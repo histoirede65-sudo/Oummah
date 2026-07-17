@@ -1,0 +1,8 @@
+[functions.quran-content]
+verify_jwt = true
+
+[functions.quran-audio]
+verify_jwt = true
+
+[functions.quran-surahs]
+verify_jwt = true
