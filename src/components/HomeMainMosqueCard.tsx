@@ -1,7 +1,12 @@
 import { Ionicons } from '@expo/vector-icons';
 import type { Href } from 'expo-router';
 import { router, useFocusEffect } from 'expo-router';
-import { useCallback, useState } from 'react';
+import {
+    useCallback,
+    useEffect,
+    useMemo,
+    useState,
+} from 'react';
 import {
     ActivityIndicator,
     Alert,
@@ -13,11 +18,28 @@ import {
 } from 'react-native';
 
 import {
+    getMosquePrayerSchedule,
+    getNextPrayer,
+    type MosquePrayerKey,
+    type MosquePrayerSchedule,
+} from '../features/mosques/data/mosquePrayerTimes';
+import {
     getMainMosque,
     type StoredMosque,
 } from '../features/mosques/data/mosquePreferences';
 import { colors } from '../theme/colors';
 import { typography } from '../theme/typography';
+
+const ARABIC_PRAYER_LABELS: Record<
+  MosquePrayerKey,
+  string
+> = {
+  Fajr: 'الفجر',
+  Dhuhr: 'الظهر',
+  Asr: 'العصر',
+  Maghrib: 'المغرب',
+  Isha: 'العشاء',
+};
 
 function openMosqueDetails(mosque: StoredMosque) {
   router.push({
@@ -62,10 +84,41 @@ async function openDirections(mosque: StoredMosque) {
   }
 }
 
+function formatCountdown(milliseconds: number) {
+  const totalSeconds = Math.max(
+    0,
+    Math.floor(milliseconds / 1_000),
+  );
+
+  const hours = Math.floor(totalSeconds / 3_600);
+  const minutes = Math.floor(
+    (totalSeconds % 3_600) / 60,
+  );
+  const seconds = totalSeconds % 60;
+
+  if (hours > 0) {
+    return `${String(hours).padStart(2, '0')} h ${String(
+      minutes,
+    ).padStart(2, '0')} min`;
+  }
+
+  return `${String(minutes).padStart(
+    2,
+    '0',
+  )} min ${String(seconds).padStart(2, '0')} s`;
+}
+
 export default function HomeMainMosqueCard() {
   const [mainMosque, setMainMosque] =
     useState<StoredMosque | null>(null);
   const [loading, setLoading] = useState(true);
+
+  const [schedule, setSchedule] =
+    useState<MosquePrayerSchedule | null>(null);
+  const [prayerLoading, setPrayerLoading] =
+    useState(false);
+  const [prayerError, setPrayerError] = useState('');
+  const [now, setNow] = useState(() => Date.now());
 
   const loadMainMosque = useCallback(async () => {
     setLoading(true);
@@ -83,6 +136,84 @@ export default function HomeMainMosqueCard() {
       void loadMainMosque();
     }, [loadMainMosque]),
   );
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      setNow(Date.now());
+    }, 1_000);
+
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!mainMosque) {
+      setSchedule(null);
+      setPrayerError('');
+      setPrayerLoading(false);
+      return;
+    }
+
+    const controller = new AbortController();
+
+    const loadPrayerSchedule = async () => {
+      setPrayerLoading(true);
+      setPrayerError('');
+
+      try {
+        const result = await getMosquePrayerSchedule(
+          mainMosque.latitude,
+          mainMosque.longitude,
+          controller.signal,
+        );
+
+        if (!controller.signal.aborted) {
+          setSchedule(result);
+        }
+      } catch (error) {
+        if (
+          error instanceof Error &&
+          error.name === 'AbortError'
+        ) {
+          return;
+        }
+
+        if (!controller.signal.aborted) {
+          setSchedule(null);
+          setPrayerError(
+            'Horaires momentanément indisponibles',
+          );
+        }
+      } finally {
+        if (!controller.signal.aborted) {
+          setPrayerLoading(false);
+        }
+      }
+    };
+
+    void loadPrayerSchedule();
+
+    return () => {
+      controller.abort();
+    };
+  }, [
+    mainMosque?.id,
+    mainMosque?.latitude,
+    mainMosque?.longitude,
+  ]);
+
+  const nextPrayer = useMemo(
+    () =>
+      schedule
+        ? getNextPrayer(schedule, now)
+        : null,
+    [now, schedule],
+  );
+
+  const countdownLabel = nextPrayer
+    ? formatCountdown(nextPrayer.timestamp - now)
+    : '';
 
   if (loading) {
     return (
@@ -103,7 +234,9 @@ export default function HomeMainMosqueCard() {
       <Pressable
         accessibilityRole="button"
         accessibilityLabel="Choisir ma mosquée"
-        onPress={() => router.push('/mosques' as Href)}
+        onPress={() =>
+          router.push('/mosques' as Href)
+        }
         style={({ pressed }) => [
           styles.emptyCard,
           pressed && styles.pressed,
@@ -118,12 +251,17 @@ export default function HomeMainMosqueCard() {
         </View>
 
         <View style={styles.emptyCopy}>
-          <Text style={styles.eyebrow}>MA MOSQUÉE</Text>
+          <Text style={styles.eyebrow}>
+            MA MOSQUÉE
+          </Text>
+
           <Text style={styles.emptyTitle}>
             Choisissez votre mosquée principale
           </Text>
+
           <Text style={styles.emptyText}>
-            Retrouvez-la directement depuis l’accueil d’OUMMAH.
+            Retrouvez-la directement depuis
+            l’accueil d’OUMMAH.
           </Text>
         </View>
 
@@ -150,17 +288,28 @@ export default function HomeMainMosqueCard() {
         </View>
 
         <View style={styles.copy}>
-          <Text style={styles.eyebrow}>MA MOSQUÉE</Text>
-          <Text numberOfLines={2} style={styles.name}>
+          <Text style={styles.eyebrow}>
+            MA MOSQUÉE
+          </Text>
+
+          <Text
+            numberOfLines={2}
+            style={styles.name}
+          >
             {mainMosque.name}
           </Text>
+
           <View style={styles.addressRow}>
             <Ionicons
               name="location-outline"
               size={14}
               color={colors.goldLight}
             />
-            <Text numberOfLines={2} style={styles.address}>
+
+            <Text
+              numberOfLines={2}
+              style={styles.address}
+            >
               {mainMosque.address}
             </Text>
           </View>
@@ -174,17 +323,133 @@ export default function HomeMainMosqueCard() {
             size={15}
             color={colors.goldLight}
           />
+
           <Text style={styles.distance}>
             {mainMosque.distanceLabel}
           </Text>
         </View>
       ) : null}
 
+      <View style={styles.prayerSection}>
+        {prayerLoading && !schedule ? (
+          <View style={styles.prayerLoading}>
+            <ActivityIndicator
+              size="small"
+              color={colors.goldLight}
+            />
+
+            <Text style={styles.prayerLoadingText}>
+              Calcul des horaires…
+            </Text>
+          </View>
+        ) : null}
+
+        {!prayerLoading &&
+        prayerError &&
+        !schedule ? (
+          <View style={styles.prayerError}>
+            <Ionicons
+              name="cloud-offline-outline"
+              size={17}
+              color={colors.goldLight}
+            />
+
+            <Text style={styles.prayerErrorText}>
+              {prayerError}
+            </Text>
+          </View>
+        ) : null}
+
+        {schedule && nextPrayer ? (
+          <>
+            <View style={styles.nextPrayerRow}>
+              <View style={styles.nextPrayerIdentity}>
+                <Text style={styles.nextPrayerEyebrow}>
+                  PROCHAINE PRIÈRE
+                </Text>
+
+                <View style={styles.nextPrayerNameRow}>
+                  <Text style={styles.nextPrayerName}>
+                    {nextPrayer.label}
+                  </Text>
+
+                  <Text style={styles.nextPrayerArabic}>
+                    {
+                      ARABIC_PRAYER_LABELS[
+                        nextPrayer.key
+                      ]
+                    }
+                  </Text>
+                </View>
+              </View>
+
+              <View style={styles.nextPrayerTimeCopy}>
+                <Text style={styles.nextPrayerTime}>
+                  {nextPrayer.time}
+                </Text>
+              </View>
+            </View>
+
+            <View style={styles.countdownHero}>
+              <Text style={styles.countdownHeroLabel}>
+                TEMPS RESTANT
+              </Text>
+
+              <Text style={styles.countdownHeroValue}>
+                {countdownLabel}
+              </Text>
+            </View>
+
+            <View style={styles.prayerTimes}>
+              {schedule.prayers.map((prayer) => {
+                const active =
+                  nextPrayer.key === prayer.key &&
+                  nextPrayer.timestamp ===
+                    prayer.timestamp;
+
+                return (
+                  <View
+                    key={prayer.key}
+                    style={[
+                      styles.prayerItem,
+                      active &&
+                        styles.prayerItemActive,
+                    ]}
+                  >
+                    <Text
+                      style={[
+                        styles.prayerLabel,
+                        active &&
+                          styles.prayerLabelActive,
+                      ]}
+                    >
+                      {prayer.label}
+                    </Text>
+
+                    <Text
+                      style={[
+                        styles.prayerTime,
+                        active &&
+                          styles.prayerTimeActive,
+                      ]}
+                    >
+                      {prayer.time}
+                    </Text>
+                  </View>
+                );
+              })}
+            </View>
+          </>
+        ) : null}
+      </View>
+
       <View style={styles.actions}>
         <Pressable
           accessibilityRole="button"
           accessibilityLabel="Ouvrir la fiche de ma mosquée"
-          onPress={() => openMosqueDetails(mainMosque)}
+          onPress={() =>
+            openMosqueDetails(mainMosque)
+          }
           style={({ pressed }) => [
             styles.primaryButton,
             pressed && styles.pressed,
@@ -195,6 +460,7 @@ export default function HomeMainMosqueCard() {
             size={18}
             color={colors.background}
           />
+
           <Text style={styles.primaryButtonText}>
             Voir la fiche
           </Text>
@@ -203,7 +469,9 @@ export default function HomeMainMosqueCard() {
         <Pressable
           accessibilityRole="button"
           accessibilityLabel="Itinéraire vers ma mosquée"
-          onPress={() => void openDirections(mainMosque)}
+          onPress={() =>
+            void openDirections(mainMosque)
+          }
           style={({ pressed }) => [
             styles.secondaryButton,
             pressed && styles.pressed,
@@ -214,6 +482,7 @@ export default function HomeMainMosqueCard() {
             size={18}
             color={colors.goldLight}
           />
+
           <Text style={styles.secondaryButtonText}>
             Itinéraire
           </Text>
@@ -234,7 +503,8 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     borderWidth: 1,
     borderColor: colors.borderSoft,
-    backgroundColor: colors.backgroundSecondary,
+    backgroundColor:
+      colors.backgroundSecondary,
   },
   loadingText: {
     color: colors.textMuted,
@@ -250,7 +520,8 @@ const styles = StyleSheet.create({
     borderRadius: 21,
     borderWidth: 1,
     borderColor: colors.borderSoft,
-    backgroundColor: colors.backgroundSecondary,
+    backgroundColor:
+      colors.backgroundSecondary,
   },
   emptyIcon: {
     width: 50,
@@ -258,7 +529,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 25,
-    backgroundColor: 'rgba(126,72,148,0.20)',
+    backgroundColor:
+      'rgba(126,72,148,0.20)',
   },
   emptyCopy: {
     flex: 1,
@@ -292,7 +564,8 @@ const styles = StyleSheet.create({
     padding: 16,
     borderRadius: 22,
     borderWidth: 1,
-    borderColor: 'rgba(224,188,112,0.46)',
+    borderColor:
+      'rgba(224,188,112,0.46)',
     backgroundColor: colors.surfaceAlt,
   },
   glow: {
@@ -302,7 +575,8 @@ const styles = StyleSheet.create({
     width: 180,
     height: 180,
     borderRadius: 90,
-    backgroundColor: 'rgba(126,72,148,0.25)',
+    backgroundColor:
+      'rgba(126,72,148,0.25)',
   },
   topRow: {
     flexDirection: 'row',
@@ -353,6 +627,145 @@ const styles = StyleSheet.create({
     fontSize: 11.5,
     fontWeight: '700',
   },
+  prayerSection: {
+    marginTop: 14,
+    paddingTop: 13,
+    borderTopWidth:
+      StyleSheet.hairlineWidth,
+    borderTopColor: colors.borderSoft,
+  },
+  prayerLoading: {
+    minHeight: 50,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+  },
+  prayerLoadingText: {
+    color: colors.textMuted,
+    fontFamily: typography.sans,
+    fontSize: 11.5,
+  },
+  prayerError: {
+    minHeight: 48,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  prayerErrorText: {
+    flex: 1,
+    color: colors.textMuted,
+    fontFamily: typography.sans,
+    fontSize: 11,
+  },
+  nextPrayerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 10,
+  },
+  nextPrayerIdentity: {
+    flex: 1,
+    minWidth: 0,
+  },
+  nextPrayerEyebrow: {
+    color: colors.textMuted,
+    fontFamily: typography.sans,
+    fontSize: 8.5,
+    fontWeight: '700',
+    letterSpacing: 1,
+  },
+  nextPrayerNameRow: {
+    marginTop: 3,
+    flexDirection: 'row',
+    alignItems: 'baseline',
+    gap: 7,
+  },
+  nextPrayerName: {
+    color: colors.text,
+    fontFamily: typography.serifMedium,
+    fontSize: 20,
+  },
+  nextPrayerArabic: {
+    color: colors.goldLight,
+    fontFamily: typography.sans,
+    fontSize: 15,
+  },
+  nextPrayerTimeCopy: {
+    alignItems: 'flex-end',
+  },
+  nextPrayerTime: {
+    color: colors.goldLight,
+    fontFamily: typography.serifMedium,
+    fontSize: 22,
+    fontVariant: ['tabular-nums'],
+  },
+  countdownHero: {
+    marginTop: 12,
+    paddingHorizontal: 14,
+    paddingVertical: 11,
+    alignItems: 'center',
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: 'rgba(224,188,112,0.52)',
+    backgroundColor: 'rgba(16,9,31,0.88)',
+  },
+  countdownHeroLabel: {
+    color: colors.textMuted,
+    fontFamily: typography.sans,
+    fontSize: 9,
+    fontWeight: '700',
+    letterSpacing: 1.2,
+  },
+  countdownHeroValue: {
+    marginTop: 2,
+    color: colors.goldLight,
+    fontFamily: typography.serifMedium,
+    fontSize: 31,
+    fontWeight: '600',
+    letterSpacing: 1.5,
+    fontVariant: ['tabular-nums'],
+  },
+  prayerTimes: {
+    marginTop: 11,
+    flexDirection: 'row',
+    gap: 5,
+  },
+  prayerItem: {
+    flex: 1,
+    minWidth: 0,
+    paddingVertical: 8,
+    alignItems: 'center',
+    borderRadius: 11,
+    backgroundColor:
+      colors.backgroundSecondary,
+  },
+  prayerItemActive: {
+    borderWidth: 1,
+    borderColor: colors.goldLight,
+    backgroundColor:
+      'rgba(224,188,112,0.08)',
+  },
+  prayerLabel: {
+    color: colors.textMuted,
+    fontFamily: typography.sans,
+    fontSize: 8.5,
+  },
+  prayerLabelActive: {
+    color: colors.goldLight,
+    fontWeight: '700',
+  },
+  prayerTime: {
+    marginTop: 3,
+    color: colors.text,
+    fontFamily: typography.sans,
+    fontSize: 10.5,
+    fontWeight: '600',
+    fontVariant: ['tabular-nums'],
+  },
+  prayerTimeActive: {
+    color: colors.goldLight,
+  },
   actions: {
     marginTop: 14,
     flexDirection: 'row',
@@ -384,7 +797,8 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     borderWidth: 1,
     borderColor: colors.borderSoft,
-    backgroundColor: colors.backgroundSecondary,
+    backgroundColor:
+      colors.backgroundSecondary,
   },
   secondaryButtonText: {
     color: colors.text,
@@ -394,6 +808,5 @@ const styles = StyleSheet.create({
   },
   pressed: {
     opacity: 0.72,
-    transform: [{ scale: 0.99 }],
   },
 });

@@ -1,7 +1,9 @@
 import { Image, StyleSheet, View } from 'react-native';
-import Animated, { Keyframe, Easing } from 'react-native-reanimated';
+import Animated, {
+  Easing,
+  Keyframe,
+} from 'react-native-reanimated';
 
-import classes from './animated-icon.module.css';
 const DURATION = 300;
 
 export function AnimatedSplashOverlay() {
@@ -40,11 +42,17 @@ const logoKeyframe = new Keyframe({
 
 const glowKeyframe = new Keyframe({
   0: {
-    transform: [{ rotateZ: '-180deg' }, { scale: 0.8 }],
+    transform: [
+      { rotateZ: '-180deg' },
+      { scale: 0.8 },
+    ],
     opacity: 0,
   },
   [DURATION / 1000]: {
-    transform: [{ rotateZ: '0deg' }, { scale: 1 }],
+    transform: [
+      { rotateZ: '0deg' },
+      { scale: 1 },
+    ],
     opacity: 1,
     easing: Easing.elastic(0.7),
   },
@@ -56,16 +64,31 @@ const glowKeyframe = new Keyframe({
 export function AnimatedIcon() {
   return (
     <View style={styles.iconContainer}>
-      <Animated.View entering={glowKeyframe.duration(60 * 1000 * 4)} style={styles.glow}>
-        <Image style={styles.glow} source={require('@/assets/images/logo-glow.png')} />
+      <Animated.View
+        entering={glowKeyframe.duration(60 * 1000 * 4)}
+        style={styles.glow}
+      >
+        <Image
+          style={styles.glowImage}
+          source={require('@/assets/images/logo-glow.png')}
+        />
       </Animated.View>
 
-      <Animated.View style={styles.background} entering={keyframe.duration(DURATION)}>
-        <div className={classes.expoLogoBackground} />
+      <Animated.View
+        style={styles.background}
+        entering={keyframe.duration(DURATION)}
+      >
+        <View style={styles.logoBackground} />
       </Animated.View>
 
-      <Animated.View style={styles.imageContainer} entering={logoKeyframe.duration(DURATION)}>
-        <Image style={styles.image} source={require('@/assets/images/expo-logo.png')} />
+      <Animated.View
+        style={styles.imageContainer}
+        entering={logoKeyframe.duration(DURATION)}
+      >
+        <Image
+          style={styles.image}
+          source={require('@/assets/images/expo-logo.png')}
+        />
       </Animated.View>
     </View>
   );
@@ -79,29 +102,57 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 128 / 2 + 138,
   },
-  imageContainer: {
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  glow: {
-    width: 201,
-    height: 201,
-    position: 'absolute',
-  },
+
   iconContainer: {
     justifyContent: 'center',
     alignItems: 'center',
     width: 128,
     height: 128,
   },
-  image: {
+
+  glow: {
+    width: 201,
+    height: 201,
     position: 'absolute',
-    width: 76,
-    height: 71,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
+
+  glowImage: {
+    width: 201,
+    height: 201,
+  },
+
   background: {
     width: 128,
     height: 128,
     position: 'absolute',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  logoBackground: {
+    width: 128,
+    height: 128,
+    borderRadius: 32,
+    backgroundColor: '#FFFFFF',
+    shadowColor: '#000000',
+    shadowOpacity: 0.12,
+    shadowRadius: 18,
+    shadowOffset: {
+      width: 0,
+      height: 8,
+    },
+  },
+
+  imageContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  image: {
+    position: 'absolute',
+    width: 76,
+    height: 71,
   },
 });

@@ -13,6 +13,8 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import MosquePrayerCountdown from '../../components/MosquePrayerCountdown';
+
 import {
     isFavoriteMosque,
     isMainMosque,
@@ -73,17 +75,24 @@ export default function MosqueDetailScreen() {
   const [savingFavorite, setSavingFavorite] = useState(false);
   const [savingMainMosque, setSavingMainMosque] = useState(false);
 
+  const mosqueId = getSingleParam(params.id);
+  const mosqueName = getSingleParam(params.name);
+  const mosqueAddress = getSingleParam(params.address);
+  const mosqueLatitudeValue = getSingleParam(params.latitude);
+  const mosqueLongitudeValue = getSingleParam(params.longitude);
+  const mosqueDistance = getOptionalValue(params.distance);
+  const mosquePhone = getOptionalValue(params.phone);
+  const mosqueWebsite = getOptionalValue(params.website);
+  const mosqueOpeningHours = getOptionalValue(params.openingHours);
+
   const mosque = useMemo<StoredMosque | null>(() => {
-    const id = getSingleParam(params.id);
-    const name = getSingleParam(params.name);
-    const address = getSingleParam(params.address);
-    const latitude = Number(getSingleParam(params.latitude));
-    const longitude = Number(getSingleParam(params.longitude));
+    const latitude = Number(mosqueLatitudeValue);
+    const longitude = Number(mosqueLongitudeValue);
 
     if (
-      !id ||
-      !name ||
-      !address ||
+      !mosqueId ||
+      !mosqueName ||
+      !mosqueAddress ||
       !Number.isFinite(latitude) ||
       !Number.isFinite(longitude)
     ) {
@@ -91,30 +100,44 @@ export default function MosqueDetailScreen() {
     }
 
     return {
-      id,
-      name,
-      address,
+      id: mosqueId,
+      name: mosqueName,
+      address: mosqueAddress,
       latitude,
       longitude,
-      distanceLabel: getOptionalValue(params.distance),
-      phone: getOptionalValue(params.phone),
-      website: getOptionalValue(params.website),
-      openingHours: getOptionalValue(params.openingHours),
+      distanceLabel: mosqueDistance,
+      phone: mosquePhone,
+      website: mosqueWebsite,
+      openingHours: mosqueOpeningHours,
     };
-  }, [params]);
+  }, [
+    mosqueAddress,
+    mosqueDistance,
+    mosqueId,
+    mosqueLatitudeValue,
+    mosqueLongitudeValue,
+    mosqueName,
+    mosqueOpeningHours,
+    mosquePhone,
+    mosqueWebsite,
+  ]);
 
   useEffect(() => {
     let active = true;
 
     const loadPreferences = async () => {
-      if (!mosque) {
-        setLoadingPreferences(false);
+      if (!mosqueId) {
+        if (active) {
+          setLoadingPreferences(false);
+        }
         return;
       }
 
+      setLoadingPreferences(true);
+
       const [favoriteValue, mainMosqueValue] = await Promise.all([
-        isFavoriteMosque(mosque.id),
-        isMainMosque(mosque.id),
+        isFavoriteMosque(mosqueId),
+        isMainMosque(mosqueId),
       ]);
 
       if (!active) return;
@@ -129,7 +152,7 @@ export default function MosqueDetailScreen() {
     return () => {
       active = false;
     };
-  }, [mosque]);
+  }, [mosqueId]);
 
   if (!mosque) {
     return (
@@ -291,9 +314,17 @@ export default function MosqueDetailScreen() {
       </View>
 
       <ScrollView
-        contentContainerStyle={styles.content}
+        alwaysBounceVertical={false}
+        bounces={false}
+        contentContainerStyle={styles.scrollContent}
+        contentInsetAdjustmentBehavior="never"
+        directionalLockEnabled
+        keyboardShouldPersistTaps="handled"
+        removeClippedSubviews={false}
         showsVerticalScrollIndicator={false}
+        style={styles.scrollView}
       >
+        <View style={styles.content}>
         <View style={styles.hero}>
           <View style={styles.heroGlow} />
 
@@ -329,6 +360,11 @@ export default function MosqueDetailScreen() {
             </View>
           ) : null}
         </View>
+
+        <MosquePrayerCountdown
+          latitude={mosque.latitude}
+          longitude={mosque.longitude}
+        />
 
         <View style={styles.actionsGrid}>
           <Pressable
@@ -552,6 +588,7 @@ export default function MosqueDetailScreen() {
             publiques de la mosquée et peuvent être incomplètes.
           </Text>
         </View>
+        </View>
       </ScrollView>
     </SafeAreaView>
   );
@@ -591,12 +628,18 @@ const styles = StyleSheet.create({
     fontSize: 23,
     textAlign: 'center',
   },
+  scrollView: {
+    flex: 1,
+  },
+  scrollContent: {
+    flexGrow: 1,
+    paddingBottom: 55,
+  },
   content: {
     width: '100%',
     maxWidth: 760,
     paddingHorizontal: 14,
     paddingTop: 18,
-    paddingBottom: 55,
     alignSelf: 'center',
   },
   hero: {
@@ -874,6 +917,5 @@ const styles = StyleSheet.create({
   },
   pressed: {
     opacity: 0.72,
-    transform: [{ scale: 0.99 }],
   },
 });
