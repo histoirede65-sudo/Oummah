@@ -1,26 +1,26 @@
 import { Ionicons } from '@expo/vector-icons';
-import * as Clipboard from 'expo-clipboard';
 import { createAudioPlayer, useAudioPlayerStatus } from 'expo-audio';
+import * as Clipboard from 'expo-clipboard';
 import { router, useLocalSearchParams } from 'expo-router';
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ActionSheetIOS, ActivityIndicator, Alert, FlatList, Platform, Pressable, Share, StyleSheet, Text, useWindowDimensions, View, type AlertButton, type ListRenderItem, type ViewToken } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { useGlobalAudioPlayer } from '../../context/AudioPlayerProvider';
+import { useReciter } from '../../context/ReciterProvider';
 import { offlineRepository } from '../../core/offline';
 import { hapticsService } from '../../core/settings';
 import { SURAHS } from '../../data/surahs';
-import { DEFAULT_READING_PREFERENCES, readingPreferencesStore, type ReadingMode, type ReadingPreferences, type ReadingTheme } from '../../features/quran/ReadingPreferences';
-import { readingQuranRepository } from '../../features/quran/ReadingQuranRepository';
+import { ARABIC_READING_FONT_FAMILY } from '../../features/quran/ArabicReadingPresentation';
 import { QuranArabicText } from '../../features/quran/QuranArabicText';
 import { QuranWordHighlight } from '../../features/quran/QuranWordHighlight';
-import { ARABIC_READING_FONT_FAMILY } from '../../features/quran/ArabicReadingPresentation';
 import { audioPositionMilliseconds, getSyncPositionMs, getWordSyncState, normalizeWordTimestamps, type AudioSourceMode } from '../../features/quran/QuranWordSync';
+import { DEFAULT_READING_PREFERENCES, readingPreferencesStore, type ReadingMode, type ReadingPreferences, type ReadingTheme } from '../../features/quran/ReadingPreferences';
+import { readingQuranRepository } from '../../features/quran/ReadingQuranRepository';
 import { quranFoundationRepository } from '../../features/quranfoundation/QuranFoundationRepository';
 import type { QuranFoundationRecitation, QuranFoundationVerse } from '../../features/quranfoundation/QuranFoundationTypes';
 import { colors } from '../../theme/colors';
 import { typography } from '../../theme/typography';
-import { useReciter } from '../../context/ReciterProvider';
-import { useGlobalAudioPlayer } from '../../context/AudioPlayerProvider';
 const modes: { id: ReadingMode; label: string }[] = [
   { id: 'arabic', label: 'Arabe' }, { id: 'arabic-translation', label: 'Arabe + traduction' },
   { id: 'arabic-transliteration', label: 'Arabe + phonétique' }, { id: 'translation', label: 'Traduction' },
@@ -81,7 +81,31 @@ function replaceAndWaitForAudioSource(
   });
 }
 
-const VerseRow = memo(function VerseRow({ verse, settings, screenWidth, onPress, onListen, isPlaying, isActive, activeWordPosition, lastReadWordPosition, isWordSyncUnavailable }: { verse: QuranFoundationVerse; settings: ReadingPreferences; screenWidth: number; onPress: (verse: QuranFoundationVerse) => void; onListen: (verse: QuranFoundationVerse) => void; isPlaying: boolean; isActive: boolean; activeWordPosition: number | null; lastReadWordPosition: number | null; isWordSyncUnavailable: boolean }) {
+const VerseRow = memo(function VerseRow({
+  verse,
+  settings,
+  screenWidth,
+  onPress,
+  onListen,
+  onOpenTafsir,
+  isPlaying,
+  isActive,
+  activeWordPosition,
+  lastReadWordPosition,
+  isWordSyncUnavailable,
+}: {
+  verse: QuranFoundationVerse;
+  settings: ReadingPreferences;
+  screenWidth: number;
+  onPress: (verse: QuranFoundationVerse) => void;
+  onListen: (verse: QuranFoundationVerse) => void;
+  onOpenTafsir: (verse: QuranFoundationVerse) => void;
+  isPlaying: boolean;
+  isActive: boolean;
+  activeWordPosition: number | null;
+  lastReadWordPosition: number | null;
+  isWordSyncUnavailable: boolean;
+}) {
   const showArabic = settings.mode !== 'translation';
   const showTranslation = settings.mode === 'arabic-translation' || settings.mode === 'translation';
   const showTransliteration = settings.showTransliteration || settings.mode === 'arabic-transliteration';
@@ -106,6 +130,42 @@ const VerseRow = memo(function VerseRow({ verse, settings, screenWidth, onPress,
       {isWordSyncUnavailable ? <Text style={styles.syncUnavailable}>Synchronisation mot à mot indisponible pour ce récitateur.</Text> : null}
       {showTransliteration ? <Text selectable style={[styles.transliteration, { fontSize: transliterationSize }]}>{verse.transliteration || 'Translittération indisponible'}</Text> : null}
       {showTranslation ? <Text selectable style={[styles.translation, { fontSize: settings.translationSize, lineHeight: settings.translationSize * 1.55 }]}>{verse.translation || verse.translations?.[0]?.text || 'Traduction indisponible'}</Text> : null}
+
+      <Pressable
+        accessibilityRole="button"
+        accessibilityLabel={`Comprendre le verset ${verse.verseKey}`}
+        onPress={(event) => {
+          event.stopPropagation();
+          onOpenTafsir(verse);
+        }}
+        style={({ pressed }) => [
+          styles.tafsirButton,
+          pressed && styles.tafsirButtonPressed,
+        ]}
+      >
+        <View style={styles.tafsirButtonIcon}>
+          <Ionicons
+            name="book-outline"
+            size={19}
+            color={colors.goldLight}
+          />
+        </View>
+
+        <View style={styles.tafsirButtonCopy}>
+          <Text style={styles.tafsirButtonTitle}>
+            Comprendre ce verset
+          </Text>
+          <Text style={styles.tafsirButtonSubtitle}>
+            Lire le tafsir Al-Mukhtasar
+          </Text>
+        </View>
+
+        <Ionicons
+          name="chevron-forward"
+          size={18}
+          color={colors.goldLight}
+        />
+      </Pressable>
     </Pressable>
   );
 });
@@ -386,7 +446,12 @@ export default function SurahReadingScreen() {
       Alert.alert('Copié', `Le verset ${verseKey} a été copié.`);
     }
     if (action === 4) await Share.share({ message: verseShareText(verse) });
-    if (action === 5) Alert.alert(`Tafsir · ${verseKey}`, 'Le tafsir de ce verset sera affiché ici dès que la ressource sera disponible.');
+    if (action === 5) {
+      router.push({
+        pathname: '/tafsir/[verseKey]',
+        params: { verseKey },
+      });
+    }
     if (action === 6) {
       const bookmarks = await offlineRepository.getBookmarks();
       const existing = bookmarks.find((item) => item.verseKey === verseKey);
@@ -417,6 +482,12 @@ export default function SurahReadingScreen() {
   actionsRef.current = actions;
   const handleVerseListen = useCallback((verse: QuranFoundationVerse) => { void listenToVerseRef.current(verse); }, []);
   const handleVerseActions = useCallback((verse: QuranFoundationVerse) => actionsRef.current(verse), []);
+  const handleOpenTafsir = useCallback((verse: QuranFoundationVerse) => {
+    router.push({
+      pathname: '/tafsir/[verseKey]',
+      params: { verseKey: verse.verseKey },
+    });
+  }, []);
 
   useEffect(() => {
     if (!activeVerse || !currentReciter) return;
@@ -435,13 +506,14 @@ export default function SurahReadingScreen() {
       screenWidth={screenWidth}
       onPress={handleVerseActions}
       onListen={handleVerseListen}
+      onOpenTafsir={handleOpenTafsir}
       isPlaying={playingVerseKey === item.verseKey}
       isActive={activeVerse?.verseKey === item.verseKey}
       activeWordPosition={activeVerse?.verseKey === item.verseKey ? activeWordState.activeWordPosition : null}
       lastReadWordPosition={activeVerse?.verseKey === item.verseKey ? lastReadWordPosition : null}
       isWordSyncUnavailable={activeVerse?.verseKey === item.verseKey && isWordSyncUnavailable}
     />
-  ), [activeVerse?.verseKey, activeWordState.activeWordPosition, handleVerseActions, handleVerseListen, isWordSyncUnavailable, lastReadWordPosition, playingVerseKey, screenWidth, settings]);
+  ), [activeVerse?.verseKey, activeWordState.activeWordPosition, handleOpenTafsir, handleVerseActions, handleVerseListen, isWordSyncUnavailable, lastReadWordPosition, playingVerseKey, screenWidth, settings]);
   const viewability = useRef(({ viewableItems }: { viewableItems: ViewToken<QuranFoundationVerse>[] }) => { const first = viewableItems.find((item) => item.item); if (first?.item) currentVerseRef.current = first.item.id; }).current;
   const palette = settings.theme === 'light' ? '#F7F3EA' : settings.theme === 'sepia' ? '#241D16' : colors.background;
 
@@ -468,4 +540,44 @@ export default function SurahReadingScreen() {
 
 const styles = StyleSheet.create({
   safe:{flex:1}, header:{minHeight:74,paddingHorizontal:12,flexDirection:'row',alignItems:'center',borderBottomWidth:1,borderColor:colors.borderSoft,backgroundColor:colors.backgroundSecondary},iconButton:{width:40,height:40,borderRadius:20,alignItems:'center',justifyContent:'center',backgroundColor:colors.purpleDeep},headerCopy:{flex:1,marginLeft:10},title:{color:colors.text,fontFamily:typography.serifMedium,fontSize:22},meta:{color:colors.textMuted,fontSize:9},headerArabic:{maxWidth:90,color:colors.goldLight,fontFamily:typography.arabic,fontSize:20,textAlign:'right'},settings:{padding:10,borderBottomWidth:1,borderColor:colors.borderSoft,backgroundColor:colors.backgroundSecondary},chip:{marginRight:7,paddingHorizontal:12,paddingVertical:8,borderRadius:14,backgroundColor:colors.surface},chipActive:{borderWidth:1,borderColor:colors.gold},chipText:{color:colors.textSecondary,fontSize:10},settingRow:{marginTop:10,flexDirection:'row',alignItems:'center',gap:10},settingLabel:{color:colors.textMuted,fontSize:10},adjust:{color:colors.goldLight,fontSize:14,fontWeight:'700'},transliterationToggle:{marginLeft:'auto',paddingHorizontal:11,height:32,flexDirection:'row',alignItems:'center',gap:6,borderRadius:16,borderWidth:1,borderColor:colors.borderSoft},transliterationToggleActive:{backgroundColor:colors.goldLight,borderColor:colors.goldLight},transliterationToggleText:{color:colors.goldLight,fontSize:10,fontWeight:'600'},transliterationToggleTextActive:{color:colors.background},themeDot:{width:23,height:23,borderRadius:12,borderWidth:1,borderColor:colors.borderSoft},themeActive:{borderWidth:2,borderColor:colors.gold},content:{paddingHorizontal:20,paddingBottom:190},verse:{maxWidth:760,width:'100%',alignSelf:'center',paddingVertical:34,paddingHorizontal:8,borderBottomWidth:StyleSheet.hairlineWidth,borderColor:'rgba(224,188,112,0.22)'},verseActive:{borderRadius:18,borderBottomColor:'rgba(224,188,112,0.48)',backgroundColor:'rgba(200,148,58,0.07)'},verseWide:{maxWidth:920},verseTop:{flexDirection:'row',alignItems:'center',marginBottom:26},number:{width:27,height:27,borderRadius:14,alignItems:'center',justifyContent:'center',borderWidth:StyleSheet.hairlineWidth,borderColor:colors.goldLight,backgroundColor:colors.goldDark},numberText:{color:colors.background,fontSize:9,fontWeight:'700'},location:{marginLeft:9,color:colors.textMuted,fontSize:10,letterSpacing:0.3},listenIcon:{marginLeft:'auto',width:34,height:34,borderRadius:17,alignItems:'center',justifyContent:'center',backgroundColor:'rgba(126,72,148,0.18)'},arabic:{color:colors.goldLight,fontFamily:typography.arabic,textAlign:'right',writingDirection:'rtl',paddingVertical:8},arabicText:{width:'100%',flexShrink:1,textAlign:'right',writingDirection:'rtl',includeFontPadding:false},syncUnavailable:{marginTop:12,color:colors.textMuted,fontSize:11,textAlign:'center'},translation:{marginTop:28,paddingTop:22,borderTopWidth:StyleSheet.hairlineWidth,borderColor:'rgba(224,188,112,0.16)',color:colors.textSecondary},transliteration:{marginTop:22,color:colors.textMuted,fontStyle:'italic',fontWeight:'400',lineHeight:28,textAlign:'left'},inlinePlayer:{position:'absolute',left:12,right:12,bottom:12,overflow:'hidden',borderRadius:20,borderWidth:1,borderColor:colors.goldDark,backgroundColor:colors.backgroundSecondary,shadowColor:'#000',shadowOffset:{width:0,height:8},shadowOpacity:0.35,shadowRadius:14,elevation:14},inlineProgressTrack:{height:3,backgroundColor:colors.surfaceLight},inlineProgress:{height:'100%',backgroundColor:colors.goldLight},inlineControls:{minHeight:72,paddingHorizontal:10,flexDirection:'row',alignItems:'center'},inlineSmallButton:{width:34,height:40,alignItems:'center',justifyContent:'center'},inlinePlayButton:{width:42,height:42,borderRadius:21,alignItems:'center',justifyContent:'center',backgroundColor:colors.goldLight},inlineCopy:{flex:1,minWidth:0,marginLeft:10},inlineTitle:{color:colors.text,fontFamily:typography.serifMedium,fontSize:16},inlineSubtitle:{marginTop:2,color:colors.textMuted,fontSize:9},rateButton:{minWidth:38,height:32,paddingHorizontal:6,alignItems:'center',justifyContent:'center',borderRadius:16,borderWidth:1,borderColor:colors.borderSoft},rateText:{color:colors.goldLight,fontSize:10,fontWeight:'700'},loader:{flex:1},error:{flex:1,alignItems:'center',justifyContent:'center'},errorText:{color:colors.textSecondary,textAlign:'center',lineHeight:22},
+  tafsirButton: {
+    minHeight: 66,
+    marginTop: 26,
+    paddingHorizontal: 14,
+    paddingVertical: 11,
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderRadius: 18,
+    borderWidth: 1,
+    borderColor: 'rgba(224,188,112,0.42)',
+    backgroundColor: 'rgba(126,72,148,0.13)',
+  },
+  tafsirButtonPressed: {
+    opacity: 0.72,
+    transform: [{ scale: 0.99 }],
+  },
+  tafsirButtonIcon: {
+    width: 40,
+    height: 40,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 20,
+    backgroundColor: 'rgba(224,188,112,0.10)',
+  },
+  tafsirButtonCopy: {
+    flex: 1,
+    minWidth: 0,
+    marginLeft: 12,
+  },
+  tafsirButtonTitle: {
+    color: colors.goldLight,
+    fontFamily: typography.serifMedium,
+    fontSize: 16,
+  },
+  tafsirButtonSubtitle: {
+    marginTop: 2,
+    color: colors.textMuted,
+    fontFamily: typography.sans,
+    fontSize: 9.5,
+  },
 });

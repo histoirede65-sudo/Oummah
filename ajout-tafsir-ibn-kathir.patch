@@ -1,0 +1,681 @@
+diff --git a/src/app/surah/[id].tsx b/src/app/surah/[id].tsx
+--- a/src/app/surah/[id].tsx
++++ b/src/app/surah/[id].tsx
+@@ -388,3 +388,8 @@
+     if (action === 4) await Share.share({ message: verseShareText(verse) });
+-    if (action === 5) Alert.alert(`Tafsir · ${verseKey}`, 'Le tafsir de ce verset sera affiché ici dès que la ressource sera disponible.');
++    if (action === 5) {
++      router.push({
++        pathname: '/tafsir/[verseKey]',
++        params: { verseKey },
++      });
++    }
+     if (action === 6) {
+diff --git a/src/features/quranfoundation/TafsirRepository.ts b/src/features/quranfoundation/TafsirRepository.ts
+new file mode 100644
+--- /dev/null
++++ b/src/features/quranfoundation/TafsirRepository.ts
+@@ -0,0 +1,149 @@
++import AsyncStorage from '@react-native-async-storage/async-storage';
++
++const SUPABASE_URL = process.env.EXPO_PUBLIC_SUPABASE_URL!;
++const ANON_KEY = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY!;
++
++export const DEFAULT_TAFSIR_RESOURCE_ID = 169;
++
++export type QuranTafsir = {
++  verseKey: string;
++  resourceId: number;
++  resourceName: string;
++  languageName: string;
++  text: string;
++};
++
++type RawTafsir = {
++  verseKey?: string;
++  verse_key?: string;
++  resourceId?: number;
++  resource_id?: number;
++  resourceName?: string;
++  resource_name?: string;
++  languageName?: string;
++  language_name?: string;
++  text?: string;
++};
++
++const memoryCache = new Map<string, QuranTafsir>();
++
++function getStorageKey(verseKey: string, resourceId: number) {
++  return `quran-foundation:v1:tafsir:${resourceId}:${verseKey}`;
++}
++
++function decodeNumericEntity(match: string, value: string) {
++  const codePoint = Number(value);
++  return Number.isFinite(codePoint) ? String.fromCodePoint(codePoint) : match;
++}
++
++function htmlToPlainText(value: string) {
++  return value
++    .replace(/<\s*br\s*\/?>/gi, '\n')
++    .replace(/<li[^>]*>/gi, '• ')
++    .replace(/<\/(?:p|div|h[1-6]|li|blockquote)>/gi, '\n\n')
++    .replace(/<[^>]+>/g, '')
++    .replace(/&nbsp;/gi, ' ')
++    .replace(/&quot;/gi, '"')
++    .replace(/&apos;|&#39;/gi, "'")
++    .replace(/&lt;/gi, '<')
++    .replace(/&gt;/gi, '>')
++    .replace(/&amp;/gi, '&')
++    .replace(/&#(\d+);/g, decodeNumericEntity)
++    .replace(/[ \t]+\n/g, '\n')
++    .replace(/\n[ \t]+/g, '\n')
++    .replace(/\n{3,}/g, '\n\n')
++    .replace(/[ \t]{2,}/g, ' ')
++    .trim();
++}
++
++function normalizeTafsir(
++  payload: unknown,
++  requestedVerseKey: string,
++  requestedResourceId: number,
++): QuranTafsir {
++  const wrapper = payload as { tafsir?: RawTafsir };
++  const raw = wrapper.tafsir ?? (payload as RawTafsir);
++  const text = htmlToPlainText(raw.text ?? '');
++
++  if (!text) {
++    throw new Error(`Le tafsir du verset ${requestedVerseKey} est indisponible.`);
++  }
++
++  return {
++    verseKey: raw.verseKey ?? raw.verse_key ?? requestedVerseKey,
++    resourceId: raw.resourceId ?? raw.resource_id ?? requestedResourceId,
++    resourceName: raw.resourceName ?? raw.resource_name ?? 'Tafsir Ibn Kathir',
++    languageName: raw.languageName ?? raw.language_name ?? 'english',
++    text,
++  };
++}
++
++async function readPersisted(key: string) {
++  const value = await AsyncStorage.getItem(key).catch(() => null);
++  if (!value) return null;
++
++  try {
++    return JSON.parse(value) as QuranTafsir;
++  } catch {
++    return null;
++  }
++}
++
++export const tafsirRepository = {
++  async getTafsir(
++    verseKey: string,
++    resourceId = DEFAULT_TAFSIR_RESOURCE_ID,
++  ): Promise<QuranTafsir> {
++    if (!/^\d{1,3}:\d{1,3}$/.test(verseKey)) {
++      throw new Error('Identifiant de verset invalide.');
++    }
++
++    const identity = `${resourceId}:${verseKey}`;
++    const storageKey = getStorageKey(verseKey, resourceId);
++    const memoryCached = memoryCache.get(identity);
++    if (memoryCached) return memoryCached;
++
++    const persisted = await readPersisted(storageKey);
++
++    try {
++      const response = await fetch(
++        `${SUPABASE_URL}/functions/v1/quran-tafsir?verse_key=${encodeURIComponent(verseKey)}&resource_id=${resourceId}`,
++        {
++          method: 'GET',
++          headers: {
++            Authorization: `Bearer ${ANON_KEY}`,
++            apikey: ANON_KEY,
++            'Content-Type': 'application/json',
++          },
++        },
++      );
++
++      if (!response.ok) {
++        const details = await response.text().catch(() => '');
++        throw new Error(
++          `Tafsir Quran.Foundation (${response.status})${details ? ` : ${details}` : ''}`,
++        );
++      }
++
++      const tafsir = normalizeTafsir(
++        await response.json(),
++        verseKey,
++        resourceId,
++      );
++
++      memoryCache.set(identity, tafsir);
++      void AsyncStorage.setItem(storageKey, JSON.stringify(tafsir)).catch(
++        () => undefined,
++      );
++
++      return tafsir;
++    } catch (error) {
++      if (persisted) {
++        memoryCache.set(identity, persisted);
++        return persisted;
++      }
++
++      throw error;
++    }
++  },
++};
+diff --git a/src/app/tafsir/[verseKey].tsx b/src/app/tafsir/[verseKey].tsx
+new file mode 100644
+--- /dev/null
++++ b/src/app/tafsir/[verseKey].tsx
+@@ -0,0 +1,392 @@
++import { Ionicons } from '@expo/vector-icons';
++import { router, useLocalSearchParams } from 'expo-router';
++import { useCallback, useEffect, useMemo, useState } from 'react';
++import {
++  ActivityIndicator,
++  Pressable,
++  ScrollView,
++  StyleSheet,
++  Text,
++  View,
++} from 'react-native';
++import { SafeAreaView } from 'react-native-safe-area-context';
++
++import { SURAHS } from '../../data/surahs';
++import { readingQuranRepository } from '../../features/quran/ReadingQuranRepository';
++import type { QuranFoundationVerse } from '../../features/quranfoundation/QuranFoundationTypes';
++import {
++  tafsirRepository,
++  type QuranTafsir,
++} from '../../features/quranfoundation/TafsirRepository';
++import { colors } from '../../theme/colors';
++import { typography } from '../../theme/typography';
++
++function languageLabel(languageName?: string) {
++  const normalized = languageName?.toLocaleLowerCase('fr') ?? '';
++  if (normalized === 'arabic') return 'Arabe';
++  if (normalized === 'french') return 'Français';
++  if (normalized === 'english') return 'Anglais';
++  return languageName || 'Langue non précisée';
++}
++
++export default function TafsirScreen() {
++  const params = useLocalSearchParams<{
++    verseKey?: string | string[];
++  }>();
++
++  const verseKey = Array.isArray(params.verseKey)
++    ? params.verseKey[0]
++    : params.verseKey;
++
++  const [verse, setVerse] = useState<QuranFoundationVerse>();
++  const [tafsir, setTafsir] = useState<QuranTafsir>();
++  const [loading, setLoading] = useState(true);
++  const [error, setError] = useState<string>();
++
++  const chapterId = Number(verseKey?.split(':')[0]);
++  const surah = useMemo(
++    () => SURAHS.find((item) => item.id === chapterId),
++    [chapterId],
++  );
++
++  const load = useCallback(async () => {
++    if (!verseKey || !/^\d{1,3}:\d{1,3}$/.test(verseKey)) {
++      setError('Ce verset est invalide.');
++      setLoading(false);
++      return;
++    }
++
++    const requestedChapter = Number(verseKey.split(':')[0]);
++    setLoading(true);
++    setError(undefined);
++
++    try {
++      const [verses, tafsirResult] = await Promise.all([
++        readingQuranRepository.getVerses(requestedChapter),
++        tafsirRepository.getTafsir(verseKey),
++      ]);
++
++      setVerse(verses.find((item) => item.verseKey === verseKey));
++      setTafsir(tafsirResult);
++    } catch (reason) {
++      setError(
++        reason instanceof Error
++          ? reason.message
++          : 'Impossible de charger le tafsir.',
++      );
++    } finally {
++      setLoading(false);
++    }
++  }, [verseKey]);
++
++  useEffect(() => {
++    void load();
++  }, [load]);
++
++  return (
++    <SafeAreaView edges={['top']} style={styles.safeArea}>
++      <View style={styles.header}>
++        <Pressable
++          accessibilityLabel="Retour"
++          onPress={() => router.back()}
++          style={styles.backButton}
++        >
++          <Ionicons name="arrow-back" size={22} color={colors.goldLight} />
++        </Pressable>
++
++        <View style={styles.headerCopy}>
++          <Text style={styles.title}>Tafsir</Text>
++          <Text style={styles.subtitle}>
++            {surah?.frenchName ?? 'Sourate'} · Verset {verseKey ?? '—'}
++          </Text>
++        </View>
++
++        <View style={styles.bookIcon}>
++          <Ionicons name="book-outline" size={21} color={colors.goldLight} />
++        </View>
++      </View>
++
++      {loading ? (
++        <View style={styles.center}>
++          <ActivityIndicator size="large" color={colors.gold} />
++          <Text style={styles.loadingText}>Chargement du tafsir…</Text>
++        </View>
++      ) : error ? (
++        <View style={styles.center}>
++          <Ionicons
++            name="alert-circle-outline"
++            size={34}
++            color={colors.goldLight}
++          />
++          <Text style={styles.errorText}>{error}</Text>
++          <Pressable onPress={() => void load()} style={styles.retryButton}>
++            <Text style={styles.retryText}>Réessayer</Text>
++          </Pressable>
++        </View>
++      ) : (
++        <ScrollView
++          contentContainerStyle={styles.content}
++          showsVerticalScrollIndicator={false}
++        >
++          {verse ? (
++            <View style={styles.verseCard}>
++              <View style={styles.verseBadge}>
++                <Text style={styles.verseBadgeText}>{verse.verseKey}</Text>
++              </View>
++
++              <Text selectable style={styles.arabic}>
++                {verse.textUthmani}
++              </Text>
++
++              {verse.translation ? (
++                <Text selectable style={styles.translation}>
++                  {verse.translation}
++                </Text>
++              ) : null}
++            </View>
++          ) : null}
++
++          <View style={styles.sourceCard}>
++            <View style={styles.sourceIcon}>
++              <Ionicons
++                name="library-outline"
++                size={18}
++                color={colors.goldLight}
++              />
++            </View>
++
++            <View style={styles.sourceCopy}>
++              <Text style={styles.sourceName}>
++                {tafsir?.resourceName ?? 'Tafsir Ibn Kathir'}
++              </Text>
++              <Text style={styles.sourceMeta}>
++                Source Quran Foundation ·{' '}
++                {languageLabel(tafsir?.languageName)}
++              </Text>
++            </View>
++          </View>
++
++          {tafsir?.languageName.toLocaleLowerCase('fr') === 'english' ? (
++            <View style={styles.languageNotice}>
++              <Ionicons
++                name="information-circle-outline"
++                size={17}
++                color={colors.goldLight}
++              />
++              <Text style={styles.languageNoticeText}>
++                Cette première version affiche le contenu officiel disponible
++                en anglais. Une traduction française vérifiée devra être
++                ajoutée séparément et clairement attribuée.
++              </Text>
++            </View>
++          ) : null}
++
++          <Text selectable style={styles.tafsirText}>
++            {tafsir?.text}
++          </Text>
++
++          <Text style={styles.disclaimer}>
++            Le texte ci-dessus est présenté comme commentaire de référence. Il
++            ne s’agit pas d’une réponse générée par Dalîl.
++          </Text>
++        </ScrollView>
++      )}
++    </SafeAreaView>
++  );
++}
++
++const styles = StyleSheet.create({
++  safeArea: {
++    flex: 1,
++    backgroundColor: colors.background,
++  },
++  header: {
++    minHeight: 74,
++    paddingHorizontal: 12,
++    flexDirection: 'row',
++    alignItems: 'center',
++    borderBottomWidth: StyleSheet.hairlineWidth,
++    borderColor: colors.borderSoft,
++    backgroundColor: colors.backgroundSecondary,
++  },
++  backButton: {
++    width: 42,
++    height: 42,
++    alignItems: 'center',
++    justifyContent: 'center',
++    borderRadius: 21,
++    backgroundColor: colors.purpleDeep,
++  },
++  headerCopy: {
++    flex: 1,
++    marginLeft: 12,
++  },
++  title: {
++    color: colors.text,
++    fontFamily: typography.serifMedium,
++    fontSize: 24,
++  },
++  subtitle: {
++    marginTop: 2,
++    color: colors.textMuted,
++    fontFamily: typography.sans,
++    fontSize: 10,
++  },
++  bookIcon: {
++    width: 40,
++    height: 40,
++    alignItems: 'center',
++    justifyContent: 'center',
++    borderRadius: 20,
++    borderWidth: 1,
++    borderColor: colors.borderSoft,
++  },
++  center: {
++    flex: 1,
++    paddingHorizontal: 28,
++    alignItems: 'center',
++    justifyContent: 'center',
++  },
++  loadingText: {
++    marginTop: 14,
++    color: colors.textMuted,
++    fontFamily: typography.sans,
++    fontSize: 11,
++  },
++  errorText: {
++    marginTop: 14,
++    color: colors.textSecondary,
++    fontFamily: typography.sans,
++    fontSize: 13,
++    lineHeight: 20,
++    textAlign: 'center',
++  },
++  retryButton: {
++    marginTop: 18,
++    paddingHorizontal: 20,
++    paddingVertical: 11,
++    borderRadius: 18,
++    backgroundColor: colors.goldLight,
++  },
++  retryText: {
++    color: colors.background,
++    fontFamily: typography.sans,
++    fontSize: 11,
++    fontWeight: '700',
++  },
++  content: {
++    width: '100%',
++    maxWidth: 760,
++    paddingHorizontal: 18,
++    paddingTop: 22,
++    paddingBottom: 60,
++    alignSelf: 'center',
++  },
++  verseCard: {
++    paddingHorizontal: 18,
++    paddingVertical: 22,
++    borderRadius: 22,
++    borderWidth: 1,
++    borderColor: 'rgba(224,188,112,0.24)',
++    backgroundColor: colors.backgroundSecondary,
++  },
++  verseBadge: {
++    alignSelf: 'flex-start',
++    paddingHorizontal: 10,
++    paddingVertical: 5,
++    borderRadius: 12,
++    backgroundColor: colors.goldDark,
++  },
++  verseBadgeText: {
++    color: colors.background,
++    fontFamily: typography.sans,
++    fontSize: 9,
++    fontWeight: '700',
++  },
++  arabic: {
++    marginTop: 20,
++    color: colors.goldLight,
++    fontFamily: typography.arabic,
++    fontSize: 30,
++    lineHeight: 54,
++    textAlign: 'right',
++    writingDirection: 'rtl',
++  },
++  translation: {
++    marginTop: 20,
++    paddingTop: 18,
++    borderTopWidth: StyleSheet.hairlineWidth,
++    borderColor: 'rgba(224,188,112,0.18)',
++    color: colors.textSecondary,
++    fontFamily: typography.sans,
++    fontSize: 15,
++    lineHeight: 24,
++  },
++  sourceCard: {
++    marginTop: 20,
++    padding: 15,
++    flexDirection: 'row',
++    alignItems: 'center',
++    borderRadius: 18,
++    borderWidth: 1,
++    borderColor: colors.borderSoft,
++    backgroundColor: colors.surface,
++  },
++  sourceIcon: {
++    width: 38,
++    height: 38,
++    alignItems: 'center',
++    justifyContent: 'center',
++    borderRadius: 19,
++    backgroundColor: 'rgba(126,72,148,0.18)',
++  },
++  sourceCopy: {
++    flex: 1,
++    marginLeft: 12,
++  },
++  sourceName: {
++    color: colors.text,
++    fontFamily: typography.serifMedium,
++    fontSize: 17,
++  },
++  sourceMeta: {
++    marginTop: 2,
++    color: colors.textMuted,
++    fontFamily: typography.sans,
++    fontSize: 9.5,
++  },
++  languageNotice: {
++    marginTop: 14,
++    padding: 14,
++    flexDirection: 'row',
++    alignItems: 'flex-start',
++    gap: 9,
++    borderRadius: 16,
++    backgroundColor: 'rgba(224,188,112,0.08)',
++  },
++  languageNoticeText: {
++    flex: 1,
++    color: colors.textMuted,
++    fontFamily: typography.sans,
++    fontSize: 10,
++    lineHeight: 16,
++  },
++  tafsirText: {
++    marginTop: 26,
++    color: colors.textSecondary,
++    fontFamily: typography.sans,
++    fontSize: 16,
++    lineHeight: 28,
++  },
++  disclaimer: {
++    marginTop: 30,
++    paddingTop: 18,
++    borderTopWidth: StyleSheet.hairlineWidth,
++    borderColor: colors.borderSoft,
++    color: colors.textMuted,
++    fontFamily: typography.sans,
++    fontSize: 9.5,
++    lineHeight: 16,
++    textAlign: 'center',
++  },
++});
+diff --git a/supabase/functions/quran-tafsir/index.ts b/supabase/functions/quran-tafsir/index.ts
+new file mode 100644
+--- /dev/null
++++ b/supabase/functions/quran-tafsir/index.ts
+@@ -0,0 +1,112 @@
++// @ts-ignore
++import {
++  handleGet,
++  integerParameter,
++  json,
++  RequestError,
++} from "../_shared/http.ts";
++
++// @ts-ignore
++import { getQuranFoundationSdk } from "../_shared/quranFoundation.ts";
++
++// @ts-ignore
++import { serve } from "../_shared/runtime.ts";
++
++type RawTafsir = {
++  id?: number;
++  resourceId?: number;
++  resource_id?: number;
++  resourceName?: string;
++  resource_name?: string;
++  languageName?: string;
++  language_name?: string;
++  name?: string;
++  translatedName?: {
++    name?: string;
++    languageName?: string;
++  };
++  translated_name?: {
++    name?: string;
++    language_name?: string;
++  };
++  text?: string;
++};
++
++type RawVersePayload = {
++  verse?: {
++    tafsirs?: RawTafsir[];
++  };
++  tafsirs?: RawTafsir[];
++};
++
++serve(
++  handleGet(async (request) => {
++    const { searchParams } = new URL(request.url);
++    const verseKey = searchParams.get("verse_key")?.trim();
++
++    if (!verseKey || !/^\d{1,3}:\d{1,3}$/.test(verseKey)) {
++      throw new RequestError("Invalid verse_key parameter");
++    }
++
++    const [chapterNumber, verseNumber] = verseKey.split(":").map(Number);
++    if (
++      chapterNumber < 1 ||
++      chapterNumber > 114 ||
++      verseNumber < 1
++    ) {
++      throw new RequestError("Invalid Quran verse key");
++    }
++
++    const resourceId = integerParameter(
++      searchParams,
++      "resource_id",
++      1,
++      10000,
++      { fallback: 169 },
++    )!;
++
++    const sdk = getQuranFoundationSdk();
++    const response = await sdk.content.v4.verses.byKey(
++      verseKey,
++      {
++        tafsirs: [resourceId],
++      },
++    );
++
++    const payload = response as unknown as RawVersePayload;
++    const tafsirs = payload.verse?.tafsirs ?? payload.tafsirs ?? [];
++    const tafsir = tafsirs.find(
++      (item) =>
++        (item.resourceId ?? item.resource_id) === resourceId,
++    ) ?? tafsirs[0];
++
++    if (!tafsir?.text) {
++      throw new RequestError(
++        `Tafsir unavailable for verse ${verseKey}`,
++        404,
++      );
++    }
++
++    return json({
++      verseKey,
++      resourceId:
++        tafsir.resourceId ??
++        tafsir.resource_id ??
++        resourceId,
++      resourceName:
++        tafsir.resourceName ??
++        tafsir.resource_name ??
++        tafsir.translatedName?.name ??
++        tafsir.translated_name?.name ??
++        tafsir.name ??
++        "Tafsir Ibn Kathir",
++      languageName:
++        tafsir.languageName ??
++        tafsir.language_name ??
++        tafsir.translatedName?.languageName ??
++        tafsir.translated_name?.language_name ??
++        "english",
++      text: tafsir.text,
++    });
++  }),
++);

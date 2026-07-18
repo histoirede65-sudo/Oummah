@@ -1,0 +1,317 @@
+diff --git a/src/app/tafsir/[verseKey].tsx b/src/app/tafsir/[verseKey].tsx
+index 9b6620d..4f48db7 100644
+--- a/src/app/tafsir/[verseKey].tsx
++++ b/src/app/tafsir/[verseKey].tsx
+@@ -157,37 +157,22 @@ export default function TafsirScreen() {
+ 
+             <View style={styles.sourceCopy}>
+               <Text style={styles.sourceName}>
+-                {tafsir?.resourceName ?? 'Tafsir Ibn Kathir'}
++                {tafsir?.resourceName ?? 'Al-Mukhtasar fi Tafsir al-Qur’an'}
+               </Text>
+               <Text style={styles.sourceMeta}>
+-                Source Quran Foundation ·{' '}
++                Source QuranEnc ·{' '}
+                 {languageLabel(tafsir?.languageName)}
+               </Text>
+             </View>
+           </View>
+ 
+-          {tafsir?.languageName.toLocaleLowerCase('fr') === 'english' ? (
+-            <View style={styles.languageNotice}>
+-              <Ionicons
+-                name="information-circle-outline"
+-                size={17}
+-                color={colors.goldLight}
+-              />
+-              <Text style={styles.languageNoticeText}>
+-                Cette première version affiche le contenu officiel disponible
+-                en anglais. Une traduction française vérifiée devra être
+-                ajoutée séparément et clairement attribuée.
+-              </Text>
+-            </View>
+-          ) : null}
+-
+           <Text selectable style={styles.tafsirText}>
+             {tafsir?.text}
+           </Text>
+ 
+           <Text style={styles.disclaimer}>
+-            Le texte ci-dessus est présenté comme commentaire de référence. Il
+-            ne s’agit pas d’une réponse générée par Dalîl.
++            Commentaire français publié par QuranEnc. Ce texte n’est pas une
++            réponse générée ou traduite automatiquement par Dalîl.
+           </Text>
+         </ScrollView>
+       )}
+@@ -355,22 +340,6 @@ const styles = StyleSheet.create({
+     fontFamily: typography.sans,
+     fontSize: 9.5,
+   },
+-  languageNotice: {
+-    marginTop: 14,
+-    padding: 14,
+-    flexDirection: 'row',
+-    alignItems: 'flex-start',
+-    gap: 9,
+-    borderRadius: 16,
+-    backgroundColor: 'rgba(224,188,112,0.08)',
+-  },
+-  languageNoticeText: {
+-    flex: 1,
+-    color: colors.textMuted,
+-    fontFamily: typography.sans,
+-    fontSize: 10,
+-    lineHeight: 16,
+-  },
+   tafsirText: {
+     marginTop: 26,
+     color: colors.textSecondary,
+diff --git a/src/features/quranfoundation/TafsirRepository.ts b/src/features/quranfoundation/TafsirRepository.ts
+index 7b7adba..31126ec 100644
+--- a/src/features/quranfoundation/TafsirRepository.ts
++++ b/src/features/quranfoundation/TafsirRepository.ts
+@@ -3,11 +3,11 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
+ const SUPABASE_URL = process.env.EXPO_PUBLIC_SUPABASE_URL!;
+ const ANON_KEY = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY!;
+ 
+-export const DEFAULT_TAFSIR_RESOURCE_ID = 169;
++export const DEFAULT_TAFSIR_SOURCE = 'french_mokhtasar';
+ 
+ export type QuranTafsir = {
+   verseKey: string;
+-  resourceId: number;
++  source: string;
+   resourceName: string;
+   languageName: string;
+   text: string;
+@@ -16,8 +16,7 @@ export type QuranTafsir = {
+ type RawTafsir = {
+   verseKey?: string;
+   verse_key?: string;
+-  resourceId?: number;
+-  resource_id?: number;
++  source?: string;
+   resourceName?: string;
+   resource_name?: string;
+   languageName?: string;
+@@ -27,8 +26,8 @@ type RawTafsir = {
+ 
+ const memoryCache = new Map<string, QuranTafsir>();
+ 
+-function getStorageKey(verseKey: string, resourceId: number) {
+-  return `quran-foundation:v1:tafsir:${resourceId}:${verseKey}`;
++function getStorageKey(verseKey: string, source: string) {
++  return `quran-foundation:v2:tafsir:${source}:${verseKey}`;
+ }
+ 
+ function decodeNumericEntity(match: string, value: string) {
+@@ -59,7 +58,7 @@ function htmlToPlainText(value: string) {
+ function normalizeTafsir(
+   payload: unknown,
+   requestedVerseKey: string,
+-  requestedResourceId: number,
++  requestedSource: string,
+ ): QuranTafsir {
+   const wrapper = payload as { tafsir?: RawTafsir };
+   const raw = wrapper.tafsir ?? (payload as RawTafsir);
+@@ -71,9 +70,12 @@ function normalizeTafsir(
+ 
+   return {
+     verseKey: raw.verseKey ?? raw.verse_key ?? requestedVerseKey,
+-    resourceId: raw.resourceId ?? raw.resource_id ?? requestedResourceId,
+-    resourceName: raw.resourceName ?? raw.resource_name ?? 'Tafsir Ibn Kathir',
+-    languageName: raw.languageName ?? raw.language_name ?? 'english',
++    source: raw.source ?? requestedSource,
++    resourceName:
++      raw.resourceName ??
++      raw.resource_name ??
++      'Al-Mukhtasar fi Tafsir al-Qur’an',
++    languageName: raw.languageName ?? raw.language_name ?? 'french',
+     text,
+   };
+ }
+@@ -92,14 +94,14 @@ async function readPersisted(key: string) {
+ export const tafsirRepository = {
+   async getTafsir(
+     verseKey: string,
+-    resourceId = DEFAULT_TAFSIR_RESOURCE_ID,
++    source = DEFAULT_TAFSIR_SOURCE,
+   ): Promise<QuranTafsir> {
+     if (!/^\d{1,3}:\d{1,3}$/.test(verseKey)) {
+       throw new Error('Identifiant de verset invalide.');
+     }
+ 
+-    const identity = `${resourceId}:${verseKey}`;
+-    const storageKey = getStorageKey(verseKey, resourceId);
++    const identity = `${source}:${verseKey}`;
++    const storageKey = getStorageKey(verseKey, source);
+     const memoryCached = memoryCache.get(identity);
+     if (memoryCached) return memoryCached;
+ 
+@@ -107,7 +109,7 @@ export const tafsirRepository = {
+ 
+     try {
+       const response = await fetch(
+-        `${SUPABASE_URL}/functions/v1/quran-tafsir?verse_key=${encodeURIComponent(verseKey)}&resource_id=${resourceId}`,
++        `${SUPABASE_URL}/functions/v1/quran-tafsir?verse_key=${encodeURIComponent(verseKey)}&source=${encodeURIComponent(source)}`,
+         {
+           method: 'GET',
+           headers: {
+@@ -121,14 +123,14 @@ export const tafsirRepository = {
+       if (!response.ok) {
+         const details = await response.text().catch(() => '');
+         throw new Error(
+-          `Tafsir Quran.Foundation (${response.status})${details ? ` : ${details}` : ''}`,
++          `Tafsir QuranEnc (${response.status})${details ? ` : ${details}` : ''}`,
+         );
+       }
+ 
+       const tafsir = normalizeTafsir(
+         await response.json(),
+         verseKey,
+-        resourceId,
++        source,
+       );
+ 
+       memoryCache.set(identity, tafsir);
+diff --git a/supabase/functions/quran-tafsir/index.ts b/supabase/functions/quran-tafsir/index.ts
+index 747551c..1e3620a 100644
+--- a/supabase/functions/quran-tafsir/index.ts
++++ b/supabase/functions/quran-tafsir/index.ts
+@@ -1,42 +1,18 @@
+ // @ts-ignore
+ import {
+   handleGet,
+-  integerParameter,
+   json,
+   RequestError,
+ } from "../_shared/http.ts";
+ 
+-// @ts-ignore
+-import { getQuranFoundationSdk } from "../_shared/quranFoundation.ts";
+-
+ // @ts-ignore
+ import { serve } from "../_shared/runtime.ts";
+ 
+-type RawTafsir = {
+-  id?: number;
+-  resourceId?: number;
+-  resource_id?: number;
+-  resourceName?: string;
+-  resource_name?: string;
+-  languageName?: string;
+-  language_name?: string;
+-  name?: string;
+-  translatedName?: {
+-    name?: string;
+-    languageName?: string;
+-  };
+-  translated_name?: {
+-    name?: string;
+-    language_name?: string;
+-  };
+-  text?: string;
+-};
+-
+-type RawVersePayload = {
+-  verse?: {
+-    tafsirs?: RawTafsir[];
+-  };
+-  tafsirs?: RawTafsir[];
++type QuranEncAya = {
++  sura?: string | number;
++  aya?: string | number;
++  translation?: string;
++  footnotes?: string;
+ };
+ 
+ serve(
+@@ -57,56 +33,51 @@ serve(
+       throw new RequestError("Invalid Quran verse key");
+     }
+ 
+-    const resourceId = integerParameter(
+-      searchParams,
+-      "resource_id",
+-      1,
+-      10000,
+-      { fallback: 169 },
+-    )!;
++    const source =
++      searchParams.get("source")?.trim() ||
++      "french_mokhtasar";
+ 
+-    const sdk = getQuranFoundationSdk();
+-    const response = await sdk.content.v4.verses.byKey(
+-      verseKey,
++    if (!/^[a-z0-9_]+$/.test(source)) {
++      throw new RequestError("Invalid tafsir source");
++    }
++
++    const response = await fetch(
++      `https://quranenc.com/api/v1/translation/aya/${source}/${chapterNumber}/${verseNumber}`,
+       {
+-        tafsirs: [resourceId],
++        method: "GET",
++        headers: {
++          Accept: "application/json",
++        },
+       },
+     );
+ 
+-    const payload = response as unknown as RawVersePayload;
+-    const tafsirs = payload.verse?.tafsirs ?? payload.tafsirs ?? [];
+-    const tafsir = tafsirs.find(
+-      (item) =>
+-        (item.resourceId ?? item.resource_id) === resourceId,
+-    ) ?? tafsirs[0];
++    if (!response.ok) {
++      throw new RequestError(
++        `QuranEnc request failed (${response.status})`,
++        response.status === 404 ? 404 : 503,
++      );
++    }
++
++    const aya = await response.json() as QuranEncAya;
++    const explanation = aya.translation?.trim();
+ 
+-    if (!tafsir?.text) {
++    if (!explanation) {
+       throw new RequestError(
+         `Tafsir unavailable for verse ${verseKey}`,
+         404,
+       );
+     }
+ 
++    const footnotes = aya.footnotes?.trim();
++
+     return json({
+       verseKey,
+-      resourceId:
+-        tafsir.resourceId ??
+-        tafsir.resource_id ??
+-        resourceId,
+-      resourceName:
+-        tafsir.resourceName ??
+-        tafsir.resource_name ??
+-        tafsir.translatedName?.name ??
+-        tafsir.translated_name?.name ??
+-        tafsir.name ??
+-        "Tafsir Ibn Kathir",
+-      languageName:
+-        tafsir.languageName ??
+-        tafsir.language_name ??
+-        tafsir.translatedName?.languageName ??
+-        tafsir.translated_name?.language_name ??
+-        "english",
+-      text: tafsir.text,
++      source,
++      resourceName: "Al-Mukhtasar fi Tafsir al-Qur’an",
++      languageName: "french",
++      text: footnotes
++        ? `${explanation}\n\n${footnotes}`
++        : explanation,
+     });
+   }),
+ );
