@@ -19,6 +19,38 @@ type TrustedSource = {
 
 type WebReference = { title: string; url: string };
 
+type WasilClassification =
+  | "answered"
+  | "clarification"
+  | "out_of_scope"
+  | "insufficient_sources"
+  | "urgent_support";
+
+type WasilPricingRate = {
+  catalog_id: string;
+  input_uncached_usd_per_million: number | string;
+  input_cached_usd_per_million: number | string;
+  cache_write_usd_per_million: number | string;
+  output_usd_per_million: number | string;
+  web_call_usd: number | string;
+};
+
+type WasilPricingSelection = {
+  catalogId: string;
+  cacheWriteApplicable: boolean | null;
+  rate: WasilPricingRate | null;
+};
+
+type CacheWriteStatus =
+  | "confirmed_zero"
+  | "confirmed_positive"
+  | "not_applicable"
+  | "unknown";
+
+const WASIL_OPENAI_PROCESSING_MODE = "standard";
+const WASIL_SHORT_CONTEXT_TIER = "short";
+const WASIL_GPT_5_6_SOL_SHORT_CONTEXT_MAX_INPUT_TOKENS = 272_000;
+
 const approvedReligiousDomains = [
   "quranenc.com",
   "quran.com",
@@ -278,6 +310,241 @@ async function postgrestRpc(name: string, body: Record<string, unknown>) {
   if (!response.ok) throw new Error(await response.text());
   const text = await response.text();
   return text ? JSON.parse(text) : null;
+}
+
+function nonnegativeInteger(value: unknown) {
+  return typeof value === "number" && Number.isSafeInteger(value) && value >= 0
+    ? value
+    : null;
+}
+
+function nonnegativeRate(value: number | string) {
+  const rate = Number(value);
+  return Number.isFinite(rate) && rate >= 0 ? rate : null;
+}
+
+async function activePricingSelection(
+  returnedModel: string | null,
+  requestedModel: string,
+  inputTokens: number | null,
+) {
+  const url = Deno.env.get("SUPABASE_URL")!;
+  const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+  const headers = {
+    apikey: serviceKey,
+    Authorization: `Bearer ${serviceKey}`,
+  };
+  const now = encodeURIComponent(new Date().toISOString());
+  const catalogResponse = await fetch(
+    `${url}/rest/v1/wasil_pricing_catalogs?select=id&effective_from=lte.${now}&order=effective_from.desc&limit=1`,
+    { headers },
+  );
+  if (!catalogResponse.ok) throw new Error("PRICING_CATALOG_LOOKUP_FAILED");
+  const catalogs = (await catalogResponse.json()) as { id?: unknown }[];
+  const catalogId = typeof catalogs[0]?.id === "string" ? catalogs[0].id : null;
+  if (!catalogId) return null;
+
+  const exactModel = async (model: string) => {
+    const response = await fetch(
+      `${url}/rest/v1/wasil_pricing_models?select=model,cache_write_applicable&catalog_id=eq.${encodeURIComponent(catalogId)}&model=eq.${encodeURIComponent(model)}&limit=1`,
+      { headers },
+    );
+    if (!response.ok) throw new Error("PRICING_MODEL_LOOKUP_FAILED");
+    const models = (await response.json()) as {
+      model?: unknown;
+      cache_write_applicable?: unknown;
+    }[];
+    const canonicalModel = typeof models[0]?.model === "string"
+      ? models[0].model
+      : null;
+    const cacheWriteApplicable = typeof models[0]?.cache_write_applicable ===
+        "boolean"
+      ? models[0].cache_write_applicable
+      : null;
+    return canonicalModel && cacheWriteApplicable !== null
+      ? { canonicalModel, cacheWriteApplicable }
+      : null;
+  };
+  const aliasedModel = async (model: string) => {
+    const response = await fetch(
+      `${url}/rest/v1/wasil_pricing_model_aliases?select=canonical_model&catalog_id=eq.${encodeURIComponent(catalogId)}&model_identifier=eq.${encodeURIComponent(model)}&limit=1`,
+      { headers },
+    );
+    if (!response.ok) throw new Error("PRICING_ALIAS_LOOKUP_FAILED");
+    const aliases = (await response.json()) as { canonical_model?: unknown }[];
+    const canonicalModel = typeof aliases[0]?.canonical_model === "string"
+      ? aliases[0].canonical_model
+      : null;
+    return canonicalModel ? await exactModel(canonicalModel) : null;
+  };
+
+  const resolvedModel = returnedModel !== null
+    ? await exactModel(returnedModel) ?? await aliasedModel(returnedModel)
+    : await exactModel(requestedModel) ?? await aliasedModel(requestedModel);
+  if (!resolvedModel) {
+    return {
+      catalogId,
+      cacheWriteApplicable: null,
+      rate: null,
+    } satisfies WasilPricingSelection;
+  }
+
+  let rate: WasilPricingRate | null = null;
+  if (
+    resolvedModel.canonicalModel === "gpt-5.6-sol" &&
+    inputTokens !== null &&
+    inputTokens <= WASIL_GPT_5_6_SOL_SHORT_CONTEXT_MAX_INPUT_TOKENS
+  ) {
+    const response = await fetch(
+      `${url}/rest/v1/wasil_pricing_rates?select=catalog_id,input_uncached_usd_per_million,input_cached_usd_per_million,cache_write_usd_per_million,output_usd_per_million,web_call_usd&catalog_id=eq.${encodeURIComponent(catalogId)}&model=eq.${encodeURIComponent(resolvedModel.canonicalModel)}&processing_mode=eq.${encodeURIComponent(WASIL_OPENAI_PROCESSING_MODE)}&context_tier=eq.${encodeURIComponent(WASIL_SHORT_CONTEXT_TIER)}&limit=1`,
+      { headers },
+    );
+    if (!response.ok) throw new Error("PRICING_RATE_LOOKUP_FAILED");
+    const rates = (await response.json()) as WasilPricingRate[];
+    rate = rates[0] ?? null;
+  }
+
+  return {
+    catalogId,
+    cacheWriteApplicable: resolvedModel.cacheWriteApplicable,
+    rate,
+  } satisfies WasilPricingSelection;
+}
+
+async function recordCostMeasurement(args: {
+  requestId: string;
+  requestedModel: string;
+  provider: Record<string, unknown>;
+  classification: WasilClassification;
+  mode: "standard" | "deep";
+}) {
+  const usage = (args.provider.usage ?? {}) as Record<string, unknown>;
+  const inputDetails = (usage.input_tokens_details ?? {}) as Record<
+    string,
+    unknown
+  >;
+  const outputDetails = (usage.output_tokens_details ?? {}) as Record<
+    string,
+    unknown
+  >;
+  const inputTokens = nonnegativeInteger(usage.input_tokens);
+  const cachedInputTokens = nonnegativeInteger(inputDetails.cached_tokens);
+  const cacheWriteTokens = nonnegativeInteger(inputDetails.cache_write_tokens);
+  const outputTokens = nonnegativeInteger(usage.output_tokens);
+  const reasoningTokens = nonnegativeInteger(outputDetails.reasoning_tokens);
+  const output = Array.isArray(args.provider.output) ? args.provider.output : [];
+  const webCallCount = output.filter(
+    (item) =>
+      item && typeof item === "object" &&
+      (item as Record<string, unknown>).type === "web_search_call",
+  ).length;
+  const returnedModel = typeof args.provider.model === "string"
+    ? args.provider.model
+    : null;
+  const providerResponseId = typeof args.provider.id === "string"
+    ? args.provider.id
+    : null;
+
+  let pricingCatalogId: string | null = null;
+  let tokenCostMicrodollars: number | null = null;
+  let cacheWriteCostMicrodollars: number | null = null;
+  let webCostMicrodollars: number | null = null;
+  let estimatedCostMicrodollars: number | null = null;
+  let selection: WasilPricingSelection | null = null;
+  try {
+    selection = await activePricingSelection(
+      returnedModel,
+      args.requestedModel,
+      inputTokens,
+    );
+  } catch (error) {
+    console.warn(
+      "WASIL_COST_PRICING_LOOKUP_FAILURE",
+      error instanceof Error ? error.message : "UNKNOWN_PRICING_LOOKUP_ERROR",
+    );
+  }
+  const rate = selection?.rate ?? null;
+  const cacheWriteApplicable = selection?.cacheWriteApplicable ?? null;
+  const cacheWriteStatus: CacheWriteStatus = cacheWriteTokens === 0
+    ? "confirmed_zero"
+    : cacheWriteTokens !== null
+    ? "confirmed_positive"
+    : cacheWriteApplicable === false
+    ? "not_applicable"
+    : "unknown";
+  const effectiveCacheWriteTokens = cacheWriteTokens ??
+    (cacheWriteStatus === "not_applicable" ? 0 : null);
+  pricingCatalogId = selection?.catalogId ?? null;
+  if (rate) {
+    const inputRate = nonnegativeRate(rate.input_uncached_usd_per_million);
+    const cachedRate = nonnegativeRate(rate.input_cached_usd_per_million);
+    const cacheWriteRate = nonnegativeRate(rate.cache_write_usd_per_million);
+    const outputRate = nonnegativeRate(rate.output_usd_per_million);
+    const webCallRate = nonnegativeRate(rate.web_call_usd);
+    if (webCallRate !== null) {
+      webCostMicrodollars = webCallCount * webCallRate * 1_000_000;
+    }
+    if (
+      inputRate !== null && cachedRate !== null && cacheWriteRate !== null &&
+      outputRate !== null && inputTokens !== null &&
+      cachedInputTokens !== null && effectiveCacheWriteTokens !== null &&
+      cachedInputTokens + effectiveCacheWriteTokens <= inputTokens &&
+      outputTokens !== null
+    ) {
+      const regularUncachedInputTokens = inputTokens - cachedInputTokens -
+        effectiveCacheWriteTokens;
+      cacheWriteCostMicrodollars = effectiveCacheWriteTokens * cacheWriteRate;
+      tokenCostMicrodollars = regularUncachedInputTokens * inputRate +
+        cachedInputTokens * cachedRate + cacheWriteCostMicrodollars +
+        outputTokens * outputRate;
+      const total = webCostMicrodollars === null
+        ? null
+        : tokenCostMicrodollars + webCostMicrodollars;
+      if (total !== null && Number.isSafeInteger(Math.round(total))) {
+        estimatedCostMicrodollars = Math.round(total);
+      } else if (total !== null) {
+        tokenCostMicrodollars = null;
+        cacheWriteCostMicrodollars = null;
+      }
+    }
+  }
+
+  const url = Deno.env.get("SUPABASE_URL")!;
+  const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+  const response = await fetch(
+    `${url}/rest/v1/wasil_request_measurements?on_conflict=request_id`,
+    {
+      method: "POST",
+      headers: {
+        apikey: serviceKey,
+        Authorization: `Bearer ${serviceKey}`,
+        "Content-Type": "application/json",
+        Prefer: "resolution=merge-duplicates",
+      },
+      body: JSON.stringify({
+        request_id: args.requestId,
+        pricing_catalog_id: pricingCatalogId,
+        requested_model: args.requestedModel,
+        returned_model: returnedModel,
+        input_tokens: inputTokens,
+        cached_input_tokens: cachedInputTokens,
+        cache_write_tokens: cacheWriteTokens,
+        cache_write_status: cacheWriteStatus,
+        output_tokens_total: outputTokens,
+        reasoning_tokens: reasoningTokens,
+        web_call_count: webCallCount,
+        classification: args.classification,
+        wasil_mode: args.mode,
+        provider_response_id: providerResponseId,
+        token_cost_microdollars: tokenCostMicrodollars,
+        cache_write_cost_microdollars: cacheWriteCostMicrodollars,
+        web_cost_microdollars: webCostMicrodollars,
+        estimated_cost_microdollars: estimatedCostMicrodollars,
+        measured_at: new Date().toISOString(),
+      }),
+    },
+  );
+  if (!response.ok) throw new Error("COST_MEASUREMENT_UPSERT_FAILED");
 }
 
 async function authenticatedUser(authorization: string) {
@@ -717,12 +984,7 @@ Deno.serve(async (request) => {
     }
     const provider = (await openAiResponse.json()) as Record<string, unknown>;
     const parsed = JSON.parse(outputText(provider)) as {
-      status:
-        | "answered"
-        | "clarification"
-        | "out_of_scope"
-        | "insufficient_sources"
-        | "urgent_support";
+      status: WasilClassification;
       title: string;
       body: string;
       source_ids: string[];
@@ -736,6 +998,21 @@ Deno.serve(async (request) => {
       !Array.isArray(parsed.web_references)
     ) {
       throw new Error("INVALID_SOURCED_ANSWER");
+    }
+
+    try {
+      await recordCostMeasurement({
+        requestId,
+        requestedModel: model,
+        provider,
+        classification: parsed.status,
+        mode,
+      });
+    } catch (error) {
+      console.warn(
+        "WASIL_COST_TELEMETRY_FAILURE",
+        error instanceof Error ? error.message : "UNKNOWN_TELEMETRY_ERROR",
+      );
     }
 
     if (parsed.status !== "answered") {
