@@ -1,6 +1,6 @@
 import type { Hadith, HadithSummary } from "../domain/Hadith";
 import type { HadithCollection } from "../domain/HadithCollection";
-import { fetchHadith, fetchHadithPage, searchHadiths } from "./hadithDataSource";
+import { fetchHadith, fetchHadithPage, fetchSupabaseCollectionPage, fetchSupabaseHadith, searchHadiths } from "./hadithDataSource";
 import { hadithCache } from "./hadithCache";
 
 export function normalizeHadithQuery(value: string) {
@@ -42,7 +42,7 @@ async function firstNonEmptySearch(phrases: readonly string[]) {
 export const hadithRepository = {
   async get(id: string): Promise<Hadith> {
     try {
-      const value = await fetchHadith(id);
+      const value = await fetchSupabaseHadith(id).catch(() => fetchHadith(id));
       await hadithCache.put(value);
       return value;
     } catch (error) {
@@ -68,14 +68,31 @@ export const hadithRepository = {
   },
 
   async searchCollection(collection: HadithCollection): Promise<HadithSummary[]> {
-    const phrases = [collection.query, ...(collection.queryAliases ?? [])];
     const cacheKey = normalizeHadithQuery(`collection:${collection.id}`);
     try {
-      const value = uniqueSummaries(await firstNonEmptySearch(phrases));
-      await hadithCache.putSearch(cacheKey, value);
-      return value;
+      const value: HadithSummary[] = [];
+      const pageSize = 100;
+      const sourceReferences = [collection.query, ...(collection.queryAliases ?? [])];
+      for (let offset = 0; ; offset += pageSize) {
+        const page = await fetchSupabaseCollectionPage(sourceReferences, offset, pageSize);
+        value.push(...page);
+        if (page.length < pageSize) break;
+      }
+      const unique = uniqueSummaries(value);
+      if (unique.length > 0) {
+        await hadithCache.putSearch(cacheKey, unique);
+        return unique;
+      }
+      throw new Error("Aucun hadith Supabase publié pour cette collection.");
     } catch {
-      return (await hadithCache.getSearch(cacheKey)) ?? [];
+      try {
+        const phrases = [collection.query, ...(collection.queryAliases ?? [])];
+        const value = uniqueSummaries(await firstNonEmptySearch(phrases));
+        await hadithCache.putSearch(cacheKey, value);
+        return value;
+      } catch {
+        return (await hadithCache.getSearch(cacheKey)) ?? [];
+      }
     }
   },
 

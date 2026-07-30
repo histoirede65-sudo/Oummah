@@ -41,6 +41,7 @@ export const HADITH_COLLECTIONS: readonly HadithCollection[] = [
   { id: "riyad", name: "Riyad as-Salihin", arabicName: "رياض الصالحين", description: "Parcours thématique autour des vertus et du comportement.", query: "Riyadh Al-Salheen", queryAliases: ["Riyad as-Salihin", "Riyâd as-Sâlihîn"], tone: "#65713E", availability: "selection" },
   { id: "adab", name: "Al-Adab al-Mufrad", arabicName: "الأدب المفرد", description: "Sélection autour de l’éthique et des relations.", query: "Al-adab Al-Mufrad", queryAliases: ["Al-Adab al-Mufrad", "Al-Adab"], tone: "#85584F", availability: "selection" },
   { id: "nawawi", name: "40 Hadiths d’an-Nawawi", arabicName: "الأربعون النووية", description: "Un parcours essentiel, présenté avec ses références vérifiables.", query: "Les 40 Hadiths d'An-Nawawî", queryAliases: ["An-Nawawî", "An-Nawawi"], tone: "#8F7A3F", availability: "selection" },
+  { id: "ahmad", name: "Musnad Ahmad", arabicName: "Musnad Ahmad", description: "Hadiths référencés dans le Musnad de l’imam Ahmad.", query: "Ahmad", queryAliases: ["Musnad Ahmad", "Ahmad ibn Hanbal"], tone: "#6B637C", availability: "selection" },
 ] as const;
 
 export function getHadithCollection(id?: string) {
