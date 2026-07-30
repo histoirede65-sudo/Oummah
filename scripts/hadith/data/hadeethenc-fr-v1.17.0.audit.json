@@ -1,0 +1,34 @@
+{
+  "file": "164cb545-07e5-45a1-9217-9c6dabcd2308.xlsx",
+  "rows": 1790,
+  "records": 1790,
+  "uniqueIds": 1790,
+  "duplicates": [],
+  "errors": [],
+  "requiredCoverage": {
+    "arabicText": 1790,
+    "frenchText": 1790,
+    "frenchExplanation": 1790,
+    "frenchBenefits": 304,
+    "grade": 1790,
+    "sourceReference": 1790,
+    "officialLink": 1790
+  },
+  "sourceMentions": {
+    "Al-Bukhari": 942,
+    "Muslim": 1071,
+    "Abu Dawud": 269,
+    "At-Tirmidhi": 241,
+    "An-Nasa’i": 0,
+    "Ibn Majah": 170,
+    "Ahmad": 31,
+    "Ad-Darimi": 45,
+    "Malik": 15
+  },
+  "payloadSha256": "27ee20d49b0cdb91be8f9121e89e45f42bef9696b64e9b0ca751d561375f154b",
+  "notes": [
+    "Les mentions de recueils ne sont pas additionnables: un même hadith peut citer plusieurs recueils.",
+    "Aucune catégorie HadeethEnc ni thème OUMMAH n’est inventé depuis cet Excel.",
+    "Aucune écriture Supabase n’a été effectuée."
+  ]
+}

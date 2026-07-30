@@ -1,0 +1,9 @@
+RESTAURATION URGENTE WASIL
+
+1. Fusionner le dossier src avec le dossier src existant du projet.
+2. Ne jamais remplacer/supprimer tout le dossier src du projet.
+3. Supprimer ce fichier s'il existe dans le projet :
+   src/app/wasil-quran-passage.tsx
+
+Cette archive restaure la version précédente où Wasil était disponible.
+Aucun module hors Wasil n'est inclus ni modifié.

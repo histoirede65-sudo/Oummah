@@ -1,0 +1,15 @@
+{
+  "source": {
+    "name": "PLACEHOLDER_SOURCE_NAME_TO_VALIDATE",
+    "url": null,
+    "license": null,
+    "corpusVersion": "bukhari-pilot-v1",
+    "importedAt": null
+  },
+  "collection": {
+    "sourceId": "bukhari",
+    "nameArabic": "PLACEHOLDER_ARABIC_COLLECTION_NAME_TO_VALIDATE",
+    "nameFrench": "Sahih al-Bukhari"
+  },
+  "hadiths": []
+}

@@ -1,19 +1,19 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from "react";
 
-import { useReciter } from '../../../../context/ReciterProvider';
-import { audioDependencies } from '../../audioDependencies';
+import { useReciter } from "../../../../context/ReciterProvider";
+import { audioDependencies } from "../../audioDependencies";
 
 function normalize(value: string) {
   return value
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
     .toLowerCase();
 }
 
 export function useRecitersViewModel() {
   const { reciters, loading, currentReciter } = useReciter();
 
-  const [search, setSearch] = useState('');
+  const [search, setSearch] = useState("");
   const [favoriteIds, setFavoriteIds] = useState<readonly string[]>([]);
 
   const refreshFavorites = useCallback(() => {
@@ -36,9 +36,9 @@ export function useRecitersViewModel() {
 
     return reciters.filter((reciter) => {
       const arabicName =
-        'arabicName' in reciter && typeof reciter.arabicName === 'string'
+        "arabicName" in reciter && typeof reciter.arabicName === "string"
           ? reciter.arabicName
-          : '';
+          : "";
 
       return (
         normalize(reciter.name).includes(query) ||
@@ -64,17 +64,22 @@ export function useRecitersViewModel() {
 
   const toggleFavoriteReciter = useCallback(async (reciterId: string) => {
     const selected = await audioDependencies.reciterFavorites.toggle(reciterId);
-    setFavoriteIds((ids) => (
+    setFavoriteIds((ids) =>
       selected
-        ? ids.includes(reciterId) ? ids : [...ids, reciterId]
-        : ids.filter((id) => id !== reciterId)
-    ));
+        ? ids.includes(reciterId)
+          ? ids
+          : [...ids, reciterId]
+        : ids.filter((id) => id !== reciterId),
+    );
     return selected;
   }, []);
 
-  const isFavoriteReciter = useCallback((reciterId: string) => {
-    return favoriteIds.includes(reciterId);
-  }, [favoriteIds]);
+  const isFavoriteReciter = useCallback(
+    (reciterId: string) => {
+      return favoriteIds.includes(reciterId);
+    },
+    [favoriteIds],
+  );
 
   const popularReciters = useMemo(() => {
     return [...filteredReciters]
@@ -99,6 +104,6 @@ export function useRecitersViewModel() {
 
     popularReciters,
 
-    totalReciters: filteredReciters.length,
+    totalReciters: reciters.length,
   };
 }

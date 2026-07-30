@@ -1,0 +1,14 @@
+RESTAURATION EXACTE DE WASIL DEPUIS LE src.zip D'ORIGINE
+
+1. Fusionner le dossier src de cette archive avec le projet.
+2. Remplacer exactement :
+   - src/app/(tabs)/dalil.tsx
+   - src/supabase/functions/wasil/index.ts
+3. Supprimer ces fichiers/dossiers s'ils existent :
+   - src/app/wasil/quran-passage.tsx
+   - src/app/wasil-quran-passage.tsx
+   - src/supabase/functions/wasil/engine/
+4. Redéployer la fonction Supabase wasil.
+5. Redémarrer Expo avec : npx expo start -c
+
+Cette archive ne modifie aucun module hors Wasil.

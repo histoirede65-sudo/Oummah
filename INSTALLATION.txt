@@ -1,0 +1,29 @@
+OUMMAH — WASIL V4 — SPRINT 2 (ENTITY RESOLVER EN MODE FANTOME)
+
+Cette archive doit remplacer uniquement le dossier supabase à la racine du projet.
+Aucun fichier React Native / Expo n'est modifié.
+
+Nouveautés :
+- extraction générique d'entités depuis plusieurs formulations françaises ;
+- nettoyage des titres et formules honorifiques ;
+- normalisation des accents, apostrophes, traits d'union et espaces ;
+- génération de clés de recherche pour les variantes ibn/bin/ben, Abu/Abou,
+  Umm/Oum, bint/bent et les articles al/el ;
+- indice de type (prophète, compagnon, savant, sourate, lieu, événement, thème) ;
+- journalisation enrichie dans le pipeline fantôme.
+
+Sécurité :
+- le moteur de production reste inchangé ;
+- les flags restent désactivés par défaut ;
+- le pipeline fantôme ne peut pas modifier la réponse ni provoquer une panne.
+
+Déploiement :
+  Test-Path .\supabase\functions\wasil\engine\EntityResolver.ts
+  supabase functions deploy wasil
+
+Activation facultative pour observer les logs seulement :
+  WASIL_V4_SHADOW_PIPELINE=true
+  WASIL_V4_ENTITY_RESOLVER=true
+
+Ne pas activer ces secrets si vous souhaitez conserver exactement le comportement
+par défaut. Même activé, le pipeline reste en mode observation et ne change pas la réponse.

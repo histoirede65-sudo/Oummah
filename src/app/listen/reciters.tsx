@@ -1,9 +1,9 @@
-import { Ionicons } from '@expo/vector-icons';
-import { Image } from 'expo-image';
-import { LinearGradient } from 'expo-linear-gradient';
-import type { Href } from 'expo-router';
-import { router, useLocalSearchParams } from 'expo-router';
-import { useCallback, useEffect, useMemo } from 'react';
+import { Ionicons } from "@expo/vector-icons";
+import { Image } from "expo-image";
+import { LinearGradient } from "expo-linear-gradient";
+import type { Href } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   FlatList,
   Pressable,
@@ -11,30 +11,26 @@ import {
   StyleSheet,
   Text,
   View,
-} from 'react-native';
-import Reanimated, {
-  Easing,
-  FadeInDown,
-} from 'react-native-reanimated';
-import { SafeAreaView } from 'react-native-safe-area-context';
+} from "react-native";
+import Reanimated, { Easing, FadeInDown } from "react-native-reanimated";
+import { SafeAreaView } from "react-native-safe-area-context";
 
-import { useGlobalAudioPlayer } from '../../context/AudioPlayerProvider';
-import { useReciter } from '../../context/ReciterProvider';
-import { SURAHS } from '../../data/surahs';
-import type { CatalogReciter } from '../../features/audio/domain/audio';
+import { useGlobalAudioPlayer } from "../../context/AudioPlayerProvider";
+import { useReciter } from "../../context/ReciterProvider";
+import { SURAHS } from "../../data/surahs";
+import type { CatalogReciter } from "../../features/audio/domain/audio";
 import {
   ListeningHeader,
-  ReciterCard,
   SearchBar,
   SectionHeader,
   listeningStyles,
-} from '../../features/audio/presentation/ListeningComponents';
-import ReciterGalleryCard from '../../features/audio/presentation/ReciterGalleryCard';
-import { preloadReciterPortraits } from '../../features/audio/presentation/audioPreload';
-import { useRecitersViewModel } from '../../features/audio/presentation/viewmodels/useRecitersViewModel';
-import { useI18n } from '../../i18n';
-import { colors } from '../../theme/colors';
-import { typography } from '../../theme/typography';
+} from "../../features/audio/presentation/ListeningComponents";
+import ReciterGalleryCard from "../../features/audio/presentation/ReciterGalleryCard";
+import { preloadReciterPortraits } from "../../features/audio/presentation/audioPreload";
+import { useRecitersViewModel } from "../../features/audio/presentation/viewmodels/useRecitersViewModel";
+import { useI18n } from "../../i18n";
+import { colors } from "../../theme/colors";
+import { typography } from "../../theme/typography";
 
 export default function RecitersCatalogScreen() {
   const { t } = useI18n();
@@ -42,6 +38,9 @@ export default function RecitersCatalogScreen() {
   const model = useRecitersViewModel();
   const audio = useGlobalAudioPlayer();
   const { setCurrentReciter } = useReciter();
+  const [filter, setFilter] = useState<
+    "all" | "favorites" | "murattal" | "mujawwad"
+  >("all");
 
   useEffect(() => {
     preloadReciterPortraits(model.reciters, 12);
@@ -64,17 +63,17 @@ export default function RecitersCatalogScreen() {
       return;
     }
 
-    router.replace((returnTo || '/listen/reciters') as Href);
+    router.replace((returnTo || "/listen/reciters") as Href);
   }, [returnTo]);
 
   const handleOpenReciter = useCallback(
     async (reciter: CatalogReciter) => {
       await setCurrentReciter(reciter);
       router.push({
-        pathname: '/listen/reciter/[reciterId]',
+        pathname: "/listen/reciter/[reciterId]",
         params: {
           reciterId: reciter.id,
-          returnTo: '/listen/reciters',
+          returnTo: "/listen/reciters",
         },
       });
     },
@@ -86,7 +85,9 @@ export default function RecitersCatalogScreen() {
       const session = await audio.resumeListening();
 
       if (session) {
-        router.push(`/listen/${session.surahId}?reciterId=${session.reciterId}&returnTo=${encodeURIComponent('/listen/reciters')}&autoplay=1` as Href);
+        router.push(
+          `/listen/${session.surahId}?reciterId=${session.reciterId}&returnTo=${encodeURIComponent("/listen/reciters")}&autoplay=1` as Href,
+        );
       }
     } catch {
       // Keep the audio home calm if a persisted session is stale.
@@ -104,14 +105,45 @@ export default function RecitersCatalogScreen() {
     [model],
   );
 
-  const resumeProgress = audio.listeningResume && audio.listeningResume.durationSeconds > 0
-    ? audio.listeningResume.positionSeconds / audio.listeningResume.durationSeconds
-    : audio.progress;
+  const handleQuickPlay = useCallback(
+    async (reciter: CatalogReciter) => {
+      await setCurrentReciter(reciter);
+      router.push(
+        `/listen/1?reciterId=${reciter.id}&returnTo=${encodeURIComponent("/listen/reciters")}&autoplay=1` as Href,
+      );
+    },
+    [setCurrentReciter],
+  );
+
+  const visibleReciters = useMemo(() => {
+    if (filter === "favorites") {
+      return model.reciters.filter((reciter) =>
+        model.isFavoriteReciter(reciter.id),
+      );
+    }
+    if (filter === "murattal" || filter === "mujawwad") {
+      return model.reciters.filter((reciter) => reciter.style === filter);
+    }
+    return model.reciters;
+  }, [filter, model]);
+
+  const resumeProgress =
+    audio.listeningResume && audio.listeningResume.durationSeconds > 0
+      ? audio.listeningResume.positionSeconds /
+        audio.listeningResume.durationSeconds
+      : audio.progress;
+  const resumeRemainingSeconds = audio.listeningResume
+    ? Math.max(
+        0,
+        audio.listeningResume.durationSeconds -
+          audio.listeningResume.positionSeconds,
+      )
+    : Math.max(0, audio.duration - audio.currentTime);
 
   const continueTitle =
     resumeSurah?.frenchName ??
     audio.track?.title ??
-    t('recitations.continueListening');
+    t("recitations.continueListening");
 
   const continueReciterName =
     resumeReciter?.name ??
@@ -121,8 +153,7 @@ export default function RecitersCatalogScreen() {
   const renderReciterItem = useCallback(
     ({ item, index }: { item: CatalogReciter; index: number }) => (
       <Reanimated.View
-        entering={FadeInDown
-          .duration(360)
+        entering={FadeInDown.duration(360)
           .delay(Math.min(index, 14) * 22)
           .easing(Easing.out(Easing.cubic))
           .withInitialValues({
@@ -140,10 +171,13 @@ export default function RecitersCatalogScreen() {
           onSelect={() => {
             void handleToggleFavorite(item);
           }}
+          onPlay={() => {
+            void handleQuickPlay(item);
+          }}
         />
       </Reanimated.View>
     ),
-    [handleOpenReciter, handleToggleFavorite, model],
+    [handleOpenReciter, handleQuickPlay, handleToggleFavorite, model],
   );
 
   const renderSectionReciters = useCallback(
@@ -159,16 +193,18 @@ export default function RecitersCatalogScreen() {
           {reciters.map((reciter, index) => (
             <Reanimated.View
               key={reciter.id}
-              entering={FadeInDown
-                .duration(300)
+              entering={FadeInDown.duration(300)
                 .delay(index * 35)
                 .easing(Easing.out(Easing.quad))}
               style={styles.horizontalCard}
             >
-              <ReciterCard
+              <FavoriteReciterCard
                 reciter={reciter}
                 onPress={() => {
                   void handleOpenReciter(reciter);
+                }}
+                onPlay={() => {
+                  void handleQuickPlay(reciter);
                 }}
               />
             </Reanimated.View>
@@ -176,21 +212,21 @@ export default function RecitersCatalogScreen() {
         </ScrollView>
       );
     },
-    [handleOpenReciter],
+    [handleOpenReciter, handleQuickPlay],
   );
 
   return (
-    <SafeAreaView edges={['top']} style={listeningStyles.safeArea}>
+    <SafeAreaView edges={["top"]} style={listeningStyles.safeArea}>
       <FlatList
         style={styles.list}
-        data={model.reciters}
+        data={visibleReciters}
         keyExtractor={(item) => item.id}
         renderItem={renderReciterItem}
         numColumns={2}
         columnWrapperStyle={styles.column}
         contentContainerStyle={[
           styles.listContent,
-          model.reciters.length === 0 && styles.emptyListContent,
+          visibleReciters.length === 0 && styles.emptyListContent,
         ]}
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
@@ -201,24 +237,27 @@ export default function RecitersCatalogScreen() {
           <View style={styles.headerContent}>
             <ListeningHeader
               title="Audio"
-              subtitle={t('recitations.recitersSubtitle')}
+              subtitle={t("recitations.recitersSubtitle")}
               onBack={goBack}
             />
 
-            <Reanimated.View entering={FadeInDown.duration(320).easing(Easing.out(Easing.cubic))}>
-              <AudioOverview
-                reciterCount={model.totalReciters}
-                favoriteCount={model.favoriteReciters.length}
-              />
-            </Reanimated.View>
+            <AudioStats
+              reciterCount={model.totalReciters}
+              favoriteCount={model.favoriteReciters.length}
+            />
 
             {audio.listeningResume && continueReciterName ? (
-              <Reanimated.View entering={FadeInDown.duration(420).easing(Easing.out(Easing.cubic))}>
+              <Reanimated.View
+                entering={FadeInDown.duration(420).easing(
+                  Easing.out(Easing.cubic),
+                )}
+              >
                 <PremiumContinueCard
                   image={resumeReciter?.image}
                   surahName={continueTitle}
                   reciterName={continueReciterName}
                   progress={resumeProgress}
+                  remainingSeconds={resumeRemainingSeconds}
                   onPress={() => {
                     void handleResumeListening();
                   }}
@@ -226,30 +265,35 @@ export default function RecitersCatalogScreen() {
               </Reanimated.View>
             ) : null}
 
-            {model.favoriteReciters.length > 0 ? (
+            <View style={styles.searchBlock}>
+              <SearchBar
+                value={model.search}
+                onChangeText={model.setSearch}
+                placeholder={t("recitations.searchReciter")}
+              />
+              <FilterChips
+                value={filter}
+                favoriteCount={model.favoriteReciters.length}
+                onChange={setFilter}
+              />
+            </View>
+
+            {model.favoriteReciters.length > 0 && filter !== "favorites" ? (
               <View style={styles.sectionBlock}>
-                <SectionHeader title="Mes récitateurs favoris" />
+                <SectionHeader title="Mes favoris" />
                 {renderSectionReciters(model.favoriteReciters)}
               </View>
             ) : null}
 
             <View style={styles.sectionBlock}>
-              <SectionHeader title="Recherche" />
-              <SearchBar
-                value={model.search}
-                onChangeText={model.setSearch}
-                placeholder={t('recitations.searchReciter')}
+              <SectionHeader
+                title={filter === "all" ? "Tous les récitateurs" : "Résultats"}
+                actionLabel={`${visibleReciters.length} voix`}
               />
             </View>
 
-            <View style={styles.sectionBlock}>
-              <SectionHeader title="Tous les récitateurs" />
-            </View>
-
-            {model.loading && model.reciters.length === 0 ? (
-              <Text style={listeningStyles.loading}>
-                {t('common.loading')}
-              </Text>
+            {model.loading && visibleReciters.length === 0 ? (
+              <Text style={listeningStyles.loading}>{t("common.loading")}</Text>
             ) : null}
           </View>
         }
@@ -257,7 +301,7 @@ export default function RecitersCatalogScreen() {
           !model.loading ? (
             <View style={listeningStyles.empty}>
               <Text style={listeningStyles.emptyText}>
-                {t('recitations.noReciterFound')}
+                {t("recitations.noReciterFound")}
               </Text>
             </View>
           ) : null
@@ -267,7 +311,7 @@ export default function RecitersCatalogScreen() {
   );
 }
 
-function AudioOverview({
+function AudioStats({
   reciterCount,
   favoriteCount,
 }: {
@@ -275,23 +319,110 @@ function AudioOverview({
   favoriteCount: number;
 }) {
   return (
-    <LinearGradient
-      colors={['rgba(200,148,58,0.18)', colors.surfaceAlt, colors.purpleDeep]}
-      start={{ x: 0, y: 0 }}
-      end={{ x: 1, y: 1 }}
-      style={styles.overview}
-    >
-      <View style={styles.overviewIcon}>
-        <Ionicons name="headset" size={21} color={colors.goldMuted} />
-      </View>
+    <View style={styles.stats}>
+      <StatChip icon="mic-outline" label={`${reciterCount} voix`} />
+      <StatChip icon="book-outline" label="114 sourates" />
+      <StatChip icon="star-outline" label={`${favoriteCount} favoris`} />
+    </View>
+  );
+}
 
-      <View style={styles.overviewCopy}>
-        <Text style={styles.overviewTitle}>Studio audio</Text>
-        <Text style={styles.overviewMeta}>
-          {reciterCount} voix · 114 sourates · {favoriteCount} favoris
-        </Text>
-      </View>
-    </LinearGradient>
+function StatChip({
+  icon,
+  label,
+}: {
+  icon: keyof typeof Ionicons.glyphMap;
+  label: string;
+}) {
+  return (
+    <View style={styles.statChip}>
+      <Ionicons name={icon} size={12} color={colors.goldMuted} />
+      <Text style={styles.statText}>{label}</Text>
+    </View>
+  );
+}
+
+function FilterChips({
+  value,
+  favoriteCount,
+  onChange,
+}: {
+  value: "all" | "favorites" | "murattal" | "mujawwad";
+  favoriteCount: number;
+  onChange: (value: "all" | "favorites" | "murattal" | "mujawwad") => void;
+}) {
+  const filters = [
+    { id: "all" as const, label: "Tous" },
+    { id: "favorites" as const, label: `Favoris ${favoriteCount}` },
+    { id: "murattal" as const, label: "Murattal" },
+    { id: "mujawwad" as const, label: "Mujawwad" },
+  ];
+
+  return (
+    <ScrollView
+      horizontal
+      showsHorizontalScrollIndicator={false}
+      contentContainerStyle={styles.filters}
+    >
+      {filters.map((item) => {
+        const active = value === item.id;
+        return (
+          <Pressable
+            key={item.id}
+            onPress={() => onChange(item.id)}
+            style={[styles.filterChip, active && styles.filterChipActive]}
+          >
+            <Text
+              style={[styles.filterText, active && styles.filterTextActive]}
+            >
+              {item.label}
+            </Text>
+          </Pressable>
+        );
+      })}
+    </ScrollView>
+  );
+}
+
+function FavoriteReciterCard({
+  reciter,
+  onPress,
+  onPlay,
+}: {
+  reciter: CatalogReciter;
+  onPress: () => void;
+  onPlay: () => void;
+}) {
+  return (
+    <Pressable
+      onPress={onPress}
+      style={({ pressed }) => [styles.favoriteCard, pressed && styles.pressed]}
+    >
+      {reciter.image ? (
+        <Image
+          source={reciter.image}
+          contentFit="cover"
+          cachePolicy="memory-disk"
+          style={StyleSheet.absoluteFill}
+        />
+      ) : null}
+      <LinearGradient
+        colors={["transparent", "rgba(7,5,16,0.96)"]}
+        style={StyleSheet.absoluteFill}
+      />
+      <Text numberOfLines={2} style={styles.favoriteName}>
+        {reciter.name}
+      </Text>
+      <Pressable
+        onPress={(event) => {
+          event.stopPropagation();
+          onPlay();
+        }}
+        style={styles.favoritePlay}
+      >
+        <Ionicons name="play" size={13} color={colors.background} />
+      </Pressable>
+    </Pressable>
   );
 }
 
@@ -300,24 +431,27 @@ function PremiumContinueCard({
   surahName,
   reciterName,
   progress,
+  remainingSeconds,
   onPress,
 }: {
-  image?: CatalogReciter['image'];
+  image?: CatalogReciter["image"];
   surahName: string;
   reciterName: string;
   progress: number;
+  remainingSeconds: number;
   onPress: () => void;
 }) {
   return (
     <Pressable
       onPress={onPress}
-      style={({ pressed }) => [
-        styles.continueCard,
-        pressed && styles.pressed,
-      ]}
+      style={({ pressed }) => [styles.continueCard, pressed && styles.pressed]}
     >
       <LinearGradient
-        colors={[colors.surfaceAlt, colors.purpleMid, colors.backgroundSecondary]}
+        colors={[
+          colors.surfaceAlt,
+          colors.purpleMid,
+          colors.backgroundSecondary,
+        ]}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
         style={styles.continueGradient}
@@ -346,7 +480,20 @@ function PremiumContinueCard({
             {reciterName}
           </Text>
           <View style={styles.progressTrack}>
-            <View style={[styles.progressFill, { width: `${Math.min(Math.max(progress, 0), 1) * 100}%` }]} />
+            <View
+              style={[
+                styles.progressFill,
+                { width: `${Math.min(Math.max(progress, 0), 1) * 100}%` },
+              ]}
+            />
+          </View>
+          <View style={styles.progressMeta}>
+            <Text style={styles.progressText}>
+              {Math.round(Math.min(Math.max(progress, 0), 1) * 100)}%
+            </Text>
+            <Text style={styles.progressText}>
+              {formatRemainingTime(remainingSeconds)} restant
+            </Text>
           </View>
         </View>
 
@@ -358,13 +505,20 @@ function PremiumContinueCard({
   );
 }
 
+function formatRemainingTime(seconds: number) {
+  const safeSeconds = Math.max(0, Math.floor(seconds));
+  const minutes = Math.floor(safeSeconds / 60);
+  const remaining = safeSeconds % 60;
+  return `${minutes}:${String(remaining).padStart(2, "0")}`;
+}
+
 const styles = StyleSheet.create({
   list: {
     flex: 1,
   },
 
   headerContent: {
-    paddingHorizontal: 16,
+    paddingHorizontal: 0,
     paddingBottom: 4,
   },
 
@@ -378,11 +532,11 @@ const styles = StyleSheet.create({
   },
 
   horizontalCard: {
-    width: 126,
+    width: 154,
   },
 
   listContent: {
-    paddingBottom: 24,
+    paddingBottom: 108,
     paddingHorizontal: 16,
   },
 
@@ -397,14 +551,14 @@ const styles = StyleSheet.create({
   cardSlot: {
     flex: 1,
     minWidth: 0,
-    marginBottom: 12,
+    marginBottom: 9,
   },
 
   continueCard: {
     marginTop: 10,
     borderRadius: 22,
     backgroundColor: colors.surfaceAlt,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.24,
     shadowRadius: 18,
@@ -414,8 +568,8 @@ const styles = StyleSheet.create({
   continueGradient: {
     minHeight: 132,
     padding: 13,
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     borderRadius: 22,
     borderWidth: 1,
     borderColor: colors.borderSoft,
@@ -424,9 +578,9 @@ const styles = StyleSheet.create({
   continueArtwork: {
     width: 84,
     height: 102,
-    overflow: 'hidden',
-    alignItems: 'center',
-    justifyContent: 'center',
+    overflow: "hidden",
+    alignItems: "center",
+    justifyContent: "center",
     borderRadius: 20,
     borderWidth: 1,
     borderColor: colors.goldDark,
@@ -434,8 +588,8 @@ const styles = StyleSheet.create({
   },
 
   continueImage: {
-    width: '100%',
-    height: '100%',
+    width: "100%",
+    height: "100%",
   },
 
   continueCopy: {
@@ -448,8 +602,8 @@ const styles = StyleSheet.create({
     color: colors.goldMuted,
     fontFamily: typography.sans,
     fontSize: 10,
-    fontWeight: '700',
-    textTransform: 'uppercase',
+    fontWeight: "700",
+    textTransform: "uppercase",
   },
 
   continueSurah: {
@@ -469,22 +623,35 @@ const styles = StyleSheet.create({
   progressTrack: {
     height: 5,
     marginTop: 14,
-    overflow: 'hidden',
+    overflow: "hidden",
     borderRadius: 3,
-    backgroundColor: 'rgba(248,244,238,0.14)',
+    backgroundColor: "rgba(248,244,238,0.14)",
   },
 
   progressFill: {
-    height: '100%',
+    height: "100%",
     borderRadius: 3,
     backgroundColor: colors.goldMuted,
+  },
+
+  progressMeta: {
+    marginTop: 4,
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
+
+  progressText: {
+    color: colors.textMuted,
+    fontFamily: typography.sans,
+    fontSize: 7.5,
+    fontVariant: ["tabular-nums"],
   },
 
   continuePlay: {
     width: 42,
     height: 42,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     borderRadius: 21,
     backgroundColor: colors.goldLight,
   },
@@ -493,49 +660,88 @@ const styles = StyleSheet.create({
     opacity: 0.68,
   },
 
-  overview: {
-    minHeight: 74,
-    padding: 12,
-    flexDirection: 'row',
-    alignItems: 'center',
-    borderRadius: 20,
+  stats: {
+    marginTop: -2,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+  },
+  statChip: {
+    height: 27,
+    paddingHorizontal: 9,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 14,
     borderWidth: 1,
-    borderColor: colors.borderSoft,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 5 },
-    shadowOpacity: 0.14,
-    shadowRadius: 12,
-    elevation: 3,
+    borderColor: "rgba(126,78,151,0.38)",
+    backgroundColor: "rgba(35,20,51,0.66)",
   },
-
-  overviewIcon: {
-    width: 44,
-    height: 44,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: 22,
-    borderWidth: 1,
-    borderColor: colors.goldDark,
-    backgroundColor: colors.purpleDeep,
-  },
-
-  overviewCopy: {
-    flex: 1,
-    minWidth: 0,
-    marginLeft: 12,
-  },
-
-  overviewTitle: {
-    color: colors.text,
-    fontFamily: typography.serifMedium,
-    fontSize: 19,
-  },
-
-  overviewMeta: {
-    marginTop: 3,
+  statText: {
+    marginLeft: 5,
     color: colors.textSecondary,
     fontFamily: typography.sans,
-    fontSize: 10,
-    fontWeight: '600',
+    fontSize: 8.5,
+    fontWeight: "700",
+  },
+  searchBlock: {
+    marginTop: 15,
+  },
+  filters: {
+    paddingTop: 9,
+    paddingRight: 12,
+    gap: 7,
+  },
+  filterChip: {
+    height: 31,
+    paddingHorizontal: 13,
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: colors.borderSoft,
+    backgroundColor: "rgba(25,15,37,0.82)",
+  },
+  filterChipActive: {
+    borderColor: "rgba(227,181,90,0.54)",
+    backgroundColor: "rgba(104,55,124,0.48)",
+  },
+  filterText: {
+    color: colors.textSecondary,
+    fontFamily: typography.sans,
+    fontSize: 9,
+    fontWeight: "700",
+  },
+  filterTextActive: {
+    color: colors.goldLight,
+  },
+  favoriteCard: {
+    height: 106,
+    overflow: "hidden",
+    justifyContent: "flex-end",
+    padding: 10,
+    borderRadius: 19,
+    borderWidth: 1,
+    borderColor: "rgba(227,181,90,0.32)",
+    backgroundColor: colors.surface,
+  },
+  favoriteName: {
+    maxWidth: 112,
+    paddingRight: 18,
+    color: colors.text,
+    fontFamily: typography.serifMedium,
+    fontSize: 13.5,
+    lineHeight: 16,
+  },
+  favoritePlay: {
+    position: "absolute",
+    right: 8,
+    bottom: 8,
+    width: 27,
+    height: 27,
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 14,
+    backgroundColor: colors.goldLight,
   },
 });

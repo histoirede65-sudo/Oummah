@@ -11,11 +11,17 @@
       "bundleIdentifier": "com.oummah.app",
       "supportsTablet": true,
       "infoPlist": {
-        "UIViewControllerBasedStatusBarAppearance": true
+        "UIViewControllerBasedStatusBarAppearance": true,
+        "ITSAppUsesNonExemptEncryption": false
       }
     },
     "android": {
       "package": "com.oummah.app",
+      "permissions": [
+        "SCHEDULE_EXACT_ALARM",
+        "android.permission.RECORD_AUDIO",
+        "android.permission.MODIFY_AUDIO_SETTINGS"
+      ],
       "adaptiveIcon": {
         "backgroundColor": "#FFFFFF"
       },
@@ -30,11 +36,26 @@
       "expo-router",
       "expo-font",
       "expo-sqlite",
-      "expo-web-browser"
+      "expo-web-browser",
+      "expo-audio",
+      [
+        "expo-notifications",
+        {
+          "color": "#F2B53D",
+          "defaultChannel": "adhan-sound"
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": false,
       "reactCompiler": true
-    }
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "cfc1e1ce-a09c-4279-861c-8c07e081d86c"
+      }
+    },
+    "owner": "bahrioummah"
   }
 }

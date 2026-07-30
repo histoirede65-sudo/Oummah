@@ -35,6 +35,12 @@ import {
   WasilApiError,
 } from "../../features/wasil/WasilApiClient";
 import {
+  loadWasilEnergyPacks,
+  purchaseWasilEnergy,
+  refreshWasilEnergyBalance,
+  type WasilEnergyPack,
+} from "../../features/wasil/WasilEnergyService";
+import {
   appendWasilConversationTurn,
   createWasilConversationId,
   loadWasilConversations,
@@ -64,6 +70,7 @@ import {
   type PendingWasilReminder,
   type PendingWasilReminderManagement,
 } from "../../features/wasil/WasilReminderService";
+import { SURAHS } from "../../data/surahs";
 import { colors } from "../../theme/colors";
 import { typography } from "../../theme/typography";
 
@@ -100,11 +107,190 @@ function getWasilReferenceRoute(reference: string): Href | null {
   return null;
 }
 
+type HadithNativeTarget =
+  | { pathname: "/hadith/[id]"; params: { id: string } }
+  | { pathname: "/hadith/search"; params: { q: string } };
+
 type WasilDisplaySource = {
   label: string;
+  detail?: string;
   url?: string;
   verified: boolean;
+  quranTarget?: QuranNativeTarget;
+  hadithTarget?: HadithNativeTarget;
 };
+
+type QuranNativeTarget = {
+  pathname: "/wasil/quran-passage";
+  params: {
+    id: string;
+    verseStart?: string;
+    verseEnd?: string;
+  };
+};
+
+type WasilVisualPose =
+  | "idle"
+  | "blink"
+  | "wave"
+  | "thinking"
+  | "reading-quran"
+  | "success"
+  | "error";
+
+const wasilPoseSources = {
+  idle: require("../../assets/images/home/wasil-idle.png"),
+  blink: require("../../assets/images/home/wasil-blink.png"),
+  "wave-1": require("../../assets/images/home/wasil-wave-1.png"),
+  "wave-2": require("../../assets/images/home/wasil-wave-2.png"),
+  "wave-3": require("../../assets/images/home/wasil-wave-3.png"),
+  thinking: require("../../assets/images/home/wasil-thinking.png"),
+  "reading-quran-1": require("../../assets/images/home/wasil-reading-quran-1.png"),
+  "reading-quran-2": require("../../assets/images/home/wasil-reading-quran-2.png"),
+} as const;
+
+function getWasilPoseSource(pose: WasilVisualPose, frame: number) {
+  switch (pose) {
+    case "blink":
+      return wasilPoseSources.blink;
+    case "thinking":
+      return wasilPoseSources.thinking;
+    case "reading-quran":
+      return wasilPoseSources["reading-quran-1"];
+    case "wave":
+      return wasilPoseSources["wave-2"];
+    default:
+      return wasilPoseSources.idle;
+  }
+}
+
+const CONFIRMED_QURAN_COM_SURAH_SLUGS: Readonly<Record<string, number>> = {
+  "al-kawthar": 108,
+};
+
+function decodeQuranReference(value: string) {
+  try {
+    return decodeURIComponent(value);
+  } catch {
+    return value;
+  }
+}
+
+function createQuranNativeTarget(
+  surahValue: string | number | undefined,
+  verseStartValue?: string | number,
+  verseEndValue?: string | number,
+): QuranNativeTarget | null {
+  const surahId = Number(surahValue);
+  const verseStart =
+    verseStartValue === undefined ? undefined : Number(verseStartValue);
+  const verseEnd =
+    verseEndValue === undefined ? undefined : Number(verseEndValue);
+
+  if (!Number.isInteger(surahId) || surahId < 1 || surahId > 114) {
+    return null;
+  }
+  if (
+    (verseStart !== undefined &&
+      (!Number.isInteger(verseStart) || verseStart < 1)) ||
+    (verseEnd !== undefined &&
+      (!Number.isInteger(verseEnd) ||
+        verseEnd < 1 ||
+        verseStart === undefined ||
+        verseEnd < verseStart))
+  ) {
+    return null;
+  }
+  const knownSurah = SURAHS.find((surah) => surah.id === surahId);
+  if (
+    !knownSurah ||
+    (verseStart !== undefined && verseStart > knownSurah.verses) ||
+    (verseEnd !== undefined && verseEnd > knownSurah.verses)
+  ) {
+    return null;
+  }
+
+  return {
+    pathname: "/wasil/quran-passage",
+    params: {
+      id: String(surahId),
+      ...(verseStart !== undefined
+        ? { verseStart: String(verseStart) }
+        : {}),
+      ...(verseEnd !== undefined ? { verseEnd: String(verseEnd) } : {}),
+    },
+  };
+}
+
+function resolveQuranNativeTarget(
+  sourceUrl: string | undefined,
+  referenceLabel: string,
+): QuranNativeTarget | null {
+  if (sourceUrl) {
+    try {
+    const url = new URL(sourceUrl);
+    const hostname = url.hostname.replace(/^www\./, "").toLowerCase();
+      const decodedPath = decodeQuranReference(url.pathname);
+
+      if (hostname === "quran.com") {
+        const numericPath = decodedPath.match(
+          /^\/(?:(?:en|fr)\/)?(\d{1,3})(?:(?:\/|:)(\d+)(?:-(\d+))?)?\/?$/i,
+        );
+        const textualPath = decodedPath.match(
+          /^\/(?:(?:en|fr)\/)?([a-z0-9-]+)(?:\/info)?\/?$/i,
+        );
+        const confirmedTextualSurah = textualPath?.[1]
+          ? CONFIRMED_QURAN_COM_SURAH_SLUGS[
+              textualPath[1].toLowerCase()
+            ]
+          : undefined;
+        const urlTarget = createQuranNativeTarget(
+          numericPath?.[1] ?? confirmedTextualSurah,
+          numericPath?.[2],
+          numericPath?.[3],
+        );
+        if (urlTarget) return urlTarget;
+      }
+
+      if (hostname === "quranenc.com") {
+        const browsePath = decodedPath.match(
+          /^\/[a-z]{2,3}\/browse\/[^/]+\/(\d{1,3})(?:\/(\d+)(?:-(\d+))?)?\/?$/i,
+        );
+        const apiSurahPath = decodedPath.match(
+          /^\/api\/v1\/translation\/sura\/[^/]+\/(\d{1,3})\/?$/i,
+        );
+        const apiVersePath = decodedPath.match(
+          /^\/api\/v1\/translation\/aya\/[^/]+\/(\d{1,3})\/(\d+)\/?$/i,
+        );
+        const urlTarget = createQuranNativeTarget(
+          browsePath?.[1] ?? apiSurahPath?.[1] ?? apiVersePath?.[1],
+          browsePath?.[2] ?? apiVersePath?.[2],
+          browsePath?.[3],
+        );
+        if (urlTarget) return urlTarget;
+      }
+    } catch {
+      // Le libellé exact reste analysable pour les anciennes conversations.
+    }
+  }
+
+  const decodedLabel = decodeQuranReference(referenceLabel).trim();
+  const explicitReference = decodedLabel.match(
+    /^(?:Coran\s+)?(\d{1,3})(?::|\/)(\d+)(?:-(\d+))?$/i,
+  );
+  const namedReference = decodedLabel.match(
+    /^Sourate\s+(\d{1,3})\s*,?\s*versets?\s+(\d+)(?:\s*(?:à|-)\s*(\d+))?$/i,
+  );
+  const coranReference = decodedLabel.match(
+    /\bCoran\s+(\d{1,3}):(\d+)(?:-(\d+))?\b/i,
+  );
+  const targetMatch = explicitReference ?? namedReference ?? coranReference;
+  return createQuranNativeTarget(
+    targetMatch?.[1],
+    targetMatch?.[2],
+    targetMatch?.[3],
+  );
+}
 
 function extractMarkdownLinks(body: string) {
   const sources: { label: string; url: string }[] = [];
@@ -126,6 +312,22 @@ function cleanMarkdownText(body: string) {
     .trim();
 }
 
+function removeDuplicateQuranCoordinates(body: string) {
+  return body
+    .replace(
+      /\s*\((?:Coran\s+)?\d{1,3}\s*:\s*\d+(?:\s*[-–—]\s*\d+)?\)\s*/gi,
+      " ",
+    )
+    .replace(
+      /(^|\n)\s*(?:[-•*]\s*)?(?:Coran\s+)?\d{1,3}\s*:\s*\d+(?:\s*[-–—]\s*\d+)?\s*(?=\n|$)/gi,
+      "$1",
+    )
+    .replace(/[ \t]{2,}/g, " ")
+    .replace(/ +([,.;:!?])/g, "$1")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
+}
+
 function canonicalSourceUrl(value: string) {
   try {
     const url = new URL(value);
@@ -141,8 +343,64 @@ function canonicalSourceUrl(value: string) {
 }
 
 function deduplicateSources(sources: WasilDisplaySource[]) {
+  const quranSources: WasilDisplaySource[] = [];
+  const otherSources: WasilDisplaySource[] = [];
+
+  sources.forEach((source) => {
+    const urlTarget = resolveQuranNativeTarget(source.url, "");
+    const targets = [
+      ...(source.quranTarget ? [source.quranTarget] : []),
+      ...(urlTarget ? [urlTarget] : []),
+      ...extractQuranTextTargets(source.label),
+    ];
+    const uniqueTargets = new Map(
+      targets.map((target) => [quranPassageKey(target), target]),
+    );
+
+    if (uniqueTargets.size === 0) {
+      otherSources.push(
+        isQuranSourceUrl(source.url)
+          ? {
+              ...source,
+              label: "Référence coranique",
+              detail: undefined,
+            }
+          : source,
+      );
+      return;
+    }
+
+    uniqueTargets.forEach((target) => {
+      const existing = quranSources.find(
+        (item) =>
+          item.quranTarget &&
+          quranPassageKey(item.quranTarget) === quranPassageKey(target),
+      );
+      if (existing) {
+        existing.verified ||= source.verified;
+        existing.url ??= source.url;
+        return;
+      }
+      quranSources.push({
+        label: "OUMMAH",
+        detail: formatQuranPassage(target),
+        url: source.url,
+        verified: source.verified,
+        quranTarget: target,
+      });
+    });
+  });
+
   const seen = new Set<string>();
-  return sources.filter((source) => {
+  const uniqueOtherSources = otherSources.filter((source) => {
+    if (
+      isQuranSourceUrl(source.url) ||
+      /^(?:quran\.com|quranenc(?:\.com)?|référence coranique)$/i.test(
+        source.label.trim(),
+      )
+    ) {
+      return false;
+    }
     const key = source.url
       ? `url:${canonicalSourceUrl(source.url)}`
       : `label:${source.label.trim().toLowerCase()}`;
@@ -150,29 +408,107 @@ function deduplicateSources(sources: WasilDisplaySource[]) {
     seen.add(key);
     return true;
   });
+  return [...quranSources, ...uniqueOtherSources];
 }
 
-function titleCaseSlug(value: string) {
-  return value
-    .split("-")
-    .filter(Boolean)
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-    .join("-");
+function isQuranSourceUrl(value?: string) {
+  if (!value) return false;
+  try {
+    const hostname = new URL(value).hostname
+      .replace(/^www\./, "")
+      .toLowerCase();
+    return hostname === "quran.com" || hostname === "quranenc.com";
+  } catch {
+    return false;
+  }
 }
 
-function markdownSourceLabel(label: string, urlValue: string, body: string) {
+function quranPassageKey(target: QuranNativeTarget) {
+  return [
+    target.params.id,
+    target.params.verseStart ?? "",
+    target.params.verseEnd ?? "",
+  ].join(":");
+}
+
+function extractQuranTextTargets(value: string) {
+  const decoded = decodeQuranReference(value);
+  const targets: QuranNativeTarget[] = [];
+  const patterns = [
+    /(?:\bCoran\s+)?\(?\b(\d{1,3})\s*:\s*(\d+)(?:\s*[-\u2013\u2014]\s*(\d+))?\b\)?/gi,
+    /\bSourate\s+(\d{1,3})\s*,?\s*versets?\s+(\d+)(?:\s*(?:à|[-–—])\s*(\d+))?/gi,
+  ];
+  patterns.forEach((pattern) => {
+    let match = pattern.exec(decoded);
+    while (match) {
+      const target = createQuranNativeTarget(match[1], match[2], match[3]);
+      if (target) targets.push(target);
+      match = pattern.exec(decoded);
+    }
+  });
+  const exact = decoded.trim().match(
+    /^\(?(?:Coran\s+)?(\d{1,3})(?::|\/)(\d+)(?:\s*[-–—]\s*(\d+))?\)?$/i,
+  );
+  const exactTarget = createQuranNativeTarget(
+    exact?.[1],
+    exact?.[2],
+    exact?.[3],
+  );
+  if (exactTarget) targets.push(exactTarget);
+  const namedPattern =
+    /\bSourate\s+([^,—\d]+?)\s*,?\s*versets?\s+(\d+)(?:\s*(?:à|[-–—])\s*(\d+))?/gi;
+  let namedMatch = namedPattern.exec(decoded);
+  while (namedMatch) {
+    const surahId = resolveExplicitSurahName(namedMatch[1]);
+    const target = createQuranNativeTarget(
+      surahId,
+      namedMatch[2],
+      namedMatch[3],
+    );
+    if (target) targets.push(target);
+    namedMatch = namedPattern.exec(decoded);
+  }
+  const surahOnlyPattern = /\b(?:Coran,\s*)?Sourate\s+(\d{1,3})\b/gi;
+  let surahOnlyMatch = surahOnlyPattern.exec(decoded);
+  while (surahOnlyMatch) {
+    const target = createQuranNativeTarget(surahOnlyMatch[1]);
+    if (target) targets.push(target);
+    surahOnlyMatch = surahOnlyPattern.exec(decoded);
+  }
+  return targets;
+}
+
+function resolveExplicitSurahName(value: string) {
+  const normalized = value.trim().toLocaleLowerCase("fr");
+  const matches = SURAHS.filter(
+    (surah) =>
+      surah.transliteration.toLocaleLowerCase("fr") === normalized ||
+      surah.frenchName.toLocaleLowerCase("fr") === normalized,
+  );
+  return matches.length === 1 ? matches[0].id : undefined;
+}
+
+function formatQuranPassage(target: QuranNativeTarget) {
+  const surahId = Number(target.params.id);
+  const surah = SURAHS.find((item) => item.id === surahId);
+  const name = surah?.transliteration ?? String(surahId);
+  const verseStart = target.params.verseStart;
+  const verseEnd = target.params.verseEnd;
+  if (!verseStart) return `Sourate ${name}`;
+  if (verseEnd && verseEnd !== verseStart) {
+    return `Sourate ${name} — versets ${verseStart} à ${verseEnd}`;
+  }
+  return `Sourate ${name} — verset ${verseStart}`;
+}
+
+function markdownSourceLabel(label: string, urlValue: string) {
   try {
     const url = new URL(urlValue);
-    if (url.hostname.replace(/^www\./, "").toLowerCase() === "quran.com") {
-      const number = body.match(/\bsourate\s+(\d{1,3})\b/i)?.[1];
-      const segments = url.pathname.split("/").filter(Boolean);
-      const slug = segments.find(
-        (segment) => !/^(?:en|fr|info|surah|chapter|verse|verses)$/i.test(segment),
-      );
-      if (number && slug && !/^\d+$/.test(slug)) {
-        return `Coran, Sourate ${number} – ${titleCaseSlug(slug)}`;
-      }
-      return "Quran.com";
+    const hostname = url.hostname.replace(/^www\./, "").toLowerCase();
+    if (hostname === "quran.com" || hostname === "quranenc.com") {
+      return label && !/^(?:quran\.com|quranenc)$/i.test(label.trim())
+        ? decodeQuranReference(label)
+        : "Référence coranique";
     }
     return label || url.hostname.replace(/^www\./, "");
   } catch {
@@ -187,16 +523,76 @@ function parseWasilAnswer(answer: WasilReply) {
     rawSources.push({ label: "", url });
     return "";
   });
-  const structuredSources: WasilDisplaySource[] = answer.reference
-    ? [{
-        label: answer.reference,
-        url: answer.sourceUrl,
+  const hasExplicitNativeReferences =
+    (answer.quranReferences?.length ?? 0) > 0 ||
+    (answer.hadithReferences?.length ?? 0) > 0;
+  const structuredSources: WasilDisplaySource[] =
+    answer.reference && !hasExplicitNativeReferences
+      ? [{
+          label: answer.reference,
+          url: answer.sourceUrl,
+          verified: true,
+        }]
+      : [];
+  const explicitQuranSources = (answer.quranReferences ?? []).flatMap(
+    (reference): WasilDisplaySource[] => {
+      const target = createQuranNativeTarget(
+        reference.surah,
+        reference.verseStart,
+        reference.verseEnd ?? undefined,
+      );
+      return target
+        ? [{
+            label: "OUMMAH",
+            detail: formatQuranPassage(target),
+            verified: true,
+            quranTarget: target,
+          }]
+        : [];
+    },
+  );
+  const explicitHadithSources = (answer.hadithReferences ?? []).flatMap(
+    (reference): WasilDisplaySource[] => {
+      const directId = reference.id?.trim();
+      const searchQuery = reference.searchQuery.trim();
+      if (!directId && !searchQuery) return [];
+      return [{
+        label: "OUMMAH · Hadith",
+        detail: [
+          reference.collection && reference.collection !== "HadeethEnc"
+            ? reference.collection
+            : null,
+          reference.reference && !reference.reference.startsWith("Hadith ")
+            ? reference.reference
+            : null,
+          reference.grade || null,
+        ].filter(Boolean).join(" · ") || "Hadith vérifié",
         verified: true,
-      }]
-    : [];
+        hadithTarget: directId
+          ? { pathname: "/hadith/[id]", params: { id: directId } }
+          : { pathname: "/hadith/search", params: { q: searchQuery } },
+      }];
+    },
+  );
+  const explicitWebSources = (answer.webReferences ?? []).map(
+    (source): WasilDisplaySource => ({
+      label: markdownSourceLabel(source.title, source.url),
+      url: source.url,
+      verified: true,
+    }),
+  );
+  const bodyTargets = extractQuranTextTargets(answer.body);
+  const bodyQuranSources = bodyTargets.map(
+    (target): WasilDisplaySource => ({
+      label: "OUMMAH",
+      detail: formatQuranPassage(target),
+      verified: structuredSources.length > 0,
+      quranTarget: target,
+    }),
+  );
   const extractedSources = [...extracted.sources, ...rawSources].map(
     (source): WasilDisplaySource => ({
-      label: markdownSourceLabel(source.label, source.url, answer.body),
+      label: markdownSourceLabel(source.label, source.url),
       url: source.url,
       verified: structuredSources.some(
         (structured) =>
@@ -205,9 +601,56 @@ function parseWasilAnswer(answer: WasilReply) {
       ),
     }),
   );
+  const normalizedSources = [
+    ...explicitQuranSources,
+    ...explicitHadithSources,
+    ...structuredSources,
+    ...bodyQuranSources,
+    ...explicitWebSources,
+    ...extractedSources,
+  ];
+  const sources = deduplicateSources(normalizedSources);
+  const urlTargets = [
+    ...structuredSources,
+    ...extractedSources,
+  ].flatMap((source) => {
+    const target = resolveQuranNativeTarget(source.url, "");
+    return target ? [target] : [];
+  });
+  const nativeTargets = sources.flatMap((source) =>
+    source.quranTarget ? [source.quranTarget] : [],
+  );
+  if (__DEV__) {
+    const serializeTarget = (target: QuranNativeTarget) => ({
+      kind: "quran" as const,
+      surahId: Number(target.params.id),
+      verseStart: target.params.verseStart
+        ? Number(target.params.verseStart)
+        : undefined,
+      verseEnd: target.params.verseEnd
+        ? Number(target.params.verseEnd)
+        : undefined,
+    });
+    console.log("[WASIL_QURAN_PIPELINE]", {
+      rawAnswer: answer.body,
+      structuredSources: structuredSources.map((source) => ({
+        label: source.label,
+        url: source.url,
+      })),
+      bodyTargets: bodyTargets.map(serializeTarget),
+      urlTargets: urlTargets.map(serializeTarget),
+      nativeTargets: nativeTargets.map(serializeTarget),
+      renderedSources: sources.map((source) => ({
+        kind: source.quranTarget ? "quran" : "external",
+        label: source.label,
+        detail: source.detail,
+        url: source.quranTarget ? undefined : source.url,
+      })),
+    });
+  }
   return {
-    body: cleanMarkdownText(withoutRawUrls),
-    sources: deduplicateSources([...structuredSources, ...extractedSources]),
+    body: removeDuplicateQuranCoordinates(cleanMarkdownText(withoutRawUrls)),
+    sources,
   };
 }
 
@@ -256,50 +699,135 @@ function renderWasilBody(body: string) {
   ));
 }
 
-function WasilAnswerPresentation({ answer }: { answer: WasilReply }) {
+function WasilAnswerPresentation({
+  answer,
+  animateReferences = false,
+}: {
+  answer: WasilReply;
+  animateReferences?: boolean;
+}) {
   const parsed = parseWasilAnswer(answer);
-  const hasVerifiedSource = parsed.sources.some((source) => source.verified);
+  const referenceOpacity = useRef(new Animated.Value(animateReferences ? 0 : 1)).current;
+  const referenceTranslateY = useRef(new Animated.Value(animateReferences ? 7 : 0)).current;
+  const visibleSources = parsed.sources.filter(
+    (source) =>
+      !!source.quranTarget ||
+      !!source.hadithTarget ||
+      !!getWasilReferenceRoute(source.label),
+  );
+  const hasVerifiedSource = visibleSources.some((source) => source.verified);
+
+  useEffect(() => {
+    if (!animateReferences) return;
+    referenceOpacity.setValue(0);
+    referenceTranslateY.setValue(7);
+    const animation = Animated.parallel([
+      Animated.timing(referenceOpacity, {
+        toValue: 1,
+        duration: 250,
+        useNativeDriver: true,
+      }),
+      Animated.timing(referenceTranslateY, {
+        toValue: 0,
+        duration: 250,
+        useNativeDriver: true,
+      }),
+    ]);
+    animation.start();
+    return () => animation.stop();
+  }, [animateReferences, referenceOpacity, referenceTranslateY]);
 
   return (
     <>
       {renderWasilBody(parsed.body)}
-      {parsed.sources.length > 0 ? (
+      {visibleSources.length > 0 ? (
         <View style={styles.wasilSources}>
           <View style={styles.wasilSourceDivider} />
-          <Text style={styles.wasilSourcesTitle}>Référence</Text>
-          {parsed.sources.map((source) => {
+          <Text style={styles.wasilSourcesTitle}>
+            {visibleSources.length > 1 ? "Références OUMMAH" : "Référence OUMMAH"}
+          </Text>
+          {visibleSources.map((source) => {
             const referenceRoute = getWasilReferenceRoute(source.label);
-            const canOpen = !!source.url || !!referenceRoute;
+            const nativeRoute =
+              source.quranTarget ?? source.hadithTarget ?? referenceRoute;
+            const canOpen = !!nativeRoute || !!source.url;
+            const isNative = !!nativeRoute;
+            const isQuranReference = !!source.quranTarget;
+            const isHadithReference = !!source.hadithTarget;
+            const referenceHint = isQuranReference
+              ? "Ouvrir dans le Coran"
+              : isHadithReference
+                ? "Consulter le hadith"
+                : undefined;
+            const visibleReferenceHint = animateReferences
+              ? referenceHint
+              : undefined;
             return (
-              <Pressable
-                accessibilityRole={canOpen ? "link" : undefined}
-                key={source.url ?? source.label}
-                onPress={
-                  source.url
-                    ? () => void Linking.openURL(source.url!)
-                    : referenceRoute
-                      ? () => router.push(referenceRoute)
-                      : undefined
+              <Animated.View
+                key={
+                  source.quranTarget
+                    ? `quran:${quranPassageKey(source.quranTarget)}`
+                    : source.hadithTarget
+                      ? `hadith:${"id" in source.hadithTarget.params ? source.hadithTarget.params.id : source.hadithTarget.params.q}:${source.detail ?? source.label}`
+                      : (source.url ?? source.label)
                 }
-                style={({ pressed }) => [
-                  styles.wasilSourceRow,
-                  pressed && canOpen && styles.pressed,
-                ]}
+                style={
+                  animateReferences
+                    ? {
+                        opacity: referenceOpacity,
+                        transform: [{ translateY: referenceTranslateY }],
+                      }
+                    : undefined
+                }
               >
-                <Ionicons
-                  name="book-outline"
-                  size={15}
-                  color={colors.goldLight}
-                />
-                <Text style={styles.wasilSourceLabel}>{source.label}</Text>
-                {canOpen ? (
+                <Pressable
+                  accessibilityLabel={visibleReferenceHint ?? source.label}
+                  accessibilityRole={canOpen ? "link" : undefined}
+                  onPress={
+                    source.quranTarget
+                      ? () => router.push(source.quranTarget!)
+                      : source.hadithTarget
+                        ? () => router.push(source.hadithTarget!)
+                        : nativeRoute
+                          ? () => router.push(nativeRoute)
+                          : source.url
+                            ? () => void Linking.openURL(source.url!)
+                            : undefined
+                  }
+                  style={({ pressed }) => [
+                    styles.wasilSourceRow,
+                    pressed && canOpen && styles.pressed,
+                  ]}
+                >
                   <Ionicons
-                    name="open-outline"
-                    size={13}
-                    color={colors.textMuted}
+                    name={
+                      animateReferences && isHadithReference
+                        ? "library-outline"
+                        : "book-outline"
+                    }
+                    size={16}
+                    color={colors.goldLight}
                   />
-                ) : null}
-              </Pressable>
+                  <View style={styles.wasilSourceCopy}>
+                    <Text style={styles.wasilSourceLabel}>{source.label}</Text>
+                    {source.detail ? (
+                      <Text style={styles.wasilSourceDetail}>
+                        {source.detail}
+                      </Text>
+                    ) : null}
+                    {visibleReferenceHint ? (
+                      <Text style={styles.wasilSourceHint}>{visibleReferenceHint}</Text>
+                    ) : null}
+                  </View>
+                  {canOpen ? (
+                    <Ionicons
+                      name={isNative ? "chevron-forward" : "open-outline"}
+                      size={13}
+                      color={colors.textMuted}
+                    />
+                  ) : null}
+                </Pressable>
+              </Animated.View>
             );
           })}
         </View>
@@ -362,6 +890,11 @@ export default function DalilScreen() {
   const [submittedPrompt, setSubmittedPrompt] = useState("");
   const [reply, setReply] = useState<WasilReply | null>(null);
   const [balance, setBalance] = useState<number | null>(null);
+  const [energyVisible, setEnergyVisible] = useState(false);
+  const [energyPacks, setEnergyPacks] = useState<WasilEnergyPack[]>([]);
+  const [energyLoading, setEnergyLoading] = useState(false);
+  const [energyPurchaseId, setEnergyPurchaseId] = useState<string | null>(null);
+  const [energyFeedback, setEnergyFeedback] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [historyVisible, setHistoryVisible] = useState(false);
   const [deletingConversationId, setDeletingConversationId] = useState("");
@@ -377,10 +910,43 @@ export default function DalilScreen() {
     useState<PendingWasilReminderManagement | null>(null);
   const [pendingGoalAction, setPendingGoalAction] =
     useState<PendingWasilGoalAction | null>(null);
+  const [visualPose, setVisualPose] = useState<WasilVisualPose>("idle");
+  const [visualFrame, setVisualFrame] = useState(0);
+  const [loadingVisualPose, setLoadingVisualPose] = useState<WasilVisualPose | null>(null);
   const float = useRef(new Animated.Value(0)).current;
+  const poseTranslateX = useRef(new Animated.Value(0)).current;
+  const poseRotate = useRef(new Animated.Value(0)).current;
+  const poseScale = useRef(new Animated.Value(1)).current;
+  const poseOpacity = useRef(new Animated.Value(1)).current;
+  const answerReadyHalo = useRef(new Animated.Value(0)).current;
+  const poseMotion = useRef<Animated.CompositeAnimation | null>(null);
+  const thinkingPulse = useRef(new Animated.Value(0)).current;
+  const currentReplyOpacity = useRef(new Animated.Value(0)).current;
+  const currentReplyTranslateY = useRef(new Animated.Value(10)).current;
+  const failedReactionOpacity = useRef(new Animated.Value(1)).current;
+  const failedReactionTranslateY = useRef(new Animated.Value(0)).current;
+  const blinkTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const poseTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const inactivityTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const loadingVariationTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const lastLoadingVariation = useRef<"calm" | "search" | "consult" | "focus" | null>(null);
+  const recentLoadingVariations = useRef<("calm" | "search" | "consult" | "focus")[]>([]);
+  const inactivityReaction = useRef<"attentive" | "curious" | "wave" | null>(null);
+  const recentInactivityReactions = useRef<("attentive" | "curious" | "wave")[]>([]);
+  const specialAnimationInProgress = useRef(false);
+  const idleCooldownUntil = useRef(0);
+  const inactivityReactionsSinceWave = useRef(2);
+  const inputFocused = useRef(false);
+  const greetingPlayed = useRef(false);
+  const processedQuranReplyId = useRef("");
+  const answerReadyReplyId = useRef("");
+  const wasLoading = useRef(false);
+  const answerReadyAnimation = useRef<Animated.CompositeAnimation | null>(null);
   const autoSubmittedPrompt = useRef("");
   const retryInFlight = useRef(false);
   const submissionInFlight = useRef(false);
+  const newTurnAnchorY = useRef<number | null>(null);
+  const newTurnScrollDone = useRef(false);
   const deletingConversationIdRef = useRef("");
   const conversationScrollRef = useRef<ScrollView>(null);
   const activeConversationId = useRef(createWasilConversationId());
@@ -391,10 +957,29 @@ export default function DalilScreen() {
     null,
   );
   const { reciters, setCurrentReciter } = useReciter();
+  const currentHour = new Date().getHours();
+  const wasilGreeting =
+    currentHour >= 5 && currentHour < 12
+      ? "Assalamu alaykum, comment puis-je vous accompagner ce matin ?"
+      : currentHour >= 12 && currentHour < 18
+        ? "Assalamu alaykum, que souhaitez-vous approfondir aujourd’hui ?"
+        : "Assalamu alaykum, comment puis-je vous accompagner ce soir ?";
 
   const scrollToLatestMessage = useCallback(() => {
     requestAnimationFrame(() => {
       conversationScrollRef.current?.scrollToEnd({ animated: true });
+    });
+  }, []);
+
+  const scrollToNewTurnAnchor = useCallback((anchorY: number) => {
+    newTurnAnchorY.current = anchorY;
+    if (newTurnScrollDone.current) return;
+    newTurnScrollDone.current = true;
+    requestAnimationFrame(() => {
+      conversationScrollRef.current?.scrollTo({
+        y: Math.max(0, anchorY - 24),
+        animated: true,
+      });
     });
   }, []);
 
@@ -425,7 +1010,6 @@ export default function DalilScreen() {
     setMessages(next.conversation.messages);
     setSubmittedPrompt("");
     setReply(null);
-    scrollToLatestMessage();
     await saveWasilConversations(next.conversations).catch(() => undefined);
     void syncConversationsWithCloud(next.conversations);
   };
@@ -473,26 +1057,478 @@ export default function DalilScreen() {
       .catch(() => setBalance(null));
   }, []);
 
+  const openEnergy = async () => {
+    setEnergyVisible(true);
+    setEnergyLoading(true);
+    setEnergyFeedback(null);
+    const result = await loadWasilEnergyPacks();
+    if (result.status === "success") {
+      setEnergyPacks(result.packs);
+    } else {
+      setEnergyPacks([]);
+      setEnergyFeedback(result.message);
+    }
+    setEnergyLoading(false);
+  };
+
+  const refreshEnergy = async () => {
+    setEnergyFeedback(null);
+    const result = await refreshWasilEnergyBalance();
+    if (result.status === "success") {
+      setBalance(result.balance);
+      setEnergyFeedback("Votre énergie a été actualisée.");
+    } else if (result.status === "error") {
+      setEnergyFeedback(result.message);
+    }
+  };
+
+  const purchaseEnergy = async (pack: WasilEnergyPack) => {
+    if (energyPurchaseId || balance === null) return;
+    setEnergyPurchaseId(pack.identifier);
+    setEnergyFeedback(null);
+    const result = await purchaseWasilEnergy(pack, balance);
+    if (result.status === "completed") {
+      setBalance(result.balance);
+      setEnergyVisible(false);
+    } else if (result.status === "pending") {
+      setBalance(result.balance);
+      setEnergyFeedback(
+        "Achat validé. Votre énergie est en cours d’actualisation.",
+      );
+    } else if (result.status === "cancelled") {
+      setEnergyFeedback("Achat annulé.");
+    } else if (result.status === "error") {
+      setEnergyFeedback(result.message);
+    }
+    setEnergyPurchaseId(null);
+  };
+
   useEffect(() => {
     const incomingPrompt = getSingleParam(contextualPrompt);
     if (incomingPrompt) setPrompt(incomingPrompt);
   }, [contextualPrompt]);
 
   useEffect(() => {
-    if (submittedPrompt) scrollToLatestMessage();
-  }, [reply, scrollToLatestMessage, submittedPrompt]);
+    poseMotion.current?.stop();
+    poseTranslateX.stopAnimation();
+    float.stopAnimation();
+    poseRotate.stopAnimation();
+    poseScale.stopAnimation();
+    poseTranslateX.setValue(0);
+    float.setValue(0);
+    poseRotate.setValue(0);
+    poseScale.setValue(1);
+
+    const reset = Animated.parallel([
+      Animated.timing(poseTranslateX, {
+        toValue: 0,
+        duration: 260,
+        useNativeDriver: true,
+      }),
+      Animated.timing(float, {
+        toValue: 0,
+        duration: 260,
+        useNativeDriver: true,
+      }),
+      Animated.timing(poseRotate, {
+        toValue: 0,
+        duration: 260,
+        useNativeDriver: true,
+      }),
+      Animated.timing(poseScale, {
+        toValue: 1,
+        duration: 260,
+        useNativeDriver: true,
+      }),
+    ]);
+
+    if (visualPose === "wave") {
+      poseMotion.current = Animated.sequence([
+        Animated.parallel([
+          Animated.timing(poseTranslateX, { toValue: 1.5, duration: 1100, useNativeDriver: true }),
+          Animated.timing(poseRotate, { toValue: -0.8, duration: 1100, useNativeDriver: true }),
+        ]),
+        Animated.parallel([
+          Animated.timing(poseTranslateX, { toValue: -1.5, duration: 1100, useNativeDriver: true }),
+          Animated.timing(poseRotate, { toValue: 0.8, duration: 1100, useNativeDriver: true }),
+        ]),
+        Animated.parallel([
+          Animated.timing(poseTranslateX, { toValue: 0, duration: 220, useNativeDriver: true }),
+          Animated.timing(poseRotate, { toValue: 0, duration: 220, useNativeDriver: true }),
+        ]),
+      ]);
+    } else if (visualPose === "thinking") {
+      poseMotion.current = Animated.loop(
+        Animated.sequence([
+          Animated.parallel([
+            Animated.timing(float, { toValue: -2, duration: 1900, useNativeDriver: true }),
+            Animated.timing(poseRotate, { toValue: -1, duration: 1900, useNativeDriver: true }),
+            Animated.timing(poseScale, { toValue: 1.012, duration: 1900, useNativeDriver: true }),
+          ]),
+          Animated.parallel([
+            Animated.timing(float, { toValue: 0, duration: 1900, useNativeDriver: true }),
+            Animated.timing(poseRotate, { toValue: 0, duration: 1900, useNativeDriver: true }),
+            Animated.timing(poseScale, { toValue: 1, duration: 1900, useNativeDriver: true }),
+          ]),
+        ]),
+      );
+    } else if (visualPose === "reading-quran") {
+      poseMotion.current = Animated.loop(
+        Animated.sequence([
+          Animated.parallel([
+            Animated.timing(float, { toValue: -1, duration: 1600, useNativeDriver: true }),
+            Animated.timing(poseRotate, { toValue: -0.3, duration: 1600, useNativeDriver: true }),
+          ]),
+          Animated.parallel([
+            Animated.timing(float, { toValue: 0, duration: 1600, useNativeDriver: true }),
+            Animated.timing(poseRotate, { toValue: 0, duration: 1600, useNativeDriver: true }),
+          ]),
+        ]),
+      );
+    } else {
+      poseMotion.current = Animated.loop(
+        Animated.sequence([
+          Animated.parallel([
+            Animated.timing(float, { toValue: -3, duration: 2100, useNativeDriver: true }),
+            Animated.timing(poseScale, { toValue: 1.008, duration: 2100, useNativeDriver: true }),
+          ]),
+          Animated.parallel([
+            Animated.timing(float, { toValue: 0, duration: 2100, useNativeDriver: true }),
+            Animated.timing(poseScale, { toValue: 1, duration: 2100, useNativeDriver: true }),
+          ]),
+        ]),
+      );
+    }
+
+    poseMotion.current.start();
+    return () => {
+      poseMotion.current?.stop();
+      poseMotion.current = null;
+    };
+  }, [float, poseRotate, poseScale, poseTranslateX, visualPose]);
 
   useEffect(() => {
+    poseOpacity.stopAnimation();
+    poseOpacity.setValue(1);
+    const transition = Animated.sequence([
+      Animated.timing(poseOpacity, {
+        toValue: 0.78,
+        duration: 45,
+        useNativeDriver: true,
+      }),
+      Animated.timing(poseOpacity, {
+        toValue: 1,
+        duration: 75,
+        useNativeDriver: true,
+      }),
+    ]);
+    transition.start();
+    return () => transition.stop();
+  }, [loadingVisualPose, poseOpacity, visualFrame, visualPose]);
+
+  useEffect(() => {
+    if (loadingVariationTimer.current) {
+      clearTimeout(loadingVariationTimer.current);
+      loadingVariationTimer.current = null;
+    }
+    poseMotion.current?.stop();
+    setLoadingVisualPose(null);
+    setVisualFrame(0);
+
+    if (!loading || failedPrompt) return;
+
+    const randomDelay = (minimum: number, maximum: number) =>
+      minimum + Math.floor(Math.random() * (maximum - minimum + 1));
+    const chooseVariation = () => {
+      const variations = (["calm", "search", "consult", "focus"] as const).filter(
+        (variation) => !recentLoadingVariations.current.includes(variation),
+      );
+      const variation = variations.length
+        ? variations[Math.floor(Math.random() * variations.length)]
+        : "calm";
+      lastLoadingVariation.current = variation;
+      recentLoadingVariations.current = [
+        ...recentLoadingVariations.current,
+        variation,
+      ].slice(-2);
+      return variation;
+    };
+    const startThinkingMotion = () => {
+      poseMotion.current = Animated.loop(
+        Animated.sequence([
+          Animated.parallel([
+            Animated.timing(float, { toValue: -2, duration: 1900, useNativeDriver: true }),
+            Animated.timing(poseRotate, { toValue: -1, duration: 1900, useNativeDriver: true }),
+            Animated.timing(poseScale, { toValue: 1.012, duration: 1900, useNativeDriver: true }),
+          ]),
+          Animated.parallel([
+            Animated.timing(float, { toValue: 0, duration: 1900, useNativeDriver: true }),
+            Animated.timing(poseRotate, { toValue: 0, duration: 1900, useNativeDriver: true }),
+            Animated.timing(poseScale, { toValue: 1, duration: 1900, useNativeDriver: true }),
+          ]),
+        ]),
+      );
+      poseMotion.current.start();
+    };
+    const scheduleVariation = (minimum: number, maximum: number) => {
+      loadingVariationTimer.current = setTimeout(() => {
+        loadingVariationTimer.current = null;
+        if (!loading || failedPrompt) {
+          specialAnimationInProgress.current = false;
+          return;
+        }
+        if (
+          specialAnimationInProgress.current ||
+          Date.now() < idleCooldownUntil.current
+        ) {
+          loadingVariationTimer.current = setTimeout(() => {
+            if (loading && !failedPrompt) scheduleVariation(4000, 6000);
+          }, 5000);
+          return;
+        }
+
+        const variation = chooseVariation();
+        specialAnimationInProgress.current = true;
+        poseMotion.current?.stop();
+        setLoadingVisualPose(variation === "search" || variation === "consult" ? variation === "search" ? "idle" : "reading-quran" : "thinking");
+        if (variation === "consult") setVisualFrame(0);
+
+        let animation: Animated.CompositeAnimation;
+        if (variation === "search") {
+          animation = Animated.sequence([
+            Animated.parallel([
+              Animated.timing(poseTranslateX, { toValue: 1.5, duration: 900, useNativeDriver: true }),
+              Animated.timing(poseRotate, { toValue: 0.8, duration: 900, useNativeDriver: true }),
+            ]),
+            Animated.parallel([
+              Animated.timing(poseTranslateX, { toValue: 0, duration: 900, useNativeDriver: true }),
+              Animated.timing(poseRotate, { toValue: 0, duration: 900, useNativeDriver: true }),
+            ]),
+          ]);
+        } else if (variation === "consult") {
+          animation = Animated.sequence([
+            Animated.delay(100),
+            Animated.timing(poseTranslateX, { toValue: 1, duration: 450, useNativeDriver: true }),
+            Animated.timing(poseTranslateX, { toValue: 0, duration: 450, useNativeDriver: true }),
+            Animated.delay(700),
+          ]);
+        } else if (variation === "focus") {
+          animation = Animated.sequence([
+            Animated.parallel([
+              Animated.timing(poseScale, { toValue: 1.008, duration: 800, useNativeDriver: true }),
+              Animated.timing(poseOpacity, { toValue: 0.88, duration: 800, useNativeDriver: true }),
+            ]),
+            Animated.delay(700),
+            Animated.parallel([
+              Animated.timing(poseScale, { toValue: 1, duration: 800, useNativeDriver: true }),
+              Animated.timing(poseOpacity, { toValue: 1, duration: 800, useNativeDriver: true }),
+            ]),
+          ]);
+        } else {
+          animation = Animated.sequence([
+            Animated.timing(poseRotate, { toValue: -0.5, duration: 1100, useNativeDriver: true }),
+            Animated.timing(poseRotate, { toValue: 0, duration: 1100, useNativeDriver: true }),
+          ]);
+        }
+
+        poseMotion.current = animation;
+        const consultationListener =
+          variation === "consult"
+            ? poseTranslateX.addListener(({ value }) => {
+                if (value >= 0.9) setVisualFrame(1);
+              })
+            : null;
+        animation.start(({ finished }) => {
+          if (consultationListener) poseTranslateX.removeListener(consultationListener);
+          if (!finished || !loading || failedPrompt) {
+            specialAnimationInProgress.current = false;
+            return;
+          }
+          setVisualFrame(0);
+          setLoadingVisualPose(null);
+          poseTranslateX.setValue(0);
+          poseRotate.setValue(0);
+          poseScale.setValue(1);
+          poseOpacity.setValue(1);
+          specialAnimationInProgress.current = false;
+          idleCooldownUntil.current = Date.now() + 3000;
+          startThinkingMotion();
+          scheduleVariation(4000, 6000);
+        });
+      }, randomDelay(minimum, maximum));
+    };
+
+    scheduleVariation(3000, 4000);
+    return () => {
+      if (loadingVariationTimer.current) clearTimeout(loadingVariationTimer.current);
+      loadingVariationTimer.current = null;
+      poseMotion.current?.stop();
+      setLoadingVisualPose(null);
+      specialAnimationInProgress.current = false;
+    };
+  }, [failedPrompt, float, loading, poseOpacity, poseRotate, poseScale, poseTranslateX]);
+
+  useEffect(() => {
+    const clearInactivity = () => {
+      if (inactivityTimer.current) clearTimeout(inactivityTimer.current);
+      inactivityTimer.current = null;
+    };
+
+    const randomDelay = (minimum: number, maximum: number) =>
+      minimum + Math.floor(Math.random() * (maximum - minimum + 1));
+
+    const chooseReaction = () => {
+      const available = (["attentive", "curious", "wave"] as const).filter(
+        (reaction) =>
+          !recentInactivityReactions.current.includes(reaction) &&
+          !(reaction === "wave" && inactivityReactionsSinceWave.current < 2),
+      );
+      const reaction = available.length
+        ? available[Math.floor(Math.random() * available.length)]
+        : null;
+      if (!reaction) return null;
+      inactivityReaction.current = reaction;
+      recentInactivityReactions.current = [
+        ...recentInactivityReactions.current,
+        reaction,
+      ].slice(-2);
+      if (reaction === "wave") inactivityReactionsSinceWave.current = 0;
+      else inactivityReactionsSinceWave.current += 1;
+      return reaction;
+    };
+
+    const startIdleMotion = () => {
+      poseMotion.current = Animated.loop(
+        Animated.sequence([
+          Animated.parallel([
+            Animated.timing(float, { toValue: -3, duration: 2100, useNativeDriver: true }),
+            Animated.timing(poseScale, { toValue: 1.008, duration: 2100, useNativeDriver: true }),
+          ]),
+          Animated.parallel([
+            Animated.timing(float, { toValue: 0, duration: 2100, useNativeDriver: true }),
+            Animated.timing(poseScale, { toValue: 1, duration: 2100, useNativeDriver: true }),
+          ]),
+        ]),
+      );
+      poseMotion.current.start();
+    };
+
+    const scheduleReaction = (minimum: number, maximum: number) => {
+      inactivityTimer.current = setTimeout(() => {
+        inactivityTimer.current = null;
+        if (
+          loading ||
+          !!failedPrompt ||
+          energyVisible ||
+          historyVisible ||
+          inputFocused.current ||
+          (visualPose !== "idle" && visualPose !== "blink")
+        ) {
+          scheduleReaction(18000, 28000);
+          return;
+        }
+        if (
+          specialAnimationInProgress.current ||
+          Date.now() < idleCooldownUntil.current
+        ) {
+          scheduleReaction(18000, 28000);
+          return;
+        }
+        const reaction = chooseReaction();
+        if (!reaction) {
+          scheduleReaction(18000, 28000);
+          return;
+        }
+        specialAnimationInProgress.current = true;
+        poseMotion.current?.stop();
+        const finish = () => {
+          poseTranslateX.setValue(0);
+          poseRotate.setValue(0);
+          float.setValue(0);
+          poseScale.setValue(1);
+          specialAnimationInProgress.current = false;
+          idleCooldownUntil.current = Date.now() + 8000;
+          startIdleMotion();
+          scheduleReaction(18000, 28000);
+        };
+
+        if (reaction === "attentive") {
+          poseMotion.current = Animated.sequence([
+            Animated.parallel([
+              Animated.timing(poseTranslateX, { toValue: 1.5, duration: 650, useNativeDriver: true }),
+              Animated.timing(poseRotate, { toValue: 0.8, duration: 650, useNativeDriver: true }),
+            ]),
+            Animated.parallel([
+              Animated.timing(poseTranslateX, { toValue: 0, duration: 650, useNativeDriver: true }),
+              Animated.timing(poseRotate, { toValue: 0, duration: 650, useNativeDriver: true }),
+            ]),
+          ]);
+        } else if (reaction === "curious") {
+          poseMotion.current = Animated.sequence([
+            Animated.parallel([
+              Animated.timing(float, { toValue: -1.5, duration: 600, useNativeDriver: true }),
+              Animated.timing(poseScale, { toValue: 1.01, duration: 600, useNativeDriver: true }),
+            ]),
+            Animated.delay(600),
+            Animated.parallel([
+              Animated.timing(float, { toValue: 0, duration: 800, useNativeDriver: true }),
+              Animated.timing(poseScale, { toValue: 1, duration: 800, useNativeDriver: true }),
+            ]),
+          ]);
+        } else {
+          setVisualFrame(0);
+          setVisualPose("wave");
+          poseMotion.current = Animated.sequence([
+            Animated.timing(poseRotate, { toValue: -1.2, duration: 900, useNativeDriver: true }),
+            Animated.timing(poseRotate, { toValue: 0, duration: 900, useNativeDriver: true }),
+          ]);
+        }
+
+        poseMotion.current.start(({ finished }) => {
+          if (finished) {
+            setVisualFrame(0);
+            setVisualPose("idle");
+            finish();
+          }
+        });
+      }, randomDelay(minimum, maximum));
+    };
+
+    clearInactivity();
+    if (
+      !loading &&
+      !failedPrompt &&
+      !energyVisible &&
+      !historyVisible &&
+      !inputFocused.current &&
+      (visualPose === "idle" || visualPose === "blink")
+    ) {
+      scheduleReaction(12000, 18000);
+    }
+
+    return clearInactivity;
+  }, [energyVisible, failedPrompt, float, historyVisible, loading, poseRotate, poseScale, poseTranslateX, visualPose]);
+
+  useEffect(() => {
+    if (!loading) {
+      Animated.timing(thinkingPulse, {
+        toValue: 0,
+        duration: 420,
+        useNativeDriver: true,
+      }).start();
+      return;
+    }
+
     const animation = Animated.loop(
       Animated.sequence([
-        Animated.timing(float, {
-          toValue: -5,
-          duration: 1700,
+        Animated.timing(thinkingPulse, {
+          toValue: 1,
+          duration: 1500,
           useNativeDriver: true,
         }),
-        Animated.timing(float, {
+        Animated.timing(thinkingPulse, {
           toValue: 0,
-          duration: 1700,
+          duration: 1500,
           useNativeDriver: true,
         }),
       ]),
@@ -500,7 +1536,227 @@ export default function DalilScreen() {
 
     animation.start();
     return () => animation.stop();
-  }, [float]);
+  }, [loading, thinkingPulse]);
+
+  useEffect(() => {
+    if (!reply) {
+      currentReplyOpacity.setValue(0);
+      currentReplyTranslateY.setValue(10);
+      return;
+    }
+
+    currentReplyOpacity.setValue(0);
+    currentReplyTranslateY.setValue(10);
+    const animation = Animated.parallel([
+      Animated.timing(currentReplyOpacity, {
+        toValue: 1,
+        duration: 320,
+        useNativeDriver: true,
+      }),
+      Animated.timing(currentReplyTranslateY, {
+        toValue: 0,
+        duration: 320,
+        useNativeDriver: true,
+      }),
+    ]);
+
+    animation.start();
+    return () => animation.stop();
+  }, [currentReplyOpacity, currentReplyTranslateY, reply]);
+
+  useEffect(() => {
+    const hadCompletedLoading = wasLoading.current;
+    wasLoading.current = loading;
+
+    if (
+      loading ||
+      !hadCompletedLoading ||
+      !reply ||
+      failedPrompt ||
+      reply.quranReferences?.length
+    ) {
+      return;
+    }
+
+    const replyId = `${reply.title}:${reply.body}`;
+    if (answerReadyReplyId.current === replyId) return;
+    answerReadyReplyId.current = replyId;
+
+    answerReadyAnimation.current?.stop();
+    specialAnimationInProgress.current = true;
+    poseMotion.current?.stop();
+    poseOpacity.stopAnimation();
+    answerReadyHalo.stopAnimation();
+    poseTranslateX.setValue(0);
+    poseRotate.setValue(0);
+    poseScale.setValue(1);
+    poseOpacity.setValue(1);
+    answerReadyHalo.setValue(0);
+
+    answerReadyAnimation.current = Animated.sequence([
+      Animated.parallel([
+        Animated.timing(poseScale, {
+          toValue: 1.015,
+          duration: 190,
+          useNativeDriver: true,
+        }),
+        Animated.timing(float, {
+          toValue: -2,
+          duration: 190,
+          useNativeDriver: true,
+        }),
+        Animated.timing(answerReadyHalo, {
+          toValue: 1,
+          duration: 190,
+          useNativeDriver: true,
+        }),
+      ]),
+      Animated.delay(100),
+      Animated.parallel([
+        Animated.timing(poseScale, {
+          toValue: 1,
+          duration: 210,
+          useNativeDriver: true,
+        }),
+        Animated.timing(float, {
+          toValue: 0,
+          duration: 210,
+          useNativeDriver: true,
+        }),
+        Animated.timing(answerReadyHalo, {
+          toValue: 0,
+          duration: 210,
+          useNativeDriver: true,
+        }),
+      ]),
+    ]);
+
+    answerReadyAnimation.current.start(() => {
+      answerReadyAnimation.current = null;
+      specialAnimationInProgress.current = false;
+      idleCooldownUntil.current = Date.now() + 10000;
+      if (!loading && !failedPrompt && visualPose === "idle") {
+        poseMotion.current = Animated.loop(
+          Animated.sequence([
+            Animated.parallel([
+              Animated.timing(float, { toValue: -3, duration: 2100, useNativeDriver: true }),
+              Animated.timing(poseScale, { toValue: 1.008, duration: 2100, useNativeDriver: true }),
+            ]),
+            Animated.parallel([
+              Animated.timing(float, { toValue: 0, duration: 2100, useNativeDriver: true }),
+              Animated.timing(poseScale, { toValue: 1, duration: 2100, useNativeDriver: true }),
+            ]),
+          ]),
+        );
+        poseMotion.current.start();
+      }
+    });
+
+    return () => {
+      answerReadyAnimation.current?.stop();
+      answerReadyAnimation.current = null;
+      specialAnimationInProgress.current = false;
+      answerReadyHalo.stopAnimation();
+      answerReadyHalo.setValue(0);
+    };
+  }, [answerReadyHalo, failedPrompt, float, loading, poseScale, reply, visualPose]);
+
+  useEffect(() => {
+    if (!failedPrompt) {
+      failedReactionOpacity.setValue(1);
+      failedReactionTranslateY.setValue(0);
+      return;
+    }
+
+    failedReactionOpacity.setValue(0);
+    failedReactionTranslateY.setValue(5);
+    const animation = Animated.parallel([
+      Animated.timing(failedReactionOpacity, {
+        toValue: 1,
+        duration: 250,
+        useNativeDriver: true,
+      }),
+      Animated.timing(failedReactionTranslateY, {
+        toValue: 0,
+        duration: 250,
+        useNativeDriver: true,
+      }),
+    ]);
+
+    animation.start();
+    return () => animation.stop();
+  }, [failedPrompt, failedReactionOpacity, failedReactionTranslateY]);
+
+  useEffect(() => {
+    const clearPoseTimers = () => {
+      if (blinkTimer.current) clearTimeout(blinkTimer.current);
+      if (poseTimer.current) clearTimeout(poseTimer.current);
+      blinkTimer.current = null;
+      poseTimer.current = null;
+    };
+
+    const scheduleBlink = () => {
+      blinkTimer.current = setTimeout(() => {
+        setVisualFrame(0);
+        setVisualPose("blink");
+        poseTimer.current = setTimeout(() => {
+          setVisualPose("idle");
+          scheduleBlink();
+        }, 160);
+      }, 4000 + Math.floor(Math.random() * 4001));
+    };
+
+    clearPoseTimers();
+
+    if (failedPrompt) {
+      setVisualFrame(0);
+      setVisualPose("error");
+      return clearPoseTimers;
+    }
+
+    if (loading) {
+      setVisualFrame(0);
+      setVisualPose("thinking");
+      return clearPoseTimers;
+    }
+
+    const currentQuranReplyId = reply?.quranReferences?.length
+      ? `${reply.title}:${reply.body}`
+      : "";
+    if (
+      currentQuranReplyId &&
+      processedQuranReplyId.current !== currentQuranReplyId
+    ) {
+      processedQuranReplyId.current = currentQuranReplyId;
+      setVisualFrame(0);
+      setVisualPose("reading-quran");
+      poseTimer.current = setTimeout(() => {
+        setVisualFrame(1);
+          poseTimer.current = setTimeout(() => {
+            setVisualFrame(0);
+            setVisualPose("idle");
+            scheduleBlink();
+          }, 450);
+      }, 450);
+      return clearPoseTimers;
+    }
+
+    if (!greetingPlayed.current) {
+      greetingPlayed.current = true;
+      setVisualPose("wave");
+      setVisualFrame(0);
+      poseTimer.current = setTimeout(() => {
+        setVisualPose("idle");
+        scheduleBlink();
+      }, 2200);
+      return clearPoseTimers;
+    }
+
+    setVisualFrame(0);
+    setVisualPose("idle");
+    scheduleBlink();
+    return clearPoseTimers;
+  }, [failedPrompt, loading, reply]);
 
   const openRoute = (route: string) => {
     Keyboard.dismiss();
@@ -512,6 +1768,8 @@ export default function DalilScreen() {
     if (!trimmedPrompt || loading || submissionInFlight.current) return;
 
     submissionInFlight.current = true;
+    newTurnAnchorY.current = null;
+    newTurnScrollDone.current = false;
     setFailedPrompt("");
     setReply(null);
 
@@ -865,7 +2123,7 @@ export default function DalilScreen() {
       <View pointerEvents="none" style={styles.ambientGlow} />
 
       <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : undefined}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={styles.keyboardView}
       >
         <View style={styles.header}>
@@ -907,6 +2165,18 @@ export default function DalilScreen() {
               <View style={styles.creditPill}>
                 <Ionicons name="sparkles" size={11} color={colors.goldLight} />
                 <Text style={styles.creditText}>{balance}</Text>
+                <Pressable
+                  accessibilityLabel="Acheter de l’Énergie Wasil"
+                  accessibilityRole="button"
+                  hitSlop={6}
+                  onPress={() => void openEnergy()}
+                  style={({ pressed }) => [
+                    styles.energyAddButton,
+                    pressed && styles.energyAddButtonPressed,
+                  ]}
+                >
+                  <Text style={styles.energyAddText}>+</Text>
+                </Pressable>
               </View>
             )}
           </View>
@@ -917,6 +2187,7 @@ export default function DalilScreen() {
           contentContainerStyle={styles.content}
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
+          style={styles.conversationScroll}
         >
           <View style={styles.hero}>
             <LinearGradient
@@ -936,7 +2207,7 @@ export default function DalilScreen() {
                 <Ionicons name="sparkles" size={13} color={colors.goldLight} />
                 <Text style={styles.wasilPillText}>WASIL</Text>
               </View>
-              <Text style={styles.heroTitle}>Que souhaitez-vous faire ?</Text>
+              <Text style={styles.heroTitle}>{wasilGreeting}</Text>
               <Text style={styles.heroText}>
                 Posez une question religieuse ou demandez à Wasil d’ouvrir un
                 espace d’OUMMAH.
@@ -947,14 +2218,50 @@ export default function DalilScreen() {
               pointerEvents="none"
               style={[
                 styles.mascotWrap,
-                { transform: [{ translateY: float }] },
+                {
+                  transform: [
+                    { translateX: poseTranslateX },
+                    { translateY: float },
+                    {
+                      rotate: poseRotate.interpolate({
+                        inputRange: [-1.5, 1.5],
+                        outputRange: ["-1.5deg", "1.5deg"],
+                      }),
+                    },
+                    { scale: poseScale },
+                  ],
+                },
               ]}
             >
-              <View style={styles.mascotHalo} />
-              <Image
-                source={require("../../assets/images/home/dalil-mascot.png")}
+              <Animated.View
+                style={[
+                  styles.mascotHalo,
+                  {
+                    opacity: Animated.add(
+                      thinkingPulse.interpolate({
+                        inputRange: [0, 1],
+                        outputRange: [0.82, 1],
+                      }),
+                      answerReadyHalo.interpolate({
+                        inputRange: [0, 1],
+                        outputRange: [0, 0.16],
+                      }),
+                    ),
+                    transform: [
+                      {
+                        scale: thinkingPulse.interpolate({
+                          inputRange: [0, 1],
+                          outputRange: [1, 1.16],
+                        }),
+                      },
+                    ],
+                  },
+                ]}
+              />
+              <Animated.Image
+                source={getWasilPoseSource(loadingVisualPose ?? visualPose, visualFrame)}
                 resizeMode="contain"
-                style={styles.mascot}
+                style={[styles.mascot, { opacity: poseOpacity }]}
               />
             </Animated.View>
           </View>
@@ -1020,7 +2327,12 @@ export default function DalilScreen() {
               })}
 
               {submittedPrompt && (reply || loading) ? (
-                <View style={styles.userMessage}>
+                <View
+                  style={styles.userMessage}
+                  onLayout={(event) =>
+                    scrollToNewTurnAnchor(event.nativeEvent.layout.y)
+                  }
+                >
                   <Text style={styles.messageAuthor}>Vous</Text>
                   <Text style={styles.userMessageText}>{submittedPrompt}</Text>
                 </View>
@@ -1034,7 +2346,22 @@ export default function DalilScreen() {
                   </Text>
                 </View>
               ) : reply ? (
-                <View style={styles.wasilMessage}>
+                <Animated.View
+                  style={[
+                    styles.wasilMessage,
+                    failedPrompt && styles.wasilErrorMessage,
+                    {
+                      opacity: Animated.multiply(
+                        currentReplyOpacity,
+                        failedReactionOpacity,
+                      ),
+                      transform: [
+                        { translateY: currentReplyTranslateY },
+                        { translateY: failedReactionTranslateY },
+                      ],
+                    },
+                  ]}
+                >
                   <View style={styles.wasilMessageHeader}>
                     <View style={styles.wasilMessageIcon}>
                       <Ionicons
@@ -1046,7 +2373,7 @@ export default function DalilScreen() {
                     <Text style={styles.messageAuthor}>Wasil</Text>
                   </View>
                   <Text style={styles.wasilMessageTitle}>{reply.title}</Text>
-                  <WasilAnswerPresentation answer={reply} />
+                  <WasilAnswerPresentation answer={reply} animateReferences />
                   {failedPrompt ? (
                     <Pressable
                       accessibilityRole="button"
@@ -1083,7 +2410,7 @@ export default function DalilScreen() {
                       />
                     </Pressable>
                   ) : null}
-                </View>
+                </Animated.View>
               ) : null}
             </View>
           ) : null}
@@ -1107,7 +2434,16 @@ export default function DalilScreen() {
               accessibilityLabel="Écrire à Wasil"
               blurOnSubmit={false}
               multiline
-              onChangeText={setPrompt}
+              onBlur={() => {
+                inputFocused.current = false;
+              }}
+              onChangeText={(value) => {
+                inputFocused.current = true;
+                setPrompt(value);
+              }}
+              onFocus={() => {
+                inputFocused.current = true;
+              }}
               onSubmitEditing={() => void submitPrompt()}
               placeholder="Demandez quelque chose à Wasil…"
               placeholderTextColor={colors.textMuted}
@@ -1118,7 +2454,10 @@ export default function DalilScreen() {
             <Pressable
               accessibilityLabel="Envoyer à Wasil"
               disabled={!prompt.trim() || loading}
-              onPress={() => void submitPrompt()}
+              onPress={() => {
+                console.log("[WASIL_SEND_PRESS]");
+                void submitPrompt();
+              }}
               style={({ pressed }) => [
                 styles.sendButton,
                 (!prompt.trim() || loading) && styles.sendButtonDisabled,
@@ -1262,6 +2601,183 @@ export default function DalilScreen() {
           </Pressable>
         </Pressable>
       </Modal>
+
+      <Modal
+        animationType="slide"
+        onRequestClose={() => setEnergyVisible(false)}
+        transparent
+        visible={energyVisible}
+      >
+        <Pressable
+          onPress={() => setEnergyVisible(false)}
+          style={styles.energyBackdrop}
+        >
+          <Pressable
+            onPress={(event) => event.stopPropagation()}
+            style={styles.energySheet}
+          >
+            <ScrollView
+              bounces={false}
+              contentContainerStyle={styles.energyScrollContent}
+              showsVerticalScrollIndicator={false}
+            >
+              <View style={styles.energyHandle} />
+              <View style={styles.energyHero}>
+                <View style={styles.energyHeroGlow} />
+                <View style={styles.energyHeroGlowSecondary} />
+                <Image
+                  source={require("../../assets/images/home/dalil-mascot.png")}
+                  resizeMode="contain"
+                  style={styles.energyMascot}
+                />
+                <View style={styles.energyHeader}>
+                  <View style={styles.energyHeaderCopy}>
+                  <View style={styles.energyEyebrow}>
+                    <Ionicons name="flash" size={13} color={colors.goldLight} />
+                    <Text style={styles.energyEyebrowText}>WASIL PREMIUM</Text>
+                  </View>
+                  <Text style={styles.energyTitle}>Énergie Wasil</Text>
+                  <Text style={styles.energySubtitle}>
+                    Continuez à apprendre, comprendre et progresser avec Wasil grâce à vos crédits d'énergie.
+                  </Text>
+                  </View>
+                  <Pressable
+                    accessibilityLabel="Fermer Énergie Wasil"
+                    hitSlop={8}
+                    onPress={() => setEnergyVisible(false)}
+                    style={styles.energyClose}
+                  >
+                    <Ionicons name="close" size={20} color={colors.text} />
+                  </Pressable>
+                </View>
+              </View>
+              <View style={styles.energyBalanceCard}>
+                <View style={styles.energyBalanceValueWrap}>
+                  <Ionicons name="flash" size={26} color={colors.goldLight} />
+                  <Text style={styles.energyBalanceValue}>{balance ?? "—"}</Text>
+                </View>
+                <Text style={styles.energyBalanceLabel}>Énergie disponible</Text>
+                <Text style={styles.energyBalanceHint}>
+                  Chaque échange avec Wasil consomme de l'énergie.
+                </Text>
+              </View>
+              <Text style={styles.energyPackPrompt}>
+                Choisissez le pack qui vous convient.
+              </Text>
+              {energyLoading ? (
+                <ActivityIndicator color={colors.goldLight} style={styles.energyLoader} />
+              ) : energyPacks.length === 0 ? (
+                <Text style={styles.energyFeedback}>
+                  {energyFeedback ?? "Les packs sont momentanément indisponibles."}
+                </Text>
+              ) : (
+                <View style={styles.energyPackList}>
+                  {energyPacks.map((pack) => {
+                    const energyCount = pack.identifier.replace("energy_", "");
+                    const isPopular = pack.identifier === "energy_75";
+                    const isBestValue = pack.identifier === "energy_400";
+                    return (
+                      <View
+                        key={pack.identifier}
+                        style={[
+                          styles.energyPackRow,
+                          (isPopular || isBestValue) && styles.energyPackFeatured,
+                          isBestValue && styles.energyPackBestValue,
+                        ]}
+                      >
+                        {(isPopular || isBestValue) ? (
+                          <View style={styles.energyBadge}>
+                            <Text style={styles.energyBadgeText}>
+                              {isPopular ? "Le plus choisi" : "Meilleure valeur"}
+                            </Text>
+                          </View>
+                        ) : null}
+                        <View style={styles.energyPackIcon}>
+                          <Ionicons name="flash" size={19} color={colors.goldLight} />
+                        </View>
+                        <View style={styles.energyPackCopy}>
+                          <Text style={styles.energyPackTitle}>{energyCount} énergies</Text>
+                          <Text style={styles.energyPackPrice}>
+                            {(
+                              pack.revenueCatPackage.product as typeof pack.revenueCatPackage.product & {
+                                localizedPrice?: string;
+                              }
+                            ).localizedPrice ?? pack.price}
+                          </Text>
+                        </View>
+                        <Pressable
+                          accessibilityLabel={`Acheter ${energyCount} énergies`}
+                          disabled={Boolean(energyPurchaseId)}
+                          onPress={() => void purchaseEnergy(pack)}
+                          style={({ pressed }) => [
+                            styles.energyBuyButton,
+                            Boolean(energyPurchaseId) && styles.energyDisabled,
+                            pressed && !energyPurchaseId && styles.pressed,
+                          ]}
+                        >
+                          {energyPurchaseId === pack.identifier ? (
+                            <ActivityIndicator color="#16111B" size="small" />
+                          ) : (
+                            <Text style={styles.energyBuyText}>Acheter</Text>
+                          )}
+                        </Pressable>
+                      </View>
+                    );
+                  })}
+                </View>
+              )}
+              {energyFeedback && energyPacks.length > 0 ? (
+                <Text style={styles.energyFeedback}>{energyFeedback}</Text>
+              ) : null}
+              <View style={styles.energyInfoCard}>
+                <View style={styles.energyInfoIcon}>
+                  <Ionicons name="sparkles-outline" size={18} color={colors.goldLight} />
+                </View>
+                <Text style={styles.energyInfoTitle}>Pourquoi acheter de l’Énergie Wasil ?</Text>
+                <Text style={styles.energyInfoIntro}>
+                  L'Énergie Wasil vous permet de continuer vos échanges avec votre assistant intelligent lorsque vos crédits inclus sont épuisés.
+                </Text>
+                <View style={styles.energyInfoList}>
+                  {[
+                    "Les packs d'énergie achetés ne périment jamais.",
+                    "Ils restent disponibles sur votre compte jusqu'à leur utilisation complète.",
+                    "Les crédits gratuits ou inclus avec Premium sont toujours utilisés en priorité.",
+                    "Vos packs achetés ne sont utilisés qu'une fois ces crédits épuisés.",
+                    "La navigation dans l'application (Coran, Audio, Hadith, Qibla, Objectifs, etc.) ne consomme aucune énergie.",
+                    "Seules les réponses générées par Wasil utilisent de l'énergie.",
+                  ].map((item) => (
+                    <View key={item} style={styles.energyInfoRow}>
+                      <Ionicons name="checkmark-circle" size={16} color={colors.goldLight} />
+                      <Text style={styles.energyInfoText}>{item}</Text>
+                    </View>
+                  ))}
+                </View>
+                <View style={styles.energyReassurance}>
+                  <Ionicons name="shield-checkmark-outline" size={16} color={colors.goldLight} />
+                  <Text style={styles.energyReassuranceText}>
+                    Vos énergies achetées restent disponibles sans limite de durée.
+                  </Text>
+                </View>
+                <Text style={styles.energyTrustLine}>
+                  🔒 Paiement 100 % sécurisé via l'App Store ou Google Play.
+                </Text>
+              </View>
+              <Pressable
+                accessibilityRole="button"
+                disabled={Boolean(energyPurchaseId)}
+                onPress={() => void refreshEnergy()}
+                style={({ pressed }) => [
+                  styles.energyRefreshButton,
+                  pressed && !energyPurchaseId && styles.pressed,
+                ]}
+              >
+                <Ionicons name="refresh" size={15} color={colors.goldLight} />
+                <Text style={styles.energyRefreshText}>Actualiser mon énergie</Text>
+              </Pressable>
+            </ScrollView>
+          </Pressable>
+        </Pressable>
+      </Modal>
     </SafeAreaView>
   );
 }
@@ -1328,6 +2844,25 @@ const styles = StyleSheet.create({
     borderColor: "rgba(227,181,90,0.25)",
     backgroundColor: "rgba(23,16,38,0.82)",
   },
+  energyAddButton: {
+    width: 24,
+    height: 24,
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 12,
+    backgroundColor: colors.goldLight,
+  },
+  energyAddButtonPressed: {
+    opacity: 0.72,
+    transform: [{ scale: 0.92 }],
+  },
+  energyAddText: {
+    color: "#16111B",
+    fontFamily: typography.sans,
+    fontSize: 18,
+    fontWeight: "800",
+    lineHeight: 20,
+  },
   creditText: {
     color: colors.goldLight,
     fontFamily: typography.sans,
@@ -1364,6 +2899,10 @@ const styles = StyleSheet.create({
   content: {
     paddingHorizontal: 15,
     paddingBottom: 18,
+  },
+  conversationScroll: {
+    flex: 1,
+    flexShrink: 1,
   },
   hero: {
     minHeight: 122,
@@ -1436,25 +2975,29 @@ const styles = StyleSheet.create({
   },
   mascotWrap: {
     position: "absolute",
-    right: -2,
+    right: 2,
     bottom: -4,
-    width: 105,
-    height: 124,
+    width: 126,
+    height: 148,
     alignItems: "center",
     justifyContent: "flex-end",
   },
   mascotHalo: {
     position: "absolute",
-    right: 5,
-    bottom: 9,
-    width: 88,
-    height: 88,
-    borderRadius: 44,
-    backgroundColor: "rgba(227,181,90,0.08)",
+    right: -1,
+    bottom: 1,
+    width: 126,
+    height: 126,
+    borderRadius: 63,
+    backgroundColor: "rgba(227,181,90,0.18)",
+    shadowColor: colors.goldLight,
+    shadowOpacity: 0.42,
+    shadowRadius: 18,
+    elevation: 5,
   },
   mascot: {
-    width: 102,
-    height: 119,
+    width: 124,
+    height: 145,
   },
   previewConversation: {
     marginTop: 18,
@@ -1479,6 +3022,10 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "rgba(227,181,90,0.17)",
     backgroundColor: "rgba(23,16,38,0.92)",
+  },
+  wasilErrorMessage: {
+    borderColor: "rgba(227,181,90,0.30)",
+    backgroundColor: "rgba(42,27,49,0.94)",
   },
   wasilLoading: {
     minHeight: 52,
@@ -1560,17 +3107,34 @@ const styles = StyleSheet.create({
     fontWeight: "700",
   },
   wasilSourceRow: {
-    minHeight: 34,
+    minHeight: 46,
     flexDirection: "row",
     alignItems: "center",
     gap: 8,
   },
-  wasilSourceLabel: {
+  wasilSourceCopy: {
     flex: 1,
+  },
+  wasilSourceLabel: {
+    color: colors.goldLight,
+    fontFamily: typography.sans,
+    fontSize: 10,
+    fontWeight: "700",
+    lineHeight: 14,
+  },
+  wasilSourceDetail: {
+    marginTop: 2,
     color: colors.textSecondary,
     fontFamily: typography.sans,
     fontSize: 12,
     lineHeight: 17,
+  },
+  wasilSourceHint: {
+    marginTop: 4,
+    color: colors.goldLight,
+    fontFamily: typography.sans,
+    fontSize: 10,
+    fontWeight: "700",
   },
   wasilAnswerFooter: {
     minHeight: 34,
@@ -1605,16 +3169,20 @@ const styles = StyleSheet.create({
   },
   retryAction: {
     alignSelf: "flex-start",
-    minHeight: 34,
+    minHeight: 40,
     marginTop: 10,
-    paddingHorizontal: 12,
+    paddingHorizontal: 15,
     flexDirection: "row",
     alignItems: "center",
     gap: 6,
-    borderRadius: 12,
+    borderRadius: 20,
     borderWidth: 1,
-    borderColor: "rgba(227,181,90,0.28)",
-    backgroundColor: "rgba(227,181,90,0.07)",
+    borderColor: "rgba(227,181,90,0.40)",
+    backgroundColor: "rgba(227,181,90,0.12)",
+    shadowColor: colors.goldLight,
+    shadowOpacity: 0.14,
+    shadowRadius: 8,
+    elevation: 2,
   },
   retryActionText: {
     color: colors.goldLight,
@@ -1659,6 +3227,10 @@ const styles = StyleSheet.create({
     lineHeight: 14,
   },
   composerWrap: {
+    position: "relative",
+    zIndex: 11,
+    elevation: 11,
+    flexShrink: 0,
     paddingHorizontal: 13,
     paddingTop: 9,
     paddingBottom: Platform.OS === "ios" ? 10 : 8,
@@ -1707,8 +3279,8 @@ const styles = StyleSheet.create({
     shadowOpacity: 0,
   },
   sendButtonPressed: {
-    opacity: 0.72,
-    transform: [{ scale: 0.96 }],
+    opacity: 0.68,
+    transform: [{ scale: 0.94 }],
   },
   historyBackdrop: {
     flex: 1,
@@ -1753,6 +3325,350 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     borderRadius: 18,
     backgroundColor: "rgba(255,255,255,0.07)",
+  },
+  energyBackdrop: {
+    flex: 1,
+    justifyContent: "flex-end",
+    backgroundColor: "rgba(4,3,10,0.78)",
+  },
+  energySheet: {
+    maxHeight: "92%",
+    borderTopLeftRadius: 25,
+    borderTopRightRadius: 25,
+    borderWidth: 1,
+    borderColor: "rgba(227,181,90,0.20)",
+    backgroundColor: "#100B19",
+    overflow: "hidden",
+  },
+  energyScrollContent: {
+    paddingTop: 10,
+    paddingHorizontal: 16,
+    paddingBottom: 24,
+  },
+  energyHandle: {
+    width: 40,
+    height: 4,
+    alignSelf: "center",
+    borderRadius: 2,
+    backgroundColor: "rgba(255,255,255,0.24)",
+  },
+  energyHeader: {
+    minHeight: 194,
+    marginTop: 10,
+    flexDirection: "row",
+    alignItems: "flex-start",
+  },
+  energyHero: {
+    minHeight: 236,
+    marginTop: 18,
+    paddingHorizontal: 18,
+    paddingTop: 10,
+    overflow: "hidden",
+    borderRadius: 28,
+    borderWidth: 1,
+    borderColor: "rgba(227,181,90,0.24)",
+    backgroundColor: "#1A1226",
+    shadowColor: colors.goldLight,
+    shadowOpacity: 0.12,
+    shadowRadius: 22,
+    shadowOffset: { width: 0, height: 8 },
+    elevation: 5,
+  },
+  energyHeroGlow: {
+    position: "absolute",
+    top: -84,
+    right: -52,
+    width: 260,
+    height: 260,
+    borderRadius: 130,
+    backgroundColor: "rgba(227,181,90,0.22)",
+  },
+  energyHeroGlowSecondary: {
+    position: "absolute",
+    bottom: -110,
+    left: -70,
+    width: 210,
+    height: 210,
+    borderRadius: 105,
+    backgroundColor: "rgba(106,63,155,0.32)",
+  },
+  energyMascot: {
+    position: "absolute",
+    right: -12,
+    bottom: -16,
+    width: 164,
+    height: 190,
+    opacity: 0.98,
+    shadowColor: colors.goldLight,
+    shadowOpacity: 0.24,
+    shadowRadius: 18,
+  },
+  energyHeaderCopy: {
+    flex: 1,
+  },
+  energyEyebrow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+  },
+  energyEyebrowText: {
+    color: colors.goldLight,
+    fontFamily: typography.sans,
+    fontSize: 9,
+    fontWeight: "800",
+    letterSpacing: 1.4,
+  },
+  energyTitle: {
+    marginTop: 7,
+    color: colors.text,
+    fontFamily: typography.serifSemibold,
+    fontSize: 26,
+  },
+  energySubtitle: {
+    maxWidth: 310,
+    marginTop: 6,
+    color: colors.textMuted,
+    fontFamily: typography.sans,
+    fontSize: 12.5,
+    lineHeight: 18,
+  },
+  energyClose: {
+    width: 40,
+    height: 40,
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 20,
+    backgroundColor: "rgba(255,255,255,0.07)",
+  },
+  energyBalanceCard: {
+    minHeight: 176,
+    marginTop: 20,
+    paddingHorizontal: 18,
+    paddingVertical: 18,
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 18,
+    borderWidth: 1,
+    borderColor: "rgba(227,181,90,0.22)",
+    backgroundColor: "rgba(227,181,90,0.08)",
+  },
+  energyBalanceLabel: {
+    marginTop: 7,
+    color: colors.goldLight,
+    fontFamily: typography.sans,
+    fontSize: 13,
+    fontWeight: "800",
+    letterSpacing: 1.1,
+  },
+  energyBalanceHint: {
+    maxWidth: 245,
+    marginTop: 6,
+    textAlign: "center",
+    color: colors.textMuted,
+    fontFamily: typography.sans,
+    fontSize: 11.5,
+    lineHeight: 17,
+  },
+  energyPackPrompt: {
+    marginTop: 22,
+    marginBottom: -5,
+    color: colors.textMuted,
+    fontFamily: typography.sans,
+    fontSize: 11,
+    textAlign: "center",
+  },
+  energyBalanceValueWrap: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 9,
+  },
+  energyBalanceValue: {
+    color: colors.text,
+    fontFamily: typography.serifSemibold,
+    fontSize: 56,
+    lineHeight: 62,
+  },
+  energyLoader: { marginVertical: 32 },
+  energyPackList: { marginTop: 18, gap: 10 },
+  energyPackRow: {
+    minHeight: 102,
+    paddingHorizontal: 16,
+    paddingVertical: 16,
+    flexDirection: "row",
+    alignItems: "center",
+    borderRadius: 22,
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.13)",
+    backgroundColor: "rgba(255,255,255,0.045)",
+    shadowColor: "#000",
+    shadowOpacity: 0.30,
+    shadowRadius: 18,
+    shadowOffset: { width: 0, height: 9 },
+    elevation: 6,
+  },
+  energyPackFeatured: {
+    borderColor: "rgba(227,181,90,0.48)",
+    backgroundColor: "rgba(227,181,90,0.10)",
+    shadowColor: colors.goldLight,
+    shadowOpacity: 0.16,
+    shadowRadius: 12,
+    elevation: 6,
+  },
+  energyPackBestValue: {
+    minHeight: 114,
+    borderColor: "rgba(246,205,111,0.72)",
+    backgroundColor: "rgba(147,93,34,0.24)",
+    shadowColor: colors.goldLight,
+    shadowOpacity: 0.30,
+    shadowRadius: 24,
+    shadowOffset: { width: 0, height: 10 },
+    elevation: 10,
+  },
+  energyBadge: {
+    position: "absolute",
+    top: -10,
+    left: 13,
+    paddingHorizontal: 9,
+    paddingVertical: 4,
+    borderRadius: 9,
+    backgroundColor: colors.goldLight,
+  },
+  energyBadgeText: {
+    color: "#16111B",
+    fontFamily: typography.sans,
+    fontSize: 9,
+    fontWeight: "800",
+  },
+  energyPackIcon: {
+    width: 48,
+    height: 48,
+    marginRight: 13,
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 24,
+    backgroundColor: "rgba(227,181,90,0.12)",
+  },
+  energyPackCopy: { flex: 1 },
+  energyPackTitle: {
+    color: colors.text,
+    fontFamily: typography.sans,
+    fontSize: 17,
+    fontWeight: "700",
+  },
+  energyPackPrice: {
+    marginTop: 3,
+    color: colors.textMuted,
+    fontFamily: typography.sans,
+    fontSize: 13,
+  },
+  energyBuyButton: {
+    minWidth: 94,
+    minHeight: 50,
+    paddingHorizontal: 16,
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 25,
+    shadowColor: colors.goldLight,
+    shadowOpacity: 0.25,
+    shadowRadius: 9,
+    elevation: 3,
+    backgroundColor: colors.goldLight,
+  },
+  energyBuyText: {
+    color: "#16111B",
+    fontFamily: typography.sans,
+    fontSize: 12,
+    fontWeight: "800",
+  },
+  energyDisabled: { opacity: 0.45 },
+  energyTrustLine: {
+    marginTop: 16,
+    color: colors.textMuted,
+    fontFamily: typography.sans,
+    fontSize: 10,
+    textAlign: "center",
+  },
+  energyFeedback: {
+    marginTop: 16,
+    color: colors.textSecondary,
+    fontFamily: typography.sans,
+    fontSize: 12,
+    lineHeight: 17,
+  },
+  energyInfoCard: {
+    marginTop: 22,
+    padding: 18,
+    borderRadius: 22,
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.10)",
+    backgroundColor: "rgba(255,255,255,0.035)",
+  },
+  energyInfoIcon: {
+    width: 34,
+    height: 34,
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 17,
+    backgroundColor: "rgba(227,181,90,0.12)",
+  },
+  energyInfoTitle: {
+    marginTop: 12,
+    color: colors.text,
+    fontFamily: typography.serifSemibold,
+    fontSize: 20,
+  },
+  energyInfoIntro: {
+    marginTop: 8,
+    color: colors.textSecondary,
+    fontFamily: typography.sans,
+    fontSize: 12,
+    lineHeight: 18,
+  },
+  energyInfoList: {
+    marginTop: 14,
+    gap: 11,
+  },
+  energyInfoRow: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    gap: 8,
+  },
+  energyInfoText: {
+    flex: 1,
+    color: colors.textSecondary,
+    fontFamily: typography.sans,
+    fontSize: 12,
+    lineHeight: 18,
+  },
+  energyReassurance: {
+    marginTop: 14,
+    paddingHorizontal: 4,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 7,
+  },
+  energyReassuranceText: {
+    color: colors.textMuted,
+    fontFamily: typography.sans,
+    fontSize: 10.5,
+  },
+  energyRefreshButton: {
+    minHeight: 46,
+    marginTop: 18,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 7,
+    borderRadius: 13,
+    borderWidth: 1,
+    borderColor: "rgba(227,181,90,0.28)",
+  },
+  energyRefreshText: {
+    color: colors.goldLight,
+    fontFamily: typography.sans,
+    fontSize: 12,
+    fontWeight: "700",
   },
   historyEmpty: {
     marginTop: 42,

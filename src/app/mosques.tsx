@@ -1,59 +1,239 @@
 import { Ionicons } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
 import * as Location from 'expo-location';
 import type { Href } from 'expo-router';
 import { router, useFocusEffect } from 'expo-router';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
-    ActivityIndicator,
-    Alert,
-    Linking,
-    Pressable,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TextInput,
-    View,
+  ActivityIndicator,
+  Alert,
+  Image,
+  Linking,
+  type GestureResponderEvent,
+  type ImageSourcePropType,
+  type NativeScrollEvent,
+  type NativeSyntheticEvent,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
 } from 'react-native';
-import MapView, {
-    Marker,
-    Polyline,
-    type Region,
-} from 'react-native-maps';
+import MapView, { Marker, Polyline, type Region } from 'react-native-maps';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import {
-    getMainMosque,
-    type StoredMosque,
+  getFavoriteMosques,
+  getMainMosque,
+  setMosqueFavorite,
+  type StoredMosque,
 } from '../features/mosques/data/mosquePreferences';
 import {
-    getWalkingRoute,
-    type MosqueRoute,
+  getMosquePrayerSchedule,
+  getNextPrayer,
+  type MosquePrayerTime,
+} from '../features/mosques/data/mosquePrayerTimes';
+import {
+  getWalkingRoute,
+  type MosqueRoute,
 } from '../features/mosques/data/mosqueRoute';
 import {
-    isMosqueSearchCacheFresh,
-    readMosqueSearchCache,
-    writeMosqueSearchCache,
+  isMosqueSearchCacheFresh,
+  readMosqueSearchCache,
+  writeMosqueSearchCache,
 } from '../features/mosques/data/mosqueSearchCache';
 import {
-    getNearbyMosques,
-    type NearbyMosque,
+  getNearbyMosques,
+  type NearbyMosque,
 } from '../features/mosques/data/nearbyMosques';
+import {
+  getUserMosques,
+  type UserMosque,
+} from '../features/mosques/data/userMosques';
 import { colors } from '../theme/colors';
 import { typography } from '../theme/typography';
 
 type ExploreMode = 'list' | 'map';
 
-type LocationState =
-  | 'idle'
-  | 'loading'
-  | 'ready'
-  | 'denied'
-  | 'error';
+type LocationState = 'idle' | 'loading' | 'ready' | 'denied' | 'error';
 
 type UserCoordinates = {
   latitude: number;
   longitude: number;
 };
+
+const MOSQUE_HERO_IMAGE = require('../assets/images/mosques/mosque-hero-premium.jpg');
+const MOSQUE_CARD_IMAGES: readonly ImageSourcePropType[] = [
+  require('../assets/images/mosques/mosque-neighborhood.jpg'),
+  require('../assets/images/mosques/mosque-coastal.jpg'),
+  require('../assets/images/mosques/mosque-hero-premium.jpg'),
+  require('../assets/images/mosques/mosque-a-00.jpg'),
+  require('../assets/images/mosques/mosque-a-01.jpg'),
+  require('../assets/images/mosques/mosque-a-02.jpg'),
+  require('../assets/images/mosques/mosque-a-03.jpg'),
+  require('../assets/images/mosques/mosque-a-04.jpg'),
+  require('../assets/images/mosques/mosque-a-05.jpg'),
+  require('../assets/images/mosques/mosque-a-06.jpg'),
+  require('../assets/images/mosques/mosque-a-07.jpg'),
+  require('../assets/images/mosques/mosque-a-08.jpg'),
+  require('../assets/images/mosques/mosque-a-09.jpg'),
+  require('../assets/images/mosques/mosque-a-10.jpg'),
+  require('../assets/images/mosques/mosque-a-11.jpg'),
+  require('../assets/images/mosques/mosque-b-00.jpg'),
+  require('../assets/images/mosques/mosque-b-01.jpg'),
+  require('../assets/images/mosques/mosque-b-02.jpg'),
+  require('../assets/images/mosques/mosque-b-03.jpg'),
+  require('../assets/images/mosques/mosque-b-04.jpg'),
+  require('../assets/images/mosques/mosque-b-05.jpg'),
+  require('../assets/images/mosques/mosque-b-06.jpg'),
+  require('../assets/images/mosques/mosque-b-07.jpg'),
+  require('../assets/images/mosques/mosque-b-08.jpg'),
+  require('../assets/images/mosques/mosque-b-09.jpg'),
+  require('../assets/images/mosques/mosque-b-10.jpg'),
+  require('../assets/images/mosques/mosque-b-11.jpg'),
+];
+const MOSQUE_RENDER_BATCH_SIZE = 24;
+
+type DisplayMosque = Omit<
+  NearbyMosque,
+  'source' | 'serviceTimes' | 'lastCheckedAt'
+> & {
+  source: 'openstreetmap' | 'user';
+  serviceTimes?: string | string[];
+  lastCheckedAt?: string;
+  imageKey?: string;
+};
+
+const USER_MOSQUE_IMAGES: Record<string, ImageSourcePropType> = {
+  'mosque-a-00': require('../assets/images/mosques/mosque-a-00.jpg'),
+  'mosque-a-01': require('../assets/images/mosques/mosque-a-01.jpg'),
+  'mosque-a-02': require('../assets/images/mosques/mosque-a-02.jpg'),
+  'mosque-a-03': require('../assets/images/mosques/mosque-a-03.jpg'),
+  'mosque-a-04': require('../assets/images/mosques/mosque-a-04.jpg'),
+  'mosque-a-05': require('../assets/images/mosques/mosque-a-05.jpg'),
+  'mosque-a-06': require('../assets/images/mosques/mosque-a-06.jpg'),
+  'mosque-a-07': require('../assets/images/mosques/mosque-a-07.jpg'),
+  'mosque-a-08': require('../assets/images/mosques/mosque-a-08.jpg'),
+  'mosque-a-09': require('../assets/images/mosques/mosque-a-09.jpg'),
+  'mosque-a-10': require('../assets/images/mosques/mosque-a-10.jpg'),
+  'mosque-a-11': require('../assets/images/mosques/mosque-a-11.jpg'),
+  'mosque-b-00': require('../assets/images/mosques/mosque-b-00.jpg'),
+  'mosque-b-01': require('../assets/images/mosques/mosque-b-01.jpg'),
+  'mosque-b-02': require('../assets/images/mosques/mosque-b-02.jpg'),
+  'mosque-b-03': require('../assets/images/mosques/mosque-b-03.jpg'),
+  'mosque-b-04': require('../assets/images/mosques/mosque-b-04.jpg'),
+  'mosque-b-05': require('../assets/images/mosques/mosque-b-05.jpg'),
+  'mosque-b-06': require('../assets/images/mosques/mosque-b-06.jpg'),
+  'mosque-b-07': require('../assets/images/mosques/mosque-b-07.jpg'),
+  'mosque-b-08': require('../assets/images/mosques/mosque-b-08.jpg'),
+  'mosque-b-09': require('../assets/images/mosques/mosque-b-09.jpg'),
+  'mosque-b-10': require('../assets/images/mosques/mosque-b-10.jpg'),
+  'mosque-b-11': require('../assets/images/mosques/mosque-b-11.jpg'),
+  'mosque-coastal': require('../assets/images/mosques/mosque-coastal.jpg'),
+  'mosque-neighborhood': require('../assets/images/mosques/mosque-neighborhood.jpg'),
+};
+
+const USER_MOSQUE_FALLBACK_IMAGE = USER_MOSQUE_IMAGES['mosque-a-00'];
+
+function distanceBetween(
+  first: UserCoordinates,
+  second: UserCoordinates,
+) {
+  const toRadians = (value: number) => (value * Math.PI) / 180;
+  const latitudeDelta = toRadians(second.latitude - first.latitude);
+  const longitudeDelta = toRadians(second.longitude - first.longitude);
+  const a =
+    Math.sin(latitudeDelta / 2) ** 2 +
+    Math.cos(toRadians(first.latitude)) *
+      Math.cos(toRadians(second.latitude)) *
+      Math.sin(longitudeDelta / 2) ** 2;
+
+  return 6_371_000 * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
+
+function formatDistance(distanceMeters: number) {
+  if (distanceMeters < 1_000) return `${Math.max(1, Math.round(distanceMeters))} m`;
+  return `${(distanceMeters / 1_000).toFixed(distanceMeters < 10_000 ? 1 : 0)} km`;
+}
+
+function formatWalkingTime(distanceMeters: number) {
+  return `${Math.max(1, Math.round(distanceMeters / 80))} min à pied`;
+}
+
+function normalizeMosqueName(value: string) {
+  return value
+    .normalize('NFD')
+    .replace(/\p{Diacritic}/gu, '')
+    .toLocaleLowerCase('fr')
+    .replace(/[^a-z0-9\u0600-\u06ff]+/g, ' ')
+    .trim();
+}
+
+function namesLookSimilar(first: string, second: string) {
+  const left = normalizeMosqueName(first);
+  const right = normalizeMosqueName(second);
+  return left === right || left.includes(right) || right.includes(left);
+}
+
+function userMosqueToDisplay(
+  mosque: UserMosque,
+  userCoordinates: UserCoordinates | null,
+): DisplayMosque {
+  const distanceMeters = userCoordinates
+    ? distanceBetween(userCoordinates, {
+        latitude: mosque.latitude,
+        longitude: mosque.longitude,
+      })
+    : null;
+
+  return {
+    id: mosque.id,
+    name: mosque.name,
+    alternativeName: mosque.alternativeName,
+    arabicName: mosque.arabicName,
+    address: mosque.address,
+    latitude: mosque.latitude,
+    longitude: mosque.longitude,
+    distanceMeters: distanceMeters ?? 0,
+    distanceLabel:
+      distanceMeters === null
+        ? 'Distance indisponible'
+        : formatDistance(distanceMeters),
+    walkingTimeLabel:
+      distanceMeters === null
+        ? '—'
+        : formatWalkingTime(distanceMeters),
+    phone: mosque.phone,
+    email: mosque.email,
+    website: mosque.website,
+    openingHours: mosque.openingHours,
+    operator: mosque.operator,
+    denomination: mosque.denomination,
+    wheelchair: mosque.wheelchair,
+    womenSpace: mosque.womenSpace,
+    ablutions: mosque.ablutions,
+    parking: mosque.parking,
+    toilets: mosque.toilets,
+    languages: mosque.languages,
+    serviceTimes: mosque.serviceTimes,
+    source: 'user',
+    imageKey: mosque.imageKey,
+  };
+}
+
+function getMosqueImage(mosqueId: string, preferredIndex?: number) {
+  if (typeof preferredIndex === 'number' && preferredIndex >= 0) {
+    return MOSQUE_CARD_IMAGES[preferredIndex % MOSQUE_CARD_IMAGES.length];
+  }
+
+  const imageIndex = [...mosqueId].reduce(
+    (total, character) => total + character.charCodeAt(0),
+    0,
+  );
+
+  return MOSQUE_CARD_IMAGES[imageIndex % MOSQUE_CARD_IMAGES.length];
+}
 
 const INITIAL_REGION: Region = {
   latitude: 46.603354,
@@ -63,17 +243,14 @@ const INITIAL_REGION: Region = {
 };
 
 function getLocationErrorMessage(error: unknown) {
-  if (
-    error instanceof Error &&
-    error.message.startsWith('OVERPASS_')
-  ) {
+  if (error instanceof Error && error.message.startsWith('OVERPASS_')) {
     return 'Le service de recherche des mosquées est momentanément indisponible.';
   }
 
   return 'Impossible de récupérer les mosquées autour de vous pour le moment.';
 }
 
-function openMosqueDetails(mosque: NearbyMosque) {
+function openMosqueDetails(mosque: DisplayMosque) {
   router.push({
     pathname: '/mosque/[id]',
     params: {
@@ -86,6 +263,23 @@ function openMosqueDetails(mosque: NearbyMosque) {
       phone: mosque.phone ?? '',
       website: mosque.website ?? '',
       openingHours: mosque.openingHours ?? '',
+      alternativeName: mosque.alternativeName ?? '',
+      arabicName: mosque.arabicName ?? '',
+      email: mosque.email ?? '',
+      operator: mosque.operator ?? '',
+      denomination: mosque.denomination ?? '',
+      wheelchair: mosque.wheelchair ?? 'unknown',
+      womenSpace: mosque.womenSpace ?? 'unknown',
+      ablutions: mosque.ablutions ?? 'unknown',
+      parking: mosque.parking ?? 'unknown',
+      toilets: mosque.toilets ?? 'unknown',
+      languages: JSON.stringify(mosque.languages ?? []),
+       serviceTimes: Array.isArray(mosque.serviceTimes)
+         ? JSON.stringify(mosque.serviceTimes)
+         : mosque.serviceTimes ?? '',
+      source: mosque.source,
+      sourceUrl: mosque.sourceUrl ?? '',
+      lastCheckedAt: mosque.lastCheckedAt,
     },
   } as Href);
 }
@@ -93,41 +287,104 @@ function openMosqueDetails(mosque: NearbyMosque) {
 export default function MosquesScreen() {
   const [mode, setMode] = useState<ExploreMode>('list');
   const [query, setQuery] = useState('');
-  const [locationState, setLocationState] =
-    useState<LocationState>('idle');
+  const [locationState, setLocationState] = useState<LocationState>('idle');
   const [mosques, setMosques] = useState<NearbyMosque[]>([]);
+  const [userMosques, setUserMosques] = useState<UserMosque[]>([]);
   const [userCoordinates, setUserCoordinates] =
     useState<UserCoordinates | null>(null);
-  const [selectedMosque, setSelectedMosque] =
-    useState<NearbyMosque | null>(null);
+  const [selectedMosque, setSelectedMosque] = useState<DisplayMosque | null>(
+    null,
+  );
   const [route, setRoute] = useState<MosqueRoute | null>(null);
   const [routeLoading, setRouteLoading] = useState(false);
   const [routeError, setRouteError] = useState('');
   const [usingCachedResults, setUsingCachedResults] = useState(false);
   const [initializing, setInitializing] = useState(true);
-  const [mainMosque, setMainMosqueState] =
-    useState<StoredMosque | null>(null);
+  const [mainMosque, setMainMosqueState] = useState<StoredMosque | null>(null);
+  const [mainMosqueNextPrayer, setMainMosqueNextPrayer] =
+    useState<MosquePrayerTime | null>(null);
+  const [favoriteMosqueIds, setFavoriteMosqueIds] = useState<Set<string>>(
+    () => new Set(),
+  );
+  const [savingFavoriteId, setSavingFavoriteId] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState('');
+  const [renderedMosqueCount, setRenderedMosqueCount] = useState(
+    MOSQUE_RENDER_BATCH_SIZE,
+  );
 
-  const requestController =
-    useRef<AbortController | null>(null);
-  const routeController =
-    useRef<AbortController | null>(null);
+  const requestController = useRef<AbortController | null>(null);
+  const routeController = useRef<AbortController | null>(null);
   const mapRef = useRef<MapView | null>(null);
 
+  const displayMosques = useMemo<DisplayMosque[]>(() => {
+    const userDisplays = userMosques.map((mosque) =>
+      userMosqueToDisplay(mosque, userCoordinates),
+    );
+
+    return [
+      ...mosques,
+      ...userDisplays.filter(
+        (userMosque) =>
+          !mosques.some(
+            (osmMosque) =>
+              distanceBetween(
+                {
+                  latitude: userMosque.latitude,
+                  longitude: userMosque.longitude,
+                },
+                {
+                  latitude: osmMosque.latitude,
+                  longitude: osmMosque.longitude,
+                },
+              ) <= 50 && namesLookSimilar(userMosque.name, osmMosque.name),
+          ),
+      ),
+    ];
+  }, [mosques, userMosques, userCoordinates]);
+
   const filteredMosques = useMemo(() => {
-    const normalized = query
-      .trim()
-      .toLocaleLowerCase('fr');
+    const normalized = query.trim().toLocaleLowerCase('fr');
 
-    if (!normalized) return mosques;
+    if (!normalized) return displayMosques;
 
-    return mosques.filter((mosque) =>
-      `${mosque.name} ${mosque.address}`
+    return displayMosques.filter((mosque) =>
+      `${mosque.name} ${mosque.alternativeName ?? ''} ${mosque.arabicName ?? ''} ${mosque.address}`
         .toLocaleLowerCase('fr')
         .includes(normalized),
     );
-  }, [mosques, query]);
+  }, [displayMosques, query]);
+
+  const renderedMosques = useMemo(
+    () => filteredMosques.slice(0, renderedMosqueCount),
+    [filteredMosques, renderedMosqueCount],
+  );
+
+  const mosqueImageIndexById = useMemo(
+    () => new Map(displayMosques.map((mosque, index) => [mosque.id, index] as const)),
+    [displayMosques],
+  );
+
+  useEffect(() => {
+    setRenderedMosqueCount(MOSQUE_RENDER_BATCH_SIZE);
+  }, [query, displayMosques]);
+
+  const handleContentScroll = (
+    event: NativeSyntheticEvent<NativeScrollEvent>,
+  ) => {
+    if (mode !== 'list' || renderedMosqueCount >= filteredMosques.length) {
+      return;
+    }
+
+    const { contentOffset, contentSize, layoutMeasurement } = event.nativeEvent;
+    const distanceFromBottom =
+      contentSize.height - (contentOffset.y + layoutMeasurement.height);
+
+    if (distanceFromBottom < layoutMeasurement.height * 1.5) {
+      setRenderedMosqueCount((current) =>
+        Math.min(current + MOSQUE_RENDER_BATCH_SIZE, filteredMosques.length),
+      );
+    }
+  };
 
   const mapRegion = useMemo<Region>(() => {
     if (!userCoordinates) return INITIAL_REGION;
@@ -181,7 +438,7 @@ export default function MosquesScreen() {
     });
   };
 
-  const selectMosqueOnMap = (mosque: NearbyMosque) => {
+  const selectMosqueOnMap = (mosque: DisplayMosque) => {
     setSelectedMosque(mosque);
     setRoute(null);
     setRouteError('');
@@ -230,10 +487,7 @@ export default function MosquesScreen() {
         animated: true,
       });
     } catch (error) {
-      if (
-        error instanceof Error &&
-        error.name === 'AbortError'
-      ) {
+      if (error instanceof Error && error.name === 'AbortError') {
         return;
       }
 
@@ -252,6 +506,83 @@ export default function MosquesScreen() {
     setRoute(null);
     setRouteError('');
     fitAllMarkers();
+  };
+
+  const toggleMosqueFavorite = async (
+    event: GestureResponderEvent,
+    mosque: DisplayMosque,
+  ) => {
+    event.stopPropagation();
+
+    if (savingFavoriteId) return;
+
+    const wasFavorite = favoriteMosqueIds.has(mosque.id);
+    const nextFavorite = !wasFavorite;
+
+    setSavingFavoriteId(mosque.id);
+    setFavoriteMosqueIds((current) => {
+      const next = new Set(current);
+
+      if (nextFavorite) {
+        next.add(mosque.id);
+      } else {
+        next.delete(mosque.id);
+      }
+
+      return next;
+    });
+
+    try {
+      await setMosqueFavorite(
+        {
+          id: mosque.id,
+          name: mosque.name,
+          address: mosque.address,
+          latitude: mosque.latitude,
+          longitude: mosque.longitude,
+          alternativeName: mosque.alternativeName,
+          arabicName: mosque.arabicName,
+          phone: mosque.phone,
+          email: mosque.email,
+          website: mosque.website,
+          openingHours: mosque.openingHours,
+          operator: mosque.operator,
+          denomination: mosque.denomination,
+          wheelchair: mosque.wheelchair,
+          womenSpace: mosque.womenSpace,
+          ablutions: mosque.ablutions,
+          parking: mosque.parking,
+          toilets: mosque.toilets,
+          languages: mosque.languages,
+          serviceTimes: Array.isArray(mosque.serviceTimes)
+            ? mosque.serviceTimes.join(', ')
+            : mosque.serviceTimes,
+          ...(mosque.source === 'openstreetmap'
+            ? { source: mosque.source, sourceUrl: mosque.sourceUrl }
+            : {}),
+        },
+        nextFavorite,
+      );
+    } catch {
+      setFavoriteMosqueIds((current) => {
+        const next = new Set(current);
+
+        if (wasFavorite) {
+          next.add(mosque.id);
+        } else {
+          next.delete(mosque.id);
+        }
+
+        return next;
+      });
+
+      Alert.alert(
+        'Favori non enregistré',
+        'Impossible de modifier vos mosquées favorites pour le moment.',
+      );
+    } finally {
+      setSavingFavoriteId(null);
+    }
   };
 
   const searchFromCoordinates = async (
@@ -295,8 +626,7 @@ export default function MosquesScreen() {
     setRouteError('');
 
     try {
-      const permission =
-        await Location.requestForegroundPermissionsAsync();
+      const permission = await Location.requestForegroundPermissionsAsync();
 
       if (!permission.granted) {
         setLocationState('denied');
@@ -305,20 +635,16 @@ export default function MosquesScreen() {
         return;
       }
 
-      const lastKnownPosition =
-        await Location.getLastKnownPositionAsync();
-
-      if (lastKnownPosition) {
-        setUserCoordinates({
-          latitude: lastKnownPosition.coords.latitude,
-          longitude: lastKnownPosition.coords.longitude,
-        });
-      }
+      const lastKnownPosition = await Location.getLastKnownPositionAsync({
+        maxAge: 5 * 60 * 1000,
+        requiredAccuracy: 1_000,
+      });
 
       const position =
-        await Location.getCurrentPositionAsync({
+        lastKnownPosition ??
+        (await Location.getCurrentPositionAsync({
           accuracy: Location.Accuracy.Balanced,
-        });
+        }));
 
       const coordinates = {
         latitude: position.coords.latitude,
@@ -352,14 +678,11 @@ export default function MosquesScreen() {
         }
       }, 350);
     } catch (error) {
-      if (
-        error instanceof Error &&
-        error.name === 'AbortError'
-      ) {
+      if (error instanceof Error && error.name === 'AbortError') {
         return;
       }
 
-      const cache = await readMosqueSearchCache();
+      const cache = await readMosqueSearchCache().catch(() => null);
 
       if (cache) {
         setUserCoordinates({
@@ -380,10 +703,7 @@ export default function MosquesScreen() {
       setLocationState('error');
 
       if (!silent) {
-        Alert.alert(
-          'Recherche impossible',
-          getLocationErrorMessage(error),
-        );
+        Alert.alert('Recherche impossible', getLocationErrorMessage(error));
       }
     }
   };
@@ -402,11 +722,7 @@ export default function MosquesScreen() {
   const selectMode = (nextMode: ExploreMode) => {
     setMode(nextMode);
 
-    if (
-      nextMode === 'map' &&
-      userCoordinates &&
-      mosques.length > 0
-    ) {
+    if (nextMode === 'map' && userCoordinates && mosques.length > 0) {
       setTimeout(fitAllMarkers, 300);
     }
   };
@@ -414,19 +730,42 @@ export default function MosquesScreen() {
   useFocusEffect(
     useCallback(() => {
       let active = true;
+      const prayerController = new AbortController();
 
-      const loadMainMosque = async () => {
-        const storedMainMosque = await getMainMosque();
+      const loadMosquePreferences = async () => {
+        const [storedMainMosque, favoriteMosques, storedUserMosques] = await Promise.all([
+          getMainMosque().catch(() => null),
+          getFavoriteMosques().catch(() => []),
+          getUserMosques().catch(() => []),
+        ]);
 
         if (active) {
           setMainMosqueState(storedMainMosque);
+          setFavoriteMosqueIds(
+            new Set(favoriteMosques.map((mosque) => mosque.id)),
+          );
+          setUserMosques(storedUserMosques);
+          setMainMosqueNextPrayer(null);
+        }
+
+        if (!storedMainMosque) return;
+
+        const schedule = await getMosquePrayerSchedule(
+          storedMainMosque.latitude,
+          storedMainMosque.longitude,
+          prayerController.signal,
+        ).catch(() => null);
+
+        if (active && schedule) {
+          setMainMosqueNextPrayer(getNextPrayer(schedule));
         }
       };
 
-      void loadMainMosque();
+      void loadMosquePreferences();
 
       return () => {
         active = false;
+        prayerController.abort();
       };
     }, []),
   );
@@ -435,7 +774,7 @@ export default function MosquesScreen() {
     let active = true;
 
     const initializeMosques = async () => {
-      const cache = await readMosqueSearchCache();
+      const cache = await readMosqueSearchCache().catch(() => null);
 
       if (!active) return;
 
@@ -449,8 +788,18 @@ export default function MosquesScreen() {
         setLocationState('ready');
       }
 
-      const permission =
-        await Location.getForegroundPermissionsAsync();
+      let permission: Location.LocationPermissionResponse;
+
+      try {
+        permission = await Location.getForegroundPermissionsAsync();
+      } catch {
+        if (!active) return;
+
+        setInitializing(false);
+        setLocationState(cache ? 'ready' : 'error');
+        setErrorMessage('La localisation est temporairement indisponible.');
+        return;
+      }
 
       if (!active) return;
 
@@ -487,11 +836,7 @@ export default function MosquesScreen() {
           onPress={() => router.back()}
           style={styles.headerButton}
         >
-          <Ionicons
-            name="arrow-back"
-            size={23}
-            color={colors.goldLight}
-          />
+          <Ionicons name="arrow-back" size={23} color={colors.goldLight} />
         </Pressable>
 
         <View style={styles.headerCopy}>
@@ -501,16 +846,10 @@ export default function MosquesScreen() {
 
         <Pressable
           accessibilityLabel="Mes mosquées favorites"
-          onPress={() =>
-            router.push('/mosque/favorites' as Href)
-          }
+          onPress={() => router.push('/mosque/favorites' as Href)}
           style={styles.headerButton}
         >
-          <Ionicons
-            name="heart-outline"
-            size={23}
-            color={colors.goldLight}
-          />
+          <Ionicons name="heart-outline" size={23} color={colors.goldLight} />
         </Pressable>
       </View>
 
@@ -518,59 +857,118 @@ export default function MosquesScreen() {
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
+        onScroll={handleContentScroll}
+        scrollEventThrottle={100}
       >
         <View style={styles.heroCard}>
-          <View style={styles.heroGlow} />
+          <Image
+            source={MOSQUE_HERO_IMAGE}
+            resizeMode="cover"
+            style={styles.heroImage}
+          />
+          <LinearGradient
+            colors={[
+              'rgba(7,5,16,0.03)',
+              'rgba(8,5,18,0.16)',
+              'rgba(8,5,18,0.74)',
+            ]}
+            locations={[0, 0.44, 1]}
+            style={StyleSheet.absoluteFill}
+          />
 
-          <View style={styles.heroIcon}>
+          <View style={styles.heroPhotoLabel}>
             <Ionicons
               name="location-outline"
-              size={29}
+              size={15}
               color={colors.goldLight}
             />
+            <Text style={styles.heroPhotoLabelText}>
+              MOSQUÉES AUTOUR DE VOUS
+            </Text>
           </View>
 
-          <Text style={styles.heroTitle}>
-            Trouver une mosquée près de vous
-          </Text>
-
-          <Text style={styles.heroText}>
-            OUMMAH utilise votre position pour afficher les
-            mosquées proches et calculer leur distance.
-          </Text>
-
-          <Pressable
-            accessibilityRole="button"
-            disabled={locationState === 'loading'}
-            onPress={() => void locateMosques(false)}
-            style={({ pressed }) => [
-              styles.locationButton,
-              pressed && styles.pressed,
-              locationState === 'loading' &&
-                styles.disabledButton,
+          <LinearGradient
+            colors={[
+              'rgba(82,57,94,0.54)',
+              'rgba(38,24,51,0.67)',
+              'rgba(13,8,24,0.79)',
             ]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={styles.heroGlassPanel}
           >
-            {locationState === 'loading' ? (
-              <ActivityIndicator
-                size="small"
-                color={colors.background}
-              />
-            ) : (
-              <Ionicons
-                name="navigate-outline"
-                size={20}
-                color={colors.background}
-              />
-            )}
+            <View pointerEvents="none" style={styles.heroGlassOrbTop} />
+            <View pointerEvents="none" style={styles.heroGlassOrbBottom} />
+            <LinearGradient
+              pointerEvents="none"
+              colors={[
+                'rgba(255,255,255,0.18)',
+                'rgba(255,255,255,0.035)',
+                'transparent',
+              ]}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 0.72, y: 0.9 }}
+              style={styles.heroGlassSheen}
+            />
+            <View pointerEvents="none" style={styles.heroGlassTopLine} />
 
-            <Text style={styles.locationButtonText}>
-              {locationButtonLabel}
+            <View style={styles.heroHeadingRow}>
+              <View style={styles.heroLocationIcon}>
+                <Ionicons
+                  name="location-outline"
+                  size={20}
+                  color={colors.goldLight}
+                />
+              </View>
+
+              <Text style={styles.heroTitle}>
+                Trouvez une mosquée près de vous
+              </Text>
+            </View>
+
+            <Text style={styles.heroText}>
+              OUMMAH utilise votre position pour afficher les mosquées proches
+              et calculer leur distance.
             </Text>
-          </Pressable>
 
-          <Text style={styles.privacyText}>
-            Votre position n’est ni publiée ni enregistrée.
-          </Text>
+            <Pressable
+              accessibilityRole="button"
+              disabled={locationState === 'loading'}
+              onPress={() => void locateMosques(false)}
+              style={({ pressed }) => [
+                pressed && styles.pressed,
+                locationState === 'loading' && styles.disabledButton,
+              ]}
+            >
+              <LinearGradient
+                colors={['#F3D27A', '#D9A846']}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={styles.locationButton}
+              >
+                {locationState === 'loading' ? (
+                  <ActivityIndicator size="small" color={colors.background} />
+                ) : (
+                  <Ionicons
+                    name="navigate"
+                    size={19}
+                    color={colors.background}
+                  />
+                )}
+
+                <Text style={styles.locationButtonText}>
+                  {locationButtonLabel}
+                </Text>
+              </LinearGradient>
+            </Pressable>
+
+            <View style={styles.privacyPill}>
+              <Ionicons name="lock-closed" size={11} color="#C9BFCE" />
+              <Text style={styles.privacyText}>
+                Votre position n’est ni publiée ni enregistrée.
+              </Text>
+            </View>
+          </LinearGradient>
         </View>
 
         {locationState === 'denied' ? (
@@ -582,12 +980,10 @@ export default function MosquesScreen() {
             />
 
             <View style={styles.messageCopy}>
-              <Text style={styles.messageTitle}>
-                Localisation refusée
-              </Text>
+              <Text style={styles.messageTitle}>Localisation refusée</Text>
               <Text style={styles.messageText}>
-                Autorisez la localisation dans les réglages pour
-                découvrir les mosquées autour de vous.
+                Autorisez la localisation dans les réglages pour découvrir les
+                mosquées autour de vous.
               </Text>
             </View>
 
@@ -595,9 +991,7 @@ export default function MosquesScreen() {
               onPress={() => void openAppSettings()}
               style={styles.settingsButton}
             >
-              <Text style={styles.settingsButtonText}>
-                Réglages
-              </Text>
+              <Text style={styles.settingsButtonText}>Réglages</Text>
             </Pressable>
           </View>
         ) : null}
@@ -609,9 +1003,7 @@ export default function MosquesScreen() {
               size={21}
               color={colors.goldLight}
             />
-            <Text style={styles.cacheWarningText}>
-              {errorMessage}
-            </Text>
+            <Text style={styles.cacheWarningText}>{errorMessage}</Text>
           </View>
         ) : null}
 
@@ -622,9 +1014,7 @@ export default function MosquesScreen() {
               size={23}
               color={colors.goldLight}
             />
-            <Text style={styles.errorText}>
-              {errorMessage}
-            </Text>
+            <Text style={styles.errorText}>{errorMessage}</Text>
           </View>
         ) : null}
 
@@ -659,63 +1049,89 @@ export default function MosquesScreen() {
             pressed && styles.pressed,
           ]}
         >
-          <View
-            style={[
-              styles.myMosqueIcon,
-              mainMosque && styles.myMosqueIconActive,
-            ]}
-          >
-            <Ionicons
-              name={mainMosque ? 'home' : 'home-outline'}
-              size={24}
-              color={
-                mainMosque
-                  ? colors.background
-                  : colors.goldLight
-              }
+          <View style={styles.myMosqueImageWrap}>
+            <Image
+              source={getMosqueImage(mainMosque?.id ?? 'main')}
+              resizeMode="cover"
+              style={styles.myMosqueImage}
             />
+            <LinearGradient
+              colors={['transparent', 'rgba(8,7,19,0.50)']}
+              style={StyleSheet.absoluteFill}
+            />
+            <View style={styles.myMosqueImageBadge}>
+              <Ionicons
+                name={mainMosque ? 'home' : 'home-outline'}
+                size={14}
+                color={colors.background}
+              />
+            </View>
           </View>
 
           <View style={styles.myMosqueCopy}>
-            <Text style={styles.sectionEyebrow}>
-              MA MOSQUÉE
-            </Text>
-            <Text
-              numberOfLines={2}
-              style={styles.myMosqueTitle}
-            >
+            <Text style={styles.sectionEyebrow}>MA MOSQUÉE</Text>
+            <Text numberOfLines={2} style={styles.myMosqueTitle}>
               {mainMosque
                 ? mainMosque.name
                 : 'Choisissez votre mosquée principale'}
             </Text>
-            <Text
-              numberOfLines={2}
-              style={styles.myMosqueText}
-            >
+            <Text numberOfLines={2} style={styles.myMosqueText}>
               {mainMosque
                 ? mainMosque.address
                 : 'Retrouvez ses horaires et ses événements en un geste.'}
             </Text>
+
+            {mainMosque && mainMosqueNextPrayer ? (
+              <View style={styles.nextPrayerRow}>
+                <Ionicons
+                  name="time-outline"
+                  size={14}
+                  color={colors.textMuted}
+                />
+                <Text style={styles.nextPrayerLabel}>Prochaine prière</Text>
+                <View style={styles.nextPrayerDot} />
+                <Text style={styles.nextPrayerValue}>
+                  {mainMosqueNextPrayer.label} {mainMosqueNextPrayer.time}
+                </Text>
+              </View>
+            ) : null}
           </View>
 
+          <Ionicons name="chevron-forward" size={21} color={colors.goldLight} />
+        </Pressable>
+
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel="Ajouter une mosquée"
+          onPress={() => router.push('/mosque/add' as Href)}
+          style={({ pressed }) => [
+            styles.addMosqueButton,
+            pressed && styles.pressed,
+          ]}
+        >
+          <View style={styles.addMosqueIcon}>
+            <Ionicons name="add" size={21} color={colors.background} />
+          </View>
+          <View style={styles.addMosqueCopy}>
+            <Text style={styles.addMosqueTitle}>Ajouter une mosquée</Text>
+            <Text style={styles.addMosqueSubtitle}>
+              Enregistrer une mosquée sur cet appareil
+            </Text>
+          </View>
           <Ionicons
             name="chevron-forward"
-            size={21}
+            size={19}
             color={colors.goldLight}
           />
         </Pressable>
 
         <View style={styles.searchWrap}>
-          <Ionicons
-            name="search-outline"
-            size={21}
-            color={colors.textMuted}
-          />
+          <Ionicons name="search-outline" size={21} color={colors.textMuted} />
 
           <TextInput
             value={query}
             onChangeText={setQuery}
-            placeholder="Rechercher dans les résultats"
+            placeholder="Rechercher une mosquée"
             placeholderTextColor={colors.textMuted}
             returnKeyType="search"
             style={styles.searchInput}
@@ -732,15 +1148,21 @@ export default function MosquesScreen() {
                 color={colors.textMuted}
               />
             </Pressable>
-          ) : null}
+          ) : (
+            <View style={styles.searchFilterButton}>
+              <Ionicons
+                name="options-outline"
+                size={19}
+                color={colors.goldLight}
+              />
+            </View>
+          )}
         </View>
 
         <View style={styles.sectionHeader}>
           <View style={styles.sectionHeaderCopy}>
             <Text style={styles.sectionTitle}>
-              {locationState === 'ready'
-                ? 'Mosquées proches'
-                : 'Explorer'}
+              {locationState === 'ready' ? 'Mosquées proches' : 'Explorer'}
             </Text>
 
             <Text style={styles.sectionSubtitle}>
@@ -770,18 +1192,13 @@ export default function MosquesScreen() {
               <Ionicons
                 name="list-outline"
                 size={17}
-                color={
-                  mode === 'list'
-                    ? colors.background
-                    : colors.goldLight
-                }
+                color={mode === 'list' ? colors.background : colors.goldLight}
               />
 
               <Text
                 style={[
                   styles.modeButtonText,
-                  mode === 'list' &&
-                    styles.modeButtonTextActive,
+                  mode === 'list' && styles.modeButtonTextActive,
                 ]}
               >
                 Liste
@@ -799,18 +1216,13 @@ export default function MosquesScreen() {
               <Ionicons
                 name="map-outline"
                 size={17}
-                color={
-                  mode === 'map'
-                    ? colors.background
-                    : colors.goldLight
-                }
+                color={mode === 'map' ? colors.background : colors.goldLight}
               />
 
               <Text
                 style={[
                   styles.modeButtonText,
-                  mode === 'map' &&
-                    styles.modeButtonTextActive,
+                  mode === 'map' && styles.modeButtonTextActive,
                 ]}
               >
                 Carte
@@ -851,14 +1263,11 @@ export default function MosquesScreen() {
                   title={mosque.name}
                   description={`${mosque.distanceLabel} • ${mosque.address}`}
                   pinColor={
-                    selectedMosque?.id === mosque.id
-                      ? '#d9b45f'
-                      : '#8a5aa4'
+                    selectedMosque?.id === mosque.id ? '#d9b45f' : '#8a5aa4'
                   }
+                  tracksViewChanges={false}
                   onPress={() => selectMosqueOnMap(mosque)}
-                  onCalloutPress={() =>
-                    openMosqueDetails(mosque)
-                  }
+                  onCalloutPress={() => openMosqueDetails(mosque)}
                 />
               ))}
             </MapView>
@@ -878,8 +1287,8 @@ export default function MosquesScreen() {
                 </Text>
 
                 <Text style={styles.mapOverlayText}>
-                  La carte affichera votre position et les
-                  mosquées autour de vous.
+                  La carte affichera votre position et les mosquées autour de
+                  vous.
                 </Text>
 
                 <Pressable
@@ -900,53 +1309,37 @@ export default function MosquesScreen() {
                   onPress={clearSelectedMosque}
                   style={styles.selectedMosqueClose}
                 >
-                  <Ionicons
-                    name="close"
-                    size={18}
-                    color={colors.textMuted}
-                  />
+                  <Ionicons name="close" size={18} color={colors.textMuted} />
                 </Pressable>
 
-                <Text
-                  numberOfLines={2}
-                  style={styles.selectedMosqueName}
-                >
+                <Text numberOfLines={2} style={styles.selectedMosqueName}>
                   {selectedMosque.name}
                 </Text>
 
-                <Text
-                  numberOfLines={1}
-                  style={styles.selectedMosqueAddress}
-                >
+                <Text numberOfLines={1} style={styles.selectedMosqueAddress}>
                   {selectedMosque.address}
                 </Text>
 
                 <View style={styles.selectedMosqueMeta}>
                   <Text style={styles.selectedMosqueDistance}>
-                    {route?.distanceLabel ??
-                      selectedMosque.distanceLabel}
+                    {route?.distanceLabel ?? selectedMosque.distanceLabel}
                   </Text>
 
                   <View style={styles.selectedMosqueDot} />
 
                   <Text style={styles.selectedMosqueDuration}>
-                    {route?.durationLabel ??
-                      selectedMosque.walkingTimeLabel}
+                    {route?.durationLabel ?? selectedMosque.walkingTimeLabel}
                   </Text>
                 </View>
 
                 {routeError ? (
-                  <Text style={styles.routeErrorText}>
-                    {routeError}
-                  </Text>
+                  <Text style={styles.routeErrorText}>{routeError}</Text>
                 ) : null}
 
                 <View style={styles.selectedMosqueActions}>
                   <Pressable
                     disabled={routeLoading}
-                    onPress={() =>
-                      void drawRouteToSelectedMosque()
-                    }
+                    onPress={() => void drawRouteToSelectedMosque()}
                     style={({ pressed }) => [
                       styles.routeButton,
                       pressed && styles.pressed,
@@ -967,24 +1360,18 @@ export default function MosquesScreen() {
                     )}
 
                     <Text style={styles.routeButtonText}>
-                      {route
-                        ? 'Recalculer'
-                        : 'Afficher le trajet'}
+                      {route ? 'Recalculer' : 'Afficher le trajet'}
                     </Text>
                   </Pressable>
 
                   <Pressable
-                    onPress={() =>
-                      openMosqueDetails(selectedMosque)
-                    }
+                    onPress={() => openMosqueDetails(selectedMosque)}
                     style={({ pressed }) => [
                       styles.detailButton,
                       pressed && styles.pressed,
                     ]}
                   >
-                    <Text style={styles.detailButtonText}>
-                      Voir la fiche
-                    </Text>
+                    <Text style={styles.detailButtonText}>Voir la fiche</Text>
                   </Pressable>
                 </View>
               </View>
@@ -1002,11 +1389,7 @@ export default function MosquesScreen() {
                   onPress={centerMapOnUser}
                   style={styles.mapControlButton}
                 >
-                  <Ionicons
-                    name="locate"
-                    size={21}
-                    color={colors.goldLight}
-                  />
+                  <Ionicons name="locate" size={21} color={colors.goldLight} />
                 </Pressable>
 
                 <Pressable
@@ -1025,10 +1408,7 @@ export default function MosquesScreen() {
 
             {locationState === 'loading' ? (
               <View style={styles.mapLoading}>
-                <ActivityIndicator
-                  size="small"
-                  color={colors.goldLight}
-                />
+                <ActivityIndicator size="small" color={colors.goldLight} />
                 <Text style={styles.mapLoadingText}>
                   Recherche des mosquées…
                 </Text>
@@ -1037,22 +1417,15 @@ export default function MosquesScreen() {
           </View>
         ) : locationState === 'loading' ? (
           <View style={styles.emptyCard}>
-            <ActivityIndicator
-              size="large"
-              color={colors.goldLight}
-            />
+            <ActivityIndicator size="large" color={colors.goldLight} />
 
-            <Text style={styles.emptyTitle}>
-              Recherche autour de vous
-            </Text>
+            <Text style={styles.emptyTitle}>Recherche autour de vous</Text>
 
             <Text style={styles.emptyText}>
-              La première recherche peut prendre quelques
-              secondes.
+              La première recherche peut prendre quelques secondes.
             </Text>
           </View>
-        ) : locationState === 'ready' &&
-          filteredMosques.length === 0 ? (
+        ) : locationState === 'ready' && filteredMosques.length === 0 ? (
           <View style={styles.emptyCard}>
             <Ionicons
               name="business-outline"
@@ -1060,9 +1433,7 @@ export default function MosquesScreen() {
               color={colors.goldLight}
             />
 
-            <Text style={styles.emptyTitle}>
-              Aucune mosquée trouvée
-            </Text>
+            <Text style={styles.emptyTitle}>Aucune mosquée trouvée</Text>
 
             <Text style={styles.emptyText}>
               Effacez la recherche ou actualisez votre position.
@@ -1070,7 +1441,7 @@ export default function MosquesScreen() {
           </View>
         ) : filteredMosques.length > 0 ? (
           <View style={styles.list}>
-            {filteredMosques.map((mosque) => (
+            {renderedMosques.map((mosque) => (
               <Pressable
                 key={mosque.id}
                 onPress={() => openMosqueDetails(mosque)}
@@ -1079,26 +1450,32 @@ export default function MosquesScreen() {
                   pressed && styles.pressed,
                 ]}
               >
-                <View style={styles.mosqueIcon}>
-                  <Ionicons
-                    name="business-outline"
-                    size={25}
-                    color={colors.goldLight}
+                <View style={styles.mosqueImageWrap}>
+                  <Image
+                    source={
+                      mosque.source === 'user'
+                        ? USER_MOSQUE_IMAGES[mosque.imageKey ?? ''] ??
+                          USER_MOSQUE_FALLBACK_IMAGE
+                        : getMosqueImage(
+                            mosque.id,
+                            mosqueImageIndexById.get(mosque.id),
+                          )
+                    }
+                    resizeMode="cover"
+                    style={styles.mosqueImage}
+                  />
+                  <LinearGradient
+                    colors={['transparent', 'rgba(9,7,19,0.72)']}
+                    style={StyleSheet.absoluteFill}
                   />
                 </View>
 
                 <View style={styles.mosqueCopy}>
-                  <Text
-                    numberOfLines={2}
-                    style={styles.mosqueName}
-                  >
+                  <Text numberOfLines={2} style={styles.mosqueName}>
                     {mosque.name}
                   </Text>
 
-                  <Text
-                    numberOfLines={2}
-                    style={styles.mosqueAddress}
-                  >
+                  <Text numberOfLines={2} style={styles.mosqueAddress}>
                     {mosque.address}
                   </Text>
 
@@ -1115,32 +1492,60 @@ export default function MosquesScreen() {
                   </View>
 
                   <View style={styles.tags}>
-                    <View style={styles.tag}>
-                      <Ionicons
-                        name="information-circle-outline"
-                        size={12}
-                        color={colors.goldLight}
-                      />
-                      <Text style={styles.tagText}>
-                        Voir la fiche
+                    <View style={[styles.tag, styles.availableTag]}>
+                      <View style={styles.availableDot} />
+                      <Text style={styles.availableTagText}>
+                        {mosque.source === 'user'
+                          ? 'Ajoutée sur cet appareil'
+                          : 'Fiche disponible'}
                       </Text>
                     </View>
 
                     {mosque.openingHours ? (
                       <View style={styles.tag}>
-                        <Text style={styles.tagText}>
-                          Horaires renseignés
-                        </Text>
+                        <Text style={styles.tagText}>Horaires renseignés</Text>
                       </View>
                     ) : null}
                   </View>
                 </View>
 
-                <Ionicons
-                  name="chevron-forward"
-                  size={20}
-                  color={colors.goldLight}
-                />
+                <View style={styles.mosqueActions}>
+                  <Pressable
+                    accessibilityLabel={
+                      favoriteMosqueIds.has(mosque.id)
+                        ? 'Retirer des favoris'
+                        : 'Ajouter aux favoris'
+                    }
+                    disabled={savingFavoriteId !== null}
+                    onPress={(event) =>
+                      void toggleMosqueFavorite(event, mosque)
+                    }
+                    style={styles.mosqueFavoriteButton}
+                  >
+                    {savingFavoriteId === mosque.id ? (
+                      <ActivityIndicator
+                        size="small"
+                        color={colors.goldLight}
+                      />
+                    ) : (
+                      <Ionicons
+                        name={
+                          favoriteMosqueIds.has(mosque.id)
+                            ? 'heart'
+                            : 'heart-outline'
+                        }
+                        size={20}
+                        color={colors.goldLight}
+                      />
+                    )}
+                  </Pressable>
+
+                  <Ionicons
+                    name="chevron-forward"
+                    size={20}
+                    color={colors.goldLight}
+                  />
+                </View>
               </Pressable>
             ))}
           </View>
@@ -1157,8 +1562,7 @@ export default function MosquesScreen() {
             </Text>
 
             <Text style={styles.emptyText}>
-              Appuyez sur « Utiliser ma position » pour
-              commencer.
+              Appuyez sur « Utiliser ma position » pour commencer.
             </Text>
           </View>
         )}
@@ -1170,24 +1574,26 @@ export default function MosquesScreen() {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: colors.background,
+    backgroundColor: '#080713',
   },
   header: {
-    minHeight: 78,
-    paddingHorizontal: 14,
+    minHeight: 96,
+    paddingHorizontal: 18,
+    paddingTop: 4,
+    paddingBottom: 8,
     flexDirection: 'row',
     alignItems: 'center',
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderColor: colors.borderSoft,
-    backgroundColor: colors.backgroundSecondary,
+    backgroundColor: '#080713',
   },
   headerButton: {
-    width: 44,
-    height: 44,
+    width: 46,
+    height: 46,
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: 22,
-    backgroundColor: colors.purpleDeep,
+    borderRadius: 23,
+    borderWidth: 1,
+    borderColor: 'rgba(224,188,112,0.18)',
+    backgroundColor: 'rgba(31,18,47,0.72)',
   },
   headerCopy: {
     flex: 1,
@@ -1203,72 +1609,155 @@ const styles = StyleSheet.create({
     marginTop: 2,
     color: colors.goldLight,
     fontFamily: typography.serifMedium,
-    fontSize: 31,
+    fontSize: 34,
+    lineHeight: 39,
   },
   content: {
     width: '100%',
     maxWidth: 760,
-    paddingHorizontal: 14,
-    paddingTop: 18,
-    paddingBottom: 56,
+    paddingHorizontal: 16,
+    paddingTop: 8,
+    paddingBottom: 62,
     alignSelf: 'center',
   },
   heroCard: {
     overflow: 'hidden',
-    paddingHorizontal: 20,
-    paddingVertical: 25,
+    minHeight: 410,
+    borderRadius: 28,
+    borderWidth: 1,
+    borderColor: 'rgba(236,196,102,0.48)',
+    backgroundColor: '#130D20',
+    shadowColor: '#000',
+    shadowOpacity: 0.42,
+    shadowRadius: 26,
+    shadowOffset: { width: 0, height: 16 },
+    elevation: 11,
+  },
+  heroImage: {
+    ...StyleSheet.absoluteFillObject,
+    width: '100%',
+    height: '100%',
+  },
+  heroPhotoLabel: {
+    position: 'absolute',
+    top: 16,
+    left: 16,
+    paddingHorizontal: 11,
+    paddingVertical: 7,
+    flexDirection: 'row',
     alignItems: 'center',
+    gap: 6,
+    borderRadius: 99,
+    borderWidth: 1,
+    borderColor: 'rgba(236,196,102,0.34)',
+    backgroundColor: 'rgba(12,8,22,0.68)',
+  },
+  heroPhotoLabelText: {
+    color: '#F1D385',
+    fontFamily: typography.sans,
+    fontSize: 9,
+    fontWeight: '800',
+    letterSpacing: 1.05,
+  },
+  heroGlassPanel: {
+    position: 'absolute',
+    right: 13,
+    bottom: 13,
+    left: 13,
+    overflow: 'hidden',
+    padding: 14,
     borderRadius: 24,
     borderWidth: 1,
-    borderColor: 'rgba(224,188,112,0.34)',
-    backgroundColor: colors.surfaceAlt,
+    borderColor: 'rgba(255,236,209,0.38)',
+    shadowColor: '#000',
+    shadowOpacity: 0.28,
+    shadowRadius: 16,
+    shadowOffset: { width: 0, height: 8 },
+    elevation: 7,
   },
-  heroGlow: {
+  heroGlassOrbTop: {
     position: 'absolute',
-    top: -90,
-    right: -50,
-    width: 210,
-    height: 210,
-    borderRadius: 105,
-    backgroundColor: 'rgba(126,72,148,0.24)',
+    top: -86,
+    right: -46,
+    width: 188,
+    height: 188,
+    borderRadius: 94,
+    backgroundColor: 'rgba(255,255,255,0.075)',
   },
-  heroIcon: {
-    width: 58,
-    height: 58,
+  heroGlassOrbBottom: {
+    position: 'absolute',
+    bottom: -104,
+    left: 44,
+    width: 220,
+    height: 220,
+    borderRadius: 110,
+    backgroundColor: 'rgba(117,70,139,0.16)',
+  },
+  heroGlassSheen: {
+    ...StyleSheet.absoluteFillObject,
+    borderRadius: 24,
+  },
+  heroGlassTopLine: {
+    position: 'absolute',
+    top: 1,
+    right: 24,
+    left: 24,
+    height: 1,
+    borderRadius: 1,
+    backgroundColor: 'rgba(255,255,255,0.32)',
+  },
+  heroHeadingRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+  },
+  heroLocationIcon: {
+    width: 36,
+    height: 36,
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: 29,
+    borderRadius: 18,
     borderWidth: 1,
-    borderColor: colors.goldDark,
-    backgroundColor: 'rgba(126,72,148,0.23)',
+    borderColor: 'rgba(240,205,124,0.54)',
+    backgroundColor: 'rgba(126,79,147,0.28)',
+  },
+  privacyPill: {
+    marginTop: 7,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 6,
+    borderRadius: 99,
   },
   heroTitle: {
-    marginTop: 16,
-    color: colors.text,
+    flex: 1,
+    color: '#FFF9F3',
     fontFamily: typography.serifMedium,
-    fontSize: 25,
-    lineHeight: 31,
-    textAlign: 'center',
+    fontSize: 24,
+    lineHeight: 27,
   },
   heroText: {
-    maxWidth: 340,
-    marginTop: 9,
-    color: colors.textSecondary,
+    marginTop: 6,
+    marginLeft: 46,
+    color: '#D6CEDB',
     fontFamily: typography.sans,
-    fontSize: 14,
-    lineHeight: 21,
-    textAlign: 'center',
+    fontSize: 11.25,
+    lineHeight: 16,
   },
   locationButton: {
-    minHeight: 50,
-    marginTop: 19,
-    paddingHorizontal: 21,
+    minHeight: 47,
+    marginTop: 12,
+    paddingHorizontal: 18,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     gap: 9,
-    borderRadius: 18,
-    backgroundColor: colors.goldLight,
+    borderRadius: 16,
+    shadowColor: '#DDAF4F',
+    shadowOpacity: 0.22,
+    shadowRadius: 15,
+    shadowOffset: { width: 0, height: 8 },
+    elevation: 7,
   },
   disabledButton: {
     opacity: 0.72,
@@ -1276,14 +1765,14 @@ const styles = StyleSheet.create({
   locationButtonText: {
     color: colors.background,
     fontFamily: typography.sans,
-    fontSize: 14,
+    fontSize: 12.75,
     fontWeight: '700',
   },
   privacyText: {
-    marginTop: 11,
-    color: colors.textMuted,
+    color: '#C9BFCE',
     fontFamily: typography.sans,
-    fontSize: 11,
+    fontSize: 8.75,
+    lineHeight: 12,
   },
   messageCard: {
     marginTop: 14,
@@ -1342,34 +1831,51 @@ const styles = StyleSheet.create({
     lineHeight: 18,
   },
   myMosqueCard: {
-    minHeight: 108,
-    marginTop: 14,
-    padding: 16,
+    minHeight: 142,
+    marginTop: 18,
+    padding: 11,
     flexDirection: 'row',
     alignItems: 'center',
-    borderRadius: 20,
+    borderRadius: 24,
     borderWidth: 1,
-    borderColor: colors.borderSoft,
-    backgroundColor: colors.backgroundSecondary,
+    borderColor: 'rgba(224,188,112,0.38)',
+    backgroundColor: '#100C1B',
+    shadowColor: '#000',
+    shadowOpacity: 0.24,
+    shadowRadius: 15,
+    shadowOffset: { width: 0, height: 8 },
+    elevation: 7,
   },
   myMosqueCardActive: {
-    borderColor: 'rgba(224,188,112,0.55)',
+    borderColor: 'rgba(232,190,91,0.62)',
+    backgroundColor: '#120D1E',
   },
-  myMosqueIcon: {
-    width: 50,
-    height: 50,
+  myMosqueImageWrap: {
+    width: 112,
+    height: 120,
+    overflow: 'hidden',
+    borderRadius: 19,
+    backgroundColor: '#1A1324',
+  },
+  myMosqueImage: {
+    width: '100%',
+    height: '100%',
+  },
+  myMosqueImageBadge: {
+    position: 'absolute',
+    right: 8,
+    bottom: 8,
+    width: 28,
+    height: 28,
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: 25,
-    backgroundColor: 'rgba(126,72,148,0.19)',
-  },
-  myMosqueIconActive: {
+    borderRadius: 14,
     backgroundColor: colors.goldLight,
   },
   myMosqueCopy: {
     flex: 1,
     minWidth: 0,
-    marginHorizontal: 13,
+    marginHorizontal: 12,
   },
   sectionEyebrow: {
     color: colors.goldLight,
@@ -1379,29 +1885,100 @@ const styles = StyleSheet.create({
     letterSpacing: 1,
   },
   myMosqueTitle: {
-    marginTop: 4,
-    color: colors.text,
+    marginTop: 5,
+    color: '#FFF8F1',
     fontFamily: typography.serifMedium,
-    fontSize: 19,
+    fontSize: 21,
     lineHeight: 24,
   },
   myMosqueText: {
     marginTop: 4,
     color: colors.textMuted,
     fontFamily: typography.sans,
-    fontSize: 12.5,
-    lineHeight: 18,
+    fontSize: 11.5,
+    lineHeight: 16,
+  },
+  nextPrayerRow: {
+    marginTop: 10,
+    paddingTop: 9,
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderTopColor: 'rgba(199,190,209,0.18)',
+  },
+  nextPrayerLabel: {
+    marginLeft: 5,
+    color: colors.textMuted,
+    fontFamily: typography.sans,
+    fontSize: 9.5,
+  },
+  nextPrayerDot: {
+    width: 3,
+    height: 3,
+    marginHorizontal: 6,
+    borderRadius: 2,
+    backgroundColor: colors.textMuted,
+  },
+  nextPrayerValue: {
+    color: colors.goldLight,
+    fontFamily: typography.sans,
+    fontSize: 10,
+    fontWeight: '700',
   },
   searchWrap: {
-    height: 54,
-    marginTop: 16,
-    paddingHorizontal: 15,
+    height: 58,
+    marginTop: 18,
+    paddingHorizontal: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderRadius: 22,
+    borderWidth: 1,
+    borderColor: 'rgba(126,72,148,0.36)',
+    backgroundColor: '#120D1F',
+  },
+  addMosqueButton: {
+    minHeight: 66,
+    marginTop: 18,
+    paddingHorizontal: 14,
+    paddingVertical: 11,
     flexDirection: 'row',
     alignItems: 'center',
     borderRadius: 18,
     borderWidth: 1,
-    borderColor: colors.borderSoft,
-    backgroundColor: colors.surface,
+    borderColor: 'rgba(224,188,112,0.22)',
+    backgroundColor: 'rgba(31,18,47,0.72)',
+  },
+  addMosqueIcon: {
+    width: 38,
+    height: 38,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 19,
+    backgroundColor: colors.goldLight,
+  },
+  addMosqueCopy: {
+    flex: 1,
+    marginHorizontal: 12,
+  },
+  addMosqueTitle: {
+    color: colors.text,
+    fontFamily: typography.sans,
+    fontSize: 14,
+    fontWeight: '700',
+  },
+  addMosqueSubtitle: {
+    marginTop: 3,
+    color: colors.textMuted,
+    fontFamily: typography.sans,
+    fontSize: 11,
+  },
+  searchFilterButton: {
+    width: 39,
+    height: 39,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 20,
+    backgroundColor: 'rgba(126,72,148,0.25)',
   },
   searchInput: {
     flex: 1,
@@ -1412,10 +1989,10 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   sectionHeader: {
-    marginTop: 23,
-    marginBottom: 13,
+    marginTop: 28,
+    marginBottom: 15,
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'flex-end',
     justifyContent: 'space-between',
   },
   sectionHeaderCopy: {
@@ -1426,7 +2003,8 @@ const styles = StyleSheet.create({
   sectionTitle: {
     color: colors.goldLight,
     fontFamily: typography.serifMedium,
-    fontSize: 25,
+    fontSize: 29,
+    lineHeight: 32,
   },
   sectionSubtitle: {
     marginTop: 4,
@@ -1463,20 +2041,20 @@ const styles = StyleSheet.create({
     padding: 4,
     flexDirection: 'row',
     gap: 4,
-    borderRadius: 16,
+    borderRadius: 19,
     borderWidth: 1,
-    borderColor: colors.borderSoft,
-    backgroundColor: colors.surface,
+    borderColor: 'rgba(126,72,148,0.42)',
+    backgroundColor: '#171125',
   },
   modeButton: {
-    minWidth: 78,
-    height: 38,
-    paddingHorizontal: 12,
+    minWidth: 66,
+    height: 40,
+    paddingHorizontal: 9,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     gap: 6,
-    borderRadius: 13,
+    borderRadius: 15,
   },
   modeButtonActive: {
     backgroundColor: colors.goldLight,
@@ -1484,7 +2062,7 @@ const styles = StyleSheet.create({
   modeButtonText: {
     color: colors.goldLight,
     fontFamily: typography.sans,
-    fontSize: 12,
+    fontSize: 11.5,
     fontWeight: '600',
   },
   modeButtonTextActive: {
@@ -1711,46 +2289,54 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   list: {
-    gap: 12,
+    gap: 11,
   },
   mosqueCard: {
-    minHeight: 150,
-    padding: 16,
+    minHeight: 142,
+    padding: 10,
     flexDirection: 'row',
-    alignItems: 'flex-start',
-    borderRadius: 20,
-    borderWidth: 1,
-    borderColor: colors.borderSoft,
-    backgroundColor: colors.backgroundSecondary,
-  },
-  mosqueIcon: {
-    width: 50,
-    height: 50,
     alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: 25,
-    backgroundColor: 'rgba(126,72,148,0.20)',
+    borderRadius: 23,
+    borderWidth: 1,
+    borderColor: 'rgba(126,72,148,0.34)',
+    backgroundColor: '#100C1B',
+    shadowColor: '#000',
+    shadowOpacity: 0.18,
+    shadowRadius: 12,
+    shadowOffset: { width: 0, height: 7 },
+    elevation: 5,
+  },
+  mosqueImageWrap: {
+    width: 112,
+    height: 122,
+    overflow: 'hidden',
+    borderRadius: 18,
+    backgroundColor: '#1B1426',
+  },
+  mosqueImage: {
+    width: '100%',
+    height: '100%',
   },
   mosqueCopy: {
     flex: 1,
     minWidth: 0,
-    marginHorizontal: 12,
+    marginHorizontal: 11,
   },
   mosqueName: {
-    color: colors.text,
+    color: '#FFF9F3',
     fontFamily: typography.serifMedium,
     fontSize: 20,
-    lineHeight: 25,
+    lineHeight: 23,
   },
   mosqueAddress: {
     marginTop: 4,
     color: colors.textMuted,
     fontFamily: typography.sans,
-    fontSize: 13,
-    lineHeight: 18,
+    fontSize: 11.5,
+    lineHeight: 16,
   },
   mosqueMetaRow: {
-    marginTop: 11,
+    marginTop: 9,
     flexDirection: 'row',
     alignItems: 'center',
   },
@@ -1773,7 +2359,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.textMuted,
   },
   tags: {
-    marginTop: 11,
+    marginTop: 9,
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: 6,
@@ -1791,6 +2377,35 @@ const styles = StyleSheet.create({
     color: colors.textMuted,
     fontFamily: typography.sans,
     fontSize: 10,
+  },
+  availableTag: {
+    backgroundColor: 'rgba(90,164,105,0.13)',
+  },
+  availableDot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: '#7ACA8B',
+  },
+  availableTagText: {
+    color: '#A9D9B1',
+    fontFamily: typography.sans,
+    fontSize: 9.5,
+  },
+  mosqueActions: {
+    width: 30,
+    alignSelf: 'stretch',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: 5,
+  },
+  mosqueFavoriteButton: {
+    width: 30,
+    height: 30,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 15,
+    backgroundColor: 'rgba(224,188,112,0.06)',
   },
   pressed: {
     opacity: 0.7,

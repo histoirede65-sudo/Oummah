@@ -1,0 +1,75 @@
+--- /tmp/oummah_current/oummah/src/features/wasil/WasilActionRouter.ts	2026-07-21 14:16:03.000000000 +0000
++++ /mnt/data/wasil_quran_navigation_verified_fix/src/features/wasil/WasilActionRouter.ts	2026-07-26 17:53:21.503663217 +0000
+@@ -156,6 +156,39 @@
+   );
+ }
+ 
++/**
++ * Détecte un terme uniquement lorsqu'il correspond à un ou plusieurs mots
++ * complets. Cette variante stricte est réservée aux commandes de navigation :
++ * elle empêche par exemple « lIslam » d'être interprété comme « lis ».
++ */
++function containsStandaloneTerm(value: string, term: string) {
++  const normalizedValue = normalize(value).replace(/-/g, " ");
++  const normalizedTerm = normalize(term).replace(/-/g, " ");
++  return ` ${normalizedValue} `.includes(` ${normalizedTerm} `);
++}
++
++const DOCUMENTARY_QUESTION_STARTERS = [
++  "que dit",
++  "qu est ce",
++  "qu est-ce",
++  "pourquoi",
++  "comment",
++  "quel",
++  "quelle",
++  "quels",
++  "quelles",
++  "selon",
++];
++
++function isDocumentaryQuestion(value: string) {
++  const normalizedValue = normalize(value);
++  return DOCUMENTARY_QUESTION_STARTERS.some(
++    (starter) =>
++      normalizedValue === normalize(starter) ||
++      normalizedValue.startsWith(`${normalize(starter)} `),
++  );
++}
++
+ function findReciter(
+   question: string,
+   reciters: readonly WasilReciterOption[],
+@@ -224,12 +257,21 @@
+   reciters: readonly WasilReciterOption[] = [],
+ ): WasilFreeAction | null {
+   const question = normalize(rawQuestion);
+-  if (!ACTION_TERMS.some((term) => question.includes(term))) return null;
++
++  // Une question documentaire doit toujours être envoyée à Wasil, même si elle
++  // contient les mots « Coran », « lire », etc. Seule une commande explicite
++  // peut être transformée localement en navigation.
++  if (isDocumentaryQuestion(question)) return null;
++  if (!ACTION_TERMS.some((term) => containsStandaloneTerm(question, term))) {
++    return null;
++  }
+ 
+   const surah = findSurah(question);
+   const reciter = findReciter(question, reciters);
+   if (surah) {
+-    const shouldListen = LISTEN_TERMS.some((term) => question.includes(term));
++    const shouldListen = LISTEN_TERMS.some((term) =>
++      containsStandaloneTerm(question, term),
++    );
+     return {
+       kind: "navigation",
+       href:
+@@ -249,7 +291,7 @@
+   }
+ 
+   const module = MODULES.find((candidate) =>
+-    candidate.terms.some((term) => question.includes(term)),
++    candidate.terms.some((term) => containsStandaloneTerm(question, term)),
+   );
+   return module ? { kind: "navigation", href: module.href } : null;
+ }

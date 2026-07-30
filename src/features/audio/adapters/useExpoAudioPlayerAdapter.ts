@@ -4,7 +4,7 @@ import type { AudioTrack } from '../../../core/audio';
 
 import { ExpoAudioPlayerAdapter } from './ExpoAudioPlayerAdapter';
 
-const PLAYER_OPTIONS = { updateInterval: 150, keepAudioSessionActive: false };
+const PLAYER_OPTIONS = { updateInterval: 150, keepAudioSessionActive: true };
 
 export function useExpoAudioPlayerAdapter() {
   const [nativePlayer, setNativePlayer] = useState(() => createAudioPlayer(null, PLAYER_OPTIONS));
@@ -47,6 +47,5 @@ export function useExpoAudioPlayerAdapter() {
     adapter.load(recoveryTrack);
     setRecoveryTrack(null);
   }, [adapter, recoveryTrack]);
-  useEffect(() => () => adapter.dispose(), [adapter]);
   return adapter;
 }

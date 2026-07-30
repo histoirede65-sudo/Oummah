@@ -1,0 +1,197 @@
+== TYPECHECK ==
+TypeScript: OK
+
+== wasil/tests/universal_relevance_regression_test.ts ==
+universal_relevance_regression_test: OK (40 thèmes)
+
+== wasil/tests/generic_lexical_intent_test.ts ==
+generic_lexical_intent_test: OK (10 formulations inédites)
+
+== wasil/tests/quran_reference_dedup_test.ts ==
+quran_reference_dedup_test: OK
+
+== wasil/tests/navigation_regression_test.ts ==
+navigation_regression_test: OK
+
+== wasil/tests/documentary_verifier_contract_test.ts ==
+documentary_verifier_contract_test: OK
+
+== wasil/tests/query_expansion_unseen_topic_test.ts ==
+WASIL_ISLAMIC_QUERY_EXPANSION {
+  canonicalName: 'Préserver les confidences et les secrets',
+  entityType: 'concept',
+  expansionMode: 'semantic-model',
+  quranSearchTerms: [
+    'حفظ السر',
+    'Préserver les confidences et les secrets',
+    'secret',
+    'confidence',
+    'discrétion',
+    'trahir les dépôts'
+  ],
+  hadithSearchTerms: [
+    'Préserver les confidences et les secrets',
+    'secret',
+    'confidence',
+    'discrétion',
+    'divulguer un secret',
+    'assemblées dépôt'
+  ],
+  evidenceTerms: [
+    'divulguer une confidence',
+    'préserver un secret',
+    'trahir un secret',
+    'Préserver les confidences et les secrets'
+  ]
+}
+query_expansion_unseen_topic_test: OK
+
+== wasil/tests/query_expansion_fallback_and_authority_test.ts ==
+WASIL_ISLAMIC_QUERY_EXPANSION {
+  canonicalName: 'divulguer secrets trahir',
+  entityType: 'concept',
+  expansionMode: 'generic-lexical-fallback',
+  quranSearchTerms: [
+    'divulguer secrets trahir',
+    'secrets trahir confidence',
+    'divulguer secrets',
+    'secrets trahir',
+    'trahir confidence',
+    'divulguer',
+    'secrets',
+    'trahir',
+    'confidence'
+  ],
+  hadithSearchTerms: [
+    'divulguer secrets trahir',
+    'secrets trahir confidence',
+    'divulguer secrets',
+    'secrets trahir',
+    'trahir confidence',
+    'divulguer',
+    'secrets',
+    'trahir',
+    'confidence'
+  ],
+  evidenceTerms: [
+    'divulguer secrets trahir',
+    'secrets trahir confidence',
+    'divulguer secrets',
+    'secrets trahir',
+    'trahir confidence',
+    'divulguer',
+    'secrets',
+    'trahir',
+    'confidence'
+  ]
+}
+WASIL_ISLAMIC_QUERY_EXPANSION {
+  canonicalName: 'consentement mariage force',
+  entityType: 'concept',
+  expansionMode: 'curated-plus-generic-fallback',
+  quranSearchTerms: [
+    'consentement mariage force',
+    'consentement mariage',
+    'mariage force',
+    'consentement',
+    'mariage',
+    'force',
+    'النكاح',
+    'الأزواج',
+    'زوج',
+    'مودة ورحمة',
+    'بالمعروف',
+    'époux'
+  ],
+  hadithSearchTerms: [
+    'consentement mariage force',
+    'consentement mariage',
+    'mariage force',
+    'consentement',
+    'mariage',
+    'force',
+    'Mariage en Islam',
+    'nikah',
+    'époux',
+    'épouse',
+    'couple',
+    'foyer'
+  ],
+  evidenceTerms: [
+    'consentement mariage force',
+    'consentement mariage',
+    'mariage force',
+    'consentement',
+    'mariage',
+    'force'
+  ]
+}
+WASIL_ISLAMIC_QUERY_EXPANSION {
+  canonicalName: 'Consentement matrimonial et absence de contrainte',
+  entityType: 'concept',
+  expansionMode: 'semantic-model',
+  quranSearchTerms: [
+    'الرضا في النكاح',
+    'Consentement matrimonial et absence de contrainte',
+    'consentement',
+    'mariage forcé',
+    'consentement mariage',
+    'ne pas contraindre'
+  ],
+  hadithSearchTerms: [
+    'Consentement matrimonial et absence de contrainte',
+    'consentement',
+    'mariage forcé',
+    'consentement de la femme'
+  ],
+  evidenceTerms: [
+    'consentement matrimonial',
+    'absence de contrainte',
+    'Consentement matrimonial et absence de contrainte'
+  ]
+}
+query_expansion_fallback_and_authority_test: OK
+
+== wasil/tests/hadith_repository_resilience_test.ts ==
+WASIL_HADEETHENC_SEARCH_EXPRESSIONS {
+  expressionCount: 10,
+  resultsByExpression: [
+    { phrase: 'test', resultCount: 1 },
+    { phrase: 'secret', resultCount: 1 },
+    { phrase: 'unique', resultCount: 1 },
+    { phrase: '900001', resultCount: 1 },
+    { phrase: 'preserver', resultCount: 1 },
+    { phrase: 'confidence', resultCount: 1 },
+    { phrase: 'test unique', resultCount: 1 },
+    { phrase: 'secret confie', resultCount: 1 },
+    { phrase: 'confidence test', resultCount: 1 },
+    { phrase: 'preserver confidence', resultCount: 1 }
+  ]
+}
+WASIL_HADITH_RELEVANCE_RANKING {
+  candidateCount: 1,
+  retainedCount: 1,
+  retained: [
+    {
+      id: '900001',
+      reference: 'Référence de test',
+      score: 1,
+      matchedTerms: [Array]
+    }
+  ]
+}
+WASIL_V4_HADITH_REPOSITORY_HTTP_FAILURE 503 fallback unavailable
+hadith_repository_resilience_test: OK
+
+== architecture_invariants_test.mjs ==
+architecture_invariants_test: OK
+
+== latency_budget_contract_test.mjs ==
+latency_budget_contract_test: OK
+
+== STRUCTURE ==
+No nested wasil/wasil: OK
+Trusted source keys unique: OK (22)
+Local imports: OK
+
+FINAL VALIDATION: OK

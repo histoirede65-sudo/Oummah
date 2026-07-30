@@ -1,5 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
+import { sanitizeTranslationText } from "../quran/TranslationText";
+
 import type {
   QuranFoundationRecitation,
   QuranFoundationReciter,
@@ -7,11 +9,9 @@ import type {
   QuranFoundationVerse,
 } from "./QuranFoundationTypes";
 
-const SUPABASE_URL =
-  process.env.EXPO_PUBLIC_SUPABASE_URL!;
+const SUPABASE_URL = process.env.EXPO_PUBLIC_SUPABASE_URL!;
 
-const ANON_KEY =
-  process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY!;
+const ANON_KEY = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY!;
 
 const CACHE_PREFIX = "quran-foundation:v1";
 const RETRY_DELAY_MS = 15_000;
@@ -73,10 +73,6 @@ type RawQuranFoundationVerse = QuranFoundationVerse & {
   words?: RawQuranFoundationWord[];
 };
 
-function stripHtml(value: string) {
-  return value.replace(/<[^>]*>/g, "").replace(/\s+/g, " ").trim();
-}
-
 function isWord(raw: RawQuranFoundationWord) {
   return (raw.charTypeName ?? raw.char_type_name ?? "word") === "word";
 }
@@ -94,22 +90,30 @@ function collectVerses(payload: unknown): RawQuranFoundationVerse[] {
       data?: RawQuranFoundationVerse[];
     };
   };
-  return record.verses ??
+  return (
+    record.verses ??
     record.items ??
     record.data ??
     record.response?.verses ??
     record.response?.items ??
     record.response?.data ??
-    [];
+    []
+  );
 }
 
-function mapVerse(raw: RawQuranFoundationVerse, chapter: number): QuranFoundationVerse {
-  const parsedVerseNumber = Number(raw.verseKey?.split(":")[1] ?? raw.verse_key?.split(":")[1]);
-  const verseNumber = raw.verseNumber ?? raw.verse_number ?? (
-    Number.isFinite(parsedVerseNumber) && parsedVerseNumber > 0
-      ? parsedVerseNumber
-      : raw.id
+function mapVerse(
+  raw: RawQuranFoundationVerse,
+  chapter: number,
+): QuranFoundationVerse {
+  const parsedVerseNumber = Number(
+    raw.verseKey?.split(":")[1] ?? raw.verse_key?.split(":")[1],
   );
+  const verseNumber =
+    raw.verseNumber ??
+    raw.verse_number ??
+    (Number.isFinite(parsedVerseNumber) && parsedVerseNumber > 0
+      ? parsedVerseNumber
+      : raw.id);
 
   const wordsText = raw.words
     ?.filter(isWord)
@@ -137,21 +141,33 @@ function mapVerse(raw: RawQuranFoundationVerse, chapter: number): QuranFoundatio
     .map((word) => word.transliteration?.text)
     .filter(Boolean)
     .join(" ");
-  const translation = raw.translations?.[0]?.text ?? raw.translation ?? raw.translationText ?? wordTranslation;
+  const translation =
+    raw.translations?.[0]?.text ??
+    raw.translation ??
+    raw.translationText ??
+    wordTranslation;
   const transliteration = wordTransliteration;
 
   return {
     id: Number.isFinite(verseNumber) && verseNumber > 0 ? verseNumber : raw.id,
     verseKey: raw.verseKey ?? raw.verse_key ?? `${chapter}:${verseNumber}`,
-    textUthmani: raw.textUthmani ?? raw.text_uthmani ?? raw.text_imlaei ?? wordsText ?? "",
+    textUthmani:
+      raw.textUthmani ?? raw.text_uthmani ?? raw.text_imlaei ?? wordsText ?? "",
     codeV1: raw.codeV1 ?? wordsCodeV1,
     codeV2: raw.codeV2 ?? wordsCodeV2,
     words: raw.words,
     hizbNumber: raw.hizbNumber ?? raw.hizb_number ?? 0,
     juzNumber: raw.juzNumber ?? raw.juz_number ?? 0,
     pageNumber: raw.pageNumber ?? raw.page_number ?? 0,
-    ...(translation ? { translation: stripHtml(translation), translations: raw.translations } : {}),
-    ...(transliteration ? { transliteration: stripHtml(transliteration) } : {}),
+    ...(translation
+      ? {
+          translation: sanitizeTranslationText(translation),
+          translations: raw.translations,
+        }
+      : {}),
+    ...(transliteration
+      ? { transliteration: sanitizeTranslationText(transliteration) }
+      : {}),
   };
 }
 
@@ -167,10 +183,18 @@ async function getFrenchTranslations(chapter: number) {
     `https://api.quran.com/api/v4/verses/by_chapter/${chapter}?language=fr&words=false&translations=31&per_page=300`,
   );
   if (!response.ok) return new Map<string, string>();
-  const payload = await response.json() as { verses?: QuranComTranslationVerse[] };
+  const payload = (await response.json()) as {
+    verses?: QuranComTranslationVerse[];
+  };
   return new Map(
     (payload.verses ?? [])
-      .map((verse) => [verse.verse_key, stripHtml(verse.translations?.[0]?.text ?? "")] as const)
+      .map(
+        (verse) =>
+          [
+            verse.verse_key,
+            sanitizeTranslationText(verse.translations?.[0]?.text),
+          ] as const,
+      )
       .filter(([, text]) => text.length > 0),
   );
 }
@@ -180,10 +204,14 @@ async function getUnicodeUthmaniTexts(chapter: number) {
     `https://api.quran.com/api/v4/verses/by_chapter/${chapter}?words=false&fields=text_uthmani&per_page=300`,
   );
   if (!response.ok) return new Map<string, string>();
-  const payload = await response.json() as { verses?: { verse_key: string; text_uthmani?: string }[] };
+  const payload = (await response.json()) as {
+    verses?: { verse_key: string; text_uthmani?: string }[];
+  };
   return new Map(
     (payload.verses ?? [])
-      .map((verse) => [verse.verse_key, verse.text_uthmani?.trim() ?? ""] as const)
+      .map(
+        (verse) => [verse.verse_key, verse.text_uthmani?.trim() ?? ""] as const,
+      )
       .filter(([, text]) => text.length > 0),
   );
 }
@@ -193,7 +221,9 @@ async function getCompleteChapterVerses(chapter: number) {
     `https://api.quran.com/api/v4/verses/by_chapter/${chapter}?language=fr&words=true&word_fields=text_uthmani,translation,transliteration&fields=text_uthmani,juz_number,hizb_number,page_number&translations=31&per_page=300`,
   );
   if (!response.ok) return [];
-  const payload = await response.json() as { verses?: RawQuranFoundationVerse[] };
+  const payload = (await response.json()) as {
+    verses?: RawQuranFoundationVerse[];
+  };
   return payload.verses ?? [];
 }
 
@@ -208,22 +238,21 @@ export class QuranFoundationClient {
     if (this.pendingRetries.has(key)) return;
     this.pendingRetries.add(key);
     setTimeout(() => {
-      void task().catch(() => undefined).finally(() => this.pendingRetries.delete(key));
+      void task()
+        .catch(() => undefined)
+        .finally(() => this.pendingRetries.delete(key));
     }, RETRY_DELAY_MS);
   }
 
   private async request<T>(path: string): Promise<T> {
-    const response = await fetch(
-      `${SUPABASE_URL}/functions/v1${path}`,
-      {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${ANON_KEY}`,
-          apikey: ANON_KEY,
-          "Content-Type": "application/json",
-        },
+    const response = await fetch(`${SUPABASE_URL}/functions/v1${path}`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${ANON_KEY}`,
+        apikey: ANON_KEY,
+        "Content-Type": "application/json",
       },
-    );
+    });
 
     if (!response.ok) {
       let message = "";
@@ -232,9 +261,7 @@ export class QuranFoundationClient {
         message = await response.text();
       } catch {}
 
-      throw new Error(
-        `Quran.Foundation (${response.status}) : ${message}`,
-      );
+      throw new Error(`Quran.Foundation (${response.status}) : ${message}`);
     }
 
     return response.json() as Promise<T>;
@@ -243,17 +270,13 @@ export class QuranFoundationClient {
   async getSurahs(): Promise<QuranFoundationSurah[]> {
     if (!this.surahsCache) {
       this.surahsCache =
-        this.request<QuranFoundationSurah[]>(
-          "/quran-foundation",
-        );
+        this.request<QuranFoundationSurah[]>("/quran-foundation");
     }
 
     return this.surahsCache;
   }
 
-  async getVerses(
-    chapter: number,
-  ): Promise<QuranFoundationVerse[]> {
+  async getVerses(chapter: number): Promise<QuranFoundationVerse[]> {
     const storageKey = cacheKey("verses", String(chapter));
     const memoryCached = this.versesCache.get(chapter);
     if (memoryCached) return memoryCached;
@@ -284,8 +307,11 @@ export class QuranFoundationClient {
     );
     const edgeVerses = collectVerses(payload);
     const completeVerses = await getCompleteChapterVerses(chapter);
-    const collected = completeVerses.length > edgeVerses.length ? completeVerses : edgeVerses;
-    console.info(`[verses] after API chapter=${chapter} raw=${collected.length}`);
+    const collected =
+      completeVerses.length > edgeVerses.length ? completeVerses : edgeVerses;
+    console.info(
+      `[verses] after API chapter=${chapter} raw=${collected.length}`,
+    );
     const mapped = collected.map((verse) => mapVerse(verse, chapter));
     const [frenchTranslations, unicodeUthmaniTexts] = await Promise.all([
       getFrenchTranslations(chapter),
@@ -296,18 +322,16 @@ export class QuranFoundationClient {
       textUthmani: unicodeUthmaniTexts.get(verse.verseKey) ?? verse.textUthmani,
       translation: frenchTranslations.get(verse.verseKey) ?? verse.translation,
     }));
-    console.info(`[verses] after mapping chapter=${chapter} mapped=${mapped.length} withText=${mapped.filter((verse) => verse.textUthmani.length > 0).length}`);
-    console.log("FRENCH TRANSLATION SAMPLE", translated.find((verse) => verse.translation)?.translation);
-    console.log("TRANSLITERATION SAMPLE", translated.find((verse) => verse.transliteration)?.transliteration);
+    console.info(
+      `[verses] after mapping chapter=${chapter} mapped=${mapped.length} withText=${mapped.filter((verse) => verse.textUthmani.length > 0).length}`,
+    );
     return translated;
   }
 
   async getReciters(): Promise<QuranFoundationReciter[]> {
     if (!this.recitersCache) {
       this.recitersCache =
-        this.request<QuranFoundationReciter[]>(
-          "/quran-audio",
-        );
+        this.request<QuranFoundationReciter[]>("/quran-audio");
     }
 
     return this.recitersCache;
@@ -335,7 +359,9 @@ export class QuranFoundationClient {
       const persisted = await readCache<QuranFoundationRecitation>(storageKey);
       if (persisted) {
         this.recitationsCache.set(identity, persisted);
-        this.retryLater(storageKey, async () => { await fetchRecitation(); });
+        this.retryLater(storageKey, async () => {
+          await fetchRecitation();
+        });
         return persisted;
       }
       throw error;
@@ -350,5 +376,4 @@ export class QuranFoundationClient {
   }
 }
 
-export const quranFoundationClient =
-  new QuranFoundationClient();
+export const quranFoundationClient = new QuranFoundationClient();

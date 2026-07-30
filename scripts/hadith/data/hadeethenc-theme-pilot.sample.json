@@ -1,0 +1,280 @@
+{
+  "sourceName": "HadeethEnc",
+  "sourceLanguage": "fr",
+  "records": [
+    {
+      "id": "66512",
+      "title": "L'Islam a été bâti sur cinq piliers",
+      "hadeeth": "D’après Abû ‘Abd ar‑Rahmân, ‘Abd Allâh b. ‘Umar — qu’Allah les agrée —, j’ai entendu le Messager d’Allah ﷺ dire : \" L'Islam a été bâti sur cinq piliers  : l'attestation qu'il n'y a aucune divinité [digne d'adoration] excepté Allah et que Muḥammad est le serviteur d'Allah et Son Messager, l'accomplissement de la prière, l'acquittement de l'aumône légale, le pèlerinage à la Demeure et le jeûne de Ramadan. \"",
+      "hadeethAr": "عَنْ أَبِي عَبْدِ الرَّحْمَنِ عَبْدِ اللَّهِ بْنِ عُمَرَ بْنِ الخَطَّابِ رَضِيَ اللَّهُ عَنْهُ قَالَ: سَمِعْتُ رَسُولَ اللَّهِ صَلَّى اللَّهُ عَلَيْهِ وَسَلَّمَ يَقُولُ: «بُنِيَ الإِسْلَامُ عَلَى خَمْسٍ: شَهَادَةِ أَنْ لَا إلَهَ إلَّا اللَّهُ وَأَنَّ مُحَمَّدًا ‌عَبْدُهُ ‌وَرَسُولُهُ، وَإِقَامِ الصَّلَاةِ، وَإِيتَاءِ الزَّكَاةِ، وَحَجِّ الْبَيْتِ، وَصَوْمِ رَمَضَانَ».",
+      "attribution": "Rapporté par Al Bukhârî et Muslim",
+      "grade": "Authentique",
+      "explanation": "Le Prophète ﷺ a comparé l'islam à un édifice solide reposant sur cinq piliers qui supporte cette structure et le reste des caractéristiques de l'Islam est comme le parachèvement de la structure. Le premier de ces piliers est : la double attestation, à savoir : l'attestation qu'il n'y a aucune divinité [digne d'adoration] excepté Allah et que Muhammad est le Messager d'Allah. Cette double attestation est un seul pilier et l'une ne va pas sans l'autre. Le serviteur prononce celle-ci en reconnaissant l'Unicité d'Allah et le fait qu'Il mérite l'adoration, Seul, en dehors de quiconque, il œuvre selon ses implications et il croit au Message de Muhammad ﷺ en le suivant. Le second pilier est : l'établissement de la prière qui correspond aux cinq prières obligatoires, de jour comme de nuit : Al Fajr, Adh-Dhuhr, Al 'Asr, Al Maghrib et Al 'Ichâ', avec leurs conditions, leurs piliers et leurs devoirs. Le troisième pilier est : l'acquittement de l'aumône obligatoire qui est une adoration financière obligatoire pour tout bien ou argent qui atteint une valeur déterminée dans la Législation et qu'on donne ensuite à quiconque la mérite. Le quatrième pilier est : le pèlerinage qui est le fait de se rendre à La Mecque pour y accomplir les rites du pèlerinage en guise de dévouement pour Allah ﷻ. Le cinquième pilier est : le jeûne de Ramadân. C'est le fait de s'abstenir de manger et boire ainsi que d'autres choses qui rompent le jeûne en ayant l'intention de se dévouer à Allah. Le jeûne dure du lever de l'aube jusqu'au coucher du soleil.",
+      "hints": [
+        "La double attestation est indissociable. En effet, l'une n'est pas valide sans l'autre ; c'est pourquoi, cette double attestation constitue un seul et même pilier.\r",
+        "La double attestation est la base de la religion. Ainsi, aucune parole ni œuvre n'est acceptée sans elle."
+      ],
+      "categories": [
+        {
+          "id": "59",
+          "label": "La foi en Allah (Exalté et Magnifié soit-Il)"
+        },
+        {
+          "id": "79",
+          "label": "La prophétie"
+        },
+        {
+          "id": "88",
+          "label": "L'Islam"
+        },
+        {
+          "id": "456",
+          "label": "Le caractère obligatoire de la prière et le jugement de celui qui l'abandonne"
+        },
+        {
+          "id": "500",
+          "label": "L'obligation de l'aumône légale et le statut de celui qui l'abandonne"
+        },
+        {
+          "id": "512",
+          "label": "Obligation of Fasting and Ruling of Its Abandoning"
+        },
+        {
+          "id": "531",
+          "label": "Obligation of Hajj and ‘Umrah and Ruling of Its Abandoner"
+        }
+      ],
+      "sourceUrl": "https://hadeethenc.com/fr/browse/hadith/66512",
+      "endpoint": "/api/v1/hadeeths/one/?language=fr&id=66512",
+      "language": "fr",
+      "retrievedAt": "2026-07-29T20:17:53.7628494Z"
+    },
+    {
+      "id": "66518",
+      "title": "Ô gens ! Certes, Allah est Bon et n’accepte que ce qui est bon. Et certes, Allah a ordonné aux croyants ce qu’Il a ordonné aux Envoyés",
+      "hadeeth": "D'après Abû Hurayrah (qu'Allah l'agrée) qui a dit : Le Messager d'Allah ﷺ a dit : « Allah est Bon et n’agrée que ce qui est bon. Allah a ordonné aux croyants ce qu’Il a ordonné aux messagers. En effet, Il (Élevé soit-Il) a dit : {Ô Messagers ! Mangez des bonnes choses licites et pures et œuvrez vertueusement !} [Les Croyants, 23 : 51]. Et Il (Élevé soit-Il) a [aussi] dit : {Ô vous qui avez cru ! Mangez des bonnes choses licites et pures que Nous vous avons pourvus !} [La Vache, 2 : 172]. Puis il mentionna l’homme qui, ayant longuement voyagé, les cheveux ébouriffés et couvert de poussière, tend ses mains vers le ciel : “Seigneur ! Seigneur !”, alors que sa nourriture est illicite, sa boisson illicite, ses vêtements illicites, et qu’il a été nourri de l’illicite ; comment serait‑il exaucé ? »",
+      "hadeethAr": "عَنْ أَبِي هُرَيْرَةَ رَضِيَ اللَّهُ عَنْهُ قَالَ: قَالَ رَسُولُ اللهِ صَلَّى اللهُ عَلَيْهِ وَسَلَّمَ: «إنَّ اللَّهَ طَيِّبٌ لَا يَقْبَلُ إلَّا طَيِّبًا، وَإِنَّ اللَّهَ أَمَرَ المُؤْمِنِينَ بِمَا أَمَرَ بِهِ المُرْسَلِينَ، فَقَالَ تَعَالَى: {يَا أَيُّهَا الرُّسُلُ كُلُوا مِنْ الطَّيِّبَاتِ وَاعْمَلُوا صَالِحًا}، وَقَالَ تَعَالَى: {يَا أَيُّهَا الَّذِينَ آمَنُوا كُلُوا مِنْ طَيِّبَاتِ مَا رَزَقْنَاكُمْ} ثُمَّ ذَكَرَ الرَّجُلَ، يُطِيلُ السَّفَرَ، أَشْعَثَ، أَغْبَرَ، يَمُدُّ يَدَيْهِ إلَى السَّمَاءِ: يَا رَبِّ! يَا رَبِّ! وَمَطْعَمُهُ حَرَامٌ، وَمَشْرَبُهُ حَرَامٌ، وَمَلْبَسُهُ حَرَامٌ، وَغُذِيَ بِالحَرَامِ، فَأَنَّى يُسْتَجَابُ لَذلك».",
+      "attribution": "Rapporté par Muslim",
+      "grade": "Authentique",
+      "explanation": "Le Prophète ﷺ a informé qu'Allah est Bon, Saint, exempt de déficiences et de défauts et Il est décrit par des attributs de perfection. Il n'accepte que les œuvres, les paroles et les croyances qui sont bonnes, c'est-à-dire : celles qui sont sincères pour Allah et qui sont conformes à la guidée du Prophète ﷺ. Et il convient de se rapprocher d'Allah uniquement par cela. Et un des plus immenses moyens d'accomplir de bonnes œuvres pour le croyant est que sa nourriture soit bonne et qu'elle soit licite. Grâce à cela, son œuvre se purifie. C’est pourquoi, Allah a ordonné aux croyants ce qu’Il ​​a ordonné aux Envoyés, à savoir : consommer ce qui est licite et œuvrer de manière vertueuse. Il a dit : {Ô Messagers ! Mangez de ce qui est bon et pur et œuvrez vertueusement. Certes, Je suis parfaitement connaisseur de ce que vous œuvrez.} [Les Croyants, 23 : 51]. Et Il a aussi dit : {Ô vous qui avez cru ! Mangez des bonnes choses pures que Nous vous avons pourvues.} [La Vache, 2 : 172].\r\n\r\nEnsuite, il ﷺ a mis en garde contre la consommation de ce qui est illicite car cela corrompt l'oeuvre et empêche son acceptation, quelles que soient les causes déployées d'acceptation apparentes, notamment :\r\n\r\nPremièrement : Un long voyage dans des voies d'obéissance comme : un pèlerinage, un combat, un lien de parenté, et autre que cela.\r\n\r\nDeuxièmement : Des cheveux ébouriffés du fait de ne pas les avoir peignés, un changement de teint, un changement de couleur des vêtements dû à la poussière, un état de nécessité impérieuse, etc.\r\n\r\nTroisièmement : Étendre ses mains et les lever au ciel lors de l'invocation.\r\n\r\nQuatrièmement  : Se rapprocher d'Allah par Ses plus beaux Noms et insister dans cela en disant : \" Ô Seigneur ! \" ; \" Ô Seigneur ! \".\r\n\r\nMalgré toutes ces causes d'exaucement d'invocations, Allah ne l'écoute pas. Cela parce que sa nourriture est illicite, sa boisson est illicite, son vêtement est illicite et la personne a été nourrie de l'illicite. Ainsi, quiconque se pare d'une telle description, alors il est improbable qu'il soit exaucé et comment pourrait-il être exaucé !?",
+      "hints": [
+        "La perfection d'Allah (Exalté et Magnifié soit-Il) dans Son Essence, Ses attributs, Ses actes et Ses décrets.\r",
+        "L'ordre de la sincérité de l'oeuvre pour Allah (Exalté et Magnifié soit-Il) et du suivi du Prophète ﷺ.\r",
+        "L'utilisation de ce qui encourage à œuvrer de sorte que le Prophète ﷺ a dit : \" Et certes, Allah a ordonné aux croyants ce qu’Il a ordonné aux Messagers. \" Ainsi, dès lors que le croyant a su que ceci fait partie des injonctions données aux Envoyés, alors cela le renforce et l'encourage à la mise en pratique.\r",
+        "Parmi les empêchements de l'exaucement de l'invocation, il y a la consommation de ce qui est illicite.\r",
+        "Parmi les causes de l'exaucement de l'invocation, il y a cinq choses : 1- Un long voyage qui dure par ce qu'il contient de la difficulté qui fait partie des plus immenses causes d'exaucement. 2- Une situation de nécessité impérieuse. 3- Le fait de lever les mains au ciel. 3- L'insistance dans l'invocation à Allah en répétant la mention de Sa Seigneurie. Ceci fait partie de ce qui est le plus requis en vue de l'exaucement de l'invocation. 5- Manger et boire ce qui est bon, licite et pur.\r",
+        "La consommation de ce qui est licite, bon et pur fait partie des causes qui aident à accomplir les œuvres vertueuses.\r",
+        "Al‑Qâḍî a dit : « Bon » (ṭayyib) s’oppose à « mauvais » ; appliqué à Allah, il signifie qu’Il est pur de tout défaut. Appliqué au serviteur de manière absolue, il implique que ce dernier est exempt de comportements odieux et d'actes ignobles, mais plutôt paré de tout ce qui oppose cela. Appliqué aux biens, il signifie qu’ils sont licites et des meilleurs biens. Ainsi, Allah n’accepte des œuvres que ce qui est pur et licite."
+      ],
+      "categories": [
+        {
+          "id": "74",
+          "label": "L'unicité des noms et des attributs"
+        },
+        {
+          "id": "312",
+          "label": "Les causes de l'exaucement de l'invocation et ses empêchements"
+        }
+      ],
+      "sourceUrl": "https://hadeethenc.com/fr/browse/hadith/66518",
+      "endpoint": "/api/v1/hadeeths/one/?language=fr&id=66518",
+      "language": "fr",
+      "retrievedAt": "2026-07-29T20:17:53.8834453Z"
+    },
+    {
+      "id": "66512",
+      "title": "L'Islam a été bâti sur cinq piliers",
+      "hadeeth": "D’après Abû ‘Abd ar‑Rahmân, ‘Abd Allâh b. ‘Umar — qu’Allah les agrée —, j’ai entendu le Messager d’Allah ﷺ dire : \" L'Islam a été bâti sur cinq piliers  : l'attestation qu'il n'y a aucune divinité [digne d'adoration] excepté Allah et que Muḥammad est le serviteur d'Allah et Son Messager, l'accomplissement de la prière, l'acquittement de l'aumône légale, le pèlerinage à la Demeure et le jeûne de Ramadan. \"",
+      "hadeethAr": "عَنْ أَبِي عَبْدِ الرَّحْمَنِ عَبْدِ اللَّهِ بْنِ عُمَرَ بْنِ الخَطَّابِ رَضِيَ اللَّهُ عَنْهُ قَالَ: سَمِعْتُ رَسُولَ اللَّهِ صَلَّى اللَّهُ عَلَيْهِ وَسَلَّمَ يَقُولُ: «بُنِيَ الإِسْلَامُ عَلَى خَمْسٍ: شَهَادَةِ أَنْ لَا إلَهَ إلَّا اللَّهُ وَأَنَّ مُحَمَّدًا ‌عَبْدُهُ ‌وَرَسُولُهُ، وَإِقَامِ الصَّلَاةِ، وَإِيتَاءِ الزَّكَاةِ، وَحَجِّ الْبَيْتِ، وَصَوْمِ رَمَضَانَ».",
+      "attribution": "Rapporté par Al Bukhârî et Muslim",
+      "grade": "Authentique",
+      "explanation": "Le Prophète ﷺ a comparé l'islam à un édifice solide reposant sur cinq piliers qui supporte cette structure et le reste des caractéristiques de l'Islam est comme le parachèvement de la structure. Le premier de ces piliers est : la double attestation, à savoir : l'attestation qu'il n'y a aucune divinité [digne d'adoration] excepté Allah et que Muhammad est le Messager d'Allah. Cette double attestation est un seul pilier et l'une ne va pas sans l'autre. Le serviteur prononce celle-ci en reconnaissant l'Unicité d'Allah et le fait qu'Il mérite l'adoration, Seul, en dehors de quiconque, il œuvre selon ses implications et il croit au Message de Muhammad ﷺ en le suivant. Le second pilier est : l'établissement de la prière qui correspond aux cinq prières obligatoires, de jour comme de nuit : Al Fajr, Adh-Dhuhr, Al 'Asr, Al Maghrib et Al 'Ichâ', avec leurs conditions, leurs piliers et leurs devoirs. Le troisième pilier est : l'acquittement de l'aumône obligatoire qui est une adoration financière obligatoire pour tout bien ou argent qui atteint une valeur déterminée dans la Législation et qu'on donne ensuite à quiconque la mérite. Le quatrième pilier est : le pèlerinage qui est le fait de se rendre à La Mecque pour y accomplir les rites du pèlerinage en guise de dévouement pour Allah ﷻ. Le cinquième pilier est : le jeûne de Ramadân. C'est le fait de s'abstenir de manger et boire ainsi que d'autres choses qui rompent le jeûne en ayant l'intention de se dévouer à Allah. Le jeûne dure du lever de l'aube jusqu'au coucher du soleil.",
+      "hints": [
+        "La double attestation est indissociable. En effet, l'une n'est pas valide sans l'autre ; c'est pourquoi, cette double attestation constitue un seul et même pilier.\r",
+        "La double attestation est la base de la religion. Ainsi, aucune parole ni œuvre n'est acceptée sans elle."
+      ],
+      "categories": [
+        {
+          "id": "59",
+          "label": "La foi en Allah (Exalté et Magnifié soit-Il)"
+        },
+        {
+          "id": "79",
+          "label": "La prophétie"
+        },
+        {
+          "id": "88",
+          "label": "L'Islam"
+        },
+        {
+          "id": "456",
+          "label": "Le caractère obligatoire de la prière et le jugement de celui qui l'abandonne"
+        },
+        {
+          "id": "500",
+          "label": "L'obligation de l'aumône légale et le statut de celui qui l'abandonne"
+        },
+        {
+          "id": "512",
+          "label": "Obligation of Fasting and Ruling of Its Abandoning"
+        },
+        {
+          "id": "531",
+          "label": "Obligation of Hajj and ‘Umrah and Ruling of Its Abandoner"
+        }
+      ],
+      "sourceUrl": "https://hadeethenc.com/fr/browse/hadith/66512",
+      "endpoint": "/api/v1/hadeeths/one/?language=fr&id=66512",
+      "language": "fr",
+      "retrievedAt": "2026-07-29T20:17:54.1326642Z"
+    },
+    {
+      "id": "66525",
+      "title": "Vois-tu si je prie les prières prescrites, jeûne Ramadân, déclare licite ce qui est licite et rends illicite ce qui est illicite",
+      "hadeeth": "D’après Abû ‘Abd Allâh Jâbir b. ‘Abd Allâh al‑Anṣârî — qu’Allah les agrée — : Un homme interrogea le Messager d’Allah ﷺ ; il répondit : «  Vois-tu si je prie les prières prescrites, jeûne Ramadân, déclare licite ce qui est licite et rends illicite ce qui est illicite, sans rien ajouter à cela; entrerais-je au Paradis?» Il répondit ﷺ : « Oui.»",
+      "hadeethAr": "عَنْ أَبِي عَبْدِ اللَّهِ جَابِرِ بْنِ عَبْدِ اللَّهِ الْأَنْصَارِيِّ رَضِيَ اللَّهُ عَنْهُمَا: أَنَّ رَجُلًا سَأَلَ رَسُولَ اللهِ صَلَّى اللهُ عَلَيْهِ وَسَلَّمَ، فَقَالَ: أَرَأَيْتَ إِذَا صَلَّيْتُ المَكْتُوبَاتِ، وَصُمْتُ رَمَضَانَ، وَأَحْلَلْتُ الحَلَالَ، وَحَرَّمْتُ الحَرَامَ، وَلَمْ أَزِدْ عَلَى ذَلِكَ شَيْئًا، أَأَدْخُلُ الجَنَّةَ؟ قَالَ: «نَعَمْ».",
+      "attribution": "Rapporté par Muslim",
+      "grade": "Authentique",
+      "explanation": "Le Prophète (qu'Allah le couvre d'éloges et le préserve) explique que quiconque prie les cinq prières obligatoires et n'y ajoute rien de surérogatoire, jeûne [le mois de] Ramadân sans y ajouter d'autres jeûnes volontaires, croit en la licéité du licite et le pratique de même qu'il croit en l'illicéité de l'illicite et s'en écarte, entrera au Paradis.",
+      "hints": [
+        "Le désir ardent du musulman à effectuer les obligations et délaisser les interdits, et que son objectif soit d'entrer au Paradis.\r",
+        "L'importance de faire ce qui est licite tout en croyant en sa licéité et de s'interdire l'illicite tout en croyant en son caractère illicite.\r",
+        "Accomplir les obligations et délaisser les interdits est une cause d'entrée au Paradis."
+      ],
+      "categories": [
+        {
+          "id": "88",
+          "label": "L'Islam"
+        },
+        {
+          "id": "134",
+          "label": "La prière"
+        },
+        {
+          "id": "137",
+          "label": "Le jeûne"
+        }
+      ],
+      "sourceUrl": "https://hadeethenc.com/fr/browse/hadith/66525",
+      "endpoint": "/api/v1/hadeeths/one/?language=fr&id=66525",
+      "language": "fr",
+      "retrievedAt": "2026-07-29T20:17:54.2475376Z"
+    },
+    {
+      "id": "4191",
+      "title": "Celui qui sort à la recherche du savoir est dans le sentier d'Allah jusqu'à ce qu'il revienne.",
+      "hadeeth": "Anas (qu’Allah l’agrée) relate que le Messager d'Allah (sur lui la paix et le salut) a dit : « Celui qui sort à la recherche du savoir est dans le sentier d'Allah jusqu'à ce qu'il revienne. »",
+      "hadeethAr": "عن أنس رضي الله عنه مرفوعاً: «من خَرج في طلب العلم فهو في سَبِيلِ الله حتى يرجع».",
+      "attribution": "Rapporté par At-Tirmidhî",
+      "grade": "Bon",
+      "explanation": "Le ḥadith signifie que celui qui sort de sa maison ou de sa ville à la recherche du savoir religieux a le même statut que celui qui sort pour combattre dans le sentier d'Allah, Exalté soit-Il, jusqu'à ce qu'il revienne chez les siens. En effet, il est semblable au combattant qui se bat pour faire revivre la religion, avilir le diable et épuiser sa personne.",
+      "hints": [],
+      "categories": [
+        {
+          "id": "270",
+          "label": "Le mérite de la science"
+        }
+      ],
+      "sourceUrl": "https://hadeethenc.com/fr/browse/hadith/4191",
+      "endpoint": "/api/v1/hadeeths/one/?language=fr&id=4191",
+      "language": "fr",
+      "retrievedAt": "2026-07-29T20:17:54.4809674Z"
+    },
+    {
+      "id": "5518",
+      "title": "Celui à qui Allah veut du bien, Il lui fait comprendre la Religion",
+      "hadeeth": "Mou'âwiyyah (qu'Allah l'agrée) relate : « J'ai entendu le Messager d'Allah (qu'Allah le couvre d'éloges et le préserve) dire : \"Celui à qui Allah veut du bien, Il lui fait comprendre la Religion  ; quant à moi, je ne suis que celui qui répartit, c'est Allah qui donne ; et cette communauté ne cessera de se tenir sur l'ordre d'Allah, sans que ne leur porte préjudice ceux qui divergent avec eux,  jusqu'à ce que ne vienne l'ordre d'Allah.\" »",
+      "hadeethAr": "عن حُصين بن عبد الرحمن قال: كنتُ عند سعيد بن جُبير فقال: أيكم رأى الكوكب الذي انقَضَّ البارحة؟ فقلتُ: أنا، ثم قلتُ: أما إني لم أكن في صلاة، ولكني لُدغْتُ، قال: فما صنعتَ؟ قلت: ارتقيتُ، قال: فما حَمَلك على ذلك؟ قلت: حديث حدَّثَناه الشعبي، قال: وما حدَّثَكم؟ قلتُ حدثنا عن بريدة بن الحُصيب أنه قال: \"لا رُقْية إلا مِن عَيْن أو حُمَة\"، قال: قد أحسَن مَن انتهى إلى ما سمع، ولكن حدثنا ابن عباس عن النبي صلى الله عليه وسلم أنه قال: \n\"عُرضت عليّ الأُمم، فرأيتُ النبي ومعه الرَّهط والنبي ومعه الرجل والرجلان، والنبي وليس معه أحد، إذ رُفع لي سواد عظيم فظننتُ أنهم أمَّتي، فقيل لي: هذا موسى وقومه، فنظرتُ فإذا سواد عظيم، فقيل لي: هذه أمَّتك، ومعهم سبعون ألفا يدخلون الجنة بغير حساب ولا عذاب، ثم نهض فدخل منْزله، فخاض الناس في أولئك؛ فقال بعضهم: فلعلهم الذين صحِبوا رسول الله صلى الله عليه وسلم وقال بعضهم: فلعلهم الذين وُلِدُوا في الإسلام فلم يشركوا بالله شيئا، وذكروا أشياء، فخرج عليهم رسول الله صلى الله عليه وسلم فأخبروه، فقال: هم الذين لا يَسْتَرقون، ولا يَكْتَوُون، ولا يَتَطَيَّرون، وعلى ربهم يتوكلون، فقام عُكاشة بن مِحصَن فقال: ادع الله أن يجعلني منهم، قال: أنت منهم، ثم قام جل آخر فقال: ادع الله أن يجعلني منهم، فقال: سَبَقَك بها عكاشة\".",
+      "attribution": "Rapporté par Al-Bukhârî et Muslim",
+      "grade": "Authentique",
+      "explanation": "Ḥuṣayn ibn 'Abdirraḥmân (qu'Allah lui fasse miséricorde) nous informe d'une discussion qui eut lieu entre lui et Sa'îd ibn Jubayr (qu'Allah lui fasse miséricorde) au sujet de l'exorcisme lorsque Ḥuṣayn fut piqué par un scorpion et demanda qu'on l'exorcise par une incantation légiférée (« Ar-Ruqyah Al-Mashrû’ah »). Lorsque Sa'îd lui demanda la preuve de son agissement, celui-ci l'informa d’un hadith que lui avait rapporté Ash-Sha'bî qui autorisait l'exorcisme contre le mauvais œil ou le poison. Sa'îd le félicita alors de son agissement mais il lui rapporta un hadith qui incitait à délaisser l'exorcisme. Il s'agissait du hadith d'Ibn 'Abbâs (qu'Allah l'agrée, lui et son père) qui contenait quatre caractéristiques dont ceux qui s’en parent méritent d’entrer au Paradis sans jugement, ni châtiment. Et ces personnes sont celles qui ne demandent pas qu'on pratique l'exorcisme sur elles, ni la cautérisation, qui ne consultent pas les augures et qui se reposent [sincèrement et] véridiquement sur Allah, Exalté soit-Il. Et quand 'Ukâshah demanda au Prophète (sur lui la paix et le salut) d'invoquer Allah en sa faveur afin qu'Il le compte parmi eux, le Messager d'Allah (sur lui la paix et le salut) l'informa alors qu'il en faisait partie. Et lorsqu'un autre homme se leva et demanda la même chose, le Prophète (sur lui la paix et le salut) lui répondit, avec douceur, que cela n'était pas possible, afin de fermer la porte à toute nouvelle demande.",
+      "hints": [],
+      "categories": [
+        {
+          "id": "211",
+          "label": "Le traitement légal par incantation (Ar Ruqyah As Shar'iyah)"
+        },
+        {
+          "id": "324",
+          "label": "Les caractéristiques du Paradis et de l'Enfer"
+        }
+      ],
+      "sourceUrl": "https://hadeethenc.com/fr/browse/hadith/3396",
+      "endpoint": "/api/v1/hadeeths/one/?language=fr&id=3396",
+      "language": "fr",
+      "retrievedAt": "2026-07-29T20:17:57.0490033Z"
+    },
+    {
+      "id": "66513",
+      "title": "L’un de vous est formé dans le ventre de sa mère pendant quarante jours sous forme de goutte (nutfah)",
+      "hadeeth": "D’après Abû ‘Abd al‑Rahmân ‘Abd Allâh b. Mas‘ûd — qu’Allah l’agrée — il a dit : Le Messager d’Allah ﷺ nous a raconté et il est le véridique, le digne d'être cru: « L’un de vous est formé dans le ventre de sa mère pendant quarante jours sous forme de goutte (nutfah), puis il devient caillot (‘alaqa) durant une période semblable, puis morceau de chair (mudgha) durant une période semblable. Ensuite, l’ange est envoyé et souffle l’âme en lui, et il lui est ordonné d’écrire quatre choses : sa subsistance, sa durée de vie, ses œuvres, et le fait qu’il sera heureux (bienheureux) ou malheureux.  Par Allah ! Celui en dehors duquel il n’y a aucune divinité ! Certes, l’un de vous accomplit des œuvres des gens du Paradis jusqu'à ce qu’il ne reste plus entre lui et le Paradis qu’une coudée, et alors il est devancé par l'Écriture, et là il accomplit des œuvres des gens de l’Enfer et il y entre. Et [inversement] certes, l’un de vous accomplit des œuvres des gens de l'Enfer jusqu'à ce qu’il ne reste plus entre lui et l'Enfer qu’une coudée, et alors il est devancé par l'Écriture, et là il accomplit des œuvres des gens du Paradis et il y entre.»",
+      "hadeethAr": "عَنْ أَبِي عَبْدِ الرَّحْمَنِ عَبْدِ اللَّهِ بْنِ مَسْعُودٍ رَضِيَ اللَّهُ عَنْهُ قَالَ: حَدَّثَنَا رَسُولُ اللَّهِ صَلَّى اللَّهُ عَلَيْهِ وَسَلَّمَ وَهُوَ الصَّادِقُ المَصْدُوقُ: «إِنَّ أَحَدَكُمْ يُجْمَعُ خَلْقُهُ فِي بَطْنِ أُمِّهِ أَرْبَعِينَ يَوْمًا، ثُمَّ يَكُونُ عَلَقَةً مِثْلَ ذَلِكَ، ثُمَّ يَكُونُ مُضْغَةً مِثْلَ ذَلِكَ، ثُمَّ يُرْسَلُ إلَيْهِ المَلَكُ فَيَنْفُخُ فِيهِ الرُّوحَ، وَيُؤْمَرُ بِأَرْبَعِ كَلِمَاتٍ: بِكَتْبِ رِزْقِهِ، وَأَجَلِهِ، وَعَمَلِهِ، وَشَقِيٍّ أَوْ سَعِيدٍ؛ فَوَالَّذِي لَا إلَهَ غَيْرُهُ إنَّ أَحَدَكُمْ لَيَعْمَلُ بِعَمَلِ أَهْلِ الجَنَّةِ حَتَّى مَا يَكُونُ بَيْنَهُ وَبَيْنَهَا إلَّا ذِرَاعٌ فَيَسْبِقُ عَلَيْهِ الكِتَابُ فَيَعْمَلُ بِعَمَلِ أَهْلِ النَّارِ فَيَدْخُلُهَا، وَإِنَّ أَحَدَكُمْ لَيَعْمَلُ بِعَمَلِ أَهْلِ النَّارِ حَتَّى مَا يَكُونُ بَيْنَهُ وَبَيْنَهَا إلَّا ذِرَاعٌ، فَيَسْبِقُ عَلَيْهِ الكِتَابُ فَيَعْمَلُ بِعَمَلِ أَهْلِ الجَنَّةِ فَيَدْخُلُهَا».",
+      "attribution": "Rapporté par Al Bukhârî et Muslim",
+      "grade": "Authentique",
+      "explanation": "Ibn Maso'ûd a dit : \"Le Messager d'Allah (qu’Allah le couvre d’éloges et le préserve), qui est le véridique\" dans sa parole, \"et reconnu comme tel\" étant donné qu'Allah, Exalté soit-Il, l'a déclaré véridique, a dit : \"La conception de l'un d’entre vous\" à savoir que lorsque l'homme a un rapport avec son épouse, son sperme disséminé se rassemble dans l'utérus de celle-ci, durant quarante jours, sous la forme d'une goutte, ensuite, cela devient une adhérence, c'est-à-dire : du sang épais et solide, durant une seconde quarantaine ; puis, cela devient un morceau, c'est-à-dire : un morceau de chair de la taille de quelque chose mâchée, et ceci durant la troisième quarantaine ; ensuite, Allah lui envoie l'Ange qui lui insuffle l'âme après la fin de la troisième quarantaine. On ordonne alors à l'Ange d'écrire quatre affaires qui sont : sa subsistance, qui correspond à la somme de bienfaits que la personne obtiendra dans sa vie, son terme, qui est la durée de sa vie en ce bas monde, son œuvre, quelle est-elle ? Et s'il sera malheureux ou bienheureux. Puis, le Prophète (qu’Allah le couvre d’éloges et le préserve) a appuyé sur le fait qu'il se peut qu'une personne accomplisse les œuvres des gens du Paradis et que ses actions soient vertueuses, c'est-à-dire : ce qu'il en apparaît aux gens, et qu'il perdure ainsi au point qu'il n'y ait plus, entre lui et le Paradis, que l'espace d'une coudée, c'est-à-dire : que ce qu'il reste entre lui et le fait d'y parvenir ne soit plus que l'équivalent d'une très petite distance séparant une personne d'un point donné sur terre. Puis, le Livre prend le dessus sur lui, ainsi que ce qui a été décrété à son sujet, il accomplit alors une œuvre des gens de l'Enfer, achève sa vie sur celle-ci et entre en Enfer. En effet, la condition d'acceptation de son œuvre est qu'il s'y tienne fermement et n'en change pas. Tandis qu'il se peut qu'une autre personne accomplisse les œuvres des gens de l'Enfer au point d'être proche d'y entrer, comme s'il n'y avait plus, entre elle et l'Enfer, que la distance d'une coudée de terre, puis que le Livre prenne le dessus sur elle, ainsi que ce qui a été décrété à son sujet, et qu'elle accomplisse alors une œuvre des gens du Paradis et y entre.",
+      "hints": [
+        "Exposé des étapes de la création de l’être humain.\r",
+        "La foi au décret divin et au destin (al‑qadar).\r",
+        "Le terme des affaires quant à l'issue finale se fait selon ce qui a été prédestiné et en fonction de ce qui a été décrété.\r",
+        "La mise en garde contre le fait d'être trompé par les apparences des œuvres ; en effet, les œuvres n'ont de valeur qu'en fonction de ce sur quoi elles se concluent."
+      ],
+      "categories": [
+        {
+          "id": "63",
+          "label": "La foi au Jour Dernier :"
+        },
+        {
+          "id": "64",
+          "label": "La foi dans le Décret et le Destin"
+        },
+        {
+          "id": "60",
+          "label": "La foi dans les Anges."
+        }
+      ],
+      "sourceUrl": "https://hadeethenc.com/fr/browse/hadith/66513",
+      "endpoint": "/api/v1/hadeeths/one/?language=fr&id=66513",
+      "language": "fr",
+      "retrievedAt": "2026-07-29T20:17:57.2949123Z"
+    },
+    {
+      "id": "4186",
+      "title": "Quiconque accorde un délai à une personne en difficulté ou l’acquitte de sa dette, Allah l'ombragera au Jour de la Résurrection, sous l’ombre de Son Trône, le Jour où il n’y aura d’autre ombre que la Sienne",
+      "hadeeth": "Aboû Hourayrah (qu'Allah l'agrée) relate que le Messager d'Allah (qu'Allah le couvre d'éloges et le préserve) a dit : \"Quiconque accorde un délai à une personne en difficulté ou l’acquitte de sa dette, Allah l'ombragera au Jour de la Résurrection, sous l’ombre de Son Trône, le Jour où il n’y aura d’autre ombre que la Sienne.\"",
+      "hadeethAr": "عن أبي هريرة رضي الله عنه قال: قال رسول الله صلى الله عليه وسلم: «مَنْ أَنْظَرَ مُعْسِرًا، أَوْ وَضَعَ لَهُ، أَظَلَّهُ اللهُ يَوْمَ الْقِيَامَةِ تَحْتَ ظِلِّ عَرْشِهِ يَوْمَ لَا ظِلَّ إِلَّا ظِلُّهُ».",
+      "attribution": "Rapporté par At-Tirmidhî et Ahmad",
+      "grade": "Authentique",
+      "explanation": "Le Prophète (qu'Allah le couvre d'éloges et le préserve) a informé que quiconque accorde un délai à une personne endettée ou la décharge de sa dette, sa récompense est qu'Allah l'ombragera sous Son Trône au Jour de la Résurrection quand le soleil sera proche des têtes des serviteurs et où sa chaleur s'intensifiera sur eux. Personne ne trouvera alors d'ombre, excepté celui qu'Allah aura ombragé.",
+      "hints": [
+        "Le mérite de faciliter les choses aux serviteurs d'Allah, Exalté soit-Il, et que cela fait partie des causes de la délivrance des affres du Jour de la Résurrection.\r",
+        "La rétribution est du même type que l'œuvre."
+      ],
+      "categories": [
+        {
+          "id": "85",
+          "label": "La vie de l'au-delà"
+        }
+      ],
+      "sourceUrl": "https://hadeethenc.com/fr/browse/hadith/4186",
+      "endpoint": "/api/v1/hadeeths/one/?language=fr&id=4186",
+      "language": "fr",
+      "retrievedAt": "2026-07-29T20:17:57.4234281Z"
+    }
+  ],
+  "collectionEndpoint": "https://hadeethenc.com/api/v1/hadeeths/list/",
+  "detailEndpoint": "https://hadeethenc.com/api/v1/hadeeths/one/",
+  "categoryEndpoint": "https://hadeethenc.com/api/v1/categories/list/",
+  "note": "Échantillon réel récupéré depuis les endpoints officiels HadeethEnc.",
+  "mappingGeneratedForCategoryIds": [
+    "59",
+    "134",
+    "270",
+    "267",
+    "191",
+    "150",
+    "511",
+    "725",
+    "125",
+    "63"
+  ]
+}

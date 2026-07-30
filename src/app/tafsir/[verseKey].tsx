@@ -1,6 +1,6 @@
-import { Ionicons } from '@expo/vector-icons';
-import { router, useLocalSearchParams } from 'expo-router';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { Ionicons } from "@expo/vector-icons";
+import { router, useLocalSearchParams } from "expo-router";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   ActivityIndicator,
   Pressable,
@@ -8,25 +8,26 @@ import {
   StyleSheet,
   Text,
   View,
-} from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
-import { SURAHS } from '../../data/surahs';
-import { readingQuranRepository } from '../../features/quran/ReadingQuranRepository';
-import type { QuranFoundationVerse } from '../../features/quranfoundation/QuranFoundationTypes';
+import { WasilContextButton } from "../../components/wasil/WasilContextButton";
+import { SURAHS } from "../../data/surahs";
+import { readingQuranRepository } from "../../features/quran/ReadingQuranRepository";
+import type { QuranFoundationVerse } from "../../features/quranfoundation/QuranFoundationTypes";
 import {
   tafsirRepository,
   type QuranTafsir,
-} from '../../features/quranfoundation/TafsirRepository';
-import { colors } from '../../theme/colors';
-import { typography } from '../../theme/typography';
+} from "../../features/quranfoundation/TafsirRepository";
+import { colors } from "../../theme/colors";
+import { typography } from "../../theme/typography";
 
 function languageLabel(languageName?: string) {
-  const normalized = languageName?.toLocaleLowerCase('fr') ?? '';
-  if (normalized === 'arabic') return 'Arabe';
-  if (normalized === 'french') return 'Français';
-  if (normalized === 'english') return 'Anglais';
-  return languageName || 'Langue non précisée';
+  const normalized = languageName?.toLocaleLowerCase("fr") ?? "";
+  if (normalized === "arabic") return "Arabe";
+  if (normalized === "french") return "Français";
+  if (normalized === "english") return "Anglais";
+  return languageName || "Langue non précisée";
 }
 
 export default function TafsirScreen() {
@@ -44,8 +45,8 @@ export default function TafsirScreen() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string>();
 
-  const chapterId = Number(verseKey?.split(':')[0]);
-  const currentVerseNumber = Number(verseKey?.split(':')[1]) || 1;
+  const chapterId = Number(verseKey?.split(":")[0]);
+  const currentVerseNumber = Number(verseKey?.split(":")[1]) || 1;
 
   const surah = useMemo(
     () => SURAHS.find((item) => item.id === chapterId),
@@ -54,17 +55,16 @@ export default function TafsirScreen() {
 
   const totalVerses = surah?.verses ?? 0;
   const hasPreviousVerse = currentVerseNumber > 1;
-  const hasNextVerse =
-    totalVerses > 0 && currentVerseNumber < totalVerses;
+  const hasNextVerse = totalVerses > 0 && currentVerseNumber < totalVerses;
 
   const load = useCallback(async () => {
     if (!verseKey || !/^\d{1,3}:\d{1,3}$/.test(verseKey)) {
-      setError('Ce verset est invalide.');
+      setError("Ce verset est invalide.");
       setLoading(false);
       return;
     }
 
-    const requestedChapter = Number(verseKey.split(':')[0]);
+    const requestedChapter = Number(verseKey.split(":")[0]);
 
     setLoading(true);
     setError(undefined);
@@ -77,15 +77,13 @@ export default function TafsirScreen() {
         tafsirRepository.getTafsir(verseKey),
       ]);
 
-      setVerse(
-        verses.find((item) => item.verseKey === verseKey),
-      );
+      setVerse(verses.find((item) => item.verseKey === verseKey));
       setTafsir(tafsirResult);
     } catch (reason) {
       setError(
         reason instanceof Error
           ? reason.message
-          : 'Impossible de charger le tafsir.',
+          : "Impossible de charger le tafsir.",
       );
     } finally {
       setLoading(false);
@@ -107,14 +105,13 @@ export default function TafsirScreen() {
         !Number.isInteger(chapterId) ||
         chapterId < 1 ||
         targetVerseNumber < 1 ||
-        (totalVerses > 0 &&
-          targetVerseNumber > totalVerses)
+        (totalVerses > 0 && targetVerseNumber > totalVerses)
       ) {
         return;
       }
 
       router.replace({
-        pathname: '/tafsir/[verseKey]',
+        pathname: "/tafsir/[verseKey]",
         params: {
           verseKey: `${chapterId}:${targetVerseNumber}`,
         },
@@ -134,7 +131,7 @@ export default function TafsirScreen() {
     }
 
     router.replace({
-      pathname: '/surah/[id]',
+      pathname: "/surah/[id]",
       params: {
         id: String(chapterId),
         verse: String(currentVerseNumber),
@@ -143,49 +140,32 @@ export default function TafsirScreen() {
   }, [chapterId, currentVerseNumber]);
 
   return (
-    <SafeAreaView
-      edges={['top']}
-      style={styles.safeArea}
-    >
+    <SafeAreaView edges={["top"]} style={styles.safeArea}>
       <View style={styles.header}>
         <Pressable
           accessibilityLabel="Retour"
           onPress={() => router.back()}
           style={styles.backButton}
         >
-          <Ionicons
-            name="arrow-back"
-            size={22}
-            color={colors.goldLight}
-          />
+          <Ionicons name="arrow-back" size={22} color={colors.goldLight} />
         </Pressable>
 
         <View style={styles.headerCopy}>
           <Text style={styles.title}>Tafsir</Text>
           <Text style={styles.subtitle}>
-            {surah?.frenchName ?? 'Sourate'} · Verset{' '}
-            {verseKey ?? '—'}
+            {surah?.frenchName ?? "Sourate"} · Verset {verseKey ?? "—"}
           </Text>
         </View>
 
         <View style={styles.bookIcon}>
-          <Ionicons
-            name="book-outline"
-            size={21}
-            color={colors.goldLight}
-          />
+          <Ionicons name="book-outline" size={21} color={colors.goldLight} />
         </View>
       </View>
 
       {loading ? (
         <View style={styles.center}>
-          <ActivityIndicator
-            size="large"
-            color={colors.gold}
-          />
-          <Text style={styles.loadingText}>
-            Chargement du tafsir…
-          </Text>
+          <ActivityIndicator size="large" color={colors.gold} />
+          <Text style={styles.loadingText}>Chargement du tafsir…</Text>
         </View>
       ) : error ? (
         <View style={styles.center}>
@@ -194,17 +174,10 @@ export default function TafsirScreen() {
             size={34}
             color={colors.goldLight}
           />
-          <Text style={styles.errorText}>
-            {error}
-          </Text>
+          <Text style={styles.errorText}>{error}</Text>
 
-          <Pressable
-            onPress={() => void load()}
-            style={styles.retryButton}
-          >
-            <Text style={styles.retryText}>
-              Réessayer
-            </Text>
+          <Pressable onPress={() => void load()} style={styles.retryButton}>
+            <Text style={styles.retryText}>Réessayer</Text>
           </Pressable>
         </View>
       ) : (
@@ -216,9 +189,7 @@ export default function TafsirScreen() {
           {verse ? (
             <View style={styles.verseCard}>
               <View style={styles.verseBadge}>
-                <Text style={styles.verseBadgeText}>
-                  {verse.verseKey}
-                </Text>
+                <Text style={styles.verseBadgeText}>{verse.verseKey}</Text>
               </View>
 
               <Text selectable style={styles.arabic}>
@@ -226,13 +197,13 @@ export default function TafsirScreen() {
               </Text>
 
               {verse.translation ? (
-                <Text
-                  selectable
-                  style={styles.translation}
-                >
+                <Text selectable style={styles.translation}>
                   {verse.translation}
                 </Text>
               ) : null}
+              <WasilContextButton
+                prompt={`Explique-moi ce verset et ce tafsir avec les sources vérifiées d’OUMMAH. Verset ${verse.verseKey} : ${verse.translation ?? verse.textUthmani}. Tafsir affiché : ${tafsir?.text ?? "indisponible"}`}
+              />
             </View>
           ) : null}
 
@@ -247,15 +218,11 @@ export default function TafsirScreen() {
 
             <View style={styles.sourceCopy}>
               <Text style={styles.sourceName}>
-                {tafsir?.resourceName ??
-                  'Al-Mukhtasar fi Tafsir al-Qur’an'}
+                {tafsir?.resourceName ?? "Al-Mukhtasar fi Tafsir al-Qur’an"}
               </Text>
 
               <Text style={styles.sourceMeta}>
-                Source QuranEnc ·{' '}
-                {languageLabel(
-                  tafsir?.languageName,
-                )}
+                Source QuranEnc · {languageLabel(tafsir?.languageName)}
               </Text>
             </View>
           </View>
@@ -265,10 +232,8 @@ export default function TafsirScreen() {
           </Text>
 
           <Text style={styles.disclaimer}>
-            Commentaire français publié par
-            QuranEnc. Ce texte n’est pas une
-            réponse générée ou traduite
-            automatiquement par Dalîl.
+            Commentaire français publié par QuranEnc. Ce texte n’est pas une
+            réponse générée ou traduite automatiquement par Dalîl.
           </Text>
 
           <View style={styles.navigationCard}>
@@ -282,9 +247,7 @@ export default function TafsirScreen() {
               </View>
 
               <View style={styles.navigationHeadingCopy}>
-                <Text style={styles.navigationTitle}>
-                  Continuer l’étude
-                </Text>
+                <Text style={styles.navigationTitle}>Continuer l’étude</Text>
                 <Text style={styles.navigationSubtitle}>
                   Parcourir le tafsir de la sourate
                 </Text>
@@ -296,36 +259,24 @@ export default function TafsirScreen() {
                 accessibilityRole="button"
                 accessibilityLabel="Tafsir du verset précédent"
                 disabled={!hasPreviousVerse}
-                onPress={() =>
-                  openVerseTafsir(
-                    currentVerseNumber - 1,
-                  )
-                }
+                onPress={() => openVerseTafsir(currentVerseNumber - 1)}
                 style={({ pressed }) => [
                   styles.navigationButton,
-                  !hasPreviousVerse &&
-                    styles.navigationButtonDisabled,
-                  pressed &&
-                    hasPreviousVerse &&
-                    styles.navigationButtonPressed,
+                  !hasPreviousVerse && styles.navigationButtonDisabled,
+                  pressed && hasPreviousVerse && styles.navigationButtonPressed,
                 ]}
               >
                 <Ionicons
                   name="chevron-back"
                   size={18}
-                  color={
-                    hasPreviousVerse
-                      ? colors.goldLight
-                      : colors.textMuted
-                  }
+                  color={hasPreviousVerse ? colors.goldLight : colors.textMuted}
                 />
 
                 <View style={styles.navigationButtonCopy}>
                   <Text
                     style={[
                       styles.navigationButtonLabel,
-                      !hasPreviousVerse &&
-                        styles.navigationButtonLabelDisabled,
+                      !hasPreviousVerse && styles.navigationButtonLabelDisabled,
                     ]}
                   >
                     Précédent
@@ -334,7 +285,7 @@ export default function TafsirScreen() {
                   <Text style={styles.navigationButtonMeta}>
                     {hasPreviousVerse
                       ? `Verset ${currentVerseNumber - 1}`
-                      : 'Début de la sourate'}
+                      : "Début de la sourate"}
                   </Text>
                 </View>
               </Pressable>
@@ -343,19 +294,12 @@ export default function TafsirScreen() {
                 accessibilityRole="button"
                 accessibilityLabel="Tafsir du verset suivant"
                 disabled={!hasNextVerse}
-                onPress={() =>
-                  openVerseTafsir(
-                    currentVerseNumber + 1,
-                  )
-                }
+                onPress={() => openVerseTafsir(currentVerseNumber + 1)}
                 style={({ pressed }) => [
                   styles.navigationButton,
                   styles.navigationButtonNext,
-                  !hasNextVerse &&
-                    styles.navigationButtonDisabled,
-                  pressed &&
-                    hasNextVerse &&
-                    styles.navigationButtonPressed,
+                  !hasNextVerse && styles.navigationButtonDisabled,
+                  pressed && hasNextVerse && styles.navigationButtonPressed,
                 ]}
               >
                 <View style={styles.navigationButtonCopy}>
@@ -363,8 +307,7 @@ export default function TafsirScreen() {
                     style={[
                       styles.navigationButtonLabel,
                       styles.navigationButtonLabelRight,
-                      !hasNextVerse &&
-                        styles.navigationButtonLabelDisabled,
+                      !hasNextVerse && styles.navigationButtonLabelDisabled,
                     ]}
                   >
                     Suivant
@@ -378,18 +321,14 @@ export default function TafsirScreen() {
                   >
                     {hasNextVerse
                       ? `Verset ${currentVerseNumber + 1}`
-                      : 'Fin de la sourate'}
+                      : "Fin de la sourate"}
                   </Text>
                 </View>
 
                 <Ionicons
                   name="chevron-forward"
                   size={18}
-                  color={
-                    hasNextVerse
-                      ? colors.goldLight
-                      : colors.textMuted
-                  }
+                  color={hasNextVerse ? colors.goldLight : colors.textMuted}
                 />
               </Pressable>
             </View>
@@ -400,8 +339,7 @@ export default function TafsirScreen() {
               onPress={returnToVerse}
               style={({ pressed }) => [
                 styles.returnButton,
-                pressed &&
-                  styles.returnButtonPressed,
+                pressed && styles.returnButtonPressed,
               ]}
             >
               <Ionicons
@@ -429,19 +367,17 @@ const styles = StyleSheet.create({
   header: {
     minHeight: 74,
     paddingHorizontal: 12,
-    flexDirection: 'row',
-    alignItems: 'center',
-    borderBottomWidth:
-      StyleSheet.hairlineWidth,
+    flexDirection: "row",
+    alignItems: "center",
+    borderBottomWidth: StyleSheet.hairlineWidth,
     borderColor: colors.borderSoft,
-    backgroundColor:
-      colors.backgroundSecondary,
+    backgroundColor: colors.backgroundSecondary,
   },
   backButton: {
     width: 42,
     height: 42,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     borderRadius: 21,
     backgroundColor: colors.purpleDeep,
   },
@@ -463,8 +399,8 @@ const styles = StyleSheet.create({
   bookIcon: {
     width: 40,
     height: 40,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     borderRadius: 20,
     borderWidth: 1,
     borderColor: colors.borderSoft,
@@ -472,8 +408,8 @@ const styles = StyleSheet.create({
   center: {
     flex: 1,
     paddingHorizontal: 28,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   loadingText: {
     marginTop: 14,
@@ -487,7 +423,7 @@ const styles = StyleSheet.create({
     fontFamily: typography.sans,
     fontSize: 13,
     lineHeight: 20,
-    textAlign: 'center',
+    textAlign: "center",
   },
   retryButton: {
     marginTop: 18,
@@ -500,28 +436,26 @@ const styles = StyleSheet.create({
     color: colors.background,
     fontFamily: typography.sans,
     fontSize: 11,
-    fontWeight: '700',
+    fontWeight: "700",
   },
   content: {
-    width: '100%',
+    width: "100%",
     maxWidth: 760,
     paddingHorizontal: 18,
     paddingTop: 22,
     paddingBottom: 60,
-    alignSelf: 'center',
+    alignSelf: "center",
   },
   verseCard: {
     paddingHorizontal: 18,
     paddingVertical: 22,
     borderRadius: 22,
     borderWidth: 1,
-    borderColor:
-      'rgba(224,188,112,0.24)',
-    backgroundColor:
-      colors.backgroundSecondary,
+    borderColor: "rgba(224,188,112,0.24)",
+    backgroundColor: colors.backgroundSecondary,
   },
   verseBadge: {
-    alignSelf: 'flex-start',
+    alignSelf: "flex-start",
     paddingHorizontal: 10,
     paddingVertical: 5,
     borderRadius: 12,
@@ -531,7 +465,7 @@ const styles = StyleSheet.create({
     color: colors.background,
     fontFamily: typography.sans,
     fontSize: 9,
-    fontWeight: '700',
+    fontWeight: "700",
   },
   arabic: {
     marginTop: 20,
@@ -539,16 +473,14 @@ const styles = StyleSheet.create({
     fontFamily: typography.arabic,
     fontSize: 30,
     lineHeight: 54,
-    textAlign: 'right',
-    writingDirection: 'rtl',
+    textAlign: "right",
+    writingDirection: "rtl",
   },
   translation: {
     marginTop: 20,
     paddingTop: 18,
-    borderTopWidth:
-      StyleSheet.hairlineWidth,
-    borderColor:
-      'rgba(224,188,112,0.18)',
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderColor: "rgba(224,188,112,0.18)",
     color: colors.textSecondary,
     fontFamily: typography.sans,
     fontSize: 15,
@@ -557,8 +489,8 @@ const styles = StyleSheet.create({
   sourceCard: {
     marginTop: 20,
     padding: 15,
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     borderRadius: 18,
     borderWidth: 1,
     borderColor: colors.borderSoft,
@@ -567,11 +499,10 @@ const styles = StyleSheet.create({
   sourceIcon: {
     width: 38,
     height: 38,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     borderRadius: 19,
-    backgroundColor:
-      'rgba(126,72,148,0.18)',
+    backgroundColor: "rgba(126,72,148,0.18)",
   },
   sourceCopy: {
     flex: 1,
@@ -598,37 +529,33 @@ const styles = StyleSheet.create({
   disclaimer: {
     marginTop: 30,
     paddingTop: 18,
-    borderTopWidth:
-      StyleSheet.hairlineWidth,
+    borderTopWidth: StyleSheet.hairlineWidth,
     borderColor: colors.borderSoft,
     color: colors.textMuted,
     fontFamily: typography.sans,
     fontSize: 9.5,
     lineHeight: 16,
-    textAlign: 'center',
+    textAlign: "center",
   },
   navigationCard: {
     marginTop: 24,
     padding: 16,
     borderRadius: 22,
     borderWidth: 1,
-    borderColor:
-      'rgba(224,188,112,0.28)',
-    backgroundColor:
-      colors.backgroundSecondary,
+    borderColor: "rgba(224,188,112,0.28)",
+    backgroundColor: colors.backgroundSecondary,
   },
   navigationHeading: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
   navigationHeadingIcon: {
     width: 38,
     height: 38,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     borderRadius: 19,
-    backgroundColor:
-      'rgba(126,72,148,0.18)',
+    backgroundColor: "rgba(126,72,148,0.18)",
   },
   navigationHeadingCopy: {
     flex: 1,
@@ -647,7 +574,7 @@ const styles = StyleSheet.create({
   },
   navigationRow: {
     marginTop: 16,
-    flexDirection: 'row',
+    flexDirection: "row",
     gap: 10,
   },
   navigationButton: {
@@ -656,15 +583,15 @@ const styles = StyleSheet.create({
     minHeight: 64,
     paddingHorizontal: 11,
     paddingVertical: 10,
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     borderRadius: 17,
     borderWidth: 1,
     borderColor: colors.borderSoft,
     backgroundColor: colors.surface,
   },
   navigationButtonNext: {
-    justifyContent: 'flex-end',
+    justifyContent: "flex-end",
   },
   navigationButtonDisabled: {
     opacity: 0.45,
@@ -682,10 +609,10 @@ const styles = StyleSheet.create({
     color: colors.goldLight,
     fontFamily: typography.sans,
     fontSize: 11,
-    fontWeight: '700',
+    fontWeight: "700",
   },
   navigationButtonLabelRight: {
-    textAlign: 'right',
+    textAlign: "right",
   },
   navigationButtonLabelDisabled: {
     color: colors.textMuted,
@@ -697,15 +624,15 @@ const styles = StyleSheet.create({
     fontSize: 8.5,
   },
   navigationButtonMetaRight: {
-    textAlign: 'right',
+    textAlign: "right",
   },
   returnButton: {
     minHeight: 46,
     marginTop: 12,
     paddingHorizontal: 15,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
     gap: 8,
     borderRadius: 16,
     backgroundColor: colors.goldLight,
@@ -718,6 +645,6 @@ const styles = StyleSheet.create({
     color: colors.background,
     fontFamily: typography.sans,
     fontSize: 11,
-    fontWeight: '700',
+    fontWeight: "700",
   },
 });

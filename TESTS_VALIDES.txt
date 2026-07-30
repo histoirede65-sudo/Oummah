@@ -1,0 +1,9 @@
+PASS | Que dit l'Islam sur le respect des promesses et des engagements selon le Coran et la Sunna ? => null
+PASS | Que dit lIslam sur le respect des promesses et des engagements selon le Coran et la Sunna ? => null
+PASS | Que dit l’Islam sur le fait de lire le Coran ? => null
+PASS | Comment lire le Coran ? => null
+PASS | Lis le Coran => /quran
+PASS | Ouvre le Coran => /quran
+PASS | S'il te plaît ouvre le Coran => /quran
+PASS | Ouvre la Qibla => /qibla
+PASS | Lis la sourate 2 => /surah/2

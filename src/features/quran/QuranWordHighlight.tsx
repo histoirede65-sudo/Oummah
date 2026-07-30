@@ -4,13 +4,24 @@ import { StyleSheet, Text } from 'react-native';
 import { colors } from '../../theme/colors';
 import { ARABIC_READING_COLOR } from './ArabicReadingPresentation';
 
-function QuranWordHighlightComponent({ text, isActive, isRead }: {
+function QuranWordHighlightComponent({ text, fontFamily, isActive, isRead }: {
   text: string;
   fontFamily: string;
   isActive: boolean;
   isRead: boolean;
 }) {
-  return <Text style={[styles.highlight, isRead && styles.read, isActive && styles.active]}>{text}</Text>;
+  return (
+    <Text
+      style={[
+        styles.highlight,
+        { fontFamily },
+        isRead && styles.read,
+        isActive && styles.active,
+      ]}
+    >
+      {text}
+    </Text>
+  );
 }
 
 export const QuranWordHighlight = memo(QuranWordHighlightComponent, (previous, next) => (

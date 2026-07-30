@@ -1,0 +1,24 @@
+CORRECTIF OUMMAH — PARCOURS PROGRESSIFS PREMIUM
+
+Copier les fichiers en conservant exactement les chemins du dossier src.
+
+Fichiers modifiés :
+- src/features/wasil/WasilGoalService.ts
+- src/app/daily-goals.tsx
+
+Fichiers ajoutés :
+- src/features/progressive-paths/domain/ProgressivePath.ts
+- src/features/progressive-paths/data/progressivePathStorage.ts
+- src/features/progressive-paths/data/progressivePathRepository.ts
+
+Fonctionnement :
+- Dans Wasil, écrire : « Je veux mémoriser la sourate Al-Kahf ».
+- Wasil crée un parcours Premium selon le rythme quotidien choisi.
+- Les 110 versets sont découpés en séances.
+- Une révision est ajoutée après chaque groupe de trois séances.
+- Une consolidation finale est prévue.
+- Le parcours apparaît dans Objectifs du jour.
+- L’utilisateur peut terminer, signaler une séance difficile ou la reporter.
+
+Le paiement et le contrôle réel de l’abonnement Premium ne sont volontairement pas modifiés.
+La page Hadith et les autres modules ne sont pas touchés.

@@ -1,0 +1,15 @@
+CORRECTION SOURCES WASIL
+
+Fichiers modifiés uniquement dans le périmètre Wasil :
+- supabase/functions/wasil/index.ts
+- src/app/(tabs)/dalil.tsx
+- src/features/wasil/WasilLocalResponder.ts
+
+Après fusion dans le projet :
+1. supabase functions deploy wasil
+2. npx expo start -c
+
+La fonction renvoie désormais une liste structurée quranReferences.
+Chaque référence coranique utilisée devient une carte OUMMAH interne.
+Les liens Quran.com et QuranEnc sont masqués lorsqu'ils correspondent à une référence coranique native.
+Les véritables sources externes non coraniques restent affichées.

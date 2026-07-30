@@ -1,8 +1,8 @@
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router, Tabs, usePathname } from 'expo-router';
-import { useSyncExternalStore } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { useEffect, useRef, useSyncExternalStore } from 'react';
+import { Animated, Easing, Pressable, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { tadabburController } from '../../core/audio';
@@ -31,10 +31,11 @@ const tabs = [
     activeIcon: 'headset',
   },
   {
-    labelKey: 'nav.dalil',
-    route: 'dalil',
-    icon: 'sparkles-outline',
-    activeIcon: 'sparkles',
+    labelKey: 'nav.qibla',
+    route: 'community',
+    href: '/qibla',
+    icon: 'compass-outline',
+    activeIcon: 'compass',
   },
   {
     labelKey: 'nav.profile',
@@ -48,6 +49,48 @@ export default function TabLayout() {
   const insets = useSafeAreaInsets();
   const { t } = useI18n();
   const pathname = usePathname();
+  const listenMotion = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    const loop = Animated.loop(
+      Animated.sequence([
+        Animated.timing(listenMotion, {
+          toValue: 1,
+          duration: 1250,
+          easing: Easing.inOut(Easing.sin),
+          useNativeDriver: true,
+          isInteraction: false,
+        }),
+        Animated.timing(listenMotion, {
+          toValue: 0,
+          duration: 1250,
+          easing: Easing.inOut(Easing.sin),
+          useNativeDriver: true,
+          isInteraction: false,
+        }),
+      ]),
+    );
+
+    loop.start();
+    return () => loop.stop();
+  }, [listenMotion]);
+
+  const listenAnimatedStyle = {
+    transform: [
+      {
+        translateY: listenMotion.interpolate({
+          inputRange: [0, 1],
+          outputRange: [0, -4],
+        }),
+      },
+      {
+        scale: listenMotion.interpolate({
+          inputRange: [0, 1],
+          outputRange: [1, 1.045],
+        }),
+      },
+    ],
+  };
 
   const tadabburMode = useSyncExternalStore(
     tadabburController.subscribe,
@@ -84,9 +127,10 @@ export default function TabLayout() {
             ]}
           >
             {tabs.map((tab, index) => {
-              const active = tab.route === 'listen'
-                ? pathname.startsWith('/listen')
-                : state.routes[state.index]?.name === tab.route;
+              const active =
+                'href' in tab
+                  ? pathname.startsWith(tab.href)
+                  : state.routes[state.index]?.name === tab.route;
 
               const center = index === 2;
 
@@ -98,8 +142,12 @@ export default function TabLayout() {
                     selected: active,
                   }}
                   onPress={() => {
-                    if ('href' in tab) router.push(tab.href as never);
-                    else navigation.navigate(tab.route as never);
+                    if ('href' in tab) {
+                      router.push(tab.href as never);
+                      return;
+                    }
+
+                    navigation.navigate(tab.route as never);
                   }}
                   style={({ pressed }) => [
                     styles.tab,
@@ -108,40 +156,32 @@ export default function TabLayout() {
                   ]}
                 >
                   {center ? (
-                    <LinearGradient
-                      colors={['#7B2C91', '#311447']}
-                      style={styles.centerButton}
+                    <Animated.View
+                      style={[styles.centerMotion, listenAnimatedStyle]}
                     >
-                      <Ionicons
-                        name={
-                          active
-                            ? tab.activeIcon
-                            : tab.icon
-                        }
-                        size={29}
-                        color={colors.text}
-                      />
-                    </LinearGradient>
+                      <View pointerEvents="none" style={styles.centerHalo} />
+                      <LinearGradient
+                        colors={['#B35BC7', '#69277F', '#32123F']}
+                        locations={[0, 0.46, 1]}
+                        style={styles.centerButton}
+                      >
+                        <View pointerEvents="none" style={styles.centerHighlight} />
+                        <Ionicons
+                          name={active ? tab.activeIcon : tab.icon}
+                          size={30}
+                          color="#FFF9F2"
+                          style={styles.centerIcon}
+                        />
+                      </LinearGradient>
+                    </Animated.View>
                   ) : (
                     <View
-                      style={[
-                        styles.iconWrap,
-                        active &&
-                          styles.iconActive,
-                      ]}
+                      style={[styles.iconWrap, active && styles.iconActive]}
                     >
                       <Ionicons
-                        name={
-                          active
-                            ? tab.activeIcon
-                            : tab.icon
-                        }
+                        name={active ? tab.activeIcon : tab.icon}
                         size={20}
-                        color={
-                          active
-                            ? colors.primaryLight
-                            : colors.textMuted
-                        }
+                        color={active ? colors.primaryLight : colors.textMuted}
                       />
                     </View>
                   )}
@@ -149,15 +189,11 @@ export default function TabLayout() {
                   <Text
                     style={[
                       styles.label,
-                      active &&
-                        styles.labelActive,
-                      center &&
-                        styles.centerLabel,
+                      active && styles.labelActive,
+                      center && styles.centerLabel,
                     ]}
                   >
-                    {t(
-                      tab.labelKey as TranslationKey,
-                    )}
+                    {center ? 'Écouter' : t(tab.labelKey as TranslationKey)}
                   </Text>
                 </Pressable>
               );
@@ -166,25 +202,15 @@ export default function TabLayout() {
         );
       }}
     >
-      <Tabs.Screen
-        name="index"
-        options={{ title: t('nav.home') }}
-      />
+      <Tabs.Screen name="index" options={{ title: t('nav.home') }} />
 
-      <Tabs.Screen
-        name="quran"
-        options={{ title: t('nav.read') }}
-      />
+      <Tabs.Screen name="quran" options={{ title: t('nav.read') }} />
 
-      <Tabs.Screen
-        name="dalil"
-        options={{ title: t('nav.dalil') }}
-      />
+      <Tabs.Screen name="dalil" options={{ title: t('nav.dalil') }} />
 
-      <Tabs.Screen
-        name="profile"
-        options={{ title: t('nav.profile') }}
-      />
+      <Tabs.Screen name="community" options={{ title: t('nav.qibla') }} />
+
+      <Tabs.Screen name="profile" options={{ title: t('nav.profile') }} />
     </Tabs>
   );
 }
@@ -199,8 +225,9 @@ const styles = StyleSheet.create({
     paddingTop: 5,
     flexDirection: 'row',
     alignItems: 'flex-start',
-    backgroundColor:
-      colors.backgroundSecondary,
+    borderTopWidth: 1,
+    borderTopColor: 'rgba(255,255,255,0.06)',
+    backgroundColor: 'rgba(8,13,22,0.98)',
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
@@ -230,26 +257,61 @@ const styles = StyleSheet.create({
   },
 
   iconActive: {
-    backgroundColor:
-      'rgba(90,43,115,0.28)',
+    backgroundColor: 'rgba(90,43,115,0.28)',
+  },
+
+  centerMotion: {
+    width: 64,
+    height: 64,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+
+  centerHalo: {
+    position: 'absolute',
+    width: 68,
+    height: 68,
+    borderRadius: 34,
+    backgroundColor: 'rgba(222,153,255,0.14)',
+    shadowColor: '#D9A0FF',
+    shadowOpacity: 0.9,
+    shadowRadius: 20,
+    elevation: 10,
   },
 
   centerButton: {
-    width: 59,
-    height: 59,
+    width: 61,
+    height: 61,
+    overflow: 'hidden',
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: 30,
+    borderRadius: 31,
     borderWidth: 2.2,
-    borderColor: colors.goldLight,
-    shadowColor: colors.gold,
+    borderColor: '#F3C86A',
+    shadowColor: '#F0B84C',
     shadowOffset: {
       width: 0,
-      height: 0,
+      height: 4,
     },
-    shadowOpacity: 0.95,
-    shadowRadius: 14,
-    elevation: 15,
+    shadowOpacity: 1,
+    shadowRadius: 18,
+    elevation: 18,
+  },
+
+  centerHighlight: {
+    position: 'absolute',
+    top: 3,
+    right: 8,
+    left: 8,
+    height: 16,
+    borderRadius: 10,
+    backgroundColor: 'rgba(255,255,255,0.18)',
+  },
+
+  centerIcon: {
+    textShadowColor: 'rgba(0,0,0,0.65)',
+    textShadowOffset: { width: 0, height: 2 },
+    textShadowRadius: 3,
   },
 
   label: {
@@ -267,7 +329,11 @@ const styles = StyleSheet.create({
 
   centerLabel: {
     marginTop: 1,
-    color: colors.text,
+    color: '#FFF7EC',
+    fontWeight: '800',
+    textShadowColor: 'rgba(0,0,0,0.95)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
   },
 
   pressed: {

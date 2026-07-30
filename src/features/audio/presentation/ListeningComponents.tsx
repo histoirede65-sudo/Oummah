@@ -1,6 +1,6 @@
-import { Ionicons } from '@expo/vector-icons';
-import { Image } from 'expo-image';
-import { memo, useRef } from 'react';
+import { Ionicons } from "@expo/vector-icons";
+import { Image } from "expo-image";
+import { memo, useRef } from "react";
 import {
   Animated,
   Pressable,
@@ -9,18 +9,15 @@ import {
   TextInput,
   View,
   type GestureResponderEvent,
-} from 'react-native';
+} from "react-native";
 
-import { animationCurves } from '../../../core/animations';
-import type { AudioTrack } from '../../../core/audio';
-import { useI18n } from '../../../i18n';
-import { colors } from '../../../theme/colors';
-import { typography } from '../../../theme/typography';
-import type {
-  CatalogReciter,
-  SurahCatalogItem,
-} from '../domain/audio';
-import type { DownloadState } from '../../../core/repositories';
+import { animationCurves } from "../../../core/animations";
+import type { AudioTrack } from "../../../core/audio";
+import { useI18n } from "../../../i18n";
+import { colors } from "../../../theme/colors";
+import { typography } from "../../../theme/typography";
+import type { CatalogReciter, SurahCatalogItem } from "../domain/audio";
+import type { DownloadState } from "../../../core/repositories";
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
@@ -40,15 +37,13 @@ export function ListeningHeader({
   return (
     <View style={styles.header}>
       <Pressable
-        accessibilityLabel={
-          onBack ? t('common.back') : t('common.menu')
-        }
+        accessibilityLabel={onBack ? t("common.back") : t("common.menu")}
         onPress={onBack}
         disabled={!onBack}
         style={styles.headerButton}
       >
         <Ionicons
-          name={onBack ? 'arrow-back' : 'headset-outline'}
+          name={onBack ? "arrow-back" : "headset-outline"}
           size={21}
           color={colors.goldMuted}
         />
@@ -63,16 +58,12 @@ export function ListeningHeader({
       </View>
 
       <Pressable
-        accessibilityLabel={t('recitations.playlists')}
+        accessibilityLabel={t("recitations.playlists")}
         onPress={onAction}
         disabled={!onAction}
         style={styles.headerButton}
       >
-        <Ionicons
-          name="albums-outline"
-          size={19}
-          color={colors.goldMuted}
-        />
+        <Ionicons name="albums-outline" size={19} color={colors.goldMuted} />
       </Pressable>
     </View>
   );
@@ -91,10 +82,14 @@ export function SectionHeader({
     <View style={styles.sectionHeader}>
       <Text style={styles.sectionTitle}>{title}</Text>
 
-      {onPress && actionLabel ? (
-        <Pressable onPress={onPress}>
+      {actionLabel ? (
+        onPress ? (
+          <Pressable onPress={onPress}>
+            <Text style={styles.sectionAction}>{actionLabel}</Text>
+          </Pressable>
+        ) : (
           <Text style={styles.sectionAction}>{actionLabel}</Text>
-        </Pressable>
+        )
       ) : null}
     </View>
   );
@@ -108,10 +103,10 @@ export function ReciterAvatar({
   size?: number;
 }) {
   const initials = reciter.name
-    .split(' ')
+    .split(" ")
     .slice(0, 2)
     .map((word) => word[0])
-    .join('');
+    .join("");
 
   /*
    * Les portraits de grande taille correspondent à la page
@@ -136,7 +131,7 @@ export function ReciterAvatar({
       >
         <Image
           source={reciter.image}
-          contentFit={isLargePortrait ? 'contain' : 'cover'}
+          contentFit={isLargePortrait ? "contain" : "cover"}
           contentPosition="center"
           cachePolicy="memory-disk"
           transition={180}
@@ -180,10 +175,7 @@ export function ReciterCard({
   return (
     <Pressable
       onPress={onPress}
-      style={({ pressed }) => [
-        styles.reciterCard,
-        pressed && styles.pressed,
-      ]}
+      style={({ pressed }) => [styles.reciterCard, pressed && styles.pressed]}
     >
       <ReciterAvatar reciter={reciter} />
 
@@ -196,7 +188,7 @@ export function ReciterCard({
       </Text>
 
       <Text style={styles.reciterCount}>
-        {t('recitations.surahAvailableCount', {
+        {t("recitations.surahAvailableCount", {
           count: reciter.availableSurahs,
         })}
       </Text>
@@ -216,17 +208,10 @@ export function TrackCard({
   return (
     <Pressable
       onPress={onPress}
-      style={({ pressed }) => [
-        styles.trackCard,
-        pressed && styles.pressed,
-      ]}
+      style={({ pressed }) => [styles.trackCard, pressed && styles.pressed]}
     >
       <View style={styles.trackIcon}>
-        <Ionicons
-          name="play"
-          size={18}
-          color={colors.goldMuted}
-        />
+        <Ionicons name="play" size={18} color={colors.goldMuted} />
       </View>
 
       <Text numberOfLines={1} style={styles.trackTitle}>
@@ -280,15 +265,11 @@ export const SurahAudioRow = memo(function SurahAudioRow({
       ]}
     >
       <View style={styles.surahNumber}>
-        <Text style={styles.surahNumberText}>
-          {item.surah.id}
-        </Text>
+        <Text style={styles.surahNumberText}>{item.surah.id}</Text>
       </View>
 
       <View style={styles.surahCopy}>
-        <Text style={styles.surahName}>
-          {item.surah.arabicName}
-        </Text>
+        <Text style={styles.surahName}>{item.surah.arabicName}</Text>
 
         <Text style={styles.surahMeta}>
           {item.surah.frenchName} · {formatDuration(item.track.durationHint)}
@@ -296,19 +277,11 @@ export const SurahAudioRow = memo(function SurahAudioRow({
       </View>
 
       {item.isFavorite ? (
-        <Ionicons
-          name="heart"
-          size={14}
-          color={colors.goldMuted}
-        />
+        <Ionicons name="heart" size={14} color={colors.goldMuted} />
       ) : null}
 
       {item.isDownloaded ? (
-        <Ionicons
-          name="download"
-          size={14}
-          color={colors.success}
-        />
+        <Ionicons name="download" size={14} color={colors.success} />
       ) : null}
 
       <Text numberOfLines={1} style={styles.surahArabic}>
@@ -316,7 +289,7 @@ export const SurahAudioRow = memo(function SurahAudioRow({
       </Text>
 
       <DownloadButton
-        downloaded={item.isDownloaded || downloadState === 'downloaded'}
+        downloaded={item.isDownloaded || downloadState === "downloaded"}
         state={downloadState}
         progress={downloadProgress}
         onPress={onDownload}
@@ -328,17 +301,13 @@ export const SurahAudioRow = memo(function SurahAudioRow({
 });
 
 function formatDuration(seconds?: number) {
-  if (!seconds || seconds <= 0) return '--:--';
+  if (!seconds || seconds <= 0) return "--:--";
   const minutes = Math.floor(seconds / 60);
   const remainingSeconds = Math.round(seconds % 60);
-  return `${minutes}:${String(remainingSeconds).padStart(2, '0')}`;
+  return `${minutes}:${String(remainingSeconds).padStart(2, "0")}`;
 }
 
-function PlayButton({
-  onPress,
-}: {
-  onPress: () => void;
-}) {
+function PlayButton({ onPress }: { onPress: () => void }) {
   const scale = useRef(new Animated.Value(1)).current;
 
   const animate = (toValue: number) => {
@@ -371,11 +340,7 @@ function PlayButton({
         },
       ]}
     >
-      <Ionicons
-        name="play"
-        size={14}
-        color={colors.goldMuted}
-      />
+      <Ionicons name="play" size={14} color={colors.goldMuted} />
     </AnimatedPressable>
   );
 }
@@ -410,8 +375,8 @@ function DownloadButton({
     onPress?.();
   };
 
-  const isDownloading = state === 'downloading' || state === 'queued';
-  const isFailed = state === 'failed';
+  const isDownloading = state === "downloading" || state === "queued";
+  const isFailed = state === "failed";
 
   return (
     <AnimatedPressable
@@ -429,12 +394,28 @@ function DownloadButton({
       ]}
     >
       <Ionicons
-        name={downloaded ? 'checkmark' : isFailed ? 'warning-outline' : isDownloading ? 'close' : 'download-outline'}
+        name={
+          downloaded
+            ? "checkmark"
+            : isFailed
+              ? "warning-outline"
+              : isDownloading
+                ? "close"
+                : "download-outline"
+        }
         size={14}
-        color={downloaded ? colors.background : isFailed ? colors.danger : colors.goldMuted}
+        color={
+          downloaded
+            ? colors.background
+            : isFailed
+              ? colors.danger
+              : colors.goldMuted
+        }
       />
       {isDownloading ? (
-        <Text style={styles.rowDownloadProgress}>{Math.round(progress * 100)}%</Text>
+        <Text style={styles.rowDownloadProgress}>
+          {Math.round(progress * 100)}%
+        </Text>
       ) : null}
     </AnimatedPressable>
   );
@@ -443,7 +424,7 @@ function DownloadButton({
 export function SearchBar({
   value,
   onChangeText,
-  placeholder = 'Rechercher un récitateur...',
+  placeholder = "Rechercher un récitateur...",
 }: {
   value?: string;
   onChangeText?: (text: string) => void;
@@ -471,7 +452,7 @@ export function SearchBar({
 }
 
 export function ContinueListeningCard({
-  title = 'CONTINUER L\'ÉCOUTE',
+  title = "CONTINUER L'ÉCOUTE",
   reciterName,
   subtitle,
   onPress,
@@ -484,10 +465,7 @@ export function ContinueListeningCard({
   return (
     <Pressable
       onPress={onPress}
-      style={({ pressed }) => [
-        styles.continueCard,
-        pressed && styles.pressed,
-      ]}
+      style={({ pressed }) => [styles.continueCard, pressed && styles.pressed]}
     >
       <View style={styles.continueCardContent}>
         <View style={styles.continueCardText}>
@@ -499,11 +477,7 @@ export function ContinueListeningCard({
         </View>
 
         <View style={styles.continueCardIconWrap}>
-          <Ionicons
-            name="play-circle"
-            size={24}
-            color={colors.goldMuted}
-          />
+          <Ionicons name="play-circle" size={24} color={colors.goldMuted} />
         </View>
       </View>
     </Pressable>
@@ -529,8 +503,8 @@ export const listeningStyles = StyleSheet.create({
   empty: {
     minHeight: 74,
     padding: 16,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     borderRadius: 18,
     borderWidth: 1,
     borderColor: colors.borderSoft,
@@ -541,7 +515,7 @@ export const listeningStyles = StyleSheet.create({
     color: colors.textMuted,
     fontFamily: typography.sans,
     fontSize: 10,
-    textAlign: 'center',
+    textAlign: "center",
   },
 
   loading: {
@@ -549,22 +523,22 @@ export const listeningStyles = StyleSheet.create({
     color: colors.textMuted,
     fontFamily: typography.sans,
     fontSize: 10,
-    textAlign: 'center',
+    textAlign: "center",
   },
 });
 
 const styles = StyleSheet.create({
   header: {
     height: 76,
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
 
   headerButton: {
     width: 42,
     height: 42,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     borderRadius: 21,
     borderWidth: 1,
     borderColor: colors.borderSoft,
@@ -586,15 +560,15 @@ const styles = StyleSheet.create({
     color: colors.textMuted,
     fontFamily: typography.sans,
     fontSize: 9.5,
-    fontWeight: '500',
+    fontWeight: "500",
   },
 
   sectionHeader: {
     marginTop: 22,
     marginBottom: 10,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
   },
 
   sectionTitle: {
@@ -607,25 +581,25 @@ const styles = StyleSheet.create({
     color: colors.textMuted,
     fontFamily: typography.sans,
     fontSize: 9.5,
-    fontWeight: '600',
+    fontWeight: "600",
   },
 
   avatarImageFrame: {
-    overflow: 'hidden',
-    alignItems: 'center',
-    justifyContent: 'center',
+    overflow: "hidden",
+    alignItems: "center",
+    justifyContent: "center",
     borderWidth: 1,
     borderColor: colors.goldDark,
     backgroundColor: colors.purpleDeep,
   },
 
   avatarImage: {
-    alignSelf: 'center',
+    alignSelf: "center",
   },
 
   avatarFallback: {
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     borderWidth: 1,
     borderColor: colors.goldDark,
     backgroundColor: colors.purpleMid,
@@ -641,7 +615,7 @@ const styles = StyleSheet.create({
     width: 126,
     minHeight: 166,
     padding: 12,
-    alignItems: 'center',
+    alignItems: "center",
     borderRadius: 20,
     borderWidth: 1,
     borderColor: colors.borderSoft,
@@ -654,7 +628,7 @@ const styles = StyleSheet.create({
     color: colors.text,
     fontFamily: typography.serifMedium,
     fontSize: 14,
-    textAlign: 'center',
+    textAlign: "center",
   },
 
   reciterCountry: {
@@ -683,8 +657,8 @@ const styles = StyleSheet.create({
   trackIcon: {
     width: 39,
     height: 39,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     borderRadius: 20,
     backgroundColor: colors.purpleDeep,
   },
@@ -706,14 +680,14 @@ const styles = StyleSheet.create({
   surahRow: {
     minHeight: 68,
     paddingHorizontal: 11,
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 7,
     borderRadius: 16,
     borderWidth: 1,
     borderColor: colors.borderSoft,
     backgroundColor: colors.surface,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: {
       width: 0,
       height: 3,
@@ -726,8 +700,8 @@ const styles = StyleSheet.create({
   surahNumber: {
     width: 34,
     height: 34,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     borderRadius: 17,
     borderWidth: 1,
     borderColor: colors.goldDark,
@@ -738,7 +712,7 @@ const styles = StyleSheet.create({
     color: colors.goldMuted,
     fontFamily: typography.sans,
     fontSize: 9,
-    fontWeight: '700',
+    fontWeight: "700",
   },
 
   surahCopy: {
@@ -759,18 +733,18 @@ const styles = StyleSheet.create({
   },
 
   surahArabic: {
-    maxWidth: '24%',
+    maxWidth: "24%",
     color: colors.goldMuted,
     fontFamily: typography.arabic,
     fontSize: 17,
-    writingDirection: 'rtl',
+    writingDirection: "rtl",
   },
 
   rowPlay: {
     width: 32,
     height: 32,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     borderRadius: 16,
     backgroundColor: colors.purpleDeep,
     shadowColor: colors.gold,
@@ -786,8 +760,8 @@ const styles = StyleSheet.create({
   rowDownload: {
     width: 32,
     height: 32,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     borderRadius: 16,
     borderWidth: 1,
     borderColor: colors.borderSoft,
@@ -804,23 +778,23 @@ const styles = StyleSheet.create({
   },
 
   rowDownloadProgress: {
-    position: 'absolute',
+    position: "absolute",
     bottom: -10,
     color: colors.goldMuted,
     fontFamily: typography.sans,
     fontSize: 6.5,
-    fontWeight: '800',
+    fontWeight: "800",
   },
 
   searchBarContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     paddingHorizontal: 14,
     paddingVertical: 12,
     borderRadius: 18,
     borderWidth: 1,
     borderColor: colors.borderSoft,
-    backgroundColor: '#181818',
+    backgroundColor: "#181818",
   },
 
   searchIcon: {
@@ -842,7 +816,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.borderSoft,
     backgroundColor: colors.surface,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: {
       width: 0,
       height: 4,
@@ -853,9 +827,9 @@ const styles = StyleSheet.create({
   },
 
   continueCardContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
   },
 
   continueCardText: {
@@ -867,9 +841,9 @@ const styles = StyleSheet.create({
     color: colors.goldMuted,
     fontFamily: typography.sans,
     fontSize: 11,
-    fontWeight: '700',
+    fontWeight: "700",
     letterSpacing: 1.2,
-    textTransform: 'uppercase',
+    textTransform: "uppercase",
   },
 
   continueCardReciter: {
@@ -889,8 +863,8 @@ const styles = StyleSheet.create({
   continueCardIconWrap: {
     width: 40,
     height: 40,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     borderRadius: 20,
     backgroundColor: colors.purpleDeep,
   },

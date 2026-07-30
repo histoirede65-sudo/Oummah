@@ -2,9 +2,12 @@
 import 'react-native-gesture-handler';
 import 'react-native-reanimated';
 
-import { Stack } from 'expo-router';
+import * as Notifications from 'expo-notifications';
+import { router, Stack } from 'expo-router';
 import { useFonts } from 'expo-font';
+import { useEffect } from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { Linking } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { AudioPlayerProvider } from '../context/AudioPlayerProvider';
@@ -23,6 +26,59 @@ export default function RootLayout() {
     'CormorantGaramond-SemiBold': cormorantSemibold,
     UthmanicHafs: uthmanicHafs,
   });
+
+  useEffect(() => {
+    const openNotificationRoute = async (
+      response: Notifications.NotificationResponse | null,
+    ) => {
+      const data = response?.notification.request.content.data;
+      const route = data?.route;
+      const rawLatitude = data?.mosqueLatitude;
+      const rawLongitude = data?.mosqueLongitude;
+      const hasLatitude =
+        (typeof rawLatitude === 'number' || typeof rawLatitude === 'string') &&
+        String(rawLatitude).trim() !== '';
+      const hasLongitude =
+        (typeof rawLongitude === 'number' || typeof rawLongitude === 'string') &&
+        String(rawLongitude).trim() !== '';
+      const latitude = hasLatitude ? Number(rawLatitude) : Number.NaN;
+      const longitude = hasLongitude ? Number(rawLongitude) : Number.NaN;
+      const hasValidCoordinates =
+        Number.isFinite(latitude) &&
+        Number.isFinite(longitude) &&
+        latitude >= -90 &&
+        latitude <= 90 &&
+        longitude >= -180 &&
+        longitude <= 180;
+      const fallbackRoute =
+        typeof route === 'string' && route.trim().length > 0 ? route : '/';
+
+      try {
+        if (hasValidCoordinates) {
+          const mapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${latitude},${longitude}`;
+          if (await Linking.canOpenURL(mapsUrl)) {
+            await Linking.openURL(mapsUrl);
+            return;
+          }
+        }
+      } catch {
+        // Fall back to the notification route below.
+      }
+
+      router.push(fallbackRoute as never);
+    };
+
+    const lastResponse = Notifications.getLastNotificationResponse();
+    openNotificationRoute(lastResponse);
+    if (lastResponse) {
+      void Notifications.clearLastNotificationResponseAsync();
+    }
+    const subscription = Notifications.addNotificationResponseReceivedListener(
+      openNotificationRoute,
+    );
+
+    return () => subscription.remove();
+  }, []);
 
   if (!fontsLoaded && !fontError) return null;
   return (
