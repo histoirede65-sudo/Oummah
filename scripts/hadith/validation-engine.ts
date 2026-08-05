@@ -1,5 +1,6 @@
 export type ValidationLevel = 'INFO' | 'WARNING' | 'ERROR';
 export type ValidationStructure = 'structured_collection' | 'documentary_source';
+export type MetadataPolicy = 'strict' | 'source_limited';
 
 export interface ValidationContent {
   text?: string;
@@ -67,6 +68,7 @@ export interface ValidationHadith {
 
 export interface ValidationCorpus {
   structure?: ValidationStructure;
+  metadataPolicy?: MetadataPolicy;
   hadiths?: ValidationHadith[];
   collectionId?: string;
   source?: string;
@@ -90,6 +92,7 @@ export interface ValidationReport {
   engineVersion: '2.0.0';
   generatedAt: string;
   structure: ValidationStructure;
+  metadataPolicy: MetadataPolicy;
   total: number;
   valid: number;
   withWarnings: number;
@@ -159,6 +162,7 @@ export function validateCorpus(corpus: ValidationCorpus): ValidationReport {
   const issues: ValidationIssue[] = [];
   const hadiths = Array.isArray(corpus.hadiths) ? corpus.hadiths : [];
   const structure = corpus.structure ?? hadiths[0]?.structure ?? 'structured_collection';
+  const metadataPolicy = corpus.metadataPolicy ?? 'strict';
   const knownThemeKeys = corpus.knownThemeKeys ? new Set(corpus.knownThemeKeys) : null;
 
   if (!Array.isArray(corpus.hadiths)) {
@@ -193,8 +197,8 @@ export function validateCorpus(corpus: ValidationCorpus): ValidationReport {
     if (!present(hadith.arabicText)) issues.push(makeIssue('ERROR', 'ARABIC_TEXT_MISSING', `${path}.arabicText`, 'Texte arabe absent ou vide.', undefined, index));
     if (!present(first(hadith.source, corpus.source))) issues.push(makeIssue('ERROR', 'SOURCE_MISSING', `${path}.source`, 'Source documentaire absente.', undefined, index));
     if (!present(first(hadith.version, hadith.corpusVersion, corpus.version))) issues.push(makeIssue('ERROR', 'VERSION_MISSING', `${path}.version`, 'Version documentaire absente.', undefined, index));
-    if (!present(hadith.sourceReference)) issues.push(makeIssue(rowStructure === 'structured_collection' ? 'ERROR' : 'WARNING', 'SOURCE_REFERENCE_MISSING', `${path}.sourceReference`, 'Référence source absente.', undefined, index));
-    if (!present(hadith.narrator)) issues.push(makeIssue('ERROR', 'NARRATOR_MISSING', `${path}.narrator`, 'Narrateur ou attribution absent.', undefined, index));
+    if (!present(hadith.sourceReference)) issues.push(makeIssue(metadataPolicy === 'source_limited' || rowStructure !== 'structured_collection' ? 'WARNING' : 'ERROR', 'SOURCE_REFERENCE_MISSING', `${path}.sourceReference`, metadataPolicy === 'source_limited' ? 'Référence source absente, acceptée par la politique source_limited.' : 'Référence source absente.', undefined, index));
+    if (!present(hadith.narrator)) issues.push(makeIssue(metadataPolicy === 'source_limited' ? 'WARNING' : 'ERROR', 'NARRATOR_MISSING', `${path}.narrator`, metadataPolicy === 'source_limited' ? 'Narrateur ou attribution absent, accepté par la politique source_limited.' : 'Narrateur ou attribution absent.', undefined, index));
     if (corpus.requireLicense && !present(first(hadith.license ?? undefined, corpus.license ?? undefined))) issues.push(makeIssue('ERROR', 'LICENSE_MISSING', `${path}.license`, 'Licence absente.', undefined, index));
 
     if (rowStructure === 'structured_collection') {
@@ -313,6 +317,7 @@ export function validateCorpus(corpus: ValidationCorpus): ValidationReport {
     engineVersion: '2.0.0',
     generatedAt,
     structure,
+    metadataPolicy,
     total: hadiths.length,
     valid: hadiths.filter((_, index) => !recordErrors.has(index)).length,
     withWarnings: recordWarnings.size,

@@ -12,7 +12,100 @@ import { getMainMosque } from "../mosques/data/mosquePreferences";
 import type { AdhanAlertMode, AdhanPreferences } from "./AdhanPreferences";
 
 const SCHEDULED_IDS_KEY = "oumma:adhan-notification-ids:v1";
+const NOTIFICATION_OWNER = "oummah-adhan";
+
+function normalizedNotificationText(value: unknown) {
+  return typeof value === "string" ? value.toLocaleLowerCase("fr-FR") : "";
+}
+
+function isLegacyPassedPrayerNotification(title: unknown, body: unknown) {
+  const normalizedTitle = normalizedNotificationText(title);
+  const normalizedBody = normalizedNotificationText(body);
+  return (
+    normalizedTitle.includes("est passée") ||
+    normalizedTitle.includes("est passee") ||
+    normalizedBody.includes("avez-vous accompli cette prière") ||
+    normalizedBody.includes("avez-vous accompli cette priere") ||
+    normalizedBody.includes("faire le point")
+  );
+}
+
+function isAdhanScheduledNotification(notification: Notifications.NotificationRequest) {
+  const data = notification.content.data as Record<string, unknown> | undefined;
+  if (data?.notificationOwner === NOTIFICATION_OWNER) return true;
+  if (typeof data?.prayer === "string" && data?.hadithReference) return true;
+  if (isLegacyPassedPrayerNotification(notification.content.title, notification.content.body)) return true;
+
+  const title = normalizedNotificationText(notification.content.title);
+  return ["fajr", "dhuhr", "dohr", "asr", "maghrib", "isha"].some(
+    (prayer) => title.startsWith(prayer) && (title.includes("heure de prière") || title.includes("dans ")),
+  );
+}
+
+async function cleanupPresentedPrayerNotifications() {
+  const presented = await Notifications.getPresentedNotificationsAsync().catch(() => []);
+  const seen = new Set<string>();
+  const idsToDismiss: string[] = [];
+
+  for (const notification of presented) {
+    const { title, body, data } = notification.request.content;
+    const route = typeof data?.route === "string" ? data.route : "";
+    const key = `${normalizedNotificationText(title)}|${normalizedNotificationText(body)}|${route}`;
+    if (isLegacyPassedPrayerNotification(title, body) || seen.has(key)) {
+      idsToDismiss.push(notification.request.identifier);
+    } else {
+      seen.add(key);
+    }
+  }
+
+  await Promise.all(
+    idsToDismiss.map((id) => Notifications.dismissNotificationAsync(id).catch(() => undefined)),
+  );
+}
+
+function duplicateScheduledNotificationIds(
+  scheduled: readonly Notifications.NotificationRequest[],
+) {
+  const seen = new Set<string>();
+  const duplicateIds: string[] = [];
+
+  for (const notification of scheduled) {
+    const { title, body, data } = notification.content;
+    const route = typeof data?.route === "string" ? data.route : "";
+    const key = `${normalizedNotificationText(title)}|${normalizedNotificationText(body)}|${route}|${JSON.stringify(notification.trigger)}`;
+    if (seen.has(key)) duplicateIds.push(notification.identifier);
+    else seen.add(key);
+  }
+
+  return duplicateIds;
+}
 const NEARBY_MOSQUE_MAX_DISTANCE_METERS = 3_000;
+
+const PRAYER_HADITHS: Record<
+  MosquePrayerTime["key"],
+  { text: string; reference: string }
+> = {
+  Fajr: {
+    text: "Celui qui accomplit la prière du Fajr est sous la protection d’Allah.",
+    reference: "Sahih Muslim, 657",
+  },
+  Dhuhr: {
+    text: "Parmi les œuvres les plus aimées d’Allah : la prière accomplie à son heure.",
+    reference: "Sahih al-Bukhari, 527",
+  },
+  Asr: {
+    text: "Celui qui délaisse la prière du ‘Asr voit ses œuvres annulées.",
+    reference: "Sahih al-Bukhari, 553",
+  },
+  Maghrib: {
+    text: "Les cinq prières effacent les fautes comme l’eau enlève les impuretés.",
+    reference: "Sahih al-Bukhari, 528",
+  },
+  Isha: {
+    text: "Celui qui accomplit ‘Isha en groupe est comme s’il avait prié la moitié de la nuit.",
+    reference: "Sahih Muslim, 656",
+  },
+};
 
 type NotificationMosque = Pick<
   NearbyMosque,
@@ -81,12 +174,28 @@ export async function requestAdhanNotificationPermission() {
 
 async function cancelAdhanNotifications() {
   const rawIds = await AsyncStorage.getItem(SCHEDULED_IDS_KEY).catch(() => null);
-  const ids = rawIds ? (JSON.parse(rawIds) as string[]) : [];
+  let storedIds: string[] = [];
+  if (rawIds) {
+    try {
+      const parsed = JSON.parse(rawIds);
+      storedIds = Array.isArray(parsed) ? parsed.filter((id): id is string => typeof id === "string") : [];
+    } catch {
+      storedIds = [];
+    }
+  }
+
+  const scheduled = await Notifications.getAllScheduledNotificationsAsync().catch(() => []);
+  const discoveredIds = scheduled
+    .filter(isAdhanScheduledNotification)
+    .map((notification) => notification.identifier);
+  const duplicateIds = duplicateScheduledNotificationIds(scheduled);
+  const ids = [...new Set([...storedIds, ...discoveredIds, ...duplicateIds])];
 
   await Promise.all(
     ids.map((id) => Notifications.cancelScheduledNotificationAsync(id).catch(() => undefined)),
   );
   await AsyncStorage.removeItem(SCHEDULED_IDS_KEY);
+  await cleanupPresentedPrayerNotifications();
 }
 
 function channelIdFor(mode: AdhanAlertMode) {
@@ -99,21 +208,20 @@ function contentFor(
   mosque?: NotificationMosque,
 ) {
   const isAdvanceReminder = preferences.leadMinutes > 0;
-  const mosqueText = mosque
-    ? `Mosquée ${mosque.name} à environ ${Math.round(mosque.distanceMeters)} m de votre position.`
-    : undefined;
+  const hadith = PRAYER_HADITHS[prayer.key];
 
   return {
     title: isAdvanceReminder
       ? `${prayer.label} dans ${preferences.leadMinutes} min`
       : `${prayer.label} — heure de prière`,
-    body: mosqueText ?? (isAdvanceReminder
-      ? "Préparez-vous pour la prière."
-      : "L’adhan commence maintenant."
-    ),
+    body: `« ${hadith.text} » — ${hadith.reference}`,
     data: {
       route: "/",
       prayer: prayer.key,
+      notificationOwner: NOTIFICATION_OWNER,
+      notificationKey: `adhan:${prayer.key}:${prayer.timestamp}:${preferences.leadMinutes}`,
+      hadithText: hadith.text,
+      hadithReference: hadith.reference,
       ...(mosque
         ? {
             mosqueName: mosque.name,
@@ -169,7 +277,7 @@ async function findNearbyNotificationMosque(): Promise<NotificationMosque | unde
   }
 }
 
-export async function syncAdhanNotifications(
+async function syncAdhanNotificationsInternal(
   schedule: MosquePrayerSchedule,
   preferences: AdhanPreferences,
 ) {
@@ -209,4 +317,15 @@ export async function syncAdhanNotifications(
   );
 
   await AsyncStorage.setItem(SCHEDULED_IDS_KEY, JSON.stringify(ids));
+}
+
+let adhanSyncQueue: Promise<void> = Promise.resolve();
+
+export function syncAdhanNotifications(
+  schedule: MosquePrayerSchedule,
+  preferences: AdhanPreferences,
+) {
+  const run = () => syncAdhanNotificationsInternal(schedule, preferences);
+  adhanSyncQueue = adhanSyncQueue.then(run, run);
+  return adhanSyncQueue;
 }

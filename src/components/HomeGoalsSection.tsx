@@ -1,6 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
-import { router } from 'expo-router';
+import { router, useFocusEffect } from 'expo-router';
+import { useCallback, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { colors } from '../theme/colors';
@@ -8,9 +9,27 @@ import { typography } from '../theme/typography';
 import { isGoalComplete } from '../features/daily-goals/domain/DailyGoal';
 import { useDailyGoalsViewModel } from '../features/daily-goals/presentation/useDailyGoalsViewModel';
 import HadithCard from './home/HadithCard';
+import { getValidSession } from '../features/auth/SupabaseAuthService';
 
 export default function HomeGoalsSection() {
   const goalsModel = useDailyGoalsViewModel();
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useFocusEffect(
+    useCallback(() => {
+      let active = true;
+      getValidSession()
+        .then((session) => {
+          if (active) setIsAuthenticated(Boolean(session));
+        })
+        .catch(() => {
+          if (active) setIsAuthenticated(false);
+        });
+      return () => {
+        active = false;
+      };
+    }, []),
+  );
   const visibleGoals = goalsModel.plan?.goals.slice(0, 3) ?? [];
   const nextGoal = goalsModel.plan?.goals.find((goal) => !isGoalComplete(goal));
   return (
@@ -18,13 +37,27 @@ export default function HomeGoalsSection() {
       <HadithCard />
 
       <Pressable
-        onPress={() => router.push('/daily-goals')}
+        onPress={() => router.push(isAuthenticated ? '/daily-goals' : '/profile')}
         style={({ pressed }) => [
           styles.card,
           styles.goalsCard,
+          !isAuthenticated && styles.signupCard,
           pressed && styles.pressed,
         ]}
       >
+        {!isAuthenticated ? (
+          <View style={styles.signupContent}>
+            <View style={styles.signupIcon}>
+              <Ionicons name="person-add-outline" size={21} color="#16111B" />
+            </View>
+            <Text style={styles.signupTitle}>Créez vos objectifs</Text>
+            <Text style={styles.signupText}>
+              Inscrivez-vous gratuitement pour créer vos objectifs et suivre votre progression.
+            </Text>
+            <Text style={styles.signupLink}>Créer mon profil →</Text>
+          </View>
+        ) : (
+        <>
         <View style={styles.heading}>
           <Text style={styles.title}>Objectifs du jour</Text>
           <Text style={styles.counter}>
@@ -64,6 +97,8 @@ export default function HomeGoalsSection() {
             Prochain : {nextGoal.title}
           </Text>
         ) : null}
+        </>
+        )}
       </Pressable>
     </View>
   );
@@ -130,6 +165,41 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(17,21,29,0.8)',
   },
   goalsCard: { padding: 11 },
+  signupCard: {
+    justifyContent: 'center',
+    borderColor: 'rgba(227,181,90,0.28)',
+    backgroundColor: '#171620',
+  },
+  signupContent: { alignItems: 'center', paddingHorizontal: 5 },
+  signupIcon: {
+    width: 34,
+    height: 34,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 17,
+    backgroundColor: colors.goldLight,
+  },
+  signupTitle: {
+    marginTop: 6,
+    color: colors.goldLight,
+    fontFamily: typography.serifMedium,
+    fontSize: 13,
+  },
+  signupText: {
+    marginTop: 3,
+    color: colors.text,
+    fontFamily: typography.sans,
+    fontSize: 8.4,
+    lineHeight: 11.5,
+    textAlign: 'center',
+  },
+  signupLink: {
+    marginTop: 4,
+    color: '#F5B735',
+    fontFamily: typography.sans,
+    fontSize: 8.5,
+    fontWeight: '700',
+  },
   heading: {
     flexDirection: 'row',
     alignItems: 'center',

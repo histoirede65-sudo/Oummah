@@ -1,9 +1,12 @@
 import { Ionicons } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useEffect, useMemo, useState } from 'react';
 import {
     ActivityIndicator,
     Alert,
+    Image,
+    type ImageSourcePropType,
     Linking,
     Pressable,
     ScrollView,
@@ -20,6 +23,7 @@ import {
     getMosqueEnrichment,
     type MosqueEnrichment,
 } from '../../features/mosques/data/mosqueEnrichment';
+import { getMosqueImageSource } from '../../features/mosques/data/mosqueImage';
 
 import {
     isFavoriteMosque,
@@ -30,6 +34,127 @@ import {
 } from '../../features/mosques/data/mosquePreferences';
 import { colors } from '../../theme/colors';
 import { typography } from '../../theme/typography';
+
+const USER_MOSQUE_IMAGES: Record<string, ImageSourcePropType> = {
+  'mosque-a-00': require('../../assets/images/mosques/mosque-a-00.jpg'),
+  'mosque-a-01': require('../../assets/images/mosques/mosque-a-01.jpg'),
+  'mosque-a-02': require('../../assets/images/mosques/mosque-a-02.jpg'),
+  'mosque-a-03': require('../../assets/images/mosques/mosque-a-03.jpg'),
+  'mosque-a-04': require('../../assets/images/mosques/mosque-a-04.jpg'),
+  'mosque-a-05': require('../../assets/images/mosques/mosque-a-05.jpg'),
+  'mosque-a-06': require('../../assets/images/mosques/mosque-a-06.jpg'),
+  'mosque-a-07': require('../../assets/images/mosques/mosque-a-07.jpg'),
+  'mosque-a-08': require('../../assets/images/mosques/mosque-a-08.jpg'),
+  'mosque-a-09': require('../../assets/images/mosques/mosque-a-09.jpg'),
+  'mosque-a-10': require('../../assets/images/mosques/mosque-a-10.jpg'),
+  'mosque-a-11': require('../../assets/images/mosques/mosque-a-11.jpg'),
+  'mosque-b-00': require('../../assets/images/mosques/mosque-b-00.jpg'),
+  'mosque-b-01': require('../../assets/images/mosques/mosque-b-01.jpg'),
+  'mosque-b-02': require('../../assets/images/mosques/mosque-b-02.jpg'),
+  'mosque-b-03': require('../../assets/images/mosques/mosque-b-03.jpg'),
+  'mosque-b-04': require('../../assets/images/mosques/mosque-b-04.jpg'),
+  'mosque-b-05': require('../../assets/images/mosques/mosque-b-05.jpg'),
+  'mosque-b-06': require('../../assets/images/mosques/mosque-b-06.jpg'),
+  'mosque-b-07': require('../../assets/images/mosques/mosque-b-07.jpg'),
+  'mosque-b-08': require('../../assets/images/mosques/mosque-b-08.jpg'),
+  'mosque-b-09': require('../../assets/images/mosques/mosque-b-09.jpg'),
+  'mosque-b-10': require('../../assets/images/mosques/mosque-b-10.jpg'),
+  'mosque-b-11': require('../../assets/images/mosques/mosque-b-11.jpg'),
+  'mosque-coastal': require('../../assets/images/mosques/mosque-coastal.jpg'),
+  'mosque-neighborhood': require('../../assets/images/mosques/mosque-neighborhood.jpg'),
+  'mosque-c-00': require('../../assets/images/mosques/mosque-c-00.jpg'),
+  'mosque-c-01': require('../../assets/images/mosques/mosque-c-01.jpg'),
+  'mosque-c-02': require('../../assets/images/mosques/mosque-c-02.jpg'),
+  'mosque-c-03': require('../../assets/images/mosques/mosque-c-03.jpg'),
+  'mosque-c-04': require('../../assets/images/mosques/mosque-c-04.jpg'),
+  'mosque-c-05': require('../../assets/images/mosques/mosque-c-05.jpg'),
+  'mosque-c-06': require('../../assets/images/mosques/mosque-c-06.jpg'),
+  'mosque-c-07': require('../../assets/images/mosques/mosque-c-07.jpg'),
+  'mosque-c-08': require('../../assets/images/mosques/mosque-c-08.jpg'),
+  'mosque-c-09': require('../../assets/images/mosques/mosque-c-09.jpg'),
+  'mosque-c-10': require('../../assets/images/mosques/mosque-c-10.jpg'),
+  'mosque-c-11': require('../../assets/images/mosques/mosque-c-11.jpg'),
+  'mosque-d-00': require('../../assets/images/mosques/mosque-d-00.jpg'),
+  'mosque-d-01': require('../../assets/images/mosques/mosque-d-01.jpg'),
+  'mosque-d-02': require('../../assets/images/mosques/mosque-d-02.jpg'),
+  'mosque-d-03': require('../../assets/images/mosques/mosque-d-03.jpg'),
+  'mosque-d-04': require('../../assets/images/mosques/mosque-d-04.jpg'),
+  'mosque-d-05': require('../../assets/images/mosques/mosque-d-05.jpg'),
+  'mosque-d-06': require('../../assets/images/mosques/mosque-d-06.jpg'),
+  'mosque-d-07': require('../../assets/images/mosques/mosque-d-07.jpg'),
+  'mosque-d-08': require('../../assets/images/mosques/mosque-d-08.jpg'),
+  'mosque-d-09': require('../../assets/images/mosques/mosque-d-09.jpg'),
+  'mosque-d-10': require('../../assets/images/mosques/mosque-d-10.jpg'),
+  'mosque-d-11': require('../../assets/images/mosques/mosque-d-11.jpg'),
+};
+
+const MOSQUE_HERO_FALLBACK = require('../../assets/images/mosques/mosque-hero-premium.jpg');
+
+const MOSQUE_CARD_IMAGES: readonly ImageSourcePropType[] = [
+  require('../../assets/images/mosques/mosque-neighborhood.jpg'),
+  require('../../assets/images/mosques/mosque-coastal.jpg'),
+  require('../../assets/images/mosques/mosque-a-00.jpg'),
+  require('../../assets/images/mosques/mosque-a-01.jpg'),
+  require('../../assets/images/mosques/mosque-a-02.jpg'),
+  require('../../assets/images/mosques/mosque-a-03.jpg'),
+  require('../../assets/images/mosques/mosque-a-04.jpg'),
+  require('../../assets/images/mosques/mosque-a-05.jpg'),
+  require('../../assets/images/mosques/mosque-a-06.jpg'),
+  require('../../assets/images/mosques/mosque-a-07.jpg'),
+  require('../../assets/images/mosques/mosque-a-08.jpg'),
+  require('../../assets/images/mosques/mosque-a-09.jpg'),
+  require('../../assets/images/mosques/mosque-a-10.jpg'),
+  require('../../assets/images/mosques/mosque-a-11.jpg'),
+  require('../../assets/images/mosques/mosque-b-00.jpg'),
+  require('../../assets/images/mosques/mosque-b-01.jpg'),
+  require('../../assets/images/mosques/mosque-b-02.jpg'),
+  require('../../assets/images/mosques/mosque-b-03.jpg'),
+  require('../../assets/images/mosques/mosque-b-04.jpg'),
+  require('../../assets/images/mosques/mosque-b-05.jpg'),
+  require('../../assets/images/mosques/mosque-b-06.jpg'),
+  require('../../assets/images/mosques/mosque-b-07.jpg'),
+  require('../../assets/images/mosques/mosque-b-08.jpg'),
+  require('../../assets/images/mosques/mosque-b-09.jpg'),
+  require('../../assets/images/mosques/mosque-b-10.jpg'),
+  require('../../assets/images/mosques/mosque-b-11.jpg'),
+  require('../../assets/images/mosques/mosque-c-00.jpg'),
+  require('../../assets/images/mosques/mosque-c-01.jpg'),
+  require('../../assets/images/mosques/mosque-c-02.jpg'),
+  require('../../assets/images/mosques/mosque-c-03.jpg'),
+  require('../../assets/images/mosques/mosque-c-04.jpg'),
+  require('../../assets/images/mosques/mosque-c-05.jpg'),
+  require('../../assets/images/mosques/mosque-c-06.jpg'),
+  require('../../assets/images/mosques/mosque-c-07.jpg'),
+  require('../../assets/images/mosques/mosque-c-08.jpg'),
+  require('../../assets/images/mosques/mosque-c-09.jpg'),
+  require('../../assets/images/mosques/mosque-c-10.jpg'),
+  require('../../assets/images/mosques/mosque-c-11.jpg'),
+  require('../../assets/images/mosques/mosque-d-00.jpg'),
+  require('../../assets/images/mosques/mosque-d-01.jpg'),
+  require('../../assets/images/mosques/mosque-d-02.jpg'),
+  require('../../assets/images/mosques/mosque-d-03.jpg'),
+  require('../../assets/images/mosques/mosque-d-04.jpg'),
+  require('../../assets/images/mosques/mosque-d-05.jpg'),
+  require('../../assets/images/mosques/mosque-d-06.jpg'),
+  require('../../assets/images/mosques/mosque-d-07.jpg'),
+  require('../../assets/images/mosques/mosque-d-08.jpg'),
+  require('../../assets/images/mosques/mosque-d-09.jpg'),
+  require('../../assets/images/mosques/mosque-d-10.jpg'),
+  require('../../assets/images/mosques/mosque-d-11.jpg'),
+];
+
+
+
+function getMosqueImage(mosqueId: string) {
+  let hash = 2_166_136_261;
+
+  for (const character of mosqueId) {
+    hash ^= character.charCodeAt(0);
+    hash = Math.imul(hash, 16_777_619);
+  }
+
+  return MOSQUE_CARD_IMAGES[(hash >>> 0) % MOSQUE_CARD_IMAGES.length] ?? MOSQUE_HERO_FALLBACK;
+}
 
 function getSingleParam(
   value: string | string[] | undefined,
@@ -203,6 +328,7 @@ export default function MosqueDetailScreen() {
     source?: string;
     sourceUrl?: string;
     lastCheckedAt?: string;
+    imageKey?: string;
   }>();
 
   const [favorite, setFavorite] = useState(false);
@@ -211,8 +337,6 @@ export default function MosqueDetailScreen() {
   const [savingFavorite, setSavingFavorite] = useState(false);
   const [savingMainMosque, setSavingMainMosque] = useState(false);
   const [enrichment, setEnrichment] = useState<MosqueEnrichment | null>(null);
-  const [loadingEnrichment, setLoadingEnrichment] = useState(true);
-  const [enrichmentError, setEnrichmentError] = useState(false);
 
   const mosqueId = getSingleParam(params.id);
   const mosqueName = getSingleParam(params.name);
@@ -238,6 +362,7 @@ export default function MosqueDetailScreen() {
   const mosqueSource = getOptionalValue(params.source);
   const mosqueSourceUrl = getOptionalValue(params.sourceUrl);
   const mosqueLastCheckedAt = getOptionalValue(params.lastCheckedAt);
+  const mosqueImageKey = getOptionalValue(params.imageKey);
 
   const mosque = useMemo<StoredMosque | null>(() => {
     const latitude = Number(mosqueLatitudeValue);
@@ -276,9 +401,10 @@ export default function MosqueDetailScreen() {
       languages: mosqueLanguages,
       serviceTimes: mosqueServiceTimes,
       source:
-        mosqueSource === 'openstreetmap'
-          ? 'openstreetmap'
+        mosqueSource === 'openstreetmap' || mosqueSource === 'user'
+          ? mosqueSource
           : undefined,
+      imageKey: mosqueImageKey,
       sourceUrl: mosqueSourceUrl,
       lastCheckedAt: mosqueLastCheckedAt,
     };
@@ -307,6 +433,7 @@ export default function MosqueDetailScreen() {
     mosqueSource,
     mosqueSourceUrl,
     mosqueLastCheckedAt,
+    mosqueImageKey,
   ]);
 
   useEffect(() => {
@@ -355,15 +482,7 @@ export default function MosqueDetailScreen() {
     let active = true;
 
     const loadEnrichment = async () => {
-      if (!mosque) {
-        if (active) {
-          setLoadingEnrichment(false);
-        }
-        return;
-      }
-
-      setLoadingEnrichment(true);
-      setEnrichmentError(false);
+      if (!mosque) return;
 
       try {
         const result = await getMosqueEnrichment({
@@ -378,13 +497,7 @@ export default function MosqueDetailScreen() {
 
         setEnrichment(result);
       } catch {
-        if (!active) return;
-
-        setEnrichmentError(true);
-      } finally {
-        if (active) {
-          setLoadingEnrichment(false);
-        }
+        // Les données d’enrichissement sont facultatives.
       }
     };
 
@@ -616,16 +729,15 @@ export default function MosqueDetailScreen() {
       >
         <View style={styles.content}>
         <View style={styles.hero}>
-          <View style={styles.heroGlow} />
-
-          <View style={styles.mosqueArtwork}>
-            <Ionicons
-              name="business"
-              size={42}
-              color={colors.goldLight}
-            />
-          </View>
-
+          <Image
+            source={getMosqueImageSource(displayedMosque.id, displayedMosque.imageKey)}
+            resizeMode="cover"
+            style={styles.heroImage}
+          />
+          <LinearGradient
+            colors={['rgba(12,8,20,0.32)', 'rgba(12,8,20,0.88)']}
+            style={StyleSheet.absoluteFill}
+          />
           <Text style={styles.mosqueName}>{displayedMosque.name}</Text>
 
           <View style={styles.locationRow}>
@@ -852,40 +964,6 @@ export default function MosqueDetailScreen() {
           </View>
         </View>
 
-        <View style={styles.googleDataCard}>
-          <View style={styles.googleDataHeader}>
-            <View style={styles.googleDataIcon}>
-              <Ionicons
-                name="sparkles-outline"
-                size={20}
-                color={colors.goldLight}
-              />
-            </View>
-
-            <View style={styles.googleDataCopy}>
-              <Text style={styles.googleDataTitle}>
-                Données Geoapify
-              </Text>
-              <Text style={styles.googleDataText}>
-                {loadingEnrichment
-                  ? 'Recherche des informations vérifiées…'
-                  : enrichmentError
-                    ? 'Informations Geoapify temporairement indisponibles.'
-                    : enrichment
-                      ? 'Contacts, horaires et accessibilité actualisés.'
-                      : 'Aucune information supplémentaire trouvée.'}
-                {'\n'}© OpenStreetMap contributors · Geoapify
-              </Text>
-            </View>
-
-            {loadingEnrichment ? (
-              <ActivityIndicator
-                size="small"
-                color={colors.goldLight}
-              />
-            ) : null}
-          </View>
-        </View>
 
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Services</Text>
@@ -1161,6 +1239,38 @@ export default function MosqueDetailScreen() {
           </View>
 
           <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="Signaler un problème sur cette mosquée"
+            onPress={() =>
+              router.push({
+                pathname: "/mosque/report",
+                params: {
+                  mosqueId: displayedMosque.id,
+                  mosqueName: displayedMosque.name,
+                  mosqueAddress: displayedMosque.address,
+                  latitude: String(displayedMosque.latitude),
+                  longitude: String(displayedMosque.longitude),
+                },
+              })
+            }
+            style={({ pressed }) => [
+              styles.reportCard,
+              pressed && styles.reportCardPressed,
+            ]}
+          >
+            <View style={styles.reportIcon}>
+              <Ionicons name="flag-outline" size={21} color="#F28B82" />
+            </View>
+            <View style={styles.reportCopy}>
+              <Text style={styles.reportTitle}>Signaler un problème</Text>
+              <Text style={styles.reportText}>
+                Adresse, horaires, fermeture, doublon ou autre erreur
+              </Text>
+            </View>
+            <Ionicons name="chevron-forward" size={18} color={colors.textMuted} />
+          </Pressable>
+
+          <Pressable
             disabled={!mosque.sourceUrl}
             onPress={() => void openSource()}
             style={({ pressed }) => [
@@ -1275,27 +1385,13 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(224,188,112,0.34)',
     backgroundColor: colors.surfaceAlt,
   },
-  heroGlow: {
-    position: 'absolute',
-    top: -100,
-    right: -45,
-    width: 230,
-    height: 230,
-    borderRadius: 115,
-    backgroundColor: 'rgba(126,72,148,0.26)',
-  },
-  mosqueArtwork: {
-    width: 78,
-    height: 78,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: 39,
-    borderWidth: 1,
-    borderColor: colors.goldDark,
-    backgroundColor: 'rgba(126,72,148,0.22)',
+  heroImage: {
+    ...StyleSheet.absoluteFillObject,
+    width: undefined,
+    height: undefined,
   },
   mosqueName: {
-    marginTop: 17,
+    marginTop: 0,
     color: colors.text,
     fontFamily: typography.serifMedium,
     fontSize: 27,
@@ -1637,6 +1733,31 @@ const styles = StyleSheet.create({
     fontSize: 10.5,
     fontWeight: '600',
   },
+  reportCard: {
+    minHeight: 78,
+    marginTop: 14,
+    marginBottom: 10,
+    paddingHorizontal: 14,
+    paddingVertical: 13,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: "rgba(242,139,130,0.26)",
+    backgroundColor: "rgba(242,139,130,0.05)",
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  reportCardPressed: { opacity: 0.76 },
+  reportIcon: {
+    width: 42,
+    height: 42,
+    borderRadius: 13,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "rgba(242,139,130,0.10)",
+  },
+  reportCopy: { flex: 1, marginHorizontal: 12 },
+  reportTitle: { color: "#F28B82", fontSize: 13, fontWeight: "800" },
+  reportText: { marginTop: 4, color: colors.textMuted, fontSize: 10.5, lineHeight: 15 },
   sourceCard: {
     minHeight: 76,
     marginTop: 10,
@@ -1692,44 +1813,6 @@ const styles = StyleSheet.create({
     fontFamily: typography.sans,
     fontSize: 11,
     lineHeight: 17,
-  },
-  googleDataCard: {
-    marginTop: 16,
-    padding: 15,
-    borderRadius: 19,
-    borderWidth: 1,
-    borderColor: 'rgba(224,188,112,0.28)',
-    backgroundColor: 'rgba(224,188,112,0.05)',
-  },
-  googleDataHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  googleDataIcon: {
-    width: 42,
-    height: 42,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: 21,
-    backgroundColor: 'rgba(126,72,148,0.18)',
-  },
-  googleDataCopy: {
-    flex: 1,
-    minWidth: 0,
-    marginHorizontal: 11,
-  },
-  googleDataTitle: {
-    color: colors.text,
-    fontFamily: typography.sans,
-    fontSize: 13,
-    fontWeight: '700',
-  },
-  googleDataText: {
-    marginTop: 4,
-    color: colors.textMuted,
-    fontFamily: typography.sans,
-    fontSize: 10.5,
-    lineHeight: 15,
   },
   invalidState: {
     flex: 1,

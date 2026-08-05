@@ -1,14 +1,16 @@
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import type { Href } from "expo-router";
-import { router, useFocusEffect } from "expo-router";
-import { useCallback, useState } from "react";
+import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
+import { useCallback, useEffect, useState } from "react";
+import { AppState, InteractionManager } from "react-native";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { hadithRepository } from "../features/hadith-explorer/data/hadithRepository";
 import type { Hadith } from "../features/hadith-explorer/domain/Hadith";
 import { HADITH_THEMES } from "../features/hadith-explorer/domain/HadithTheme";
 import DailyHadithCard from "../features/hadith-explorer/presentation/DailyHadithCard";
+import { preloadHadithCollections } from "../features/hadith-explorer/services/hadithPreloader";
 import {
   hadithLibraryService,
   type HadithLibraryEntry,
@@ -19,29 +21,27 @@ import { typography } from "../theme/typography";
 const ACTIONS = [
   {
     label: "Collections",
-    subtitle: "Sources",
+    subtitle: "9 recueils authentiques · Boukhari • Muslim • Nawawi · Explorer les recueils →",
     icon: "library-outline",
     route: "/hadith/collections",
-  },
-  {
-    label: "Thèmes",
-    subtitle: "Explorer",
-    icon: "grid-outline",
-    route: "/hadith/themes",
+    size: "wide",
   },
   {
     label: "Recherche",
-    subtitle: "Trouver",
+    subtitle: "Trouver un hadith",
     icon: "search-outline",
     route: "/hadith/search",
+    size: "narrow",
   },
 ] as const;
 
 export default function HadithHomeScreen() {
+  const { open: requestedOpen } = useLocalSearchParams<{ open?: string | string[] }>();
   const [daily, setDaily] = useState<Hadith | null>(null);
   const [loading, setLoading] = useState(true);
   const [favorites, setFavorites] = useState<HadithLibraryEntry[]>([]);
   const [history, setHistory] = useState<HadithLibraryEntry[]>([]);
+  const [dailyRouteHandled, setDailyRouteHandled] = useState(false);
 
   useFocusEffect(
     useCallback(() => {
@@ -68,7 +68,28 @@ export default function HadithHomeScreen() {
     }, []),
   );
 
+  useEffect(() => {
+    const subscription = AppState.addEventListener("change", (state) => {
+      if (state === "active") void hadithRepository.daily().then(setDaily);
+    });
+    return () => subscription.remove();
+  }, []);
+
+  useEffect(() => {
+    const task = InteractionManager.runAfterInteractions(() => {
+      void preloadHadithCollections();
+    });
+    return () => task.cancel();
+  }, []);
+
   const open = (id: string) => router.push(`/hadith/${id}` as Href);
+
+  useEffect(() => {
+    const openValue = Array.isArray(requestedOpen) ? requestedOpen[0] : requestedOpen;
+    if (openValue !== "daily" || !daily || dailyRouteHandled) return;
+    setDailyRouteHandled(true);
+    open(daily.id);
+  }, [daily, dailyRouteHandled, requestedOpen]);
 
   return (
     <LinearGradient
@@ -115,6 +136,7 @@ export default function HadithHomeScreen() {
             hadith={daily}
             loading={loading}
             onPress={() => daily && open(daily.id)}
+            wasilPrompt={daily ? `Explique-moi ce hadith de manière claire et fidèle.${daily.id ? `\n\nIdentifiant : ${daily.id}` : ""}${daily.reference ? `\nRéférence : ${daily.reference}` : ""}${daily.french ? `\nTexte français : ${daily.french}` : ""}${daily.attribution ? `\nNarrateur : ${daily.attribution}` : ""}` : undefined}
           />
 
           <View style={styles.actions}>
@@ -124,11 +146,15 @@ export default function HadithHomeScreen() {
                 onPress={() => router.push(action.route as Href)}
                 style={({ pressed }) => [
                   styles.action,
+                  action.size === "wide" ? styles.actionWide : styles.actionNarrow,
+                  action.label === "Collections" && styles.collectionAction,
                   pressed && styles.pressed,
                 ]}
               >
                 <LinearGradient
-                  colors={["rgba(73,42,91,0.88)", "rgba(27,18,40,0.96)"]}
+                  colors={action.label === "Collections"
+                    ? ["rgba(91,55,112,0.94)", "rgba(31,20,46,0.98)"]
+                    : ["rgba(73,42,91,0.88)", "rgba(27,18,40,0.96)"]}
                   style={StyleSheet.absoluteFill}
                 />
                 <View style={styles.actionGlow} />
@@ -139,8 +165,12 @@ export default function HadithHomeScreen() {
                     color={colors.goldLight}
                   />
                 </View>
-                <Text style={styles.actionLabel}>{action.label}</Text>
-                <Text style={styles.actionSubtitle}>{action.subtitle}</Text>
+                <Text style={[styles.actionLabel, action.label === "Collections" && styles.collectionLabel]}>
+                  {action.label}
+                </Text>
+                <Text style={[styles.actionSubtitle, action.label === "Collections" && styles.collectionSubtitle]}>
+                  {action.subtitle}
+                </Text>
               </Pressable>
             ))}
           </View>
@@ -178,7 +208,7 @@ export default function HadithHomeScreen() {
                 >
                   <Ionicons
                     name={theme.icon as never}
-                    size={19}
+                    size={22}
                     color={theme.color}
                   />
                   <LinearGradient
@@ -409,13 +439,33 @@ const styles = StyleSheet.create({
     marginTop: 16,
   },
   action: {
-    flex: 1,
     minHeight: 108,
     borderRadius: 23,
     overflow: "hidden",
     borderWidth: 1,
     borderColor: "rgba(128,80,151,0.30)",
     padding: 13,
+  },
+  actionWide: { flex: 2 },
+  actionNarrow: { flex: 1 },
+  collectionAction: {
+    borderColor: "rgba(227,181,90,0.48)",
+    shadowColor: colors.goldLight,
+    shadowOpacity: 0.18,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: 4,
+  },
+  collectionLabel: {
+    fontSize: 15,
+    fontWeight: "800",
+    marginTop: 1,
+  },
+  collectionSubtitle: {
+    color: "#F2E3C2",
+    fontSize: 11,
+    lineHeight: 15,
+    marginTop: 5,
   },
   actionGlow: {
     position: "absolute",
@@ -681,4 +731,3 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
 });
-

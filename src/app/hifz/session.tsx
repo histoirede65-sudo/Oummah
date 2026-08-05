@@ -17,6 +17,7 @@ import {
 import {
   ActivityIndicator,
   Animated,
+  Image,
   Modal,
   PanResponder,
   Pressable,
@@ -24,6 +25,7 @@ import {
   StyleSheet,
   Text,
   View,
+  useWindowDimensions,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -39,6 +41,16 @@ import {
 import { quranFoundationRepository } from "../../features/quranfoundation/QuranFoundationRepository";
 import type { QuranFoundationVerse } from "../../features/quranfoundation/QuranFoundationTypes";
 import { ARABIC_READING_FONT_FAMILY } from "../../features/quran/ArabicReadingPresentation";
+import { QuranArabicText } from "../../features/quran/QuranArabicText";
+import { QuranWordHighlight } from "../../features/quran/QuranWordHighlight";
+import {
+  audioPositionMilliseconds,
+  getSyncPositionMs,
+  getWordSyncState,
+  normalizeWordTimestamps,
+  type AudioSourceMode,
+  type WordTimestamp,
+} from "../../features/quran/QuranWordSync";
 import { colors } from "../../theme/colors";
 import { goalProgressBridge } from "../../features/daily-goals/services/goalProgressBridge";
 import { typography } from "../../theme/typography";
@@ -51,9 +63,10 @@ type Celebration = "verse" | "surah" | null;
 
 function resolveVerseAudioUrl(value?: string) {
   if (!value) return undefined;
-  return /^https?:\/\//.test(value)
-    ? value
-    : `https://verses.quran.foundation/${value.replace(/^\/+/, "")}`;
+  const trimmed = value.trim();
+  if (/^https?:\/\//i.test(trimmed)) return trimmed;
+  if (trimmed.startsWith("//")) return `https:${trimmed}`;
+  return `https://verses.quran.foundation/${trimmed.replace(/^\/+/, "")}`;
 }
 
 function concealed(text: string, level: TeacherLevel) {
@@ -164,6 +177,7 @@ function VerseSwipe({
 }
 
 export default function HifzSessionScreen() {
+  const { width: screenWidth } = useWindowDimensions();
   const {
     surah: rawSurah,
     review,
@@ -187,7 +201,7 @@ export default function HifzSessionScreen() {
   const [masteredVerses, setMasteredVerses] = useState<number[]>([]);
   const [celebration, setCelebration] = useState<Celebration>(null);
   const { pause: pauseQuranAudio } = useGlobalAudioPlayer();
-  const { currentReciter } = useReciter();
+  const { currentReciter, reciters, setCurrentReciter } = useReciter();
   const [versePlayer] = useState(() =>
     createAudioPlayer(null, {
       updateInterval: 100,
@@ -196,10 +210,19 @@ export default function HifzSessionScreen() {
   );
   const verseAudioStatus = useAudioPlayerStatus(versePlayer);
   const repeatsRemaining = useRef(0);
-  const clipTimer = useRef<ReturnType<typeof setTimeout> | undefined>();
+  const clipTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const audioRequestId = useRef(0);
   const screenFocused = useRef(false);
   const [audioError, setAudioError] = useState<string>();
+  const [audioLoading, setAudioLoading] = useState(false);
+  const [reciterModalVisible, setReciterModalVisible] = useState(false);
+  const [selectedWordRange, setSelectedWordRange] = useState<[number, number] | null>(null);
+  const [wordTimings, setWordTimings] = useState<readonly WordTimestamp[]>([]);
+  const [activeAudioTiming, setActiveAudioTiming] = useState<{
+    startMs: number;
+    endMs: number;
+    audioMode: AudioSourceMode;
+  } | null>(null);
 
   useEffect(() => {
     let active = true;
@@ -249,6 +272,9 @@ export default function HifzSessionScreen() {
 
   useEffect(() => {
     stopVerseAudio();
+    setSelectedWordRange(null);
+    setWordTimings([]);
+    setActiveAudioTiming(null);
   }, [index, stopVerseAudio]);
 
   useEffect(() => {
@@ -315,6 +341,20 @@ export default function HifzSessionScreen() {
   );
   const currentVerseNumber = Number(verse?.verseKey.split(":")[1] ?? index + 1);
   const currentVerseMastered = masteredVerses.includes(currentVerseNumber);
+  const syncPositionMs = activeAudioTiming
+    ? getSyncPositionMs(
+        audioPositionMilliseconds(verseAudioStatus.currentTime),
+        activeAudioTiming.startMs,
+        activeAudioTiming.audioMode,
+      )
+    : audioPositionMilliseconds(verseAudioStatus.currentTime);
+  const activeWordState = getWordSyncState({
+    positionMs: syncPositionMs,
+    verseTimeline: wordTimings,
+  });
+  const activeWordPosition = activeWordState.activeWordPosition;
+  const lastReadWordPosition =
+    activeWordState.completedWordPositions.at(-1) ?? null;
 
   const listen = async () => {
     if (verseAudioStatus.playing) {
@@ -347,17 +387,42 @@ export default function HifzSessionScreen() {
       const timing = recitation.timestamps?.find(
         (item) => item.verseKey === verse.verseKey,
       );
+      const normalizedWordTimings = normalizeWordTimestamps(
+        timing ? [{ ...timing, verseId: currentVerseNumber, segments: timing.segments }] : [],
+        Math.max(0, (timing?.timestampTo ?? 0) - (timing?.timestampFrom ?? 0)),
+      );
+      setWordTimings(normalizedWordTimings);
       const fullSource = resolveVerseAudioUrl(recitation.audioUrl);
       const source = dedicatedSource ?? fullSource;
+      if (timing) {
+        setActiveAudioTiming({
+          startMs: timing.timestampFrom,
+          endMs: timing.timestampTo,
+          audioMode: dedicatedSource ? "single-verse" : "full-surah",
+        });
+      } else {
+        setActiveAudioTiming(null);
+      }
       if (!source) throw new Error("Le fichier de ce verset est indisponible.");
       if (clipTimer.current) clearTimeout(clipTimer.current);
+      setAudioLoading(true);
       versePlayer.replace({ uri: source });
+      const waitStartedAt = Date.now();
+      while (!versePlayer.isLoaded && Date.now() - waitStartedAt < 12_000) {
+        await new Promise((resolve) => setTimeout(resolve, 80));
+        if (!screenFocused.current || requestId !== audioRequestId.current) return;
+      }
+      if (!versePlayer.isLoaded) {
+        throw new Error("Le fichier audio met trop de temps à charger.");
+      }
       versePlayer.setPlaybackRate(speed);
       repeatsRemaining.current = repeat - 1;
-      if (dedicatedSource) {
+      if (dedicatedSource && !selectedWordRange) {
         if (!screenFocused.current || requestId !== audioRequestId.current)
           return;
+        await versePlayer.seekTo(0);
         versePlayer.play();
+        setAudioLoading(false);
         return;
       }
       if (
@@ -366,10 +431,16 @@ export default function HifzSessionScreen() {
         !Number.isFinite(timing.timestampTo)
       )
         throw new Error("Le minutage de ce verset est indisponible.");
-      const start = timing.timestampFrom / 1000;
+      const selectedTimings = selectedWordRange
+        ? normalizedWordTimings.filter((item) => item.wordPosition >= selectedWordRange[0] && item.wordPosition <= selectedWordRange[1])
+        : [];
+      const absoluteStartMs = selectedTimings[0]?.startMs ?? timing.timestampFrom;
+      const start = dedicatedSource
+        ? Math.max(0, absoluteStartMs - timing.timestampFrom) / 1000
+        : absoluteStartMs / 1000;
       const length = Math.max(
         0.2,
-        (timing.timestampTo - timing.timestampFrom) / 1000 / speed,
+        ((selectedTimings.at(-1)?.endMs ?? timing.timestampTo) - (selectedTimings[0]?.startMs ?? timing.timestampFrom)) / 1000 / speed,
       );
       const playClip = () => {
         if (!screenFocused.current || requestId !== audioRequestId.current)
@@ -394,8 +465,10 @@ export default function HifzSessionScreen() {
         );
       };
       clipTimer.current = setTimeout(playClip, 180);
+      setAudioLoading(false);
     } catch {
       repeatsRemaining.current = 0;
+      setAudioLoading(false);
       if (!screenFocused.current || requestId !== audioRequestId.current) return;
       setAudioError(
         "Audio du verset indisponible. Réessayez avec un autre récitateur.",
@@ -569,9 +642,60 @@ export default function HifzSessionScreen() {
             <Text style={styles.modeLabel}>
               MODE PROFESSEUR · {teacherLabel.toUpperCase()}
             </Text>
-            <Text selectable style={styles.arabic}>
-              {concealed(currentText, teacherLevel)}
-            </Text>
+            {teacherLevel === 0 ? (
+              <View style={styles.wordSelection}>
+                <QuranArabicText
+                  screenWidth={screenWidth}
+                  preferredSize={33}
+                  style={styles.arabicWordsLine}
+                >
+                  {currentText.trim().split(/\s+/).map((word, wordIndex, words) => {
+                    const position = wordIndex + 1;
+                    const selected = Boolean(
+                      selectedWordRange &&
+                        position >= selectedWordRange[0] &&
+                        position <= selectedWordRange[1],
+                    );
+                    return (
+                      <Text
+                        key={`${verse?.verseKey}-${position}`}
+                        onPress={() =>
+                          setSelectedWordRange((range) =>
+                            range
+                              ? [
+                                  Math.min(range[0], position),
+                                  Math.max(range[1], position),
+                                ]
+                              : [position, position],
+                          )
+                        }
+                        style={[
+                          styles.selectableWord,
+                          selected && styles.selectableWordActive,
+                        ]}
+                      >
+                        <QuranWordHighlight
+                          text={`${word}${wordIndex < words.length - 1 ? " " : ""}`}
+                          fontFamily={ARABIC_READING_FONT_FAMILY}
+                          isActive={activeWordPosition === position}
+                          isRead={
+                            lastReadWordPosition !== null &&
+                            position <= lastReadWordPosition
+                          }
+                        />
+                      </Text>
+                    );
+                  })}
+                </QuranArabicText>
+                {selectedWordRange ? (
+                  <Pressable onPress={() => setSelectedWordRange(null)} style={styles.fullVerseButton}>
+                    <Text style={styles.fullVerseButtonText}>Verset entier</Text>
+                  </Pressable>
+                ) : null}
+              </View>
+            ) : (
+              <Text selectable style={styles.arabic}>{concealed(currentText, teacherLevel)}</Text>
+            )}
             <View style={styles.phoneticBlock}>
               <Text style={styles.contentEyebrow}>PHONÉTIQUE</Text>
               <Text selectable style={styles.phonetic}>
@@ -612,42 +736,68 @@ export default function HifzSessionScreen() {
           </View>
         </VerseSwipe>
         <View style={styles.controls}>
-          <Pressable onPress={() => void listen()} style={styles.play}>
-            <Ionicons
-              name={verseAudioStatus.playing ? "pause" : "play"}
-              size={20}
-              color={colors.background}
-            />
-            <Text style={styles.playText}>
-              {verseAudioStatus.playing
-                ? "Pause"
-                : `Écouter ce verset (${repeat}×)`}
-            </Text>
-          </Pressable>
           <Pressable
-            accessibilityRole="button"
-            accessibilityLabel="Fermer l’écoute du verset"
-            onPress={stopVerseAudio}
-            style={({ pressed }) => [
-              styles.stopControl,
-              pressed && styles.controlPressed,
-            ]}
-          >
-            <Ionicons name="close" size={18} color="#FFF8EE" />
-            <Text style={styles.stopControlText}>Fermer</Text>
-          </Pressable>
-          <Pressable
-            onPress={() => setSpeed(speed === 0.75 ? 1 : 0.75)}
+            onPress={() => setIndex((value) => Math.max(0, value - 1))}
             style={styles.controlSmall}
           >
-            <Ionicons
-              name="speedometer-outline"
-              size={17}
-              color={colors.goldLight}
-            />
-            <Text style={styles.controlSmallText}>{speed}×</Text>
+            <Ionicons name="play-skip-back" size={20} color={colors.goldLight} />
+          </Pressable>
+          <Pressable
+            onPress={() => void versePlayer.seekTo(Math.max(0, verseAudioStatus.currentTime - 10))}
+            style={styles.controlSmall}
+          >
+            <Text style={styles.controlSmallText}>-10s</Text>
+          </Pressable>
+          <Pressable onPress={() => void listen()} style={styles.playRound}>
+            {audioLoading ? (
+              <ActivityIndicator color={colors.background} />
+            ) : (
+              <Ionicons
+                name={verseAudioStatus.playing ? "pause" : "play"}
+                size={25}
+                color={colors.background}
+              />
+            )}
+          </Pressable>
+          <Pressable onPress={stopVerseAudio} style={styles.controlSmall}>
+            <Ionicons name="stop" size={20} color={colors.goldLight} />
+          </Pressable>
+          <Pressable
+            onPress={() => void versePlayer.seekTo(Math.max(0, verseAudioStatus.currentTime + 10))}
+            style={styles.controlSmall}
+          >
+            <Text style={styles.controlSmallText}>+10s</Text>
+          </Pressable>
+          <Pressable
+            onPress={() => setIndex((value) => Math.min(verses.length - 1, value + 1))}
+            style={styles.controlSmall}
+          >
+            <Ionicons name="play-skip-forward" size={20} color={colors.goldLight} />
           </Pressable>
         </View>
+        <View style={styles.reciterHeader}>
+          <Text style={styles.controlTitle}>Récitateur</Text>
+          <Pressable onPress={() => setReciterModalVisible(true)}>
+            <Text style={styles.seeAllReciters}>Voir tous</Text>
+          </Pressable>
+        </View>
+        <Pressable
+          onPress={() => setReciterModalVisible(true)}
+          style={styles.selectedReciterCard}
+        >
+          {currentReciter?.image ? (
+            <Image source={currentReciter.image} style={styles.selectedReciterImage} />
+          ) : (
+            <View style={styles.selectedReciterFallback}>
+              <Ionicons name="person" size={22} color={colors.goldLight} />
+            </View>
+          )}
+          <View style={styles.selectedReciterCopy}>
+            <Text style={styles.selectedReciterLabel}>RÉCITATEUR ACTUEL</Text>
+            <Text style={styles.selectedReciterName}>{currentReciter?.name}</Text>
+          </View>
+          <Ionicons name="chevron-forward" size={20} color={colors.goldLight} />
+        </Pressable>
         {audioError ? (
           <Text style={styles.audioError}>{audioError}</Text>
         ) : null}
@@ -733,6 +883,56 @@ export default function HifzSessionScreen() {
           </View>
         ) : null}
       </ScrollView>
+      <Modal
+        visible={reciterModalVisible}
+        transparent
+        animationType="slide"
+        onRequestClose={() => setReciterModalVisible(false)}
+      >
+        <View style={styles.reciterModalBackdrop}>
+          <View style={styles.reciterModalCard}>
+            <View style={styles.reciterModalHeader}>
+              <View>
+                <Text style={styles.reciterModalTitle}>Choisir un récitateur</Text>
+                <Text style={styles.reciterModalSubtitle}>Tous les récitateurs disponibles</Text>
+              </View>
+              <Pressable onPress={() => setReciterModalVisible(false)} style={styles.reciterModalClose}>
+                <Ionicons name="close" size={22} color={colors.text} />
+              </Pressable>
+            </View>
+            <ScrollView showsVerticalScrollIndicator={false}>
+              {reciters.map((reciter) => {
+                const selected = currentReciter?.id === reciter.id;
+                return (
+                  <Pressable
+                    key={reciter.id}
+                    onPress={() => {
+                      stopVerseAudio();
+                      void setCurrentReciter(reciter);
+                      setReciterModalVisible(false);
+                    }}
+                    style={[styles.reciterModalRow, selected && styles.reciterModalRowSelected]}
+                  >
+                    {reciter.image ? (
+                      <Image source={reciter.image} style={styles.reciterModalImage} />
+                    ) : (
+                      <View style={styles.reciterModalImageFallback}>
+                        <Ionicons name="person" size={20} color={colors.goldLight} />
+                      </View>
+                    )}
+                    <Text style={styles.reciterModalName}>{reciter.name}</Text>
+                    {selected ? (
+                      <Ionicons name="checkmark-circle" size={22} color={colors.goldLight} />
+                    ) : (
+                      <Ionicons name="play-circle-outline" size={22} color={colors.textMuted} />
+                    )}
+                  </Pressable>
+                );
+              })}
+            </ScrollView>
+          </View>
+        </View>
+      </Modal>
       <Modal
         visible={celebration !== null}
         transparent
@@ -953,6 +1153,33 @@ const styles = StyleSheet.create({
     textShadowOffset: { width: 0, height: 2 },
     textShadowRadius: 7,
   },
+  wordSelection: {
+    marginTop: 18,
+    alignItems: "stretch",
+  },
+  arabicWordsLine: {
+    paddingHorizontal: 4,
+    textAlign: "right",
+    writingDirection: "rtl",
+  },
+  selectableWord: {
+    textDecorationLine: "none",
+  },
+  selectableWordActive: {
+    textDecorationLine: "underline",
+    textDecorationColor: "rgba(227,181,90,0.72)",
+  },
+  fullVerseButton: {
+    width: "100%",
+    marginTop: 8,
+    alignItems: "center",
+  },
+  fullVerseButtonText: {
+    color: colors.goldLight,
+    fontFamily: typography.sans,
+    fontSize: 11,
+    fontWeight: "800",
+  },
   phoneticBlock: {
     marginTop: 20,
     paddingHorizontal: 15,
@@ -1031,7 +1258,25 @@ const styles = StyleSheet.create({
     fontWeight: "800",
   },
   levelTextActive: { color: colors.background },
-  controls: { height: 52, marginTop: 12, flexDirection: "row", gap: 8 },
+  controls: { marginTop: 12, flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: 7 },
+  reciterRow: { gap: 8, paddingVertical: 8 },
+  reciterChoice: {
+    maxWidth: 150,
+    paddingHorizontal: 12,
+    paddingVertical: 9,
+    borderRadius: 15,
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.16)",
+  },
+  reciterChoiceActive: {
+    borderColor: colors.goldLight,
+    backgroundColor: "rgba(227,181,90,0.18)",
+  },
+  reciterChoiceText: {
+    color: colors.text,
+    fontFamily: typography.sans,
+    fontSize: 10,
+  },
   play: {
     flex: 1,
     flexDirection: "row",
@@ -1073,7 +1318,8 @@ const styles = StyleSheet.create({
     transform: [{ scale: 0.97 }],
   },
   controlSmall: {
-    width: 70,
+    flex: 1,
+    height: 58,
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 21,
@@ -1219,6 +1465,131 @@ const styles = StyleSheet.create({
     color: colors.textMuted,
     fontFamily: typography.sans,
     fontSize: 9,
+  },
+  playRound: {
+    width: 58,
+    height: 58,
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 29,
+    backgroundColor: colors.goldLight,
+  },
+  reciterHeader: {
+    marginTop: 22,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  seeAllReciters: {
+    color: colors.goldLight,
+    fontFamily: typography.sans,
+    fontSize: 12,
+    fontWeight: "800",
+  },
+  selectedReciterCard: {
+    marginTop: 10,
+    padding: 12,
+    flexDirection: "row",
+    alignItems: "center",
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: "rgba(227,181,90,0.38)",
+    backgroundColor: "rgba(37,22,49,0.92)",
+  },
+  selectedReciterImage: { width: 52, height: 52, borderRadius: 26 },
+  selectedReciterFallback: {
+    width: 52,
+    height: 52,
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 26,
+    backgroundColor: "rgba(227,181,90,0.12)",
+  },
+  selectedReciterCopy: { flex: 1, marginLeft: 12 },
+  selectedReciterLabel: {
+    color: colors.goldLight,
+    fontFamily: typography.sans,
+    fontSize: 9,
+    fontWeight: "900",
+    letterSpacing: 1.2,
+  },
+  selectedReciterName: {
+    marginTop: 4,
+    color: colors.text,
+    fontFamily: typography.sans,
+    fontSize: 15,
+    fontWeight: "700",
+  },
+  reciterModalBackdrop: {
+    flex: 1,
+    justifyContent: "flex-end",
+    backgroundColor: "rgba(4,2,8,0.78)",
+  },
+  reciterModalCard: {
+    maxHeight: "82%",
+    paddingHorizontal: 20,
+    paddingTop: 20,
+    paddingBottom: 30,
+    borderTopLeftRadius: 30,
+    borderTopRightRadius: 30,
+    borderWidth: 1,
+    borderColor: "rgba(227,181,90,0.30)",
+    backgroundColor: "#120B1B",
+  },
+  reciterModalHeader: {
+    marginBottom: 14,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  reciterModalTitle: {
+    color: colors.text,
+    fontFamily: typography.serif,
+    fontSize: 24,
+  },
+  reciterModalSubtitle: {
+    marginTop: 3,
+    color: colors.textMuted,
+    fontFamily: typography.sans,
+    fontSize: 12,
+  },
+  reciterModalClose: {
+    width: 42,
+    height: 42,
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 21,
+    backgroundColor: "rgba(255,255,255,0.06)",
+  },
+  reciterModalRow: {
+    minHeight: 72,
+    paddingHorizontal: 10,
+    flexDirection: "row",
+    alignItems: "center",
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: "rgba(255,255,255,0.10)",
+  },
+  reciterModalRowSelected: {
+    borderRadius: 18,
+    borderBottomColor: "transparent",
+    backgroundColor: "rgba(227,181,90,0.12)",
+  },
+  reciterModalImage: { width: 48, height: 48, borderRadius: 24 },
+  reciterModalImageFallback: {
+    width: 48,
+    height: 48,
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 24,
+    backgroundColor: "rgba(227,181,90,0.10)",
+  },
+  reciterModalName: {
+    flex: 1,
+    marginHorizontal: 12,
+    color: colors.text,
+    fontFamily: typography.sans,
+    fontSize: 14,
+    fontWeight: "700",
   },
   modalBackdrop: {
     flex: 1,

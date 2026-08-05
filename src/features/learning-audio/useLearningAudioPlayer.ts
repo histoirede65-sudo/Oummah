@@ -72,6 +72,7 @@ export function useLearningAudioPlayer({
   const [speedIndex, setSpeedIndex] = useState(1);
   const [activeRange, setActiveRange] = useState<AudioRange>();
   const [error, setError] = useState<string>();
+  const [completionCount, setCompletionCount] = useState(0);
 
   const speedIndexRef = useRef(1);
   const loadedKeyRef = useRef<string>();
@@ -141,6 +142,7 @@ export function useLearningAudioPlayer({
 
   useEffect(() => {
     if (!status.didJustFinish) return;
+    setCompletionCount((value) => value + 1);
     clearPoll();
     pendingRef.current = undefined;
     rangeRef.current = undefined;
@@ -162,6 +164,7 @@ export function useLearningAudioPlayer({
     }
 
     rangeFinishedRef.current = true;
+    setCompletionCount((value) => value + 1);
     try {
       player.pause();
     } catch {
@@ -377,6 +380,7 @@ export function useLearningAudioPlayer({
     focusedProgress,
     speed: LEARNING_AUDIO_SPEEDS[speedIndex],
     error,
+    completionCount,
     toggle,
     stop,
     cycleSpeed,

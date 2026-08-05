@@ -1,26 +1,21 @@
-CORRECTION CIBLÉE — OUMMAH / WASIL
+OUMMAH — Streaming Wasil
 
-Fichier à remplacer uniquement :
-src/features/wasil/WasilActionRouter.ts
+Périmètre strictement modifié :
+- src/features/wasil/WasilApiClient.ts
+- src/app/(tabs)/dalil.tsx
+- src/supabase/functions/wasil.zip (backend Wasil uniquement)
 
-Ne pas modifier :
-- supabase/functions/wasil
-- le module Coran
-- dalil.tsx
+Fonctionnement :
+- Le backend Wasil accepte désormais text/event-stream.
+- La sortie structurée OpenAI reste identique et continue d'être validée intégralement.
+- Seul le champ body est envoyé progressivement pendant la génération.
+- La réponse finale complète remplace ensuite la réponse provisoire et conserve les références Coran/Hadith, les sources, le solde et la classification.
+- Les opérations balance, mémoire et conversations restent en JSON normal.
 
-Cause corrigée :
-La détection locale des commandes utilisait des sous-chaînes. Une question pouvait donc être prise à tort pour une commande de navigation avant l'appel Supabase.
+Aucun autre module OUMMAH n'a été modifié.
 
-Protections ajoutées :
-- verbes d'action reconnus uniquement comme mots complets ;
-- questions documentaires (« Que dit… », « Comment… », « Pourquoi… », etc.) toujours envoyées à Wasil ;
-- commandes explicites « Lis le Coran » et « Ouvre le Coran » conservées.
-
-Tests exécutés :
-PASS — question avec l'Islam -> aucune navigation
-PASS — question avec lIslam -> aucune navigation
-PASS — « Comment lire le Coran ? » -> aucune navigation
-PASS — « Lis le Coran » -> /quran
-PASS — « Ouvre le Coran » -> /quran
-PASS — « Ouvre la Qibla » -> /qibla
-PASS — « Lis la sourate 2 » -> /surah/2
+Déploiement :
+1. Remplacer les trois éléments aux chemins indiqués.
+2. Depuis la racine du projet :
+   npx.cmd supabase functions deploy wasil
+   npx.cmd expo start --go

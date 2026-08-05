@@ -1,6 +1,7 @@
 import { getValidSession } from "../auth/SupabaseAuthService";
 import type { WasilReply } from "./WasilLocalResponder";
 import type { WasilConversationThread } from "./WasilConversationStore";
+import { trackAnalyticsEvent } from "../analytics/AnalyticsService";
 
 export class WasilApiError extends Error {
   constructor(
@@ -44,6 +45,21 @@ export type WasilProfileMemory = {
 export type WasilConversationContextMessage = {
   role: "user" | "assistant";
   content: string;
+};
+
+export type WasilLocationContext = {
+  latitude: number;
+  longitude: number;
+  accuracyMeters?: number;
+  mosques?: Array<{
+    name: string;
+    address: string;
+    distanceMeters: number;
+    distanceLabel: string;
+    walkingTimeLabel: string;
+    latitude: number;
+    longitude: number;
+  }>;
 };
 
 function configuration() {
@@ -222,7 +238,9 @@ export async function askWasil(
   mode: "standard" | "deep" = "standard",
   clarificationOf?: string,
   conversationHistory: readonly WasilConversationContextMessage[] = [],
+  locationContext?: WasilLocationContext,
 ) {
+  const clientStartedAt = Date.now();
   const recentConversation = conversationHistory
     .filter(
       (message) =>
@@ -246,8 +264,22 @@ export async function askWasil(
       sourceId: localContext.sourceId,
       action: localContext.action,
     },
+    locationContext,
   });
   if (!payload.reply)
     throw new WasilApiError("INVALID_RESPONSE", "Réponse Wasil invalide.");
+
+  void trackAnalyticsEvent({
+    eventName: "wasil_question",
+    module: "wasil",
+    route: "/dalil",
+    metadata: {
+      mode,
+      creditsCharged: Number(payload.creditsCharged ?? 0),
+      classification: payload.classification ?? null,
+      clientLatencyMs: Math.max(0, Date.now() - clientStartedAt),
+    },
+  });
+
   return payload as WasilResponse;
 }

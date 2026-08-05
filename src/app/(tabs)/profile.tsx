@@ -18,6 +18,7 @@ import { useCallback, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { colors } from "../../theme/colors";
+import { getMyUnreadSupportCount } from "../../features/support/SupportService";
 import { typography } from "../../theme/typography";
 import {
   getValidSession,
@@ -26,6 +27,7 @@ import {
   signUpWithPassword,
   SupabaseAuthSession,
 } from "../../features/auth/SupabaseAuthService";
+import { isOummahAdminSession } from "../../features/auth/AdminAccess";
 
 const LOCAL_DATA = [
   { icon: "trending-up-outline", label: "Progression" },
@@ -34,6 +36,7 @@ const LOCAL_DATA = [
 ] as const;
 
 export default function ProfileScreen() {
+  const [supportUnreadCount, setSupportUnreadCount] = useState(0);
   const router = useRouter();
   const [session, setSession] = useState<SupabaseAuthSession | null>(null);
   const [authOpen, setAuthOpen] = useState(false);
@@ -41,6 +44,7 @@ export default function ProfileScreen() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const isAdmin = isOummahAdminSession(session);
 
   useFocusEffect(
     useCallback(() => {
@@ -58,8 +62,8 @@ export default function ProfileScreen() {
     }, []),
   );
 
-  const openAuth = () => {
-    setAuthMode("signup");
+  const openAuth = (mode: "signup" | "signin") => {
+    setAuthMode(mode);
     setPassword("");
     setAuthOpen(true);
   };
@@ -83,9 +87,19 @@ export default function ProfileScreen() {
       const nextSession = authMode === "signup"
         ? await signUpWithPassword(normalizedEmail, password)
         : await signInWithPassword(normalizedEmail, password);
-      setSession(nextSession);
+
       setAuthOpen(false);
       setPassword("");
+
+      if (authMode === "signup" && !nextSession) {
+        Alert.alert(
+          "Compte créé",
+          "Consultez votre e-mail pour confirmer votre compte OUMMAH, puis connectez-vous.",
+        );
+        return;
+      }
+
+      setSession(nextSession);
       Alert.alert(
         authMode === "signup" ? "Compte créé" : "Connexion réussie",
         "Votre profil OUMMAH est maintenant connecté.",
@@ -152,9 +166,9 @@ export default function ProfileScreen() {
               </Text>
             </View>
 
-            <View style={styles.activeBadge}>
-              <View style={styles.activeDot} />
-              <Text style={styles.activeText}>ACTIF</Text>
+            <View style={[styles.activeBadge, isAdmin && styles.adminBadge]}>
+              <View style={[styles.activeDot, isAdmin && styles.adminDot]} />
+              <Text style={styles.activeText}>{isAdmin ? "ADMIN" : "ACTIF"}</Text>
             </View>
           </View>
 
@@ -174,16 +188,45 @@ export default function ProfileScreen() {
           </View>
         </LinearGradient>
 
+
+        {isAdmin ? (
+          <Pressable
+            accessibilityRole="button"
+            onPress={() => router.push("/admin")}
+            style={({ pressed }) => [styles.adminButton, pressed && styles.premiumButtonPressed]}
+          >
+            <Ionicons name="shield-checkmark-outline" size={21} color={colors.goldLight} />
+            <View style={styles.adminButtonCopy}>
+              <Text style={styles.adminButtonTitle}>Espace administrateur</Text>
+              <Text style={styles.adminButtonSubtitle}>Pilotage, utilisateurs, crédits et mosquées</Text>
+            </View>
+            <Ionicons name="chevron-forward" size={19} color={colors.goldLight} />
+          </Pressable>
+        ) : null}
+
+
         <Pressable
           accessibilityRole="button"
-          onPress={() => router.push("/premium")}
+          onPress={() => router.push("/support")}
           style={({ pressed }) => [
-            styles.premiumButton,
+            styles.supportButton,
             pressed && styles.premiumButtonPressed,
           ]}
         >
-          <Ionicons name="diamond-outline" size={20} color={colors.goldLight} />
-          <Text style={styles.premiumButtonText}>Passer à Premium</Text>
+          <Ionicons name="help-buoy-outline" size={20} color={colors.goldLight} />
+          <View style={styles.supportButtonCopy}>
+            <Text style={styles.supportButtonTitle}>Aide et support</Text>
+            <Text style={styles.supportButtonSubtitle}>
+              Signaler un bug, demander de l’aide ou faire une suggestion
+            </Text>
+          </View>
+          {supportUnreadCount > 0 ? (
+            <View style={styles.supportUnreadBadge}>
+              <Text style={styles.supportUnreadText}>
+                {supportUnreadCount > 99 ? "99+" : supportUnreadCount}
+              </Text>
+            </View>
+          ) : null}
           <Ionicons name="chevron-forward" size={19} color={colors.goldLight} />
         </Pressable>
 
@@ -227,11 +270,8 @@ export default function ProfileScreen() {
 
           <Pressable
             accessibilityRole="button"
-            onPress={session ? disconnect : openAuth}
-            style={({ pressed }) => [
-              styles.primaryButton,
-              pressed && styles.primaryButtonPressed,
-            ]}
+            onPress={session ? disconnect : () => openAuth("signup")}
+            style={styles.primaryButton}
           >
             <Ionicons
               name={session ? "log-out-outline" : "mail-outline"}
@@ -246,11 +286,8 @@ export default function ProfileScreen() {
           {!session && (
             <Pressable
               accessibilityRole="button"
-              onPress={openAuth}
-              style={({ pressed }) => [
-                styles.signInButton,
-                pressed && styles.signInButtonPressed,
-              ]}
+              onPress={() => openAuth("signin")}
+              style={styles.signInButton}
             >
               <Text style={styles.signInText}>J’ai déjà un profil</Text>
             </Pressable>
@@ -478,6 +515,47 @@ const styles = StyleSheet.create({
     fontFamily: typography.sans,
     fontSize: 11.5,
     lineHeight: 16,
+  },
+  supportButton: {
+    minHeight: 72,
+    marginTop: 14,
+    paddingHorizontal: 15,
+    flexDirection: "row",
+    alignItems: "center",
+    borderRadius: 18,
+    borderWidth: 1,
+    borderColor: colors.border,
+    backgroundColor: colors.card,
+  },
+  supportUnreadBadge: {
+    minWidth: 24,
+    height: 24,
+    marginRight: 8,
+    paddingHorizontal: 6,
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 12,
+    backgroundColor: "#F28B82",
+  },
+  supportUnreadText: {
+    color: colors.background,
+    fontSize: 9,
+    fontWeight: "900",
+  },
+  supportButtonCopy: {
+    flex: 1,
+    marginHorizontal: 12,
+  },
+  supportButtonTitle: {
+    color: colors.text,
+    fontSize: 13,
+    fontWeight: "800",
+  },
+  supportButtonSubtitle: {
+    marginTop: 4,
+    color: colors.textMuted,
+    fontSize: 9.5,
+    lineHeight: 14,
   },
   premiumButton: {
     alignItems: "center",
@@ -723,4 +801,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
+  adminBadge: { borderColor: "rgba(241,188,79,0.7)", backgroundColor: "rgba(241,188,79,0.16)" },
+  adminDot: { backgroundColor: colors.goldLight },
+  adminButton: { minHeight: 68, marginTop: 14, paddingHorizontal: 16, flexDirection: "row", alignItems: "center", borderRadius: 18, borderWidth: 1, borderColor: "rgba(241,188,79,0.32)", backgroundColor: "rgba(241,188,79,0.08)" },
+  adminButtonCopy: { flex: 1, marginHorizontal: 12 },
+  adminButtonTitle: { color: colors.text, fontFamily: typography.serifMedium, fontSize: 16 },
+  adminButtonSubtitle: { marginTop: 2, color: colors.textMuted, fontFamily: typography.sans, fontSize: 10.5 },
 });

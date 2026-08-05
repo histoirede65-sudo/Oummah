@@ -1,10 +1,13 @@
 import { Ionicons } from "@expo/vector-icons";
 import type { Href } from "expo-router";
 import { router } from "expo-router";
-import { Modal, Pressable, StyleSheet, Text, View } from "react-native";
+import { Modal, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { useEffect, useState } from "react";
 
 import { colors } from "../theme/colors";
 import { typography } from "../theme/typography";
+import { getValidSession } from "../features/auth/SupabaseAuthService";
+import { isOummahAdminSession } from "../features/auth/AdminAccess";
 
 type SheetMode = "menu" | "notifications";
 
@@ -27,6 +30,17 @@ export default function HomeHeaderSheet({
   onClose(): void;
   onOpenAdhan(): void;
 }) {
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    if (!visible || mode !== "menu") return;
+    let active = true;
+    getValidSession(true)
+      .then((session) => { if (active) setIsAdmin(isOummahAdminSession(session)); })
+      .catch(() => { if (active) setIsAdmin(false); });
+    return () => { active = false; };
+  }, [visible, mode]);
+
   const open = (route: string) => {
     onClose();
     router.push(route as Href);
@@ -52,7 +66,22 @@ export default function HomeHeaderSheet({
           </View>
 
           {mode === "menu" ? (
-            <View style={styles.items}>
+            <ScrollView
+              style={styles.menuScroll}
+              contentContainerStyle={styles.items}
+              showsVerticalScrollIndicator={false}
+            >
+              {isAdmin ? (
+                <Pressable onPress={() => open("/admin/mosques")} style={[styles.item, styles.adminItem]}>
+                  <View style={styles.icon}><Ionicons name="shield-checkmark-outline" size={19} color={colors.goldLight} /></View>
+                  <View style={styles.copy}>
+                    <Text style={styles.itemTitle}>Administration mosquées</Text>
+                    <Text style={styles.itemSubtitle}>Valider les propositions</Text>
+                  </View>
+                  <View style={styles.adminBadge}><Text style={styles.adminBadgeText}>ADMIN</Text></View>
+                  <Ionicons name="chevron-forward" size={17} color={colors.textMuted} />
+                </Pressable>
+              ) : null}
               {MENU_ITEMS.map((item) => (
                 <Pressable key={item.label} onPress={() => open(item.route)} style={styles.item}>
                   <View style={styles.icon}>
@@ -65,7 +94,7 @@ export default function HomeHeaderSheet({
                   <Ionicons name="chevron-forward" size={17} color={colors.textMuted} />
                 </Pressable>
               ))}
-            </View>
+            </ScrollView>
           ) : (
             <View style={styles.items}>
               <Pressable onPress={() => { onClose(); onOpenAdhan(); }} style={styles.item}>
@@ -99,7 +128,11 @@ const styles = StyleSheet.create({
   eyebrow: { color: colors.goldMuted, fontFamily: typography.sans, fontSize: 8, fontWeight: "800", letterSpacing: 1.1 },
   title: { marginTop: 3, color: colors.text, fontFamily: typography.serifSemibold, fontSize: 23 },
   close: { width: 36, height: 36, alignItems: "center", justifyContent: "center", borderRadius: 18, backgroundColor: "rgba(255,255,255,0.06)" },
-  items: { gap: 7 },
+  menuScroll: { maxHeight: 450 },
+  items: { gap: 7, paddingBottom: 4 },
+  adminItem: { borderColor: "rgba(241,188,79,0.28)", backgroundColor: "rgba(241,188,79,0.07)" },
+  adminBadge: { marginRight: 7, paddingHorizontal: 7, paddingVertical: 3, borderRadius: 7, backgroundColor: "rgba(241,188,79,0.14)" },
+  adminBadgeText: { color: colors.goldLight, fontFamily: typography.sans, fontSize: 7.5, fontWeight: "900", letterSpacing: 0.7 },
   item: { minHeight: 62, paddingHorizontal: 11, flexDirection: "row", alignItems: "center", borderRadius: 17, borderWidth: 1, borderColor: "rgba(255,255,255,0.07)", backgroundColor: "rgba(255,255,255,0.03)" },
   icon: { width: 38, height: 38, alignItems: "center", justifyContent: "center", borderRadius: 13, backgroundColor: "rgba(241,188,79,0.09)" },
   copy: { flex: 1, minWidth: 0, marginHorizontal: 10 },

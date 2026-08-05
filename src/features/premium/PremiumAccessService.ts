@@ -83,6 +83,63 @@ function publicConfiguration() {
   return { url, key };
 }
 
+
+type ManualPremiumOverrideRow = {
+  active?: boolean;
+  starts_at?: string | null;
+  ends_at?: string | null;
+  reason?: string | null;
+};
+
+async function fetchManualPremiumOverride(
+  session: Awaited<ReturnType<typeof getValidSession>>,
+): Promise<PremiumAccess | null> {
+  if (!session) return null;
+
+  const configuration = publicConfiguration();
+  if (!configuration) return null;
+
+  try {
+    const response = await fetch(
+      `${configuration.url}/rest/v1/rpc/get_my_manual_premium_override`,
+      {
+        method: "POST",
+        headers: {
+          apikey: configuration.key,
+          Authorization: `Bearer ${session.accessToken}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({}),
+      },
+    );
+
+    if (!response.ok) return null;
+
+    const row = firstRow(
+      await response.json(),
+    ) as ManualPremiumOverrideRow | null;
+
+    if (!row?.active) return null;
+
+    return access("active", {
+      isPremium: true,
+      tier: "premium",
+      currentPeriodEnd: row.ends_at ?? undefined,
+      subscription: {
+        tier: "premium",
+        status: "active",
+        purchasePlatform: "manual",
+        startedAt: row.starts_at ?? undefined,
+        expiresAt: row.ends_at ?? undefined,
+        autoRenew: false,
+        provider: "oummah-admin",
+      },
+    });
+  } catch {
+    return null;
+  }
+}
+
 function access(
   reason: PremiumAccessReason,
   values: Partial<PremiumAccess> = {},
@@ -185,6 +242,11 @@ async function fetchRemotePremiumAccess(): Promise<PremiumAccess> {
 
 export async function getPremiumAccess() {
   await synchronizePremiumSubscription(revenueCatPaymentProvider);
+
+  const session = await getValidSession();
+  const manualAccess = await fetchManualPremiumOverride(session);
+  if (manualAccess?.isPremium) return manualAccess;
+
   const supabaseAccess = await fetchRemotePremiumAccess();
   if (supabaseAccess.isPremium || supabaseAccess.reason === "signed-out") {
     return supabaseAccess;

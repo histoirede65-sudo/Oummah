@@ -4,7 +4,6 @@ import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import {
-  ActivityIndicator,
   Animated,
   Easing,
   ImageBackground,
@@ -21,10 +20,8 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import {
-  bearingToCardinal,
   calculateDistanceToKaabaKm,
   calculateQiblaBearing,
-  getTurnInstruction,
   normalizeDegrees,
   shortestAngle,
 } from "../features/qibla/qiblaMath";
@@ -41,57 +38,32 @@ import { colors } from "../theme/colors";
 import { typography } from "../theme/typography";
 
 const ALIGNMENT_TOLERANCE = 3;
-const NEAR_ALIGNMENT_TOLERANCE = 10;
+const NEAR_ALIGNMENT_TOLERANCE = 12;
 const BACKGROUND_IMAGE = require("../assets/images/home/shortcuts/qibla-real.jpg");
+
+function unwrapTarget(previous: number, nextNormalized: number) {
+  return previous + shortestAngle(nextNormalized - normalizeDegrees(previous));
+}
 
 function formatDistance(distanceKm: number | null) {
   if (distanceKm === null) return "—";
   return `${Math.round(distanceKm).toLocaleString("fr-FR")} km`;
 }
 
-function qualityLabel(quality: QiblaSensorQuality) {
-  if (quality === "excellent") return "Excellente";
-  if (quality === "medium") return "Moyenne";
-  return "Faible";
+function qualityCopy(quality: QiblaSensorQuality) {
+  if (quality === "excellent") return "Précision optimale";
+  if (quality === "medium") return "Précision correcte";
+  return "Calibrage conseillé";
 }
 
-function qualityColor(quality: QiblaSensorQuality) {
-  if (quality === "excellent") return colors.success;
-  if (quality === "medium") return colors.goldLight;
-  return colors.danger;
-}
-
-function unwrapTarget(previous: number, nextNormalized: number) {
-  return previous + shortestAngle(nextNormalized - normalizeDegrees(previous));
-}
-
-function GlassCard({
-  children,
-  style,
-}: {
-  children: ReactNode;
-  style?: object;
-}) {
+function GlassCard({ children, style }: { children: ReactNode; style?: object }) {
   return (
     <View style={[styles.glassCard, style]}>
       <LinearGradient
         pointerEvents="none"
-        colors={[
-          "rgba(255,255,255,0.135)",
-          "rgba(108,61,137,0.13)",
-          "rgba(13,8,24,0.66)",
-        ]}
-        locations={[0, 0.38, 1]}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
+        colors={["rgba(255,255,255,0.12)", "rgba(89,45,119,0.12)", "rgba(10,6,19,0.82)"]}
+        locations={[0, 0.35, 1]}
         style={StyleSheet.absoluteFill}
-      />
-      <LinearGradient
-        pointerEvents="none"
-        colors={["rgba(255,255,255,0.16)", "transparent"]}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 0.75, y: 0.8 }}
-        style={styles.glassShine}
       />
       {children}
     </View>
@@ -103,62 +75,62 @@ function PremiumCompass({
   heading,
   qiblaBearing,
   isAligned,
+  isNear,
 }: {
   size: number;
   heading: number | null;
   qiblaBearing: number | null;
   isAligned: boolean;
+  isNear: boolean;
 }) {
   const dialRotation = useRef(new Animated.Value(0)).current;
   const needleRotation = useRef(new Animated.Value(0)).current;
   const pulse = useRef(new Animated.Value(0)).current;
+  const kaabaScale = useRef(new Animated.Value(1)).current;
   const previousDialRef = useRef(0);
   const previousNeedleRef = useRef(0);
 
   useEffect(() => {
     if (heading === null) return;
-    const normalized = normalizeDegrees(-heading);
-    const target = unwrapTarget(previousDialRef.current, normalized);
+    const target = unwrapTarget(previousDialRef.current, normalizeDegrees(-heading));
     previousDialRef.current = target;
+    dialRotation.stopAnimation();
     Animated.timing(dialRotation, {
       toValue: target,
-      duration: 145,
-      easing: Easing.out(Easing.cubic),
+      duration: 240,
+      easing: Easing.out(Easing.quad),
       useNativeDriver: true,
     }).start();
   }, [dialRotation, heading]);
 
   useEffect(() => {
     if (heading === null || qiblaBearing === null) return;
-    const normalized = normalizeDegrees(qiblaBearing - heading);
-    const target = unwrapTarget(previousNeedleRef.current, normalized);
+    const target = unwrapTarget(
+      previousNeedleRef.current,
+      normalizeDegrees(qiblaBearing - heading),
+    );
     previousNeedleRef.current = target;
-    Animated.spring(needleRotation, {
+    needleRotation.stopAnimation();
+    Animated.timing(needleRotation, {
       toValue: target,
-      damping: 24,
-      stiffness: 150,
-      mass: 0.45,
+      duration: isNear ? 300 : 220,
+      easing: Easing.out(Easing.cubic),
       useNativeDriver: true,
     }).start();
-  }, [heading, needleRotation, qiblaBearing]);
+  }, [heading, isNear, needleRotation, qiblaBearing]);
 
   useEffect(() => {
-    if (!isAligned) {
-      pulse.stopAnimation();
-      pulse.setValue(0);
-      return;
-    }
     const animation = Animated.loop(
       Animated.sequence([
         Animated.timing(pulse, {
           toValue: 1,
-          duration: 900,
+          duration: isAligned ? 780 : 1250,
           easing: Easing.inOut(Easing.sin),
           useNativeDriver: true,
         }),
         Animated.timing(pulse, {
           toValue: 0,
-          duration: 900,
+          duration: isAligned ? 780 : 1250,
           easing: Easing.inOut(Easing.sin),
           useNativeDriver: true,
         }),
@@ -167,6 +139,15 @@ function PremiumCompass({
     animation.start();
     return () => animation.stop();
   }, [isAligned, pulse]);
+
+  useEffect(() => {
+    Animated.spring(kaabaScale, {
+      toValue: isAligned ? 1.12 : isNear ? 1.06 : 1,
+      damping: 12,
+      stiffness: 135,
+      useNativeDriver: true,
+    }).start();
+  }, [isAligned, isNear, kaabaScale]);
 
   const dialRotate = dialRotation.interpolate({
     inputRange: [-1440, 1440],
@@ -177,29 +158,25 @@ function PremiumCompass({
     outputRange: ["-1440deg", "1440deg"],
   });
 
-  const degreeLabels = Array.from({ length: 12 }, (_, index) => index * 30);
-  const labelRadius = size * 0.405;
-  const center = size / 2;
-
   return (
     <View style={[styles.compassStage, { width: size, height: size }]}>
       <Animated.View
         pointerEvents="none"
         style={[
-          styles.compassHalo,
+          styles.outerGlow,
           {
-            width: size + 24,
-            height: size + 24,
-            borderRadius: (size + 24) / 2,
+            width: size + 30,
+            height: size + 30,
+            borderRadius: (size + 30) / 2,
             opacity: pulse.interpolate({
               inputRange: [0, 1],
-              outputRange: [isAligned ? 0.28 : 0.08, isAligned ? 0.76 : 0.08],
+              outputRange: isAligned ? [0.38, 0.9] : isNear ? [0.16, 0.46] : [0.06, 0.14],
             }),
             transform: [
               {
                 scale: pulse.interpolate({
                   inputRange: [0, 1],
-                  outputRange: [0.98, 1.035],
+                  outputRange: [0.985, isAligned ? 1.045 : 1.018],
                 }),
               },
             ],
@@ -210,155 +187,59 @@ function PremiumCompass({
       <LinearGradient
         colors={
           isAligned
-            ? ["#FFF0A8", "#E9B84F", "#8E5E18", "#F6D77F"]
-            : ["#E9C878", "#8E672C", "#3F2A17", "#C59B4A"]
+            ? ["#FFF4B5", "#EAB74A", "#8C5B15", "#F6D87B"]
+            : isNear
+              ? ["#F8D987", "#C99335", "#553517", "#DDB65D"]
+              : ["#DAB963", "#805B28", "#2E1C14", "#B78B3E"]
         }
-        start={{ x: 0.15, y: 0 }}
-        end={{ x: 0.85, y: 1 }}
-        style={[
-          styles.compassGoldRim,
-          { width: size, height: size, borderRadius: size / 2 },
-        ]}
+        style={[styles.compassRim, { width: size, height: size, borderRadius: size / 2 }]}
       >
-        <View
-          style={[
-            styles.compassGlassRim,
-            {
-              width: size - 8,
-              height: size - 8,
-              borderRadius: (size - 8) / 2,
-            },
-          ]}
-        >
+        <View style={[styles.compassFace, { width: size - 9, height: size - 9, borderRadius: (size - 9) / 2 }]}>
           <LinearGradient
-            colors={[
-              "rgba(55,34,74,0.94)",
-              "rgba(9,7,18,0.98)",
-              "rgba(23,12,34,0.98)",
-            ]}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
+            colors={["rgba(57,31,78,0.97)", "rgba(9,6,17,0.99)", "rgba(22,11,34,0.99)"]}
             style={StyleSheet.absoluteFill}
           />
 
-          <View style={styles.compassInnerHighlight} />
-
-          <Animated.View
-            style={[
-              styles.rotatingDial,
-              { transform: [{ rotate: dialRotate }] },
-            ]}
-          >
-            {Array.from({ length: 120 }).map((_, index) => {
-              const major = index % 10 === 0;
-              const medium = index % 5 === 0;
-              return (
-                <View
-                  key={index}
-                  pointerEvents="none"
-                  style={[
-                    styles.tickWrap,
-                    { transform: [{ rotate: `${index * 3}deg` }] },
-                  ]}
-                >
-                  <View
-                    style={[
-                      styles.tick,
-                      medium && styles.tickMedium,
-                      major && styles.tickMajor,
-                    ]}
-                  />
-                </View>
-              );
-            })}
-
-            {degreeLabels.map((degree) => {
-              const angle = ((degree - 90) * Math.PI) / 180;
-              const left = center + Math.cos(angle) * labelRadius - 15;
-              const top = center + Math.sin(angle) * labelRadius - 9;
-              return (
-                <Text
-                  key={degree}
-                  style={[
-                    styles.degreeLabel,
-                    {
-                      left,
-                      top,
-                      transform: [{ rotate: `${degree}deg` }],
-                    },
-                  ]}
-                >
-                  {degree}°
-                </Text>
-              );
-            })}
-
-            <Text style={[styles.cardinal, styles.cardinalNorth]}>N</Text>
-            <Text style={[styles.cardinal, styles.cardinalEast]}>E</Text>
-            <Text style={[styles.cardinal, styles.cardinalSouth]}>S</Text>
-            <Text style={[styles.cardinal, styles.cardinalWest]}>O</Text>
-
-            {Array.from({ length: 8 }).map((_, index) => (
+          <Animated.View style={[styles.rotatingDial, { transform: [{ rotate: dialRotate }] }]}>
+            {Array.from({ length: 36 }).map((_, index) => (
               <View
                 key={index}
-                style={[
-                  styles.roseRayWrap,
-                  { transform: [{ rotate: `${index * 45}deg` }] },
-                ]}
+                style={[styles.tickWrap, { transform: [{ rotate: `${index * 10}deg` }] }]}
               >
-                <LinearGradient
-                  colors={
-                    index % 2 === 0
-                      ? ["rgba(239,194,95,0.82)", "rgba(239,194,95,0.03)"]
-                      : ["rgba(255,255,255,0.42)", "rgba(255,255,255,0.02)"]
-                  }
-                  style={styles.roseRay}
-                />
+                <View style={[styles.tick, index % 3 === 0 && styles.tickMajor]} />
               </View>
             ))}
+            <Text style={[styles.cardinal, styles.north]}>N</Text>
+            <Text style={[styles.cardinal, styles.east]}>E</Text>
+            <Text style={[styles.cardinal, styles.south]}>S</Text>
+            <Text style={[styles.cardinal, styles.west]}>O</Text>
           </Animated.View>
 
-          <Animated.View
-            pointerEvents="none"
-            style={[
-              styles.needleLayer,
-              { transform: [{ rotate: needleRotate }] },
-            ]}
-          >
+          <Animated.View style={[styles.needleLayer, { transform: [{ rotate: needleRotate }] }]}>
+            <View style={[styles.qiblaTip, isAligned && styles.qiblaTipAligned]}>
+              <View style={styles.miniKaaba}>
+                <View style={styles.miniKaabaBand} />
+              </View>
+            </View>
             <LinearGradient
-              colors={
-                isAligned
-                  ? ["#FFF5BD", "#F2BD45", "#A76B17"]
-                  : ["#F2D58A", "#D59A32", "#875618"]
-              }
-              style={styles.needleShaft}
+              colors={isAligned ? ["#FFF9D8", "#F3C653", "#A66A19"] : ["#F6DE94", "#D9A43D", "#85511B"]}
+              style={styles.qiblaPointer}
             />
-            <View
-              style={[
-                styles.needleHead,
-                isAligned && styles.needleHeadAligned,
-              ]}
-            />
-            <View style={styles.needleTail} />
+            <View style={styles.pointerTail} />
           </Animated.View>
 
-          <View style={styles.centerMedallionOuter}>
-            <LinearGradient
-              colors={["#F0D68E", "#A76D1E", "#E8BE61"]}
-              style={styles.centerMedallionGold}
-            >
-              <View style={styles.centerMedallionInner}>
+          <Animated.View style={[styles.centerMedallion, { transform: [{ scale: kaabaScale }] }]}>
+            <LinearGradient colors={["#F7DC91", "#A76D1D", "#E7B954"]} style={styles.centerGold}>
+              <View style={styles.centerInner}>
                 <View style={styles.kaaba}>
                   <View style={styles.kaabaBand} />
                   <View style={styles.kaabaDoor} />
                 </View>
               </View>
             </LinearGradient>
-          </View>
+          </Animated.View>
 
-          <View style={styles.phoneMarker}>
-            <View style={styles.phoneMarkerTriangle} />
-          </View>
+          <View style={styles.phoneMarker} />
         </View>
       </LinearGradient>
     </View>
@@ -370,7 +251,6 @@ export default function QiblaScreen() {
   const {
     location,
     heading,
-    headingAccuracy,
     sensorQuality,
     loading,
     permissionDenied,
@@ -380,40 +260,24 @@ export default function QiblaScreen() {
 
   const [helpVisible, setHelpVisible] = useState(false);
   const [tutorialVisible, setTutorialVisible] = useState(false);
+  const [detailsVisible, setDetailsVisible] = useState(false);
   const [hapticsEnabled, setHapticsEnabled] = useState(true);
-  const [locked, setLocked] = useState(false);
-  const [lockedHeading, setLockedHeading] = useState<number | null>(null);
   const hasVibratedRef = useRef(false);
 
-  const compassSize = Math.min(width - 30, 382);
-  const effectiveHeading = locked ? lockedHeading : heading;
+  const compassSize = Math.min(width - 34, 370);
   const qiblaBearing = useMemo(
-    () =>
-      location
-        ? calculateQiblaBearing(location.latitude, location.longitude)
-        : null,
+    () => (location ? calculateQiblaBearing(location.latitude, location.longitude) : null),
     [location],
   );
   const distanceKm = useMemo(
-    () =>
-      location
-        ? calculateDistanceToKaabaKm(location.latitude, location.longitude)
-        : null,
+    () => (location ? calculateDistanceToKaabaKm(location.latitude, location.longitude) : null),
     [location],
   );
-  const relativeAngle =
-    qiblaBearing !== null && effectiveHeading !== null
-      ? shortestAngle(qiblaBearing - effectiveHeading)
-      : 0;
+  const relativeAngle = qiblaBearing !== null && heading !== null ? shortestAngle(qiblaBearing - heading) : 0;
   const absoluteDifference = Math.abs(relativeAngle);
-  const isAligned =
-    qiblaBearing !== null &&
-    effectiveHeading !== null &&
-    absoluteDifference <= ALIGNMENT_TOLERANCE;
-  const isNear =
-    qiblaBearing !== null &&
-    effectiveHeading !== null &&
-    absoluteDifference <= NEAR_ALIGNMENT_TOLERANCE;
+  const hasDirection = qiblaBearing !== null && heading !== null;
+  const isAligned = hasDirection && absoluteDifference <= ALIGNMENT_TOLERANCE;
+  const isNear = hasDirection && absoluteDifference <= NEAR_ALIGNMENT_TOLERANCE;
 
   useEffect(() => {
     void readQiblaPreferences().then((preferences) => {
@@ -426,9 +290,7 @@ export default function QiblaScreen() {
     if (isAligned && !hasVibratedRef.current) {
       hasVibratedRef.current = true;
       if (hapticsEnabled) {
-        void Haptics.notificationAsync(
-          Haptics.NotificationFeedbackType.Success,
-        ).catch(() => undefined);
+        void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => undefined);
       }
     }
     if (!isNear) hasVibratedRef.current = false;
@@ -444,21 +306,13 @@ export default function QiblaScreen() {
     await setQiblaHapticsEnabled(value);
   };
 
-  const toggleLock = () => {
-    if (!locked) {
-      setLockedHeading(heading);
-      setLocked(true);
-      return;
-    }
-    setLocked(false);
-    setLockedHeading(null);
-  };
-
-  const statusText = loading
-    ? "Initialisation des capteurs…"
-    : qiblaBearing === null || effectiveHeading === null
-      ? "Recherche de la direction…"
-      : getTurnInstruction(relativeAngle);
+  const instruction = loading || !hasDirection
+    ? { icon: "compass-outline" as const, eyebrow: "UN INSTANT", title: "Recherche de la Qibla", subtitle: "Gardez votre téléphone à plat" }
+    : isAligned
+      ? { icon: "checkmark" as const, eyebrow: "QIBLA TROUVÉE", title: "Vous êtes bien orienté", subtitle: "La flèche dorée pointe vers La Mecque" }
+      : relativeAngle > 0
+        ? { icon: "arrow-redo" as const, eyebrow: isNear ? "PRESQUE" : "ORIENTATION", title: isNear ? "Un peu à droite" : "Tournez à droite", subtitle: `${Math.max(1, Math.round(absoluteDifference))}° avant l’alignement` }
+        : { icon: "arrow-undo" as const, eyebrow: isNear ? "PRESQUE" : "ORIENTATION", title: isNear ? "Un peu à gauche" : "Tournez à gauche", subtitle: `${Math.max(1, Math.round(absoluteDifference))}° avant l’alignement` };
 
   return (
     <View style={styles.screen}>
@@ -470,12 +324,8 @@ export default function QiblaScreen() {
         imageStyle={styles.backgroundImage}
       >
         <LinearGradient
-          colors={[
-            "rgba(4,3,10,0.68)",
-            "rgba(14,7,24,0.72)",
-            "rgba(5,3,12,0.94)",
-          ]}
-          locations={[0, 0.46, 1]}
+          colors={["rgba(4,3,10,0.69)", "rgba(13,7,22,0.82)", "rgba(5,3,12,0.97)"]}
+          locations={[0, 0.42, 1]}
           style={StyleSheet.absoluteFill}
         />
         <View style={styles.backgroundOrbTop} />
@@ -483,400 +333,124 @@ export default function QiblaScreen() {
       </ImageBackground>
 
       <SafeAreaView edges={["top", "left", "right"]} style={styles.safeArea}>
-        <ScrollView
-          contentContainerStyle={styles.content}
-          showsVerticalScrollIndicator={false}
-        >
+        <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
           <View style={styles.header}>
             <Pressable onPress={() => router.back()} style={styles.headerButton}>
               <Ionicons name="chevron-back" size={23} color={colors.goldLight} />
             </Pressable>
             <View style={styles.headerCopy}>
               <Text style={styles.title}>Qibla</Text>
-              <Text style={styles.subtitle}>Direction de La Mecque</Text>
+              <View style={styles.locationLine}>
+                <Ionicons name="location" size={11} color={colors.goldLight} />
+                <Text numberOfLines={1} style={styles.locationText}>{location?.city ?? "Localisation en cours"}</Text>
+              </View>
             </View>
-            <Pressable
-              onPress={() => setHelpVisible(true)}
-              style={styles.headerButton}
-            >
-              <Ionicons
-                name="sparkles-outline"
-                size={21}
-                color={colors.goldLight}
-              />
+            <Pressable onPress={() => setHelpVisible(true)} style={styles.headerButton}>
+              <Ionicons name="help-circle-outline" size={22} color={colors.goldLight} />
             </Pressable>
           </View>
 
           {permissionDenied || error ? (
-            <GlassCard style={styles.permissionCard}>
-              <View style={styles.permissionIcon}>
-                <Ionicons
-                  name={permissionDenied ? "location-outline" : "compass-outline"}
-                  size={31}
-                  color={colors.goldLight}
-                />
+            <GlassCard style={styles.errorCard}>
+              <View style={styles.errorIcon}>
+                <Ionicons name={permissionDenied ? "location-outline" : "compass-outline"} size={34} color={colors.goldLight} />
               </View>
-              <Text style={styles.permissionTitle}>
-                {permissionDenied
-                  ? "Localisation nécessaire"
-                  : "Boussole indisponible"}
-              </Text>
-              <Text style={styles.permissionText}>
-                {permissionDenied
-                  ? "OUMMAH utilise votre position uniquement pour calculer la direction de La Mecque."
-                  : error}
-              </Text>
+              <Text style={styles.errorTitle}>{permissionDenied ? "Localisation nécessaire" : "Boussole indisponible"}</Text>
+              <Text style={styles.errorText}>{permissionDenied ? "Autorisez la localisation pour calculer précisément la direction de La Mecque." : error}</Text>
               <Pressable onPress={restart} style={styles.primaryButton}>
-                <LinearGradient
-                  colors={["#F4CF77", "#C98C2F"]}
-                  style={StyleSheet.absoluteFill}
-                />
+                <LinearGradient colors={["#F4CF77", "#C98C2F"]} style={StyleSheet.absoluteFill} />
                 <Text style={styles.primaryButtonText}>Réessayer</Text>
               </Pressable>
             </GlassCard>
           ) : (
             <>
-              <View style={styles.locationRow}>
-                <View style={styles.locationPill}>
-                  <Ionicons name="location" size={13} color={colors.goldLight} />
-                  <Text numberOfLines={1} style={styles.locationText}>
-                    {location?.city ?? "Localisation en cours"}
-                  </Text>
+              <View style={[styles.instructionCard, isAligned && styles.instructionCardAligned]}>
+                <View style={[styles.instructionIcon, isAligned && styles.instructionIconAligned]}>
+                  <Ionicons name={instruction.icon} size={22} color={isAligned ? colors.background : colors.goldLight} />
                 </View>
-                <Pressable
-                  onPress={toggleLock}
-                  style={[styles.lockPill, locked && styles.lockPillActive]}
-                >
-                  <Ionicons
-                    name={locked ? "lock-closed" : "lock-open-outline"}
-                    size={13}
-                    color={locked ? colors.background : colors.textSecondary}
-                  />
-                  <Text
-                    style={[
-                      styles.lockText,
-                      locked && styles.lockTextActive,
-                    ]}
-                  >
-                    {locked ? "Verrouillée" : "Stabiliser"}
-                  </Text>
-                </Pressable>
-              </View>
-
-              <View style={styles.statusWrap}>
-                <View
-                  style={[
-                    styles.statusDot,
-                    {
-                      backgroundColor: isAligned
-                        ? colors.success
-                        : colors.goldLight,
-                    },
-                  ]}
-                />
-                <Text
-                  style={[
-                    styles.statusText,
-                    isAligned && styles.statusTextAligned,
-                  ]}
-                >
-                  {statusText}
-                </Text>
+                <View style={styles.instructionCopy}>
+                  <Text style={[styles.instructionEyebrow, isAligned && styles.instructionEyebrowAligned]}>{instruction.eyebrow}</Text>
+                  <Text style={[styles.instructionTitle, isAligned && styles.instructionTitleAligned]}>{instruction.title}</Text>
+                  <Text style={styles.instructionSubtitle}>{instruction.subtitle}</Text>
+                </View>
               </View>
 
               <PremiumCompass
                 size={compassSize}
-                heading={effectiveHeading}
+                heading={heading}
                 qiblaBearing={qiblaBearing}
                 isAligned={isAligned}
+                isNear={isNear}
               />
 
-              <GlassCard style={styles.metricsCard}>
-                <View style={styles.metricBlock}>
-                  <View style={styles.metricIcon}>
-                    <Ionicons
-                      name="navigate-outline"
-                      size={18}
-                      color={colors.goldLight}
-                    />
-                  </View>
-                  <Text style={styles.metricLabel}>Qibla à</Text>
-                  <Text style={styles.metricValue}>
-                    {qiblaBearing === null ? "—" : `${Math.round(qiblaBearing)}°`}
-                  </Text>
+              <Pressable onPress={() => setDetailsVisible((value) => !value)} style={styles.detailsToggle}>
+                <View style={styles.detailsToggleLeft}>
+                  <Ionicons name="options-outline" size={17} color={colors.textSecondary} />
+                  <Text style={styles.detailsToggleText}>Détails et réglages</Text>
                 </View>
-                <View style={styles.metricDivider} />
-                <View style={styles.metricBlock}>
-                  <View style={styles.metricIcon}>
-                    <View style={styles.miniKaaba}>
-                      <View style={styles.miniKaabaBand} />
+                <Ionicons name={detailsVisible ? "chevron-up" : "chevron-down"} size={18} color={colors.textSecondary} />
+              </Pressable>
+
+              {detailsVisible ? (
+                <GlassCard style={styles.detailsCard}>
+                  <View style={styles.detailRow}>
+                    <View><Text style={styles.detailLabel}>Direction</Text><Text style={styles.detailValue}>{qiblaBearing === null ? "—" : `${Math.round(qiblaBearing)}°`}</Text></View>
+                    <View style={styles.detailDivider} />
+                    <View><Text style={styles.detailLabel}>La Mecque</Text><Text style={styles.detailValue}>{formatDistance(distanceKm)}</Text></View>
+                    <View style={styles.detailDivider} />
+                    <View><Text style={styles.detailLabel}>Capteur</Text><Text style={styles.detailValueSmall}>{qualityCopy(sensorQuality)}</Text></View>
+                  </View>
+                  <View style={styles.settingSeparator} />
+                  <View style={styles.settingRow}>
+                    <View style={styles.settingCopy}>
+                      <Ionicons name="phone-portrait-outline" size={19} color={colors.goldLight} />
+                      <View><Text style={styles.settingTitle}>Vibration à l’alignement</Text><Text style={styles.settingSubtitle}>Confirme lorsque la Qibla est trouvée</Text></View>
                     </View>
-                  </View>
-                  <Text style={styles.metricLabel}>La Mecque à</Text>
-                  <Text
-                    numberOfLines={1}
-                    adjustsFontSizeToFit
-                    style={styles.metricValueDistance}
-                  >
-                    {formatDistance(distanceKm)}
-                  </Text>
-                </View>
-                <View style={styles.metricDivider} />
-                <View style={styles.metricBlock}>
-                  <View
-                    style={[
-                      styles.metricIcon,
-                      isAligned && styles.metricIconAligned,
-                    ]}
-                  >
-                    <Ionicons
-                      name={isAligned ? "checkmark" : "sync-outline"}
-                      size={20}
-                      color={isAligned ? colors.background : colors.goldLight}
+                    <Switch
+                      value={hapticsEnabled}
+                      onValueChange={toggleHaptics}
+                      trackColor={{ false: "rgba(255,255,255,0.12)", true: "rgba(227,181,90,0.52)" }}
+                      thumbColor={hapticsEnabled ? colors.goldLight : "#8D8592"}
                     />
                   </View>
-                  <Text style={styles.metricLabel}>Orientation</Text>
-                  <Text
-                    numberOfLines={2}
-                    style={[
-                      styles.alignmentText,
-                      isAligned && styles.alignmentTextSuccess,
-                    ]}
-                  >
-                    {isAligned
-                      ? "Bien aligné"
-                      : qiblaBearing === null
-                        ? "En attente"
-                        : bearingToCardinal(qiblaBearing)}
-                  </Text>
-                </View>
-              </GlassCard>
-
-              <GlassCard style={styles.sensorCard}>
-                <View style={styles.sensorRow}>
-                  <View style={styles.sensorIconWrap}>
-                    <Ionicons
-                      name="locate-outline"
-                      size={21}
-                      color={colors.goldLight}
-                    />
-                  </View>
-                  <View style={styles.sensorCopy}>
-                    <Text style={styles.sensorLabel}>Précision du capteur</Text>
-                    <Text
-                      style={[
-                        styles.sensorValue,
-                        { color: qualityColor(sensorQuality) },
-                      ]}
-                    >
-                      {qualityLabel(sensorQuality)}
-                    </Text>
-                  </View>
-                  <View style={styles.signalBars}>
-                    {[0, 1, 2, 3].map((bar) => {
-                      const activeBars =
-                        sensorQuality === "excellent"
-                          ? 4
-                          : sensorQuality === "medium"
-                            ? 3
-                            : 1;
-                      return (
-                        <View
-                          key={bar}
-                          style={[
-                            styles.signalBar,
-                            { height: 7 + bar * 4 },
-                            bar < activeBars && {
-                              backgroundColor: qualityColor(sensorQuality),
-                            },
-                          ]}
-                        />
-                      );
-                    })}
-                  </View>
-                </View>
-                <View style={styles.sensorSeparator} />
-                <View style={styles.sensorAdviceRow}>
-                  <Ionicons
-                    name="information-circle-outline"
-                    size={16}
-                    color={colors.textMuted}
-                  />
-                  <Text style={styles.sensorAdvice}>
-                    {sensorQuality === "low"
-                      ? "Éloignez le téléphone des objets métalliques puis calibrez-le."
-                      : `Cap actuel : ${heading === null ? "—" : `${Math.round(heading)}°`} • Gardez le téléphone à plat.`}
-                  </Text>
-                </View>
-              </GlassCard>
-
-              <View style={styles.actionRow}>
-                <Pressable
-                  onPress={() => router.push("/qibla-map")}
-                  style={styles.actionButton}
-                >
-                  <LinearGradient
-                    colors={["rgba(42,24,60,0.88)", "rgba(14,9,25,0.93)"]}
-                    style={StyleSheet.absoluteFill}
-                  />
-                  <Ionicons name="map-outline" size={22} color={colors.goldLight} />
-                  <Text style={styles.actionButtonText}>Carte</Text>
-                </Pressable>
-                <Pressable
-                  onPress={() => setHelpVisible(true)}
-                  style={styles.actionButton}
-                >
-                  <LinearGradient
-                    colors={["rgba(42,24,60,0.88)", "rgba(14,9,25,0.93)"]}
-                    style={StyleSheet.absoluteFill}
-                  />
-                  <Ionicons name="scan-outline" size={22} color={colors.goldLight} />
-                  <Text style={styles.actionButtonText}>Calibration</Text>
-                </Pressable>
-              </View>
-
-              <GlassCard style={styles.preferenceCard}>
-                <View style={styles.preferenceCopy}>
-                  <Ionicons
-                    name="phone-portrait-outline"
-                    size={20}
-                    color={colors.goldLight}
-                  />
-                  <View style={styles.preferenceTexts}>
-                    <Text style={styles.preferenceTitle}>
-                      Vibration à l’alignement
-                    </Text>
-                    <Text style={styles.preferenceSubtitle}>
-                      Une seule vibration lorsque la Qibla est trouvée
-                    </Text>
-                  </View>
-                </View>
-                <Switch
-                  value={hapticsEnabled}
-                  onValueChange={toggleHaptics}
-                  trackColor={{
-                    false: "rgba(255,255,255,0.12)",
-                    true: "rgba(227,181,90,0.52)",
-                  }}
-                  thumbColor={hapticsEnabled ? colors.goldLight : "#8D8592"}
-                />
-              </GlassCard>
+                  <Pressable onPress={() => setHelpVisible(true)} style={styles.calibrateButton}>
+                    <Ionicons name="scan-outline" size={18} color={colors.goldLight} />
+                    <Text style={styles.calibrateText}>Calibrer la boussole</Text>
+                  </Pressable>
+                </GlassCard>
+              ) : null}
             </>
           )}
         </ScrollView>
       </SafeAreaView>
 
-      <Modal
-        visible={helpVisible}
-        transparent
-        animationType="fade"
-        onRequestClose={() => setHelpVisible(false)}
-      >
+      <Modal visible={helpVisible} transparent animationType="fade" onRequestClose={() => setHelpVisible(false)}>
         <View style={styles.modalBackdrop}>
           <GlassCard style={styles.modalCard}>
             <View style={styles.modalHeader}>
-              <View>
-                <Text style={styles.modalEyebrow}>PRÉCISION</Text>
-                <Text style={styles.modalTitle}>Calibrer la boussole</Text>
-              </View>
-              <Pressable
-                onPress={() => setHelpVisible(false)}
-                style={styles.modalClose}
-              >
-                <Ionicons name="close" size={22} color={colors.text} />
-              </Pressable>
+              <View><Text style={styles.modalEyebrow}>PRÉCISION</Text><Text style={styles.modalTitle}>Calibrer la boussole</Text></View>
+              <Pressable onPress={() => setHelpVisible(false)} style={styles.modalClose}><Ionicons name="close" size={22} color={colors.text} /></Pressable>
             </View>
-            <View style={styles.figureEight}>
-              <Text style={styles.figureEightText}>∞</Text>
-            </View>
-            <Text style={styles.modalBody}>
-              Déplacez doucement votre téléphone en dessinant un huit dans
-              l’air pendant quelques secondes.
-            </Text>
-            <View style={styles.helpList}>
-              <View style={styles.helpRow}>
-                <Ionicons
-                  name="remove-circle-outline"
-                  size={18}
-                  color={colors.goldLight}
-                />
-                <Text style={styles.helpText}>
-                  Retirez les accessoires ou coques aimantés.
-                </Text>
-              </View>
-              <View style={styles.helpRow}>
-                <Ionicons
-                  name="hardware-chip-outline"
-                  size={18}
-                  color={colors.goldLight}
-                />
-                <Text style={styles.helpText}>
-                  Éloignez-vous des enceintes, véhicules et objets métalliques.
-                </Text>
-              </View>
-              <View style={styles.helpRow}>
-                <Ionicons
-                  name="phone-portrait-outline"
-                  size={18}
-                  color={colors.goldLight}
-                />
-                <Text style={styles.helpText}>
-                  Tenez ensuite le téléphone à plat, écran vers le haut.
-                </Text>
-              </View>
-            </View>
-            <Pressable
-              onPress={() => {
-                setHelpVisible(false);
-                restart();
-              }}
-              style={styles.primaryButton}
-            >
-              <LinearGradient
-                colors={["#F4CF77", "#C98C2F"]}
-                style={StyleSheet.absoluteFill}
-              />
+            <View style={styles.figureEight}><Text style={styles.figureEightText}>∞</Text></View>
+            <Text style={styles.modalBody}>Dessinez doucement un huit avec votre téléphone pendant quelques secondes, puis tenez-le à plat.</Text>
+            <View style={styles.helpRow}><Ionicons name="remove-circle-outline" size={18} color={colors.goldLight} /><Text style={styles.helpText}>Retirez les coques ou accessoires aimantés.</Text></View>
+            <View style={styles.helpRow}><Ionicons name="hardware-chip-outline" size={18} color={colors.goldLight} /><Text style={styles.helpText}>Éloignez-vous des véhicules et objets métalliques.</Text></View>
+            <Pressable onPress={() => { setHelpVisible(false); restart(); }} style={styles.primaryButton}>
+              <LinearGradient colors={["#F4CF77", "#C98C2F"]} style={StyleSheet.absoluteFill} />
               <Text style={styles.primaryButtonText}>Recalibrer maintenant</Text>
             </Pressable>
           </GlassCard>
         </View>
       </Modal>
 
-      <Modal
-        visible={tutorialVisible}
-        transparent
-        animationType="fade"
-        onRequestClose={closeTutorial}
-      >
+      <Modal visible={tutorialVisible} transparent animationType="fade" onRequestClose={closeTutorial}>
         <View style={styles.modalBackdrop}>
           <GlassCard style={styles.modalCard}>
-            <View style={styles.tutorialIcon}>
-              <Ionicons name="compass-outline" size={38} color={colors.goldLight} />
-            </View>
-            <Text style={styles.tutorialTitle}>Trouvez la Qibla</Text>
-            <Text style={styles.tutorialText}>
-              Posez votre téléphone à plat puis tournez-vous jusqu’à ce que la
-              flèche dorée pointe vers le haut.
-            </Text>
-            <View style={styles.tutorialSteps}>
-              <View style={styles.tutorialStep}>
-                <Text style={styles.stepNumber}>1</Text>
-                <Text style={styles.stepText}>Autorisez votre localisation</Text>
-              </View>
-              <View style={styles.tutorialStep}>
-                <Text style={styles.stepNumber}>2</Text>
-                <Text style={styles.stepText}>Éloignez les objets métalliques</Text>
-              </View>
-              <View style={styles.tutorialStep}>
-                <Text style={styles.stepNumber}>3</Text>
-                <Text style={styles.stepText}>Attendez le halo doré</Text>
-              </View>
-            </View>
+            <View style={styles.tutorialIcon}><Ionicons name="compass-outline" size={38} color={colors.goldLight} /></View>
+            <Text style={styles.tutorialTitle}>Trouvez la Qibla simplement</Text>
+            <Text style={styles.tutorialText}>Posez le téléphone à plat et suivez l’indication. Lorsque vous êtes bien orienté, l’écran devient doré et le téléphone vibre.</Text>
             <Pressable onPress={closeTutorial} style={styles.primaryButton}>
-              <LinearGradient
-                colors={["#F4CF77", "#C98C2F"]}
-                style={StyleSheet.absoluteFill}
-              />
+              <LinearGradient colors={["#F4CF77", "#C98C2F"]} style={StyleSheet.absoluteFill} />
               <Text style={styles.primaryButtonText}>Commencer</Text>
             </Pressable>
           </GlassCard>
@@ -889,697 +463,88 @@ export default function QiblaScreen() {
 const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: colors.background },
   safeArea: { flex: 1 },
-  backgroundImage: { opacity: 0.72 },
-  backgroundOrbTop: {
-    position: "absolute",
-    top: -110,
-    right: -90,
-    width: 260,
-    height: 260,
-    borderRadius: 130,
-    backgroundColor: "rgba(99,43,134,0.25)",
-  },
-  backgroundOrbBottom: {
-    position: "absolute",
-    bottom: 80,
-    left: -130,
-    width: 310,
-    height: 310,
-    borderRadius: 155,
-    backgroundColor: "rgba(191,132,45,0.09)",
-  },
-  content: { paddingHorizontal: 15, paddingBottom: 42 },
-  header: {
-    height: 72,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
-  headerButton: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    alignItems: "center",
-    justifyContent: "center",
-    overflow: "hidden",
-    borderWidth: 1,
-    borderColor: "rgba(227,181,90,0.28)",
-    backgroundColor: "rgba(18,11,30,0.66)",
-  },
-  headerCopy: { alignItems: "center" },
-  title: {
-    color: colors.goldLight,
-    fontFamily: typography.serifSemibold,
-    fontSize: 36,
-    lineHeight: 37,
-  },
-  subtitle: {
-    marginTop: -1,
-    color: colors.textSecondary,
-    fontFamily: typography.sans,
-    fontSize: 11,
-    letterSpacing: 0.3,
-  },
-  locationRow: {
-    marginTop: 1,
-    marginBottom: 8,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    gap: 8,
-  },
-  locationPill: {
-    minWidth: 0,
-    flex: 1,
-    height: 34,
-    paddingHorizontal: 12,
-    flexDirection: "row",
-    alignItems: "center",
-    borderRadius: 17,
-    borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.12)",
-    backgroundColor: "rgba(15,9,27,0.58)",
-  },
-  locationText: {
-    flex: 1,
-    marginLeft: 6,
-    color: colors.textSecondary,
-    fontFamily: typography.sans,
-    fontSize: 9.5,
-  },
-  lockPill: {
-    height: 34,
-    paddingHorizontal: 11,
-    flexDirection: "row",
-    alignItems: "center",
-    borderRadius: 17,
-    borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.12)",
-    backgroundColor: "rgba(15,9,27,0.58)",
-  },
-  lockPillActive: {
-    borderColor: colors.goldLight,
-    backgroundColor: colors.goldLight,
-  },
-  lockText: {
-    marginLeft: 5,
-    color: colors.textSecondary,
-    fontFamily: typography.sans,
-    fontSize: 8.5,
-    fontWeight: "700",
-  },
-  lockTextActive: { color: colors.background },
-  statusWrap: {
-    minHeight: 37,
-    marginBottom: 5,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  statusDot: {
-    width: 7,
-    height: 7,
-    marginRight: 8,
-    borderRadius: 4,
-    shadowColor: colors.goldLight,
-    shadowOpacity: 0.7,
-    shadowRadius: 7,
-  },
-  statusText: {
-    color: colors.text,
-    fontFamily: typography.serifMedium,
-    fontSize: 18,
-    textAlign: "center",
-  },
-  statusTextAligned: { color: "#F4D87B" },
-  compassStage: {
-    alignSelf: "center",
-    alignItems: "center",
-    justifyContent: "center",
-    marginBottom: 14,
-  },
-  compassHalo: {
-    position: "absolute",
-    borderWidth: 2,
-    borderColor: "rgba(246,203,99,0.78)",
-    backgroundColor: "rgba(225,161,52,0.15)",
-    shadowColor: "#F4C85E",
-    shadowOpacity: 0.9,
-    shadowRadius: 25,
-    elevation: 12,
-  },
-  compassGoldRim: {
-    alignItems: "center",
-    justifyContent: "center",
-    padding: 4,
-    shadowColor: "#000",
-    shadowOpacity: 0.58,
-    shadowRadius: 20,
-    shadowOffset: { width: 0, height: 13 },
-    elevation: 13,
-  },
-  compassGlassRim: {
-    overflow: "hidden",
-    alignItems: "center",
-    justifyContent: "center",
-    borderWidth: 1,
-    borderColor: "rgba(255,247,220,0.30)",
-    backgroundColor: "rgba(9,6,17,0.96)",
-  },
-  compassInnerHighlight: {
-    position: "absolute",
-    top: 7,
-    right: 22,
-    left: 22,
-    height: "44%",
-    borderTopLeftRadius: 180,
-    borderTopRightRadius: 180,
-    borderWidth: 1,
-    borderBottomWidth: 0,
-    borderColor: "rgba(255,255,255,0.10)",
-    backgroundColor: "rgba(255,255,255,0.025)",
-  },
+  backgroundImage: { opacity: 0.66 },
+  backgroundOrbTop: { position: "absolute", top: -110, right: -90, width: 270, height: 270, borderRadius: 135, backgroundColor: "rgba(102,44,137,0.26)" },
+  backgroundOrbBottom: { position: "absolute", bottom: 30, left: -140, width: 320, height: 320, borderRadius: 160, backgroundColor: "rgba(201,144,48,0.09)" },
+  content: { paddingHorizontal: 17, paddingBottom: 36 },
+  header: { height: 70, flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
+  headerButton: { width: 43, height: 43, borderRadius: 22, alignItems: "center", justifyContent: "center", borderWidth: 1, borderColor: "rgba(227,181,90,0.25)", backgroundColor: "rgba(18,11,30,0.62)" },
+  headerCopy: { flex: 1, alignItems: "center", paddingHorizontal: 8 },
+  title: { color: colors.goldLight, fontFamily: typography.serifSemibold, fontSize: 34, lineHeight: 36 },
+  locationLine: { maxWidth: 190, flexDirection: "row", alignItems: "center", marginTop: 1 },
+  locationText: { marginLeft: 4, color: colors.textSecondary, fontFamily: typography.sans, fontSize: 10 },
+  instructionCard: { minHeight: 86, marginTop: 3, marginBottom: 14, paddingHorizontal: 16, borderRadius: 24, flexDirection: "row", alignItems: "center", borderWidth: 1, borderColor: "rgba(227,181,90,0.22)", backgroundColor: "rgba(16,9,28,0.76)" },
+  instructionCardAligned: { borderColor: "rgba(246,210,111,0.72)", backgroundColor: "rgba(83,58,18,0.72)", shadowColor: "#F2C65B", shadowOpacity: 0.35, shadowRadius: 18 },
+  instructionIcon: { width: 46, height: 46, borderRadius: 23, alignItems: "center", justifyContent: "center", borderWidth: 1, borderColor: "rgba(227,181,90,0.38)", backgroundColor: "rgba(13,8,23,0.82)" },
+  instructionIconAligned: { borderColor: colors.goldLight, backgroundColor: colors.goldLight },
+  instructionCopy: { flex: 1, marginLeft: 13 },
+  instructionEyebrow: { color: colors.goldLight, fontFamily: typography.sans, fontSize: 9, fontWeight: "800", letterSpacing: 1.5 },
+  instructionEyebrowAligned: { color: "#FFF2B0" },
+  instructionTitle: { marginTop: 2, color: colors.text, fontFamily: typography.serifSemibold, fontSize: 23, lineHeight: 27 },
+  instructionTitleAligned: { color: "#FFF3B2" },
+  instructionSubtitle: { marginTop: 1, color: colors.textSecondary, fontFamily: typography.sans, fontSize: 11 },
+  compassStage: { alignSelf: "center", alignItems: "center", justifyContent: "center", marginBottom: 18 },
+  outerGlow: { position: "absolute", borderWidth: 2, borderColor: "rgba(246,203,99,0.78)", backgroundColor: "rgba(225,161,52,0.12)", shadowColor: "#F4C85E", shadowOpacity: 0.9, shadowRadius: 27, elevation: 12 },
+  compassRim: { padding: 4.5, alignItems: "center", justifyContent: "center", shadowColor: "#000", shadowOpacity: 0.6, shadowRadius: 22, shadowOffset: { width: 0, height: 14 }, elevation: 14 },
+  compassFace: { overflow: "hidden", alignItems: "center", justifyContent: "center", borderWidth: 1, borderColor: "rgba(255,247,220,0.28)", backgroundColor: "#0A0712" },
   rotatingDial: { ...StyleSheet.absoluteFillObject },
-  tickWrap: {
-    position: "absolute",
-    top: 7,
-    right: 7,
-    bottom: 7,
-    left: 7,
-    alignItems: "center",
-  },
-  tick: {
-    width: 1,
-    height: 5,
-    borderRadius: 1,
-    backgroundColor: "rgba(234,202,130,0.38)",
-  },
-  tickMedium: {
-    height: 9,
-    backgroundColor: "rgba(238,202,120,0.66)",
-  },
-  tickMajor: {
-    width: 2,
-    height: 14,
-    backgroundColor: "#E8C168",
-  },
-  degreeLabel: {
-    position: "absolute",
-    width: 30,
-    color: "rgba(238,214,166,0.68)",
-    fontFamily: typography.serifMedium,
-    fontSize: 10,
-    textAlign: "center",
-  },
-  cardinal: {
-    position: "absolute",
-    color: "#F2D792",
-    fontFamily: typography.serifSemibold,
-    fontSize: 24,
-    textAlign: "center",
-    textShadowColor: "rgba(229,173,62,0.34)",
-    textShadowRadius: 8,
-  },
-  cardinalNorth: { top: "10%", alignSelf: "center" },
-  cardinalEast: { right: "11%", top: "46%" },
-  cardinalSouth: { bottom: "8.5%", alignSelf: "center" },
-  cardinalWest: { left: "10.5%", top: "46%" },
-  roseRayWrap: {
-    ...StyleSheet.absoluteFillObject,
-    alignItems: "center",
-  },
-  roseRay: {
-    width: 3,
-    height: "31%",
-    marginTop: "20%",
-    borderTopLeftRadius: 3,
-    borderTopRightRadius: 3,
-  },
+  tickWrap: { position: "absolute", top: 9, right: 9, bottom: 9, left: 9, alignItems: "center" },
+  tick: { width: 1, height: 6, borderRadius: 1, backgroundColor: "rgba(235,202,130,0.38)" },
+  tickMajor: { width: 2, height: 14, backgroundColor: "#E8C168" },
+  cardinal: { position: "absolute", color: "#F2D792", fontFamily: typography.serifSemibold, fontSize: 25, textShadowColor: "rgba(229,173,62,0.34)", textShadowRadius: 8 },
+  north: { top: "10%", alignSelf: "center" },
+  east: { right: "11%", top: "45%" },
+  south: { bottom: "9%", alignSelf: "center" },
+  west: { left: "10%", top: "45%" },
   needleLayer: { ...StyleSheet.absoluteFillObject, alignItems: "center" },
-  needleShaft: {
-    position: "absolute",
-    top: "16%",
-    width: 8,
-    height: "36%",
-    borderTopLeftRadius: 7,
-    borderTopRightRadius: 7,
-    borderBottomLeftRadius: 3,
-    borderBottomRightRadius: 3,
-    shadowColor: "#F6C24B",
-    shadowOpacity: 0.86,
-    shadowRadius: 10,
-    elevation: 8,
-  },
-  needleHead: {
-    position: "absolute",
-    top: "11.5%",
-    width: 0,
-    height: 0,
-    borderLeftWidth: 12,
-    borderRightWidth: 12,
-    borderBottomWidth: 25,
-    borderLeftColor: "transparent",
-    borderRightColor: "transparent",
-    borderBottomColor: "#E8B748",
-    transform: [{ rotate: "180deg" }],
-  },
-  needleHeadAligned: { borderBottomColor: "#FFF0A0" },
-  needleTail: {
-    position: "absolute",
-    top: "51%",
-    width: 4,
-    height: "18%",
-    borderBottomLeftRadius: 3,
-    borderBottomRightRadius: 3,
-    backgroundColor: "rgba(219,208,187,0.52)",
-  },
-  centerMedallionOuter: {
-    width: 88,
-    height: 88,
-    borderRadius: 44,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "rgba(5,3,11,0.82)",
-    shadowColor: "#000",
-    shadowOpacity: 0.8,
-    shadowRadius: 12,
-    elevation: 10,
-  },
-  centerMedallionGold: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  centerMedallionInner: {
-    width: 70,
-    height: 70,
-    borderRadius: 35,
-    alignItems: "center",
-    justifyContent: "center",
-    borderWidth: 1,
-    borderColor: "rgba(255,240,189,0.38)",
-    backgroundColor: "#130D1D",
-  },
-  kaaba: {
-    width: 36,
-    height: 31,
-    borderWidth: 1.4,
-    borderColor: "#E7B752",
-    backgroundColor: "#06050A",
-  },
-  kaabaBand: {
-    position: "absolute",
-    top: 8,
-    right: 0,
-    left: 0,
-    height: 4,
-    borderTopWidth: 1,
-    borderBottomWidth: 1,
-    borderColor: "#E7B752",
-    backgroundColor: "rgba(199,146,49,0.35)",
-  },
-  kaabaDoor: {
-    position: "absolute",
-    right: 7,
-    bottom: 0,
-    width: 7,
-    height: 13,
-    borderWidth: 1,
-    borderBottomWidth: 0,
-    borderColor: "#D9A742",
-  },
-  phoneMarker: {
-    position: "absolute",
-    top: 1,
-    alignItems: "center",
-  },
-  phoneMarkerTriangle: {
-    width: 0,
-    height: 0,
-    borderLeftWidth: 8,
-    borderRightWidth: 8,
-    borderBottomWidth: 13,
-    borderLeftColor: "transparent",
-    borderRightColor: "transparent",
-    borderBottomColor: "#FFF0A3",
-    transform: [{ rotate: "180deg" }],
-  },
-  glassCard: {
-    overflow: "hidden",
-    borderWidth: 1,
-    borderColor: "rgba(223,190,129,0.19)",
-    backgroundColor: "rgba(16,9,28,0.70)",
-    shadowColor: "#000",
-    shadowOpacity: 0.28,
-    shadowRadius: 18,
-    shadowOffset: { width: 0, height: 10 },
-    elevation: 7,
-  },
-  glassShine: {
-    position: "absolute",
-    top: 0,
-    right: 0,
-    left: 0,
-    height: "52%",
-  },
-  metricsCard: {
-    minHeight: 126,
-    paddingVertical: 17,
-    paddingHorizontal: 8,
-    flexDirection: "row",
-    alignItems: "stretch",
-    borderRadius: 27,
-  },
-  metricBlock: {
-    flex: 1,
-    minWidth: 0,
-    alignItems: "center",
-    justifyContent: "center",
-    paddingHorizontal: 4,
-  },
-  metricDivider: {
-    width: 1,
-    marginVertical: 8,
-    backgroundColor: "rgba(255,255,255,0.15)",
-  },
-  metricIcon: {
-    width: 37,
-    height: 37,
-    marginBottom: 7,
-    borderRadius: 19,
-    alignItems: "center",
-    justifyContent: "center",
-    borderWidth: 1,
-    borderColor: "rgba(227,181,90,0.34)",
-    backgroundColor: "rgba(15,9,27,0.65)",
-  },
-  metricIconAligned: {
-    borderColor: colors.goldLight,
-    backgroundColor: colors.goldLight,
-    shadowColor: colors.goldLight,
-    shadowOpacity: 0.7,
-    shadowRadius: 9,
-  },
-  metricLabel: {
-    color: colors.textSecondary,
-    fontFamily: typography.serifMedium,
-    fontSize: 13,
-  },
-  metricValue: {
-    marginTop: 2,
-    color: colors.goldLight,
-    fontFamily: typography.serifSemibold,
-    fontSize: 28,
-    lineHeight: 30,
-    fontVariant: ["tabular-nums"],
-  },
-  metricValueDistance: {
-    marginTop: 2,
-    color: colors.goldLight,
-    fontFamily: typography.serifSemibold,
-    fontSize: 21,
-    lineHeight: 26,
-    textAlign: "center",
-    fontVariant: ["tabular-nums"],
-  },
-  alignmentText: {
-    marginTop: 4,
-    color: colors.text,
-    fontFamily: typography.serifMedium,
-    fontSize: 14,
-    lineHeight: 15,
-    textAlign: "center",
-  },
-  alignmentTextSuccess: { color: "#F3D575" },
-  miniKaaba: {
-    width: 20,
-    height: 18,
-    borderWidth: 1,
-    borderColor: colors.goldLight,
-    backgroundColor: "#08070B",
-  },
-  miniKaabaBand: {
-    position: "absolute",
-    top: 5,
-    right: 0,
-    left: 0,
-    height: 3,
-    backgroundColor: colors.goldLight,
-  },
-  sensorCard: {
-    marginTop: 12,
-    padding: 15,
-    borderRadius: 24,
-  },
-  sensorRow: { flexDirection: "row", alignItems: "center" },
-  sensorIconWrap: {
-    width: 45,
-    height: 45,
-    borderRadius: 23,
-    alignItems: "center",
-    justifyContent: "center",
-    borderWidth: 1,
-    borderColor: "rgba(227,181,90,0.34)",
-    backgroundColor: "rgba(25,14,39,0.75)",
-  },
-  sensorCopy: { flex: 1, marginLeft: 12 },
-  sensorLabel: {
-    color: colors.text,
-    fontFamily: typography.serifMedium,
-    fontSize: 17,
-  },
-  sensorValue: {
-    marginTop: 1,
-    fontFamily: typography.sans,
-    fontSize: 10,
-    fontWeight: "800",
-  },
-  signalBars: {
-    height: 28,
-    flexDirection: "row",
-    alignItems: "flex-end",
-    gap: 4,
-  },
-  signalBar: {
-    width: 5,
-    borderRadius: 3,
-    backgroundColor: "rgba(255,255,255,0.15)",
-  },
-  sensorSeparator: {
-    height: 1,
-    marginVertical: 12,
-    backgroundColor: "rgba(255,255,255,0.09)",
-  },
-  sensorAdviceRow: { flexDirection: "row", alignItems: "center" },
-  sensorAdvice: {
-    flex: 1,
-    marginLeft: 7,
-    color: colors.textMuted,
-    fontFamily: typography.sans,
-    fontSize: 9,
-    lineHeight: 14,
-  },
-  actionRow: { marginTop: 12, flexDirection: "row", gap: 10 },
-  actionButton: {
-    flex: 1,
-    height: 58,
-    overflow: "hidden",
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    borderRadius: 22,
-    borderWidth: 1,
-    borderColor: "rgba(227,181,90,0.24)",
-  },
-  actionButtonText: {
-    marginLeft: 9,
-    color: colors.text,
-    fontFamily: typography.sans,
-    fontSize: 11,
-    fontWeight: "700",
-  },
-  preferenceCard: {
-    marginTop: 12,
-    padding: 14,
-    borderRadius: 22,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
-  preferenceCopy: { flex: 1, flexDirection: "row", alignItems: "center" },
-  preferenceTexts: { flex: 1, marginLeft: 10 },
-  preferenceTitle: {
-    color: colors.text,
-    fontFamily: typography.serifMedium,
-    fontSize: 15,
-  },
-  preferenceSubtitle: {
-    marginTop: 2,
-    color: colors.textMuted,
-    fontFamily: typography.sans,
-    fontSize: 8,
-  },
-  permissionCard: {
-    marginTop: 24,
-    padding: 24,
-    borderRadius: 28,
-    alignItems: "center",
-  },
-  permissionIcon: {
-    width: 66,
-    height: 66,
-    borderRadius: 33,
-    alignItems: "center",
-    justifyContent: "center",
-    borderWidth: 1,
-    borderColor: "rgba(227,181,90,0.38)",
-    backgroundColor: "rgba(40,21,55,0.75)",
-  },
-  permissionTitle: {
-    marginTop: 16,
-    color: colors.text,
-    fontFamily: typography.serifSemibold,
-    fontSize: 24,
-  },
-  permissionText: {
-    marginTop: 7,
-    color: colors.textSecondary,
-    fontFamily: typography.sans,
-    fontSize: 10,
-    lineHeight: 16,
-    textAlign: "center",
-  },
-  primaryButton: {
-    height: 50,
-    width: "100%",
-    marginTop: 20,
-    overflow: "hidden",
-    alignItems: "center",
-    justifyContent: "center",
-    borderRadius: 20,
-  },
-  primaryButtonText: {
-    color: colors.background,
-    fontFamily: typography.sans,
-    fontSize: 10,
-    fontWeight: "900",
-  },
-  modalBackdrop: {
-    flex: 1,
-    padding: 18,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "rgba(3,2,8,0.82)",
-  },
-  modalCard: {
-    width: "100%",
-    maxWidth: 420,
-    padding: 20,
-    borderRadius: 30,
-  },
-  modalHeader: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
-  modalEyebrow: {
-    color: colors.goldLight,
-    fontFamily: typography.sans,
-    fontSize: 8,
-    fontWeight: "800",
-    letterSpacing: 1.4,
-  },
-  modalTitle: {
-    marginTop: 3,
-    color: colors.text,
-    fontFamily: typography.serifSemibold,
-    fontSize: 25,
-  },
-  modalClose: {
-    width: 38,
-    height: 38,
-    borderRadius: 19,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "rgba(255,255,255,0.07)",
-  },
-  figureEight: {
-    height: 112,
-    marginVertical: 13,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  figureEightText: {
-    color: colors.goldLight,
-    fontFamily: typography.serif,
-    fontSize: 104,
-    lineHeight: 110,
-    textShadowColor: "rgba(227,181,90,0.55)",
-    textShadowRadius: 16,
-  },
-  modalBody: {
-    color: colors.textSecondary,
-    fontFamily: typography.sans,
-    fontSize: 10,
-    lineHeight: 17,
-    textAlign: "center",
-  },
-  helpList: { marginTop: 14, gap: 11 },
-  helpRow: { flexDirection: "row", alignItems: "flex-start" },
-  helpText: {
-    flex: 1,
-    marginLeft: 9,
-    color: colors.textSecondary,
-    fontFamily: typography.sans,
-    fontSize: 9,
-    lineHeight: 15,
-  },
-  tutorialIcon: {
-    width: 72,
-    height: 72,
-    alignSelf: "center",
-    alignItems: "center",
-    justifyContent: "center",
-    borderRadius: 36,
-    borderWidth: 1,
-    borderColor: "rgba(227,181,90,0.38)",
-    backgroundColor: "rgba(70,35,88,0.40)",
-  },
-  tutorialTitle: {
-    marginTop: 16,
-    color: colors.text,
-    fontFamily: typography.serifSemibold,
-    fontSize: 28,
-    textAlign: "center",
-  },
-  tutorialText: {
-    marginTop: 7,
-    color: colors.textSecondary,
-    fontFamily: typography.sans,
-    fontSize: 10,
-    lineHeight: 17,
-    textAlign: "center",
-  },
-  tutorialSteps: { marginTop: 16, gap: 10 },
-  tutorialStep: { flexDirection: "row", alignItems: "center" },
-  stepNumber: {
-    width: 29,
-    height: 29,
-    borderRadius: 15,
-    color: colors.background,
-    backgroundColor: colors.goldLight,
-    fontFamily: typography.sans,
-    fontSize: 9,
-    fontWeight: "900",
-    lineHeight: 29,
-    textAlign: "center",
-  },
-  stepText: {
-    marginLeft: 10,
-    color: colors.text,
-    fontFamily: typography.sans,
-    fontSize: 9.5,
-  },
+  qiblaTip: { position: "absolute", top: "7%", width: 48, height: 48, borderRadius: 24, alignItems: "center", justifyContent: "center", borderWidth: 2, borderColor: "rgba(244,210,125,0.72)", backgroundColor: "#17101F", shadowColor: "#E6B94F", shadowOpacity: 0.55, shadowRadius: 10, elevation: 7 },
+  qiblaTipAligned: { borderColor: "#FFF3AE", backgroundColor: "#5C4217", shadowOpacity: 0.95, shadowRadius: 16 },
+  miniKaaba: { width: 22, height: 19, borderWidth: 1, borderColor: "#EBC45D", backgroundColor: "#07060A" },
+  miniKaabaBand: { position: "absolute", top: 5, right: 0, left: 0, height: 3, backgroundColor: "#B88729" },
+  qiblaPointer: { position: "absolute", top: "21%", width: 8, height: "31%", borderRadius: 6, shadowColor: "#F6C24B", shadowOpacity: 0.7, shadowRadius: 9, elevation: 6 },
+  pointerTail: { position: "absolute", top: "52%", width: 3, height: "13%", borderRadius: 3, backgroundColor: "rgba(230,218,194,0.32)" },
+  centerMedallion: { width: 82, height: 82, borderRadius: 41, alignItems: "center", justifyContent: "center", backgroundColor: "rgba(5,3,11,0.88)", shadowColor: "#000", shadowOpacity: 0.85, shadowRadius: 14, elevation: 11 },
+  centerGold: { width: 74, height: 74, borderRadius: 37, alignItems: "center", justifyContent: "center" },
+  centerInner: { width: 64, height: 64, borderRadius: 32, alignItems: "center", justifyContent: "center", borderWidth: 1, borderColor: "rgba(255,240,189,0.4)", backgroundColor: "#120C1B" },
+  kaaba: { width: 34, height: 29, borderWidth: 1.5, borderColor: "#E7B752", backgroundColor: "#050408", shadowColor: "#F2C45D", shadowOpacity: 0.5, shadowRadius: 8 },
+  kaabaBand: { position: "absolute", top: 9, right: 0, left: 0, height: 5, borderTopWidth: 1, borderBottomWidth: 1, borderColor: "#E7B752", backgroundColor: "rgba(199,146,49,0.35)" },
+  kaabaDoor: { position: "absolute", right: 8, bottom: 0, width: 8, height: 15, borderWidth: 1, borderBottomWidth: 0, borderColor: "#D9A742" },
+  phoneMarker: { position: "absolute", top: 2, width: 0, height: 0, borderLeftWidth: 9, borderRightWidth: 9, borderBottomWidth: 15, borderLeftColor: "transparent", borderRightColor: "transparent", borderBottomColor: "#FFF0A3", transform: [{ rotate: "180deg" }] },
+  detailsToggle: { height: 48, marginTop: 0, paddingHorizontal: 13, flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
+  detailsToggleLeft: { flexDirection: "row", alignItems: "center" },
+  detailsToggleText: { marginLeft: 8, color: colors.textSecondary, fontFamily: typography.sans, fontSize: 12, fontWeight: "700" },
+  glassCard: { overflow: "hidden", borderWidth: 1, borderColor: "rgba(223,190,129,0.19)", backgroundColor: "rgba(16,9,28,0.78)", shadowColor: "#000", shadowOpacity: 0.28, shadowRadius: 18, shadowOffset: { width: 0, height: 10 }, elevation: 7 },
+  detailsCard: { borderRadius: 24, padding: 16 },
+  detailRow: { flexDirection: "row", alignItems: "stretch" },
+  detailDivider: { width: 1, marginHorizontal: 12, backgroundColor: "rgba(255,255,255,0.12)" },
+  detailLabel: { color: colors.textMuted, fontFamily: typography.sans, fontSize: 9 },
+  detailValue: { marginTop: 4, color: colors.goldLight, fontFamily: typography.serifSemibold, fontSize: 18 },
+  detailValueSmall: { maxWidth: 95, marginTop: 5, color: colors.text, fontFamily: typography.sans, fontSize: 11, fontWeight: "700" },
+  settingSeparator: { height: 1, marginVertical: 15, backgroundColor: "rgba(255,255,255,0.1)" },
+  settingRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
+  settingCopy: { flex: 1, flexDirection: "row", alignItems: "center", gap: 10 },
+  settingTitle: { color: colors.text, fontFamily: typography.sans, fontSize: 12, fontWeight: "700" },
+  settingSubtitle: { marginTop: 2, color: colors.textMuted, fontFamily: typography.sans, fontSize: 9.5 },
+  calibrateButton: { height: 44, marginTop: 15, borderRadius: 14, flexDirection: "row", alignItems: "center", justifyContent: "center", borderWidth: 1, borderColor: "rgba(227,181,90,0.28)", backgroundColor: "rgba(12,7,21,0.48)" },
+  calibrateText: { marginLeft: 8, color: colors.goldLight, fontFamily: typography.sans, fontSize: 12, fontWeight: "700" },
+  errorCard: { marginTop: 40, borderRadius: 26, padding: 24, alignItems: "center" },
+  errorIcon: { width: 68, height: 68, marginBottom: 15, borderRadius: 34, alignItems: "center", justifyContent: "center", borderWidth: 1, borderColor: "rgba(227,181,90,0.35)", backgroundColor: "rgba(14,8,25,0.82)" },
+  errorTitle: { color: colors.text, fontFamily: typography.serifSemibold, fontSize: 24 },
+  errorText: { marginTop: 8, color: colors.textSecondary, fontFamily: typography.sans, fontSize: 12, lineHeight: 18, textAlign: "center" },
+  primaryButton: { width: "100%", height: 52, marginTop: 20, borderRadius: 17, overflow: "hidden", alignItems: "center", justifyContent: "center" },
+  primaryButtonText: { color: "#1A1022", fontFamily: typography.sans, fontSize: 13, fontWeight: "800" },
+  modalBackdrop: { flex: 1, padding: 20, alignItems: "center", justifyContent: "center", backgroundColor: "rgba(3,2,7,0.78)" },
+  modalCard: { width: "100%", maxWidth: 430, borderRadius: 28, padding: 22 },
+  modalHeader: { flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
+  modalEyebrow: { color: colors.goldLight, fontFamily: typography.sans, fontSize: 9, fontWeight: "800", letterSpacing: 1.5 },
+  modalTitle: { marginTop: 2, color: colors.text, fontFamily: typography.serifSemibold, fontSize: 25 },
+  modalClose: { width: 38, height: 38, borderRadius: 19, alignItems: "center", justifyContent: "center", backgroundColor: "rgba(255,255,255,0.07)" },
+  figureEight: { height: 100, marginVertical: 12, alignItems: "center", justifyContent: "center" },
+  figureEightText: { color: colors.goldLight, fontFamily: typography.serifSemibold, fontSize: 100, lineHeight: 104, textShadowColor: "rgba(236,185,76,0.42)", textShadowRadius: 18 },
+  modalBody: { marginBottom: 15, color: colors.textSecondary, fontFamily: typography.sans, fontSize: 12.5, lineHeight: 19, textAlign: "center" },
+  helpRow: { flexDirection: "row", alignItems: "center", marginTop: 10 },
+  helpText: { flex: 1, marginLeft: 10, color: colors.textSecondary, fontFamily: typography.sans, fontSize: 11.5, lineHeight: 17 },
+  tutorialIcon: { width: 76, height: 76, alignSelf: "center", marginBottom: 15, borderRadius: 38, alignItems: "center", justifyContent: "center", borderWidth: 1, borderColor: "rgba(227,181,90,0.35)", backgroundColor: "rgba(14,8,25,0.82)" },
+  tutorialTitle: { color: colors.text, fontFamily: typography.serifSemibold, fontSize: 27, textAlign: "center" },
+  tutorialText: { marginTop: 10, color: colors.textSecondary, fontFamily: typography.sans, fontSize: 12.5, lineHeight: 19, textAlign: "center" },
 });

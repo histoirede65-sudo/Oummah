@@ -17,6 +17,10 @@ import { typography } from "../../theme/typography";
 
 const SUGGESTIONS = ["intention", "parents", "colère", "sourire", "mensonge", "jeûne", "prière", "patience"];
 
+function normalizeSearchTitle(value: string) {
+  return value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLocaleLowerCase("fr").replace(/[^a-z0-9]+/g, "");
+}
+
 export default function HadithSearchScreen() {
   const params = useLocalSearchParams<{ q?: string; theme?: string; collection?: string; collectionId?: string; view?: string }>();
   const [query, setQuery] = useState(params.q ?? params.collection ?? "");
@@ -51,6 +55,10 @@ export default function HadithSearchScreen() {
 
         if (collection && isInitialCollectionQuery) {
           return hadithRepository.searchCollection(collection);
+        }
+
+        if (collection) {
+          return hadithRepository.searchWithinCollection(collection, clean);
         }
 
         return hadithRepository.search(clean);
@@ -92,5 +100,3 @@ const styles = StyleSheet.create({
   hint: { marginTop: 23, padding: 16, borderRadius: 19, flexDirection: "row", alignItems: "flex-start", gap: 10, backgroundColor: "rgba(227,181,90,0.07)" }, hintText: { flex: 1, color: colors.textMuted, fontFamily: typography.sans, fontSize: 10.5, lineHeight: 16 },
   state: { paddingVertical: 55, alignItems: "center", gap: 10 }, stateText: { maxWidth: 280, textAlign: "center", color: colors.textMuted, fontFamily: typography.sans, fontSize: 11.5, lineHeight: 17 }, emptyTitle: { color: colors.text, fontFamily: typography.serifMedium, fontSize: 20 }, count: { color: colors.textMuted, fontFamily: typography.sans, fontSize: 10.5, marginTop: 20, marginBottom: 10 }, list: { gap: 9 }, credit: { color: "#6D6475", fontFamily: typography.sans, fontSize: 9.5, textAlign: "center", marginTop: 25 },
 });
-
-

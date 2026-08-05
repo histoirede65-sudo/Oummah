@@ -2,6 +2,8 @@ import { storageService } from "../../core/storage";
 import { findOfficialFrenchDua } from "./OfficialFrenchDuaCatalog";
 
 export type DuaSectionId =
+  | "morning"
+  | "evening"
   | "morning-evening"
   | "sleep"
   | "prayer"
@@ -30,6 +32,7 @@ export type DuaItem = {
   audioEndRatio?: number;
   audioStartOffsetSeconds?: number;
   audioEndOffsetSeconds?: number;
+  audioHighlightDelaySeconds?: number;
   frenchIsSummary?: boolean;
   source: string;
   sourceUrl?: string;
@@ -665,6 +668,8 @@ const TRANSLATION_RULES: readonly TranslationRule[] = [
 ];
 
 const GENERAL_FRENCH_BY_SECTION: Record<DuaSectionId, string> = {
+  morning: "Invocation de protection et de reconnaissance à réciter le matin.",
+  evening: "Invocation de protection et de reconnaissance à réciter le soir.",
   "morning-evening":
     "Invocation de protection et de reconnaissance à réciter le matin ou le soir.",
   sleep: "Invocation liée au sommeil, au réveil ou à la protection durant la nuit.",
@@ -843,12 +848,25 @@ function normalizeCatalog(
             audioUrl: canUseLearningAudio ? resolveUrl(item.audio) : undefined,
             audioStartRatio: focused.audioStartRatio,
             audioEndRatio: focused.audioEndRatio,
+            // The first morning track contains a spoken explanation before
+            // Ayat al-Kursi. Start playback at the real recitation instead of
+            // playing the introduction while the Arabic word cursor advances.
             audioStartOffsetSeconds: canUseLearningAudio
-              ? focused.hasNarration
-                ? 0.95
-                : 0.18
+              ? category.id === 1 && item.id === 1
+                ? 8.2
+                : focused.hasNarration
+                  ? 2.2
+                  : 0.45
               : 0,
             audioEndOffsetSeconds: canUseLearningAudio ? 0.28 : 0,
+            // Keep a short settling delay after the focused audio begins. Other
+            // narrated tracks retain a longer guard before highlighting.
+            audioHighlightDelaySeconds:
+              category.id === 1 && item.id === 1
+                ? 0.85
+                : focused.hasNarration
+                  ? 2.8
+                  : 0,
             source: official
               ? "La Citadelle du musulman — édition française"
               : verified?.reference?.trim() || "Hisn al-Muslim",
@@ -1059,6 +1077,60 @@ const CURATED_DUA_CATEGORIES: readonly DuaCategory[] = [
   },
 ];
 
+
+function normalizeSearchText(value: string) {
+  return value
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase();
+}
+
+function itemPeriods(item: DuaItem): readonly ("morning" | "evening")[] {
+  const searchable = normalizeSearchText(
+    `${item.arabic} ${item.phonetic} ${item.french}`,
+  );
+  const morningOnly =
+    /\bmatin\b|ce matin|du jour|today|morning|صباح|أصبح|اصبح|نهار/.test(searchable);
+  const eveningOnly =
+    /\bsoir\b|ce soir|de la nuit|evening|tonight|مساء|أمس|امس|ليلة|الليل/.test(searchable);
+
+  if (morningOnly && !eveningOnly) return ["morning"];
+  if (eveningOnly && !morningOnly) return ["evening"];
+  return ["morning", "evening"];
+}
+
+function splitMorningAndEvening(catalog: readonly DuaCategory[]) {
+  return catalog.flatMap((category): readonly DuaCategory[] => {
+    if (category.section !== "morning-evening") return [category];
+
+    const morningItems = category.items.filter((item) =>
+      itemPeriods(item).includes("morning"),
+    );
+    const eveningItems = category.items.filter((item) =>
+      itemPeriods(item).includes("evening"),
+    );
+
+    return [
+      {
+        ...category,
+        id: category.id * 100 + 1,
+        frenchTitle: "Adhkār du matin",
+        arabicTitle: "أذكار الصباح",
+        section: "morning",
+        items: morningItems,
+      },
+      {
+        ...category,
+        id: category.id * 100 + 2,
+        frenchTitle: "Adhkār du soir",
+        arabicTitle: "أذكار المساء",
+        section: "evening",
+        items: eveningItems,
+      },
+    ].filter((entry) => entry.items.length > 0);
+  });
+}
+
 function addGuidedCategories(catalog: readonly DuaCategory[]) {
   return [...CURATED_DUA_CATEGORIES, ...catalog];
 }
@@ -1098,10 +1170,10 @@ export async function loadDuaCatalog(): Promise<readonly DuaCategory[]> {
     if (!cachedFrench?.length && french.length > 4) {
       void storageService.set(FRENCH_CACHE_KEY, french).catch(() => undefined);
     }
-    return addGuidedCategories(normalized);
+    return splitMorningAndEvening(addGuidedCategories(normalized));
   } catch {
-    return addGuidedCategories(
-      normalizeCatalog(FALLBACK_CATALOG, cachedFrench ?? []),
+    return splitMorningAndEvening(
+      addGuidedCategories(normalizeCatalog(FALLBACK_CATALOG, cachedFrench ?? [])),
     );
   }
 }
@@ -1238,11 +1310,18 @@ export const DUA_SECTIONS: ReadonlyArray<{
   imageSource: number;
 }> = [
   {
-    id: "morning-evening",
-    label: "Matin & soir",
-    subtitle: "Adhkār quotidiens et protection",
+    id: "morning",
+    label: "Adhkār du matin",
+    subtitle: "Commencer la journée avec protection",
     icon: "sunny-outline",
     imageSource: require("../../assets/images/dua/guides/protection.jpg"),
+  },
+  {
+    id: "evening",
+    label: "Adhkār du soir",
+    subtitle: "Terminer la journée avec protection",
+    icon: "moon-outline",
+    imageSource: require("../../assets/images/dua/guides/sleep.jpg"),
   },
   {
     id: "sleep",

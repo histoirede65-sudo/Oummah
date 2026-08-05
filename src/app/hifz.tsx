@@ -409,13 +409,50 @@ export default function HifzScreen() {
           </View>
         </View>
 
+        <View style={styles.primaryReviewRow}>
+          <Pressable onPress={() => begin()} style={styles.primaryReviewCard}>
+            <Ionicons name="play-circle-outline" size={24} color={colors.goldLight} />
+            <View style={styles.primaryReviewCopy}>
+              <Text style={styles.primaryReviewTitle}>Continuer l’apprentissage</Text>
+              <Text style={styles.primaryReviewMeta}>{priorities[0]?.transliteration ?? "Choisir une sourate"}</Text>
+            </View>
+            <Ionicons name="chevron-forward" size={18} color={colors.goldLight} />
+          </Pressable>
+          <Pressable onPress={() => begin(priorities[0]?.id, true)} style={styles.primaryReviewCard}>
+            <Ionicons name="refresh-circle-outline" size={24} color={colors.goldLight} />
+            <View style={styles.primaryReviewCopy}>
+              <Text style={styles.primaryReviewTitle}>Réviser aujourd’hui</Text>
+              <Text style={styles.primaryReviewMeta}>{due.length} passage{due.length > 1 ? "s" : ""} à revoir</Text>
+            </View>
+            <Ionicons name="chevron-forward" size={18} color={colors.goldLight} />
+          </Pressable>
+        </View>
+
+        <View style={styles.sectionHeader}>
+          <Text style={styles.sectionTitle}>Mes sourates</Text>
+          <Pressable onPress={() => setShowPicker(true)}><Text style={styles.link}>Choisir</Text></Pressable>
+        </View>
+        {studied.slice(0, 4).map((entry) => {
+          const surah = SURAHS.find((item) => item.id === entry.surahId);
+          if (!surah) return null;
+          return <Pressable key={entry.surahId} onPress={() => router.push(`/hifz/${surah.id}` as Href)} style={styles.compactSurahRow}>
+            <View><Text style={styles.compactSurahName}>{surah.transliteration}</Text><Text style={styles.compactSurahMeta}>{entry.learnedVerses.length} / {surah.verses} versets</Text></View>
+            <Ionicons name="chevron-forward" size={18} color={colors.goldLight} />
+          </Pressable>;
+        })}
+        <Pressable onPress={() => router.push("/hifz/progress" as Href)} style={styles.progressLinkCard}>
+          <View><Text style={styles.progressLinkTitle}>Progression</Text><Text style={styles.progressLinkMeta}>{learned} verset{learned > 1 ? "s" : ""} mémorisé{learned > 1 ? "s" : ""}</Text></View>
+          <Ionicons name="chevron-forward" size={18} color={colors.goldLight} />
+        </Pressable>
+
+        {false ? <>
         <CalendarSeasonalPrompt context="hifz" />
 
         <View style={styles.actionRow}>
           <InfoCard
             icon="time-outline"
             label="Dernière session"
-            value={todaySession ? `${todaySession.minutes} min` : "À commencer"}
+            value={todaySession ? `${todaySession?.minutes ?? 0} min` : "À commencer"}
           />
           <InfoCard
             icon="layers-outline"
@@ -722,7 +759,7 @@ export default function HifzScreen() {
               />
               <Text style={styles.dayDetailText}>
                 {selectedSession
-                  ? `${selectedSession.minutes} min · ${selectedSession.learned} appris · ${selectedSession.reviewed} révisés`
+                  ? `${selectedSession?.minutes ?? 0} min · ${selectedSession?.learned ?? 0} appris · ${selectedSession?.reviewed ?? 0} révisés`
                   : "Jour de repos — vous pourrez reprendre quand vous voulez."}
               </Text>
             </View>
@@ -785,6 +822,7 @@ export default function HifzScreen() {
             </Text>
           </View>
         )}
+        </> : null}
       </ScrollView>
       <Modal
         visible={showPicker}
@@ -1009,6 +1047,40 @@ function Reward({
 const styles = StyleSheet.create({
   safeArea: { flex: 1, backgroundColor: colors.background },
   content: { paddingHorizontal: 14, paddingBottom: 120 },
+  progressToggle: {
+    marginTop: 16,
+    paddingHorizontal: 16,
+    paddingVertical: 14,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    borderRadius: 18,
+    borderWidth: 1,
+    borderColor: "rgba(227,181,90,0.28)",
+    backgroundColor: "rgba(42,23,56,0.72)",
+  },
+  primaryReviewRow: { marginTop: 16, gap: 10 },
+  primaryReviewCard: { minHeight: 70, paddingHorizontal: 14, paddingVertical: 12, flexDirection: "row", alignItems: "center", borderRadius: 18, borderWidth: 1, borderColor: "rgba(227,181,90,0.28)", backgroundColor: "rgba(42,23,56,0.72)" },
+  primaryReviewCopy: { flex: 1, marginHorizontal: 11 },
+  primaryReviewTitle: { color: colors.text, fontFamily: typography.serifMedium, fontSize: 16 },
+  primaryReviewMeta: { marginTop: 4, color: colors.textMuted, fontFamily: typography.sans, fontSize: 12 },
+  compactSurahRow: { minHeight: 62, paddingHorizontal: 14, flexDirection: "row", alignItems: "center", justifyContent: "space-between", borderBottomWidth: 1, borderBottomColor: colors.borderSoft },
+  compactSurahName: { color: colors.text, fontFamily: typography.sans, fontSize: 15, fontWeight: "700" },
+  compactSurahMeta: { marginTop: 3, color: colors.textMuted, fontFamily: typography.sans, fontSize: 12 },
+  progressLinkCard: { minHeight: 60, marginTop: 14, paddingHorizontal: 15, flexDirection: "row", alignItems: "center", justifyContent: "space-between", borderRadius: 17, borderWidth: 1, borderColor: colors.borderSoft, backgroundColor: colors.surface },
+  progressLinkTitle: { color: colors.text, fontFamily: typography.serifMedium, fontSize: 17 },
+  progressLinkMeta: { marginTop: 3, color: colors.textMuted, fontFamily: typography.sans, fontSize: 12 },
+  progressToggleTitle: {
+    color: colors.text,
+    fontFamily: typography.serifMedium,
+    fontSize: 18,
+  },
+  progressToggleSubtitle: {
+    marginTop: 3,
+    color: colors.textMuted,
+    fontFamily: typography.sans,
+    fontSize: 11,
+  },
   topBar: { height: 70, flexDirection: "row", alignItems: "center" },
   circleButton: {
     width: 42,
@@ -1093,7 +1165,7 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(255,255,255,0.12)",
   },
   fill: { height: "100%", borderRadius: 3, backgroundColor: colors.goldLight },
-  heroActions: { marginTop: 13, flexDirection: "row", gap: 8 },
+  heroActions: { display: "none" },
   primaryButton: {
     height: 38,
     paddingHorizontal: 13,

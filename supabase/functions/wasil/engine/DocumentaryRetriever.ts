@@ -142,7 +142,7 @@ export async function retrieveDocumentaryKnowledge(
       body: JSON.stringify({
         model,
         store: false,
-        max_output_tokens: 900,
+        max_output_tokens: 1800,
         max_tool_calls: 1,
         tools: [{ type: "web_search" }],
         tool_choice: "required",
@@ -186,11 +186,30 @@ export async function retrieveDocumentaryKnowledge(
 
     const payload = await response.json() as OpenAIResponse;
     const references = consultedSources(payload);
-    const parsed = JSON.parse(outputText(payload)) as {
+    const rawOutput = outputText(payload);
+    if (!rawOutput) {
+      console.warn("WASIL_DOCUMENTARY_RETRIEVAL_EMPTY_OUTPUT", {
+        entity: expansion.canonicalName,
+        referenceCount: references.length,
+      });
+      return null;
+    }
+
+    let parsed: {
       summary: string;
       establishedFacts: string[];
       cautions: string[];
     };
+    try {
+      parsed = JSON.parse(rawOutput) as typeof parsed;
+    } catch (error) {
+      console.warn("WASIL_DOCUMENTARY_RETRIEVAL_INVALID_JSON", {
+        entity: expansion.canonicalName,
+        message: error instanceof Error ? error.message : String(error),
+        outputLength: rawOutput.length,
+      });
+      return null;
+    }
 
     if (!parsed.summary?.trim() || !Array.isArray(parsed.establishedFacts) || parsed.establishedFacts.length < 2 || references.length === 0) {
       console.warn("WASIL_DOCUMENTARY_RETRIEVAL_EMPTY", {

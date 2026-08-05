@@ -284,7 +284,10 @@ async function searchHadeethEnc(
       const hitDelta = b.candidate.matchedPhrases.size - a.candidate.matchedPhrases.size;
       return hitDelta !== 0 ? hitDelta : b.score - a.score;
     })
-    .slice(0, 18);
+    // The final dossier keeps at most six hadiths. Fetching 18 full HadeethEnc
+    // records was mostly wasted latency; twelve candidates preserve recall
+    // while reducing detail requests on cache misses.
+    .slice(0, 12);
 
   const details = await Promise.all(summaryCandidates.map(({ id }) =>
     fetchHadeethEncJson<HadeethEncItem>(

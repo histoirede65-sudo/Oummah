@@ -6,7 +6,7 @@ import type {
   SourceFile, SourceHadith, SourceLesson, SourceTranslation, SourceExplanation,
   VerificationStatus, ValidationError, ValidationWarning,
 } from './types';
-import { validateCorpus, type ValidationCorpus, type ValidationIssue, type ValidationReport } from './validation-engine';
+import { validateCorpus, type MetadataPolicy, type ValidationCorpus, type ValidationIssue, type ValidationReport } from './validation-engine';
 
 declare const require: { main?: unknown } | undefined;
 declare const module: unknown;
@@ -189,6 +189,7 @@ export function validateSourceFile(raw: unknown, requestedVersion: string): Vali
   const collection = isRecord(raw.collection) ? raw.collection : {};
   const sourceVersion = typeof source.corpusVersion === 'string' && source.corpusVersion.trim() ? source.corpusVersion : requestedVersion;
   const sourceLicense = typeof source.license === 'string' ? source.license : undefined;
+  const metadataPolicy: MetadataPolicy = raw.metadataPolicy === 'source_limited' ? 'source_limited' : 'strict';
   const hadiths = raw.hadiths.map((item): Record<string, unknown> => {
     const row = isRecord(item) ? item : {};
     const book = isRecord(row.book) ? row.book : {};
@@ -198,7 +199,7 @@ export function validateSourceFile(raw: unknown, requestedVersion: string): Vali
     const lessons = Array.isArray(row.lessonsFrench) ? row.lessonsFrench.map((lesson) => validationContent(lesson, sourceVersion, sourceLicense ?? null)).filter((lesson): lesson is Record<string, unknown> => lesson !== undefined) : undefined;
     return { id: row.sourceHadithId, sourceHadithId: row.sourceHadithId, collectionId: collection.sourceId, bookId: book.sourceId, bookNumber: book.number, bookName: book.titleFrench, chapterId: chapter.sourceId, chapterNumber: chapter.number, chapterTitle: chapter.titleFrench, globalNumber: row.globalNumber, hadithNumberInBook: row.hadithNumberInBook, arabicText: row.arabicText, narrator: row.narrator, chain: row.chainText, authenticity: row.authenticityGrade, source: source.name, sourceReference: row.sourceReference, version: sourceVersion, license: sourceLicense, translation, explanation, lessons };
   });
-  return validateCorpus({ hadiths, version: sourceVersion, license: sourceLicense } as ValidationCorpus);
+  return validateCorpus({ hadiths, version: sourceVersion, license: sourceLicense, metadataPolicy } as ValidationCorpus);
 }
 
 function printValidationReport(report: ValidationReport): void {

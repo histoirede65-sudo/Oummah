@@ -24,6 +24,21 @@ assert.equal(perfect.canImport, true);
 assert.equal(perfect.errors, 0);
 assert.equal(perfect.valid, 1);
 
+const missingStrict = structuredReport([structuredHadith({ narrator: null, sourceReference: null })]);
+assert.equal(missingStrict.canImport, false);
+assert.equal(missingStrict.issues.filter((item) => item.level === 'ERROR' && ['NARRATOR_MISSING', 'SOURCE_REFERENCE_MISSING'].includes(item.code)).length, 2);
+
+const sourceLimited = validateCorpus({
+  structure: 'structured_collection', metadataPolicy: 'source_limited', version: 'v1', license: 'licence-validée',
+  hadiths: [structuredHadith({ narrator: null, sourceReference: null })],
+} as ValidationCorpus);
+assert.equal(sourceLimited.canImport, true);
+assert.equal(sourceLimited.metadataPolicy, 'source_limited');
+assert.equal(sourceLimited.issues.filter((item) => item.level === 'WARNING' && ['NARRATOR_MISSING', 'SOURCE_REFERENCE_MISSING'].includes(item.code)).length, 2);
+
+assert.equal(validateCorpus({ structure: 'structured_collection', metadataPolicy: 'source_limited', version: 'v1', hadiths: [structuredHadith({ arabicText: '' })] } as ValidationCorpus).canImport, false);
+assert.equal(validateCorpus({ structure: 'structured_collection', metadataPolicy: 'source_limited', version: 'v1', hadiths: [structuredHadith({ translationFrench: { text: '', source: 'Source', version: 'v1' } })] } as ValidationCorpus).canImport, false);
+
 const duplicate = structuredReport([
   structuredHadith(),
   structuredHadith({ globalNumber: 2, hadithNumberInBook: 2 }),

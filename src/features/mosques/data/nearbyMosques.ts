@@ -24,7 +24,7 @@ export type NearbyMosque = {
   toilets?: MosqueFeatureState;
   languages?: string[];
   serviceTimes?: string;
-  source: 'openstreetmap';
+  source: 'openstreetmap' | 'islamic_app' | 'google';
   sourceUrl?: string;
   lastCheckedAt: string;
 };
@@ -77,20 +77,42 @@ type PhotonResponse = {
   features?: PhotonFeature[];
 };
 
+type IslamicAppMosque = {
+  slug?: string;
+  name?: string;
+  name_ar?: string;
+  city?: string;
+  country?: string;
+  address?: string;
+  lat?: number;
+  lng?: number;
+  url?: string;
+};
+
+type IslamicAppResponse = {
+  data?: { mosques?: IslamicAppMosque[] };
+};
+
 const OVERPASS_ENDPOINTS = [
   'https://maps.mail.ru/osm/tools/overpass/api/interpreter',
+  'https://overpass-api.de/api/interpreter',
+  'https://overpass.kumi.systems/api/interpreter',
 ] as const;
 
 const NOMINATIM_SEARCH_URL =
   'https://nominatim.openstreetmap.org/search';
 const PHOTON_SEARCH_URL = 'https://photon.komoot.io/api/';
+const ISLAMIC_APP_MASAJID_URL =
+  'https://api.islamic.app/v1/masajid/near';
 
 const SEARCH_RADIUS_METERS = 20_000;
 const REQUEST_TIMEOUT_MS = 10_000;
 const NOMINATIM_TIMEOUT_MS = 8_000;
 const PHOTON_TIMEOUT_MS = 8_000;
+const ISLAMIC_APP_TIMEOUT_MS = 8_000;
 const MAX_RESULTS = 200;
 const DUPLICATE_DISTANCE_METERS = 20;
+const PROBABLE_DUPLICATE_DISTANCE_METERS = 80;
 
 function isFiniteNumber(value: unknown): value is number {
   return typeof value === 'number' && Number.isFinite(value);
@@ -292,15 +314,25 @@ function buildOverpassQuery(latitude: number, longitude: number) {
     [out:json][timeout:8];
     (
       nwr(around:${SEARCH_RADIUS_METERS},${latitude},${longitude})
-        ["amenity"="place_of_worship"]["religion"="muslim"];
+          ["amenity"="place_of_worship"]["religion"="muslim"];
       nwr(around:${SEARCH_RADIUS_METERS},${latitude},${longitude})
-        ["amenity"="prayer_room"]["religion"="muslim"];
+          ["amenity"="prayer_room"]["religion"="muslim"];
       nwr(around:${SEARCH_RADIUS_METERS},${latitude},${longitude})
-        ["building"="mosque"];
+          ["amenity"="place_of_worship"]
+          ["name"~"mosq|masjid|musalla|mousalla|prayer",i];
       nwr(around:${SEARCH_RADIUS_METERS},${latitude},${longitude})
-        ["place_of_worship"="mosque"];
+          ["amenity"="prayer_room"];
       nwr(around:${SEARCH_RADIUS_METERS},${latitude},${longitude})
-        ["religion"="muslim"];
+          ["amenity"="community_centre"]
+          ["name"~"mosq|masjid|islam|muslim|musulman",i];
+      nwr(around:${SEARCH_RADIUS_METERS},${latitude},${longitude})
+          ["building"="mosque"];
+      nwr(around:${SEARCH_RADIUS_METERS},${latitude},${longitude})
+          ["place_of_worship"="mosque"];
+      nwr(around:${SEARCH_RADIUS_METERS},${latitude},${longitude})
+          ["religion"="muslim"];
+      nwr(around:${SEARCH_RADIUS_METERS},${latitude},${longitude})
+          ["name"~"mosq|masjid|musalla|mousalla|salle de priere|prayer room",i];
     );
     out center tags;
   `;
@@ -364,31 +396,51 @@ async function requestOverpass(
   query: string,
   signal?: AbortSignal,
 ): Promise<OverpassResponse> {
-  let lastError: unknown = null;
+  if (signal?.aborted) {
+    throw new DOMException('Aborted', 'AbortError');
+  }
 
-  for (const endpoint of OVERPASS_ENDPOINTS) {
+  const endpointControllers = OVERPASS_ENDPOINTS.map(() => new AbortController());
+  const attempts = OVERPASS_ENDPOINTS.map((endpoint, index) =>
+    fetchFromEndpoint(
+      endpoint,
+      query,
+      combineSignals(signal, endpointControllers[index]),
+    ),
+  );
+
+  try {
+    const results = await Promise.allSettled(attempts);
+    const successfulResults = results
+      .filter(
+        (result): result is PromiseFulfilledResult<OverpassResponse> =>
+          result.status === 'fulfilled',
+      )
+      .map((result) => result.value);
+
+    if (successfulResults.length > 0) {
+      return {
+        elements: successfulResults.flatMap((result) => result.elements ?? []),
+      };
+    }
+
+    const errors = results
+      .filter(
+        (result): result is PromiseRejectedResult => result.status === 'rejected',
+      )
+      .map((result) => result.reason);
+    const lastError = errors[errors.length - 1];
+
+    throw lastError instanceof Error
+      ? lastError
+      : new Error('OVERPASS_UNAVAILABLE');
+  } catch (error) {
     if (signal?.aborted) {
       throw new DOMException('Aborted', 'AbortError');
     }
 
-    try {
-      return await fetchFromEndpoint(endpoint, query, signal);
-    } catch (error) {
-      if (
-        error instanceof Error &&
-        error.name === 'AbortError' &&
-        signal?.aborted
-      ) {
-        throw error;
-      }
-
-      lastError = error;
-    }
+    throw error instanceof Error ? error : new Error('OVERPASS_UNAVAILABLE');
   }
-
-  throw lastError instanceof Error
-    ? lastError
-    : new Error('OVERPASS_UNAVAILABLE');
 }
 
 function getNominatimViewbox(latitude: number, longitude: number) {
@@ -663,6 +715,84 @@ async function getNearbyMosquesFromPhoton(
   }
 }
 
+async function getNearbyMosquesFromIslamicApp(
+  latitude: number,
+  longitude: number,
+  signal?: AbortSignal,
+): Promise<NearbyMosque[]> {
+  const timeoutController = new AbortController();
+  const timeoutId = setTimeout(
+    () => timeoutController.abort(),
+    ISLAMIC_APP_TIMEOUT_MS,
+  );
+  const params = new URLSearchParams({
+    lat: String(latitude),
+    lng: String(longitude),
+    radius: String(SEARCH_RADIUS_METERS / 1_000),
+    limit: String(MAX_RESULTS),
+  });
+
+  try {
+    const response = await fetch(
+      `${ISLAMIC_APP_MASAJID_URL}?${params.toString()}`,
+      {
+        headers: { Accept: 'application/json' },
+        signal: combineSignals(signal, timeoutController),
+      },
+    );
+
+    if (!response.ok) throw new Error(`ISLAMIC_APP_${response.status}`);
+
+    const payload = (await response.json()) as IslamicAppResponse;
+    const checkedAt = new Date().toISOString();
+
+    return (payload.data?.mosques ?? [])
+      .map((mosque): NearbyMosque | null => {
+        if (
+          !mosque.slug ||
+          !isFiniteNumber(mosque.lat) ||
+          !isFiniteNumber(mosque.lng)
+        ) {
+          return null;
+        }
+
+        const distanceMeters = getDistanceMeters(
+          latitude,
+          longitude,
+          mosque.lat,
+          mosque.lng,
+        );
+
+        if (distanceMeters > SEARCH_RADIUS_METERS) return null;
+
+        return {
+          id: `islamic-app-${mosque.slug}`,
+          name: mosque.name ?? 'Mosquée sans nom renseigné',
+          arabicName: mosque.name_ar,
+          address:
+            mosque.address ??
+            ([mosque.city, mosque.country].filter(Boolean).join(', ') ||
+              'Adresse non renseignée'),
+          latitude: mosque.lat,
+          longitude: mosque.lng,
+          distanceMeters,
+          distanceLabel: formatDistance(distanceMeters),
+          walkingTimeLabel: formatWalkingTime(distanceMeters),
+          source: 'islamic_app',
+          sourceUrl:
+            mosque.url ??
+            `https://islamic.app/m/${encodeURIComponent(mosque.slug)}`,
+          lastCheckedAt: checkedAt,
+        };
+      })
+      .filter((mosque): mosque is NearbyMosque => mosque !== null)
+      .sort((first, second) => first.distanceMeters - second.distanceMeters)
+      .slice(0, MAX_RESULTS);
+  } finally {
+    clearTimeout(timeoutId);
+  }
+}
+
 function mergeOptional<T>(first: T | undefined, second: T | undefined) {
   return first ?? second;
 }
@@ -743,10 +873,6 @@ function findCertainDuplicateIndex(
   return mosques.findIndex((existing) => {
     const existingName = normalizeText(existing.name);
 
-    if (!existingName || existingName !== candidateName) {
-      return false;
-    }
-
     const distance = getDistanceMeters(
       existing.latitude,
       existing.longitude,
@@ -754,8 +880,60 @@ function findCertainDuplicateIndex(
       candidate.longitude,
     );
 
-    return distance <= DUPLICATE_DISTANCE_METERS;
+    if (distance <= DUPLICATE_DISTANCE_METERS && existingName === candidateName) {
+      return true;
+    }
+
+    if (distance > PROBABLE_DUPLICATE_DISTANCE_METERS) return false;
+
+    const nameMatch = namesLikelyMatch(existingName, candidateName);
+    const addressMatch = addressesLikelyMatch(existing.address, candidate.address);
+
+    // Google and OSM frequently use slightly different names for the same
+    // building. Require either a strong name match or a matching address.
+    return nameMatch || addressMatch;
   });
+}
+
+function textTokens(value: string) {
+  return new Set(
+    normalizeText(value)
+      .split(' ')
+      .filter((token) => token.length >= 3 && !/^\d+$/.test(token)),
+  );
+}
+
+function namesLikelyMatch(first: string, second: string) {
+  if (!first || !second) return false;
+  if (first === second || first.includes(second) || second.includes(first)) return true;
+  const left = textTokens(first);
+  const right = textTokens(second);
+  const overlap = [...left].filter((token) => right.has(token)).length;
+  return overlap >= 2 || (overlap === 1 && left.size === 1 && right.size === 1);
+}
+
+function addressesLikelyMatch(first: string, second: string) {
+  const normalizedFirst = normalizeText(first);
+  const normalizedSecond = normalizeText(second);
+  if (
+    normalizedFirst.length > 0 &&
+    normalizedFirst === normalizedSecond
+  ) {
+    return true;
+  }
+
+  const left = textTokens(first);
+  const right = textTokens(second);
+  const overlap = [...left].filter((token) => right.has(token));
+  const firstNumber = normalizedFirst.match(/\b\d+[a-z]?\b/)?.[0];
+  const secondNumber = normalizedSecond.match(/\b\d+[a-z]?\b/)?.[0];
+
+  return Boolean(
+    firstNumber &&
+      secondNumber &&
+      firstNumber === secondNumber &&
+      overlap.length >= 2,
+  );
 }
 
 function mergeMosqueLists(
@@ -796,6 +974,7 @@ export async function getNearbyMosques(
   longitude: number,
   signal?: AbortSignal,
 ): Promise<NearbyMosque[]> {
+  const { getNearbyMosquesFromGoogle } = await import('./googleNearbyMosques');
   const nominatimPromise = getNearbyMosquesFromNominatim(
     latitude,
     longitude,
@@ -816,6 +995,19 @@ export async function getNearbyMosques(
       mosques: [] as NearbyMosque[],
       error,
     }));
+  const islamicAppPromise = getNearbyMosquesFromIslamicApp(
+    latitude,
+    longitude,
+    signal,
+  )
+    .then((mosques) => ({ mosques, error: null as unknown }))
+    .catch((error: unknown) => ({
+      mosques: [] as NearbyMosque[],
+      error,
+    }));
+  const googlePromise = getNearbyMosquesFromGoogle(latitude, longitude, signal)
+    .then((mosques) => ({ mosques, error: null as unknown }))
+    .catch((error: unknown) => ({ mosques: [] as NearbyMosque[], error }));
   let payload: OverpassResponse;
 
   try {
@@ -832,14 +1024,19 @@ export async function getNearbyMosques(
       throw error;
     }
 
-    const [nominatim, photon] = await Promise.all([
+    const [nominatim, photon, islamicApp, google] = await Promise.all([
       nominatimPromise,
       photonPromise,
+      islamicAppPromise,
+      googlePromise,
     ]);
 
-    if (nominatim.error && photon.error) throw error;
+    if (nominatim.error && photon.error && islamicApp.error && google.error) throw error;
 
-    return mergeMosqueLists(nominatim.mosques, photon.mosques);
+    return mergeMosqueLists(
+      mergeMosqueLists(nominatim.mosques, photon.mosques),
+      mergeMosqueLists(islamicApp.mosques, google.mosques),
+    );
   }
 
   const mosques: NearbyMosque[] = [];
@@ -947,13 +1144,18 @@ export async function getNearbyMosques(
     }
   }
 
-  const [nominatim, photon] = await Promise.all([
+  const [nominatim, photon, islamicApp, google] = await Promise.all([
     nominatimPromise,
     photonPromise,
+    islamicAppPromise,
+    googlePromise,
   ]);
 
   return mergeMosqueLists(
-    mergeMosqueLists(mosques, photon.mosques),
-    nominatim.mosques,
+    mergeMosqueLists(
+      mergeMosqueLists(mosques, photon.mosques),
+      nominatim.mosques,
+    ),
+    mergeMosqueLists(islamicApp.mosques, google.mosques),
   );
 }

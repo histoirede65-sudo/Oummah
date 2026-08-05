@@ -2,7 +2,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import type { Href } from "expo-router";
 import { router, useFocusEffect } from "expo-router";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import {
   Alert,
   Modal,
@@ -16,6 +16,13 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { loadHifzState, type HifzState } from "../features/hifz/HifzStore";
+import { syncAdhanNotifications } from "../features/adhan/AdhanNotifications";
+import {
+  DEFAULT_ADHAN_PREFERENCES,
+  loadAdhanPreferences,
+  saveAdhanPreferences,
+  type AdhanPreferences,
+} from "../features/adhan/AdhanPreferences";
 import {
   getMosquePrayerSchedule,
   type MosquePrayerSchedule,
@@ -36,6 +43,7 @@ import {
   type NotificationCenterPreferences,
 } from "../features/notifications/NotificationCenter";
 import { colors } from "../theme/colors";
+import { getActiveAnnouncements, type PublicAnnouncement } from "../features/announcements/AnnouncementService";
 import { typography } from "../theme/typography";
 
 type Filter = "all" | NotificationCenterItem["category"];
@@ -58,6 +66,16 @@ export default function NotificationsScreen() {
   const [preferences, setPreferences] = useState<NotificationCenterPreferences>(
     DEFAULT_NOTIFICATION_CENTER_PREFERENCES,
   );
+  const [savedPreferences, setSavedPreferences] = useState<NotificationCenterPreferences>(
+    DEFAULT_NOTIFICATION_CENTER_PREFERENCES,
+  );
+  const [adhanPreferences, setAdhanPreferences] = useState<AdhanPreferences>(
+    DEFAULT_ADHAN_PREFERENCES,
+  );
+  const [savedAdhanPreferences, setSavedAdhanPreferences] = useState<AdhanPreferences>(
+    DEFAULT_ADHAN_PREFERENCES,
+  );
+  const [saving, setSaving] = useState(false);
   const [schedule, setSchedule] = useState<MosquePrayerSchedule | null>(null);
   const [mosque, setMosque] = useState<StoredMosque | null>(null);
   const [hifzState, setHifzState] = useState<HifzState | null>(null);
@@ -65,21 +83,28 @@ export default function NotificationsScreen() {
   const [filter, setFilter] = useState<Filter>("all");
   const [settingsVisible, setSettingsVisible] = useState(false);
   const [loaded, setLoaded] = useState(false);
+  const [adminAnnouncements, setAdminAnnouncements] = useState<PublicAnnouncement[]>([]);
 
   useFocusEffect(
     useCallback(() => {
       let active = true;
       void Promise.all([
         loadNotificationCenterPreferences(),
+        loadAdhanPreferences(),
         loadReadNotificationIds(),
         loadHifzState(),
         getMainMosque(),
-      ]).then(async ([nextPreferences, nextReadIds, nextHifz, nextMosque]) => {
+        getActiveAnnouncements("notifications").catch(() => []),
+      ]).then(async ([nextPreferences, nextAdhanPreferences, nextReadIds, nextHifz, nextMosque, nextAnnouncements]) => {
         if (!active) return;
         setPreferences(nextPreferences);
+        setSavedPreferences(nextPreferences);
+        setAdhanPreferences(nextAdhanPreferences);
+        setSavedAdhanPreferences(nextAdhanPreferences);
         setReadIds(nextReadIds);
         setHifzState(nextHifz);
         setMosque(nextMosque);
+        setAdminAnnouncements(nextAnnouncements);
         setLoaded(true);
 
         if (nextMosque) {
@@ -96,12 +121,7 @@ export default function NotificationsScreen() {
     }, []),
   );
 
-  useEffect(() => {
-    if (!loaded) return;
-    void syncNotificationCenterSchedule(preferences, schedule, mosque?.name).catch(
-      () => undefined,
-    );
-  }, [loaded, mosque?.name, preferences, schedule]);
+
 
   const items = useMemo(
     () =>
@@ -118,14 +138,34 @@ export default function NotificationsScreen() {
 
   const updatePreferences = useCallback(
     (update: (current: NotificationCenterPreferences) => NotificationCenterPreferences) => {
-      setPreferences((current) => {
-        const next = update(current);
-        void saveNotificationCenterPreferences(next).catch(() => undefined);
-        return next;
-      });
+      setPreferences(update);
     },
     [],
   );
+
+  const hasPendingChanges = useMemo(
+    () =>
+      JSON.stringify(preferences) !== JSON.stringify(savedPreferences) ||
+      JSON.stringify(adhanPreferences) !== JSON.stringify(savedAdhanPreferences),
+    [adhanPreferences, preferences, savedAdhanPreferences, savedPreferences],
+  );
+
+  const saveSettings = async () => {
+    if (saving || !hasPendingChanges) return;
+    setSaving(true);
+    try {
+      await Promise.all([
+        saveNotificationCenterPreferences(preferences),
+        saveAdhanPreferences(adhanPreferences),
+      ]);
+      await syncNotificationCenterSchedule(preferences, schedule, mosque?.name);
+      if (schedule) await syncAdhanNotifications(schedule, adhanPreferences);
+      setSavedPreferences(preferences);
+      setSavedAdhanPreferences(adhanPreferences);
+    } finally {
+      setSaving(false);
+    }
+  };
 
   const toggleSystemNotifications = async (enabled: boolean) => {
     if (!enabled) {
@@ -212,6 +252,18 @@ export default function NotificationsScreen() {
           ))}
         </ScrollView>
 
+        {adminAnnouncements.length ? (
+          <View style={styles.adminAnnouncements}>
+            <Text style={styles.adminAnnouncementsTitle}>Communications OUMMAH</Text>
+            {adminAnnouncements.map((announcement) => (
+              <Pressable key={announcement.id} disabled={!announcement.actionRoute} onPress={() => announcement.actionRoute && router.push(announcement.actionRoute as Href)} style={styles.adminAnnouncementCard}>
+                <View style={styles.adminAnnouncementIcon}><Ionicons name="megaphone-outline" size={18} color="#26181C" /></View>
+                <View style={styles.adminAnnouncementCopy}><Text style={styles.adminAnnouncementTitle}>{announcement.title}</Text><Text style={styles.adminAnnouncementBody}>{announcement.body}</Text>{announcement.actionLabel ? <Text style={styles.adminAnnouncementAction}>{announcement.actionLabel} →</Text> : null}</View>
+              </Pressable>
+            ))}
+          </View>
+        ) : null}
+
         <View style={styles.feed}>
           {visibleItems.length ? (
             visibleItems.map((item) => {
@@ -286,7 +338,10 @@ export default function NotificationsScreen() {
                 {MODES.map((mode) => (
                   <Pressable
                     key={mode.id}
-                    onPress={() => updatePreferences((current) => ({ ...current, mode: mode.id }))}
+                    onPress={() => {
+                      updatePreferences((current) => ({ ...current, mode: mode.id }));
+                      setAdhanPreferences((current) => ({ ...current, mode: mode.id }));
+                    }}
                     style={[styles.modeChoice, preferences.mode === mode.id && styles.choiceActive]}
                   >
                     <Ionicons name={mode.icon} size={18} color={preferences.mode === mode.id ? "#F4C75E" : "#9E96A1"} />
@@ -295,7 +350,92 @@ export default function NotificationsScreen() {
                 ))}
               </View>
 
-              {["Prières", "Dou‘as", "Apprentissage", "Inspiration"].map((section) => (
+              <Text style={styles.sectionLabel}>PRIÈRES</Text>
+              <View style={styles.settingsGroup}>
+                <View style={styles.settingRow}>
+                  <View style={styles.settingCopy}>
+                    <Text style={styles.settingTitle}>Alertes de prière</Text>
+                    <Text style={styles.settingDescription}>Une seule notification, au délai choisi. Aucun message après la prière.</Text>
+                  </View>
+                  <Switch
+                    value={adhanPreferences.enabled}
+                    onValueChange={(value) =>
+                      setAdhanPreferences((current) => ({ ...current, enabled: value }))
+                    }
+                    trackColor={{ false: "#443D47", true: "rgba(236,177,61,0.50)" }}
+                    thumbColor={adhanPreferences.enabled ? "#F2B53D" : "#908892"}
+                  />
+                </View>
+                <View style={styles.prayerChoicesBlock}>
+                  <Text style={styles.delayTitle}>Prières concernées</Text>
+                  <View style={styles.prayerChoicesRow}>
+                    {([
+                      ["Fajr", "Fajr"],
+                      ["Dhuhr", "Dhuhr"],
+                      ["Asr", "‘Asr"],
+                      ["Maghrib", "Maghrib"],
+                      ["Isha", "‘Isha"],
+                    ] as const).map(([key, label]) => {
+                      const selected = adhanPreferences.prayers[key];
+                      return (
+                        <Pressable
+                          key={key}
+                          disabled={!adhanPreferences.enabled}
+                          onPress={() =>
+                            setAdhanPreferences((current) => ({
+                              ...current,
+                              prayers: { ...current.prayers, [key]: !current.prayers[key] },
+                            }))
+                          }
+                          style={[
+                            styles.prayerChoice,
+                            selected && styles.choiceActive,
+                            !adhanPreferences.enabled && styles.disabledChoice,
+                          ]}
+                        >
+                          <Ionicons
+                            name={selected ? "checkmark-circle" : "ellipse-outline"}
+                            size={15}
+                            color={selected ? "#F4C75E" : "#9E96A1"}
+                          />
+                          <Text style={[styles.delayText, selected && styles.choiceTextActive]}>
+                            {label}
+                          </Text>
+                        </Pressable>
+                      );
+                    })}
+                  </View>
+                </View>
+                <View style={styles.delayBlock}>
+                  <Text style={styles.delayTitle}>Moment du rappel</Text>
+                  <View style={styles.delayRow}>
+                    {[0, 5, 10, 15, 30].map((minutes) => (
+                      <Pressable
+                        key={minutes}
+                        disabled={!adhanPreferences.enabled}
+                        onPress={() =>
+                          setAdhanPreferences((current) => ({ ...current, leadMinutes: minutes }))
+                        }
+                        style={[
+                          styles.delayChoice,
+                          adhanPreferences.leadMinutes === minutes && styles.choiceActive,
+                          !adhanPreferences.enabled && styles.disabledChoice,
+                        ]}
+                      >
+                        <Text style={[styles.delayText, adhanPreferences.leadMinutes === minutes && styles.choiceTextActive]}>
+                          {minutes === 0 ? "À l’heure" : `${minutes} min`}
+                        </Text>
+                      </Pressable>
+                    ))}
+                  </View>
+                </View>
+                <View style={styles.adhanUnavailable}>
+                  <Ionicons name="information-circle-outline" size={17} color="#F2BE55" />
+                  <Text style={styles.adhanUnavailableText}>Chaque alerte de prière contient un hadith authentique adapté. Le véritable son de l’Adhan sera ajouté dès qu’un audio officiel sera intégré ; pour l’instant, le mode Son utilise le son système.</Text>
+                </View>
+              </View>
+
+              {["Dou‘as", "Apprentissage", "Inspiration"].map((section) => (
                 <View key={section}>
                   <Text style={styles.sectionLabel}>{section.toUpperCase()}</Text>
                   <View style={styles.settingsGroup}>
@@ -324,6 +464,20 @@ export default function NotificationsScreen() {
                 </View>
               ))}
             </ScrollView>
+            <Pressable
+              disabled={saving || !hasPendingChanges}
+              onPress={() => void saveSettings()}
+              style={[
+                styles.saveButton,
+                hasPendingChanges ? styles.saveButtonPending : styles.saveButtonSaved,
+                saving && styles.disabledChoice,
+              ]}
+            >
+              <Ionicons name={hasPendingChanges ? "save-outline" : "checkmark-circle"} size={19} color="#172018" />
+              <Text style={styles.saveButtonText}>
+                {saving ? "Enregistrement…" : hasPendingChanges ? "Enregistrer mes notifications" : "Notifications enregistrées"}
+              </Text>
+            </Pressable>
           </View>
         </View>
       </Modal>
@@ -350,6 +504,14 @@ const styles = StyleSheet.create({
   filterActive: { borderColor: "rgba(242,190,85,0.45)", backgroundColor: "rgba(231,168,50,0.12)" },
   filterText: { color: "#9F97A3", fontFamily: typography.sans, fontSize: 10.5, fontWeight: "600" },
   filterTextActive: { color: "#FFE3A0" },
+  adminAnnouncements: { marginBottom: 18 },
+  adminAnnouncementsTitle: { marginBottom: 10, color: "#F2BE55", fontFamily: typography.serifMedium, fontSize: 17 },
+  adminAnnouncementCard: { marginBottom: 9, padding: 13, flexDirection: "row", alignItems: "flex-start", borderRadius: 16, borderWidth: 1, borderColor: "rgba(242,190,85,0.25)", backgroundColor: "rgba(242,190,85,0.07)" },
+  adminAnnouncementIcon: { width: 38, height: 38, borderRadius: 12, alignItems: "center", justifyContent: "center", backgroundColor: "#F2BE55" },
+  adminAnnouncementCopy: { flex: 1, marginLeft: 11 },
+  adminAnnouncementTitle: { color: "#FFF8EF", fontSize: 12.5, fontWeight: "800" },
+  adminAnnouncementBody: { marginTop: 4, color: "#C9C0C8", fontSize: 10.5, lineHeight: 15 },
+  adminAnnouncementAction: { marginTop: 6, color: "#F2BE55", fontSize: 9.5, fontWeight: "800" },
   feed: { gap: 8 },
   itemCard: { minHeight: 91, overflow: "hidden", padding: 12, flexDirection: "row", alignItems: "center", borderRadius: 20, borderWidth: 1, borderColor: "rgba(255,255,255,0.075)", backgroundColor: "rgba(22,20,29,0.84)" },
   itemAccent: { position: "absolute", top: 16, bottom: 16, left: 0, width: 3, borderTopRightRadius: 3, borderBottomRightRadius: 3 },
@@ -384,5 +546,20 @@ const styles = StyleSheet.create({
   settingCopy: { flex: 1, paddingRight: 10 },
   settingTitle: { color: "#FFF7EE", fontFamily: typography.serifMedium, fontSize: 14 },
   settingDescription: { marginTop: 2, color: "rgba(230,220,228,0.52)", fontFamily: typography.sans, fontSize: 9.5, lineHeight: 13 },
+  prayerChoicesBlock: { padding: 13, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: "rgba(255,255,255,0.07)" },
+  prayerChoicesRow: { flexDirection: "row", flexWrap: "wrap", gap: 7 },
+  prayerChoice: { minHeight: 36, paddingHorizontal: 10, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 5, borderRadius: 12, borderWidth: 1, borderColor: "rgba(255,255,255,0.08)", backgroundColor: "rgba(255,255,255,0.035)" },
+  delayBlock: { padding: 13, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: "rgba(255,255,255,0.07)" },
+  delayTitle: { marginBottom: 9, color: "#FFF7EE", fontFamily: typography.serifMedium, fontSize: 13 },
+  delayRow: { flexDirection: "row", flexWrap: "wrap", gap: 7 },
+  delayChoice: { minHeight: 36, paddingHorizontal: 11, alignItems: "center", justifyContent: "center", borderRadius: 12, borderWidth: 1, borderColor: "rgba(255,255,255,0.08)", backgroundColor: "rgba(255,255,255,0.035)" },
+  delayText: { color: "#AAA1AD", fontFamily: typography.sans, fontSize: 10, fontWeight: "700" },
+  disabledChoice: { opacity: 0.45 },
+  adhanUnavailable: { padding: 13, flexDirection: "row", alignItems: "flex-start", gap: 8 },
+  adhanUnavailableText: { flex: 1, color: "rgba(230,220,228,0.56)", fontFamily: typography.sans, fontSize: 9.5, lineHeight: 14 },
+  saveButton: { minHeight: 54, marginBottom: 14, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 8, borderRadius: 17 },
+  saveButtonPending: { backgroundColor: "#E0A83D" },
+  saveButtonSaved: { backgroundColor: "#71C99F" },
+  saveButtonText: { color: "#172018", fontFamily: typography.sans, fontSize: 12, fontWeight: "800" },
 });
 

@@ -123,9 +123,10 @@ export async function signUpWithPassword(email: string, password: string) {
   if (!response.ok) throw new Error(await parseError(response));
   const result = await response.json();
   if (!isSessionResponse(result)) {
-    throw new Error(
-      "Le compte a été créé, mais la confirmation par e-mail est encore activée dans Supabase.",
-    );
+    // Lorsque la confirmation par e-mail est activée, Supabase crée bien
+    // l’utilisateur mais ne renvoie pas encore de session. Ce n’est pas une
+    // erreur de connexion : l’utilisateur doit simplement confirmer son e-mail.
+    return null;
   }
   return saveSession(result);
 }

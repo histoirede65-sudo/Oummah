@@ -3,6 +3,7 @@ import {
   type QuranKnowledgeResult,
 } from "../QuranKnowledgeEngine.ts";
 import {
+  buildProphetBiographyExpansion,
   expandIslamicQuery,
   type IslamicQueryExpansion,
 } from "../IslamicQueryExpansion.ts";
@@ -109,7 +110,9 @@ export async function searchQuranRepository(
   if (cached) return cached;
 
   try {
-    const resolvedExpansion = expansion ?? await expandIslamicQuery(question);
+    const resolvedExpansion = expansion ??
+      buildProphetBiographyExpansion(question) ??
+      await expandIslamicQuery(question);
     const result = await retrieveQuranKnowledge(question, resolvedExpansion);
     if (!result) return null;
 

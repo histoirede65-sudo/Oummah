@@ -533,11 +533,31 @@ export default function PrayerCard() {
     () => {
       if (!schedule) return null;
 
-      return (
+      const lastPrayer =
         getLastPassedPrayer(schedule, now) ??
         schedule.prayers[schedule.prayers.length - 1] ??
-        null
-      );
+        null;
+
+      if (!lastPrayer) return null;
+
+      if (lastPrayer.key === "Fajr") {
+        if (now > lastPrayer.timestamp + 60 * 60 * 1000) {
+          return null;
+        }
+      }
+
+      if (lastPrayer.key === "Isha") {
+        const fajr = getPrayerByKey(schedule, "Fajr");
+        if (fajr) {
+          const midpoint = lastPrayer.timestamp + ((fajr.timestamp + 24 * 60 * 60 * 1000) - lastPrayer.timestamp) / 2;
+          const adjustedNow = now < fajr.timestamp ? now + 24 * 60 * 60 * 1000 : now;
+          if (adjustedNow > midpoint) {
+            return null;
+          }
+        }
+      }
+
+      return lastPrayer;
     },
     [now, schedule],
   );
@@ -848,6 +868,7 @@ export default function PrayerCard() {
                     style={[
                       styles.orbitName,
                       prayer.active && styles.orbitNameActive,
+                      prayer.key === "Isha" && styles.orbitNameIsha,
                     ]}
                   >
                     {prayer.label}
@@ -1619,11 +1640,9 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 3 },
   },
   orbitNodeActive: {
-    width: 39,
-    height: 39,
-    marginTop: -4,
-    marginBottom: -4,
-    borderRadius: 20,
+    width: 31,
+    height: 31,
+    borderRadius: 16,
     borderWidth: 2,
     borderColor: "#FFE39B",
     backgroundColor: "#F2B43D",
@@ -1661,7 +1680,7 @@ const styles = StyleSheet.create({
     marginTop: 2,
     color: "#FFF7EF",
     fontFamily: typography.serifMedium,
-    fontSize: 10.5,
+    fontSize: 13.5,
     textAlign: "center",
     textShadowColor: "rgba(0,0,0,0.92)",
     textShadowOffset: { width: 0, height: 1 },
@@ -1669,7 +1688,7 @@ const styles = StyleSheet.create({
   },
   orbitNameActive: {
     color: "#FFD160",
-    fontSize: 12.5,
+    fontSize: 15.5,
   },
   orbitTime: {
     color: "#E6DCE1",
@@ -1685,8 +1704,11 @@ const styles = StyleSheet.create({
     color: "#FFD160",
     fontSize: 10,
   },
+  orbitNameIsha: {
+    transform: [{ translateY: -2 }],
+  },
   orbitTimeIsha: {
-    transform: [{ translateY: -4 }],
+    transform: [{ translateY: -8 }],
   },
   orbitCenter: {
     position: "absolute",

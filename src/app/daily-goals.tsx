@@ -47,7 +47,6 @@ export default function DailyGoalsScreen() {
   const model = useDailyGoalsViewModel();
   const [addVisible, setAddVisible] = useState(false);
   const [settingsVisible, setSettingsVisible] = useState(false);
-  const [premiumProgramVisible, setPremiumProgramVisible] = useState(false);
   const [personalTitle, setPersonalTitle] = useState("");
   const [settings, setSettings] = useState<DailyGoalSettings | null>(null);
   const [weekly, setWeekly] = useState({ activeDays: 0, regularity: 0 });
@@ -179,31 +178,6 @@ export default function DailyGoalsScreen() {
 
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <DailyProgressHero summary={model.summary} streak={weekly.activeDays} />
-        <Pressable
-          onPress={() => {
-            if (premiumAccess?.isPremium) {
-              router.push({ pathname: "/dalil", params: { prompt: "Je souhaite créer un programme personnalisé progressif" } } as Href);
-              return;
-            }
-            setPremiumProgramVisible(true);
-          }}
-          style={styles.createProgramCard}
-        >
-          <View style={styles.createProgramIcon}>
-            <Ionicons name="sparkles-outline" size={22} color={colors.goldLight} />
-          </View>
-          <View style={styles.createProgramCopy}>
-            <View style={styles.createProgramTitleRow}>
-              <Text style={styles.createProgramTitle}>Créer un programme personnalisé avec Wasil</Text>
-              <View style={styles.createProgramBadge}>
-                <Ionicons name="diamond-outline" size={12} color={colors.goldLight} />
-                <Text style={styles.createProgramBadgeText}>PREMIUM</Text>
-              </View>
-            </View>
-            <Text style={styles.createProgramText}>Un parcours adapté à votre objectif, votre rythme et votre progression.</Text>
-          </View>
-          <Ionicons name="chevron-forward" size={19} color={colors.goldMuted} />
-        </Pressable>
         {progressivePath && pathProgress && nextPathSession ? (
           <>
             <Text style={styles.sectionLabel}>PARCOURS PREMIUM</Text>
@@ -255,28 +229,6 @@ export default function DailyGoalsScreen() {
         <Text style={styles.footerNote}>Une nouvelle journée commence toujours sans dette. Les objectifs non terminés ne s’accumulent pas automatiquement.</Text>
       </ScrollView>
 
-      <Modal visible={premiumProgramVisible} transparent animationType="fade" onRequestClose={() => setPremiumProgramVisible(false)}>
-        <Pressable onPress={() => setPremiumProgramVisible(false)} style={styles.backdrop}>
-          <Pressable onPress={(event) => event.stopPropagation()} style={styles.modalCard}>
-            <View style={styles.premiumModalIcon}>
-              <Ionicons name="diamond-outline" size={25} color={colors.goldLight} />
-            </View>
-            <Text style={styles.modalEyebrow}>WASIL PREMIUM</Text>
-            <Text style={styles.modalTitle}>Votre programme sur mesure</Text>
-            <Text style={styles.modalText}>La création de programmes progressifs personnalisés avec Wasil est réservée aux membres Premium.</Text>
-            <Text style={styles.premiumModalDetail}>Wasil organise vos séances, vos révisions et adapte le parcours selon votre avancement.</Text>
-            <View style={styles.modalActions}>
-              <Pressable onPress={() => setPremiumProgramVisible(false)} style={styles.secondaryButton}>
-                <Text style={styles.secondaryText}>Plus tard</Text>
-              </Pressable>
-              <Pressable onPress={() => { setPremiumProgramVisible(false); router.push(premiumAccess?.reason === "signed-out" ? "/profile" : "/premium"); }} style={styles.primaryButton}>
-                <Text style={styles.primaryText}>{premiumAccess?.reason === "signed-out" ? "Se connecter" : "Découvrir Premium"}</Text>
-              </Pressable>
-            </View>
-          </Pressable>
-        </Pressable>
-      </Modal>
-
       <Modal visible={addVisible} transparent animationType="fade" onRequestClose={() => setAddVisible(false)}>
         <Pressable onPress={() => setAddVisible(false)} style={styles.backdrop}><Pressable onPress={(event) => event.stopPropagation()} style={styles.modalCard}>
           <Text style={styles.modalEyebrow}>MES OBJECTIFS</Text><Text style={styles.modalTitle}>Ajouter une intention</Text><Text style={styles.modalText}>Une action simple, personnelle et réaliste pour aujourd’hui.</Text>
@@ -305,14 +257,6 @@ const styles = StyleSheet.create({
   headerButton: { width: 39, height: 39, alignItems: "center", justifyContent: "center", borderRadius: 20, borderWidth: 1, borderColor: "rgba(255,255,255,0.09)", backgroundColor: "rgba(255,255,255,0.035)" },
   headerCopy: { flex: 1, minWidth: 0, marginHorizontal: 12 }, headerTitle: { color: colors.text, fontFamily: typography.serifSemibold, fontSize: 25 }, headerSubtitle: { marginTop: 1, color: colors.textMuted, fontFamily: typography.sans, fontSize: 11.5 },
   content: { paddingHorizontal: 13, paddingBottom: 32 },
-  createProgramCard: { minHeight: 94, marginTop: 13, padding: 14, flexDirection: "row", alignItems: "center", borderRadius: 21, borderWidth: 1, borderColor: "rgba(241,188,79,0.24)", backgroundColor: "rgba(74,40,88,0.18)" },
-  createProgramIcon: { width: 47, height: 47, alignItems: "center", justifyContent: "center", borderRadius: 16, backgroundColor: "rgba(241,188,79,0.10)" },
-  createProgramCopy: { flex: 1, minWidth: 0, marginHorizontal: 11 },
-  createProgramTitleRow: { flexDirection: "row", alignItems: "flex-start", gap: 7 },
-  createProgramTitle: { flex: 1, color: colors.text, fontFamily: typography.serifSemibold, fontSize: 17, lineHeight: 21 },
-  createProgramBadge: { minHeight: 23, paddingHorizontal: 7, flexDirection: "row", alignItems: "center", borderRadius: 11, backgroundColor: "rgba(241,188,79,0.10)" },
-  createProgramBadgeText: { marginLeft: 4, color: colors.goldLight, fontFamily: typography.sans, fontSize: 8.5, fontWeight: "800", letterSpacing: 0.65 },
-  createProgramText: { marginTop: 5, color: colors.textSecondary, fontFamily: typography.sans, fontSize: 12.5, lineHeight: 16 },
   pathCard: { padding: 15, borderRadius: 21, borderWidth: 1, borderColor: "rgba(241,188,79,0.24)", backgroundColor: "rgba(74,40,88,0.18)" },
   pathTop: { flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
   pathBadge: { minHeight: 25, paddingHorizontal: 9, flexDirection: "row", alignItems: "center", borderRadius: 12, backgroundColor: "rgba(241,188,79,0.10)" },
@@ -340,8 +284,6 @@ const styles = StyleSheet.create({
   footerNote: { marginTop: 15, color: colors.textMuted, fontFamily: typography.serifMedium, fontSize: 11.5, lineHeight: 15, textAlign: "center" },
   eveningCard: { minHeight: 92, marginTop: 10, padding: 13, flexDirection: "row", alignItems: "center", borderRadius: 20, borderWidth: 1, borderColor: "rgba(241,188,79,0.13)", backgroundColor: "rgba(74,40,88,0.16)" }, eveningIcon: { width: 39, height: 39, alignItems: "center", justifyContent: "center", borderRadius: 14, backgroundColor: "rgba(241,188,79,0.08)" }, eveningCopy: { flex: 1, minWidth: 0, marginLeft: 11 }, eveningEyebrow: { color: colors.goldMuted, fontFamily: typography.sans, fontSize: 9.5, fontWeight: "800", letterSpacing: 0.9 }, eveningTitle: { marginTop: 4, color: colors.text, fontFamily: typography.serifMedium, fontSize: 15 }, eveningText: { marginTop: 4, color: colors.textMuted, fontFamily: typography.sans, fontSize: 11.2, lineHeight: 14 },
   backdrop: { flex: 1, justifyContent: "flex-end", padding: 12, backgroundColor: "rgba(3,4,10,0.74)" }, modalCard: { padding: 20, borderRadius: 25, borderWidth: 1, borderColor: "rgba(241,188,79,0.20)", backgroundColor: colors.backgroundSecondary },
-  premiumModalIcon: { width: 52, height: 52, marginBottom: 15, alignItems: "center", justifyContent: "center", borderRadius: 18, backgroundColor: "rgba(241,188,79,0.10)" },
-  premiumModalDetail: { marginTop: 12, padding: 12, borderRadius: 15, color: colors.textMuted, fontFamily: typography.sans, fontSize: 12.5, lineHeight: 17, backgroundColor: "rgba(255,255,255,0.035)" },
   modalEyebrow: { color: colors.goldMuted, fontFamily: typography.sans, fontSize: 10, fontWeight: "800", letterSpacing: 1.1 }, modalTitle: { marginTop: 4, color: colors.text, fontFamily: typography.serifSemibold, fontSize: 25 }, modalText: { marginTop: 7, color: colors.textSecondary, fontFamily: typography.sans, fontSize: 13, lineHeight: 17 },
   input: { height: 50, marginTop: 17, paddingHorizontal: 14, borderRadius: 16, borderWidth: 1, borderColor: "rgba(255,255,255,0.10)", backgroundColor: "rgba(255,255,255,0.04)", color: colors.text, fontFamily: typography.sans, fontSize: 15 }, modalActions: { marginTop: 15, flexDirection: "row", gap: 8 },
   secondaryButton: { minHeight: 46, flex: 1, alignItems: "center", justifyContent: "center", borderRadius: 15, backgroundColor: "rgba(255,255,255,0.06)" }, secondaryText: { color: colors.textSecondary, fontFamily: typography.sans, fontSize: 13, fontWeight: "700" }, primaryButton: { minHeight: 46, flex: 1, alignItems: "center", justifyContent: "center", borderRadius: 15, backgroundColor: colors.goldLight }, primaryText: { color: colors.background, fontFamily: typography.sans, fontSize: 13, fontWeight: "800" },

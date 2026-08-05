@@ -47,28 +47,34 @@ const shortcuts = [
     image: require("../assets/images/home/shortcuts/hifz-real.jpg"),
   },
   {
-    label: "Dou‘ā",
-    subtitle: "Invocations du quotidien",
-    route: "/dua",
-    image: require("../assets/images/home/shortcuts/dua-real.jpg"),
-  },
-  {
     label: "Mosquées",
     subtitle: "Autour de vous",
     route: "/mosques",
     image: require("../assets/images/mosques/mosque-hero-premium.jpg"),
   },
   {
-    label: "Calendrier",
-    subtitle: "Hijri & événements",
-    route: "/calendar",
-    image: require("../assets/images/home/shortcuts/calendar-real.jpg"),
-  },
-  {
     label: "Qibla",
     subtitle: "Direction de prière",
     route: "/qibla",
     image: require("../assets/images/home/shortcuts/qibla-real.jpg"),
+  },
+  {
+    label: "Zawaj",
+    subtitle: "Mariage en Islam",
+    route: "/zawaj",
+    image: require("../assets/images/dua/guides/marriage.jpg"),
+  },
+  {
+    label: "Zakat",
+    subtitle: "Calculer & comprendre",
+    route: "/zakat",
+    image: require("../assets/images/dua/guides/debt.jpg"),
+  },
+  {
+    label: "Calendrier",
+    subtitle: "Hijri & événements",
+    route: "/calendar",
+    image: require("../assets/images/home/shortcuts/calendar-real.jpg"),
   },
 ] as const;
 

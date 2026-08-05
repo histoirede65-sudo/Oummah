@@ -1,17 +1,66 @@
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
-import { router } from "expo-router";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import type { Href } from "expo-router";
+import { router, useFocusEffect } from "expo-router";
+import { useCallback, useEffect, useState } from "react";
+import { AppState, Pressable, StyleSheet, Text, View } from "react-native";
 
+import { hadithRepository } from "../../features/hadith-explorer/data/hadithRepository";
+import type { Hadith } from "../../features/hadith-explorer/domain/Hadith";
 import { colors } from "../../theme/colors";
 import { typography } from "../../theme/typography";
 
 export default function HadithCard() {
+  const [daily, setDaily] = useState<Hadith | null>(null);
+
+  const loadDailyHadith = useCallback(async () => {
+    try {
+      const hadith = await hadithRepository.daily();
+      setDaily(hadith);
+    } catch {
+      // Conserve le dernier hadith affiché si le rechargement échoue.
+    }
+  }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      let active = true;
+
+      void hadithRepository
+        .daily()
+        .then((hadith) => {
+          if (active) setDaily(hadith);
+        })
+        .catch(() => undefined);
+
+      return () => {
+        active = false;
+      };
+    }, []),
+  );
+
+  useEffect(() => {
+    const subscription = AppState.addEventListener("change", (state) => {
+      if (state === "active") void loadDailyHadith();
+    });
+
+    return () => subscription.remove();
+  }, [loadDailyHadith]);
+
+  const openDailyHadith = () => {
+    if (daily?.id) {
+      router.push(`/hadith/${daily.id}` as Href);
+      return;
+    }
+
+    router.push("/hadiths" as Href);
+  };
+
   return (
     <Pressable
       accessibilityRole="button"
       accessibilityLabel="Ouvrir le hadith du jour"
-      onPress={() => router.push("/hadith")}
+      onPress={openDailyHadith}
       style={({ pressed }) => [styles.card, pressed && styles.pressed]}
     >
       <LinearGradient
@@ -29,9 +78,11 @@ export default function HadithCard() {
         <Text style={styles.title}>Hadith du jour</Text>
       </View>
       <Text numberOfLines={3} style={styles.bodyText}>
-        Les meilleures œuvres sont celles accomplies régulièrement…
+        {daily?.french || "Chargement du hadith du jour…"}
       </Text>
-      <Text style={styles.reference}>Bukhari &amp; Muslim</Text>
+      <Text numberOfLines={1} style={styles.reference}>
+        {daily?.reference || ""}
+      </Text>
     </Pressable>
   );
 }

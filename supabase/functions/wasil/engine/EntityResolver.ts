@@ -68,6 +68,8 @@ const KIND_PATTERNS: Array<{ kind: EntityKindHint; pattern: RegExp }> = [
 
 const LEADING_TITLES = /^(?:(?:le|la|l['’])\s+)?(?:proph[eè]te|compagnon|imam|savant|cheikh|shaykh|calife|sourate|surah)\s+/iu;
 const TRAILING_HONORIFICS = /(?:\s*[,(]?\s*(?:رضي الله عنه|رضي الله عنها|عليه السلام|ﷺ|sallallahu alayhi wa sallam|paix sur lui|qu['’]allah soit satisfait de lui|qu['’]allah soit satisfaite d['’]elle)\s*[)]?\s*)+$/iu;
+const INJECTED_GUIDANCE_MARKER = /\s+(?:INTERPR[ÉE]TATION\s+ISLAMIQUE\s+PRIORITAIRE|ISLAMIC\s+INTERPRETATION\s+PRIORITY)\s*:/iu;
+const TRAILING_CONTEXT = /\s+(?:selon|dans|d['’]apr[eè]s)\s+(?:(?:le|la|les)\s+)?(?:coran|qur['’]?an|hadiths?|sunna|sunnah|islam)(?:\s+.*)?$/iu;
 
 export function normalizeEntityText(value: string): string {
   return value
@@ -80,10 +82,15 @@ export function normalizeEntityText(value: string): string {
     .toLowerCase();
 }
 
+function stripInjectedGuidance(value: string): string {
+  return value.split(INJECTED_GUIDANCE_MARKER, 1)[0]?.trim() ?? value.trim();
+}
+
 function cleanCandidate(value: string): string {
-  return value
+  return stripInjectedGuidance(value)
     .replace(/^[\s:,-]+|[\s?.!,:;-]+$/g, "")
     .replace(TRAILING_HONORIFICS, "")
+    .replace(TRAILING_CONTEXT, "")
     .replace(LEADING_TITLES, "")
     .replace(/\s+/g, " ")
     .trim();
@@ -157,10 +164,11 @@ function buildCandidate(
  */
 export function resolveEntityCandidate(question: string): EntityResolution {
   const compact = question.replace(/\s+/g, " ").trim();
-  if (!compact) return { status: "no_candidate", candidate: null };
+  const extractionInput = stripInjectedGuidance(compact);
+  if (!extractionInput) return { status: "no_candidate", candidate: null };
 
   for (const extractor of QUESTION_PREFIXES) {
-    const match = compact.match(extractor.pattern);
+    const match = extractionInput.match(extractor.pattern);
     if (!match) continue;
 
     const rawValue = extractor.method === "typed_question" ? match[2] : match[1];
@@ -174,15 +182,15 @@ export function resolveEntityCandidate(question: string): EntityResolution {
     }
   }
 
-  const words = compact.split(" ");
+  const words = extractionInput.split(" ");
   const looksLikeBareEntity =
     words.length >= 1 &&
     words.length <= 8 &&
-    !/[?]/.test(compact) &&
+    !/[?]/.test(extractionInput) &&
     words.every((word) => /^[\p{L}\p{N}][\p{L}\p{N}’'`´.-]*$/u.test(word));
 
   if (looksLikeBareEntity) {
-    return buildCandidate(compact, compact, "bare_entity", 0.58);
+    return buildCandidate(extractionInput, compact, "bare_entity", 0.58);
   }
 
   return { status: "no_candidate", candidate: null };

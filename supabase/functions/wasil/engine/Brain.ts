@@ -44,6 +44,7 @@ export type WasilProductionExecutionPlan = {
   category:
     | "quran_overview"
     | "prophet_biography"
+    | "companion_biography"
     | "fiqh"
     | "aqidah"
     | "hadith"
@@ -221,7 +222,8 @@ function categoryFromBrainPlan(
   if (skills.has("fiqh") || skills.has("prayer")) return "fiqh";
   if (skills.has("hadith")) return "hadith";
   if (skills.has("dua")) return "dua";
-  if (skills.has("companion") || skills.has("sirah") || skills.has("scholar")) {
+  if (skills.has("companion")) return "companion_biography";
+  if (skills.has("sirah") || skills.has("scholar")) {
     return "prophet_biography";
   }
   if (skills.has("quran") || skills.has("tafsir")) return "quran_overview";

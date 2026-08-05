@@ -8,9 +8,10 @@ import { typography } from "../../theme/typography";
 type Props = {
   prompt: string;
   compact?: boolean;
+  largeLabel?: boolean;
 };
 
-export function WasilContextButton({ prompt, compact = false }: Props) {
+export function WasilContextButton({ prompt, compact = false, largeLabel = false }: Props) {
   const openWasil = () => {
     router.push({
       pathname: "/dalil",
@@ -34,7 +35,7 @@ export function WasilContextButton({ prompt, compact = false }: Props) {
         size={compact ? 15 : 16}
         color={colors.goldLight}
       />
-      {!compact ? <Text style={styles.label}>Expliquer avec Wasil</Text> : null}
+      {!compact ? <Text style={[styles.label, largeLabel && styles.largeLabel]}>Expliquer avec Wasil</Text> : null}
     </Pressable>
   );
 }
@@ -68,6 +69,7 @@ const styles = StyleSheet.create({
     fontSize: 10,
     fontWeight: "700",
   },
+  largeLabel: { fontSize: 13, fontWeight: "800" },
   pressed: {
     opacity: 0.72,
     transform: [{ scale: 0.98 }],

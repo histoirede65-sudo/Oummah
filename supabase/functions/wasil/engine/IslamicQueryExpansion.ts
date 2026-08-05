@@ -20,6 +20,167 @@ export type IslamicQueryExpansion = {
   directEvidenceDescription: string;
 };
 
+
+const PROPHET_BIOGRAPHY_EXPANSIONS: Array<{
+  canonicalName: string;
+  arabicName: string;
+  aliases: string[];
+  searchTerms: string[];
+}> = [
+  { canonicalName: "Âdam", arabicName: "آدم", aliases: ["adam", "âdam"], searchTerms: ["Adam", "آدم"] },
+  { canonicalName: "Idrîs", arabicName: "إدريس", aliases: ["idris", "idriss", "idrîs"], searchTerms: ["Idris", "إدريس"] },
+  { canonicalName: "Nûh", arabicName: "نوح", aliases: ["nouh", "nuh", "noe", "noé"], searchTerms: ["Nuh", "Noé", "نوح"] },
+  { canonicalName: "Hûd", arabicName: "هود", aliases: ["houd", "hud", "hûd"], searchTerms: ["Hud", "هود"] },
+  { canonicalName: "Sâlih", arabicName: "صالح", aliases: ["salih", "saleh", "sâlih"], searchTerms: ["Salih", "صالح"] },
+  { canonicalName: "Ibrâhîm", arabicName: "إبراهيم", aliases: ["ibrahim", "ibrâhîm", "abraham"], searchTerms: ["Ibrahim", "Abraham", "إبراهيم"] },
+  { canonicalName: "Lût", arabicName: "لوط", aliases: ["lout", "lut", "loth", "lût"], searchTerms: ["Lut", "Loth", "لوط"] },
+  { canonicalName: "Ismâ‘îl", arabicName: "إسماعيل", aliases: ["ismail", "ismael", "ismaël", "ismâ‘îl"], searchTerms: ["Ismail", "Ismaël", "إسماعيل"] },
+  { canonicalName: "Ishâq", arabicName: "إسحاق", aliases: ["ishaq", "ishak", "isaac", "ishâq"], searchTerms: ["Ishaq", "Isaac", "إسحاق"] },
+  { canonicalName: "Ya‘qûb", arabicName: "يعقوب", aliases: ["yaqub", "yacoub", "jacob", "ya‘qûb"], searchTerms: ["Yaqub", "Jacob", "يعقوب"] },
+  { canonicalName: "Yûsuf", arabicName: "يوسف", aliases: ["yusuf", "youssouf", "joseph", "yûsuf"], searchTerms: ["Yusuf", "Joseph", "يوسف"] },
+  { canonicalName: "Shu‘ayb", arabicName: "شعيب", aliases: ["chouayb", "shuayb", "shuaib"], searchTerms: ["Shuayb", "شعيب"] },
+  { canonicalName: "Ayyûb", arabicName: "أيوب", aliases: ["ayoub", "ayyub", "job", "ayyûb"], searchTerms: ["Ayyub", "Job", "أيوب"] },
+  { canonicalName: "Dhûl-Kifl", arabicName: "ذو الكفل", aliases: ["dhu al kifl", "dhul kifl", "doul kifl"], searchTerms: ["Dhul-Kifl", "ذو الكفل"] },
+  { canonicalName: "Mûsâ", arabicName: "موسى", aliases: ["moussa", "musa", "moise", "moïse", "mûsâ"], searchTerms: ["Musa", "Moïse", "موسى"] },
+  { canonicalName: "Hârûn", arabicName: "هارون", aliases: ["haroun", "harun", "aaron", "hârûn"], searchTerms: ["Harun", "Aaron", "هارون"] },
+  { canonicalName: "Dâwûd", arabicName: "داود", aliases: ["daoud", "dawud", "david", "dâwûd"], searchTerms: ["Dawud", "David", "داود"] },
+  { canonicalName: "Sulaymân", arabicName: "سليمان", aliases: ["souleymane", "souleiman", "suleyman", "sulayman", "salomon"], searchTerms: ["Sulayman", "Salomon", "سليمان"] },
+  { canonicalName: "Ilyâs", arabicName: "إلياس", aliases: ["ilyas", "elias", "élie", "ilyâs"], searchTerms: ["Ilyas", "Élie", "إلياس"] },
+  { canonicalName: "Al-Yasa‘", arabicName: "اليسع", aliases: ["alyasa", "al yasa", "elisee", "élisée"], searchTerms: ["Al-Yasa", "Élisée", "اليسع"] },
+  { canonicalName: "Yûnus", arabicName: "يونس", aliases: ["younes", "younous", "yunus", "jonas", "yûnus"], searchTerms: ["Yunus", "Jonas", "يونس"] },
+  { canonicalName: "Zakariyyâ", arabicName: "زكريا", aliases: ["zakaria", "zakariya", "zakariyya", "zacharie"], searchTerms: ["Zakariya", "Zacharie", "زكريا"] },
+  { canonicalName: "Yahyâ", arabicName: "يحيى", aliases: ["yahya", "yahia", "jean baptiste", "jean-baptiste"], searchTerms: ["Yahya", "Jean-Baptiste", "يحيى"] },
+  { canonicalName: "‘Îsâ", arabicName: "عيسى", aliases: ["issa", "isa", "jesus", "jésus", "‘îsâ"], searchTerms: ["Isa", "Jésus", "عيسى"] },
+  { canonicalName: "Muhammad ﷺ", arabicName: "محمد", aliases: ["muhammad", "mohammed", "mohamed", "prophete muhammad", "prophète muhammad"], searchTerms: ["Muhammad", "محمد"] },
+];
+
+function normalizeProphetLookup(value: string): string {
+  return value
+    .toLocaleLowerCase("fr")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[’']/g, " ")
+    .replace(/[^a-z0-9\s-]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+export function buildProphetBiographyExpansion(
+  question: string,
+): IslamicQueryExpansion | null {
+  const normalized = normalizeProphetLookup(question);
+  const prophet = PROPHET_BIOGRAPHY_EXPANSIONS.find((entry) =>
+    entry.aliases.some((alias) => {
+      const normalizedAlias = normalizeProphetLookup(alias);
+      return new RegExp(`(?:^|\\s)${normalizedAlias.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}(?:$|\\s)`).test(normalized);
+    })
+  );
+  if (!prophet) return null;
+
+  const cleanTerms = uniqueTerms([
+    prophet.canonicalName,
+    ...prophet.searchTerms,
+    ...prophet.aliases.slice(0, 3),
+    `prophète ${prophet.canonicalName}`,
+    `histoire de ${prophet.canonicalName}`,
+  ], 8);
+
+  const expansion: IslamicQueryExpansion = {
+    isIslamicEntity: true,
+    entityType: "prophet",
+    canonicalName: prophet.canonicalName,
+    arabicName: prophet.arabicName,
+    aliases: uniqueTerms(prophet.aliases, 8),
+    quranSearchTerms: cleanTerms,
+    hadithSearchTerms: cleanTerms,
+    evidenceTerms: uniqueTerms([prophet.canonicalName, ...prophet.searchTerms], 6),
+    relatedTerms: [],
+    directEvidenceDescription:
+      `Passages qui racontent directement l’histoire du prophète ${prophet.canonicalName}.`,
+  };
+
+  console.log("WASIL_ISLAMIC_QUERY_EXPANSION", {
+    canonicalName: expansion.canonicalName,
+    entityType: expansion.entityType,
+    expansionMode: "deterministic-prophet-biography",
+    quranSearchTerms: expansion.quranSearchTerms,
+    hadithSearchTerms: expansion.hadithSearchTerms,
+    evidenceTerms: expansion.evidenceTerms,
+  });
+
+  return expansion;
+}
+
+
+const COMPANION_BIOGRAPHY_EXPANSIONS: Array<{
+  canonicalName: string;
+  arabicName: string;
+  aliases: string[];
+}> = [
+  { canonicalName: "Abû Bakr as-Siddîq", arabicName: "أبو بكر الصديق", aliases: ["abu bakr", "abou bakr", "abu bakr as siddiq", "abou bakr as siddiq"] },
+  { canonicalName: "‘Umar ibn al-Khattâb", arabicName: "عمر بن الخطاب", aliases: ["umar", "omar", "umar ibn al khattab", "omar ibn al khattab"] },
+  { canonicalName: "‘Uthmân ibn ‘Affân", arabicName: "عثمان بن عفان", aliases: ["uthman", "othman", "osman", "uthman ibn affan", "othman ibn affan"] },
+  { canonicalName: "‘Alî ibn Abî Tâlib", arabicName: "علي بن أبي طالب", aliases: ["ali", "ali ibn abi talib", "ali ibn abou talib"] },
+  { canonicalName: "Bilâl ibn Rabâh", arabicName: "بلال بن رباح", aliases: ["bilal", "bilal ibn rabah"] },
+  { canonicalName: "Khâlid ibn al-Walîd", arabicName: "خالد بن الوليد", aliases: ["khalid", "khaled", "khalid ibn al walid", "khaled ibn al walid"] },
+  { canonicalName: "Salmân al-Fârisî", arabicName: "سلمان الفارسي", aliases: ["salman", "salman al farisi", "salmane al farisi"] },
+  { canonicalName: "Abû Hurayra", arabicName: "أبو هريرة", aliases: ["abu hurayra", "abou hourayra", "abu huraira", "abou houreira"] },
+  { canonicalName: "‘Â’isha", arabicName: "عائشة", aliases: ["aisha", "aicha", "ayesha"] },
+  { canonicalName: "Khadîja", arabicName: "خديجة", aliases: ["khadija", "khadidja"] },
+];
+
+export function buildCompanionBiographyExpansion(
+  question: string,
+  resolvedName?: string | null,
+): IslamicQueryExpansion | null {
+  const normalizedQuestion = normalizeProphetLookup(`${resolvedName ?? ""} ${question}`);
+  const companion = COMPANION_BIOGRAPHY_EXPANSIONS.find((entry) =>
+    entry.aliases.some((alias) => {
+      const normalizedAlias = normalizeProphetLookup(alias);
+      return new RegExp(`(?:^|\\s)${normalizedAlias.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}(?:$|\\s)`).test(normalizedQuestion);
+    })
+  );
+
+  const fallbackName = resolvedName?.trim();
+  if (!companion && !fallbackName) return null;
+
+  const canonicalName = companion?.canonicalName ?? fallbackName!;
+  const arabicName = companion?.arabicName ?? "";
+  const aliases = uniqueTerms(companion?.aliases ?? [canonicalName], 8);
+  const cleanTerms = uniqueTerms([
+    canonicalName,
+    arabicName,
+    ...aliases,
+    `compagnon ${canonicalName}`,
+    `biographie ${canonicalName}`,
+  ], 8);
+
+  const expansion: IslamicQueryExpansion = {
+    isIslamicEntity: true,
+    entityType: "companion",
+    canonicalName,
+    arabicName,
+    aliases,
+    quranSearchTerms: cleanTerms,
+    hadithSearchTerms: cleanTerms,
+    evidenceTerms: uniqueTerms([canonicalName, arabicName, ...aliases], 6),
+    relatedTerms: [],
+    directEvidenceDescription:
+      `Sources qui établissent directement la biographie du compagnon ${canonicalName}.`,
+  };
+
+  console.log("WASIL_ISLAMIC_QUERY_EXPANSION", {
+    canonicalName: expansion.canonicalName,
+    entityType: expansion.entityType,
+    expansionMode: "deterministic-companion-biography",
+    quranSearchTerms: expansion.quranSearchTerms,
+    hadithSearchTerms: expansion.hadithSearchTerms,
+    evidenceTerms: expansion.evidenceTerms,
+  });
+
+  return expansion;
+}
+
 type ExpansionPayload = {
   output_text?: string;
   output?: Array<{
@@ -390,7 +551,7 @@ async function requestModelExpansion(
   const model = Deno.env.get("WASIL_MODEL_RETRIEVAL") ??
     Deno.env.get("WASIL_MODEL_STANDARD") ?? "gpt-5.6-luna";
   const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 2500);
+  const timeout = setTimeout(() => controller.abort(), 500);
 
   try {
     const response = await fetch("https://api.openai.com/v1/responses", {

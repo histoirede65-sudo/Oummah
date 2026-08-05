@@ -1,10 +1,16 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { getValidSession } from '../../auth/SupabaseAuthService';
+import { getDeterministicMosqueImageKey } from './mosqueImage';
 
 export type UserMosqueFeatureState =
   | 'yes'
   | 'no'
   | 'limited'
   | 'unknown';
+
+export type MosqueValidationStatus =
+  | 'pending'
+  | 'approved'
+  | 'rejected';
 
 export type UserMosque = {
   id: string;
@@ -14,7 +20,7 @@ export type UserMosque = {
   longitude: number;
   source: 'user';
   imageKey: string;
-  validationStatus: 'local';
+  validationStatus: MosqueValidationStatus;
   createdAt: string;
   updatedAt: string;
   alternativeName?: string;
@@ -49,13 +55,48 @@ export type CreateUserMosqueInput = Omit<
 export type UpdateUserMosqueInput = Partial<
   Omit<
     UserMosque,
-    'id' | 'source' | 'imageKey' | 'validationStatus' | 'createdAt'
+    | 'id'
+    | 'source'
+    | 'imageKey'
+    | 'validationStatus'
+    | 'createdAt'
   >
 > & {
   source?: 'user';
 };
 
-const USER_MOSQUES_KEY = 'oummah.mosques.user.v1';
+type MosqueSubmissionRow = {
+  id: string;
+  name: string;
+  address: string;
+  latitude: number;
+  longitude: number;
+  image_key: string;
+  validation_status: MosqueValidationStatus;
+  created_at: string;
+  updated_at: string;
+  alternative_name: string | null;
+  arabic_name: string | null;
+  phone: string | null;
+  email: string | null;
+  website: string | null;
+  opening_hours: string | null;
+  operator: string | null;
+  denomination: string | null;
+  wheelchair: UserMosqueFeatureState | null;
+  women_space: UserMosqueFeatureState | null;
+  ablutions: UserMosqueFeatureState | null;
+  parking: UserMosqueFeatureState | null;
+  toilets: UserMosqueFeatureState | null;
+  languages: string[] | null;
+  service_times: string[] | null;
+};
+
+const SUPABASE_URL =
+  process.env.EXPO_PUBLIC_SUPABASE_URL?.replace(/\/+$/, '');
+
+const SUPABASE_ANON_KEY =
+  process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY;
 
 const USER_MOSQUE_IMAGE_KEYS = [
   'mosque-a-00',
@@ -84,7 +125,37 @@ const USER_MOSQUE_IMAGE_KEYS = [
   'mosque-b-11',
   'mosque-coastal',
   'mosque-neighborhood',
+  'mosque-c-00',
+  'mosque-c-01',
+  'mosque-c-02',
+  'mosque-c-03',
+  'mosque-c-04',
+  'mosque-c-05',
+  'mosque-c-06',
+  'mosque-c-07',
+  'mosque-c-08',
+  'mosque-c-09',
+  'mosque-c-10',
+  'mosque-c-11',
+  'mosque-d-00',
+  'mosque-d-01',
+  'mosque-d-02',
+  'mosque-d-03',
+  'mosque-d-04',
+  'mosque-d-05',
+  'mosque-d-06',
+  'mosque-d-07',
+  'mosque-d-08',
+  'mosque-d-09',
+  'mosque-d-10',
+  'mosque-d-11',
 ] as const;
+
+function assertSupabaseConfiguration() {
+  if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
+    throw new Error('USER_MOSQUE_SUPABASE_NOT_CONFIGURED');
+  }
+}
 
 function isFiniteNumber(value: unknown): value is number {
   return typeof value === 'number' && Number.isFinite(value);
@@ -108,7 +179,10 @@ function cleanStringArray(value: unknown) {
   return cleaned.length > 0 ? cleaned : undefined;
 }
 
-function assertCoordinates(latitude: unknown, longitude: unknown) {
+function assertCoordinates(
+  latitude: unknown,
+  longitude: unknown,
+) {
   if (
     !isFiniteNumber(latitude) ||
     latitude < -90 ||
@@ -121,7 +195,10 @@ function assertCoordinates(latitude: unknown, longitude: unknown) {
   }
 }
 
-function assertRequiredFields(name: unknown, address: unknown) {
+function assertRequiredFields(
+  name: unknown,
+  address: unknown,
+) {
   if (!cleanOptionalString(name)) {
     throw new Error('USER_MOSQUE_NAME_REQUIRED');
   }
@@ -131,66 +208,15 @@ function assertRequiredFields(name: unknown, address: unknown) {
   }
 }
 
-function createLocalId() {
-  return `user-mosque-${Date.now().toString(36)}-${Math.random()
-    .toString(36)
-    .slice(2, 10)}`;
-}
-
-function selectImageKey() {
-  const index = Math.floor(Math.random() * USER_MOSQUE_IMAGE_KEYS.length);
-  return USER_MOSQUE_IMAGE_KEYS[index] ?? USER_MOSQUE_IMAGE_KEYS[0];
-}
-
-function isUserMosque(value: unknown): value is UserMosque {
-  if (!value || typeof value !== 'object') return false;
-
-  const mosque = value as Partial<UserMosque>;
-
-  return (
-    typeof mosque.id === 'string' &&
-    typeof mosque.name === 'string' &&
-    mosque.name.trim().length > 0 &&
-    typeof mosque.address === 'string' &&
-    mosque.address.trim().length > 0 &&
-    isFiniteNumber(mosque.latitude) &&
-    mosque.latitude >= -90 &&
-    mosque.latitude <= 90 &&
-    isFiniteNumber(mosque.longitude) &&
-    mosque.longitude >= -180 &&
-    mosque.longitude <= 180 &&
-    mosque.source === 'user' &&
-    typeof mosque.imageKey === 'string' &&
-    (USER_MOSQUE_IMAGE_KEYS as readonly string[]).includes(mosque.imageKey) &&
-    mosque.validationStatus === 'local' &&
-    typeof mosque.createdAt === 'string' &&
-    typeof mosque.updatedAt === 'string'
-  );
-}
-
-async function readUserMosques() {
-  try {
-    const rawValue = await AsyncStorage.getItem(USER_MOSQUES_KEY);
-    if (!rawValue) return [];
-
-    const parsed: unknown = JSON.parse(rawValue);
-    return Array.isArray(parsed) ? parsed.filter(isUserMosque) : [];
-  } catch {
-    return [];
-  }
-}
-
-async function writeUserMosques(mosques: UserMosque[]) {
-  await AsyncStorage.setItem(USER_MOSQUES_KEY, JSON.stringify(mosques));
-}
-
 function normalizeFields(
   input: CreateUserMosqueInput | UpdateUserMosqueInput,
 ) {
   return {
     name: cleanOptionalString(input.name),
     address: cleanOptionalString(input.address),
-    alternativeName: cleanOptionalString(input.alternativeName),
+    alternativeName: cleanOptionalString(
+      input.alternativeName,
+    ),
     arabicName: cleanOptionalString(input.arabicName),
     phone: cleanOptionalString(input.phone),
     email: cleanOptionalString(input.email),
@@ -208,90 +234,218 @@ function normalizeFields(
   };
 }
 
+function toUserMosque(row: MosqueSubmissionRow): UserMosque {
+  return {
+    id: row.id,
+    name: row.name,
+    address: row.address,
+    latitude: row.latitude,
+    longitude: row.longitude,
+    source: 'user',
+    imageKey: row.image_key,
+    validationStatus: row.validation_status,
+    createdAt: row.created_at,
+    updatedAt: row.updated_at,
+    alternativeName: row.alternative_name ?? undefined,
+    arabicName: row.arabic_name ?? undefined,
+    phone: row.phone ?? undefined,
+    email: row.email ?? undefined,
+    website: row.website ?? undefined,
+    openingHours: row.opening_hours ?? undefined,
+    operator: row.operator ?? undefined,
+    denomination: row.denomination ?? undefined,
+    wheelchair: row.wheelchair ?? undefined,
+    womenSpace: row.women_space ?? undefined,
+    ablutions: row.ablutions ?? undefined,
+    parking: row.parking ?? undefined,
+    toilets: row.toilets ?? undefined,
+    languages: row.languages ?? undefined,
+    serviceTimes: row.service_times ?? undefined,
+  };
+}
+
+function buildHeaders(preferRepresentation = false) {
+  assertSupabaseConfiguration();
+
+  return {
+    apikey: SUPABASE_ANON_KEY!,
+    Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+    'Content-Type': 'application/json',
+    ...(preferRepresentation
+      ? { Prefer: 'return=representation' }
+      : {}),
+  };
+}
+
+async function buildAuthenticatedHeaders(preferRepresentation = false) {
+  assertSupabaseConfiguration();
+
+  const session = await getValidSession();
+  if (!session?.accessToken) {
+    throw new Error('USER_MOSQUE_AUTH_REQUIRED');
+  }
+
+  return {
+    apikey: SUPABASE_ANON_KEY!,
+    Authorization: `Bearer ${session.accessToken}`,
+    'Content-Type': 'application/json',
+    ...(preferRepresentation
+      ? { Prefer: 'return=representation' }
+      : {}),
+  };
+}
+
+/**
+ * Retourne uniquement les mosquées approuvées.
+ * Les propositions pending/rejected restent invisibles dans la liste publique.
+ */
 export async function getUserMosques(): Promise<UserMosque[]> {
-  return readUserMosques();
+  assertSupabaseConfiguration();
+
+  const params = new URLSearchParams({
+    select: '*',
+    validation_status: 'eq.approved',
+    is_hidden: 'eq.false',
+    order: 'created_at.desc',
+  });
+
+  const response = await fetch(
+    `${SUPABASE_URL}/rest/v1/mosque_submissions?${params.toString()}`,
+    {
+      method: 'GET',
+      headers: buildHeaders(),
+    },
+  );
+
+  if (!response.ok) {
+    throw new Error('USER_MOSQUE_LIST_FAILED');
+  }
+
+  const rows = (await response.json()) as MosqueSubmissionRow[];
+  return rows.map(toUserMosque);
 }
 
 export async function getUserMosqueById(
   id: string,
 ): Promise<UserMosque | null> {
-  const mosque = (await readUserMosques()).find((item) => item.id === id);
-  return mosque ?? null;
+  assertSupabaseConfiguration();
+
+  const params = new URLSearchParams({
+    select: '*',
+    id: `eq.${id}`,
+    validation_status: 'eq.approved',
+    is_hidden: 'eq.false',
+    limit: '1',
+  });
+
+  const response = await fetch(
+    `${SUPABASE_URL}/rest/v1/mosque_submissions?${params.toString()}`,
+    {
+      method: 'GET',
+      headers: buildHeaders(),
+    },
+  );
+
+  if (!response.ok) {
+    throw new Error('USER_MOSQUE_READ_FAILED');
+  }
+
+  const rows = (await response.json()) as MosqueSubmissionRow[];
+  return rows[0] ? toUserMosque(rows[0]) : null;
 }
 
+/**
+ * Envoie une proposition avec la session de l'utilisateur connecté.
+ * Supabase décide seul du statut : owner/admin = approved, sinon pending.
+ */
 export async function createUserMosque(
   input: CreateUserMosqueInput,
 ): Promise<UserMosque> {
-  if (input.source !== undefined && input.source !== 'user') {
+  if (
+    input.source !== undefined &&
+    input.source !== 'user'
+  ) {
     throw new Error('USER_MOSQUE_SOURCE_INVALID');
   }
 
   assertRequiredFields(input.name, input.address);
   assertCoordinates(input.latitude, input.longitude);
 
-  const now = new Date().toISOString();
   const fields = normalizeFields(input);
-  const mosque: UserMosque = {
-    ...fields,
+
+  const payload = {
     name: fields.name!,
     address: fields.address!,
     latitude: input.latitude,
     longitude: input.longitude,
-    id: createLocalId(),
-    source: 'user',
-    imageKey: selectImageKey(),
-    validationStatus: 'local',
-    createdAt: now,
-    updatedAt: now,
+    image_key: USER_MOSQUE_IMAGE_KEYS[0],
+    alternative_name: fields.alternativeName ?? null,
+    arabic_name: fields.arabicName ?? null,
+    phone: fields.phone ?? null,
+    email: fields.email ?? null,
+    website: fields.website ?? null,
+    opening_hours: fields.openingHours ?? null,
+    operator: fields.operator ?? null,
+    denomination: fields.denomination ?? null,
+    wheelchair: fields.wheelchair ?? 'unknown',
+    women_space: fields.womenSpace ?? 'unknown',
+    ablutions: fields.ablutions ?? 'unknown',
+    parking: fields.parking ?? 'unknown',
+    toilets: fields.toilets ?? 'unknown',
+    languages: fields.languages ?? [],
+    service_times: fields.serviceTimes ?? [],
   };
 
-  const mosques = await readUserMosques();
-  await writeUserMosques([...mosques, mosque]);
-  return mosque;
-}
+  const response = await fetch(
+    `${SUPABASE_URL}/rest/v1/mosque_submissions`,
+    {
+      method: 'POST',
+      headers: await buildAuthenticatedHeaders(true),
+      body: JSON.stringify(payload),
+    },
+  );
 
-export async function updateUserMosque(
-  id: string,
-  updates: UpdateUserMosqueInput,
-): Promise<UserMosque | null> {
-  if (updates.source !== undefined && updates.source !== 'user') {
-    throw new Error('USER_MOSQUE_SOURCE_INVALID');
+  if (!response.ok) {
+    throw new Error('USER_MOSQUE_CREATE_FAILED');
   }
 
-  const mosques = await readUserMosques();
-  const index = mosques.findIndex((mosque) => mosque.id === id);
-  if (index < 0) return null;
+  const rows = (await response.json()) as MosqueSubmissionRow[];
+  const row = rows[0];
 
-  const current = mosques[index];
-  const nextFields = normalizeFields(updates);
-  const nextName = nextFields.name ?? current.name;
-  const nextAddress = nextFields.address ?? current.address;
-  const nextLatitude = updates.latitude ?? current.latitude;
-  const nextLongitude = updates.longitude ?? current.longitude;
+  if (!row) {
+    throw new Error('USER_MOSQUE_CREATE_EMPTY');
+  }
 
-  assertRequiredFields(nextName, nextAddress);
-  assertCoordinates(nextLatitude, nextLongitude);
+  const deterministicImageKey = getDeterministicMosqueImageKey(row.id);
+  const updateResponse = await fetch(
+    `${SUPABASE_URL}/rest/v1/mosque_submissions?id=eq.${encodeURIComponent(row.id)}`,
+    {
+      method: 'PATCH',
+      headers: await buildAuthenticatedHeaders(true),
+      body: JSON.stringify({ image_key: deterministicImageKey }),
+    },
+  );
 
-  const updated: UserMosque = {
-    ...current,
-    ...nextFields,
-    name: nextName,
-    address: nextAddress,
-    latitude: nextLatitude,
-    longitude: nextLongitude,
-    updatedAt: new Date().toISOString(),
-  };
+  if (!updateResponse.ok) {
+    throw new Error('USER_MOSQUE_IMAGE_ASSIGNMENT_FAILED');
+  }
 
-  mosques[index] = updated;
-  await writeUserMosques(mosques);
-  return updated;
+  return toUserMosque({ ...row, image_key: deterministicImageKey });
 }
 
-export async function deleteUserMosque(id: string): Promise<boolean> {
-  const mosques = await readUserMosques();
-  const nextMosques = mosques.filter((mosque) => mosque.id !== id);
-  if (nextMosques.length === mosques.length) return false;
+/**
+ * Les modifications et suppressions publiques sont volontairement bloquées.
+ * Une proposition doit être corrigée/validée depuis l'administration Supabase.
+ */
+export async function updateUserMosque(
+  _id: string,
+  _updates: UpdateUserMosqueInput,
+): Promise<UserMosque | null> {
+  throw new Error('USER_MOSQUE_ADMIN_REVIEW_REQUIRED');
+}
 
-  await writeUserMosques(nextMosques);
-  return true;
+export async function deleteUserMosque(
+  _id: string,
+): Promise<boolean> {
+  throw new Error('USER_MOSQUE_ADMIN_REVIEW_REQUIRED');
 }

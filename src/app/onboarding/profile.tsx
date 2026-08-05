@@ -271,7 +271,7 @@ export default function ProfileOnboardingScreen() {
           onboardingStep: 5,
         });
         await markProfileCompleted(userId);
-        router.replace("/profile");
+        router.replace({ pathname: "/", params: { welcome: "1" } });
       }
     } catch {
       setError("La sauvegarde a échoué. Vérifiez votre connexion puis réessayez.");

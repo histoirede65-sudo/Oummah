@@ -4,7 +4,9 @@ import { router } from "expo-router";
 import type { ImageSourcePropType } from "react-native";
 import { Image, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useEffect, useState } from "react";
 import { HADITH_COLLECTIONS } from "../../features/hadith-explorer/domain/HadithCollection";
+import { fetchPublishedCollectionAvailability } from "../../features/hadith-explorer/data/hadithDataSource";
 import HadithScreenHeader from "../../features/hadith-explorer/presentation/HadithScreenHeader";
 import { colors } from "../../theme/colors";
 import { typography } from "../../theme/typography";
@@ -21,7 +23,20 @@ const COLLECTION_COVERS: ImageSourcePropType[] = [
   require("../../assets/images/hadith-collections/forty-nawawi.png"),
 ];
 
+const HIDDEN_COLLECTION_IDS = new Set(["riyad", "adab", "nasai"]);
+
 export default function HadithCollectionsScreen() {
+  const [availableCollections, setAvailableCollections] = useState<Set<string> | null>(null);
+  const fallbackAvailableCollections = new Set(["nasai", "nawawi"]);
+
+  useEffect(() => {
+    let active = true;
+    void fetchPublishedCollectionAvailability(HADITH_COLLECTIONS)
+      .then((available) => active && setAvailableCollections(available))
+      .catch(() => active && setAvailableCollections(null));
+    return () => { active = false; };
+  }, []);
+
   return (
     <LinearGradient colors={["#080713", "#120A1D", "#080713"]} style={styles.screen}>
       <SafeAreaView edges={["top"]} style={styles.safe}>
@@ -47,9 +62,13 @@ export default function HadithCollectionsScreen() {
           </View>
 
           <View style={styles.grid}>
-            {HADITH_COLLECTIONS.map((collection, index) => (
+            {HADITH_COLLECTIONS
+              .map((collection, index) => ({ collection, index }))
+              .filter(({ collection }) => !HIDDEN_COLLECTION_IDS.has(collection.id))
+              .map(({ collection, index }, visibleIndex) => (
               <Pressable
                 key={collection.id}
+                disabled={availableCollections !== null && !availableCollections.has(collection.id) && !fallbackAvailableCollections.has(collection.id)}
                 onPress={() =>
                   router.push({
                     pathname: "/hadith/collection/[collectionId]",
@@ -58,7 +77,7 @@ export default function HadithCollectionsScreen() {
                 }
                 style={({ pressed }) => [
                   styles.card,
-                  pressed && styles.pressed,
+                  pressed && (availableCollections?.has(collection.id) || fallbackAvailableCollections.has(collection.id)) && styles.pressed,
                 ]}
               >
                 <LinearGradient
@@ -92,7 +111,7 @@ export default function HadithCollectionsScreen() {
                 />
 
                 <View style={styles.ornament}>
-                  <Text style={styles.ornamentText}>{index + 1}</Text>
+                  <Text style={styles.ornamentText}>{visibleIndex + 1}</Text>
                 </View>
 
                 <View style={styles.topContent}>
@@ -116,7 +135,7 @@ export default function HadithCollectionsScreen() {
                   </Text>
                 </View>
 
-                <View style={styles.footer}>
+                <View style={[styles.footer, availableCollections !== null && !availableCollections.has(collection.id) && !fallbackAvailableCollections.has(collection.id) && styles.hiddenFooter]}>
                   <Text style={styles.badge}>SÉLECTION RÉFÉRENCÉE</Text>
                   <Ionicons
                     name="arrow-forward"
@@ -124,6 +143,9 @@ export default function HadithCollectionsScreen() {
                     color="#F4D58A"
                   />
                 </View>
+                {availableCollections !== null && !availableCollections.has(collection.id) && !fallbackAvailableCollections.has(collection.id) ? (
+                  <Text style={styles.unavailableBadge}>BIENTÔT DISPONIBLE</Text>
+                ) : null}
               </Pressable>
             ))}
           </View>
@@ -283,6 +305,16 @@ const styles = StyleSheet.create({
   },
   badge: {
     color: "#F4D58A",
+    fontFamily: typography.sans,
+    fontSize: 7,
+    fontWeight: "800",
+    letterSpacing: 0.58,
+  },
+  hiddenFooter: { display: "none" },
+  unavailableBadge: {
+    marginTop: "auto",
+    paddingTop: 7,
+    color: colors.textMuted,
     fontFamily: typography.sans,
     fontSize: 7,
     fontWeight: "800",

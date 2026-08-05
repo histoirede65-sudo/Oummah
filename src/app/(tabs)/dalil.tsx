@@ -1,7 +1,8 @@
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
+import * as Location from "expo-location";
 import type { Href } from "expo-router";
-import { router, useLocalSearchParams } from "expo-router";
+import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
@@ -33,6 +34,7 @@ import {
   getWasilBalance,
   syncWasilConversations,
   WasilApiError,
+  type WasilLocationContext,
 } from "../../features/wasil/WasilApiClient";
 import {
   loadWasilEnergyPacks,
@@ -71,11 +73,144 @@ import {
   type PendingWasilReminderManagement,
 } from "../../features/wasil/WasilReminderService";
 import { SURAHS } from "../../data/surahs";
+import { getNearbyMosques } from "../../features/mosques/data/nearbyMosques";
 import { colors } from "../../theme/colors";
 import { typography } from "../../theme/typography";
+import { getValidSession } from "../../features/auth/SupabaseAuthService";
 
 function getSingleParam(value: string | string[] | undefined) {
   return Array.isArray(value) ? (value[0] ?? "") : (value ?? "");
+}
+
+function asksForNearbyMosque(value: string) {
+  const normalized = value
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase();
+
+  const mentionsMosque =
+    /\b(mosquee|mosque|masjid|salle de priere)\b/.test(normalized);
+  const mentionsProximity =
+    /\b(proche|pres|autour|alentour|a cote|plus proche|nearest|nearby)\b/.test(
+      normalized,
+    ) ||
+    normalized.includes("chez moi") ||
+    normalized.includes("de moi") ||
+    normalized.includes("autour de moi") ||
+    normalized.includes("pres de moi");
+
+  return mentionsMosque && mentionsProximity;
+}
+
+async function resolveWasilLocationContext(
+  question: string,
+): Promise<WasilLocationContext | undefined> {
+  if (!asksForNearbyMosque(question)) return undefined;
+
+  const permission = await Location.requestForegroundPermissionsAsync();
+  if (permission.status !== Location.PermissionStatus.GRANTED) return undefined;
+
+  const lastKnown = await Location.getLastKnownPositionAsync({
+    maxAge: 5 * 60 * 1000,
+    requiredAccuracy: 2_000,
+  });
+  const position =
+    lastKnown ??
+    (await Location.getCurrentPositionAsync({
+      accuracy: Location.Accuracy.Balanced,
+    }));
+
+  const { latitude, longitude, accuracy } = position.coords;
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 12_000);
+  try {
+    const mosques = await getNearbyMosques(
+      latitude,
+      longitude,
+      controller.signal,
+    ).catch(() => []);
+    return {
+      latitude,
+      longitude,
+      accuracyMeters: accuracy ?? undefined,
+      mosques: mosques.slice(0, 5).map((mosque) => ({
+        name: mosque.name,
+        address: mosque.address,
+        distanceMeters: mosque.distanceMeters,
+        distanceLabel: mosque.distanceLabel,
+        walkingTimeLabel: mosque.walkingTimeLabel,
+        latitude: mosque.latitude,
+        longitude: mosque.longitude,
+      })),
+    };
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
+
+function buildNearbyMosqueLocalReply(
+  locationContext?: WasilLocationContext,
+): WasilReply {
+  const mosques = locationContext?.mosques ?? [];
+
+  if (!locationContext) {
+    return {
+      kind: "answer",
+      title: "Localisation nécessaire",
+      body: 
+        "Pour trouver une mosquée proche, autorise OUMMAH à accéder à ta position. Cette recherche locale est gratuite et ne consomme aucun crédit Wasil.",
+      action: { label: "Ouvrir les mosquées", route: "/mosques" },
+    };
+  }
+
+  if (mosques.length === 0) {
+    return {
+      kind: "answer",
+      title: "Aucune mosquée trouvée à proximité",
+      body:
+        "Ta position a bien été récupérée, mais la recherche locale n’a trouvé aucune mosquée autour de toi pour le moment. Tu peux ouvrir le module Mosquées pour élargir la recherche.",
+      action: { label: "Ouvrir les mosquées", route: "/mosques" },
+    };
+  }
+
+  const body = mosques
+    .map(
+      (mosque, index) =>
+        `${index + 1}. ${mosque.name}\n${mosque.distanceLabel} · ${mosque.walkingTimeLabel}\n${mosque.address}`,
+    )
+    .join("\n\n");
+
+  return {
+    kind: "answer",
+    title: mosques.length === 1 ? "Mosquée proche de toi" : "Mosquées proches de toi",
+    body: `${body}\n\nCette recherche est effectuée localement par OUMMAH et ne consomme aucun crédit Wasil.`,
+    action: { label: "Voir dans Mosquées", route: "/mosques" },
+  };
+}
+
+function buildNearbyMosqueQuestion(
+  question: string,
+  locationContext?: WasilLocationContext,
+) {
+  if (!locationContext) return question;
+
+  const mosqueLines = (locationContext.mosques ?? []).map(
+    (mosque, index) =>
+      `${index + 1}. ${mosque.name} — ${mosque.distanceLabel} — ${mosque.walkingTimeLabel} — ${mosque.address}`,
+  );
+
+  return `${question}
+
+[CONTEXTE DE LOCALISATION FOURNI AUTOMATIQUEMENT PAR OUMMAH]
+La position actuelle de l’utilisateur a été autorisée et obtenue : latitude ${locationContext.latitude.toFixed(6)}, longitude ${locationContext.longitude.toFixed(6)}.
+${
+    mosqueLines.length > 0
+      ? `Mosquées trouvées autour de cette position, déjà classées de la plus proche à la plus éloignée :\n${mosqueLines.join("\n")}`
+      : "La position a bien été obtenue, mais la recherche locale OUMMAH n’a retourné aucune mosquée."
+  }
+Réponds directement à la demande à partir de ces données. Ne demande ni ville, ni quartier, ni code postal et ne dis pas que tu ne connais pas la position.
+[FIN DU CONTEXTE DE LOCALISATION]`;
 }
 
 function getWasilReferenceRoute(reference: string): Href | null {
@@ -891,11 +1026,15 @@ export default function DalilScreen() {
   const [reply, setReply] = useState<WasilReply | null>(null);
   const [balance, setBalance] = useState<number | null>(null);
   const [energyVisible, setEnergyVisible] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [energyPacks, setEnergyPacks] = useState<WasilEnergyPack[]>([]);
   const [energyLoading, setEnergyLoading] = useState(false);
   const [energyPurchaseId, setEnergyPurchaseId] = useState<string | null>(null);
   const [energyFeedback, setEnergyFeedback] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [loadingStatus, setLoadingStatus] = useState(
+    "Wasil comprend votre question…",
+  );
   const [historyVisible, setHistoryVisible] = useState(false);
   const [deletingConversationId, setDeletingConversationId] = useState("");
   const [conversations, setConversations] = useState<
@@ -929,6 +1068,7 @@ export default function DalilScreen() {
   const poseTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const inactivityTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const loadingVariationTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const loadingStatusTimers = useRef<ReturnType<typeof setTimeout>[]>([]);
   const lastLoadingVariation = useRef<"calm" | "search" | "consult" | "focus" | null>(null);
   const recentLoadingVariations = useRef<("calm" | "search" | "consult" | "focus")[]>([]);
   const inactivityReaction = useRef<"attentive" | "curious" | "wave" | null>(null);
@@ -1050,12 +1190,54 @@ export default function DalilScreen() {
     setHistoryVisible(false);
   };
 
-  useEffect(() => {
-    void ensureConversationsLoaded().then(syncConversationsWithCloud);
-    getWasilBalance()
-      .then(setBalance)
-      .catch(() => setBalance(null));
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      let active = true;
+      getValidSession()
+        .then((session) => {
+          if (!active) return;
+          const authenticated = Boolean(session);
+          setIsAuthenticated(authenticated);
+          if (!authenticated) {
+            setBalance(null);
+            setEnergyVisible(false);
+            setConversations([]);
+            setMessages([]);
+            setSubmittedPrompt("");
+            setReply(null);
+            setFailedPrompt("");
+            setPrompt("");
+            setHistoryVisible(false);
+            return;
+          }
+          void ensureConversationsLoaded().then(syncConversationsWithCloud);
+          getWasilBalance()
+            .then((nextBalance) => {
+              if (active) setBalance(nextBalance);
+            })
+            .catch(() => {
+              if (active) setBalance(null);
+            });
+        })
+        .catch(() => {
+          if (active) {
+            setIsAuthenticated(false);
+            setBalance(null);
+            setEnergyVisible(false);
+            setConversations([]);
+            setMessages([]);
+            setSubmittedPrompt("");
+            setReply(null);
+            setFailedPrompt("");
+            setPrompt("");
+            setHistoryVisible(false);
+          }
+        });
+      return () => {
+        active = false;
+      };
+    }, []),
+  );
 
   const openEnergy = async () => {
     setEnergyVisible(true);
@@ -1225,6 +1407,35 @@ export default function DalilScreen() {
     transition.start();
     return () => transition.stop();
   }, [loadingVisualPose, poseOpacity, visualFrame, visualPose]);
+
+  useEffect(() => {
+    loadingStatusTimers.current.forEach(clearTimeout);
+    loadingStatusTimers.current = [];
+
+    if (!loading) {
+      setLoadingStatus("Wasil comprend votre question…");
+      return;
+    }
+
+    setLoadingStatus("Wasil comprend votre question…");
+
+    const scheduleStatus = (delay: number, value: string) => {
+      const timer = setTimeout(() => {
+        setLoadingStatus(value);
+      }, delay);
+      loadingStatusTimers.current.push(timer);
+    };
+
+    scheduleStatus(900, "Wasil rassemble les éléments utiles…");
+    scheduleStatus(2300, "Wasil consulte ses sources fiables…");
+    scheduleStatus(4600, "Wasil vérifie les références…");
+    scheduleStatus(7200, "Wasil prépare une réponse claire…");
+
+    return () => {
+      loadingStatusTimers.current.forEach(clearTimeout);
+      loadingStatusTimers.current = [];
+    };
+  }, [loading]);
 
   useEffect(() => {
     if (loadingVariationTimer.current) {
@@ -1766,6 +1977,14 @@ export default function DalilScreen() {
   const submitPrompt = async (promptOverride?: string) => {
     const trimmedPrompt = (promptOverride ?? prompt).trim();
     if (!trimmedPrompt || loading || submissionInFlight.current) return;
+    const session = await getValidSession().catch(() => null);
+    if (!session) {
+      setIsAuthenticated(false);
+      setBalance(null);
+      Keyboard.dismiss();
+      return;
+    }
+    setIsAuthenticated(true);
 
     submissionInFlight.current = true;
     newTurnAnchorY.current = null;
@@ -1931,6 +2150,27 @@ export default function DalilScreen() {
       return;
     }
 
+    if (asksForNearbyMosque(trimmedPrompt)) {
+      Keyboard.dismiss();
+      setSubmittedPrompt(trimmedPrompt);
+      setPrompt("");
+      setReply(null);
+      setLoading(true);
+      try {
+        const locationContext = await resolveWasilLocationContext(trimmedPrompt).catch(
+          () => undefined,
+        );
+        const nearbyReply = buildNearbyMosqueLocalReply(locationContext);
+        setReply(nearbyReply);
+        setFailedPrompt("");
+        setLastMisunderstoodPrompt("");
+        await commitTurn(trimmedPrompt, nearbyReply);
+      } finally {
+        setLoading(false);
+      }
+      return;
+    }
+
     const freeAction = resolveWasilFreeAction(trimmedPrompt, reciters);
     if (freeAction) {
       if (freeAction.reciterId) {
@@ -1953,8 +2193,11 @@ export default function DalilScreen() {
     setReply(null);
     setLoading(true);
     try {
+      const locationContext = await resolveWasilLocationContext(trimmedPrompt).catch(
+        () => undefined,
+      );
       const response = await askWasil(
-        trimmedPrompt,
+        buildNearbyMosqueQuestion(trimmedPrompt, locationContext),
         localContext,
         "standard",
         lastMisunderstoodPrompt || undefined,
@@ -1962,6 +2205,7 @@ export default function DalilScreen() {
           role: message.role,
           content: message.text,
         })),
+        locationContext,
       );
       setReply(response.reply);
       setFailedPrompt("");
@@ -2161,7 +2405,7 @@ export default function DalilScreen() {
                 color={colors.goldLight}
               />
             </Pressable>
-            {balance === null ? null : (
+            {!isAuthenticated || balance === null ? null : (
               <View style={styles.creditPill}>
                 <Ionicons name="sparkles" size={11} color={colors.goldLight} />
                 <Text style={styles.creditText}>{balance}</Text>
@@ -2342,7 +2586,7 @@ export default function DalilScreen() {
                 <View style={styles.wasilLoading}>
                   <ActivityIndicator size="small" color={colors.goldLight} />
                   <Text style={styles.wasilLoadingText}>
-                    Wasil vérifie les sources…
+                    {loadingStatus}
                   </Text>
                 </View>
               ) : reply ? (
@@ -2372,8 +2616,10 @@ export default function DalilScreen() {
                     </View>
                     <Text style={styles.messageAuthor}>Wasil</Text>
                   </View>
-                  <Text style={styles.wasilMessageTitle}>{reply.title}</Text>
-                  <WasilAnswerPresentation answer={reply} animateReferences />
+                  <Text style={styles.wasilMessageTitle}>
+                    {reply.title}
+                  </Text>
+                  <WasilAnswerPresentation answer={reply} />
                   {failedPrompt ? (
                     <Pressable
                       accessibilityRole="button"
@@ -2429,6 +2675,23 @@ export default function DalilScreen() {
         </ScrollView>
 
         <View style={styles.composerWrap}>
+          {!isAuthenticated ? (
+            <Pressable
+              onPress={() => router.push('/profile')}
+              style={({ pressed }) => [styles.guestWasilCard, pressed && styles.pressed]}
+            >
+              <View style={styles.guestWasilIcon}>
+                <Ionicons name="person-add-outline" size={22} color="#16111B" />
+              </View>
+              <View style={styles.guestWasilCopy}>
+                <Text style={styles.guestWasilTitle}>Inscrivez-vous gratuitement</Text>
+                <Text style={styles.guestWasilText}>
+                  « Et quiconque place sa confiance en Allah, Il lui suffit. » — Coran, 65:3 Inscrivez-vous pour commencer à parler avec Wasil et recevoir vos crédits gratuits.
+                </Text>
+                <Text style={styles.guestWasilLink}>Créer mon profil →</Text>
+              </View>
+            </Pressable>
+          ) : (
           <View style={styles.composer}>
             <TextInput
               accessibilityLabel="Écrire à Wasil"
@@ -2474,6 +2737,7 @@ export default function DalilScreen() {
               )}
             </Pressable>
           </View>
+          )}
         </View>
       </KeyboardAvoidingView>
 
@@ -3225,6 +3489,44 @@ const styles = StyleSheet.create({
     fontFamily: typography.sans,
     fontSize: 9.8,
     lineHeight: 14,
+  },
+  guestWasilCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 11,
+    padding: 13,
+    borderRadius: 18,
+    borderWidth: 1,
+    borderColor: 'rgba(227,181,90,0.38)',
+    backgroundColor: '#181520',
+  },
+  guestWasilIcon: {
+    width: 42,
+    height: 42,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 21,
+    backgroundColor: colors.goldLight,
+  },
+  guestWasilCopy: { flex: 1 },
+  guestWasilTitle: {
+    color: colors.goldLight,
+    fontFamily: typography.serifMedium,
+    fontSize: 15,
+  },
+  guestWasilText: {
+    marginTop: 3,
+    color: colors.text,
+    fontFamily: typography.sans,
+    fontSize: 10,
+    lineHeight: 14,
+  },
+  guestWasilLink: {
+    marginTop: 5,
+    color: '#F5B735',
+    fontFamily: typography.sans,
+    fontSize: 10,
+    fontWeight: '800',
   },
   composerWrap: {
     position: "relative",

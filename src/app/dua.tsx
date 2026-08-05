@@ -2,11 +2,10 @@ import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import type { Href } from "expo-router";
-import { router } from "expo-router";
-import { useEffect, useMemo, useState } from "react";
+import { router, useLocalSearchParams } from "expo-router";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   ActivityIndicator,
-  FlatList,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -40,7 +39,8 @@ const SECTION_ORDER = new Map(
 );
 
 const QUICK_SECTION_IDS: readonly DuaSectionId[] = [
-  "morning-evening",
+  "morning",
+  "evening",
   "sleep",
   "prayer",
   "protection",
@@ -64,10 +64,18 @@ function matchingItemIndex(category: DuaCategory, query: string) {
   return Math.max(0, index);
 }
 
-function openCategory(categoryId: number, itemIndex = 0) {
+function openCategory(
+  categoryId: number,
+  itemIndex = 0,
+  period?: "morning" | "evening",
+) {
   router.push({
     pathname: "/dua/[categoryId]",
-    params: { categoryId: String(categoryId), item: String(itemIndex) },
+    params: {
+      categoryId: String(categoryId),
+      item: String(itemIndex),
+      ...(period ? { period } : {}),
+    },
   });
 }
 
@@ -76,12 +84,21 @@ function sectionFor(id: DuaSectionId) {
 }
 
 export default function DuaHomeScreen() {
+  const { section: requestedSection, focus: requestedFocus } = useLocalSearchParams<{
+    section?: string | string[];
+    focus?: string | string[];
+  }>();
   const [catalog, setCatalog] = useState<readonly DuaCategory[]>([]);
   const [loading, setLoading] = useState(true);
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState<FilterId>("all");
   const [favoriteIds, setFavoriteIds] = useState<readonly string[]>([]);
   const [resume, setResume] = useState<DuaProgress | null>(null);
+  const [expandedSections, setExpandedSections] = useState<readonly DuaSectionId[]>([]);
+  const scrollRef = useRef<ScrollView>(null);
+  const sectionOffsetsRef = useRef<Partial<Record<DuaSectionId, number>>>({});
+  const libraryOffsetRef = useRef(0);
+  const handledNotificationRouteRef = useRef(false);
 
   useEffect(() => {
     let active = true;
@@ -103,7 +120,7 @@ export default function DuaHomeScreen() {
   const suggestedSection: DuaSectionId =
     new Date().getHours() >= 18 || new Date().getHours() < 5
       ? "sleep"
-      : "morning-evening";
+      : "morning";
   const suggestedCategory =
     catalog.find((category) => category.section === suggestedSection) ??
     catalog[0];
@@ -160,10 +177,61 @@ export default function DuaHomeScreen() {
     catalog.some((category) => category.section === section.id),
   );
 
-  const applySection = (section: DuaSectionId) => {
-    setFilter(section);
+  const revealSection = (section: DuaSectionId) => {
+    setFilter("all");
     setQuery("");
+    setExpandedSections([section]);
+    requestAnimationFrame(() => {
+      setTimeout(() => {
+        const y = sectionOffsetsRef.current[section];
+        if (typeof y === "number") {
+          scrollRef.current?.scrollTo({ y: Math.max(0, libraryOffsetRef.current + y - 18), animated: true });
+        }
+      }, 80);
+    });
   };
+
+  const applySection = (section: DuaSectionId) => {
+    revealSection(section);
+  };
+
+  useEffect(() => {
+    if (loading || handledNotificationRouteRef.current || catalog.length === 0) return;
+
+    const sectionValue = Array.isArray(requestedSection) ? requestedSection[0] : requestedSection;
+    const focusValue = Array.isArray(requestedFocus) ? requestedFocus[0] : requestedFocus;
+    const validSection = DUA_SECTIONS.some((entry) => entry.id === sectionValue)
+      ? (sectionValue as DuaSectionId)
+      : undefined;
+
+    if (!validSection && !focusValue) return;
+    handledNotificationRouteRef.current = true;
+
+    const focusQueries: Record<string, string> = {
+      "wake-up": "réveil",
+      bedtime: "dormir",
+      leave: "sortant de chez",
+      enter: "entrant chez",
+      "before-meal": "avant de manger",
+    };
+    const focusQuery = focusValue ? focusQueries[focusValue] : undefined;
+    const candidates = validSection
+      ? catalog.filter((category) => category.section === validSection)
+      : catalog;
+    const matchingCategory = focusQuery
+      ? candidates.find((category) =>
+          normalize(`${category.frenchTitle} ${category.items.map((item) => item.french).join(" ")}`).includes(
+            normalize(focusQuery),
+          ),
+        )
+      : candidates[0];
+
+    if (matchingCategory) {
+      openCategory(matchingCategory.id, focusQuery ? matchingItemIndex(matchingCategory, focusQuery) : 0);
+    } else if (validSection) {
+      revealSection(validSection);
+    }
+  }, [catalog, loading, requestedFocus, requestedSection]);
 
   const applyGuide = (guide: GuideDefinition) => {
     if (guide.categoryId != null) {
@@ -177,6 +245,21 @@ export default function DuaHomeScreen() {
     setFilter("all");
     setQuery(guide.query ?? "");
   };
+
+  const toggleSection = (sectionId: DuaSectionId) => {
+    setExpandedSections((current) =>
+      current.includes(sectionId)
+        ? current.filter((id) => id !== sectionId)
+        : [...current, sectionId],
+    );
+  };
+
+  const groupedSections = useMemo(() =>
+    DUA_SECTIONS.map((section) => ({
+      section,
+      categories: filtered.filter((category) => category.section === section.id),
+    })).filter((group) => group.categories.length > 0),
+  [filtered]);
 
   const header = (
     <View style={styles.headerContent}>
@@ -368,7 +451,12 @@ export default function DuaHomeScreen() {
         ))}
       </ScrollView>
 
-      <View style={styles.catalogHeading}>
+      <View
+        onLayout={(event) => {
+          libraryOffsetRef.current = event.nativeEvent.layout.y;
+        }}
+        style={styles.catalogHeading}
+      >
         <View>
           <Text style={styles.catalogEyebrow}>BIBLIOTHÈQUE ORGANISÉE</Text>
           <Text style={styles.catalogTitle}>
@@ -381,57 +469,96 @@ export default function DuaHomeScreen() {
         </View>
         <Text style={styles.resultCount}>{filtered.length} catégories</Text>
       </View>
+
+      {loading ? (
+        <View style={styles.empty}>
+          <ActivityIndicator color={colors.goldLight} />
+          <Text style={styles.emptyText}>Organisation des invocations…</Text>
+        </View>
+      ) : filtered.length === 0 ? (
+        <View style={styles.empty}>
+          <Ionicons name="search-outline" size={25} color={colors.goldLight} />
+          <Text style={styles.emptyText}>
+            Aucune invocation ne correspond à cette sélection.
+          </Text>
+        </View>
+      ) : filter !== "all" || query.trim() ? (
+        <View style={styles.filteredList}>
+          {filtered.map((category) => (
+            <CategoryCard
+              key={category.id}
+              category={category}
+              section={sectionFor(category.section)}
+              favoriteCount={category.items.filter((entry) => favoriteIds.includes(entry.id)).length}
+              onPress={() => openCategory(category.id, matchingItemIndex(category, query))}
+            />
+          ))}
+        </View>
+      ) : (
+        <View style={styles.accordionList}>
+          {groupedSections.map(({ section, categories }) => {
+            const expanded = expandedSections.includes(section.id);
+            return (
+              <View
+                key={section.id}
+                style={styles.accordionGroup}
+                onLayout={(event) => {
+                  sectionOffsetsRef.current[section.id] = event.nativeEvent.layout.y;
+                }}
+              >
+                <Pressable
+                  onPress={() => toggleSection(section.id)}
+                  style={({ pressed }) => [styles.accordionHeader, pressed && styles.pressed]}
+                >
+                  <View style={styles.catalogSectionIcon}>
+                    <Ionicons
+                      name={section.icon as keyof typeof Ionicons.glyphMap}
+                      size={18}
+                      color={colors.goldLight}
+                    />
+                  </View>
+                  <View style={styles.accordionCopy}>
+                    <Text style={styles.catalogSectionTitle}>{section.label}</Text>
+                    <Text style={styles.catalogSectionSubtitle}>{section.subtitle}</Text>
+                  </View>
+                  <Text style={styles.accordionCount}>{categories.length}</Text>
+                  <Ionicons
+                    name={expanded ? "chevron-up" : "chevron-down"}
+                    size={18}
+                    color={colors.goldLight}
+                  />
+                </Pressable>
+                {expanded ? (
+                  <View style={styles.accordionBody}>
+                    {categories.map((category) => (
+                      <CategoryCard
+                        key={category.id}
+                        category={category}
+                        section={section}
+                        favoriteCount={category.items.filter((entry) => favoriteIds.includes(entry.id)).length}
+                        onPress={() => openCategory(category.id)}
+                      />
+                    ))}
+                  </View>
+                ) : null}
+              </View>
+            );
+          })}
+        </View>
+      )}
     </View>
   );
 
   return (
     <SafeAreaView edges={["top"]} style={styles.safeArea}>
-      <FlatList
-        data={filtered}
-        keyExtractor={(item) => String(item.id)}
-        ListHeaderComponent={header}
-        renderItem={({ item, index }) => {
-          const previous = filtered[index - 1];
-          const showSectionHeader =
-            filter === "all" && previous?.section !== item.section;
-          const section = sectionFor(item.section);
-          return (
-            <View>
-              {showSectionHeader ? <CatalogSectionHeader section={section} /> : null}
-              <CategoryCard
-                category={item}
-                section={section}
-                favoriteCount={
-                  item.items.filter((entry) => favoriteIds.includes(entry.id)).length
-                }
-                onPress={() => openCategory(item.id, matchingItemIndex(item, query))}
-              />
-            </View>
-          );
-        }}
-        ItemSeparatorComponent={() => <View style={styles.separator} />}
-        ListEmptyComponent={
-          loading ? (
-            <View style={styles.empty}>
-              <ActivityIndicator color={colors.goldLight} />
-              <Text style={styles.emptyText}>Organisation des invocations…</Text>
-            </View>
-          ) : (
-            <View style={styles.empty}>
-              <Ionicons name="search-outline" size={25} color={colors.goldLight} />
-              <Text style={styles.emptyText}>
-                Aucune invocation ne correspond à cette sélection.
-              </Text>
-            </View>
-          )
-        }
+      <ScrollView
+        ref={scrollRef}
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
-        initialNumToRender={10}
-        maxToRenderPerBatch={10}
-        windowSize={7}
-      />
+      >
+        {header}
+      </ScrollView>
     </SafeAreaView>
   );
 }
@@ -595,6 +722,49 @@ function CatalogSectionHeader({ section }: { section: SectionDefinition }) {
   );
 }
 
+function AdhkarPeriodCard({
+  period,
+  count,
+  onPress,
+}: {
+  period: "morning" | "evening";
+  count: number;
+  onPress: () => void;
+}) {
+  const morning = period === "morning";
+  return (
+    <Pressable
+      onPress={onPress}
+      style={({ pressed }) => [
+        styles.periodCard,
+        morning ? styles.morningCard : styles.eveningCard,
+        pressed && styles.pressed,
+      ]}
+    >
+      <View style={styles.periodIcon}>
+        <Ionicons
+          name={morning ? "sunny-outline" : "moon-outline"}
+          size={21}
+          color={colors.goldLight}
+        />
+      </View>
+      <View style={styles.periodCopy}>
+        <Text style={styles.periodEyebrow}>PARCOURS DISTINCT</Text>
+        <Text style={styles.periodTitle}>
+          {morning ? "Adhkār du matin" : "Adhkār du soir"}
+        </Text>
+        <Text style={styles.periodSubtitle}>
+          {morning ? "Invocations du réveil et du début de journée" : "Invocations de fin de journée et de protection"}
+        </Text>
+      </View>
+      <View style={styles.periodCount}>
+        <Text style={styles.periodCountText}>{count}</Text>
+        <Ionicons name="arrow-forward" size={15} color={colors.goldLight} />
+      </View>
+    </Pressable>
+  );
+}
+
 function CategoryCard({
   category,
   section,
@@ -667,6 +837,64 @@ function CategoryCard({
 }
 
 const styles = StyleSheet.create({
+  periodCards: { gap: 10 },
+  periodCard: {
+    minHeight: 112,
+    borderRadius: 20,
+    borderWidth: 1,
+    paddingHorizontal: 15,
+    paddingVertical: 14,
+    flexDirection: "row",
+    alignItems: "center",
+    overflow: "hidden",
+  },
+  morningCard: {
+    backgroundColor: "rgba(84,55,21,0.38)",
+    borderColor: "rgba(244,211,143,0.28)",
+  },
+  eveningCard: {
+    backgroundColor: "rgba(35,32,72,0.48)",
+    borderColor: "rgba(146,140,210,0.24)",
+  },
+  periodIcon: {
+    width: 43,
+    height: 43,
+    borderRadius: 15,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "rgba(255,255,255,0.06)",
+    marginRight: 12,
+  },
+  periodCopy: { flex: 1 },
+  periodEyebrow: {
+    color: colors.goldMuted,
+    fontFamily: typography.sansSemiBold,
+    fontSize: 9,
+    letterSpacing: 1.1,
+    marginBottom: 4,
+  },
+  periodTitle: {
+    color: colors.text,
+    fontFamily: typography.serifMedium,
+    fontSize: 20,
+    marginBottom: 4,
+  },
+  periodSubtitle: {
+    color: colors.textMuted,
+    fontFamily: typography.sans,
+    fontSize: 11,
+    lineHeight: 16,
+  },
+  periodCount: {
+    minWidth: 40,
+    alignItems: "center",
+    gap: 6,
+  },
+  periodCountText: {
+    color: colors.goldLight,
+    fontFamily: typography.sansSemiBold,
+    fontSize: 12,
+  },
   safeArea: { flex: 1, backgroundColor: colors.background },
   content: { paddingHorizontal: 14, paddingBottom: 116 },
   headerContent: { marginHorizontal: -14, paddingHorizontal: 14 },
@@ -1033,4 +1261,32 @@ const styles = StyleSheet.create({
   empty: { minHeight: 170, alignItems: "center", justifyContent: "center" },
   emptyText: { marginTop: 10, color: colors.textMuted, fontFamily: typography.sans, fontSize: 10, textAlign: "center" },
   pressed: { opacity: 0.72, transform: [{ scale: 0.992 }] },
+  filteredList: { gap: 10, paddingBottom: 18 },
+  accordionList: { gap: 10, paddingBottom: 22 },
+  accordionGroup: {
+    overflow: "hidden",
+    borderRadius: 22,
+    borderWidth: 1,
+    borderColor: colors.borderSoft,
+    backgroundColor: "rgba(35,20,45,0.78)",
+  },
+  accordionHeader: {
+    minHeight: 76,
+    paddingHorizontal: 13,
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  accordionCopy: { flex: 1, minWidth: 0, marginLeft: 10 },
+  accordionCount: {
+    marginRight: 10,
+    color: colors.textMuted,
+    fontFamily: typography.sans,
+    fontSize: 10,
+    fontWeight: "700",
+  },
+  accordionBody: {
+    gap: 10,
+    paddingHorizontal: 9,
+    paddingBottom: 10,
+  },
 });

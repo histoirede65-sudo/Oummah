@@ -7,10 +7,8 @@ import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View } from
 import { SafeAreaView } from "react-native-safe-area-context";
 import { hadithRepository } from "../../../../features/hadith-explorer/data/hadithRepository";
 import type { HadithSummary } from "../../../../features/hadith-explorer/domain/Hadith";
-import {
-  getHadithCollection,
-  getHadithCollectionTheme,
-} from "../../../../features/hadith-explorer/domain/HadithCollection";
+import { getHadithCollection } from "../../../../features/hadith-explorer/domain/HadithCollection";
+import type { HadithDocumentaryCategory } from "../../../../features/hadith-explorer/domain/HadithCollection";
 import HadithCard from "../../../../features/hadith-explorer/presentation/HadithCard";
 import HadithScreenHeader from "../../../../features/hadith-explorer/presentation/HadithScreenHeader";
 import { colors } from "../../../../theme/colors";
@@ -25,7 +23,7 @@ export default function HadithCollectionThemeScreen() {
   }>();
 
   const collection = useMemo(() => getHadithCollection(collectionId), [collectionId]);
-  const theme = useMemo(() => getHadithCollectionTheme(themeId), [themeId]);
+  const [category, setCategory] = useState<HadithDocumentaryCategory | null>(null);
   const [items, setItems] = useState<HadithSummary[]>([]);
   const [loading, setLoading] = useState(true);
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
@@ -33,17 +31,23 @@ export default function HadithCollectionThemeScreen() {
   useEffect(() => {
     let active = true;
 
-    if (!collection || !theme) {
+    if (!collection || !themeId) {
       setLoading(false);
       setItems([]);
+      setCategory(null);
       return;
     }
 
     setLoading(true);
     setVisibleCount(PAGE_SIZE);
 
-    void hadithRepository
-      .searchCollectionTheme(collection, theme.query)
+    void hadithRepository.listCollectionCategories(collection)
+      .then((categories) => {
+        const selected = categories.find((item) => item.id === themeId) ?? null;
+        if (!selected) throw new Error("Catégorie introuvable.");
+        setCategory(selected);
+        return hadithRepository.searchCollectionCategory(collection, selected.id);
+      })
       .then((results) => {
         if (active) setItems(results);
       })
@@ -57,9 +61,30 @@ export default function HadithCollectionThemeScreen() {
     return () => {
       active = false;
     };
-  }, [collection, theme]);
+  }, [collection, themeId]);
 
-  if (!collection || !theme) {
+  if (!collection) {
+    return (
+      <LinearGradient colors={["#080713", "#120A1D", "#080713"]} style={styles.screen}>
+        <SafeAreaView style={styles.center}>
+          <Text style={styles.emptyTitle}>Catégorie introuvable</Text>
+        </SafeAreaView>
+      </LinearGradient>
+    );
+  }
+
+  if (loading) {
+    return (
+      <LinearGradient colors={["#080713", "#120A1D", "#080713"]} style={styles.screen}>
+        <SafeAreaView style={styles.center}>
+          <ActivityIndicator color={colors.goldLight} />
+          <Text style={styles.stateText}>Chargement de la catégorie…</Text>
+        </SafeAreaView>
+      </LinearGradient>
+    );
+  }
+
+  if (!category) {
     return (
       <LinearGradient colors={["#080713", "#120A1D", "#080713"]} style={styles.screen}>
         <SafeAreaView style={styles.center}>
@@ -75,17 +100,17 @@ export default function HadithCollectionThemeScreen() {
     <LinearGradient colors={["#080713", "#120A1D", "#080713"]} style={styles.screen}>
       <SafeAreaView edges={["top"]} style={styles.safe}>
         <View style={styles.header}>
-          <HadithScreenHeader title={theme.name} subtitle={collection.name} />
+          <HadithScreenHeader title={category.name} subtitle={collection.name} />
         </View>
 
         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.content}>
           <LinearGradient colors={[`${collection.tone}D9`, "#201329"]} style={styles.hero}>
             <View style={styles.heroIcon}>
-              <Ionicons name={theme.icon as never} size={25} color={colors.goldLight} />
+                <Ionicons name="pricetag-outline" size={25} color={colors.goldLight} />
             </View>
             <View style={styles.heroCopy}>
               <Text style={styles.heroEyebrow}>CATÉGORIE</Text>
-              <Text style={styles.heroTitle}>{theme.name}</Text>
+              <Text style={styles.heroTitle}>{category.name}</Text>
               <Text style={styles.heroCollection}>{collection.name}</Text>
             </View>
           </LinearGradient>
@@ -110,7 +135,7 @@ export default function HadithCollectionThemeScreen() {
                 <HadithCard
                   key={item.id}
                   title={item.title}
-                  subtitle={`${collection.name} · ${theme.name}`}
+                  subtitle={`${collection.name} · ${category.name}`}
                   index={index}
                   onPress={() => router.push(`/hadith/${item.id}` as Href)}
                 />

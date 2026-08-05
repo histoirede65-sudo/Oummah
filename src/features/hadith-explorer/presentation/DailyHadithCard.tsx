@@ -3,6 +3,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { colors } from "../../../theme/colors";
 import { typography } from "../../../theme/typography";
+import { WasilContextButton } from "../../../components/wasil/WasilContextButton";
 import type { Hadith } from "../domain/Hadith";
 import HadithGradeBadge from "./HadithGradeBadge";
 
@@ -10,10 +11,12 @@ export default function DailyHadithCard({
   hadith,
   loading,
   onPress,
+  wasilPrompt,
 }: {
   hadith: Hadith | null;
   loading: boolean;
   onPress: () => void;
+  wasilPrompt?: string;
 }) {
   return (
     <Pressable
@@ -53,14 +56,6 @@ export default function DailyHadithCard({
         <Text style={styles.empty}>Chargement du hadith authentifié…</Text>
       ) : hadith ? (
         <>
-          {hadith.arabic ? (
-            <View style={styles.arabicBlock}>
-              <Text numberOfLines={4} style={styles.arabic}>
-                {hadith.arabic}
-              </Text>
-            </View>
-          ) : null}
-
           <Text numberOfLines={5} style={styles.french}>
             {hadith.french || hadith.title}
           </Text>
@@ -84,6 +79,11 @@ export default function DailyHadithCard({
               </View>
             </View>
           </View>
+          {wasilPrompt ? <View style={styles.wasilSection}>
+            <View style={styles.wasilDivider} />
+            <WasilContextButton largeLabel prompt={wasilPrompt} />
+            <Text style={styles.wasilSubtitle}>Comprendre le sens, le contexte et les enseignements du hadith.</Text>
+          </View> : null}
         </>
       ) : (
         <Text style={styles.empty}>
@@ -99,10 +99,10 @@ export default function DailyHadithCard({
 
 const styles = StyleSheet.create({
   card: {
-    minHeight: 326,
+    minHeight: 285,
     borderRadius: 30,
     overflow: "hidden",
-    padding: 22,
+    padding: 20,
     borderWidth: 1,
     borderColor: "rgba(233,197,122,0.42)",
     shadowColor: "#000",
@@ -137,7 +137,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "flex-start",
-    marginBottom: 18,
+    marginBottom: 14,
   },
   eyebrowRow: {
     flexDirection: "row",
@@ -156,7 +156,7 @@ const styles = StyleSheet.create({
   eyebrow: {
     color: colors.goldLight,
     fontFamily: typography.sans,
-    fontSize: 10.5,
+    fontSize: 11,
     fontWeight: "800",
     letterSpacing: 1.7,
   },
@@ -225,6 +225,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 8,
   },
+  wasilSection: { marginTop: 13 },
+  wasilDivider: { height: 1, marginBottom: 10, backgroundColor: "rgba(227,181,90,0.18)" },
+  wasilSubtitle: { color: "#FFF1C9", fontFamily: typography.sans, fontSize: 10.5, lineHeight: 15, fontWeight: "600", textAlign: "center", marginTop: 5 },
   read: {
     flexDirection: "row",
     alignItems: "center",

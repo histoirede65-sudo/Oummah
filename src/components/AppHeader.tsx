@@ -15,6 +15,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import Svg, { Circle, Path, Rect } from "react-native-svg";
 
 import { useI18n } from "../i18n";
+import { getValidSession } from "../features/auth/SupabaseAuthService";
 import { loadHifzState } from "../features/hifz/HifzStore";
 import { getMosquePrayerSchedule } from "../features/mosques/data/mosquePrayerTimes";
 import { getMainMosque } from "../features/mosques/data/mosquePreferences";
@@ -47,7 +48,8 @@ type MenuItem = {
     | "sparkles-outline"
     | "school-outline"
     | "library-outline"
-    | "person-outline";
+    | "person-outline"
+    | "shield-checkmark-outline";
 };
 
 const MENU_GROUPS: ReadonlyArray<{
@@ -72,6 +74,7 @@ const MENU_GROUPS: ReadonlyArray<{
       { label: "Invocations", description: "Dou‘as authentiques", href: "/dua", icon: "hand-left-outline" },
       { label: "Dhikr", description: "Rappels et compteur", href: "/dhikr", icon: "sparkles-outline" },
       { label: "Mémorisation", description: "Suivi du Hifz", href: "/hifz", icon: "school-outline" },
+      { label: "Zakat", description: "Calcul et suivi", href: "/zakat", icon: "shield-checkmark-outline" },
     ],
   },
   {
@@ -81,6 +84,8 @@ const MENU_GROUPS: ReadonlyArray<{
     ],
   },
 ];
+
+const ADMIN_EMAIL = "bahri13015@hotmail.fr";
 
 function MosqueLogo({ size = 36 }: { size?: number }) {
   return (
@@ -148,6 +153,7 @@ export default function AppHeader({
 }: AppHeaderProps) {
   const { t } = useI18n();
   const [menuVisible, setMenuVisible] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [hasUnreadNotifications, setHasUnreadNotifications] = useState(false);
 
   useFocusEffect(
@@ -155,11 +161,12 @@ export default function AppHeader({
       let active = true;
 
       const refreshUnreadStatus = async () => {
-        const [preferences, readIds, hifzState, mosque] = await Promise.all([
+        const [preferences, readIds, hifzState, mosque, session] = await Promise.all([
           loadNotificationCenterPreferences(),
           loadReadNotificationIds(),
           loadHifzState(),
           getMainMosque(),
+          getValidSession().catch(() => null),
         ]);
         const schedule = mosque
           ? await getMosquePrayerSchedule(
@@ -177,6 +184,9 @@ export default function AppHeader({
         if (active) {
           setHasUnreadNotifications(
             items.some((item) => !readIds.includes(item.id)),
+          );
+          setIsAdmin(
+            session?.user.email?.trim().toLowerCase() === ADMIN_EMAIL,
           );
         }
       };
@@ -287,10 +297,24 @@ export default function AppHeader({
               contentContainerStyle={styles.menuScrollContent}
               showsVerticalScrollIndicator={false}
             >
-              {MENU_GROUPS.map((group) => (
+              {MENU_GROUPS.map((group) => {
+                const items =
+                  group.title === "OUMMAH" && isAdmin
+                    ? [
+                        {
+                          label: "Espace administrateur",
+                          description: "Pilotage, crédits et modération",
+                          href: "/admin",
+                          icon: "shield-checkmark-outline" as const,
+                        },
+                        ...group.items,
+                      ]
+                    : group.items;
+
+                return (
                 <View key={group.title} style={styles.menuGroup}>
                   <Text style={styles.menuGroupTitle}>{group.title}</Text>
-                  {group.items.map((item) => (
+                  {items.map((item) => (
                     <Pressable
                       key={item.href}
                       accessibilityRole="button"
@@ -315,7 +339,8 @@ export default function AppHeader({
                     </Pressable>
                   ))}
                 </View>
-              ))}
+                );
+              })}
             </ScrollView>
 
             <Text style={styles.menuFooter}>Un seul espace pour votre quotidien</Text>

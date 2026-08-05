@@ -9,12 +9,13 @@ export type CachedMosqueSearch = {
   mosques: NearbyMosque[];
 };
 
-const CACHE_KEY = 'oummah.mosques.search.v5';
+const CACHE_KEY = 'oummah.mosques.search.v6';
 const OLD_CACHE_KEYS = [
   'oummah.mosques.search.v1',
   'oummah.mosques.search.v2',
   'oummah.mosques.search.v3',
   'oummah.mosques.search.v4',
+  'oummah.mosques.search.v5',
 ];
 const CACHE_MAX_AGE_MS = 45 * 60 * 1000;
 

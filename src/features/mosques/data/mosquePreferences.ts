@@ -22,7 +22,8 @@ export type StoredMosque = {
   toilets?: 'yes' | 'no' | 'limited' | 'unknown';
   languages?: string[];
   serviceTimes?: string;
-  source?: 'openstreetmap';
+  source?: 'openstreetmap' | 'user';
+  imageKey?: string;
   sourceUrl?: string;
   lastCheckedAt?: string;
 };

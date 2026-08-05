@@ -6,6 +6,7 @@
     "orientation": "portrait",
     "scheme": "oummah",
     "userInterfaceStyle": "automatic",
+    "icon": "./assets/images/icon.png",
     "newArchEnabled": true,
     "ios": {
       "bundleIdentifier": "com.oummah.app",
@@ -23,6 +24,7 @@
         "android.permission.MODIFY_AUDIO_SETTINGS"
       ],
       "adaptiveIcon": {
+        "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
       },
       "edgeToEdgeEnabled": true,

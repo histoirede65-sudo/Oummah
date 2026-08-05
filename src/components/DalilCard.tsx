@@ -1,7 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
-import { router } from 'expo-router';
-import { useEffect, useRef, useState } from 'react';
+import { router, useFocusEffect } from 'expo-router';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   Animated,
   Easing,
@@ -14,8 +14,13 @@ import {
 
 import { colors } from '../theme/colors';
 import { typography } from '../theme/typography';
+import { getValidSession } from '../features/auth/SupabaseAuthService';
 
 type CardPose = 'idle' | 'blink' | 'thinking' | 'reading-quran' | 'wave';
+
+type DalilCardProps = {
+  onPromptFocus?: () => void;
+};
 
 const cardPoseSources = {
   idle: require('../assets/images/home/wasil-idle.png'),
@@ -46,9 +51,36 @@ const suggestions = [
   },
 ] as const;
 
-export default function DalilCard() {
+const animatedPrompts = [
+  'Salam aleykoum 👋',
+  'Comment puis-je vous aider ?',
+  'Explique-moi un verset',
+  'Quel dhikr faire aujourd’hui ?',
+  'Trouve une mosquée proche',
+] as const;
+
+export default function DalilCard({ onPromptFocus }: DalilCardProps) {
   const [question, setQuestion] = useState('');
   const [pose, setPose] = useState<CardPose>('idle');
+  const [isPromptFocused, setIsPromptFocused] = useState(false);
+  const [animatedPrompt, setAnimatedPrompt] = useState('');
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useFocusEffect(
+    useCallback(() => {
+      let active = true;
+      getValidSession()
+        .then((session) => {
+          if (active) setIsAuthenticated(Boolean(session));
+        })
+        .catch(() => {
+          if (active) setIsAuthenticated(false);
+        });
+      return () => {
+        active = false;
+      };
+    }, []),
+  );
   const float = useRef(new Animated.Value(0)).current;
   const gestureX = useRef(new Animated.Value(0)).current;
   const gestureY = useRef(new Animated.Value(0)).current;
@@ -165,6 +197,62 @@ export default function DalilCard() {
   }, [float, gestureScale, gestureTilt, gestureX, gestureY, glowPulse]);
 
   useEffect(() => {
+    if (isPromptFocused || question.length > 0) {
+      setAnimatedPrompt('');
+      return;
+    }
+
+    let cancelled = false;
+    let timer: ReturnType<typeof setTimeout> | null = null;
+    let promptIndex = 0;
+    let characterIndex = 0;
+    let deleting = false;
+
+    const schedule = (callback: () => void, delay: number) => {
+      timer = setTimeout(callback, delay);
+    };
+
+    const animate = () => {
+      if (cancelled) return;
+
+      const currentPrompt = animatedPrompts[promptIndex];
+
+      if (!deleting) {
+        characterIndex += 1;
+        setAnimatedPrompt(currentPrompt.slice(0, characterIndex));
+
+        if (characterIndex >= currentPrompt.length) {
+          deleting = true;
+          schedule(animate, 2200);
+          return;
+        }
+
+        schedule(animate, 65);
+        return;
+      }
+
+      characterIndex -= 1;
+      setAnimatedPrompt(currentPrompt.slice(0, Math.max(0, characterIndex)));
+
+      if (characterIndex <= 0) {
+        deleting = false;
+        promptIndex = (promptIndex + 1) % animatedPrompts.length;
+        schedule(animate, 450);
+        return;
+      }
+
+      schedule(animate, 35);
+    };
+
+    schedule(animate, 500);
+
+    return () => {
+      cancelled = true;
+      if (timer) clearTimeout(timer);
+    };
+  }, [isPromptFocused, question]);
+
+  useEffect(() => {
     const clearTimers = () => {
       if (poseTimer.current) clearTimeout(poseTimer.current);
       if (poseSafetyTimer.current) clearTimeout(poseSafetyTimer.current);
@@ -267,6 +355,10 @@ export default function DalilCard() {
   });
 
   const openWasilWithQuestion = () => {
+    if (!isAuthenticated) {
+      router.push('/profile');
+      return;
+    }
     const prompt = question.trim();
     if (!prompt) return;
     router.push({
@@ -278,7 +370,7 @@ export default function DalilCard() {
   return (
     <Pressable
       accessibilityLabel="Ouvrir Wasil"
-      onPress={() => router.push('/dalil')}
+      onPress={() => router.push(isAuthenticated ? '/dalil' : '/profile')}
       onPressIn={() => {
         Animated.timing(pressScale, {
           toValue: 0.97,
@@ -309,7 +401,7 @@ export default function DalilCard() {
         style={[styles.glow, { opacity: glowPulse }]}
       />
 
-      <View style={styles.askRow}>
+      <View style={[styles.askRow, !isAuthenticated && styles.guestAskRow]}>
         <Animated.Image
           source={cardPoseSource}
           resizeMode="contain"
@@ -330,14 +422,49 @@ export default function DalilCard() {
             },
           ]}
         />
+        {!isAuthenticated ? (
+          <Pressable
+            onPress={(event) => {
+              event.stopPropagation();
+              router.push('/profile');
+            }}
+            style={styles.guestPrompt}
+          >
+            <Text style={styles.guestTitle}>Commencez avec Wasil</Text>
+            <Text style={styles.guestText}>
+              « Et quiconque place sa confiance en Allah, Il lui suffit. » — Coran, 65:3
+            </Text>
+            <Text style={styles.guestInvite}>
+              Inscrivez-vous gratuitement pour commencer à parler avec moi.
+            </Text>
+            <Text style={styles.guestLink}>Créer mon profil →</Text>
+          </Pressable>
+        ) : (
         <View style={styles.prompt}>
+          {!isPromptFocused && question.length === 0 ? (
+            <Text
+              numberOfLines={1}
+              pointerEvents="none"
+              style={styles.animatedPlaceholder}
+            >
+              {animatedPrompt}
+              <Text style={styles.animatedCursor}>|</Text>
+            </Text>
+          ) : null}
           <TextInput
             accessibilityLabel="Écrire une question à Wasil"
             autoCapitalize="sentences"
+            onBlur={() => setIsPromptFocused(false)}
             onChangeText={setQuestion}
+            onFocus={() => {
+              setIsPromptFocused(true);
+              onPromptFocus?.();
+            }}
             onPressIn={(event) => event.stopPropagation()}
             onSubmitEditing={openWasilWithQuestion}
-            placeholder="Demandez quelque chose à Wasil…"
+            placeholder={
+              isPromptFocused ? 'Demandez quelque chose à Wasil…' : undefined
+            }
             placeholderTextColor="#A9A2AA"
             returnKeyType="send"
             style={styles.promptInput}
@@ -356,6 +483,7 @@ export default function DalilCard() {
             <Ionicons name="navigate" size={22} color="#14131A" />
           </Pressable>
         </View>
+        )}
       </View>
 
       <View style={styles.suggestions}>
@@ -414,6 +542,43 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.8,
     shadowRadius: 10,
   },
+  guestAskRow: { paddingRight: 14 },
+  guestPrompt: {
+    flex: 1,
+    minHeight: 78,
+    justifyContent: 'center',
+    paddingHorizontal: 13,
+    borderRadius: 17,
+    borderWidth: 1,
+    borderColor: 'rgba(227,181,90,0.3)',
+    backgroundColor: 'rgba(20,18,28,0.78)',
+  },
+  guestTitle: {
+    color: colors.goldLight,
+    fontFamily: typography.serifMedium,
+    fontSize: 14,
+  },
+  guestText: {
+    marginTop: 3,
+    color: '#F2E7D3',
+    fontFamily: typography.sans,
+    fontSize: 8.5,
+    fontStyle: 'italic',
+  },
+  guestInvite: {
+    marginTop: 3,
+    color: colors.text,
+    fontFamily: typography.sans,
+    fontSize: 8.7,
+    lineHeight: 12,
+  },
+  guestLink: {
+    marginTop: 3,
+    color: '#F5B735',
+    fontFamily: typography.sans,
+    fontSize: 9,
+    fontWeight: '800',
+  },
   askRow: {
     height: 99,
     paddingTop: 19,
@@ -439,6 +604,18 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: 'rgba(255,255,255,0.13)',
     backgroundColor: 'rgba(22,22,28,0.66)',
+  },
+  animatedPlaceholder: {
+    position: 'absolute',
+    zIndex: 1,
+    left: 12,
+    right: 58,
+    color: '#A9A2AA',
+    fontFamily: typography.sans,
+    fontSize: 13,
+  },
+  animatedCursor: {
+    color: colors.goldLight,
   },
   promptInput: {
     flex: 1,

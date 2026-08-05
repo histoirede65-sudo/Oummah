@@ -35,6 +35,8 @@ function openMosqueDetails(mosque: StoredMosque) {
       phone: mosque.phone ?? '',
       website: mosque.website ?? '',
       openingHours: mosque.openingHours ?? '',
+      source: mosque.source ?? '',
+      imageKey: mosque.imageKey ?? '',
     },
   } as Href);
 }
