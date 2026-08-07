@@ -1,0 +1,2 @@
+[functions.revenuecat-wasil-webhook]
+verify_jwt = false

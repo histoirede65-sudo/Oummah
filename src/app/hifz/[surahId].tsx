@@ -1,9 +1,11 @@
 import { Ionicons } from "@expo/vector-icons";
 import { useFocusEffect } from "@react-navigation/native";
 import { useLocalSearchParams, router } from "expo-router";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   ActivityIndicator,
+  FlatList,
+  Modal,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -34,7 +36,11 @@ export default function HifzSurahDetail() {
   const [verses, setVerses] = useState<readonly QuranFoundationVerse[]>([]);
   const [tab, setTab] = useState<Tab>("all");
   const [startVerse, setStartVerse] = useState(1);
-  const [endVerse, setEndVerse] = useState(Math.min(3, surah.verses));
+  const [endVerse, setEndVerse] = useState(surah.verses);
+  const [versePickerVisible, setVersePickerVisible] = useState(false);
+  const [versePickerTarget, setVersePickerTarget] = useState<"start" | "end">("start");
+  const versePickerListRef = useRef<FlatList<QuranFoundationVerse>>(null);
+  const rangeRestoredRef = useRef(false);
 
   useFocusEffect(
     useCallback(() => {
@@ -51,6 +57,20 @@ export default function HifzSurahDetail() {
       .then(setVerses)
       .catch(() => setVerses([]));
   }, [surahId]);
+  useEffect(() => {
+    if (!state || rangeRestoredRef.current) return;
+    const savedRange = state.plannedRanges?.find((item) => item.surahId === surahId);
+    if (
+      savedRange &&
+      savedRange.startVerse >= 1 &&
+      savedRange.endVerse <= surah.verses &&
+      savedRange.startVerse <= savedRange.endVerse
+    ) {
+      setStartVerse(savedRange.startVerse);
+      setEndVerse(savedRange.endVerse);
+    }
+    rangeRestoredRef.current = true;
+  }, [state, surah.verses, surahId]);
   const progress = state?.progress.find((item) => item.surahId === surahId);
   const learned = new Set(progress?.learnedVerses ?? []);
   const difficult = new Set(progress?.difficultVerses ?? []);
@@ -58,13 +78,28 @@ export default function HifzSurahDetail() {
     () =>
       verses.filter((verse) => {
         const number = Number(verse.verseKey.split(":")[1]);
+        if (number < startVerse || number > endVerse) return false;
         if (tab === "all") return true;
         if (tab === "learned") return learned.has(number);
         if (tab === "review") return difficult.has(number);
         return !learned.has(number);
       }),
-    [difficult, learned, tab, verses],
+    [difficult, endVerse, learned, startVerse, tab, verses],
   );
+  const persistRange = (nextStart: number, nextEnd: number) => {
+    setStartVerse(nextStart);
+    setEndVerse(nextEnd);
+    if (!state) return;
+    const next = {
+      ...state,
+      plannedRanges: [
+        ...(state.plannedRanges ?? []).filter((item) => item.surahId !== surahId),
+        { surahId, startVerse: nextStart, endVerse: nextEnd },
+      ],
+    };
+    setState(next);
+    void saveHifzState(next);
+  };
   const planRange = () => {
     if (!state) return;
     const range = { surahId, startVerse, endVerse };
@@ -79,9 +114,36 @@ export default function HifzSurahDetail() {
     };
     setState(next);
     void saveHifzState(next);
+    console.log("[HIFZ OPEN SESSION]", {
+      surah: surahId,
+      verse: startVerse,
+      end: endVerse,
+    });
     router.push(
-      `/hifz/session?surah=${surahId}&verse=${startVerse}&end=${endVerse}`,
+      `/hifz/session?surah=${surahId}&verse=${startVerse}&end=${endVerse}&repeat=3&reciter=&portion=portion`,
     );
+  };
+  const openVersePicker = (target: "start" | "end") => {
+    setVersePickerTarget(target);
+    setVersePickerVisible(true);
+  };
+  useEffect(() => {
+    if (!versePickerVisible || verses.length === 0) return;
+    const selectedVerse = versePickerTarget === "start" ? startVerse : endVerse;
+    const index = verses.findIndex(
+      (verse) => Number(verse.verseKey.split(":")[1]) === selectedVerse,
+    );
+    if (index >= 0) {
+      requestAnimationFrame(() => versePickerListRef.current?.scrollToIndex({ index, animated: false }));
+    }
+  }, [endVerse, startVerse, versePickerTarget, versePickerVisible, verses]);
+  const selectVerse = (value: number) => {
+    const nextStart = versePickerTarget === "start" ? value : startVerse;
+    const nextEnd = versePickerTarget === "end" ? value : endVerse;
+    const coherentStart = versePickerTarget === "end" && nextEnd < nextStart ? nextEnd : nextStart;
+    const coherentEnd = versePickerTarget === "start" && nextStart > nextEnd ? nextStart : nextEnd;
+    persistRange(coherentStart, coherentEnd);
+    setVersePickerVisible(false);
   };
   const status = (number: number) =>
     learned.has(number)
@@ -129,33 +191,39 @@ export default function HifzSurahDetail() {
                 Choisissez exactement les versets à travailler.
               </Text>
             </View>
-            <Ionicons
-              name="options-outline"
-              size={19}
-              color={colors.goldLight}
-            />
           </View>
           <View style={styles.rangeControls}>
             <Pressable
-              onPress={() => setStartVerse((value) => Math.max(1, value - 1))}
-              style={styles.rangeButton}
+              disabled={endVerse <= startVerse}
+              onPress={() => persistRange(startVerse, Math.max(startVerse, endVerse - 1))}
+              style={[styles.rangeButton, endVerse <= startVerse && styles.rangeButtonDisabled]}
             >
               <Ionicons name="remove" size={16} color={colors.goldLight} />
             </Pressable>
-            <View style={styles.rangeValue}>
+            <Pressable
+              onPress={() => openVersePicker("start")}
+              style={({ pressed }) => [styles.rangeValue, pressed && styles.rangeValuePressed]}
+            >
               <Text style={styles.rangeLabel}>DU</Text>
-              <Text style={styles.rangeNumber}>{startVerse}</Text>
-            </View>
+              <View style={styles.rangeNumberRow}>
+                <Text style={styles.rangeNumber}>{startVerse}</Text>
+                <Ionicons name="chevron-down" size={12} color={colors.goldLight} />
+              </View>
+            </Pressable>
             <Text style={styles.rangeTo}>→</Text>
-            <View style={styles.rangeValue}>
+            <Pressable
+              onPress={() => openVersePicker("end")}
+              style={({ pressed }) => [styles.rangeValue, pressed && styles.rangeValuePressed]}
+            >
               <Text style={styles.rangeLabel}>AU</Text>
-              <Text style={styles.rangeNumber}>{endVerse}</Text>
-            </View>
+              <View style={styles.rangeNumberRow}>
+                <Text style={styles.rangeNumber}>{endVerse}</Text>
+                <Ionicons name="chevron-down" size={12} color={colors.goldLight} />
+              </View>
+            </Pressable>
             <Pressable
               onPress={() =>
-                setEndVerse((value) =>
-                  Math.min(surah.verses, Math.max(value + 1, startVerse)),
-                )
+                persistRange(startVerse, Math.min(surah.verses, Math.max(endVerse + 1, startVerse)))
               }
               style={styles.rangeButton}
             >
@@ -165,10 +233,46 @@ export default function HifzSurahDetail() {
           <Pressable onPress={planRange} style={styles.planButton}>
             <Ionicons name="play" size={16} color={colors.background} />
             <Text style={styles.planText}>
-              Mémoriser les versets {startVerse} à {endVerse}
+              {startVerse === endVerse
+                ? `Mémoriser le verset ${startVerse}`
+                : `Mémoriser les versets ${startVerse} à ${endVerse}`}
             </Text>
           </Pressable>
+          <Text style={styles.rangeHint}>Touchez les numéros pour choisir vos versets</Text>
         </View>
+        <Modal visible={versePickerVisible} transparent animationType="slide" onRequestClose={() => setVersePickerVisible(false)}>
+          <View style={styles.versePickerBackdrop}>
+            <View style={styles.versePickerCard}>
+              <View style={styles.optionsHeader}>
+                <Text style={styles.optionsTitle}>Choisir le verset {versePickerTarget === "start" ? "de départ" : "de fin"}</Text>
+                <Pressable onPress={() => setVersePickerVisible(false)} hitSlop={8}>
+                  <Ionicons name="close" size={21} color={colors.textMuted} />
+                </Pressable>
+              </View>
+              <FlatList
+                ref={versePickerListRef}
+                data={verses}
+                keyExtractor={(verse) => verse.verseKey}
+                style={styles.versePickerList}
+                contentContainerStyle={styles.versePickerContent}
+                getItemLayout={(_, index) => ({ length: 63, offset: 63 * index, index })}
+                onScrollToIndexFailed={({ index }) => {
+                  setTimeout(() => versePickerListRef.current?.scrollToIndex({ index, animated: false }), 50);
+                }}
+                renderItem={({ item: verse }) => {
+                  const value = Number(verse.verseKey.split(":")[1]);
+                  const selected = value === (versePickerTarget === "start" ? startVerse : endVerse);
+                  return (
+                    <Pressable onPress={() => selectVerse(value)} style={[styles.versePickerItem, selected && styles.versePickerItemSelected]}>
+                      <Text style={[styles.versePickerItemNumber, selected && styles.versePickerItemTextSelected]}>{value}</Text>
+                      <Text numberOfLines={1} ellipsizeMode="tail" style={[styles.versePickerItemText, selected && styles.versePickerItemTextSelected]}>{verse.textUthmani}</Text>
+                    </Pressable>
+                  );
+                }}
+              />
+            </View>
+          </View>
+        </Modal>
         <Text style={styles.sectionTitle}>Les versets</Text>
         <View style={styles.tabs}>
           {(
@@ -201,13 +305,19 @@ export default function HifzSurahDetail() {
           filtered.map((verse) => {
             const number = Number(verse.verseKey.split(":")[1]);
             const current = status(number);
+            const selectedInRange = number >= startVerse && number <= endVerse;
             return (
               <Pressable
                 key={verse.verseKey}
-                onPress={() =>
-                  router.push(`/hifz/session?surah=${surahId}&verse=${number}`)
-                }
-                style={styles.verseRow}
+                onPress={() => {
+                  console.log("[HIFZ OPEN SESSION]", {
+                    surah: surahId,
+                    verse: number,
+                    end: endVerse,
+                  });
+                  router.push(`/hifz/session?surah=${surahId}&verse=${number}&end=${endVerse}`);
+                }}
+                style={[styles.verseRow, selectedInRange && styles.verseRowSelected]}
               >
                 <View
                   style={[
@@ -239,6 +349,9 @@ export default function HifzSurahDetail() {
                   <Text numberOfLines={2} style={styles.verseArabic}>
                     {verse.textUthmani}
                   </Text>
+                  {selectedInRange && (
+                    <Text style={styles.selectedRangeBadge}>Passage sélectionné</Text>
+                  )}
                 </View>
                 <Ionicons
                   name="chevron-forward"
@@ -347,6 +460,21 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.borderSoft,
   },
+  rangeButtonDisabled: { opacity: 0.35 },
+  rangeValuePressed: { opacity: 0.65 },
+  rangeNumberRow: { flexDirection: "row", alignItems: "center", gap: 3 },
+  rangeHint: { marginTop: 8, color: colors.textMuted, fontFamily: typography.sans, fontSize: 10, textAlign: "center" },
+  versePickerBackdrop: { flex: 1, justifyContent: "flex-end", backgroundColor: "rgba(7,5,11,0.72)" },
+  versePickerCard: { maxHeight: "78%", padding: 22, paddingBottom: 28, borderTopLeftRadius: 26, borderTopRightRadius: 26, backgroundColor: colors.surface },
+  versePickerList: { marginTop: 14 },
+  versePickerContent: { paddingBottom: 8 },
+  versePickerItem: { minHeight: 58, marginBottom: 5, paddingHorizontal: 10, flexDirection: "row", alignItems: "center", borderRadius: 12, borderWidth: 1, borderColor: colors.borderSoft, backgroundColor: colors.background },
+  versePickerItemSelected: { borderColor: colors.goldLight, backgroundColor: "rgba(227,181,90,0.12)" },
+  versePickerItemNumber: { width: 30, color: colors.textMuted, fontFamily: typography.sansBold, fontSize: 12 },
+  versePickerItemText: { flex: 1, color: colors.textMuted, fontFamily: ARABIC_READING_FONT_FAMILY, fontSize: 25, lineHeight: 38, textAlign: "right", writingDirection: "rtl" },
+  versePickerItemTextSelected: { color: colors.goldLight, fontFamily: typography.sansBold },
+  optionsHeader: { flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
+  optionsTitle: { color: colors.goldLight, fontFamily: typography.serifMedium, fontSize: 22 },
   rangeValue: { width: 48, alignItems: "center" },
   rangeLabel: {
     color: colors.textMuted,
@@ -415,6 +543,8 @@ const styles = StyleSheet.create({
     borderColor: colors.borderSoft,
     backgroundColor: "rgba(30,18,42,0.86)",
   },
+  verseRowSelected: { borderColor: colors.goldLight, borderWidth: 1 },
+  selectedRangeBadge: { marginTop: 4, color: colors.goldLight, fontFamily: typography.sansBold, fontSize: 10 },
   statusDot: {
     width: 28,
     height: 28,

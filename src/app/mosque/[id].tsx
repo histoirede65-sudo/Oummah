@@ -8,10 +8,14 @@ import {
     Image,
     type ImageSourcePropType,
     Linking,
+    KeyboardAvoidingView,
+    Platform,
     Pressable,
     ScrollView,
     StyleSheet,
     Text,
+    TextInput,
+    Modal,
     View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -32,6 +36,11 @@ import {
     setMainMosque,
     type StoredMosque,
 } from '../../features/mosques/data/mosquePreferences';
+import {
+    getApprovedMosquePrayerTimes,
+    proposeMosquePrayerTimes,
+    type MosquePrayerTimes,
+} from '../../features/mosques/data/mosquePrayerUpdates';
 import { colors } from '../../theme/colors';
 import { typography } from '../../theme/typography';
 
@@ -302,6 +311,32 @@ async function openExternalUrl(url: string, errorMessage: string) {
   }
 }
 
+
+function formatPrayerTimeInput(value: string): string {
+  if (/[Hh:]/.test(value)) {
+    const [rawHours, rawMinutes = ''] = value.split(/[Hh:]/, 2);
+    const hours = rawHours.replace(/\D/g, '').slice(0, 2);
+    const minutes = rawMinutes.replace(/\D/g, '').slice(0, 2);
+    return minutes.length > 0 || /[Hh:]/.test(value)
+      ? `${hours}H${minutes}`
+      : hours;
+  }
+  const digits = value.replace(/\D/g, '').slice(0, 4);
+  if (digits.length <= 3) return digits;
+  return `${digits.slice(0, 2)}H${digits.slice(2)}`;
+}
+
+function isValidPrayerTime(value: string): boolean {
+  if (!value) return true;
+  if (/^\d{3}$/.test(value)) value = value.padStart(4, '0');
+  if (/^\d{4}$/.test(value)) value = `${value.slice(0, 2)}H${value.slice(2)}`;
+  const match = /^(\d{2})H(\d{2})$/.exec(value);
+  if (!match) return false;
+  const hours = Number(match[1]);
+  const minutes = Number(match[2]);
+  return hours >= 0 && hours <= 23 && minutes >= 0 && minutes <= 59;
+}
+
 export default function MosqueDetailScreen() {
   const params = useLocalSearchParams<{
     id?: string;
@@ -337,6 +372,10 @@ export default function MosqueDetailScreen() {
   const [savingFavorite, setSavingFavorite] = useState(false);
   const [savingMainMosque, setSavingMainMosque] = useState(false);
   const [enrichment, setEnrichment] = useState<MosqueEnrichment | null>(null);
+  const [prayerTimes, setPrayerTimes] = useState<MosquePrayerTimes | null>(null);
+  const [prayerModalVisible, setPrayerModalVisible] = useState(false);
+  const [savingPrayerTimes, setSavingPrayerTimes] = useState(false);
+  const [prayerForm, setPrayerForm] = useState({ fajr: '', dhuhr: '', asr: '', maghrib: '', isha: '', jumuah: '', note: '' });
 
   const mosqueId = getSingleParam(params.id);
   const mosqueName = getSingleParam(params.name);
@@ -476,6 +515,15 @@ export default function MosqueDetailScreen() {
     return () => {
       active = false;
     };
+  }, [mosqueId]);
+
+  useEffect(() => {
+    let active = true;
+    if (!mosqueId) return () => { active = false; };
+    void getApprovedMosquePrayerTimes(mosqueId)
+      .then((value) => { if (active) setPrayerTimes(value); })
+      .catch(() => undefined);
+    return () => { active = false; };
   }, [mosqueId]);
 
   useEffect(() => {
@@ -644,6 +692,35 @@ export default function MosqueDetailScreen() {
     }
   };
 
+  const openPrayerTimesProposal = () => {
+    setPrayerForm({
+      fajr: formatPrayerTimeInput(prayerTimes?.fajr ?? ''), dhuhr: formatPrayerTimeInput(prayerTimes?.dhuhr ?? ''), asr: formatPrayerTimeInput(prayerTimes?.asr ?? ''),
+      maghrib: formatPrayerTimeInput(prayerTimes?.maghrib ?? ''), isha: formatPrayerTimeInput(prayerTimes?.isha ?? ''), jumuah: formatPrayerTimeInput(prayerTimes?.jumuah ?? ''), note: '',
+    });
+    setPrayerModalVisible(true);
+  };
+
+  const submitPrayerTimesProposal = async () => {
+    if (savingPrayerTimes) return;
+    const invalidTime = (['fajr','dhuhr','asr','maghrib','isha','jumuah'] as const).find((key) => !isValidPrayerTime(prayerForm[key]));
+    if (invalidTime) {
+      Alert.alert('Horaire incorrect', 'Saisissez une heure valide, par exemple 13H30.');
+      return;
+    }
+    setSavingPrayerTimes(true);
+    try {
+      await proposeMosquePrayerTimes({ mosqueId: displayedMosque.id, mosqueName: displayedMosque.name, mosqueAddress: displayedMosque.address, ...prayerForm });
+      setPrayerModalVisible(false);
+      Alert.alert('Proposition envoyée', 'Les horaires seront affichés après validation par un administrateur.');
+    } catch (error) {
+      Alert.alert('Envoi impossible', error instanceof Error && error.message === 'AUTH_REQUIRED'
+        ? 'Connectez-vous pour proposer des horaires.'
+        : error instanceof Error && error.message === 'HORAIRE_INVALIDE'
+        ? 'Saisissez une heure valide, par exemple 13H30.'
+        : 'Impossible d’envoyer la proposition.');
+    } finally { setSavingPrayerTimes(false); }
+  };
+
   const chooseMainMosque = async () => {
     if (savingMainMosque || mainMosque) return;
 
@@ -767,6 +844,28 @@ export default function MosqueDetailScreen() {
           latitude={displayedMosque.latitude}
           longitude={displayedMosque.longitude}
         />
+
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Horaires de la mosquée</Text>
+          <View style={styles.prayerTimesCard}>
+            {(['fajr','dhuhr','asr','maghrib','isha'] as const).map((key) => (
+              <View key={key} style={styles.prayerTimeRow}>
+                <Text style={styles.prayerTimeLabel}>{key.charAt(0).toUpperCase() + key.slice(1)}</Text>
+                <Text style={styles.prayerTimeValue}>{prayerTimes?.[key] ?? 'Non renseigné'}</Text>
+              </View>
+            ))}
+            <View style={styles.prayerTimeDivider} />
+            <View style={styles.prayerTimeRow}>
+              <Text style={styles.jumuahLabel}>Joumou’a</Text>
+              <Text style={styles.jumuahValue}>{prayerTimes?.jumuah ?? 'Non renseigné'}</Text>
+            </View>
+            {prayerTimes?.updatedAt ? <Text style={styles.prayerUpdated}>Dernière validation : {new Date(prayerTimes.updatedAt).toLocaleDateString('fr-FR')}</Text> : null}
+            <Pressable onPress={openPrayerTimesProposal} style={styles.proposePrayerButton}>
+              <Ionicons name="create-outline" size={18} color={colors.background} />
+              <Text style={styles.proposePrayerButtonText}>Proposer une modification</Text>
+            </Pressable>
+          </View>
+        </View>
 
         <View style={styles.actionsGrid}>
           <Pressable
@@ -1323,6 +1422,48 @@ export default function MosqueDetailScreen() {
         </View>
         </View>
       </ScrollView>
+      <Modal visible={prayerModalVisible} transparent animationType="slide" onRequestClose={() => setPrayerModalVisible(false)}>
+        <KeyboardAvoidingView
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          style={styles.modalBackdrop}
+        >
+          <ScrollView
+            bounces={false}
+            keyboardShouldPersistTaps="handled"
+            contentContainerStyle={styles.prayerModalScrollContent}
+          >
+            <View style={styles.prayerModal}>
+              <Text style={styles.prayerModalTitle}>Proposer les horaires</Text>
+              <Text style={styles.prayerModalText}>Saisissez uniquement les chiffres de l’heure.</Text>
+              <View style={styles.prayerInputsGrid}>
+                {(['fajr','dhuhr','asr','maghrib','isha','jumuah'] as const).map((key) => (
+                  <View key={key} style={styles.prayerInputBlock}>
+                    <Text style={styles.prayerInputLabel}>{key === 'jumuah' ? 'Joumou’a' : key.charAt(0).toUpperCase() + key.slice(1)}</Text>
+                    <TextInput
+                      value={prayerForm[key]}
+                      selection={{ start: prayerForm[key].length, end: prayerForm[key].length }}
+                      onChangeText={(value) => setPrayerForm((current) => ({ ...current, [key]: formatPrayerTimeInput(value) }))}
+                      onBlur={() => setPrayerForm((current) => ({ ...current, [key]: formatPrayerTimeInput(current[key]) }))}
+                      placeholder="00H00"
+                      placeholderTextColor="#837789"
+                      keyboardType="number-pad"
+                      inputMode="numeric"
+                      maxLength={5}
+                      returnKeyType="done"
+                      style={styles.prayerInput}
+                    />
+                  </View>
+                ))}
+              </View>
+              <TextInput value={prayerForm.note} onChangeText={(note) => setPrayerForm((current) => ({...current,note}))} placeholder="Note facultative" placeholderTextColor="#837789" style={[styles.prayerInput, styles.noteInput]} />
+              <View style={styles.modalActions}>
+                <Pressable onPress={() => setPrayerModalVisible(false)} style={styles.modalCancel}><Text style={styles.modalCancelText}>Annuler</Text></Pressable>
+                <Pressable disabled={savingPrayerTimes} onPress={() => void submitPrayerTimesProposal()} style={styles.modalSubmit}><Text style={styles.modalSubmitText}>{savingPrayerTimes ? 'Envoi…' : 'Envoyer'}</Text></Pressable>
+              </View>
+            </View>
+          </ScrollView>
+        </KeyboardAvoidingView>
+      </Modal>
     </SafeAreaView>
   );
 }
@@ -1836,4 +1977,30 @@ const styles = StyleSheet.create({
   pressed: {
     opacity: 0.72,
   },
+
+  prayerTimesCard: { backgroundColor: '#18131F', borderRadius: 22, borderWidth: 1, borderColor: 'rgba(242,181,61,0.18)', padding: 18 },
+  prayerTimeRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 8 },
+  prayerTimeLabel: { color: colors.text, fontFamily: typography.sans, fontSize: 15 },
+  prayerTimeValue: { color: colors.textMuted, fontFamily: typography.sansMedium, fontSize: 15 },
+  prayerTimeDivider: { height: 1, backgroundColor: 'rgba(255,255,255,0.08)', marginVertical: 8 },
+  jumuahLabel: { color: colors.goldLight, fontFamily: typography.sansBold, fontSize: 17 },
+  jumuahValue: { color: colors.goldLight, fontFamily: typography.sansBold, fontSize: 19 },
+  prayerUpdated: { marginTop: 10, color: colors.textMuted, fontFamily: typography.sans, fontSize: 12 },
+  proposePrayerButton: { marginTop: 16, minHeight: 46, borderRadius: 14, backgroundColor: colors.goldLight, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8 },
+  proposePrayerButtonText: { color: colors.background, fontFamily: typography.sansBold, fontSize: 14 },
+  modalBackdrop: { flex: 1, backgroundColor: 'rgba(7,5,11,0.72)' },
+  prayerModalScrollContent: { flexGrow: 1, justifyContent: 'flex-end' },
+  prayerModal: { backgroundColor: '#18131F', borderTopLeftRadius: 28, borderTopRightRadius: 28, padding: 22, paddingBottom: 32 },
+  prayerModalTitle: { color: colors.goldLight, fontFamily: typography.serifMedium, fontSize: 24 },
+  prayerModalText: { marginTop: 6, marginBottom: 16, color: colors.textMuted, fontFamily: typography.sans, fontSize: 13 },
+  prayerInputsGrid: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between' },
+  prayerInputBlock: { width: '48%', marginBottom: 12 },
+  prayerInputLabel: { marginBottom: 5, color: colors.text, fontFamily: typography.sansMedium, fontSize: 13 },
+  prayerInput: { minHeight: 45, borderRadius: 12, borderWidth: 1, borderColor: 'rgba(242,181,61,0.24)', backgroundColor: '#100C16', paddingHorizontal: 13, color: colors.text, fontFamily: typography.sans, fontSize: 15 },
+  noteInput: { marginTop: 2 },
+  modalActions: { flexDirection: 'row', gap: 10, marginTop: 18 },
+  modalCancel: { flex: 1, minHeight: 48, borderRadius: 14, borderWidth: 1, borderColor: 'rgba(255,255,255,0.15)', alignItems: 'center', justifyContent: 'center' },
+  modalCancelText: { color: colors.text, fontFamily: typography.sansBold },
+  modalSubmit: { flex: 1, minHeight: 48, borderRadius: 14, backgroundColor: colors.goldLight, alignItems: 'center', justifyContent: 'center' },
+  modalSubmitText: { color: colors.background, fontFamily: typography.sansBold },
 });

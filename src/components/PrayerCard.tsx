@@ -40,6 +40,7 @@ import {
   getMainMosque,
   type StoredMosque,
 } from "../features/mosques/data/mosquePreferences";
+import { getApprovedMosquePrayerTimes } from "../features/mosques/data/mosquePrayerUpdates";
 import { colors } from "../theme/colors";
 import { typography } from "../theme/typography";
 import {
@@ -70,6 +71,28 @@ const ADHAN_PRAYERS: MosquePrayerKey[] = [
   "Maghrib",
   "Isha",
 ];
+
+function applyApprovedMosquePrayerTimes(
+  schedule: MosquePrayerSchedule,
+  approved: Awaited<ReturnType<typeof getApprovedMosquePrayerTimes>>,
+) {
+  if (!approved) return schedule;
+
+  const adjust = (prayer: MosquePrayerTime) => {
+    const value = approved[prayer.key.toLowerCase() as "fajr" | "dhuhr" | "asr" | "maghrib" | "isha"];
+    if (!value || !/^([01]\d|2[0-3]):[0-5]\d$/.test(value)) return prayer;
+    const [hours, minutes] = value.split(":").map(Number);
+    const date = new Date(prayer.timestamp);
+    date.setHours(hours, minutes, 0, 0);
+    return { ...prayer, time: value, timestamp: date.getTime() };
+  };
+
+  return {
+    ...schedule,
+    prayers: schedule.prayers.map(adjust),
+    tomorrowFajr: adjust(schedule.tomorrowFajr),
+  };
+}
 
 const ADHAN_MODES: ReadonlyArray<{
   key: AdhanAlertMode;
@@ -302,6 +325,7 @@ export default function PrayerCard() {
   const { width } = useWindowDimensions();
   const compact = width < 375;
   const [mainMosque, setMainMosque] = useState<StoredMosque | null>(null);
+  const [mainMosqueJumuah, setMainMosqueJumuah] = useState<string | null>(null);
   const [source, setSource] = useState<PrayerSource | null>(null);
   const [manualSource, setManualSource] = useState<PrayerSource | null>(null);
   const [schedule, setSchedule] = useState<MosquePrayerSchedule | null>(null);
@@ -386,6 +410,12 @@ export default function PrayerCard() {
 
         if (active) {
           setMainMosque(mosque);
+          if (mosque) {
+            const approved = await getApprovedMosquePrayerTimes(mosque.id).catch(() => null);
+            if (active) setMainMosqueJumuah(approved?.jumuah ?? null);
+          } else {
+            setMainMosqueJumuah(null);
+          }
         }
       };
 
@@ -459,9 +489,14 @@ export default function PrayerCard() {
           controller.signal,
         );
 
+        const approved = mainMosque && !manualSource
+          ? await getApprovedMosquePrayerTimes(mainMosque.id).catch(() => null)
+          : null;
+        const adjustedResult = applyApprovedMosquePrayerTimes(result, approved);
+
         if (!controller.signal.aborted) {
           setSource(resolvedSource);
-          setSchedule(result);
+          setSchedule(adjustedResult);
         }
       } catch (error) {
         if (error instanceof Error && error.name === "AbortError") {
@@ -569,6 +604,14 @@ export default function PrayerCard() {
   const countdown = nextPrayer
     ? formatCountdown(nextPrayer.timestamp - now)
     : "--:--:--";
+  const jumuahMinutes = mainMosqueJumuah
+    ? Number(mainMosqueJumuah.slice(0, 2)) * 60 + Number(mainMosqueJumuah.slice(3, 5))
+    : null;
+  const currentMinutes = new Date(now).getHours() * 60 + new Date(now).getMinutes();
+  const showFridayJumuah =
+    new Date(now).getDay() === 5 &&
+    jumuahMinutes !== null &&
+    currentMinutes < jumuahMinutes;
   const calendarDate = useMemo(() => new Date(now), [now]);
   const hijriDate = useMemo(
     () =>
@@ -658,7 +701,7 @@ export default function PrayerCard() {
                   numberOfLines={1}
                   style={styles.prayerName}
                 >
-                  {currentPrayer ? PRAYER_LABELS[currentPrayer.key] : "Isha"}
+                  {currentPrayer ? PRAYER_LABELS[currentPrayer.key] : ""}
                 </Text>
               </View>
               <Text
@@ -826,7 +869,9 @@ export default function PrayerCard() {
             <View pointerEvents="none" style={styles.orbitCenter}>
               <View style={styles.orbitCenterLine} />
               <Ionicons name="time-outline" size={13} color="#F2B94C" />
-              <Text style={styles.orbitCenterText}>Cycle des prières</Text>
+              <Text style={styles.orbitCenterText}>
+                {showFridayJumuah ? `Joumou’a\n${mainMosqueJumuah}` : "Cycle des prières"}
+              </Text>
               <View style={styles.orbitCenterLine} />
             </View>
 
@@ -1713,7 +1758,7 @@ const styles = StyleSheet.create({
   orbitCenter: {
     position: "absolute",
     zIndex: 2,
-    top: 64,
+    top: 60,
     right: 98,
     left: 98,
     flexDirection: "row",
@@ -1728,10 +1773,14 @@ const styles = StyleSheet.create({
   },
   orbitCenterText: {
     marginLeft: 4,
-    color: "rgba(255,239,213,0.70)",
+    color: colors.goldLight,
     fontFamily: typography.serifMedium,
-    fontSize: 8.5,
+    fontSize: 11,
+    lineHeight: 12,
+    textAlign: "center",
     letterSpacing: 0.35,
+    textShadowColor: "rgba(242,185,76,0.72)",
+    textShadowRadius: 5,
   },
   loading: {
     position: "absolute",

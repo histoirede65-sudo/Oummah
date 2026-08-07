@@ -43,6 +43,7 @@ export default function ProfileScreen() {
   const [authMode, setAuthMode] = useState<"signup" | "signin">("signup");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const isAdmin = isOummahAdminSession(session);
 
@@ -356,18 +357,32 @@ export default function ProfileScreen() {
               style={styles.authInput}
               value={email}
             />
-            <TextInput
-              autoCapitalize="none"
-              autoComplete={authMode === "signup" ? "new-password" : "password"}
-              editable={!loading}
-              onChangeText={setPassword}
-              onSubmitEditing={authenticateWithPassword}
-              placeholder="Mot de passe"
-              placeholderTextColor={colors.textMuted}
-              secureTextEntry
-              style={styles.authInput}
-              value={password}
-            />
+            <View style={styles.passwordInputWrap}>
+              <TextInput
+                autoCapitalize="none"
+                autoComplete={authMode === "signup" ? "new-password" : "password"}
+                editable={!loading}
+                onChangeText={setPassword}
+                onSubmitEditing={authenticateWithPassword}
+                placeholder="Mot de passe"
+                placeholderTextColor={colors.textMuted}
+                secureTextEntry={!showPassword}
+                style={styles.passwordInput}
+                value={password}
+              />
+              <Pressable
+                accessibilityLabel={showPassword ? "Masquer le mot de passe" : "Afficher le mot de passe"}
+                accessibilityRole="button"
+                onPress={() => setShowPassword((current) => !current)}
+                style={styles.passwordToggle}
+              >
+                <Ionicons
+                  name={showPassword ? "eye-off-outline" : "eye-outline"}
+                  size={20}
+                  color={colors.textMuted}
+                />
+              </Pressable>
+            </View>
 
             <Pressable
               accessibilityRole="button"
@@ -761,6 +776,31 @@ const styles = StyleSheet.create({
     color: colors.text,
     fontFamily: typography.sans,
     fontSize: 14,
+  },
+  passwordInputWrap: {
+    position: "relative",
+    marginTop: 16,
+  },
+  passwordInput: {
+    minHeight: 50,
+    paddingLeft: 15,
+    paddingRight: 48,
+    borderRadius: 15,
+    borderWidth: 1,
+    borderColor: "rgba(227,181,90,0.20)",
+    backgroundColor: "rgba(255,255,255,0.055)",
+    color: colors.text,
+    fontFamily: typography.sans,
+    fontSize: 14,
+  },
+  passwordToggle: {
+    position: "absolute",
+    right: 6,
+    top: 5,
+    width: 40,
+    height: 40,
+    alignItems: "center",
+    justifyContent: "center",
   },
   magicLinkStatus: {
     minHeight: 72,

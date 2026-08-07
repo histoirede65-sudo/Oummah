@@ -1,0 +1,101 @@
+[
+  {
+    "sourceHadithId": "nawawi:1",
+    "globalNumber": 1,
+    "book": {
+      "number": 1,
+      "sourceId": "nawawi:book:1",
+      "titleArabic": "الأربعون النووية",
+      "titleFrench": "Les 40 hadiths d’An-Nawawi"
+    },
+    "chapter": {
+      "number": 1,
+      "sourceId": "nawawi:section:1",
+      "titleArabic": "الأربعون النووية",
+      "titleFrench": "Les 40 hadiths d’An-Nawawi"
+    },
+    "hadithNumberInBook": 1,
+    "arabicText": "عَنْ أَمِيرِ الْمُؤْمِنِينَ أَبِي حَفْصٍ عُمَرَ بْنِ الْخَطَّابِ رَضِيَ اللهُ عَنْهُ قَالَ: سَمِعْتُ رَسُولَ اللَّهِ صلى الله عليه وسلم يَقُولُ: \" إنَّمَا الْأَعْمَالُ بِالنِّيَّاتِ، وَإِنَّمَا لِكُلِّ امْرِئٍ مَا نَوَى، فَمَنْ كَانَتْ هِجْرَتُهُ إلَى اللَّهِ وَرَسُولِهِ فَهِجْرَتُهُ إلَى اللَّهِ وَرَسُولِهِ، وَمَنْ كَانَتْ هِجْرَتُهُ لِدُنْيَا يُصِيبُهَا أَوْ امْرَأَةٍ يَنْكِحُهَا فَهِجْرَتُهُ إلَى مَا هَاجَرَ إلَيْهِ\". رَوَاهُ إِمَامَا الْمُحَدِّثِينَ أَبُو عَبْدِ اللهِ مُحَمَّدُ بنُ إِسْمَاعِيل بن إِبْرَاهِيم بن الْمُغِيرَة بن بَرْدِزبَه الْبُخَارِيُّ الْجُعْفِيُّ [رقم:1]، وَأَبُو الْحُسَيْنِ مُسْلِمٌ بنُ الْحَجَّاج بن مُسْلِم الْقُشَيْرِيُّ النَّيْسَابُورِيُّ [رقم:1907] رَضِيَ اللهُ عَنْهُمَا فِي \"صَحِيحَيْهِمَا\" اللذَينِ هُمَا أَصَحُّ الْكُتُبِ الْمُصَنَّفَةِ",
+    "narrator": null,
+    "chainText": null,
+    "authenticityGrade": null,
+    "sourceReference": null,
+    "translationFrench": {
+      "text": "Il est rapporté d’après le chef des croyants, Abou Hafs ‘Omar ibn al-Khattab (qu’Allah l’agrée), qui a dit : J’ai entendu le Messager d’Allah (ﷺ) dire : « Les actions ne valent que par les intentions, et chacun sera récompensé selon ce qu’il a eu comme intention. Ainsi, celui dont l’émigration était pour Allah et Son Messager, son émigration sera pour Allah et Son Messager. Mais celui dont l’émigration visait un intérêt matériel à obtenir, ou une femme à épouser, alors son émigration sera pour ce qui l’a motivé. » [Boukhari & Mouslim]",
+      "translator": null,
+      "sourceName": "fawazahmed0/hadith-api",
+      "sourceUrl": "https://cdn.jsdelivr.net/gh/fawazahmed0/hadith-api@1/editions/fra-nawawi.json",
+      "sourceReference": null,
+      "license": null,
+      "verificationStatus": "unverified"
+    },
+    "explanationFrench": null,
+    "lessonsFrench": []
+  },
+  {
+    "sourceHadithId": "nawawi:2",
+    "globalNumber": 2,
+    "book": {
+      "number": 1,
+      "sourceId": "nawawi:book:1",
+      "titleArabic": "الأربعون النووية",
+      "titleFrench": "Les 40 hadiths d’An-Nawawi"
+    },
+    "chapter": {
+      "number": 1,
+      "sourceId": "nawawi:section:1",
+      "titleArabic": "الأربعون النووية",
+      "titleFrench": "Les 40 hadiths d’An-Nawawi"
+    },
+    "hadithNumberInBook": 2,
+    "arabicText": "عَنْ عُمَرَ رَضِيَ اللهُ عَنْهُ أَيْضًا قَالَ: بَيْنَمَا نَحْنُ جُلُوسٌ عِنْدَ رَسُولِ اللَّهِ صلى الله عليه و سلم ذَاتَ يَوْمٍ، إذْ طَلَعَ عَلَيْنَا رَجُلٌ شَدِيدُ بَيَاضِ الثِّيَابِ، شَدِيدُ سَوَادِ الشَّعْرِ، لَا يُرَى عَلَيْهِ أَثَرُ السَّفَرِ، وَلَا يَعْرِفُهُ مِنَّا أَحَدٌ. حَتَّى جَلَسَ إلَى النَّبِيِّ صلى الله عليه و سلم . فَأَسْنَدَ رُكْبَتَيْهِ إلَى رُكْبَتَيْهِ، وَوَضَعَ كَفَّيْهِ عَلَى فَخِذَيْهِ، وَقَالَ: يَا مُحَمَّدُ أَخْبِرْنِي عَنْ الْإِسْلَامِ. فَقَالَ رَسُولُ اللَّهِ صلى الله عليه و سلم الْإِسْلَامُ أَنْ تَشْهَدَ أَنْ لَا إلَهَ إلَّا اللَّهُ وَأَنَّ مُحَمَّدًا رَسُولُ اللَّهِ، وَتُقِيمَ الصَّلَاةَ، وَتُؤْتِيَ الزَّكَاةَ، وَتَصُومَ رَمَضَانَ، وَتَحُجَّ الْبَيْتَ إنْ اسْتَطَعْت إلَيْهِ سَبِيلًا. قَالَ: صَدَقْت . فَعَجِبْنَا لَهُ يَسْأَلُهُ وَيُصَدِّقُهُ! قَالَ: فَأَخْبِرْنِي عَنْ الْإِيمَانِ. قَالَ: أَنْ تُؤْمِنَ بِاَللَّهِ وَمَلَائِكَتِهِ وَكُتُبِهِ وَرُسُلِهِ وَالْيَوْمِ الْآخِرِ، وَتُؤْمِنَ بِالْقَدَرِ خَيْرِهِ وَشَرِّهِ. قَالَ: صَدَقْت. قَالَ: فَأَخْبِرْنِي عَنْ الْإِحْسَانِ. قَالَ: أَنْ تَعْبُدَ اللَّهَ كَأَنَّك تَرَاهُ، فَإِنْ لَمْ تَكُنْ تَرَاهُ فَإِنَّهُ يَرَاك. قَالَ: فَأَخْبِرْنِي عَنْ السَّاعَةِ. قَالَ: مَا الْمَسْئُولُ عَنْهَا بِأَعْلَمَ مِنْ السَّائِلِ. قَالَ: فَأَخْبِرْنِي عَنْ أَمَارَاتِهَا؟ قَالَ: أَنْ تَلِدَ الْأَمَةُ رَبَّتَهَا، وَأَنْ تَرَى الْحُفَاةَ الْعُرَاةَ الْعَالَةَ رِعَاءَ الشَّاءِ يَتَطَاوَلُونَ فِي الْبُنْيَانِ. ثُمَّ انْطَلَقَ، فَلَبِثْتُ مَلِيًّا، ثُمَّ قَالَ: يَا عُمَرُ أَتَدْرِي مَنْ السَّائِلُ؟. ‫‬قُلْتُ: اللَّهُ وَرَسُولُهُ أَعْلَمُ. قَالَ: فَإِنَّهُ جِبْرِيلُ أَتَاكُمْ يُعَلِّمُكُمْ دِينَكُمْ . [رَوَاهُ مُسْلِمٌ]",
+    "narrator": null,
+    "chainText": null,
+    "authenticityGrade": null,
+    "sourceReference": null,
+    "translationFrench": {
+      "text": "Il est aussi rapporté d’après ‘Omar (qu’Allah l’agrée) qui a dit : Un jour que nous étions assis auprès du Messager d’Allah (ﷺ), un homme aux habits d’un blanc éclatant et aux cheveux très noirs est apparu. Aucun signe de voyage ne se voyait sur lui et personne d’entre nous ne le connaissait. Il s’assit près du Prophète (ﷺ), posa ses genoux contre les siens, mit ses mains sur ses cuisses, et dit : « Ô Muhammad, informe-moi sur l’islam. » Le Messager d’Allah (ﷺ) répondit : « L’islam, c’est d’attester qu’il n’y a pas de divinité digne d’adoration en dehors d’Allah et que Muhammad est Son Messager (ﷺ), d’accomplir la prière, de donner la zakat, de jeûner pendant Ramadan et de faire le pèlerinage à la Maison (la Ka’ba à la Mecque) si tu en as la capacité. » Il lui dit : « Tu as dit vrai. » Nous avons été étonnés qu’il l’interroge puis l’approuve. Il reprit : « Informe-moi sur la foi (iman). » Le Prophète répondit : « C’est de croire en Allah, en Ses anges, en Ses Livres, en Ses Messagers, au Jour Dernier, et de croire au destin, qu’il soit favorable ou défavorable. » Il dit : « Tu as dit vrai. » Puis il dit : « Informe-moi sur l’excellence (ihsan). » Le Prophète répondit : « C’est d’adorer Allah comme si tu Le voyais ; et même si tu ne Le vois pas, certes Lui te voit. » Il dit : « Informe-moi sur l’Heure. » Le Prophète dit : « Celui qui est interrogé n’en sait pas plus que celui qui interroge. » Il dit : « Eh bien, informe-moi de ses signes. » Il dit : « Lorsque la servante donnera naissance à sa maîtresse, et que tu verras les pieds-nus, les pauvres bergers rivaliser dans la construction d’immeubles élevés. » Puis l’homme partit. Je restai un moment, puis le Prophète me dit : « Ô ‘Omar, sais-tu qui était le questionneur ? » Je répondis : « Allah et Son Messager savent mieux. » Il dit : « C’était Jibril (l’ange Gabriel), venu vous enseigner votre religion. » [Mouslim]",
+      "translator": null,
+      "sourceName": "fawazahmed0/hadith-api",
+      "sourceUrl": "https://cdn.jsdelivr.net/gh/fawazahmed0/hadith-api@1/editions/fra-nawawi.json",
+      "sourceReference": null,
+      "license": null,
+      "verificationStatus": "unverified"
+    },
+    "explanationFrench": null,
+    "lessonsFrench": []
+  },
+  {
+    "sourceHadithId": "nawawi:42",
+    "globalNumber": 42,
+    "book": {
+      "number": 1,
+      "sourceId": "nawawi:book:1",
+      "titleArabic": "الأربعون النووية",
+      "titleFrench": "Les 40 hadiths d’An-Nawawi"
+    },
+    "chapter": {
+      "number": 1,
+      "sourceId": "nawawi:section:1",
+      "titleArabic": "الأربعون النووية",
+      "titleFrench": "Les 40 hadiths d’An-Nawawi"
+    },
+    "hadithNumberInBook": 42,
+    "arabicText": "عَنْ أَنَسِ بْنِ مَالِكٍ رَضِيَ اللهُ عَنْهُ قَالَ: سَمِعْت رَسُولَ اللَّهِ صلى الله عليه و سلم يَقُولُ: قَالَ اللَّهُ تَعَالَى: يَا ابْنَ آدَمَ! إِنَّكَ مَا دَعَوْتنِي وَرَجَوْتنِي غَفَرْتُ لَك عَلَى مَا كَانَ مِنْك وَلَا أُبَالِي، يَا ابْنَ آدَمَ! لَوْ بَلَغَتْ ذُنُوبُك عَنَانَ السَّمَاءِ ثُمَّ اسْتَغْفَرْتنِي غَفَرْتُ لَك، يَا ابْنَ آدَمَ! إنَّك لَوْ أتَيْتنِي بِقُرَابِ الْأَرْضِ خَطَايَا ثُمَّ لَقِيتنِي لَا تُشْرِكُ بِي شَيْئًا لَأَتَيْتُك بِقُرَابِهَا مَغْفِرَةً . رَوَاهُ التِّرْمِذِيُّ [رقم:3540]، وَقَالَ: حَدِيثٌ حَسَنٌ صَحِيحٌ",
+    "narrator": null,
+    "chainText": null,
+    "authenticityGrade": null,
+    "sourceReference": null,
+    "translationFrench": {
+      "text": "Selon Anas (qu’Allah l’agrée), qui a dit : J’ai entendu le Messager d’Allah (ﷺ) dire : « Allah le Tout-Puissant a dit : Ô fils d’Adam, tant que tu M’invoques et espères en Moi, Je te pardonnerai ce que tu as fait, et cela ne M’affectera pas. Ô fils d’Adam, si tes péchés atteignaient les nuages du ciel puis tu Me demandais pardon, Je te pardonnerais. Ô fils d’Adam, si tu venais à Moi avec des péchés proches de la terre entière, puis que tu Me rencontrais sans M’associer quoi que ce soit, Je te donnerais autant de pardon. » Rapporté par at-Tirmidhi, qui a dit qu’il est bon (hasan)",
+      "translator": null,
+      "sourceName": "fawazahmed0/hadith-api",
+      "sourceUrl": "https://cdn.jsdelivr.net/gh/fawazahmed0/hadith-api@1/editions/fra-nawawi.json",
+      "sourceReference": null,
+      "license": null,
+      "verificationStatus": "unverified"
+    },
+    "explanationFrench": null,
+    "lessonsFrench": []
+  }
+]

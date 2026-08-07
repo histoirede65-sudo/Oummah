@@ -1,0 +1,1286 @@
+{
+  "repository": "fawazahmed0/hadith-api",
+  "version": "@1",
+  "retrievedAt": "2026-07-31",
+  "files": {
+    "arabic": {
+      "url": "https://cdn.jsdelivr.net/gh/fawazahmed0/hadith-api@1/editions/ara-nawawi.json",
+      "sha256": "91f559b90422005b768bb449426d87d2e6fabbb43ac3a31e5c24c50ca77465e6"
+    },
+    "french": {
+      "url": "https://cdn.jsdelivr.net/gh/fawazahmed0/hadith-api@1/editions/fra-nawawi.json",
+      "sha256": "26c9a30a49c886d5bd70760381711cca4a65d87e9d3e442351fe330fa4f361b0"
+    }
+  },
+  "note": "La traduction française n’indique pas clairement son traducteur dans le JSON source.",
+  "metadataPolicy": "source_limited",
+  "validation": {
+    "arabicTexts": 42,
+    "frenchTranslations": 42,
+    "numbers": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      26,
+      27,
+      28,
+      29,
+      30,
+      31,
+      32,
+      33,
+      34,
+      35,
+      36,
+      37,
+      38,
+      39,
+      40,
+      41,
+      42
+    ],
+    "duplicateNumbers": [],
+    "missingNumbers": [],
+    "emptyTexts": [],
+    "mismatches": [],
+    "errors": []
+  },
+  "engineValidation": {
+    "engineVersion": "2.0.0",
+    "generatedAt": "2026-07-31T21:13:25.005Z",
+    "structure": "structured_collection",
+    "metadataPolicy": "source_limited",
+    "total": 42,
+    "valid": 42,
+    "withWarnings": 42,
+    "errors": 0,
+    "warnings": 85,
+    "infos": 0,
+    "issues": [
+      {
+        "level": "WARNING",
+        "code": "CORPUS_LICENSE_UNVALIDATED",
+        "path": "license",
+        "message": "Licence absente ou non documentée."
+      },
+      {
+        "level": "WARNING",
+        "code": "SOURCE_REFERENCE_MISSING",
+        "path": "hadiths[0].sourceReference",
+        "message": "Référence source absente, acceptée par la politique source_limited.",
+        "recordIndex": 0
+      },
+      {
+        "level": "WARNING",
+        "code": "NARRATOR_MISSING",
+        "path": "hadiths[0].narrator",
+        "message": "Narrateur ou attribution absent, accepté par la politique source_limited.",
+        "recordIndex": 0
+      },
+      {
+        "level": "WARNING",
+        "code": "SOURCE_REFERENCE_MISSING",
+        "path": "hadiths[1].sourceReference",
+        "message": "Référence source absente, acceptée par la politique source_limited.",
+        "recordIndex": 1
+      },
+      {
+        "level": "WARNING",
+        "code": "NARRATOR_MISSING",
+        "path": "hadiths[1].narrator",
+        "message": "Narrateur ou attribution absent, accepté par la politique source_limited.",
+        "recordIndex": 1
+      },
+      {
+        "level": "WARNING",
+        "code": "SOURCE_REFERENCE_MISSING",
+        "path": "hadiths[2].sourceReference",
+        "message": "Référence source absente, acceptée par la politique source_limited.",
+        "recordIndex": 2
+      },
+      {
+        "level": "WARNING",
+        "code": "NARRATOR_MISSING",
+        "path": "hadiths[2].narrator",
+        "message": "Narrateur ou attribution absent, accepté par la politique source_limited.",
+        "recordIndex": 2
+      },
+      {
+        "level": "WARNING",
+        "code": "SOURCE_REFERENCE_MISSING",
+        "path": "hadiths[3].sourceReference",
+        "message": "Référence source absente, acceptée par la politique source_limited.",
+        "recordIndex": 3
+      },
+      {
+        "level": "WARNING",
+        "code": "NARRATOR_MISSING",
+        "path": "hadiths[3].narrator",
+        "message": "Narrateur ou attribution absent, accepté par la politique source_limited.",
+        "recordIndex": 3
+      },
+      {
+        "level": "WARNING",
+        "code": "SOURCE_REFERENCE_MISSING",
+        "path": "hadiths[4].sourceReference",
+        "message": "Référence source absente, acceptée par la politique source_limited.",
+        "recordIndex": 4
+      },
+      {
+        "level": "WARNING",
+        "code": "NARRATOR_MISSING",
+        "path": "hadiths[4].narrator",
+        "message": "Narrateur ou attribution absent, accepté par la politique source_limited.",
+        "recordIndex": 4
+      },
+      {
+        "level": "WARNING",
+        "code": "SOURCE_REFERENCE_MISSING",
+        "path": "hadiths[5].sourceReference",
+        "message": "Référence source absente, acceptée par la politique source_limited.",
+        "recordIndex": 5
+      },
+      {
+        "level": "WARNING",
+        "code": "NARRATOR_MISSING",
+        "path": "hadiths[5].narrator",
+        "message": "Narrateur ou attribution absent, accepté par la politique source_limited.",
+        "recordIndex": 5
+      },
+      {
+        "level": "WARNING",
+        "code": "SOURCE_REFERENCE_MISSING",
+        "path": "hadiths[6].sourceReference",
+        "message": "Référence source absente, acceptée par la politique source_limited.",
+        "recordIndex": 6
+      },
+      {
+        "level": "WARNING",
+        "code": "NARRATOR_MISSING",
+        "path": "hadiths[6].narrator",
+        "message": "Narrateur ou attribution absent, accepté par la politique source_limited.",
+        "recordIndex": 6
+      },
+      {
+        "level": "WARNING",
+        "code": "SOURCE_REFERENCE_MISSING",
+        "path": "hadiths[7].sourceReference",
+        "message": "Référence source absente, acceptée par la politique source_limited.",
+        "recordIndex": 7
+      },
+      {
+        "level": "WARNING",
+        "code": "NARRATOR_MISSING",
+        "path": "hadiths[7].narrator",
+        "message": "Narrateur ou attribution absent, accepté par la politique source_limited.",
+        "recordIndex": 7
+      },
+      {
+        "level": "WARNING",
+        "code": "SOURCE_REFERENCE_MISSING",
+        "path": "hadiths[8].sourceReference",
+        "message": "Référence source absente, acceptée par la politique source_limited.",
+        "recordIndex": 8
+      },
+      {
+        "level": "WARNING",
+        "code": "NARRATOR_MISSING",
+        "path": "hadiths[8].narrator",
+        "message": "Narrateur ou attribution absent, accepté par la politique source_limited.",
+        "recordIndex": 8
+      },
+      {
+        "level": "WARNING",
+        "code": "SOURCE_REFERENCE_MISSING",
+        "path": "hadiths[9].sourceReference",
+        "message": "Référence source absente, acceptée par la politique source_limited.",
+        "recordIndex": 9
+      },
+      {
+        "level": "WARNING",
+        "code": "NARRATOR_MISSING",
+        "path": "hadiths[9].narrator",
+        "message": "Narrateur ou attribution absent, accepté par la politique source_limited.",
+        "recordIndex": 9
+      },
+      {
+        "level": "WARNING",
+        "code": "SOURCE_REFERENCE_MISSING",
+        "path": "hadiths[10].sourceReference",
+        "message": "Référence source absente, acceptée par la politique source_limited.",
+        "recordIndex": 10
+      },
+      {
+        "level": "WARNING",
+        "code": "NARRATOR_MISSING",
+        "path": "hadiths[10].narrator",
+        "message": "Narrateur ou attribution absent, accepté par la politique source_limited.",
+        "recordIndex": 10
+      },
+      {
+        "level": "WARNING",
+        "code": "SOURCE_REFERENCE_MISSING",
+        "path": "hadiths[11].sourceReference",
+        "message": "Référence source absente, acceptée par la politique source_limited.",
+        "recordIndex": 11
+      },
+      {
+        "level": "WARNING",
+        "code": "NARRATOR_MISSING",
+        "path": "hadiths[11].narrator",
+        "message": "Narrateur ou attribution absent, accepté par la politique source_limited.",
+        "recordIndex": 11
+      },
+      {
+        "level": "WARNING",
+        "code": "SOURCE_REFERENCE_MISSING",
+        "path": "hadiths[12].sourceReference",
+        "message": "Référence source absente, acceptée par la politique source_limited.",
+        "recordIndex": 12
+      },
+      {
+        "level": "WARNING",
+        "code": "NARRATOR_MISSING",
+        "path": "hadiths[12].narrator",
+        "message": "Narrateur ou attribution absent, accepté par la politique source_limited.",
+        "recordIndex": 12
+      },
+      {
+        "level": "WARNING",
+        "code": "SOURCE_REFERENCE_MISSING",
+        "path": "hadiths[13].sourceReference",
+        "message": "Référence source absente, acceptée par la politique source_limited.",
+        "recordIndex": 13
+      },
+      {
+        "level": "WARNING",
+        "code": "NARRATOR_MISSING",
+        "path": "hadiths[13].narrator",
+        "message": "Narrateur ou attribution absent, accepté par la politique source_limited.",
+        "recordIndex": 13
+      },
+      {
+        "level": "WARNING",
+        "code": "SOURCE_REFERENCE_MISSING",
+        "path": "hadiths[14].sourceReference",
+        "message": "Référence source absente, acceptée par la politique source_limited.",
+        "recordIndex": 14
+      },
+      {
+        "level": "WARNING",
+        "code": "NARRATOR_MISSING",
+        "path": "hadiths[14].narrator",
+        "message": "Narrateur ou attribution absent, accepté par la politique source_limited.",
+        "recordIndex": 14
+      },
+      {
+        "level": "WARNING",
+        "code": "SOURCE_REFERENCE_MISSING",
+        "path": "hadiths[15].sourceReference",
+        "message": "Référence source absente, acceptée par la politique source_limited.",
+        "recordIndex": 15
+      },
+      {
+        "level": "WARNING",
+        "code": "NARRATOR_MISSING",
+        "path": "hadiths[15].narrator",
+        "message": "Narrateur ou attribution absent, accepté par la politique source_limited.",
+        "recordIndex": 15
+      },
+      {
+        "level": "WARNING",
+        "code": "SOURCE_REFERENCE_MISSING",
+        "path": "hadiths[16].sourceReference",
+        "message": "Référence source absente, acceptée par la politique source_limited.",
+        "recordIndex": 16
+      },
+      {
+        "level": "WARNING",
+        "code": "NARRATOR_MISSING",
+        "path": "hadiths[16].narrator",
+        "message": "Narrateur ou attribution absent, accepté par la politique source_limited.",
+        "recordIndex": 16
+      },
+      {
+        "level": "WARNING",
+        "code": "SOURCE_REFERENCE_MISSING",
+        "path": "hadiths[17].sourceReference",
+        "message": "Référence source absente, acceptée par la politique source_limited.",
+        "recordIndex": 17
+      },
+      {
+        "level": "WARNING",
+        "code": "NARRATOR_MISSING",
+        "path": "hadiths[17].narrator",
+        "message": "Narrateur ou attribution absent, accepté par la politique source_limited.",
+        "recordIndex": 17
+      },
+      {
+        "level": "WARNING",
+        "code": "SOURCE_REFERENCE_MISSING",
+        "path": "hadiths[18].sourceReference",
+        "message": "Référence source absente, acceptée par la politique source_limited.",
+        "recordIndex": 18
+      },
+      {
+        "level": "WARNING",
+        "code": "NARRATOR_MISSING",
+        "path": "hadiths[18].narrator",
+        "message": "Narrateur ou attribution absent, accepté par la politique source_limited.",
+        "recordIndex": 18
+      },
+      {
+        "level": "WARNING",
+        "code": "SOURCE_REFERENCE_MISSING",
+        "path": "hadiths[19].sourceReference",
+        "message": "Référence source absente, acceptée par la politique source_limited.",
+        "recordIndex": 19
+      },
+      {
+        "level": "WARNING",
+        "code": "NARRATOR_MISSING",
+        "path": "hadiths[19].narrator",
+        "message": "Narrateur ou attribution absent, accepté par la politique source_limited.",
+        "recordIndex": 19
+      },
+      {
+        "level": "WARNING",
+        "code": "SOURCE_REFERENCE_MISSING",
+        "path": "hadiths[20].sourceReference",
+        "message": "Référence source absente, acceptée par la politique source_limited.",
+        "recordIndex": 20
+      },
+      {
+        "level": "WARNING",
+        "code": "NARRATOR_MISSING",
+        "path": "hadiths[20].narrator",
+        "message": "Narrateur ou attribution absent, accepté par la politique source_limited.",
+        "recordIndex": 20
+      },
+      {
+        "level": "WARNING",
+        "code": "SOURCE_REFERENCE_MISSING",
+        "path": "hadiths[21].sourceReference",
+        "message": "Référence source absente, acceptée par la politique source_limited.",
+        "recordIndex": 21
+      },
+      {
+        "level": "WARNING",
+        "code": "NARRATOR_MISSING",
+        "path": "hadiths[21].narrator",
+        "message": "Narrateur ou attribution absent, accepté par la politique source_limited.",
+        "recordIndex": 21
+      },
+      {
+        "level": "WARNING",
+        "code": "SOURCE_REFERENCE_MISSING",
+        "path": "hadiths[22].sourceReference",
+        "message": "Référence source absente, acceptée par la politique source_limited.",
+        "recordIndex": 22
+      },
+      {
+        "level": "WARNING",
+        "code": "NARRATOR_MISSING",
+        "path": "hadiths[22].narrator",
+        "message": "Narrateur ou attribution absent, accepté par la politique source_limited.",
+        "recordIndex": 22
+      },
+      {
+        "level": "WARNING",
+        "code": "SOURCE_REFERENCE_MISSING",
+        "path": "hadiths[23].sourceReference",
+        "message": "Référence source absente, acceptée par la politique source_limited.",
+        "recordIndex": 23
+      },
+      {
+        "level": "WARNING",
+        "code": "NARRATOR_MISSING",
+        "path": "hadiths[23].narrator",
+        "message": "Narrateur ou attribution absent, accepté par la politique source_limited.",
+        "recordIndex": 23
+      },
+      {
+        "level": "WARNING",
+        "code": "SOURCE_REFERENCE_MISSING",
+        "path": "hadiths[24].sourceReference",
+        "message": "Référence source absente, acceptée par la politique source_limited.",
+        "recordIndex": 24
+      },
+      {
+        "level": "WARNING",
+        "code": "NARRATOR_MISSING",
+        "path": "hadiths[24].narrator",
+        "message": "Narrateur ou attribution absent, accepté par la politique source_limited.",
+        "recordIndex": 24
+      },
+      {
+        "level": "WARNING",
+        "code": "SOURCE_REFERENCE_MISSING",
+        "path": "hadiths[25].sourceReference",
+        "message": "Référence source absente, acceptée par la politique source_limited.",
+        "recordIndex": 25
+      },
+      {
+        "level": "WARNING",
+        "code": "NARRATOR_MISSING",
+        "path": "hadiths[25].narrator",
+        "message": "Narrateur ou attribution absent, accepté par la politique source_limited.",
+        "recordIndex": 25
+      },
+      {
+        "level": "WARNING",
+        "code": "SOURCE_REFERENCE_MISSING",
+        "path": "hadiths[26].sourceReference",
+        "message": "Référence source absente, acceptée par la politique source_limited.",
+        "recordIndex": 26
+      },
+      {
+        "level": "WARNING",
+        "code": "NARRATOR_MISSING",
+        "path": "hadiths[26].narrator",
+        "message": "Narrateur ou attribution absent, accepté par la politique source_limited.",
+        "recordIndex": 26
+      },
+      {
+        "level": "WARNING",
+        "code": "SOURCE_REFERENCE_MISSING",
+        "path": "hadiths[27].sourceReference",
+        "message": "Référence source absente, acceptée par la politique source_limited.",
+        "recordIndex": 27
+      },
+      {
+        "level": "WARNING",
+        "code": "NARRATOR_MISSING",
+        "path": "hadiths[27].narrator",
+        "message": "Narrateur ou attribution absent, accepté par la politique source_limited.",
+        "recordIndex": 27
+      },
+      {
+        "level": "WARNING",
+        "code": "SOURCE_REFERENCE_MISSING",
+        "path": "hadiths[28].sourceReference",
+        "message": "Référence source absente, acceptée par la politique source_limited.",
+        "recordIndex": 28
+      },
+      {
+        "level": "WARNING",
+        "code": "NARRATOR_MISSING",
+        "path": "hadiths[28].narrator",
+        "message": "Narrateur ou attribution absent, accepté par la politique source_limited.",
+        "recordIndex": 28
+      },
+      {
+        "level": "WARNING",
+        "code": "SOURCE_REFERENCE_MISSING",
+        "path": "hadiths[29].sourceReference",
+        "message": "Référence source absente, acceptée par la politique source_limited.",
+        "recordIndex": 29
+      },
+      {
+        "level": "WARNING",
+        "code": "NARRATOR_MISSING",
+        "path": "hadiths[29].narrator",
+        "message": "Narrateur ou attribution absent, accepté par la politique source_limited.",
+        "recordIndex": 29
+      },
+      {
+        "level": "WARNING",
+        "code": "SOURCE_REFERENCE_MISSING",
+        "path": "hadiths[30].sourceReference",
+        "message": "Référence source absente, acceptée par la politique source_limited.",
+        "recordIndex": 30
+      },
+      {
+        "level": "WARNING",
+        "code": "NARRATOR_MISSING",
+        "path": "hadiths[30].narrator",
+        "message": "Narrateur ou attribution absent, accepté par la politique source_limited.",
+        "recordIndex": 30
+      },
+      {
+        "level": "WARNING",
+        "code": "SOURCE_REFERENCE_MISSING",
+        "path": "hadiths[31].sourceReference",
+        "message": "Référence source absente, acceptée par la politique source_limited.",
+        "recordIndex": 31
+      },
+      {
+        "level": "WARNING",
+        "code": "NARRATOR_MISSING",
+        "path": "hadiths[31].narrator",
+        "message": "Narrateur ou attribution absent, accepté par la politique source_limited.",
+        "recordIndex": 31
+      },
+      {
+        "level": "WARNING",
+        "code": "SOURCE_REFERENCE_MISSING",
+        "path": "hadiths[32].sourceReference",
+        "message": "Référence source absente, acceptée par la politique source_limited.",
+        "recordIndex": 32
+      },
+      {
+        "level": "WARNING",
+        "code": "NARRATOR_MISSING",
+        "path": "hadiths[32].narrator",
+        "message": "Narrateur ou attribution absent, accepté par la politique source_limited.",
+        "recordIndex": 32
+      },
+      {
+        "level": "WARNING",
+        "code": "SOURCE_REFERENCE_MISSING",
+        "path": "hadiths[33].sourceReference",
+        "message": "Référence source absente, acceptée par la politique source_limited.",
+        "recordIndex": 33
+      },
+      {
+        "level": "WARNING",
+        "code": "NARRATOR_MISSING",
+        "path": "hadiths[33].narrator",
+        "message": "Narrateur ou attribution absent, accepté par la politique source_limited.",
+        "recordIndex": 33
+      },
+      {
+        "level": "WARNING",
+        "code": "SOURCE_REFERENCE_MISSING",
+        "path": "hadiths[34].sourceReference",
+        "message": "Référence source absente, acceptée par la politique source_limited.",
+        "recordIndex": 34
+      },
+      {
+        "level": "WARNING",
+        "code": "NARRATOR_MISSING",
+        "path": "hadiths[34].narrator",
+        "message": "Narrateur ou attribution absent, accepté par la politique source_limited.",
+        "recordIndex": 34
+      },
+      {
+        "level": "WARNING",
+        "code": "SOURCE_REFERENCE_MISSING",
+        "path": "hadiths[35].sourceReference",
+        "message": "Référence source absente, acceptée par la politique source_limited.",
+        "recordIndex": 35
+      },
+      {
+        "level": "WARNING",
+        "code": "NARRATOR_MISSING",
+        "path": "hadiths[35].narrator",
+        "message": "Narrateur ou attribution absent, accepté par la politique source_limited.",
+        "recordIndex": 35
+      },
+      {
+        "level": "WARNING",
+        "code": "SOURCE_REFERENCE_MISSING",
+        "path": "hadiths[36].sourceReference",
+        "message": "Référence source absente, acceptée par la politique source_limited.",
+        "recordIndex": 36
+      },
+      {
+        "level": "WARNING",
+        "code": "NARRATOR_MISSING",
+        "path": "hadiths[36].narrator",
+        "message": "Narrateur ou attribution absent, accepté par la politique source_limited.",
+        "recordIndex": 36
+      },
+      {
+        "level": "WARNING",
+        "code": "SOURCE_REFERENCE_MISSING",
+        "path": "hadiths[37].sourceReference",
+        "message": "Référence source absente, acceptée par la politique source_limited.",
+        "recordIndex": 37
+      },
+      {
+        "level": "WARNING",
+        "code": "NARRATOR_MISSING",
+        "path": "hadiths[37].narrator",
+        "message": "Narrateur ou attribution absent, accepté par la politique source_limited.",
+        "recordIndex": 37
+      },
+      {
+        "level": "WARNING",
+        "code": "SOURCE_REFERENCE_MISSING",
+        "path": "hadiths[38].sourceReference",
+        "message": "Référence source absente, acceptée par la politique source_limited.",
+        "recordIndex": 38
+      },
+      {
+        "level": "WARNING",
+        "code": "NARRATOR_MISSING",
+        "path": "hadiths[38].narrator",
+        "message": "Narrateur ou attribution absent, accepté par la politique source_limited.",
+        "recordIndex": 38
+      },
+      {
+        "level": "WARNING",
+        "code": "SOURCE_REFERENCE_MISSING",
+        "path": "hadiths[39].sourceReference",
+        "message": "Référence source absente, acceptée par la politique source_limited.",
+        "recordIndex": 39
+      },
+      {
+        "level": "WARNING",
+        "code": "NARRATOR_MISSING",
+        "path": "hadiths[39].narrator",
+        "message": "Narrateur ou attribution absent, accepté par la politique source_limited.",
+        "recordIndex": 39
+      },
+      {
+        "level": "WARNING",
+        "code": "SOURCE_REFERENCE_MISSING",
+        "path": "hadiths[40].sourceReference",
+        "message": "Référence source absente, acceptée par la politique source_limited.",
+        "recordIndex": 40
+      },
+      {
+        "level": "WARNING",
+        "code": "NARRATOR_MISSING",
+        "path": "hadiths[40].narrator",
+        "message": "Narrateur ou attribution absent, accepté par la politique source_limited.",
+        "recordIndex": 40
+      },
+      {
+        "level": "WARNING",
+        "code": "SOURCE_REFERENCE_MISSING",
+        "path": "hadiths[41].sourceReference",
+        "message": "Référence source absente, acceptée par la politique source_limited.",
+        "recordIndex": 41
+      },
+      {
+        "level": "WARNING",
+        "code": "NARRATOR_MISSING",
+        "path": "hadiths[41].narrator",
+        "message": "Narrateur ou attribution absent, accepté par la politique source_limited.",
+        "recordIndex": 41
+      }
+    ],
+    "duplicates": [],
+    "gaps": [],
+    "inconsistencies": [
+      {
+        "level": "WARNING",
+        "code": "SOURCE_REFERENCE_MISSING",
+        "path": "hadiths[0].sourceReference",
+        "message": "Référence source absente, acceptée par la politique source_limited.",
+        "recordIndex": 0
+      },
+      {
+        "level": "WARNING",
+        "code": "NARRATOR_MISSING",
+        "path": "hadiths[0].narrator",
+        "message": "Narrateur ou attribution absent, accepté par la politique source_limited.",
+        "recordIndex": 0
+      },
+      {
+        "level": "WARNING",
+        "code": "SOURCE_REFERENCE_MISSING",
+        "path": "hadiths[1].sourceReference",
+        "message": "Référence source absente, acceptée par la politique source_limited.",
+        "recordIndex": 1
+      },
+      {
+        "level": "WARNING",
+        "code": "NARRATOR_MISSING",
+        "path": "hadiths[1].narrator",
+        "message": "Narrateur ou attribution absent, accepté par la politique source_limited.",
+        "recordIndex": 1
+      },
+      {
+        "level": "WARNING",
+        "code": "SOURCE_REFERENCE_MISSING",
+        "path": "hadiths[2].sourceReference",
+        "message": "Référence source absente, acceptée par la politique source_limited.",
+        "recordIndex": 2
+      },
+      {
+        "level": "WARNING",
+        "code": "NARRATOR_MISSING",
+        "path": "hadiths[2].narrator",
+        "message": "Narrateur ou attribution absent, accepté par la politique source_limited.",
+        "recordIndex": 2
+      },
+      {
+        "level": "WARNING",
+        "code": "SOURCE_REFERENCE_MISSING",
+        "path": "hadiths[3].sourceReference",
+        "message": "Référence source absente, acceptée par la politique source_limited.",
+        "recordIndex": 3
+      },
+      {
+        "level": "WARNING",
+        "code": "NARRATOR_MISSING",
+        "path": "hadiths[3].narrator",
+        "message": "Narrateur ou attribution absent, accepté par la politique source_limited.",
+        "recordIndex": 3
+      },
+      {
+        "level": "WARNING",
+        "code": "SOURCE_REFERENCE_MISSING",
+        "path": "hadiths[4].sourceReference",
+        "message": "Référence source absente, acceptée par la politique source_limited.",
+        "recordIndex": 4
+      },
+      {
+        "level": "WARNING",
+        "code": "NARRATOR_MISSING",
+        "path": "hadiths[4].narrator",
+        "message": "Narrateur ou attribution absent, accepté par la politique source_limited.",
+        "recordIndex": 4
+      },
+      {
+        "level": "WARNING",
+        "code": "SOURCE_REFERENCE_MISSING",
+        "path": "hadiths[5].sourceReference",
+        "message": "Référence source absente, acceptée par la politique source_limited.",
+        "recordIndex": 5
+      },
+      {
+        "level": "WARNING",
+        "code": "NARRATOR_MISSING",
+        "path": "hadiths[5].narrator",
+        "message": "Narrateur ou attribution absent, accepté par la politique source_limited.",
+        "recordIndex": 5
+      },
+      {
+        "level": "WARNING",
+        "code": "SOURCE_REFERENCE_MISSING",
+        "path": "hadiths[6].sourceReference",
+        "message": "Référence source absente, acceptée par la politique source_limited.",
+        "recordIndex": 6
+      },
+      {
+        "level": "WARNING",
+        "code": "NARRATOR_MISSING",
+        "path": "hadiths[6].narrator",
+        "message": "Narrateur ou attribution absent, accepté par la politique source_limited.",
+        "recordIndex": 6
+      },
+      {
+        "level": "WARNING",
+        "code": "SOURCE_REFERENCE_MISSING",
+        "path": "hadiths[7].sourceReference",
+        "message": "Référence source absente, acceptée par la politique source_limited.",
+        "recordIndex": 7
+      },
+      {
+        "level": "WARNING",
+        "code": "NARRATOR_MISSING",
+        "path": "hadiths[7].narrator",
+        "message": "Narrateur ou attribution absent, accepté par la politique source_limited.",
+        "recordIndex": 7
+      },
+      {
+        "level": "WARNING",
+        "code": "SOURCE_REFERENCE_MISSING",
+        "path": "hadiths[8].sourceReference",
+        "message": "Référence source absente, acceptée par la politique source_limited.",
+        "recordIndex": 8
+      },
+      {
+        "level": "WARNING",
+        "code": "NARRATOR_MISSING",
+        "path": "hadiths[8].narrator",
+        "message": "Narrateur ou attribution absent, accepté par la politique source_limited.",
+        "recordIndex": 8
+      },
+      {
+        "level": "WARNING",
+        "code": "SOURCE_REFERENCE_MISSING",
+        "path": "hadiths[9].sourceReference",
+        "message": "Référence source absente, acceptée par la politique source_limited.",
+        "recordIndex": 9
+      },
+      {
+        "level": "WARNING",
+        "code": "NARRATOR_MISSING",
+        "path": "hadiths[9].narrator",
+        "message": "Narrateur ou attribution absent, accepté par la politique source_limited.",
+        "recordIndex": 9
+      },
+      {
+        "level": "WARNING",
+        "code": "SOURCE_REFERENCE_MISSING",
+        "path": "hadiths[10].sourceReference",
+        "message": "Référence source absente, acceptée par la politique source_limited.",
+        "recordIndex": 10
+      },
+      {
+        "level": "WARNING",
+        "code": "NARRATOR_MISSING",
+        "path": "hadiths[10].narrator",
+        "message": "Narrateur ou attribution absent, accepté par la politique source_limited.",
+        "recordIndex": 10
+      },
+      {
+        "level": "WARNING",
+        "code": "SOURCE_REFERENCE_MISSING",
+        "path": "hadiths[11].sourceReference",
+        "message": "Référence source absente, acceptée par la politique source_limited.",
+        "recordIndex": 11
+      },
+      {
+        "level": "WARNING",
+        "code": "NARRATOR_MISSING",
+        "path": "hadiths[11].narrator",
+        "message": "Narrateur ou attribution absent, accepté par la politique source_limited.",
+        "recordIndex": 11
+      },
+      {
+        "level": "WARNING",
+        "code": "SOURCE_REFERENCE_MISSING",
+        "path": "hadiths[12].sourceReference",
+        "message": "Référence source absente, acceptée par la politique source_limited.",
+        "recordIndex": 12
+      },
+      {
+        "level": "WARNING",
+        "code": "NARRATOR_MISSING",
+        "path": "hadiths[12].narrator",
+        "message": "Narrateur ou attribution absent, accepté par la politique source_limited.",
+        "recordIndex": 12
+      },
+      {
+        "level": "WARNING",
+        "code": "SOURCE_REFERENCE_MISSING",
+        "path": "hadiths[13].sourceReference",
+        "message": "Référence source absente, acceptée par la politique source_limited.",
+        "recordIndex": 13
+      },
+      {
+        "level": "WARNING",
+        "code": "NARRATOR_MISSING",
+        "path": "hadiths[13].narrator",
+        "message": "Narrateur ou attribution absent, accepté par la politique source_limited.",
+        "recordIndex": 13
+      },
+      {
+        "level": "WARNING",
+        "code": "SOURCE_REFERENCE_MISSING",
+        "path": "hadiths[14].sourceReference",
+        "message": "Référence source absente, acceptée par la politique source_limited.",
+        "recordIndex": 14
+      },
+      {
+        "level": "WARNING",
+        "code": "NARRATOR_MISSING",
+        "path": "hadiths[14].narrator",
+        "message": "Narrateur ou attribution absent, accepté par la politique source_limited.",
+        "recordIndex": 14
+      },
+      {
+        "level": "WARNING",
+        "code": "SOURCE_REFERENCE_MISSING",
+        "path": "hadiths[15].sourceReference",
+        "message": "Référence source absente, acceptée par la politique source_limited.",
+        "recordIndex": 15
+      },
+      {
+        "level": "WARNING",
+        "code": "NARRATOR_MISSING",
+        "path": "hadiths[15].narrator",
+        "message": "Narrateur ou attribution absent, accepté par la politique source_limited.",
+        "recordIndex": 15
+      },
+      {
+        "level": "WARNING",
+        "code": "SOURCE_REFERENCE_MISSING",
+        "path": "hadiths[16].sourceReference",
+        "message": "Référence source absente, acceptée par la politique source_limited.",
+        "recordIndex": 16
+      },
+      {
+        "level": "WARNING",
+        "code": "NARRATOR_MISSING",
+        "path": "hadiths[16].narrator",
+        "message": "Narrateur ou attribution absent, accepté par la politique source_limited.",
+        "recordIndex": 16
+      },
+      {
+        "level": "WARNING",
+        "code": "SOURCE_REFERENCE_MISSING",
+        "path": "hadiths[17].sourceReference",
+        "message": "Référence source absente, acceptée par la politique source_limited.",
+        "recordIndex": 17
+      },
+      {
+        "level": "WARNING",
+        "code": "NARRATOR_MISSING",
+        "path": "hadiths[17].narrator",
+        "message": "Narrateur ou attribution absent, accepté par la politique source_limited.",
+        "recordIndex": 17
+      },
+      {
+        "level": "WARNING",
+        "code": "SOURCE_REFERENCE_MISSING",
+        "path": "hadiths[18].sourceReference",
+        "message": "Référence source absente, acceptée par la politique source_limited.",
+        "recordIndex": 18
+      },
+      {
+        "level": "WARNING",
+        "code": "NARRATOR_MISSING",
+        "path": "hadiths[18].narrator",
+        "message": "Narrateur ou attribution absent, accepté par la politique source_limited.",
+        "recordIndex": 18
+      },
+      {
+        "level": "WARNING",
+        "code": "SOURCE_REFERENCE_MISSING",
+        "path": "hadiths[19].sourceReference",
+        "message": "Référence source absente, acceptée par la politique source_limited.",
+        "recordIndex": 19
+      },
+      {
+        "level": "WARNING",
+        "code": "NARRATOR_MISSING",
+        "path": "hadiths[19].narrator",
+        "message": "Narrateur ou attribution absent, accepté par la politique source_limited.",
+        "recordIndex": 19
+      },
+      {
+        "level": "WARNING",
+        "code": "SOURCE_REFERENCE_MISSING",
+        "path": "hadiths[20].sourceReference",
+        "message": "Référence source absente, acceptée par la politique source_limited.",
+        "recordIndex": 20
+      },
+      {
+        "level": "WARNING",
+        "code": "NARRATOR_MISSING",
+        "path": "hadiths[20].narrator",
+        "message": "Narrateur ou attribution absent, accepté par la politique source_limited.",
+        "recordIndex": 20
+      },
+      {
+        "level": "WARNING",
+        "code": "SOURCE_REFERENCE_MISSING",
+        "path": "hadiths[21].sourceReference",
+        "message": "Référence source absente, acceptée par la politique source_limited.",
+        "recordIndex": 21
+      },
+      {
+        "level": "WARNING",
+        "code": "NARRATOR_MISSING",
+        "path": "hadiths[21].narrator",
+        "message": "Narrateur ou attribution absent, accepté par la politique source_limited.",
+        "recordIndex": 21
+      },
+      {
+        "level": "WARNING",
+        "code": "SOURCE_REFERENCE_MISSING",
+        "path": "hadiths[22].sourceReference",
+        "message": "Référence source absente, acceptée par la politique source_limited.",
+        "recordIndex": 22
+      },
+      {
+        "level": "WARNING",
+        "code": "NARRATOR_MISSING",
+        "path": "hadiths[22].narrator",
+        "message": "Narrateur ou attribution absent, accepté par la politique source_limited.",
+        "recordIndex": 22
+      },
+      {
+        "level": "WARNING",
+        "code": "SOURCE_REFERENCE_MISSING",
+        "path": "hadiths[23].sourceReference",
+        "message": "Référence source absente, acceptée par la politique source_limited.",
+        "recordIndex": 23
+      },
+      {
+        "level": "WARNING",
+        "code": "NARRATOR_MISSING",
+        "path": "hadiths[23].narrator",
+        "message": "Narrateur ou attribution absent, accepté par la politique source_limited.",
+        "recordIndex": 23
+      },
+      {
+        "level": "WARNING",
+        "code": "SOURCE_REFERENCE_MISSING",
+        "path": "hadiths[24].sourceReference",
+        "message": "Référence source absente, acceptée par la politique source_limited.",
+        "recordIndex": 24
+      },
+      {
+        "level": "WARNING",
+        "code": "NARRATOR_MISSING",
+        "path": "hadiths[24].narrator",
+        "message": "Narrateur ou attribution absent, accepté par la politique source_limited.",
+        "recordIndex": 24
+      },
+      {
+        "level": "WARNING",
+        "code": "SOURCE_REFERENCE_MISSING",
+        "path": "hadiths[25].sourceReference",
+        "message": "Référence source absente, acceptée par la politique source_limited.",
+        "recordIndex": 25
+      },
+      {
+        "level": "WARNING",
+        "code": "NARRATOR_MISSING",
+        "path": "hadiths[25].narrator",
+        "message": "Narrateur ou attribution absent, accepté par la politique source_limited.",
+        "recordIndex": 25
+      },
+      {
+        "level": "WARNING",
+        "code": "SOURCE_REFERENCE_MISSING",
+        "path": "hadiths[26].sourceReference",
+        "message": "Référence source absente, acceptée par la politique source_limited.",
+        "recordIndex": 26
+      },
+      {
+        "level": "WARNING",
+        "code": "NARRATOR_MISSING",
+        "path": "hadiths[26].narrator",
+        "message": "Narrateur ou attribution absent, accepté par la politique source_limited.",
+        "recordIndex": 26
+      },
+      {
+        "level": "WARNING",
+        "code": "SOURCE_REFERENCE_MISSING",
+        "path": "hadiths[27].sourceReference",
+        "message": "Référence source absente, acceptée par la politique source_limited.",
+        "recordIndex": 27
+      },
+      {
+        "level": "WARNING",
+        "code": "NARRATOR_MISSING",
+        "path": "hadiths[27].narrator",
+        "message": "Narrateur ou attribution absent, accepté par la politique source_limited.",
+        "recordIndex": 27
+      },
+      {
+        "level": "WARNING",
+        "code": "SOURCE_REFERENCE_MISSING",
+        "path": "hadiths[28].sourceReference",
+        "message": "Référence source absente, acceptée par la politique source_limited.",
+        "recordIndex": 28
+      },
+      {
+        "level": "WARNING",
+        "code": "NARRATOR_MISSING",
+        "path": "hadiths[28].narrator",
+        "message": "Narrateur ou attribution absent, accepté par la politique source_limited.",
+        "recordIndex": 28
+      },
+      {
+        "level": "WARNING",
+        "code": "SOURCE_REFERENCE_MISSING",
+        "path": "hadiths[29].sourceReference",
+        "message": "Référence source absente, acceptée par la politique source_limited.",
+        "recordIndex": 29
+      },
+      {
+        "level": "WARNING",
+        "code": "NARRATOR_MISSING",
+        "path": "hadiths[29].narrator",
+        "message": "Narrateur ou attribution absent, accepté par la politique source_limited.",
+        "recordIndex": 29
+      },
+      {
+        "level": "WARNING",
+        "code": "SOURCE_REFERENCE_MISSING",
+        "path": "hadiths[30].sourceReference",
+        "message": "Référence source absente, acceptée par la politique source_limited.",
+        "recordIndex": 30
+      },
+      {
+        "level": "WARNING",
+        "code": "NARRATOR_MISSING",
+        "path": "hadiths[30].narrator",
+        "message": "Narrateur ou attribution absent, accepté par la politique source_limited.",
+        "recordIndex": 30
+      },
+      {
+        "level": "WARNING",
+        "code": "SOURCE_REFERENCE_MISSING",
+        "path": "hadiths[31].sourceReference",
+        "message": "Référence source absente, acceptée par la politique source_limited.",
+        "recordIndex": 31
+      },
+      {
+        "level": "WARNING",
+        "code": "NARRATOR_MISSING",
+        "path": "hadiths[31].narrator",
+        "message": "Narrateur ou attribution absent, accepté par la politique source_limited.",
+        "recordIndex": 31
+      },
+      {
+        "level": "WARNING",
+        "code": "SOURCE_REFERENCE_MISSING",
+        "path": "hadiths[32].sourceReference",
+        "message": "Référence source absente, acceptée par la politique source_limited.",
+        "recordIndex": 32
+      },
+      {
+        "level": "WARNING",
+        "code": "NARRATOR_MISSING",
+        "path": "hadiths[32].narrator",
+        "message": "Narrateur ou attribution absent, accepté par la politique source_limited.",
+        "recordIndex": 32
+      },
+      {
+        "level": "WARNING",
+        "code": "SOURCE_REFERENCE_MISSING",
+        "path": "hadiths[33].sourceReference",
+        "message": "Référence source absente, acceptée par la politique source_limited.",
+        "recordIndex": 33
+      },
+      {
+        "level": "WARNING",
+        "code": "NARRATOR_MISSING",
+        "path": "hadiths[33].narrator",
+        "message": "Narrateur ou attribution absent, accepté par la politique source_limited.",
+        "recordIndex": 33
+      },
+      {
+        "level": "WARNING",
+        "code": "SOURCE_REFERENCE_MISSING",
+        "path": "hadiths[34].sourceReference",
+        "message": "Référence source absente, acceptée par la politique source_limited.",
+        "recordIndex": 34
+      },
+      {
+        "level": "WARNING",
+        "code": "NARRATOR_MISSING",
+        "path": "hadiths[34].narrator",
+        "message": "Narrateur ou attribution absent, accepté par la politique source_limited.",
+        "recordIndex": 34
+      },
+      {
+        "level": "WARNING",
+        "code": "SOURCE_REFERENCE_MISSING",
+        "path": "hadiths[35].sourceReference",
+        "message": "Référence source absente, acceptée par la politique source_limited.",
+        "recordIndex": 35
+      },
+      {
+        "level": "WARNING",
+        "code": "NARRATOR_MISSING",
+        "path": "hadiths[35].narrator",
+        "message": "Narrateur ou attribution absent, accepté par la politique source_limited.",
+        "recordIndex": 35
+      },
+      {
+        "level": "WARNING",
+        "code": "SOURCE_REFERENCE_MISSING",
+        "path": "hadiths[36].sourceReference",
+        "message": "Référence source absente, acceptée par la politique source_limited.",
+        "recordIndex": 36
+      },
+      {
+        "level": "WARNING",
+        "code": "NARRATOR_MISSING",
+        "path": "hadiths[36].narrator",
+        "message": "Narrateur ou attribution absent, accepté par la politique source_limited.",
+        "recordIndex": 36
+      },
+      {
+        "level": "WARNING",
+        "code": "SOURCE_REFERENCE_MISSING",
+        "path": "hadiths[37].sourceReference",
+        "message": "Référence source absente, acceptée par la politique source_limited.",
+        "recordIndex": 37
+      },
+      {
+        "level": "WARNING",
+        "code": "NARRATOR_MISSING",
+        "path": "hadiths[37].narrator",
+        "message": "Narrateur ou attribution absent, accepté par la politique source_limited.",
+        "recordIndex": 37
+      },
+      {
+        "level": "WARNING",
+        "code": "SOURCE_REFERENCE_MISSING",
+        "path": "hadiths[38].sourceReference",
+        "message": "Référence source absente, acceptée par la politique source_limited.",
+        "recordIndex": 38
+      },
+      {
+        "level": "WARNING",
+        "code": "NARRATOR_MISSING",
+        "path": "hadiths[38].narrator",
+        "message": "Narrateur ou attribution absent, accepté par la politique source_limited.",
+        "recordIndex": 38
+      },
+      {
+        "level": "WARNING",
+        "code": "SOURCE_REFERENCE_MISSING",
+        "path": "hadiths[39].sourceReference",
+        "message": "Référence source absente, acceptée par la politique source_limited.",
+        "recordIndex": 39
+      },
+      {
+        "level": "WARNING",
+        "code": "NARRATOR_MISSING",
+        "path": "hadiths[39].narrator",
+        "message": "Narrateur ou attribution absent, accepté par la politique source_limited.",
+        "recordIndex": 39
+      },
+      {
+        "level": "WARNING",
+        "code": "SOURCE_REFERENCE_MISSING",
+        "path": "hadiths[40].sourceReference",
+        "message": "Référence source absente, acceptée par la politique source_limited.",
+        "recordIndex": 40
+      },
+      {
+        "level": "WARNING",
+        "code": "NARRATOR_MISSING",
+        "path": "hadiths[40].narrator",
+        "message": "Narrateur ou attribution absent, accepté par la politique source_limited.",
+        "recordIndex": 40
+      },
+      {
+        "level": "WARNING",
+        "code": "SOURCE_REFERENCE_MISSING",
+        "path": "hadiths[41].sourceReference",
+        "message": "Référence source absente, acceptée par la politique source_limited.",
+        "recordIndex": 41
+      },
+      {
+        "level": "WARNING",
+        "code": "NARRATOR_MISSING",
+        "path": "hadiths[41].narrator",
+        "message": "Narrateur ou attribution absent, accepté par la politique source_limited.",
+        "recordIndex": 41
+      }
+    ],
+    "missingTranslations": 0,
+    "missingCategories": 0,
+    "hashConflicts": 0,
+    "canImport": true
+  },
+  "tableRows": {
+    "hadith_sources": 1,
+    "hadith_source_versions": 1,
+    "hadith_collections": 1,
+    "hadith_books": 1,
+    "hadith_chapters": 1,
+    "hadiths": 42,
+    "hadith_translations_fr": 42,
+    "hadith_explanations": 0,
+    "hadith_lessons": 0
+  },
+  "canImport": true
+}

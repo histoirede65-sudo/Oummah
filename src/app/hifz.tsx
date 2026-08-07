@@ -204,6 +204,10 @@ export default function HifzScreen() {
   );
 
   const studied = state?.progress ?? [];
+  const primarySurahProgress = studied[0];
+  const primarySurah = primarySurahProgress
+    ? SURAHS.find((item) => item.id === primarySurahProgress.surahId)
+    : undefined;
   const learned = studied.reduce(
     (sum, item) => sum + item.learnedVerses.length,
     0,
@@ -409,28 +413,41 @@ export default function HifzScreen() {
           </View>
         </View>
 
+        <View style={styles.hifzGuide}>
+          <View style={styles.hifzGuideStep}><Text style={styles.hifzGuideNumber}>1</Text><Text style={styles.hifzGuideText}>Choisir une sourate</Text></View>
+          <View style={styles.hifzGuideStep}><Text style={styles.hifzGuideNumber}>2</Text><Text style={styles.hifzGuideText}>Mémoriser les versets</Text></View>
+          <View style={styles.hifzGuideStep}><Text style={styles.hifzGuideNumber}>3</Text><Text style={styles.hifzGuideText}>Réviser régulièrement</Text></View>
+        </View>
+
         <View style={styles.primaryReviewRow}>
           <Pressable onPress={() => begin()} style={styles.primaryReviewCard}>
             <Ionicons name="play-circle-outline" size={24} color={colors.goldLight} />
             <View style={styles.primaryReviewCopy}>
-              <Text style={styles.primaryReviewTitle}>Continuer l’apprentissage</Text>
-              <Text style={styles.primaryReviewMeta}>{priorities[0]?.transliteration ?? "Choisir une sourate"}</Text>
+              <Text style={styles.primaryReviewTitle}>{studied.length > 0 ? "Continuer mon Hifz" : "Commencer mon Hifz"}</Text>
+              <Text style={styles.primaryReviewMeta}>
+                {studied.length > 0 && primarySurah && primarySurahProgress
+                  ? `${primarySurah.transliteration} • ${primarySurahProgress.learnedVerses.length}/${primarySurah.verses} versets mémorisés`
+                  : "Choisir une sourate pour commencer"}
+              </Text>
             </View>
             <Ionicons name="chevron-forward" size={18} color={colors.goldLight} />
           </Pressable>
-          <Pressable onPress={() => begin(priorities[0]?.id, true)} style={styles.primaryReviewCard}>
+          {due.length > 0 ? <Pressable onPress={() => begin(priorities[0]?.id, true)} style={styles.primaryReviewCard}>
             <Ionicons name="refresh-circle-outline" size={24} color={colors.goldLight} />
             <View style={styles.primaryReviewCopy}>
               <Text style={styles.primaryReviewTitle}>Réviser aujourd’hui</Text>
               <Text style={styles.primaryReviewMeta}>{due.length} passage{due.length > 1 ? "s" : ""} à revoir</Text>
             </View>
             <Ionicons name="chevron-forward" size={18} color={colors.goldLight} />
-          </Pressable>
+          </Pressable> : null}
         </View>
 
         <View style={styles.sectionHeader}>
           <Text style={styles.sectionTitle}>Mes sourates</Text>
-          <Pressable onPress={() => setShowPicker(true)}><Text style={styles.link}>Choisir</Text></Pressable>
+          <Pressable onPress={() => setShowPicker(true)} style={styles.addSurahHeader}>
+            <Ionicons name="add-circle-outline" size={17} color={colors.goldLight} />
+            <Text style={styles.addSurahHeaderText}>Ajouter une sourate</Text>
+          </Pressable>
         </View>
         {studied.slice(0, 4).map((entry) => {
           const surah = SURAHS.find((item) => item.id === entry.surahId);
@@ -440,10 +457,10 @@ export default function HifzScreen() {
             <Ionicons name="chevron-forward" size={18} color={colors.goldLight} />
           </Pressable>;
         })}
-        <Pressable onPress={() => router.push("/hifz/progress" as Href)} style={styles.progressLinkCard}>
+        {learned > 0 ? <Pressable onPress={() => router.push("/hifz/progress" as Href)} style={styles.progressLinkCard}>
           <View><Text style={styles.progressLinkTitle}>Progression</Text><Text style={styles.progressLinkMeta}>{learned} verset{learned > 1 ? "s" : ""} mémorisé{learned > 1 ? "s" : ""}</Text></View>
           <Ionicons name="chevron-forward" size={18} color={colors.goldLight} />
-        </Pressable>
+        </Pressable> : null}
 
         {false ? <>
         <CalendarSeasonalPrompt context="hifz" />
@@ -1064,12 +1081,18 @@ const styles = StyleSheet.create({
   primaryReviewCopy: { flex: 1, marginHorizontal: 11 },
   primaryReviewTitle: { color: colors.text, fontFamily: typography.serifMedium, fontSize: 16 },
   primaryReviewMeta: { marginTop: 4, color: colors.textMuted, fontFamily: typography.sans, fontSize: 12 },
+  hifzGuide: { marginTop: 12, flexDirection: "row", justifyContent: "space-between" },
+  hifzGuideStep: { flex: 1, alignItems: "center" },
+  hifzGuideNumber: { color: colors.goldMuted, fontFamily: typography.sansBold, fontSize: 11 },
+  hifzGuideText: { marginTop: 3, color: colors.textMuted, fontFamily: typography.sans, fontSize: 9, textAlign: "center" },
   compactSurahRow: { minHeight: 62, paddingHorizontal: 14, flexDirection: "row", alignItems: "center", justifyContent: "space-between", borderBottomWidth: 1, borderBottomColor: colors.borderSoft },
   compactSurahName: { color: colors.text, fontFamily: typography.sans, fontSize: 15, fontWeight: "700" },
   compactSurahMeta: { marginTop: 3, color: colors.textMuted, fontFamily: typography.sans, fontSize: 12 },
   progressLinkCard: { minHeight: 60, marginTop: 14, paddingHorizontal: 15, flexDirection: "row", alignItems: "center", justifyContent: "space-between", borderRadius: 17, borderWidth: 1, borderColor: colors.borderSoft, backgroundColor: colors.surface },
   progressLinkTitle: { color: colors.text, fontFamily: typography.serifMedium, fontSize: 17 },
   progressLinkMeta: { marginTop: 3, color: colors.textMuted, fontFamily: typography.sans, fontSize: 12 },
+  addSurahHeader: { flexDirection: "row", alignItems: "center", paddingHorizontal: 10, paddingVertical: 7, borderRadius: 12, borderWidth: 1, borderColor: "rgba(227,181,90,0.35)", backgroundColor: "rgba(42,23,56,0.72)" },
+  addSurahHeaderText: { marginLeft: 5, color: colors.goldLight, fontFamily: typography.sans, fontSize: 10, fontWeight: "700" },
   progressToggleTitle: {
     color: colors.text,
     fontFamily: typography.serifMedium,

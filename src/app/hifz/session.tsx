@@ -56,6 +56,7 @@ import { goalProgressBridge } from "../../features/daily-goals/services/goalProg
 import { typography } from "../../theme/typography";
 
 type TeacherLevel = 0 | 1 | 2 | 3;
+type TextVisibility = "full" | "masked" | "hidden";
 const repetitions = [3, 5, 10] as const;
 const REPEAT_GAP_MS = 450;
 
@@ -69,14 +70,25 @@ function resolveVerseAudioUrl(value?: string) {
   return `https://verses.quran.foundation/${trimmed.replace(/^\/+/, "")}`;
 }
 
-function concealed(text: string, level: TeacherLevel) {
+function isMaskedWord(index: number, seed: number) {
+  return (index + seed) % 3 === 1;
+}
+
+function concealed(text: string, level: TeacherLevel, revealedWordCount = 0, seed = 0) {
   if (level === 0) return text;
-  const words = text.trim().split(/\s+/);
-  if (level === 3) return "… … …";
+  const words = text.trim().split(/\s+/).filter(Boolean);
+  let revealed = 0;
   return words
-    .map((word, index) =>
-      (level === 1 ? index % 3 === 1 : index % 2 === 1) ? "…" : word,
-    )
+    .map((word, index) => {
+      if (level === 1 && !isMaskedWord(index, seed)) return word;
+      if (revealed < revealedWordCount) {
+        revealed += 1;
+        return word;
+      }
+      if (level === 3) return "…";
+      const shouldHide = level === 1 ? isMaskedWord(index, seed) : index % 2 === 1;
+      return shouldHide ? "…" : word;
+    })
     .join(" ");
 }
 
@@ -84,35 +96,47 @@ function VerseSwipe({
   children,
   onPrevious,
   onNext,
+  canPrevious,
+  canNext,
 }: {
   children: ReactNode;
   onPrevious: () => void;
   onNext: () => void;
+  canPrevious: boolean;
+  canNext: boolean;
 }) {
   const previousRef = useRef(onPrevious);
   const nextRef = useRef(onNext);
+  const canPreviousRef = useRef(canPrevious);
+  const canNextRef = useRef(canNext);
   const translateX = useRef(new Animated.Value(0)).current;
+  const animatingRef = useRef(false);
 
   useEffect(() => {
     previousRef.current = onPrevious;
     nextRef.current = onNext;
-  }, [onNext, onPrevious]);
+    canPreviousRef.current = canPrevious;
+    canNextRef.current = canNext;
+  }, [canNext, canPrevious, onNext, onPrevious]);
 
   const responder = useRef(
     PanResponder.create({
       onStartShouldSetPanResponder: () => false,
       onStartShouldSetPanResponderCapture: () => false,
       onMoveShouldSetPanResponder: (_, gesture) =>
-        Math.abs(gesture.dx) > 10 &&
-        Math.abs(gesture.dx) > Math.abs(gesture.dy) * 1.2,
+        !animatingRef.current &&
+        Math.abs(gesture.dx) > 6 &&
+        Math.abs(gesture.dx) > Math.abs(gesture.dy) * 1.1,
       onMoveShouldSetPanResponderCapture: (_, gesture) =>
-        Math.abs(gesture.dx) > 10 &&
-        Math.abs(gesture.dx) > Math.abs(gesture.dy) * 1.2,
+        !animatingRef.current &&
+        Math.abs(gesture.dx) > 6 &&
+        Math.abs(gesture.dx) > Math.abs(gesture.dy) * 1.1,
       onPanResponderMove: (_, gesture) => {
         const resistance = Math.min(1, 150 / Math.max(150, Math.abs(gesture.dx)));
         translateX.setValue(gesture.dx * resistance);
       },
       onPanResponderRelease: (_, gesture) => {
+        if (animatingRef.current) return;
         const goNext = gesture.dx < -44 || gesture.vx < -0.42;
         const goPrevious = gesture.dx > 44 || gesture.vx > 0.42;
 
@@ -127,6 +151,27 @@ function VerseSwipe({
           return;
         }
 
+        const navigate = (goNext && canNextRef.current) || (goPrevious && canPreviousRef.current);
+        if (!navigate) {
+          Animated.spring(translateX, {
+            toValue: goNext ? -18 : 18,
+            damping: 18,
+            stiffness: 210,
+            mass: 0.75,
+            useNativeDriver: true,
+          }).start(() => {
+            Animated.spring(translateX, {
+              toValue: 0,
+              damping: 18,
+              stiffness: 210,
+              mass: 0.75,
+              useNativeDriver: true,
+            }).start();
+          });
+          return;
+        }
+
+        animatingRef.current = true;
         const exitTo = goNext ? -105 : 105;
         Animated.timing(translateX, {
           toValue: exitTo,
@@ -143,10 +188,13 @@ function VerseSwipe({
             stiffness: 230,
             mass: 0.72,
             useNativeDriver: true,
-          }).start();
+          }).start(() => {
+            animatingRef.current = false;
+          });
         });
       },
       onPanResponderTerminate: () => {
+        animatingRef.current = false;
         Animated.spring(translateX, {
           toValue: 0,
           damping: 18,
@@ -178,23 +226,48 @@ function VerseSwipe({
 
 export default function HifzSessionScreen() {
   const { width: screenWidth } = useWindowDimensions();
+  const params = useLocalSearchParams<{
+    surah?: string;
+    review?: string;
+    verse?: string | string[];
+    end?: string | string[];
+    repeat?: string;
+    reciter?: string;
+    portion?: "full" | "portion";
+  }>();
   const {
     surah: rawSurah,
     review,
     verse: rawVerse,
     end: rawEnd,
-  } = useLocalSearchParams<{
-    surah?: string;
-    review?: string;
-    verse?: string;
-    end?: string;
-  }>();
+    repeat: rawRepeat,
+    reciter: rawReciter,
+    portion: rawPortion,
+  } = params;
+  console.log("[HIFZ SESSION PARAMS]", { rawVerse, rawEnd, params });
+  if (rawEnd === undefined || rawEnd === null || rawEnd === "") {
+    console.warn("[HIFZ] end param missing", params);
+  }
   const surahId = Math.max(1, Math.min(114, Number(rawSurah) || 112));
   const surah = SURAHS.find((item) => item.id === surahId) ?? SURAHS[111];
   const [verses, setVerses] = useState<readonly QuranFoundationVerse[]>([]);
-  const [index, setIndex] = useState(Math.max(0, (Number(rawVerse) || 1) - 1));
-  const endVerse = Math.max(1, Number(rawEnd) || Number.POSITIVE_INFINITY);
+  const numericParam = (value: string | string[] | undefined) => {
+    const candidate = Array.isArray(value) ? value[0] : value;
+    const parsed = Number(candidate);
+    return Number.isFinite(parsed) ? Math.floor(parsed) : undefined;
+  };
+  const requestedVerse = numericParam(rawVerse);
+  const currentVerse = requestedVerse !== undefined && requestedVerse >= 1
+    ? requestedVerse
+    : 1;
+  const startVerse = Math.min(surah.verses, currentVerse);
+  const requestedEnd = numericParam(rawEnd);
+  const endVerse = requestedEnd !== undefined && requestedEnd >= startVerse
+    ? Math.min(surah.verses, requestedEnd)
+    : startVerse;
+  const [index, setIndex] = useState(startVerse - 1);
   const [teacherLevel, setTeacherLevel] = useState<TeacherLevel>(0);
+  const [revealedWordCount, setRevealedWordCount] = useState(0);
   const [repeat, setRepeat] = useState<(typeof repetitions)[number]>(3);
   const [speed, setSpeed] = useState(0.75);
   const [saved, setSaved] = useState(false);
@@ -212,17 +285,38 @@ export default function HifzSessionScreen() {
   const repeatsRemaining = useRef(0);
   const clipTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const audioRequestId = useRef(0);
+  const loadedReciterId = useRef<string | null>(null);
+  const loadedVerseKey = useRef<string | null>(null);
+  const resumePosition = useRef<number | null>(null);
   const screenFocused = useRef(false);
   const [audioError, setAudioError] = useState<string>();
   const [audioLoading, setAudioLoading] = useState(false);
   const [reciterModalVisible, setReciterModalVisible] = useState(false);
   const [selectedWordRange, setSelectedWordRange] = useState<[number, number] | null>(null);
+  const [textVisibility, setTextVisibility] = useState<TextVisibility>("full");
+  const [maskSeed, setMaskSeed] = useState(0);
+  const validationInProgress = useRef(false);
   const [wordTimings, setWordTimings] = useState<readonly WordTimestamp[]>([]);
   const [activeAudioTiming, setActiveAudioTiming] = useState<{
     startMs: number;
     endMs: number;
     audioMode: AudioSourceMode;
   } | null>(null);
+
+  useEffect(() => {
+    const requestedRepeat = Number(rawRepeat);
+    if (repetitions.includes(requestedRepeat as (typeof repetitions)[number])) {
+      setRepeat(requestedRepeat as (typeof repetitions)[number]);
+    }
+  }, [rawRepeat]);
+
+  useEffect(() => {
+    if (!rawReciter) return;
+    const selected = reciters.find((reciter) => reciter.id === rawReciter);
+    if (selected && selected.id !== currentReciter?.id) {
+      void setCurrentReciter(selected);
+    }
+  }, [currentReciter?.id, rawReciter, reciters, setCurrentReciter]);
 
   useEffect(() => {
     let active = true;
@@ -259,6 +353,16 @@ export default function HifzSessionScreen() {
     } catch {}
   }, [versePlayer]);
 
+  const pauseVerseAudio = useCallback(() => {
+    if (clipTimer.current) {
+      clearTimeout(clipTimer.current);
+      clipTimer.current = undefined;
+    }
+    try {
+      versePlayer.pause();
+    } catch {}
+  }, [versePlayer]);
+
   useFocusEffect(
     useCallback(() => {
       screenFocused.current = true;
@@ -272,7 +376,12 @@ export default function HifzSessionScreen() {
 
   useEffect(() => {
     stopVerseAudio();
+    loadedReciterId.current = null;
+    loadedVerseKey.current = null;
+    resumePosition.current = null;
     setSelectedWordRange(null);
+    setRevealedWordCount(0);
+    setMaskSeed(0);
     setWordTimings([]);
     setActiveAudioTiming(null);
   }, [index, stopVerseAudio]);
@@ -314,6 +423,13 @@ export default function HifzSessionScreen() {
   }, [verseAudioStatus.didJustFinish, versePlayer]);
 
   const verse = verses[index];
+  const currentSessionVerse = Number(verse?.verseKey.split(":")[1] ?? index + 1);
+  const canGoPrevious = currentSessionVerse > startVerse;
+  const canGoNext = currentSessionVerse < endVerse;
+  useEffect(() => {
+    if (rawPortion !== "full" || !verse?.text) return;
+    setSelectedWordRange([1, verse.text.trim().split(/\s+/).length]);
+  }, [rawPortion, verse]);
   const currentText = verse?.textUthmani || "Chargement du verset…";
   const currentPhonetic = useMemo(() => {
     const direct = verse?.transliteration?.trim();
@@ -341,6 +457,24 @@ export default function HifzSessionScreen() {
   );
   const currentVerseNumber = Number(verse?.verseKey.split(":")[1] ?? index + 1);
   const currentVerseMastered = masteredVerses.includes(currentVerseNumber);
+  const maskedWordCount = Math.ceil(words / 3);
+  const allWordsRevealed = revealedWordCount >= maskedWordCount;
+  const changeTeacherLevel = (level: TeacherLevel) => {
+    setTeacherLevel(level);
+    setRevealedWordCount(0);
+  };
+  const revealNextWord = () => {
+    setRevealedWordCount((value) => Math.min(words, value + 1));
+  };
+  const maskedText = useMemo(() => {
+    const verseWords = currentText.trim().split(/\s+/).filter(Boolean);
+    let maskedSeen = 0;
+    return verseWords.map((word, wordIndex) => {
+      const masked = isMaskedWord(wordIndex, maskSeed);
+      const revealed = masked && maskedSeen++ < revealedWordCount;
+      return { word, wordIndex, masked, revealed };
+    });
+  }, [currentText, maskSeed, revealedWordCount]);
   const syncPositionMs = activeAudioTiming
     ? getSyncPositionMs(
         audioPositionMilliseconds(verseAudioStatus.currentTime),
@@ -358,10 +492,19 @@ export default function HifzSessionScreen() {
 
   const listen = async () => {
     if (verseAudioStatus.playing) {
-      stopVerseAudio();
+      pauseVerseAudio();
       return;
     }
     if (!verse || !currentReciter) return;
+    if (
+      versePlayer.isLoaded &&
+      !verseAudioStatus.didJustFinish &&
+      loadedReciterId.current === currentReciter.id &&
+      loadedVerseKey.current === verse.verseKey
+    ) {
+      versePlayer.play();
+      return;
+    }
     const requestId = audioRequestId.current + 1;
     audioRequestId.current = requestId;
     setAudioError(undefined);
@@ -415,12 +558,15 @@ export default function HifzSessionScreen() {
       if (!versePlayer.isLoaded) {
         throw new Error("Le fichier audio met trop de temps à charger.");
       }
+      loadedReciterId.current = currentReciter.id;
+      loadedVerseKey.current = verse.verseKey;
       versePlayer.setPlaybackRate(speed);
       repeatsRemaining.current = repeat - 1;
       if (dedicatedSource && !selectedWordRange) {
         if (!screenFocused.current || requestId !== audioRequestId.current)
           return;
-        await versePlayer.seekTo(0);
+        await versePlayer.seekTo(Math.max(0, resumePosition.current ?? 0));
+        resumePosition.current = null;
         versePlayer.play();
         setAudioLoading(false);
         return;
@@ -482,6 +628,8 @@ export default function HifzSessionScreen() {
   }, [stopVerseAudio]);
 
   const complete = async (difficulty: "easy" | "hard") => {
+    if (validationInProgress.current || saved) return;
+    validationInProgress.current = true;
     const state = await loadHifzState();
     const verseNumber = Number(verse?.verseKey.split(":")[1] ?? index + 1);
     const now = new Date();
@@ -542,13 +690,15 @@ export default function HifzSessionScreen() {
         [];
       setMasteredVerses(learned);
       setCelebration(learned.length >= surah.verses ? "surah" : "verse");
+      validationInProgress.current = false;
       return;
     }
     if (index < verses.length - 1 && index + 1 < endVerse) {
       setIndex((value) => value + 1);
-      setTeacherLevel(0);
+      changeTeacherLevel(0);
       setSaved(false);
     }
+    validationInProgress.current = false;
   };
 
   const closeCelebration = () => {
@@ -564,7 +714,7 @@ export default function HifzSessionScreen() {
     setCelebration(null);
     if (shouldAdvance) {
       setIndex((value) => value + 1);
-      setTeacherLevel(0);
+      changeTeacherLevel(0);
       setSaved(false);
     }
   };
@@ -610,16 +760,18 @@ export default function HifzSessionScreen() {
           </View>
         </View>
         <VerseSwipe
+          canPrevious={canGoPrevious}
+          canNext={canGoNext}
           onPrevious={() => {
-            if (index > 0) {
+            if (canGoPrevious) {
               setIndex((value) => value - 1);
-              setTeacherLevel(0);
+              changeTeacherLevel(0);
             }
           }}
           onNext={() => {
-            if (index < verses.length - 1) {
+            if (canGoNext && index < verses.length - 1) {
               setIndex((value) => value + 1);
-              setTeacherLevel(0);
+              changeTeacherLevel(0);
             }
           }}
         >
@@ -639,10 +791,25 @@ export default function HifzSessionScreen() {
                 <Text style={styles.masteredBadgeText}>Verset maîtrisé</Text>
               </View>
             ) : null}
+            <View style={styles.verseNumberBadge}>
+              <View style={styles.verseNumberCircle}>
+                <Text style={styles.verseNumberText}>{index + 1}</Text>
+              </View>
+              <Text style={styles.verseNumberProgress}>
+                {currentSessionVerse - startVerse + 1} sur {endVerse - startVerse + 1}
+              </Text>
+            </View>
             <Text style={styles.modeLabel}>
               MODE PROFESSEUR · {teacherLabel.toUpperCase()}
             </Text>
-            {teacherLevel === 0 ? (
+            {textVisibility === "hidden" ? (
+              <View style={styles.memoryModeBlock}>
+                <Pressable onPress={() => setTextVisibility("full")} style={styles.memoryAction}>
+                  <Ionicons name="eye-outline" size={16} color={colors.goldLight} />
+                  <Text style={styles.memoryActionText}>Afficher le texte</Text>
+                </Pressable>
+              </View>
+            ) : textVisibility === "full" && teacherLevel === 0 ? (
               <View style={styles.wordSelection}>
                 <QuranArabicText
                   screenWidth={screenWidth}
@@ -694,7 +861,59 @@ export default function HifzSessionScreen() {
                 ) : null}
               </View>
             ) : (
-              <Text selectable style={styles.arabic}>{concealed(currentText, teacherLevel)}</Text>
+              <View style={styles.memoryModeBlock}>
+                <Text selectable style={styles.arabic}>
+                  {textVisibility === "masked"
+                    ? maskedText.map(({ word, wordIndex, masked, revealed }) => (
+                        <Text key={`${verse?.verseKey}-${wordIndex}`} style={revealed ? styles.revealedWord : undefined}>
+                          {masked && !revealed ? "…" : word}{wordIndex < maskedText.length - 1 ? " " : ""}
+                        </Text>
+                      ))
+                    : concealed(currentText, teacherLevel, revealedWordCount, maskSeed)}
+                </Text>
+                <View style={styles.memoryActions}>
+                  <Pressable
+                    disabled={allWordsRevealed}
+                    onPress={revealNextWord}
+                    style={[
+                      styles.memoryAction,
+                      allWordsRevealed && styles.memoryActionDisabled,
+                    ]}
+                  >
+                    <Ionicons name="eye-outline" size={16} color={colors.goldLight} />
+                    <Text style={styles.memoryActionText}>
+                      {allWordsRevealed ? "Verset révélé" : "Mot suivant"}
+                    </Text>
+                  </Pressable>
+                  <Pressable
+                    onPress={() => setRevealedWordCount(words)}
+                    style={styles.memoryAction}
+                  >
+                    <Ionicons name="book-outline" size={16} color={colors.goldLight} />
+                    <Text style={styles.memoryActionText}>Afficher le verset</Text>
+                  </Pressable>
+                  {textVisibility === "masked" ? (
+                    <Pressable
+                      onPress={() => {
+                        setMaskSeed((value) => (value + 1) % 3);
+                        setRevealedWordCount(0);
+                      }}
+                      style={styles.memoryReset}
+                    >
+                      <Ionicons name="refresh" size={15} color={colors.goldLight} />
+                    </Pressable>
+                  ) : null}
+                  <Pressable
+                    onPress={() => setRevealedWordCount(0)}
+                    style={styles.memoryReset}
+                  >
+                    <Ionicons name="refresh" size={15} color={colors.textMuted} />
+                  </Pressable>
+                </View>
+                <Text style={styles.memoryHint}>
+                  Récitez de mémoire, puis révélez uniquement l’aide dont vous avez besoin.
+                </Text>
+              </View>
             )}
             <View style={styles.phoneticBlock}>
               <Text style={styles.contentEyebrow}>PHONÉTIQUE</Text>
@@ -709,14 +928,24 @@ export default function HifzSessionScreen() {
                   "Écoutez attentivement, répétez puis récitez le passage avec assurance."}
               </Text>
             </View>
-            <Text style={styles.swipeHint}>
+            <Text style={endVerse > startVerse ? styles.swipeHint : styles.hidden}>
               Glissez latéralement pour changer de verset
             </Text>
+            {endVerse > startVerse ? (
+              <Text style={styles.hidden}>Glissez latéralement pour changer de verset</Text>
+            ) : null}
+            <View style={styles.textVisibilityRow}>
+              {([["full", "Texte complet"], ["masked", "Mots masqués"], ["hidden", "Texte caché"]] as const).map(([mode, label]) => (
+                <Pressable key={mode} onPress={() => { setTextVisibility(mode); if (mode === "masked") { setMaskSeed((value) => (value + 1) % 3); setRevealedWordCount(0); } }} style={[styles.textVisibilityOption, textVisibility === mode && styles.levelActive]}>
+                  <Text style={[styles.textVisibilityText, textVisibility === mode && styles.levelTextActive]}>{label}</Text>
+                </Pressable>
+              ))}
+            </View>
             <View style={styles.teacherButtons}>
               {([0, 1, 2, 3] as TeacherLevel[]).map((level) => (
                 <Pressable
                   key={level}
-                  onPress={() => setTeacherLevel(level)}
+                  onPress={() => changeTeacherLevel(level)}
                   style={[
                     styles.level,
                     teacherLevel === level && styles.levelActive,
@@ -737,7 +966,7 @@ export default function HifzSessionScreen() {
         </VerseSwipe>
         <View style={styles.controls}>
           <Pressable
-            onPress={() => setIndex((value) => Math.max(0, value - 1))}
+            onPress={() => setIndex((value) => Math.max(startVerse - 1, value - 1))}
             style={styles.controlSmall}
           >
             <Ionicons name="play-skip-back" size={20} color={colors.goldLight} />
@@ -769,7 +998,7 @@ export default function HifzSessionScreen() {
             <Text style={styles.controlSmallText}>+10s</Text>
           </Pressable>
           <Pressable
-            onPress={() => setIndex((value) => Math.min(verses.length - 1, value + 1))}
+            onPress={() => setIndex((value) => Math.min(endVerse - 1, verses.length - 1, value + 1))}
             style={styles.controlSmall}
           >
             <Ionicons name="play-skip-forward" size={20} color={colors.goldLight} />
@@ -819,10 +1048,6 @@ export default function HifzSessionScreen() {
               </Text>
             </Pressable>
           ))}
-          <View style={styles.pausePill}>
-            <Ionicons name="flash-outline" size={14} color={colors.textMuted} />
-            <Text style={styles.pauseText}>enchaînement rapide</Text>
-          </View>
         </View>
         <View style={styles.evaluate}>
           <Text style={styles.evaluateTitle}>
@@ -852,23 +1077,23 @@ export default function HifzSessionScreen() {
         </View>
         <View style={styles.nav}>
           <Pressable
-            disabled={index === 0}
+            disabled={!canGoPrevious}
             onPress={() => {
-              setIndex((value) => Math.max(0, value - 1));
-              setTeacherLevel(0);
+              if (canGoPrevious) setIndex((value) => Math.max(startVerse - 1, value - 1));
+              changeTeacherLevel(0);
             }}
-            style={[styles.navButton, index === 0 && styles.dim]}
+              style={[styles.navButton, !canGoPrevious && styles.dim]}
           >
             <Ionicons name="arrow-back" size={17} color={colors.goldLight} />
             <Text style={styles.navText}>Précédent</Text>
           </Pressable>
           <Pressable
-            disabled={index >= verses.length - 1}
+            disabled={!canGoNext || index >= verses.length - 1}
             onPress={() => {
-              setIndex((value) => Math.min(verses.length - 1, value + 1));
-              setTeacherLevel(0);
+              if (canGoNext) setIndex((value) => Math.min(endVerse - 1, verses.length - 1, value + 1));
+              changeTeacherLevel(0);
             }}
-            style={[styles.navButton, index >= verses.length - 1 && styles.dim]}
+              style={[styles.navButton, (!canGoNext || index >= verses.length - 1) && styles.dim]}
           >
             <Text style={styles.navText}>Suivant</Text>
             <Ionicons name="arrow-forward" size={17} color={colors.goldLight} />
@@ -907,6 +1132,11 @@ export default function HifzSessionScreen() {
                   <Pressable
                     key={reciter.id}
                     onPress={() => {
+                      resumePosition.current = verseAudioStatus.currentTime;
+                      loadedReciterId.current = null;
+                      loadedVerseKey.current = null;
+                      setWordTimings([]);
+                      setActiveAudioTiming(null);
                       stopVerseAudio();
                       void setCurrentReciter(reciter);
                       setReciterModalVisible(false);
@@ -1141,6 +1371,33 @@ const styles = StyleSheet.create({
     letterSpacing: 1,
     textAlign: "center",
   },
+  verseNumberBadge: {
+    position: "absolute",
+    top: 13,
+    right: 14,
+    alignItems: "center",
+  },
+  verseNumberCircle: {
+    width: 30,
+    height: 30,
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 15,
+    borderWidth: 1,
+    borderColor: colors.goldLight,
+    backgroundColor: "rgba(227,181,90,0.12)",
+  },
+  verseNumberText: {
+    color: colors.goldLight,
+    fontFamily: typography.sansBold,
+    fontSize: 12,
+  },
+  verseNumberProgress: {
+    marginTop: 3,
+    color: colors.textMuted,
+    fontFamily: typography.sansBold,
+    fontSize: 8,
+  },
   arabic: {
     marginTop: 22,
     color: "#FFF9EF",
@@ -1179,6 +1436,58 @@ const styles = StyleSheet.create({
     fontFamily: typography.sans,
     fontSize: 11,
     fontWeight: "800",
+  },
+  memoryModeBlock: {
+    width: "100%",
+    alignItems: "center",
+  },
+  memoryActions: {
+    marginTop: 18,
+    width: "100%",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 8,
+  },
+  memoryAction: {
+    minHeight: 40,
+    paddingHorizontal: 12,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 6,
+    borderRadius: 14,
+    borderWidth: 1,
+    borderColor: "rgba(227,181,90,0.32)",
+    backgroundColor: "rgba(227,181,90,0.08)",
+  },
+  memoryActionDisabled: {
+    opacity: 0.48,
+  },
+  memoryActionText: {
+    color: colors.goldLight,
+    fontFamily: typography.sans,
+    fontSize: 10,
+    fontWeight: "800",
+  },
+  memoryReset: {
+    width: 40,
+    height: 40,
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 14,
+    borderWidth: 1,
+    borderColor: colors.borderSoft,
+    backgroundColor: "rgba(255,255,255,0.035)",
+  },
+  memoryHint: {
+    marginTop: 10,
+    maxWidth: 300,
+    color: colors.textMuted,
+    fontFamily: typography.sans,
+    fontSize: 9,
+    lineHeight: 14,
+    textAlign: "center",
   },
   phoneticBlock: {
     marginTop: 20,
@@ -1232,6 +1541,26 @@ const styles = StyleSheet.create({
     fontSize: 7.5,
     textAlign: "center",
   },
+  hidden: { display: "none" },
+  textVisibilityRow: {
+    flexDirection: "row",
+    justifyContent: "center",
+    gap: 6,
+    marginTop: 8,
+  },
+  textVisibilityOption: {
+    paddingHorizontal: 8,
+    paddingVertical: 5,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: colors.borderSoft,
+  },
+  textVisibilityText: {
+    color: colors.textMuted,
+    fontFamily: typography.sans,
+    fontSize: 9,
+  },
+  revealedWord: { color: colors.goldLight },
   teacherButtons: {
     marginTop: 20,
     flexDirection: "row",
@@ -1374,20 +1703,6 @@ const styles = StyleSheet.create({
     fontWeight: "800",
   },
   repeatTextActive: { color: colors.goldLight },
-  pausePill: {
-    height: 35,
-    paddingHorizontal: 9,
-    flexDirection: "row",
-    alignItems: "center",
-    borderRadius: 16,
-    backgroundColor: "rgba(255,255,255,0.05)",
-  },
-  pauseText: {
-    marginLeft: 4,
-    color: colors.textMuted,
-    fontFamily: typography.sans,
-    fontSize: 8,
-  },
   evaluate: {
     marginTop: 20,
     padding: 15,

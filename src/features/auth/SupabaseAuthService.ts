@@ -117,6 +117,9 @@ export async function signUpWithPassword(email: string, password: string) {
     body: JSON.stringify({
       email: email.trim().toLowerCase(),
       password,
+      options: {
+        emailRedirectTo: "oummah://auth/callback",
+      },
     }),
   });
 

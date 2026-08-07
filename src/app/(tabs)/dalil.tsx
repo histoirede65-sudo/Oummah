@@ -2196,6 +2196,7 @@ export default function DalilScreen() {
       const locationContext = await resolveWasilLocationContext(trimmedPrompt).catch(
         () => undefined,
       );
+      const isClarificationFollowUp = Boolean(lastMisunderstoodPrompt);
       const response = await askWasil(
         buildNearbyMosqueQuestion(trimmedPrompt, locationContext),
         localContext,
@@ -2211,12 +2212,14 @@ export default function DalilScreen() {
       setFailedPrompt("");
       setBalance(response.balance);
       if (
-        response.classification === "out_of_scope" ||
-        response.classification === "insufficient_sources" ||
-        response.classification === "clarification"
+        response.classification === "clarification" &&
+        !isClarificationFollowUp
       ) {
+        // Grant one free message only: the next reply to Wasil's clarification.
         setLastMisunderstoodPrompt(trimmedPrompt);
       } else {
+        // Consume the free clarification turn immediately. A second clarification
+        // does not open another free message.
         setLastMisunderstoodPrompt("");
       }
       await commitTurn(trimmedPrompt, response.reply);
@@ -2872,17 +2875,22 @@ export default function DalilScreen() {
         transparent
         visible={energyVisible}
       >
-        <Pressable
-          onPress={() => setEnergyVisible(false)}
-          style={styles.energyBackdrop}
-        >
+        <View style={styles.energyBackdrop}>
           <Pressable
-            onPress={(event) => event.stopPropagation()}
-            style={styles.energySheet}
-          >
+            accessibilityLabel="Fermer Énergie Wasil"
+            onPress={() => setEnergyVisible(false)}
+            style={StyleSheet.absoluteFill}
+          />
+          <View style={styles.energySheet}>
             <ScrollView
-              bounces={false}
+              alwaysBounceVertical
+              bounces
               contentContainerStyle={styles.energyScrollContent}
+              decelerationRate="normal"
+              directionalLockEnabled
+              nestedScrollEnabled
+              overScrollMode="always"
+              scrollEventThrottle={16}
               showsVerticalScrollIndicator={false}
             >
               <View style={styles.energyHandle} />
@@ -3039,8 +3047,8 @@ export default function DalilScreen() {
                 <Text style={styles.energyRefreshText}>Actualiser mon énergie</Text>
               </Pressable>
             </ScrollView>
-          </Pressable>
-        </Pressable>
+          </View>
+        </View>
       </Modal>
     </SafeAreaView>
   );

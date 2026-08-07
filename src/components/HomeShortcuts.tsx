@@ -3,7 +3,7 @@ import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import type { Href } from "expo-router";
 import { router } from "expo-router";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import {
   type NativeScrollEvent,
   type NativeSyntheticEvent,
@@ -80,15 +80,27 @@ const shortcuts = [
 
 export default function HomeShortcuts() {
   const [activeIndex, setActiveIndex] = useState(0);
+  const viewportWidthRef = useRef(0);
+  const contentWidthRef = useRef(0);
 
   const updateActiveIndex = (
     event: NativeSyntheticEvent<NativeScrollEvent>,
   ) => {
-    const nextIndex = Math.round(
-      event.nativeEvent.contentOffset.x / SNAP_INTERVAL,
+    const maxOffset = Math.max(
+      0,
+      contentWidthRef.current - viewportWidthRef.current,
+    );
+    const progress =
+      maxOffset > 0 ? event.nativeEvent.contentOffset.x / maxOffset : 0;
+    const nextIndex = Math.round(progress * (shortcuts.length - 1));
+    const boundedIndex = Math.max(
+      0,
+      Math.min(shortcuts.length - 1, nextIndex),
     );
 
-    setActiveIndex(Math.max(0, Math.min(shortcuts.length - 1, nextIndex)));
+    setActiveIndex((currentIndex) =>
+      currentIndex === boundedIndex ? currentIndex : boundedIndex,
+    );
   };
 
   return (
@@ -108,6 +120,14 @@ export default function HomeShortcuts() {
         decelerationRate="fast"
         snapToInterval={SNAP_INTERVAL}
         snapToAlignment="start"
+        scrollEventThrottle={16}
+        onLayout={(event) => {
+          viewportWidthRef.current = event.nativeEvent.layout.width;
+        }}
+        onContentSizeChange={(width) => {
+          contentWidthRef.current = width;
+        }}
+        onScroll={updateActiveIndex}
         onMomentumScrollEnd={updateActiveIndex}
       >
         {shortcuts.map((item) => (

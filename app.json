@@ -18,6 +18,7 @@
     },
     "android": {
       "package": "com.oummah.app",
+      "versionCode": 2,
       "permissions": [
         "SCHEDULE_EXACT_ALARM",
         "android.permission.RECORD_AUDIO",

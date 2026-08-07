@@ -2286,8 +2286,13 @@ Deno.serve(async (request) => {
     )
     .join("\n");
 
-  const credits =
-    mode === "deep"
+  // A clarification requested by Wasil grants exactly one free follow-up:
+  // the immediately following user message. The client sends clarificationOf
+  // only for that next turn and clears it afterwards, even if Wasil asks again.
+  const isFreeClarificationFollowUp = Boolean(clarificationOf);
+  const credits = isFreeClarificationFollowUp
+    ? 0
+    : mode === "deep"
       ? Math.max(1, Number(Deno.env.get("WASIL_DEEP_CREDITS") ?? "3") || 3)
       : Math.max(1, Number(Deno.env.get("WASIL_STANDARD_CREDITS") ?? "1") || 1);
   const model =
@@ -2295,32 +2300,43 @@ Deno.serve(async (request) => {
       ? (Deno.env.get("WASIL_MODEL_DEEP") ?? "gpt-5.6-sol")
       : (Deno.env.get("WASIL_MODEL_STANDARD") ?? "gpt-5.6-luna");
 
-  let nextBalance: number;
+  let nextBalance = balance;
+  let hasCreditReservation = false;
   const creditReservationStartedAt = performance.now();
-  try {
-    nextBalance = Number(
-      await postgrestRpc("reserve_wasil_credits", {
-        p_user_id: user.id,
-        p_request_id: requestId,
-        p_amount: credits,
-        p_mode: mode,
-        p_model: model,
-      }),
-    );
-    markLatency("creditReservationMs", creditReservationStartedAt);
-  } catch (error) {
-    markLatency("creditReservationMs", creditReservationStartedAt);
-    const message = error instanceof Error ? error.message : "";
-    if (message.includes("INSUFFICIENT_CREDITS")) {
-      return json({ code: "INSUFFICIENT_CREDITS", balance }, 402);
+  if (isFreeClarificationFollowUp) {
+    latencyStages.creditReservationMs = 0;
+    console.log("WASIL_FREE_CLARIFICATION_FOLLOW_UP", {
+      requestId,
+      userId: user.id,
+      clarificationOf: clarificationOf.slice(0, 160),
+    });
+  } else {
+    try {
+      nextBalance = Number(
+        await postgrestRpc("reserve_wasil_credits", {
+          p_user_id: user.id,
+          p_request_id: requestId,
+          p_amount: credits,
+          p_mode: mode,
+          p_model: model,
+        }),
+      );
+      hasCreditReservation = true;
+      markLatency("creditReservationMs", creditReservationStartedAt);
+    } catch (error) {
+      markLatency("creditReservationMs", creditReservationStartedAt);
+      const message = error instanceof Error ? error.message : "";
+      if (message.includes("INSUFFICIENT_CREDITS")) {
+        return json({ code: "INSUFFICIENT_CREDITS", balance }, 402);
+      }
+      return json({ code: "CREDIT_ERROR" }, 500);
     }
-    return json({ code: "CREDIT_ERROR" }, 500);
   }
 
   try {
     if (deterministicLocalAnswer) {
       const finalValidationStartedAt = performance.now();
-      runInBackground(
+      if (hasCreditReservation) runInBackground(
         postgrestRpc("complete_wasil_request", {
           p_request_id: requestId,
           p_input_tokens: 0,
@@ -2963,7 +2979,9 @@ Deno.serve(async (request) => {
     );
 
     if (parsed.status !== "answered") {
-      const refundedBalance = await refund(user.id, requestId, parsed.status);
+      const refundedBalance = hasCreditReservation
+        ? await refund(user.id, requestId, parsed.status)
+        : balance;
       const nonAnswer =
         parsed.status === "urgent_support"
           ? {
@@ -3084,7 +3102,7 @@ Deno.serve(async (request) => {
     }
 
     const usage = (provider.usage ?? {}) as Record<string, number>;
-    runInBackground(
+    if (hasCreditReservation) runInBackground(
       postgrestRpc("complete_wasil_request", {
         p_request_id: requestId,
         p_input_tokens: usage.input_tokens ?? 0,
@@ -3245,11 +3263,13 @@ Deno.serve(async (request) => {
       stages: latencyStages,
       totalMs: latencyStages.totalMs,
     });
-    const refundedBalance = await refund(
-      user.id,
-      requestId,
-      "technical_or_source_failure",
-    );
+    const refundedBalance = hasCreditReservation
+      ? await refund(
+          user.id,
+          requestId,
+          "technical_or_source_failure",
+        )
+      : balance;
     return json(
       {
         code: "ANSWER_FAILED",
