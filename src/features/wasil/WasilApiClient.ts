@@ -1,7 +1,24 @@
+import * as Application from "expo-application";
+import { Platform } from "react-native";
 import { getValidSession } from "../auth/SupabaseAuthService";
+import { storageService } from "../../core/storage/StorageService";
 import type { WasilReply } from "./WasilLocalResponder";
 import type { WasilConversationThread } from "./WasilConversationStore";
 import { trackAnalyticsEvent } from "../analytics/AnalyticsService";
+
+const WELCOME_CREDIT_CLAIM_KEY = "oummah:wasil:welcome-credit-claimed:v1";
+
+async function installationDeviceId() {
+  if (Platform.OS === "android") {
+    const androidId = Application.getAndroidId();
+    return androidId ? `android:${androidId}` : null;
+  }
+  if (Platform.OS === "ios") {
+    const iosId = await Application.getIosIdForVendorAsync().catch(() => null);
+    return iosId ? `ios:${iosId}` : null;
+  }
+  return null;
+}
 
 export class WasilApiError extends Error {
   constructor(
@@ -92,6 +109,18 @@ async function invoke(body: Record<string, unknown>) {
       "Connectez votre profil pour interroger Wasil.",
     );
   const { url, key } = configuration();
+  const deviceId = await installationDeviceId();
+  const welcomeCreditClaimed = await storageService
+    .get<boolean>(WELCOME_CREDIT_CLAIM_KEY)
+    .catch(() => true);
+  const requestBody = {
+    ...body,
+    installationDeviceId: deviceId,
+    welcomeCreditsEligible: welcomeCreditClaimed !== true,
+  };
+  if (welcomeCreditClaimed !== true) {
+    await storageService.set(WELCOME_CREDIT_CLAIM_KEY, true).catch(() => undefined);
+  }
   const send = (accessToken: string) =>
     fetch(`${url}/functions/v1/wasil`, {
       method: "POST",
@@ -100,7 +129,7 @@ async function invoke(body: Record<string, unknown>) {
         Authorization: `Bearer ${accessToken}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(body),
+      body: JSON.stringify(requestBody),
     });
 
   let response = await send(session.accessToken);

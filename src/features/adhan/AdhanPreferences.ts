@@ -2,12 +2,14 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import type { MosquePrayerKey } from "../mosques/data/mosquePrayerTimes";
 
-export type AdhanAlertMode = "sound" | "vibration" | "silent";
+export type AdhanAlertMode = "adhan" | "notification" | "vibration" | "silent";
+export type AdhanVoice = "makkah" | "madinah" | "egypt";
 
 export type AdhanPreferences = {
   enabled: boolean;
   prayers: Record<MosquePrayerKey, boolean>;
   mode: AdhanAlertMode;
+  voice: AdhanVoice;
   leadMinutes: number;
 };
 
@@ -20,7 +22,8 @@ export const DEFAULT_ADHAN_PREFERENCES: AdhanPreferences = {
     Maghrib: true,
     Isha: true,
   },
-  mode: "sound",
+  mode: "adhan",
+  voice: "makkah",
   leadMinutes: 0,
 };
 
@@ -34,9 +37,19 @@ export async function loadAdhanPreferences(): Promise<AdhanPreferences> {
   try {
     const parsed = JSON.parse(stored) as Partial<AdhanPreferences>;
 
+    const legacyMode = parsed.mode as string | undefined;
+    const mode: AdhanAlertMode =
+      legacyMode === "sound" || legacyMode === "adhan"
+        ? "adhan"
+        : legacyMode === "notification" || legacyMode === "vibration" || legacyMode === "silent"
+          ? legacyMode
+          : DEFAULT_ADHAN_PREFERENCES.mode;
+
     return {
       ...DEFAULT_ADHAN_PREFERENCES,
       ...parsed,
+      mode,
+      voice: parsed.voice === "madinah" || parsed.voice === "egypt" ? parsed.voice : "makkah",
       prayers: {
         ...DEFAULT_ADHAN_PREFERENCES.prayers,
         ...parsed.prayers,

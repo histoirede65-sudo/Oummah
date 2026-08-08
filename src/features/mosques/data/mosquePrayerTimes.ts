@@ -22,6 +22,7 @@ export type MosquePrayerSchedule = {
   methodName: string;
   prayers: MosquePrayerTime[];
   tomorrowFajr: MosquePrayerTime;
+  futurePrayers?: MosquePrayerTime[];
   fromCache: boolean;
 };
 
@@ -113,13 +114,6 @@ function getCacheKey(
     longitude.toFixed(4),
     dateKey,
   ].join(':');
-}
-
-function getTomorrow(date: Date) {
-  const tomorrow = new Date(date);
-  tomorrow.setDate(tomorrow.getDate() + 1);
-  tomorrow.setHours(12, 0, 0, 0);
-  return tomorrow;
 }
 
 function getUnixTimestamp(date: Date) {
@@ -408,7 +402,8 @@ async function readCachedSchedule(
       !cached.savedAt ||
       Date.now() - cached.savedAt > CACHE_MAX_AGE_MS ||
       !Array.isArray(cached.prayers) ||
-      !cached.tomorrowFajr
+      !cached.tomorrowFajr ||
+      !Array.isArray(cached.futurePrayers)
     ) {
       return null;
     }
@@ -465,26 +460,25 @@ export async function getMosquePrayerSchedule(
   );
 
   try {
-    const [todayResponse, tomorrowResponse] =
-      await Promise.all([
+    const responses = await Promise.all(
+      Array.from({ length: 7 }, (_, index) =>
         fetchPrayerDay(
-          today,
+          getDateOffset(today, index),
           latitude,
           longitude,
           signal,
         ),
-        fetchPrayerDay(
-          getTomorrow(today),
-          latitude,
-          longitude,
-          signal,
-        ),
-      ]);
+      ),
+    );
+    const [todayResponse, tomorrowResponse, ...futureResponses] = responses;
 
     const schedule = buildSchedule(
       todayResponse,
       tomorrowResponse,
       dateKey,
+    );
+    schedule.futurePrayers = [tomorrowResponse, ...futureResponses].flatMap((response) =>
+      PRAYER_DEFINITIONS.map(({ key, label }) => buildPrayer(response, key, label)),
     );
 
     await writeCachedSchedule(
@@ -510,4 +504,11 @@ export async function getMosquePrayerSchedule(
 
     throw error;
   }
+}
+
+function getDateOffset(date: Date, days: number) {
+  const next = new Date(date);
+  next.setDate(next.getDate() + days);
+  next.setHours(12, 0, 0, 0);
+  return next;
 }

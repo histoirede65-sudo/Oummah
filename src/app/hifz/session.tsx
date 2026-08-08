@@ -74,6 +74,10 @@ function isMaskedWord(index: number, seed: number) {
   return (index + seed) % 3 === 1;
 }
 
+function isQuranicPauseMark(value: string) {
+  return /^[\u06D6-\u06ED]+$/u.test(value);
+}
+
 function concealed(text: string, level: TeacherLevel, revealedWordCount = 0, seed = 0) {
   if (level === 0) return text;
   const words = text.trim().split(/\s+/).filter(Boolean);
@@ -431,6 +435,10 @@ export default function HifzSessionScreen() {
     setSelectedWordRange([1, verse.text.trim().split(/\s+/).length]);
   }, [rawPortion, verse]);
   const currentText = verse?.textUthmani || "Chargement du verset…";
+  const textWords = useMemo(
+    () => currentText.trim().split(/\s+/).filter(Boolean),
+    [currentText],
+  );
   const currentPhonetic = useMemo(() => {
     const direct = verse?.transliteration?.trim();
     if (direct) return direct;
@@ -482,13 +490,26 @@ export default function HifzSessionScreen() {
         activeAudioTiming.audioMode,
       )
     : audioPositionMilliseconds(verseAudioStatus.currentTime);
+  const lastWordTiming = wordTimings.at(-1);
+  const activePositionMs =
+    lastWordTiming &&
+    activeAudioTiming &&
+    syncPositionMs >= lastWordTiming.startMs &&
+    syncPositionMs <= activeAudioTiming.endMs &&
+    !wordTimings.some(
+      (word) => syncPositionMs >= word.startMs && syncPositionMs < word.endMs,
+    )
+      ? lastWordTiming.startMs
+      : syncPositionMs;
   const activeWordState = getWordSyncState({
-    positionMs: syncPositionMs,
+    positionMs: activePositionMs,
     verseTimeline: wordTimings,
   });
   const activeWordPosition = activeWordState.activeWordPosition;
   const lastReadWordPosition =
-    activeWordState.completedWordPositions.at(-1) ?? null;
+    activeWordPosition !== null
+      ? activeWordPosition - 1
+      : activeWordState.completedWordPositions.at(-1) ?? null;
 
   const listen = async () => {
     if (verseAudioStatus.playing) {
@@ -816,16 +837,20 @@ export default function HifzSessionScreen() {
                   preferredSize={33}
                   style={styles.arabicWordsLine}
                 >
-                  {currentText.trim().split(/\s+/).map((word, wordIndex, words) => {
-                    const position = wordIndex + 1;
+                  {textWords.map((word, wordIndex) => {
+                    const isPauseMark = isQuranicPauseMark(word);
+                    const position = textWords
+                      .slice(0, wordIndex + 1)
+                      .filter((item) => !isQuranicPauseMark(item)).length;
                     const selected = Boolean(
-                      selectedWordRange &&
+                      !isPauseMark &&
+                        selectedWordRange &&
                         position >= selectedWordRange[0] &&
                         position <= selectedWordRange[1],
                     );
                     return (
                       <Text
-                        key={`${verse?.verseKey}-${position}`}
+                        key={`${verse?.verseKey}-${wordIndex}-${isPauseMark ? "quranic-sign" : "word"}`}
                         onPress={() =>
                           setSelectedWordRange((range) =>
                             range
@@ -842,10 +867,11 @@ export default function HifzSessionScreen() {
                         ]}
                       >
                         <QuranWordHighlight
-                          text={`${word}${wordIndex < words.length - 1 ? " " : ""}`}
+                          text={`${word}${wordIndex < textWords.length - 1 ? " " : ""}`}
                           fontFamily={ARABIC_READING_FONT_FAMILY}
-                          isActive={activeWordPosition === position}
+                          isActive={!isPauseMark && activeWordPosition === position}
                           isRead={
+                            !isPauseMark &&
                             lastReadWordPosition !== null &&
                             position <= lastReadWordPosition
                           }

@@ -178,6 +178,11 @@ export default function DailyGoalsScreen() {
 
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <DailyProgressHero summary={model.summary} streak={weekly.activeDays} />
+        <Pressable onPress={() => setSettingsVisible(true)} style={({ pressed }) => [styles.manageGoalsButton, pressed && styles.pressed]}>
+          <Ionicons name="options-outline" size={19} color={colors.background} />
+          <Text style={styles.manageGoalsText}>Modifier mes objectifs</Text>
+          <Ionicons name="chevron-forward" size={17} color={colors.background} />
+        </Pressable>
         {progressivePath && pathProgress && nextPathSession ? (
           <>
             <Text style={styles.sectionLabel}>PARCOURS PREMIUM</Text>
@@ -257,6 +262,8 @@ const styles = StyleSheet.create({
   headerButton: { width: 39, height: 39, alignItems: "center", justifyContent: "center", borderRadius: 20, borderWidth: 1, borderColor: "rgba(255,255,255,0.09)", backgroundColor: "rgba(255,255,255,0.035)" },
   headerCopy: { flex: 1, minWidth: 0, marginHorizontal: 12 }, headerTitle: { color: colors.text, fontFamily: typography.serifSemibold, fontSize: 25 }, headerSubtitle: { marginTop: 1, color: colors.textMuted, fontFamily: typography.sans, fontSize: 11.5 },
   content: { paddingHorizontal: 13, paddingBottom: 32 },
+  manageGoalsButton: { minHeight: 52, marginTop: 14, paddingHorizontal: 16, flexDirection: "row", alignItems: "center", justifyContent: "center", borderRadius: 17, backgroundColor: colors.goldLight },
+  manageGoalsText: { marginHorizontal: 9, color: colors.background, fontFamily: typography.sans, fontSize: 14, fontWeight: "800" },
   pathCard: { padding: 15, borderRadius: 21, borderWidth: 1, borderColor: "rgba(241,188,79,0.24)", backgroundColor: "rgba(74,40,88,0.18)" },
   pathTop: { flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
   pathBadge: { minHeight: 25, paddingHorizontal: 9, flexDirection: "row", alignItems: "center", borderRadius: 12, backgroundColor: "rgba(241,188,79,0.10)" },

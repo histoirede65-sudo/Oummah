@@ -13,13 +13,6 @@ const ENERGY_PACKAGE_IDS = [
   "energy_400",
 ] as const;
 
-const ENERGY_PRODUCT_IDS = new Set([
-  "oummah.wasil.credits25",
-  "oummah.wasil.credits75",
-  "oummah.wasil.credits180",
-  "oummah.wasil.credits400",
-]);
-
 export type WasilEnergyPackageId = (typeof ENERGY_PACKAGE_IDS)[number];
 
 export type WasilEnergyPack = {
@@ -93,26 +86,45 @@ export async function loadWasilEnergyPacks(): Promise<WasilEnergyLoadResult> {
     return errorResult("offering-unavailable", "L’offre Énergie Wasil est momentanément indisponible.");
   }
 
-  const packs = ENERGY_PACKAGE_IDS.map((identifier) => {
+  const expectedProducts: Record<WasilEnergyPackageId, string> = {
+    energy_25: "oummah.wasil.credits25",
+    energy_75: "oummah.wasil.credits75",
+    energy_180: "oummah.wasil.credits180",
+    energy_400: "oummah.wasil.credits400",
+  };
+  const packs: WasilEnergyPack[] = [];
+
+  for (const identifier of ENERGY_PACKAGE_IDS) {
+    const expectedProductIdentifier = expectedProducts[identifier];
     const revenueCatPackage = offering.availablePackages.find(
-      (item) =>
-        item.identifier === identifier &&
-        ENERGY_PRODUCT_IDS.has(item.product.identifier),
+      (item) => item.identifier === identifier,
     );
-    if (!revenueCatPackage) return null;
-    return {
+
+    if (!revenueCatPackage || revenueCatPackage.product.identifier !== expectedProductIdentifier) {
+      if (__DEV__) {
+        console.warn(
+          `[Wasil] Package ${identifier} ignoré : ` +
+            (!revenueCatPackage
+              ? "package absent dans l’offering wasil_energy"
+              : `produit associé ${revenueCatPackage.product.identifier} au lieu de ${expectedProductIdentifier}`),
+        );
+      }
+      continue;
+    }
+
+    packs.push({
       identifier,
       productIdentifier: revenueCatPackage.product.identifier,
       price: revenueCatPackage.product.priceString,
       revenueCatPackage,
-    } satisfies WasilEnergyPack;
-  });
+    });
+  }
 
-  if (packs.some((pack) => pack === null)) {
+  if (packs.length === 0) {
     return errorResult("package-unavailable", "Un ou plusieurs packs d’énergie sont indisponibles.");
   }
 
-  return { status: "success", packs: packs as WasilEnergyPack[] };
+  return { status: "success", packs };
 }
 
 export async function purchaseWasilEnergy(

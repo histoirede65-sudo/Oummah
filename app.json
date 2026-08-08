@@ -18,7 +18,7 @@
     },
     "android": {
       "package": "com.oummah.app",
-      "versionCode": 2,
+      "versionCode": 3,
       "permissions": [
         "SCHEDULE_EXACT_ALARM",
         "android.permission.RECORD_AUDIO",
@@ -40,12 +40,22 @@
       "expo-font",
       "expo-sqlite",
       "expo-web-browser",
-      "expo-audio",
+      [
+        "expo-audio",
+        {
+          "enableBackgroundPlayback": true
+        }
+      ],
       [
         "expo-notifications",
         {
-          "color": "#F2B53D",
-          "defaultChannel": "adhan-sound"
+            "color": "#F2B53D",
+          "defaultChannel": "adhan-sound-makkah",
+          "sounds": [
+            "./assets/adhan/adhan_makkah.mp3",
+            "./assets/adhan/adhan_madinah.mp3",
+            "./assets/adhan/adhan_egypt.mp3"
+          ]
         }
       ]
     ],

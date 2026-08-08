@@ -1,4 +1,5 @@
 import type { AudioPlayer as ExpoPlayer, AudioStatus as ExpoStatus } from 'expo-audio';
+import { Asset } from 'expo-asset';
 
 import {
   getTrackReciter,
@@ -10,6 +11,15 @@ import {
   type PlaybackRate,
   type RepeatMode,
 } from '../../../core/audio';
+
+const OUMMAH_ARTWORK_ASSET = Asset.fromModule(require('../../../../assets/images/lecteur.png'));
+
+function toAndroidFileUri(uri: string | null) {
+  if (!uri) return null;
+  if (uri.startsWith('file://')) return uri;
+  if (uri.startsWith('/')) return `file://${uri}`;
+  return null;
+}
 
 const INITIAL_STATUS: AudioPlayerStatus = {
   isLoaded: false,
@@ -74,12 +84,22 @@ export class ExpoAudioPlayerAdapter implements AudioPlayer {
       return;
     }
     try {
-      this.player.setActiveForLockScreen(true, {
+      const lockScreenMetadata = {
         title: track.title,
         artist: reciter.name,
         albumTitle: 'OUMMAH',
-        artworkUrl: track.artworkUri ?? (reciter.photoUri?.startsWith('http') ? reciter.photoUri : undefined),
-      }, { showSeekBackward: true, showSeekForward: true });
+      };
+      void OUMMAH_ARTWORK_ASSET.downloadAsync()
+        .then((asset) => {
+          const artworkUrl = toAndroidFileUri(asset.localUri);
+          if (!artworkUrl) return;
+          if (__DEV__) console.debug('[Audio] Android artworkUrl:', artworkUrl);
+          this.player.setActiveForLockScreen(true, { ...lockScreenMetadata, artworkUrl }, {
+            showSeekBackward: true,
+            showSeekForward: true,
+          });
+        })
+        .catch(() => undefined);
     } catch {
       // Unsupported on some web and development runtimes.
     }

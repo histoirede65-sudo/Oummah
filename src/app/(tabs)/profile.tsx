@@ -101,8 +101,12 @@ export default function ProfileScreen() {
       }
 
       setSession(nextSession);
+      if (authMode === "signup") {
+        router.replace({ pathname: "/onboarding/daily-goals", params: { fresh: "1" } });
+        return;
+      }
       Alert.alert(
-        authMode === "signup" ? "Compte créé" : "Connexion réussie",
+        "Connexion réussie",
         "Votre profil OUMMAH est maintenant connecté.",
       );
     } catch (error) {

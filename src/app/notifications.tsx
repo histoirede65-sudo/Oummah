@@ -431,7 +431,7 @@ export default function NotificationsScreen() {
                 </View>
                 <View style={styles.adhanUnavailable}>
                   <Ionicons name="information-circle-outline" size={17} color="#F2BE55" />
-                  <Text style={styles.adhanUnavailableText}>Chaque alerte de prière contient un hadith authentique adapté. Le véritable son de l’Adhan sera ajouté dès qu’un audio officiel sera intégré ; pour l’instant, le mode Son utilise le son système.</Text>
+                  <Text style={styles.adhanUnavailableText}>Chaque alerte de prière contient un hadith authentique adapté. En mode Son, l’Adhan sélectionné est utilisé pour la notification.</Text>
                 </View>
               </View>
 
@@ -562,4 +562,3 @@ const styles = StyleSheet.create({
   saveButtonSaved: { backgroundColor: "#71C99F" },
   saveButtonText: { color: "#172018", fontFamily: typography.sans, fontSize: 12, fontWeight: "800" },
 });
-

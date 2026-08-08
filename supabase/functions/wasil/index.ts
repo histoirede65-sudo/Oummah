@@ -1439,6 +1439,8 @@ type WasilBody = {
   memoryValue?: string;
   memoryLabel?: string;
   conversations?: unknown[];
+  welcomeCreditsEligible?: boolean;
+  installationDeviceId?: string | null;
 };
 
 const profileMemoryKeys = [
@@ -1832,15 +1834,20 @@ async function authenticatedUser(authorization: string) {
   return response.json() as Promise<{ id: string; email?: string }>;
 }
 
-async function getBalance(userId: string) {
+async function getBalance(
+  userId: string,
+  welcomeCreditsEligible: boolean,
+  installationDeviceId: string | null,
+) {
   const initialCredits = Math.max(
     0,
     Number(Deno.env.get("WASIL_INITIAL_CREDITS") ?? "0") || 0,
   );
   return Number(
-    await postgrestRpc("ensure_wasil_wallet", {
+    await postgrestRpc("ensure_wasil_wallet_for_installation", {
       p_user_id: userId,
-      p_initial_balance: initialCredits,
+      p_initial_balance: welcomeCreditsEligible ? initialCredits : 0,
+      p_installation_device_id: installationDeviceId ?? "",
     }),
   );
 }
@@ -2036,7 +2043,13 @@ Deno.serve(async (request) => {
   }
 
   const balanceStartedAt = performance.now();
-  const balance = await getBalance(user.id);
+  const balance = await getBalance(
+    user.id,
+    body.welcomeCreditsEligible === true,
+    typeof body.installationDeviceId === "string"
+      ? body.installationDeviceId
+      : null,
+  );
   markLatency("balanceLoadMs", balanceStartedAt);
   if (body.operation === "balance") return json({ balance });
 

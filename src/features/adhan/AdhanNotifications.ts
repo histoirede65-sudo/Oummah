@@ -9,7 +9,7 @@ import type {
 } from "../mosques/data/mosquePrayerTimes";
 import { getNearbyMosques, type NearbyMosque } from "../mosques/data/nearbyMosques";
 import { getMainMosque } from "../mosques/data/mosquePreferences";
-import type { AdhanAlertMode, AdhanPreferences } from "./AdhanPreferences";
+import type { AdhanAlertMode, AdhanPreferences, AdhanVoice } from "./AdhanPreferences";
 
 const SCHEDULED_IDS_KEY = "oumma:adhan-notification-ids:v1";
 const NOTIFICATION_OWNER = "oummah-adhan";
@@ -135,8 +135,17 @@ async function configureAndroidChannels() {
   if (Platform.OS !== "android") return;
 
   await Promise.all([
-    Notifications.setNotificationChannelAsync("adhan-sound", {
-      name: "Adhan avec son",
+    ...(["makkah", "madinah", "egypt"] as const).map((voice) =>
+      Notifications.setNotificationChannelAsync(`adhan-sound-${voice}`, {
+      name: `Adhan — ${voice === "makkah" ? "La Mecque" : voice === "madinah" ? "Médine" : "Égypte"}`,
+      importance: Notifications.AndroidImportance.HIGH,
+      sound: `adhan_${voice}.mp3`,
+      vibrationPattern: [0, 280, 160, 280],
+      lightColor: "#F2B53D",
+      }),
+    ),
+    Notifications.setNotificationChannelAsync("adhan-notification", {
+      name: "Notification Adhan",
       importance: Notifications.AndroidImportance.HIGH,
       sound: "default",
       vibrationPattern: [0, 280, 160, 280],
@@ -198,8 +207,8 @@ async function cancelAdhanNotifications() {
   await cleanupPresentedPrayerNotifications();
 }
 
-function channelIdFor(mode: AdhanAlertMode) {
-  return `adhan-${mode}`;
+function channelIdFor(mode: AdhanAlertMode, voice: AdhanVoice) {
+  return mode === "adhan" ? `adhan-sound-${voice}` : mode === "notification" ? "adhan-notification" : `adhan-${mode}`;
 }
 
 function contentFor(
@@ -232,7 +241,12 @@ function contentFor(
           }
         : {}),
     },
-    sound: preferences.mode === "sound" ? "default" : false,
+    sound:
+      preferences.mode === "adhan"
+        ? `adhan_${preferences.voice}.mp3`
+        : preferences.mode === "notification"
+          ? "default"
+          : false,
     vibrate: preferences.mode === "vibration" ? [0, 350, 180, 350] : [],
     color: "#F2B53D",
   };
@@ -298,7 +312,13 @@ async function syncAdhanNotificationsInternal(
   ]);
 
   const leadMilliseconds = preferences.leadMinutes * 60 * 1_000;
-  const prayers = [...schedule.prayers, schedule.tomorrowFajr].filter(
+  const prayers = [
+    ...schedule.prayers,
+    schedule.tomorrowFajr,
+    ...(schedule.futurePrayers ?? []).filter(
+      (prayer) => prayer.timestamp !== schedule.tomorrowFajr.timestamp,
+    ),
+  ].filter(
     (prayer) =>
       preferences.prayers[prayer.key] && prayer.timestamp - leadMilliseconds > Date.now(),
   );
@@ -310,7 +330,7 @@ async function syncAdhanNotificationsInternal(
         trigger: {
           type: Notifications.SchedulableTriggerInputTypes.DATE,
           date: new Date(prayer.timestamp - leadMilliseconds),
-          channelId: channelIdFor(preferences.mode),
+          channelId: channelIdFor(preferences.mode, preferences.voice),
         },
       }),
     ),
