@@ -333,6 +333,7 @@ export default function PrayerCard() {
   const { width } = useWindowDimensions();
   const compact = width < 375;
   const [mainMosque, setMainMosque] = useState<StoredMosque | null>(null);
+  const [mainMosqueLoaded, setMainMosqueLoaded] = useState(false);
   const [mainMosqueJumuah, setMainMosqueJumuah] = useState<string | null>(null);
   const [source, setSource] = useState<PrayerSource | null>(null);
   const [manualSource, setManualSource] = useState<PrayerSource | null>(null);
@@ -426,6 +427,7 @@ export default function PrayerCard() {
           } else {
             setMainMosqueJumuah(null);
           }
+          setMainMosqueLoaded(true);
         }
       };
 
@@ -476,6 +478,8 @@ export default function PrayerCard() {
   }, []);
 
   useEffect(() => {
+    if (!mainMosqueLoaded) return;
+
     const controller = new AbortController();
 
     const loadPrayerTimes = async () => {
@@ -532,7 +536,7 @@ export default function PrayerCard() {
     void loadPrayerTimes();
 
     return () => controller.abort();
-  }, [mainMosque?.id, mainMosque?.latitude, mainMosque?.longitude, manualSource?.latitude, manualSource?.longitude, refreshKey]);
+  }, [mainMosqueLoaded, mainMosque?.id, mainMosque?.latitude, mainMosque?.longitude, manualSource?.latitude, manualSource?.longitude, refreshKey]);
 
   const chooseCity = async () => {
     const query = cityQuery.trim();
