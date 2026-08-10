@@ -43,6 +43,14 @@ const FOCUSES: Array<{
   { id: "hadith", label: "Hadith", icon: "library-outline" },
 ];
 
+function returnFromDailyGoals() {
+  if (router.canGoBack()) {
+    router.back();
+    return;
+  }
+  router.replace("/(tabs)" as Href);
+}
+
 export default function DailyGoalsScreen() {
   const model = useDailyGoalsViewModel();
   const [addVisible, setAddVisible] = useState(false);
@@ -171,7 +179,7 @@ export default function DailyGoalsScreen() {
   return (
     <SafeAreaView edges={["top"]} style={styles.safe}>
       <View style={styles.header}>
-        <Pressable onPress={() => router.back()} style={styles.headerButton}><Ionicons name="arrow-back" size={21} color={colors.goldLight} /></Pressable>
+        <Pressable onPress={returnFromDailyGoals} style={styles.headerButton}><Ionicons name="arrow-back" size={21} color={colors.goldLight} /></Pressable>
         <View style={styles.headerCopy}><Text style={styles.headerTitle}>Objectifs du jour</Text><Text style={styles.headerSubtitle}>Avancez à votre rythme, avec constance</Text></View>
         <Pressable onPress={() => setSettingsVisible(true)} style={styles.headerButton}><Ionicons name="options-outline" size={20} color={colors.goldLight} /></Pressable>
       </View>
