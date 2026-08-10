@@ -314,6 +314,7 @@ function AppLaunchAnimation({
 
 export default function RootLayout() {
   const [launchVisible, setLaunchVisible] = useState(true);
+  const [fontFallbackReady, setFontFallbackReady] = useState(false);
 
   const [fontsLoaded, fontError] = useFonts({
     'CormorantGaramond-Regular': cormorantRegular,
@@ -321,6 +322,11 @@ export default function RootLayout() {
     'CormorantGaramond-SemiBold': cormorantSemibold,
     UthmanicHafs: uthmanicHafs,
   });
+
+  useEffect(() => {
+    const fallbackTimer = setTimeout(() => setFontFallbackReady(true), 5_000);
+    return () => clearTimeout(fallbackTimer);
+  }, []);
 
   useEffect(() => {
     void syncPushRegistration()
@@ -390,7 +396,7 @@ export default function RootLayout() {
     return () => subscription.remove();
   }, []);
 
-  const appReady = fontsLoaded || Boolean(fontError);
+  const appReady = fontsLoaded || Boolean(fontError) || fontFallbackReady;
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
