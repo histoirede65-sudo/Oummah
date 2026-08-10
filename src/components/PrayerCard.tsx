@@ -1,5 +1,4 @@
 import { Ionicons } from "@expo/vector-icons";
-import { useAudioPlayer, useAudioPlayerStatus } from "expo-audio";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import * as Location from "expo-location";
@@ -353,8 +352,6 @@ export default function PrayerCard() {
   const [cityQuery, setCityQuery] = useState("");
   const [cityLoading, setCityLoading] = useState(false);
   const [adhanPreferencesLoaded, setAdhanPreferencesLoaded] = useState(false);
-  const adhanPlayer = useAudioPlayer(ADHAN_VOICES.find((voice) => voice.key === adhanPreferences.voice)?.file ?? ADHAN_VOICES[0].file);
-  const adhanPlayerStatus = useAudioPlayerStatus(adhanPlayer);
   const orbitGlow = useRef(new Animated.Value(0.32)).current;
 
   useEffect(() => {
@@ -1172,10 +1169,6 @@ export default function PrayerCard() {
                     </Pressable>;
                   })}
                 </View>
-                <Pressable style={styles.adhanPreviewButton} onPress={() => adhanPlayerStatus.playing ? adhanPlayer.pause() : adhanPlayer.play()}>
-                  <Ionicons name={adhanPlayerStatus.playing ? "pause" : "play"} size={16} color="#281816" />
-                  <Text style={styles.adhanPreviewText}>{adhanPlayerStatus.playing ? "Pause" : "Aperçu"}</Text>
-                </Pressable>
               </>
             )}
 
@@ -1669,22 +1662,6 @@ const styles = StyleSheet.create({
     color: "#281816",
     fontFamily: typography.serifSemibold,
     fontSize: 15,
-  },
-  adhanPreviewButton: {
-    minHeight: 40,
-    marginTop: 8,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 7,
-    borderRadius: 13,
-    backgroundColor: "#F5D276",
-  },
-  adhanPreviewText: {
-    color: "#281816",
-    fontFamily: typography.sans,
-    fontSize: 11,
-    fontWeight: "800",
   },
   glass: {
     position: "absolute",
