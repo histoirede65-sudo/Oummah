@@ -15,6 +15,23 @@ import { storageService } from "../core/storage";
 
 const RECITER_BOOTSTRAP_CACHE_KEY = "oummah:audio:reciters:bootstrap:v2";
 
+const DEFAULT_RECITER: CatalogReciter = {
+  id: "mishary-alafasy",
+  name: "Mishary Rashid Al-Afasy",
+  language: "ar",
+  country: "Koweït",
+  style: "murattal",
+  photoUri: "mishary-alafasy",
+  portraitHdUri: "mishary-alafasy",
+  audioSource: "quranfoundation",
+  image: getReciterImage(7, "Mishary Rashid Al-Afasy"),
+  availableSurahs: 114,
+  popularity: 100,
+  biography: "",
+  popularSurahIds: [1, 2, 18, 36, 55, 67],
+  totalDurationSeconds: 0,
+};
+
 function normalizeReciterName(value: string) {
   return value
     .normalize("NFD")
@@ -84,10 +101,10 @@ export function ReciterProvider({
 }) {
   const [reciters, setReciters] = useState<
     readonly CatalogReciter[]
-  >([]);
+  >([DEFAULT_RECITER]);
 
   const [currentReciter, setCurrentReciterState] =
-    useState<CatalogReciter | null>(null);
+    useState<CatalogReciter>(DEFAULT_RECITER);
 
   const [loading, setLoading] = useState(true);
 
@@ -111,7 +128,7 @@ export function ReciterProvider({
               (reciter) => reciter.id === preferredId,
             ) ??
               stableCachedReciters[0] ??
-              null,
+              DEFAULT_RECITER,
           );
           setLoading(false);
         }
@@ -136,9 +153,7 @@ export function ReciterProvider({
 
         setCurrentReciterState(selected);
       } catch {
-        if (active) {
-          setCurrentReciterState((current) => current);
-        }
+        // Keep the local cache or the default reciter and keep rendering.
       } finally {
         if (active) {
           setLoading(false);
@@ -176,10 +191,6 @@ export function ReciterProvider({
       setCurrentReciter,
     ],
   );
-
-  if (loading || !currentReciter) {
-    return null;
-  }
 
   return (
     <ReciterContext.Provider value={value}>
