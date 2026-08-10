@@ -38,6 +38,9 @@ begin
     raise exception 'INVALID_AUDIENCE_TIER';
   end if;
 
+  raise log '[PushDiagnostic] register_my_push_token user_id=% token_suffix=% platform=% tier=%',
+    auth.uid(), right(trim(p_expo_push_token), 6), p_platform, p_audience_tier;
+
   insert into public.user_push_tokens (
     user_id,
     expo_push_token,
@@ -61,6 +64,8 @@ begin
     audience_tier = excluded.audience_tier,
     enabled = true,
     last_seen_at = now();
+
+  raise log '[PushDiagnostic] register_my_push_token upsert terminé user_id=%', auth.uid();
 end;
 $$;
 

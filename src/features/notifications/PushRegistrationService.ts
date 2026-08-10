@@ -40,8 +40,16 @@ async function ensureAndroidChannel() {
 }
 
 export async function syncPushRegistration() {
+  const diagnostic = (message: string, details?: unknown) => {
+    if (__DEV__) console.info(`[PushDiagnostic] ${message}`, details ?? "");
+  };
+
   const session = await getValidSession().catch(() => null);
-  if (!session) return { registered: false as const, reason: "signed-out" as const };
+  if (!session) {
+    diagnostic("session absente; enregistrement ignoré");
+    return { registered: false as const, reason: "signed-out" as const };
+  }
+  diagnostic("session trouvée", { userId: session.user.id });
 
   await ensureAndroidChannel();
 
@@ -60,11 +68,14 @@ export async function syncPushRegistration() {
   }
 
   if (!granted) {
+    diagnostic("permission notifications refusée");
     return { registered: false as const, reason: "permission-denied" as const };
   }
+  diagnostic("permission notifications accordée");
 
   const expoProjectId = projectId();
   if (!expoProjectId) {
+    diagnostic("projectId Expo absent");
     return { registered: false as const, reason: "project-id-missing" as const };
   }
 
@@ -73,6 +84,11 @@ export async function syncPushRegistration() {
       projectId: expoProjectId,
     })
   ).data;
+  diagnostic("token Expo récupéré", {
+    tokenPreview: token.length > 12 ? `${token.slice(0, 8)}…${token.slice(-4)}` : "<court>",
+    platform: Platform.OS,
+    projectId: expoProjectId,
+  });
 
   const premium = await getPremiumAccess().catch(() => null);
   const tier = premium?.isPremium ? "premium" : "free";
@@ -90,6 +106,12 @@ export async function syncPushRegistration() {
       p_platform: Platform.OS,
       p_audience_tier: tier,
     }),
+  });
+
+  diagnostic("RPC register_my_push_token répondu", {
+    status: response.status,
+    ok: response.ok,
+    userId: session.user.id,
   });
 
   if (!response.ok) {

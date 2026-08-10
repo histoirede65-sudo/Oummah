@@ -323,7 +323,13 @@ export default function RootLayout() {
   });
 
   useEffect(() => {
-    void syncPushRegistration().catch(() => undefined);
+    void syncPushRegistration()
+      .then((result) => {
+        if (__DEV__) console.info("[PushDiagnostic] résultat syncPushRegistration", result);
+      })
+      .catch((error) => {
+        if (__DEV__) console.warn("[PushDiagnostic] syncPushRegistration a échoué", error);
+      });
     void trackAnalyticsEvent({
       eventName: 'app_open',
       module: 'home',

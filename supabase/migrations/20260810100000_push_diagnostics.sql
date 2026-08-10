@@ -1,3 +1,59 @@
+-- Diagnostics temporaires uniquement : aucun comportement fonctionnel modifié.
+
+create or replace function public.register_my_push_token(
+  p_expo_push_token text,
+  p_platform text,
+  p_audience_tier text
+)
+returns void
+language plpgsql
+security definer
+set search_path = public, auth
+as $$
+begin
+  if auth.uid() is null then
+    raise exception 'AUTH_REQUIRED';
+  end if;
+
+  if p_platform not in ('ios', 'android') then
+    raise exception 'INVALID_PLATFORM';
+  end if;
+
+  if p_audience_tier not in ('free', 'premium') then
+    raise exception 'INVALID_AUDIENCE_TIER';
+  end if;
+
+  raise log '[PushDiagnostic] register_my_push_token user_id=% token_suffix=% platform=% tier=%',
+    auth.uid(), right(trim(p_expo_push_token), 6), p_platform, p_audience_tier;
+
+  insert into public.user_push_tokens (
+    user_id,
+    expo_push_token,
+    platform,
+    audience_tier,
+    enabled,
+    last_seen_at
+  )
+  values (
+    auth.uid(),
+    trim(p_expo_push_token),
+    p_platform,
+    p_audience_tier,
+    true,
+    now()
+  )
+  on conflict (expo_push_token)
+  do update set
+    user_id = auth.uid(),
+    platform = excluded.platform,
+    audience_tier = excluded.audience_tier,
+    enabled = true,
+    last_seen_at = now();
+
+  raise log '[PushDiagnostic] register_my_push_token upsert terminé user_id=%', auth.uid();
+end;
+$$;
+
 create or replace function public.notify_admins_new_user()
 returns trigger
 language plpgsql
@@ -27,9 +83,7 @@ begin
       'body', 'Un nouvel utilisateur vient de créer un compte.',
       'sound', 'default',
       'channelId', 'oummah-admin',
-      'data', jsonb_build_object(
-        'route', '/admin'
-      )
+      'data', jsonb_build_object('route', '/admin')
     )
   )
   into messages
@@ -63,10 +117,6 @@ exception
 end;
 $$;
 
-drop trigger if exists notify_admins_new_user_trigger on auth.users;
-create trigger notify_admins_new_user_trigger
-  after insert on auth.users
-  for each row
-  execute function public.notify_admins_new_user();
-
 revoke all on function public.notify_admins_new_user() from public;
+revoke all on function public.register_my_push_token(text, text, text) from public;
+grant execute on function public.register_my_push_token(text, text, text) to authenticated;
