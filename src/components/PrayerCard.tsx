@@ -53,7 +53,6 @@ import {
 } from "../features/adhan/AdhanPreferences";
 import {
   requestAdhanNotificationPermission,
-  syncAdhanNotifications,
 } from "../features/adhan/AdhanNotifications";
 import AppHeader from "./AppHeader";
 
@@ -351,7 +350,6 @@ export default function PrayerCard() {
   const [locationOptionsVisible, setLocationOptionsVisible] = useState(false);
   const [cityQuery, setCityQuery] = useState("");
   const [cityLoading, setCityLoading] = useState(false);
-  const [adhanPreferencesLoaded, setAdhanPreferencesLoaded] = useState(false);
   const orbitGlow = useRef(new Animated.Value(0.32)).current;
 
   useEffect(() => {
@@ -457,8 +455,6 @@ export default function PrayerCard() {
 
     void loadAdhanPreferences().then((preferences) => {
       if (active) setAdhanPreferences(preferences);
-    }).finally(() => {
-      if (active) setAdhanPreferencesLoaded(true);
     });
 
     return () => {
@@ -564,12 +560,6 @@ export default function PrayerCard() {
     setCityLoading(false);
     setLocationOptionsVisible(false);
   };
-
-  useEffect(() => {
-    if (!schedule || !adhanPreferencesLoaded) return;
-
-    void syncAdhanNotifications(schedule, adhanPreferences).catch(() => undefined);
-  }, [adhanPreferences, adhanPreferencesLoaded, schedule]);
 
   const nextPrayer = useMemo(
     () => (schedule ? getNextPrayer(schedule, now) : null),
