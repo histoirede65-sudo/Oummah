@@ -40,12 +40,7 @@
       "expo-font",
       "expo-sqlite",
       "expo-web-browser",
-      [
-        "expo-audio",
-        {
-          "enableBackgroundPlayback": true
-        }
-      ],
+      "expo-audio",
       [
         "expo-notifications",
         {
