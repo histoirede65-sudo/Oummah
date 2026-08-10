@@ -460,17 +460,23 @@ export async function getMosquePrayerSchedule(
   );
 
   try {
-    const responses = await Promise.all(
-      Array.from({ length: 7 }, (_, index) =>
+    const [todayResponse, tomorrowResponse] = await Promise.all([
+      fetchPrayerDay(today, latitude, longitude, signal),
+      fetchPrayerDay(getDateOffset(today, 1), latitude, longitude, signal),
+    ]);
+    const futureResults = await Promise.allSettled(
+      Array.from({ length: 5 }, (_, index) =>
         fetchPrayerDay(
-          getDateOffset(today, index),
+          getDateOffset(today, index + 2),
           latitude,
           longitude,
           signal,
         ),
       ),
     );
-    const [todayResponse, tomorrowResponse, ...futureResponses] = responses;
+    const futureResponses = futureResults.flatMap((result) =>
+      result.status === 'fulfilled' ? [result.value] : [],
+    );
 
     const schedule = buildSchedule(
       todayResponse,
