@@ -2294,43 +2294,15 @@ Deno.serve(async (request) => {
   // Resolve the user's precise religious intent before any generic
   // deterministic guidance. The same expansion is reused by retrieval below.
   const preflightQueryExpansionPromise = expandIslamicQuery(effectiveQuestion);
-  const sourceHint = submittedContext?.sourceId;
-  const contextStartedAt = performance.now();
-  const contextPromise = Promise.all([
-    clarificationOf
-      ? Promise.resolve([] as string[])
-      : postgrestRpc("find_wasil_intent_memory", {
-          p_user_id: user.id,
-          p_normalized_question: normalizeQuestion(effectiveQuestion),
-        }).then((value) => (Array.isArray(value) ? value as string[] : []))
-          .catch((error) => {
-            console.warn("WASIL_INTENT_MEMORY_LOAD_FAILURE", error instanceof Error ? error.message : String(error));
-            return [] as string[];
-          }),
-    loadProfileMemories(user.id),
-    loadQuranContext(effectiveQuestion),
-  ] as const).then((value) => ({
-    value,
-    durationMs: elapsedMs(contextStartedAt),
-  }));
-  const [loadedBalance, preflightQueryExpansion, loadedContextResult] = await Promise.all([
-    balancePromise,
-    preflightQueryExpansionPromise,
-    contextPromise,
-  ]);
-  balance = loadedBalance.value;
-  latencyStages.balanceLoadMs = loadedBalance.durationMs;
-  const contextLoadMs = loadedContextResult.durationMs;
-  latencyStages.contextLoadMs = contextLoadMs;
-  const deterministicLocalAnswer = resolveDeterministicQuranFact(effectiveQuestion) ??
-    resolveDeterministicDailyGuidance(effectiveQuestion, preflightQueryExpansion);
   let sharedHadithRepositoryPromise: Promise<HadithRepositoryRecord | null> | null = null;
   const loadSharedHadithRepository = () => {
-    sharedHadithRepositoryPromise ??= searchHadithRepository(effectiveQuestion, {
-      force: true,
-      expansion: preflightQueryExpansion,
-      budget: webBudget,
-    });
+    sharedHadithRepositoryPromise ??= preflightQueryExpansionPromise.then(
+      (expansion) => searchHadithRepository(effectiveQuestion, {
+        force: true,
+        expansion,
+        budget: webBudget,
+      }),
+    );
     return sharedHadithRepositoryPromise;
   };
   const featureFlags = getWasilFeatureFlags();
@@ -2357,34 +2329,65 @@ Deno.serve(async (request) => {
     v4ProductionBrainGuidance: featureFlags.v4ProductionBrainGuidance,
     v4ExecutionPlan: featureFlags.v4ExecutionPlan,
   });
-  let v4Analysis: WasilV4ShadowResult | null = null;
+  const deterministicLocalAnswerPromise = preflightQueryExpansionPromise.then(
+    (expansion) => resolveDeterministicQuranFact(effectiveQuestion) ??
+      resolveDeterministicDailyGuidance(effectiveQuestion, expansion),
+  );
   const v4AnalysisStartedAt = performance.now();
-  if (
-    !deterministicLocalAnswer &&
-    (featureFlags.v4ProductionBrainGuidance ||
-    featureFlags.v4ExecutionPlan)
-  ) {
-    // Controlled activation: the Brain may advise prompt structure, but the
-    // stable engine retains credits, retrieval, web routing and validation.
-    v4Analysis = await runWasilV4ShadowPipeline(
-      effectiveQuestion,
-      requestId,
-      webBudget,
-      loadSharedHadithRepository,
-    );
-  } else if (!deterministicLocalAnswer) {
-    // Pure shadow mode remains fire-and-forget and cannot affect production.
-    void runWasilV4ShadowPipeline(
-      effectiveQuestion,
-      requestId,
-      webBudget,
-      loadSharedHadithRepository,
-    );
-  }
-  const v4AnalysisMs = markLatency("v4AnalysisMs", v4AnalysisStartedAt);
-  latencyStages.v4AnalysisWaitMs = productionV4InjectionRequested
-    ? v4AnalysisMs
-    : 0;
+  const v4AnalysisPromise: Promise<WasilV4ShadowResult | null> =
+    deterministicLocalAnswerPromise.then((deterministicAnswer) => {
+      if (deterministicAnswer) return null;
+      if (productionV4InjectionRequested) {
+        return runWasilV4ShadowPipeline(
+          effectiveQuestion,
+          requestId,
+          webBudget,
+          loadSharedHadithRepository,
+        );
+      }
+      void runWasilV4ShadowPipeline(
+        effectiveQuestion,
+        requestId,
+        webBudget,
+        loadSharedHadithRepository,
+      );
+      return null;
+    });
+  const sourceHint = submittedContext?.sourceId;
+  const contextStartedAt = performance.now();
+  const contextPromise = Promise.all([
+    clarificationOf
+      ? Promise.resolve([] as string[])
+      : postgrestRpc("find_wasil_intent_memory", {
+          p_user_id: user.id,
+          p_normalized_question: normalizeQuestion(effectiveQuestion),
+        }).then((value) => (Array.isArray(value) ? value as string[] : []))
+          .catch((error) => {
+            console.warn("WASIL_INTENT_MEMORY_LOAD_FAILURE", error instanceof Error ? error.message : String(error));
+            return [] as string[];
+          }),
+    loadProfileMemories(user.id),
+    loadQuranContext(effectiveQuestion),
+  ] as const).then((value) => ({
+    value,
+    durationMs: elapsedMs(contextStartedAt),
+  }));
+  const [
+    loadedBalance,
+    preflightQueryExpansion,
+    loadedContextResult,
+    deterministicLocalAnswer,
+  ] = await Promise.all([
+    balancePromise,
+    preflightQueryExpansionPromise,
+    contextPromise,
+    deterministicLocalAnswerPromise,
+  ]);
+  balance = loadedBalance.value;
+  latencyStages.balanceLoadMs = loadedBalance.durationMs;
+  const contextLoadMs = loadedContextResult.durationMs;
+  latencyStages.contextLoadMs = contextLoadMs;
+  let v4Analysis: WasilV4ShadowResult | null = null;
 
   const [rememberedSourceIds, profileMemories, quranContext] = deterministicLocalAnswer
     ? [[], [], null] as [string[], ProfileMemory[], null]
@@ -2444,6 +2447,13 @@ Deno.serve(async (request) => {
   }
 
   try {
+    const v4AnalysisWaitStartedAt = performance.now();
+    v4Analysis = await v4AnalysisPromise;
+    latencyStages.v4AnalysisMs = elapsedMs(v4AnalysisStartedAt);
+    latencyStages.v4AnalysisWaitMs = productionV4InjectionRequested
+      ? elapsedMs(v4AnalysisWaitStartedAt)
+      : 0;
+
     if (deterministicLocalAnswer) {
       const finalValidationStartedAt = performance.now();
       if (hasCreditReservation) runInBackground(
