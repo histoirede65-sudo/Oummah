@@ -36,3 +36,12 @@ utilisateur Supabase dédié et attribuer/révoquer son entitlement manuellement
 depuis un environnement serveur autorisé, puis vérifier les états gratuit,
 actif, expiré, annulé, essai et attente. Ne jamais exposer `service_role` au
 client pour ces tests.
+
+## Idée produit : Wasil Premium plus rapide
+
+- Réserver éventuellement le traitement OpenAI `priority` aux utilisateurs Premium.
+- Argument produit visé : réponses Wasil généralement autour de 6 à 7 secondes, voire moins lorsque les caches sont actifs.
+- Conserver exactement le même modèle, les mêmes sources, le même vérificateur documentaire et les mêmes exigences de qualité.
+- Ne pas activer cette option avant d'avoir mesuré le coût réel par réponse et la marge de l'abonnement.
+- Garder le traitement standard comme repli automatique si Priority n'est pas disponible.
+- Évaluer l'activation uniquement après les premiers retours utilisateurs et des tests comparatifs de latence, qualité et coût.
