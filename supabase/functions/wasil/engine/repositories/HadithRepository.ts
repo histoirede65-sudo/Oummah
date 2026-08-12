@@ -170,12 +170,19 @@ function hadithSearchPhrases(
 
   // HadeethEnc's French search is lexical. Prefer concise French expressions;
   // Arabic terms remain useful for the documentary web fallback instead.
+  const isIstikhara = /(?:priere\s+(?:de\s+)?(?:consultation|istikhara)|salat\s+al[- ]?istikhara|istikhara|صلاة\s+الاستخارة|الاستخارة)/iu.test(question);
+  const canonicalIstikharaTerms = isIstikhara
+    ? ["istikhara", "istikhâra", "prière de consultation", "Jabir", "enseigner l'istikhara"]
+    : [];
   const candidates = [
+    ...canonicalIstikharaTerms,
     ...(expansion?.evidenceTerms ?? []),
     ...(expansion?.hadithSearchTerms ?? []),
     ...(expansion?.aliases ?? []),
     ...universalTerms,
-    ...fallbackKeywords.slice(0, 6),
+    // Standalone fallback words are kept only as secondary recall signals;
+    // complete expressions from buildHadithSearchTerms remain first.
+    ...fallbackKeywords.slice(0, 3).filter((word) => !/^\d+$/.test(word)),
   ]
     .map((phrase) => phrase.trim())
     .filter((phrase) => phrase.length >= 3 && !/[\u0600-\u06ff]/u.test(phrase));
@@ -184,11 +191,64 @@ function hadithSearchPhrases(
     .sort((a, b) => {
       const aWords = a.split(" ").length;
       const bWords = b.split(" ").length;
-      // Short exact expressions generally work better than the full question.
+      // Multi-word concepts carry the religious relation better than isolated
+      // fallback terms. Keep concise phrases first within the same specificity.
+      const aSpecificity = aWords >= 2 ? 0 : 1;
+      const bSpecificity = bWords >= 2 ? 0 : 1;
+      if (aSpecificity !== bSpecificity) return aSpecificity - bSpecificity;
       if (aWords !== bWords) return aWords - bWords;
       return a.length - b.length;
     })
-    .slice(0, 10);
+    .slice(0, isIstikhara ? 14 : 10);
+}
+
+type HadithConceptProfile = {
+  uncertainty: string[];
+  practice: string[];
+  quantity: string[];
+  correction: string[];
+};
+
+function buildHadithConceptProfile(question: string): HadithConceptProfile {
+  const normalized = normalizeText(question);
+  const groups = {
+    uncertainty: ["doute", "incertitude", "oublie", "oubli", "ne sais plus", "hesite"],
+    practice: ["priere", "rakah", "rakaat", "unite", "unites", "salat"],
+    quantity: ["nombre", "trois", "quatre", "deux", "premiere", "seconde"],
+    correction: ["sahw", "oubli", "prosternation", "prosternations", "corriger", "completer"],
+  };
+  return Object.fromEntries(
+    Object.entries(groups).map(([key, terms]) => [
+      key,
+      terms.filter((term) => normalized.includes(term)),
+    ])
+  ) as HadithConceptProfile;
+}
+
+function applyHadithConceptReranking(
+  rankedItems: Array<{ item: HadithRepositoryItem; score: number; matchedTerms: string[] }>,
+  question: string,
+): Array<{ item: HadithRepositoryItem; score: number; matchedTerms: string[] }> {
+  const profile = buildHadithConceptProfile(question);
+  const activeGroups = Object.values(profile).filter((terms) => terms.length > 0).length;
+  if (activeGroups < 2) return rankedItems;
+
+  return rankedItems.map((entry) => {
+    const text = normalizeText(`${entry.item.frenchMeaning} ${entry.item.relevance}`);
+    const matchedGroups = Object.values(profile).filter((terms) =>
+      terms.some((term) => text.includes(term))
+    ).length;
+    const hasConceptRelation =
+      profile.uncertainty.some((term) => text.includes(term)) &&
+      profile.practice.some((term) => text.includes(term));
+    let adjustment = 0;
+    if (matchedGroups < 2) adjustment -= 0.24;
+    if (activeGroups >= 3 && matchedGroups < 3) adjustment -= 0.18;
+    if (!hasConceptRelation && profile.uncertainty.length > 0 && profile.practice.length > 0) {
+      adjustment -= 0.16;
+    }
+    return { ...entry, score: entry.score + adjustment };
+  }).sort((a, b) => b.score - a.score);
 }
 
 async function fetchHadeethEncJson<T>(path: string, timeoutMs = 4000): Promise<T | null> {
@@ -287,7 +347,7 @@ async function searchHadeethEnc(
     // The final dossier keeps at most six hadiths. Fetching 18 full HadeethEnc
     // records was mostly wasted latency; twelve candidates preserve recall
     // while reducing detail requests on cache misses.
-    .slice(0, 12);
+    .slice(0, 18);
 
   const details = await Promise.all(summaryCandidates.map(({ id }) =>
     fetchHadeethEncJson<HadeethEncItem>(
@@ -327,19 +387,20 @@ async function searchHadeethEnc(
       retrievalHits: summaryCandidates.find((entry) => entry.id === item.id)?.candidate.matchedPhrases.size ?? 1,
     }),
     0.18,
-    10,
+    14,
     false,
   );
 
+  const conceptRankedItems = applyHadithConceptReranking(rankedItems, question);
   const items = deduplicateAndPrioritizeHadithItems(
-    rankedItems.map(({ item }) => item),
+    conceptRankedItems.map(({ item }) => item),
     6,
   );
 
   console.log("WASIL_HADITH_RELEVANCE_RANKING", {
     candidateCount: rawItems.length,
     retainedCount: items.length,
-    retained: rankedItems.map(({ item, score, matchedTerms }) => ({
+    retained: conceptRankedItems.map(({ item, score, matchedTerms }) => ({
       id: item.id,
       reference: item.reference,
       score: Number(score.toFixed(3)),

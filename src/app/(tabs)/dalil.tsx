@@ -273,6 +273,14 @@ type WasilVisualPose =
   | "success"
   | "error";
 
+const WASIL_QUESTION_EXAMPLES = [
+  "J’ai un doute pendant ma prière : je ne sais plus si j’ai prié trois ou quatre rakʿahs. Que dois-je faire ?",
+  "Que dit le Coran sur la patience face aux épreuves ?",
+  "Que dit le Coran sur le respect des parents ?",
+  "Raconte-moi l’histoire du prophète Yûnus selon le Coran.",
+  "Raconte-moi l’histoire du prophète Yûsuf selon le Coran et les enseignements que je peux en tirer.",
+] as const;
+
 const wasilPoseSources = {
   idle: require("../../assets/images/home/wasil-idle.png"),
   blink: require("../../assets/images/home/wasil-blink.png"),
@@ -802,7 +810,15 @@ function renderInlineWasilMarkdown(text: string) {
   });
 }
 
+function normalizeWasilLiteralNewlines(body: string) {
+  return body
+    .replace(/\\r\\n/g, "\n")
+    .replace(/\\n/g, "\n")
+    .replace(/\\r/g, "\n");
+}
+
 function renderWasilBody(body: string) {
+  body = normalizeWasilLiteralNewlines(body);
   const paragraphs: { start: number; text: string }[] = [];
   const separator = /(?:\r\n|\n|\r){2,}/g;
   let paragraphStart = 0;
@@ -850,7 +866,8 @@ function WasilAnswerPresentation({
       !!source.hadithTarget ||
       !!getWasilReferenceRoute(source.label),
   );
-  const hasVerifiedSource = visibleSources.some((source) => source.verified);
+  const documentaryStatus = answer.documentaryStatus ??
+    (visibleSources.some((source) => source.verified) ? "verified" : "none");
 
   useEffect(() => {
     if (!animateReferences) return;
@@ -968,7 +985,7 @@ function WasilAnswerPresentation({
         </View>
       ) : null}
       <View style={styles.wasilAnswerFooter}>
-        {hasVerifiedSource ? (
+        {documentaryStatus === "verified" ? (
           <View style={styles.wasilVerifiedBadge}>
             <Ionicons
               name="shield-checkmark-outline"
@@ -977,25 +994,18 @@ function WasilAnswerPresentation({
             />
             <Text style={styles.wasilVerifiedText}>Réponse vérifiée</Text>
           </View>
+        ) : documentaryStatus === "partial" ? (
+          <View style={styles.wasilVerifiedBadge}>
+            <Ionicons
+              name="information-circle-outline"
+              size={13}
+              color={colors.goldLight}
+            />
+            <Text style={styles.wasilVerifiedText}>Sources partielles</Text>
+          </View>
         ) : (
           <View />
         )}
-        <View style={styles.wasilAnswerActions}>
-          <Pressable accessibilityLabel="Enregistrer la réponse" disabled>
-            <Ionicons
-              name="bookmark-outline"
-              size={17}
-              color={colors.textMuted}
-            />
-          </Pressable>
-          <Pressable accessibilityLabel="Partager la réponse" disabled>
-            <Ionicons
-              name="share-outline"
-              size={17}
-              color={colors.textMuted}
-            />
-          </Pressable>
-        </View>
       </View>
     </>
   );
@@ -1022,6 +1032,7 @@ export default function DalilScreen() {
     requestKey?: string | string[];
   }>();
   const [prompt, setPrompt] = useState("");
+  const [examplesExpanded, setExamplesExpanded] = useState(false);
   const [submittedPrompt, setSubmittedPrompt] = useState("");
   const [reply, setReply] = useState<WasilReply | null>(null);
   const [balance, setBalance] = useState<number | null>(null);
@@ -1052,6 +1063,7 @@ export default function DalilScreen() {
   const [visualPose, setVisualPose] = useState<WasilVisualPose>("idle");
   const [visualFrame, setVisualFrame] = useState(0);
   const [loadingVisualPose, setLoadingVisualPose] = useState<WasilVisualPose | null>(null);
+
   const float = useRef(new Animated.Value(0)).current;
   const poseTranslateX = useRef(new Animated.Value(0)).current;
   const poseRotate = useRef(new Animated.Value(0)).current;
@@ -1243,7 +1255,11 @@ export default function DalilScreen() {
     setEnergyVisible(true);
     setEnergyLoading(true);
     setEnergyFeedback(null);
-    const result = await loadWasilEnergyPacks();
+    const result = await loadWasilEnergyPacks().catch(() => ({
+      status: "error" as const,
+      code: "offering-unavailable" as const,
+      message: "La boutique est temporairement indisponible. Réessayez dans quelques instants.",
+    }));
     if (result.status === "success") {
       setEnergyPacks(result.packs);
     } else {
@@ -2741,6 +2757,47 @@ export default function DalilScreen() {
             </Pressable>
           </View>
           )}
+          {isAuthenticated ? (
+            <View style={styles.questionExamples}>
+              <Pressable
+                accessibilityRole="button"
+                accessibilityState={{ expanded: examplesExpanded }}
+                onPress={() => setExamplesExpanded((expanded) => !expanded)}
+                style={({ pressed }) => [
+                  styles.questionExamplesToggle,
+                  pressed && styles.pressed,
+                ]}
+              >
+                <Text style={styles.questionExamplesTitle}>
+                  Exemples de questions à poser à Wasil
+                </Text>
+                <Ionicons
+                  name={examplesExpanded ? "chevron-up" : "chevron-down"}
+                  size={15}
+                  color={colors.textMuted}
+                />
+              </Pressable>
+              {examplesExpanded ? (
+                <View style={styles.questionExamplesList}>
+                  {WASIL_QUESTION_EXAMPLES.map((question) => (
+                    <Pressable
+                      key={question}
+                      onPress={() => {
+                        setPrompt(question);
+                        setExamplesExpanded(false);
+                      }}
+                      style={({ pressed }) => [
+                        styles.questionExampleItem,
+                        pressed && styles.pressed,
+                      ]}
+                    >
+                      <Text style={styles.questionExampleText}>{question}</Text>
+                    </Pressable>
+                  ))}
+                </View>
+              ) : null}
+            </View>
+          ) : null}
         </View>
       </KeyboardAvoidingView>
 
@@ -3433,12 +3490,6 @@ const styles = StyleSheet.create({
     fontSize: 10,
     fontWeight: "700",
   },
-  wasilAnswerActions: {
-    marginLeft: "auto",
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 3,
-  },
   retryAction: {
     alignSelf: "flex-start",
     minHeight: 40,
@@ -3591,6 +3642,44 @@ const styles = StyleSheet.create({
   sendButtonPressed: {
     opacity: 0.68,
     transform: [{ scale: 0.94 }],
+  },
+  questionExamples: {
+    marginTop: 4,
+  },
+  questionExamplesToggle: {
+    minHeight: 32,
+    marginTop: 2,
+    paddingHorizontal: 10,
+    flexDirection: "row",
+    alignItems: "center",
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: "rgba(227,181,90,0.28)",
+    backgroundColor: "rgba(227,181,90,0.09)",
+  },
+  questionExamplesTitle: {
+    flex: 1,
+    color: colors.goldLight,
+    fontFamily: typography.sans,
+    fontSize: 11.5,
+    fontWeight: "600",
+  },
+  questionExamplesList: {
+    paddingTop: 2,
+    paddingBottom: 3,
+  },
+  questionExampleItem: {
+    marginTop: 3,
+    paddingHorizontal: 10,
+    paddingVertical: 7,
+    borderRadius: 8,
+    backgroundColor: "rgba(255,255,255,0.035)",
+  },
+  questionExampleText: {
+    color: colors.text,
+    fontFamily: typography.sans,
+    fontSize: 11,
+    lineHeight: 16,
   },
   historyBackdrop: {
     flex: 1,

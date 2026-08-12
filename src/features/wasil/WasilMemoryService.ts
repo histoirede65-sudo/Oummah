@@ -6,6 +6,7 @@ import {
   type WasilProfileMemoryKey,
 } from "./WasilApiClient";
 import type { WasilReply } from "./WasilLocalResponder";
+import { preRouteWasilIntent } from "./WasilIntentPreRouter";
 
 type ParsedMemory = {
   key: WasilProfileMemoryKey;
@@ -208,9 +209,8 @@ function isClearIntent(value: string) {
 
 function isDeleteIntent(value: string) {
   const normalized = normalize(value);
-  return ["oublie", "efface de ta memoire", "supprime de ta memoire"].some(
-    (term) => normalized.includes(term),
-  );
+  return preRouteWasilIntent(value).explicitMemoryIntent &&
+    /\b(?:oublie|efface|supprime)\b/u.test(normalized);
 }
 
 function isSetIntent(value: string) {
@@ -219,7 +219,7 @@ function isSetIntent(value: string) {
 }
 
 export function isWasilMemoryIntent(value: string) {
-  return (
+  return preRouteWasilIntent(value).explicitMemoryIntent && (
     isListIntent(value) ||
     isClearIntent(value) ||
     isDeleteIntent(value) ||

@@ -471,9 +471,23 @@ function deterministicHadithReference(reference: string, title: string): HadithR
   };
 }
 
-function resolveDeterministicDailyGuidance(question: string): DeterministicLocalAnswer | null {
+function hasSpecificReligiousIntent(expansion: IslamicQueryExpansion | null): boolean {
+  if (!expansion) return false;
+  const canonical = expansion.canonicalName
+    .toLocaleLowerCase("fr")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .trim();
+  return Boolean(canonical) && !/^(priere|salat|salah|الصلاة)$/u.test(canonical);
+}
+
+function resolveDeterministicDailyGuidance(
+  question: string,
+  intentExpansion: IslamicQueryExpansion | null = null,
+): DeterministicLocalAnswer | null {
   const q = normalizedFastPathQuestion(question);
   const asksHow = /\b(comment|comment faire|comment fait|etapes|maniere|selon la sunna|selon la sounna)\b/.test(q);
+  const hasQualification = /\b(?:sans|impossible|ne peut pas|ne peux pas|interdit|obligatoire|en voyage|voyageur|malade|pendant le ramadan|durant le ramadan|avant l aube|oubli|oublie|erreur|en cas de|condition|sauf|excepte)\b/u.test(q);
 
   if (/\b(doua|invocation|dhikr)\b/.test(q)) {
     if (/\b(matin|reveil|au reveil)\b/.test(q)) {
@@ -536,7 +550,7 @@ function resolveDeterministicDailyGuidance(question: string): DeterministicLocal
     }
   }
 
-  if (asksHow && /\b(grande|grandes|ghusl)\b.*\b(ablution|ablutions)\b|\bghusl\b/.test(q)) {
+  if (!hasQualification && asksHow && /\b(grande|grandes|ghusl)\b.*\b(ablution|ablutions)\b|\bghusl\b/.test(q)) {
     return {
       title: "Les grandes ablutions (ghusl)",
       body: "Méthode générale rapportée dans la Sunna : former l’intention intérieure, laver les mains, nettoyer les parties intimes, accomplir les ablutions, faire parvenir l’eau jusqu’aux racines des cheveux puis verser l’eau sur toute la tête, et enfin laver tout le corps sans laisser de zone sèche. Les détails secondaires peuvent varier selon les écoles juridiques reconnues.",
@@ -564,7 +578,7 @@ function resolveDeterministicDailyGuidance(question: string): DeterministicLocal
       category: "guide_fast_path",
     };
   }
-  if (asksHow && /\b(ablution|ablutions|wudu)\b/.test(q)) {
+  if (!hasQualification && asksHow && /\b(ablution|ablutions|wudu)\b/.test(q)) {
     return {
       title: "Les ablutions",
       body: "Méthode générale : avoir l’intention intérieure, dire « Bismillah », laver les mains, rincer la bouche et le nez, laver le visage, laver les bras jusqu’aux coudes, passer les mains mouillées sur la tête et les oreilles, puis laver les pieds jusqu’aux chevilles. Respecte l’ordre et évite de gaspiller l’eau. Les détails secondaires peuvent varier selon les écoles juridiques reconnues.",
@@ -578,7 +592,12 @@ function resolveDeterministicDailyGuidance(question: string): DeterministicLocal
       category: "guide_fast_path",
     };
   }
-  if (asksHow && /\b(priere|salat|salah)\b/.test(q)) {
+  if (
+    !hasSpecificReligiousIntent(intentExpansion) &&
+    !hasQualification &&
+    asksHow &&
+    /\b(priere|salat|salah)\b/.test(q)
+  ) {
     const source = trustedSources["guide:prayer-preparation"];
     return {
       title: source.title, body: source.body, reference: source.reference,
@@ -609,6 +628,22 @@ type WasilQueryProfile = {
   maxLocalSources: number;
 };
 
+type DocumentaryStatus = "verified" | "partial" | "none";
+
+function deriveDocumentaryStatus(input: {
+  answer: string;
+  selectedSourceIds: string[];
+  verifiedWebReferenceCount: number;
+}): DocumentaryStatus {
+  const hasSources = input.selectedSourceIds.length > 0 || input.verifiedWebReferenceCount > 0;
+  if (!hasSources) return "none";
+  const normalized = input.answer.toLocaleLowerCase("fr").normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  const multiPosition = /\b(?:ecoles?|avis|divergence|divergent|selon les|hanafite|malikite|chafite|hanbalite)\b/.test(normalized);
+  const conditionCount = [...normalized.matchAll(/\b(?:si|lorsque|en cas de|cependant|toutefois|mais|apres|avant|doit|ne doit pas|faut il|est il necessaire)\b/g)].length;
+  if ((multiPosition || conditionCount >= 3) && input.selectedSourceIds.length < 2 && input.verifiedWebReferenceCount < 2) return "partial";
+  return "verified";
+}
+
 function analyzeWasilQuery(question: string, mode: "standard" | "deep"): WasilQueryProfile {
   const normalized = question
     .toLocaleLowerCase("fr")
@@ -628,6 +663,9 @@ function analyzeWasilQuery(question: string, mode: "standard" | "deep"): WasilQu
   const maxOutputTokens =
     depth === "short" ? 600 : depth === "detailed" ? 6000 : 3000;
 
+  const purificationSubject = /\b(?:ablution|ablutions|wudu|oudou|purification|tahara|ghusl|tayammum)\b/.test(normalized);
+  const purificationNormativeIntent = /\b(?:annul(?:e|er|ees?)?|invalide(?:r|es)?|valid(?:e|ite|ité)|oblig(?:ation|atoire|atoires)?|interdit(?:e|es)?|permis|autorise(?:e|es)?|dois|doit|peut|comment|que faire|qu'est ce qui)\b/.test(normalized);
+
   if (/\b(que dit le coran|dans le coran|selon le coran|passages? coraniques?)\b/.test(normalized)) {
     return {
       category: "quran_overview", depth, maxOutputTokens,
@@ -644,7 +682,7 @@ function analyzeWasilQuery(question: string, mode: "standard" | "deep"): WasilQu
       maxLocalSources: 8,
     };
   }
-  if (/\b(peut-on|est-il permis|halal|haram|licite|interdit|obligatoire|fiqh|ablution|ghusl|jeune|divorce|heritage|riba|prier avec)\b/.test(normalized)) {
+  if (purificationSubject && purificationNormativeIntent || /\b(peut-on|est-il permis|halal|haram|licite|interdit|obligatoire|fiqh|jeune|divorce|heritage|riba|prier avec)\b/.test(normalized)) {
     return {
       category: "fiqh", depth, maxOutputTokens,
       guidance: "Commence par la règle générale, puis les preuves utiles, les divergences reconnues si elles existent et enfin l'application pratique. Distingue nettement la règle générale du cas individuel.",
@@ -1002,7 +1040,7 @@ function buildDocumentaryCandidates(input: {
   // when the second-stage model times out.
   const candidates = [
     ...scoreCorpus(quran, "quran", 0.18, 16),
-    ...scoreCorpus(hadith, "hadith", 0.18, 12),
+    ...scoreCorpus(hadith, "hadith", 0.18, 16),
   ];
   const deterministicFallback = [
     ...scoreCorpus(quran, "quran", 0.36, 6),
@@ -1042,10 +1080,10 @@ function applyDocumentaryVerification(input: {
   );
 
   if (input.selection === null) {
-    const orderedIds = [...new Set([
-      ...orderedProtectedIds,
-      ...input.deterministicFallbackSourceIds,
-    ])];
+    // Fail closed: a lexical fallback may improve recall, but it is not a
+    // documentary verification. Never expose it as a verified source when the
+    // semantic verifier is unavailable, timed out, or uncertain.
+    const orderedIds = [...orderedProtectedIds];
     const selectedIds = new Set(orderedIds);
     for (const candidate of input.candidates) {
       if (!selectedIds.has(candidate.id)) delete input.requestSources[candidate.id];
@@ -1093,6 +1131,7 @@ function ensureRequestedCorpusCoverage(input: {
   brainPlan: WasilV4ShadowResult["brainPlan"];
   verifiedQuranSourceIds: string[];
   verifiedHadithSourceIds: string[];
+  normativeQuestion: boolean;
   hadithMetadata: Map<string, HadithReference>;
 }): void {
   const plannedSkills = new Set(
@@ -1100,7 +1139,9 @@ function ensureRequestedCorpusCoverage(input: {
   );
   const explicitlyRequested = requestedDocumentaryCorpora(input.question);
   const requireQuran = explicitlyRequested.quran || plannedSkills.has("quran");
-  const requireHadith = explicitlyRequested.hadith || plannedSkills.has("hadith");
+  const requireHadith = explicitlyRequested.hadith ||
+    plannedSkills.has("hadith") ||
+    input.normativeQuestion;
   const selectedIds = new Set(input.parsedSourceIds);
 
   const hasSelectedQuran = input.parsedSourceIds.some((sourceId) => {
@@ -2228,8 +2269,11 @@ Deno.serve(async (request) => {
     });
   }
 
+  // Resolve the user's precise religious intent before any generic
+  // deterministic guidance. The same expansion is reused by retrieval below.
+  const preflightQueryExpansion = await expandIslamicQuery(effectiveQuestion);
   const deterministicLocalAnswer = resolveDeterministicQuranFact(effectiveQuestion) ??
-    resolveDeterministicDailyGuidance(effectiveQuestion);
+    resolveDeterministicDailyGuidance(effectiveQuestion, preflightQueryExpansion);
   const featureFlags = getWasilFeatureFlags();
   const productionV4InjectionRequested =
     featureFlags.v4ProductionBrainGuidance ||
@@ -2448,7 +2492,7 @@ Deno.serve(async (request) => {
           effectiveQuestion,
           v4Analysis?.entityResolution?.candidate?.displayText ?? null,
         )
-      : await expandIslamicQuery(effectiveQuestion);
+      : preflightQueryExpansion;
     const semanticExpansionMs = markLatency(
       "semanticExpansionMs",
       semanticExpansionStartedAt,
@@ -2457,8 +2501,17 @@ Deno.serve(async (request) => {
     const plannedSkills = new Set(
       v4Analysis?.brainPlan?.executionSteps.map((step) => step.skill) ?? [],
     );
+    const normativeCategory = ["fiqh", "hadith", "dua", "aqidah"].includes(
+      initialQueryProfile.category,
+    );
+    const preciseNormativeIntent = Boolean(
+      queryExpansion?.isIslamicEntity &&
+      queryExpansion.directEvidenceDescription,
+    );
     const shouldRetrieveHadith = requestedCorpora.hadith ||
-      plannedSkills.has("hadith") || initialQueryProfile.category === "hadith";
+      plannedSkills.has("hadith") ||
+      normativeCategory ||
+      preciseNormativeIntent;
 
     // Once the intent is resolved, both repositories run in parallel. This
     // preserves latency while ensuring they receive exactly the same semantic
@@ -3030,6 +3083,7 @@ Deno.serve(async (request) => {
       brainPlan: v4Analysis?.brainPlan ?? null,
       verifiedQuranSourceIds: documentaryQuranSourceIds,
       verifiedHadithSourceIds: documentaryHadithSourceIds,
+      normativeQuestion: ["fiqh", "hadith", "dua", "aqidah"].includes(queryProfile.category),
       hadithMetadata: productionHadith.metadata,
     });
     parsed.quran_references = deduplicateQuranReferences(
@@ -3040,6 +3094,13 @@ Deno.serve(async (request) => {
       requestSources,
     );
 
+    // The language model may only cite documentary sources that survived the
+    // semantic verifier. Valid source IDs alone are not sufficient evidence.
+    const verifiedSourceIds = new Set([
+      ...documentaryQuranSourceIds,
+      ...documentaryHadithSourceIds,
+    ]);
+    parsed.source_ids = parsed.source_ids.filter((id) => verifiedSourceIds.has(id));
     const selectedSourceIds = parsed.source_ids;
     const selectedSources = selectedSourceIds.map((id) => requestSources[id]);
     const hadithReferences: HadithReference[] = deduplicateHadithReferences(
@@ -3097,6 +3158,26 @@ Deno.serve(async (request) => {
     const sourceUrl =
       selectedSources.find((source) => source.sourceUrl)?.sourceUrl ??
       verifiedWebReferences[0]?.url;
+    const documentaryStatus = deriveDocumentaryStatus({
+      answer: finalAnswerBody,
+      selectedSourceIds,
+      verifiedWebReferenceCount: verifiedWebReferences.length,
+    });
+
+    console.log("WASIL_HADITH_COVERAGE_DEBUG", {
+      requestId,
+      shouldRetrieveHadith,
+      verifiedHadithSourceIds: documentaryHadithSourceIds,
+      gptSourceIdsBeforeCoverage: gptReturnedSourceIds,
+      sourceIdsAfterCoverage: parsed.source_ids,
+      hadithReferencesFinal: hadithReferences.map((reference) => ({
+        id: reference.id ?? null,
+        sourceId: [...productionHadith.metadata.entries()]
+          .find(([, item]) => item === reference)?.[0] ?? null,
+      })),
+      documentaryStatus,
+      documentaryHadithSourceCount: documentaryHadithSourceIds.length,
+    });
 
     if (
       clarificationOf &&
@@ -3256,6 +3337,7 @@ Deno.serve(async (request) => {
         quranReferences: parsed.quran_references,
         hadithReferences,
         webReferences: verifiedWebReferences,
+        documentaryStatus,
         // A documentary source must never trigger navigation. Only preserve an
         // action already supplied by the app when the user's current message is
         // an explicit navigation command ("ouvre le Coran", "va à la Qibla", etc.).

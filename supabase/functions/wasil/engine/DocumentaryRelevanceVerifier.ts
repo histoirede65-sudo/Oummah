@@ -74,7 +74,7 @@ export async function verifyDocumentaryRelevance(
   const model = Deno.env.get("WASIL_MODEL_RETRIEVAL") ??
     Deno.env.get("WASIL_MODEL_STANDARD") ?? "gpt-5.6-luna";
   const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 1_800);
+  const timeout = setTimeout(() => controller.abort(), 5_500);
 
   try {
     const response = await fetch("https://api.openai.com/v1/responses", {

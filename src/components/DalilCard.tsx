@@ -1,7 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router, useFocusEffect } from 'expo-router';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   Animated,
   Easing,
@@ -15,6 +15,7 @@ import {
 import { colors } from '../theme/colors';
 import { typography } from '../theme/typography';
 import { getValidSession } from '../features/auth/SupabaseAuthService';
+import { getCurrentUserProfile } from '../features/profile/UserProfileRepository';
 
 type CardPose = 'idle' | 'blink' | 'thinking' | 'reading-quran' | 'wave';
 
@@ -51,27 +52,33 @@ const suggestions = [
   },
 ] as const;
 
-const animatedPrompts = [
-  'Salam aleykoum 👋',
-  'Comment puis-je vous aider ?',
-  'Explique-moi un verset',
-  'Quel dhikr faire aujourd’hui ?',
-  'Trouve une mosquée proche',
-] as const;
-
 export default function DalilCard({ onPromptFocus }: DalilCardProps) {
   const [question, setQuestion] = useState('');
   const [pose, setPose] = useState<CardPose>('idle');
   const [isPromptFocused, setIsPromptFocused] = useState(false);
   const [animatedPrompt, setAnimatedPrompt] = useState('');
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [displayName, setDisplayName] = useState('');
+  const animatedPrompts = useMemo(() => [
+    displayName ? `Salam aleykoum, ${displayName} 👋` : 'Salam aleykoum 👋',
+    'Comment puis-je vous aider ?',
+    'Explique-moi un verset',
+    'Quel dhikr faire aujourd’hui ?',
+    'Trouve une mosquée proche',
+  ], [displayName]);
 
   useFocusEffect(
     useCallback(() => {
       let active = true;
       getValidSession()
-        .then((session) => {
-          if (active) setIsAuthenticated(Boolean(session));
+        .then(async (session) => {
+          const profile = session
+            ? await getCurrentUserProfile().catch(() => null)
+            : null;
+          if (active) {
+            setIsAuthenticated(Boolean(session));
+            setDisplayName(profile?.displayName?.trim() ?? '');
+          }
         })
         .catch(() => {
           if (active) setIsAuthenticated(false);
@@ -95,7 +102,8 @@ export default function DalilCard({ onPromptFocus }: DalilCardProps) {
   const specialAnimationInProgress = useRef(false);
   const idleCooldownUntil = useRef(0);
 
-  useEffect(() => {
+  useFocusEffect(
+    useCallback(() => {
     const floatingAnimation = Animated.loop(
       Animated.sequence([
         Animated.timing(float, {
@@ -194,7 +202,8 @@ export default function DalilCard({ onPromptFocus }: DalilCardProps) {
       gestureAnimation.stop();
       glowAnimation.stop();
     };
-  }, [float, gestureScale, gestureTilt, gestureX, gestureY, glowPulse]);
+    }, [float, gestureScale, gestureTilt, gestureX, gestureY, glowPulse]),
+  );
 
   useEffect(() => {
     if (isPromptFocused || question.length > 0) {
@@ -250,7 +259,7 @@ export default function DalilCard({ onPromptFocus }: DalilCardProps) {
       cancelled = true;
       if (timer) clearTimeout(timer);
     };
-  }, [isPromptFocused, question]);
+  }, [animatedPrompts, isPromptFocused, question]);
 
   useEffect(() => {
     const clearTimers = () => {

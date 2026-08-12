@@ -1,5 +1,6 @@
 import { OFFICIAL_FRENCH_DUAS } from "../dua/OfficialFrenchDuaCatalog";
 import { HADITH_CATALOG } from "../hadith/data/hadithCatalog";
+import { allowsGenericFastPath } from "./WasilIntentPreRouter";
 
 export type WasilReply = {
   kind: "answer" | "unsupported-religious" | "out-of-scope";
@@ -29,6 +30,7 @@ export type WasilReply = {
     label: string;
     route: string;
   };
+  documentaryStatus?: "verified" | "partial" | "none";
 };
 
 function normalize(value: string) {
@@ -126,6 +128,7 @@ const RELIGIOUS_TERMS = [
 ];
 
 export function getWasilLocalReply(prompt: string): WasilReply {
+  const isIstikhara = /(?:priere\s+(?:de\s+)?(?:consultation|istikhara)|salat\s+al[- ]?istikhara|istikhara|صلاة\s+الاستخارة|الاستخارة)/u.test(normalize(prompt));
   const question = normalize(prompt);
 
   if (includesOneOf(question, ["apres les ablutions", "apres ablution"])) {
@@ -136,7 +139,7 @@ export function getWasilLocalReply(prompt: string): WasilReply {
     );
   }
 
-  if (includesOneOf(question, ["ablution", "wudu", "woudou"])) {
+  if (allowsGenericFastPath(prompt) && includesOneOf(question, ["ablution", "wudu", "woudou"])) {
     return {
       kind: "answer",
       title: "Les ablutions",
@@ -151,6 +154,7 @@ export function getWasilLocalReply(prompt: string): WasilReply {
   }
 
   if (
+    !isIstikhara && allowsGenericFastPath(prompt) &&
     includesOneOf(question, [
       "comment prier",
       "faire la priere",

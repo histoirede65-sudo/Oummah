@@ -203,6 +203,17 @@ type TopicExpansion = {
 
 const TOPIC_EXPANSIONS: TopicExpansion[] = [
   {
+    id: "istikhara",
+    canonicalName: "Salat al-istikhara (prière de consultation)",
+    arabicName: "صلاة الاستخارة",
+    patterns: [/(?:pri(?:e|è)re\s+(?:de\s+)?(?:consultation|l['’]?istikhara)|salat\s+al[- ]?istikhara|istikh(?:ara|âra)|صلاة\s+الاستخارة|الاستخارة)/iu],
+    aliases: ["prière de consultation", "prière d'istikhâra", "istikhara", "istikhâra", "salat al-istikhara", "صلاة الاستخارة", "الاستخارة"],
+    quranSearchTerms: ["صلاة الاستخارة", "الاستخارة", "prière de consultation"],
+    hadithSearchTerms: ["istikhara", "istikhâra", "prière de consultation", "Jabir", "enseigner l'istikhara"],
+    evidenceTerms: ["istikhara", "prière de consultation", "صلاة الاستخارة"],
+    directEvidenceDescription: "Une preuve directement pertinente doit expliquer la salat al-istikhara, son invocation ou son enseignement par le Prophète.",
+  },
+  {
     id: "marriage_spousal_rights",
     canonicalName: "Droits et devoirs des époux",
     arabicName: "حقوق الزوجين",
@@ -516,6 +527,21 @@ function chooseExpansion(
   staticExpansion: IslamicQueryExpansion | null,
   genericExpansion: IslamicQueryExpansion | null,
 ): IslamicQueryExpansion | null {
+  const isBroadCategoryExpansion = (expansion: IslamicQueryExpansion | null) => {
+    if (!expansion) return false;
+    const canonical = normalizeIntentText(expansion.canonicalName);
+    return canonical.split(" ").filter(Boolean).length <= 1;
+  };
+
+  // A model expansion must not erase a more precise curated concept detected
+  // in the original wording (for example a specific ritual hidden under the
+  // broad category "prière"). The curated expansion remains the safety
+  // anchor; the model remains authoritative for genuinely generic requests.
+  if (modelExpansion && staticExpansion &&
+      !isBroadCategoryExpansion(staticExpansion) &&
+      isBroadCategoryExpansion(modelExpansion)) {
+    return staticExpansion;
+  }
   if (modelExpansion) return modelExpansion;
   if (staticExpansion && genericExpansion) {
     // In outage mode, the user's own wording remains the exact target. The
@@ -551,7 +577,7 @@ async function requestModelExpansion(
   const model = Deno.env.get("WASIL_MODEL_RETRIEVAL") ??
     Deno.env.get("WASIL_MODEL_STANDARD") ?? "gpt-5.6-luna";
   const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 500);
+  const timeout = setTimeout(() => controller.abort(), 1_800);
 
   try {
     const response = await fetch("https://api.openai.com/v1/responses", {
@@ -646,6 +672,14 @@ async function requestModelExpansion(
 
     const parsed = JSON.parse(rawJson) as IslamicQueryExpansion;
     const aliases = uniqueTerms(parsed.aliases ?? [], 10);
+    const userHadithTerms = uniqueTerms([
+      ...buildHadithSearchTerms(question),
+      ...extractSalientTerms(question),
+    ], 16);
+    const prioritizedUserHadithTerms = [
+      ...userHadithTerms.filter((term) => term.includes(" ")),
+      ...userHadithTerms.filter((term) => !term.includes(" ") && term.length >= 5),
+    ];
     const quranSearchTerms = uniqueTerms([
       parsed.arabicName,
       parsed.canonicalName,
@@ -656,6 +690,7 @@ async function requestModelExpansion(
       parsed.canonicalName,
       ...aliases,
       ...(parsed.hadithSearchTerms ?? []),
+      ...prioritizedUserHadithTerms,
     ]);
     const evidenceTerms = uniqueTerms([
       ...(parsed.evidenceTerms ?? []),

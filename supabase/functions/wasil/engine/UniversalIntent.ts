@@ -100,5 +100,35 @@ export function buildQuranSearchTerms(question: string): string[] {
 }
 
 export function buildHadithSearchTerms(question: string): string[] {
-  return extractSalientTerms(question).slice(0, 12);
+  const normalized = normalizeIntentText(question);
+  const tokens = normalized.split(" ").filter(Boolean);
+  const generic = new Set([
+    "comment", "faire", "que", "dois", "doit", "pendant", "dans", "pour",
+    "une", "un", "la", "le", "les", "des", "priere", "prieres",
+  ]);
+  const numbers = tokens.filter((token) => /^\d+$/.test(token));
+  const phrases: string[] = [];
+
+  // Preserve the user's complete semantic units. Single numbers and generic
+  // verbs are never emitted as strong Hadith queries by themselves.
+  for (let size = Math.min(4, tokens.length); size >= 2; size -= 1) {
+    for (let index = 0; index + size <= tokens.length; index += 1) {
+      const part = tokens.slice(index, index + size);
+      const substantive = part.filter((token) =>
+        !generic.has(token) && !/^\d+$/.test(token)
+      );
+      if (substantive.length >= 2 || (numbers.length > 0 && substantive.length >= 1)) {
+        phrases.push(part.join(" "));
+      }
+    }
+  }
+
+  const salient = extractSalientTerms(question).filter((term) =>
+    term.includes(" ") || (!/^\d+$/.test(term) && term.length >= 5)
+  );
+
+  return [...new Set([
+    ...phrases,
+    ...salient,
+  ])].filter((term) => term.length >= 5).slice(0, 14);
 }

@@ -69,6 +69,9 @@ const REMINDER_INTENTS = [
   "notifie moi",
 ];
 
+const REMINDER_TIME_OR_DELIVERY = /\b(?:demain|aujourd hui|ce soir|ce matin|lundi|mardi|mercredi|jeudi|vendredi|samedi|dimanche|a\s+\d{1,2}|\d{1,2}\s*h|notification|notifie|previens|programme|planifie)\b/u;
+const RELIGIOUS_CONTEXT = /\b(?:priere|salat|rakah|rakat|ablution|wudu|woudou|tayammum|hadith|coran|sourate|verset|ramadan|jeune|aube|qibla|repentir|istikhara)\b/u;
+
 const DAY_DEFINITIONS = [
   { names: ["dimanche"], expoWeekday: 1, jsDay: 0 },
   { names: ["lundi"], expoWeekday: 2, jsDay: 1 },
@@ -102,7 +105,12 @@ function normalize(value: string) {
 
 function isReminderIntent(value: string) {
   const normalized = normalize(value);
-  return REMINDER_INTENTS.some((intent) => normalized.includes(intent));
+  const explicitPhrase = REMINDER_INTENTS.some((intent) => normalized.includes(intent));
+  if (!explicitPhrase) return false;
+  // "Rappelle-moi ce hadith" is conversational unless delivery/scheduling is
+  // explicitly requested. A reminder intent needs a temporal or notification
+  // commitment, not only the verb "rappelle".
+  return REMINDER_TIME_OR_DELIVERY.test(normalized);
 }
 
 function parseTime(value: string) {
@@ -247,6 +255,7 @@ export function isWasilReminderFollowUp(
   return (
     normalized.length > 0 &&
     normalized.length <= 100 &&
+    !RELIGIOUS_CONTEXT.test(normalized) &&
     !/^(qui|que|quoi|comment|pourquoi|est ce que)\b/.test(normalized)
   );
 }
@@ -435,7 +444,8 @@ function reminderManagementAction(
   value: string,
 ): ReminderManagementAction | null {
   const normalized = normalize(value);
-  const mentionsReminder = normalized.includes("rappel");
+  const mentionsReminder = /\b(?:rappel|rappels)\b/u.test(normalized);
+  if (!mentionsReminder) return null;
   if (
     mentionsReminder &&
     ["annule", "annuler", "supprime", "supprimer", "efface", "retire"].some(
@@ -472,7 +482,9 @@ function reminderManagementAction(
 }
 
 export function isWasilReminderManagementIntent(value: string) {
-  return reminderManagementAction(value) !== null;
+  const normalized = normalize(value);
+  return reminderManagementAction(value) !== null &&
+    /\b(?:mon|mes|un|le|les|ce|ceux|rappel|rappels)\b/u.test(normalized);
 }
 
 export function isWasilReminderManagementFollowUp(
@@ -481,6 +493,7 @@ export function isWasilReminderManagementFollowUp(
 ) {
   const normalized = normalize(value);
   if (!normalized || normalized.length > 100) return false;
+  if (RELIGIOUS_CONTEXT.test(normalized)) return false;
   if (/^(qui|que|quoi|comment|pourquoi|est ce que)\b/.test(normalized)) {
     return false;
   }
