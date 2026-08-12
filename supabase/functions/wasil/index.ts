@@ -467,7 +467,7 @@ function deterministicHadithReference(reference: string, title: string): HadithR
     reference,
     title,
     grade: null,
-    searchQuery: reference,
+    searchQuery: title,
   };
 }
 
@@ -1038,9 +1038,13 @@ function buildDocumentaryCandidates(input: {
   // deterministic subset is kept separately for verifier outages. This avoids
   // both failure modes: dropping a synonym too early and restoring weak stories
   // when the second-stage model times out.
+  const rankedQuranCandidates = scoreCorpus(quran, "quran", 0.18, 16);
+  const rankedHadithCandidates = scoreCorpus(hadith, "hadith", 0.18, 16);
   const candidates = [
-    ...scoreCorpus(quran, "quran", 0.18, 16),
-    ...scoreCorpus(hadith, "hadith", 0.18, 16),
+    ...rankedQuranCandidates,
+    ...(rankedHadithCandidates.length > 0
+      ? rankedHadithCandidates
+      : hadith.slice(0, 16)),
   ];
   const deterministicFallback = [
     ...scoreCorpus(quran, "quran", 0.36, 6),
@@ -1196,29 +1200,35 @@ function selectRelevantSources(
   rememberedSourceIds: string[],
   sourceHint?: string,
 ) {
+  const genericSourceQueryTerms = new Set([
+    "quel", "quelle", "quels", "quelles", "hadith", "parle", "parler",
+    "coran", "quran", "sunna", "sunnah", "islam", "allah", "disent",
+  ]);
   const queryTerms = new Set(
     normalizeQuestion(question)
       .split(" ")
-      .filter((term) => term.length >= 3),
+      .filter((term) => term.length >= 3 && !genericSourceQueryTerms.has(term)),
   );
   const priorityIds = new Set(
     [sourceHint, ...rememberedSourceIds].filter((value): value is string => Boolean(value)),
   );
   const scored = Object.entries(trustedSources).map(([id, source]) => {
     const haystack = sourceSearchText(id, source);
-    let score = priorityIds.has(id) ? 100 : 0;
+    const prioritized = priorityIds.has(id);
+    let lexicalScore = 0;
     for (const term of queryTerms) {
-      if (haystack.includes(term)) score += term.length >= 6 ? 4 : 2;
+      if (haystack.includes(term)) lexicalScore += term.length >= 6 ? 4 : 2;
     }
+    let score = prioritized ? 100 : lexicalScore;
     if (profile.category === "hadith" && id.startsWith("hadith:")) score += 3;
     if (profile.category === "dua" && id.startsWith("dua:")) score += 4;
     if (profile.category === "fiqh" && id.startsWith("guide:")) score += 3;
     if (profile.category === "quran_overview" && id.startsWith("quran:")) score += 3;
-    return { id, source, score };
+    return { id, source, score, lexicalScore, prioritized };
   });
 
   const selected = scored
-    .filter((item) => item.score > 0)
+    .filter((item) => item.prioritized || item.lexicalScore > 0)
     .sort((a, b) => b.score - a.score)
     .slice(0, profile.maxLocalSources);
 
@@ -2084,14 +2094,23 @@ Deno.serve(async (request) => {
   }
 
   const balanceStartedAt = performance.now();
-  const balance = await getBalance(
+  const balancePromise = getBalance(
     user.id,
     body.welcomeCreditsEligible === true,
     typeof body.installationDeviceId === "string"
       ? body.installationDeviceId
       : null,
-  );
-  markLatency("balanceLoadMs", balanceStartedAt);
+  ).then((value) => ({
+    value,
+    durationMs: elapsedMs(balanceStartedAt),
+  }));
+  let balance = 0;
+  const isAskOperation = !body.operation || body.operation === "ask";
+  if (!isAskOperation) {
+    const balanceResult = await balancePromise;
+    balance = balanceResult.value;
+    latencyStages.balanceLoadMs = balanceResult.durationMs;
+  }
   if (body.operation === "balance") return json({ balance });
 
   if (body.operation === "memory_list") {
@@ -2246,6 +2265,9 @@ Deno.serve(async (request) => {
 
   const freeSocialInteraction = detectFreeSocialInteraction(effectiveQuestion, requestId);
   if (freeSocialInteraction) {
+    const balanceResult = await balancePromise;
+    balance = balanceResult.value;
+    latencyStages.balanceLoadMs = balanceResult.durationMs;
     console.log("WASIL_FREE_SOCIAL_INTERACTION", {
       requestId,
       freeSocialInteraction: true,
@@ -2271,9 +2293,46 @@ Deno.serve(async (request) => {
 
   // Resolve the user's precise religious intent before any generic
   // deterministic guidance. The same expansion is reused by retrieval below.
-  const preflightQueryExpansion = await expandIslamicQuery(effectiveQuestion);
+  const preflightQueryExpansionPromise = expandIslamicQuery(effectiveQuestion);
+  const sourceHint = submittedContext?.sourceId;
+  const contextStartedAt = performance.now();
+  const contextPromise = Promise.all([
+    clarificationOf
+      ? Promise.resolve([] as string[])
+      : postgrestRpc("find_wasil_intent_memory", {
+          p_user_id: user.id,
+          p_normalized_question: normalizeQuestion(effectiveQuestion),
+        }).then((value) => (Array.isArray(value) ? value as string[] : []))
+          .catch((error) => {
+            console.warn("WASIL_INTENT_MEMORY_LOAD_FAILURE", error instanceof Error ? error.message : String(error));
+            return [] as string[];
+          }),
+    loadProfileMemories(user.id),
+    loadQuranContext(effectiveQuestion),
+  ] as const).then((value) => ({
+    value,
+    durationMs: elapsedMs(contextStartedAt),
+  }));
+  const [loadedBalance, preflightQueryExpansion, loadedContextResult] = await Promise.all([
+    balancePromise,
+    preflightQueryExpansionPromise,
+    contextPromise,
+  ]);
+  balance = loadedBalance.value;
+  latencyStages.balanceLoadMs = loadedBalance.durationMs;
+  const contextLoadMs = loadedContextResult.durationMs;
+  latencyStages.contextLoadMs = contextLoadMs;
   const deterministicLocalAnswer = resolveDeterministicQuranFact(effectiveQuestion) ??
     resolveDeterministicDailyGuidance(effectiveQuestion, preflightQueryExpansion);
+  let sharedHadithRepositoryPromise: Promise<HadithRepositoryRecord | null> | null = null;
+  const loadSharedHadithRepository = () => {
+    sharedHadithRepositoryPromise ??= searchHadithRepository(effectiveQuestion, {
+      force: true,
+      expansion: preflightQueryExpansion,
+      budget: webBudget,
+    });
+    return sharedHadithRepositoryPromise;
+  };
   const featureFlags = getWasilFeatureFlags();
   const productionV4InjectionRequested =
     featureFlags.v4ProductionBrainGuidance ||
@@ -2307,35 +2366,29 @@ Deno.serve(async (request) => {
   ) {
     // Controlled activation: the Brain may advise prompt structure, but the
     // stable engine retains credits, retrieval, web routing and validation.
-    v4Analysis = await runWasilV4ShadowPipeline(effectiveQuestion, requestId, webBudget);
+    v4Analysis = await runWasilV4ShadowPipeline(
+      effectiveQuestion,
+      requestId,
+      webBudget,
+      loadSharedHadithRepository,
+    );
   } else if (!deterministicLocalAnswer) {
     // Pure shadow mode remains fire-and-forget and cannot affect production.
-    void runWasilV4ShadowPipeline(effectiveQuestion, requestId, webBudget);
+    void runWasilV4ShadowPipeline(
+      effectiveQuestion,
+      requestId,
+      webBudget,
+      loadSharedHadithRepository,
+    );
   }
   const v4AnalysisMs = markLatency("v4AnalysisMs", v4AnalysisStartedAt);
   latencyStages.v4AnalysisWaitMs = productionV4InjectionRequested
     ? v4AnalysisMs
     : 0;
 
-  const sourceHint = submittedContext?.sourceId;
-  const contextStartedAt = performance.now();
   const [rememberedSourceIds, profileMemories, quranContext] = deterministicLocalAnswer
     ? [[], [], null] as [string[], ProfileMemory[], null]
-    : await Promise.all([
-        clarificationOf
-          ? Promise.resolve([] as string[])
-          : postgrestRpc("find_wasil_intent_memory", {
-              p_user_id: user.id,
-              p_normalized_question: normalizeQuestion(effectiveQuestion),
-            }).then((value) => (Array.isArray(value) ? value as string[] : []))
-              .catch((error) => {
-                console.warn("WASIL_INTENT_MEMORY_LOAD_FAILURE", error instanceof Error ? error.message : String(error));
-                return [] as string[];
-              }),
-        loadProfileMemories(user.id),
-        loadQuranContext(effectiveQuestion),
-      ]);
-  const contextLoadMs = markLatency("contextLoadMs", contextStartedAt);
+    : loadedContextResult.value;
   const profileMemoryContext = profileMemories
     .map(
       (memory) =>
@@ -2520,11 +2573,13 @@ Deno.serve(async (request) => {
     const [quranTopic, directHadithRecord] = await Promise.all([
       retrieveQuranKnowledgeSafely(effectiveQuestion, queryExpansion),
       shouldRetrieveHadith
-        ? searchHadithRepository(effectiveQuestion, {
-            force: true,
-            expansion: queryExpansion,
-            budget: webBudget,
-          })
+        ? queryExpansion === preflightQueryExpansion
+          ? loadSharedHadithRepository()
+          : searchHadithRepository(effectiveQuestion, {
+              force: true,
+              expansion: queryExpansion,
+              budget: webBudget,
+            })
         : Promise.resolve(null),
     ]);
     const repositoryRetrievalMs = markLatency(
@@ -2588,23 +2643,50 @@ Deno.serve(async (request) => {
       protectedSourceIds: quranContext ? [quranContext.id] : [],
     });
     const documentaryCandidates = documentaryCandidateSet.candidates;
-    const semanticVerifierStartedAt = performance.now();
-    const semanticSelection = await verifyDocumentaryRelevance(
-      effectiveQuestion,
-      documentaryCandidates,
-      {
-        directEvidenceDescription:
-          queryExpansion?.directEvidenceDescription ?? undefined,
-        requireQuran: requestedCorpora.quran,
-        requireHadith: requestedCorpora.hadith,
-        maximumQuranItems: 4,
-        maximumHadithItems: 4,
-      },
+    const soleDocumentaryCandidate = documentaryCandidates.length === 1
+      ? documentaryCandidates[0]
+      : null;
+    const canUseSingleDirectCandidate = Boolean(
+      soleDocumentaryCandidate &&
+      documentaryCandidateSet.deterministicFallbackSourceIds.includes(
+        soleDocumentaryCandidate.id,
+      ) &&
+      (!requestedCorpora.quran || soleDocumentaryCandidate.kind === "quran") &&
+      (!requestedCorpora.hadith || soleDocumentaryCandidate.kind === "hadith"),
     );
+    const semanticVerifierStartedAt = performance.now();
+    const semanticSelection: DocumentaryVerificationSelection[] | null =
+      canUseSingleDirectCandidate && soleDocumentaryCandidate
+        ? [{
+            id: soleDocumentaryCandidate.id,
+            relevance: 1,
+            directness: 1,
+            reason: "Seul candidat documentaire ayant franchi le classement lexical strict.",
+          }]
+        : await verifyDocumentaryRelevance(
+            effectiveQuestion,
+            documentaryCandidates,
+            {
+              directEvidenceDescription:
+                queryExpansion?.directEvidenceDescription ?? undefined,
+              requireQuran: requestedCorpora.quran,
+              requireHadith: requestedCorpora.hadith,
+              maximumQuranItems: 4,
+              maximumHadithItems: 4,
+            },
+          );
     const semanticVerifierMs = markLatency(
       "semanticVerifierMs",
       semanticVerifierStartedAt,
     );
+    if (canUseSingleDirectCandidate) {
+      console.log("WASIL_DOCUMENTARY_SINGLE_DIRECT_FAST_PATH", {
+        requestId,
+        sourceId: soleDocumentaryCandidate?.id,
+        kind: soleDocumentaryCandidate?.kind,
+        semanticVerifierMs,
+      });
+    }
     const verifiedDocumentary = applyDocumentaryVerification({
       requestSources,
       candidates: documentaryCandidates,

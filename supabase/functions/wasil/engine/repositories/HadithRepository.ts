@@ -174,6 +174,11 @@ function hadithSearchPhrases(
   const canonicalIstikharaTerms = isIstikhara
     ? ["istikhara", "istikhâra", "prière de consultation", "Jabir", "enseigner l'istikhara"]
     : [];
+  const priorityTerms = new Set(
+    [...canonicalIstikharaTerms, ...(expansion?.evidenceTerms ?? [])]
+      .map((phrase) => normalizeText(phrase))
+      .filter(Boolean),
+  );
   const candidates = [
     ...canonicalIstikharaTerms,
     ...(expansion?.evidenceTerms ?? []),
@@ -189,6 +194,8 @@ function hadithSearchPhrases(
 
   return [...new Set(candidates.map((phrase) => normalizeText(phrase)).filter(Boolean))]
     .sort((a, b) => {
+      const priorityDelta = Number(priorityTerms.has(b)) - Number(priorityTerms.has(a));
+      if (priorityDelta !== 0) return priorityDelta;
       const aWords = a.split(" ").length;
       const bWords = b.split(" ").length;
       // Multi-word concepts carry the religious relation better than isolated
@@ -320,27 +327,39 @@ async function searchHadeethEnc(
   // Avoid fetching hundreds of detail records. Candidates returned by several
   // independent expressions are fetched first, then the closest summary titles.
   const primaryTerms = expansion?.evidenceTerms ?? buildHadithSearchTerms(question);
+  const normalizedPrimaryTerms = primaryTerms
+    .map((term) => normalizeText(term))
+    .filter(Boolean);
   const summaryCandidates = [...summariesById.entries()]
-    .map(([id, candidate]) => ({
-      id,
-      candidate,
-      score: rankDocuments(
-        [[id, candidate]] as Array<[string, typeof candidate]>,
-        ([, value]) => ({
-          canonicalName: expansion?.canonicalName ?? question,
-          queryTerms: [...phrases, question],
-          evidenceTerms: primaryTerms,
-          relatedTerms: expansion?.relatedTerms ?? [],
-          text: `${value.summary.title ?? ""}`,
-          kind: "hadith",
-          retrievalHits: value.matchedPhrases.size,
-        }),
-        0,
-        1,
-        true,
-      )[0]?.score ?? 0,
-    }))
+    .map(([id, candidate]) => {
+      const matchedPhraseText = normalizeText([...candidate.matchedPhrases].join(" "));
+      const exactEvidenceHits = normalizedPrimaryTerms.filter((term) =>
+        matchedPhraseText.includes(term)
+      ).length;
+      return {
+        id,
+        candidate,
+        exactEvidenceHits,
+        score: rankDocuments(
+          [[id, candidate]] as Array<[string, typeof candidate]>,
+          ([, value]) => ({
+            canonicalName: expansion?.canonicalName ?? question,
+            queryTerms: [...phrases, question],
+            evidenceTerms: primaryTerms,
+            relatedTerms: expansion?.relatedTerms ?? [],
+            text: `${value.summary.title ?? ""} ${[...value.matchedPhrases].join(" ")}`,
+            kind: "hadith",
+            retrievalHits: value.matchedPhrases.size,
+          }),
+          0,
+          1,
+          true,
+        )[0]?.score ?? 0,
+      };
+    })
     .sort((a, b) => {
+      const evidenceDelta = b.exactEvidenceHits - a.exactEvidenceHits;
+      if (evidenceDelta !== 0) return evidenceDelta;
       const hitDelta = b.candidate.matchedPhrases.size - a.candidate.matchedPhrases.size;
       return hitDelta !== 0 ? hitDelta : b.score - a.score;
     })
@@ -359,6 +378,9 @@ async function searchHadeethEnc(
     ({ id, candidate }, index) => {
       const detail = details[index];
       const sourceUrl = `https://hadeethenc.com/fr/browse/hadith/${encodeURIComponent(id)}`;
+      const matchedPhraseContext = [...candidate.matchedPhrases]
+        .map((phrase) => `« ${phrase} »`)
+        .join(", ");
       return {
         id: String(detail?.id ?? id),
         collection: inferHadithCollection(`${detail?.reference ?? ""} ${detail?.attribution ?? ""}`),
@@ -367,8 +389,12 @@ async function searchHadeethEnc(
         grade: detail?.grade?.trim() || null,
         arabicText: detail?.hadeeth_ar?.trim() || null,
         frenchMeaning: detail?.hadeeth?.trim() || candidate.summary.title!.trim(),
-        relevance: detail?.explanation?.trim().slice(0, 700) ||
-          `Résultat retrouvé par ${[...candidate.matchedPhrases].map((phrase) => `« ${phrase} »`).join(", ")}`,
+        relevance: [
+          detail?.explanation?.trim().slice(0, 700),
+          matchedPhraseContext
+            ? `Expressions de recherche correspondantes : ${matchedPhraseContext}`
+            : "",
+        ].filter(Boolean).join("\n"),
         sourceUrl,
       };
     },
@@ -376,16 +402,22 @@ async function searchHadeethEnc(
 
   const rankedItems = rankDocuments(
     rawItems,
-    (item) => ({
-      canonicalName: expansion?.canonicalName ?? (extractIntentConcepts(question).map((c) => c.label).join(" ") || phrases.join(" ")),
-      queryTerms: [...phrases, question, ...(expansion?.hadithSearchTerms ?? [])],
-      evidenceTerms: primaryTerms,
-      relatedTerms: expansion?.relatedTerms ?? [],
-      reference: item.reference,
-      text: `${item.frenchMeaning} ${item.relevance} ${item.collection}`,
-      kind: "hadith",
-      retrievalHits: summaryCandidates.find((entry) => entry.id === item.id)?.candidate.matchedPhrases.size ?? 1,
-    }),
+    (item) => {
+      const matchedSearchPhrases = [
+        ...(summaryCandidates.find((entry) => entry.id === item.id)
+          ?.candidate.matchedPhrases ?? []),
+      ];
+      return {
+        canonicalName: expansion?.canonicalName ?? (extractIntentConcepts(question).map((c) => c.label).join(" ") || phrases.join(" ")),
+        queryTerms: [...phrases, question, ...(expansion?.hadithSearchTerms ?? [])],
+        evidenceTerms: primaryTerms,
+        relatedTerms: expansion?.relatedTerms ?? [],
+        reference: item.reference,
+        text: `${item.frenchMeaning} ${item.relevance} ${item.collection} ${matchedSearchPhrases.join(" ")}`,
+        kind: "hadith",
+        retrievalHits: matchedSearchPhrases.length || 1,
+      };
+    },
     0.18,
     14,
     false,
@@ -586,7 +618,8 @@ export async function searchHadithRepository(
   const model = Deno.env.get("WASIL_MODEL_RETRIEVAL") ??
     Deno.env.get("WASIL_MODEL_STANDARD") ?? "gpt-5.6-luna";
   const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 6_500);
+  const supplementalTimeoutMs = directRecord ? 2_500 : 6_500;
+  const timeout = setTimeout(() => controller.abort(), supplementalTimeoutMs);
 
   try {
     const response = await fetch("https://api.openai.com/v1/responses", {

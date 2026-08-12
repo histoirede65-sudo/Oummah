@@ -45,6 +45,7 @@ export async function runWasilV4ShadowPipeline(
   question: string,
   requestId: string,
   budget: WasilWebBudget,
+  sharedHadithRepository?: () => Promise<HadithRepositoryRecord | null>,
 ): Promise<WasilV4ShadowResult | null> {
   const flags = getWasilFeatureFlags();
   if (!flags.v4ShadowPipeline) return null;
@@ -72,7 +73,8 @@ export async function runWasilV4ShadowPipeline(
         : Promise.resolve(null),
       (flags.v4HadithRepository || productionDocumentaryMode) &&
           preliminarySkills.has("hadith")
-        ? searchHadithRepository(question, { force: true, budget })
+        ? sharedHadithRepository?.() ??
+          searchHadithRepository(question, { force: true, budget })
         : Promise.resolve(null),
     ]);
 

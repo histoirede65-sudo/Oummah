@@ -728,6 +728,47 @@ async function requestModelExpansion(
 export async function expandIslamicQuery(
   question: string,
 ): Promise<IslamicQueryExpansion | null> {
+  const cacheKey = question
+    .normalize("NFKC")
+    .trim()
+    .replace(/\s+/g, " ")
+    .toLocaleLowerCase("fr-FR");
+  const cached = queryExpansionCache.get(cacheKey);
+  if (cached && cached.expiresAt > Date.now()) return cached.value;
+
+  const inFlight = queryExpansionRequests.get(cacheKey);
+  if (inFlight) return inFlight;
+
+  const request = expandIslamicQueryUncached(question).finally(() => {
+    queryExpansionRequests.delete(cacheKey);
+  });
+  queryExpansionRequests.set(cacheKey, request);
+  const expansion = await request;
+  queryExpansionCache.set(cacheKey, {
+    value: expansion,
+    expiresAt: Date.now() + QUERY_EXPANSION_CACHE_TTL_MS,
+  });
+  if (queryExpansionCache.size > QUERY_EXPANSION_CACHE_MAX_ENTRIES) {
+    const oldestKey = queryExpansionCache.keys().next().value;
+    if (oldestKey) queryExpansionCache.delete(oldestKey);
+  }
+  return expansion;
+}
+
+const QUERY_EXPANSION_CACHE_TTL_MS = 10 * 60 * 1000;
+const QUERY_EXPANSION_CACHE_MAX_ENTRIES = 100;
+const queryExpansionCache = new Map<
+  string,
+  { value: IslamicQueryExpansion | null; expiresAt: number }
+>();
+const queryExpansionRequests = new Map<
+  string,
+  Promise<IslamicQueryExpansion | null>
+>();
+
+async function expandIslamicQueryUncached(
+  question: string,
+): Promise<IslamicQueryExpansion | null> {
   const staticExpansion = findStaticTopicExpansion(question);
   const genericExpansion = buildGenericFallbackExpansion(question);
   const modelExpansion = await requestModelExpansion(question);
