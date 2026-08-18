@@ -16,6 +16,9 @@ import Svg, { Circle, Path, Rect } from "react-native-svg";
 
 import { useI18n } from "../i18n";
 import { getValidSession } from "../features/auth/SupabaseAuthService";
+import { isOummahAdminSession } from "../features/auth/AdminAccess";
+import { getCurrentUserProfile } from "../features/profile/UserProfileRepository";
+import { getAdminAttentionState } from "../features/admin/AdminAlertsService";
 import { loadHifzState } from "../features/hifz/HifzStore";
 import { getMosquePrayerSchedule } from "../features/mosques/data/mosquePrayerTimes";
 import { getMainMosque } from "../features/mosques/data/mosquePreferences";
@@ -85,8 +88,6 @@ const MENU_GROUPS: ReadonlyArray<{
   },
 ];
 
-const ADMIN_EMAIL = "bahri13015@hotmail.fr";
-
 function MosqueLogo({ size = 36 }: { size?: number }) {
   return (
     <Svg width={size} height={size} viewBox="0 0 34 34">
@@ -155,6 +156,8 @@ export default function AppHeader({
   const [menuVisible, setMenuVisible] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const [hasUnreadNotifications, setHasUnreadNotifications] = useState(false);
+  const [adminAttentionCount, setAdminAttentionCount] = useState(0);
+  const [displayName, setDisplayName] = useState("");
 
   useFocusEffect(
     useCallback(() => {
@@ -180,14 +183,23 @@ export default function AppHeader({
           hifzState,
           mosqueName: mosque?.name,
         });
+        const profile = session
+          ? await getCurrentUserProfile().catch(() => null)
+          : null;
 
         if (active) {
+          setDisplayName(profile?.displayName?.trim() ?? "");
           setHasUnreadNotifications(
             items.some((item) => !readIds.includes(item.id)),
           );
-          setIsAdmin(
-            session?.user.email?.trim().toLowerCase() === ADMIN_EMAIL,
-          );
+          const admin = isOummahAdminSession(session);
+          setIsAdmin(admin);
+          if (admin) {
+            const attention = await getAdminAttentionState().catch(() => null);
+            if (active) setAdminAttentionCount(attention?.attentionCount ?? 0);
+          } else {
+            setAdminAttentionCount(0);
+          }
         }
       };
 
@@ -228,7 +240,10 @@ export default function AppHeader({
           {leftAction === 'back' ? (
             <Ionicons name="arrow-back" size={21} color={colors.goldLight} />
           ) : (
-            <MenuIcon />
+            <View>
+              <MenuIcon />
+              {isAdmin && adminAttentionCount > 0 ? <View style={styles.adminAttentionDot} /> : null}
+            </View>
           )}
         </Pressable>
         <View style={styles.brand}>
@@ -290,7 +305,11 @@ export default function AppHeader({
               </Pressable>
             </View>
 
-            <Text style={styles.menuWelcome}>Salam, où souhaitez-vous aller ?</Text>
+            <Text style={styles.menuWelcome}>
+              {displayName
+                ? `Salam ${displayName}, où souhaitez-vous aller ?`
+                : "Salam, où souhaitez-vous aller ?"}
+            </Text>
 
             <ScrollView
               style={styles.menuScroll}
@@ -331,6 +350,7 @@ export default function AppHeader({
                         <Text style={styles.menuItemLabel}>{item.label}</Text>
                         <Text style={styles.menuItemDescription}>{item.description}</Text>
                       </View>
+                      {item.href === "/admin" && adminAttentionCount > 0 ? <View style={styles.adminAttentionDotMenu} /> : null}
                       <Ionicons
                         name="chevron-forward"
                         size={15}
@@ -352,6 +372,8 @@ export default function AppHeader({
 }
 
 const styles = StyleSheet.create({
+  adminAttentionDot: { position: "absolute", top: -2, right: -3, width: 8, height: 8, borderRadius: 4, backgroundColor: colors.danger, borderWidth: 1, borderColor: colors.background },
+  adminAttentionDotMenu: { width: 8, height: 8, marginRight: 9, borderRadius: 4, backgroundColor: colors.danger },
   container: {
     zIndex: 5,
     height: 70,

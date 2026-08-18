@@ -53,6 +53,7 @@ import {
 } from "../../features/quran/QuranWordSync";
 import { colors } from "../../theme/colors";
 import { goalProgressBridge } from "../../features/daily-goals/services/goalProgressBridge";
+import { getCurrentUserProfile } from "../../features/profile/UserProfileRepository";
 import { typography } from "../../theme/typography";
 
 type TeacherLevel = 0 | 1 | 2 | 3;
@@ -277,6 +278,7 @@ export default function HifzSessionScreen() {
   const [saved, setSaved] = useState(false);
   const [masteredVerses, setMasteredVerses] = useState<number[]>([]);
   const [celebration, setCelebration] = useState<Celebration>(null);
+  const [displayName, setDisplayName] = useState("");
   const { pause: pauseQuranAudio } = useGlobalAudioPlayer();
   const { currentReciter, reciters, setCurrentReciter } = useReciter();
   const [versePlayer] = useState(() =>
@@ -306,6 +308,20 @@ export default function HifzSessionScreen() {
     endMs: number;
     audioMode: AudioSourceMode;
   } | null>(null);
+
+  useEffect(() => {
+    let active = true;
+    void getCurrentUserProfile()
+      .then((profile) => {
+        if (active) setDisplayName(profile?.displayName?.trim() ?? "");
+      })
+      .catch(() => {
+        if (active) setDisplayName("");
+      });
+    return () => {
+      active = false;
+    };
+  }, []);
 
   useEffect(() => {
     const requestedRepeat = Number(rawRepeat);
@@ -409,8 +425,15 @@ export default function HifzSessionScreen() {
       !screenFocused.current ||
       !verseAudioStatus.didJustFinish ||
       repeatsRemaining.current <= 0
-    )
+    ) {
+      if (screenFocused.current && verseAudioStatus.didJustFinish) {
+        try {
+          versePlayer.pause();
+          void versePlayer.seekTo(0).catch(() => undefined);
+        } catch {}
+      }
       return;
+    }
     const requestId = audioRequestId.current;
     repeatsRemaining.current -= 1;
     const timer = setTimeout(() => {
@@ -517,15 +540,6 @@ export default function HifzSessionScreen() {
       return;
     }
     if (!verse || !currentReciter) return;
-    if (
-      versePlayer.isLoaded &&
-      !verseAudioStatus.didJustFinish &&
-      loadedReciterId.current === currentReciter.id &&
-      loadedVerseKey.current === verse.verseKey
-    ) {
-      versePlayer.play();
-      return;
-    }
     const requestId = audioRequestId.current + 1;
     audioRequestId.current = requestId;
     setAudioError(undefined);
@@ -624,7 +638,10 @@ export default function HifzSessionScreen() {
             if (!screenFocused.current || requestId !== audioRequestId.current)
               return;
             versePlayer.pause();
-            if (repeatsRemaining.current <= 0) return;
+            if (repeatsRemaining.current <= 0) {
+              void versePlayer.seekTo(0).catch(() => undefined);
+              return;
+            }
             repeatsRemaining.current -= 1;
             clipTimer.current = setTimeout(playClip, REPEAT_GAP_MS);
           },
@@ -1225,7 +1242,9 @@ export default function HifzSessionScreen() {
             <Text style={styles.celebrationTitle}>
               {celebration === "surah"
                 ? `Mâ shâ Allah, ${surah.transliteration} est maîtrisée !`
-                : "Mâ shâ Allah, continuez ainsi !"}
+                : displayName
+                  ? `Mâ shâ Allah ${displayName}, continuez ainsi !`
+                  : "Mâ shâ Allah, continuez ainsi !"}
             </Text>
             <Text style={styles.celebrationBody}>
               {celebration === "surah"

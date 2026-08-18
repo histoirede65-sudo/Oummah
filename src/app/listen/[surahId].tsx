@@ -25,9 +25,6 @@ import type { ReciterTransitionData } from "../../components/surah/ReciterTransi
 import SyncedVerseList, {
   type TadabburDisplayVerse,
 } from "../../components/surah/SyncedVerseList";
-import TadabburControls from "../../components/surah/TadabburControls";
-import TadabburPlayerBar from "../../components/surah/TadabburPlayerBar";
-import TadabburVerseFocus from "../../components/surah/TadabburVerseFocus";
 import { useGlobalAudioPlayer } from "../../context/AudioPlayerProvider";
 import { useReciter } from "../../context/ReciterProvider";
 import {
@@ -91,14 +88,25 @@ export default function SurahListeningScreen() {
   const playRequestRef = useRef(0);
   const mountedRef = useRef(true);
   const audioReadyRef = useRef(false);
+  const id = Number(surahId) || 1;
+  const surah = SURAHS.find((item) => item.id === id) ?? SURAHS[0];
   const [quickMenuVisible, setQuickMenuVisible] = useState(false);
   const [tadabburVerses, setTadabburVerses] = useState<
     readonly TadabburDisplayVerse[]
   >([]);
   const [activeTadabburVerseId, setActiveTadabburVerseId] = useState(1);
+  const [rangeStart, setRangeStart] = useState(1);
+  const [rangeEnd, setRangeEnd] = useState(surah.verses);
+  const rangeEndRef = useRef(surah.verses);
+  const rangeStopSecondsRef = useRef<number | null>(null);
   const [activeVerseProgress, setActiveVerseProgress] = useState(0);
-  const id = Number(surahId) || 1;
-  const surah = SURAHS.find((item) => item.id === id) ?? SURAHS[0];
+
+  useEffect(() => {
+    if (surah.id === 1) {
+      tadabburController.deactivate();
+      rangeStopSecondsRef.current = null;
+    }
+  }, [surah.id]);
   const heroHeight = Math.max(430, Math.min(560, Math.round(height * 0.52)));
   const {
     track,
@@ -146,13 +154,21 @@ export default function SurahListeningScreen() {
     [],
   );
 
-  const seekToTadabburVerse = useCallback(
-    (verse: TadabburDisplayVerse) => {
-      if (!Number.isFinite(verse.startSeconds)) return;
-      void seekTo(verse.startSeconds ?? 0);
-    },
-    [seekTo],
-  );
+  const playVerseRange = useCallback(() => {
+    const start = tadabburVerses.find((verse) => verse.id === rangeStart);
+    if (start?.startSeconds === undefined) return;
+    rangeEndRef.current = rangeEnd;
+    rangeStopSecondsRef.current = tadabburVerses.find((verse) => verse.id === rangeEnd)?.endSeconds ?? null;
+    void seekTo(start.startSeconds).then(() => play());
+  }, [play, rangeEnd, rangeStart, seekTo, tadabburVerses]);
+
+  useEffect(() => subscribeToPosition((positionMs) => {
+    const stopAt = rangeStopSecondsRef.current;
+    if (stopAt !== null && positionMs / 1000 >= stopAt) {
+      rangeStopSecondsRef.current = null;
+      pause();
+    }
+  }), [pause, subscribeToPosition]);
 
   const activeReciter = track ? getTrackReciter(track) : undefined;
   const activeSurahId = track ? getTrackSurahId(track) : undefined;
@@ -286,9 +302,10 @@ export default function SurahListeningScreen() {
     if (!requestedReciterId) return false;
     const correctTrack =
       activeSurahId === surah.id && activeReciter?.id === requestedReciterId;
-    if (!correctTrack) {
+    if (surah.id === 1 || !correctTrack || !isLoaded) {
       audioReadyRef.current = false;
       await loadSurah(surah.id, false, requestedReciterId);
+      if (surah.id === 1) await seekTo(0);
     }
     const [timelineReady, audioReady] = await Promise.all([
       waitForTimeline(requestedTimelineKey),
@@ -298,9 +315,11 @@ export default function SurahListeningScreen() {
   }, [
     activeReciter?.id,
     activeSurahId,
+    isLoaded,
     loadSurah,
     requestedReciterId,
     requestedTimelineKey,
+    seekTo,
     surah.id,
     waitForAudioReady,
     waitForTimeline,
@@ -345,11 +364,6 @@ export default function SurahListeningScreen() {
     if (currentReciterId)
       void audioDependencies.reciterFavorites.toggle(currentReciterId);
   }, [currentReciterId]);
-  const toggleTadabbur = useCallback(() => {
-    setQuickMenuVisible(false);
-    tadabburController.toggle();
-  }, []);
-
   useEffect(() => {
     if (!backdropInitialized.current && !tadabburMode.isActive) {
       backdropInitialized.current = true;
@@ -535,54 +549,37 @@ export default function SurahListeningScreen() {
                   })
                 }
                 onReciterDoubleTap={toggleReciterFavorite}
-                focusContent={
-                  tadabburMode.isActive && activeTadabburVerse ? (
-                    <TadabburVerseFocus
-                      verses={tadabburVerses}
-                      activeVerseId={activeTadabburVerseId}
-                      progress={activeVerseProgress}
-                    />
-                  ) : undefined
-                }
+                rangeStart={rangeStart}
+                rangeEnd={rangeEnd}
+                onRangeStartChange={(value) => {
+                  setRangeStart(value);
+                  if (value > rangeEnd) setRangeEnd(value);
+                }}
+                onRangeEndChange={setRangeEnd}
+                onPlayRange={playVerseRange}
               />
             ) : null}
             <SyncedVerseList
-              key={tadabburMode.isActive ? "tadabbur-verses" : "normal-verses"}
+              key="normal-verses"
               surahId={surah.id}
               reciterId={activeReciter?.id ?? reciterId}
               trackId={track?.id}
               audioUrl={track?.remoteUri ?? track?.source.uri}
               duration={duration}
               compact={compact}
-              hidden={tadabburMode.isActive}
+              hidden={false}
               subscribeToPosition={subscribeToPosition}
               getCurrentPositionMs={getCurrentPositionMs}
               onTimelineReady={handleTimelineReady}
               onTadabburUpdate={handleTadabburUpdate}
             />
-            <TadabburControls
-              isActive={tadabburMode.isActive}
-              pauseSeconds={tadabburMode.settings.pauseAfterVerseSeconds}
-              onToggle={toggleTadabbur}
-              onCyclePause={() => tadabburController.cyclePauseAfterVerse()}
+            <AudioPlayer
+              onTogglePlay={handleTogglePlay}
+              onPrevious={handlePrevious}
+              onNext={handleNext}
+              onPlayLongPress={() => setQuickMenuVisible(true)}
+              onOpenMenu={() => setQuickMenuVisible(true)}
             />
-            {tadabburMode.isActive ? (
-              <TadabburPlayerBar
-                verses={tadabburVerses}
-                activeVerseId={activeTadabburVerseId}
-                isPlaying={isPlaying}
-                onTogglePlay={handleTogglePlay}
-                onSelectVerse={seekToTadabburVerse}
-              />
-            ) : (
-              <AudioPlayer
-                onTogglePlay={handleTogglePlay}
-                onPrevious={handlePrevious}
-                onNext={handleNext}
-                onPlayLongPress={() => setQuickMenuVisible(true)}
-                onOpenMenu={() => setQuickMenuVisible(true)}
-              />
-            )}
           </ScrollView>
         </Animated.View>
       </Animated.View>
@@ -590,6 +587,7 @@ export default function SurahListeningScreen() {
         visible={quickMenuVisible}
         reciters={reciters}
         currentSurahId={surah.id}
+        currentReciterName={currentReciter?.name ?? activeReciter?.name}
         onClose={() => setQuickMenuVisible(false)}
         onSpeed={cyclePlaybackRate}
         onTimer={cycleSleepTimer}

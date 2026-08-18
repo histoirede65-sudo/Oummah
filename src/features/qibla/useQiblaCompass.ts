@@ -41,8 +41,14 @@ function smoothingFactor(delta: number, accuracy: number | null) {
   if (absolute >= 35) return 0.58;
   if (absolute >= 16) return 0.38;
   if (absolute >= 6) return 0.24;
-  if (accuracy !== null && accuracy <= 1) return 0.1;
-  return 0.16;
+
+  // Expo reports compass calibration from 0 (none) to 3 (high).
+  // Trust well-calibrated readings more so the compass follows movement
+  // promptly, while filtering small movements from an uncertain sensor.
+  if (accuracy === 3) return 0.28;
+  if (accuracy === 2) return 0.18;
+  if (accuracy === 1) return 0.1;
+  return 0.06;
 }
 
 export function getQiblaSensorQuality(

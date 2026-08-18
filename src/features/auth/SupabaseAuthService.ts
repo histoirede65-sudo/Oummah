@@ -1,5 +1,6 @@
 import { storageService } from "../../core/storage/StorageService";
 import { revenueCatPaymentProvider } from "../premium/RevenueCatPaymentProvider";
+import AuthFallbackStorage from "expo-sqlite/kv-store";
 
 const SESSION_KEY = "oummah.auth.session.v1";
 const HANDLED_MAGIC_LINKS_KEY = "oummah.auth.handled-magic-links.v1";
@@ -88,10 +89,14 @@ async function saveSession(value: SupabaseSessionResponse) {
   try {
     await storageService.set(SESSION_KEY, session);
   } catch {
-    throw new MagicLinkError(
-      "session-save-failed",
-      "La session n’a pas pu être enregistrée sur cet appareil.",
-    );
+    try {
+      await AuthFallbackStorage.setItem(SESSION_KEY, JSON.stringify(session));
+    } catch {
+      throw new MagicLinkError(
+        "session-save-failed",
+        "La session n’a pas pu être enregistrée sur cet appareil.",
+      );
+    }
   }
   await revenueCatPaymentProvider.logIn(session.user.id);
   return session;
@@ -377,7 +382,17 @@ export async function verifyEmailOtp(email: string, token: string) {
 }
 
 export async function getStoredSession() {
-  return storageService.get<SupabaseAuthSession>(SESSION_KEY);
+  try {
+    const session = await storageService.get<SupabaseAuthSession>(SESSION_KEY);
+    if (session) return session;
+  } catch {
+    // Le stockage SQLite de secours est vérifié juste après.
+  }
+
+  const fallbackSession = await AuthFallbackStorage.getItem(SESSION_KEY);
+  return fallbackSession
+    ? JSON.parse(fallbackSession) as SupabaseAuthSession
+    : null;
 }
 
 export async function getValidSession(forceRefresh = false) {
@@ -413,7 +428,10 @@ export async function getValidSession(forceRefresh = false) {
 
 export async function signOut() {
   const session = await getStoredSession();
-  await storageService.remove(SESSION_KEY);
+  await Promise.allSettled([
+    storageService.remove(SESSION_KEY),
+    AuthFallbackStorage.removeItem(SESSION_KEY),
+  ]);
   await revenueCatPaymentProvider.logOut();
   if (!session) return;
 

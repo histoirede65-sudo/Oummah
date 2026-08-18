@@ -6,6 +6,7 @@ import { router } from "expo-router";
 import { useFocusEffect } from "@react-navigation/native";
 import { useCallback, useMemo, useState } from "react";
 import {
+  Alert,
   Modal,
   Pressable,
   ScrollView,
@@ -190,6 +191,7 @@ const HIFZ_BADGES: readonly {
 export default function HifzScreen() {
   const [state, setState] = useState<HifzState>();
   const [showPicker, setShowPicker] = useState(false);
+  const [draftSurahIds, setDraftSurahIds] = useState<Set<number>>(new Set());
   const [showTargetPicker, setShowTargetPicker] = useState(false);
   const [selectedCalendarDay, setSelectedCalendarDay] = useState<string>();
 
@@ -311,35 +313,66 @@ export default function HifzScreen() {
     verse?: number,
   ) => {
     if (!surahId) {
-      setShowPicker(true);
+      openSurahPicker();
       return;
     }
     router.push(
       `/hifz/session?surah=${surahId}&review=${review ? "1" : "0"}${verse ? `&verse=${verse}` : ""}` as Href,
     );
   };
-  const addSurah = (surahId: number) => {
+  const openSurahPicker = () => {
+    setDraftSurahIds(new Set((state?.progress ?? []).map((item) => item.surahId)));
+    setShowPicker(true);
+  };
+  const toggleDraftSurah = (surahId: number) => {
+    setDraftSurahIds((current) => {
+      const next = new Set(current);
+      if (next.has(surahId)) next.delete(surahId);
+      else next.add(surahId);
+      return next;
+    });
+  };
+  const confirmSurahSelection = () => {
     if (!state) return;
-    const alreadyAdded = state.progress.some(
-      (item) => item.surahId === surahId,
+    const nextProgress = SURAHS.filter((surah) => draftSurahIds.has(surah.id)).map(
+      (surah) => state.progress.find((item) => item.surahId === surah.id) ?? {
+        surahId: surah.id,
+        learnedVerses: [],
+        difficultVerses: [],
+        reviewCount: 0,
+      },
     );
-    const next = alreadyAdded
-      ? {
-          ...state,
-          progress: state.progress.filter((item) => item.surahId !== surahId),
-          plannedRanges: (state.plannedRanges ?? []).filter(
-            (item) => item.surahId !== surahId,
-          ),
-        }
-      : {
-          ...state,
-          progress: [
-            ...state.progress,
-            { surahId, learnedVerses: [], difficultVerses: [], reviewCount: 0 },
-          ],
-        };
+    const next = {
+      ...state,
+      progress: nextProgress,
+      plannedRanges: (state.plannedRanges ?? []).filter((item) => draftSurahIds.has(item.surahId)),
+    };
     setState(next);
     void saveHifzState(next);
+    setShowPicker(false);
+  };
+  const removeSurah = (surahId: number, name: string) => {
+    if (!state) return;
+    Alert.alert(
+      "Retirer cette sourate ?",
+      `${name} sera retirée de vos sourates à apprendre. Votre progression sera conservée.`,
+      [
+        { text: "Annuler", style: "cancel" },
+        {
+          text: "Retirer",
+          style: "destructive",
+          onPress: () => {
+            const next = {
+              ...state,
+              progress: state.progress.filter((item) => item.surahId !== surahId),
+              plannedRanges: (state.plannedRanges ?? []).filter((item) => item.surahId !== surahId),
+            };
+            setState(next);
+            void saveHifzState(next);
+          },
+        },
+      ],
+    );
   };
 
   return (
@@ -444,18 +477,29 @@ export default function HifzScreen() {
 
         <View style={styles.sectionHeader}>
           <Text style={styles.sectionTitle}>Mes sourates</Text>
-          <Pressable onPress={() => setShowPicker(true)} style={styles.addSurahHeader}>
-            <Ionicons name="add-circle-outline" size={17} color={colors.goldLight} />
+          <Pressable onPress={openSurahPicker} style={styles.addSurahHeader}>
+            <Ionicons name="add-circle" size={20} color={colors.background} />
             <Text style={styles.addSurahHeaderText}>Ajouter une sourate</Text>
           </Pressable>
         </View>
         {studied.slice(0, 4).map((entry) => {
           const surah = SURAHS.find((item) => item.id === entry.surahId);
           if (!surah) return null;
-          return <Pressable key={entry.surahId} onPress={() => router.push(`/hifz/${surah.id}` as Href)} style={styles.compactSurahRow}>
-            <View><Text style={styles.compactSurahName}>{surah.transliteration}</Text><Text style={styles.compactSurahMeta}>{entry.learnedVerses.length} / {surah.verses} versets</Text></View>
-            <Ionicons name="chevron-forward" size={18} color={colors.goldLight} />
-          </Pressable>;
+          return <View key={entry.surahId} style={styles.compactSurahRow}>
+            <Pressable onPress={() => router.push(`/hifz/${surah.id}` as Href)} style={styles.compactSurahContent}>
+              <View><Text style={styles.compactSurahName}>{surah.transliteration}</Text><Text style={styles.compactSurahMeta}>{entry.learnedVerses.length} / {surah.verses} versets</Text></View>
+              <Ionicons name="chevron-forward" size={18} color={colors.goldLight} />
+            </Pressable>
+            <Pressable
+              onPress={() => removeSurah(surah.id, surah.transliteration)}
+              accessibilityRole="button"
+              accessibilityLabel={`Retirer ${surah.transliteration}`}
+              hitSlop={8}
+              style={styles.removeSurahButton}
+            >
+              <Ionicons name="remove" size={13} color={colors.background} />
+            </Pressable>
+          </View>;
         })}
         {learned > 0 ? <Pressable onPress={() => router.push("/hifz/progress" as Href)} style={styles.progressLinkCard}>
           <View><Text style={styles.progressLinkTitle}>Progression</Text><Text style={styles.progressLinkMeta}>{learned} verset{learned > 1 ? "s" : ""} mémorisé{learned > 1 ? "s" : ""}</Text></View>
@@ -672,7 +716,7 @@ export default function HifzScreen() {
             </Pressable>
           );
         })}
-        <Pressable onPress={() => setShowPicker(true)} style={styles.addSurah}>
+        <Pressable onPress={openSurahPicker} style={styles.addSurah}>
           <Ionicons name="add" size={18} color={colors.goldLight} />
           <Text style={styles.addSurahText}>Choisir mes sourates</Text>
         </Pressable>
@@ -866,11 +910,13 @@ export default function HifzScreen() {
             </View>
             <ScrollView showsVerticalScrollIndicator={false}>
               {SURAHS.map((surah) => {
-                const added = studied.some((item) => item.surahId === surah.id);
+                const added = draftSurahIds.has(surah.id);
                 return (
                   <Pressable
                     key={surah.id}
-                    onPress={() => addSurah(surah.id)}
+                    onPress={() => toggleDraftSurah(surah.id)}
+                    accessibilityRole="button"
+                    accessibilityLabel={`${added ? "Retirer" : "Ajouter"} ${surah.transliteration}`}
                     style={[styles.pickerRow, added && styles.pickerRowAdded]}
                   >
                     <View style={styles.pickerNumber}>
@@ -892,8 +938,8 @@ export default function HifzScreen() {
                       ]}
                     >
                       <Ionicons
-                        name={added ? "checkmark" : "add"}
-                        size={16}
+                        name={added ? "remove" : "add"}
+                        size={18}
                         color={added ? colors.background : colors.goldLight}
                       />
                     </View>
@@ -901,6 +947,13 @@ export default function HifzScreen() {
                 );
               })}
             </ScrollView>
+            <Pressable onPress={confirmSurahSelection} style={styles.confirmSurahsButton}>
+              <Ionicons name="checkmark-circle" size={20} color={colors.background} />
+              <Text style={styles.confirmSurahsText}>Confirmer ma sélection</Text>
+              <View style={styles.selectionBadge}>
+                <Text style={styles.selectionBadgeText}>{draftSurahIds.size}</Text>
+              </View>
+            </Pressable>
           </View>
         </View>
       </Modal>
@@ -1085,14 +1138,16 @@ const styles = StyleSheet.create({
   hifzGuideStep: { flex: 1, alignItems: "center" },
   hifzGuideNumber: { color: colors.goldMuted, fontFamily: typography.sansBold, fontSize: 11 },
   hifzGuideText: { marginTop: 3, color: colors.textMuted, fontFamily: typography.sans, fontSize: 9, textAlign: "center" },
-  compactSurahRow: { minHeight: 62, paddingHorizontal: 14, flexDirection: "row", alignItems: "center", justifyContent: "space-between", borderBottomWidth: 1, borderBottomColor: colors.borderSoft },
-  compactSurahName: { color: colors.text, fontFamily: typography.sans, fontSize: 15, fontWeight: "700" },
-  compactSurahMeta: { marginTop: 3, color: colors.textMuted, fontFamily: typography.sans, fontSize: 12 },
+  compactSurahRow: { minHeight: 68, marginTop: 5, paddingHorizontal: 14, flexDirection: "row", alignItems: "center", borderRadius: 16, borderWidth: 1, borderColor: "rgba(227,181,90,0.18)", backgroundColor: "rgba(34,20,51,0.62)" },
+  compactSurahContent: { flex: 1, minHeight: 66, flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
+  compactSurahName: { color: colors.text, fontFamily: typography.sans, fontSize: 16, fontWeight: "800" },
+  compactSurahMeta: { marginTop: 4, color: colors.textSecondary, fontFamily: typography.sans, fontSize: 12 },
+  removeSurahButton: { width: 20, height: 20, marginLeft: 9, alignItems: "center", justifyContent: "center", borderRadius: 10, borderWidth: 1, borderColor: "rgba(255,220,220,0.72)", backgroundColor: "#B84B61", shadowColor: "#000000", shadowOpacity: 0.48, shadowRadius: 5, shadowOffset: { width: 0, height: 3 }, elevation: 6 },
   progressLinkCard: { minHeight: 60, marginTop: 14, paddingHorizontal: 15, flexDirection: "row", alignItems: "center", justifyContent: "space-between", borderRadius: 17, borderWidth: 1, borderColor: colors.borderSoft, backgroundColor: colors.surface },
   progressLinkTitle: { color: colors.text, fontFamily: typography.serifMedium, fontSize: 17 },
   progressLinkMeta: { marginTop: 3, color: colors.textMuted, fontFamily: typography.sans, fontSize: 12 },
-  addSurahHeader: { flexDirection: "row", alignItems: "center", paddingHorizontal: 10, paddingVertical: 7, borderRadius: 12, borderWidth: 1, borderColor: "rgba(227,181,90,0.35)", backgroundColor: "rgba(42,23,56,0.72)" },
-  addSurahHeaderText: { marginLeft: 5, color: colors.goldLight, fontFamily: typography.sans, fontSize: 10, fontWeight: "700" },
+  addSurahHeader: { flexDirection: "row", alignItems: "center", paddingHorizontal: 13, paddingVertical: 10, borderRadius: 16, backgroundColor: colors.goldLight, shadowColor: colors.goldLight, shadowOpacity: 0.28, shadowRadius: 8, shadowOffset: { width: 0, height: 3 }, elevation: 3 },
+  addSurahHeaderText: { marginLeft: 6, color: colors.background, fontFamily: typography.sans, fontSize: 11, fontWeight: "800" },
   progressToggleTitle: {
     color: colors.text,
     fontFamily: typography.serifMedium,
@@ -1445,8 +1500,8 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     borderRadius: 19,
     borderWidth: 1,
-    borderColor: "rgba(227,181,90,0.35)",
-    borderStyle: "dashed",
+    borderColor: "rgba(227,181,90,0.72)",
+    backgroundColor: "rgba(227,181,90,0.12)",
   },
   addSurahText: {
     marginLeft: 7,
@@ -1717,6 +1772,39 @@ const styles = StyleSheet.create({
     borderColor: "rgba(227,181,90,0.40)",
   },
   pickerToggleAdded: { borderColor: "#72C694", backgroundColor: "#72C694" },
+  confirmSurahsButton: {
+    minHeight: 52,
+    marginTop: 12,
+    paddingHorizontal: 16,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 17,
+    backgroundColor: colors.goldLight,
+  },
+  confirmSurahsText: {
+    marginLeft: 8,
+    color: colors.background,
+    fontFamily: typography.sans,
+    fontSize: 12,
+    fontWeight: "800",
+  },
+  selectionBadge: {
+    minWidth: 24,
+    height: 24,
+    marginLeft: 9,
+    paddingHorizontal: 6,
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 12,
+    backgroundColor: "rgba(7,31,29,0.18)",
+  },
+  selectionBadgeText: {
+    color: colors.background,
+    fontFamily: typography.sans,
+    fontSize: 10,
+    fontWeight: "800",
+  },
   easyStart: {
     marginTop: 12,
     padding: 13,

@@ -1,4 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
+import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
 import type { Href } from 'expo-router';
 import { router, useLocalSearchParams } from 'expo-router';
@@ -89,6 +90,11 @@ export default function ReciterDetailScreen() {
     if (router.canGoBack()) router.back();
     else router.replace((returnTo || '/listen/reciters') as Href);
   }, [returnTo]);
+
+  const changeReciter = useCallback(() => {
+    if (!reciterId) return;
+    router.push(`/listen/reciters?returnTo=${encodeURIComponent(`/listen/reciter/${reciterId}`)}` as Href);
+  }, [reciterId]);
 
   const openSurah = useCallback(
     (surahId: number) => {
@@ -205,6 +211,9 @@ export default function ReciterDetailScreen() {
               title={reciter?.name ?? t('recitations.reciters')}
               subtitle={t('recitations.reciterSurahs')}
               onBack={goBack}
+              onAction={changeReciter}
+              actionIcon="swap-horizontal-outline"
+              actionAccessibilityLabel="Changer de réciteur"
             />
 
             {reciter ? (
@@ -216,7 +225,17 @@ export default function ReciterDetailScreen() {
                   style={styles.hero}
                 >
                   <View style={styles.portraitFrame}>
-                    <ReciterAvatar reciter={reciter} size={150} />
+                    {reciter.image ? (
+                      <Image
+                        source={reciter.image}
+                        contentFit="cover"
+                        cachePolicy="memory-disk"
+                        transition={180}
+                        style={styles.portraitImage}
+                      />
+                    ) : (
+                      <ReciterAvatar reciter={reciter} size={150} />
+                    )}
                   </View>
 
                   <Text numberOfLines={2} style={styles.name}>
@@ -330,12 +349,18 @@ const styles = StyleSheet.create({
   },
 
   portraitFrame: {
-    width: 164,
-    height: 164,
+    width: '100%',
+    height: 270,
+    overflow: 'hidden',
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: 82,
+    borderRadius: 22,
     backgroundColor: 'rgba(200,148,58,0.08)',
+  },
+
+  portraitImage: {
+    width: '100%',
+    height: '100%',
   },
 
   name: {

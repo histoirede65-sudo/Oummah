@@ -15,8 +15,10 @@ import { ReciterProvider } from '../context/ReciterProvider';
 import MiniPlayer from '../features/audio/presentation/MiniPlayer';
 import { I18nProvider } from '../i18n/I18nProvider';
 import { syncPushRegistration } from '../features/notifications/PushRegistrationService';
+import { verseOfDayRoute } from '../features/notifications/NotificationCenter';
 import AnalyticsRouteTracker from '../features/analytics/AnalyticsRouteTracker';
 import { trackAnalyticsEvent } from '../features/analytics/AnalyticsService';
+import { STOP_ADHAN_ACTION } from '../features/adhan/AdhanNotifications';
 import cormorantRegular from '../../assets/fonts/CormorantGaramond-Regular.ttf';
 import cormorantMedium from '../../assets/fonts/CormorantGaramond-Medium.ttf';
 import cormorantSemibold from '../../assets/fonts/CormorantGaramond-SemiBold.ttf';
@@ -314,7 +316,6 @@ function AppLaunchAnimation({
 
 export default function RootLayout() {
   const [launchVisible, setLaunchVisible] = useState(true);
-  const [fontFallbackReady, setFontFallbackReady] = useState(false);
 
   const [fontsLoaded, fontError] = useFonts({
     'CormorantGaramond-Regular': cormorantRegular,
@@ -322,11 +323,7 @@ export default function RootLayout() {
     'CormorantGaramond-SemiBold': cormorantSemibold,
     UthmanicHafs: uthmanicHafs,
   });
-
-  useEffect(() => {
-    const fallbackTimer = setTimeout(() => setFontFallbackReady(true), 5_000);
-    return () => clearTimeout(fallbackTimer);
-  }, []);
+  const appReady = fontsLoaded || Boolean(fontError);
 
   useEffect(() => {
     void syncPushRegistration()
@@ -344,10 +341,19 @@ export default function RootLayout() {
   }, []);
 
   useEffect(() => {
+    if (!appReady) return;
+
     const openNotificationRoute = async (
       response: Notifications.NotificationResponse | null,
     ) => {
       const data = response?.notification.request.content.data;
+      const isAdhanNotification = data?.notificationOwner === 'oummah-adhan';
+      if (isAdhanNotification && response) {
+        await Notifications.dismissNotificationAsync(
+          response.notification.request.identifier,
+        ).catch(() => undefined);
+        if (response.actionIdentifier === STOP_ADHAN_ACTION) return;
+      }
       const route = data?.route;
       const rawLatitude = data?.mosqueLatitude;
       const rawLongitude = data?.mosqueLongitude;
@@ -381,25 +387,34 @@ export default function RootLayout() {
         // Fall back to the notification route below.
       }
 
+      if (fallbackRoute === "/hadiths?open=daily") {
+        router.push({ pathname: "/hadiths", params: { open: "daily" } });
+        return;
+      }
+      if (fallbackRoute === "/verse-of-day") {
+        router.push(verseOfDayRoute() as never);
+        return;
+      }
       router.push(fallbackRoute as never);
     };
 
     const lastResponse = Notifications.getLastNotificationResponse();
     if (lastResponse) {
-      openNotificationRoute(lastResponse);
-      void Notifications.clearLastNotificationResponseAsync();
+      void openNotificationRoute(lastResponse).then(() =>
+        Notifications.clearLastNotificationResponseAsync(),
+      );
     }
     const subscription = Notifications.addNotificationResponseReceivedListener(
       openNotificationRoute,
     );
 
     return () => subscription.remove();
-  }, []);
-
-  const appReady = fontsLoaded || Boolean(fontError) || fontFallbackReady;
+  }, [appReady]);
 
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
+    <GestureHandlerRootView
+      style={{ flex: 1 }}
+    >
       {appReady ? (
         <SafeAreaProvider>
           <I18nProvider>
@@ -415,7 +430,20 @@ export default function RootLayout() {
                       backgroundColor: '#071F1D',
                     },
                   }}
-                />
+                >
+                  <Stack.Screen
+                    name="listen/reciters"
+                    options={{ animation: "none", contentStyle: { backgroundColor: "#071F1D" } }}
+                  />
+                  <Stack.Screen
+                    name="listen/reciter/[reciterId]"
+                    options={{ animation: "none", contentStyle: { backgroundColor: "#071F1D" } }}
+                  />
+                  <Stack.Screen
+                    name="listen/[surahId]"
+                    options={{ animation: "none", contentStyle: { backgroundColor: "#071F1D" } }}
+                  />
+                </Stack>
                 <MiniPlayer />
               </AudioPlayerProvider>
             </ReciterProvider>

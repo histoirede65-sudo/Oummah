@@ -19,6 +19,8 @@ type RevenueCatEvent = {
   period_type?: unknown;
   price?: unknown;
   price_in_purchased_currency?: unknown;
+  currency?: unknown;
+  currency_code?: unknown;
   cancel_reason?: unknown;
 };
 
@@ -123,14 +125,45 @@ Deno.serve(async (request) => {
   const purchasedAtMs = finiteNumber(rcEvent.purchased_at_ms);
   const price = finiteNumber(rcEvent.price_in_purchased_currency) ?? finiteNumber(rcEvent.price);
 
+  const isTestStorePurchase = environment === "SANDBOX" && store === "TEST_STORE";
+  const isGooglePlayPurchase = environment === "PRODUCTION" && store === "PLAY_STORE";
+  const isAppleSandboxPurchase = environment === "SANDBOX" && store === "APP_STORE";
+  const isAppleProductionPurchase = environment === "PRODUCTION" && store === "APP_STORE";
+  const isSupportedPurchase =
+    isTestStorePurchase ||
+    isGooglePlayPurchase ||
+    isAppleSandboxPurchase ||
+    isAppleProductionPurchase;
+  const grantEnvironment = isTestStorePurchase || isAppleSandboxPurchase
+    ? "test"
+    : isGooglePlayPurchase || isAppleProductionPurchase
+      ? "production"
+      : null;
+  const grantPlatform = isTestStorePurchase
+    ? "revenuecat_test"
+    : isGooglePlayPurchase
+      ? "google_play"
+      : isAppleSandboxPurchase || isAppleProductionPurchase
+        ? "ios"
+      : null;
+
+  log("REVENUECAT_WASIL_WEBHOOK_PURCHASE_CLASSIFIED", {
+    eventId,
+    environment,
+    store,
+    productId,
+    appUserId,
+    grantEnvironment,
+    grantPlatform,
+  });
+
   if (
     !eventId ||
     !appUserId ||
     !UUID_PATTERN.test(appUserId) ||
     !productId ||
     !transactionId ||
-    environment !== "SANDBOX" ||
-    store !== "TEST_STORE" ||
+    !isSupportedPurchase ||
     (purchasedAtMs !== null && purchasedAtMs <= 0)
   ) {
     log("REVENUECAT_WASIL_WEBHOOK_INVALID_PAYLOAD", {
@@ -161,8 +194,8 @@ Deno.serve(async (request) => {
     p_event_id: eventId,
     p_app_user_id: appUserId,
     p_product_id: productId,
-    p_environment: "test",
-    p_platform: "revenuecat_test",
+    p_environment: grantEnvironment,
+    p_platform: grantPlatform,
     p_store_transaction_id: transactionId,
     p_purchased_at: purchasedAtMs === null ? null : new Date(purchasedAtMs).toISOString(),
     p_metadata: {
@@ -183,6 +216,10 @@ Deno.serve(async (request) => {
   if (error) {
     log("REVENUECAT_WASIL_WEBHOOK_RPC_FAILURE", {
       eventId,
+      environment,
+      store,
+      productId,
+      appUserId,
       errorCode: error.code ?? null,
     });
     return json({ ok: false, error: "purchase_credit_failed" }, 502);
@@ -191,14 +228,56 @@ Deno.serve(async (request) => {
   const result = Array.isArray(data) ? data[0] as Record<string, unknown> | undefined : undefined;
   const alreadyProcessed = result?.already_processed === true;
   if (alreadyProcessed) {
-    log("REVENUECAT_WASIL_WEBHOOK_DUPLICATE", { eventId });
+    log("REVENUECAT_WASIL_WEBHOOK_DUPLICATE", {
+      eventId,
+      environment,
+      store,
+      productId,
+      appUserId,
+      creditsAdded: result?.credits_added ?? null,
+    });
     return json({ ok: true, credited: false, alreadyProcessed: true });
+  }
+
+  const creditsAdded = Number(result?.credits_added ?? 0);
+  if (creditsAdded > 0) {
+    const currency = text(rcEvent.currency_code) ?? text(rcEvent.currency);
+    const priceLabel = price !== null
+      ? ` • ${price.toFixed(2)}${currency ? ` ${currency}` : ""}`
+      : "";
+    const { error: alertError } = await supabase.rpc("create_admin_alert_and_notify", {
+      p_alert_type: "wasil_purchase",
+      p_source_key: `wasil-purchase:${eventId}`,
+      p_severity: "info",
+      p_title: "⚡ Nouvel achat Wasil",
+      p_description: `${creditsAdded} crédits achetés${priceLabel}`,
+      p_requires_action: false,
+      p_metadata: {
+        event_id: eventId,
+        app_user_id: appUserId,
+        product_id: productId,
+        credits_added: creditsAdded,
+        price,
+        currency,
+        environment,
+        store,
+      },
+    });
+    if (alertError) {
+      log("REVENUECAT_WASIL_ADMIN_ALERT_FAILURE", {
+        eventId,
+        errorCode: alertError.code ?? null,
+      });
+    }
   }
 
   log("REVENUECAT_WASIL_WEBHOOK_CREDITED", {
     eventId,
+    environment,
+    store,
+    appUserId,
     productId,
-    creditsAdded: result?.credits_added ?? null,
+    creditsAdded: creditsAdded || null,
   });
   return json({ ok: true, credited: true, alreadyProcessed: false });
 });

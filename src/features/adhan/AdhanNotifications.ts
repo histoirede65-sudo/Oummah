@@ -13,6 +13,8 @@ import type { AdhanAlertMode, AdhanPreferences, AdhanVoice } from "./AdhanPrefer
 
 const SCHEDULED_IDS_KEY = "oumma:adhan-notification-ids:v1";
 const NOTIFICATION_OWNER = "oummah-adhan";
+export const ADHAN_NOTIFICATION_CATEGORY = "adhan_control";
+export const STOP_ADHAN_ACTION = "stop_adhan";
 
 function normalizedNotificationText(value: unknown) {
   return typeof value === "string" ? value.toLocaleLowerCase("fr-FR") : "";
@@ -83,29 +85,35 @@ const NEARBY_MOSQUE_MAX_DISTANCE_METERS = 3_000;
 
 const PRAYER_HADITHS: Record<
   MosquePrayerTime["key"],
-  { text: string; reference: string }
+  ReadonlyArray<{ text: string; reference: string }>
 > = {
-  Fajr: {
-    text: "Celui qui accomplit la prière du Fajr est sous la protection d’Allah.",
-    reference: "Sahih Muslim, 657",
-  },
-  Dhuhr: {
-    text: "Parmi les œuvres les plus aimées d’Allah : la prière accomplie à son heure.",
-    reference: "Sahih al-Bukhari, 527",
-  },
-  Asr: {
-    text: "Celui qui délaisse la prière du ‘Asr voit ses œuvres annulées.",
-    reference: "Sahih al-Bukhari, 553",
-  },
-  Maghrib: {
-    text: "Les cinq prières effacent les fautes comme l’eau enlève les impuretés.",
-    reference: "Sahih al-Bukhari, 528",
-  },
-  Isha: {
-    text: "Celui qui accomplit ‘Isha en groupe est comme s’il avait prié la moitié de la nuit.",
-    reference: "Sahih Muslim, 656",
-  },
+  Fajr: [
+    { text: "Celui qui accomplit la prière du Fajr est sous la protection d’Allah.", reference: "Sahih Muslim, 657" },
+    { text: "Celui qui accomplit les prières de l’aube et de l’après-midi entrera au Paradis.", reference: "Sahih al-Bukhari, 574" },
+  ],
+  Dhuhr: [
+    { text: "Parmi les œuvres les plus aimées d’Allah : la prière accomplie à son heure.", reference: "Sahih al-Bukhari, 527" },
+    { text: "Les cinq prières effacent les fautes comme l’eau enlève les impuretés.", reference: "Sahih al-Bukhari, 528" },
+  ],
+  Asr: [
+    { text: "Celui qui délaisse la prière du ‘Asr voit ses œuvres annulées.", reference: "Sahih al-Bukhari, 553" },
+    { text: "Celui qui accomplit les prières de l’aube et de l’après-midi entrera au Paradis.", reference: "Sahih al-Bukhari, 574" },
+  ],
+  Maghrib: [
+    { text: "Les cinq prières effacent les fautes comme l’eau enlève les impuretés.", reference: "Sahih al-Bukhari, 528" },
+    { text: "La prière est une lumière.", reference: "Sahih Muslim, 223" },
+  ],
+  Isha: [
+    { text: "Celui qui accomplit ‘Isha en groupe est comme s’il avait prié la moitié de la nuit.", reference: "Sahih Muslim, 656" },
+    { text: "Si les gens savaient ce qu’il y a dans les prières de l’‘Isha et du Fajr, ils y viendraient même en rampant.", reference: "Sahih al-Bukhari, 721" },
+  ],
 };
+
+function hadithForPrayer(prayer: MosquePrayerTime) {
+  const hadiths = PRAYER_HADITHS[prayer.key];
+  const dayNumber = Math.floor(prayer.timestamp / (24 * 60 * 60 * 1_000));
+  return hadiths[dayNumber % hadiths.length];
+}
 
 type NotificationMosque = Pick<
   NearbyMosque,
@@ -168,8 +176,28 @@ async function configureAndroidChannels() {
   ]);
 }
 
+async function configureAdhanNotificationCategory() {
+  await Notifications.setNotificationCategoryAsync(
+    ADHAN_NOTIFICATION_CATEGORY,
+    [
+      {
+        identifier: STOP_ADHAN_ACTION,
+        buttonTitle: "Arrêter l’adhan",
+        options: {
+          opensAppToForeground: true,
+          isAuthenticationRequired: false,
+          isDestructive: false,
+        },
+      },
+    ],
+  );
+}
+
 export async function requestAdhanNotificationPermission() {
-  await configureAndroidChannels();
+  await Promise.all([
+    configureAndroidChannels(),
+    configureAdhanNotificationCategory(),
+  ]);
 
   const existing = await Notifications.getPermissionsAsync();
   if (isGranted(existing)) return true;
@@ -217,13 +245,14 @@ function contentFor(
   mosque?: NotificationMosque,
 ) {
   const isAdvanceReminder = preferences.leadMinutes > 0;
-  const hadith = PRAYER_HADITHS[prayer.key];
+  const hadith = hadithForPrayer(prayer);
 
   return {
     title: isAdvanceReminder
       ? `${prayer.label} dans ${preferences.leadMinutes} min`
       : `${prayer.label} — heure de prière`,
     body: `« ${hadith.text} » — ${hadith.reference}`,
+    categoryIdentifier: ADHAN_NOTIFICATION_CATEGORY,
     data: {
       route: "/",
       prayer: prayer.key,
@@ -303,6 +332,7 @@ async function syncAdhanNotificationsInternal(
   if (!isGranted(permission)) return;
 
   await configureAndroidChannels();
+  await configureAdhanNotificationCategory();
 
   const nearbyMosque = await Promise.race([
     findNearbyNotificationMosque(),

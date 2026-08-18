@@ -270,6 +270,9 @@ function CompatibilityBridge({ children }: { children: ReactNode }) {
   );
   const loadSurah = useCallback(
     async (surahId: number, autoplay = false, reciterId?: string) => {
+      if (surahId === 1) {
+        console.info("[FATIHA LOAD SURAH]", { autoplay, reciterId });
+      }
       if (reciterId && reciterId !== currentReciter?.id) {
         const selectedReciter = reciters.find(
           (reciter) => reciter.id === reciterId,
@@ -289,6 +292,7 @@ function CompatibilityBridge({ children }: { children: ReactNode }) {
         const track = await withLocalDownload(
           await audioDependencies.catalog.getTrack(surahId, resolvedReciterId),
         );
+        if (surahId === 1) console.info("[FATIHA AUDIO TRACK]", { reciterId: resolvedReciterId, trackId: track.id, uri: track.source.uri, remoteUri: track.remoteUri, localUri: track.localUri, autoplay });
         await player.loadTrack(track, autoplay);
         if (preservePosition) await player.seekTo(position);
         else await player.seekTo(0);
@@ -313,6 +317,21 @@ function CompatibilityBridge({ children }: { children: ReactNode }) {
         if (localizedPlaylist !== playlist)
           playlists.current.set(resolvedReciterId, localizedPlaylist);
         setPlaylist(localizedPlaylist, item.id, autoplay);
+        if (preservePosition) await player.seekTo(position);
+        else await player.seekTo(0);
+      } else if (surahId === 1) {
+        const track = await withLocalDownload(
+          await audioDependencies.catalog.getTrack(1, resolvedReciterId),
+        );
+        console.info("[FATIHA AUDIO TRACK]", {
+          reciterId: resolvedReciterId,
+          trackId: track.id,
+          uri: track.source.uri,
+          remoteUri: track.remoteUri,
+          localUri: track.localUri,
+          autoplay,
+        });
+        await player.loadTrack(track, autoplay);
         if (preservePosition) await player.seekTo(position);
         else await player.seekTo(0);
       }

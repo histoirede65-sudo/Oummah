@@ -26,11 +26,15 @@ export function ListeningHeader({
   subtitle,
   onBack,
   onAction,
+  actionIcon = "albums-outline",
+  actionAccessibilityLabel,
 }: {
   title: string;
   subtitle?: string;
   onBack?: () => void;
   onAction?: () => void;
+  actionIcon?: keyof typeof Ionicons.glyphMap;
+  actionAccessibilityLabel?: string;
 }) {
   const { t } = useI18n();
 
@@ -58,12 +62,12 @@ export function ListeningHeader({
       </View>
 
       <Pressable
-        accessibilityLabel={t("recitations.playlists")}
+        accessibilityLabel={actionAccessibilityLabel ?? t("recitations.playlists")}
         onPress={onAction}
         disabled={!onAction}
         style={styles.headerButton}
       >
-        <Ionicons name="albums-outline" size={19} color={colors.goldMuted} />
+        <Ionicons name={actionIcon} size={19} color={colors.goldMuted} />
       </Pressable>
     </View>
   );

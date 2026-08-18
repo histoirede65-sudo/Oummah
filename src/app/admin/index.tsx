@@ -25,7 +25,7 @@ import { getValidSession } from "../../features/auth/SupabaseAuthService";
 import { isOummahAdminSession } from "../../features/auth/AdminAccess";
 import { colors } from "../../theme/colors";
 import { getAdminSupportCounts } from "../../features/support/AdminSupportService";
-import { getAdminAlertCounts } from "../../features/admin/AdminAlertsService";
+import { getAdminAlertCounts, getAdminAttentionState, type AdminAttentionState } from "../../features/admin/AdminAlertsService";
 import { adminListMosquePrayerTimeUpdates } from "../../features/mosques/data/mosquePrayerUpdates";
 import { typography } from "../../theme/typography";
 
@@ -82,6 +82,7 @@ export default function AdminHomeScreen() {
     info: 0,
   });
   const [pendingPrayerTimes, setPendingPrayerTimes] = useState(0);
+  const [attention, setAttention] = useState<AdminAttentionState>({ attentionCount: 0, actionCount: 0, unreadCount: 0, items: [] });
 
   const load = useCallback(async (silent = false) => {
     if (!silent) setLoading(true);
@@ -100,6 +101,7 @@ export default function AdminHomeScreen() {
         nextSupportCounts,
         nextAlertCounts,
         nextPrayerTimes,
+        nextAttention,
       ] = await Promise.all([
         getAdminDashboard(),
         getAdminUsers(search),
@@ -116,6 +118,7 @@ export default function AdminHomeScreen() {
           info: 0,
         })),
         adminListMosquePrayerTimeUpdates().catch(() => []),
+        getAdminAttentionState().catch(() => ({ attentionCount: 0, actionCount: 0, unreadCount: 0, items: [] })),
       ]);
 
       setDashboard(nextDashboard);
@@ -123,6 +126,7 @@ export default function AdminHomeScreen() {
       setSupportCounts(nextSupportCounts);
       setAlertCounts(nextAlertCounts);
       setPendingPrayerTimes(nextPrayerTimes.length);
+      setAttention(nextAttention);
     } catch (error) {
       Alert.alert(
         "Administration",
@@ -213,6 +217,27 @@ export default function AdminHomeScreen() {
             />
           }
         >
+          <View style={styles.attentionCard}>
+            <View style={styles.attentionHeader}>
+              <View>
+                <Text style={styles.sectionTitle}>À traiter</Text>
+                <Text style={styles.attentionMeta}>{attention.actionCount} action{attention.actionCount > 1 ? "s" : ""} en attente · {attention.unreadCount} information{attention.unreadCount > 1 ? "s" : ""} non lue{attention.unreadCount > 1 ? "s" : ""}</Text>
+              </View>
+              <Pressable onPress={() => router.push("/admin/alerts")}><Text style={styles.attentionLink}>Tout voir</Text></Pressable>
+            </View>
+            {attention.items.slice(0, 5).map((item) => (
+              <Pressable key={item.id} onPress={() => router.push("/admin/alerts")} style={styles.attentionRow}>
+                <View style={[styles.attentionDot, item.requiresAction && styles.attentionDotAction]} />
+                <View style={styles.attentionCopy}>
+                  <Text style={styles.attentionTitle}>{item.title}</Text>
+                  <Text style={styles.attentionDescription}>{item.description}</Text>
+                </View>
+              </Pressable>
+            ))}
+            {attention.items.length === 0 ? <Text style={styles.attentionEmpty}>Aucune alerte nécessitant votre attention.</Text> : null}
+          </View>
+
+          <Text style={styles.sectionTitle}>Activité récente</Text>
           <Pressable
             onPress={() => router.push("/admin/cockpit")}
             style={({ pressed }) => [
@@ -611,6 +636,17 @@ export default function AdminHomeScreen() {
 }
 
 const styles = StyleSheet.create({
+  attentionCard: { marginBottom: 16, padding: 15, borderRadius: 22, borderWidth: 1, borderColor: "rgba(227,181,90,0.28)", backgroundColor: "rgba(42,23,56,0.72)" },
+  attentionHeader: { flexDirection: "row", alignItems: "flex-start", justifyContent: "space-between" },
+  attentionMeta: { marginTop: -10, color: colors.textMuted, fontFamily: typography.sans, fontSize: 9 },
+  attentionLink: { color: colors.goldLight, fontFamily: typography.sans, fontSize: 10, fontWeight: "800" },
+  attentionRow: { minHeight: 46, marginTop: 10, paddingTop: 9, flexDirection: "row", alignItems: "center", borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: "rgba(255,255,255,0.08)" },
+  attentionDot: { width: 8, height: 8, marginRight: 10, borderRadius: 4, backgroundColor: colors.textMuted },
+  attentionDotAction: { backgroundColor: colors.danger },
+  attentionCopy: { flex: 1 },
+  attentionTitle: { color: colors.text, fontFamily: typography.sans, fontSize: 11, fontWeight: "800" },
+  attentionDescription: { marginTop: 2, color: colors.textMuted, fontFamily: typography.sans, fontSize: 9 },
+  attentionEmpty: { marginTop: 12, color: colors.textMuted, fontFamily: typography.sans, fontSize: 10 },
   safeArea: { flex: 1, backgroundColor: colors.background },
   header: { minHeight: 72, paddingHorizontal: 18, flexDirection: "row", alignItems: "center", justifyContent: "space-between", borderBottomWidth: 1, borderBottomColor: colors.border },
   headerButton: { width: 42, height: 42, borderRadius: 21, alignItems: "center", justifyContent: "center", backgroundColor: colors.card },

@@ -13,12 +13,13 @@
       "supportsTablet": true,
       "infoPlist": {
         "UIViewControllerBasedStatusBarAppearance": true,
-        "ITSAppUsesNonExemptEncryption": false
+        "ITSAppUsesNonExemptEncryption": false,
+        "NSLocationWhenInUseUsageDescription": "OUMMAH utilise votre position lorsque vous utilisez l’application afin de calculer les horaires de prière correspondant à votre localisation et de vous aider à trouver les mosquées à proximité."
       }
     },
     "android": {
       "package": "com.oummah.app",
-      "versionCode": 4,
+      "versionCode": 14,
       "permissions": [
         "SCHEDULE_EXACT_ALARM",
         "android.permission.RECORD_AUDIO",
@@ -40,11 +41,16 @@
       "expo-font",
       "expo-sqlite",
       "expo-web-browser",
-      "expo-audio",
+      [
+        "expo-audio",
+        {
+          "enableBackgroundPlayback": true
+        }
+      ],
       [
         "expo-notifications",
         {
-            "color": "#F2B53D",
+          "color": "#F2B53D",
           "defaultChannel": "adhan-sound-makkah",
           "sounds": [
             "./assets/adhan/adhan_makkah.mp3",

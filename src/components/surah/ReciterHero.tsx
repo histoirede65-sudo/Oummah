@@ -1,7 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useMemo, type ReactNode } from 'react';
-import { Animated, Pressable, StyleSheet, Text, View } from 'react-native';
+import { useMemo, useState, type ReactNode } from 'react';
+import { Animated, Modal, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { useReciter } from '../../context/ReciterProvider';
 import { useI18n } from '../../i18n';
@@ -9,7 +9,6 @@ import { colors } from '../../theme/colors';
 import { typography } from '../../theme/typography';
 import { useDoubleTapGesture } from './PlayerGestures';
 import ReciterImage from './ReciterImage';
-import ReciterInfo from './ReciterInfo';
 import ReciterTransition, { type ReciterTransitionData } from './ReciterTransition';
 import WaveVisualizer from './WaveVisualizer';
 
@@ -32,6 +31,11 @@ type ReciterHeroProps = {
   surahFrenchName: string;
   onBack?: () => void;
   onMenu?: () => void;
+  rangeStart: number;
+  rangeEnd: number;
+  onRangeStartChange: (value: number) => void;
+  onRangeEndChange: (value: number) => void;
+  onPlayRange: () => void;
 };
 
 const NOOP = () => undefined;
@@ -54,6 +58,11 @@ export default function ReciterHero({
   surahFrenchName,
   onBack,
   onMenu,
+  rangeStart,
+  rangeEnd,
+  onRangeStartChange,
+  onRangeEndChange,
+  onPlayRange,
 }: ReciterHeroProps) {
   const { t } = useI18n();
   const { currentReciter } = useReciter();
@@ -131,25 +140,14 @@ export default function ReciterHero({
 
               <View style={styles.topActions}>
                 <Pressable
-                  accessibilityLabel={t('recitations.addFavorite')}
-                  onPress={onFavorite}
-                  style={({ pressed }) => [styles.roundButton, pressed && styles.pressed]}
-                >
-                  <Ionicons
-                    name={isFavorite ? 'bookmark' : 'bookmark-outline'}
-                    size={24}
-                    color={stylesConstants.premiumGold}
-                  />
-                </Pressable>
-
-                <Pressable
                   accessibilityRole="button"
                   onPress={onMenu}
                   style={({ pressed }) => [styles.roundButton, pressed && styles.pressed]}
                 >
-                  <Ionicons name="ellipsis-horizontal" size={25} color={colors.text} />
+                  <Ionicons name="ellipsis-horizontal" size={20} color={colors.text} />
                 </Pressable>
               </View>
+              <Text numberOfLines={1} style={styles.topReciterName}>{reciter.name}</Text>
             </View>
 
             <Pressable
@@ -167,33 +165,36 @@ export default function ReciterHero({
             </Pressable>
 
             <View style={styles.identity}>
-              <Text numberOfLines={1} adjustsFontSizeToFit style={styles.title}>
+              <Text
+                numberOfLines={1}
+                adjustsFontSizeToFit
+                minimumFontScale={0.6}
+                style={[
+                  styles.title,
+                  surahFrenchName.length > 14 && styles.titleLong,
+                ]}
+              >
                 {surahFrenchName}
               </Text>
 
               <Text style={styles.subtitle}>Sourate {surahNumber}  •</Text>
 
-              <ReciterInfo>
-                {(displayed) => (
-                  <Pressable
-                    accessibilityRole="button"
-                    accessibilityLabel={t('recitations.viewReciter', {
-                      name: displayed.name,
-                    })}
-                    onPress={onReciterPress}
-                  >
-                    <Text
-                      numberOfLines={1}
-                      adjustsFontSizeToFit
-                      style={styles.reciter}
-                    >
-                      {displayed.name}
-                    </Text>
+              <Pressable
+                accessibilityRole="button"
+                accessibilityLabel={t('recitations.viewReciter', { name: reciter.name })}
+                onPress={onReciterPress}
+              >
+              </Pressable>
+              <View style={styles.rangePanel}>
+                <Text style={styles.rangeTitle}>Écouter une plage de versets</Text>
+                <View style={styles.rangeControls}>
+                  <RangeControl label="De" value={rangeStart} minimum={1} maximum={rangeEnd} onChange={onRangeStartChange} />
+                  <RangeControl label="À" value={rangeEnd} minimum={rangeStart} maximum={verses} onChange={onRangeEndChange} />
+                  <Pressable onPress={onPlayRange} style={({ pressed }) => [styles.rangePlay, pressed && styles.pressed]}>
+                    <Ionicons name="play" size={15} color={colors.background} />
                   </Pressable>
-                )}
-              </ReciterInfo>
-
-              <Text style={styles.nowPlaying}>Lecture en cours</Text>
+                </View>
+              </View>
             </View>
 
             <View style={styles.wave}>
@@ -213,6 +214,40 @@ export default function ReciterHero({
         )}
       </ReciterTransition>
     </View>
+  );
+}
+
+function RangeControl({ label, value, minimum, maximum, onChange }: { label: string; value: number; minimum: number; maximum: number; onChange: (value: number) => void }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <>
+      <Pressable onPress={() => setOpen(true)} style={styles.rangeControl}>
+        <Text style={styles.rangeLabel}>{label}</Text>
+        <Text style={styles.rangeValue}>{value}</Text>
+        <Ionicons name="chevron-down" size={13} color={colors.goldMuted} />
+      </Pressable>
+      <Modal visible={open} transparent animationType="fade" onRequestClose={() => setOpen(false)}>
+        <Pressable style={styles.rangeModalBackdrop} onPress={() => setOpen(false)}>
+          <Pressable style={styles.rangeModal} onPress={(event) => event.stopPropagation()}>
+            <Text style={styles.rangeModalTitle}>Verset {label.toLowerCase()}</Text>
+            <ScrollView style={styles.rangeList} contentContainerStyle={styles.rangeListContent}>
+              {Array.from({ length: maximum - minimum + 1 }, (_, index) => minimum + index).map((item) => (
+                <Pressable
+                  key={item}
+                  onPress={() => {
+                    onChange(item);
+                    setOpen(false);
+                  }}
+                  style={[styles.rangeOption, item === value && styles.rangeOptionActive]}
+                >
+                  <Text style={[styles.rangeOptionText, item === value && styles.rangeOptionTextActive]}>{item}</Text>
+                </Pressable>
+              ))}
+            </ScrollView>
+          </Pressable>
+        </Pressable>
+      </Modal>
+    </>
   );
 }
 
@@ -260,11 +295,11 @@ const styles = StyleSheet.create({
   },
 
   roundButton: {
-    width: 58,
-    height: 58,
+    width: 46,
+    height: 46,
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: 29,
+    borderRadius: 23,
     borderWidth: 1.3,
     borderColor: 'rgba(216,182,90,0.72)',
     backgroundColor: 'rgba(8,7,19,0.42)',
@@ -303,14 +338,16 @@ const styles = StyleSheet.create({
 
   identity: {
     position: 'absolute',
-    top: 138,
+    top: 150,
+    left: 24,
     right: 24,
-    maxWidth: '48%',
+    maxWidth: 'none',
     alignItems: 'flex-end',
     zIndex: 4,
   },
 
   title: {
+    transform: [{ translateY: 187 }],
     color: colors.text,
     fontFamily: typography.serifSemibold,
     fontSize: 29,
@@ -322,7 +359,14 @@ const styles = StyleSheet.create({
     textShadowRadius: 18,
   },
 
+  titleLong: {
+    maxWidth: '44%',
+    fontSize: 21,
+    lineHeight: 25,
+  },
+
   subtitle: {
+    transform: [{ translateY: 187 }],
     marginTop: 5,
     color: stylesConstants.premiumGold,
     fontFamily: typography.sans,
@@ -446,6 +490,25 @@ const styles = StyleSheet.create({
     letterSpacing: 2.2,
     textAlign: 'right',
   },
+  topReciterName: { position: 'absolute', left: 58, right: 58, color: '#F4D98A', fontFamily: typography.serifMedium, fontSize: 25, fontWeight: '700', textAlign: 'center', textShadowColor: 'rgba(0,0,0,0.9)', textShadowOffset: { width: 0, height: 2 }, textShadowRadius: 7 },
+  reciterHint: { marginTop: 3, color: colors.textMuted, fontFamily: typography.sans, fontSize: 9, textAlign: 'center' },
+  rangePanel: { alignSelf: 'flex-start', marginTop: 48, transform: [{ translateX: -24 }, { translateY: 80 }], padding: 9, borderRadius: 16, backgroundColor: 'rgba(8,7,19,0.68)', borderWidth: 1, borderColor: 'rgba(216,182,90,0.28)' },
+  rangeTitle: { color: colors.textSecondary, fontFamily: typography.sans, fontSize: 10, fontWeight: '700', textAlign: 'center' },
+  rangeControls: { marginTop: 6, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 7 },
+  rangeControl: { minWidth: 70, height: 34, paddingHorizontal: 5, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', borderRadius: 10, backgroundColor: 'rgba(126,78,151,0.28)' },
+  rangeLabel: { marginRight: 4, color: colors.textMuted, fontFamily: typography.sans, fontSize: 9 },
+  rangeValue: { minWidth: 22, color: colors.goldLight, fontFamily: typography.sans, fontSize: 13, fontWeight: '800', textAlign: 'center' },
+  rangeArrow: { padding: 3 },
+  rangePlay: { width: 34, height: 34, alignItems: 'center', justifyContent: 'center', borderRadius: 17, backgroundColor: colors.goldLight },
+  rangeModalBackdrop: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 24, backgroundColor: 'rgba(0,0,0,0.68)' },
+  rangeModal: { width: '100%', maxWidth: 340, maxHeight: '70%', padding: 16, borderRadius: 22, backgroundColor: colors.backgroundSecondary, borderWidth: 1, borderColor: colors.goldDark },
+  rangeModalTitle: { marginBottom: 10, color: colors.goldLight, fontFamily: typography.serifMedium, fontSize: 21, textAlign: 'center' },
+  rangeList: { maxHeight: 360 },
+  rangeListContent: { gap: 6 },
+  rangeOption: { minHeight: 42, alignItems: 'center', justifyContent: 'center', borderRadius: 12, backgroundColor: colors.purpleDeep },
+  rangeOptionActive: { backgroundColor: colors.surfaceLight, borderWidth: 1, borderColor: colors.goldDark },
+  rangeOptionText: { color: colors.textSecondary, fontFamily: typography.sans, fontSize: 15, fontWeight: '700' },
+  rangeOptionTextActive: { color: colors.goldLight },
 
   surahNumberPill: {
     marginTop: 12,

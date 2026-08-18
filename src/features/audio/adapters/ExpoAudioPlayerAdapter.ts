@@ -110,6 +110,7 @@ export class ExpoAudioPlayerAdapter implements AudioPlayer {
     try {
       this.player.pause();
       await this.player.seekTo(0);
+      this.player.clearLockScreenControls();
     } catch {
       this.onNativeInvalidated?.();
       this.dispose();

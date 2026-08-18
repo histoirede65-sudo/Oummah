@@ -1,4 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
+import { useFocusEffect } from "@react-navigation/native";
 import { createAudioPlayer, useAudioPlayerStatus } from "expo-audio";
 import * as Clipboard from "expo-clipboard";
 import { router, useLocalSearchParams, type Href } from "expo-router";
@@ -40,6 +41,7 @@ import {
   audioPositionMilliseconds,
   getSyncPositionMs,
   getWordSyncState,
+  isQuranicPauseMark,
   normalizeWordTimestamps,
   type AudioSourceMode,
 } from "../../features/quran/QuranWordSync";
@@ -202,25 +204,40 @@ const VerseRow = memo(function VerseRow({
         />
       </View>
       {showArabic ? (
-        <QuranArabicText
+      <QuranArabicText
           selectable
           screenWidth={screenWidth}
           preferredSize={settings.arabicSize}
         >
-          {isActive
-            ? arabicWords.map((word, index) => (
+          {isActive ? (() => {
+            let visualWordPosition = 0;
+            return arabicWords.map((word, index) => {
+              const isPauseMark = isQuranicPauseMark(word);
+              const wordPosition = isPauseMark ? null : ++visualWordPosition;
+              if (verse.verseKey === "2:5") {
+                console.log("[QURAN-VISUAL-MAPPING-2-5]", {
+                  text: word,
+                  wordPosition,
+                });
+              }
+              return (
                 <QuranWordHighlight
-                  key={`${index + 1}-${word}`}
+                  key={`${index}-${word}`}
                   text={`${word}${index < arabicWords.length - 1 ? " " : ""}`}
                   fontFamily={ARABIC_READING_FONT_FAMILY}
-                  isActive={index + 1 === activeWordPosition}
+                  isActive={
+                    wordPosition !== null &&
+                    wordPosition === activeWordPosition
+                  }
                   isRead={
+                    wordPosition !== null &&
                     lastReadWordPosition !== null &&
-                    index + 1 <= lastReadWordPosition
+                    wordPosition <= lastReadWordPosition
                   }
                 />
-              ))
-            : verse.textUthmani}
+              );
+            });
+          })() : verse.textUthmani}
         </QuranArabicText>
       ) : null}
       {isWordSyncUnavailable ? (
@@ -296,21 +313,28 @@ function getRenderedVerseNumber(verse: QuranFoundationVerse) {
 }
 
 export default function SurahReadingScreen() {
-  const { id, verse: requestedVerse } = useLocalSearchParams<{
+  const { id, verse: requestedVerse, direct } = useLocalSearchParams<{
     id: string;
     verse?: string;
+    direct?: string;
   }>();
   const { width: screenWidth } = useWindowDimensions();
   const parsedSurahId = parsePositiveRouteNumber(id);
   const surahId =
     parsedSurahId && parsedSurahId <= 114 ? parsedSurahId : 1;
   const surah = SURAHS.find((item) => item.id === surahId) ?? SURAHS[0];
+  const requestedVerseNumber = parsePositiveRouteNumber(requestedVerse);
+  const shouldRevealRequestedVerseDirectly =
+    direct === "1" && requestedVerseNumber !== null;
   const listRef = useRef<FlatList<QuranFoundationVerse>>(null);
   const offsetRef = useRef(0);
-  const currentVerseRef = useRef(parsePositiveRouteNumber(requestedVerse) ?? 1);
+  const currentVerseRef = useRef(requestedVerseNumber ?? 1);
   const verseLoadRequestRef = useRef(0);
   const [verses, setVerses] = useState<QuranFoundationVerse[]>([]);
   const [loading, setLoading] = useState(true);
+  const [deepLinkPositioned, setDeepLinkPositioned] = useState(
+    requestedVerseNumber === null,
+  );
   const [error, setError] = useState<string>();
   const [settings, setSettings] = useState(DEFAULT_READING_PREFERENCES);
   const [showSettings, setShowSettings] = useState(false);
@@ -360,6 +384,7 @@ export default function SurahReadingScreen() {
   const timelineAudioUrlsRef = useRef(new Map<string, string>());
   const verseAudioUrlsRef = useRef(new Map<string, string>());
   const loadedVerseAudioUrlRef = useRef<string | null>(null);
+  const loadingVerseKeyRef = useRef<string | null>(null);
 
   useEffect(() => {
     const tracker = inlineGoalAudioRef.current;
@@ -377,7 +402,7 @@ export default function SurahReadingScreen() {
   }, [versePlayerStatus.currentTime, versePlayerStatus.playing]);
 
   const stopInlineVerse = useCallback(
-    (requestId?: number) => {
+    (requestId?: number, _resetPositionSeconds?: number) => {
       if (requestId !== undefined && sessionIdRef.current !== requestId) return;
       if (stopTimerRef.current) {
         clearTimeout(stopTimerRef.current);
@@ -387,6 +412,21 @@ export default function SurahReadingScreen() {
       setPlayingVerseKey(undefined);
     },
     [versePlayer],
+  );
+
+  useFocusEffect(
+    useCallback(
+      () => () => {
+        sessionIdRef.current += 1;
+        if (stopTimerRef.current) {
+          clearTimeout(stopTimerRef.current);
+          stopTimerRef.current = undefined;
+        }
+        versePlayer.pause();
+        preloadPlayer.pause();
+      },
+      [preloadPlayer, versePlayer],
+    ),
   );
 
   useEffect(
@@ -443,6 +483,7 @@ export default function SurahReadingScreen() {
     const requestId = verseLoadRequestRef.current + 1;
     verseLoadRequestRef.current = requestId;
     setLoading(true);
+    if (requestedVerseNumber) setDeepLinkPositioned(false);
     setError(undefined);
     try {
       const response = (await readingQuranRepository.getVerses(
@@ -455,12 +496,43 @@ export default function SurahReadingScreen() {
         : (response?.verses ?? []);
       if (verseLoadRequestRef.current !== requestId) return;
       setVerses(normalizedVerses);
+      const requestedIndex = requestedVerseNumber
+        ? normalizedVerses.findIndex(
+            (verse) => getRenderedVerseNumber(verse) === requestedVerseNumber,
+          )
+        : -1;
       setTimeout(
-        () =>
+        () => {
+          if (requestedIndex >= 0) {
+            currentVerseRef.current = requestedVerseNumber ?? 1;
+            if (!shouldRevealRequestedVerseDirectly) {
+              setDeepLinkPositioned(true);
+            }
+            try {
+              listRef.current?.scrollToIndex({
+                index: requestedIndex,
+                animated: false,
+                viewPosition: 0,
+              });
+            } catch {
+              listRef.current?.scrollToOffset({
+                offset: 0,
+                animated: false,
+              });
+              // Android can fail to measure the list before the first
+              // scroll. Do not leave the whole screen hidden in that case.
+              if (shouldRevealRequestedVerseDirectly) {
+                setDeepLinkPositioned(true);
+              }
+            }
+            return;
+          }
+          setDeepLinkPositioned(true);
           listRef.current?.scrollToOffset({
             offset: offsetRef.current,
             animated: false,
-          }),
+          });
+        },
         0,
       );
     } catch (reason) {
@@ -470,10 +542,11 @@ export default function SurahReadingScreen() {
           ? reason.message
           : "Impossible de charger les versets.",
       );
+      setDeepLinkPositioned(true);
     } finally {
       if (verseLoadRequestRef.current === requestId) setLoading(false);
     }
-  }, [surahId]);
+  }, [requestedVerseNumber, shouldRevealRequestedVerseDirectly, surahId]);
 
   useEffect(() => {
     let active = true;
@@ -483,7 +556,7 @@ export default function SurahReadingScreen() {
     ]).then(([savedSettings, position]) => {
       if (!active) return;
       setSettings(savedSettings);
-      if (position?.surahId === surahId) {
+      if (!requestedVerseNumber && position?.surahId === surahId) {
         offsetRef.current = position.scrollOffset ?? 0;
         currentVerseRef.current = position.verseNumber;
       }
@@ -492,7 +565,7 @@ export default function SurahReadingScreen() {
     return () => {
       active = false;
     };
-  }, [loadVerses, surahId]);
+  }, [loadVerses, requestedVerseNumber, surahId]);
 
   useEffect(
     () => () => {
@@ -516,8 +589,12 @@ export default function SurahReadingScreen() {
   const listenToVerse = useCallback(
     async (verse: QuranFoundationVerse) => {
       if (!currentReciter) return;
+      if (loadingVerseKeyRef.current === verse.verseKey) return;
       const player = versePlayer;
-      if (playingVerseKey === verse.verseKey) {
+      if (
+        playingVerseKey === verse.verseKey &&
+        versePlayerStatus.playing
+      ) {
         sessionIdRef.current += 1;
         stopInlineVerse();
         return;
@@ -530,6 +607,41 @@ export default function SurahReadingScreen() {
             activeTiming.audioMode,
           )
         : playerPositionMs;
+      const sameFinishedVerse =
+        activeTiming?.verseKey === verse.verseKey &&
+        activeTiming.reciterId === currentReciter.id &&
+        (versePlayerStatus.didJustFinish ||
+          pausedPositionMs >= activeTiming.endMs);
+      if (sameFinishedVerse) {
+        const requestId = ++sessionIdRef.current;
+        const isCurrentRequest = () => sessionIdRef.current === requestId;
+        const startSeconds =
+          activeTiming.audioMode === "single-verse"
+            ? 0
+            : activeTiming.startMs / 1000;
+        pauseGlobalAudio();
+        if (stopTimerRef.current) clearTimeout(stopTimerRef.current);
+        player.pause();
+        await player.seekTo(startSeconds, 0, 0);
+        const seekConfirmed = await waitForAudioCondition(
+          () => Math.abs(player.currentTime - startSeconds) <= 0.08,
+          isCurrentRequest,
+          2_000,
+        );
+        if (!seekConfirmed || !isCurrentRequest()) return;
+        player.setPlaybackRate(playbackRate);
+        setActiveTiming({ ...activeTiming, requestId });
+        setPlayingVerseKey(verse.verseKey);
+        player.play();
+        stopTimerRef.current = setTimeout(
+          () => stopInlineVerse(requestId, startSeconds),
+          Math.max(
+            1,
+            (activeTiming.endMs - activeTiming.startMs) / playbackRate,
+          ),
+        );
+        return;
+      }
       if (
         activeTiming?.verseKey === verse.verseKey &&
         activeTiming.reciterId === currentReciter.id &&
@@ -544,16 +656,23 @@ export default function SurahReadingScreen() {
         setPlayingVerseKey(verse.verseKey);
         stopTimerRef.current = setTimeout(
           () => {
-            stopInlineVerse(requestId);
+            stopInlineVerse(
+              requestId,
+              activeTiming.audioMode === "single-verse"
+                ? 0
+                : activeTiming.startMs / 1000,
+            );
           },
           Math.max(1, (activeTiming.endMs - pausedPositionMs) / playbackRate),
         );
         return;
       }
-      const requestId = ++sessionIdRef.current;
-      const isCurrentRequest = () => sessionIdRef.current === requestId;
-      pauseGlobalAudio();
-      player.pause();
+      loadingVerseKeyRef.current = verse.verseKey;
+      try {
+        const requestId = ++sessionIdRef.current;
+        const isCurrentRequest = () => sessionIdRef.current === requestId;
+        pauseGlobalAudio();
+        player.pause();
       if (stopTimerRef.current) clearTimeout(stopTimerRef.current);
       setActiveTiming(undefined);
       setActiveRecitationTimeline(null);
@@ -623,8 +742,14 @@ export default function SurahReadingScreen() {
         ? "single-verse"
         : "full-surah";
       setActiveRecitationTimeline({ key: timelineKey, timestamps: [timing] });
+      const verseHadFinished =
+        activeTiming?.verseKey === verse.verseKey &&
+        (versePlayerStatus.didJustFinish ||
+          pausedPositionMs >= activeTiming.endMs);
       const loaded =
-        loadedVerseAudioUrlRef.current === sourceUrl && player.isLoaded
+        loadedVerseAudioUrlRef.current === sourceUrl &&
+        player.isLoaded &&
+        !verseHadFinished
           ? true
           : await replaceAndWaitForAudioSource(
               player,
@@ -654,12 +779,17 @@ export default function SurahReadingScreen() {
       });
       setPlayingVerseKey(verse.verseKey);
       player.play();
-      stopTimerRef.current = setTimeout(
-        () => {
-          stopInlineVerse(requestId);
-        },
-        Math.max(1, (endMs - timestampFromMs) / playbackRate),
-      );
+        stopTimerRef.current = setTimeout(
+          () => {
+            stopInlineVerse(requestId, startSeconds);
+          },
+          Math.max(1, (endMs - timestampFromMs) / playbackRate),
+        );
+      } finally {
+        if (loadingVerseKeyRef.current === verse.verseKey) {
+          loadingVerseKeyRef.current = null;
+        }
+      }
     },
     [
       activeTiming,
@@ -670,6 +800,8 @@ export default function SurahReadingScreen() {
       stopInlineVerse,
       surahId,
       versePlayer,
+      versePlayerStatus.didJustFinish,
+      versePlayerStatus.playing,
     ],
   );
 
@@ -704,7 +836,12 @@ export default function SurahReadingScreen() {
       const requestId = activeTiming.requestId;
       stopTimerRef.current = setTimeout(
         () => {
-          stopInlineVerse(requestId);
+          stopInlineVerse(
+            requestId,
+            activeTiming.audioMode === "single-verse"
+              ? 0
+              : activeTiming.startMs / 1000,
+          );
         },
         Math.max(1, remainingMs / next),
       );
@@ -780,21 +917,29 @@ export default function SurahReadingScreen() {
     if (
       !activeTiming ||
       !playingVerseKey ||
+      !versePlayerStatus.playing ||
       activeTiming.requestId !== sessionIdRef.current
     )
       return;
     const currentMs = getSyncPositionMs(
-      audioPositionMilliseconds(versePlayerStatus.currentTime),
+      audioPositionMilliseconds(versePlayer.currentTime),
       activeTiming.startMs,
       activeTiming.audioMode,
     );
     if (currentMs < activeTiming.endMs) return;
-    stopInlineVerse(activeTiming.requestId);
+    stopInlineVerse(
+      activeTiming.requestId,
+      activeTiming.audioMode === "single-verse"
+        ? 0
+        : activeTiming.startMs / 1000,
+    );
   }, [
     activeTiming,
     playingVerseKey,
     stopInlineVerse,
+    versePlayer,
     versePlayerStatus.currentTime,
+    versePlayerStatus.playing,
   ]);
   const verseShareText = (verse: QuranFoundationVerse) =>
     `${verse.textUthmani}\n\n${sanitizeTranslationText(verse.translation ?? verse.translations?.[0]?.text)}\n— Coran ${verse.verseKey}`;
@@ -998,6 +1143,12 @@ export default function SurahReadingScreen() {
       const first = viewableItems.find((item) => item.item);
       if (first?.item) {
         currentVerseRef.current = getRenderedVerseNumber(first.item);
+        if (
+          shouldRevealRequestedVerseDirectly &&
+          getRenderedVerseNumber(first.item) === requestedVerseNumber
+        ) {
+          setDeepLinkPositioned(true);
+        }
         goalProgressBridge.record({
           metric: "quran_verses_read",
           evidenceId: first.item.verseKey,
@@ -1157,12 +1308,39 @@ export default function SurahReadingScreen() {
             updateCellsBatchingPeriod={40}
             windowSize={7}
             removeClippedSubviews
+            onScrollToIndexFailed={({ averageItemLength, index }) => {
+              listRef.current?.scrollToOffset({
+                offset: averageItemLength * index,
+                animated: false,
+              });
+              setTimeout(() => {
+                try {
+                  listRef.current?.scrollToIndex({
+                    index,
+                    animated: false,
+                    viewPosition: 0,
+                  });
+                } catch {
+                  // Android may fail twice before FlatList finishes measuring.
+                  // Showing the list is safer than leaving the screen stuck.
+                  setDeepLinkPositioned(true);
+                }
+              }, 80);
+            }}
             onViewableItemsChanged={viewability}
             onScroll={(event) => {
               offsetRef.current = event.nativeEvent.contentOffset.y;
             }}
             scrollEventThrottle={250}
+            style={!deepLinkPositioned ? styles.hiddenVerseList : undefined}
           />
+          {!deepLinkPositioned ? (
+            <ActivityIndicator
+              pointerEvents="none"
+              style={StyleSheet.absoluteFill}
+              color={colors.gold}
+            />
+          ) : null}
         </View>
       )}
       {activeVerse ? (
@@ -1333,6 +1511,7 @@ const styles = StyleSheet.create({
   themeActive: { borderWidth: 2, borderColor: colors.gold },
   content: { paddingHorizontal: 20, paddingBottom: 190 },
   verseListContainer: { flex: 1 },
+  hiddenVerseList: { opacity: 0 },
   verse: {
     maxWidth: 760,
     width: "100%",

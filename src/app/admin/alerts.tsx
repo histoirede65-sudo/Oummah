@@ -16,6 +16,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import {
   getAdminAlerts,
   getAdminAlertHealth,
+  markAdminAlertRead,
   refreshAdminAlerts,
   updateAdminAlert,
   type AdminAlert as AdminAlertRow,
@@ -92,6 +93,13 @@ export default function AdminAlertsScreen() {
         ]);
         setRows(nextRows);
         setHealth(nextHealth);
+        if (status === "open") {
+          void Promise.all(
+            nextRows
+              .filter((row) => row.severity === "info")
+              .map((row) => markAdminAlertRead(row.id)),
+          );
+        }
       } catch (error) {
         Alert.alert(
           "Alertes administrateur",

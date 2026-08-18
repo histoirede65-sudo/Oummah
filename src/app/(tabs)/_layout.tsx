@@ -50,8 +50,14 @@ export default function TabLayout() {
   const { t } = useI18n();
   const pathname = usePathname();
   const listenMotion = useRef(new Animated.Value(0)).current;
+  const isListeningRoute = pathname.startsWith('/listen');
 
   useEffect(() => {
+    if (!isListeningRoute) {
+      listenMotion.stopAnimation();
+      listenMotion.setValue(0);
+      return;
+    }
     const loop = Animated.loop(
       Animated.sequence([
         Animated.timing(listenMotion, {
@@ -73,7 +79,7 @@ export default function TabLayout() {
 
     loop.start();
     return () => loop.stop();
-  }, [listenMotion]);
+  }, [isListeningRoute, listenMotion]);
 
   const listenAnimatedStyle = {
     transform: [
@@ -101,7 +107,7 @@ export default function TabLayout() {
   return (
     <Tabs
       backBehavior="history"
-      detachInactiveScreens={false}
+      detachInactiveScreens
       screenOptions={{
         headerShown: false,
         animation: 'shift',
@@ -111,10 +117,12 @@ export default function TabLayout() {
         },
         sceneStyle: styles.scene,
         freezeOnBlur: true,
-        lazy: false,
+        lazy: true,
       }}
       tabBar={({ state, navigation }) => {
-        if (tadabburMode.isActive) return null;
+        if (tadabburMode.isActive) {
+          return null;
+        }
 
         return (
           <View

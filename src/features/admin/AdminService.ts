@@ -73,7 +73,8 @@ async function rpc<T>(name: string, body: Record<string, unknown> = {}): Promise
     throw new Error(detail || "ADMIN_REQUEST_FAILED");
   }
 
-  return (await response.json()) as T;
+  const payload = await response.text();
+  return (payload ? JSON.parse(payload) : undefined) as T;
 }
 
 export async function getAdminDashboard(): Promise<AdminDashboard> {
@@ -259,6 +260,10 @@ export async function getAdminUserCreditHistory(
     adminEmail: row.admin_email,
     createdAt: row.created_at,
   }));
+}
+
+export async function deleteAdminUser(userId: string): Promise<void> {
+  await rpc("admin_delete_user", { p_user_id: userId });
 }
 
 

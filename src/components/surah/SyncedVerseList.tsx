@@ -43,6 +43,7 @@ import {
   getActiveWordTimestamp,
   getSyncPositionMs,
   getWordSyncState,
+  isQuranicPauseMark,
   normalizeVerseTimestamps,
   normalizeWordTimestamps,
 } from "../../features/quran/QuranWordSync";
@@ -55,7 +56,23 @@ import type {
 type SyncedWord = {
   position: number;
   text: string;
+  charTypeName?: string;
+  type?: string;
 };
+
+function isSynchronizableWord(word: NonNullable<QuranFoundationVerse["words"]>[number], text: string) {
+  const charTypeName = word.charTypeName ?? word.char_type_name;
+  const type = typeof (word as { type?: unknown }).type === "string"
+    ? String((word as { type?: unknown }).type).toLowerCase()
+    : "";
+  if (charTypeName && charTypeName !== "word") return false;
+  if (/^(end|pause|sajdah|rub[-_ ]?el[-_ ]?hizb|marker|symbol|annotation)$/i.test(type)) return false;
+  return Boolean(text.trim()) && hasArabicLetter(text) && !isQuranicPauseMark(text.trim());
+}
+
+function hasArabicLetter(value: string) {
+  return /[\u0621-\u064A]/u.test(value);
+}
 
 type SyncedVerse = {
   id: number;
@@ -127,36 +144,54 @@ function verseArabic(verse: QuranFoundationVerse) {
 
 function verseWords(verse: QuranFoundationVerse) {
   const foundationWords = (verse.words ?? []).flatMap((word): SyncedWord[] => {
-    const charType = word.charTypeName ?? word.char_type_name ?? "word";
     const position = Number(
       word.position ?? word.wordPosition ?? word.word_position,
     );
     const text = word.textUthmani ?? word.text_uthmani ?? word.text ?? "";
     if (
-      charType !== "word" ||
       !Number.isFinite(position) ||
       position <= 0 ||
-      !text.trim()
+      !isSynchronizableWord(word, text)
     )
       return [];
-    return [{ position, text: text.trim() }];
+    const sourceWord = word as typeof word & { type?: unknown };
+    return [{
+      position,
+      text: text.trim(),
+      charTypeName: word.charTypeName ?? word.char_type_name,
+      type: typeof sourceWord.type === "string" ? sourceWord.type : undefined,
+    }];
   });
   if (foundationWords.length > 0) return foundationWords;
   return verseArabic(verse)
     .replace(/\s+/g, " ")
     .trim()
     .split(" ")
-    .filter(Boolean)
+    .filter((text) => Boolean(text) && hasArabicLetter(text))
     .map((text, index) => ({ position: index + 1, text }));
 }
 
-function fatihaWords(verse: QuranFoundationVerse) {
-  return verseArabic(verse)
-    .replace(/\s+/g, " ")
-    .trim()
-    .split(" ")
-    .filter(Boolean)
-    .map((text, index) => ({ position: index + 1, text }));
+function verseWordPositions(
+  verse: QuranFoundationVerse,
+  useUnicodeFallback = false,
+) {
+  const positions = new Set<number>();
+  for (const word of verse.words ?? []) {
+    const position = Number(word.position ?? word.wordPosition ?? word.word_position);
+    const text = word.textUthmani ?? word.text_uthmani ?? word.text ?? "";
+    if (isSynchronizableWord(word, text) && Number.isFinite(position) && position > 0) {
+      positions.add(position);
+    }
+  }
+  if (positions.size === 0 && useUnicodeFallback) {
+    verseArabic(verse)
+      .replace(/\s+/g, " ")
+      .trim()
+      .split(" ")
+      .filter(hasArabicLetter)
+      .forEach((_, index) => positions.add(index + 1));
+  }
+  return positions;
 }
 
 function verseFont(verse: QuranFoundationVerse) {
@@ -180,6 +215,7 @@ function verseTransliteration(verse: QuranFoundationVerse) {
 function restoreOpenFinalSegments(
   raw: unknown,
   normalized: readonly WordTimestamp[],
+  validWordPositions: ReadonlyMap<number, ReadonlySet<number>>,
 ): readonly WordTimestamp[] {
   if (!Array.isArray(raw)) return normalized;
   const restored = [...normalized];
@@ -206,7 +242,8 @@ function restoreOpenFinalSegments(
     if (
       !Number.isFinite(wordPosition) ||
       !Number.isFinite(startMs) ||
-      verseEndMs <= startMs
+      verseEndMs <= startMs ||
+      !validWordPositions.get(verseId)?.has(wordPosition)
     )
       return;
     if (
@@ -339,12 +376,22 @@ export default function SyncedVerseList({
     [duration, rawTimestamps],
   );
   const normalizedWordTimestamps = useMemo(
-    () => normalizeWordTimestamps(rawTimestamps, duration),
-    [duration, rawTimestamps],
+    () => normalizeWordTimestamps(rawTimestamps, duration, new Map(
+      verses.map((verse) => [
+        verseNumberFromKey(verseKey(verse)) ?? verse.id,
+        verseWordPositions(verse, surahId === 1),
+      ]),
+    )),
+    [duration, rawTimestamps, surahId, verses],
   );
   const wordTimestamps = useMemo(
-    () => restoreOpenFinalSegments(rawTimestamps, normalizedWordTimestamps),
-    [normalizedWordTimestamps, rawTimestamps],
+    () => restoreOpenFinalSegments(rawTimestamps, normalizedWordTimestamps, new Map(
+      verses.map((verse) => [
+        verseNumberFromKey(verseKey(verse)) ?? verse.id,
+        verseWordPositions(verse, surahId === 1),
+      ]),
+    )),
+    [normalizedWordTimestamps, rawTimestamps, surahId, verses],
   );
 
   const syncedVerses = useMemo<readonly SyncedVerse[]>(() => {
@@ -355,13 +402,13 @@ export default function SyncedVerseList({
       .map((verse) => {
         const id = verseNumberFromKey(verseKey(verse)) ?? verse.id;
         const font = verseFont(verse);
-        const words = surahId === 1 ? fatihaWords(verse) : verseWords(verse);
+        // The API word list already excludes non-recited entries (tajwid marks,
+        // pause markers and other annotations). Keep the same tokenization for
+        // Al-Fatiha instead of splitting its rendered text into synthetic words.
+        const words = verseWords(verse);
         return {
           id,
-          arabic:
-            words.length > 0
-              ? words.map((word) => word.text).join(" ")
-              : clipWords(verseArabic(verse), 9),
+          arabic: verseArabic(verse),
           words,
           pageNumber: font.pageNumber,
           fontFamily: font.fontFamily,
@@ -372,7 +419,7 @@ export default function SyncedVerseList({
         };
       })
       .filter((verse) => verse.arabic.length > 0);
-  }, [surahId, timestamps, verses]);
+  }, [timestamps, verses]);
 
   const tadabburVerses = useMemo<readonly TadabburDisplayVerse[]>(
     () =>
@@ -666,6 +713,7 @@ function VerseModeTabs({
 
 const StableArabicVerse = memo(function StableArabicVerse({
   words,
+  arabic,
   activeWordPosition,
   lastReadWordPosition,
   fontFamily,
@@ -673,6 +721,7 @@ const StableArabicVerse = memo(function StableArabicVerse({
   preferredArabicSize,
 }: {
   words: readonly SyncedWord[];
+  arabic: string;
   activeWordPosition: number | null;
   lastReadWordPosition: number | null;
   fontFamily: string;
@@ -681,6 +730,8 @@ const StableArabicVerse = memo(function StableArabicVerse({
 }) {
   const metrics = getArabicReadingMetrics(screenWidth, preferredArabicSize);
   const arabicLineHeight = metrics.lineHeight + 4;
+  const unicodeWords = arabic.replace(/\s+/g, " ").trim().split(" ").filter(Boolean);
+  let syncWordIndex = 0;
 
   return (
     <QuranArabicText
@@ -688,20 +739,25 @@ const StableArabicVerse = memo(function StableArabicVerse({
       preferredSize={preferredArabicSize}
       style={[styles.stableArabicText, { lineHeight: arabicLineHeight }]}
     >
-      {words.map((word, index) => (
-        <Fragment key={`${word.position}-${word.text}`}>
+      {unicodeWords.map((text, index) => {
+        const isSynchronizable = hasArabicLetter(text) && !isQuranicPauseMark(text);
+        const syncWord = isSynchronizable ? words[syncWordIndex++] : undefined;
+        return (
+        <Fragment key={`${index}-${text}`}>
           <QuranWordHighlight
             fontFamily={fontFamily}
-            isActive={word.position === activeWordPosition}
+            isActive={syncWord?.position === activeWordPosition}
             isRead={
               lastReadWordPosition !== null &&
-              word.position <= lastReadWordPosition
+              syncWord !== undefined &&
+              syncWord.position <= lastReadWordPosition
             }
-            text={word.text}
+            text={text}
           />
-          {index < words.length - 1 ? " " : null}
+          {index < unicodeWords.length - 1 ? " " : null}
         </Fragment>
-      ))}
+        );
+      })}
     </QuranArabicText>
   );
 });
@@ -784,6 +840,7 @@ const SyncedVerseRow = memo(
           <>
             <StableArabicVerse
               words={stableWords}
+              arabic={verse.arabic}
               activeWordPosition={activeWordPosition}
               lastReadWordPosition={isActive ? lastReadWordPosition : null}
               fontFamily={verse.fontFamily}

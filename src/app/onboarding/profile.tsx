@@ -355,6 +355,7 @@ export default function ProfileOnboardingScreen() {
                 autoCapitalize="words"
                 maxLength={50}
                 onChangeText={setDisplayName}
+                onPressIn={(event) => event.stopPropagation()}
                 placeholder="Comment souhaitez-vous être appelé ?"
                 placeholderTextColor={colors.textMuted}
                 returnKeyType="done"

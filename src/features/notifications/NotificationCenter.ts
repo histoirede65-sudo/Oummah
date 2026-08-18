@@ -84,6 +84,153 @@ const READ_IDS_KEY = "oumma:notification-center-read:v1";
 const SCHEDULED_IDS_KEY = "oumma:notification-center-scheduled:v1";
 const NOTIFICATION_OWNER = "oummah-notification-center";
 const LEGACY_PRAYER_TITLES = ["fajr", "dhuhr", "dohr", "asr", "maghrib", "isha"] as const;
+const DAILY_VERSE_SELECTION = [
+  { surahId: 1, verse: 5 },
+  { surahId: 2, verse: 286 },
+  { surahId: 2, verse: 45 },
+  { surahId: 2, verse: 153 },
+  { surahId: 2, verse: 186 },
+  { surahId: 2, verse: 201 },
+  { surahId: 2, verse: 255 },
+  { surahId: 2, verse: 261 },
+  { surahId: 3, verse: 139 },
+  { surahId: 3, verse: 8 },
+  { surahId: 3, verse: 26 },
+  { surahId: 3, verse: 103 },
+  { surahId: 3, verse: 159 },
+  { surahId: 3, verse: 173 },
+  { surahId: 3, verse: 200 },
+  { surahId: 4, verse: 110 },
+  { surahId: 4, verse: 36 },
+  { surahId: 4, verse: 40 },
+  { surahId: 4, verse: 86 },
+  { surahId: 5, verse: 8 },
+  { surahId: 5, verse: 2 },
+  { surahId: 5, verse: 32 },
+  { surahId: 5, verse: 100 },
+  { surahId: 6, verse: 160 },
+  { surahId: 6, verse: 54 },
+  { surahId: 6, verse: 59 },
+  { surahId: 6, verse: 162 },
+  { surahId: 7, verse: 56 },
+  { surahId: 7, verse: 31 },
+  { surahId: 7, verse: 156 },
+  { surahId: 8, verse: 46 },
+  { surahId: 8, verse: 2 },
+  { surahId: 9, verse: 51 },
+  { surahId: 9, verse: 40 },
+  { surahId: 9, verse: 71 },
+  { surahId: 10, verse: 62 },
+  { surahId: 10, verse: 57 },
+  { surahId: 11, verse: 115 },
+  { surahId: 11, verse: 6 },
+  { surahId: 12, verse: 87 },
+  { surahId: 12, verse: 18 },
+  { surahId: 12, verse: 86 },
+  { surahId: 12, verse: 90 },
+  { surahId: 12, verse: 92 },
+  { surahId: 13, verse: 28 },
+  { surahId: 13, verse: 11 },
+  { surahId: 14, verse: 7 },
+  { surahId: 14, verse: 40 },
+  { surahId: 15, verse: 49 },
+  { surahId: 16, verse: 97 },
+  { surahId: 16, verse: 90 },
+  { surahId: 17, verse: 70 },
+  { surahId: 17, verse: 23 },
+  { surahId: 18, verse: 10 },
+  { surahId: 18, verse: 46 },
+  { surahId: 19, verse: 96 },
+  { surahId: 20, verse: 46 },
+  { surahId: 20, verse: 114 },
+  { surahId: 21, verse: 83 },
+  { surahId: 21, verse: 87 },
+  { surahId: 23, verse: 1 },
+  { surahId: 24, verse: 35 },
+  { surahId: 25, verse: 63 },
+  { surahId: 26, verse: 62 },
+  { surahId: 27, verse: 19 },
+  { surahId: 28, verse: 24 },
+  { surahId: 29, verse: 69 },
+  { surahId: 30, verse: 21 },
+  { surahId: 31, verse: 17 },
+  { surahId: 33, verse: 35 },
+  { surahId: 35, verse: 34 },
+  { surahId: 36, verse: 58 },
+  { surahId: 39, verse: 53 },
+  { surahId: 40, verse: 60 },
+  { surahId: 41, verse: 30 },
+  { surahId: 47, verse: 7 },
+  { surahId: 48, verse: 4 },
+  { surahId: 49, verse: 13 },
+  { surahId: 50, verse: 16 },
+  { surahId: 53, verse: 39 },
+  { surahId: 55, verse: 60 },
+  { surahId: 57, verse: 4 },
+  { surahId: 58, verse: 11 },
+  { surahId: 59, verse: 18 },
+  { surahId: 64, verse: 16 },
+  { surahId: 65, verse: 3 },
+  { surahId: 67, verse: 2 },
+  { surahId: 68, verse: 4 },
+  { surahId: 73, verse: 8 },
+  { surahId: 89, verse: 27 },
+  { surahId: 90, verse: 17 },
+  { surahId: 91, verse: 9 },
+  { surahId: 92, verse: 5 },
+  { surahId: 93, verse: 3 },
+  { surahId: 94, verse: 5 },
+  { surahId: 95, verse: 4 },
+  { surahId: 96, verse: 1 },
+  { surahId: 97, verse: 3 },
+  { surahId: 98, verse: 7 },
+  { surahId: 103, verse: 3 },
+] as const;
+
+function versesAreConsecutive(
+  first: (typeof DAILY_VERSE_SELECTION)[number],
+  second: (typeof DAILY_VERSE_SELECTION)[number],
+) {
+  return (
+    first.surahId === second.surahId &&
+    Math.abs(first.verse - second.verse) <= 1
+  );
+}
+
+function dailyVerseIndex(dayNumber: number) {
+  let value = (dayNumber ^ 0x9e3779b9) >>> 0;
+  value = Math.imul(value ^ (value >>> 16), 0x21f0aaad) >>> 0;
+  value = Math.imul(value ^ (value >>> 15), 0x735a2d97) >>> 0;
+  return (value ^ (value >>> 15)) >>> 0;
+}
+
+export function verseOfDay(date = new Date()) {
+  const dayNumber = Math.floor(Date.UTC(
+    date.getFullYear(),
+    date.getMonth(),
+    date.getDate(),
+  ) / 86_400_000);
+  const todayIndex = dailyVerseIndex(dayNumber) % DAILY_VERSE_SELECTION.length;
+  const yesterdayIndex =
+    dailyVerseIndex(dayNumber - 1) % DAILY_VERSE_SELECTION.length;
+  const yesterdayVerse = DAILY_VERSE_SELECTION[yesterdayIndex];
+  let selectedIndex = todayIndex;
+  while (
+    versesAreConsecutive(
+      DAILY_VERSE_SELECTION[selectedIndex],
+      yesterdayVerse,
+    )
+  ) {
+    selectedIndex = (selectedIndex + 1) % DAILY_VERSE_SELECTION.length;
+  }
+
+  return DAILY_VERSE_SELECTION[selectedIndex];
+}
+
+export function verseOfDayRoute(date = new Date()) {
+  const dailyVerse = verseOfDay(date);
+  return `/surah/${dailyVerse.surahId}?verse=${dailyVerse.verse}&direct=1`;
+}
 
 function normalizedNotificationText(value: unknown) {
   return typeof value === "string" ? value.toLocaleLowerCase("fr-FR") : "";
@@ -215,6 +362,8 @@ export function buildNotificationCenterItems({
   const items: NotificationCenterItem[] = [];
   const day = localDateKey(now);
   const enabled = preferences.reminders;
+  const dailyVerseRoute = verseOfDayRoute(now);
+  const dailyVerseReference = dailyVerseRoute.match(/surah\/(\d+)\?verse=(\d+)/);
 
 
   const timedItems: ReadonlyArray<{
@@ -231,7 +380,7 @@ export function buildNotificationCenterItems({
     { id: "morning-dua", time: "07:00", title: "Dou‘as du matin", body: "Commencez la journée avec les adhkār authentiques du matin.", route: "/dua?section=morning", category: "dua", icon: "sunny-outline", accent: "#F4C95D" },
     { id: "leave-home-dua", time: "08:00", title: "Avant de sortir", body: "Pensez à l’invocation en sortant de chez vous.", route: "/dua?section=home&focus=leave", category: "dua", icon: "exit-outline", accent: "#E3A85F" },
     { id: "before-meal-dua", time: "12:15", title: "Avant de manger", body: "Un rappel simple : prononcez le nom d’Allah avant votre repas.", route: "/dua?section=food&focus=before-meal", category: "dua", icon: "restaurant-outline", accent: "#CF9561" },
-    { id: "verse-of-day", time: "13:00", title: "Votre verset du jour vous attend", body: "Quelques minutes de lecture peuvent éclairer toute votre journée.", route: "/surah/36?verse=1", category: "inspiration", icon: "book-outline", accent: "#A878D0" },
+    { id: "verse-of-day", time: "13:00", title: "Votre verset du jour vous attend", body: dailyVerseReference ? `Découvrez aujourd’hui le verset ${dailyVerseReference[1]}:${dailyVerseReference[2]}.` : "Quelques minutes de lecture peuvent éclairer toute votre journée.", route: dailyVerseRoute, category: "inspiration", icon: "book-outline", accent: "#A878D0" },
     { id: "hifz", time: "18:00", title: "Objectif Hifz", body: "Reprenez votre mémorisation là où vous l’avez laissée.", route: "/hifz", category: "learning", icon: "school-outline", accent: "#6BBCA8" },
     { id: "enter-home-dua", time: "18:30", title: "En rentrant chez vous", body: "Pensez à l’invocation en entrant dans votre foyer.", route: "/dua?section=home&focus=enter", category: "dua", icon: "home-outline", accent: "#D8A767" },
     { id: "evening-dua", time: "20:30", title: "Dou‘as du soir", body: "Prenez un moment pour les adhkār authentiques du soir.", route: "/dua?section=evening", category: "dua", icon: "moon-outline", accent: "#8D78CB" },
@@ -378,7 +527,7 @@ async function syncNotificationCenterScheduleInternal(
           reminder.description,
           preferences.mode,
           reminder.id === "verse-of-day"
-            ? "/surah/36?verse=1"
+            ? "/verse-of-day"
             : reminder.id === "hadith-of-day"
               ? "/hadiths?open=daily"
               : reminder.id === "hifz"

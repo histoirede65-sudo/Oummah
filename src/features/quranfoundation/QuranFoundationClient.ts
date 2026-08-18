@@ -13,7 +13,7 @@ const SUPABASE_URL = process.env.EXPO_PUBLIC_SUPABASE_URL!;
 
 const ANON_KEY = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY!;
 
-const CACHE_PREFIX = "quran-foundation:v1";
+const CACHE_PREFIX = "quran-foundation:v2";
 const RETRY_DELAY_MS = 15_000;
 
 function cacheKey(kind: "verses" | "recitation", identity: string) {
@@ -323,7 +323,7 @@ export class QuranFoundationClient {
       translation: frenchTranslations.get(verse.verseKey) ?? verse.translation,
     }));
     console.info(
-      `[verses] after mapping chapter=${chapter} mapped=${mapped.length} withText=${mapped.filter((verse) => verse.textUthmani.length > 0).length}`,
+      `[verses] after mapping chapter=${chapter} mapped=${translated.length} withText=${translated.filter((verse) => verse.textUthmani.length > 0).length}`,
     );
     return translated;
   }

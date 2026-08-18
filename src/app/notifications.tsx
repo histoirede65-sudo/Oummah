@@ -62,6 +62,13 @@ const MODES: ReadonlyArray<{ id: CenterAlertMode; label: string; icon: "volume-h
   { id: "silent", label: "Silencieux", icon: "notifications-outline" },
 ];
 
+function notificationTimeValue(timeLabel: string) {
+  const [hours, minutes] = timeLabel.split(":").map(Number);
+  return Number.isFinite(hours) && Number.isFinite(minutes)
+    ? hours * 60 + minutes
+    : -1;
+}
+
 export default function NotificationsScreen() {
   const [preferences, setPreferences] = useState<NotificationCenterPreferences>(
     DEFAULT_NOTIFICATION_CENTER_PREFERENCES,
@@ -133,7 +140,14 @@ export default function NotificationsScreen() {
       }),
     [hifzState, mosque?.name, preferences, schedule],
   );
-  const visibleItems = filter === "all" ? items : items.filter((item) => item.category === filter);
+  const visibleItems = useMemo(() => {
+    const filtered = filter === "all"
+      ? items
+      : items.filter((item) => item.category === filter);
+    return [...filtered].sort(
+      (left, right) => notificationTimeValue(right.timeLabel) - notificationTimeValue(left.timeLabel),
+    );
+  }, [filter, items]);
   const unreadCount = items.filter((item) => !readIds.includes(item.id)).length;
 
   const updatePreferences = useCallback(
@@ -272,10 +286,14 @@ export default function NotificationsScreen() {
                 <Pressable
                   key={item.id}
                   onPress={() => openItem(item)}
-                  style={({ pressed }) => [styles.itemCard, pressed && styles.pressed]}
+                  style={({ pressed }) => [
+                    styles.itemCard,
+                    unread && styles.itemCardUnread,
+                    pressed && styles.pressed,
+                  ]}
                 >
-                  <View style={[styles.itemAccent, { backgroundColor: item.accent }]} />
-                  <View style={[styles.itemIcon, { backgroundColor: `${item.accent}20` }]}>
+                  <View style={[styles.itemAccent, unread && styles.itemAccentUnread, { backgroundColor: item.accent }]} />
+                  <View style={[styles.itemIcon, unread && styles.itemIconUnread, { backgroundColor: `${item.accent}20` }]}>
                     <Ionicons
                       name={item.icon as keyof typeof Ionicons.glyphMap}
                       size={20}
@@ -284,11 +302,11 @@ export default function NotificationsScreen() {
                   </View>
                   <View style={styles.itemCopy}>
                     <View style={styles.itemTitleRow}>
-                      <Text style={styles.itemTitle}>{item.title}</Text>
-                      {unread ? <View style={styles.unreadDot} /> : null}
+                      <Text style={[styles.itemTitle, unread && styles.itemTitleUnread]}>{item.title}</Text>
+                      {unread ? <Text style={styles.unreadBadge}>NOUVEAU</Text> : null}
                     </View>
-                    <Text style={styles.itemBody}>{item.body}</Text>
-                    <Text style={styles.itemTime}>{item.timeLabel}</Text>
+                    <Text style={[styles.itemBody, unread && styles.itemBodyUnread]}>{item.body}</Text>
+                    <Text style={[styles.itemTime, unread && styles.itemTimeUnread]}>{item.timeLabel}</Text>
                   </View>
                   <Ionicons name="chevron-forward" size={16} color="rgba(255,255,255,0.28)" />
                 </Pressable>
@@ -514,14 +532,20 @@ const styles = StyleSheet.create({
   adminAnnouncementAction: { marginTop: 6, color: "#F2BE55", fontSize: 9.5, fontWeight: "800" },
   feed: { gap: 8 },
   itemCard: { minHeight: 91, overflow: "hidden", padding: 12, flexDirection: "row", alignItems: "center", borderRadius: 20, borderWidth: 1, borderColor: "rgba(255,255,255,0.075)", backgroundColor: "rgba(22,20,29,0.84)" },
+  itemCardUnread: { borderColor: "rgba(242,190,85,0.66)", borderWidth: 1.5, backgroundColor: "rgba(65,43,31,0.93)", shadowColor: "#F2B53D", shadowOffset: { width: 0, height: 3 }, shadowOpacity: 0.18, shadowRadius: 9, elevation: 4 },
   itemAccent: { position: "absolute", top: 16, bottom: 16, left: 0, width: 3, borderTopRightRadius: 3, borderBottomRightRadius: 3 },
+  itemAccentUnread: { top: 10, bottom: 10, width: 5, borderTopRightRadius: 4, borderBottomRightRadius: 4 },
   itemIcon: { width: 42, height: 42, marginRight: 11, alignItems: "center", justifyContent: "center", borderRadius: 14 },
+  itemIconUnread: { borderWidth: 1, borderColor: "rgba(255,234,179,0.48)" },
   itemCopy: { flex: 1, paddingRight: 7 },
   itemTitleRow: { flexDirection: "row", alignItems: "center" },
   itemTitle: { flexShrink: 1, color: "#FFF7EE", fontFamily: typography.serifSemibold, fontSize: 14.5 },
-  unreadDot: { width: 6, height: 6, marginLeft: 7, borderRadius: 3, backgroundColor: "#F2B53D" },
+  itemTitleUnread: { color: "#FFF9E9", fontSize: 15.5 },
+  unreadBadge: { marginLeft: 7, paddingHorizontal: 6, paddingVertical: 3, borderRadius: 6, overflow: "hidden", color: "#20160F", backgroundColor: "#F2B53D", fontFamily: typography.sans, fontSize: 7.5, fontWeight: "900", letterSpacing: 0.6 },
   itemBody: { marginTop: 3, color: "rgba(229,218,226,0.63)", fontFamily: typography.sans, fontSize: 10.5, lineHeight: 14 },
+  itemBodyUnread: { color: "rgba(255,245,235,0.82)" },
   itemTime: { marginTop: 4, color: "rgba(242,190,85,0.66)", fontFamily: typography.sans, fontSize: 9, fontWeight: "700" },
+  itemTimeUnread: { color: "#FFDA7E", fontSize: 9.5 },
   pressed: { opacity: 0.7, transform: [{ scale: 0.992 }] },
   emptyCard: { minHeight: 180, alignItems: "center", justifyContent: "center", borderRadius: 22, borderWidth: 1, borderColor: "rgba(255,255,255,0.07)", backgroundColor: "rgba(255,255,255,0.03)" },
   emptyTitle: { marginTop: 10, color: "#FFF7EE", fontFamily: typography.serifSemibold, fontSize: 17 },

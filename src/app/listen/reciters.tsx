@@ -73,11 +73,11 @@ export default function RecitersCatalogScreen() {
         pathname: "/listen/reciter/[reciterId]",
         params: {
           reciterId: reciter.id,
-          returnTo: "/listen/reciters",
+          returnTo: returnTo || "/listen/reciters",
         },
       });
     },
-    [setCurrentReciter],
+    [returnTo, setCurrentReciter],
   );
 
   const handleResumeListening = useCallback(async () => {

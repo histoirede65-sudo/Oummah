@@ -300,8 +300,17 @@ export default function HifzSessionScreen() {
       !screenFocused.current ||
       !verseAudioStatus.didJustFinish ||
       repeatsRemaining.current <= 0
-    )
+    ) {
+      if (screenFocused.current && verseAudioStatus.didJustFinish) {
+        // Never leave a full-surah source at its end: a later Play must
+        // restart only the currently displayed verse.
+        try {
+          versePlayer.pause();
+          void versePlayer.seekTo(0).catch(() => undefined);
+        } catch {}
+      }
       return;
+    }
     const requestId = audioRequestId.current;
     repeatsRemaining.current -= 1;
     const timer = setTimeout(() => {
@@ -469,7 +478,10 @@ export default function HifzSessionScreen() {
             if (!screenFocused.current || requestId !== audioRequestId.current)
               return;
             versePlayer.pause();
-            if (repeatsRemaining.current <= 0) return;
+            if (repeatsRemaining.current <= 0) {
+              void versePlayer.seekTo(0).catch(() => undefined);
+              return;
+            }
             repeatsRemaining.current -= 1;
             clipTimer.current = setTimeout(playClip, REPEAT_GAP_MS);
           },

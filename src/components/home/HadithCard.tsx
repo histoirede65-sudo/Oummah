@@ -10,8 +10,19 @@ import type { Hadith } from "../../features/hadith-explorer/domain/Hadith";
 import { colors } from "../../theme/colors";
 import { typography } from "../../theme/typography";
 
+function getHadithPreview(text: string) {
+  const frenchQuotedContent = text.match(/«\s*([^»]+?)\s*»/s)?.[1]?.trim();
+  if (frenchQuotedContent) return frenchQuotedContent;
+  const straightQuotedContent = text.match(/"\s*([^"]+?)\s*"/s)?.[1]?.trim();
+  return straightQuotedContent || text;
+}
+
 export default function HadithCard() {
   const [daily, setDaily] = useState<Hadith | null>(null);
+  const rawHadithText = daily?.french ?? "";
+  const previewHadithText = rawHadithText
+    ? getHadithPreview(rawHadithText)
+    : "Chargement du hadith du jour…";
 
   const loadDailyHadith = useCallback(async () => {
     try {
@@ -78,7 +89,7 @@ export default function HadithCard() {
         <Text style={styles.title}>Hadith du jour</Text>
       </View>
       <Text numberOfLines={3} style={styles.bodyText}>
-        {daily?.french || "Chargement du hadith du jour…"}
+        {previewHadithText}
       </Text>
       <Text numberOfLines={1} style={styles.reference}>
         {daily?.reference || ""}

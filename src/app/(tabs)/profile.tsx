@@ -14,7 +14,7 @@ import {
   TextInput,
   View,
 } from "react-native";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { colors } from "../../theme/colors";
@@ -28,6 +28,11 @@ import {
   SupabaseAuthSession,
 } from "../../features/auth/SupabaseAuthService";
 import { isOummahAdminSession } from "../../features/auth/AdminAccess";
+import {
+  createProfileDraft,
+  getCurrentUserProfile,
+  updateProfile,
+} from "../../features/profile/UserProfileRepository";
 
 const LOCAL_DATA = [
   { icon: "trending-up-outline", label: "Progression" },
@@ -45,14 +50,24 @@ export default function ProfileScreen() {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [displayName, setDisplayName] = useState("");
+  const [nameDraft, setNameDraft] = useState("");
+  const [nameEditorOpen, setNameEditorOpen] = useState(false);
+  const [savingName, setSavingName] = useState(false);
   const isAdmin = isOummahAdminSession(session);
 
   useFocusEffect(
     useCallback(() => {
       let active = true;
       getValidSession()
-        .then((nextSession) => {
-          if (active) setSession(nextSession);
+        .then(async (nextSession) => {
+          const profile = nextSession
+            ? await getCurrentUserProfile().catch(() => null)
+            : null;
+          if (active) {
+            setSession(nextSession);
+            setDisplayName(profile?.displayName?.trim() ?? "");
+          }
         })
         .catch(() => {
           if (active) setSession(null);
@@ -67,6 +82,30 @@ export default function ProfileScreen() {
     setAuthMode(mode);
     setPassword("");
     setAuthOpen(true);
+  };
+
+  const openNameEditor = () => {
+    setNameDraft(displayName);
+    setNameEditorOpen(true);
+  };
+
+  const saveDisplayName = async () => {
+    const nextName = nameDraft.trim();
+    if (!session || !nextName) {
+      Alert.alert("Prénom", "Indiquez le prénom ou le pseudonyme à afficher.");
+      return;
+    }
+    setSavingName(true);
+    try {
+      await createProfileDraft(session.user.id);
+      const profile = await updateProfile(session.user.id, { displayName: nextName });
+      setDisplayName(profile.displayName?.trim() ?? nextName);
+      setNameEditorOpen(false);
+    } catch {
+      Alert.alert("Modification impossible", "Le prénom n’a pas pu être enregistré.");
+    } finally {
+      setSavingName(false);
+    }
   };
 
   const authenticateWithPassword = async () => {
@@ -102,7 +141,7 @@ export default function ProfileScreen() {
 
       setSession(nextSession);
       if (authMode === "signup") {
-        router.replace({ pathname: "/onboarding/daily-goals", params: { fresh: "1" } });
+        router.replace("/onboarding/profile");
         return;
       }
       Alert.alert(
@@ -164,33 +203,62 @@ export default function ProfileScreen() {
 
             <View style={styles.profileCopy}>
               <Text style={styles.profileTitle}>
-                {session ? "Profil OUMMAH" : "Sans compte"}
+                {session
+                  ? displayName
+                    ? `Salam, ${displayName}`
+                    : "Salam"
+                  : "Sans compte"}
               </Text>
               <Text style={styles.profileSubtitle}>
                 {session?.user.email ?? "Profil local"}
               </Text>
             </View>
 
-            <View style={[styles.activeBadge, isAdmin && styles.adminBadge]}>
-              <View style={[styles.activeDot, isAdmin && styles.adminDot]} />
-              <Text style={styles.activeText}>{isAdmin ? "ADMIN" : "ACTIF"}</Text>
-            </View>
+            {session ? (
+              <Pressable
+                accessibilityLabel="Modifier mon prénom"
+                accessibilityRole="button"
+                onPress={openNameEditor}
+              >
+                <Ionicons name="chevron-forward" size={20} color={colors.goldLight} />
+              </Pressable>
+            ) : (
+              <View style={styles.activeBadge}>
+                <View style={styles.activeDot} />
+                <Text style={styles.activeText}>ACTIF</Text>
+              </View>
+            )}
           </View>
 
           <View style={styles.divider} />
 
-          <View style={styles.localStatusRow}>
-            <Ionicons
-              name="phone-portrait-outline"
-              size={18}
-              color={colors.goldLight}
-            />
-            <Text style={styles.localStatusText}>
-              {session
-                ? "Votre profil est connecté et protégé par Supabase."
-                : "Vos données sont enregistrées sur cet appareil."}
-            </Text>
-          </View>
+          {session ? (
+            <Pressable
+              accessibilityRole="button"
+              onPress={openNameEditor}
+              style={styles.localStatusRow}
+            >
+              <Ionicons name="pencil-outline" size={18} color={colors.goldLight} />
+              <Text style={styles.localStatusText}>
+                {displayName ? "Profil OUMMAH" : "Ajouter mon prénom"}
+              </Text>
+              <View style={[styles.activeBadge, isAdmin && styles.adminBadge]}>
+                <View style={[styles.activeDot, isAdmin && styles.adminDot]} />
+                <Text style={styles.activeText}>{isAdmin ? "ADMIN" : "ACTIF"}</Text>
+              </View>
+            </Pressable>
+          ) : (
+            <View style={styles.localStatusRow}>
+              <Ionicons
+                name="phone-portrait-outline"
+                size={18}
+                color={colors.goldLight}
+              />
+              <Text style={styles.localStatusText}>
+                Vos données sont enregistrées sur cet appareil.
+              </Text>
+            </View>
+          )}
         </LinearGradient>
 
 
@@ -313,6 +381,62 @@ export default function ProfileScreen() {
           </View>
         )}
       </ScrollView>
+
+      <Modal
+        visible={nameEditorOpen}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setNameEditorOpen(false)}
+      >
+        <KeyboardAvoidingView
+          behavior={Platform.OS === "ios" ? "padding" : undefined}
+          style={styles.modalBackdrop}
+        >
+          <Pressable
+            style={StyleSheet.absoluteFill}
+            onPress={() => !savingName && setNameEditorOpen(false)}
+          />
+          <View style={styles.authCard}>
+            <View style={styles.authHeader}>
+              <View>
+                <Text style={styles.authEyebrow}>MON PROFIL</Text>
+                <Text style={styles.authTitle}>Comment vous appeler ?</Text>
+              </View>
+              <Pressable
+                disabled={savingName}
+                onPress={() => setNameEditorOpen(false)}
+                style={styles.closeButton}
+              >
+                <Ionicons name="close" size={20} color={colors.textSecondary} />
+              </Pressable>
+            </View>
+            <TextInput
+              autoCapitalize="words"
+              editable={!savingName}
+              maxLength={50}
+              onChangeText={setNameDraft}
+              onSubmitEditing={() => void saveDisplayName()}
+              placeholder="Votre prénom ou pseudonyme"
+              placeholderTextColor={colors.textMuted}
+              returnKeyType="done"
+              style={styles.authInput}
+              value={nameDraft}
+            />
+            <Pressable
+              accessibilityRole="button"
+              disabled={savingName}
+              onPress={() => void saveDisplayName()}
+              style={styles.authButton}
+            >
+              {savingName ? (
+                <ActivityIndicator color="#25152B" />
+              ) : (
+                <Text style={styles.authButtonText}>Enregistrer</Text>
+              )}
+            </Pressable>
+          </View>
+        </KeyboardAvoidingView>
+      </Modal>
 
       <Modal
         visible={authOpen}

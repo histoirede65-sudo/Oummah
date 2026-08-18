@@ -111,12 +111,14 @@ export default function DalilCard({ onPromptFocus }: DalilCardProps) {
           duration: 1600,
           easing: Easing.inOut(Easing.sin),
           useNativeDriver: true,
+          isInteraction: false,
         }),
         Animated.timing(float, {
           toValue: 0,
           duration: 1600,
           easing: Easing.inOut(Easing.sin),
           useNativeDriver: true,
+          isInteraction: false,
         }),
       ]),
     );
@@ -195,12 +197,8 @@ export default function DalilCard({ onPromptFocus }: DalilCardProps) {
     );
 
     floatingAnimation.start();
-    gestureAnimation.start();
-    glowAnimation.start();
     return () => {
       floatingAnimation.stop();
-      gestureAnimation.stop();
-      glowAnimation.stop();
     };
     }, [float, gestureScale, gestureTilt, gestureX, gestureY, glowPulse]),
   );
@@ -236,7 +234,7 @@ export default function DalilCard({ onPromptFocus }: DalilCardProps) {
           return;
         }
 
-        schedule(animate, 65);
+        schedule(animate, 125);
         return;
       }
 
@@ -250,7 +248,7 @@ export default function DalilCard({ onPromptFocus }: DalilCardProps) {
         return;
       }
 
-      schedule(animate, 35);
+      schedule(animate, 80);
     };
 
     schedule(animate, 500);

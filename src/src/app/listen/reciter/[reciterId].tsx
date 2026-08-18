@@ -218,7 +218,6 @@ export default function ReciterDetailScreen() {
                   <View style={styles.portraitFrame}>
                     <ReciterAvatar reciter={reciter} size={150} />
                   </View>
-
                   <Text numberOfLines={2} style={styles.name}>
                     {reciter.name}
                   </Text>
@@ -248,6 +247,7 @@ export default function ReciterDetailScreen() {
                       onPress={playRandom}
                     />
                   </View>
+
                 </LinearGradient>
 
                 <View style={styles.storageCard}>

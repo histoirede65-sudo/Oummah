@@ -18,6 +18,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import {
   adjustAdminUserCredits,
+  deleteAdminUser,
   getAdminUserCreditHistory,
   getAdminUserDetail,
   type AdminUserCreditAdjustment,
@@ -168,6 +169,38 @@ export default function AdminUserDetailScreen() {
     );
   };
 
+  const removeUser = () => {
+    if (!userId || saving || !user) return;
+
+    Alert.alert(
+      "Supprimer définitivement cet utilisateur ?",
+      `Le compte ${user.email} et ses données liées seront supprimés. Cette action est irréversible.`,
+      [
+        { text: "Annuler", style: "cancel" },
+        {
+          text: "Supprimer définitivement",
+          style: "destructive",
+          onPress: async () => {
+            setSaving(true);
+            try {
+              await deleteAdminUser(userId);
+              Alert.alert("Utilisateur supprimé", "Le compte a été supprimé.", [
+                { text: "OK", onPress: () => router.replace("/admin") },
+              ]);
+            } catch (error) {
+              Alert.alert(
+                "Suppression impossible",
+                error instanceof Error ? error.message : "Réessayez.",
+              );
+            } finally {
+              setSaving(false);
+            }
+          },
+        },
+      ],
+    );
+  };
+
   return (
     <SafeAreaView style={styles.safeArea} edges={["top"]}>
       <KeyboardAvoidingView
@@ -224,6 +257,15 @@ export default function AdminUserDetailScreen() {
                 </Text>
               </View>
             </View>
+
+            <Pressable
+              disabled={saving}
+              onPress={removeUser}
+              style={[styles.deleteButton, saving && styles.disabled]}
+            >
+              <Ionicons name="trash-outline" size={18} color="#F28B82" />
+              <Text style={styles.deleteButtonText}>Supprimer définitivement</Text>
+            </Pressable>
 
             <View style={styles.metrics}>
               <View style={styles.metric}>
@@ -506,6 +548,23 @@ const styles = StyleSheet.create({
   identityCopy: {
     flex: 1,
     marginLeft: 13,
+  },
+  deleteButton: {
+    minHeight: 48,
+    marginTop: 11,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 8,
+    borderRadius: 14,
+    borderWidth: 1,
+    borderColor: "rgba(242,139,130,0.55)",
+    backgroundColor: "rgba(242,139,130,0.08)",
+  },
+  deleteButtonText: {
+    color: "#F28B82",
+    fontSize: 12,
+    fontWeight: "800",
   },
   email: {
     color: colors.text,

@@ -23,6 +23,12 @@ export type WordTimestamp = {
   endMs: number;
 };
 
+export type ValidWordPositions = ReadonlyMap<number, ReadonlySet<number>>;
+
+export function isQuranicPauseMark(value: string) {
+  return /^[\u06D6-\u06ED]+$/u.test(value);
+}
+
 function verseNumberFromKey(verseKey?: string) {
   const value = Number(verseKey?.split(':')[1]);
   return Number.isFinite(value) && value > 0 ? value : null;
@@ -74,7 +80,11 @@ export function normalizeVerseTimestamps(raw: unknown, duration: number): readon
     .sort((left, right) => left.startSeconds - right.startSeconds);
 }
 
-export function normalizeWordTimestamps(raw: unknown, duration: number): readonly WordTimestamp[] {
+export function normalizeWordTimestamps(
+  raw: unknown,
+  duration: number,
+  validWordPositions?: ValidWordPositions,
+): readonly WordTimestamp[] {
   if (!Array.isArray(raw)) return [];
   return raw.flatMap((item): WordTimestamp[] => {
     if (!item || typeof item !== 'object') return [];
@@ -88,6 +98,7 @@ export function normalizeWordTimestamps(raw: unknown, duration: number): readonl
           const start = Number(child[1]);
           const end = Number(child[2]);
           if (!Number.isFinite(parentVerseId) || parentVerseId <= 0 || !Number.isFinite(wordPosition) || wordPosition <= 0 || !Number.isFinite(start) || !Number.isFinite(end)) return [];
+          if (validWordPositions && !validWordPositions.get(parentVerseId)?.has(wordPosition)) return [];
           return [{ verseId: parentVerseId, wordPosition, startMs: start, endMs: end }];
         }
         if (!child || typeof child !== 'object') return [];
@@ -96,6 +107,7 @@ export function normalizeWordTimestamps(raw: unknown, duration: number): readonl
         const wordPosition = Number(childRecord.wordPosition ?? childRecord.word_position ?? childRecord.position ?? childRecord.word ?? childRecord.wordIndex ?? childRecord.word_index);
         const { start, end, milliseconds } = bounds(childRecord);
         if (!Number.isFinite(verseId) || verseId <= 0 || !Number.isFinite(wordPosition) || wordPosition <= 0 || !Number.isFinite(start) || !Number.isFinite(end)) return [];
+        if (validWordPositions && !validWordPositions.get(verseId)?.has(wordPosition)) return [];
         return [{
           verseId,
           wordPosition,
@@ -108,6 +120,7 @@ export function normalizeWordTimestamps(raw: unknown, duration: number): readonl
     const wordPosition = Number(record.wordPosition ?? record.word_position ?? record.position ?? record.word ?? record.wordIndex ?? record.word_index);
     const { start, end, milliseconds } = bounds(record);
     if (!Number.isFinite(verseId) || verseId <= 0 || !Number.isFinite(wordPosition) || wordPosition <= 0 || !Number.isFinite(start) || !Number.isFinite(end)) return [];
+    if (validWordPositions && !validWordPositions.get(verseId)?.has(wordPosition)) return [];
     return [{
       verseId,
       wordPosition,

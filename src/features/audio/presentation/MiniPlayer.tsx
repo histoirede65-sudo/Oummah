@@ -25,7 +25,7 @@ export default function MiniPlayer() {
     progress,
     togglePlay,
     next,
-    stop,
+    startNewListening,
     miniPlayerState,
     hideMiniPlayer,
     setFullPlayerActive,
@@ -47,10 +47,10 @@ export default function MiniPlayer() {
   }, [pathname, reciter, track]);
   const closePlayer = useCallback(() => {
     hideMiniPlayer();
-    void stop()
+    void startNewListening()
       .catch(() => undefined)
       .finally(hideMiniPlayer);
-  }, [hideMiniPlayer, stop]);
+  }, [hideMiniPlayer, startNewListening]);
   const gestureOptions = useMemo(
     () => ({
       surface: "mini" as const,

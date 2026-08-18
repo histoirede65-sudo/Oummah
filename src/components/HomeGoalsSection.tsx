@@ -9,6 +9,7 @@ import { typography } from '../theme/typography';
 import { isGoalComplete } from '../features/daily-goals/domain/DailyGoal';
 import { useDailyGoalsViewModel } from '../features/daily-goals/presentation/useDailyGoalsViewModel';
 import HadithCard from './home/HadithCard';
+import VerseOfDayCard from './home/VerseOfDayCard';
 import { getValidSession } from '../features/auth/SupabaseAuthService';
 
 export default function HomeGoalsSection() {
@@ -33,8 +34,11 @@ export default function HomeGoalsSection() {
   const visibleGoals = goalsModel.plan?.goals.slice(0, 3) ?? [];
   const nextGoal = goalsModel.plan?.goals.find((goal) => !isGoalComplete(goal));
   return (
-    <View style={styles.row}>
-      <HadithCard />
+    <View style={styles.section}>
+      <View style={styles.dailyRow}>
+        <HadithCard />
+        <VerseOfDayCard />
+      </View>
 
       <Pressable
         onPress={() => router.push(isAuthenticated ? '/daily-goals' : '/profile')}
@@ -105,9 +109,12 @@ export default function HomeGoalsSection() {
 }
 
 const styles = StyleSheet.create({
-  row: {
-    height: 134,
+  section: {
     marginBottom: 16,
+  },
+  dailyRow: {
+    height: 134,
+    marginBottom: 7,
     flexDirection: 'row',
     gap: 7,
   },
@@ -164,7 +171,7 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(255,255,255,0.13)',
     backgroundColor: 'rgba(17,21,29,0.8)',
   },
-  goalsCard: { padding: 11 },
+  goalsCard: { flex: 0, height: 134, padding: 11 },
   signupCard: {
     justifyContent: 'center',
     borderColor: 'rgba(227,181,90,0.28)',

@@ -1,20 +1,20 @@
-import muhammadSiddiqAlMinshawi from '../../../../assets/reciters/Muhammad Siddiq Al-Minshawi.png';
-import aliJaber from '../../../../assets/reciters/ali_jaber.png';
-import abdulBasit from '../../../../assets/reciters/abdul_basit.png';
-import abuBakrAlShatri from '../../../../assets/reciters/abu_bakr_alshatri.png';
-import ahmedAlAjmi from '../../../../assets/reciters/ahmed_alajmi.png';
-import bandarBalila from '../../../../assets/reciters/bandar_balila.png';
-import faresAbbad from '../../../../assets/reciters/fares_abbad.png';
-import haniArRifai from '../../../../assets/reciters/hani_arrifai.png';
-import houdaifi from '../../../../assets/reciters/houdaifi.png';
-import khalidAlQahtani from '../../../../assets/reciters/khalid_alqahtani.png';
-import maherAlMuaiqly from '../../../../assets/reciters/maher_almuaiqly.png';
-import mahmoudAlHusary from '../../../../assets/reciters/mahmoud_alhusary.png';
-import misharyAlAfasy from '../../../../assets/reciters/mishary_alafasy.png';
-import saadAlGhamdi from '../../../../assets/reciters/saad_alghamdi.png';
-import shuraim from '../../../../assets/reciters/shuraim.png';
-import sudais from '../../../../assets/reciters/sudais.png';
-import yasserAlDossari from '../../../../assets/reciters/yasser_aldossari.png';
+import muhammadSiddiqAlMinshawi from '../../../../assets/reciters/webp/Muhammad Siddiq Al-Minshawi.webp';
+import aliJaber from '../../../../assets/reciters/webp/ali_jaber.webp';
+import abdulBasit from '../../../../assets/reciters/webp/abdul_basit.webp';
+import abuBakrAlShatri from '../../../../assets/reciters/webp/abu_bakr_alshatri.webp';
+import ahmedAlAjmi from '../../../../assets/reciters/webp/ahmed_alajmi.webp';
+import bandarBalila from '../../../../assets/reciters/webp/bandar_balila.webp';
+import faresAbbad from '../../../../assets/reciters/webp/fares_abbad.webp';
+import haniArRifai from '../../../../assets/reciters/webp/hani_arrifai.webp';
+import houdaifi from '../../../../assets/reciters/webp/houdaifi.webp';
+import khalidAlQahtani from '../../../../assets/reciters/webp/khalid_alqahtani.webp';
+import maherAlMuaiqly from '../../../../assets/reciters/webp/maher_almuaiqly.webp';
+import mahmoudAlHusary from '../../../../assets/reciters/webp/mahmoud_alhusary.webp';
+import misharyAlAfasy from '../../../../assets/reciters/webp/mishary_alafasy.webp';
+import saadAlGhamdi from '../../../../assets/reciters/webp/saad_alghamdi.webp';
+import shuraim from '../../../../assets/reciters/webp/shuraim.webp';
+import sudais from '../../../../assets/reciters/webp/sudais.webp';
+import yasserAlDossari from '../../../../assets/reciters/webp/yasser_aldossari.webp';
 
 export const RECITER_IMAGES: Record<number, any> = {
   7: misharyAlAfasy,

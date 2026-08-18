@@ -1,15 +1,18 @@
 import { Ionicons } from "@expo/vector-icons";
+import { useAudioPlayer, useAudioPlayerStatus } from "expo-audio";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import * as Location from "expo-location";
 import type { Href } from "expo-router";
 import { router, useFocusEffect } from "expo-router";
 import Svg, { Circle, Ellipse } from "react-native-svg";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import {
   ActivityIndicator,
   Animated,
   Alert,
+  InteractionManager,
   Modal,
   Pressable,
   StyleSheet,
@@ -53,6 +56,7 @@ import {
 } from "../features/adhan/AdhanPreferences";
 import {
   requestAdhanNotificationPermission,
+  syncAdhanNotifications,
 } from "../features/adhan/AdhanNotifications";
 import AppHeader from "./AppHeader";
 
@@ -134,7 +138,7 @@ const ORBIT_POSITIONS: ReadonlyArray<{
 }> = [
   { left: "4%", top: 66 },
   { left: "19%", top: 9 },
-  { left: "41%", top: 1 },
+  { left: "41%", top: 8 },
   { left: "63%", top: 9 },
   { left: "79%", top: 66 },
   { left: "41%", top: 88 },
@@ -195,6 +199,21 @@ function formatCountdown(milliseconds: number) {
     String(seconds).padStart(2, "0"),
   ].join(":");
 }
+
+const PrayerCountdown = memo(function PrayerCountdown({
+  timestamp,
+}: {
+  timestamp: number | null;
+}) {
+  const [now, setNow] = useState(() => Date.now());
+
+  useEffect(() => {
+    const intervalId = setInterval(() => setNow(Date.now()), 1_000);
+    return () => clearInterval(intervalId);
+  }, []);
+
+  return <Text style={styles.countdown}>{timestamp ? formatCountdown(timestamp - now) : "--:--:--"}</Text>;
+});
 
 function formatDateLabel(date: Date) {
   const formatted = new Intl.DateTimeFormat("fr-FR", {
@@ -328,8 +347,12 @@ async function resolvePrayerSource(
 }
 
 export default function PrayerCard() {
-  const { width } = useWindowDimensions();
-  const compact = width < 375;
+  const insets = useSafeAreaInsets();
+  const { width, height } = useWindowDimensions();
+  const compact = width < 375 || height < 700;
+  // The prayer orbit has a deliberately dense layout. Scale it down on
+  // narrow phones so labels remain inside the card instead of being clipped.
+  const orbitScale = Math.min(1, Math.max(0.72, (width - 32) / 343));
   const [mainMosque, setMainMosque] = useState<StoredMosque | null>(null);
   const [mainMosqueLoaded, setMainMosqueLoaded] = useState(false);
   const [mainMosqueJumuah, setMainMosqueJumuah] = useState<string | null>(null);
@@ -348,9 +371,23 @@ export default function PrayerCard() {
   );
   const [adhanSettingsVisible, setAdhanSettingsVisible] = useState(false);
   const [locationOptionsVisible, setLocationOptionsVisible] = useState(false);
+  const [orbitLayoutReady, setOrbitLayoutReady] = useState(false);
   const [cityQuery, setCityQuery] = useState("");
   const [cityLoading, setCityLoading] = useState(false);
+  const [adhanPreferencesLoaded, setAdhanPreferencesLoaded] = useState(false);
+  const adhanPlayer = useAudioPlayer(ADHAN_VOICES.find((voice) => voice.key === adhanPreferences.voice)?.file ?? ADHAN_VOICES[0].file);
+  const adhanPlayerStatus = useAudioPlayerStatus(adhanPlayer);
   const orbitGlow = useRef(new Animated.Value(0.32)).current;
+
+  useFocusEffect(
+    useCallback(() => {
+      setOrbitLayoutReady(false);
+      const task = InteractionManager.runAfterInteractions(() => {
+        setOrbitLayoutReady(true);
+      });
+      return () => task.cancel();
+    }, []),
+  );
 
   useEffect(() => {
     const pulse = Animated.loop(
@@ -359,11 +396,13 @@ export default function PrayerCard() {
           toValue: 0.82,
           duration: 1450,
           useNativeDriver: true,
+          isInteraction: false,
         }),
         Animated.timing(orbitGlow, {
           toValue: 0.32,
           duration: 1450,
           useNativeDriver: true,
+          isInteraction: false,
         }),
       ]),
     );
@@ -455,6 +494,8 @@ export default function PrayerCard() {
 
     void loadAdhanPreferences().then((preferences) => {
       if (active) setAdhanPreferences(preferences);
+    }).finally(() => {
+      if (active) setAdhanPreferencesLoaded(true);
     });
 
     return () => {
@@ -463,12 +504,20 @@ export default function PrayerCard() {
   }, []);
 
   useEffect(() => {
+    if (!schedule || !adhanPreferencesLoaded) return;
+    void syncAdhanNotifications(schedule, adhanPreferences).catch(() => undefined);
+  }, [adhanPreferences, adhanPreferencesLoaded, schedule]);
+
+  useFocusEffect(
+    useCallback(() => {
+      setNow(Date.now());
     const intervalId = setInterval(() => {
       setNow(Date.now());
-    }, 1_000);
+    }, 60_000);
 
     return () => clearInterval(intervalId);
-  }, []);
+    }, []),
+  );
 
   useEffect(() => {
     if (!mainMosqueLoaded) return;
@@ -561,10 +610,42 @@ export default function PrayerCard() {
     setLocationOptionsVisible(false);
   };
 
-  const nextPrayer = useMemo(
-    () => (schedule ? getNextPrayer(schedule, now) : null),
-    [now, schedule],
-  );
+  const fridayJumuahPrayer = useMemo(() => {
+    if (
+      !schedule ||
+      new Date(now).getDay() !== 5 ||
+      !mainMosqueJumuah ||
+      !/^([01]\d|2[0-3]):[0-5]\d$/.test(mainMosqueJumuah)
+    ) {
+      return null;
+    }
+
+    const dhuhr = getPrayerByKey(schedule, "Dhuhr");
+    if (!dhuhr) return null;
+    const [hours, minutes] = mainMosqueJumuah.split(":").map(Number);
+    const jumuahDate = new Date(dhuhr.timestamp);
+    jumuahDate.setHours(hours, minutes, 0, 0);
+    return {
+      ...dhuhr,
+      label: "Joumou’a",
+      time: mainMosqueJumuah,
+      timestamp: jumuahDate.getTime(),
+    };
+  }, [mainMosqueJumuah, now, schedule]);
+  const nextPrayer = useMemo(() => {
+    if (!schedule) return null;
+    const scheduledNextPrayer = getNextPrayer(schedule, now);
+    const fajr = getPrayerByKey(schedule, "Fajr");
+    if (
+      fridayJumuahPrayer &&
+      fajr &&
+      now >= fajr.timestamp &&
+      now < fridayJumuahPrayer.timestamp
+    ) {
+      return fridayJumuahPrayer;
+    }
+    return scheduledNextPrayer;
+  }, [fridayJumuahPrayer, now, schedule]);
   const currentPrayer = useMemo(
     () => {
       if (!schedule) return null;
@@ -602,9 +683,6 @@ export default function PrayerCard() {
     [currentPrayer, schedule],
   );
   const orbitMarker = useMemo(() => getOrbitMarker(timeline, now), [now, timeline]);
-  const countdown = nextPrayer
-    ? formatCountdown(nextPrayer.timestamp - now)
-    : "--:--:--";
   const jumuahMinutes = mainMosqueJumuah
     ? Number(mainMosqueJumuah.slice(0, 2)) * 60 + Number(mainMosqueJumuah.slice(3, 5))
     : null;
@@ -702,18 +780,18 @@ export default function PrayerCard() {
                   numberOfLines={1}
                   style={styles.prayerName}
                 >
-                  {currentPrayer ? PRAYER_LABELS[currentPrayer.key] : ""}
+                  {currentPrayer?.label ?? ""}
                 </Text>
               </View>
               <Text
                 numberOfLines={1}
                 style={[styles.prayerName, styles.upcomingPrayerName]}
               >
-                {nextPrayer ? PRAYER_LABELS[nextPrayer.key] : "Fajr"}
+                {nextPrayer?.label ?? "Fajr"}
               </Text>
             </View>
 
-            <Text style={styles.countdown}>{countdown}</Text>
+            <PrayerCountdown timestamp={nextPrayer?.timestamp ?? null} />
 
             <Pressable
               accessibilityRole="button"
@@ -806,6 +884,10 @@ export default function PrayerCard() {
               end={{ x: 0.72, y: 0.9 }}
               style={StyleSheet.absoluteFill}
             />
+            <View
+              pointerEvents="none"
+              style={[styles.orbitContent, { transform: [{ scale: orbitScale }] }]}
+            >
             <View pointerEvents="none" style={styles.orbitRail}>
               <Svg
                 width="100%"
@@ -870,14 +952,21 @@ export default function PrayerCard() {
             <View pointerEvents="none" style={styles.orbitCenter}>
               <View style={styles.orbitCenterLine} />
               <Ionicons name="time-outline" size={13} color="#F2B94C" />
-              <Text style={styles.orbitCenterText}>
+              <Text
+                style={[
+                  styles.orbitCenterText,
+                  showFridayJumuah && styles.orbitCenterTextJumuah,
+                ]}
+              >
                 {showFridayJumuah ? `Joumou’a\n${mainMosqueJumuah}` : "Cycle des prières"}
               </Text>
               <View style={styles.orbitCenterLine} />
             </View>
 
-            <View style={styles.orbitStations}>
-              {timeline.map((prayer, index) => (
+            <View
+              style={styles.orbitStations}
+            >
+              {orbitLayoutReady && timeline.map((prayer, index) => (
                 <View
                   key={prayer.key}
                   style={[
@@ -891,6 +980,8 @@ export default function PrayerCard() {
                   <View
                     style={[
                       styles.orbitNode,
+                      ["Sunrise", "Dhuhr", "Asr"].includes(prayer.key) &&
+                        styles.orbitNodeUpper,
                       prayer.active && styles.orbitNodeActive,
                     ]}
                   >
@@ -908,28 +999,49 @@ export default function PrayerCard() {
                       color={prayer.active ? "#1B1220" : "#F9E8C9"}
                     />
                   </View>
-                  <Text
-                    numberOfLines={1}
-                    adjustsFontSizeToFit
+                  <View
                     style={[
-                      styles.orbitName,
-                      prayer.active && styles.orbitNameActive,
-                      prayer.key === "Isha" && styles.orbitNameIsha,
+                      styles.orbitTextGroup,
+                      prayer.key === "Sunrise" && styles.orbitTextLeft,
+                      prayer.key === "Dhuhr" && styles.orbitTextAbove,
+                      prayer.key === "Asr" && styles.orbitTextRight,
                     ]}
                   >
-                    {prayer.label}
-                  </Text>
-                  <Text
-                    style={[
-                      styles.orbitTime,
-                      prayer.active && styles.orbitTimeActive,
-                      prayer.key === "Isha" && styles.orbitTimeIsha,
-                    ]}
-                  >
-                    {prayer.time}
-                  </Text>
+                    <Text
+                      numberOfLines={1}
+                      adjustsFontSizeToFit
+                      style={[
+                        styles.orbitName,
+                        prayer.active && styles.orbitNameActive,
+                        prayer.key === "Isha" && styles.orbitNameIsha,
+                        prayer.key === "Fajr" && styles.orbitNameFajr,
+                        prayer.key === "Dhuhr" && styles.orbitNameDhuhr,
+                        prayer.key === "Sunrise" && styles.orbitNameSunrise,
+                        prayer.key === "Asr" && styles.orbitNameAsr,
+                        prayer.key === "Maghrib" && styles.orbitNameMaghrib,
+                      ]}
+                    >
+                      {prayer.label}
+                    </Text>
+                    <Text
+                      style={[
+                        styles.orbitTime,
+                        prayer.active && styles.orbitTimeActive,
+                        prayer.key === "Isha" && styles.orbitTimeIsha,
+                        prayer.key === "Fajr" && styles.orbitTimeFajr,
+                        prayer.key === "Dhuhr" && styles.orbitTimeDhuhr,
+                        prayer.key === "Maghrib" && styles.orbitTimeMaghribLarge,
+                        prayer.key === "Sunrise" && styles.orbitTimeSunrise,
+                        prayer.key === "Asr" && styles.orbitTimeAsr,
+                        prayer.key === "Maghrib" && styles.orbitTimeMaghrib,
+                      ]}
+                    >
+                      {prayer.time}
+                    </Text>
+                  </View>
                 </View>
               ))}
+            </View>
             </View>
           </View>
         </>
@@ -1031,7 +1143,7 @@ export default function PrayerCard() {
         >
           <Pressable
             onPress={(event) => event.stopPropagation()}
-            style={styles.adhanSheet}
+            style={[styles.adhanSheet, { paddingBottom: 24 + insets.bottom }]}
           >
             <View style={styles.adhanSheetHandle} />
             <View style={styles.adhanSheetHeader}>
@@ -1159,6 +1271,16 @@ export default function PrayerCard() {
                     </Pressable>;
                   })}
                 </View>
+                <Pressable
+                  accessibilityLabel={adhanPlayerStatus.playing ? "Mettre l’aperçu de l’Adhan en pause" : "Écouter l’aperçu de l’Adhan"}
+                  style={styles.adhanPreviewButton}
+                  onPress={() => adhanPlayerStatus.playing ? adhanPlayer.pause() : adhanPlayer.play()}
+                >
+                  <Ionicons name={adhanPlayerStatus.playing ? "pause" : "play"} size={19} color="#281816" />
+                  <Text style={styles.adhanPreviewText}>
+                    {adhanPlayerStatus.playing ? "Mettre en pause" : "Écouter l’aperçu"}
+                  </Text>
+                </Pressable>
               </>
             )}
 
@@ -1364,7 +1486,7 @@ const styles = StyleSheet.create({
     marginLeft: 8,
     color: colors.goldLight,
     fontFamily: typography.serifSemibold,
-    fontSize: 13.5,
+    fontSize: 21,
   },
   adhanPressed: {
     opacity: 0.78,
@@ -1640,6 +1762,25 @@ const styles = StyleSheet.create({
     borderColor: "rgba(255,255,255,0.08)",
     backgroundColor: "rgba(255,255,255,0.035)",
   },
+  adhanPreviewButton: {
+    minHeight: 46,
+    marginTop: 11,
+    paddingHorizontal: 17,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 9,
+    borderRadius: 15,
+    borderWidth: 1,
+    borderColor: "rgba(246,199,93,0.82)",
+    backgroundColor: "#F2C55B",
+  },
+  adhanPreviewText: {
+    color: "#281816",
+    fontFamily: typography.sans,
+    fontSize: 13,
+    fontWeight: "800",
+  },
   adhanDoneButton: {
     minHeight: 48,
     marginTop: 21,
@@ -1656,9 +1797,9 @@ const styles = StyleSheet.create({
   glass: {
     position: "absolute",
     right: 16,
-    bottom: 7,
+    bottom: 1,
     left: 16,
-    height: 148,
+    height: 178,
     overflow: "hidden",
     borderRadius: 22,
     borderWidth: 1,
@@ -1669,15 +1810,24 @@ const styles = StyleSheet.create({
     shadowRadius: 17,
     shadowOffset: { width: 0, height: 9 },
   },
+  orbitContent: {
+    ...StyleSheet.absoluteFillObject,
+    alignItems: "center",
+    justifyContent: "center",
+  },
   orbitRail: {
     position: "absolute",
-    top: 5,
+    top: 27,
     right: 3,
-    bottom: 5,
     left: 3,
+    height: 138,
   },
   orbitStations: {
-    ...StyleSheet.absoluteFillObject,
+    position: "absolute",
+    top: 22,
+    right: 0,
+    left: 0,
+    height: 148,
     zIndex: 3,
   },
   orbitStation: {
@@ -1735,6 +1885,36 @@ const styles = StyleSheet.create({
     shadowRadius: 12,
     shadowOffset: { width: 0, height: 0 },
   },
+  orbitNodeUpper: {
+    position: "relative",
+    top: 2,
+  },
+  orbitTextGroup: {
+    width: "100%",
+    alignItems: "center",
+  },
+  orbitTextLeft: {
+    position: "absolute",
+    top: 3,
+    right: "75%",
+    width: 72,
+    alignItems: "flex-end",
+  },
+  orbitTextAbove: {
+    position: "absolute",
+    bottom: "100%",
+    left: "50%",
+    width: 84,
+    alignItems: "center",
+    transform: [{ translateX: -42 }],
+  },
+  orbitTextRight: {
+    position: "absolute",
+    top: 3,
+    left: "75%",
+    width: 72,
+    alignItems: "flex-start",
+  },
   orbitName: {
     width: "100%",
     marginTop: 2,
@@ -1753,7 +1933,7 @@ const styles = StyleSheet.create({
   orbitTime: {
     color: "#E6DCE1",
     fontFamily: typography.sans,
-    fontSize: 8.8,
+    fontSize: 11,
     fontWeight: "600",
     fontVariant: ["tabular-nums"],
     textShadowColor: "rgba(0,0,0,0.92)",
@@ -1765,15 +1945,67 @@ const styles = StyleSheet.create({
     fontSize: 10,
   },
   orbitNameIsha: {
-    transform: [{ translateY: -2 }],
+    fontSize: 24.15,
+    position: "relative",
+    top: -5,
+  },
+  orbitNameFajr: {
+    fontSize: 24.15,
+  },
+  orbitNameDhuhr: {
+    fontSize: 24.15,
+    position: "relative",
+    top: 10,
+  },
+  orbitNameAsr: {
+    fontSize: 21,
+    position: "relative",
+    left: -18,
+    top: -14,
+  },
+  orbitNameMaghrib: {
+    fontSize: 24.15,
+    position: "relative",
+    top: 3,
+  },
+  orbitTimeMaghrib: {
+    position: "relative",
+    top: 3,
+  },
+  orbitNameSunrise: {
+    position: "relative",
+    left: 6,
   },
   orbitTimeIsha: {
-    transform: [{ translateY: -8 }],
+    fontSize: 12.65,
+    position: "relative",
+    top: -12,
+  },
+  orbitTimeAsr: {
+    fontSize: 12.65,
+    position: "relative",
+    left: 5,
+    top: -14,
+  },
+  orbitTimeFajr: {
+    fontSize: 12.65,
+  },
+  orbitTimeDhuhr: {
+    fontSize: 12.65,
+    position: "relative",
+    top: 2,
+  },
+  orbitTimeMaghribLarge: {
+    fontSize: 12.65,
+  },
+  orbitTimeSunrise: {
+    position: "relative",
+    left: -8,
   },
   orbitCenter: {
     position: "absolute",
     zIndex: 2,
-    top: 60,
+    top: 82,
     right: 98,
     left: 98,
     flexDirection: "row",
@@ -1796,6 +2028,11 @@ const styles = StyleSheet.create({
     letterSpacing: 0.35,
     textShadowColor: "rgba(242,185,76,0.72)",
     textShadowRadius: 5,
+  },
+  orbitCenterTextJumuah: {
+    fontSize: 14,
+    lineHeight: 16,
+    transform: [{ translateY: -10 }],
   },
   loading: {
     position: "absolute",

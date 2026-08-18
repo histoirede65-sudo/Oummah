@@ -97,8 +97,8 @@ function PremiumCompass({
     dialRotation.stopAnimation();
     Animated.timing(dialRotation, {
       toValue: target,
-      duration: 240,
-      easing: Easing.out(Easing.quad),
+      duration: 110,
+      easing: Easing.linear,
       useNativeDriver: true,
     }).start();
   }, [dialRotation, heading]);
@@ -113,8 +113,8 @@ function PremiumCompass({
     needleRotation.stopAnimation();
     Animated.timing(needleRotation, {
       toValue: target,
-      duration: isNear ? 300 : 220,
-      easing: Easing.out(Easing.cubic),
+      duration: isNear ? 140 : 110,
+      easing: Easing.linear,
       useNativeDriver: true,
     }).start();
   }, [heading, isNear, needleRotation, qiblaBearing]);

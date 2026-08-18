@@ -28,6 +28,24 @@ export type AdminAlertCounts = {
   info: number;
 };
 
+export type AdminAttentionItem = {
+  id: string;
+  type: string;
+  title: string;
+  description: string;
+  requiresAction: boolean;
+  status: AdminAlertStatus;
+  createdAt: string;
+  metadata: Record<string, unknown>;
+};
+
+export type AdminAttentionState = {
+  attentionCount: number;
+  actionCount: number;
+  unreadCount: number;
+  items: AdminAttentionItem[];
+};
+
 function configuration() {
   const url = process.env.EXPO_PUBLIC_SUPABASE_URL?.trim().replace(/\/$/, "");
   const key = (
@@ -82,6 +100,34 @@ async function rpc<T>(
 
 export async function refreshAdminAlerts(): Promise<void> {
   await rpc("admin_refresh_system_alerts");
+}
+
+export async function getAdminAttentionState(): Promise<AdminAttentionState> {
+  const raw = await rpc<{
+    attention_count?: number;
+    action_count?: number;
+    unread_count?: number;
+    items?: Array<Record<string, unknown>>;
+  }>("admin_get_attention_state");
+  return {
+    attentionCount: Number(raw.attention_count ?? 0),
+    actionCount: Number(raw.action_count ?? 0),
+    unreadCount: Number(raw.unread_count ?? 0),
+    items: (raw.items ?? []).map((item) => ({
+      id: String(item.id ?? ""),
+      type: String(item.type ?? ""),
+      title: String(item.title ?? ""),
+      description: String(item.description ?? ""),
+      requiresAction: Boolean(item.requiresAction),
+      status: String(item.status ?? "open") as AdminAlertStatus,
+      createdAt: String(item.createdAt ?? ""),
+      metadata: (item.metadata ?? {}) as Record<string, unknown>,
+    })),
+  };
+}
+
+export async function markAdminAlertRead(alertId: string): Promise<void> {
+  await rpc("admin_mark_alert_read", { p_alert_id: alertId });
 }
 
 export async function getAdminAlertCounts(
