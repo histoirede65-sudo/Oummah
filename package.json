@@ -4,6 +4,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
+    "postinstall": "patch-package",
     "start": "expo start --go",
     "reset-project": "node ./scripts/reset-project.js",
     "android": "expo run:android",
@@ -57,6 +58,7 @@
     "eslint": "^9.39.5",
     "eslint-config-expo": "~10.0.0",
     "eslint-plugin-react-compiler": "^19.1.0-rc.2",
+    "patch-package": "^8.0.1",
     "typescript": "~5.9.2"
   }
 }

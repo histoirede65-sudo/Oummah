@@ -1,0 +1,23 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#070811">
+  <ImageView
+      android:id="@+id/prayer_widget_art_horizontal"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:contentDescription="Horaires de priere OUMMAH"
+      android:scaleType="fitXY" />
+  <Chronometer
+      android:id="@+id/prayer_widget_countdown_horizontal"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_gravity="center"
+      android:gravity="center"
+      android:textColor="#F8F4EB"
+      android:textSize="21sp"
+      android:fontFamily="sans"
+      android:includeFontPadding="false"
+      android:format="%s"
+      android:visibility="gone" />
+</FrameLayout>
