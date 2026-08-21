@@ -2,8 +2,8 @@ node_modules/
 .expo/
 .expo-maps-check/
 .expo-qibla-route-check/
-android/
-ios/
+/android/
+/ios/
 dist/
 web-build/
 *.zip

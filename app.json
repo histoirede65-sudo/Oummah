@@ -2,7 +2,7 @@
   "expo": {
     "name": "Oummah",
     "slug": "oummah",
-    "version": "1.0.0",
+    "version": "1.0.6",
     "orientation": "portrait",
     "scheme": "oummah",
     "userInterfaceStyle": "automatic",
@@ -14,6 +14,9 @@
       "infoPlist": {
         "UIViewControllerBasedStatusBarAppearance": true,
         "ITSAppUsesNonExemptEncryption": false,
+        "UIBackgroundModes": [
+          "audio"
+        ],
         "NSLocationWhenInUseUsageDescription": "OUMMAH utilise votre position lorsque vous utilisez l’application afin de calculer les horaires de prière correspondant à votre localisation et de vous aider à trouver les mosquées à proximité."
       }
     },
@@ -58,6 +61,14 @@
             "./assets/adhan/adhan_egypt.mp3"
           ]
         }
+      ],
+      [
+        "./modules/prayer-times-widget/app.plugin.js",
+        {
+          "targetName": "PrayerTimesWidgetExtension",
+          "bundleIdentifier": "com.oummah.app.prayerwidget",
+          "groupIdentifier": "group.com.oummah.app"
+        }
       ]
     ],
     "experiments": {
@@ -67,7 +78,24 @@
     "extra": {
       "router": {},
       "eas": {
-        "projectId": "cfc1e1ce-a09c-4279-861c-8c07e081d86c"
+        "projectId": "cfc1e1ce-a09c-4279-861c-8c07e081d86c",
+        "build": {
+          "experimental": {
+            "ios": {
+              "appExtensions": [
+                {
+                  "targetName": "PrayerTimesWidgetExtension",
+                  "bundleIdentifier": "com.oummah.app.prayerwidget",
+                  "entitlements": {
+                    "com.apple.security.application-groups": [
+                      "group.com.oummah.app"
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        }
       }
     },
     "owner": "bahrioummah"

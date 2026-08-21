@@ -21,6 +21,7 @@ export type MosquePrayerSchedule = {
   timezone: string;
   methodName: string;
   prayers: MosquePrayerTime[];
+  tomorrowPrayers: MosquePrayerTime[];
   tomorrowFajr: MosquePrayerTime;
   futurePrayers?: MosquePrayerTime[];
   fromCache: boolean;
@@ -297,11 +298,10 @@ function buildSchedule(
     buildPrayer(todayResponse, key, label),
   );
 
-  const tomorrowFajr = buildPrayer(
-    tomorrowResponse,
-    'Fajr',
-    'Fajr',
+  const tomorrowPrayers = PRAYER_DEFINITIONS.map(({ key, label }) =>
+    buildPrayer(tomorrowResponse, key, label),
   );
+  const tomorrowFajr = tomorrowPrayers[0];
 
   return {
     dateKey,
@@ -315,6 +315,7 @@ function buildSchedule(
       todayResponse.data?.meta?.method?.name ||
       'Union Organization Islamic de France',
     prayers,
+    tomorrowPrayers,
     tomorrowFajr,
     fromCache: false,
   };
@@ -403,6 +404,7 @@ async function readCachedSchedule(
       Date.now() - cached.savedAt > CACHE_MAX_AGE_MS ||
       !Array.isArray(cached.prayers) ||
       !cached.tomorrowFajr ||
+      !Array.isArray(cached.tomorrowPrayers) ||
       !Array.isArray(cached.futurePrayers)
     ) {
       return null;
@@ -415,6 +417,7 @@ async function readCachedSchedule(
       timezone: cached.timezone,
       methodName: cached.methodName,
       prayers: cached.prayers,
+      tomorrowPrayers: cached.tomorrowPrayers,
       tomorrowFajr: cached.tomorrowFajr,
       fromCache: true,
     };
@@ -434,6 +437,7 @@ async function writeCachedSchedule(
     timezone: schedule.timezone,
     methodName: schedule.methodName,
     prayers: schedule.prayers,
+    tomorrowPrayers: schedule.tomorrowPrayers,
     tomorrowFajr: schedule.tomorrowFajr,
     savedAt: Date.now(),
   };

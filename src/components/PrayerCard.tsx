@@ -44,6 +44,7 @@ import {
   type StoredMosque,
 } from "../features/mosques/data/mosquePreferences";
 import { getApprovedMosquePrayerTimes } from "../features/mosques/data/mosquePrayerUpdates";
+import { syncPrayerTimesWidget } from "../features/prayer-widget/PrayerWidgetSync";
 import { colors } from "../theme/colors";
 import { typography } from "../theme/typography";
 import {
@@ -94,6 +95,7 @@ function applyApprovedMosquePrayerTimes(
   return {
     ...schedule,
     prayers: schedule.prayers.map(adjust),
+    tomorrowPrayers: schedule.tomorrowPrayers.map(adjust),
     tomorrowFajr: adjust(schedule.tomorrowFajr),
   };
 }
@@ -224,6 +226,25 @@ function formatDateLabel(date: Date) {
   }).format(date);
 
   return formatted.charAt(0).toUpperCase() + formatted.slice(1);
+}
+
+function getLocalDayStart(timestamp: number) {
+  const date = new Date(timestamp);
+  date.setHours(0, 0, 0, 0);
+  return date.getTime();
+}
+
+function getPrayerWidgetSunrise(fajr: MosquePrayerTime) {
+  const sunrise = new Date(fajr.timestamp + 90 * 60 * 1_000);
+  return {
+    key: "Sunrise",
+    label: "Chourouk",
+    time: [
+      String(sunrise.getHours()).padStart(2, "0"),
+      String(sunrise.getMinutes()).padStart(2, "0"),
+    ].join(":"),
+    timestamp: sunrise.getTime(),
+  };
 }
 
 function getPrayerByKey(schedule: MosquePrayerSchedule, key: MosquePrayerKey) {
@@ -510,13 +531,30 @@ export default function PrayerCard() {
 
   useFocusEffect(
     useCallback(() => {
-      setNow(Date.now());
-    const intervalId = setInterval(() => {
-      setNow(Date.now());
-    }, 60_000);
+      let prayerTransitionTimeout: ReturnType<typeof setTimeout> | null = null;
 
-    return () => clearInterval(intervalId);
-    }, []),
+      const refreshNow = () => setNow(Date.now());
+      const schedulePrayerTransition = () => {
+        if (!schedule) return;
+
+        const nextPrayer = getNextPrayer(schedule);
+        if (!nextPrayer) return;
+
+        prayerTransitionTimeout = setTimeout(() => {
+          refreshNow();
+          schedulePrayerTransition();
+        }, Math.max(100, nextPrayer.timestamp - Date.now() + 50));
+      };
+
+      refreshNow();
+      schedulePrayerTransition();
+      const intervalId = setInterval(refreshNow, 60_000);
+
+      return () => {
+        clearInterval(intervalId);
+        if (prayerTransitionTimeout) clearTimeout(prayerTransitionTimeout);
+      };
+    }, [schedule]),
   );
 
   useEffect(() => {
@@ -702,6 +740,44 @@ export default function PrayerCard() {
       ),
     [calendarDate, calendarSettings],
   );
+  useEffect(() => {
+    const todayAnchor = schedule?.prayers[0];
+    const tomorrowAnchor = schedule?.tomorrowPrayers[0];
+    if (!schedule || !todayAnchor || !tomorrowAnchor) return;
+
+    const todayDate = new Date(todayAnchor.timestamp);
+    const tomorrowDate = new Date(tomorrowAnchor.timestamp);
+    const tomorrowHijriDate = getHijriDate(
+      tomorrowDate,
+      calendarSettings.method,
+      calendarSettings.adjustment,
+      calendarSettings.country,
+    );
+
+    void syncPrayerTimesWidget({
+      today: {
+        dateKey: schedule.dateKey,
+        startTimestamp: getLocalDayStart(todayAnchor.timestamp),
+        frenchDate: formatDateLabel(todayDate),
+        hijriDate: formatHijri(getHijriDate(
+          todayDate,
+          calendarSettings.method,
+          calendarSettings.adjustment,
+          calendarSettings.country,
+        )),
+        prayers: schedule.prayers,
+        sunrise: getPrayerWidgetSunrise(todayAnchor),
+      },
+      tomorrow: {
+        dateKey: tomorrowDate.toISOString().slice(0, 10),
+        startTimestamp: getLocalDayStart(tomorrowAnchor.timestamp),
+        frenchDate: formatDateLabel(tomorrowDate),
+        hijriDate: formatHijri(tomorrowHijriDate),
+        prayers: schedule.tomorrowPrayers,
+        sunrise: getPrayerWidgetSunrise(tomorrowAnchor),
+      },
+    });
+  }, [calendarSettings, schedule]);
   const nextIslamicEvent = useMemo(
     () =>
       findNextEvent(
