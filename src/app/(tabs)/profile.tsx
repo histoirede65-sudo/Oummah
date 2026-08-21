@@ -24,6 +24,7 @@ import {
   getValidSession,
   signInWithPassword,
   signOut,
+  deleteCurrentAccount,
   signUpWithPassword,
   SupabaseAuthSession,
 } from "../../features/auth/SupabaseAuthService";
@@ -54,6 +55,7 @@ export default function ProfileScreen() {
   const [nameDraft, setNameDraft] = useState("");
   const [nameEditorOpen, setNameEditorOpen] = useState(false);
   const [savingName, setSavingName] = useState(false);
+  const [deletingAccount, setDeletingAccount] = useState(false);
   const isAdmin = isOummahAdminSession(session);
 
   useFocusEffect(
@@ -170,6 +172,49 @@ export default function ProfileScreen() {
           onPress: async () => {
             await signOut();
             setSession(null);
+          },
+        },
+      ],
+    );
+  };
+
+  const deleteAccount = () => {
+    Alert.alert(
+      "Supprimer mon compte",
+      "Cette suppression est définitive. Votre compte et les données personnelles associées seront supprimés et ne pourront pas être récupérés.",
+      [
+        { text: "Annuler", style: "cancel" },
+        {
+          text: "Continuer",
+          style: "destructive",
+          onPress: () => {
+            Alert.alert(
+              "Suppression définitive",
+              "Voulez-vous vraiment supprimer définitivement votre compte ?",
+              [
+                { text: "Annuler", style: "cancel" },
+                {
+                  text: "Supprimer définitivement",
+                  style: "destructive",
+                  onPress: async () => {
+                    setDeletingAccount(true);
+                    try {
+                      await deleteCurrentAccount();
+                      setSession(null);
+                      setDisplayName("");
+                      router.replace("/profile");
+                    } catch (error) {
+                      Alert.alert(
+                        "Suppression impossible",
+                        error instanceof Error ? error.message : "Réessayez plus tard.",
+                      );
+                    } finally {
+                      setDeletingAccount(false);
+                    }
+                  },
+                },
+              ],
+            );
           },
         },
       ],
@@ -365,6 +410,21 @@ export default function ProfileScreen() {
               <Text style={styles.signInText}>J’ai déjà un profil</Text>
             </Pressable>
           )}
+
+          {session ? (
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="Supprimer mon compte"
+              disabled={deletingAccount}
+              onPress={deleteAccount}
+              style={({ pressed }) => [styles.deleteAccountButton, pressed && styles.premiumButtonPressed]}
+            >
+              <Ionicons name="trash-outline" size={18} color={colors.danger} />
+              <Text style={styles.deleteAccountText}>
+                {deletingAccount ? "Suppression en cours…" : "Supprimer mon compte"}
+              </Text>
+            </Pressable>
+          ) : null}
         </View>
 
         {!session && (
@@ -832,6 +892,25 @@ const styles = StyleSheet.create({
     fontFamily: typography.sans,
     fontSize: 12,
     fontWeight: "600",
+  },
+  deleteAccountButton: {
+    width: "100%",
+    minHeight: 46,
+    marginTop: 12,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 15,
+    borderWidth: 1,
+    borderColor: "rgba(239, 91, 91, 0.45)",
+    backgroundColor: "rgba(239, 91, 91, 0.08)",
+  },
+  deleteAccountText: {
+    marginLeft: 8,
+    color: colors.danger,
+    fontFamily: typography.sans,
+    fontSize: 12.5,
+    fontWeight: "700",
   },
   notice: {
     marginTop: 16,

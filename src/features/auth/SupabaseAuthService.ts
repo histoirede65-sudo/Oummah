@@ -448,3 +448,27 @@ export async function signOut() {
     // La session locale est déjà supprimée, même hors connexion.
   }
 }
+
+/** Permanently deletes the currently authenticated account on the server. */
+export async function deleteCurrentAccount() {
+  const session = await getStoredSession();
+  if (!session) throw new Error("Aucun compte connecté.");
+
+  const { url, key } = configuration();
+  const response = await fetch(`${url}/functions/v1/delete-account`, {
+    method: "POST",
+    headers: {
+      apikey: key,
+      Authorization: `Bearer ${session.accessToken}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({}),
+  });
+
+  if (!response.ok) throw new Error(await parseError(response));
+
+  // The server has confirmed deletion. signOut also clears local auth state
+  // and logs the deleted identity out of RevenueCat; its remote logout may
+  // legitimately fail because the Auth user no longer exists.
+  await signOut();
+}
