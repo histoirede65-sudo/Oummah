@@ -102,6 +102,34 @@ async function saveSession(value: SupabaseSessionResponse) {
   return session;
 }
 
+async function clearStoredSession() {
+  await Promise.allSettled([
+    storageService.remove(SESSION_KEY),
+    AuthFallbackStorage.removeItem(SESSION_KEY),
+  ]);
+}
+
+function hasDefinitivelyInvalidRefreshToken(body: unknown) {
+  if (!body || typeof body !== "object") return false;
+
+  const response = body as {
+    error_code?: unknown;
+    error?: unknown;
+    error_description?: unknown;
+  };
+  const values = [
+    response.error_code,
+    response.error,
+    response.error_description,
+  ].filter((value): value is string => typeof value === "string");
+
+  return values.some((value) => {
+    const normalized = value.toLowerCase();
+    return normalized.includes("refresh_token_not_found") ||
+      normalized.includes("refresh_token_already_used");
+  });
+}
+
 function isSessionResponse(value: unknown): value is SupabaseSessionResponse {
   if (!value || typeof value !== "object") return false;
   const session = value as Partial<SupabaseSessionResponse>;
@@ -419,7 +447,10 @@ export async function getValidSession(forceRefresh = false) {
   );
 
   if (!response.ok) {
-    await storageService.remove(SESSION_KEY);
+    const body = await response.json().catch(() => null);
+    if (hasDefinitivelyInvalidRefreshToken(body)) {
+      await clearStoredSession();
+    }
     return null;
   }
 
@@ -428,10 +459,7 @@ export async function getValidSession(forceRefresh = false) {
 
 export async function signOut() {
   const session = await getStoredSession();
-  await Promise.allSettled([
-    storageService.remove(SESSION_KEY),
-    AuthFallbackStorage.removeItem(SESSION_KEY),
-  ]);
+  await clearStoredSession();
   await revenueCatPaymentProvider.logOut();
   if (!session) return;
 
