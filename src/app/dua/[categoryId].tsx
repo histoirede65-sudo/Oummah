@@ -58,7 +58,7 @@ export default function DuaReaderScreen() {
   const [audioTrackWidth, setAudioTrackWidth] = useState(0);
   const [listVisible, setListVisible] = useState(false);
   const [showPhonetic, setShowPhonetic] = useState(false);
-  const [showFrench, setShowFrench] = useState(false);
+  const [showArabic, setShowArabic] = useState(false);
   const [learningRepeatCount, setLearningRepeatCount] = useState<1 | 3 | 5>(3);
   const [learningRepeatIndex, setLearningRepeatIndex] = useState(0);
   const repeatTimerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
@@ -341,7 +341,7 @@ export default function DuaReaderScreen() {
     }
     setLearningRepeatIndex(0);
     setShowPhonetic(false);
-    setShowFrench(false);
+    setShowArabic(false);
     setShowDetails(false);
   }, [current?.id]);
 
@@ -676,20 +676,7 @@ export default function DuaReaderScreen() {
             </Pressable>
           </View>
 
-          <Text selectable style={styles.arabic}>
-            {arabicWords.map((word, wordIndex) => (
-              <Text
-                key={`${wordIndex}:${word}`}
-                style={[
-                  styles.arabicWord,
-                  wordIndex === activeWordIndex && styles.arabicWordActive,
-                ]}
-              >
-                {word}
-                {wordIndex < arabicWords.length - 1 ? " " : ""}
-              </Text>
-            ))}
-          </Text>
+          <Text selectable style={styles.frenchMain}>{current.french}</Text>
 
           <View style={styles.languageDivider} />
           <Pressable onPress={() => setShowPhonetic((value) => !value)} style={styles.accordionHeader}>
@@ -701,14 +688,29 @@ export default function DuaReaderScreen() {
           </Pressable>
           {showPhonetic ? <Text selectable style={styles.phonetic}>{current.phonetic}</Text> : null}
 
-          <Pressable onPress={() => setShowFrench((value) => !value)} style={styles.accordionHeader}>
+          <Pressable onPress={() => setShowArabic((value) => !value)} style={styles.accordionHeader}>
             <View style={styles.languageHeading}>
-              <Ionicons name="book-outline" size={16} color={colors.goldLight} />
-              <Text style={styles.languageLabel}>TRADUCTION FRANÇAISE</Text>
+              <Ionicons name="text-outline" size={16} color={colors.goldLight} />
+              <Text style={styles.languageLabel}>ARABE</Text>
             </View>
-            <Ionicons name={showFrench ? "chevron-up" : "chevron-down"} size={17} color={colors.textMuted} />
+            <Ionicons name={showArabic ? "chevron-up" : "chevron-down"} size={17} color={colors.textMuted} />
           </Pressable>
-          {showFrench ? <Text selectable style={styles.french}>{current.french}</Text> : null}
+          {showArabic ? (
+            <Text selectable style={styles.arabic}>
+              {arabicWords.map((word, wordIndex) => (
+                <Text
+                  key={`${wordIndex}:${word}`}
+                  style={[
+                    styles.arabicWord,
+                    wordIndex === activeWordIndex && styles.arabicWordActive,
+                  ]}
+                >
+                  {word}
+                  {wordIndex < arabicWords.length - 1 ? " " : ""}
+                </Text>
+              ))}
+            </Text>
+          ) : null}
 
           <Pressable onPress={() => setShowDetails((value) => !value)} style={styles.detailsHeader}>
             <View style={styles.languageHeading}>
@@ -998,6 +1000,16 @@ const styles = StyleSheet.create({
     lineHeight: 52,
     textAlign: "right",
     writingDirection: "rtl",
+  },
+  frenchMain: {
+    flexGrow: 0,
+    marginVertical: 23,
+    color: colors.textSecondary,
+    fontFamily: typography.sans,
+    fontSize: 16,
+    lineHeight: 25,
+    textAlign: "left",
+    writingDirection: "ltr",
   },
   arabicWord: { color: "#FFF9F0" },
   arabicWordActive: {

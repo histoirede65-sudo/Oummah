@@ -47,6 +47,12 @@ const shortcuts = [
     image: require("../assets/images/home/shortcuts/hifz-real.jpg"),
   },
   {
+    label: "Dou‘ā",
+    subtitle: "Invocations du quotidien",
+    route: "/dua",
+    image: require("../assets/images/home/shortcuts/dua-real.jpg"),
+  },
+  {
     label: "Mosquées",
     subtitle: "Autour de vous",
     route: "/mosques",

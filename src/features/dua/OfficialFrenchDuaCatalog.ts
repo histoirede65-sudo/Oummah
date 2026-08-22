@@ -5,8 +5,8 @@ export type OfficialFrenchDua = {
 
 export const OFFICIAL_FRENCH_DUAS: Readonly<Record<string, OfficialFrenchDua>> = {
   "2:1": {
-    "french": "Au nom d’Allah, le Tout Miséricordieux, le Très Miséricordieux",
-    "sourceUrl": "https://citadelledumusulman.com/invocations-avant-de-dormir/"
+    "french": "Aïcha, l’épouse du Prophète ﷺ, rapporte que chaque nuit, lorsqu’il se mettait au lit, le Messager d’Allah ﷺ joignait ses mains, soufflait dedans, puis y récitait : « Dis : Il est Allah, Unique », « Dis : Je cherche protection auprès du Seigneur de l’aube naissante » et « Dis : Je cherche protection auprès du Seigneur des hommes ». Ensuite, il passait ses mains sur toutes les parties de son corps qu’il pouvait atteindre, en commençant par sa tête, son visage et la partie avant de son corps. Il faisait cela trois fois.",
+    "sourceUrl": "https://hadeethenc.com/downloads/pdf/Hadeethenc_fr/Hadeethenc_fr_part5.pdf"
   },
   "2:3": {
     "french": "« Le Messager a cru en ce qu’on a fait descendre vers lui venant de son Seigneur ainsi que les croyants. Tous ont cru en Allah, en Ses Anges, à Ses Livres et en Ses Messagers. Nous ne faisons pas de distinction entre Ses Messagers. Et ils ont dit : Nous avons entendu et obéi, Seigneur nous demandons Ton absolution. C’est vers Toi que sera le retour – Dieu n’impose à aucune âme une charge supérieure à sa capacité. Récompensée pour son bien et châtiée pour le mal qu’elle aura fait. Seigneur ne nous châtie pas s’il nous arrive d’oublier ou de commettre une erreur. Seigneur ! Ne nous charge pas d’un fardeau lourd comme Tu as chargé ceux qui vécurent avant nous. Seigneur ! Ne nous oblige pas à faire ce que nous ne pouvons supporter. Pardonne-nous, absous-nous et fais-nous miséricorde. Tu es notre Maître, accorde-nous la victoire sur les peuples infidèles. «",
@@ -101,7 +101,7 @@ export const OFFICIAL_FRENCH_DUAS: Readonly<Record<string, OfficialFrenchDua>> =
     "sourceUrl": "https://citadelledumusulman.com/invocations-doua-allant-mosquee/"
   },
   "11:1": {
-    "french": "Je cherche protection auprès d’Allah le Très-Grand, auprès de Son visage majestueux et Son royaume éternel, contre Satan le maudit.",
+    "french": "En entrant, commencer par le pied droit et dire :\n\n« Je cherche protection auprès d’Allah le Très-Grand, auprès de Son visage majestueux et de Son royaume éternel, contre Satan le maudit.\n\n[Au nom d’Allah, que la prière et le salut soient sur le Messager d’Allah.]\n\nÔ Seigneur ! Ouvre-moi les portes de Ta miséricorde. »",
     "sourceUrl": "https://citadelledumusulman.com/invocations-doua-entrant-mosquee/"
   },
   "12:1": {
@@ -405,7 +405,7 @@ export const OFFICIAL_FRENCH_DUAS: Readonly<Record<string, OfficialFrenchDua>> =
     "sourceUrl": "https://citadelledumusulman.com/invocation-fermer-yeux-mort/"
   },
   "57:1": {
-    "french": "Qu’Allah accroisse ta rétribution, t’accorde les meilleures condoléances et pardonne à ton défunt.",
+    "french": "Certes, à Allah appartient ce qu’Il a repris et c’est à Lui aussi qu’appartient ce qu’Il a donné. Toute chose a auprès de Lui un terme fixé. Sois donc patient et espère la récompense d’Allah.\n\nIl est également bon de dire :\n\n« Qu’Allah accroisse ta rétribution, t’accorde les meilleures condoléances et pardonne à ton défunt. »",
     "sourceUrl": "https://citadelledumusulman.com/invocation-doua-condoleances/"
   },
   "58:1": {
@@ -417,8 +417,8 @@ export const OFFICIAL_FRENCH_DUAS: Readonly<Record<string, OfficialFrenchDua>> =
     "sourceUrl": "https://citadelledumusulman.com/invocation-doua-cimetiere/"
   },
   "60:1": {
-    "french": "Ô Seigneur ! Pardonne-lui ! Ô Seigneur ! Raffermis-le (car il est questionné par les Anges de la mort).",
-    "sourceUrl": "https://citadelledumusulman.com/invocation-inhumation-mort/"
+    "french": "Que le salut soit sur vous, habitants de ces demeures, croyants et musulmans. Nous allons, si Allah le veut, certainement vous rejoindre. [Qu’Allah accorde Sa grâce à ceux qui sont morts avant nous et à ceux qui vont les suivre.] Je demande à Allah pour nous et pour vous le salut.",
+    "sourceUrl": "https://citadelledumusulman.com/invocation-doua-cimetiere/"
   },
   "61:1": {
     "french": "Ô Seigneur ! Je Te demande le bien (de ce vent), le bien qu’il contient et le bien avec lequel il a été envoyé. Et je me mets sous Ta protection contre son mal, le mal qui contient et contre le mal pour lequel il a été déchaîné.",
@@ -573,7 +573,7 @@ export const OFFICIAL_FRENCH_DUAS: Readonly<Record<string, OfficialFrenchDua>> =
     "sourceUrl": "https://citadelledumusulman.com/invocation-doua-monture-transport/"
   },
   "96:1": {
-    "french": "Réciter cette invocation en arrivant aux abords de sa ville, au moment d’entrer dans ses environs, et il est permis de la répéter jusqu’à l’arrivée.",
+    "french": "Allah est le Plus Grand, Allah est le Plus Grand, Allah est le Plus Grand.\n\n« Gloire à Celui qui a mis ceci à notre service alors que nous n’étions pas capables de les dominer, et c’est vers notre Seigneur que nous devons retourner. »\n\nÔ Seigneur ! Nous Te demandons dans ce voyage la bonté pieuse, la crainte ainsi que tout acte qui procurera Ta satisfaction. Ô Seigneur ! Tranquillise-nous dans ce voyage et diminue-nous-en la distance. Ô Seigneur ! Tu es le compagnon de voyage et le remplaçant dans la famille. Ô Seigneur ! Je me mets sous Ta protection contre les fatigues du voyage, contre tout paysage source de chagrin, et contre tout mal qui nous frapperait, de retour dans nos biens et nos familles.\n\nAu retour, ajouter :\n\n« Nous voilà donc de retour, pleinement soumis et dévoués, et proclamant la louange de notre Seigneur. »",
     "sourceUrl": "https://citadelledumusulman.com/invocation-doua-voyageur/"
   },
   "97:1": {
@@ -581,7 +581,7 @@ export const OFFICIAL_FRENCH_DUAS: Readonly<Record<string, OfficialFrenchDua>> =
     "sourceUrl": "https://citadelledumusulman.com/invocation-doua-entre-ville/"
   },
   "98:1": {
-    "french": "Ecoutez la doua du marché en arabe :",
+    "french": "Il n’y a d’autre divinité digne d’adoration qu’Allah, Unique, sans associé. À Lui la royauté, à Lui la louange. Il donne la vie et donne la mort. Il est vivant et ne mourra jamais. Le bien est dans Sa main et Il est capable de toute chose.",
     "sourceUrl": "https://citadelledumusulman.com/invocation-doua-entrant-marche/"
   },
   "99:1": {
@@ -625,7 +625,7 @@ export const OFFICIAL_FRENCH_DUAS: Readonly<Record<string, OfficialFrenchDua>> =
     "sourceUrl": "https://citadelledumusulman.com/rendre-salam-non-musulmans/"
   },
   "111:1": {
-    "french": "Cette invocation n’est à réciter que la nuit, quand le chien aboie la journée cette doua n’est pas à dire.",
+    "french": "Lorsque vous entendez les aboiements des chiens et le braiement des ânes la nuit, demandez donc protection auprès d’Allah contre eux, car ils voient ce que vous ne pouvez voir.",
     "sourceUrl": "https://citadelledumusulman.com/invocation-doua-aboiements-chien-nuit/"
   },
   "112:1": {
@@ -743,7 +743,7 @@ const REFERENCE_SOURCE_URL =
 
 const VERIFIED_OVERRIDES: Readonly<Record<string, string>> = {
   "1:1": "Je cherche refuge auprès d’Allah contre Satan le banni. Allah, nul ne mérite d’être adoré en dehors de Lui, le Vivant, Celui qui subsiste par Lui-même. Ni somnolence ni sommeil ne Le saisissent. À Lui appartient tout ce qui est dans les cieux et sur la terre. Nul n’intercède auprès de Lui sans Sa permission. Il connaît leur présent et leur avenir, tandis qu’ils n’embrassent de Sa science que ce qu’Il veut. Son Kursî s’étend sur les cieux et la terre, dont la garde ne Lui coûte aucune peine. Il est le Très-Haut, l’Immense.",
-  "1:2": "Au nom d’Allah, le Tout Miséricordieux, le Très Miséricordieux. Réciter les sourates Al-Ikhlās, Al-Falaq et An-Nās, trois fois chacune.",
+  "1:2": "Au nom d’Allah, le Tout Miséricordieux, le Très Miséricordieux.\n\nDis : « Il est Allah, Unique ۞ Allah Le Seul à être imploré pour ce que nous désirons ۞ Il n’a jamais engendré et n’a pas été engendré non plus ۞ Et nul n’est égal à Lui. »\n\nAu nom d’Allah, le Tout Miséricordieux, le Très Miséricordieux.\n\nDis : « Je cherche protection auprès du Seigneur de l’aube naissante ۞ contre le mal des êtres qu’Il a créés ۞ contre le mal de l’obscurité quand elle s’approfondit ۞ contre le mal de celles qui soufflent sur les nœuds ۞ et contre le mal de l’envieux quand il envie. »\n\nAu nom d’Allah, le Tout Miséricordieux, le Très Miséricordieux.\n\nDis : « Je cherche protection auprès du Seigneur des hommes ۞ Le Souverain des hommes ۞ Dieu des hommes ۞ contre le mal du mauvais conseiller, furtif ۞ qui souffle le mal dans les poitrines des hommes ۞ qu’il soit un djinn, ou un être humain. »\n\nRéciter les trois sourates trois fois.",
   "1:3": "Nous voici au matin et la royauté appartient à Allah. Louange à Allah. Nul ne mérite d’être adoré en dehors d’Allah, Seul, sans associé. À Lui la royauté et la louange, et Il est capable de toute chose. Seigneur, je Te demande le bien de ce jour et de ce qui le suit, et je cherche refuge auprès de Toi contre le mal de ce jour et de ce qui le suit. Seigneur, je cherche refuge auprès de Toi contre la paresse, les maux de la vieillesse, le châtiment du Feu et le châtiment de la tombe.",
   "1:4": "Ô Allah, c’est par Toi que nous atteignons le matin et le soir, par Toi que nous vivons et mourons, et c’est vers Toi que se fera la résurrection.",
   "1:5": "Ô Allah, Tu es mon Seigneur. Nul ne mérite d’être adoré en dehors de Toi. Tu m’as créé et je suis Ton serviteur. Je demeure fidèle à Ton engagement et à Ta promesse autant que je le peux. Je cherche refuge auprès de Toi contre le mal que j’ai commis. Je reconnais Tes bienfaits envers moi et je reconnais mes péchés. Pardonne-moi, car nul autre que Toi ne pardonne les péchés.",
@@ -785,7 +785,7 @@ const VERIFIED_OVERRIDES: Readonly<Record<string, string>> = {
   "27:2": "Nul ne mérite d’être adoré en dehors d’Allah, Seul, sans associé. À Lui la royauté et la louange, et Il est capable de toute chose. Ô Allah, nul ne peut retenir ce que Tu donnes, ni donner ce que Tu retiens, et la richesse du fortuné ne lui sert à rien contre Toi.",
   "27:3": "Nul ne mérite d’être adoré en dehors d’Allah, Seul, sans associé. À Lui la royauté et la louange, et Il est capable de toute chose. Il n’y a de force ni de puissance qu’en Allah. Nul ne mérite d’être adoré en dehors d’Allah et nous n’adorons que Lui. À Lui le bienfait, la grâce et la belle louange. Nul ne mérite d’être adoré en dehors d’Allah ; nous Lui vouons un culte sincère, même si les mécréants le détestent.",
   "27:4": "Gloire à Allah, louange à Allah et Allah est le Plus Grand, trente-trois fois. Nul ne mérite d’être adoré en dehors d’Allah, Seul, sans associé. À Lui la royauté et la louange, et Il est capable de toute chose.",
-  "27:5": "Au nom d’Allah, le Tout Miséricordieux, le Très Miséricordieux. Réciter les sourates Al-Ikhlās, Al-Falaq et An-Nās.",
+  "27:5": "Au nom d’Allah, le Tout Miséricordieux, le Très Miséricordieux.\n\nDis : « Il est Allah, Unique ۞ Allah Le Seul à être imploré pour ce que nous désirons ۞ Il n’a jamais engendré et n’a pas été engendré non plus ۞ Et nul n’est égal à Lui. »\n\nAu nom d’Allah, le Tout Miséricordieux, le Très Miséricordieux.\n\nDis : « Je cherche protection auprès du Seigneur de l’aube naissante ۞ contre le mal des êtres qu’Il a créés ۞ contre le mal de l’obscurité quand elle s’approfondit ۞ contre le mal de celles qui soufflent sur les nœuds ۞ et contre le mal de l’envieux quand il envie. »\n\nAu nom d’Allah, le Tout Miséricordieux, le Très Miséricordieux.\n\nDis : « Je cherche protection auprès du Seigneur des hommes ۞ Le Souverain des hommes ۞ Dieu des hommes ۞ contre le mal du mauvais conseiller, furtif ۞ qui souffle le mal dans les poitrines des hommes ۞ qu’il soit un djinn, ou un être humain. »\n\nAprès chaque prière.",
   "27:6": "Allah, nul ne mérite d’être adoré en dehors de Lui, le Vivant, Celui qui subsiste par Lui-même. Ni somnolence ni sommeil ne Le saisissent. À Lui appartient tout ce qui est dans les cieux et sur la terre. Nul n’intercède auprès de Lui sans Sa permission. Il connaît leur présent et leur avenir, tandis qu’ils n’embrassent de Sa science que ce qu’Il veut. Son Kursî s’étend sur les cieux et la terre, dont la garde ne Lui coûte aucune peine. Il est le Très-Haut, l’Immense.",
   "27:7": "Nul ne mérite d’être adoré en dehors d’Allah, Seul, sans associé. À Lui la royauté et la louange. Il donne la vie et donne la mort, et Il est capable de toute chose.",
   "27:8": "Ô Allah, je Te demande un savoir utile, une subsistance bonne et des œuvres agréées.",
