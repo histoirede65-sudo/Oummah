@@ -7,6 +7,7 @@ import {
   ActivityIndicator,
   Alert,
   KeyboardAvoidingView,
+  LayoutAnimation,
   Platform,
   Pressable,
   ScrollView,
@@ -16,6 +17,8 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { WasilContextButton } from '../components/wasil/WasilContextButton';
+import { colors } from '../theme/colors';
 
 const STORAGE_KEY = '@oummah/zakat/history/v1';
 const ZAKAT_RATES = { lunar: 0.025, gregorian: 0.02577 } as const;
@@ -109,6 +112,7 @@ export default function ZakatScreen() {
   const [showResult, setShowResult] = useState(false);
   const [history, setHistory] = useState<HistoryEntry[]>([]);
   const [showHistory, setShowHistory] = useState(false);
+  const [showZakatExplanation, setShowZakatExplanation] = useState(false);
 
   useEffect(() => {
     AsyncStorage.getItem(STORAGE_KEY)
@@ -237,7 +241,7 @@ export default function ZakatScreen() {
   return (
     <KeyboardAvoidingView style={styles.screen} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
       <ScrollView showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled" contentContainerStyle={styles.content}>
-        <LinearGradient colors={['#123C36', '#0A2926', '#071F1D']} style={styles.hero}>
+        <LinearGradient colors={[colors.purpleMid, colors.surface, colors.background]} style={styles.hero}>
           <SafeAreaView edges={['top']} style={styles.safeHeader}>
             <Pressable onPress={() => router.back()} style={styles.backButton} accessibilityLabel="Retour">
               <Ionicons name="chevron-back" size={22} color="#FFFFFF" />
@@ -302,6 +306,34 @@ export default function ZakatScreen() {
             </View>
           ) : (
             <>
+              <View style={styles.educationCard}>
+                <Text style={styles.educationEyebrow}>COMPRENDRE LA ZAKAT</Text>
+                <Text style={styles.educationTitle}>Qu’est-ce que la Zakat ?</Text>
+                <Text style={styles.educationText}>La Zakat est une adoration obligatoire et l’un des cinq piliers de l’Islam. Lorsque les conditions requises sont réunies, une part déterminée des biens est destinée aux bénéficiaires de la Zakat. Elle est à la fois un acte d’adoration, de purification des biens et de solidarité.</Text>
+                {showZakatExplanation ? (
+                  <View style={styles.zakatExplanation}>
+                    <EducationRow icon="scale-outline" title="Le nisab" text="Le nisab est le seuil minimal de richesse à partir duquel la Zakat peut devenir obligatoire. Pour ce calculateur, OUMMAH utilise un nisab basé sur la valeur de 85 g d’or." />
+                    <EducationRow icon="calendar-outline" title="Le hawl" text="Pour les biens concernés par ce calculateur, le patrimoine doit en principe être resté au-dessus du nisab pendant une année lunaire complète (hawl)." />
+                    <EducationRow icon="pie-chart-outline" title="Le taux" text="Le taux utilisé est de 2,5 % pour une année lunaire. Lorsque le calcul est effectué sur une année grégorienne complète, OUMMAH applique 2,577 % afin de tenir compte de sa durée plus longue." />
+                    <EducationRow icon="people-outline" title="À qui est destinée la Zakat ?" text="Le Coran mentionne huit catégories de bénéficiaires de la Zakat dans la sourate At-Tawbah, verset 60." />
+                    <EducationRow icon="help-circle-outline" title="Selon votre situation" text="Les règles peuvent différer selon la nature des biens, les dettes et certaines situations particulières. En cas de doute, demandez l’avis d’une personne qualifiée." />
+                    <WasilContextButton
+                      prompt="Qu’est-ce que la Zakat ? Explique-moi simplement ce qu’elle est, à qui elle s’applique et les principes essentiels à connaître."
+                      largeLabel
+                    />
+                  </View>
+                ) : null}
+                <Pressable
+                  onPress={() => {
+                    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+                    setShowZakatExplanation((value) => !value);
+                  }}
+                  style={showZakatExplanation ? styles.secondaryButton : styles.zakatCta}
+                >
+                  <Text style={showZakatExplanation ? styles.secondaryButtonText : styles.zakatCtaText}>{showZakatExplanation ? 'Réduire' : 'En savoir plus'}</Text>
+                </Pressable>
+              </View>
+
               <View style={styles.introCard}>
                 <View style={styles.introIcon}>
                   <Ionicons name="information-circle-outline" size={22} color="#D8B767" />
@@ -520,23 +552,23 @@ function EducationRow({ icon, title, text }: { icon: keyof typeof Ionicons.glyph
 }
 
 const styles = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: '#071F1D' },
+  screen: { flex: 1, backgroundColor: colors.background },
   content: { paddingBottom: 50 },
   hero: { paddingBottom: 28, borderBottomLeftRadius: 34, borderBottomRightRadius: 34, overflow: 'hidden' },
   safeHeader: { paddingHorizontal: 18, paddingBottom: 8, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   backButton: { width: 42, height: 42, borderRadius: 21, alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(255,255,255,0.09)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.13)' },
   historyButton: { height: 40, paddingHorizontal: 14, borderRadius: 20, flexDirection: 'row', alignItems: 'center', gap: 7, backgroundColor: 'rgba(255,255,255,0.08)', borderWidth: 1, borderColor: 'rgba(242,216,155,0.22)' },
   historyButtonText: { color: '#F2D89B', fontSize: 12, fontWeight: '700' },
-  heroIcon: { width: 52, height: 52, borderRadius: 18, backgroundColor: '#E2C574', alignItems: 'center', justifyContent: 'center', marginTop: 12, marginLeft: 22 },
-  heroEyebrow: { marginTop: 16, marginHorizontal: 22, color: '#D8B767', fontSize: 10, letterSpacing: 1.8, fontWeight: '800' },
+  heroIcon: { width: 52, height: 52, borderRadius: 18, backgroundColor: colors.goldLight, alignItems: 'center', justifyContent: 'center', marginTop: 12, marginLeft: 22 },
+  heroEyebrow: { marginTop: 16, marginHorizontal: 22, color: colors.goldLight, fontSize: 10, letterSpacing: 1.8, fontWeight: '800' },
   heroTitle: { marginHorizontal: 22, marginTop: 2, color: '#FFFFFF', fontSize: 40, fontFamily: 'CormorantGaramond-SemiBold' },
   heroText: { marginHorizontal: 22, marginTop: 4, color: '#C9D6D3', fontSize: 14, lineHeight: 21, maxWidth: 350 },
-  verseCard: { marginHorizontal: 22, marginTop: 22, padding: 15, borderRadius: 18, backgroundColor: 'rgba(255,255,255,0.07)', borderWidth: 1, borderColor: 'rgba(216,183,103,0.18)' },
-  verseText: { color: '#F4EFE3', fontFamily: 'CormorantGaramond-Medium', fontSize: 17, lineHeight: 23, marginTop: 8 },
-  verseReference: { color: '#D8B767', fontSize: 11, fontWeight: '700', marginTop: 7 },
+  verseCard: { marginHorizontal: 22, marginTop: 22, padding: 15, borderRadius: 18, backgroundColor: 'rgba(255,255,255,0.07)', borderWidth: 1, borderColor: 'rgba(227,181,90,0.24)' },
+  verseText: { color: colors.text, fontFamily: 'CormorantGaramond-Medium', fontSize: 17, lineHeight: 23, marginTop: 8 },
+  verseReference: { color: colors.goldLight, fontSize: 11, fontWeight: '700', marginTop: 7 },
   body: { paddingHorizontal: 18, paddingTop: 22 },
-  introCard: { flexDirection: 'row', gap: 12, padding: 16, backgroundColor: '#0D2A27', borderRadius: 20, borderWidth: 1, borderColor: '#183B37', marginBottom: 28 },
-  introIcon: { width: 40, height: 40, borderRadius: 14, backgroundColor: '#173A35', alignItems: 'center', justifyContent: 'center' },
+  introCard: { flexDirection: 'row', gap: 12, padding: 16, backgroundColor: colors.surface, borderRadius: 20, borderWidth: 1, borderColor: colors.borderSoft, marginBottom: 28 },
+  introIcon: { width: 40, height: 40, borderRadius: 14, backgroundColor: colors.surfaceAlt, alignItems: 'center', justifyContent: 'center' },
   introCopy: { flex: 1 },
   introTitle: { color: '#F5F1E8', fontSize: 15, fontWeight: '700' },
   introText: { color: '#AFC0BC', fontSize: 12.5, lineHeight: 19, marginTop: 4 },
@@ -545,22 +577,22 @@ const styles = StyleSheet.create({
   sectionTitle: { color: '#F5F1E8', fontFamily: 'CormorantGaramond-SemiBold', fontSize: 25, marginTop: 2 },
   sectionDescription: { color: '#93AAA5', fontSize: 12.5, lineHeight: 19, marginTop: 4, marginBottom: 15 },
   modeRow: { flexDirection: 'row', gap: 10, marginTop: 14 },
-  modeCard: { flex: 1, minHeight: 155, padding: 14, borderRadius: 22, backgroundColor: '#0D2A27', borderWidth: 1, borderColor: '#1A3C38' },
-  modeCardActive: { borderColor: '#D8B767', backgroundColor: '#12332F' },
-  modeIcon: { width: 38, height: 38, borderRadius: 13, backgroundColor: '#173A35', alignItems: 'center', justifyContent: 'center' },
-  modeIconActive: { backgroundColor: '#D8B767' },
+  modeCard: { flex: 1, minHeight: 155, padding: 14, borderRadius: 22, backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.border },
+  modeCardActive: { borderColor: colors.goldLight, backgroundColor: colors.surfaceAlt },
+  modeIcon: { width: 38, height: 38, borderRadius: 13, backgroundColor: colors.surfaceAlt, alignItems: 'center', justifyContent: 'center' },
+  modeIconActive: { backgroundColor: colors.goldLight },
   modeTitle: { color: '#F5F1E8', fontSize: 14, fontWeight: '800', marginTop: 12 },
   modeSubtitle: { color: '#91A7A2', fontSize: 11.5, lineHeight: 16, marginTop: 4, paddingRight: 14 },
   radio: { position: 'absolute', right: 13, top: 13, width: 18, height: 18, borderRadius: 9, borderWidth: 1.5, borderColor: '#59706C', alignItems: 'center', justifyContent: 'center' },
   radioActive: { borderColor: '#D8B767' },
   radioDot: { width: 9, height: 9, borderRadius: 5, backgroundColor: '#D8B767' },
   divider: { height: 1, backgroundColor: '#153532', marginVertical: 27 },
-  amountCard: { minHeight: 76, flexDirection: 'row', alignItems: 'center', padding: 12, borderRadius: 18, backgroundColor: '#0D2A27', borderWidth: 1, borderColor: '#183936', marginBottom: 9 },
-  amountIcon: { width: 40, height: 40, borderRadius: 14, backgroundColor: '#173A35', alignItems: 'center', justifyContent: 'center' },
+  amountCard: { minHeight: 76, flexDirection: 'row', alignItems: 'center', padding: 12, borderRadius: 18, backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.border, marginBottom: 9 },
+  amountIcon: { width: 40, height: 40, borderRadius: 14, backgroundColor: colors.surfaceAlt, alignItems: 'center', justifyContent: 'center' },
   amountCopy: { flex: 1, paddingHorizontal: 11 },
   amountLabel: { color: '#F2EEE5', fontSize: 13.5, fontWeight: '700' },
   amountDescription: { color: '#7F9994', fontSize: 10.5, lineHeight: 14, marginTop: 2 },
-  inputWrap: { width: 86, height: 44, borderRadius: 13, backgroundColor: '#071F1D', borderWidth: 1, borderColor: '#244540', flexDirection: 'row', alignItems: 'center', paddingHorizontal: 9 },
+  inputWrap: { width: 86, height: 44, borderRadius: 13, backgroundColor: colors.backgroundSecondary, borderWidth: 1, borderColor: colors.border, flexDirection: 'row', alignItems: 'center', paddingHorizontal: 9 },
   input: { flex: 1, color: '#FFFFFF', textAlign: 'right', fontSize: 15, fontWeight: '700', paddingVertical: 0 },
   currency: { color: '#D8B767', fontSize: 13, fontWeight: '700', marginLeft: 4 },
   nisabOptions: { flexDirection: 'row', gap: 8, marginBottom: 12 },
@@ -570,10 +602,10 @@ const styles = StyleSheet.create({
   nisabTitleActive: { color: '#F0D895' },
   nisabSubtitle: { color: '#78908B', fontSize: 9.5, marginTop: 3 },
   yearRow: { flexDirection: 'row', gap: 9, marginBottom: 16 },
-  yearChoice: { flex: 1, minHeight: 142, padding: 13, borderRadius: 19, borderWidth: 1, borderColor: '#1A3C38', backgroundColor: '#0D2A27' },
-  yearChoiceActive: { borderColor: '#D8B767', backgroundColor: '#12332F' },
-  yearIcon: { width: 38, height: 38, borderRadius: 13, backgroundColor: '#173A35', alignItems: 'center', justifyContent: 'center' },
-  yearIconActive: { backgroundColor: '#D8B767' },
+  yearChoice: { flex: 1, minHeight: 142, padding: 13, borderRadius: 19, borderWidth: 1, borderColor: colors.border, backgroundColor: colors.surface },
+  yearChoiceActive: { borderColor: colors.goldLight, backgroundColor: colors.surfaceAlt },
+  yearIcon: { width: 38, height: 38, borderRadius: 13, backgroundColor: colors.surfaceAlt, alignItems: 'center', justifyContent: 'center' },
+  yearIconActive: { backgroundColor: colors.goldLight },
   yearChoiceTitle: { color: '#E9EEE9', fontSize: 13.5, fontWeight: '800', marginTop: 10 },
   yearChoiceTitleActive: { color: '#F2D893' },
   yearChoiceRate: { color: '#F5F1E8', fontFamily: 'CormorantGaramond-SemiBold', fontSize: 25, marginTop: 1 },
@@ -584,8 +616,8 @@ const styles = StyleSheet.create({
   hawlChoiceActive: { backgroundColor: '#D8B767', borderColor: '#D8B767' },
   hawlChoiceText: { color: '#E9EEE9', fontSize: 11.5, fontWeight: '700', textAlign: 'center' },
   hawlChoiceTextActive: { color: '#17312E' },
-  nisabAutoCard: { flexDirection: 'row', alignItems: 'center', padding: 15, borderRadius: 20, backgroundColor: '#12332F', borderWidth: 1, borderColor: '#D8B767', marginTop: 5 },
-  nisabAutoIcon: { width: 44, height: 44, borderRadius: 15, backgroundColor: '#0B2724', alignItems: 'center', justifyContent: 'center' },
+  nisabAutoCard: { flexDirection: 'row', alignItems: 'center', padding: 15, borderRadius: 20, backgroundColor: colors.surfaceAlt, borderWidth: 1, borderColor: colors.goldLight, marginTop: 5 },
+  nisabAutoIcon: { width: 44, height: 44, borderRadius: 15, backgroundColor: colors.purpleDeep, alignItems: 'center', justifyContent: 'center' },
   nisabAutoCopy: { flex: 1, paddingHorizontal: 12 },
   nisabAutoLabel: { color: '#F3EEE4', fontSize: 12.5, fontWeight: '800' },
   nisabAutoValue: { color: '#F2D893', fontFamily: 'CormorantGaramond-SemiBold', fontSize: 25, marginTop: 2 },
@@ -616,14 +648,15 @@ const styles = StyleSheet.create({
   resultNoticeText: { flex: 1, color: '#9DB0AC', fontSize: 11, lineHeight: 16 },
   resetButton: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 7, height: 43, marginTop: 13 },
   resetText: { color: '#EBD79F', fontSize: 12.5, fontWeight: '700' },
-  educationCard: { marginTop: 28, padding: 18, borderRadius: 24, backgroundColor: '#0D2A27', borderWidth: 1, borderColor: '#173A36' },
-  educationEyebrow: { color: '#CDAE63', fontSize: 9, fontWeight: '800', letterSpacing: 1.5 },
-  educationTitle: { color: '#F4EFE5', fontFamily: 'CormorantGaramond-SemiBold', fontSize: 24, marginTop: 3, marginBottom: 8 },
-  educationRow: { flexDirection: 'row', gap: 11, paddingVertical: 11, borderTopWidth: 1, borderTopColor: '#173835' },
-  educationIcon: { width: 36, height: 36, borderRadius: 13, backgroundColor: '#173A35', alignItems: 'center', justifyContent: 'center' },
+  educationCard: { marginTop: 28, padding: 18, borderRadius: 24, backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.borderSoft },
+  educationEyebrow: { color: colors.goldLight, fontSize: 9, fontWeight: '800', letterSpacing: 1.5 },
+  educationTitle: { color: colors.text, fontFamily: 'CormorantGaramond-SemiBold', fontSize: 24, marginTop: 3, marginBottom: 8 },
+  zakatExplanation: { marginTop: 4 },
+  educationRow: { flexDirection: 'row', gap: 11, paddingVertical: 13, borderTopWidth: 1, borderTopColor: colors.borderSoft },
+  educationIcon: { width: 38, height: 38, borderRadius: 13, backgroundColor: colors.surfaceAlt, alignItems: 'center', justifyContent: 'center' },
   educationCopy: { flex: 1 },
-  educationRowTitle: { color: '#EDEAE2', fontSize: 13, fontWeight: '700' },
-  educationText: { color: '#8FA5A0', fontSize: 11.5, lineHeight: 17, marginTop: 2 },
+  educationRowTitle: { color: colors.text, fontSize: 15, lineHeight: 20, fontWeight: '700' },
+  educationText: { color: colors.textSecondary, fontSize: 14, lineHeight: 21, marginTop: 4 },
   historyPanel: { paddingTop: 4 },
   clearButton: { width: 38, height: 38, borderRadius: 14, backgroundColor: '#2B302C', alignItems: 'center', justifyContent: 'center' },
   emptyHistory: { alignItems: 'center', paddingVertical: 48, paddingHorizontal: 28 },
@@ -635,6 +668,8 @@ const styles = StyleSheet.create({
   historyDate: { color: '#EDEAE2', fontSize: 12.5, fontWeight: '700' },
   historyMeta: { color: '#7E9691', fontSize: 9.5, marginTop: 3 },
   historyAmount: { color: '#E2C574', fontSize: 14, fontWeight: '800' },
-  secondaryButton: { marginTop: 20, height: 49, borderRadius: 16, borderWidth: 1, borderColor: '#31504B', alignItems: 'center', justifyContent: 'center' },
-  secondaryButtonText: { color: '#D9E1DF', fontSize: 13, fontWeight: '700' },
+  secondaryButton: { marginTop: 20, height: 49, borderRadius: 16, borderWidth: 1, borderColor: colors.border, alignItems: 'center', justifyContent: 'center' },
+  secondaryButtonText: { color: colors.textSecondary, fontSize: 13, fontWeight: '700' },
+  zakatCtaText: { color: colors.purpleDeep, fontSize: 14, fontWeight: '800' },
+  zakatCta: { marginTop: 22, minHeight: 54, borderRadius: 16, backgroundColor: colors.goldLight, alignItems: 'center', justifyContent: 'center', shadowColor: colors.goldLight, shadowOpacity: 0.22, shadowRadius: 10, shadowOffset: { width: 0, height: 4 }, elevation: 3 },
 });
