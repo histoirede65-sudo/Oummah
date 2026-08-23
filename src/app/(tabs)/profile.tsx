@@ -440,6 +440,20 @@ export default function ProfileScreen() {
             </Text>
           </View>
         )}
+
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel="Test récitation Hifz temporaire"
+          onPress={() => router.push("/dev/hifz-recitation-test")}
+          style={({ pressed }) => [styles.devTestButton, pressed && styles.premiumButtonPressed]}
+        >
+          <Ionicons name="mic-outline" size={19} color={colors.goldLight} />
+          <View style={styles.devTestCopy}>
+            <Text style={styles.devTestTitle}>Test récitation Hifz 🎙️</Text>
+            <Text style={styles.devTestSubtitle}>Accès temporaire · développement</Text>
+          </View>
+          <Ionicons name="chevron-forward" size={18} color={colors.goldLight} />
+        </Pressable>
       </ScrollView>
 
       <Modal
@@ -918,6 +932,20 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "flex-start",
   },
+  devTestButton: {
+    minHeight: 68,
+    marginTop: 18,
+    paddingHorizontal: 15,
+    flexDirection: "row",
+    alignItems: "center",
+    borderRadius: 18,
+    borderWidth: 1,
+    borderColor: "rgba(227,181,90,0.28)",
+    backgroundColor: "rgba(227,181,90,0.06)",
+  },
+  devTestCopy: { flex: 1, marginLeft: 11 },
+  devTestTitle: { color: colors.goldLight, fontFamily: typography.sans, fontSize: 13, fontWeight: "800" },
+  devTestSubtitle: { marginTop: 3, color: colors.textMuted, fontFamily: typography.sans, fontSize: 10.5 },
   noticeText: {
     flex: 1,
     marginLeft: 8,
