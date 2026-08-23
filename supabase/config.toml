@@ -1,2 +1,5 @@
 [functions.revenuecat-wasil-webhook]
 verify_jwt = false
+
+[functions.hifz-recitation-analyze]
+verify_jwt = true
