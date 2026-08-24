@@ -261,10 +261,10 @@ function AppLaunchAnimation({
             },
           ]}
         >
-          <Text style={launchStyles.eyebrow}>BIENVENUE DANS</Text>
-          <Text style={launchStyles.title}>OUMMAH</Text>
+          <Text allowFontScaling={false} style={launchStyles.eyebrow}>BIENVENUE DANS</Text>
+          <Text allowFontScaling={false} style={launchStyles.title}>OUMMAH</Text>
           <View style={launchStyles.brandLine} />
-          <Text style={launchStyles.subtitle}>Votre compagnon musulman au quotidien</Text>
+          <Text allowFontScaling={false} style={launchStyles.subtitle}>Votre compagnon musulman au quotidien</Text>
         </Animated.View>
 
         <Animated.View

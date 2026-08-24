@@ -29,6 +29,10 @@ import {
 } from "../features/mosques/data/mosquePrayerTimes";
 import { getMainMosque, type StoredMosque } from "../features/mosques/data/mosquePreferences";
 import {
+  applyApprovedMosquePrayerTimes,
+  getApprovedMosquePrayerTimes,
+} from "../features/mosques/data/mosquePrayerUpdates";
+import {
   buildNotificationCenterItems,
   CENTER_REMINDERS,
   DEFAULT_NOTIFICATION_CENTER_PREFERENCES,
@@ -39,6 +43,7 @@ import {
   saveReadNotificationIds,
   syncNotificationCenterSchedule,
   type CenterAlertMode,
+  type CenterReminderId,
   type NotificationCenterItem,
   type NotificationCenterPreferences,
 } from "../features/notifications/NotificationCenter";
@@ -91,6 +96,9 @@ export default function NotificationsScreen() {
   const [settingsVisible, setSettingsVisible] = useState(false);
   const [loaded, setLoaded] = useState(false);
   const [adminAnnouncements, setAdminAnnouncements] = useState<PublicAnnouncement[]>([]);
+  const [timePickerReminder, setTimePickerReminder] = useState<CenterReminderId | null>(null);
+  const [timePickerHour, setTimePickerHour] = useState(0);
+  const [timePickerMinute, setTimePickerMinute] = useState(0);
 
   useFocusEffect(
     useCallback(() => {
@@ -115,10 +123,14 @@ export default function NotificationsScreen() {
         setLoaded(true);
 
         if (nextMosque) {
-          const nextSchedule = await getMosquePrayerSchedule(
+          const calculatedSchedule = await getMosquePrayerSchedule(
             nextMosque.latitude,
             nextMosque.longitude,
           ).catch(() => null);
+          const approved = await getApprovedMosquePrayerTimes(nextMosque.id).catch(() => null);
+          const nextSchedule = calculatedSchedule
+            ? applyApprovedMosquePrayerTimes(calculatedSchedule, approved)
+            : null;
           if (active) setSchedule(nextSchedule);
         }
       });
@@ -156,6 +168,23 @@ export default function NotificationsScreen() {
     },
     [],
   );
+
+  const openReminderTimePicker = (reminder: (typeof CENTER_REMINDERS)[number]) => {
+    const [hour, minute] = (preferences.reminderTimes?.[reminder.id] ?? reminder.time ?? "00:00").split(":").map(Number);
+    setTimePickerReminder(reminder.id);
+    setTimePickerHour(Number.isFinite(hour) ? hour : 0);
+    setTimePickerMinute(Number.isFinite(minute) ? minute : 0);
+  };
+
+  const saveReminderTime = () => {
+    if (!timePickerReminder) return;
+    const time = `${String(timePickerHour).padStart(2, "0")}:${String(timePickerMinute).padStart(2, "0")}`;
+    updatePreferences((current) => ({
+      ...current,
+      reminderTimes: { ...current.reminderTimes, [timePickerReminder]: time },
+    }));
+    setTimePickerReminder(null);
+  };
 
   const hasPendingChanges = useMemo(
     () =>
@@ -224,12 +253,13 @@ export default function NotificationsScreen() {
           <Ionicons name="chevron-back" size={22} color="#FFF8EF" />
         </Pressable>
         <View style={styles.headerCopy}>
-          <Text style={styles.eyebrow}>VOTRE QUOTIDIEN</Text>
-          <Text style={styles.title}>Notifications</Text>
+          <Text allowFontScaling={false} style={styles.eyebrow}>VOTRE QUOTIDIEN</Text>
+          <Text allowFontScaling={false} numberOfLines={1} style={styles.title}>Notifications</Text>
+          <Pressable onPress={() => setSettingsVisible(true)} style={styles.editNotificationsButton}>
+            <Ionicons name="options-outline" size={15} color="#F2BE55" />
+            <Text allowFontScaling={false} style={styles.editNotificationsText}>Modifier mes notifications</Text>
+          </Pressable>
         </View>
-        <Pressable onPress={() => setSettingsVisible(true)} style={styles.headerButton}>
-          <Ionicons name="options-outline" size={21} color="#F2BE55" />
-        </Pressable>
       </View>
 
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
@@ -461,9 +491,13 @@ export default function NotificationsScreen() {
                       <View key={reminder.id} style={styles.settingRow}>
                         <View style={styles.settingCopy}>
                           <Text style={styles.settingTitle}>{reminder.title}</Text>
-                          <Text style={styles.settingDescription}>
-                            {reminder.description}{reminder.time ? ` · ${reminder.time}` : ""}
-                          </Text>
+                          <Text style={styles.settingDescription}>{reminder.description}</Text>
+                          {section === "Dou‘as" && reminder.time ? (
+                            <Pressable onPress={() => openReminderTimePicker(reminder)} style={styles.reminderTimeButton}>
+                              <Ionicons name="time-outline" size={14} color="#F4C75E" />
+                              <Text style={styles.reminderTimeText}>{preferences.reminderTimes?.[reminder.id] ?? reminder.time}</Text>
+                            </Pressable>
+                          ) : null}
                         </View>
                         <Switch
                           value={preferences.reminders[reminder.id]}
@@ -496,20 +530,46 @@ export default function NotificationsScreen() {
                 {saving ? "Enregistrement…" : hasPendingChanges ? "Enregistrer mes notifications" : "Notifications enregistrées"}
               </Text>
             </Pressable>
+          {timePickerReminder !== null ? (
+            <View style={styles.timePickerOverlay}>
+              <Pressable style={styles.timePickerBackdrop} onPress={() => setTimePickerReminder(null)}>
+                <Pressable style={styles.timePickerCard} onPress={(event) => event.stopPropagation()}>
+                  <Text style={styles.timePickerTitle}>Choisir l’heure</Text>
+                  <View style={styles.timePickerValues}>
+                    <View style={styles.timePickerColumn}>
+                      <Pressable onPress={() => setTimePickerHour((value) => (value + 1) % 24)} style={styles.timePickerAdjust}><Ionicons name="chevron-up" size={22} color="#F4C75E" /></Pressable>
+                      <Text style={styles.timePickerValue}>{String(timePickerHour).padStart(2, "0")}</Text>
+                      <Pressable onPress={() => setTimePickerHour((value) => (value + 23) % 24)} style={styles.timePickerAdjust}><Ionicons name="chevron-down" size={22} color="#F4C75E" /></Pressable>
+                    </View>
+                    <Text style={styles.timePickerSeparator}>:</Text>
+                    <View style={styles.timePickerColumn}>
+                      <Pressable onPress={() => setTimePickerMinute((value) => (value + 5) % 60)} style={styles.timePickerAdjust}><Ionicons name="chevron-up" size={22} color="#F4C75E" /></Pressable>
+                      <Text style={styles.timePickerValue}>{String(timePickerMinute).padStart(2, "0")}</Text>
+                      <Pressable onPress={() => setTimePickerMinute((value) => (value + 55) % 60)} style={styles.timePickerAdjust}><Ionicons name="chevron-down" size={22} color="#F4C75E" /></Pressable>
+                    </View>
+                  </View>
+                  <Pressable onPress={saveReminderTime} style={styles.timePickerDone}><Text style={styles.timePickerDoneText}>Valider</Text></Pressable>
+                </Pressable>
+              </Pressable>
+            </View>
+          ) : null}
           </View>
         </View>
       </Modal>
+
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   safeArea: { flex: 1, backgroundColor: "#10131C" },
-  header: { height: 68, paddingHorizontal: 16, flexDirection: "row", alignItems: "center" },
+  header: { minHeight: 108, paddingHorizontal: 16, paddingVertical: 10, flexDirection: "row", alignItems: "center" },
   headerButton: { width: 42, height: 42, alignItems: "center", justifyContent: "center", borderRadius: 21, borderWidth: 1, borderColor: "rgba(255,230,190,0.14)", backgroundColor: "rgba(255,255,255,0.045)" },
-  headerCopy: { flex: 1, alignItems: "center" },
+  editNotificationsButton: { height: 38, marginTop: 6, paddingHorizontal: 10, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 5, borderRadius: 13, borderWidth: 1, borderColor: "rgba(242,190,85,0.28)", backgroundColor: "rgba(242,190,85,0.10)" },
+  editNotificationsText: { color: "#F2BE55", fontFamily: typography.sans, fontSize: 9.5, fontWeight: "800" },
+  headerCopy: { flex: 1, alignItems: "center", minWidth: 0 },
   eyebrow: { color: "rgba(242,190,85,0.70)", fontFamily: typography.sans, fontSize: 8.5, fontWeight: "700", letterSpacing: 1.2 },
-  title: { color: "#FFF8EF", fontFamily: typography.serifSemibold, fontSize: 25 },
+  title: { color: "#FFF8EF", fontFamily: typography.serifSemibold, fontSize: 25, flexShrink: 1, textAlign: "center" },
   content: { padding: 14, paddingBottom: 34 },
   summaryCard: { minHeight: 76, padding: 13, flexDirection: "row", alignItems: "center", borderRadius: 22, borderWidth: 1, borderColor: "rgba(245,198,96,0.20)", backgroundColor: "rgba(255,255,255,0.055)" },
   summaryIcon: { width: 44, height: 44, alignItems: "center", justifyContent: "center", borderRadius: 15, backgroundColor: "#F0B94B" },
@@ -570,12 +630,25 @@ const styles = StyleSheet.create({
   settingCopy: { flex: 1, paddingRight: 10 },
   settingTitle: { color: "#FFF7EE", fontFamily: typography.serifMedium, fontSize: 14 },
   settingDescription: { marginTop: 2, color: "rgba(230,220,228,0.52)", fontFamily: typography.sans, fontSize: 9.5, lineHeight: 13 },
+  reminderTimeButton: { marginTop: 5, alignSelf: "flex-start", paddingHorizontal: 8, paddingVertical: 4, flexDirection: "row", alignItems: "center", gap: 5, borderRadius: 9, backgroundColor: "rgba(242,190,85,0.10)" },
+  reminderTimeText: { color: "#F4C75E", fontFamily: typography.sans, fontSize: 11, fontWeight: "800", fontVariant: ["tabular-nums"] },
   prayerChoicesBlock: { padding: 13, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: "rgba(255,255,255,0.07)" },
   prayerChoicesRow: { flexDirection: "row", flexWrap: "wrap", gap: 7 },
   prayerChoice: { minHeight: 36, paddingHorizontal: 10, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 5, borderRadius: 12, borderWidth: 1, borderColor: "rgba(255,255,255,0.08)", backgroundColor: "rgba(255,255,255,0.035)" },
   delayBlock: { padding: 13, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: "rgba(255,255,255,0.07)" },
   delayTitle: { marginBottom: 9, color: "#FFF7EE", fontFamily: typography.serifMedium, fontSize: 13 },
   delayRow: { flexDirection: "row", flexWrap: "wrap", gap: 7 },
+  timePickerBackdrop: { flex: 1, alignItems: "center", justifyContent: "center", padding: 24, backgroundColor: "rgba(3,4,9,0.74)" },
+  timePickerOverlay: { ...StyleSheet.absoluteFillObject, zIndex: 10 },
+  timePickerCard: { width: "100%", maxWidth: 330, padding: 20, borderRadius: 24, borderWidth: 1, borderColor: "rgba(255,227,172,0.18)", backgroundColor: "#17131C" },
+  timePickerTitle: { color: "#FFF8EF", fontFamily: typography.serifSemibold, fontSize: 20, textAlign: "center" },
+  timePickerValues: { marginTop: 17, flexDirection: "row", alignItems: "center", justifyContent: "center" },
+  timePickerColumn: { alignItems: "center" },
+  timePickerAdjust: { width: 52, height: 38, alignItems: "center", justifyContent: "center", borderRadius: 12, backgroundColor: "rgba(242,190,85,0.08)" },
+  timePickerValue: { minWidth: 68, marginVertical: 5, color: "#FFF8EF", fontFamily: typography.sans, fontSize: 30, fontWeight: "800", textAlign: "center", fontVariant: ["tabular-nums"] },
+  timePickerSeparator: { marginHorizontal: 8, color: "#F4C75E", fontFamily: typography.sans, fontSize: 28, fontWeight: "800" },
+  timePickerDone: { minHeight: 46, marginTop: 18, alignItems: "center", justifyContent: "center", borderRadius: 15, backgroundColor: "#F2C55B" },
+  timePickerDoneText: { color: "#172018", fontFamily: typography.sans, fontSize: 13, fontWeight: "800" },
   delayChoice: { minHeight: 36, paddingHorizontal: 11, alignItems: "center", justifyContent: "center", borderRadius: 12, borderWidth: 1, borderColor: "rgba(255,255,255,0.08)", backgroundColor: "rgba(255,255,255,0.035)" },
   delayText: { color: "#AAA1AD", fontFamily: typography.sans, fontSize: 10, fontWeight: "700" },
   disabledChoice: { opacity: 0.45 },

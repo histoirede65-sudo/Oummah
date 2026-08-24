@@ -27,6 +27,7 @@ export type NotificationCenterPreferences = {
   systemEnabled: boolean;
   mode: CenterAlertMode;
   reminders: Record<CenterReminderId, boolean>;
+  reminderTimes?: Partial<Record<CenterReminderId, string>>;
 };
 
 export type NotificationCenterItem = {
@@ -76,6 +77,15 @@ export const DEFAULT_NOTIFICATION_CENTER_PREFERENCES: NotificationCenterPreferen
     "verse-of-day": true,
     "hadith-of-day": true,
     jummah: true,
+  },
+  reminderTimes: {
+    "morning-dua": "07:00",
+    "leave-home-dua": "08:00",
+    "before-meal-dua": "12:15",
+    "enter-home-dua": "18:30",
+    "evening-dua": "20:30",
+    "wake-up-dua": "06:45",
+    "sleep-dua": "22:30",
   },
 };
 
@@ -306,6 +316,10 @@ export async function loadNotificationCenterPreferences() {
         ...DEFAULT_NOTIFICATION_CENTER_PREFERENCES.reminders,
         ...stored.reminders,
       },
+      reminderTimes: {
+        ...DEFAULT_NOTIFICATION_CENTER_PREFERENCES.reminderTimes,
+        ...(stored.reminderTimes ?? {}),
+      },
     };
   } catch {
     return DEFAULT_NOTIFICATION_CENTER_PREFERENCES;
@@ -389,7 +403,8 @@ export function buildNotificationCenterItems({
   ];
 
   timedItems.forEach((item) => {
-    if (!enabled[item.id] || !timeReached(item.time, now)) return;
+    const itemTime = preferences.reminderTimes?.[item.id] ?? item.time;
+    if (!enabled[item.id] || !timeReached(itemTime, now)) return;
     const remaining = item.id === "hifz" ? hifzRemaining(hifzState, now) : null;
     if (item.id === "hifz" && remaining === 0) return;
     items.push({
@@ -401,7 +416,7 @@ export function buildNotificationCenterItems({
         item.id === "hifz" && remaining
           ? `Il vous reste ${remaining} verset${remaining > 1 ? "s" : ""} pour atteindre votre objectif du jour.`
           : item.body,
-      timeLabel: item.time,
+      timeLabel: itemTime,
       route: item.route,
       icon: item.icon,
       accent: item.accent,
@@ -519,7 +534,7 @@ async function syncNotificationCenterScheduleInternal(
 
   for (const reminder of CENTER_REMINDERS) {
     if (!preferences.reminders[reminder.id] || !reminder.time) continue;
-    const [hour, minute] = reminder.time.split(":").map(Number);
+    const [hour, minute] = (preferences.reminderTimes?.[reminder.id] ?? reminder.time).split(":").map(Number);
     ids.push(
       await Notifications.scheduleNotificationAsync({
         content: notificationContent(

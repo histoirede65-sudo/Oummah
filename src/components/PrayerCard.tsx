@@ -15,6 +15,7 @@ import {
   InteractionManager,
   Modal,
   Pressable,
+  ScrollView,
   StyleSheet,
   Switch,
   Text,
@@ -43,7 +44,10 @@ import {
   getMainMosque,
   type StoredMosque,
 } from "../features/mosques/data/mosquePreferences";
-import { getApprovedMosquePrayerTimes } from "../features/mosques/data/mosquePrayerUpdates";
+import {
+  applyApprovedMosquePrayerTimes,
+  getApprovedMosquePrayerTimes,
+} from "../features/mosques/data/mosquePrayerUpdates";
 import { syncPrayerTimesWidget } from "../features/prayer-widget/PrayerWidgetSync";
 import { colors } from "../theme/colors";
 import { typography } from "../theme/typography";
@@ -76,29 +80,6 @@ const ADHAN_PRAYERS: MosquePrayerKey[] = [
   "Maghrib",
   "Isha",
 ];
-
-function applyApprovedMosquePrayerTimes(
-  schedule: MosquePrayerSchedule,
-  approved: Awaited<ReturnType<typeof getApprovedMosquePrayerTimes>>,
-) {
-  if (!approved) return schedule;
-
-  const adjust = (prayer: MosquePrayerTime) => {
-    const value = approved[prayer.key.toLowerCase() as "fajr" | "dhuhr" | "asr" | "maghrib" | "isha"];
-    if (!value || !/^([01]\d|2[0-3]):[0-5]\d$/.test(value)) return prayer;
-    const [hours, minutes] = value.split(":").map(Number);
-    const date = new Date(prayer.timestamp);
-    date.setHours(hours, minutes, 0, 0);
-    return { ...prayer, time: value, timestamp: date.getTime() };
-  };
-
-  return {
-    ...schedule,
-    prayers: schedule.prayers.map(adjust),
-    tomorrowPrayers: schedule.tomorrowPrayers.map(adjust),
-    tomorrowFajr: adjust(schedule.tomorrowFajr),
-  };
-}
 
 const ADHAN_MODES: ReadonlyArray<{
   key: AdhanAlertMode;
@@ -214,7 +195,7 @@ const PrayerCountdown = memo(function PrayerCountdown({
     return () => clearInterval(intervalId);
   }, []);
 
-  return <Text style={styles.countdown}>{timestamp ? formatCountdown(timestamp - now) : "--:--:--"}</Text>;
+  return <Text allowFontScaling={false} style={styles.countdown}>{timestamp ? formatCountdown(timestamp - now) : "--:--:--"}</Text>;
 });
 
 function formatDateLabel(date: Date) {
@@ -846,13 +827,14 @@ export default function PrayerCard() {
         <>
           <View style={styles.prayerInfo}>
             <View style={styles.prayerLabels}>
-              <Text style={styles.nextLabel}>Prière du moment</Text>
-              <Text style={styles.nextLabel}>Prière à venir</Text>
+              <Text allowFontScaling={false} style={styles.nextLabel}>Prière du moment</Text>
+              <Text allowFontScaling={false} style={styles.nextLabel}>Prière à venir</Text>
             </View>
 
             <View style={styles.prayerNameRow}>
               <View style={styles.currentPrayerValue}>
                 <Text
+                  allowFontScaling={false}
                   numberOfLines={1}
                   style={styles.prayerName}
                 >
@@ -860,6 +842,7 @@ export default function PrayerCard() {
                 </Text>
               </View>
               <Text
+                allowFontScaling={false}
                 numberOfLines={1}
                 style={[styles.prayerName, styles.upcomingPrayerName]}
               >
@@ -885,10 +868,10 @@ export default function PrayerCard() {
                 color={colors.goldLight}
               />
               <View style={styles.hijriCopy}>
-                <Text numberOfLines={1} style={styles.metaText}>
-                  {nextPrayer?.time ?? "--:--"} · {formatDateLabel(new Date(now))}
+                <Text allowFontScaling={false} numberOfLines={1} style={styles.metaText}>
+                  {formatDateLabel(new Date(now))}
                 </Text>
-                <Text numberOfLines={1} style={styles.hijriEventText}>
+                <Text allowFontScaling={false} numberOfLines={1} style={styles.hijriEventText}>
                   {formatHijri(hijriDate)} · {hijriEventLabel}
                 </Text>
               </View>
@@ -915,10 +898,10 @@ export default function PrayerCard() {
                 color={colors.goldLight}
               />
               <View style={styles.locationMetaCopy}>
-                <Text numberOfLines={1} style={styles.metaText}>
+                <Text allowFontScaling={false} numberOfLines={1} style={styles.metaText}>
                   {source?.label ?? "Votre position"}
                 </Text>
-                <Text numberOfLines={1} style={styles.locationMetaSubtitle}>
+                <Text allowFontScaling={false} numberOfLines={1} style={styles.locationMetaSubtitle}>
                   Localisation des horaires de prière
                 </Text>
               </View>
@@ -945,7 +928,7 @@ export default function PrayerCard() {
               size={19}
               color={colors.goldLight}
             />
-            <Text style={styles.adhanText}>Adhan</Text>
+            <Text allowFontScaling={false} style={styles.adhanText}>Adhan</Text>
           </Pressable>
 
           <View style={styles.glass}>
@@ -1084,6 +1067,7 @@ export default function PrayerCard() {
                     ]}
                   >
                     <Text
+                      allowFontScaling={false}
                       numberOfLines={1}
                       adjustsFontSizeToFit
                       style={[
@@ -1100,6 +1084,7 @@ export default function PrayerCard() {
                       {prayer.label}
                     </Text>
                     <Text
+                      allowFontScaling={false}
                       style={[
                         styles.orbitTime,
                         prayer.active && styles.orbitTimeActive,
@@ -1219,9 +1204,15 @@ export default function PrayerCard() {
         >
           <Pressable
             onPress={(event) => event.stopPropagation()}
-            style={[styles.adhanSheet, { paddingBottom: 24 + insets.bottom }]}
+            style={[styles.adhanSheet, { maxHeight: Math.max(320, height - insets.top - insets.bottom - 12) }]}
           >
-            <View style={styles.adhanSheetHandle} />
+            <ScrollView
+              bounces={false}
+              keyboardShouldPersistTaps="handled"
+              showsVerticalScrollIndicator={false}
+              contentContainerStyle={{ paddingBottom: 24 + insets.bottom }}
+            >
+              <View style={styles.adhanSheetHandle} />
             <View style={styles.adhanSheetHeader}>
               <View style={styles.adhanSheetTitleRow}>
                 <View style={styles.adhanSheetIcon}>
@@ -1393,16 +1384,17 @@ export default function PrayerCard() {
               })}
             </View>
 
-            <Pressable
+              <Pressable
               onPress={() => setAdhanSettingsVisible(false)}
               style={styles.adhanDoneButton}
-            >
+              >
               <LinearGradient
                 colors={["#F5D276", "#D59A35"]}
                 style={StyleSheet.absoluteFill}
               />
               <Text style={styles.adhanDoneText}>Enregistrer</Text>
-            </Pressable>
+              </Pressable>
+            </ScrollView>
           </Pressable>
         </Pressable>
       </Modal>

@@ -1,4 +1,5 @@
 import { getValidSession } from '../../auth/SupabaseAuthService';
+import type { MosquePrayerSchedule } from './mosquePrayerTimes';
 
 export type MosquePrayerTimes = {
   mosqueId: string;
@@ -54,6 +55,29 @@ export async function getApprovedMosquePrayerTimes(mosqueId: string): Promise<Mo
   );
   const row = rows[0];
   return row ? { mosqueId: row.mosque_id, fajr: row.fajr ?? undefined, dhuhr: row.dhuhr ?? undefined, asr: row.asr ?? undefined, maghrib: row.maghrib ?? undefined, isha: row.isha ?? undefined, jumuah: row.jumuah ?? undefined, updatedAt: row.updated_at } : null;
+}
+
+export function applyApprovedMosquePrayerTimes(
+  schedule: MosquePrayerSchedule,
+  approved: MosquePrayerTimes | null,
+): MosquePrayerSchedule {
+  if (!approved) return schedule;
+
+  const adjust = (prayer: MosquePrayerSchedule['prayers'][number]) => {
+    const value = approved[prayer.key.toLowerCase() as 'fajr' | 'dhuhr' | 'asr' | 'maghrib' | 'isha'];
+    if (!value || !/^([01]\d|2[0-3]):[0-5]\d$/.test(value)) return prayer;
+    const [hours, minutes] = value.split(':').map(Number);
+    const date = new Date(prayer.timestamp);
+    date.setHours(hours, minutes, 0, 0);
+    return { ...prayer, time: value, timestamp: date.getTime() };
+  };
+
+  return {
+    ...schedule,
+    prayers: schedule.prayers.map(adjust),
+    tomorrowPrayers: schedule.tomorrowPrayers.map(adjust),
+    tomorrowFajr: adjust(schedule.tomorrowFajr),
+  };
 }
 
 export async function proposeMosquePrayerTimes(input: MosquePrayerTimes & {mosqueName:string;mosqueAddress?:string;note?:string}) {
