@@ -30,6 +30,12 @@ const learningModules = [
     route: "/prophets",
     image: require("../assets/images/prophets/prophets-home-premium.png"),
   },
+  {
+    label: "Les Compagnons",
+    subtitle: "Savoir · Fidélité · Transmission",
+    route: "/companions",
+    image: require("../assets/images/home/shortcuts/companions-premium.png"),
+  },
 ] as const;
 
 export default function AllahNamesHomeSection() {
@@ -57,7 +63,7 @@ export default function AllahNamesHomeSection() {
             onPress={() => router.push(item.route as Href)}
             style={({ pressed }) => [styles.card, pressed && styles.pressed]}
           >
-            <Image source={item.image} contentFit="cover" transition={180} style={StyleSheet.absoluteFill} />
+            {item.image ? <Image source={item.image} contentFit="cover" transition={180} style={StyleSheet.absoluteFill} /> : <LinearGradient colors={["#2B153F", "#0E0A1B"]} style={StyleSheet.absoluteFill} />}
             <LinearGradient
               colors={["rgba(7,9,16,0.02)", "rgba(8,10,18,0.11)", "rgba(6,8,15,0.80)"]}
               locations={[0, 0.44, 1]}
