@@ -19,6 +19,7 @@ import { verseOfDayRoute } from '../features/notifications/NotificationCenter';
 import AnalyticsRouteTracker from '../features/analytics/AnalyticsRouteTracker';
 import { trackAnalyticsEvent } from '../features/analytics/AnalyticsService';
 import { STOP_ADHAN_ACTION } from '../features/adhan/AdhanNotifications';
+import { syncJumuahNotification } from '../features/jumuah/JumuahService';
 import cormorantRegular from '../../assets/fonts/CormorantGaramond-Regular.ttf';
 import cormorantMedium from '../../assets/fonts/CormorantGaramond-Medium.ttf';
 import cormorantSemibold from '../../assets/fonts/CormorantGaramond-SemiBold.ttf';
@@ -333,6 +334,7 @@ export default function RootLayout() {
       .catch((error) => {
         if (__DEV__) console.warn("[PushDiagnostic] syncPushRegistration a échoué", error);
       });
+    void syncJumuahNotification().catch(() => undefined);
     void trackAnalyticsEvent({
       eventName: 'app_open',
       module: 'home',

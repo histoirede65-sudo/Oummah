@@ -256,7 +256,7 @@ export default function NotificationsScreen() {
           <Text allowFontScaling={false} style={styles.eyebrow}>VOTRE QUOTIDIEN</Text>
           <Text allowFontScaling={false} numberOfLines={1} style={styles.title}>Notifications</Text>
           <Pressable onPress={() => setSettingsVisible(true)} style={styles.editNotificationsButton}>
-            <Ionicons name="options-outline" size={15} color="#F2BE55" />
+            <Ionicons name="options-outline" size={18} color="#F2BE55" />
             <Text allowFontScaling={false} style={styles.editNotificationsText}>Modifier mes notifications</Text>
           </Pressable>
         </View>
@@ -565,8 +565,8 @@ const styles = StyleSheet.create({
   safeArea: { flex: 1, backgroundColor: "#10131C" },
   header: { minHeight: 108, paddingHorizontal: 16, paddingVertical: 10, flexDirection: "row", alignItems: "center" },
   headerButton: { width: 42, height: 42, alignItems: "center", justifyContent: "center", borderRadius: 21, borderWidth: 1, borderColor: "rgba(255,230,190,0.14)", backgroundColor: "rgba(255,255,255,0.045)" },
-  editNotificationsButton: { height: 38, marginTop: 6, paddingHorizontal: 10, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 5, borderRadius: 13, borderWidth: 1, borderColor: "rgba(242,190,85,0.28)", backgroundColor: "rgba(242,190,85,0.10)" },
-  editNotificationsText: { color: "#F2BE55", fontFamily: typography.sans, fontSize: 9.5, fontWeight: "800" },
+  editNotificationsButton: { minHeight: 44, marginTop: 7, paddingHorizontal: 14, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 7, borderRadius: 14, borderWidth: 1, borderColor: "rgba(242,190,85,0.34)", backgroundColor: "rgba(242,190,85,0.12)" },
+  editNotificationsText: { color: "#F2BE55", fontFamily: typography.sans, fontSize: 12.5, lineHeight: 16, fontWeight: "800" },
   headerCopy: { flex: 1, alignItems: "center", minWidth: 0 },
   eyebrow: { color: "rgba(242,190,85,0.70)", fontFamily: typography.sans, fontSize: 8.5, fontWeight: "700", letterSpacing: 1.2 },
   title: { color: "#FFF8EF", fontFamily: typography.serifSemibold, fontSize: 25, flexShrink: 1, textAlign: "center" },

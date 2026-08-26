@@ -12,6 +12,7 @@ import { isOummahAdminSession } from "../features/auth/AdminAccess";
 type SheetMode = "menu" | "notifications";
 
 const MENU_ITEMS = [
+  { label: "Djoumou’a", subtitle: "Votre parcours du vendredi", icon: "moon-outline", route: "/jumuah" },
   { label: "Mon profil", subtitle: "Préférences et parcours", icon: "person-outline", route: "/profile" },
   { label: "Objectifs du jour", subtitle: "Votre programme spirituel", icon: "checkmark-circle-outline", route: "/daily-goals" },
   { label: "Hadith du jour", subtitle: "Lire et méditer", icon: "library-outline", route: "/hadith" },

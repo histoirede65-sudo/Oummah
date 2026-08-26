@@ -52,7 +52,8 @@ type MenuItem = {
     | "school-outline"
     | "library-outline"
     | "person-outline"
-    | "shield-checkmark-outline";
+    | "shield-checkmark-outline"
+    | "moon-outline";
 };
 
 const MENU_GROUPS: ReadonlyArray<{
@@ -83,6 +84,7 @@ const MENU_GROUPS: ReadonlyArray<{
   {
     title: "OUMMAH",
     items: [
+      { label: "Djoumou’a", description: "Votre parcours du vendredi", href: "/jumuah", icon: "moon-outline" },
       { label: "Mon profil", description: "Compte et préférences", href: "/profile", icon: "person-outline" },
     ],
   },

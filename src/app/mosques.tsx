@@ -24,6 +24,7 @@ import MapView, { Marker, Polyline, type Region } from 'react-native-maps';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import {
+  clearMainMosque,
   getFavoriteMosques,
   getMainMosque,
   setMosqueFavorite,
@@ -644,6 +645,35 @@ export default function MosquesScreen() {
     }
   };
 
+  const removeMainMosque = () => {
+    if (!mainMosque) return;
+
+    Alert.alert(
+      'Retirer ma mosquée',
+      `Voulez-vous retirer ${mainMosque.name} comme votre mosquée principale ?`,
+      [
+        { text: 'Annuler', style: 'cancel' },
+        {
+          text: 'Retirer',
+          style: 'destructive',
+          onPress: () => {
+            void clearMainMosque()
+              .then(() => {
+                setMainMosqueState(null);
+                setMainMosqueNextPrayer(null);
+              })
+              .catch(() => {
+                Alert.alert(
+                  'Suppression impossible',
+                  'Impossible de retirer votre mosquée principale pour le moment.',
+                );
+              });
+          },
+        },
+      ],
+    );
+  };
+
   const searchFromCoordinates = async (
     coordinates: UserCoordinates,
     controller: AbortController,
@@ -1159,6 +1189,21 @@ export default function MosquesScreen() {
 
           <Ionicons name="chevron-forward" size={21} color={colors.goldLight} />
         </Pressable>
+
+        {mainMosque ? (
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="Retirer ma mosquée principale"
+            onPress={removeMainMosque}
+            style={({ pressed }) => [
+              styles.removeMainMosqueButton,
+              pressed && styles.pressed,
+            ]}
+          >
+            <Ionicons name="trash-outline" size={18} color={colors.goldLight} />
+            <Text style={styles.removeMainMosqueText}>Retirer ma mosquée</Text>
+          </Pressable>
+        ) : null}
 
         <Pressable
           accessibilityRole="button"
@@ -1983,6 +2028,25 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: 'rgba(126,72,148,0.36)',
     backgroundColor: '#120D1F',
+  },
+  removeMainMosqueButton: {
+    minHeight: 46,
+    marginTop: 9,
+    paddingHorizontal: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: 'rgba(224,188,112,0.28)',
+    backgroundColor: 'rgba(224,188,112,0.07)',
+  },
+  removeMainMosqueText: {
+    color: colors.goldLight,
+    fontFamily: typography.sans,
+    fontSize: 13,
+    fontWeight: '700',
   },
   addMosqueButton: {
     minHeight: 66,

@@ -7,6 +7,7 @@ import { useEffect, useRef, useState } from "react";
 import DalilCard from "../../components/DalilCard";
 import HomeGoalsSection from "../../components/HomeGoalsSection";
 import HomeAnnouncementBanner from "../../components/HomeAnnouncementBanner";
+import AllahNamesHomeSection from "../../components/AllahNamesHomeSection";
 import HomeShortcuts from "../../components/HomeShortcuts";
 import PrayerCard from "../../components/PrayerCard";
 import { colors } from "../../theme/colors";
@@ -83,6 +84,7 @@ export default function HomeScreen() {
           >
             <DalilCard onPromptFocus={revealWasilInput} />
             <HomeShortcuts />
+            <AllahNamesHomeSection />
             <HomeGoalsSection />
           </View>
         </ScrollView>

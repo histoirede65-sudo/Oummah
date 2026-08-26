@@ -3,7 +3,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import type { MosquePrayerKey } from "../mosques/data/mosquePrayerTimes";
 
 export type AdhanAlertMode = "adhan" | "notification" | "vibration" | "silent";
-export type AdhanVoice = "makkah" | "madinah" | "egypt";
+export type AdhanVoice = "makkah" | "madinah" | "egypt" | "birds";
 
 export type AdhanPreferences = {
   enabled: boolean;
@@ -49,7 +49,7 @@ export async function loadAdhanPreferences(): Promise<AdhanPreferences> {
       ...DEFAULT_ADHAN_PREFERENCES,
       ...parsed,
       mode,
-      voice: parsed.voice === "madinah" || parsed.voice === "egypt" ? parsed.voice : "makkah",
+      voice: parsed.voice === "madinah" || parsed.voice === "egypt" || parsed.voice === "birds" ? parsed.voice : "makkah",
       prayers: {
         ...DEFAULT_ADHAN_PREFERENCES.prayers,
         ...parsed.prayers,

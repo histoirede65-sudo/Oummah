@@ -929,6 +929,7 @@ export default function MosqueDetailScreen() {
           onPress={() => void chooseMainMosque()}
           style={({ pressed }) => [
             styles.mainMosqueCard,
+            !mainMosque && styles.mainMosqueCardCta,
             mainMosque && styles.mainMosqueCardActive,
             pressed && !mainMosque && styles.pressed,
           ]}
@@ -962,12 +963,12 @@ export default function MosqueDetailScreen() {
             <Text style={styles.mainMosqueTitle}>
               {mainMosque
                 ? 'Votre mosquée principale'
-                : 'Définir comme ma mosquée'}
+                : 'Ajouter cette mosquée comme ma mosquée'}
             </Text>
             <Text style={styles.mainMosqueText}>
               {mainMosque
                 ? 'OUMMAH utilisera cette mosquée pour vos informations personnalisées.'
-                : 'Retrouvez plus tard ses horaires et ses événements directement sur l’accueil.'}
+                : 'Choisissez-la comme votre mosquée principale pour la retrouver facilement dans OUMMAH.'}
             </Text>
           </View>
 
@@ -1628,6 +1629,10 @@ const styles = StyleSheet.create({
     borderColor: colors.borderSoft,
     backgroundColor: colors.backgroundSecondary,
   },
+  mainMosqueCardCta: {
+    borderColor: 'rgba(224,188,112,0.62)',
+    backgroundColor: 'rgba(224,188,112,0.10)',
+  },
   mainMosqueCardActive: {
     borderColor: 'rgba(224,188,112,0.48)',
   },
@@ -1657,9 +1662,9 @@ const styles = StyleSheet.create({
   mainMosqueTitle: {
     marginTop: 4,
     color: colors.text,
-    fontFamily: typography.serifMedium,
-    fontSize: 19,
-    lineHeight: 24,
+    fontFamily: typography.serifSemibold,
+    fontSize: 20.5,
+    lineHeight: 25,
   },
   mainMosqueText: {
     marginTop: 4,

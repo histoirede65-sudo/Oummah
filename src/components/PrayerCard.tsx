@@ -97,6 +97,7 @@ const ADHAN_VOICES: ReadonlyArray<{ key: AdhanVoice; label: string; file: number
   { key: "makkah", label: "La Mecque", file: require("../../assets/adhan/adhan_makkah.mp3") },
   { key: "madinah", label: "Médine", file: require("../../assets/adhan/adhan_madinah.mp3") },
   { key: "egypt", label: "Égypte", file: require("../../assets/adhan/adhan_egypt.mp3") },
+  { key: "birds", label: "Oiseaux apaisants", file: require("../../assets/adhan/adhan_birds.wav") },
 ];
 
 type PrayerSource = {

@@ -59,7 +59,8 @@
           "sounds": [
             "./assets/adhan/adhan_makkah.mp3",
             "./assets/adhan/adhan_madinah.mp3",
-            "./assets/adhan/adhan_egypt.mp3"
+            "./assets/adhan/adhan_egypt.mp3",
+            "./assets/adhan/adhan_birds.wav"
           ]
         }
       ],

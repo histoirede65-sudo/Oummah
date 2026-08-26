@@ -143,11 +143,11 @@ async function configureAndroidChannels() {
   if (Platform.OS !== "android") return;
 
   await Promise.all([
-    ...(["makkah", "madinah", "egypt"] as const).map((voice) =>
+    ...(["makkah", "madinah", "egypt", "birds"] as const).map((voice) =>
       Notifications.setNotificationChannelAsync(`adhan-sound-${voice}`, {
-      name: `Adhan — ${voice === "makkah" ? "La Mecque" : voice === "madinah" ? "Médine" : "Égypte"}`,
+      name: `Adhan — ${voice === "makkah" ? "La Mecque" : voice === "madinah" ? "Médine" : voice === "egypt" ? "Égypte" : "Oiseaux apaisants"}`,
       importance: Notifications.AndroidImportance.HIGH,
-      sound: `adhan_${voice}.mp3`,
+      sound: voice === "birds" ? "adhan_birds.wav" : `adhan_${voice}.mp3`,
       vibrationPattern: [0, 280, 160, 280],
       lightColor: "#F2B53D",
       }),
@@ -272,7 +272,7 @@ function contentFor(
     },
     sound:
       preferences.mode === "adhan"
-        ? `adhan_${preferences.voice}.mp3`
+        ? preferences.voice === "birds" ? "adhan_birds.wav" : `adhan_${preferences.voice}.mp3`
         : preferences.mode === "notification"
           ? "default"
           : false,

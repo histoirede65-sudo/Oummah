@@ -116,6 +116,10 @@ export async function setMainMosque(mosque: StoredMosque) {
   );
 }
 
+export async function clearMainMosque() {
+  await AsyncStorage.removeItem(MAIN_MOSQUE_KEY);
+}
+
 export async function isMainMosque(id: string) {
   const mainMosque = await getMainMosque();
   return mainMosque?.id === id;
