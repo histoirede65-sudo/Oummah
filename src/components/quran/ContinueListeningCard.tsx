@@ -45,7 +45,7 @@ export default function ContinueListeningCard({
             {surahName ?? t('quran.alFatiha')}
           </Text>
           <Text numberOfLines={1} style={styles.detail}>
-            {reciterName ?? 'Choisir un récitateur'}
+            {reciterName ?? t('quran.chooseReciter')}
           </Text>
           <View style={styles.progressTrack}>
             <LinearGradient
@@ -63,7 +63,7 @@ export default function ContinueListeningCard({
         onPress={onOpenRecitations}
         style={({ pressed }) => [styles.library, pressed && styles.pressed]}
       >
-        <Text style={styles.libraryText}>Tous les récitateurs</Text>
+        <Text style={styles.libraryText}>{t('quran.allReciters')}</Text>
         <Ionicons name="arrow-forward" size={15} color="#E7B655" />
       </Pressable>
     </View>

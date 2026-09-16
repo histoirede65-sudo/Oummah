@@ -2,6 +2,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { Pressable, StyleSheet, Text } from "react-native";
 
+import { useI18n } from "../../i18n";
 import { colors } from "../../theme/colors";
 import { typography } from "../../theme/typography";
 
@@ -9,9 +10,22 @@ type Props = {
   prompt: string;
   compact?: boolean;
   largeLabel?: boolean;
+  label?: string;
+  accessibilityLabel?: string;
 };
 
-export function WasilContextButton({ prompt, compact = false, largeLabel = false }: Props) {
+export function WasilContextButton({
+  prompt,
+  compact = false,
+  largeLabel = false,
+  label,
+  accessibilityLabel,
+}: Props) {
+  const { t } = useI18n();
+  const visibleLabel = label ?? t("wasil.explain");
+  const visibleAccessibilityLabel =
+    accessibilityLabel ?? t("wasil.askForExplanation");
+
   const openWasil = () => {
     router.push({
       pathname: "/dalil",
@@ -21,7 +35,7 @@ export function WasilContextButton({ prompt, compact = false, largeLabel = false
 
   return (
     <Pressable
-      accessibilityLabel="Demander une explication à Wasil"
+      accessibilityLabel={visibleAccessibilityLabel}
       accessibilityRole="button"
       onPress={openWasil}
       hitSlop={8}
@@ -35,7 +49,11 @@ export function WasilContextButton({ prompt, compact = false, largeLabel = false
         size={compact ? 15 : 16}
         color={colors.goldLight}
       />
-      {!compact ? <Text style={[styles.label, largeLabel && styles.largeLabel]}>Expliquer avec Wasil</Text> : null}
+      {!compact ? (
+        <Text style={[styles.label, largeLabel && styles.largeLabel]}>
+          {visibleLabel}
+        </Text>
+      ) : null}
     </Pressable>
   );
 }

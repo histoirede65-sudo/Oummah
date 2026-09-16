@@ -3,7 +3,7 @@ import { Platform } from "react-native";
 import { storageService } from "../../core/storage/StorageService";
 
 const OWNER = "oummah-jumuah";
-const CHANNEL = "oummah-jumuah";
+const CHANNEL = "oummah-jumuah-v2";
 export const JUMUAH_ROUTE = "/jumuah";
 
 function permissionGranted(status: Notifications.NotificationPermissionsStatus) {

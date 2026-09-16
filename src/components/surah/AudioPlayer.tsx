@@ -119,7 +119,7 @@ export default function AudioPlayer({ compact, minimal, onPlayLongPress, onOpenM
           <Text style={styles.modeText}>{t(repeatMode === 'surah' ? 'audio.repeatSurah' : repeatMode === 'verse' ? 'audio.repeatVerse' : 'audio.normal')}</Text>
           {onOpenMenu ? (
             <Pressable onPress={onOpenMenu} style={({ pressed }) => [styles.surahMenuButton, pressed && styles.pressed]}>
-              <Text style={styles.surahMenuText}>Mode Tadabbur</Text>
+              <Text style={styles.surahMenuText}>{t('tadabbur.mode')}</Text>
             </Pressable>
           ) : null}
         </View>

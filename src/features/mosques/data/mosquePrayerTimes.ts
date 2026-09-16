@@ -27,6 +27,52 @@ export type MosquePrayerSchedule = {
   fromCache: boolean;
 };
 
+export type PrayerCalculationSettings = {
+  mode: 'preset' | 'custom';
+  method: number;
+  fajrAngle: number;
+  ishaAngle: number;
+  scheduleSource: 'mosque' | 'calculation';
+};
+
+export const DEFAULT_PRAYER_CALCULATION_SETTINGS: PrayerCalculationSettings = {
+  mode: 'preset', method: 12, fajrAngle: 18, ishaAngle: 18, scheduleSource: 'mosque',
+};
+
+export const PRAYER_CALCULATION_METHODS = [
+  { method: 12, label: 'UOIF / France' },
+  { method: 3, label: 'Muslim World League' },
+  { method: 2, label: 'ISNA' },
+  { method: 5, label: 'Egyptian General Authority' },
+  { method: 4, label: 'Umm al-Qura University, Makkah' },
+  { method: 1, label: 'University of Islamic Sciences, Karachi' },
+] as const;
+
+const CALCULATION_SETTINGS_KEY = 'oummah.prayer.calculation-settings.v1';
+export async function loadPrayerCalculationSettings(): Promise<PrayerCalculationSettings> {
+  try {
+    const raw = await AsyncStorage.getItem(CALCULATION_SETTINGS_KEY);
+    if (!raw) return DEFAULT_PRAYER_CALCULATION_SETTINGS;
+    const value = JSON.parse(raw) as Partial<PrayerCalculationSettings>;
+    return {
+      ...DEFAULT_PRAYER_CALCULATION_SETTINGS,
+      ...value,
+      mode: value.mode === 'custom' ? 'custom' : 'preset',
+      scheduleSource: value.scheduleSource === 'calculation' ? 'calculation' : 'mosque',
+    };
+  } catch { return DEFAULT_PRAYER_CALCULATION_SETTINGS; }
+}
+export async function savePrayerCalculationSettings(value: PrayerCalculationSettings): Promise<void> {
+  await AsyncStorage.setItem(CALCULATION_SETTINGS_KEY, JSON.stringify(value));
+}
+
+export async function setPrayerScheduleSource(
+  scheduleSource: PrayerCalculationSettings['scheduleSource'],
+): Promise<void> {
+  const current = await loadPrayerCalculationSettings();
+  await savePrayerCalculationSettings({ ...current, scheduleSource });
+}
+
 export function getNextPrayer(
   schedule: MosquePrayerSchedule,
   now: number = Date.now(),
@@ -76,10 +122,9 @@ type CachedPrayerSchedule = Omit<MosquePrayerSchedule, 'fromCache'> & {
 };
 
 const API_BASE_URL = 'https://api.aladhan.com/v1';
-const CALCULATION_METHOD = 12;
 const SCHOOL = 0;
 const REQUEST_TIMEOUT_MS = 15_000;
-const CACHE_MAX_AGE_MS = 18 * 60 * 60 * 1000;
+const CACHE_MAX_AGE_MS = 48 * 60 * 60 * 1000;
 
 const PRAYER_DEFINITIONS: ReadonlyArray<{
   key: MosquePrayerKey;
@@ -108,12 +153,17 @@ function getCacheKey(
   latitude: number,
   longitude: number,
   dateKey: string,
+  calculation: PrayerCalculationSettings,
 ) {
   return [
-    'oummah.mosque.prayers.v1',
+    'oummah.mosque.prayers.v2',
     latitude.toFixed(4),
     longitude.toFixed(4),
     dateKey,
+    calculation.mode,
+    String(calculation.method),
+    String(calculation.fajrAngle),
+    String(calculation.ishaAngle),
   ].join(':');
 }
 
@@ -326,6 +376,7 @@ async function fetchPrayerDay(
   latitude: number,
   longitude: number,
   externalSignal?: AbortSignal,
+  calculation: PrayerCalculationSettings = DEFAULT_PRAYER_CALCULATION_SETTINGS,
 ) {
   const timeoutController = new AbortController();
   const timeoutId = setTimeout(
@@ -349,7 +400,8 @@ async function fetchPrayerDay(
   const query = [
     `latitude=${encodeURIComponent(latitude)}`,
     `longitude=${encodeURIComponent(longitude)}`,
-    `method=${CALCULATION_METHOD}`,
+    `method=${calculation.mode === 'custom' ? 99 : calculation.method}`,
+    ...(calculation.mode === 'custom' ? [`methodSettings=${calculation.fajrAngle},null,${calculation.ishaAngle}`] : []),
     `school=${SCHOOL}`,
   ].join('&');
 
@@ -404,8 +456,7 @@ async function readCachedSchedule(
       Date.now() - cached.savedAt > CACHE_MAX_AGE_MS ||
       !Array.isArray(cached.prayers) ||
       !cached.tomorrowFajr ||
-      !Array.isArray(cached.tomorrowPrayers) ||
-      !Array.isArray(cached.futurePrayers)
+      !Array.isArray(cached.tomorrowPrayers)
     ) {
       return null;
     }
@@ -419,6 +470,7 @@ async function readCachedSchedule(
       prayers: cached.prayers,
       tomorrowPrayers: cached.tomorrowPrayers,
       tomorrowFajr: cached.tomorrowFajr,
+      futurePrayers: Array.isArray(cached.futurePrayers) ? cached.futurePrayers : [],
       fromCache: true,
     };
   } catch {
@@ -439,6 +491,7 @@ async function writeCachedSchedule(
     prayers: schedule.prayers,
     tomorrowPrayers: schedule.tomorrowPrayers,
     tomorrowFajr: schedule.tomorrowFajr,
+    futurePrayers: schedule.futurePrayers ?? [],
     savedAt: Date.now(),
   };
 
@@ -452,6 +505,7 @@ export async function getMosquePrayerSchedule(
   latitude: number,
   longitude: number,
   signal?: AbortSignal,
+  calculation: PrayerCalculationSettings = DEFAULT_PRAYER_CALCULATION_SETTINGS,
 ): Promise<MosquePrayerSchedule> {
   const today = new Date();
   today.setHours(12, 0, 0, 0);
@@ -461,12 +515,13 @@ export async function getMosquePrayerSchedule(
     latitude,
     longitude,
     dateKey,
+    calculation,
   );
 
   try {
     const [todayResponse, tomorrowResponse] = await Promise.all([
-      fetchPrayerDay(today, latitude, longitude, signal),
-      fetchPrayerDay(getDateOffset(today, 1), latitude, longitude, signal),
+      fetchPrayerDay(today, latitude, longitude, signal, calculation),
+      fetchPrayerDay(getDateOffset(today, 1), latitude, longitude, signal, calculation),
     ]);
 
     const schedule = buildSchedule(

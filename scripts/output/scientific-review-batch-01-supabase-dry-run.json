@@ -1,0 +1,13 @@
+{
+  "mode": "dry-run",
+  "status": "blocked_before_write",
+  "reason": "fetch failed",
+  "writeAttempted": false,
+  "targetedCodes": [
+    "E202",
+    "E211",
+    "E250",
+    "E407",
+    "E955"
+  ]
+}

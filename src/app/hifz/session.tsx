@@ -958,12 +958,25 @@ export default function HifzSessionScreen() {
                 </Text>
               </View>
             )}
-            <View style={styles.phoneticBlock}>
-              <Text style={styles.contentEyebrow}>PHONÉTIQUE</Text>
-              <Text selectable style={styles.phonetic}>
-                {currentPhonetic}
-              </Text>
-            </View>
+            {textVisibility === "full" && teacherLevel === 0 ? (
+              <View style={styles.selectionHint}>
+                <Ionicons name="hand-left-outline" size={15} color={colors.goldLight} />
+                <View style={styles.selectionHintCopy}>
+                  <Text style={styles.selectionHintTitle}>SÉLECTION PRÉCISE</Text>
+                  <Text style={styles.selectionHintText}>
+                    Touchez un mot, puis un autre si besoin, pour n’écouter que ce mot ou cette partie du verset.
+                  </Text>
+                </View>
+              </View>
+            ) : null}
+            {textVisibility === "full" ? (
+              <View style={styles.phoneticBlock}>
+                <Text style={styles.contentEyebrow}>PHONÉTIQUE</Text>
+                <Text selectable style={styles.phonetic}>
+                  {currentPhonetic}
+                </Text>
+              </View>
+            ) : null}
             <View style={styles.translationBlock}>
               <Text style={styles.contentEyebrow}>TRADUCTION</Text>
               <Text style={styles.translation}>
@@ -979,8 +992,8 @@ export default function HifzSessionScreen() {
             ) : null}
             <View style={styles.textVisibilityRow}>
               {([["full", "Texte complet"], ["masked", "Mots masqués"], ["hidden", "Texte caché"]] as const).map(([mode, label]) => (
-                <Pressable key={mode} onPress={() => { setTextVisibility(mode); if (mode === "masked") { setMaskSeed((value) => (value + 1) % 3); setRevealedWordCount(0); } }} style={[styles.textVisibilityOption, textVisibility === mode && styles.levelActive]}>
-                  <Text style={[styles.textVisibilityText, textVisibility === mode && styles.levelTextActive]}>{label}</Text>
+                <Pressable key={mode} onPress={() => { setTextVisibility(mode); if (mode === "masked") { setMaskSeed((value) => (value + 1) % 3); setRevealedWordCount(0); } }} style={[styles.textVisibilityOption, textVisibility === mode && styles.textVisibilityOptionActive]}>
+                  <Text style={[styles.textVisibilityText, textVisibility === mode && styles.textVisibilityTextActive]}>{label}</Text>
                 </Pressable>
               ))}
             </View>
@@ -1534,6 +1547,36 @@ const styles = StyleSheet.create({
     lineHeight: 14,
     textAlign: "center",
   },
+  selectionHint: {
+    marginTop: 14,
+    paddingHorizontal: 13,
+    paddingVertical: 10,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 8,
+    borderRadius: 14,
+    borderWidth: 1,
+    borderColor: "rgba(227,181,90,0.24)",
+    backgroundColor: "rgba(227,181,90,0.07)",
+  },
+  selectionHintCopy: {
+    flex: 1,
+  },
+  selectionHintTitle: {
+    color: colors.goldLight,
+    fontFamily: typography.sansBold,
+    fontSize: 8.5,
+    fontWeight: "900",
+    letterSpacing: 0.8,
+  },
+  selectionHintText: {
+    marginTop: 2,
+    color: "#FFFFFF",
+    fontFamily: typography.sans,
+    fontSize: 10.5,
+    lineHeight: 16,
+  },
   phoneticBlock: {
     marginTop: 20,
     paddingHorizontal: 15,
@@ -1563,7 +1606,7 @@ const styles = StyleSheet.create({
   phonetic: {
     marginTop: 9,
     color: "#FFFDF8",
-    fontFamily: typography.serifMedium,
+    fontFamily: typography.sans,
     fontSize: 18,
     lineHeight: 28,
     textAlign: "center",
@@ -1590,20 +1633,33 @@ const styles = StyleSheet.create({
   textVisibilityRow: {
     flexDirection: "row",
     justifyContent: "center",
-    gap: 6,
-    marginTop: 8,
+    gap: 8,
+    marginTop: 14,
   },
   textVisibilityOption: {
-    paddingHorizontal: 8,
-    paddingVertical: 5,
-    borderRadius: 10,
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: 10,
+    paddingVertical: 10,
+    borderRadius: 14,
     borderWidth: 1,
-    borderColor: colors.borderSoft,
+    borderColor: "rgba(236,203,125,0.35)",
+    backgroundColor: "rgba(255,255,255,0.055)",
+  },
+  textVisibilityOptionActive: {
+    borderColor: colors.goldLight,
+    backgroundColor: colors.goldLight,
   },
   textVisibilityText: {
-    color: colors.textMuted,
+    color: "#F5EFE3",
     fontFamily: typography.sans,
-    fontSize: 9,
+    fontSize: 11,
+    fontWeight: "800",
+    textAlign: "center",
+  },
+  textVisibilityTextActive: {
+    color: colors.background,
   },
   revealedWord: { color: colors.goldLight },
   teacherButtons: {

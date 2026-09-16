@@ -182,12 +182,6 @@ export default function DuaReaderScreen() {
     : duaSpeech.activeKey === current?.id
       ? duaSpeech.progress
       : 0;
-  const hasFocusedAudio =
-    hasRecordedAudio &&
-    (audioStartRatio > 0.015 ||
-      audioEndRatio < 0.985 ||
-      audioStartOffsetSeconds > 0.05 ||
-      audioEndOffsetSeconds > 0.05);
   const arabicWords = useMemo(
     () => current?.arabic.trim().split(/\s+/).filter(Boolean) ?? [],
     [current?.arabic],
@@ -566,14 +560,6 @@ export default function DuaReaderScreen() {
         <View style={styles.audioCard}>
           <View style={styles.audioLiquidOrb} />
           <View style={styles.audioSheen} />
-          {hasFocusedAudio ? (
-            <View style={styles.focusedAudioPill}>
-              <Ionicons name="cut-outline" size={12} color={colors.goldLight} />
-              <Text style={styles.focusedAudioText}>
-                Introduction retirée · audio centré sur la dou‘ā
-              </Text>
-            </View>
-          ) : null}
           <Pressable
             disabled={!current}
             onPress={toggleAudio}
@@ -1042,9 +1028,9 @@ const styles = StyleSheet.create({
     marginTop: 8,
     marginBottom: 18,
     color: "#F1E7F3",
-    fontFamily: typography.serifMedium,
-    fontSize: 20,
-    lineHeight: 31,
+    fontFamily: typography.sans,
+    fontSize: 18,
+    lineHeight: 28,
   },
   french: {
     marginTop: 8,
@@ -1072,28 +1058,6 @@ const styles = StyleSheet.create({
     fontFamily: typography.sans,
     fontSize: 9.2,
     lineHeight: 13.5,
-  },
-  focusedAudioPill: {
-    position: "absolute",
-    top: 4,
-    left: 72,
-    right: 54,
-    minHeight: 20,
-    paddingHorizontal: 8,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 5,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: "rgba(227,181,90,0.28)",
-    backgroundColor: "rgba(54,29,72,0.76)",
-  },
-  focusedAudioText: {
-    color: colors.goldLight,
-    fontFamily: typography.sans,
-    fontSize: 7.8,
-    fontWeight: "700",
   },
   readerEyebrow: { color: colors.goldLight, fontFamily: typography.sans, fontSize: 8, fontWeight: "800", letterSpacing: 1 },
   readerHint: { marginTop: 3, color: colors.textMuted, fontFamily: typography.sans, fontSize: 9.5 },

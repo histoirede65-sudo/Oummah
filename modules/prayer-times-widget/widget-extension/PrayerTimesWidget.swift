@@ -5,6 +5,23 @@ private let widgetKind = "PrayerTimesWidget"
 private let widgetGroupIdentifier = "group.com.oummah.app"
 private let widgetPayloadKey = "oummah.prayer-times-widget.payload.v1"
 
+private func safeCountdownInterval(to timestamp: Double) -> ClosedRange<Date> {
+  let now = Date()
+  let end = Date(timeIntervalSince1970: timestamp / 1_000)
+  return min(now, end)...end
+}
+
+private struct WidgetBackground: ViewModifier {
+  @ViewBuilder
+  func body(content: Content) -> some View {
+    if #available(iOS 17.0, *) {
+      content.containerBackground(for: .widget) { Color.clear }
+    } else {
+      content
+    }
+  }
+}
+
 private struct Prayer: Codable, Identifiable {
   let key: String
   let label: String
@@ -61,8 +78,10 @@ private struct PrayerWidgetProvider: TimelineProvider {
   }
 
   func getTimeline(in context: Context, completion: @escaping (Timeline<PrayerWidgetEntry>) -> Void) {
+    let isHomeScreen = context.family == .systemMedium || context.family == .systemLarge
     guard let schedule = loadSchedule() else {
-      completion(Timeline(entries: [entry(for: .now, schedule: nil)], policy: .after(.now.addingTimeInterval(60 * 60))))
+      let retryDelay: TimeInterval = isHomeScreen ? 5 * 60 : 60 * 60
+      completion(Timeline(entries: [entry(for: .now, schedule: nil)], policy: .after(.now.addingTimeInterval(retryDelay))))
       return
     }
 
@@ -73,8 +92,13 @@ private struct PrayerWidgetProvider: TimelineProvider {
     var timestamps = Set<Int64>()
     timestamps.insert(Int64((now.timeIntervalSince1970 * 1_000).rounded()))
 
+    // Bound the expensive Home Screen render batch. Keep all prayer transitions
+    // below so the schedule still advances if iOS delays the next reload.
+    let progressEndTimestamp = isHomeScreen
+      ? min(endTimestamp, now.addingTimeInterval(2 * 60 * 60).timeIntervalSince1970 * 1_000)
+      : endTimestamp
     var slot = firstSlot
-    while slot * 1_000 <= endTimestamp {
+    while slot * 1_000 <= progressEndTimestamp {
       timestamps.insert(Int64((slot * 1_000).rounded()))
       slot += fiveMinutes
     }
@@ -93,7 +117,11 @@ private struct PrayerWidgetProvider: TimelineProvider {
 
     let dates = timestamps.sorted().map { Date(timeIntervalSince1970: Double($0) / 1_000) }
     let entries = dates.map { entry(for: $0, schedule: schedule) }
-    completion(Timeline(entries: entries, policy: .atEnd))
+    if isHomeScreen {
+      completion(Timeline(entries: entries, policy: .after(now.addingTimeInterval(60 * 60))))
+    } else {
+      completion(Timeline(entries: entries, policy: .atEnd))
+    }
   }
 
   private func loadSchedule() -> PrayerSchedule? {
@@ -116,12 +144,12 @@ private struct PrayerWidgetProvider: TimelineProvider {
   }
 
   private func progressState(for currentDate: Date, schedule: PrayerSchedule) -> PrayerProgressState {
-    let events = [
-      PrayerEvent(prayer: schedule.today.prayers.first(where: { $0.key == "Fajr" }) ?? schedule.today.sunrise, timestamp: schedule.today.prayers.first(where: { $0.key == "Fajr" })?.timestamp ?? schedule.today.startTimestamp),
-      PrayerEvent(prayer: schedule.today.sunrise, timestamp: schedule.today.sunrise.timestamp),
-    ] + schedule.today.prayers.map { PrayerEvent(prayer: $0, timestamp: $0.timestamp) } + [
-      PrayerEvent(prayer: schedule.tomorrow.prayers.first(where: { $0.key == "Fajr" }) ?? schedule.tomorrow.sunrise, timestamp: schedule.tomorrow.prayers.first(where: { $0.key == "Fajr" })?.timestamp ?? schedule.tomorrow.startTimestamp),
-    ]
+    // Include the complete cached schedule, including tomorrow after Fajr.
+    let events = [schedule.today, schedule.tomorrow].flatMap { day in
+      (day.prayers + [day.sunrise]).map {
+        PrayerEvent(prayer: $0, timestamp: $0.timestamp)
+      }
+    }
     let ordered = events.sorted { $0.timestamp < $1.timestamp }
     let now = currentDate.timeIntervalSince1970 * 1_000
     guard let nextIndex = ordered.firstIndex(where: { $0.timestamp > now }) else {
@@ -166,6 +194,30 @@ private struct PrayerEvent {
 private struct PrayerTimesWidgetView: View {
   let entry: PrayerWidgetEntry
 
+  @Environment(\.widgetFamily) private var widgetFamily
+
+  @ViewBuilder
+  var body: some View {
+    if #available(iOS 16.0, *) {
+      switch widgetFamily {
+      case .accessoryRectangular, .accessoryCircular, .accessoryInline:
+        LockScreenPrayerView(entry: entry)
+          .widgetURL(URL(string: "oummah:///"))
+      default:
+        HomeScreenPrayerView(entry: entry)
+          .widgetURL(URL(string: "oummah:///"))
+      }
+    } else {
+      HomeScreenPrayerView(entry: entry)
+        .widgetURL(URL(string: "oummah:///"))
+    }
+  }
+}
+
+// The Home Screen widget is intentionally kept unchanged.
+private struct HomeScreenPrayerView: View {
+  let entry: PrayerWidgetEntry
+
   var body: some View {
     GeometryReader { proxy in
       ZStack {
@@ -175,8 +227,7 @@ private struct PrayerTimesWidgetView: View {
           .frame(width: proxy.size.width, height: proxy.size.height)
           .clipped()
           .ignoresSafeArea()
-        
-        // Translucent black overlay for readability
+
         Color.black
           .opacity(0.68)
           .ignoresSafeArea()
@@ -197,8 +248,72 @@ private struct PrayerTimesWidgetView: View {
         }
       }
     }
-    .widgetURL(URL(string: "oummah:///"))
   }
+}
+
+@available(iOS 16.0, *)
+private struct LockScreenPrayerView: View {
+  let entry: PrayerWidgetEntry
+
+  @Environment(\.widgetFamily) private var widgetFamily
+
+  var nextPrayer: Prayer? { entry.progressState.nextPrayer }
+
+  var prayerName: String {
+    guard let prayer = nextPrayer else { return "OUMMAH" }
+    return prayer.key == "Sunrise" ? "Chourouk" : prayer.label
+  }
+
+  @ViewBuilder
+  var body: some View {
+    switch widgetFamily {
+    case .accessoryRectangular:
+      HStack(spacing: 8) {
+        Image(systemName: "moon.stars.fill")
+          .font(.system(size: 20, weight: .semibold))
+          .widgetAccentable()
+
+        VStack(alignment: .leading, spacing: 1) {
+          Text("PROCHAINE PRIÈRE")
+            .font(.system(size: 10, weight: .semibold, design: .rounded))
+          HStack(alignment: .firstTextBaseline, spacing: 4) {
+            Text(prayerName.uppercased())
+              .font(.system(size: 15, weight: .bold, design: .rounded))
+            Text(nextPrayer?.time ?? "—")
+              .font(.system(size: 13, weight: .semibold, design: .rounded))
+          }
+        }
+        .lineLimit(1)
+        .minimumScaleFactor(0.72)
+        Spacer(minLength: 0)
+      }
+
+    case .accessoryCircular:
+      VStack(spacing: 0) {
+        Image(systemName: "moon.stars.fill")
+          .font(.system(size: 13, weight: .semibold))
+          .widgetAccentable()
+        Text(prayerName.uppercased())
+          .font(.system(size: 10, weight: .bold, design: .rounded))
+          .lineLimit(1)
+          .minimumScaleFactor(0.6)
+        Text(nextPrayer?.time ?? "—")
+          .font(.system(size: 11, weight: .bold, design: .rounded))
+      }
+
+    case .accessoryInline:
+      if let prayer = nextPrayer {
+        Label("\(prayerName) · \(prayer.time)", systemImage: "moon.stars.fill")
+      } else {
+        Label("OUMMAH · Ouvrez l’app", systemImage: "moon.stars.fill")
+      }
+
+    default:
+      EmptyView()
+    }
+  }
+
+
 }
 
 private struct PrayerContent: View {
@@ -439,7 +554,7 @@ private struct CountdownText: View {
       if let timestamp {
         if #available(iOS 16.0, *) {
           Text(
-            timerInterval: Date()...Date(timeIntervalSince1970: timestamp / 1_000),
+            timerInterval: safeCountdownInterval(to: timestamp),
             countsDown: true
           )
         } else {
@@ -450,6 +565,8 @@ private struct CountdownText: View {
       }
     }
     .font(.system(size: fontSize, weight: .semibold, design: .rounded))
+    .monospacedDigit()
+    .multilineTextAlignment(.center)
     .lineLimit(1)
     .minimumScaleFactor(0.7)
   }
@@ -460,7 +577,7 @@ private struct CenteredCountdown: View {
 
   var body: some View {
     GeometryReader { proxy in
-      CountdownText(timestamp: timestamp, fontSize: 24)
+      CountdownText(timestamp: timestamp, fontSize: 21)
         .foregroundStyle(Color.oummahText)
         .frame(
           width: proxy.size.width,
@@ -749,17 +866,14 @@ private struct NextPrayerView: View {
           Text(nextPrayer.time)
         }
         .frame(maxWidth: .infinity, alignment: .center)
-        HStack(alignment: .firstTextBaseline, spacing: 4) {
+        VStack(spacing: 0) {
           Text("dans")
             .font(.system(size: compact ? 10.5 : 13, weight: .medium, design: .rounded))
-          if #available(iOS 16.0, *) {
-            Text(
-              timerInterval: Date()...Date(timeIntervalSince1970: nextPrayer.timestamp / 1_000),
-              countsDown: true
-            )
-          } else {
-            Text(Date(timeIntervalSince1970: nextPrayer.timestamp / 1_000), style: .timer)
-          }
+          CountdownText(
+            timestamp: nextPrayer.timestamp,
+            fontSize: compact ? 13.5 : 18.5
+          )
+          .frame(maxWidth: .infinity)
         }
         .frame(maxWidth: .infinity, alignment: .center)
       }
@@ -858,15 +972,229 @@ private extension Color {
   static let oummahTextSecondary = Color(red: 0.780, green: 0.745, blue: 0.820)
 }
 
-@main
 struct PrayerTimesWidget: Widget {
+  private var supportedPrayerFamilies: [WidgetFamily] {
+    if #available(iOS 16.0, *) {
+      return [.systemMedium, .systemLarge, .accessoryRectangular, .accessoryCircular, .accessoryInline]
+    }
+    return [.systemMedium, .systemLarge]
+  }
+
   var body: some WidgetConfiguration {
     StaticConfiguration(kind: widgetKind, provider: PrayerWidgetProvider()) { entry in
       PrayerTimesWidgetView(entry: entry)
+        .modifier(WidgetBackground())
     }
     .configurationDisplayName("Horaires de prière")
     .description("Vos horaires de prière OUMMAH.")
-    .supportedFamilies([.systemMedium, .systemLarge])
+    .supportedFamilies(supportedPrayerFamilies)
     .contentMarginsDisabled()
+  }
+}
+
+// MARK: - Verset OUMMAH · écran verrouillé
+
+private let verseWidgetKind = "OummahVerseLockScreenWidget"
+
+private struct LockScreenVerse: Identifiable {
+  let surah: Int
+  let ayah: Int
+  let text: String
+  var id: String { "\(surah):\(ayah)" }
+  var reference: String { "Coran \(surah):\(ayah)" }
+}
+
+// Traduction française de Muhammad Hamidullah (Quran.com, ressource 31).
+// Les appels de notes ont seuls été retirés : aucun verset n'est raccourci ni paraphrasé.
+private let lockScreenVerses: [LockScreenVerse] = [
+  LockScreenVerse(surah: 1, ayah: 1, text: "Au nom d’Allah, le Tout Miséricordieux, le Très Miséricordieux."),
+  LockScreenVerse(surah: 1, ayah: 2, text: "Louange à Allah, Seigneur de l’Univers."),
+  LockScreenVerse(surah: 1, ayah: 6, text: "Guide-nous dans le droit chemin,"),
+  LockScreenVerse(surah: 78, ayah: 8, text: "Nous vous avons créés en couples,"),
+  LockScreenVerse(surah: 78, ayah: 29, text: "alors que Nous avons dénombré toutes choses en écrit."),
+  LockScreenVerse(surah: 89, ayah: 14, text: "Car ton Seigneur demeure aux aguets."),
+  LockScreenVerse(surah: 89, ayah: 17, text: "Mais non ! C’est vous plutôt, qui n’êtes pas généreux envers les orphelins ;"),
+  LockScreenVerse(surah: 90, ayah: 4, text: "Nous avons, certes, créé l’homme pour une vie de lutte."),
+  LockScreenVerse(surah: 93, ayah: 3, text: "Ton Seigneur ne t’a ni abandonné, ni détesté."),
+  LockScreenVerse(surah: 93, ayah: 4, text: "La vie dernière t’est, certes, meilleure que la vie présente."),
+  LockScreenVerse(surah: 93, ayah: 5, text: "Ton Seigneur t’accordera certes [Ses faveurs], et alors tu seras satisfait."),
+  LockScreenVerse(surah: 93, ayah: 9, text: "Quant à l’orphelin, donc, ne le maltraite pas."),
+  LockScreenVerse(surah: 93, ayah: 11, text: "Et quant au bienfait de ton Seigneur, proclame-le."),
+  LockScreenVerse(surah: 94, ayah: 1, text: "N’avons-Nous pas ouvert pour toi ta poitrine ?"),
+  LockScreenVerse(surah: 94, ayah: 4, text: "Et exalté pour toi ta renommée ?"),
+  LockScreenVerse(surah: 95, ayah: 4, text: "Nous avons certes créé l’homme dans la forme la plus parfaite."),
+  LockScreenVerse(surah: 95, ayah: 8, text: "Allah n’est-Il pas le plus sage des Juges ?"),
+  LockScreenVerse(surah: 96, ayah: 1, text: "Lis, au nom de ton Seigneur qui a créé,"),
+  LockScreenVerse(surah: 96, ayah: 3, text: "Lis! Ton Seigneur est le Très Noble,"),
+  LockScreenVerse(surah: 96, ayah: 14, text: "Ne sait-il pas que vraiment Allah voit ?"),
+  LockScreenVerse(surah: 97, ayah: 3, text: "La nuit d’Al-Qadr est meilleure que mille mois."),
+  LockScreenVerse(surah: 99, ayah: 7, text: "Quiconque fait un bien fût-ce du poids d’un atome, le verra,"),
+  LockScreenVerse(surah: 99, ayah: 8, text: "et quiconque fait un mal fût-ce du poids d’un atome, le verra"),
+  LockScreenVerse(surah: 1, ayah: 3, text: "Le Tout Miséricordieux, le Très Miséricordieux,"),
+  LockScreenVerse(surah: 1, ayah: 4, text: "Maître du Jour de la Rétribution."),
+  LockScreenVerse(surah: 1, ayah: 5, text: "C’est Toi [Seul] que nous adorons, et c’est Toi [Seul] dont nous implorons secours."),
+  LockScreenVerse(surah: 2, ayah: 147, text: "La vérité vient de ton Seigneur. Ne sois donc pas de ceux qui doutent."),
+  LockScreenVerse(surah: 2, ayah: 152, text: "Souvenez-vous de Moi donc, Je Me souviendrai de vous. Remerciez- Moi et ne soyez pas ingrats envers Moi !"),
+  LockScreenVerse(surah: 2, ayah: 192, text: "S’ils cessent, Allah est, certes, Pardonneur et Miséricordieux."),
+  LockScreenVerse(surah: 3, ayah: 5, text: "Rien, vraiment, ne se cache d’Allah de ce qui existe sur la terre ou dans le ciel."),
+  LockScreenVerse(surah: 3, ayah: 60, text: "La vérité vient de ton Seigneur. Ne sois donc pas du nombre des sceptiques."),
+  LockScreenVerse(surah: 3, ayah: 74, text: "Il réserve à qui Il veut Sa miséricorde. Et Allah est Détenteur de la grâce immense."),
+  LockScreenVerse(surah: 3, ayah: 115, text: "Et quelque bien qu’ils fassent, il ne leur sera pas dénié. Car Allah connaît bien les pieux."),
+  LockScreenVerse(surah: 3, ayah: 132, text: "Et obéissez à Allah et au Messager afin qu’il vous soit fait miséricorde !"),
+  LockScreenVerse(surah: 3, ayah: 138, text: "Voilà un exposé pour les gens, un guide, et une exhortation pour les pieux."),
+  LockScreenVerse(surah: 3, ayah: 150, text: "Mais c’est Allah votre Maître. Il est meilleur des secoureurs."),
+  LockScreenVerse(surah: 3, ayah: 189, text: "A Allah appartient le royaume des cieux et de la terre. Et Allah est Omnipotent."),
+  LockScreenVerse(surah: 4, ayah: 28, text: "Allah veut vous alléger (les obligations,) car l’homme a été créé faible."),
+  LockScreenVerse(surah: 4, ayah: 45, text: "Allah connaît mieux vos ennemis. Et Allah suffit comme protecteur. Et Allah suffit comme secoureur."),
+  LockScreenVerse(surah: 4, ayah: 68, text: "et Nous les aurions guidés certes vers un droit chemin."),
+  LockScreenVerse(surah: 4, ayah: 70, text: "Cette grâce vient d’Allah. Et Allah suffit comme Parfait Connaisseur."),
+  LockScreenVerse(surah: 4, ayah: 99, text: "À ceux-là, Allah accordera le pardon. Et Allah est Clément et Pardonneur."),
+  LockScreenVerse(surah: 4, ayah: 106, text: "Et implore d’Allah le pardon car Allah est certes Pardonneur et Miséricordieux."),
+  LockScreenVerse(surah: 13, ayah: 9, text: "Le Connaisseur de ce qui est caché et de ce qui est apparent, Le Grand, Le Sublime."),
+  LockScreenVerse(surah: 13, ayah: 29, text: "Ceux qui croient et font de bonnes œuvres, auront le plus grand bien et aussi le plus bon retour."),
+  LockScreenVerse(surah: 20, ayah: 2, text: "Nous n’avons point fait descendre sur toi le Coran pour que tu sois malheureux,"),
+  LockScreenVerse(surah: 20, ayah: 7, text: "Et si tu élèves la voix, Il connaît certes les secrets, mêmes les plus cachés."),
+  LockScreenVerse(surah: 20, ayah: 8, text: "Allah ! Point de divinité que Lui ! Il possède les noms les plus beaux."),
+  LockScreenVerse(surah: 20, ayah: 13, text: "Et Moi, Je t’ai choisi. Ecoute donc ce qui va être révélé."),
+  LockScreenVerse(surah: 20, ayah: 37, text: "Et Nous t’avons déjà favorisé une première fois."),
+  LockScreenVerse(surah: 20, ayah: 41, text: "Et je t’ai assigné à Moi-Même."),
+  LockScreenVerse(surah: 20, ayah: 42, text: "Pars, toi et ton frère, avec Mes prodiges; et ne faiblissez pas de M’invoquer."),
+  LockScreenVerse(surah: 20, ayah: 112, text: "Et quiconque aura fait de bonnes œuvres tout en étant croyant, ne craindra ni injustice ni oppression."),
+  LockScreenVerse(surah: 20, ayah: 122, text: "Son Seigneur l’a ensuite élu, agréé son repentir et l’a guidé."),
+  LockScreenVerse(surah: 39, ayah: 1, text: "La révélation du Livre vient d’Allah, le Puissant, le Sage."),
+  LockScreenVerse(surah: 39, ayah: 30, text: "En vérité tu mourras et ils mourront eux aussi ;"),
+  LockScreenVerse(surah: 39, ayah: 62, text: "Allah est le Créateur de toute chose, et de toute chose Il est Garant."),
+  LockScreenVerse(surah: 48, ayah: 7, text: "A Allah appartiennent les armées des cieux et de la Terre ; et Allah est Puissant et Sage."),
+  LockScreenVerse(surah: 51, ayah: 5, text: "Ce qui vous est promis est certainement vrai."),
+  LockScreenVerse(surah: 51, ayah: 6, text: "Et la Rétribution arrivera inévitablement."),
+  LockScreenVerse(surah: 51, ayah: 20, text: "Il y a sur terre des preuves pour ceux qui croient avec certitude ;"),
+  LockScreenVerse(surah: 51, ayah: 21, text: "ainsi qu’en vous-mêmes. N’observez-vous donc pas ?"),
+  LockScreenVerse(surah: 51, ayah: 48, text: "Et la terre, Nous l’avons étendue. Et de quelle excellente façon Nous l’avons nivelée !"),
+  LockScreenVerse(surah: 51, ayah: 55, text: "Et rappelle ! Car le rappel profite aux croyants."),
+  LockScreenVerse(surah: 51, ayah: 56, text: "Je n’ai créé les djinns et les hommes que pour qu’ils M’adorent."),
+  LockScreenVerse(surah: 51, ayah: 58, text: "En vérité, c’est Allah qui est le Grand Pourvoyeur, Le Détenteur de la force, l’Inébranlable."),
+  LockScreenVerse(surah: 55, ayah: 1, text: "Le Tout Miséricordieux."),
+  LockScreenVerse(surah: 55, ayah: 2, text: "Il a enseigné le Coran."),
+  LockScreenVerse(surah: 55, ayah: 60, text: "Y a-t-il d’autre récompense pour le bien, que le bien ?"),
+  LockScreenVerse(surah: 55, ayah: 78, text: "Béni soit le Nom de ton Seigneur, Plein de Majesté et de Munificence !"),
+  LockScreenVerse(surah: 89, ayah: 27, text: "\"ô toi, âme apaisée,"),
+  LockScreenVerse(surah: 89, ayah: 28, text: "retourne vers ton Seigneur, satisfaite et agréée ;"),
+  LockScreenVerse(surah: 89, ayah: 29, text: "entre donc parmi Mes serviteurs,"),
+  LockScreenVerse(surah: 89, ayah: 30, text: "et entre dans Mon Paradis.\""),
+  LockScreenVerse(surah: 91, ayah: 9, text: "A réussi, certes celui qui la purifie."),
+  LockScreenVerse(surah: 91, ayah: 10, text: "Et est perdu, certes, celui qui la corrompt."),
+  LockScreenVerse(surah: 92, ayah: 7, text: "Nous lui faciliterons la voie au plus grand bonheur."),
+  LockScreenVerse(surah: 94, ayah: 5, text: "A côté de la difficulté est, certes, une facilité !"),
+  LockScreenVerse(surah: 94, ayah: 6, text: "A côté de la difficulté, est certes, une facilité !"),
+  LockScreenVerse(surah: 112, ayah: 2, text: "Allah, Le Seul à être imploré pour ce que nous désirons."),
+]
+
+private struct VerseWidgetEntry: TimelineEntry {
+  let date: Date
+  let verse: LockScreenVerse
+}
+
+private struct VerseWidgetProvider: TimelineProvider {
+  func placeholder(in context: Context) -> VerseWidgetEntry {
+    VerseWidgetEntry(date: .now, verse: lockScreenVerses[0])
+  }
+
+  func getSnapshot(in context: Context, completion: @escaping (VerseWidgetEntry) -> Void) {
+    completion(entry(for: .now))
+  }
+
+  func getTimeline(in context: Context, completion: @escaping (Timeline<VerseWidgetEntry>) -> Void) {
+    let calendar = Calendar.current
+    let now = Date()
+    let start = calendar.date(bySetting: .second, value: 0, of: now) ?? now
+
+    // 48 entrées préparées d’un coup : un nouveau verset toutes les ~30 minutes.
+    // iOS garde la main sur le moment exact d’affichage ; un verrouillage/déverrouillage
+    // ne déclenche pas à lui seul un refresh garanti par WidgetKit.
+    let entries = (0..<48).compactMap { offset -> VerseWidgetEntry? in
+      guard let date = calendar.date(byAdding: .minute, value: offset * 30, to: start) else { return nil }
+      return entry(for: date)
+    }
+    completion(Timeline(entries: entries, policy: .atEnd))
+  }
+
+  private func entry(for date: Date) -> VerseWidgetEntry {
+    VerseWidgetEntry(date: date, verse: verse(for: date))
+  }
+
+  private func verse(for date: Date) -> LockScreenVerse {
+    guard !lockScreenVerses.isEmpty else {
+      return LockScreenVerse(surah: 93, ayah: 3, text: "Ton Seigneur ne t’a ni abandonné, ni détesté.")
+    }
+
+    // Mélange déterministe : stable pendant le créneau de 30 min,
+    // mais suffisamment dispersé pour éviter une lecture séquentielle évidente.
+    let slot = Int(floor(date.timeIntervalSince1970 / (30 * 60)))
+    let mixed = (slot &* 73 &+ 41) ^ (slot >> 3)
+    let index = abs(mixed) % lockScreenVerses.count
+    return lockScreenVerses[index]
+  }
+}
+
+private struct VerseLockScreenView: View {
+  let entry: VerseWidgetEntry
+
+  private var verseFontSize: CGFloat {
+    switch entry.verse.text.count {
+    case 0...55:
+      return 13.4
+    case 56...82:
+      return 12.5
+    default:
+      return 11.4
+    }
+  }
+
+  var body: some View {
+    VStack(alignment: .leading, spacing: 3) {
+      HStack(spacing: 5) {
+        Image(systemName: "book.closed.fill")
+          .font(.system(size: 8.5, weight: .semibold))
+        Text(entry.verse.reference.uppercased())
+          .font(.system(size: 9, weight: .semibold, design: .rounded))
+          .tracking(0.25)
+          .lineLimit(1)
+        Spacer(minLength: 0)
+      }
+      .foregroundStyle(.secondary)
+
+      Text(entry.verse.text)
+        .font(.system(size: verseFontSize, weight: .semibold, design: .serif))
+        .foregroundStyle(.primary)
+        .lineLimit(4)
+        .minimumScaleFactor(0.85)
+        .allowsTightening(true)
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+    }
+    .padding(.horizontal, 2)
+    .padding(.vertical, 1)
+    .widgetURL(URL(string: "oummah:///surah/\(entry.verse.surah)?verse=\(entry.verse.ayah)&source=widget"))
+  }
+}
+
+@available(iOS 16.0, *)
+struct OummahVerseLockScreenWidget: Widget {
+  var body: some WidgetConfiguration {
+    StaticConfiguration(kind: verseWidgetKind, provider: VerseWidgetProvider()) { entry in
+      VerseLockScreenView(entry: entry)
+        .modifier(WidgetBackground())
+    }
+    .configurationDisplayName("Verset OUMMAH")
+    .description("Un court verset en français sur votre écran verrouillé.")
+    .supportedFamilies([.accessoryRectangular])
+  }
+}
+
+@available(iOS 16.0, *)
+@main
+struct OummahWidgetBundle: WidgetBundle {
+  var body: some Widget {
+    PrayerTimesWidget()
+    OummahVerseLockScreenWidget()
   }
 }

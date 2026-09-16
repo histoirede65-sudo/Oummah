@@ -5,9 +5,9 @@ export class QuranFoundationRepository {
     return quranFoundationClient.getSurahs();
   }
 
-  getVerses(surahId: number) {
-    console.info(`[verses] repository getVerses called surah=${surahId}`);
-    return quranFoundationClient.getVerses(surahId);
+  getVerses(surahId: number, language: "fr" | "en" = "fr") {
+    console.info(`[verses] repository getVerses called surah=${surahId} language=${language}`);
+    return quranFoundationClient.getVerses(surahId, language);
   }
 
   getReciters() {

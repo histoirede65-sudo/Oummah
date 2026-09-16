@@ -1,5 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
-import { useFocusEffect } from "@react-navigation/native";
+import { useFocusEffect } from "expo-router";
 import { createAudioPlayer, useAudioPlayerStatus } from "expo-audio";
 import * as Clipboard from "expo-clipboard";
 import { router, useLocalSearchParams, type Href } from "expo-router";
@@ -21,6 +21,7 @@ import {
   Share,
   StyleSheet,
   Text,
+  TextInput,
   useWindowDimensions,
   View,
   type AlertButton,
@@ -64,12 +65,13 @@ import { colors } from "../../theme/colors";
 import { typography } from "../../theme/typography";
 import QuranReciterSelector from "../../components/quran/QuranReciterSelector";
 import { WasilContextButton } from "../../components/wasil/WasilContextButton";
-const modes: { id: ReadingMode; label: string }[] = [
-  { id: "arabic", label: "Arabe" },
-  { id: "arabic-translation", label: "Arabe + traduction" },
-  { id: "arabic-transliteration", label: "Arabe + phonétique" },
-  { id: "translation", label: "Traduction" },
-  { id: "mushaf", label: "Mushaf" },
+import { useI18n, type TranslationKey } from "../../i18n";
+const modes: { id: ReadingMode; labelKey: TranslationKey }[] = [
+  { id: "arabic", labelKey: "surahReader.arabic" },
+  { id: "arabic-translation", labelKey: "surahReader.arabicTranslation" },
+  { id: "arabic-transliteration", labelKey: "surahReader.arabicTransliteration" },
+  { id: "translation", labelKey: "surahReader.translation" },
+  { id: "mushaf", labelKey: "surahReader.mushaf" },
 ];
 
 function resolveVerseAudioUrl(value?: string) {
@@ -156,6 +158,7 @@ const VerseRow = memo(function VerseRow({
   lastReadWordPosition: number | null;
   isWordSyncUnavailable: boolean;
 }) {
+  const { t } = useI18n();
   const showArabic = settings.mode !== "translation";
   const showTranslation =
     settings.mode === "arabic-translation" || settings.mode === "translation";
@@ -184,10 +187,13 @@ const VerseRow = memo(function VerseRow({
           <Text style={styles.numberText}>{verse.id}</Text>
         </View>
         <Text style={styles.location}>
-          Juz {verse.juzNumber || "—"} · Page {verse.pageNumber || "—"}
+          {t("surahReader.verseLocation", {
+            juz: verse.juzNumber || "—",
+            page: verse.pageNumber || "—",
+          })}
         </Text>
         <Pressable
-          accessibilityLabel={`Écouter le verset ${verse.id}`}
+          accessibilityLabel={t("surahReader.listenVerse", { verse: verse.id })}
           onPress={() => onListen(verse)}
           hitSlop={10}
           style={styles.listenIcon}
@@ -199,8 +205,16 @@ const VerseRow = memo(function VerseRow({
           />
         </Pressable>
         <WasilContextButton
+          accessibilityLabel={t("surahReader.wasilAccessibility")}
           compact
-          prompt={`Explique-moi ce verset du Coran à partir des sources vérifiées d’OUMMAH. Référence : ${verse.verseKey}. Texte arabe : ${verse.textUthmani}. Traduction affichée : ${sanitizeTranslationText(verse.translation || verse.translations?.[0]?.text) || "indisponible"}`}
+          prompt={t("surahReader.wasilPrompt", {
+            verseKey: verse.verseKey,
+            arabic: verse.textUthmani,
+            translation:
+              sanitizeTranslationText(
+                verse.translation || verse.translations?.[0]?.text,
+              ) || t("surahReader.translationUnavailable"),
+          })}
         />
       </View>
       {showArabic ? (
@@ -242,7 +256,7 @@ const VerseRow = memo(function VerseRow({
       ) : null}
       {isWordSyncUnavailable ? (
         <Text style={styles.syncUnavailable}>
-          Synchronisation mot à mot indisponible pour ce récitateur.
+          {t("surahReader.wordSyncUnavailable")}
         </Text>
       ) : null}
       {showTransliteration ? (
@@ -250,7 +264,7 @@ const VerseRow = memo(function VerseRow({
           selectable
           style={[styles.transliteration, { fontSize: transliterationSize }]}
         >
-          {verse.transliteration || "Translittération indisponible"}
+          {verse.transliteration || t("surahReader.transliterationUnavailable")}
         </Text>
       ) : null}
       {showTranslation ? (
@@ -266,13 +280,13 @@ const VerseRow = memo(function VerseRow({
         >
           {sanitizeTranslationText(
             verse.translation || verse.translations?.[0]?.text,
-          ) || "Traduction indisponible"}
+          ) || t("surahReader.translationUnavailable")}
         </Text>
       ) : null}
 
       <Pressable
         accessibilityRole="button"
-        accessibilityLabel={`Comprendre le verset ${verse.verseKey}`}
+        accessibilityLabel={t("surahReader.understandVerseLabel", { verse: verse.verseKey })}
         onPress={(event) => {
           event.stopPropagation();
           onOpenTafsir(verse);
@@ -287,9 +301,9 @@ const VerseRow = memo(function VerseRow({
         </View>
 
         <View style={styles.tafsirButtonCopy}>
-          <Text style={styles.tafsirButtonTitle}>Comprendre ce verset</Text>
+          <Text style={styles.tafsirButtonTitle}>{t("surahReader.understandVerse")}</Text>
           <Text style={styles.tafsirButtonSubtitle}>
-            Lire le tafsir Al-Mukhtasar
+            {t("surahReader.readTafsir")}
           </Text>
         </View>
 
@@ -313,10 +327,12 @@ function getRenderedVerseNumber(verse: QuranFoundationVerse) {
 }
 
 export default function SurahReadingScreen() {
-  const { id, verse: requestedVerse, direct } = useLocalSearchParams<{
+  const { language, t } = useI18n();
+  const { id, verse: requestedVerse, direct, source } = useLocalSearchParams<{
     id: string;
     verse?: string;
     direct?: string;
+    source?: string;
   }>();
   const { width: screenWidth } = useWindowDimensions();
   const parsedSurahId = parsePositiveRouteNumber(id);
@@ -326,11 +342,19 @@ export default function SurahReadingScreen() {
   const requestedVerseNumber = parsePositiveRouteNumber(requestedVerse);
   const shouldRevealRequestedVerseDirectly =
     direct === "1" && requestedVerseNumber !== null;
+  const handleBack = useCallback(() => {
+    if (source === "widget" || !router.canGoBack()) {
+      router.dismissTo("/(tabs)");
+      return;
+    }
+    router.back();
+  }, [source]);
   const listRef = useRef<FlatList<QuranFoundationVerse>>(null);
   const offsetRef = useRef(0);
   const currentVerseRef = useRef(requestedVerseNumber ?? 1);
   const verseLoadRequestRef = useRef(0);
   const [verses, setVerses] = useState<QuranFoundationVerse[]>([]);
+  const [englishSurahName, setEnglishSurahName] = useState<string>();
   const [loading, setLoading] = useState(true);
   const [deepLinkPositioned, setDeepLinkPositioned] = useState(
     requestedVerseNumber === null,
@@ -338,6 +362,8 @@ export default function SurahReadingScreen() {
   const [error, setError] = useState<string>();
   const [settings, setSettings] = useState(DEFAULT_READING_PREFERENCES);
   const [showSettings, setShowSettings] = useState(false);
+  const [showVerseJump, setShowVerseJump] = useState(false);
+  const [verseJumpValue, setVerseJumpValue] = useState("");
   const [playingVerseKey, setPlayingVerseKey] = useState<string>();
   const [activeVerse, setActiveVerse] = useState<QuranFoundationVerse>();
   const [activeTiming, setActiveTiming] = useState<{
@@ -361,6 +387,28 @@ export default function SurahReadingScreen() {
       keepAudioSessionActive: true,
     }),
   );
+
+  useEffect(() => {
+    let active = true;
+    if (language !== "en") {
+      setEnglishSurahName(undefined);
+      return () => {
+        active = false;
+      };
+    }
+    setEnglishSurahName(undefined);
+    void readingQuranRepository
+      .getEnglishSurahNames()
+      .then((names) => {
+        if (active) setEnglishSurahName(names.get(surah.id));
+      })
+      .catch(() => {
+        if (active) setEnglishSurahName(undefined);
+      });
+    return () => {
+      active = false;
+    };
+  }, [language, surah.id]);
   const [preloadPlayer] = useState(() =>
     createAudioPlayer(null, {
       updateInterval: 1000,
@@ -402,13 +450,16 @@ export default function SurahReadingScreen() {
   }, [versePlayerStatus.currentTime, versePlayerStatus.playing]);
 
   const stopInlineVerse = useCallback(
-    (requestId?: number, _resetPositionSeconds?: number) => {
+    (requestId?: number, resetPositionSeconds?: number) => {
       if (requestId !== undefined && sessionIdRef.current !== requestId) return;
       if (stopTimerRef.current) {
         clearTimeout(stopTimerRef.current);
         stopTimerRef.current = undefined;
       }
       versePlayer.pause();
+      if (resetPositionSeconds !== undefined) {
+        void versePlayer.seekTo(resetPositionSeconds, 0, 0).catch(() => undefined);
+      }
       setPlayingVerseKey(undefined);
     },
     [versePlayer],
@@ -488,6 +539,7 @@ export default function SurahReadingScreen() {
     try {
       const response = (await readingQuranRepository.getVerses(
         surahId,
+        language,
       )) as unknown as
         | QuranFoundationVerse[]
         | { verses?: QuranFoundationVerse[] };
@@ -540,13 +592,13 @@ export default function SurahReadingScreen() {
       setError(
         reason instanceof Error
           ? reason.message
-          : "Impossible de charger les versets.",
+          : t("surahReader.loadFailed"),
       );
       setDeepLinkPositioned(true);
     } finally {
       if (verseLoadRequestRef.current === requestId) setLoading(false);
     }
-  }, [requestedVerseNumber, shouldRevealRequestedVerseDirectly, surahId]);
+  }, [language, requestedVerseNumber, shouldRevealRequestedVerseDirectly, surahId, t]);
 
   useEffect(() => {
     let active = true;
@@ -713,8 +765,8 @@ export default function SurahReadingScreen() {
       const timing = timelines.find((item) => item.verseKey === verse.verseKey);
       if (!timing) {
         Alert.alert(
-          "Audio indisponible",
-          "Le minutage de ce verset est indisponible.",
+          t("surahReader.audioUnavailable"),
+          t("surahReader.timingUnavailable"),
         );
         return;
       }
@@ -726,8 +778,8 @@ export default function SurahReadingScreen() {
         endMs <= timestampFromMs
       ) {
         Alert.alert(
-          "Audio indisponible",
-          "Les bornes audio de ce verset sont invalides.",
+          t("surahReader.audioUnavailable"),
+          t("surahReader.invalidAudioBounds"),
         );
         return;
       }
@@ -799,6 +851,7 @@ export default function SurahReadingScreen() {
       playingVerseKey,
       stopInlineVerse,
       surahId,
+      t,
       versePlayer,
       versePlayerStatus.didJustFinish,
       versePlayerStatus.playing,
@@ -942,7 +995,7 @@ export default function SurahReadingScreen() {
     versePlayerStatus.playing,
   ]);
   const verseShareText = (verse: QuranFoundationVerse) =>
-    `${verse.textUthmani}\n\n${sanitizeTranslationText(verse.translation ?? verse.translations?.[0]?.text)}\n— Coran ${verse.verseKey}`;
+    `${verse.textUthmani}\n\n${sanitizeTranslationText(verse.translation ?? verse.translations?.[0]?.text)}\n— ${t("quran.title")} ${verse.verseKey}`;
   const runVerseAction = async (
     verse: QuranFoundationVerse,
     action: number,
@@ -982,7 +1035,10 @@ export default function SurahReadingScreen() {
     }
     if (action === 3) {
       await Clipboard.setStringAsync(verseShareText(verse));
-      Alert.alert("Copié", `Le verset ${verseKey} a été copié.`);
+      Alert.alert(
+        t("surahReader.copied"),
+        t("surahReader.verseCopied", { verse: verseKey }),
+      );
     }
     if (action === 4) await Share.share({ message: verseShareText(verse) });
     if (action === 5) {
@@ -1003,8 +1059,8 @@ export default function SurahReadingScreen() {
       const existing = bookmarks.find((item) => item.verseKey === verseKey);
       if (Platform.OS === "ios") {
         Alert.prompt(
-          "Ajouter une note",
-          `Verset ${verseKey}`,
+          t("surahReader.addNote"),
+          t("surahReader.verseTitle", { verse: verseKey }),
           async (note) => {
             const next = bookmarks.filter((item) => item.verseKey !== verseKey);
             if (note.trim())
@@ -1021,27 +1077,27 @@ export default function SurahReadingScreen() {
         );
       } else {
         Alert.alert(
-          "Ajouter une note",
-          "La saisie de notes est disponible sur iOS.",
+          t("surahReader.addNote"),
+          t("surahReader.notesIosOnly"),
         );
       }
     }
   };
   const actions = (verse: QuranFoundationVerse) => {
     const options = [
-      "Écouter ce verset",
-      "Mettre en favori",
-      "Ajouter un signet",
-      "Copier",
-      "Partager",
-      "Ouvrir le tafsir",
-      "Mémoriser ce verset",
-      "Ajouter une note",
-      "Annuler",
+      t("surahReader.listenToVerse"),
+      t("surahReader.addFavorite"),
+      t("surahReader.addBookmark"),
+      t("surahReader.copy"),
+      t("common.share"),
+      t("surahReader.openTafsir"),
+      t("surahReader.memorizeVerse"),
+      t("surahReader.addNote"),
+      t("surahReader.cancel"),
     ];
     if (Platform.OS === "ios") {
       ActionSheetIOS.showActionSheetWithOptions(
-        { title: `Verset ${verse.verseKey}`, options, cancelButtonIndex: 8 },
+        { title: t("surahReader.verseTitle", { verse: verse.verseKey }), options, cancelButtonIndex: 8 },
         (index) => {
           if (index < 8) void runVerseAction(verse, index);
         },
@@ -1052,8 +1108,12 @@ export default function SurahReadingScreen() {
       text,
       onPress: () => void runVerseAction(verse, index),
     }));
-    buttons.push({ text: "Annuler", style: "cancel" });
-    Alert.alert(`Verset ${verse.verseKey}`, "Choisissez une action", buttons);
+    buttons.push({ text: t("surahReader.cancel"), style: "cancel" });
+    Alert.alert(
+      t("surahReader.verseTitle", { verse: verse.verseKey }),
+      t("surahReader.chooseAction"),
+      buttons,
+    );
   };
   const listenToVerseRef = useRef(listenToVerse);
   const actionsRef = useRef(actions);
@@ -1156,6 +1216,37 @@ export default function SurahReadingScreen() {
       }
     },
   ).current;
+  const jumpToVerse = useCallback(() => {
+    const verseNumber = parsePositiveRouteNumber(verseJumpValue.trim());
+    if (!verseNumber) {
+      Alert.alert(
+        t("surahReader.verseNotFound"),
+        t("surahReader.enterValidVerse"),
+      );
+      return;
+    }
+
+    const index = verses.findIndex(
+      (verse) => getRenderedVerseNumber(verse) === verseNumber,
+    );
+    if (index < 0) {
+      Alert.alert(
+        t("surahReader.verseNotFound"),
+        t("surahReader.surahVerseCount", { count: surah.verses }),
+      );
+      return;
+    }
+
+    currentVerseRef.current = verseNumber;
+    listRef.current?.scrollToIndex({
+      index,
+      animated: true,
+      viewPosition: 0,
+    });
+    setShowVerseJump(false);
+    setVerseJumpValue("");
+  }, [surah.verses, t, verseJumpValue, verses]);
+
   const palette =
     settings.theme === "light"
       ? "#F7F3EA"
@@ -1169,13 +1260,24 @@ export default function SurahReadingScreen() {
       style={[styles.safe, { backgroundColor: palette }]}
     >
       <View style={styles.header}>
-        <Pressable onPress={() => router.back()} style={styles.iconButton}>
+        <Pressable onPress={handleBack} style={styles.iconButton}>
           <Ionicons name="arrow-back" size={21} color={colors.goldLight} />
         </Pressable>
         <View style={styles.headerCopy}>
-          <Text style={styles.title}>{surah.frenchName}</Text>
+          <Text style={styles.title}>{surah.transliteration}</Text>
           <Text style={styles.meta}>
-            Sourate {surah.id} · {surah.revelationType} · {surah.verses} versets
+            {t("surahReader.surahMeta", {
+              name:
+                language === "en"
+                  ? englishSurahName || surah.transliteration
+                  : surah.frenchName,
+              number: surah.id,
+              place:
+                surah.revelationType === "Médine"
+                  ? t("surahReader.medina")
+                  : t("surahReader.mecca"),
+              count: surah.verses,
+            })}
           </Text>
         </View>
         <Text style={styles.headerArabic}>{surah.arabicName}</Text>
@@ -1187,7 +1289,38 @@ export default function SurahReadingScreen() {
         </Pressable>
       </View>
       <View style={styles.reciterSelectorSlot}>
-        <QuranReciterSelector compact />
+        <View style={styles.reciterSelectorRow}>
+          <View style={styles.reciterSelectorControl}>
+            <QuranReciterSelector compact />
+          </View>
+          <Pressable
+            accessibilityLabel={t("surahReader.goToVerse")}
+            onPress={() => setShowVerseJump((value) => !value)}
+            style={styles.verseJumpTrigger}
+          >
+            <Text style={styles.verseJumpTriggerText}>{t("surahReader.goToVerse")}</Text>
+          </Pressable>
+        </View>
+        {showVerseJump ? (
+          <View style={styles.verseJumpRow}>
+            <TextInput
+              autoFocus
+              value={verseJumpValue}
+              onChangeText={(value) =>
+                setVerseJumpValue(value.replace(/[^0-9]/g, ""))
+              }
+              onSubmitEditing={jumpToVerse}
+              keyboardType="number-pad"
+              returnKeyType="go"
+              placeholder={t("surahReader.verseNumberPlaceholder", { count: surah.verses })}
+              placeholderTextColor={colors.textMuted}
+              style={styles.verseJumpInput}
+            />
+            <Pressable onPress={jumpToVerse} style={styles.verseJumpGoButton}>
+              <Text style={styles.verseJumpGoText}>{t("surahReader.go")}</Text>
+            </Pressable>
+          </View>
+        ) : null}
       </View>
       {showSettings ? (
         <View style={styles.settings}>
@@ -1204,12 +1337,12 @@ export default function SurahReadingScreen() {
                   settings.mode === item.id && styles.chipActive,
                 ]}
               >
-                <Text style={styles.chipText}>{item.label}</Text>
+                <Text style={styles.chipText}>{t(item.labelKey)}</Text>
               </Pressable>
             )}
           />
           <View style={styles.settingRow}>
-            <Text style={styles.settingLabel}>Arabe</Text>
+            <Text style={styles.settingLabel}>{t("surahReader.arabic")}</Text>
             <Pressable
               onPress={() =>
                 updateSettings({
@@ -1258,12 +1391,12 @@ export default function SurahReadingScreen() {
                     styles.transliterationToggleTextActive,
                 ]}
               >
-                Phonétique
+                {t("surahReader.transliteration")}
               </Text>
             </Pressable>
           </View>
           <View style={styles.settingRow}>
-            <Text style={styles.settingLabel}>Thème</Text>
+            <Text style={styles.settingLabel}>{t("surahReader.theme")}</Text>
             {(["dark", "sepia", "light"] as ReadingTheme[]).map((theme) => (
               <Pressable
                 key={theme}
@@ -1289,11 +1422,11 @@ export default function SurahReadingScreen() {
         <ActivityIndicator style={styles.loader} color={colors.gold} />
       ) : error ? (
         <Pressable onPress={() => void loadVerses()} style={styles.error}>
-          <Text style={styles.errorText}>{error}\nTouchez pour réessayer</Text>
+          <Text style={styles.errorText}>{error}\n{t("surahReader.tapToRetry")}</Text>
         </Pressable>
       ) : verses.length === 0 ? (
         <View style={styles.error}>
-          <Text style={styles.errorText}>Aucun verset disponible.</Text>
+          <Text style={styles.errorText}>{t("surahReader.noVerses")}</Text>
         </View>
       ) : (
         <View style={styles.verseListContainer}>
@@ -1355,7 +1488,7 @@ export default function SurahReadingScreen() {
           </View>
           <View style={styles.inlineControls}>
             <Pressable
-              accessibilityLabel="Verset précédent"
+              accessibilityLabel={t("surahReader.previousVerse")}
               disabled={activeVerse.id <= 1}
               onPress={() => playNeighbor(-1)}
               style={styles.inlineSmallButton}
@@ -1369,7 +1502,7 @@ export default function SurahReadingScreen() {
               />
             </Pressable>
             <Pressable
-              accessibilityLabel={playingVerseKey ? "Pause" : "Lecture"}
+              accessibilityLabel={playingVerseKey ? t("common.pause") : t("surahReader.play")}
               onPress={() => void listenToVerse(activeVerse)}
               style={styles.inlinePlayButton}
             >
@@ -1380,7 +1513,7 @@ export default function SurahReadingScreen() {
               />
             </Pressable>
             <Pressable
-              accessibilityLabel="Verset suivant"
+              accessibilityLabel={t("surahReader.nextVerse")}
               disabled={activeVerse.id >= verses.length}
               onPress={() => playNeighbor(1)}
               style={styles.inlineSmallButton}
@@ -1397,14 +1530,20 @@ export default function SurahReadingScreen() {
             </Pressable>
             <View style={styles.inlineCopy}>
               <Text numberOfLines={1} style={styles.inlineTitle}>
-                {surah.frenchName} · Verset {activeVerse.id}
+                {t("surahReader.activeVerse", {
+                  surah:
+                    language === "en"
+                      ? englishSurahName || surah.transliteration
+                      : surah.frenchName,
+                  verse: activeVerse.id,
+                })}
               </Text>
               <Text numberOfLines={1} style={styles.inlineSubtitle}>
-                {currentReciter?.name ?? "Récitateur"}
+                {currentReciter?.name ?? t("surahReader.reciter")}
               </Text>
             </View>
             <Pressable
-              accessibilityLabel="Vitesse de lecture"
+              accessibilityLabel={t("surahReader.playbackSpeed")}
               onPress={cyclePlaybackRate}
               style={styles.rateButton}
             >
@@ -1456,6 +1595,60 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderColor: colors.borderSoft,
     backgroundColor: colors.backgroundSecondary,
+  },
+  reciterSelectorRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+  },
+  reciterSelectorControl: {
+    flex: 1,
+    minWidth: 0,
+  },
+  verseJumpTrigger: {
+    height: 38,
+    paddingHorizontal: 11,
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: colors.borderSoft,
+    backgroundColor: colors.purpleDeep,
+  },
+  verseJumpTriggerText: {
+    color: colors.goldLight,
+    fontSize: 11,
+    fontWeight: "700",
+  },
+  verseJumpRow: {
+    marginTop: 7,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+  },
+  verseJumpInput: {
+    flex: 1,
+    height: 38,
+    paddingHorizontal: 12,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: colors.borderSoft,
+    backgroundColor: colors.surface,
+    color: colors.text,
+    fontSize: 13,
+  },
+  verseJumpGoButton: {
+    height: 38,
+    paddingHorizontal: 14,
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 12,
+    backgroundColor: colors.purpleDeep,
+  },
+  verseJumpGoText: {
+    color: colors.goldLight,
+    fontSize: 12,
+    fontWeight: "700",
   },
   settings: {
     padding: 10,

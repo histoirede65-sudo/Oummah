@@ -1,4 +1,4 @@
-import { Animated, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, View } from "react-native";
+import { Animated, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, useWindowDimensions, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { router, useLocalSearchParams } from "expo-router";
@@ -10,10 +10,14 @@ import HomeAnnouncementBanner from "../../components/HomeAnnouncementBanner";
 import AllahNamesHomeSection from "../../components/AllahNamesHomeSection";
 import HomeShortcuts from "../../components/HomeShortcuts";
 import PrayerCard from "../../components/PrayerCard";
+import { useI18n } from "../../i18n";
 import { colors } from "../../theme/colors";
 import { typography } from "../../theme/typography";
 
 export default function HomeScreen() {
+  const { t } = useI18n();
+  const { width } = useWindowDimensions();
+  const dashboardHorizontalPadding = width < 350 ? 7 : width < 390 ? 9 : width > 430 ? 16 : 11;
   const { welcome } = useLocalSearchParams<{ welcome?: string }>();
   const [showWelcome, setShowWelcome] = useState(false);
   const welcomeOpacity = useRef(new Animated.Value(0)).current;
@@ -80,7 +84,7 @@ export default function HomeScreen() {
             onLayout={(event) => {
               wasilOffset.current = event.nativeEvent.layout.y;
             }}
-            style={styles.dashboard}
+            style={[styles.dashboard, { paddingHorizontal: dashboardHorizontalPadding }]}
           >
             <DalilCard onPromptFocus={revealWasilInput} />
             <HomeShortcuts />
@@ -106,9 +110,9 @@ export default function HomeScreen() {
             <View style={styles.welcomeIcon}>
               <Ionicons name="checkmark" size={34} color="#17131D" />
             </View>
-            <Text style={styles.welcomeTitle}>Bienvenue dans OUMMAH</Text>
+            <Text style={styles.welcomeTitle}>{t("home.welcomeTitle")}</Text>
             <Text style={styles.welcomeText}>
-              Votre profil est prêt. Qu’Allah mette de la baraka dans votre cheminement.
+              {t("home.welcomeText")}
             </Text>
           </Animated.View>
         </Animated.View>

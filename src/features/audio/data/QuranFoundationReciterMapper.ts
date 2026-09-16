@@ -15,6 +15,7 @@ import saadAlGhamdi from '../../../../assets/reciters/webp/saad_alghamdi.webp';
 import shuraim from '../../../../assets/reciters/webp/shuraim.webp';
 import sudais from '../../../../assets/reciters/webp/sudais.webp';
 import yasserAlDossari from '../../../../assets/reciters/webp/yasser_aldossari.webp';
+import ahmedAbdelhamidTahoun from '../../../../assets/reciters/webp/ahmed_abdelhamid_tahoun.webp';
 
 export const RECITER_IMAGES: Record<number, any> = {
   7: misharyAlAfasy,
@@ -34,6 +35,7 @@ export const RECITER_IMAGES: Record<number, any> = {
   2: abdulBasit,
   160: bandarBalila,
   174: yasserAlDossari,
+  176: ahmedAbdelhamidTahoun,
 };
 
 function normalizeName(value: string) {

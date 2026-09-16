@@ -1,23 +1,44 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#070811">
+    android:background="#171026">
+
   <ImageView
       android:id="@+id/prayer_widget_art_horizontal"
       android:layout_width="match_parent"
       android:layout_height="match_parent"
       android:contentDescription="Horaires de priere OUMMAH"
       android:scaleType="fitXY" />
-  <Chronometer
-      android:id="@+id/prayer_widget_countdown_horizontal"
+
+  <LinearLayout
       android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:layout_gravity="center"
-      android:gravity="center"
-      android:textColor="#F8F4EB"
-      android:textSize="21sp"
-      android:fontFamily="sans"
-      android:includeFontPadding="false"
-      android:format="%s"
-      android:visibility="gone" />
+      android:layout_height="match_parent"
+      android:orientation="vertical"
+      android:gravity="center_horizontal">
+
+    <TextView
+        android:layout_width="1dp"
+        android:layout_height="0dp"
+        android:layout_weight="0.47"
+        android:text="" />
+
+    <Chronometer
+        android:id="@+id/prayer_widget_countdown_horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textColor="#F8F4EB"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:fontFamily="sans-serif"
+        android:includeFontPadding="false"
+        android:format="%s"
+        android:visibility="gone" />
+
+    <TextView
+        android:layout_width="1dp"
+        android:layout_height="0dp"
+        android:layout_weight="0.53"
+        android:text="" />
+  </LinearLayout>
 </FrameLayout>

@@ -1,7 +1,6 @@
 import type { Href } from "expo-router";
-import { router } from "expo-router";
+import { router, useFocusEffect } from "expo-router";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { useFocusEffect } from "@react-navigation/native";
 import {
   StyleSheet,
   Text,
@@ -25,6 +24,7 @@ import { useI18n } from "../../i18n";
 import { colors } from "../../theme/colors";
 import { typography } from "../../theme/typography";
 import { offlineRepository, type ReadingPosition } from "../../core/offline";
+import { readingQuranRepository } from "../../features/quran/ReadingQuranRepository";
 
 function normalize(value: string, locale: string) {
   return value
@@ -47,6 +47,41 @@ export default function QuranScreen() {
   const [bookmarkVerseBySurah, setBookmarkVerseBySurah] = useState<
     Map<number, number>
   >(new Map());
+  const [englishSurahNames, setEnglishSurahNames] = useState<
+    ReadonlyMap<number, string>
+  >(new Map());
+
+  useEffect(() => {
+    let active = true;
+    if (language !== "en") {
+      setEnglishSurahNames(new Map());
+      return () => {
+        active = false;
+      };
+    }
+
+    void readingQuranRepository
+      .getEnglishSurahNames()
+      .then((names) => {
+        if (!active) return;
+        setEnglishSurahNames(names);
+      })
+      .catch(() => {
+        if (active) setEnglishSurahNames(new Map());
+      });
+
+    return () => {
+      active = false;
+    };
+  }, [language]);
+
+  const getSurahDisplayName = useCallback(
+    (surah: (typeof SURAHS)[number]) =>
+      language === "en"
+        ? englishSurahNames.get(surah.id) || surah.transliteration
+        : surah.frenchName,
+    [englishSurahNames, language],
+  );
   const handleBackPress = () => {
     if (router.canGoBack()) router.back();
     else router.replace("/" as Href);
@@ -114,11 +149,11 @@ export default function QuranScreen() {
 
     return base.filter((surah) =>
       normalize(
-        `${surah.frenchName} ${surah.transliteration} ${surah.arabicName}`,
+        `${getSurahDisplayName(surah)} ${surah.frenchName} ${surah.transliteration} ${surah.arabicName}`,
         language,
       ).includes(search),
     );
-  }, [activeTab, bookmarkSurahIds, favoriteSurahIds, language, query]);
+  }, [activeTab, bookmarkSurahIds, favoriteSurahIds, getSurahDisplayName, language, query]);
 
   const filteredJuz = useMemo(() => {
     const search = normalize(query.trim(), language);
@@ -131,11 +166,11 @@ export default function QuranScreen() {
         (candidate) => candidate.id === juz.startSurahId,
       );
       return normalize(
-        `${surah?.frenchName ?? ""} ${surah?.transliteration ?? ""} ${surah?.arabicName ?? ""}`,
+        `${surah ? getSurahDisplayName(surah) : ""} ${surah?.frenchName ?? ""} ${surah?.transliteration ?? ""} ${surah?.arabicName ?? ""}`,
         language,
       ).includes(search);
     });
-  }, [language, query]);
+  }, [getSurahDisplayName, language, query]);
 
   const changeTab = (tab: QuranTab) => {
     setActiveTab(tab);
@@ -181,7 +216,7 @@ export default function QuranScreen() {
 
   const emptyMessage =
     activeTab === "juz"
-      ? "Aucun Juz ne correspond à cette recherche."
+      ? t("quran.juzSearchEmpty")
       : activeTab === "favorites"
         ? t("quran.favoritesEmpty")
         : activeTab === "bookmarks"
@@ -195,7 +230,7 @@ export default function QuranScreen() {
   const header = (
     <>
       <LastReadingCard
-        surahName={lastReadingSurah?.frenchName}
+        surahName={lastReadingSurah ? getSurahDisplayName(lastReadingSurah) : undefined}
         page={lastReading?.page}
         verse={lastReading?.verseNumber}
         progress={
@@ -219,7 +254,9 @@ export default function QuranScreen() {
       <QuranQuickActions
         activeTab={activeTab}
         onTabChange={changeTab}
-        onBookmarkPress={() => changeTab("bookmarks")}
+        onBookmarkPress={() =>
+          changeTab(activeTab === "bookmarks" ? "surahs" : "bookmarks")
+        }
         onAudioPress={() => router.push("/listen/reciters" as Href)}
         onHifzPress={() => router.push("/hifz" as Href)}
       />
@@ -258,6 +295,7 @@ export default function QuranScreen() {
         <JuzList
           data={filteredJuz}
           header={header}
+          getSurahDisplayName={getSurahDisplayName}
           onJuzPress={(juz) =>
             router.push(
               `/surah/${juz.startSurahId}?verse=${juz.startVerse}` as Href,
@@ -268,6 +306,7 @@ export default function QuranScreen() {
         <SurahList
           data={filteredSurahs}
           header={header}
+          getSurahDisplayName={getSurahDisplayName}
           emptyMessage={emptyMessage}
           favoriteSurahIds={favoriteSurahIds}
           onToggleFavorite={(surahId) => void toggleFavorite(surahId)}

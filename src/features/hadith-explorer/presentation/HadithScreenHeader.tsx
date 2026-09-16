@@ -3,11 +3,13 @@ import { router } from "expo-router";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { colors } from "../../../theme/colors";
 import { typography } from "../../../theme/typography";
+import { useI18n } from "../../../i18n";
 
 export default function HadithScreenHeader({ title, subtitle, right }: { title: string; subtitle?: string; right?: React.ReactNode }) {
+  const { t } = useI18n();
   return (
     <View style={styles.header}>
-      <Pressable accessibilityLabel="Retour" onPress={() => router.back()} style={styles.back}>
+      <Pressable accessibilityLabel={t("common.back")} onPress={() => router.back()} style={styles.back}>
         <Ionicons name="chevron-back" size={21} color={colors.goldLight} />
       </Pressable>
       <View style={styles.copy}>
@@ -27,5 +29,4 @@ const styles = StyleSheet.create({
   subtitle: { color: colors.textMuted, fontFamily: typography.sans, fontSize: 10.5, marginTop: 1 },
   right: { minWidth: 42, alignItems: "flex-end" },
 });
-
 

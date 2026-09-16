@@ -18,15 +18,17 @@ import {
   listeningStyles,
 } from '../../../features/audio/presentation/ListeningComponents';
 import { preloadReciterPortraits } from '../../../features/audio/presentation/audioPreload';
+import { localizeReciterCountry } from '../../../features/audio/presentation/reciterCountry';
 import { useOfflineDownloads } from '../../../features/audio/presentation/useOfflineDownloads';
 import { useSurahCatalogViewModel } from '../../../features/audio/presentation/viewmodels/useSurahCatalogViewModel';
 import type { SurahCatalogItem } from '../../../features/audio/domain/audio';
+import { readingQuranRepository } from '../../../features/quran/ReadingQuranRepository';
 import { useI18n } from '../../../i18n';
 import { colors } from '../../../theme/colors';
 import { typography } from '../../../theme/typography';
 
 export default function ReciterDetailScreen() {
-  const { t } = useI18n();
+  const { language, t } = useI18n();
   const { reciterId: routeReciterId, returnTo } = useLocalSearchParams<{ reciterId?: string; returnTo?: string }>();
   const { currentReciter, reciters } = useReciter();
   const reciterId = routeReciterId ?? currentReciter?.id;
@@ -34,6 +36,9 @@ export default function ReciterDetailScreen() {
   const { items, refresh } = useSurahCatalogViewModel(reciterId);
   const offline = useOfflineDownloads();
   const [favoriteIds, setFavoriteIds] = useState<readonly string[]>([]);
+  const [englishSurahNames, setEnglishSurahNames] = useState<
+    ReadonlyMap<number, string>
+  >(new Map());
   const isFavorite = reciter ? favoriteIds.includes(reciter.id) : false;
 
   const displayedItems = useMemo<readonly SurahCatalogItem[]>(() => {
@@ -69,7 +74,7 @@ export default function ReciterDetailScreen() {
     const minutes = Math.round((seconds % 3600) / 60);
     return hours > 0
       ? t('recitations.durationHoursMinutes', { hours, minutes })
-      : `${minutes} min`;
+      : t('recitations.durationMinutes', { minutes });
   }, [displayedItems, t]);
 
   useEffect(() => {
@@ -85,6 +90,27 @@ export default function ReciterDetailScreen() {
       active = false;
     };
   }, [reciters]);
+
+  useEffect(() => {
+    let active = true;
+    if (language !== 'en') {
+      setEnglishSurahNames(new Map());
+      return () => {
+        active = false;
+      };
+    }
+    void readingQuranRepository
+      .getEnglishSurahNames()
+      .then((names) => {
+        if (active) setEnglishSurahNames(names);
+      })
+      .catch(() => {
+        if (active) setEnglishSurahNames(new Map());
+      });
+    return () => {
+      active = false;
+    };
+  }, [language]);
 
   const goBack = useCallback(() => {
     if (router.canGoBack()) router.back();
@@ -175,6 +201,11 @@ export default function ReciterDetailScreen() {
       >
         <SurahAudioRow
           item={item}
+          surahDisplayName={
+            language === 'en'
+              ? englishSurahNames.get(item.surah.id) || item.surah.transliteration
+              : item.surah.frenchName
+          }
           onPress={() => {
             void openSurah(item.surah.id);
           }}
@@ -186,7 +217,7 @@ export default function ReciterDetailScreen() {
         />
       </Reanimated.View>
     ),
-    [downloadTrack, offline.downloads, openSurah],
+    [downloadTrack, englishSurahNames, language, offline.downloads, openSurah],
   );
 
   const keyExtractor = useCallback((item: (typeof displayedItems)[number]) => item.track.id, []);
@@ -213,7 +244,7 @@ export default function ReciterDetailScreen() {
               onBack={goBack}
               onAction={changeReciter}
               actionIcon="swap-horizontal-outline"
-              actionAccessibilityLabel="Changer de réciteur"
+              actionAccessibilityLabel={t('recitations.changeReciter')}
             />
 
             {reciter ? (
@@ -242,13 +273,13 @@ export default function ReciterDetailScreen() {
                     {reciter.name}
                   </Text>
                   <Text style={styles.meta}>
-                    {reciter.country} · {t(`recitations.style.${reciter.style}`)} · {totalDuration}
+                    {localizeReciterCountry(reciter.country, language)} · {t(`recitations.style.${reciter.style}`)} · {totalDuration}
                   </Text>
 
                   <View style={styles.actions}>
                     <ActionButton
                       icon={isFavorite ? 'star' : 'star-outline'}
-                      label="Favori"
+                      label={t('recitations.favorite')}
                       active={isFavorite}
                       onPress={() => {
                         void toggleFavorite();
@@ -256,37 +287,49 @@ export default function ReciterDetailScreen() {
                     />
                     <ActionButton
                       icon="download-outline"
-                      label="Tout"
+                      label={t('recitations.downloadAllShort')}
                       onPress={() => {
                         void downloadAll();
                       }}
                     />
                     <ActionButton
                       icon="shuffle"
-                      label="Aléatoire"
+                      label={t('recitations.random')}
                       onPress={playRandom}
                     />
                   </View>
                 </LinearGradient>
 
                 <View style={styles.storageCard}>
-                  <Text style={styles.storageTitle}>Stockage hors ligne</Text>
+                  <Text style={styles.storageTitle}>
+                    {t('recitations.offlineStorage')}
+                  </Text>
                   <Text style={styles.storageText}>
-                    {offline.stats.downloadedCount} sourates · {formatBytes(offline.stats.usedBytes)} utilisés · {formatBytes(offline.stats.freeBytes)} libres
+                    {t('recitations.storageStats', {
+                      count: offline.stats.downloadedCount,
+                      used: formatBytes(offline.stats.usedBytes, language),
+                      free: formatBytes(offline.stats.freeBytes, language),
+                    })}
                   </Text>
                   <View style={styles.storageActions}>
                     <Pressable onPress={removeReciterDownloads} style={styles.storageAction}>
                       <Ionicons name="trash-outline" size={14} color={colors.goldMuted} />
-                      <Text style={styles.storageActionText}>Effacer ce récitateur</Text>
+                      <Text style={styles.storageActionText}>
+                        {t('recitations.clearReciterDownloads')}
+                      </Text>
                     </Pressable>
                     <Pressable onPress={offline.clearAll} style={styles.storageAction}>
                       <Ionicons name="close-circle-outline" size={14} color={colors.goldMuted} />
-                      <Text style={styles.storageActionText}>Vider le cache</Text>
+                      <Text style={styles.storageActionText}>
+                        {t('recitations.clearCache')}
+                      </Text>
                     </Pressable>
                   </View>
                 </View>
 
-                <Text style={styles.sectionTitle}>Toutes les sourates</Text>
+                <Text style={styles.sectionTitle}>
+                  {t('recitations.allSurahs')}
+                </Text>
               </Reanimated.View>
             ) : null}
           </>
@@ -326,11 +369,13 @@ function SurahSeparator() {
   return <View style={styles.surahSeparator} />;
 }
 
-function formatBytes(bytes: number) {
-  if (bytes <= 0) return '0 Mo';
+function formatBytes(bytes: number, language: 'fr' | 'en') {
+  if (bytes <= 0) return language === 'en' ? '0 MB' : '0 Mo';
   const megabytes = bytes / 1024 / 1024;
-  if (megabytes < 1024) return `${megabytes.toFixed(1)} Mo`;
-  return `${(megabytes / 1024).toFixed(2)} Go`;
+  if (megabytes < 1024) {
+    return `${megabytes.toFixed(1)} ${language === 'en' ? 'MB' : 'Mo'}`;
+  }
+  return `${(megabytes / 1024).toFixed(2)} ${language === 'en' ? 'GB' : 'Go'}`;
 }
 
 const styles = StyleSheet.create({

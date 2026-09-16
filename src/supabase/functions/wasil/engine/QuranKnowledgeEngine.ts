@@ -160,9 +160,15 @@ async function searchQuranTerms(
           });
         }
       } catch (error) {
+        const message = error instanceof Error ? error.message : String(error);
+        const statusMatch = message.match(/\b(4\d\d|5\d\d)\b/u);
+        const providerCode = message.match(/(?:code|error)[=: ]+([A-Z0-9_-]{2,40})/iu)?.[1] ?? null;
         console.warn("QURAN_KNOWLEDGE_SEARCH_TERM_FAILED", {
-          term,
-          message: error instanceof Error ? error.message : String(error),
+          stage: "quran_foundation_search",
+          httpStatus: statusMatch ? Number(statusMatch[1]) : null,
+          providerErrorCode: providerCode,
+          hasSearchTerm: Boolean(term),
+          hasQuranFoundationClient: true,
         });
       }
     }),

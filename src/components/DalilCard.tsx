@@ -9,11 +9,13 @@ import {
   StyleSheet,
   Text,
   TextInput,
+  useWindowDimensions,
   View,
 } from 'react-native';
 
 import { colors } from '../theme/colors';
 import { typography } from '../theme/typography';
+import { useI18n } from '../i18n';
 import { getValidSession } from '../features/auth/SupabaseAuthService';
 import { getCurrentUserProfile } from '../features/profile/UserProfileRepository';
 
@@ -36,23 +38,27 @@ const cardPoseSources = {
 
 const suggestions = [
   {
-    label: 'Explique ce verset',
+    labelKey: 'home.wasilExplainVerse',
     icon: 'book-outline',
     route: '/dalil',
   },
   {
-    label: 'Quel dhikr aujourd’hui ?',
+    labelKey: 'home.wasilDhikrToday',
     icon: 'repeat-outline',
     route: '/dalil',
   },
   {
-    label: 'Mosquée la plus proche',
+    labelKey: 'home.wasilNearestMosque',
     icon: 'business-outline',
     route: '/mosques',
   },
 ] as const;
 
 export default function DalilCard({ onPromptFocus }: DalilCardProps) {
+  const { t } = useI18n();
+  const { width } = useWindowDimensions();
+  const compact = width < 390;
+  const veryCompact = width < 350;
   const [question, setQuestion] = useState('');
   const [pose, setPose] = useState<CardPose>('idle');
   const [isPromptFocused, setIsPromptFocused] = useState(false);
@@ -60,12 +66,12 @@ export default function DalilCard({ onPromptFocus }: DalilCardProps) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [displayName, setDisplayName] = useState('');
   const animatedPrompts = useMemo(() => [
-    displayName ? `Salam aleykoum, ${displayName} 👋` : 'Salam aleykoum 👋',
-    'Comment puis-je vous aider ?',
-    'Explique-moi un verset',
-    'Quel dhikr faire aujourd’hui ?',
-    'Trouve une mosquée proche',
-  ], [displayName]);
+    displayName ? t('home.wasilGreetingName', { name: displayName }) : t('home.wasilGreeting'),
+    t('home.wasilHelp'),
+    t('home.wasilExplainPrompt'),
+    t('home.wasilDhikrPrompt'),
+    t('home.wasilMosquePrompt'),
+  ], [displayName, t]);
 
   useFocusEffect(
     useCallback(() => {
@@ -376,7 +382,7 @@ export default function DalilCard({ onPromptFocus }: DalilCardProps) {
 
   return (
     <Pressable
-      accessibilityLabel="Ouvrir Wasil"
+      accessibilityLabel={t('home.openWasil')}
       onPress={() => router.push(isAuthenticated ? '/dalil' : '/profile')}
       onPressIn={() => {
         Animated.timing(pressScale, {
@@ -392,7 +398,7 @@ export default function DalilCard({ onPromptFocus }: DalilCardProps) {
           useNativeDriver: true,
         }).start();
       }}
-      style={styles.card}
+      style={[styles.card, compact && styles.cardCompact, veryCompact && styles.cardVeryCompact]}
     >
       <LinearGradient
         colors={[
@@ -408,12 +414,14 @@ export default function DalilCard({ onPromptFocus }: DalilCardProps) {
         style={[styles.glow, { opacity: glowPulse }]}
       />
 
-      <View style={[styles.askRow, !isAuthenticated && styles.guestAskRow]}>
+      <View style={[styles.askRow, compact && styles.askRowCompact, veryCompact && styles.askRowVeryCompact, !isAuthenticated && styles.guestAskRow]}>
         <Animated.Image
           source={cardPoseSource}
           resizeMode="contain"
           style={[
             styles.mascot,
+            compact && styles.mascotCompact,
+            veryCompact && styles.mascotVeryCompact,
             {
               transform: [
                 { translateY: Animated.add(float, gestureY) },
@@ -437,14 +445,14 @@ export default function DalilCard({ onPromptFocus }: DalilCardProps) {
             }}
             style={styles.guestPrompt}
           >
-            <Text style={styles.guestTitle}>Commencez avec Wasil</Text>
+            <Text style={styles.guestTitle}>{t('home.startWithWasil')}</Text>
             <Text style={styles.guestText}>
-              « Et quiconque place sa confiance en Allah, Il lui suffit. » — Coran, 65:3
+              {t('home.wasilTrustVerse')}
             </Text>
             <Text style={styles.guestInvite}>
-              Inscrivez-vous gratuitement pour commencer à parler avec moi.
+              {t('home.wasilGuestInvite')}
             </Text>
-            <Text style={styles.guestLink}>Créer mon profil →</Text>
+            <Text style={styles.guestLink}>{t('home.createProfileArrow')}</Text>
           </Pressable>
         ) : (
         <View style={styles.prompt}>
@@ -459,7 +467,7 @@ export default function DalilCard({ onPromptFocus }: DalilCardProps) {
             </Text>
           ) : null}
           <TextInput
-            accessibilityLabel="Écrire une question à Wasil"
+            accessibilityLabel={t('home.writeWasilQuestion')}
             autoCapitalize="sentences"
             onBlur={() => setIsPromptFocused(false)}
             onChangeText={setQuestion}
@@ -470,7 +478,7 @@ export default function DalilCard({ onPromptFocus }: DalilCardProps) {
             onPressIn={(event) => event.stopPropagation()}
             onSubmitEditing={openWasilWithQuestion}
             placeholder={
-              isPromptFocused ? 'Demandez quelque chose à Wasil…' : undefined
+              isPromptFocused ? t('home.askWasil') : undefined
             }
             placeholderTextColor="#A9A2AA"
             returnKeyType="send"
@@ -478,7 +486,7 @@ export default function DalilCard({ onPromptFocus }: DalilCardProps) {
             value={question}
           />
           <Pressable
-            accessibilityLabel="Envoyer à Wasil"
+            accessibilityLabel={t('home.sendToWasil')}
             disabled={!question.trim()}
             onPress={openWasilWithQuestion}
             style={({ pressed }) => [
@@ -496,7 +504,7 @@ export default function DalilCard({ onPromptFocus }: DalilCardProps) {
       <View style={styles.suggestions}>
         {suggestions.map((suggestion) => (
           <Pressable
-            key={suggestion.label}
+            key={suggestion.labelKey}
             onPress={() => router.push(suggestion.route)}
             style={({ pressed }) => [
               styles.suggestion,
@@ -513,7 +521,7 @@ export default function DalilCard({ onPromptFocus }: DalilCardProps) {
               adjustsFontSizeToFit
               style={styles.suggestionText}
             >
-              {suggestion.label}
+              {t(suggestion.labelKey)}
             </Text>
           </Pressable>
         ))}
@@ -537,6 +545,8 @@ const styles = StyleSheet.create({
     shadowRadius: 18,
     elevation: 8,
   },
+  cardCompact: { height: 160 },
+  cardVeryCompact: { height: 156 },
   cardGradient: { borderRadius: 25 },
   glow: {
     position: 'absolute',
@@ -593,6 +603,8 @@ const styles = StyleSheet.create({
     paddingLeft: 112,
     justifyContent: 'center',
   },
+  askRowCompact: { paddingLeft: 100, paddingRight: 12 },
+  askRowVeryCompact: { paddingLeft: 92, paddingRight: 10 },
   mascot: {
     position: 'absolute',
     zIndex: 3,
@@ -601,6 +613,8 @@ const styles = StyleSheet.create({
     width: 114,
     height: 132,
   },
+  mascotCompact: { left: 4, width: 102, height: 118 },
+  mascotVeryCompact: { left: 2, width: 94, height: 109 },
   prompt: {
     height: 58,
     paddingLeft: 12,

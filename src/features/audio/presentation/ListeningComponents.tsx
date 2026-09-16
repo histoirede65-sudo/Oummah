@@ -231,12 +231,14 @@ export function TrackCard({
 
 export const SurahAudioRow = memo(function SurahAudioRow({
   item,
+  surahDisplayName,
   onPress,
   onDownload,
   downloadState,
   downloadProgress,
 }: {
   item: SurahCatalogItem;
+  surahDisplayName: string;
   onPress: () => void;
   onDownload?: () => void;
   downloadState?: DownloadState;
@@ -276,7 +278,10 @@ export const SurahAudioRow = memo(function SurahAudioRow({
         <Text style={styles.surahName}>{item.surah.arabicName}</Text>
 
         <Text style={styles.surahMeta}>
-          {item.surah.frenchName} · {formatDuration(item.track.durationHint)}
+          {surahDisplayName}
+          {item.track.durationHint && item.track.durationHint > 0
+            ? ` · ${formatDuration(item.track.durationHint)}`
+            : ""}
         </Text>
       </View>
 
@@ -360,6 +365,7 @@ function DownloadButton({
   progress?: number;
   onPress?: () => void;
 }) {
+  const { t } = useI18n();
   const scale = useRef(new Animated.Value(1)).current;
 
   const animate = (toValue: number) => {
@@ -385,6 +391,15 @@ function DownloadButton({
   return (
     <AnimatedPressable
       accessibilityRole="button"
+      accessibilityLabel={
+        downloaded
+          ? t("audio.removeDownload")
+          : isFailed
+            ? t("audio.retryDownload")
+            : isDownloading
+              ? t("audio.cancelDownload")
+              : t("audio.download")
+      }
       onPress={download}
       onPressIn={() => animate(0.94)}
       onPressOut={() => animate(1)}
@@ -428,12 +443,13 @@ function DownloadButton({
 export function SearchBar({
   value,
   onChangeText,
-  placeholder = "Rechercher un récitateur...",
+  placeholder,
 }: {
   value?: string;
   onChangeText?: (text: string) => void;
   placeholder?: string;
 }) {
+  const { t } = useI18n();
   return (
     <View style={styles.searchBarContainer}>
       <Ionicons
@@ -445,7 +461,7 @@ export function SearchBar({
       <TextInput
         value={value}
         onChangeText={onChangeText}
-        placeholder={placeholder}
+        placeholder={placeholder ?? t("recitations.searchReciter")}
         placeholderTextColor={colors.textMuted}
         style={styles.searchInput}
         selectionColor={colors.goldMuted}
@@ -456,7 +472,7 @@ export function SearchBar({
 }
 
 export function ContinueListeningCard({
-  title = "CONTINUER L'ÉCOUTE",
+  title,
   reciterName,
   subtitle,
   onPress,
@@ -466,6 +482,7 @@ export function ContinueListeningCard({
   subtitle?: string;
   onPress?: () => void;
 }) {
+  const { t } = useI18n();
   return (
     <Pressable
       onPress={onPress}
@@ -473,7 +490,9 @@ export function ContinueListeningCard({
     >
       <View style={styles.continueCardContent}>
         <View style={styles.continueCardText}>
-          <Text style={styles.continueCardTitle}>{title}</Text>
+          <Text style={styles.continueCardTitle}>
+            {title ?? t("recitations.continueListening")}
+          </Text>
           <Text style={styles.continueCardReciter}>{reciterName}</Text>
           {subtitle ? (
             <Text style={styles.continueCardSubtitle}>{subtitle}</Text>
@@ -727,13 +746,13 @@ const styles = StyleSheet.create({
   surahName: {
     color: colors.text,
     fontFamily: typography.serifMedium,
-    fontSize: 15,
+    fontSize: 18,
   },
 
   surahMeta: {
-    color: colors.textMuted,
+    color: colors.goldMuted,
     fontFamily: typography.sans,
-    fontSize: 8.5,
+    fontSize: 9.5,
   },
 
   surahArabic: {

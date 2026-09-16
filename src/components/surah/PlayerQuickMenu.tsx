@@ -1,9 +1,11 @@
 import { Ionicons } from '@expo/vector-icons';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Modal, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { SURAHS } from '../../data/surahs';
 import type { CatalogReciter } from '../../features/audio/domain/audio';
+import { localizeReciterCountry } from '../../features/audio/presentation/reciterCountry';
+import { readingQuranRepository } from '../../features/quran/ReadingQuranRepository';
 import { useGlobalAudioPlayer } from '../../context/AudioPlayerProvider';
 import { useI18n } from '../../i18n';
 import { colors } from '../../theme/colors';
@@ -21,12 +23,31 @@ export default function PlayerQuickMenu({ visible, reciters, currentSurahId, cur
   onReciter: (reciterId: string) => void;
   onSurah: (surahId: number) => void;
 }) {
-  const { t } = useI18n();
+  const { language, t } = useI18n();
   const { playbackRate, sleepTimer, repeatMode } = useGlobalAudioPlayer();
   const [showReciters, setShowReciters] = useState(false);
   const [showSurahs, setShowSurahs] = useState(false);
+  const [englishSurahNames, setEnglishSurahNames] = useState<ReadonlyMap<number, string>>(new Map());
+  useEffect(() => {
+    let active = true;
+    if (language !== 'en') {
+      setEnglishSurahNames(new Map());
+      return () => { active = false; };
+    }
+    void readingQuranRepository.getEnglishSurahNames()
+      .then((names) => { if (active) setEnglishSurahNames(names); })
+      .catch(() => { if (active) setEnglishSurahNames(new Map()); });
+    return () => { active = false; };
+  }, [language]);
+  const localizedSurahName = (surahId: number) => {
+    const surah = SURAHS[surahId - 1];
+    if (!surah) return '';
+    return language === 'en'
+      ? englishSurahNames.get(surahId) ?? surah.transliteration
+      : surah.frenchName;
+  };
   const close = () => { setShowReciters(false); setShowSurahs(false); onClose(); };
-  const title = showReciters ? t('recitations.reciters') : showSurahs ? 'Changer de sourate' : t('audio.quickMenu');
+  const title = showReciters ? t('recitations.reciters') : showSurahs ? t('audio.changeSurah') : t('audio.quickMenu');
   return (
     <Modal visible={visible} transparent animationType="fade" onRequestClose={close}>
       <Pressable onPress={close} style={styles.backdrop}>
@@ -38,7 +59,7 @@ export default function PlayerQuickMenu({ visible, reciters, currentSurahId, cur
               {reciters.map((reciter) => (
                 <Pressable key={reciter.id} onPress={() => { onReciter(reciter.id); close(); }} style={({ pressed }) => [styles.reciterRow, pressed && styles.pressed]}>
                   <View style={styles.reciterIcon}><Ionicons name="mic-outline" size={17} color={colors.goldMuted} /></View>
-                  <View style={styles.reciterCopy}><Text style={styles.reciterName}>{reciter.name}</Text><Text style={styles.reciterMeta}>{reciter.country} · {t(`recitations.style.${reciter.style}`)}</Text></View>
+                  <View style={styles.reciterCopy}><Text style={styles.reciterName}>{reciter.name}</Text><Text style={styles.reciterMeta}>{localizeReciterCountry(reciter.country, language)} · {t(`recitations.style.${reciter.style}`)}</Text></View>
                   <Ionicons name="chevron-forward" size={15} color={colors.textMuted} />
                 </Pressable>
               ))}
@@ -48,20 +69,20 @@ export default function PlayerQuickMenu({ visible, reciters, currentSurahId, cur
               {SURAHS.map((surah) => (
                 <Pressable key={surah.id} onPress={() => { onSurah(surah.id); close(); }} style={({ pressed }) => [styles.reciterRow, surah.id === currentSurahId && styles.activeRow, pressed && styles.pressed]}>
                   <View style={styles.reciterIcon}><Text style={styles.surahNumber}>{surah.id}</Text></View>
-                  <View style={styles.reciterCopy}><Text style={styles.reciterName}>{surah.frenchName}</Text><Text style={styles.reciterMeta}>{surah.arabicName} · {surah.transliteration}</Text></View>
+                  <View style={styles.reciterCopy}><Text style={styles.reciterName}>{localizedSurahName(surah.id)}</Text><Text style={styles.reciterMeta}>{surah.arabicName} · {surah.transliteration}</Text></View>
                   <Ionicons name="play-outline" size={15} color={surah.id === currentSurahId ? colors.goldMuted : colors.textMuted} />
                 </Pressable>
               ))}
             </ScrollView>
           ) : (
             <View style={styles.options}>
-              <Text style={styles.sectionLabel}>RÉGLAGES DE LECTURE</Text>
-              <Option icon="speedometer-outline" label="Vitesse de récitation" value={`${playbackRate}×`} onPress={onSpeed} />
-              <Option icon="timer-outline" label="Minuteur de sommeil" value={sleepTimer ? `${sleepTimer} min` : "Désactivé"} description="Arrêter automatiquement la récitation" onPress={onTimer} />
-              <Option icon="repeat-outline" label="Répétition" value={repeatMode === 'none' ? "Désactivée" : repeatMode === 'verse' ? "Verset ×3" : "Sourate"} description={repeatMode === 'none' ? undefined : "Idéal pour mémoriser un passage"} onPress={onRepeat} />
-              <Text style={styles.sectionLabel}>CONTENU</Text>
-              <Option icon="people-outline" label="Récitateur" value={currentReciterName ?? "Sélectionner"} onPress={() => setShowReciters(true)} />
-              <Option icon="list-outline" label="Sourate" value={`${SURAHS[currentSurahId - 1]?.frenchName ?? ""} · ${currentSurahId}`} onPress={() => setShowSurahs(true)} />
+              <Text style={styles.sectionLabel}>{t('audio.playbackSettings')}</Text>
+              <Option icon="speedometer-outline" label={t('audio.recitationSpeed')} value={`${playbackRate}×`} onPress={onSpeed} />
+              <Option icon="timer-outline" label={t('audio.sleepTimer')} value={sleepTimer ? `${sleepTimer} min` : t('audio.disabled')} description={t('audio.stopAutomatically')} onPress={onTimer} />
+              <Option icon="repeat-outline" label={t('audio.repetition')} value={repeatMode === 'none' ? t('audio.disabledFeminine') : repeatMode === 'verse' ? t('audio.verseTimesThree') : t('audio.surah')} description={repeatMode === 'none' ? undefined : t('audio.idealForMemorization')} onPress={onRepeat} />
+              <Text style={styles.sectionLabel}>{t('audio.content')}</Text>
+              <Option icon="people-outline" label={t('audio.reciter')} value={currentReciterName ?? t('audio.select')} onPress={() => setShowReciters(true)} />
+              <Option icon="list-outline" label={t('audio.surah')} value={`${localizedSurahName(currentSurahId)} · ${currentSurahId}`} onPress={() => setShowSurahs(true)} />
             </View>
           )}
         </Pressable>

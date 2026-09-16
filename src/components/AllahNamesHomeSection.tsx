@@ -3,67 +3,101 @@ import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import type { Href } from "expo-router";
 import { router } from "expo-router";
-import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { FlatList, Pressable, StyleSheet, Text, useWindowDimensions, View } from "react-native";
 
 import { colors } from "../theme/colors";
 import { typography } from "../theme/typography";
+import { useI18n } from "../i18n";
 
 const CARD_WIDTH = 150;
 const CARD_GAP = 8;
 
 const learningModules = [
   {
-    label: "Les 99 noms d’Allah",
-    subtitle: "Connaître · Comprendre",
+    labelKey: "home.moduleHalal",
+    subtitleKey: "home.moduleHalalSubtitle",
+    route: "/halal",
+    image: require("../assets/images/dua/guides/food.jpg"),
+  },
+  {
+    labelKey: "home.moduleFiqh",
+    subtitleKey: "home.moduleFiqhSubtitle",
+    route: "/fiqh",
+    image: require("../assets/images/fiqh/fiqh-home.png"),
+  },
+  {
+    labelKey: "home.moduleNamesAllah",
+    subtitleKey: "home.moduleNamesAllahSubtitle",
     route: "/99-names",
     image: require("../assets/images/home/shortcuts/allah-names-premium.png"),
   },
   {
-    label: "Les rêves en Islam",
-    subtitle: "Comprendre · Prudence",
-    route: "/dreams",
-    image: require("../assets/images/dua/guides/sleep.jpg"),
-  },
-  {
-    label: "Histoires des Prophètes",
-    subtitle: "Récits · Coran · Leçons",
+    labelKey: "home.moduleProphets",
+    subtitleKey: "home.moduleProphetsSubtitle",
     route: "/prophets",
     image: require("../assets/images/prophets/prophets-home-premium.png"),
   },
   {
-    label: "Les Compagnons",
-    subtitle: "Savoir · Fidélité · Transmission",
+    labelKey: "home.moduleCompanions",
+    subtitleKey: "home.moduleCompanionsSubtitle",
     route: "/companions",
     image: require("../assets/images/home/shortcuts/companions-premium.png"),
+  },
+  {
+    labelKey: "home.moduleSirah",
+    subtitleKey: "home.moduleSirahSubtitle",
+    route: "/sirah",
+    image: require("../assets/images/home/shortcuts/sirah-premium.png"),
+  },
+  {
+    labelKey: "home.modulePilgrimage",
+    subtitleKey: "home.modulePilgrimageSubtitle",
+    route: "/pilgrimage",
+    image: require("../assets/images/home/shortcuts/pilgrimage-premium.png"),
+  },
+  {
+    labelKey: "home.moduleNames",
+    subtitleKey: "home.moduleNamesSubtitle",
+    route: "/prenoms",
+    image: require("../assets/images/fiqh/family.png"),
+  },
+  {
+    labelKey: "home.moduleDreams",
+    subtitleKey: "home.moduleDreamsSubtitle",
+    route: "/dreams",
+    image: require("../assets/images/dua/guides/sleep.jpg"),
   },
 ] as const;
 
 export default function AllahNamesHomeSection() {
+  const { t } = useI18n();
+  const { width } = useWindowDimensions();
+  const cardWidth = width < 350 ? 132 : width < 390 ? 142 : width > 430 ? 160 : CARD_WIDTH;
+  const cardHeight = width < 350 ? 154 : width < 390 ? 162 : 170;
+
   return (
     <View style={styles.wrapper}>
       <View style={styles.header}>
-        <Text style={styles.heading}>Approfondir</Text>
+        <Text style={styles.heading}>{t("home.goDeeper")}</Text>
         <View style={styles.swipeHint}>
-          <Text style={styles.swipeText}>Glissez pour découvrir</Text>
+          <Text style={styles.swipeText}>{t("home.swipeToDiscover")}</Text>
           <Ionicons name="arrow-forward" size={15} color={colors.goldLight} />
         </View>
       </View>
 
-      <ScrollView
-        horizontal
-        contentContainerStyle={styles.row}
-        showsHorizontalScrollIndicator={false}
-        decelerationRate="fast"
-        snapToInterval={CARD_WIDTH + CARD_GAP}
-        snapToAlignment="start"
-      >
-        {learningModules.map((item) => (
+      <FlatList
+        data={learningModules}
+        keyExtractor={(item) => item.labelKey}
+        renderItem={({ item }) => (
           <Pressable
-            key={item.label}
             onPress={() => router.push(item.route as Href)}
-            style={({ pressed }) => [styles.card, pressed && styles.pressed]}
+            style={({ pressed }) => [styles.card, { width: cardWidth, height: cardHeight }, pressed && styles.pressed]}
           >
-            {item.image ? <Image source={item.image} contentFit="cover" transition={180} style={StyleSheet.absoluteFill} /> : <LinearGradient colors={["#2B153F", "#0E0A1B"]} style={StyleSheet.absoluteFill} />}
+            {item.image ? (
+              <Image source={item.image} contentFit="cover" transition={180} style={StyleSheet.absoluteFill} />
+            ) : (
+              <LinearGradient colors={["#2B153F", "#0E0A1B"]} style={StyleSheet.absoluteFill} />
+            )}
             <LinearGradient
               colors={["rgba(7,9,16,0.02)", "rgba(8,10,18,0.11)", "rgba(6,8,15,0.80)"]}
               locations={[0, 0.44, 1]}
@@ -88,14 +122,20 @@ export default function AllahNamesHomeSection() {
               style={styles.copy}
             >
               <View style={styles.labelReliefWrap}>
-                <Text accessible={false} numberOfLines={2} style={styles.labelDepth}>{item.label}</Text>
-                <Text numberOfLines={2} style={styles.label}>{item.label}</Text>
+                <Text accessible={false} numberOfLines={2} style={styles.labelDepth}>{t(item.labelKey)}</Text>
+                <Text numberOfLines={2} style={styles.label}>{t(item.labelKey)}</Text>
               </View>
-              <Text numberOfLines={1} adjustsFontSizeToFit style={styles.subtitle}>{item.subtitle}</Text>
+              <Text numberOfLines={1} adjustsFontSizeToFit style={styles.subtitle}>{t(item.subtitleKey)}</Text>
             </LinearGradient>
           </Pressable>
-        ))}
-      </ScrollView>
+        )}
+        horizontal
+        contentContainerStyle={styles.row}
+        showsHorizontalScrollIndicator={false}
+        decelerationRate="fast"
+        snapToInterval={cardWidth + CARD_GAP}
+        snapToAlignment="start"
+      />
     </View>
   );
 }
@@ -108,6 +148,7 @@ const styles = StyleSheet.create({
   swipeText: { color: colors.goldLight, fontFamily: typography.sans, fontSize: 10.5, fontWeight: "600" },
   row: { paddingTop: 5, paddingRight: 36, gap: CARD_GAP },
   card: { width: CARD_WIDTH, height: 170, overflow: "hidden", borderRadius: 25, borderWidth: 1.5, borderColor: "rgba(255,236,191,0.58)", backgroundColor: "rgba(20,24,31,0.96)", shadowColor: "#000", shadowOffset: { width: 0, height: 13 }, shadowOpacity: 0.58, shadowRadius: 20, elevation: 16 },
+
   liquidOrb: { position: "absolute", top: -57, right: -34, width: 126, height: 126, borderRadius: 63, backgroundColor: "rgba(255,255,255,0.08)", borderWidth: 1, borderColor: "rgba(255,255,255,0.11)" },
   innerRim: { position: "absolute", top: 6, right: 6, bottom: 6, left: 6, borderRadius: 20, borderWidth: 1, borderColor: "rgba(255,255,255,0.13)" },
   bottomBevel: { position: "absolute", right: 0, bottom: 0, left: 0, height: 96 },

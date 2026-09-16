@@ -28,12 +28,13 @@ import {
 import ReciterGalleryCard from "../../features/audio/presentation/ReciterGalleryCard";
 import { preloadReciterPortraits } from "../../features/audio/presentation/audioPreload";
 import { useRecitersViewModel } from "../../features/audio/presentation/viewmodels/useRecitersViewModel";
+import { readingQuranRepository } from "../../features/quran/ReadingQuranRepository";
 import { useI18n } from "../../i18n";
 import { colors } from "../../theme/colors";
 import { typography } from "../../theme/typography";
 
 export default function RecitersCatalogScreen() {
-  const { t } = useI18n();
+  const { language, t } = useI18n();
   const { returnTo } = useLocalSearchParams<{ returnTo?: string }>();
   const model = useRecitersViewModel();
   const audio = useGlobalAudioPlayer();
@@ -41,11 +42,35 @@ export default function RecitersCatalogScreen() {
   const [filter, setFilter] = useState<
     "all" | "favorites" | "murattal" | "mujawwad"
   >("all");
+  const [englishSurahNames, setEnglishSurahNames] = useState<
+    ReadonlyMap<number, string>
+  >(new Map());
 
   useEffect(() => {
     preloadReciterPortraits(model.reciters, 12);
     preloadReciterPortraits(model.favoriteReciters, 12);
   }, [model.favoriteReciters, model.reciters]);
+
+  useEffect(() => {
+    let active = true;
+    if (language !== "en") {
+      setEnglishSurahNames(new Map());
+      return () => {
+        active = false;
+      };
+    }
+    void readingQuranRepository
+      .getEnglishSurahNames()
+      .then((names) => {
+        if (active) setEnglishSurahNames(names);
+      })
+      .catch(() => {
+        if (active) setEnglishSurahNames(new Map());
+      });
+    return () => {
+      active = false;
+    };
+  }, [language]);
 
   const resumeReciter = useMemo(() => {
     const reciterId = audio.listeningResume?.reciterId;
@@ -141,7 +166,11 @@ export default function RecitersCatalogScreen() {
     : Math.max(0, audio.duration - audio.currentTime);
 
   const continueTitle =
-    resumeSurah?.frenchName ??
+    (resumeSurah
+      ? language === "en"
+        ? englishSurahNames.get(resumeSurah.id) ?? resumeSurah.transliteration
+        : resumeSurah.frenchName
+      : undefined) ??
     audio.track?.title ??
     t("recitations.continueListening");
 
@@ -236,7 +265,7 @@ export default function RecitersCatalogScreen() {
         ListHeaderComponent={
           <View style={styles.headerContent}>
             <ListeningHeader
-              title="Audio"
+              title={t("recitations.audio")}
               subtitle={t("recitations.recitersSubtitle")}
               onBack={goBack}
             />
@@ -280,15 +309,21 @@ export default function RecitersCatalogScreen() {
 
             {model.favoriteReciters.length > 0 && filter !== "favorites" ? (
               <View style={styles.sectionBlock}>
-                <SectionHeader title="Mes favoris" />
+                <SectionHeader title={t("recitations.myFavorites")} />
                 {renderSectionReciters(model.favoriteReciters)}
               </View>
             ) : null}
 
             <View style={styles.sectionBlock}>
               <SectionHeader
-                title={filter === "all" ? "Tous les récitateurs" : "Résultats"}
-                actionLabel={`${visibleReciters.length} voix`}
+                title={
+                  filter === "all"
+                    ? t("recitations.allReciters")
+                    : t("recitations.results")
+                }
+                actionLabel={t("recitations.voiceCount", {
+                  count: visibleReciters.length,
+                })}
               />
             </View>
 
@@ -318,11 +353,21 @@ function AudioStats({
   reciterCount: number;
   favoriteCount: number;
 }) {
+  const { t } = useI18n();
   return (
     <View style={styles.stats}>
-      <StatChip icon="mic-outline" label={`${reciterCount} voix`} />
-      <StatChip icon="book-outline" label="114 sourates" />
-      <StatChip icon="star-outline" label={`${favoriteCount} favoris`} />
+      <StatChip
+        icon="mic-outline"
+        label={t("recitations.voiceCount", { count: reciterCount })}
+      />
+      <StatChip
+        icon="book-outline"
+        label={t("recitations.surahCount", { count: 114 })}
+      />
+      <StatChip
+        icon="star-outline"
+        label={t("recitations.favoriteCount", { count: favoriteCount })}
+      />
     </View>
   );
 }
@@ -351,11 +396,15 @@ function FilterChips({
   favoriteCount: number;
   onChange: (value: "all" | "favorites" | "murattal" | "mujawwad") => void;
 }) {
+  const { t } = useI18n();
   const filters = [
-    { id: "all" as const, label: "Tous" },
-    { id: "favorites" as const, label: `Favoris ${favoriteCount}` },
-    { id: "murattal" as const, label: "Murattal" },
-    { id: "mujawwad" as const, label: "Mujawwad" },
+    { id: "all" as const, label: t("recitations.filter.all") },
+    {
+      id: "favorites" as const,
+      label: t("recitations.filterFavoritesCount", { count: favoriteCount }),
+    },
+    { id: "murattal" as const, label: t("recitations.style.murattal") },
+    { id: "mujawwad" as const, label: t("recitations.style.mujawwad") },
   ];
 
   return (
@@ -441,6 +490,7 @@ function PremiumContinueCard({
   remainingSeconds: number;
   onPress: () => void;
 }) {
+  const { t } = useI18n();
   return (
     <Pressable
       onPress={onPress}
@@ -472,7 +522,9 @@ function PremiumContinueCard({
         </View>
 
         <View style={styles.continueCopy}>
-          <Text style={styles.continueEyebrow}>{"Continuer l'écoute"}</Text>
+          <Text style={styles.continueEyebrow}>
+            {t("recitations.continueListening")}
+          </Text>
           <Text numberOfLines={1} style={styles.continueSurah}>
             {surahName}
           </Text>
@@ -492,7 +544,9 @@ function PremiumContinueCard({
               {Math.round(Math.min(Math.max(progress, 0), 1) * 100)}%
             </Text>
             <Text style={styles.progressText}>
-              {formatRemainingTime(remainingSeconds)} restant
+              {t("recitations.timeRemaining", {
+                time: formatRemainingTime(remainingSeconds),
+              })}
             </Text>
           </View>
         </View>

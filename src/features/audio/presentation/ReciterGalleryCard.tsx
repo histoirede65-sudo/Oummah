@@ -15,6 +15,7 @@ import { useI18n } from "../../../i18n";
 import { colors } from "../../../theme/colors";
 import { typography } from "../../../theme/typography";
 import type { CatalogReciter } from "../domain/audio";
+import { localizeReciterCountry } from "./reciterCountry";
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
@@ -31,7 +32,7 @@ function ReciterGalleryCard({
   onSelect: () => void;
   onPlay?: () => void;
 }) {
-  const { t } = useI18n();
+  const { language, t } = useI18n();
   const initials = useMemo(
     () =>
       reciter.name
@@ -193,7 +194,7 @@ function ReciterGalleryCard({
               {reciter.name}
             </Text>
             <Text numberOfLines={1} style={styles.country}>
-              {reciter.country}
+              {localizeReciterCountry(reciter.country, language)}
             </Text>
           </View>
         </View>
@@ -223,7 +224,9 @@ function ReciterGalleryCard({
       </AnimatedPressable>
       {onPlay ? (
         <Pressable
-          accessibilityLabel={`Écouter ${reciter.name}`}
+          accessibilityLabel={t("recitations.listenToReciter", {
+            name: reciter.name,
+          })}
           onPress={(event) => {
             event.stopPropagation();
             onPlay();

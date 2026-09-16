@@ -11,8 +11,10 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import {
   ActivityIndicator,
   Animated,
+  AppState,
   Alert,
   InteractionManager,
+  Linking,
   Modal,
   Pressable,
   ScrollView,
@@ -27,9 +29,14 @@ import {
 import {
   getMosquePrayerSchedule,
   getNextPrayer,
+  PRAYER_CALCULATION_METHODS,
   type MosquePrayerKey,
   type MosquePrayerSchedule,
   type MosquePrayerTime,
+  type PrayerCalculationSettings,
+  DEFAULT_PRAYER_CALCULATION_SETTINGS,
+  loadPrayerCalculationSettings,
+  savePrayerCalculationSettings,
 } from "../features/mosques/data/mosquePrayerTimes";
 import {
   DEFAULT_CALENDAR_SETTINGS,
@@ -49,6 +56,7 @@ import {
   getApprovedMosquePrayerTimes,
 } from "../features/mosques/data/mosquePrayerUpdates";
 import { syncPrayerTimesWidget } from "../features/prayer-widget/PrayerWidgetSync";
+import { storageService } from "../core/storage/StorageService";
 import { colors } from "../theme/colors";
 import { typography } from "../theme/typography";
 import {
@@ -64,13 +72,14 @@ import {
   syncAdhanNotifications,
 } from "../features/adhan/AdhanNotifications";
 import AppHeader from "./AppHeader";
+import { useI18n, type TranslationKey } from "../i18n";
 
-const PRAYER_LABELS: Record<MosquePrayerKey, string> = {
-  Fajr: "Fajr",
-  Dhuhr: "Dhuhr",
-  Asr: "Asr",
-  Maghrib: "Maghrib",
-  Isha: "Isha",
+const PRAYER_LABEL_KEYS: Record<MosquePrayerKey, TranslationKey> = {
+  Fajr: "prayer.fajr",
+  Dhuhr: "prayer.dhuhr",
+  Asr: "prayer.asr",
+  Maghrib: "prayer.maghrib",
+  Isha: "prayer.isha",
 };
 
 const ADHAN_PRAYERS: MosquePrayerKey[] = [
@@ -83,21 +92,23 @@ const ADHAN_PRAYERS: MosquePrayerKey[] = [
 
 const ADHAN_MODES: ReadonlyArray<{
   key: AdhanAlertMode;
-  label: string;
+  labelKey: TranslationKey;
   icon: "volume-high-outline" | "phone-portrait-outline" | "notifications-outline";
 }> = [
-  { key: "adhan", label: "Adhan", icon: "volume-high-outline" },
-  { key: "notification", label: "Notification", icon: "notifications-outline" },
-  { key: "vibration", label: "Vibreur", icon: "phone-portrait-outline" },
-  { key: "silent", label: "Silencieux", icon: "notifications-outline" },
+  { key: "adhan", labelKey: "prayer.alertAdhan", icon: "volume-high-outline" },
+  { key: "notification", labelKey: "prayer.alertNotification", icon: "notifications-outline" },
+  { key: "vibration", labelKey: "prayer.alertVibration", icon: "phone-portrait-outline" },
+  { key: "silent", labelKey: "prayer.alertSilent", icon: "notifications-outline" },
 ];
 
 const ADHAN_LEAD_TIMES = [0, 5, 10, 15] as const;
-const ADHAN_VOICES: ReadonlyArray<{ key: AdhanVoice; label: string; file: number }> = [
-  { key: "makkah", label: "La Mecque", file: require("../../assets/adhan/adhan_makkah.mp3") },
-  { key: "madinah", label: "Médine", file: require("../../assets/adhan/adhan_madinah.mp3") },
-  { key: "egypt", label: "Égypte", file: require("../../assets/adhan/adhan_egypt.mp3") },
-  { key: "birds", label: "Oiseaux apaisants", file: require("../../assets/adhan/adhan_birds.wav") },
+const CALCULATION_GUIDE_STORAGE_KEY =
+  "oummah:first-visit-guide:v1:prayer-calculation-method";
+const ADHAN_VOICES: ReadonlyArray<{ key: AdhanVoice; labelKey: TranslationKey; file: number }> = [
+  { key: "makkah", labelKey: "prayer.voiceMakkah", file: require("../../assets/adhan/adhan_makkah.mp3") },
+  { key: "madinah", labelKey: "prayer.voiceMadinah", file: require("../../assets/adhan/adhan_madinah.mp3") },
+  { key: "egypt", labelKey: "prayer.voiceEgypt", file: require("../../assets/adhan/adhan_egypt.mp3") },
+  { key: "birds", labelKey: "prayer.voiceBirds", file: require("../../assets/adhan/adhan_birds.wav") },
 ];
 
 type PrayerSource = {
@@ -115,6 +126,15 @@ type TimelineItem = {
   icon: "partly-sunny-outline" | "sunny-outline" | "moon-outline";
   active: boolean;
 };
+
+const PRAYER_METHOD_LABEL_KEYS = {
+  12: "prayer.methodFrance",
+  3: "prayer.methodWorldLeague",
+  2: "prayer.methodIsna",
+  5: "prayer.methodEgypt",
+  4: "prayer.methodMakkah",
+  1: "prayer.methodKarachi",
+} as const;
 
 const ORBIT_POSITIONS: ReadonlyArray<{
   left: `${number}%`;
@@ -191,16 +211,18 @@ const PrayerCountdown = memo(function PrayerCountdown({
 }) {
   const [now, setNow] = useState(() => Date.now());
 
-  useEffect(() => {
+  useFocusEffect(
+    useCallback(() => {
     const intervalId = setInterval(() => setNow(Date.now()), 1_000);
     return () => clearInterval(intervalId);
-  }, []);
+    }, []),
+  );
 
   return <Text allowFontScaling={false} style={styles.countdown}>{timestamp ? formatCountdown(timestamp - now) : "--:--:--"}</Text>;
 });
 
-function formatDateLabel(date: Date) {
-  const formatted = new Intl.DateTimeFormat("fr-FR", {
+function formatDateLabel(date: Date, locale = "fr-FR") {
+  const formatted = new Intl.DateTimeFormat(locale, {
     weekday: "long",
     day: "numeric",
     month: "long",
@@ -350,6 +372,7 @@ async function resolvePrayerSource(
 }
 
 export default function PrayerCard() {
+  const { language, t } = useI18n();
   const insets = useSafeAreaInsets();
   const { width, height } = useWindowDimensions();
   const compact = width < 375 || height < 700;
@@ -365,6 +388,7 @@ export default function PrayerCard() {
   const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
   const [refreshKey, setRefreshKey] = useState(0);
+  const [calculationSettings, setCalculationSettings] = useState<PrayerCalculationSettings>(DEFAULT_PRAYER_CALCULATION_SETTINGS);
   const [now, setNow] = useState(() => Date.now());
   const [calendarSettings, setCalendarSettings] = useState(
     DEFAULT_CALENDAR_SETTINGS,
@@ -373,6 +397,9 @@ export default function PrayerCard() {
     DEFAULT_ADHAN_PREFERENCES,
   );
   const [adhanSettingsVisible, setAdhanSettingsVisible] = useState(false);
+  const [calculationOptionsVisible, setCalculationOptionsVisible] = useState(false);
+  const [degreesOptionsVisible, setDegreesOptionsVisible] = useState(false);
+  const [calculationGuideVisible, setCalculationGuideVisible] = useState(false);
   const [locationOptionsVisible, setLocationOptionsVisible] = useState(false);
   const [orbitLayoutReady, setOrbitLayoutReady] = useState(false);
   const [cityQuery, setCityQuery] = useState("");
@@ -381,6 +408,54 @@ export default function PrayerCard() {
   const adhanPlayer = useAudioPlayer(ADHAN_VOICES.find((voice) => voice.key === adhanPreferences.voice)?.file ?? ADHAN_VOICES[0].file);
   const adhanPlayerStatus = useAudioPlayerStatus(adhanPlayer);
   const orbitGlow = useRef(new Animated.Value(0.32)).current;
+  const waitingForLocationSettingsRef = useRef(false);
+
+  const retryLocationAccess = useCallback(async () => {
+    const current = await Location.getForegroundPermissionsAsync().catch(() => null);
+
+    if (current?.granted) {
+      setRefreshKey((value) => value + 1);
+      return;
+    }
+
+    const requested = current?.canAskAgain
+      ? await Location.requestForegroundPermissionsAsync().catch(() => null)
+      : current;
+
+    if (requested?.granted) {
+      setRefreshKey((value) => value + 1);
+      return;
+    }
+
+    Alert.alert(
+      "Localisation nécessaire",
+      "Autorisez la localisation dans les réglages du téléphone pour afficher les horaires de prière.",
+      [
+        { text: "Annuler", style: "cancel" },
+        {
+          text: "Ouvrir les réglages",
+          onPress: () => {
+            waitingForLocationSettingsRef.current = true;
+            void Linking.openSettings().catch(() => undefined);
+          },
+        },
+      ],
+    );
+  }, []);
+
+  useEffect(() => {
+    const subscription = AppState.addEventListener("change", (state) => {
+      if (state !== "active" || !waitingForLocationSettingsRef.current) return;
+      waitingForLocationSettingsRef.current = false;
+      void Location.getForegroundPermissionsAsync()
+        .then((permission) => {
+          if (permission.granted) setRefreshKey((value) => value + 1);
+        })
+        .catch(() => undefined);
+    });
+
+    return () => subscription.remove();
+  }, []);
 
   useFocusEffect(
     useCallback(() => {
@@ -392,7 +467,8 @@ export default function PrayerCard() {
     }, []),
   );
 
-  useEffect(() => {
+  useFocusEffect(
+    useCallback(() => {
     const pulse = Animated.loop(
       Animated.sequence([
         Animated.timing(orbitGlow, {
@@ -412,7 +488,8 @@ export default function PrayerCard() {
 
     pulse.start();
     return () => pulse.stop();
-  }, [orbitGlow]);
+    }, [orbitGlow]),
+  );
 
   const updateAdhanPreferences = useCallback(
     (update: (current: AdhanPreferences) => AdhanPreferences) => {
@@ -438,15 +515,15 @@ export default function PrayerCard() {
 
       if (!permissionGranted) {
         Alert.alert(
-          "Autorisation nécessaire",
-          "Autorisez les notifications dans les réglages de votre téléphone pour recevoir les rappels de prière.",
+          t("prayer.permissionRequired"),
+          t("prayer.notificationPermissionMessage"),
         );
         return;
       }
 
       updateAdhanPreferences((current) => ({ ...current, enabled: true }));
     },
-    [updateAdhanPreferences],
+    [t, updateAdhanPreferences],
   );
 
   useFocusEffect(
@@ -506,6 +583,20 @@ export default function PrayerCard() {
     };
   }, []);
 
+  useFocusEffect(
+    useCallback(() => {
+      let active = true;
+      void loadPrayerCalculationSettings()
+        .then((settings) => {
+          if (active) setCalculationSettings(settings);
+        })
+        .catch(() => undefined);
+      return () => {
+        active = false;
+      };
+    }, []),
+  );
+
   useEffect(() => {
     if (!schedule || !adhanPreferencesLoaded) return;
     void syncAdhanNotifications(schedule, adhanPreferences).catch(() => undefined);
@@ -545,7 +636,7 @@ export default function PrayerCard() {
     const controller = new AbortController();
 
     const loadPrayerTimes = async () => {
-      setLoading(true);
+      if (!schedule) setLoading(true);
       setErrorMessage("");
 
       try {
@@ -563,12 +654,15 @@ export default function PrayerCard() {
           resolvedSource.latitude,
           resolvedSource.longitude,
           controller.signal,
+          calculationSettings,
         );
 
         const approved = mainMosque && !manualSource
           ? await getApprovedMosquePrayerTimes(mainMosque.id).catch(() => null)
           : null;
-        const adjustedResult = applyApprovedMosquePrayerTimes(result, approved);
+        const adjustedResult = calculationSettings.scheduleSource === "mosque"
+          ? applyApprovedMosquePrayerTimes(result, approved)
+          : result;
 
         if (!controller.signal.aborted) {
           setSource(resolvedSource);
@@ -580,8 +674,6 @@ export default function PrayerCard() {
         }
 
         if (!controller.signal.aborted) {
-          setSource(null);
-          setSchedule(null);
           setErrorMessage(
             error instanceof Error && error.message === "LOCATION_DENIED"
               ? "Autorisez la localisation ou choisissez votre mosquée."
@@ -598,7 +690,32 @@ export default function PrayerCard() {
     void loadPrayerTimes();
 
     return () => controller.abort();
-  }, [mainMosqueLoaded, mainMosque?.id, mainMosque?.latitude, mainMosque?.longitude, manualSource?.latitude, manualSource?.longitude, refreshKey]);
+  }, [mainMosqueLoaded, mainMosque?.id, mainMosque?.latitude, mainMosque?.longitude, manualSource?.latitude, manualSource?.longitude, refreshKey, calculationSettings]);
+
+  const openCalculationSettings = async () => {
+    const seen = await storageService
+      .get<boolean>(CALCULATION_GUIDE_STORAGE_KEY)
+      .catch(() => false);
+
+    if (seen === true) {
+      setCalculationOptionsVisible(true);
+      setDegreesOptionsVisible(false);
+      setAdhanSettingsVisible(true);
+      return;
+    }
+
+    setCalculationGuideVisible(true);
+  };
+
+  const closeCalculationGuideAndOpenSettings = async () => {
+    setCalculationGuideVisible(false);
+    await storageService
+      .set(CALCULATION_GUIDE_STORAGE_KEY, true)
+      .catch(() => undefined);
+    setCalculationOptionsVisible(true);
+    setDegreesOptionsVisible(false);
+    setAdhanSettingsVisible(true);
+  };
 
   const chooseCity = async () => {
     const query = cityQuery.trim();
@@ -607,7 +724,7 @@ export default function PrayerCard() {
     const places = await Location.geocodeAsync(query).catch(() => []);
     const place = places[0];
     if (!place) {
-      Alert.alert("Ville introuvable", "Aucune ville correspondante n’a été trouvée.");
+      Alert.alert(t("prayer.cityNotFound"), t("prayer.cityNotFoundMessage"));
       setCityLoading(false);
       return;
     }
@@ -772,11 +889,18 @@ export default function PrayerCard() {
   );
   const hijriEventLabel = nextIslamicEvent
     ? nextIslamicEvent.days === 0
-      ? `${nextIslamicEvent.event.shortTitle} aujourd’hui`
-      : `${nextIslamicEvent.event.shortTitle} dans ${nextIslamicEvent.days} jour${
-          nextIslamicEvent.days > 1 ? "s" : ""
-        }`
-    : "Ouvrir le calendrier islamique";
+      ? t("prayer.eventToday", { event: nextIslamicEvent.event.shortTitle })
+      : t("prayer.eventInDays", {
+          event: nextIslamicEvent.event.shortTitle,
+          days: nextIslamicEvent.days,
+        })
+    : t("prayer.openIslamicCalendar");
+
+  const translatedPrayerLabel = (key: MosquePrayerKey | "Sunrise", label?: string) => {
+    if (label === "Joumou’a") return t("prayer.jumuah");
+    if (key === "Sunrise") return t("prayer.sunrise");
+    return t(PRAYER_LABEL_KEYS[key]);
+  };
 
   return (
     <View style={[styles.hero, compact && styles.heroCompact]}>
@@ -811,14 +935,18 @@ export default function PrayerCard() {
       {loading ? (
         <View style={styles.loading}>
           <ActivityIndicator size="small" color={colors.goldLight} />
-          <Text style={styles.loadingText}>Calcul des horaires…</Text>
+          <Text style={styles.loadingText}>{t("prayer.calculatingTimes")}</Text>
         </View>
       ) : errorMessage ? (
         <View style={styles.error}>
           <Ionicons name="warning-outline" size={20} color={colors.goldLight} />
-          <Text style={styles.errorText}>{errorMessage}</Text>
+          <Text style={styles.errorText}>
+            {errorMessage === "Autorisez la localisation ou choisissez votre mosquée."
+              ? t("prayer.locationRequired")
+              : t("prayer.timesUnavailable")}
+          </Text>
           <Pressable
-            onPress={() => setRefreshKey((value) => value + 1)}
+            onPress={() => void retryLocationAccess()}
             style={styles.retry}
           >
             <Ionicons name="refresh" size={17} color={colors.background} />
@@ -827,35 +955,32 @@ export default function PrayerCard() {
       ) : (
         <>
           <View style={styles.prayerInfo}>
-            <View style={styles.prayerLabels}>
-              <Text allowFontScaling={false} style={styles.nextLabel}>Prière du moment</Text>
-              <Text allowFontScaling={false} style={styles.nextLabel}>Prière à venir</Text>
-            </View>
-
-            <View style={styles.prayerNameRow}>
-              <View style={styles.currentPrayerValue}>
-                <Text
-                  allowFontScaling={false}
-                  numberOfLines={1}
-                  style={styles.prayerName}
-                >
-                  {currentPrayer?.label ?? ""}
-                </Text>
-              </View>
+            <View style={styles.nextPrayerBlock}>
               <Text
                 allowFontScaling={false}
                 numberOfLines={1}
-                style={[styles.prayerName, styles.upcomingPrayerName]}
+                adjustsFontSizeToFit
+                minimumFontScale={0.72}
+                style={styles.nextPrayerName}
               >
-                {nextPrayer?.label ?? "Fajr"}
+                {nextPrayer ? translatedPrayerLabel(nextPrayer.key, nextPrayer.label) : t("prayer.fajr")}
               </Text>
+              <View style={styles.countdownRow}>
+                <Text allowFontScaling={false} style={styles.countdownPrefix}>{t("prayer.in")}</Text>
+                <PrayerCountdown timestamp={nextPrayer?.timestamp ?? null} />
+              </View>
+              <View style={styles.currentPrayerRow}>
+                <Ionicons name="time-outline" size={16} color={colors.goldLight} />
+                <Text allowFontScaling={false} style={styles.currentPrayerLabel}>{t("prayer.currentPrayer")}</Text>
+                <Text allowFontScaling={false} numberOfLines={1} style={styles.currentPrayerName}>
+                  {currentPrayer ? translatedPrayerLabel(currentPrayer.key, currentPrayer.label) : "—"}
+                </Text>
+              </View>
             </View>
-
-            <PrayerCountdown timestamp={nextPrayer?.timestamp ?? null} />
 
             <Pressable
               accessibilityRole="button"
-              accessibilityLabel="Ouvrir le calendrier islamique"
+              accessibilityLabel={t("prayer.openIslamicCalendar")}
               onPress={() => router.push("/calendar" as Href)}
               style={({ pressed }) => [
                 styles.metaRow,
@@ -870,7 +995,7 @@ export default function PrayerCard() {
               />
               <View style={styles.hijriCopy}>
                 <Text allowFontScaling={false} numberOfLines={1} style={styles.metaText}>
-                  {formatDateLabel(new Date(now))}
+                  {formatDateLabel(new Date(now), language === "en" ? "en-GB" : "fr-FR")}
                 </Text>
                 <Text allowFontScaling={false} numberOfLines={1} style={styles.hijriEventText}>
                   {formatHijri(hijriDate)} · {hijriEventLabel}
@@ -878,46 +1003,62 @@ export default function PrayerCard() {
               </View>
               <Ionicons
                 name="chevron-forward"
-                size={14}
+                size={12}
                 color="rgba(255,249,242,0.75)"
               />
             </Pressable>
 
-            <Pressable
-              accessibilityRole="button"
-              accessibilityLabel="Choisir la localisation des horaires de prière"
-              onPress={() => setLocationOptionsVisible(true)}
-              style={({ pressed }) => [
-                styles.metaRow,
-                styles.locationMetaRow,
-                pressed && styles.metaRowPressed,
-              ]}
-            >
-              <Ionicons
-                name="location-outline"
-                size={15}
-                color={colors.goldLight}
-              />
-              <View style={styles.locationMetaCopy}>
-                <Text allowFontScaling={false} numberOfLines={1} style={styles.metaText}>
-                  {source?.label ?? "Votre position"}
-                </Text>
-                <Text allowFontScaling={false} numberOfLines={1} style={styles.locationMetaSubtitle}>
-                  Localisation des horaires de prière
-                </Text>
-              </View>
-              <Ionicons
-                name="chevron-forward"
-                size={14}
-                color="rgba(255,249,242,0.75)"
-              />
-            </Pressable>
+            <View style={styles.metaChipsRow}>
+              <Pressable
+                accessibilityRole="button"
+                accessibilityLabel={t("prayer.chooseCalculationMethod")}
+                onPress={() => void openCalculationSettings()}
+                style={({ pressed }) => [styles.metaChip, pressed && styles.metaRowPressed]}
+              >
+                <Ionicons name="calculator-outline" size={16} color={colors.goldLight} />
+                <View style={styles.metaChipCopy}>
+                  <Text allowFontScaling={false} numberOfLines={1} style={styles.metaChipTitle}>
+                    {t("prayer.calculationMethod")}
+                  </Text>
+                  <Text allowFontScaling={false} numberOfLines={1} style={styles.metaChipSubtitle}>
+                    {calculationSettings.scheduleSource === "mosque" && source?.type === "mosque"
+                      ? t("prayer.mosqueTimes")
+                      : calculationSettings.mode === "custom"
+                      ? t("prayer.customAnglesDetail", { fajr: calculationSettings.fajrAngle, isha: calculationSettings.ishaAngle })
+                      : t(PRAYER_METHOD_LABEL_KEYS[calculationSettings.method as keyof typeof PRAYER_METHOD_LABEL_KEYS] ?? "prayer.methodFrance")}
+                  </Text>
+                </View>
+              </Pressable>
+
+              <Pressable
+                accessibilityRole="button"
+                accessibilityLabel={t("prayer.chooseLocation")}
+                onPress={() => setLocationOptionsVisible(true)}
+                style={({ pressed }) => [styles.metaChip, pressed && styles.metaRowPressed]}
+              >
+                <Ionicons name="location-outline" size={16} color={colors.goldLight} />
+                <View style={styles.metaChipCopy}>
+                  <Text allowFontScaling={false} numberOfLines={1} style={styles.metaChipTitle}>
+                    {source?.type === "location" && source.label === "Votre position actuelle"
+                      ? t("prayer.currentLocation")
+                      : source?.label ?? t("prayer.yourLocation")}
+                  </Text>
+                  <Text allowFontScaling={false} numberOfLines={1} style={styles.metaChipSubtitle}>
+                    {t("prayer.timesLocation")}
+                  </Text>
+                </View>
+              </Pressable>
+            </View>
           </View>
 
           <Pressable
             accessibilityRole="button"
-            accessibilityLabel="Configurer les alertes de l’adhan"
-            onPress={() => setAdhanSettingsVisible(true)}
+            accessibilityLabel={t("prayer.configureAdhanAlerts")}
+            onPress={() => {
+              setCalculationOptionsVisible(false);
+              setDegreesOptionsVisible(false);
+              setAdhanSettingsVisible(true);
+            }}
             style={({ pressed }) => [styles.adhan, pressed && styles.adhanPressed]}
           >
             <Ionicons
@@ -929,7 +1070,7 @@ export default function PrayerCard() {
               size={19}
               color={colors.goldLight}
             />
-            <Text allowFontScaling={false} style={styles.adhanText}>Adhan</Text>
+            <Text allowFontScaling={false} style={styles.adhanText}>{t("prayer.adhan")}</Text>
           </Pressable>
 
           <View style={styles.glass}>
@@ -1018,7 +1159,9 @@ export default function PrayerCard() {
                   showFridayJumuah && styles.orbitCenterTextJumuah,
                 ]}
               >
-                {showFridayJumuah ? `Joumou’a\n${mainMosqueJumuah}` : "Cycle des prières"}
+                {showFridayJumuah
+                  ? `${t("prayer.jumuah")}\n${mainMosqueJumuah}`
+                  : t("prayer.prayerCycle")}
               </Text>
               <View style={styles.orbitCenterLine} />
             </View>
@@ -1031,6 +1174,8 @@ export default function PrayerCard() {
                   key={prayer.key}
                   style={[
                     styles.orbitStation,
+                    prayer.key === "Fajr" && styles.orbitStationFajr,
+                    prayer.key === "Maghrib" && styles.orbitStationMaghrib,
                     {
                       left: ORBIT_POSITIONS[index]?.left ?? "41%",
                       top: ORBIT_POSITIONS[index]?.top ?? 2,
@@ -1082,7 +1227,7 @@ export default function PrayerCard() {
                         prayer.key === "Maghrib" && styles.orbitNameMaghrib,
                       ]}
                     >
-                      {prayer.label}
+                      {translatedPrayerLabel(prayer.key, prayer.label)}
                     </Text>
                     <Text
                       allowFontScaling={false}
@@ -1118,7 +1263,7 @@ export default function PrayerCard() {
       >
         <Pressable
           accessibilityRole="button"
-          accessibilityLabel="Fermer les options de localisation"
+          accessibilityLabel={t("prayer.closeLocationOptions")}
           onPress={() => setLocationOptionsVisible(false)}
           style={styles.locationModalBackdrop}
         >
@@ -1127,7 +1272,7 @@ export default function PrayerCard() {
             style={styles.locationSheet}
           >
             <View style={styles.adhanSheetHandle} />
-            <Text style={styles.locationSheetTitle}>Localisation</Text>
+            <Text style={styles.locationSheetTitle}>{t("prayer.locationTitle")}</Text>
             <Pressable
               onPress={() => {
                 setMainMosque(null);
@@ -1142,19 +1287,19 @@ export default function PrayerCard() {
             >
               <Ionicons name="locate-outline" size={20} color={colors.goldLight} />
               <Text style={styles.locationOptionText}>
-                Utiliser ma position actuelle
+                {t("prayer.useCurrentLocation")}
               </Text>
             </Pressable>
             <View style={styles.cityPicker}>
               <View style={styles.locationOption}>
                 <Ionicons name="search-outline" size={20} color={colors.goldLight} />
-                <Text style={styles.locationOptionText}>Choisir une autre ville</Text>
+                <Text style={styles.locationOptionText}>{t("prayer.chooseAnotherCity")}</Text>
               </View>
               <View style={styles.cityPickerRow}>
                 <TextInput
                   value={cityQuery}
                   onChangeText={setCityQuery}
-                  placeholder="Ex. Marseille"
+                  placeholder={t("prayer.cityExample")}
                   placeholderTextColor={colors.textMuted}
                   style={styles.cityInput}
                 />
@@ -1172,6 +1317,9 @@ export default function PrayerCard() {
                 onPress={() => {
                   setMainMosque(mainMosque);
                   setManualSource(null);
+                  const next = { ...calculationSettings, scheduleSource: "mosque" as const };
+                  setCalculationSettings(next);
+                  void savePrayerCalculationSettings(next);
                   setRefreshKey((value) => value + 1);
                   setLocationOptionsVisible(false);
                 }}
@@ -1182,12 +1330,49 @@ export default function PrayerCard() {
               >
                 <Ionicons name="business-outline" size={20} color={colors.goldLight} />
                 <Text style={styles.locationOptionText}>
-                  Utiliser ma mosquée favorite
+                  {t("prayer.useFavoriteMosque")}
                 </Text>
               </Pressable>
             ) : null}
           </Pressable>
         </Pressable>
+      </Modal>
+
+      <Modal
+        animationType="fade"
+        onRequestClose={() => setCalculationGuideVisible(false)}
+        statusBarTranslucent
+        transparent
+        visible={calculationGuideVisible}
+      >
+        <View style={styles.calculationGuideBackdrop}>
+          <View style={styles.calculationGuideCard}>
+            <View style={styles.calculationGuideGlow} />
+            <View style={styles.calculationGuideIcon}>
+              <Ionicons name="calculator-outline" size={28} color={colors.goldLight} />
+            </View>
+
+            <Text style={styles.calculationGuideEyebrow}>{t("prayer.prayerTimesUpper")}</Text>
+            <Text style={styles.calculationGuideTitle}>
+              {t("prayer.chooseSuitableMethod")}
+            </Text>
+            <Text style={styles.calculationGuideDescription}>
+              {t("prayer.calculationGuideDescription")}
+            </Text>
+
+            <Pressable
+              accessibilityRole="button"
+              onPress={() => void closeCalculationGuideAndOpenSettings()}
+              style={({ pressed }) => [
+                styles.calculationGuideButton,
+                pressed && styles.calculationGuidePressed,
+              ]}
+            >
+              <Text style={styles.calculationGuideButtonText}>{t("prayer.discover")}</Text>
+              <Ionicons name="checkmark" size={18} color="#17111C" />
+            </Pressable>
+          </View>
+        </View>
       </Modal>
 
       <Modal
@@ -1199,7 +1384,7 @@ export default function PrayerCard() {
       >
         <Pressable
           accessibilityRole="button"
-          accessibilityLabel="Fermer les réglages de l’adhan"
+          accessibilityLabel={t("prayer.closeAdhanSettings")}
           onPress={() => setAdhanSettingsVisible(false)}
           style={styles.adhanModalBackdrop}
         >
@@ -1220,13 +1405,13 @@ export default function PrayerCard() {
                   <Ionicons name="volume-high" size={21} color="#24151A" />
                 </View>
                 <View>
-                  <Text style={styles.adhanSheetEyebrow}>RAPPEL DES PRIÈRES</Text>
-                  <Text style={styles.adhanSheetTitle}>Adhan et alertes</Text>
+                  <Text style={styles.adhanSheetEyebrow}>{t("prayer.prayerRemindersUpper")}</Text>
+                  <Text style={styles.adhanSheetTitle}>{t("prayer.adhanAndAlerts")}</Text>
                 </View>
               </View>
               <Pressable
                 accessibilityRole="button"
-                accessibilityLabel="Fermer"
+                accessibilityLabel={t("prayer.close")}
                 onPress={() => setAdhanSettingsVisible(false)}
                 style={styles.adhanSheetClose}
               >
@@ -1236,9 +1421,9 @@ export default function PrayerCard() {
 
             <View style={styles.adhanMainToggle}>
               <View style={styles.adhanSettingCopy}>
-                <Text style={styles.adhanSettingTitle}>Activer les alertes</Text>
+                <Text style={styles.adhanSettingTitle}>{t("prayer.enableAlerts")}</Text>
                 <Text style={styles.adhanSettingSubtitle}>
-                  Vos choix seront mémorisés sur cet appareil
+                  {t("prayer.choicesSavedDevice")}
                 </Text>
               </View>
               <Switch
@@ -1249,7 +1434,98 @@ export default function PrayerCard() {
               />
             </View>
 
-            <Text style={styles.adhanSectionLabel}>PRIÈRES CONCERNÉES</Text>
+            <Pressable
+              accessibilityRole="button"
+              accessibilityState={{ expanded: calculationOptionsVisible }}
+              onPress={() => {
+                setCalculationOptionsVisible(!calculationOptionsVisible);
+                setDegreesOptionsVisible(false);
+              }}
+              style={styles.calculationDisclosure}
+            >
+              <View style={styles.calculationDisclosureCopy}>
+                <Text style={styles.adhanSettingTitle}>{t("prayer.adjustCalculation")}</Text>
+                <Text style={styles.adhanSettingSubtitle}>
+                  {calculationSettings.scheduleSource === "mosque" && source?.type === "mosque"
+                    ? t("prayer.mosqueTimes")
+                    : calculationSettings.scheduleSource === "calculation" && calculationSettings.mode === "custom"
+                      ? t("prayer.customAnglesDetail", { fajr: calculationSettings.fajrAngle, isha: calculationSettings.ishaAngle })
+                      : t(PRAYER_METHOD_LABEL_KEYS[calculationSettings.method as keyof typeof PRAYER_METHOD_LABEL_KEYS] ?? "prayer.methodFrance")}
+                </Text>
+              </View>
+              <Ionicons name={calculationOptionsVisible ? "chevron-up" : "chevron-down"} size={18} color={colors.goldLight} />
+            </Pressable>
+            {calculationOptionsVisible ? (
+              <>
+                <Text style={styles.adhanSectionLabel}>{t("prayer.calculationMethodUpper")}</Text>
+                <View style={styles.calculationMethodChoices}>
+                  {PRAYER_CALCULATION_METHODS.map((method) => (
+                    <Pressable
+                      key={method.method}
+                      accessibilityRole="button"
+                      accessibilityState={{ selected: calculationSettings.scheduleSource === "calculation" && calculationSettings.mode === "preset" && calculationSettings.method === method.method }}
+                      onPress={() => {
+                        const next = { ...calculationSettings, scheduleSource: "calculation" as const, mode: "preset" as const, method: method.method };
+                        setCalculationSettings(next);
+                        void savePrayerCalculationSettings(next);
+                      }}
+                      style={[styles.adhanLeadChoice, styles.calculationMethodChoice, calculationSettings.scheduleSource === "calculation" && calculationSettings.mode === "preset" && calculationSettings.method === method.method && styles.adhanChoiceSelected]}
+                    >
+                      <Text style={styles.adhanModeText}>{t(PRAYER_METHOD_LABEL_KEYS[method.method])}</Text>
+                    </Pressable>
+                  ))}
+                </View>
+                <Pressable
+                  accessibilityRole="button"
+                  accessibilityState={{ expanded: degreesOptionsVisible }}
+                  onPress={() => setDegreesOptionsVisible(!degreesOptionsVisible)}
+                  style={styles.calculationDisclosure}
+                >
+                  <View style={styles.calculationDisclosureCopy}>
+                    <Text style={styles.adhanSettingTitle}>{t("prayer.chooseDegrees")}</Text>
+                    <Text style={styles.adhanSettingSubtitle}>{t("prayer.degreesOptional")}</Text>
+                  </View>
+                  <Ionicons name={degreesOptionsVisible ? "chevron-up" : "chevron-down"} size={18} color={colors.goldLight} />
+                </Pressable>
+                {degreesOptionsVisible ? (
+                  <>
+                    <Text style={styles.calculationHint}>{t("prayer.degreesExplanation")}</Text>
+                    <View style={styles.customAngles}>
+                      {(["fajrAngle", "ishaAngle"] as const).map((key) => (
+                        <View key={key} style={styles.customAngleGroup}>
+                          <Text style={styles.adhanModeText}>{key === "fajrAngle" ? "Fajr" : "Isha"}</Text>
+                          <View style={styles.angleChoices}>
+                            {[12, 15, 16, 17, 17.5, 18, 18.5, 19.5, 20].map((angle) => {
+                              const selected = calculationSettings.scheduleSource === "calculation"
+                                && calculationSettings.mode === "custom"
+                                && calculationSettings[key] === angle;
+                              return (
+                                <Pressable
+                                  key={angle}
+                                  accessibilityRole="button"
+                                  accessibilityLabel={`${key === "fajrAngle" ? "Fajr" : "Isha"} ${angle}°`}
+                                  accessibilityState={{ selected }}
+                                  hitSlop={6}
+                                  onPress={() => {
+                                    const next = { ...calculationSettings, scheduleSource: "calculation" as const, mode: "custom" as const, [key]: angle };
+                                    setCalculationSettings(next);
+                                    void savePrayerCalculationSettings(next);
+                                  }}
+                                  style={[styles.angleChoice, selected && styles.adhanChoiceSelected]}
+                                >
+                                  <Text style={[styles.adhanModeText, selected && styles.adhanChoiceTextSelected]}>{angle}°</Text>
+                                </Pressable>
+                              );
+                            })}
+                          </View>
+                        </View>
+                      ))}
+                    </View>
+                  </>
+                ) : null}
+              </>
+            ) : null}
+            <Text style={styles.adhanSectionLabel}>{t("prayer.selectedPrayersUpper")}</Text>
             <View style={styles.adhanPrayerGrid}>
               {ADHAN_PRAYERS.map((prayer) => {
                 const selected = adhanPreferences.prayers[prayer];
@@ -1283,14 +1559,14 @@ export default function PrayerCard() {
                         selected && styles.adhanChoiceTextSelected,
                       ]}
                     >
-                      {PRAYER_LABELS[prayer]}
+                      {t(PRAYER_LABEL_KEYS[prayer])}
                     </Text>
                   </Pressable>
                 );
               })}
             </View>
 
-            <Text style={styles.adhanSectionLabel}>TYPE D’ALERTE</Text>
+            <Text style={styles.adhanSectionLabel}>{t("prayer.alertTypeUpper")}</Text>
             <View style={styles.adhanOptionRow}>
               {ADHAN_MODES.map((mode) => {
                 const selected = adhanPreferences.mode === mode.key;
@@ -1321,7 +1597,7 @@ export default function PrayerCard() {
                         selected && styles.adhanChoiceTextSelected,
                       ]}
                     >
-                      {mode.label}
+                      {t(mode.labelKey)}
                     </Text>
                   </Pressable>
                 );
@@ -1330,29 +1606,29 @@ export default function PrayerCard() {
 
             {adhanPreferences.mode === "adhan" && (
               <>
-                <Text style={styles.adhanSectionLabel}>VOIX DE L’ADHAN</Text>
+                <Text style={styles.adhanSectionLabel}>{t("prayer.adhanVoiceUpper")}</Text>
                 <View style={styles.adhanOptionRow}>
                   {ADHAN_VOICES.map((voice) => {
                     const selected = adhanPreferences.voice === voice.key;
                     return <Pressable key={voice.key} onPress={() => updateAdhanPreferences((current) => ({ ...current, voice: voice.key }))} style={[styles.adhanLeadChoice, selected && styles.adhanChoiceSelected]}>
-                      <Text style={[styles.adhanModeText, selected && styles.adhanChoiceTextSelected]}>{voice.label}</Text>
+                      <Text style={[styles.adhanModeText, selected && styles.adhanChoiceTextSelected]}>{t(voice.labelKey)}</Text>
                     </Pressable>;
                   })}
                 </View>
                 <Pressable
-                  accessibilityLabel={adhanPlayerStatus.playing ? "Mettre l’aperçu de l’Adhan en pause" : "Écouter l’aperçu de l’Adhan"}
+                  accessibilityLabel={adhanPlayerStatus.playing ? t("prayer.pauseAdhanPreview") : t("prayer.listenAdhanPreview")}
                   style={styles.adhanPreviewButton}
                   onPress={() => adhanPlayerStatus.playing ? adhanPlayer.pause() : adhanPlayer.play()}
                 >
                   <Ionicons name={adhanPlayerStatus.playing ? "pause" : "play"} size={19} color="#281816" />
                   <Text style={styles.adhanPreviewText}>
-                    {adhanPlayerStatus.playing ? "Mettre en pause" : "Écouter l’aperçu"}
+                    {adhanPlayerStatus.playing ? t("prayer.pausePreview") : t("prayer.listenPreview")}
                   </Text>
                 </Pressable>
               </>
             )}
 
-            <Text style={styles.adhanSectionLabel}>MOMENT DU RAPPEL</Text>
+            <Text style={styles.adhanSectionLabel}>{t("prayer.reminderTimeUpper")}</Text>
             <View style={styles.adhanOptionRow}>
               {ADHAN_LEAD_TIMES.map((minutes) => {
                 const selected = adhanPreferences.leadMinutes === minutes;
@@ -1378,7 +1654,7 @@ export default function PrayerCard() {
                         selected && styles.adhanChoiceTextSelected,
                       ]}
                     >
-                      {minutes === 0 ? "À l’heure" : `-${minutes} min`}
+                      {minutes === 0 ? t("prayer.onTime") : `-${minutes} min`}
                     </Text>
                   </Pressable>
                 );
@@ -1393,7 +1669,7 @@ export default function PrayerCard() {
                 colors={["#F5D276", "#D59A35"]}
                 style={StyleSheet.absoluteFill}
               />
-              <Text style={styles.adhanDoneText}>Enregistrer</Text>
+              <Text style={styles.adhanDoneText}>{t("prayer.save")}</Text>
               </Pressable>
             </ScrollView>
           </Pressable>
@@ -1419,99 +1695,88 @@ const styles = StyleSheet.create({
   },
   prayerInfo: {
     position: "absolute",
-    top: 87,
+    top: 84,
     left: 18,
-    width: "70%",
+    right: 18,
   },
-  nextLabel: {
-    width: 124,
-    color: "rgba(248,240,232,0.86)",
-    fontFamily: typography.serifMedium,
-    fontSize: 12.5,
-    letterSpacing: 0.25,
+  nextPrayerBlock: {
+    width: "64%",
   },
-  prayerLabels: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  prayerNameRow: {
-    marginTop: 4,
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  currentPrayerValue: {
-    width: 124,
-    minWidth: 0,
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  prayerName: {
+  nextPrayerName: {
     color: "#FFF9F3",
     fontFamily: typography.serifSemibold,
-    fontSize: 35,
-    lineHeight: 40,
+    fontSize: 31,
+    lineHeight: 34,
+    textShadowColor: "rgba(0,0,0,0.78)",
+    textShadowOffset: { width: 0, height: 2 },
+    textShadowRadius: 8,
   },
-  prayerSymbol: {
-    marginLeft: 11,
-    textShadowColor: "#E3A62E",
-    textShadowRadius: 13,
+  countdownRow: {
+    marginTop: 1,
+    flexDirection: "row",
+    alignItems: "baseline",
   },
-  upcomingPrayerName: {
-    flex: 1,
-    minWidth: 0,
-    textAlign: "left",
+  countdownPrefix: {
+    marginRight: 8,
+    color: "rgba(248,240,232,0.86)",
+    fontFamily: typography.serifMedium,
+    fontSize: 19,
+    lineHeight: 27,
   },
   countdown: {
-    marginTop: 1,
     color: "#F3B83F",
     fontFamily: typography.serifSemibold,
-    fontSize: 30,
-    lineHeight: 35,
-    letterSpacing: 1.3,
+    fontSize: 27,
+    lineHeight: 31,
+    letterSpacing: 1,
     fontVariant: ["tabular-nums"],
     textShadowColor: "rgba(225,157,34,0.35)",
     textShadowRadius: 9,
   },
+  currentPrayerRow: {
+    alignSelf: "flex-start",
+    minHeight: 27,
+    marginTop: 4,
+    paddingHorizontal: 8,
+    flexDirection: "row",
+    alignItems: "center",
+    borderRadius: 14,
+    backgroundColor: "rgba(8,7,19,0.32)",
+  },
+  currentPrayerLabel: {
+    marginLeft: 6,
+    color: "rgba(255,249,243,0.92)",
+    fontFamily: typography.serifMedium,
+    fontSize: 14,
+  },
+  currentPrayerName: {
+    marginLeft: 5,
+    color: colors.goldLight,
+    fontFamily: typography.serifSemibold,
+    fontSize: 17,
+    fontWeight: "700",
+  },
   metaRow: {
-    maxWidth: 285,
-    minHeight: 23,
-    marginTop: 5,
+    minHeight: 34,
+    marginTop: 7,
     paddingHorizontal: 0,
     flexDirection: "row",
     alignItems: "center",
-    alignSelf: "flex-start",
   },
   metaText: {
     flexShrink: 1,
     marginLeft: 8,
     color: "#FFF9F2",
     fontFamily: typography.sans,
-    fontSize: 12.5,
+    fontSize: 11.5,
     fontWeight: "600",
     textShadowColor: "rgba(0,0,0,0.78)",
     textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 4,
   },
-  locationMetaRow: {
-    maxWidth: 300,
-    paddingRight: 8,
-  },
-  locationMetaCopy: {
-    flex: 1,
-    minWidth: 0,
-  },
-  locationMetaSubtitle: {
-    marginLeft: 8,
-    marginTop: 1,
-    color: "rgba(242,224,202,0.78)",
-    fontFamily: typography.sans,
-    fontSize: 9.5,
-    textShadowColor: "rgba(0,0,0,0.70)",
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 3,
-  },
   dateMetaRow: {
-    minHeight: 37,
+    width: "100%",
+    minHeight: 34,
     paddingRight: 0,
   },
   hijriCopy: {
@@ -1529,16 +1794,61 @@ const styles = StyleSheet.create({
     textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 3,
   },
+  metaChipsRow: {
+    marginTop: 16,
+    flexDirection: "row",
+    gap: 8,
+  },
+  metaChip: {
+    flex: 1,
+    minWidth: 0,
+    height: 47,
+    paddingHorizontal: 10,
+    flexDirection: "row",
+    alignItems: "center",
+    borderRadius: 14,
+    borderWidth: 1,
+    borderColor: "rgba(255,236,209,0.22)",
+    backgroundColor: "rgba(20,17,28,0.62)",
+    shadowColor: "#000",
+    shadowOpacity: 0.18,
+    shadowRadius: 7,
+    shadowOffset: { width: 0, height: 3 },
+  },
+  metaChipCopy: {
+    flex: 1,
+    minWidth: 0,
+    marginLeft: 7,
+  },
+  metaChipTitle: {
+    color: "#FFF9F2",
+    fontFamily: typography.sans,
+    fontSize: 10.5,
+    fontWeight: "700",
+  },
+  metaChipSubtitle: {
+    marginTop: 2,
+    color: "rgba(242,224,202,0.76)",
+    fontFamily: typography.sans,
+    fontSize: 8.7,
+  },
+  calculationHint: {
+    marginTop: 8,
+    color: "rgba(242,224,202,0.72)",
+    fontFamily: typography.sans,
+    fontSize: 10,
+    lineHeight: 14,
+  },
   metaRowPressed: {
     opacity: 0.78,
     transform: [{ scale: 0.985 }],
   },
   adhan: {
     position: "absolute",
-    top: 82,
+    top: 91,
     right: 15,
-    minHeight: 38,
-    paddingHorizontal: 14,
+    minHeight: 34,
+    paddingHorizontal: 12,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
@@ -1552,10 +1862,10 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 7 },
   },
   adhanText: {
-    marginLeft: 8,
+    marginLeft: 7,
     color: colors.goldLight,
     fontFamily: typography.serifSemibold,
-    fontSize: 21,
+    fontSize: 18,
   },
   adhanPressed: {
     opacity: 0.78,
@@ -1804,6 +2114,14 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     gap: 7,
   },
+  calculationDisclosure: { minHeight: 54, marginTop: 13, paddingHorizontal: 13, flexDirection: "row", alignItems: "center", justifyContent: "space-between", borderRadius: 13, borderWidth: 1, borderColor: "rgba(255,255,255,0.10)", backgroundColor: "rgba(255,255,255,0.035)" },
+  calculationDisclosureCopy: { flex: 1, paddingVertical: 8, paddingRight: 10 },
+  calculationMethodChoices: { flexDirection: "row", flexWrap: "wrap", gap: 7 },
+  calculationMethodChoice: { flex: 0, width: "48%", minHeight: 50, paddingHorizontal: 7 },
+  customAngles: { gap: 10, marginBottom: 10 },
+  customAngleGroup: { gap: 6 },
+  angleChoices: { flexDirection: "row", flexWrap: "wrap", gap: 7 },
+  angleChoice: { minWidth: 58, minHeight: 38, paddingHorizontal: 10, alignItems: "center", justifyContent: "center", borderRadius: 12, borderWidth: 1, borderColor: "rgba(255,255,255,0.08)", backgroundColor: "rgba(255,255,255,0.035)" },
   adhanModeChoice: {
     minHeight: 48,
     flex: 1,
@@ -1903,6 +2221,12 @@ const styles = StyleSheet.create({
     position: "absolute",
     width: 62,
     alignItems: "center",
+  },
+  orbitStationFajr: {
+    transform: [{ translateX: -19 }],
+  },
+  orbitStationMaghrib: {
+    transform: [{ translateX: 12 }],
   },
   orbitNode: {
     width: 31,
@@ -2148,5 +2472,94 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     borderRadius: 18,
     backgroundColor: colors.goldLight,
+  },
+  calculationGuideBackdrop: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: 22,
+    backgroundColor: "rgba(5, 3, 13, 0.82)",
+  },
+  calculationGuideCard: {
+    width: "100%",
+    maxWidth: 390,
+    overflow: "hidden",
+    alignItems: "center",
+    paddingHorizontal: 24,
+    paddingTop: 28,
+    paddingBottom: 20,
+    borderRadius: 30,
+    borderWidth: 1,
+    borderColor: "rgba(239, 190, 74, 0.42)",
+    backgroundColor: "#17111F",
+    shadowColor: "#000",
+    shadowOpacity: 0.45,
+    shadowRadius: 28,
+    shadowOffset: { width: 0, height: 14 },
+    elevation: 18,
+  },
+  calculationGuideGlow: {
+    position: "absolute",
+    top: -90,
+    width: 220,
+    height: 180,
+    borderRadius: 110,
+    backgroundColor: "rgba(116, 47, 145, 0.22)",
+  },
+  calculationGuideIcon: {
+    width: 60,
+    height: 60,
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 30,
+    borderWidth: 1,
+    borderColor: "rgba(239, 190, 74, 0.34)",
+    backgroundColor: "rgba(82, 39, 101, 0.70)",
+  },
+  calculationGuideEyebrow: {
+    marginTop: 17,
+    color: colors.goldLight,
+    fontFamily: typography.sans,
+    fontSize: 9.5,
+    fontWeight: "800",
+    letterSpacing: 2.2,
+    textAlign: "center",
+  },
+  calculationGuideTitle: {
+    marginTop: 8,
+    color: colors.text,
+    fontFamily: typography.serifSemibold,
+    fontSize: 25,
+    lineHeight: 30,
+    textAlign: "center",
+  },
+  calculationGuideDescription: {
+    marginTop: 10,
+    color: colors.textSecondary,
+    fontFamily: typography.sans,
+    fontSize: 14,
+    lineHeight: 21,
+    textAlign: "center",
+  },
+  calculationGuideButton: {
+    width: "100%",
+    minHeight: 50,
+    marginTop: 22,
+    paddingHorizontal: 18,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 8,
+    borderRadius: 18,
+    backgroundColor: colors.goldLight,
+  },
+  calculationGuideButtonText: {
+    color: "#17111C",
+    fontFamily: typography.sans,
+    fontSize: 14,
+    fontWeight: "800",
+  },
+  calculationGuidePressed: {
+    opacity: 0.72,
   },
 });

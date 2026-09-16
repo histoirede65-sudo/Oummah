@@ -45,6 +45,8 @@ import {
   preloadAudioSurface,
   preloadReciterPortraits,
 } from "../../features/audio/presentation/audioPreload";
+import { readingQuranRepository } from "../../features/quran/ReadingQuranRepository";
+import { useI18n } from "../../i18n";
 import { colors } from "../../theme/colors";
 
 function transitionData(reciter: {
@@ -66,6 +68,7 @@ function transitionData(reciter: {
 }
 
 export default function SurahListeningScreen() {
+  const { language } = useI18n();
   const { surahId, reciterId, returnTo, autoplay } = useLocalSearchParams<{
     surahId: string;
     reciterId?: string;
@@ -100,6 +103,29 @@ export default function SurahListeningScreen() {
   const rangeEndRef = useRef(surah.verses);
   const rangeStopSecondsRef = useRef<number | null>(null);
   const [activeVerseProgress, setActiveVerseProgress] = useState(0);
+  const [englishSurahName, setEnglishSurahName] = useState<string>();
+
+  useEffect(() => {
+    let active = true;
+    if (language !== "en") {
+      setEnglishSurahName(undefined);
+      return () => {
+        active = false;
+      };
+    }
+    setEnglishSurahName(undefined);
+    void readingQuranRepository
+      .getEnglishSurahNames()
+      .then((names) => {
+        if (active) setEnglishSurahName(names.get(surah.id));
+      })
+      .catch(() => {
+        if (active) setEnglishSurahName(undefined);
+      });
+    return () => {
+      active = false;
+    };
+  }, [language, surah.id]);
 
   useEffect(() => {
     if (surah.id === 1) {
@@ -119,7 +145,9 @@ export default function SurahListeningScreen() {
     loadSurah,
     pause,
     play,
+    stop,
     seekTo,
+    skipBy,
     subscribeToPosition,
     toggleFavorite,
     cyclePlaybackRate,
@@ -225,6 +253,16 @@ export default function SurahListeningScreen() {
   const handleNext = useCallback(() => {
     openSurah(surah.id + 1);
   }, [openSurah, surah.id]);
+  const handleStop = useCallback(() => {
+    rangeStopSecondsRef.current = null;
+    void stop();
+  }, [stop]);
+  const handleSkipBackward = useCallback(() => {
+    void skipBy(-5);
+  }, [skipBy]);
+  const handleSkipForward = useCallback(() => {
+    void skipBy(5);
+  }, [skipBy]);
   const goBack = useCallback(() => {
     if (router.canGoBack()) router.back();
     else router.replace((returnTo || "/listen/reciters") as Href);
@@ -533,7 +571,11 @@ export default function SurahListeningScreen() {
                 surahName={track?.title ?? surah.transliteration}
                 surahNumber={surah.id}
                 surahArabicName={surah.arabicName}
-                surahFrenchName={surah.frenchName}
+                surahFrenchName={
+                  language === "en"
+                    ? englishSurahName || surah.transliteration
+                    : surah.frenchName
+                }
                 verses={surah.verses}
                 revelation={surah.revelationType}
                 height={heroHeight}
@@ -557,6 +599,15 @@ export default function SurahListeningScreen() {
                 }}
                 onRangeEndChange={setRangeEnd}
                 onPlayRange={playVerseRange}
+                onTogglePlay={handleTogglePlay}
+                onStop={handleStop}
+                onSkipBackward={handleSkipBackward}
+                onSkipForward={handleSkipForward}
+                onPrevious={handlePrevious}
+                onNext={handleNext}
+                previousDisabled={surah.id <= 1 && currentTime <= 3}
+                nextDisabled={surah.id >= 114}
+                transportDisabled={!isLoaded}
               />
             ) : null}
             <SyncedVerseList

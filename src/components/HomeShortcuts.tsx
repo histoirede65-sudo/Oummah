@@ -7,84 +7,90 @@ import { useRef, useState } from "react";
 import {
   type NativeScrollEvent,
   type NativeSyntheticEvent,
+  FlatList,
   Pressable,
-  ScrollView,
   StyleSheet,
   Text,
+  useWindowDimensions,
   View,
 } from "react-native";
 
 import { colors } from "../theme/colors";
 import { typography } from "../theme/typography";
+import { useI18n } from "../i18n";
 
 const CARD_WIDTH = 150;
 const CARD_GAP = 8;
-const SNAP_INTERVAL = CARD_WIDTH + CARD_GAP;
 
 const shortcuts = [
   {
-    label: "Coran",
-    subtitle: "Lire & Comprendre",
+    labelKey: "home.shortcutQuran",
+    subtitleKey: "home.shortcutQuranSubtitle",
     route: "/quran",
     image: require("../assets/images/home/shortcuts/quran-real.jpg"),
   },
   {
-    label: "Hadith",
-    subtitle: "Lire & méditer",
+    labelKey: "home.shortcutHadith",
+    subtitleKey: "home.shortcutHadithSubtitle",
     route: "/hadith",
     image: require("../assets/images/home/shortcuts/hadith-premium.jpg"),
   },
   {
-    label: "Dhikr",
-    subtitle: "Tasbih & compteur",
+    labelKey: "home.shortcutDhikr",
+    subtitleKey: "home.shortcutDhikrCounterSubtitle",
     route: "/dhikr",
     image: require("../assets/images/home/shortcuts/dhikr-real.jpg"),
   },
   {
-    label: "Hifz",
-    subtitle: "Mémoriser & réviser",
+    labelKey: "home.shortcutHifz",
+    subtitleKey: "home.shortcutHifzSubtitle",
     route: "/hifz",
     image: require("../assets/images/home/shortcuts/hifz-real.jpg"),
   },
   {
-    label: "Dou‘ā",
-    subtitle: "Invocations du quotidien",
+    labelKey: "home.shortcutDua",
+    subtitleKey: "home.shortcutDuaSubtitle",
     route: "/dua",
     image: require("../assets/images/home/shortcuts/dua-real.jpg"),
   },
   {
-    label: "Mosquées",
-    subtitle: "Autour de vous",
+    labelKey: "home.shortcutMosques",
+    subtitleKey: "home.shortcutMosquesSubtitle",
     route: "/mosques",
     image: require("../assets/images/mosques/mosque-hero-premium.jpg"),
   },
   {
-    label: "Qibla",
-    subtitle: "Direction de prière",
+    labelKey: "home.shortcutQibla",
+    subtitleKey: "home.shortcutQiblaSubtitle",
     route: "/qibla",
     image: require("../assets/images/home/shortcuts/qibla-real.jpg"),
   },
   {
-    label: "Zawaj",
-    subtitle: "Mariage en Islam",
-    route: "/zawaj",
-    image: require("../assets/images/dua/guides/marriage.jpg"),
+    labelKey: "home.shortcutCalendar",
+    subtitleKey: "home.shortcutCalendarSubtitle",
+    route: "/calendar",
+    image: require("../assets/images/home/shortcuts/calendar-real.jpg"),
   },
   {
-    label: "Zakat",
-    subtitle: "Calculer & comprendre",
+    labelKey: "home.shortcutZakat",
+    subtitleKey: "home.shortcutZakatSubtitle",
     route: "/zakat",
     image: require("../assets/images/dua/guides/debt.jpg"),
   },
   {
-    label: "Calendrier",
-    subtitle: "Hijri & événements",
-    route: "/calendar",
-    image: require("../assets/images/home/shortcuts/calendar-real.jpg"),
+    labelKey: "home.shortcutZawaj",
+    subtitleKey: "home.shortcutZawajSubtitle",
+    route: "/zawaj",
+    image: require("../assets/images/dua/guides/marriage.jpg"),
   },
 ] as const;
 
 export default function HomeShortcuts() {
+  const { t } = useI18n();
+  const { width } = useWindowDimensions();
+  const cardWidth = width < 350 ? 132 : width < 390 ? 142 : width > 430 ? 160 : CARD_WIDTH;
+  const cardHeight = width < 350 ? 154 : width < 390 ? 162 : 170;
+  const snapInterval = cardWidth + CARD_GAP;
   const [activeIndex, setActiveIndex] = useState(0);
   const viewportWidthRef = useRef(0);
   const contentWidthRef = useRef(0);
@@ -112,19 +118,25 @@ export default function HomeShortcuts() {
   return (
     <View style={styles.wrapper}>
       <View style={styles.header}>
-        <Text style={styles.heading}>Vos essentiels</Text>
+        <Text style={styles.heading}>{t("home.essentials")}</Text>
         <View style={styles.swipeHint}>
-          <Text style={styles.swipeText}>Glissez pour découvrir</Text>
+          <Text style={styles.swipeText}>{t("home.swipeToDiscover")}</Text>
           <Ionicons name="arrow-forward" size={15} color={colors.goldLight} />
         </View>
       </View>
 
-      <ScrollView
+      <FlatList
+        data={shortcuts}
+        keyExtractor={(item) => item.labelKey}
+        initialNumToRender={3}
+        maxToRenderPerBatch={3}
+        windowSize={5}
+        removeClippedSubviews
         horizontal
         contentContainerStyle={styles.row}
         showsHorizontalScrollIndicator={false}
         decelerationRate="fast"
-        snapToInterval={SNAP_INTERVAL}
+        snapToInterval={snapInterval}
         snapToAlignment="start"
         scrollEventThrottle={16}
         onLayout={(event) => {
@@ -135,12 +147,10 @@ export default function HomeShortcuts() {
         }}
         onScroll={updateActiveIndex}
         onMomentumScrollEnd={updateActiveIndex}
-      >
-        {shortcuts.map((item) => (
+        renderItem={({ item }) => (
           <Pressable
-            key={item.label}
             onPress={() => router.push(item.route as Href)}
-            style={({ pressed }) => [styles.card, pressed && styles.pressed]}
+            style={({ pressed }) => [styles.card, { width: cardWidth, height: cardHeight }, pressed && styles.pressed]}
           >
             <Image
               source={item.image}
@@ -195,10 +205,10 @@ export default function HomeShortcuts() {
                   adjustsFontSizeToFit
                   style={styles.labelDepth}
                 >
-                  {item.label}
+                  {t(item.labelKey)}
                 </Text>
                 <Text numberOfLines={1} adjustsFontSizeToFit style={styles.label}>
-                  {item.label}
+                  {t(item.labelKey)}
                 </Text>
               </View>
               <View style={styles.subtitleReliefWrap}>
@@ -208,25 +218,25 @@ export default function HomeShortcuts() {
                   adjustsFontSizeToFit
                   style={styles.subtitleDepth}
                 >
-                  {item.subtitle}
+                  {t(item.subtitleKey)}
                 </Text>
                 <Text
                   numberOfLines={1}
                   adjustsFontSizeToFit
                   style={styles.subtitle}
                 >
-                  {item.subtitle}
+                  {t(item.subtitleKey)}
                 </Text>
               </View>
             </LinearGradient>
           </Pressable>
-        ))}
-      </ScrollView>
+        )}
+      />
 
       <View style={styles.pagination}>
         {shortcuts.map((item, index) => (
           <View
-            key={item.label}
+            key={item.labelKey}
             style={[styles.dot, index === activeIndex && styles.dotActive]}
           />
         ))}

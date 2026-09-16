@@ -28,6 +28,7 @@ import { ARABIC_READING_FONT_FAMILY } from "../features/quran/ArabicReadingPrese
 import { colors } from "../theme/colors";
 import { typography } from "../theme/typography";
 import { goalProgressBridge } from "../features/daily-goals/services/goalProgressBridge";
+import { useI18n } from "../i18n";
 
 const BEAD_COUNT = 33;
 const ROSARY_SIZE = 304;
@@ -39,6 +40,7 @@ const CORE_TASBIH = {
 };
 
 export default function DhikrScreen() {
+  const { language, t } = useI18n();
   const [stepIndex, setStepIndex] = useState(0);
   const [counts, setCounts] = useState<Record<string, number>>({});
   const [totalToday, setTotalToday] = useState(0);
@@ -180,11 +182,18 @@ export default function DhikrScreen() {
     learningAudio.activeKey === step.id && learningAudio.isPlaying;
   const isAudioLoading = learningAudio.pendingKey === step.id;
   const overallProgress = sessionTarget > 0 ? sessionTotal / sessionTarget : 0;
+  const presetTitle = language === "en" ? preset.englishTitle : preset.title;
+  const presetSource =
+    language === "en" && preset.id === "free-remembrance"
+      ? t("dhikr.freeCounter")
+      : preset.source;
+  const stepTranslation = language === "en" ? step.english : step.french;
 
   return (
     <SafeAreaView edges={["top"]} style={styles.safeArea}>
       <View style={styles.topBar}>
         <Pressable
+          accessibilityLabel={t("common.back")}
           onPress={() =>
             router.canGoBack() ? router.back() : router.replace("/" as Href)
           }
@@ -193,12 +202,12 @@ export default function DhikrScreen() {
           <Ionicons name="arrow-back" size={21} color={colors.goldLight} />
         </Pressable>
         <View style={styles.titleCopy}>
-          <Text style={styles.title}>Dhikr</Text>
-          <Text style={styles.subtitle}>Votre chapelet numérique</Text>
+          <Text style={styles.title}>{t("dhikr.title")}</Text>
+          <Text style={styles.subtitle}>{t("dhikr.subtitle")}</Text>
         </View>
         <View style={styles.todayPill}>
           <Text style={styles.todayValue}>{totalToday}</Text>
-          <Text style={styles.todayLabel}>AUJ.</Text>
+          <Text style={styles.todayLabel}>{t("dhikr.todayShort")}</Text>
         </View>
       </View>
 
@@ -227,13 +236,10 @@ export default function DhikrScreen() {
             </View>
             <View style={styles.heroCopy}>
               <Text style={styles.heroEyebrow}>
-                TASBIH · PRÉSENCE · RÉGULARITÉ
+                {t("dhikr.heroEyebrow")}
               </Text>
-              <Text style={styles.heroTitle}>Comptez sans perdre le sens</Text>
-              <Text style={styles.heroText}>
-                Touchez le chapelet à chaque répétition. Votre progression est
-                enregistrée automatiquement.
-              </Text>
+              <Text style={styles.heroTitle}>{t("dhikr.heroTitle")}</Text>
+              <Text style={styles.heroText}>{t("dhikr.heroText")}</Text>
             </View>
           </View>
         </View>
@@ -243,6 +249,7 @@ export default function DhikrScreen() {
             const active = itemIndex === safeStepIndex;
             return (
               <Pressable
+                accessibilityLabel={t("dhikr.selectFormula", { name: item.phonetic })}
                 key={item.id}
                 onPress={() => goToStep(itemIndex)}
                 style={[styles.formulaTab, active && styles.formulaTabActive]}
@@ -269,13 +276,17 @@ export default function DhikrScreen() {
           <View style={styles.sessionTopRow}>
             <View>
               <Text style={styles.sessionEyebrow}>
-                {preset.title.toUpperCase()}
+                {presetTitle.toUpperCase()}
               </Text>
               <Text style={styles.sessionStep}>
-                Étape {safeStepIndex + 1} sur {preset.steps.length}
+                {t("dhikr.stepProgress", {
+                  current: safeStepIndex + 1,
+                  total: preset.steps.length,
+                })}
               </Text>
             </View>
             <Pressable
+              accessibilityLabel={t("dhikr.openSource", { source: presetSource })}
               disabled={!preset.sourceUrl}
               onPress={() =>
                 preset.sourceUrl && void Linking.openURL(preset.sourceUrl)
@@ -287,7 +298,7 @@ export default function DhikrScreen() {
                 size={13}
                 color={colors.goldLight}
               />
-              <Text style={styles.sourceText}>{preset.source}</Text>
+              <Text style={styles.sourceText}>{presetSource}</Text>
             </Pressable>
           </View>
 
@@ -310,16 +321,20 @@ export default function DhikrScreen() {
             {step.phonetic}
           </Text>
           <Text selectable style={styles.french}>
-            {step.french}
+            {stepTranslation}
           </Text>
 
           <View style={styles.formulaActions}>
             <View style={styles.targetPill}>
               <Ionicons name="repeat" size={14} color={colors.goldLight} />
-              <Text style={styles.targetText}>Objectif {step.target}</Text>
+              <Text style={styles.targetText}>{t("dhikr.target", { count: step.target })}</Text>
             </View>
             {step.audioSource ? (
               <Pressable
+                accessibilityLabel={t(
+                  isPlaying ? "dhikr.pauseAccessibility" : "dhikr.listenAccessibility",
+                  { name: step.phonetic },
+                )}
                 onPress={toggleAudio}
                 style={styles.listenButton}
               >
@@ -334,16 +349,18 @@ export default function DhikrScreen() {
                 )}
                 <Text style={styles.listenText}>
                   {isAudioLoading
-                    ? "Chargement"
+                    ? t("dhikr.loadingAudio")
                     : isPlaying
-                      ? "Pause"
-                      : "Écouter"}
+                      ? t("dhikr.pause")
+                      : t("dhikr.listen")}
                 </Text>
               </Pressable>
             ) : null}
           </View>
           {learningAudio.error ? (
-            <Text style={styles.audioError}>{learningAudio.error}</Text>
+            <Text style={styles.audioError}>
+              {language === "fr" ? learningAudio.error : t("dhikr.audioPlaybackError")}
+            </Text>
           ) : null}
         </View>
 
@@ -362,7 +379,10 @@ export default function DhikrScreen() {
             ))}
             <Pressable
               accessibilityRole="button"
-              accessibilityLabel={`Compteur de dhikr, ${count} sur ${step.target}`}
+              accessibilityLabel={t("dhikr.counterAccessibility", {
+                count,
+                target: step.target,
+              })}
               onPress={increment}
               style={({ pressed }) => [
                 styles.counter,
@@ -392,7 +412,7 @@ export default function DhikrScreen() {
                   complete && styles.counterTargetDone,
                 ]}
               >
-                sur {step.target}
+                {t("dhikr.outOf", { target: step.target })}
               </Text>
               <View
                 style={[styles.tapPill, complete && styles.tapPillComplete]}
@@ -405,7 +425,7 @@ export default function DhikrScreen() {
                 <Text
                   style={[styles.tapText, complete && styles.tapTextComplete]}
                 >
-                  {complete ? "TERMINÉ" : "TOUCHER"}
+                  {complete ? t("dhikr.finishedUpper") : t("dhikr.tapUpper")}
                 </Text>
               </View>
             </Pressable>
@@ -413,6 +433,7 @@ export default function DhikrScreen() {
 
           <View style={styles.counterTools}>
             <Pressable
+              accessibilityLabel={t("dhikr.undoAccessibility")}
               onPress={undo}
               disabled={count === 0}
               style={styles.toolButton}
@@ -422,21 +443,22 @@ export default function DhikrScreen() {
                 size={18}
                 color={colors.textSecondary}
               />
-              <Text style={styles.toolText}>Annuler</Text>
+              <Text style={styles.toolText}>{t("dhikr.undo")}</Text>
             </Pressable>
             <View style={styles.cyclePill}>
               <Text style={styles.cycleValue}>
                 {Math.floor(count / BEAD_COUNT)}
               </Text>
-              <Text style={styles.cycleLabel}>TOURS COMPLETS</Text>
+              <Text style={styles.cycleLabel}>{t("dhikr.completedRounds")}</Text>
             </View>
             <Pressable
+              accessibilityLabel={t("dhikr.resetAccessibility")}
               onPress={reset}
               disabled={count === 0}
               style={styles.toolButton}
             >
               <Ionicons name="refresh" size={18} color={colors.textSecondary} />
-              <Text style={styles.toolText}>Remettre</Text>
+              <Text style={styles.toolText}>{t("dhikr.reset")}</Text>
             </Pressable>
           </View>
         </View>
@@ -444,6 +466,7 @@ export default function DhikrScreen() {
         {preset.steps.length > 1 ? (
           <View style={styles.stepNavigation}>
             <Pressable
+              accessibilityLabel={t("dhikr.previous")}
               disabled={safeStepIndex === 0}
               onPress={() => goToStep(safeStepIndex - 1)}
               style={[
@@ -452,9 +475,10 @@ export default function DhikrScreen() {
               ]}
             >
               <Ionicons name="arrow-back" size={17} color={colors.goldLight} />
-              <Text style={styles.stepButtonText}>Précédent</Text>
+              <Text style={styles.stepButtonText}>{t("dhikr.previous")}</Text>
             </Pressable>
             <Pressable
+              accessibilityLabel={t("dhikr.nextDhikr")}
               disabled={safeStepIndex >= preset.steps.length - 1}
               onPress={() => goToStep(safeStepIndex + 1)}
               style={[
@@ -463,7 +487,7 @@ export default function DhikrScreen() {
                 safeStepIndex >= preset.steps.length - 1 && styles.disabled,
               ]}
             >
-              <Text style={styles.stepButtonPrimaryText}>Dhikr suivant</Text>
+              <Text style={styles.stepButtonPrimaryText}>{t("dhikr.nextDhikr")}</Text>
               <Ionicons
                 name="arrow-forward"
                 size={17}

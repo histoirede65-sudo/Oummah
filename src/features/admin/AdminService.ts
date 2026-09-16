@@ -117,7 +117,7 @@ export async function getAdminUsers(
     total_spent: number | null;
   }>>("admin_list_users", {
     p_search: search.trim() || null,
-    p_limit: Math.min(100, Math.max(1, limit)),
+    p_limit: Math.min(5000, Math.max(1, limit)),
   });
 
   return rows.map((row) => ({

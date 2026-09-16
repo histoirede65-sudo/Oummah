@@ -17,25 +17,14 @@ import {
 } from "../features/hadith-explorer/services/hadithLibraryService";
 import { colors } from "../theme/colors";
 import { typography } from "../theme/typography";
-
-const ACTIONS = [
-  {
-    label: "Collections",
-    subtitle: "9 recueils authentiques · Boukhari • Muslim • Nawawi · Explorer les recueils →",
-    icon: "library-outline",
-    route: "/hadith/collections",
-    size: "wide",
-  },
-  {
-    label: "Recherche",
-    subtitle: "Trouver un hadith",
-    icon: "search-outline",
-    route: "/hadith/search",
-    size: "narrow",
-  },
-] as const;
+import { useI18n } from "../i18n";
 
 export default function HadithHomeScreen() {
+  const { language, t } = useI18n();
+  const actions = [
+    { label: t("hadith.collections"), subtitle: t("hadith.collectionsSubtitle"), icon: "library-outline", route: "/hadith/collections", size: "wide" },
+    { label: t("hadith.search"), subtitle: t("hadith.searchSubtitle"), icon: "search-outline", route: "/hadith/search", size: "narrow" },
+  ] as const;
   const { open: requestedOpen } = useLocalSearchParams<{ open?: string | string[] }>();
   const [daily, setDaily] = useState<Hadith | null>(null);
   const [loading, setLoading] = useState(true);
@@ -49,7 +38,7 @@ export default function HadithHomeScreen() {
       setLoading(true);
 
       void Promise.all([
-        hadithRepository.daily(),
+        hadithRepository.daily(language),
         hadithLibraryService.favorites(),
         hadithLibraryService.history(),
       ])
@@ -65,15 +54,15 @@ export default function HadithHomeScreen() {
       return () => {
         active = false;
       };
-    }, []),
+    }, [language]),
   );
 
   useEffect(() => {
     const subscription = AppState.addEventListener("change", (state) => {
-      if (state === "active") void hadithRepository.daily().then(setDaily);
+      if (state === "active") void hadithRepository.daily(language).then(setDaily);
     });
     return () => subscription.remove();
-  }, []);
+  }, [language]);
 
   useEffect(() => {
     const task = InteractionManager.runAfterInteractions(() => {
@@ -100,7 +89,7 @@ export default function HadithHomeScreen() {
         <View style={styles.localHeader}>
           <Pressable
             accessibilityRole="button"
-            accessibilityLabel="Retour"
+            accessibilityLabel={t("common.back")}
             onPress={() => router.back()}
             style={({ pressed }) => [
               styles.headerCircle,
@@ -136,23 +125,23 @@ export default function HadithHomeScreen() {
             hadith={daily}
             loading={loading}
             onPress={() => daily && open(daily.id)}
-            wasilPrompt={daily ? `Explique-moi ce hadith de manière claire et fidèle.${daily.id ? `\n\nIdentifiant : ${daily.id}` : ""}${daily.reference ? `\nRéférence : ${daily.reference}` : ""}${daily.french ? `\nTexte français : ${daily.french}` : ""}${daily.attribution ? `\nNarrateur : ${daily.attribution}` : ""}` : undefined}
+            wasilPrompt={daily ? t("hadith.wasilPrompt", { id: daily.id, reference: daily.reference, text: daily.french, attribution: daily.attribution }) : undefined}
           />
 
           <View style={styles.actions}>
-            {ACTIONS.map((action) => (
+            {actions.map((action) => (
               <Pressable
                 key={action.route}
                 onPress={() => router.push(action.route as Href)}
                 style={({ pressed }) => [
                   styles.action,
                   action.size === "wide" ? styles.actionWide : styles.actionNarrow,
-                  action.label === "Collections" && styles.collectionAction,
+                  action.route === "/hadith/collections" && styles.collectionAction,
                   pressed && styles.pressed,
                 ]}
               >
                 <LinearGradient
-                  colors={action.label === "Collections"
+                  colors={action.route === "/hadith/collections"
                     ? ["rgba(91,55,112,0.94)", "rgba(31,20,46,0.98)"]
                     : ["rgba(73,42,91,0.88)", "rgba(27,18,40,0.96)"]}
                   style={StyleSheet.absoluteFill}
@@ -165,10 +154,10 @@ export default function HadithHomeScreen() {
                     color={colors.goldLight}
                   />
                 </View>
-                <Text style={[styles.actionLabel, action.label === "Collections" && styles.collectionLabel]}>
+                <Text style={[styles.actionLabel, action.route === "/hadith/collections" && styles.collectionLabel]}>
                   {action.label}
                 </Text>
-                <Text style={[styles.actionSubtitle, action.label === "Collections" && styles.collectionSubtitle]}>
+                <Text style={[styles.actionSubtitle, action.route === "/hadith/collections" && styles.collectionSubtitle]}>
                   {action.subtitle}
                 </Text>
               </Pressable>
@@ -176,8 +165,8 @@ export default function HadithHomeScreen() {
           </View>
 
           <SectionTitle
-            title="Explorer par thème"
-            action="Tout voir"
+            title={t("hadith.exploreByTheme")}
+            action={t("hadith.viewAll")}
             onPress={() => router.push("/hadith/themes" as Href)}
           />
 
@@ -192,7 +181,12 @@ export default function HadithHomeScreen() {
                 onPress={() =>
                   router.push({
                     pathname: "/hadith/search",
-                    params: { q: theme.query, theme: theme.label },
+                    params: {
+                      q: language === "en"
+                        ? t(`hadith.themeQuery.${theme.id}` as never)
+                        : theme.query,
+                      theme: t(`hadith.theme.${theme.id}` as never),
+                    },
                   })
                 }
                 style={({ pressed }) => [
@@ -218,7 +212,7 @@ export default function HadithHomeScreen() {
                     style={styles.themeGlowLine}
                   />
                 </View>
-                <Text style={styles.themeLabel}>{theme.label}</Text>
+                <Text style={styles.themeLabel}>{t(`hadith.theme.${theme.id}` as never)}</Text>
               </Pressable>
             ))}
           </ScrollView>
@@ -226,9 +220,9 @@ export default function HadithHomeScreen() {
           <View style={styles.libraryRow}>
             <LibraryCard
               icon="bookmark-outline"
-              title="Mes favoris"
+              title={t("hadith.myFavorites")}
               count={favorites.length}
-              empty="Vos hadiths enregistrés"
+              empty={t("hadith.savedHadiths")}
               onPress={() =>
                 router.push({
                   pathname: "/hadith/search",
@@ -238,16 +232,16 @@ export default function HadithHomeScreen() {
             />
             <LibraryCard
               icon="time-outline"
-              title="Continuer"
+              title={t("hadith.continue")}
               count={history.length}
-              empty="Votre historique de lecture"
+              empty={t("hadith.readingHistory")}
               onPress={() => history[0] && open(history[0].id)}
             />
           </View>
 
           {history.length ? (
             <>
-              <SectionTitle title="Lus récemment" />
+              <SectionTitle title={t("hadith.recentlyRead")} />
               <View style={styles.recentList}>
                 {history.slice(0, 3).map((item) => (
                   <Pressable
@@ -302,11 +296,9 @@ export default function HadithHomeScreen() {
               color="#78CCA2"
             />
             <View style={styles.trustCopy}>
-              <Text style={styles.trustTitle}>Une source visible, toujours</Text>
+              <Text style={styles.trustTitle}>{t("hadith.visibleSource")}</Text>
               <Text style={styles.trustText}>
-                Texte, traduction, attribution et classification proviennent de
-                HadeethEnc. Toute divergence indiquée par la source reste
-                affichée.
+                {t("hadith.sourceNotice")}
               </Text>
             </View>
           </View>
@@ -353,6 +345,7 @@ function LibraryCard({
   empty: string;
   onPress: () => void;
 }) {
+  const { t } = useI18n();
   return (
     <Pressable
       onPress={onPress}
@@ -375,7 +368,7 @@ function LibraryCard({
       </View>
       <Text style={styles.libraryTitle}>{title}</Text>
       <Text style={styles.libraryCount}>
-        {count ? `${count} enregistré${count > 1 ? "s" : ""}` : empty}
+        {count ? t("hadith.savedCount", { count }) : empty}
       </Text>
       <Ionicons
         name="chevron-forward"

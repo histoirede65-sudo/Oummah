@@ -11,8 +11,10 @@ import { useDailyGoalsViewModel } from '../features/daily-goals/presentation/use
 import HadithCard from './home/HadithCard';
 import VerseOfDayCard from './home/VerseOfDayCard';
 import { getValidSession } from '../features/auth/SupabaseAuthService';
+import { useI18n } from '../i18n';
 
 export default function HomeGoalsSection() {
+  const { t } = useI18n();
   const goalsModel = useDailyGoalsViewModel();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
@@ -54,16 +56,16 @@ export default function HomeGoalsSection() {
             <View style={styles.signupIcon}>
               <Ionicons name="person-add-outline" size={21} color="#16111B" />
             </View>
-            <Text style={styles.signupTitle}>Créez vos objectifs</Text>
+            <Text style={styles.signupTitle}>{t('home.createGoals')}</Text>
             <Text style={styles.signupText}>
-              Inscrivez-vous gratuitement pour créer vos objectifs et suivre votre progression.
+              {t('home.createGoalsDescription')}
             </Text>
-            <Text style={styles.signupLink}>Créer mon profil →</Text>
+            <Text style={styles.signupLink}>{t('home.createProfileArrow')}</Text>
           </View>
         ) : (
         <>
         <View style={styles.heading}>
-          <Text style={styles.title}>Objectifs du jour</Text>
+          <Text style={styles.title}>{t('home.goalsToday')}</Text>
           <Text style={styles.counter}>
             {goalsModel.summary?.completed ?? 0} / {goalsModel.summary?.total ?? 0}
           </Text>
@@ -98,7 +100,7 @@ export default function HomeGoalsSection() {
         )})}
         {nextGoal ? (
           <Text numberOfLines={1} style={styles.nextGoal}>
-            Prochain : {nextGoal.title}
+            {t('home.nextGoal', { goal: nextGoal.title })}
           </Text>
         ) : null}
         </>

@@ -17,6 +17,7 @@ import { useI18n } from "../../i18n";
 type SurahListProps = {
   data: Surah[];
   header: React.ReactElement;
+  getSurahDisplayName: (surah: Surah) => string;
   onSurahPress: (surah: Surah) => void;
   favoriteSurahIds: Set<number>;
   onToggleFavorite: (surahId: number) => void;
@@ -26,6 +27,7 @@ type SurahListProps = {
 export default function SurahList({
   data,
   header,
+  getSurahDisplayName,
   onSurahPress,
   favoriteSurahIds,
   onToggleFavorite,
@@ -94,15 +96,19 @@ export default function SurahList({
 
           <View style={styles.main}>
             <Text numberOfLines={1} style={styles.french}>
-              {item.frenchName}
+              {getSurahDisplayName(item)}
             </Text>
             <Text numberOfLines={1} style={styles.transliteration}>
               {item.transliteration}
             </Text>
             <View style={styles.metaRow}>
-              <Text style={styles.meta}>{item.verses} versets</Text>
+              <Text style={styles.meta}>{t("common.verseCount", { count: item.verses })}</Text>
               <View style={styles.metaDot} />
-              <Text style={styles.meta}>{item.revelationType}</Text>
+              <Text style={styles.meta}>
+                {item.revelationType === "Médine"
+                  ? t("surahReader.medina")
+                  : t("surahReader.mecca")}
+              </Text>
               <View style={styles.juzPill}>
                 <Text style={styles.juzText}>Juz {item.juzStart}</Text>
               </View>
@@ -120,8 +126,8 @@ export default function SurahList({
               accessibilityRole="button"
               accessibilityLabel={
                 favoriteSurahIds.has(item.id)
-                  ? "Retirer cette sourate des favoris"
-                  : "Ajouter cette sourate aux favoris"
+                  ? t("quran.removeSurahFavorite")
+                  : t("quran.addSurahFavorite")
               }
               onPress={(event) => {
                 event.stopPropagation();

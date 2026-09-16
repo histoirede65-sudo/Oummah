@@ -16,21 +16,27 @@ import { SURAHS } from "../../data/surahs";
 import { readingQuranRepository } from "../../features/quran/ReadingQuranRepository";
 import type { QuranFoundationVerse } from "../../features/quranfoundation/QuranFoundationTypes";
 import {
+  ENGLISH_TAFSIR_SOURCE,
   tafsirRepository,
   type QuranTafsir,
 } from "../../features/quranfoundation/TafsirRepository";
+import { useI18n, type TranslationKey } from "../../i18n";
 import { colors } from "../../theme/colors";
 import { typography } from "../../theme/typography";
 
-function languageLabel(languageName?: string) {
+function languageLabel(
+  languageName: string | undefined,
+  t: (key: TranslationKey) => string,
+) {
   const normalized = languageName?.toLocaleLowerCase("fr") ?? "";
-  if (normalized === "arabic") return "Arabe";
-  if (normalized === "french") return "Français";
-  if (normalized === "english") return "Anglais";
-  return languageName || "Langue non précisée";
+  if (normalized === "arabic") return t("tafsir.arabic");
+  if (normalized === "french") return t("tafsir.french");
+  if (normalized === "english") return t("tafsir.english");
+  return languageName || t("tafsir.unspecifiedLanguage");
 }
 
 export default function TafsirScreen() {
+  const { language, t } = useI18n();
   const params = useLocalSearchParams<{
     verseKey?: string | string[];
   }>();
@@ -42,6 +48,7 @@ export default function TafsirScreen() {
   const scrollRef = useRef<ScrollView>(null);
   const [verse, setVerse] = useState<QuranFoundationVerse>();
   const [tafsir, setTafsir] = useState<QuranTafsir>();
+  const [englishSurahName, setEnglishSurahName] = useState<string>();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string>();
 
@@ -56,10 +63,22 @@ export default function TafsirScreen() {
   const totalVerses = surah?.verses ?? 0;
   const hasPreviousVerse = currentVerseNumber > 1;
   const hasNextVerse = totalVerses > 0 && currentVerseNumber < totalVerses;
+  const surahName =
+    language === "en"
+      ? englishSurahName || surah?.transliteration
+      : surah?.frenchName;
+  const tafsirParagraphs = useMemo(
+    () =>
+      (tafsir?.text ?? "")
+        .split(/\n{2,}/)
+        .map((paragraph) => paragraph.trim())
+        .filter(Boolean),
+    [tafsir?.text],
+  );
 
   const load = useCallback(async () => {
     if (!verseKey || !/^\d{1,3}:\d{1,3}$/.test(verseKey)) {
-      setError("Ce verset est invalide.");
+      setError(t("tafsir.invalidVerse"));
       setLoading(false);
       return;
     }
@@ -70,25 +89,29 @@ export default function TafsirScreen() {
     setError(undefined);
     setVerse(undefined);
     setTafsir(undefined);
+    setEnglishSurahName(undefined);
 
     try {
-      const [verses, tafsirResult] = await Promise.all([
-        readingQuranRepository.getVerses(requestedChapter),
-        tafsirRepository.getTafsir(verseKey),
+      const [verses, tafsirResult, englishNames] = await Promise.all([
+        readingQuranRepository.getVerses(requestedChapter, language),
+        tafsirRepository.getTafsir(
+          verseKey,
+          language === "en" ? ENGLISH_TAFSIR_SOURCE : undefined,
+        ),
+        language === "en"
+          ? readingQuranRepository.getEnglishSurahNames()
+          : Promise.resolve(undefined),
       ]);
 
       setVerse(verses.find((item) => item.verseKey === verseKey));
       setTafsir(tafsirResult);
-    } catch (reason) {
-      setError(
-        reason instanceof Error
-          ? reason.message
-          : "Impossible de charger le tafsir.",
-      );
+      setEnglishSurahName(englishNames?.get(requestedChapter));
+    } catch {
+      setError(t("tafsir.loadFailed"));
     } finally {
       setLoading(false);
     }
-  }, [verseKey]);
+  }, [language, t, verseKey]);
 
   useEffect(() => {
     scrollRef.current?.scrollTo({
@@ -143,7 +166,7 @@ export default function TafsirScreen() {
     <SafeAreaView edges={["top"]} style={styles.safeArea}>
       <View style={styles.header}>
         <Pressable
-          accessibilityLabel="Retour"
+          accessibilityLabel={t("common.back")}
           onPress={() => router.back()}
           style={styles.backButton}
         >
@@ -151,9 +174,12 @@ export default function TafsirScreen() {
         </Pressable>
 
         <View style={styles.headerCopy}>
-          <Text style={styles.title}>Tafsir</Text>
+          <Text style={styles.title}>{t("common.tafsir")}</Text>
           <Text style={styles.subtitle}>
-            {surah?.frenchName ?? "Sourate"} · Verset {verseKey ?? "—"}
+            {t("tafsir.headerMeta", {
+              surah: surahName ?? t("tafsir.surah"),
+              verse: verseKey ?? "—",
+            })}
           </Text>
         </View>
 
@@ -165,7 +191,7 @@ export default function TafsirScreen() {
       {loading ? (
         <View style={styles.center}>
           <ActivityIndicator size="large" color={colors.gold} />
-          <Text style={styles.loadingText}>Chargement du tafsir…</Text>
+          <Text style={styles.loadingText}>{t("tafsir.loading")}</Text>
         </View>
       ) : error ? (
         <View style={styles.center}>
@@ -177,13 +203,14 @@ export default function TafsirScreen() {
           <Text style={styles.errorText}>{error}</Text>
 
           <Pressable onPress={() => void load()} style={styles.retryButton}>
-            <Text style={styles.retryText}>Réessayer</Text>
+            <Text style={styles.retryText}>{t("tafsir.retry")}</Text>
           </Pressable>
         </View>
       ) : (
         <ScrollView
           ref={scrollRef}
           contentContainerStyle={styles.content}
+          directionalLockEnabled
           showsVerticalScrollIndicator={false}
         >
           {verse ? (
@@ -202,7 +229,13 @@ export default function TafsirScreen() {
                 </Text>
               ) : null}
               <WasilContextButton
-                prompt={`Explique-moi ce verset et ce tafsir avec les sources vérifiées d’OUMMAH. Verset ${verse.verseKey} : ${verse.translation ?? verse.textUthmani}. Tafsir affiché : ${tafsir?.text ?? "indisponible"}`}
+                accessibilityLabel={t("tafsir.wasilAccessibility")}
+                label={t("tafsir.explainWithWasil")}
+                prompt={t("tafsir.wasilPrompt", {
+                  verseKey: verse.verseKey,
+                  verse: verse.translation ?? verse.textUthmani,
+                  tafsir: tafsir?.text ?? t("tafsir.unavailable"),
+                })}
               />
             </View>
           ) : null}
@@ -218,22 +251,40 @@ export default function TafsirScreen() {
 
             <View style={styles.sourceCopy}>
               <Text style={styles.sourceName}>
-                {tafsir?.resourceName ?? "Al-Mukhtasar fi Tafsir al-Qur’an"}
+                {tafsir?.resourceName ??
+                  (language === "en"
+                    ? "Ibn Kathir (Abridged)"
+                    : "Al-Mukhtasar fi Tafsir al-Qur’an")}
               </Text>
 
               <Text style={styles.sourceMeta}>
-                Source QuranEnc · {languageLabel(tafsir?.languageName)}
+                {t("tafsir.sourceMeta", {
+                  source: language === "en" ? "Quran.com" : "QuranEnc",
+                  language: languageLabel(tafsir?.languageName, t),
+                })}
               </Text>
             </View>
           </View>
 
-          <Text selectable style={styles.tafsirText}>
-            {tafsir?.text}
-          </Text>
+          <View style={styles.tafsirBody}>
+            {tafsirParagraphs.map((paragraph, index) => (
+              <Text
+                key={`${index}-${paragraph.slice(0, 24)}`}
+                selectable
+                style={[
+                  styles.tafsirText,
+                  index > 0 && styles.tafsirParagraphSpacing,
+                ]}
+              >
+                {paragraph}
+              </Text>
+            ))}
+          </View>
 
           <Text style={styles.disclaimer}>
-            Commentaire français publié par QuranEnc. Ce texte n’est pas une
-            réponse générée ou traduite automatiquement par Dalîl.
+            {language === "en"
+              ? t("tafsir.englishDisclaimer")
+              : t("tafsir.frenchDisclaimer")}
           </Text>
 
           <View style={styles.navigationCard}>
@@ -247,9 +298,11 @@ export default function TafsirScreen() {
               </View>
 
               <View style={styles.navigationHeadingCopy}>
-                <Text style={styles.navigationTitle}>Continuer l’étude</Text>
+                <Text style={styles.navigationTitle}>
+                  {t("tafsir.continueStudy")}
+                </Text>
                 <Text style={styles.navigationSubtitle}>
-                  Parcourir le tafsir de la sourate
+                  {t("tafsir.browseSurah")}
                 </Text>
               </View>
             </View>
@@ -257,7 +310,7 @@ export default function TafsirScreen() {
             <View style={styles.navigationRow}>
               <Pressable
                 accessibilityRole="button"
-                accessibilityLabel="Tafsir du verset précédent"
+                accessibilityLabel={t("tafsir.previousAccessibility")}
                 disabled={!hasPreviousVerse}
                 onPress={() => openVerseTafsir(currentVerseNumber - 1)}
                 style={({ pressed }) => [
@@ -279,20 +332,20 @@ export default function TafsirScreen() {
                       !hasPreviousVerse && styles.navigationButtonLabelDisabled,
                     ]}
                   >
-                    Précédent
+                    {t("tafsir.previous")}
                   </Text>
 
                   <Text style={styles.navigationButtonMeta}>
                     {hasPreviousVerse
-                      ? `Verset ${currentVerseNumber - 1}`
-                      : "Début de la sourate"}
+                      ? t("tafsir.verse", { verse: currentVerseNumber - 1 })
+                      : t("tafsir.startOfSurah")}
                   </Text>
                 </View>
               </Pressable>
 
               <Pressable
                 accessibilityRole="button"
-                accessibilityLabel="Tafsir du verset suivant"
+                accessibilityLabel={t("tafsir.nextAccessibility")}
                 disabled={!hasNextVerse}
                 onPress={() => openVerseTafsir(currentVerseNumber + 1)}
                 style={({ pressed }) => [
@@ -310,7 +363,7 @@ export default function TafsirScreen() {
                       !hasNextVerse && styles.navigationButtonLabelDisabled,
                     ]}
                   >
-                    Suivant
+                    {t("tafsir.next")}
                   </Text>
 
                   <Text
@@ -320,8 +373,8 @@ export default function TafsirScreen() {
                     ]}
                   >
                     {hasNextVerse
-                      ? `Verset ${currentVerseNumber + 1}`
-                      : "Fin de la sourate"}
+                      ? t("tafsir.verse", { verse: currentVerseNumber + 1 })
+                      : t("tafsir.endOfSurah")}
                   </Text>
                 </View>
 
@@ -335,7 +388,9 @@ export default function TafsirScreen() {
 
             <Pressable
               accessibilityRole="button"
-              accessibilityLabel={`Retour au verset ${currentVerseNumber}`}
+              accessibilityLabel={t("tafsir.returnAccessibility", {
+                verse: currentVerseNumber,
+              })}
               onPress={returnToVerse}
               style={({ pressed }) => [
                 styles.returnButton,
@@ -349,7 +404,7 @@ export default function TafsirScreen() {
               />
 
               <Text style={styles.returnButtonText}>
-                Retour au verset dans la lecture
+                {t("tafsir.returnToReading")}
               </Text>
             </Pressable>
           </View>
@@ -519,12 +574,17 @@ const styles = StyleSheet.create({
     fontFamily: typography.sans,
     fontSize: 9.5,
   },
-  tafsirText: {
+  tafsirBody: {
     marginTop: 26,
+  },
+  tafsirText: {
     color: colors.textSecondary,
     fontFamily: typography.sans,
     fontSize: 16,
     lineHeight: 28,
+  },
+  tafsirParagraphSpacing: {
+    marginTop: 18,
   },
   disclaimer: {
     marginTop: 30,

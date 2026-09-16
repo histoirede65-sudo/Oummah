@@ -2,13 +2,14 @@ import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import type { Href } from "expo-router";
 import { router, useFocusEffect } from "expo-router";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { AppState, Pressable, StyleSheet, Text, View } from "react-native";
 
 import { hadithRepository } from "../../features/hadith-explorer/data/hadithRepository";
 import type { Hadith } from "../../features/hadith-explorer/domain/Hadith";
 import { colors } from "../../theme/colors";
 import { typography } from "../../theme/typography";
+import { useI18n } from "../../i18n";
 
 function getHadithPreview(text: string) {
   const frenchQuotedContent = text.match(/«\s*([^»]+?)\s*»/s)?.[1]?.trim();
@@ -18,36 +19,37 @@ function getHadithPreview(text: string) {
 }
 
 export default function HadithCard() {
+  const { language, t } = useI18n();
   const [daily, setDaily] = useState<Hadith | null>(null);
-  const rawHadithText = daily?.french ?? "";
+  const [loadedLanguage, setLoadedLanguage] = useState<typeof language | null>(null);
+  const requestId = useRef(0);
+  const visibleDaily = loadedLanguage === language ? daily : null;
+  const rawHadithText = visibleDaily?.french ?? "";
   const previewHadithText = rawHadithText
     ? getHadithPreview(rawHadithText)
-    : "Chargement du hadith du jour…";
+    : t("home.loadingHadith");
 
   const loadDailyHadith = useCallback(async () => {
+    const currentRequestId = ++requestId.current;
     try {
-      const hadith = await hadithRepository.daily();
-      setDaily(hadith);
+      const hadith = await hadithRepository.daily(language);
+      if (currentRequestId === requestId.current) {
+        setDaily(hadith);
+        setLoadedLanguage(language);
+      }
     } catch {
       // Conserve le dernier hadith affiché si le rechargement échoue.
     }
-  }, []);
+  }, [language]);
 
   useFocusEffect(
     useCallback(() => {
-      let active = true;
-
-      void hadithRepository
-        .daily()
-        .then((hadith) => {
-          if (active) setDaily(hadith);
-        })
-        .catch(() => undefined);
+      void loadDailyHadith();
 
       return () => {
-        active = false;
+        requestId.current += 1;
       };
-    }, []),
+    }, [loadDailyHadith]),
   );
 
   useEffect(() => {
@@ -59,8 +61,8 @@ export default function HadithCard() {
   }, [loadDailyHadith]);
 
   const openDailyHadith = () => {
-    if (daily?.id) {
-      router.push(`/hadith/${daily.id}` as Href);
+    if (visibleDaily?.id) {
+      router.push(`/hadith/${visibleDaily.id}` as Href);
       return;
     }
 
@@ -70,7 +72,7 @@ export default function HadithCard() {
   return (
     <Pressable
       accessibilityRole="button"
-      accessibilityLabel="Ouvrir le hadith du jour"
+      accessibilityLabel={t("home.openHadithToday")}
       onPress={openDailyHadith}
       style={({ pressed }) => [styles.card, pressed && styles.pressed]}
     >
@@ -86,13 +88,13 @@ export default function HadithCard() {
           size={21}
           color={colors.primaryLight}
         />
-        <Text style={styles.title}>Hadith du jour</Text>
+        <Text style={styles.title}>{t("home.hadithToday")}</Text>
       </View>
       <Text numberOfLines={3} style={styles.bodyText}>
         {previewHadithText}
       </Text>
       <Text numberOfLines={1} style={styles.reference}>
-        {daily?.reference || ""}
+        {visibleDaily?.reference || ""}
       </Text>
     </Pressable>
   );

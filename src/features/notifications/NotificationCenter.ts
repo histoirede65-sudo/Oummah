@@ -7,6 +7,7 @@ import type {
   MosquePrayerKey,
   MosquePrayerSchedule,
 } from "../mosques/data/mosquePrayerTimes";
+import { isNotificationPermissionGranted } from "./NotificationPermissions";
 
 export type CenterReminderId =
   | "morning-dua"
@@ -93,6 +94,7 @@ const PREFERENCES_KEY = "oumma:notification-center-preferences:v1";
 const READ_IDS_KEY = "oumma:notification-center-read:v1";
 const SCHEDULED_IDS_KEY = "oumma:notification-center-scheduled:v1";
 const NOTIFICATION_OWNER = "oummah-notification-center";
+const readStatusListeners = new Set<() => void>();
 const LEGACY_PRAYER_TITLES = ["fajr", "dhuhr", "dohr", "asr", "maghrib", "isha"] as const;
 const DAILY_VERSE_SELECTION = [
   { surahId: 1, verse: 5 },
@@ -303,6 +305,51 @@ function localDateKey(date = new Date()) {
   ].join("-");
 }
 
+export function notificationCenterReadId(
+  reminderId: unknown,
+  date = new Date(),
+) {
+  if (
+    typeof reminderId !== "string" ||
+    !CENTER_REMINDERS.some((reminder) => reminder.id === reminderId)
+  ) {
+    return null;
+  }
+
+  return `${localDateKey(date)}:${reminderId}`;
+}
+
+// Older notifications (including Joumou'a) do not always carry reminderId.
+export function notificationResponseReadId(notification: Notifications.Notification) {
+  const data = notification.request.content.data;
+  const date = new Date(notification.date);
+  const explicitId = notificationCenterReadId(data?.reminderId, date);
+  if (explicitId) return explicitId;
+  if (data?.notificationOwner === "oummah-jumuah") {
+    return notificationCenterReadId("jummah", date);
+  }
+  const route = typeof data?.route === "string" ? data.route.trim() : "";
+  const remindersByRoute: Record<string, CenterReminderId> = {
+    "/jumuah": "jummah",
+    "/verse-of-day": "verse-of-day",
+    "/hadiths?open=daily": "hadith-of-day",
+    "/hifz": "hifz",
+    "/dua?section=morning": "morning-dua",
+    "/dua?section=evening": "evening-dua",
+    "/dua?section=sleep&focus=wake-up": "wake-up-dua",
+    "/dua?section=sleep&focus=bedtime": "sleep-dua",
+    "/dua?section=food&focus=before-meal": "before-meal-dua",
+    "/dua?section=home&focus=leave": "leave-home-dua",
+    "/dua?section=home&focus=enter": "enter-home-dua",
+  };
+  return notificationCenterReadId(remindersByRoute[route], date);
+}
+
+export function subscribeNotificationReadStatus(listener: () => void) {
+  readStatusListeners.add(listener);
+  return () => readStatusListeners.delete(listener);
+}
+
 export async function loadNotificationCenterPreferences() {
   const raw = await AsyncStorage.getItem(PREFERENCES_KEY).catch(() => null);
   if (!raw) return DEFAULT_NOTIFICATION_CENTER_PREFERENCES;
@@ -336,14 +383,28 @@ export async function loadReadNotificationIds() {
   const raw = await AsyncStorage.getItem(READ_IDS_KEY).catch(() => null);
   if (!raw) return [] as string[];
   try {
-    return JSON.parse(raw) as string[];
+    const parsed: unknown = JSON.parse(raw);
+    return Array.isArray(parsed)
+      ? parsed.filter((id): id is string => typeof id === "string")
+      : [];
   } catch {
     return [] as string[];
   }
 }
 
+let readStatusQueue: Promise<void> = Promise.resolve();
+
 export function saveReadNotificationIds(ids: readonly string[]) {
-  return AsyncStorage.setItem(READ_IDS_KEY, JSON.stringify(ids.slice(-100)));
+  const addedIds = [...ids];
+  const save = async () => {
+    // Merge inside the queue so simultaneous taps cannot overwrite one another.
+    const current = await loadReadNotificationIds();
+    const merged = [...new Set([...current, ...addedIds])].slice(-100);
+    await AsyncStorage.setItem(READ_IDS_KEY, JSON.stringify(merged));
+    readStatusListeners.forEach((listener) => listener());
+  };
+  readStatusQueue = readStatusQueue.then(save, save);
+  return readStatusQueue;
 }
 
 function hifzRemaining(state: HifzState | null, now: Date) {
@@ -443,18 +504,9 @@ export function buildNotificationCenterItems({
   return items;
 }
 
-function isPermissionGranted(status: Notifications.NotificationPermissionsStatus) {
-  if (Platform.OS !== "ios") return status.granted;
-  return (
-    status.ios?.status === Notifications.IosAuthorizationStatus.AUTHORIZED ||
-    status.ios?.status === Notifications.IosAuthorizationStatus.PROVISIONAL ||
-    status.ios?.status === Notifications.IosAuthorizationStatus.EPHEMERAL
-  );
-}
-
 async function configureChannel(mode: CenterAlertMode) {
   if (Platform.OS !== "android") return;
-  await Notifications.setNotificationChannelAsync(`oummah-reminders-${mode}`, {
+  await Notifications.setNotificationChannelAsync(`oummah-reminders-${mode}-v3`, {
     name: "Rappels OUMMAH",
     importance:
       mode === "silent"
@@ -469,11 +521,11 @@ async function configureChannel(mode: CenterAlertMode) {
 export async function requestNotificationCenterPermission(mode: CenterAlertMode) {
   await configureChannel(mode);
   const current = await Notifications.getPermissionsAsync();
-  if (isPermissionGranted(current)) return true;
+  if (isNotificationPermissionGranted(current)) return true;
   const requested = await Notifications.requestPermissionsAsync({
     ios: { allowAlert: true, allowSound: true, allowBadge: true },
   });
-  return isPermissionGranted(requested);
+  return isNotificationPermissionGranted(requested);
 }
 
 async function cancelScheduledCenterNotifications() {
@@ -511,7 +563,7 @@ function notificationContent(
   return {
     title,
     body,
-    data: { route, reminderId, notificationOwner: NOTIFICATION_OWNER },
+    data: { route, reminderId, notificationOwner: NOTIFICATION_OWNER, notificationMode: mode },
     sound: mode === "sound" ? "default" : false,
     vibrate: mode === "vibration" ? [0, 300, 180, 300] : [],
     color: "#F2B53D",
@@ -522,18 +574,20 @@ async function syncNotificationCenterScheduleInternal(
   preferences: NotificationCenterPreferences,
   schedule: MosquePrayerSchedule | null,
   mosqueName?: string,
+  hifzState: HifzState | null = null,
 ) {
   await cancelScheduledCenterNotifications();
   if (!preferences.systemEnabled) return;
 
   const permission = await Notifications.getPermissionsAsync();
-  if (!isPermissionGranted(permission)) return;
+  if (!isNotificationPermissionGranted(permission)) return;
   await configureChannel(preferences.mode);
-  const channelId = `oummah-reminders-${preferences.mode}`;
+  const channelId = `oummah-reminders-${preferences.mode}-v3`;
   const ids: string[] = [];
 
   for (const reminder of CENTER_REMINDERS) {
     if (!preferences.reminders[reminder.id] || !reminder.time) continue;
+    if (reminder.id === "hifz" && hifzRemaining(hifzState, new Date()) === 0) continue;
     const [hour, minute] = (preferences.reminderTimes?.[reminder.id] ?? reminder.time).split(":").map(Number);
     ids.push(
       await Notifications.scheduleNotificationAsync({
@@ -575,32 +629,9 @@ async function syncNotificationCenterScheduleInternal(
   }
 
 
-  if (preferences.reminders.jummah && schedule) {
-    const dhuhr = schedule.prayers.find((prayer) => prayer.key === ("Dhuhr" as MosquePrayerKey));
-    if (dhuhr) {
-      const prayerDate = new Date(dhuhr.timestamp);
-      let hour = prayerDate.getHours() - 1;
-      if (hour < 0) hour = 0;
-      ids.push(
-        await Notifications.scheduleNotificationAsync({
-          content: notificationContent(
-            "Préparez Joumou‘a",
-            mosqueName ? `La prière du vendredi approche à ${mosqueName}.` : "La prière du vendredi approche.",
-            preferences.mode,
-            "/mosques",
-            "jummah",
-          ),
-          trigger: {
-            type: Notifications.SchedulableTriggerInputTypes.WEEKLY,
-            weekday: 6,
-            hour,
-            minute: prayerDate.getMinutes(),
-            channelId,
-          },
-        }),
-      );
-    }
-  }
+  // Joumou'a est programmée globalement par JumuahService.
+  // Ne pas la reprogrammer ici : cela évite les doublons et la dépendance à une mosquée.
+
 
   await AsyncStorage.setItem(SCHEDULED_IDS_KEY, JSON.stringify(ids));
 }
@@ -612,8 +643,9 @@ export function syncNotificationCenterSchedule(
   preferences: NotificationCenterPreferences,
   schedule: MosquePrayerSchedule | null,
   mosqueName?: string,
+  hifzState: HifzState | null = null,
 ) {
-  const run = () => syncNotificationCenterScheduleInternal(preferences, schedule, mosqueName);
+  const run = () => syncNotificationCenterScheduleInternal(preferences, schedule, mosqueName, hifzState);
   notificationCenterSyncQueue = notificationCenterSyncQueue.then(run, run);
   return notificationCenterSyncQueue;
 }

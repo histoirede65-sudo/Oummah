@@ -6,23 +6,24 @@ import type { Juz } from "../../data/juz";
 import { SURAHS } from "../../data/surahs";
 import { colors } from "../../theme/colors";
 import { typography } from "../../theme/typography";
+import { useI18n } from "../../i18n";
 
 type JuzListProps = {
   data: readonly Juz[];
   header: React.ReactElement;
+  getSurahDisplayName: (surah: (typeof SURAHS)[number]) => string;
   onJuzPress: (juz: Juz) => void;
 };
 
-export default function JuzList({ data, header, onJuzPress }: JuzListProps) {
+export default function JuzList({ data, header, getSurahDisplayName, onJuzPress }: JuzListProps) {
+  const { t } = useI18n();
   return (
     <FlatList
       data={data}
       keyExtractor={(item) => String(item.id)}
       ListHeaderComponent={header}
       ListEmptyComponent={
-        <Text style={styles.empty}>
-          Aucun Juz ne correspond à cette recherche.
-        </Text>
+        <Text style={styles.empty}>{t("quran.juzSearchEmpty")}</Text>
       }
       renderItem={({ item }) => {
         const surah =
@@ -48,10 +49,13 @@ export default function JuzList({ data, header, onJuzPress }: JuzListProps) {
             <View style={styles.copy}>
               <Text style={styles.title}>Juz {item.id}</Text>
               <Text style={styles.subtitle}>
-                Commence à {surah.transliteration}
+                {t("quran.startsAt", { surah: surah.transliteration })}
               </Text>
               <Text style={styles.meta}>
-                {surah.frenchName} · Verset {item.startVerse}
+                {t("quran.juzStartVerse", {
+                  surah: getSurahDisplayName(surah),
+                  verse: item.startVerse,
+                })}
               </Text>
             </View>
             <View style={styles.arabicPill}>

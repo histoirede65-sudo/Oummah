@@ -10,6 +10,7 @@ import type { HadithDocumentaryCategory } from "../../../../features/hadith-expl
 import HadithScreenHeader from "../../../../features/hadith-explorer/presentation/HadithScreenHeader";
 import { colors } from "../../../../theme/colors";
 import { typography } from "../../../../theme/typography";
+import { useI18n } from "../../../../i18n";
 
 function categoryIcon(name: string): keyof typeof Ionicons.glyphMap {
   const value = name.toLocaleLowerCase("fr");
@@ -41,6 +42,7 @@ function categoryIcon(name: string): keyof typeof Ionicons.glyphMap {
 }
 
 export default function HadithCollectionCategoriesScreen() {
+  const { language, t } = useI18n();
   const { collectionId, uxTitle, uxTerms } = useLocalSearchParams<{
     collectionId: string;
     uxTitle?: string;
@@ -57,13 +59,13 @@ export default function HadithCollectionCategoriesScreen() {
       setLoading(false);
       return;
     }
-    void hadithRepository.listCollectionCategories(collection)
+    void hadithRepository.listCollectionCategories(collection, language)
       .then((value) => active && setCategories(value))
       .finally(() => active && setLoading(false));
     return () => {
       active = false;
     };
-  }, [collection]);
+  }, [collection, language]);
 
   const visibleCategories = useMemo(() => {
     const terms = uxTerms?.split(",").filter(Boolean);
@@ -75,21 +77,21 @@ export default function HadithCollectionCategoriesScreen() {
   }, [categories, searchText, uxTerms]);
 
   if (!collection) {
-    return <View style={styles.center}><Text style={styles.title}>Recueil introuvable</Text></View>;
+    return <View style={styles.center}><Text style={styles.title}>{t("hadith.collectionNotFound")}</Text></View>;
   }
 
-  const pageTitle = uxTitle || "Toutes les catégories";
+  const pageTitle = uxTitle || t("hadith.allCategories");
 
   return (
     <LinearGradient colors={["#080713", "#120A1D", "#080713"]} style={styles.screen}>
       <SafeAreaView edges={["top"]} style={styles.safe}>
         <View style={styles.header}>
-          <HadithScreenHeader title={pageTitle} subtitle={collection.name} />
+          <HadithScreenHeader title={pageTitle} subtitle={t(`hadith.collection.${collection.id}.name` as never)} />
         </View>
         {loading ? (
           <View style={styles.center}>
             <ActivityIndicator color={colors.goldLight} />
-            <Text style={styles.muted}>Chargement des catégories…</Text>
+            <Text style={styles.muted}>{t("hadith.loadingCategories")}</Text>
           </View>
         ) : (
           <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
@@ -98,14 +100,14 @@ export default function HadithCollectionCategoriesScreen() {
               <TextInput
                 value={searchText}
                 onChangeText={setSearchText}
-                placeholder="Rechercher une catégorie…"
+                placeholder={t("hadith.searchCategory")}
                 placeholderTextColor={colors.textMuted}
                 style={styles.searchInput}
                 autoCapitalize="none"
                 clearButtonMode="while-editing"
               />
             </View>
-            <Text style={styles.muted}>{visibleCategories.length} catégories disponibles</Text>
+            <Text style={styles.muted}>{t("hadith.availableCategories", { count: visibleCategories.length })}</Text>
             <View style={styles.grid}>
               {visibleCategories.map((category) => (
                 <Pressable

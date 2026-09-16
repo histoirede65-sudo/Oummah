@@ -90,15 +90,10 @@ export function AudioPlayerProvider({
   const [isReady, setIsReady] = useState(false);
   const [isFavorite, setIsFavorite] = useState(false);
   const [sleepTimer, setSleepTimerState] = useState<SleepTimerOption>(null);
-  const restoredEngine = useRef<AudioEngine | null>(null);
 
   useEffect(() => {
     const unsubscribe = engine.on('stateChanged', setState);
-    if (restoredEngine.current !== engine) {
-      restoredEngine.current = engine;
-      setIsReady(false);
-      void engine.restoreSession().catch(() => false).finally(() => setIsReady(true));
-    }
+    setIsReady(true);
     return () => { unsubscribe(); };
   }, [engine]);
 

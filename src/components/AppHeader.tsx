@@ -26,6 +26,7 @@ import {
   buildNotificationCenterItems,
   loadNotificationCenterPreferences,
   loadReadNotificationIds,
+  subscribeNotificationReadStatus,
 } from "../features/notifications/NotificationCenter";
 import { colors } from "../theme/colors";
 import { typography } from "../theme/typography";
@@ -45,6 +46,7 @@ type MenuItem = {
     | "book-outline"
     | "headset-outline"
     | "business-outline"
+    | "restaurant-outline"
     | "calendar-outline"
     | "compass-outline"
     | "hand-left-outline"
@@ -53,6 +55,7 @@ type MenuItem = {
     | "library-outline"
     | "person-outline"
     | "shield-checkmark-outline"
+    | "images-outline"
     | "moon-outline";
 };
 
@@ -64,6 +67,8 @@ const MENU_GROUPS: ReadonlyArray<{
     title: "ESSENTIEL",
     items: [
       { label: "Accueil", description: "Votre journée", href: "/", icon: "home-outline" },
+      { label: "Fonds d’écran", description: "12 créations OUMMAH", href: "/wallpapers", icon: "images-outline" },
+      { label: "Djoumou’a", description: "Votre parcours du vendredi", href: "/jumuah", icon: "moon-outline" },
       { label: "Lire le Coran", description: "Sourates et lecture", href: "/quran", icon: "book-outline" },
       { label: "Hadiths", description: "Lire et méditer", href: "/hadith", icon: "library-outline" },
       { label: "Écouter", description: "Récitateurs et audio", href: "/listen/reciters", icon: "headset-outline" },
@@ -73,6 +78,7 @@ const MENU_GROUPS: ReadonlyArray<{
   {
     title: "AU QUOTIDIEN",
     items: [
+      { label: "Halal autour de moi", description: "Restaurants et commerces", href: "/halal", icon: "restaurant-outline" },
       { label: "Calendrier", description: "Dates et événements", href: "/calendar", icon: "calendar-outline" },
       { label: "Qibla", description: "Direction de La Mecque", href: "/qibla", icon: "compass-outline" },
       { label: "Invocations", description: "Dou‘as authentiques", href: "/dua", icon: "hand-left-outline" },
@@ -84,7 +90,6 @@ const MENU_GROUPS: ReadonlyArray<{
   {
     title: "OUMMAH",
     items: [
-      { label: "Djoumou’a", description: "Votre parcours du vendredi", href: "/jumuah", icon: "moon-outline" },
       { label: "Mon profil", description: "Compte et préférences", href: "/profile", icon: "person-outline" },
     ],
   },
@@ -198,7 +203,7 @@ export default function AppHeader({
           setIsAdmin(admin);
           if (admin) {
             const attention = await getAdminAttentionState().catch(() => null);
-            if (active) setAdminAttentionCount(attention?.attentionCount ?? 0);
+            if (active) setAdminAttentionCount(attention?.actionCount ?? 0);
           } else {
             setAdminAttentionCount(0);
           }
@@ -206,12 +211,16 @@ export default function AppHeader({
       };
 
       void refreshUnreadStatus();
+      const unsubscribeReadStatus = subscribeNotificationReadStatus(() => {
+        void refreshUnreadStatus();
+      });
       const intervalId = setInterval(() => {
         void refreshUnreadStatus();
       }, 60_000);
 
       return () => {
         active = false;
+        unsubscribeReadStatus();
         clearInterval(intervalId);
       };
     }, []),
@@ -342,16 +351,33 @@ export default function AppHeader({
                       onPress={() => navigate(item.href)}
                       style={({ pressed }) => [
                         styles.menuItem,
+                        item.href === "/jumuah" && styles.menuItemJumuah,
+                        item.href === "/wallpapers" && styles.menuItemWallpapers,
                         pressed && styles.menuItemPressed,
                       ]}
                     >
-                      <View style={styles.menuItemIcon}>
-                        <Ionicons name={item.icon} size={19} color="#F2BE55" />
+                      <View
+                        style={[
+                          styles.menuItemIcon,
+                          item.href === "/jumuah" && styles.menuItemIconJumuah,
+                          item.href === "/wallpapers" && styles.menuItemIconWallpapers,
+                        ]}
+                      >
+                        <Ionicons
+                          name={item.icon}
+                          size={19}
+                          color={item.href === "/wallpapers" ? "#E2B6F3" : "#F2BE55"}
+                        />
                       </View>
                       <View style={styles.menuItemCopy}>
                         <Text style={styles.menuItemLabel}>{item.label}</Text>
                         <Text style={styles.menuItemDescription}>{item.description}</Text>
                       </View>
+                      {item.href === "/wallpapers" ? (
+                        <View style={styles.menuNewBadge}>
+                          <Text style={styles.menuNewBadgeText}>NOUVEAU</Text>
+                        </View>
+                      ) : null}
                       {item.href === "/admin" && adminAttentionCount > 0 ? <View style={styles.adminAttentionDotMenu} /> : null}
                       <Ionicons
                         name="chevron-forward"
@@ -377,7 +403,12 @@ const styles = StyleSheet.create({
   adminAttentionDot: { position: "absolute", top: -2, right: -3, width: 8, height: 8, borderRadius: 4, backgroundColor: colors.danger, borderWidth: 1, borderColor: colors.background },
   adminAttentionDotMenu: { width: 8, height: 8, marginRight: 9, borderRadius: 4, backgroundColor: colors.danger },
   container: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
     zIndex: 5,
+    elevation: 5,
     height: 70,
     paddingHorizontal: 17,
     flexDirection: "row",
@@ -503,6 +534,26 @@ const styles = StyleSheet.create({
   menuItemPressed: {
     backgroundColor: "rgba(226,169,58,0.10)",
   },
+  menuItemJumuah: {
+    marginBottom: 6,
+    borderWidth: 1,
+    borderColor: "rgba(242,190,85,0.58)",
+    backgroundColor: "rgba(242,190,85,0.075)",
+  },
+  menuItemWallpapers: {
+    marginBottom: 6,
+    borderWidth: 1,
+    borderColor: "rgba(194,123,224,0.42)",
+    backgroundColor: "rgba(125,65,151,0.16)",
+  },
+  menuItemIconJumuah: {
+    borderColor: "rgba(242,190,85,0.52)",
+    backgroundColor: "rgba(242,190,85,0.11)",
+  },
+  menuItemIconWallpapers: {
+    borderColor: "rgba(220,166,241,0.46)",
+    backgroundColor: "rgba(154,83,184,0.2)",
+  },
   menuItemIcon: {
     width: 38,
     height: 38,
@@ -527,6 +578,20 @@ const styles = StyleSheet.create({
     color: "rgba(231,220,229,0.48)",
     fontFamily: typography.sans,
     fontSize: 9.5,
+  },
+  menuNewBadge: {
+    marginRight: 7,
+    paddingHorizontal: 6,
+    paddingVertical: 4,
+    borderRadius: 8,
+    backgroundColor: "rgba(226,182,243,0.14)",
+  },
+  menuNewBadgeText: {
+    color: "#E8C2F5",
+    fontFamily: typography.sans,
+    fontSize: 6.5,
+    fontWeight: "900",
+    letterSpacing: 0.55,
   },
   menuFooter: {
     paddingVertical: 12,

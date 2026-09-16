@@ -10,6 +10,7 @@ import { fetchPublishedCollectionAvailability } from "../../features/hadith-expl
 import HadithScreenHeader from "../../features/hadith-explorer/presentation/HadithScreenHeader";
 import { colors } from "../../theme/colors";
 import { typography } from "../../theme/typography";
+import { useI18n } from "../../i18n";
 
 const COLLECTION_COVERS: ImageSourcePropType[] = [
   require("../../assets/images/hadith-collections/sahih-bukhari.png"),
@@ -26,6 +27,7 @@ const COLLECTION_COVERS: ImageSourcePropType[] = [
 const HIDDEN_COLLECTION_IDS = new Set(["riyad", "adab", "nasai"]);
 
 export default function HadithCollectionsScreen() {
+  const { t } = useI18n();
   const [availableCollections, setAvailableCollections] = useState<Set<string> | null>(null);
   const fallbackAvailableCollections = new Set(["nasai", "nawawi"]);
 
@@ -41,7 +43,7 @@ export default function HadithCollectionsScreen() {
     <LinearGradient colors={["#080713", "#120A1D", "#080713"]} style={styles.screen}>
       <SafeAreaView edges={["top"]} style={styles.safe}>
         <View style={styles.header}>
-          <HadithScreenHeader title="Collections" subtitle="Explorer par source référencée" />
+          <HadithScreenHeader title={t("hadith.collections")} subtitle={t("hadith.collectionsScreenSubtitle")} />
         </View>
 
         <ScrollView
@@ -55,9 +57,7 @@ export default function HadithCollectionsScreen() {
               color={colors.goldLight}
             />
             <Text style={styles.noticeText}>
-              HadeethEnc propose une sélection traduite et authentifiée, pas
-              nécessairement l’intégralité de chaque recueil. OUMMAH l’indique
-              clairement pour ne jamais induire en erreur.
+              {t("hadith.collectionsNotice")}
             </Text>
           </View>
 
@@ -120,7 +120,7 @@ export default function HadithCollectionsScreen() {
                       {collection.arabicName}
                     </Text>
                     <Text numberOfLines={2} style={styles.title}>
-                      {collection.name}
+                      {t(`hadith.collection.${collection.id}.name` as never)}
                     </Text>
                   </View>
                 </View>
@@ -131,12 +131,12 @@ export default function HadithCollectionsScreen() {
                     ellipsizeMode="tail"
                     style={styles.description}
                   >
-                    {collection.description}
+                    {t(`hadith.collection.${collection.id}.description` as never)}
                   </Text>
                 </View>
 
                 <View style={[styles.footer, availableCollections !== null && !availableCollections.has(collection.id) && !fallbackAvailableCollections.has(collection.id) && styles.hiddenFooter]}>
-                  <Text style={styles.badge}>SÉLECTION RÉFÉRENCÉE</Text>
+                  <Text style={styles.badge}>{t("hadith.referencedSelection")}</Text>
                   <Ionicons
                     name="arrow-forward"
                     size={16}
@@ -144,14 +144,14 @@ export default function HadithCollectionsScreen() {
                   />
                 </View>
                 {availableCollections !== null && !availableCollections.has(collection.id) && !fallbackAvailableCollections.has(collection.id) ? (
-                  <Text style={styles.unavailableBadge}>BIENTÔT DISPONIBLE</Text>
+                  <Text style={styles.unavailableBadge}>{t("hadith.comingSoon")}</Text>
                 ) : null}
               </Pressable>
             ))}
           </View>
 
           <Text style={styles.credit}>
-            Données et classifications : HadeethEnc · flux API courant
+            {t("hadith.dataCredit")}
           </Text>
         </ScrollView>
       </SafeAreaView>

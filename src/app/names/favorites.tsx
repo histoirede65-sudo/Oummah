@@ -1,0 +1,10 @@
+import { Ionicons } from "@expo/vector-icons";
+import { router, useFocusEffect } from "expo-router";
+import { useCallback, useState } from "react";
+import { FlatList, Pressable, SafeAreaView, StyleSheet, Text, View } from "react-native";
+import { NAMES } from "../../features/names/namesData";
+import { loadNameFavorites, saveNameFavorites } from "../../features/names/namesStorage";
+import { colors } from "../../theme/colors";
+import { typography } from "../../theme/typography";
+export default function NameFavoritesScreen(){ const [ids,setIds]=useState<string[]>([]); useFocusEffect(useCallback(()=>{void loadNameFavorites().then(setIds)},[])); const data=NAMES.filter(n=>ids.includes(n.id)); return <SafeAreaView style={s.safe}><View style={s.header}><Pressable onPress={()=>router.back()}><Ionicons name="arrow-back" size={23} color={colors.text}/></Pressable><Text style={s.title}>Mes favoris</Text><View/></View><FlatList data={data} keyExtractor={x=>x.id} contentContainerStyle={s.content} ListEmptyComponent={<Text style={s.empty}>Vos prénoms favoris apparaîtront ici.</Text>} renderItem={({item})=><View style={s.item}><View><Text style={s.name}>{item.name}</Text><Text style={s.meaning}>{item.meaning}</Text></View><Pressable onPress={()=>{const next=ids.filter(id=>id!==item.id);setIds(next);void saveNameFavorites(next)}}><Ionicons name="heart" size={22} color={colors.goldLight}/></Pressable></View>}/></SafeAreaView> }
+const s=StyleSheet.create({safe:{flex:1,backgroundColor:colors.background},header:{padding:20,flexDirection:"row",justifyContent:"space-between",alignItems:"center"},title:{color:colors.text,fontFamily:typography.serifSemibold,fontSize:26},content:{padding:20},item:{paddingVertical:16,borderBottomWidth:1,borderBottomColor:colors.borderSoft,flexDirection:"row",justifyContent:"space-between",alignItems:"center"},name:{color:colors.text,fontFamily:typography.serifMedium,fontSize:20},meaning:{color:colors.textMuted,fontSize:12,marginTop:3},empty:{color:colors.textMuted,textAlign:"center",marginTop:50}})

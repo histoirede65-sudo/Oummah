@@ -109,9 +109,9 @@ export default function MiniPlayer() {
       <LinearGradient
         pointerEvents="none"
         colors={[
-          colors.surfaceAlt,
-          colors.purpleDeep,
-          colors.backgroundSecondary,
+          colors.goldDark,
+          colors.gold,
+          colors.goldLight,
         ]}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
@@ -164,17 +164,17 @@ export default function MiniPlayer() {
         <Ionicons
           name={isPlaying ? "pause" : "play"}
           size={21}
-          color={colors.background}
+          color={colors.text}
           style={!isPlaying && styles.playIcon}
         />
       </Pressable>
       <Pressable
         accessibilityRole="button"
-        accessibilityLabel="Sourate suivante"
+        accessibilityLabel={t("audio.next")}
         onPress={() => void next()}
         style={({ pressed }) => [styles.nextButton, pressed && styles.pressed]}
       >
-        <Ionicons name="play-skip-forward" size={18} color={colors.goldLight} />
+        <Ionicons name="play-skip-forward" size={18} color={colors.text} />
       </Pressable>
       <View style={styles.progressTrack}>
         <View
@@ -193,13 +193,13 @@ const styles = StyleSheet.create({
     position: "absolute",
     left: 12,
     right: 12,
-    height: 58,
+    height: 64,
     flexDirection: "row",
     alignItems: "center",
     borderWidth: 1,
-    borderColor: colors.borderSoft,
-    borderRadius: 20,
-    backgroundColor: colors.surfaceAlt,
+    borderColor: colors.goldLight,
+    borderRadius: 22,
+    backgroundColor: colors.gold,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.28,
@@ -216,8 +216,8 @@ const styles = StyleSheet.create({
     paddingLeft: 10,
   },
   artwork: {
-    width: 40,
-    height: 40,
+    width: 44,
+    height: 44,
     overflow: "hidden",
     alignItems: "center",
     justifyContent: "center",
@@ -231,14 +231,14 @@ const styles = StyleSheet.create({
   title: {
     color: colors.text,
     fontFamily: typography.serif,
-    fontSize: 15,
+    fontSize: 16,
     fontWeight: "600",
   },
   subtitle: {
     marginTop: 1,
-    color: colors.textMuted,
+    color: colors.text,
     fontFamily: typography.sans,
-    fontSize: 9.5,
+    fontSize: 10.5,
     fontWeight: "500",
   },
   closeButton: {
@@ -258,12 +258,12 @@ const styles = StyleSheet.create({
     elevation: 4,
   },
   playButton: {
-    width: 39,
-    height: 39,
+    width: 42,
+    height: 42,
     alignItems: "center",
     justifyContent: "center",
-    borderRadius: 20,
-    backgroundColor: colors.goldLight,
+    borderRadius: 21,
+    backgroundColor: colors.purpleDeep,
     shadowColor: colors.gold,
     shadowOpacity: 0.34,
     shadowRadius: 8,
@@ -286,6 +286,6 @@ const styles = StyleSheet.create({
     borderRadius: 2,
     backgroundColor: "rgba(248,244,238,0.12)",
   },
-  progressFill: { height: "100%", backgroundColor: colors.goldLight },
+  progressFill: { height: "100%", backgroundColor: colors.text },
   pressed: { opacity: 0.68 },
 });

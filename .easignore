@@ -1,11 +1,25 @@
-node_modules/
-.expo/
-.expo-maps-check/
-.expo-qibla-route-check/
-/android/
-/ios/
-dist/
-web-build/
+# Git
+.git
+.gitignore
+
+# Sauvegardes / archives locales
 *.zip
+
+# Logs
 *.log
-.env*.local
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Outils / caches
+.expo
+.eas
+.vscode
+.idea
+
+# Supabase local/temp
+supabase/.temp
+
+# OS
+.DS_Store
+Thumbs.db

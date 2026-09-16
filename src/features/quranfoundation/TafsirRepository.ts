@@ -4,6 +4,7 @@ const SUPABASE_URL = process.env.EXPO_PUBLIC_SUPABASE_URL!;
 const ANON_KEY = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY!;
 
 export const DEFAULT_TAFSIR_SOURCE = 'french_mokhtasar';
+export const ENGLISH_TAFSIR_SOURCE = 'english_ibn_kathir';
 
 export type QuranTafsir = {
   verseKey: string;
@@ -75,7 +76,10 @@ function normalizeTafsir(
       raw.resourceName ??
       raw.resource_name ??
       'Al-Mukhtasar fi Tafsir al-Qur’an',
-    languageName: raw.languageName ?? raw.language_name ?? 'french',
+    languageName:
+      raw.languageName ??
+      raw.language_name ??
+      (requestedSource === ENGLISH_TAFSIR_SOURCE ? 'english' : 'french'),
     text,
   };
 }
@@ -108,22 +112,27 @@ export const tafsirRepository = {
     const persisted = await readPersisted(storageKey);
 
     try {
+      const isEnglish = source === ENGLISH_TAFSIR_SOURCE;
       const response = await fetch(
-        `${SUPABASE_URL}/functions/v1/quran-tafsir?verse_key=${encodeURIComponent(verseKey)}&source=${encodeURIComponent(source)}`,
-        {
-          method: 'GET',
-          headers: {
-            Authorization: `Bearer ${ANON_KEY}`,
-            apikey: ANON_KEY,
-            'Content-Type': 'application/json',
-          },
-        },
+        isEnglish
+          ? `https://api.quran.com/api/v4/tafsirs/169/by_ayah/${encodeURIComponent(verseKey)}`
+          : `${SUPABASE_URL}/functions/v1/quran-tafsir?verse_key=${encodeURIComponent(verseKey)}&source=${encodeURIComponent(source)}`,
+        isEnglish
+          ? undefined
+          : {
+              method: 'GET',
+              headers: {
+                Authorization: `Bearer ${ANON_KEY}`,
+                apikey: ANON_KEY,
+                'Content-Type': 'application/json',
+              },
+            },
       );
 
       if (!response.ok) {
         const details = await response.text().catch(() => '');
         throw new Error(
-          `Tafsir QuranEnc (${response.status})${details ? ` : ${details}` : ''}`,
+          `Tafsir source (${response.status})${details ? ` : ${details}` : ''}`,
         );
       }
 

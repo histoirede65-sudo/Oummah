@@ -1,0 +1,2218 @@
+{
+  "generatedAt": "2026-08-29T13:17:58.075Z",
+  "sourcePayload": "scripts/hadith/data/hadeethenc-fr-v1.17.0.payload.json",
+  "policy": "candidates_only_no_automatic_mapping",
+  "thresholds": {
+    "strong": 0.9,
+    "review": 0.65
+  },
+  "totalFiqhHadiths": 71,
+  "alreadyVerified": 1,
+  "strongCandidates": 0,
+  "reviewCandidates": 59,
+  "noReliableCandidate": 39,
+  "totalCandidateRows": 59,
+  "referencesWithCandidates": [
+    "abudawud-1573",
+    "bukhari-1117",
+    "bukhari-1405",
+    "bukhari-1454",
+    "bukhari-1483",
+    "bukhari-1503",
+    "bukhari-1652",
+    "bukhari-1748",
+    "bukhari-1906",
+    "bukhari-1907",
+    "bukhari-1935",
+    "bukhari-1937",
+    "bukhari-1958",
+    "bukhari-1990",
+    "bukhari-2017",
+    "bukhari-2020",
+    "muslim-1112a",
+    "muslim-1113e",
+    "muslim-1141a",
+    "muslim-1155",
+    "muslim-1211ab",
+    "muslim-1211ae",
+    "muslim-1218",
+    "muslim-1218a",
+    "muslim-1218c",
+    "muslim-1334",
+    "muslim-1336c",
+    "muslim-1337",
+    "muslim-293",
+    "muslim-582",
+    "muslim-687a"
+  ],
+  "rows": [
+    {
+      "sourceId": "abudawud-1573",
+      "expectedCollection": "Sunan Abi Dawud",
+      "expectedReference": "1573",
+      "currentStatus": "unverified",
+      "candidates": [
+        {
+          "hadeethEncId": "10901",
+          "sourceCollections": [
+            "Abu Dawud"
+          ],
+          "narrator": null,
+          "title": "Le récit de celui qui porte préjudice à sa prière selon la version de Rifâ’ah (qu’Allah l’agrée).",
+          "sourceReference": "[Rapporté par Abû Dâwud]",
+          "documentHash": "5ce7f7ee0ed3d7d1fa16fa87632b88bf046f00bbbbe661b8692210ea25c90314",
+          "confidence": "review_candidate",
+          "score": {
+            "collectionMatch": 0.55,
+            "referenceMatch": 0,
+            "narratorMatch": 0,
+            "contentMatch": 0.15,
+            "genericTermsPenalty": 0,
+            "finalScore": 0.7000000000000001
+          },
+          "reasons": [
+            "collection concordante",
+            "formulation distinctive partageant au moins trois termes non generiques",
+            "termes non generiques: rapporte, sunan, dawud"
+          ],
+          "warnings": [
+            "aucune reference numerique canonique presente"
+          ]
+        },
+        {
+          "hadeethEncId": "11262",
+          "sourceCollections": [
+            "Abu Dawud",
+            "Ibn Majah"
+          ],
+          "narrator": null,
+          "title": "Le « Witr » est avéré, que celui qui le désire prie le « Witr » en sept [unités de prière] ; que celui qui le désire prie le « Witr » en cinq [unités de prière] ; que celui qui le désire prie le « Witr » en trois [unités de prière] et que celui qui le désire prie le « Witr » en une seule [unité de prière].",
+          "sourceReference": "[Rapporté par Ibn Mâjah - Rapporté par An-Nassâ'î - Rapporté par Abû Dâwud]",
+          "documentHash": "26bed822ac2213294366844d6f86323b0466461ab221943ff8d421537c654595",
+          "confidence": "review_candidate",
+          "score": {
+            "collectionMatch": 0.55,
+            "referenceMatch": 0,
+            "narratorMatch": 0,
+            "contentMatch": 0.15,
+            "genericTermsPenalty": 0,
+            "finalScore": 0.7000000000000001
+          },
+          "reasons": [
+            "collection concordante",
+            "formulation distinctive partageant au moins trois termes non generiques",
+            "termes non generiques: rapporte, sunan, dawud"
+          ],
+          "warnings": [
+            "aucune reference numerique canonique presente"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceId": "abudawud-1949",
+      "expectedCollection": "Sunan Abi Dawud",
+      "expectedReference": "1949",
+      "currentStatus": "unverified",
+      "candidates": []
+    },
+    {
+      "sourceId": "bukhari-1117",
+      "expectedCollection": "Sahih al-Bukhari",
+      "expectedReference": "1117",
+      "currentStatus": "unverified",
+      "candidates": [
+        {
+          "hadeethEncId": "6075",
+          "sourceCollections": [
+            "Al-Bukhari",
+            "Muslim"
+          ],
+          "narrator": null,
+          "title": "Le Messager d’Allah (sur lui la paix et le salut) pria chez lui alors qu’il était malade",
+          "sourceReference": "[Rapporté par Al-Bukhârî et Muslim]",
+          "documentHash": "b43b89088b64654479356fdf8a557447ac588ab05826429db009ac2b8840ec85",
+          "confidence": "review_candidate",
+          "score": {
+            "collectionMatch": 0.55,
+            "referenceMatch": 0,
+            "narratorMatch": 0,
+            "contentMatch": 0.15,
+            "genericTermsPenalty": 0,
+            "finalScore": 0.7000000000000001
+          },
+          "reasons": [
+            "collection concordante",
+            "formulation distinctive partageant au moins trois termes non generiques",
+            "termes non generiques: position, malade, capacite"
+          ],
+          "warnings": [
+            "aucune reference numerique canonique presente"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceId": "bukhari-1224",
+      "expectedCollection": "Sahih al-Bukhari",
+      "expectedReference": "1224",
+      "currentStatus": "unverified",
+      "candidates": []
+    },
+    {
+      "sourceId": "bukhari-1334",
+      "expectedCollection": "Sahih al-Bukhari",
+      "expectedReference": "1334",
+      "currentStatus": "unverified",
+      "candidates": []
+    },
+    {
+      "sourceId": "bukhari-1405",
+      "expectedCollection": "Sahih al-Bukhari",
+      "expectedReference": "1405",
+      "currentStatus": "unverified",
+      "candidates": [
+        {
+          "hadeethEncId": "4547",
+          "sourceCollections": [
+            "Al-Bukhari",
+            "Muslim"
+          ],
+          "narrator": null,
+          "title": "Il n'y a pas d'aumône légale à payer sur moins de cinq onces d'argent, ni sur moins de cinq chameaux et ni sur moins de cinq « Awsuq ».",
+          "sourceReference": "[Rapporté par Al-Bukhârî et Muslim]",
+          "documentHash": "2a1a6b95ad69fd962e176b063e06c1123e805de7b1fca700a599d7363aa94b6f",
+          "confidence": "review_candidate",
+          "score": {
+            "collectionMatch": 0.55,
+            "referenceMatch": 0,
+            "narratorMatch": 0,
+            "contentMatch": 0.15,
+            "genericTermsPenalty": 0,
+            "finalScore": 0.7000000000000001
+          },
+          "reasons": [
+            "collection concordante",
+            "formulation distinctive partageant au moins trois termes non generiques",
+            "termes non generiques: argent, chameaux, awsuq"
+          ],
+          "warnings": [
+            "aucune reference numerique canonique presente"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceId": "bukhari-1454",
+      "expectedCollection": "Sahih al-Bukhari",
+      "expectedReference": "1454",
+      "currentStatus": "unverified",
+      "candidates": [
+        {
+          "hadeethEncId": "4820",
+          "sourceCollections": [
+            "Al-Bukhari",
+            "Muslim"
+          ],
+          "narrator": null,
+          "title": "Je n'ai jamais faussé compagnie au Messager d'Allah (sur lui la paix et le salut) au cours d'une expédition militaire qu'il a entreprise, excepté l'expédition de Tabûk. Il n'y a que la bataille de Badr à laquelle je n'ai pas participé, mais personne n'a été blâmé pour cela.",
+          "sourceReference": "[Rapporté par Al-Bukhârî et Muslim]",
+          "documentHash": "73df0ef514b5da397fe6af275aab0447162ce8eeeb4175be198dcae2b180c715",
+          "confidence": "review_candidate",
+          "score": {
+            "collectionMatch": 0.55,
+            "referenceMatch": 0,
+            "narratorMatch": 0,
+            "contentMatch": 0.15,
+            "genericTermsPenalty": 0,
+            "finalScore": 0.7000000000000001
+          },
+          "reasons": [
+            "collection concordante",
+            "formulation distinctive partageant au moins trois termes non generiques",
+            "termes non generiques: lettre, chameaux, argent"
+          ],
+          "warnings": [
+            "aucune reference numerique canonique presente"
+          ]
+        },
+        {
+          "hadeethEncId": "6048",
+          "sourceCollections": [
+            "Al-Bukhari",
+            "Muslim"
+          ],
+          "narrator": null,
+          "title": "Le Messager d’Allah (sur lui la paix et le salut) fut interrogé au sujet de l’or ou de l’argent que l’on trouve par terre. Il répondit : \" Observe bien comment sont la bourse et le cordon, puis fais-en l’annonce pendant un an. Si personne ne les reconnaît, tu peux alors les dépenser. Toutefois, considère-les comme quelque chose que l’on t’a confié. Et si un jour leur propriétaire vient les réclamer, rends-les-lui ! \"",
+          "sourceReference": "[Rapporté par Al-Bukhârî et Muslim]",
+          "documentHash": "2aa83dfcf785e91c6b4845c3f65036f30f4a12dfaecf3195b549bca377529d79",
+          "confidence": "review_candidate",
+          "score": {
+            "collectionMatch": 0.55,
+            "referenceMatch": 0,
+            "narratorMatch": 0,
+            "contentMatch": 0.15,
+            "genericTermsPenalty": 0,
+            "finalScore": 0.7000000000000001
+          },
+          "reasons": [
+            "collection concordante",
+            "formulation distinctive partageant au moins trois termes non generiques",
+            "termes non generiques: chameaux, moutons, argent"
+          ],
+          "warnings": [
+            "aucune reference numerique canonique presente"
+          ]
+        },
+        {
+          "hadeethEncId": "6219",
+          "sourceCollections": [
+            "Al-Bukhari"
+          ],
+          "narrator": null,
+          "title": "Allah n'a pas envoyé un Prophète sans que celui-ci n'ait gardé les moutons !",
+          "sourceReference": "[Rapporté par Al-Bûkhârî]",
+          "documentHash": "1a5ba92be69a77685d73d3c56d34da877186da649d91c36187975b4188d25985",
+          "confidence": "review_candidate",
+          "score": {
+            "collectionMatch": 0.55,
+            "referenceMatch": 0,
+            "narratorMatch": 0,
+            "contentMatch": 0.15,
+            "genericTermsPenalty": 0,
+            "finalScore": 0.7000000000000001
+          },
+          "reasons": [
+            "collection concordante",
+            "formulation distinctive partageant au moins trois termes non generiques",
+            "termes non generiques: chameaux, moutons, argent"
+          ],
+          "warnings": [
+            "aucune reference numerique canonique presente"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceId": "bukhari-1483",
+      "expectedCollection": "Sahih al-Bukhari",
+      "expectedReference": "1483",
+      "currentStatus": "unverified",
+      "candidates": [
+        {
+          "hadeethEncId": "3853",
+          "sourceCollections": [
+            "Al-Bukhari",
+            "Muslim"
+          ],
+          "narrator": null,
+          "title": "Le menteur n'est pas celui qui réconcilie les gens en attribuant des paroles bienveillantes, ou en disant du bien.",
+          "sourceReference": "[Rapporté par Al-Bukhârî et Muslim]",
+          "documentHash": "d2b0568c4bc32394f689eeb5c8dac0a78189396254ff6b86b9b3d1c6f2a04f22",
+          "confidence": "review_candidate",
+          "score": {
+            "collectionMatch": 0.55,
+            "referenceMatch": 0,
+            "narratorMatch": 0,
+            "contentMatch": 0.15,
+            "genericTermsPenalty": 0,
+            "finalScore": 0.7000000000000001
+          },
+          "reasons": [
+            "collection concordante",
+            "formulation distinctive partageant au moins trois termes non generiques",
+            "termes non generiques: selon, decrit, sahih"
+          ],
+          "warnings": [
+            "aucune reference numerique canonique presente"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceId": "bukhari-1499",
+      "expectedCollection": "Sahih al-Bukhari",
+      "expectedReference": "1499",
+      "currentStatus": "unverified",
+      "candidates": []
+    },
+    {
+      "sourceId": "bukhari-1503",
+      "expectedCollection": "Sahih al-Bukhari",
+      "expectedReference": "1503",
+      "currentStatus": "unverified",
+      "candidates": [
+        {
+          "hadeethEncId": "3728",
+          "sourceCollections": [
+            "Al-Bukhari",
+            "Muslim"
+          ],
+          "narrator": null,
+          "title": "Lequel d’entre vous jure par Allah de ne pas faire le bien ?",
+          "sourceReference": "[Rapporté par Al-Bukhârî et Muslim]",
+          "documentHash": "6c53530e3d610b3837deaff19b46e7362e3ca5a37e5129c34901c23d1a91f54d",
+          "confidence": "review_candidate",
+          "score": {
+            "collectionMatch": 0.55,
+            "referenceMatch": 0,
+            "narratorMatch": 0,
+            "contentMatch": 0.15,
+            "genericTermsPenalty": 0,
+            "finalScore": 0.7000000000000001
+          },
+          "reasons": [
+            "collection concordante",
+            "formulation distinctive partageant au moins trois termes non generiques",
+            "termes non generiques: personnes, paiement, sahih"
+          ],
+          "warnings": [
+            "aucune reference numerique canonique presente"
+          ]
+        },
+        {
+          "hadeethEncId": "3853",
+          "sourceCollections": [
+            "Al-Bukhari",
+            "Muslim"
+          ],
+          "narrator": null,
+          "title": "Le menteur n'est pas celui qui réconcilie les gens en attribuant des paroles bienveillantes, ou en disant du bien.",
+          "sourceReference": "[Rapporté par Al-Bukhârî et Muslim]",
+          "documentHash": "d2b0568c4bc32394f689eeb5c8dac0a78189396254ff6b86b9b3d1c6f2a04f22",
+          "confidence": "review_candidate",
+          "score": {
+            "collectionMatch": 0.55,
+            "referenceMatch": 0,
+            "narratorMatch": 0,
+            "contentMatch": 0.15,
+            "genericTermsPenalty": 0,
+            "finalScore": 0.7000000000000001
+          },
+          "reasons": [
+            "collection concordante",
+            "formulation distinctive partageant au moins trois termes non generiques",
+            "termes non generiques: personnes, avant, sahih"
+          ],
+          "warnings": [
+            "aucune reference numerique canonique presente"
+          ]
+        },
+        {
+          "hadeethEncId": "4820",
+          "sourceCollections": [
+            "Al-Bukhari",
+            "Muslim"
+          ],
+          "narrator": null,
+          "title": "Je n'ai jamais faussé compagnie au Messager d'Allah (sur lui la paix et le salut) au cours d'une expédition militaire qu'il a entreprise, excepté l'expédition de Tabûk. Il n'y a que la bataille de Badr à laquelle je n'ai pas participé, mais personne n'a été blâmé pour cela.",
+          "sourceReference": "[Rapporté par Al-Bukhârî et Muslim]",
+          "documentHash": "73df0ef514b5da397fe6af275aab0447162ce8eeeb4175be198dcae2b180c715",
+          "confidence": "review_candidate",
+          "score": {
+            "collectionMatch": 0.55,
+            "referenceMatch": 0,
+            "narratorMatch": 0,
+            "contentMatch": 0.15,
+            "genericTermsPenalty": 0,
+            "finalScore": 0.7000000000000001
+          },
+          "reasons": [
+            "collection concordante",
+            "formulation distinctive partageant au moins trois termes non generiques",
+            "termes non generiques: dattes, personnes, avant"
+          ],
+          "warnings": [
+            "aucune reference numerique canonique presente"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceId": "bukhari-1504",
+      "expectedCollection": "Sahih al-Bukhari",
+      "expectedReference": "1504",
+      "currentStatus": "unverified",
+      "candidates": []
+    },
+    {
+      "sourceId": "bukhari-1528",
+      "expectedCollection": "Sahih al-Bukhari",
+      "expectedReference": "1528",
+      "currentStatus": "unverified",
+      "candidates": []
+    },
+    {
+      "sourceId": "bukhari-1549",
+      "expectedCollection": "Sahih al-Bukhari",
+      "expectedReference": "1549",
+      "currentStatus": "unverified",
+      "candidates": []
+    },
+    {
+      "sourceId": "bukhari-159",
+      "expectedCollection": "Sahih al-Bukhari",
+      "expectedReference": "159",
+      "currentStatus": "unverified",
+      "candidates": []
+    },
+    {
+      "sourceId": "bukhari-1652",
+      "expectedCollection": "Sahih al-Bukhari",
+      "expectedReference": "1652",
+      "currentStatus": "unverified",
+      "candidates": [
+        {
+          "hadeethEncId": "3309",
+          "sourceCollections": [
+            "Al-Bukhari",
+            "Muslim"
+          ],
+          "narrator": null,
+          "title": "Une fois arrivé à La Mecque, je vis le Messager d’Allah (sur lui la paix et le salut) qui commençait la circumambulation en touchant le « coin noir » et durant les trois premiers tours, il marchait à pas rapides.",
+          "sourceReference": "[Rapporté par Al-Bukhârî et Muslim dans ses deux versions]",
+          "documentHash": "a8033b0ab4c3084a4be89ab9f26f469f3ef32ff195a435529fb08bb9cb8558b2",
+          "confidence": "review_candidate",
+          "score": {
+            "collectionMatch": 0.55,
+            "referenceMatch": 0,
+            "narratorMatch": 0,
+            "contentMatch": 0.15,
+            "genericTermsPenalty": 0,
+            "finalScore": 0.7000000000000001
+          },
+          "reasons": [
+            "collection concordante",
+            "formulation distinctive partageant au moins trois termes non generiques",
+            "termes non generiques: rites, femme, tawaf"
+          ],
+          "warnings": [
+            "aucune reference numerique canonique presente"
+          ]
+        },
+        {
+          "hadeethEncId": "4550",
+          "sourceCollections": [
+            "Al-Bukhari",
+            "Muslim"
+          ],
+          "narrator": null,
+          "title": "Si c'était à refaire, je n'aurais pas amené d'offrande et si je n'avais pas d'offrande avec moi, je me serais désacralisé.",
+          "sourceReference": "[Rapporté par Al-Bukhârî et Muslim]",
+          "documentHash": "5f0f4ddd8b11b2e66d6ccf0f511701faeb0e579cf780eb671c0931f3e7399137",
+          "confidence": "review_candidate",
+          "score": {
+            "collectionMatch": 0.55,
+            "referenceMatch": 0,
+            "narratorMatch": 0,
+            "contentMatch": 0.15,
+            "genericTermsPenalty": 0,
+            "finalScore": 0.7000000000000001
+          },
+          "reasons": [
+            "collection concordante",
+            "formulation distinctive partageant au moins trois termes non generiques",
+            "termes non generiques: rites, femme, exception"
+          ],
+          "warnings": [
+            "aucune reference numerique canonique presente"
+          ]
+        },
+        {
+          "hadeethEncId": "4820",
+          "sourceCollections": [
+            "Al-Bukhari",
+            "Muslim"
+          ],
+          "narrator": null,
+          "title": "Je n'ai jamais faussé compagnie au Messager d'Allah (sur lui la paix et le salut) au cours d'une expédition militaire qu'il a entreprise, excepté l'expédition de Tabûk. Il n'y a que la bataille de Badr à laquelle je n'ai pas participé, mais personne n'a été blâmé pour cela.",
+          "sourceReference": "[Rapporté par Al-Bukhârî et Muslim]",
+          "documentHash": "73df0ef514b5da397fe6af275aab0447162ce8eeeb4175be198dcae2b180c715",
+          "confidence": "review_candidate",
+          "score": {
+            "collectionMatch": 0.55,
+            "referenceMatch": 0,
+            "narratorMatch": 0,
+            "contentMatch": 0.15,
+            "genericTermsPenalty": 0,
+            "finalScore": 0.7000000000000001
+          },
+          "reasons": [
+            "collection concordante",
+            "formulation distinctive partageant au moins trois termes non generiques",
+            "termes non generiques: rites, femme, exception"
+          ],
+          "warnings": [
+            "aucune reference numerique canonique presente"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceId": "bukhari-1727",
+      "expectedCollection": "Sahih al-Bukhari",
+      "expectedReference": "1727",
+      "currentStatus": "unverified",
+      "candidates": []
+    },
+    {
+      "sourceId": "bukhari-1728",
+      "expectedCollection": "Sahih al-Bukhari",
+      "expectedReference": "1728",
+      "currentStatus": "unverified",
+      "candidates": []
+    },
+    {
+      "sourceId": "bukhari-1730",
+      "expectedCollection": "Sahih al-Bukhari",
+      "expectedReference": "1730",
+      "currentStatus": "unverified",
+      "candidates": []
+    },
+    {
+      "sourceId": "bukhari-1731",
+      "expectedCollection": "Sahih al-Bukhari",
+      "expectedReference": "1731",
+      "currentStatus": "unverified",
+      "candidates": []
+    },
+    {
+      "sourceId": "bukhari-1748",
+      "expectedCollection": "Sahih al-Bukhari",
+      "expectedReference": "1748",
+      "currentStatus": "unverified",
+      "candidates": [
+        {
+          "hadeethEncId": "3656",
+          "sourceCollections": [
+            "Al-Bukhari",
+            "Muslim"
+          ],
+          "narrator": null,
+          "title": "« Un homme avait embrassé une femme et vint voir le Prophète (sur lui la paix et le salut) pour l’informer de son acte. Allah, Exalté soit-Il, révéla alors : {( Accomplis la prière aux extrémités du jour et au début de la nuit, certes, les bonnes actions effacent les mauvaises. )}",
+          "sourceReference": "[Rapporté par Al-Bukhârî et Muslim]",
+          "documentHash": "686dcec9a6886d946cbfbe5d426f2a6c48d269d2be594b47d3706aa47a8be419",
+          "confidence": "review_candidate",
+          "score": {
+            "collectionMatch": 0.55,
+            "referenceMatch": 0,
+            "narratorMatch": 0,
+            "contentMatch": 0.15,
+            "genericTermsPenalty": 0,
+            "finalScore": 0.7000000000000001
+          },
+          "reasons": [
+            "collection concordante",
+            "formulation distinctive partageant au moins trois termes non generiques",
+            "termes non generiques: grande, rapporte, sahih"
+          ],
+          "warnings": [
+            "aucune reference numerique canonique presente"
+          ]
+        },
+        {
+          "hadeethEncId": "10877",
+          "sourceCollections": [
+            "Al-Bukhari"
+          ],
+          "narrator": null,
+          "title": "Lorsque l'un d'entre vous se lève en prière, la miséricorde lui fait face, qu'il n'enlève pas les cailloux.",
+          "sourceReference": "Rapporté par Al-Bûkhârî.",
+          "documentHash": "1031515cd7bd1a3775d89c776a248a629d190433f63927af8bd6be8818b7d387",
+          "confidence": "review_candidate",
+          "score": {
+            "collectionMatch": 0.55,
+            "referenceMatch": 0,
+            "narratorMatch": 0,
+            "contentMatch": 0.15,
+            "genericTermsPenalty": 0,
+            "finalScore": 0.7000000000000001
+          },
+          "reasons": [
+            "collection concordante",
+            "formulation distinctive partageant au moins trois termes non generiques",
+            "termes non generiques: cailloux, grande, rapporte"
+          ],
+          "warnings": [
+            "aucune reference numerique canonique presente"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceId": "bukhari-1900",
+      "expectedCollection": "Sahih al-Bukhari",
+      "expectedReference": "1900",
+      "currentStatus": "unverified",
+      "candidates": []
+    },
+    {
+      "sourceId": "bukhari-1906",
+      "expectedCollection": "Sahih al-Bukhari",
+      "expectedReference": "1906",
+      "currentStatus": "unverified",
+      "candidates": [
+        {
+          "hadeethEncId": "8284",
+          "sourceCollections": [
+            "Al-Bukhari",
+            "Muslim"
+          ],
+          "narrator": null,
+          "title": "Ne te convient-il pas que Je garde un lien avec celui qui te garde et que Je rompe avec celui qui te rompt ?",
+          "sourceReference": "[Rapporté par Al-Bukhârî et Muslim]",
+          "documentHash": "4000e1db8eb92150f19a0067eaa26df30a8035b6b3a7394edc18a6648efbcfaa",
+          "confidence": "review_candidate",
+          "score": {
+            "collectionMatch": 0.55,
+            "referenceMatch": 0,
+            "narratorMatch": 0,
+            "contentMatch": 0.15,
+            "genericTermsPenalty": 0,
+            "finalScore": 0.7000000000000001
+          },
+          "reasons": [
+            "collection concordante",
+            "formulation distinctive partageant au moins trois termes non generiques",
+            "termes non generiques: terminer, avant, compte"
+          ],
+          "warnings": [
+            "aucune reference numerique canonique presente"
+          ]
+        },
+        {
+          "hadeethEncId": "8301",
+          "sourceCollections": [
+            "Al-Bukhari",
+            "Muslim"
+          ],
+          "narrator": null,
+          "title": "Ô Messager d'Allah ! Verrons-nous notre Seigneur au Jour de la Résurrection ? - Il répondit : Éprouvez-vous des difficultés à voir le soleil ou la lune, lorsque le ciel est clair ?",
+          "sourceReference": "[Rapporté par Al-Bukhârî et Muslim]",
+          "documentHash": "65540df17025c1714416d10e64f7f876d9e8098cfaf31bfbc746346c4498e14c",
+          "confidence": "review_candidate",
+          "score": {
+            "collectionMatch": 0.55,
+            "referenceMatch": 0,
+            "narratorMatch": 0,
+            "contentMatch": 0.15,
+            "genericTermsPenalty": 0,
+            "finalScore": 0.7000000000000001
+          },
+          "reasons": [
+            "collection concordante",
+            "formulation distinctive partageant au moins trois termes non generiques",
+            "termes non generiques: avant, vision, compte"
+          ],
+          "warnings": [
+            "aucune reference numerique canonique presente"
+          ]
+        },
+        {
+          "hadeethEncId": "58157",
+          "sourceCollections": [
+            "Al-Bukhari",
+            "Muslim"
+          ],
+          "narrator": null,
+          "title": "Uwaymir Al-'Ajlânî se rendit chez 'Âṣim ibn 'Âdî Al-Anṣârî et lui demanda : \"Ô ‘Âṣim ! Vois-tu si un homme surprend sa femme avec un autre homme, le tue-t-il ? Et l'exécutera-t-on alors ? Ou comment doit-il faire ? Pose donc cette question de ma part, ô 'Âṣim, au Messager d'Allah (sur lui la paix et le salut) !",
+          "sourceReference": "[Rapporté par Al-Bukhârî et Muslim]",
+          "documentHash": "ea2e90161625bc66b44b559f3bd7bed84cd36149f018649719106a5930ae1b49",
+          "confidence": "review_candidate",
+          "score": {
+            "collectionMatch": 0.55,
+            "referenceMatch": 0,
+            "narratorMatch": 0,
+            "contentMatch": 0.15,
+            "genericTermsPenalty": 0,
+            "finalScore": 0.7000000000000001
+          },
+          "reasons": [
+            "collection concordante",
+            "formulation distinctive partageant au moins trois termes non generiques",
+            "termes non generiques: terminer, avant, compte"
+          ],
+          "warnings": [
+            "aucune reference numerique canonique presente"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceId": "bukhari-1907",
+      "expectedCollection": "Sahih al-Bukhari",
+      "expectedReference": "1907",
+      "currentStatus": "unverified",
+      "candidates": [
+        {
+          "hadeethEncId": "3728",
+          "sourceCollections": [
+            "Al-Bukhari",
+            "Muslim"
+          ],
+          "narrator": null,
+          "title": "Lequel d’entre vous jure par Allah de ne pas faire le bien ?",
+          "sourceReference": "[Rapporté par Al-Bukhârî et Muslim]",
+          "documentHash": "6c53530e3d610b3837deaff19b46e7362e3ca5a37e5129c34901c23d1a91f54d",
+          "confidence": "review_candidate",
+          "score": {
+            "collectionMatch": 0.55,
+            "referenceMatch": 0,
+            "narratorMatch": 0,
+            "contentMatch": 0.15,
+            "genericTermsPenalty": 0,
+            "finalScore": 0.7000000000000001
+          },
+          "reasons": [
+            "collection concordante",
+            "formulation distinctive partageant au moins trois termes non generiques",
+            "termes non generiques: jours, jours, sahih"
+          ],
+          "warnings": [
+            "aucune reference numerique canonique presente"
+          ]
+        },
+        {
+          "hadeethEncId": "3853",
+          "sourceCollections": [
+            "Al-Bukhari",
+            "Muslim"
+          ],
+          "narrator": null,
+          "title": "Le menteur n'est pas celui qui réconcilie les gens en attribuant des paroles bienveillantes, ou en disant du bien.",
+          "sourceReference": "[Rapporté par Al-Bukhârî et Muslim]",
+          "documentHash": "d2b0568c4bc32394f689eeb5c8dac0a78189396254ff6b86b9b3d1c6f2a04f22",
+          "confidence": "review_candidate",
+          "score": {
+            "collectionMatch": 0.55,
+            "referenceMatch": 0,
+            "narratorMatch": 0,
+            "contentMatch": 0.15,
+            "genericTermsPenalty": 0,
+            "finalScore": 0.7000000000000001
+          },
+          "reasons": [
+            "collection concordante",
+            "formulation distinctive partageant au moins trois termes non generiques",
+            "termes non generiques: jours, jours, sahih"
+          ],
+          "warnings": [
+            "aucune reference numerique canonique presente"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceId": "bukhari-1923",
+      "expectedCollection": "Sahih al-Bukhari",
+      "expectedReference": "1923",
+      "currentStatus": "unverified",
+      "candidates": []
+    },
+    {
+      "sourceId": "bukhari-1935",
+      "expectedCollection": "Sahih al-Bukhari",
+      "expectedReference": "1935",
+      "currentStatus": "unverified",
+      "candidates": [
+        {
+          "hadeethEncId": "3656",
+          "sourceCollections": [
+            "Al-Bukhari",
+            "Muslim"
+          ],
+          "narrator": null,
+          "title": "« Un homme avait embrassé une femme et vint voir le Prophète (sur lui la paix et le salut) pour l’informer de son acte. Allah, Exalté soit-Il, révéla alors : {( Accomplis la prière aux extrémités du jour et au début de la nuit, certes, les bonnes actions effacent les mauvaises. )}",
+          "sourceReference": "[Rapporté par Al-Bukhârî et Muslim]",
+          "documentHash": "686dcec9a6886d946cbfbe5d426f2a6c48d269d2be594b47d3706aa47a8be419",
+          "confidence": "review_candidate",
+          "score": {
+            "collectionMatch": 0.55,
+            "referenceMatch": 0,
+            "narratorMatch": 0,
+            "contentMatch": 0.15,
+            "genericTermsPenalty": 0,
+            "finalScore": 0.7000000000000001
+          },
+          "reasons": [
+            "collection concordante",
+            "formulation distinctive partageant au moins trois termes non generiques",
+            "termes non generiques: rapporte, rapport, expiation, sahih"
+          ],
+          "warnings": [
+            "aucune reference numerique canonique presente"
+          ]
+        },
+        {
+          "hadeethEncId": "3713",
+          "sourceCollections": [
+            "Al-Bukhari",
+            "Muslim"
+          ],
+          "narrator": null,
+          "title": "Ô Banî Salamah ! Restez dans vos demeures ! Vos traces seront inscrites ! Restez dans vos demeures ! Vos traces seront inscrites !",
+          "sourceReference": "[Rapporté par Al-Bukhârî de manière similaire - Rapporté par Muslim]",
+          "documentHash": "504889c5aba61d10f015d06ca1821a81a1aeb8760736176334dd5da5bd370f54",
+          "confidence": "review_candidate",
+          "score": {
+            "collectionMatch": 0.55,
+            "referenceMatch": 0,
+            "narratorMatch": 0,
+            "contentMatch": 0.15,
+            "genericTermsPenalty": 0,
+            "finalScore": 0.7000000000000001
+          },
+          "reasons": [
+            "collection concordante",
+            "formulation distinctive partageant au moins trois termes non generiques",
+            "termes non generiques: rapporte, rapport, expiation"
+          ],
+          "warnings": [
+            "aucune reference numerique canonique presente"
+          ]
+        },
+        {
+          "hadeethEncId": "3728",
+          "sourceCollections": [
+            "Al-Bukhari",
+            "Muslim"
+          ],
+          "narrator": null,
+          "title": "Lequel d’entre vous jure par Allah de ne pas faire le bien ?",
+          "sourceReference": "[Rapporté par Al-Bukhârî et Muslim]",
+          "documentHash": "6c53530e3d610b3837deaff19b46e7362e3ca5a37e5129c34901c23d1a91f54d",
+          "confidence": "review_candidate",
+          "score": {
+            "collectionMatch": 0.55,
+            "referenceMatch": 0,
+            "narratorMatch": 0,
+            "contentMatch": 0.15,
+            "genericTermsPenalty": 0,
+            "finalScore": 0.7000000000000001
+          },
+          "reasons": [
+            "collection concordante",
+            "formulation distinctive partageant au moins trois termes non generiques",
+            "termes non generiques: rapporte, rapport, sahih"
+          ],
+          "warnings": [
+            "aucune reference numerique canonique presente"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceId": "bukhari-1937",
+      "expectedCollection": "Sahih al-Bukhari",
+      "expectedReference": "1937",
+      "currentStatus": "unverified",
+      "candidates": [
+        {
+          "hadeethEncId": "8304",
+          "sourceCollections": [
+            "Al-Bukhari",
+            "Muslim"
+          ],
+          "narrator": null,
+          "title": "L'histoire de Moïse (sur lui la paix) avec Al-Khaḍir",
+          "sourceReference": "[Rapporté par Al-Bukhârî et Muslim]",
+          "documentHash": "33b0e3dabb8a03e560cccfbcbdccaaa1347aed1eb2b4dbfe4ace8abfe20d7e34",
+          "confidence": "review_candidate",
+          "score": {
+            "collectionMatch": 0.55,
+            "referenceMatch": 0,
+            "narratorMatch": 0,
+            "contentMatch": 0.15,
+            "genericTermsPenalty": 0,
+            "finalScore": 0.7000000000000001
+          },
+          "reasons": [
+            "collection concordante",
+            "formulation distinctive partageant au moins trois termes non generiques",
+            "termes non generiques: ordre, rapporte, formes"
+          ],
+          "warnings": [
+            "aucune reference numerique canonique presente"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceId": "bukhari-1957",
+      "expectedCollection": "Sahih al-Bukhari",
+      "expectedReference": "1957",
+      "currentStatus": "unverified",
+      "candidates": []
+    },
+    {
+      "sourceId": "bukhari-1958",
+      "expectedCollection": "Sahih al-Bukhari",
+      "expectedReference": "1958",
+      "currentStatus": "unverified",
+      "candidates": [
+        {
+          "hadeethEncId": "3309",
+          "sourceCollections": [
+            "Al-Bukhari",
+            "Muslim"
+          ],
+          "narrator": null,
+          "title": "Une fois arrivé à La Mecque, je vis le Messager d’Allah (sur lui la paix et le salut) qui commençait la circumambulation en touchant le « coin noir » et durant les trois premiers tours, il marchait à pas rapides.",
+          "sourceReference": "[Rapporté par Al-Bukhârî et Muslim dans ses deux versions]",
+          "documentHash": "a8033b0ab4c3084a4be89ab9f26f469f3ef32ff195a435529fb08bb9cb8558b2",
+          "confidence": "review_candidate",
+          "score": {
+            "collectionMatch": 0.55,
+            "referenceMatch": 0,
+            "narratorMatch": 0,
+            "contentMatch": 0.15,
+            "genericTermsPenalty": 0,
+            "finalScore": 0.7000000000000001
+          },
+          "reasons": [
+            "collection concordante",
+            "formulation distinctive partageant au moins trois termes non generiques",
+            "termes non generiques: entree, moment, voyage"
+          ],
+          "warnings": [
+            "aucune reference numerique canonique presente"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceId": "bukhari-1990",
+      "expectedCollection": "Sahih al-Bukhari",
+      "expectedReference": "1990",
+      "currentStatus": "unverified",
+      "candidates": [
+        {
+          "hadeethEncId": "3853",
+          "sourceCollections": [
+            "Al-Bukhari",
+            "Muslim"
+          ],
+          "narrator": null,
+          "title": "Le menteur n'est pas celui qui réconcilie les gens en attribuant des paroles bienveillantes, ou en disant du bien.",
+          "sourceReference": "[Rapporté par Al-Bukhârî et Muslim]",
+          "documentHash": "d2b0568c4bc32394f689eeb5c8dac0a78189396254ff6b86b9b3d1c6f2a04f22",
+          "confidence": "review_candidate",
+          "score": {
+            "collectionMatch": 0.55,
+            "referenceMatch": 0,
+            "narratorMatch": 0,
+            "contentMatch": 0.15,
+            "genericTermsPenalty": 0,
+            "finalScore": 0.7000000000000001
+          },
+          "reasons": [
+            "collection concordante",
+            "formulation distinctive partageant au moins trois termes non generiques",
+            "termes non generiques: interdiction, rapportee, sahih"
+          ],
+          "warnings": [
+            "aucune reference numerique canonique presente"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceId": "bukhari-2002",
+      "expectedCollection": "Sahih al-Bukhari",
+      "expectedReference": "2002",
+      "currentStatus": "unverified",
+      "candidates": []
+    },
+    {
+      "sourceId": "bukhari-2017",
+      "expectedCollection": "Sahih al-Bukhari",
+      "expectedReference": "2017",
+      "currentStatus": "unverified",
+      "candidates": [
+        {
+          "hadeethEncId": "4459",
+          "sourceCollections": [
+            "Al-Bukhari",
+            "Muslim"
+          ],
+          "narrator": null,
+          "title": "Celui qui a accompli la retraite spirituelle avec moi, qu’il se retire les dix derniers jours. Car j’ai vu cette fameuse nuit, puis on me l’a fait oublier. J’ai vu qu’au matin suivant cette nuit, je me prosternais dans l’eau et la terre. Cherchez-la donc dans les dix dernières nuits et, plus précisément, cherchez-la dans les nuits impaires.",
+          "sourceReference": "[Rapporté par Al-Bukhârî et Muslim]",
+          "documentHash": "b59e8689553d1d5237c0196e61af4d77b99f62b7a0dfd6239a5f4d5ec7783271",
+          "confidence": "review_candidate",
+          "score": {
+            "collectionMatch": 0.55,
+            "referenceMatch": 0,
+            "narratorMatch": 0,
+            "contentMatch": 0.15,
+            "genericTermsPenalty": 0,
+            "finalScore": 0.7000000000000001
+          },
+          "reasons": [
+            "collection concordante",
+            "formulation distinctive partageant au moins trois termes non generiques",
+            "termes non generiques: laylat, nuits, impaires"
+          ],
+          "warnings": [
+            "aucune reference numerique canonique presente"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceId": "bukhari-2020",
+      "expectedCollection": "Sahih al-Bukhari",
+      "expectedReference": "2020",
+      "currentStatus": "unverified",
+      "candidates": [
+        {
+          "hadeethEncId": "4459",
+          "sourceCollections": [
+            "Al-Bukhari",
+            "Muslim"
+          ],
+          "narrator": null,
+          "title": "Celui qui a accompli la retraite spirituelle avec moi, qu’il se retire les dix derniers jours. Car j’ai vu cette fameuse nuit, puis on me l’a fait oublier. J’ai vu qu’au matin suivant cette nuit, je me prosternais dans l’eau et la terre. Cherchez-la donc dans les dix dernières nuits et, plus précisément, cherchez-la dans les nuits impaires.",
+          "sourceReference": "[Rapporté par Al-Bukhârî et Muslim]",
+          "documentHash": "b59e8689553d1d5237c0196e61af4d77b99f62b7a0dfd6239a5f4d5ec7783271",
+          "confidence": "review_candidate",
+          "score": {
+            "collectionMatch": 0.55,
+            "referenceMatch": 0,
+            "narratorMatch": 0,
+            "contentMatch": 0.15,
+            "genericTermsPenalty": 0,
+            "finalScore": 0.7000000000000001
+          },
+          "reasons": [
+            "collection concordante",
+            "formulation distinctive partageant au moins trois termes non generiques",
+            "termes non generiques: laylat, dernieres, nuits"
+          ],
+          "warnings": [
+            "aucune reference numerique canonique presente"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceId": "bukhari-206",
+      "expectedCollection": "Sahih al-Bukhari",
+      "expectedReference": "206",
+      "currentStatus": "unverified",
+      "candidates": []
+    },
+    {
+      "sourceId": "bukhari-248",
+      "expectedCollection": "Sahih al-Bukhari",
+      "expectedReference": "248",
+      "currentStatus": "unverified",
+      "candidates": []
+    },
+    {
+      "sourceId": "bukhari-631",
+      "expectedCollection": "Sahih al-Bukhari",
+      "expectedReference": "631",
+      "currentStatus": "unverified",
+      "candidates": []
+    },
+    {
+      "sourceId": "bukhari-756",
+      "expectedCollection": "Sahih al-Bukhari",
+      "expectedReference": "756",
+      "currentStatus": "unverified",
+      "candidates": []
+    },
+    {
+      "sourceId": "bukhari-757",
+      "expectedCollection": "Sahih al-Bukhari",
+      "expectedReference": "757",
+      "currentStatus": "unverified",
+      "candidates": []
+    },
+    {
+      "sourceId": "bukhari-831",
+      "expectedCollection": "Sahih al-Bukhari",
+      "expectedReference": "831",
+      "currentStatus": "unverified",
+      "candidates": []
+    },
+    {
+      "sourceId": "bukhari-908",
+      "expectedCollection": "Sahih al-Bukhari",
+      "expectedReference": "908",
+      "currentStatus": "unverified",
+      "candidates": []
+    },
+    {
+      "sourceId": "muslim-1112a",
+      "expectedCollection": "Sahih Muslim",
+      "expectedReference": "1112a",
+      "currentStatus": "unverified",
+      "candidates": [
+        {
+          "hadeethEncId": "3656",
+          "sourceCollections": [
+            "Al-Bukhari",
+            "Muslim"
+          ],
+          "narrator": null,
+          "title": "« Un homme avait embrassé une femme et vint voir le Prophète (sur lui la paix et le salut) pour l’informer de son acte. Allah, Exalté soit-Il, révéla alors : {( Accomplis la prière aux extrémités du jour et au début de la nuit, certes, les bonnes actions effacent les mauvaises. )}",
+          "sourceReference": "[Rapporté par Al-Bukhârî et Muslim]",
+          "documentHash": "686dcec9a6886d946cbfbe5d426f2a6c48d269d2be594b47d3706aa47a8be419",
+          "confidence": "review_candidate",
+          "score": {
+            "collectionMatch": 0.55,
+            "referenceMatch": 0,
+            "narratorMatch": 0,
+            "contentMatch": 0.15,
+            "genericTermsPenalty": 0,
+            "finalScore": 0.7000000000000001
+          },
+          "reasons": [
+            "collection concordante",
+            "formulation distinctive partageant au moins trois termes non generiques",
+            "termes non generiques: rapport, rapporte, sahih"
+          ],
+          "warnings": [
+            "aucune reference numerique canonique presente"
+          ]
+        },
+        {
+          "hadeethEncId": "3728",
+          "sourceCollections": [
+            "Al-Bukhari",
+            "Muslim"
+          ],
+          "narrator": null,
+          "title": "Lequel d’entre vous jure par Allah de ne pas faire le bien ?",
+          "sourceReference": "[Rapporté par Al-Bukhârî et Muslim]",
+          "documentHash": "6c53530e3d610b3837deaff19b46e7362e3ca5a37e5129c34901c23d1a91f54d",
+          "confidence": "review_candidate",
+          "score": {
+            "collectionMatch": 0.55,
+            "referenceMatch": 0,
+            "narratorMatch": 0,
+            "contentMatch": 0.15,
+            "genericTermsPenalty": 0,
+            "finalScore": 0.7000000000000001
+          },
+          "reasons": [
+            "collection concordante",
+            "formulation distinctive partageant au moins trois termes non generiques",
+            "termes non generiques: rapport, rapporte, sahih"
+          ],
+          "warnings": [
+            "aucune reference numerique canonique presente"
+          ]
+        },
+        {
+          "hadeethEncId": "3853",
+          "sourceCollections": [
+            "Al-Bukhari",
+            "Muslim"
+          ],
+          "narrator": null,
+          "title": "Le menteur n'est pas celui qui réconcilie les gens en attribuant des paroles bienveillantes, ou en disant du bien.",
+          "sourceReference": "[Rapporté par Al-Bukhârî et Muslim]",
+          "documentHash": "d2b0568c4bc32394f689eeb5c8dac0a78189396254ff6b86b9b3d1c6f2a04f22",
+          "confidence": "review_candidate",
+          "score": {
+            "collectionMatch": 0.55,
+            "referenceMatch": 0,
+            "narratorMatch": 0,
+            "contentMatch": 0.15,
+            "genericTermsPenalty": 0,
+            "finalScore": 0.7000000000000001
+          },
+          "reasons": [
+            "collection concordante",
+            "formulation distinctive partageant au moins trois termes non generiques",
+            "termes non generiques: rapport, rapporte, sahih"
+          ],
+          "warnings": [
+            "aucune reference numerique canonique presente"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceId": "muslim-1113e",
+      "expectedCollection": "Sahih Muslim",
+      "expectedReference": "1113e",
+      "currentStatus": "unverified",
+      "candidates": [
+        {
+          "hadeethEncId": "4507",
+          "sourceCollections": [
+            "Al-Bukhari",
+            "Muslim"
+          ],
+          "narrator": null,
+          "title": "Un homme questionna le Prophète (sur lui la paix et le salut) au sujet du fait de jeûner en voyage. Il répondit : « Jeûne si tu le souhaites et romps si tu le souhaites. »",
+          "sourceReference": "[Rapporté par Al-Bukhârî et Muslim]",
+          "documentHash": "f9738797e6996e47bf737c91ef64e8810c75fc9448c609957d583fd982921a7b",
+          "confidence": "review_candidate",
+          "score": {
+            "collectionMatch": 0.55,
+            "referenceMatch": 0,
+            "narratorMatch": 0,
+            "contentMatch": 0.15,
+            "genericTermsPenalty": 0,
+            "finalScore": 0.7000000000000001
+          },
+          "reasons": [
+            "collection concordante",
+            "formulation distinctive partageant au moins trois termes non generiques",
+            "termes non generiques: jeuner, rompre, voyage"
+          ],
+          "warnings": [
+            "aucune reference numerique canonique presente"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceId": "muslim-1141a",
+      "expectedCollection": "Sahih Muslim",
+      "expectedReference": "1141a",
+      "currentStatus": "unverified",
+      "candidates": [
+        {
+          "hadeethEncId": "2934",
+          "sourceCollections": [
+            "Al-Bukhari",
+            "Muslim"
+          ],
+          "narrator": null,
+          "title": "Le Prophète (sur lui la paix et le salut) a fait courir des chevaux affûtés depuis Al-Ḥafyâ' jusqu'à Thaniyyah Al-Wadâ'.",
+          "sourceReference": "[Rapporté par Al-Bukhârî et Muslim]",
+          "documentHash": "c0155ea5697702ab0df788ae4e717647f986830a5164a6e5c37a73ffe2929b43",
+          "confidence": "review_candidate",
+          "score": {
+            "collectionMatch": 0.55,
+            "referenceMatch": 0,
+            "narratorMatch": 0,
+            "contentMatch": 0.15,
+            "genericTermsPenalty": 0,
+            "finalScore": 0.7000000000000001
+          },
+          "reasons": [
+            "collection concordante",
+            "formulation distinctive partageant au moins trois termes non generiques",
+            "termes non generiques: jours, comme, jours"
+          ],
+          "warnings": [
+            "aucune reference numerique canonique presente"
+          ]
+        },
+        {
+          "hadeethEncId": "2966",
+          "sourceCollections": [
+            "Al-Bukhari",
+            "Muslim"
+          ],
+          "narrator": null,
+          "title": "Un homme parmi les Anṣâr s’est engagé à libérer l'un de ses esclaves",
+          "sourceReference": "[Rapporté par Al-Bukhârî et Muslim]",
+          "documentHash": "92f0408dde5fced1b490b1bb683c805584693773ca1dd977997042672980383d",
+          "confidence": "review_candidate",
+          "score": {
+            "collectionMatch": 0.55,
+            "referenceMatch": 0,
+            "narratorMatch": 0,
+            "contentMatch": 0.15,
+            "genericTermsPenalty": 0,
+            "finalScore": 0.7000000000000001
+          },
+          "reasons": [
+            "collection concordante",
+            "formulation distinctive partageant au moins trois termes non generiques",
+            "termes non generiques: jours, comme, jours"
+          ],
+          "warnings": [
+            "aucune reference numerique canonique presente"
+          ]
+        },
+        {
+          "hadeethEncId": "2983",
+          "sourceCollections": [
+            "Al-Bukhari",
+            "Muslim"
+          ],
+          "narrator": null,
+          "title": "Les biens des Banû Naḍîr furent de ceux qu’Allah accorda comme prise de guerre à Son Messager (sur lui la paix et le salut), sans que les musulmans n’eussent besoin de faire courir leurs chevaux ou d’autres montures.",
+          "sourceReference": "[Rapporté par Al-Bukhârî et Muslim]",
+          "documentHash": "02092c47cb92091238c7768e8f8725e2f5905016d2501b7150693b257577e76d",
+          "confidence": "review_candidate",
+          "score": {
+            "collectionMatch": 0.55,
+            "referenceMatch": 0,
+            "narratorMatch": 0,
+            "contentMatch": 0.15,
+            "genericTermsPenalty": 0,
+            "finalScore": 0.7000000000000001
+          },
+          "reasons": [
+            "collection concordante",
+            "formulation distinctive partageant au moins trois termes non generiques",
+            "termes non generiques: jours, comme, jours"
+          ],
+          "warnings": [
+            "aucune reference numerique canonique presente"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceId": "muslim-1155",
+      "expectedCollection": "Sahih Muslim",
+      "expectedReference": "1155",
+      "currentStatus": "unverified",
+      "candidates": [
+        {
+          "hadeethEncId": "5450",
+          "sourceCollections": [
+            "Muslim"
+          ],
+          "narrator": null,
+          "title": "Qu’aucun d’entre vous ne boive debout. Et s’il oublie, qu’il se fasse vomir !",
+          "sourceReference": "[Rapporté par Muslim dans ses deux versions]",
+          "documentHash": "e15980078f4c364b07274dbd76950e48cdc99d18f68cbbd776676070db5fd524",
+          "confidence": "review_candidate",
+          "score": {
+            "collectionMatch": 0.55,
+            "referenceMatch": 0,
+            "narratorMatch": 0,
+            "contentMatch": 0.15,
+            "genericTermsPenalty": 0,
+            "finalScore": 0.7000000000000001
+          },
+          "reasons": [
+            "collection concordante",
+            "formulation distinctive partageant au moins trois termes non generiques",
+            "termes non generiques: manger, boire, oubli"
+          ],
+          "warnings": [
+            "aucune reference numerique canonique presente"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceId": "muslim-1162a",
+      "expectedCollection": "Sahih Muslim",
+      "expectedReference": "1162a",
+      "currentStatus": "unverified",
+      "candidates": []
+    },
+    {
+      "sourceId": "muslim-1164c",
+      "expectedCollection": "Sahih Muslim",
+      "expectedReference": "1164c",
+      "currentStatus": "unverified",
+      "candidates": []
+    },
+    {
+      "sourceId": "muslim-1211ab",
+      "expectedCollection": "Sahih Muslim",
+      "expectedReference": "1211ab",
+      "currentStatus": "unverified",
+      "candidates": [
+        {
+          "hadeethEncId": "5208",
+          "sourceCollections": [
+            "Al-Bukhari",
+            "Muslim"
+          ],
+          "narrator": null,
+          "title": "Blessée et égosillée soit-elle ! A-t-elle tourné [autour de la Kaʽbah] le jour du sacrifice ? - On dit : oui ! - Il dit : Alors, pars !",
+          "sourceReference": "[Rapporté par Al-Bukhârî et Muslim]",
+          "documentHash": "ecf26683eb3ba799e112c1ca4d681b6e62b393f84dc9a4e6220345a6fed565cf",
+          "confidence": "review_candidate",
+          "score": {
+            "collectionMatch": 0.55,
+            "referenceMatch": 0,
+            "narratorMatch": 0,
+            "contentMatch": 0.15,
+            "genericTermsPenalty": 0,
+            "finalScore": 0.7000000000000001
+          },
+          "reasons": [
+            "collection concordante",
+            "formulation distinctive partageant au moins trois termes non generiques",
+            "termes non generiques: safiyya, tawaf, ifada"
+          ],
+          "warnings": [
+            "aucune reference numerique canonique presente"
+          ]
+        },
+        {
+          "hadeethEncId": "10010",
+          "sourceCollections": [
+            "Muslim"
+          ],
+          "narrator": null,
+          "title": "C'est quelque chose qu'Allah a décrété pour les filles d'Adam. Accomplis ce qu'accompli le pèlerin, sauf que tu ne feras les circumambulations autour de la maison qu'une fois purifiée.",
+          "sourceReference": "[Rapporté par Muslim]",
+          "documentHash": "48d47a39859a164f8065a22f86cf704b52110aae28f0a28d1dda2ef0195babf9",
+          "confidence": "review_candidate",
+          "score": {
+            "collectionMatch": 0.55,
+            "referenceMatch": 0,
+            "narratorMatch": 0,
+            "contentMatch": 0.15,
+            "genericTermsPenalty": 0,
+            "finalScore": 0.7000000000000001
+          },
+          "reasons": [
+            "collection concordante",
+            "formulation distinctive partageant au moins trois termes non generiques",
+            "termes non generiques: apres, tawaf, ifada"
+          ],
+          "warnings": [
+            "aucune reference numerique canonique presente"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceId": "muslim-1211ae",
+      "expectedCollection": "Sahih Muslim",
+      "expectedReference": "1211ae",
+      "currentStatus": "unverified",
+      "candidates": [
+        {
+          "hadeethEncId": "3008",
+          "sourceCollections": [
+            "Muslim"
+          ],
+          "narrator": null,
+          "title": "Lorsque le Prophète (sur lui la paix et le salut) se trouvait au soir, il disait : « Nous nous retrouvons au soir, ainsi que la royauté, appartenant à Allah ; les louanges sont pour Allah, il n'est de divinité [digne d'adoration] excepté Allah, Lui Seul, Il n’a point d’associé. »",
+          "sourceReference": "[Rapporté par Muslim]",
+          "documentHash": "99fa39a3bbfb70b1088c25977cf9786b9b578cabe35ba53319ef47f79f1ba250",
+          "confidence": "review_candidate",
+          "score": {
+            "collectionMatch": 0.55,
+            "referenceMatch": 0,
+            "narratorMatch": 0,
+            "contentMatch": 0.15,
+            "genericTermsPenalty": 0,
+            "finalScore": 0.7000000000000001
+          },
+          "reasons": [
+            "collection concordante",
+            "formulation distinctive partageant au moins trois termes non generiques",
+            "termes non generiques: apres, accompli, rapporte"
+          ],
+          "warnings": [
+            "aucune reference numerique canonique presente"
+          ]
+        },
+        {
+          "hadeethEncId": "3020",
+          "sourceCollections": [
+            "Al-Bukhari",
+            "Muslim"
+          ],
+          "narrator": null,
+          "title": "Lorsque le Messager d'Allah (sur lui la paix et le salut) et ses Compagnons se rendirent à la Mecque, les polythéistes dirent : « Des gens que la chaleur de Yathrib a affaiblis viennent à vous ! » Le Prophète (sur lui la paix et le salut) leur ordonna alors d'accélérer le pas durant les trois premiers tours et de marcher entre les deux piliers.",
+          "sourceReference": "[Rapporté par Al-Bukhârî et Muslim]",
+          "documentHash": "901859583fa4091d6777d371f0a5088cca29213cf7020fa85fdcac64d0b38e52",
+          "confidence": "review_candidate",
+          "score": {
+            "collectionMatch": 0.55,
+            "referenceMatch": 0,
+            "narratorMatch": 0,
+            "contentMatch": 0.15,
+            "genericTermsPenalty": 0,
+            "finalScore": 0.7000000000000001
+          },
+          "reasons": [
+            "collection concordante",
+            "formulation distinctive partageant au moins trois termes non generiques",
+            "termes non generiques: apres, tawaf, accompli"
+          ],
+          "warnings": [
+            "aucune reference numerique canonique presente"
+          ]
+        },
+        {
+          "hadeethEncId": "3309",
+          "sourceCollections": [
+            "Al-Bukhari",
+            "Muslim"
+          ],
+          "narrator": null,
+          "title": "Une fois arrivé à La Mecque, je vis le Messager d’Allah (sur lui la paix et le salut) qui commençait la circumambulation en touchant le « coin noir » et durant les trois premiers tours, il marchait à pas rapides.",
+          "sourceReference": "[Rapporté par Al-Bukhârî et Muslim dans ses deux versions]",
+          "documentHash": "a8033b0ab4c3084a4be89ab9f26f469f3ef32ff195a435529fb08bb9cb8558b2",
+          "confidence": "review_candidate",
+          "score": {
+            "collectionMatch": 0.55,
+            "referenceMatch": 0,
+            "narratorMatch": 0,
+            "contentMatch": 0.15,
+            "genericTermsPenalty": 0,
+            "finalScore": 0.7000000000000001
+          },
+          "reasons": [
+            "collection concordante",
+            "formulation distinctive partageant au moins trois termes non generiques",
+            "termes non generiques: apres, tawaf, accompli"
+          ],
+          "warnings": [
+            "aucune reference numerique canonique presente"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceId": "muslim-1213c",
+      "expectedCollection": "Sahih Muslim",
+      "expectedReference": "1213c",
+      "currentStatus": "unverified",
+      "candidates": []
+    },
+    {
+      "sourceId": "muslim-1216a",
+      "expectedCollection": "Sahih Muslim",
+      "expectedReference": "1216a",
+      "currentStatus": "unverified",
+      "candidates": []
+    },
+    {
+      "sourceId": "muslim-1218",
+      "expectedCollection": "Sahih Muslim",
+      "expectedReference": "1218",
+      "currentStatus": "unverified",
+      "candidates": [
+        {
+          "hadeethEncId": "3309",
+          "sourceCollections": [
+            "Al-Bukhari",
+            "Muslim"
+          ],
+          "narrator": null,
+          "title": "Une fois arrivé à La Mecque, je vis le Messager d’Allah (sur lui la paix et le salut) qui commençait la circumambulation en touchant le « coin noir » et durant les trois premiers tours, il marchait à pas rapides.",
+          "sourceReference": "[Rapporté par Al-Bukhârî et Muslim dans ses deux versions]",
+          "documentHash": "a8033b0ab4c3084a4be89ab9f26f469f3ef32ff195a435529fb08bb9cb8558b2",
+          "confidence": "review_candidate",
+          "score": {
+            "collectionMatch": 0.55,
+            "referenceMatch": 0,
+            "narratorMatch": 0,
+            "contentMatch": 0.15,
+            "genericTermsPenalty": 0,
+            "finalScore": 0.7000000000000001
+          },
+          "reasons": [
+            "collection concordante",
+            "formulation distinctive partageant au moins trois termes non generiques",
+            "termes non generiques: tawaf, sacrifice, cheveux"
+          ],
+          "warnings": [
+            "aucune reference numerique canonique presente"
+          ]
+        },
+        {
+          "hadeethEncId": "10010",
+          "sourceCollections": [
+            "Muslim"
+          ],
+          "narrator": null,
+          "title": "C'est quelque chose qu'Allah a décrété pour les filles d'Adam. Accomplis ce qu'accompli le pèlerin, sauf que tu ne feras les circumambulations autour de la maison qu'une fois purifiée.",
+          "sourceReference": "[Rapporté par Muslim]",
+          "documentHash": "48d47a39859a164f8065a22f86cf704b52110aae28f0a28d1dda2ef0195babf9",
+          "confidence": "review_candidate",
+          "score": {
+            "collectionMatch": 0.55,
+            "referenceMatch": 0,
+            "narratorMatch": 0,
+            "contentMatch": 0.15,
+            "genericTermsPenalty": 0,
+            "finalScore": 0.7000000000000001
+          },
+          "reasons": [
+            "collection concordante",
+            "formulation distinctive partageant au moins trois termes non generiques",
+            "termes non generiques: tawaf, sacrifice, cheveux"
+          ],
+          "warnings": [
+            "aucune reference numerique canonique presente"
+          ]
+        },
+        {
+          "hadeethEncId": "10622",
+          "sourceCollections": [
+            "Muslim"
+          ],
+          "narrator": null,
+          "title": "Le hadith de Jâbir ibn 'Abdillah (qu'Allah l'agrée) au sujet de la description du Pèlerinage d'adieu du Messager d'Allah (sur lui la paix et le salut).",
+          "sourceReference": "[Rapporté par Muslim]",
+          "documentHash": "6c7ae6fb2fa8838abb70133558770235b67864d8d6500504bb73144bd7bee013",
+          "confidence": "review_candidate",
+          "score": {
+            "collectionMatch": 0.55,
+            "referenceMatch": 0,
+            "narratorMatch": 0,
+            "contentMatch": 0.15,
+            "genericTermsPenalty": 0,
+            "finalScore": 0.7000000000000001
+          },
+          "reasons": [
+            "collection concordante",
+            "formulation distinctive partageant au moins trois termes non generiques",
+            "termes non generiques: jabir, lieux, sacrifice, cheveux"
+          ],
+          "warnings": [
+            "aucune reference numerique canonique presente"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceId": "muslim-1218a",
+      "expectedCollection": "Sahih Muslim",
+      "expectedReference": "1218a",
+      "currentStatus": "unverified",
+      "candidates": [
+        {
+          "hadeethEncId": "3309",
+          "sourceCollections": [
+            "Al-Bukhari",
+            "Muslim"
+          ],
+          "narrator": null,
+          "title": "Une fois arrivé à La Mecque, je vis le Messager d’Allah (sur lui la paix et le salut) qui commençait la circumambulation en touchant le « coin noir » et durant les trois premiers tours, il marchait à pas rapides.",
+          "sourceReference": "[Rapporté par Al-Bukhârî et Muslim dans ses deux versions]",
+          "documentHash": "a8033b0ab4c3084a4be89ab9f26f469f3ef32ff195a435529fb08bb9cb8558b2",
+          "confidence": "review_candidate",
+          "score": {
+            "collectionMatch": 0.55,
+            "referenceMatch": 0,
+            "narratorMatch": 0,
+            "contentMatch": 0.15,
+            "genericTermsPenalty": 0,
+            "finalScore": 0.7000000000000001
+          },
+          "reasons": [
+            "collection concordante",
+            "formulation distinctive partageant au moins trois termes non generiques",
+            "termes non generiques: tawaf, maqam, ibrahim"
+          ],
+          "warnings": [
+            "aucune reference numerique canonique presente"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceId": "muslim-1218c",
+      "expectedCollection": "Sahih Muslim",
+      "expectedReference": "1218c",
+      "currentStatus": "unverified",
+      "candidates": [
+        {
+          "hadeethEncId": "2933",
+          "sourceCollections": [
+            "Al-Bukhari",
+            "Muslim"
+          ],
+          "narrator": null,
+          "title": "Un homme parmi les musulmans vint trouver le Messager d'Allah (sur lui la paix et le salut), qui se trouvait dans la mosquée, et l'appela à voix haute en disant : « Ô Messager d'Allah ! J'ai commis l'adultère ! »",
+          "sourceReference": "[Rapporté par Al-Bukhârî et Muslim]",
+          "documentHash": "a2551f4d46f7077f3c8e0e7e352aea26e5b7dd5634d1dfeff9fef13e22c8f8c7",
+          "confidence": "review_candidate",
+          "score": {
+            "collectionMatch": 0.55,
+            "referenceMatch": 0,
+            "narratorMatch": 0,
+            "contentMatch": 0.15,
+            "genericTermsPenalty": 0,
+            "finalScore": 0.7000000000000001
+          },
+          "reasons": [
+            "collection concordante",
+            "formulation distinctive partageant au moins trois termes non generiques",
+            "termes non generiques: comme, comme, explicitement, jabir"
+          ],
+          "warnings": [
+            "aucune reference numerique canonique presente"
+          ]
+        },
+        {
+          "hadeethEncId": "2941",
+          "sourceCollections": [
+            "Al-Bukhari",
+            "Muslim"
+          ],
+          "narrator": null,
+          "title": "Ne vous informerais-je pas des plus grands des péchés majeurs ?",
+          "sourceReference": "[Rapporté par Al Bukhârî et Muslim]",
+          "documentHash": "6705022a5bdff5cd1fe28cebbddb717e40f60307b12cb07ba09b7c6d79d3899c",
+          "confidence": "review_candidate",
+          "score": {
+            "collectionMatch": 0.55,
+            "referenceMatch": 0,
+            "narratorMatch": 0,
+            "contentMatch": 0.15,
+            "genericTermsPenalty": 0,
+            "finalScore": 0.7000000000000001
+          },
+          "reasons": [
+            "collection concordante",
+            "formulation distinctive partageant au moins trois termes non generiques",
+            "termes non generiques: comme, comme, cette"
+          ],
+          "warnings": [
+            "aucune reference numerique canonique presente"
+          ]
+        },
+        {
+          "hadeethEncId": "2947",
+          "sourceCollections": [
+            "Al-Bukhari",
+            "Muslim"
+          ],
+          "narrator": null,
+          "title": "Le Prophète (sur lui la paix et le salut) trancha la main d'un homme qui avait volé un bouclier dont la valeur était de trois dirhams.",
+          "sourceReference": "[Rapporté par Al-Bukhârî et Muslim]",
+          "documentHash": "2ed92777ee1af98ab150bcecfd305840556348ff9cbaa46bb35a20ad1f789627",
+          "confidence": "review_candidate",
+          "score": {
+            "collectionMatch": 0.55,
+            "referenceMatch": 0,
+            "narratorMatch": 0,
+            "contentMatch": 0.15,
+            "genericTermsPenalty": 0,
+            "finalScore": 0.7000000000000001
+          },
+          "reasons": [
+            "collection concordante",
+            "formulation distinctive partageant au moins trois termes non generiques",
+            "termes non generiques: comme, comme, cette"
+          ],
+          "warnings": [
+            "aucune reference numerique canonique presente"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceId": "muslim-1226g",
+      "expectedCollection": "Sahih Muslim",
+      "expectedReference": "1226g",
+      "currentStatus": "unverified",
+      "candidates": []
+    },
+    {
+      "sourceId": "muslim-1334",
+      "expectedCollection": "Sahih Muslim",
+      "expectedReference": "1334",
+      "currentStatus": "unverified",
+      "candidates": [
+        {
+          "hadeethEncId": "3656",
+          "sourceCollections": [
+            "Al-Bukhari",
+            "Muslim"
+          ],
+          "narrator": null,
+          "title": "« Un homme avait embrassé une femme et vint voir le Prophète (sur lui la paix et le salut) pour l’informer de son acte. Allah, Exalté soit-Il, révéla alors : {( Accomplis la prière aux extrémités du jour et au début de la nuit, certes, les bonnes actions effacent les mauvaises. )}",
+          "sourceReference": "[Rapporté par Al-Bukhârî et Muslim]",
+          "documentHash": "686dcec9a6886d946cbfbe5d426f2a6c48d269d2be594b47d3706aa47a8be419",
+          "confidence": "review_candidate",
+          "score": {
+            "collectionMatch": 0.55,
+            "referenceMatch": 0,
+            "narratorMatch": 0,
+            "contentMatch": 0.15,
+            "genericTermsPenalty": 0,
+            "finalScore": 0.7000000000000001
+          },
+          "reasons": [
+            "collection concordante",
+            "formulation distinctive partageant au moins trois termes non generiques",
+            "termes non generiques: accompli, rapporte, sahih"
+          ],
+          "warnings": [
+            "aucune reference numerique canonique presente"
+          ]
+        },
+        {
+          "hadeethEncId": "3728",
+          "sourceCollections": [
+            "Al-Bukhari",
+            "Muslim"
+          ],
+          "narrator": null,
+          "title": "Lequel d’entre vous jure par Allah de ne pas faire le bien ?",
+          "sourceReference": "[Rapporté par Al-Bukhârî et Muslim]",
+          "documentHash": "6c53530e3d610b3837deaff19b46e7362e3ca5a37e5129c34901c23d1a91f54d",
+          "confidence": "review_candidate",
+          "score": {
+            "collectionMatch": 0.55,
+            "referenceMatch": 0,
+            "narratorMatch": 0,
+            "contentMatch": 0.15,
+            "genericTermsPenalty": 0,
+            "finalScore": 0.7000000000000001
+          },
+          "reasons": [
+            "collection concordante",
+            "formulation distinctive partageant au moins trois termes non generiques",
+            "termes non generiques: accompli, rapporte, sahih"
+          ],
+          "warnings": [
+            "aucune reference numerique canonique presente"
+          ]
+        },
+        {
+          "hadeethEncId": "3853",
+          "sourceCollections": [
+            "Al-Bukhari",
+            "Muslim"
+          ],
+          "narrator": null,
+          "title": "Le menteur n'est pas celui qui réconcilie les gens en attribuant des paroles bienveillantes, ou en disant du bien.",
+          "sourceReference": "[Rapporté par Al-Bukhârî et Muslim]",
+          "documentHash": "d2b0568c4bc32394f689eeb5c8dac0a78189396254ff6b86b9b3d1c6f2a04f22",
+          "confidence": "review_candidate",
+          "score": {
+            "collectionMatch": 0.55,
+            "referenceMatch": 0,
+            "narratorMatch": 0,
+            "contentMatch": 0.15,
+            "genericTermsPenalty": 0,
+            "finalScore": 0.7000000000000001
+          },
+          "reasons": [
+            "collection concordante",
+            "formulation distinctive partageant au moins trois termes non generiques",
+            "termes non generiques: accompli, rapporte, sahih"
+          ],
+          "warnings": [
+            "aucune reference numerique canonique presente"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceId": "muslim-1336c",
+      "expectedCollection": "Sahih Muslim",
+      "expectedReference": "1336c",
+      "currentStatus": "unverified",
+      "candidates": [
+        {
+          "hadeethEncId": "3295",
+          "sourceCollections": [
+            "Al-Bukhari",
+            "Muslim"
+          ],
+          "narrator": null,
+          "title": "La patience se manifeste lors du premier choc.",
+          "sourceReference": "[Rapporté par Al-Bukhârî et Muslim]",
+          "documentHash": "6c167e5b086dcd0046c0f5bbfb5772d0b51a5f5f49b069a36dcde0ef2561281d",
+          "confidence": "review_candidate",
+          "score": {
+            "collectionMatch": 0.55,
+            "referenceMatch": 0,
+            "narratorMatch": 0,
+            "contentMatch": 0.15,
+            "genericTermsPenalty": 0,
+            "finalScore": 0.7000000000000001
+          },
+          "reasons": [
+            "collection concordante",
+            "formulation distinctive partageant au moins trois termes non generiques",
+            "termes non generiques: enfant, reconnu, recompense"
+          ],
+          "warnings": [
+            "aucune reference numerique canonique presente"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceId": "muslim-1337",
+      "expectedCollection": "Sahih Muslim",
+      "expectedReference": "1337",
+      "currentStatus": "unverified",
+      "candidates": [
+        {
+          "hadeethEncId": "4295",
+          "sourceCollections": [
+            "Al-Bukhari",
+            "Muslim"
+          ],
+          "narrator": null,
+          "title": "Laissez-moi ! Je ne vous ai pas délaissés. En fait, ce qui a anéanti quiconque était avant vous fut leurs [incessantes] questions et leurs divergences avec leurs Prophètes",
+          "sourceReference": "[Rapporté par Al Bukhârî et Muslim]",
+          "documentHash": "5b0570a3644968e745a4685943d3672fccdad637afec2b0a56f2ddaa5780c8ed",
+          "confidence": "review_candidate",
+          "score": {
+            "collectionMatch": 0.55,
+            "referenceMatch": 0,
+            "narratorMatch": 0,
+            "contentMatch": 0.15,
+            "genericTermsPenalty": 0,
+            "finalScore": 0.7000000000000001
+          },
+          "reasons": [
+            "collection concordante",
+            "formulation distinctive partageant au moins trois termes non generiques",
+            "termes non generiques: obligation, absence, obligation"
+          ],
+          "warnings": [
+            "aucune reference numerique canonique presente"
+          ]
+        },
+        {
+          "hadeethEncId": "8901",
+          "sourceCollections": [
+            "Muslim"
+          ],
+          "narrator": null,
+          "title": "La sacralité des femmes des combattants est, pour ceux qui sont restés [chez eux sans combattre], semblable à la sacralité de leurs propres mères.",
+          "sourceReference": "[Rapporté par Muslim]",
+          "documentHash": "b405ab90d367dc9205d6e27dcc9a0519525e1dffc848aa210d372b8bb767d926",
+          "confidence": "review_candidate",
+          "score": {
+            "collectionMatch": 0.55,
+            "referenceMatch": 0,
+            "narratorMatch": 0,
+            "contentMatch": 0.15,
+            "genericTermsPenalty": 0,
+            "finalScore": 0.7000000000000001
+          },
+          "reasons": [
+            "collection concordante",
+            "formulation distinctive partageant au moins trois termes non generiques",
+            "termes non generiques: obligation, absence, obligation"
+          ],
+          "warnings": [
+            "aucune reference numerique canonique presente"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceId": "muslim-276a",
+      "expectedCollection": "Sahih Muslim",
+      "expectedReference": "276a",
+      "currentStatus": "unverified",
+      "candidates": []
+    },
+    {
+      "sourceId": "muslim-293",
+      "expectedCollection": "Sahih Muslim",
+      "expectedReference": "293a",
+      "currentStatus": "unverified",
+      "candidates": [
+        {
+          "hadeethEncId": "3853",
+          "sourceCollections": [
+            "Al-Bukhari",
+            "Muslim"
+          ],
+          "narrator": null,
+          "title": "Le menteur n'est pas celui qui réconcilie les gens en attribuant des paroles bienveillantes, ou en disant du bien.",
+          "sourceReference": "[Rapporté par Al-Bukhârî et Muslim]",
+          "documentHash": "d2b0568c4bc32394f689eeb5c8dac0a78189396254ff6b86b9b3d1c6f2a04f22",
+          "confidence": "review_candidate",
+          "score": {
+            "collectionMatch": 0.55,
+            "referenceMatch": 0,
+            "narratorMatch": 0,
+            "contentMatch": 0.15,
+            "genericTermsPenalty": 0,
+            "finalScore": 0.7000000000000001
+          },
+          "reasons": [
+            "collection concordante",
+            "formulation distinctive partageant au moins trois termes non generiques",
+            "termes non generiques: rapportee, femme, sahih"
+          ],
+          "warnings": [
+            "aucune reference numerique canonique presente"
+          ]
+        },
+        {
+          "hadeethEncId": "10870",
+          "sourceCollections": [
+            "Muslim",
+            "Abu Dawud"
+          ],
+          "narrator": null,
+          "title": "Lorsque l’un d’entre vous se lève pour prier, il sera protégé si devant lui se trouve [un objet de la taille d’] une selle de chameau ; s’il n’y a pas devant lui [un objet de la taille d’] une selle de chameau, sa prière sera rompue par l’âne, la femme et le chien noir.",
+          "sourceReference": "[Rapporté par Abû Dâwud - Rapporté par Muslim]",
+          "documentHash": "83e2f3ce1b05a5160130f165bce11556184747a6e3588021632482308cf5692d",
+          "confidence": "review_candidate",
+          "score": {
+            "collectionMatch": 0.55,
+            "referenceMatch": 0,
+            "narratorMatch": 0,
+            "contentMatch": 0.15,
+            "genericTermsPenalty": 0,
+            "finalScore": 0.7000000000000001
+          },
+          "reasons": [
+            "collection concordante",
+            "formulation distinctive partageant au moins trois termes non generiques",
+            "termes non generiques: rapportee, femme, menstruee"
+          ],
+          "warnings": [
+            "aucune reference numerique canonique presente"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceId": "muslim-335c",
+      "expectedCollection": "Sahih Muslim",
+      "expectedReference": "335c",
+      "currentStatus": "unverified",
+      "candidates": []
+    },
+    {
+      "sourceId": "muslim-361",
+      "expectedCollection": "Sahih Muslim",
+      "expectedReference": "361",
+      "currentStatus": "unverified",
+      "candidates": []
+    },
+    {
+      "sourceId": "muslim-570b",
+      "expectedCollection": "Sahih Muslim",
+      "expectedReference": "570b",
+      "currentStatus": "unverified",
+      "candidates": []
+    },
+    {
+      "sourceId": "muslim-571a",
+      "expectedCollection": "Sahih Muslim",
+      "expectedReference": "571a",
+      "currentStatus": "unverified",
+      "candidates": []
+    },
+    {
+      "sourceId": "muslim-572a",
+      "expectedCollection": "Sahih Muslim",
+      "expectedReference": "572a",
+      "currentStatus": "unverified",
+      "candidates": []
+    },
+    {
+      "sourceId": "muslim-582",
+      "expectedCollection": "Sahih Muslim",
+      "expectedReference": "582",
+      "currentStatus": "unverified",
+      "candidates": [
+        {
+          "hadeethEncId": "5216",
+          "sourceCollections": [
+            "Muslim"
+          ],
+          "narrator": null,
+          "title": "ʽÂ’ishah (qu’Allah l’agrée) relate : « Le Messager d'Allah (sur lui la paix et le salut) commençait la prière en prononçant le Takbîr et en récitant : {( La louange est à Allah, Seigneur de l'univers )}. Quand il s'inclinait, il ne levait pas la tête et ne la baissait pas, mais se tenait entre les deux.",
+          "sourceReference": "[Rapporté par Muslim]",
+          "documentHash": "693d297da71dd2c8992f72ba6e22a35efa3334fbfe4491224d7d990c33c26ff0",
+          "confidence": "review_candidate",
+          "score": {
+            "collectionMatch": 0.55,
+            "referenceMatch": 0,
+            "narratorMatch": 0,
+            "contentMatch": 0.15,
+            "genericTermsPenalty": 0,
+            "finalScore": 0.7000000000000001
+          },
+          "reasons": [
+            "collection concordante",
+            "formulation distinctive partageant au moins trois termes non generiques",
+            "termes non generiques: taslim, droite, gauche"
+          ],
+          "warnings": [
+            "aucune reference numerique canonique presente"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceId": "muslim-613b",
+      "expectedCollection": "Sahih Muslim",
+      "expectedReference": "613b",
+      "currentStatus": "unverified",
+      "candidates": []
+    },
+    {
+      "sourceId": "muslim-687a",
+      "expectedCollection": "Sahih Muslim",
+      "expectedReference": "687a",
+      "currentStatus": "unverified",
+      "candidates": [
+        {
+          "hadeethEncId": "4820",
+          "sourceCollections": [
+            "Al-Bukhari",
+            "Muslim"
+          ],
+          "narrator": null,
+          "title": "Je n'ai jamais faussé compagnie au Messager d'Allah (sur lui la paix et le salut) au cours d'une expédition militaire qu'il a entreprise, excepté l'expédition de Tabûk. Il n'y a que la bataille de Badr à laquelle je n'ai pas participé, mais personne n'a été blâmé pour cela.",
+          "sourceReference": "[Rapporté par Al-Bukhârî et Muslim]",
+          "documentHash": "73df0ef514b5da397fe6af275aab0447162ce8eeeb4175be198dcae2b180c715",
+          "confidence": "review_candidate",
+          "score": {
+            "collectionMatch": 0.55,
+            "referenceMatch": 0,
+            "narratorMatch": 0,
+            "contentMatch": 0.15,
+            "genericTermsPenalty": 0,
+            "finalScore": 0.7000000000000001
+          },
+          "reasons": [
+            "collection concordante",
+            "formulation distinctive partageant au moins trois termes non generiques",
+            "termes non generiques: quatre, voyage, situation"
+          ],
+          "warnings": [
+            "aucune reference numerique canonique presente"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceId": "muslim-705c",
+      "expectedCollection": "Sahih Muslim",
+      "expectedReference": "705c",
+      "currentStatus": "unverified",
+      "candidates": []
+    },
+    {
+      "sourceId": "muslim-875g",
+      "expectedCollection": "Sahih Muslim",
+      "expectedReference": "875g",
+      "currentStatus": "unverified",
+      "candidates": []
+    },
+    {
+      "sourceId": "muslim-981",
+      "expectedCollection": "Sahih Muslim",
+      "expectedReference": "981",
+      "currentStatus": "unverified",
+      "candidates": []
+    },
+    {
+      "sourceId": "muslim-984e",
+      "expectedCollection": "Sahih Muslim",
+      "expectedReference": "984e",
+      "currentStatus": "unverified",
+      "candidates": []
+    },
+    {
+      "sourceId": "muslim-226",
+      "currentStatus": "already_verified",
+      "candidates": []
+    }
+  ]
+}

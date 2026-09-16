@@ -1,7 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { router, useFocusEffect } from "expo-router";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { AppState, Pressable, StyleSheet, Text, View } from "react-native";
 
 import { SURAHS } from "../../data/surahs";
@@ -9,6 +9,7 @@ import { verseOfDay, verseOfDayRoute } from "../../features/notifications/Notifi
 import { quranFoundationRepository } from "../../features/quranfoundation/QuranFoundationRepository";
 import { colors } from "../../theme/colors";
 import { typography } from "../../theme/typography";
+import { useI18n } from "../../i18n";
 
 type DailyVersePreview = {
   text: string;
@@ -16,40 +17,65 @@ type DailyVersePreview = {
   route: string;
 };
 
-async function loadDailyVerse(): Promise<DailyVersePreview> {
+async function loadDailyVerse(
+  language: "fr" | "en",
+  fallbackText: string,
+  surahLabel: string,
+): Promise<DailyVersePreview> {
   const dailyVerse = verseOfDay();
   const surah = SURAHS.find((item) => item.id === dailyVerse.surahId);
-  const verses = await quranFoundationRepository.getVerses(dailyVerse.surahId);
+  const verses = await quranFoundationRepository.getVerses(dailyVerse.surahId, language);
   const verse = verses.find((item) => item.verseKey === `${dailyVerse.surahId}:${dailyVerse.verse}`);
   const text = verse?.translation?.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
 
   return {
-    text: text || "Découvrez le verset sélectionné pour aujourd’hui.",
-    reference: `${surah?.transliteration ?? `Sourate ${dailyVerse.surahId}`} — ${dailyVerse.surahId}:${dailyVerse.verse}`,
+    text: text || fallbackText,
+    reference: `${surah?.transliteration ?? `${surahLabel} ${dailyVerse.surahId}`} — ${dailyVerse.surahId}:${dailyVerse.verse}`,
     route: verseOfDayRoute(),
   };
 }
 
 export default function VerseOfDayCard() {
+  const { language, t } = useI18n();
   const [dailyVerse, setDailyVerse] = useState<DailyVersePreview | null>(null);
+  const [loadedLanguage, setLoadedLanguage] = useState<typeof language | null>(null);
+  const requestId = useRef(0);
+  const visibleDailyVerse = loadedLanguage === language ? dailyVerse : null;
 
   const refresh = useCallback(async () => {
+    const currentRequestId = ++requestId.current;
     try {
-      setDailyVerse(await loadDailyVerse());
+      const verse = await loadDailyVerse(
+        language,
+        t("home.verseFallback"),
+        t("home.surah"),
+      );
+      if (currentRequestId === requestId.current) {
+        setDailyVerse(verse);
+        setLoadedLanguage(language);
+      }
     } catch {
       const verse = verseOfDay();
       const surah = SURAHS.find((item) => item.id === verse.surahId);
-      setDailyVerse({
-        text: "Découvrez le verset sélectionné pour aujourd’hui.",
-        reference: `${surah?.transliteration ?? `Sourate ${verse.surahId}`} — ${verse.surahId}:${verse.verse}`,
-        route: verseOfDayRoute(),
-      });
+      if (currentRequestId === requestId.current) {
+        setDailyVerse({
+          text: t("home.verseFallback"),
+          reference: `${surah?.transliteration ?? `${t("home.surah")} ${verse.surahId}`} — ${verse.surahId}:${verse.verse}`,
+          route: verseOfDayRoute(),
+        });
+        setLoadedLanguage(language);
+      }
     }
-  }, []);
+  }, [language, t]);
 
-  useFocusEffect(useCallback(() => {
-    void refresh();
-  }, [refresh]));
+  useFocusEffect(
+    useCallback(() => {
+      void refresh();
+      return () => {
+        requestId.current += 1;
+      };
+    }, [refresh]),
+  );
 
   useEffect(() => {
     const subscription = AppState.addEventListener("change", (state) => {
@@ -61,8 +87,8 @@ export default function VerseOfDayCard() {
   return (
     <Pressable
       accessibilityRole="button"
-      accessibilityLabel="Ouvrir le verset du jour"
-      onPress={() => router.push((dailyVerse?.route ?? verseOfDayRoute()) as never)}
+      accessibilityLabel={t("home.openVerseToday")}
+      onPress={() => router.push((visibleDailyVerse?.route ?? verseOfDayRoute()) as never)}
       style={({ pressed }) => [styles.card, pressed && styles.pressed]}
     >
       <LinearGradient
@@ -73,13 +99,13 @@ export default function VerseOfDayCard() {
       />
       <View style={styles.cardHeader}>
         <Ionicons name="book-outline" size={21} color={colors.goldLight} />
-        <Text style={styles.title}>Verset du jour</Text>
+        <Text style={styles.title}>{t("home.verseToday")}</Text>
       </View>
       <Text numberOfLines={3} style={styles.bodyText}>
-        {dailyVerse?.text ?? "Chargement du verset du jour…"}
+        {visibleDailyVerse?.text ?? t("home.loadingVerse")}
       </Text>
       <Text numberOfLines={1} style={styles.reference}>
-        {dailyVerse?.reference ?? ""}
+        {visibleDailyVerse?.reference ?? ""}
       </Text>
     </Pressable>
   );

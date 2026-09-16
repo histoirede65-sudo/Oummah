@@ -9,16 +9,19 @@ import {
 } from 'react-native';
 
 import {
-    getMosquePrayerSchedule,
+  getMosquePrayerSchedule,
+  loadPrayerCalculationSettings,
     type MosquePrayerSchedule,
     type MosquePrayerTime,
 } from '../features/mosques/data/mosquePrayerTimes';
+import { applyApprovedMosquePrayerTimes, getApprovedMosquePrayerTimes } from '../features/mosques/data/mosquePrayerUpdates';
 import { colors } from '../theme/colors';
 import { typography } from '../theme/typography';
 
 type MosquePrayerCountdownProps = {
   latitude: number;
   longitude: number;
+  mosqueId?: string;
 };
 
 function getNextPrayer(
@@ -67,6 +70,7 @@ function formatRemainingTime(milliseconds: number) {
 function MosquePrayerCountdown({
   latitude,
   longitude,
+  mosqueId,
 }: MosquePrayerCountdownProps) {
   const [schedule, setSchedule] =
     useState<MosquePrayerSchedule | null>(null);
@@ -81,14 +85,21 @@ function MosquePrayerCountdown({
       setErrorMessage('');
 
       try {
+        const settings = await loadPrayerCalculationSettings();
         const result = await getMosquePrayerSchedule(
           latitude,
           longitude,
           signal,
+          settings,
         );
+        const approved = mosqueId ? await getApprovedMosquePrayerTimes(mosqueId).catch(() => null) : null;
 
         if (!signal.aborted) {
-          setSchedule(result);
+          setSchedule(
+            settings.scheduleSource === 'mosque'
+              ? applyApprovedMosquePrayerTimes(result, approved)
+              : result,
+          );
         }
       } catch (error) {
         if (
@@ -109,7 +120,7 @@ function MosquePrayerCountdown({
         }
       }
     },
-    [latitude, longitude],
+    [latitude, longitude, mosqueId],
   );
 
   useEffect(() => {

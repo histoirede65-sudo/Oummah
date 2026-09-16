@@ -344,7 +344,7 @@ function notificationTrigger(
   request: WasilReminderRequest,
   mode: CenterAlertMode,
 ): Notifications.NotificationTriggerInput {
-  const channelId = `oummah-reminders-${mode}`;
+  const channelId = `oummah-reminders-${mode}-v3`;
   if (request.frequency === "daily") {
     return {
       type: Notifications.SchedulableTriggerInputTypes.DAILY,

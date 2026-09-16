@@ -1,0 +1,155 @@
+import { Ionicons } from '@expo/vector-icons';
+import { Image } from 'expo-image';
+import { LinearGradient } from 'expo-linear-gradient';
+import { useEffect, useState } from 'react';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
+
+import {
+  HALAL_CATEGORY_LABELS,
+  type HalalPlace,
+  type HalalPlaceCategory,
+} from '../../features/halal/domain/HalalPlace';
+import { colors } from '../../theme/colors';
+import { typography } from '../../theme/typography';
+import { getGoogleHalalPhotoSource } from '../../features/halal/data/googleHalalPlaces';
+
+type HalalPlaceCardProps = {
+  place: HalalPlace;
+  favorite: boolean;
+  onPress: () => void;
+  onFavorite: () => void;
+  compact?: boolean;
+};
+
+const CATEGORY_ICONS: Record<HalalPlaceCategory, keyof typeof Ionicons.glyphMap> = {
+  restaurant: 'restaurant-outline',
+  fast_food: 'fast-food-outline',
+  butcher: 'storefront-outline',
+  grocery: 'basket-outline',
+  bakery: 'cafe-outline',
+  other: 'storefront-outline',
+};
+
+function verificationColors(place: HalalPlace) {
+  if (place.verificationStatus === 'verified_certificate') {
+    return { color: colors.success, background: 'rgba(98,197,139,0.13)', border: 'rgba(98,197,139,0.42)' };
+  }
+  if (place.verificationStatus === 'declared') {
+    return { color: colors.goldLight, background: 'rgba(227,181,90,0.12)', border: 'rgba(227,181,90,0.35)' };
+  }
+  return { color: colors.textSecondary, background: 'rgba(143,132,154,0.12)', border: 'rgba(143,132,154,0.30)' };
+}
+
+export default function HalalPlaceCard({ place, favorite, onPress, onFavorite, compact }: HalalPlaceCardProps) {
+  const verification = verificationColors(place);
+  const photoSource = place.communityPhotoUrl
+    ? { uri: place.communityPhotoUrl }
+    : getGoogleHalalPhotoSource(place.photoName);
+  const [photoFailed, setPhotoFailed] = useState(false);
+  useEffect(() => setPhotoFailed(false), [place.photoName, place.communityPhotoUrl]);
+  const displayPhoto = photoSource && !photoFailed;
+  return (
+    <Pressable
+      accessibilityRole="button"
+      accessibilityLabel={`Ouvrir la fiche de ${place.name}`}
+      onPress={onPress}
+      style={({ pressed }) => [styles.shell, compact && styles.shellCompact, pressed && styles.pressed]}
+    >
+      <LinearGradient
+        colors={['rgba(40,24,56,0.98)', 'rgba(18,13,30,0.98)', 'rgba(10,9,21,0.99)']}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={StyleSheet.absoluteFill}
+      />
+      <View style={[styles.iconWrap, displayPhoto && styles.photoWrap, compact && displayPhoto && styles.photoWrapCompact]}>
+        {displayPhoto ? (
+          <Image source={photoSource} contentFit="cover" transition={180} onError={() => setPhotoFailed(true)} style={StyleSheet.absoluteFill} />
+        ) : (
+          <Ionicons name={CATEGORY_ICONS[place.category]} size={compact ? 19 : 22} color={colors.goldLight} />
+        )}
+      </View>
+      <View style={styles.copy}>
+        <View style={styles.titleRow}>
+          <Text numberOfLines={1} style={styles.title}>{place.name}</Text>
+          <Text style={styles.distance}>{place.distanceLabel}</Text>
+        </View>
+        <Text numberOfLines={1} style={styles.category}>
+          {HALAL_CATEGORY_LABELS[place.category]}{place.cuisine ? ` · ${place.cuisine}` : ''}
+        </Text>
+        <Text numberOfLines={1} style={styles.address}>{place.address}</Text>
+        <View style={[styles.verification, { backgroundColor: verification.background, borderColor: verification.border }]}> 
+          <Ionicons
+            name={place.verificationStatus === 'verified_certificate' ? 'shield-checkmark' : 'information-circle-outline'}
+            size={12}
+            color={verification.color}
+          />
+          <Text numberOfLines={1} style={[styles.verificationText, { color: verification.color }]}>
+            {place.verificationLabel}
+          </Text>
+        </View>
+        {place.communityPhotoUrl ? (
+          <Text numberOfLines={1} style={styles.googleAttribution}>Photo communauté · validée par OUMMAH</Text>
+        ) : place.source === 'google' || place.photoName ? (
+          <Text numberOfLines={1} style={styles.googleAttribution}>
+            Google Maps{place.photoAttribution ? ` · Photo : ${place.photoAttribution}` : ''}
+          </Text>
+        ) : null}
+      </View>
+      <Pressable
+        accessibilityRole="button"
+        accessibilityLabel={favorite ? 'Retirer des favoris' : 'Ajouter aux favoris'}
+        hitSlop={9}
+        onPress={(event) => {
+          event.stopPropagation();
+          onFavorite();
+        }}
+        style={styles.favorite}
+      >
+        <Ionicons name={favorite ? 'heart' : 'heart-outline'} size={20} color={favorite ? colors.goldLight : colors.textMuted} />
+      </Pressable>
+    </Pressable>
+  );
+}
+
+const styles = StyleSheet.create({
+  shell: {
+    minHeight: 132,
+    overflow: 'hidden',
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    padding: 14,
+    borderRadius: 23,
+    borderWidth: 1,
+    borderColor: 'rgba(227,181,90,0.26)',
+    shadowColor: '#000',
+    shadowOpacity: 0.25,
+    shadowRadius: 12,
+    shadowOffset: { width: 0, height: 7 },
+    elevation: 6,
+  },
+  shellCompact: { minHeight: 116, borderRadius: 20, padding: 12 },
+  pressed: { opacity: 0.83, transform: [{ scale: 0.99 }] },
+  iconWrap: {
+    width: 42,
+    height: 42,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 15,
+    borderWidth: 1,
+    borderColor: 'rgba(227,181,90,0.34)',
+    backgroundColor: 'rgba(200,148,58,0.10)',
+    overflow: 'hidden',
+  },
+  photoWrap: { width: 78, height: 98, borderRadius: 18 },
+  photoWrapCompact: { width: 65, height: 84, borderRadius: 16 },
+  copy: { flex: 1, minWidth: 0, marginLeft: 11, paddingRight: 22 },
+  titleRow: { flexDirection: 'row', alignItems: 'center' },
+  title: { flex: 1, minWidth: 0, color: colors.text, fontFamily: typography.serifSemibold, fontSize: 19, fontWeight: '700' },
+  distance: { marginLeft: 7, color: colors.goldLight, fontFamily: typography.sans, fontSize: 11, fontWeight: '800' },
+  category: { marginTop: 2, color: colors.goldMuted, fontFamily: typography.sans, fontSize: 10.5, fontWeight: '700' },
+  address: { marginTop: 5, color: colors.textSecondary, fontFamily: typography.sans, fontSize: 11, lineHeight: 15 },
+  verification: { alignSelf: 'flex-start', maxWidth: '100%', marginTop: 8, paddingHorizontal: 7, paddingVertical: 4, flexDirection: 'row', alignItems: 'center', gap: 4, borderRadius: 10, borderWidth: 1 },
+  verificationText: { flexShrink: 1, fontFamily: typography.sans, fontSize: 9.5, fontWeight: '700' },
+  googleAttribution: { marginTop: 6, color: colors.textSecondary, fontFamily: typography.sans, fontSize: 12, fontWeight: '400' },
+  favorite: { position: 'absolute', top: 10, right: 10, width: 30, height: 30, alignItems: 'center', justifyContent: 'center' },
+});

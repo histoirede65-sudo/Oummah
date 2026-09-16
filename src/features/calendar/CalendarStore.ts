@@ -42,7 +42,7 @@ export const DEFAULT_CALENDAR_SETTINGS: CalendarSettings = {
   personalReminders: [],
 };
 
-export async function loadCalendarSettings() {
+export async function loadCalendarSettings(): Promise<CalendarSettings> {
   const saved = await storageService
     .get<StoredCalendarSettings>(KEY)
     .catch(() => null);

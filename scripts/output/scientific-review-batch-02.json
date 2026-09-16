@@ -1,0 +1,154 @@
+{
+  "batch": "scientific-review-batch-02",
+  "reviewedAt": "2026-09-16",
+  "scope": "E100, E101, E120, E160A, E330",
+  "supabaseWritten": false,
+  "methodology": {
+    "classificationIsProposalOnly": true,
+    "hazardRiskSeparated": true,
+    "productExposureMeasured": false,
+    "note": "Une ADI absente ou non numerique ne signifie pas absence de risque. Une autorisation ne constitue pas une garantie d'absence de risque. Les signaux observes dans des complements a forte dose ne sont pas transferes automatiquement a l'usage alimentaire."
+  },
+  "additives": [
+    {
+      "code": "E100",
+      "canonicalName": "Curcumin",
+      "cas": ["458-37-7"],
+      "openFoodTox": {
+        "subUuid": "1ec9f394-7fbb-43a2-8d6b-6a1067cef59f",
+        "refSubUuid": "1de094c6-513a-4dc2-9afd-9cfa8c13569c",
+        "matchingMethod": "cas_exact",
+        "referenceValuesRaw": [{"type": "ADI", "lowerValue": "3", "Unit": "mg/kg bw/day"}]
+      },
+      "regulatoryStatus": {"euAuthorised": true, "conditions": "Curcumine autorisee comme colorant dans le cadre des conditions d'emploi de l'Union europeenne; la conformite du produit scanne n'est pas evaluee ici."},
+      "adi": {"value": "3", "unit": "mg/kg bw/day", "type": "ADI", "status": "EFSA/JECFA", "appliesTo": "curcumine alimentaire"},
+      "adiAuthority": "EFSA / JECFA",
+      "adiHistory": [{"date": "2003", "value": "0-3", "unit": "mg/kg bw", "type": "ADI", "sourceId": "e100-jecfa-2003"}, {"date": "2010", "value": "3", "unit": "mg/kg bw/day", "type": "ADI confirmee par EFSA", "sourceId": "e100-efsa-2010"}],
+      "healthEffects": [{"effectType": "general_toxicity", "finding": "EFSA a retenu une ADI de 3 mg/kg/j fondee sur une etude de toxicite reproductive; l'extrait officiel consulte ne fournit pas de signal de genotoxicite justifiant une gravite elevee.", "population": "population generale; exposition alimentaire", "evidenceLevel": "strong", "sourceId": "e100-efsa-2010"}],
+      "sensitivePopulations": ["Enfants exposes a des niveaux eleves dans certains scenarios d'exposition aux colorants et consommateurs de curcuma comme epice."],
+      "exposureAssessment": {"officialConclusion": "EFSA a identifie des depassements possibles de l'ADI dans certains scenarios eleves, alors que l'exposition du regime normal etait estimee bien plus basse; JECFA indiquait que les donnees disponibles ne permettaient pas d'estimer precisement l'exposition.", "productSpecificConclusion": "La quantite de E100 dans le produit scanne et l'exposition alimentaire totale sont inconnues.", "concern": "possible", "sourceId": "e100-efsa-2010"},
+      "severity": "low",
+      "evidenceStrength": "strong",
+      "exposureConcern": "possible",
+      "scientificClassification": "limited_concern",
+      "scientificSummary": "La curcumine dispose d'une ADI de 3 mg/kg/j. Les evaluations officielles decrivent une base toxicologique suffisante mais une incertitude d'exposition, avec des depassements possibles dans certains scenarios eleves. Cela justifie une attention limitee, sans extrapoler les usages de complements fortement doses au colorant alimentaire.",
+      "sources": [
+        {"sourceId": "e100-efsa-2010", "organisation": "EFSA", "title": "Scientific Opinion on the re-evaluation of curcumin (E 100) as a food additive", "url": "https://doi.org/10.2903/j.efsa.2010.1679", "publishedAt": "2010", "accessedAt": "2026-09-16", "fieldsSupported": ["ADI", "toxicology", "exposure"]},
+        {"sourceId": "e100-jecfa-2003", "organisation": "JECFA / WHO", "title": "Curcumin evaluation", "url": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/638", "publishedAt": "2003", "accessedAt": "2026-09-16", "fieldsSupported": ["ADI", "NOEL", "exposure_uncertainty"]},
+        {"sourceId": "e100-eu-rules", "organisation": "European Commission", "title": "EU rules on food additives", "url": "https://food.ec.europa.eu/food-safety/food-improvement-agents/additives/eu-rules_en", "accessedAt": "2026-09-16", "fieldsSupported": ["regulatory_framework"]}
+      ],
+      "scientificReviewedAt": "2026-09-16",
+      "needsScientificReview": false,
+      "limitations": ["L'exposition du produit n'est pas mesuree.", "Les donnees de complements alimentaires fortement doses ne sont pas assimilees a l'exposition au E100 alimentaire."]
+    },
+    {
+      "code": "E101",
+      "canonicalName": "Riboflavins",
+      "cas": ["83-88-5"],
+      "openFoodTox": {"subUuid": "6bd4f020-5316-4ce1-a4d6-8a0df1c257eb", "refSubUuid": "5eb42649-e1d7-46c4-9102-383262a50bb6", "matchingMethod": "cas_exact", "referenceValuesRaw": [{"type": "ADI", "upperQualifier": "<=", "upperValue": "0.5", "Unit": "mg/kg bw/day"}]},
+      "regulatoryStatus": {"euAuthorised": true, "conditions": "E101 couvre la riboflavine (E101i) et le riboflavine-5'-phosphate sodium (E101ii) selon les specifications et conditions d'emploi applicables."},
+      "adi": {"value": null, "unit": "mg/kg bw/day", "type": "ADI", "status": "Aucune ADI numerique retenue dans les sources officielles utilisees; la valeur brute OpenFoodTox <=0.5 n'est pas interpretee sans contexte.", "appliesTo": "E101i et E101ii selon l'evaluation EFSA"},
+      "adiAuthority": "EFSA",
+      "adiHistory": [{"date": "2013", "value": null, "unit": null, "type": "evaluation de securite", "sourceId": "e101-efsa-2013"}],
+      "healthEffects": [{"effectType": "nutritional_and_toxicological", "finding": "EFSA a conclu que la riboflavine et la riboflavine-5'-phosphate sodium etaient peu susceptibles de poser un probleme de securite aux usages et niveaux actuellement autorises, malgre des incertitudes dans la base de donnees.", "population": "population generale aux usages alimentaires autorises", "evidenceLevel": "strong", "sourceId": "e101-efsa-2013"}],
+      "sensitivePopulations": [],
+      "exposureAssessment": {"officialConclusion": "L'avis EFSA ne signale pas de preoccupation pour les usages et niveaux autorises evalues.", "productSpecificConclusion": "La concentration dans le produit scanne n'est pas connue.", "concern": "unlikely", "sourceId": "e101-efsa-2013"},
+      "severity": "none",
+      "evidenceStrength": "strong",
+      "exposureConcern": "unlikely",
+      "scientificClassification": "no_particular_signal",
+      "scientificSummary": "E101 regroupe deux formes reglementaires de riboflavine. L'EFSA conclut a l'absence de preoccupation de securite aux usages autorises evalues, sans que cela constitue une garantie pour une exposition individuelle ou pour des formes non couvertes.",
+      "sources": [
+        {"sourceId": "e101-efsa-2013", "organisation": "EFSA", "title": "Re-evaluation of riboflavin (E 101i) and riboflavin-5'-phosphate sodium (E 101ii) as food additives", "url": "https://doi.org/10.2903/j.efsa.2013.3358", "publishedAt": "2013", "accessedAt": "2026-09-16", "fieldsSupported": ["identity", "forms", "safety_conclusion"]},
+        {"sourceId": "e101-efsa-colours", "organisation": "EFSA", "title": "Food colours: status of EFSA safety assessments", "url": "https://www.efsa.europa.eu/en/topics/topic/food-colours", "accessedAt": "2026-09-16", "fieldsSupported": ["re-evaluation_status"]}
+      ],
+      "scientificReviewedAt": "2026-09-16",
+      "needsScientificReview": false,
+      "limitations": ["La valeur brute OpenFoodTox <=0.5 mg/kg/j n'est pas retenue comme ADI officielle sans contexte documentaire.", "La fiche produit ne permet pas de distinguer la forme exacte d'E101."]
+    },
+    {
+      "code": "E120",
+      "canonicalName": "Cochineal carminic acid carmins",
+      "cas": ["1260-17-9", "1390-65-4"],
+      "openFoodTox": {"subUuid": "3256afd8-8a25-430e-9cd6-a48d7c7226e6", "refSubUuid": "754e3b46-7fc6-4c69-9c02-38d6ce089ef8", "matchingMethod": "nom_ou_alias_exact", "referenceValuesRaw": []},
+      "regulatoryStatus": {"euAuthorised": true, "conditions": "E120 couvre la cochenille, l'acide carminique et les carmins dans le cadre des specifications et conditions d'emploi de l'Union europeenne."},
+      "adi": {"value": "0-5", "unit": "mg/kg bw", "type": "ADI", "status": "JECFA; carmins exprimes comme carminate d'ammonium ou sels equivalents", "appliesTo": "carmins; ne permet pas de resoudre a lui seul le signal d'allergenicite"},
+      "adiAuthority": "JECFA / WHO",
+      "adiHistory": [{"date": "1982", "value": "0-5", "unit": "mg/kg bw", "type": "ADI", "sourceId": "e120-jecfa-1982"}, {"date": "2000", "value": "0-5", "unit": "mg/kg bw", "type": "ADI maintenue", "sourceId": "e120-jecfa-2000"}],
+      "healthEffects": [{"effectType": "hypersensitivity", "finding": "Des reactions allergiques ont ete rapportees avec des produits contenant cochenille/carmine; JECFA indique que la cochenille, les carmins et possiblement l'acide carminique peuvent provoquer des reactions chez certaines personnes. EFSA a souligne le role possible de residus proteiques et l'absence de seuil utilisable pour etablir une ADI sur ce danger.", "population": "personnes sensibilisees; ce signal ne constitue pas une toxicite generale pour toute la population", "evidenceLevel": "moderate", "sourceId": "e120-jecfa-2000"}],
+      "sensitivePopulations": ["Personnes ayant une hypersensibilite connue a la cochenille/carmine ou a des residus proteiques associes."],
+      "exposureAssessment": {"officialConclusion": "Le risque d'hypersensibilite n'est pas representable par une ADI, car aucun seuil n'est etabli pour ce danger; l'exposition alimentaire generale n'est pas quantifiee pour le produit scanne.", "productSpecificConclusion": "La quantite de E120 et la sensibilite individuelle sont inconnues.", "concern": "possible", "sourceId": "e120-efsa-allergenicity"},
+      "severity": "low",
+      "evidenceStrength": "moderate",
+      "exposureConcern": "possible",
+      "scientificClassification": "limited_concern",
+      "scientificSummary": "Le signal principal de E120 est une hypersensibilite possible chez certaines personnes, a distinguer d'une toxicite generale. Une ADI JECFA existe pour les carmins, mais elle ne couvre pas le risque allergique sans seuil; la classification est donc limitee et ciblee, pas un verdict de danger general.",
+      "sources": [
+        {"sourceId": "e120-jecfa-2000", "organisation": "JECFA / WHO", "title": "Carmines evaluation", "url": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/1079", "publishedAt": "2000", "accessedAt": "2026-09-16", "fieldsSupported": ["ADI", "allergenicity", "identity"]},
+        {"sourceId": "e120-efsa-allergenicity", "organisation": "EFSA", "title": "Re-evaluation of E120 cochineal, carminic acid and carmines - panel discussion", "url": "https://www.efsa.europa.eu/sites/default/files/event/110920-m.pdf", "publishedAt": "2011", "accessedAt": "2026-09-16", "fieldsSupported": ["allergic_reactions", "protein_residues", "no_threshold_for_allergenicity"]},
+        {"sourceId": "e120-efsa-status", "organisation": "EFSA", "title": "Food colours: E120 safety assessment status", "url": "https://www.efsa.europa.eu/en/topics/topic/food-colours", "accessedAt": "2026-09-16", "fieldsSupported": ["re_evaluation_status"]}
+      ],
+      "scientificReviewedAt": "2026-09-16",
+      "needsScientificReview": false,
+      "limitations": ["Le signal d'allergie est individuel et ne permet pas d'estimer un risque general.", "La fiche OpenFoodTox ne fournit pas de valeur de reference pour E120.", "L'exposition et la teneur en residus proteiques du produit sont inconnues."]
+    },
+    {
+      "code": "E160A",
+      "canonicalName": "Carotenes",
+      "cas": ["7235-40-7"],
+      "openFoodTox": {"subUuid": "e616fda4-1673-4d4f-8bf4-be2bf777c824", "refSubUuid": "7df80a57-db0e-4c72-ae4e-7afacf2b7f2c", "matchingMethod": "nom_ou_alias_exact", "referenceValuesRaw": []},
+      "regulatoryStatus": {"euAuthorised": true, "conditions": "E160a comprend les carotenes mixtes et le beta-carotene selon les specifications et usages autorises; la composition exacte de l'additif du produit n'est pas disponible."},
+      "adi": {"value": null, "unit": null, "type": "ADI", "status": "Aucune ADI numerique n'a pu etre etablie par EFSA pour les carotenes mixtes et le beta-carotene dans l'avis cite; EFSA a formule une condition d'exposition alimentaire/supplementaire."},
+      "adiAuthority": "EFSA",
+      "adiHistory": [{"date": "2012", "value": null, "unit": null, "type": "absence d'ADI numerique; condition de ne pas depasser l'ordre de l'apport alimentaire naturel", "sourceId": "e160a-efsa-2012"}, {"date": "2019", "value": null, "unit": null, "type": "JECFA n'a pas pu etablir une ADI de groupe applicable aux gros fumeurs", "sourceId": "e160a-jecfa-2019"}],
+      "healthEffects": [{"effectType": "supplement_specific_signal", "finding": "Des essais a doses de complements d'au moins 20 mg/j ont observe un risque accru de cancer du poumon chez des fumeurs ou travailleurs exposes a l'amiante; ce signal n'est pas transpose automatiquement a l'usage comme colorant alimentaire.", "population": "gros fumeurs et travailleurs exposes a l'amiante dans des contextes de supplementation elevee", "evidenceLevel": "strong", "sourceId": "e160a-efsa-2012"}],
+      "sensitivePopulations": ["Gros fumeurs pour les complements a forte dose; cette population ne permet pas d'inferer le risque du E160a alimentaire dans un produit donne."],
+      "exposureAssessment": {"officialConclusion": "EFSA ne souleve pas de preoccupation pour l'usage comme colorant lorsque l'exposition alimentaire et supplementaire reste du meme ordre que l'apport naturel (5-10 mg/j), mais ne peut pas etablir d'ADI numerique.", "productSpecificConclusion": "La forme exacte, la dose dans le produit et la consommation totale de carotenes sont inconnues; la conclusion ne constitue donc pas une mesure de l'exposition individuelle.", "concern": "unlikely", "sourceId": "e160a-efsa-2012"},
+      "severity": "low",
+      "evidenceStrength": "strong",
+      "exposureConcern": "unlikely",
+      "scientificClassification": "no_particular_signal",
+      "scientificSummary": "E160a couvre plusieurs formes de carotenes. Pour l'usage comme colorant alimentaire, l'EFSA ne releve pas de preoccupation de securite lorsque l'exposition reste dans l'ordre de l'apport naturel. Le signal observe chez certains gros fumeurs concerne des complements a forte dose et n'est pas attribue automatiquement au colorant alimentaire. La conclusion reste conditionnelle et ne mesure pas l'exposition individuelle du produit scanne.",
+      "sources": [
+        {"sourceId": "e160a-efsa-2012", "organisation": "EFSA", "title": "Re-evaluation of mixed carotenes (E 160a(i)) and beta-carotene (E 160a(ii))", "url": "https://www.efsa.europa.eu/sites/default/files/event/120214-m.pdf", "publishedAt": "2012", "accessedAt": "2026-09-16", "fieldsSupported": ["forms", "ADI_status", "food_vs_supplement", "smoker_signal"]},
+        {"sourceId": "e160a-jecfa-2019", "organisation": "JECFA / WHO", "title": "Summary and conclusions of the 87th JECFA meeting", "url": "https://cdn.who.int/media/docs/default-source/food-safety/jecfa/summary-and-conclusions/jecfa87_4-13-june-2019_summary-and-conclusion.pdf", "publishedAt": "2019", "accessedAt": "2026-09-16", "fieldsSupported": ["group_ADI_uncertainty", "heavy_smokers"]},
+        {"sourceId": "e160a-efsa-status", "organisation": "EFSA", "title": "Food colours: E160a safety assessment status", "url": "https://www.efsa.europa.eu/en/topics/topic/food-colours", "accessedAt": "2026-09-16", "fieldsSupported": ["re_evaluation_status", "follow_up"]}
+      ],
+      "scientificReviewedAt": "2026-09-16",
+      "needsScientificReview": false,
+      "limitations": ["La composition exacte de E160a dans le produit est inconnue.", "Aucune dose du produit n'est disponible.", "Le signal des complements a forte dose chez les gros fumeurs n'est pas un signal produit-specifique."]
+    },
+    {
+      "code": "E330",
+      "canonicalName": "Citric acid",
+      "cas": ["77-92-9", "5949-29-1"],
+      "openFoodTox": {"subUuid": "39cf5b57-4e50-49f0-8c49-6719ebb32d47", "refSubUuid": "c4d38ae8-aec4-47b2-b02b-344dfbced691", "matchingMethod": "cas_exact", "referenceValuesRaw": []},
+      "regulatoryStatus": {"euAuthorised": true, "conditions": "E330 est autorise dans le cadre des conditions d'emploi applicables; il est aussi naturellement present dans de nombreux aliments."},
+      "adi": {"value": null, "unit": null, "type": "ADI", "status": "JECFA: not limited; aucune ADI numerique necessaire dans l'evaluation citee", "appliesTo": "acide citrique et sels cites par JECFA"},
+      "adiAuthority": "JECFA / WHO",
+      "adiHistory": [{"date": "1973", "value": null, "unit": null, "type": "ADI not limited; evaluation de groupe", "sourceId": "e330-jecfa-1973"}, {"date": "2014", "value": null, "unit": null, "type": "not limited; specifications", "sourceId": "e330-jecfa-2014"}],
+      "healthEffects": [{"effectType": "local_acidity", "finding": "L'acide citrique est un acidifiant; les effets locaux lies a l'acidite et a la matrice alimentaire ne doivent pas etre confondus avec une toxicite systemique de l'additif. JECFA l'a classe comme non limite pour l'evaluation citee.", "population": "population generale; effets locaux dependants de la matrice et de la consommation", "evidenceLevel": "strong", "sourceId": "e330-jecfa-2014"}],
+      "sensitivePopulations": [],
+      "exposureAssessment": {"officialConclusion": "JECFA indique une ADI not limited et precise que l'evaluation 2014 portait sur les specifications; cela ne fournit pas une mesure de l'exposition a ce produit.", "productSpecificConclusion": "La concentration de E330, la matrice et la consommation individuelle sont inconnues.", "concern": "unlikely", "sourceId": "e330-jecfa-2014"},
+      "severity": "none",
+      "evidenceStrength": "strong",
+      "exposureConcern": "unlikely",
+      "scientificClassification": "no_particular_signal",
+      "scientificSummary": "JECFA indique que l'ADI de l'acide citrique et de certains sels n'est pas limitee et l'a re-evalue pour specifications. Cela ne constitue pas une garantie individuelle; la distinction est conservee entre acidite locale liee a la matrice et toxicite systemique.",
+      "sources": [
+        {"sourceId": "e330-jecfa-2014", "organisation": "JECFA / WHO", "title": "Citric acid evaluation", "url": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/3594", "publishedAt": "2014", "accessedAt": "2026-09-16", "fieldsSupported": ["ADI_status", "identity", "specifications"]},
+        {"sourceId": "e330-efsa-framework", "organisation": "EFSA", "title": "Food additives", "url": "https://www.efsa.europa.eu/en/topics/topic/food-additives", "accessedAt": "2026-09-16", "fieldsSupported": ["regulatory_context", "natural_occurrence"]}
+      ],
+      "scientificReviewedAt": "2026-09-16",
+      "needsScientificReview": false,
+      "limitations": ["L'absence d'ADI numerique n'est pas interpretee comme absence absolue de risque.", "Les effets locaux de l'acidite dependent de la matrice et de l'exposition, qui ne sont pas mesurees ici.", "OpenFoodTox ne fournit pas de valeur de reference pour E330 dans cet export."]
+    }
+  ],
+  "summaryTable": [
+    {"code": "E100", "classificationProposed": "limited_concern", "evidenceStrength": "strong", "exposureConcern": "possible", "adi": "3 mg/kg bw/day", "reviewComplete": true},
+    {"code": "E101", "classificationProposed": "no_particular_signal", "evidenceStrength": "strong", "exposureConcern": "unlikely", "adi": "non numerique dans les sources retenues; valeur brute OFF <=0.5 non interpretee", "reviewComplete": true},
+    {"code": "E120", "classificationProposed": "limited_concern", "evidenceStrength": "moderate", "exposureConcern": "possible", "adi": "0-5 mg/kg bw pour carmins; allergenicite non couverte par une ADI", "reviewComplete": true},
+    {"code": "E160A", "classificationProposed": "no_particular_signal", "evidenceStrength": "strong", "exposureConcern": "unlikely", "adi": "aucune ADI numerique; conclusion EFSA conditionnelle a une exposition de l'ordre de l'apport naturel", "reviewComplete": true},
+    {"code": "E330", "classificationProposed": "no_particular_signal", "evidenceStrength": "strong", "exposureConcern": "unlikely", "adi": "not limited", "reviewComplete": true}
+  ]
+}

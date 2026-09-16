@@ -8,6 +8,7 @@ import {
   ActivityIndicator,
   Alert,
   Image,
+  type LayoutChangeEvent,
   Linking,
   type GestureResponderEvent,
   type ImageSourcePropType,
@@ -118,6 +119,7 @@ const MOSQUE_CARD_IMAGES: readonly ImageSourcePropType[] = [
   require('../assets/images/mosques/mosque-d-11.jpg'),
 ];
 const MOSQUE_RENDER_BATCH_SIZE = 24;
+const SAME_ZONE_MAX_DISTANCE_METERS = 3_000;
 
 type DisplayMosque = Omit<
   NearbyMosque,
@@ -362,6 +364,8 @@ export default function MosquesScreen() {
   const requestController = useRef<AbortController | null>(null);
   const routeController = useRef<AbortController | null>(null);
   const mapRef = useRef<MapView | null>(null);
+  const scrollViewRef = useRef<ScrollView | null>(null);
+  const resultsSectionY = useRef(0);
 
   const displayMosques = useMemo<DisplayMosque[]>(() => {
     const userDisplays = userMosques.map((mosque) =>
@@ -427,6 +431,15 @@ export default function MosquesScreen() {
   useEffect(() => {
     setRenderedMosqueCount(MOSQUE_RENDER_BATCH_SIZE);
   }, [query, displayMosques]);
+
+  const scrollToResults = () => {
+    requestAnimationFrame(() => {
+      scrollViewRef.current?.scrollTo({
+        y: Math.max(0, resultsSectionY.current - 16),
+        animated: true,
+      });
+    });
+  };
 
   const handleContentScroll = (
     event: NativeSyntheticEvent<NativeScrollEvent>,
@@ -680,10 +693,31 @@ export default function MosquesScreen() {
   ) => {
     setUserCoordinates(coordinates);
 
+    const cache = await readMosqueSearchCache().catch(() => null);
+    const cachedMosques = cache && distanceBetween(coordinates, {
+      latitude: cache.latitude,
+      longitude: cache.longitude,
+    }) <= SAME_ZONE_MAX_DISTANCE_METERS
+      ? cache.mosques
+      : [];
+
+    if (cachedMosques.length > 0) {
+      setMosques(cachedMosques);
+      setUsingCachedResults(true);
+      setLocationState('ready');
+    }
+
     const nearbyMosques = await getNearbyMosques(
       coordinates.latitude,
       coordinates.longitude,
       controller.signal,
+      (progressMosques) => {
+        if (controller.signal.aborted) return;
+        setMosques(progressMosques);
+        setUsingCachedResults(false);
+        setLocationState('ready');
+      },
+      cachedMosques,
     );
 
     setMosques(nearbyMosques);
@@ -703,6 +737,8 @@ export default function MosquesScreen() {
   const locateMosques = async (silent = false) => {
     if (locationState === 'loading') return;
 
+    scrollToResults();
+
     requestController.current?.abort();
 
     const controller = new AbortController();
@@ -713,6 +749,7 @@ export default function MosquesScreen() {
     setSelectedMosque(null);
     setRoute(null);
     setRouteError('');
+    let attemptedCoordinates: UserCoordinates | null = null;
 
     try {
       const permission = await Location.requestForegroundPermissionsAsync();
@@ -742,6 +779,7 @@ export default function MosquesScreen() {
         latitude: position.coords.latitude,
         longitude: position.coords.longitude,
       };
+      attemptedCoordinates = coordinates;
 
       const nearbyMosques = await searchFromCoordinates(
         coordinates,
@@ -776,10 +814,17 @@ export default function MosquesScreen() {
 
       const cache = await readMosqueSearchCache().catch(() => null);
 
-      if (cache) {
-        setUserCoordinates({
+      if (
+        cache
+        && attemptedCoordinates
+        && distanceBetween(attemptedCoordinates, {
           latitude: cache.latitude,
           longitude: cache.longitude,
+        }) <= SAME_ZONE_MAX_DISTANCE_METERS
+      ) {
+        setUserCoordinates({
+          latitude: attemptedCoordinates.latitude,
+          longitude: attemptedCoordinates.longitude,
         });
         setMosques(cache.mosques);
         setUsingCachedResults(true);
@@ -863,47 +908,9 @@ export default function MosquesScreen() {
   );
 
   useEffect(() => {
-    let active = true;
-
-    const initializeMosques = async () => {
-      const cache = await readMosqueSearchCache().catch(() => null);
-
-      if (!active) return;
-
-      if (cache) {
-        setMosques(cache.mosques);
-        setUserCoordinates({
-          latitude: cache.latitude,
-          longitude: cache.longitude,
-        });
-        setUsingCachedResults(true);
-        setLocationState('ready');
-      }
-
-      let permission: Location.LocationPermissionResponse;
-
-      try {
-        permission = await Location.getForegroundPermissionsAsync();
-      } catch {
-        if (!active) return;
-
-        setInitializing(false);
-        setLocationState(cache ? 'ready' : 'error');
-        setErrorMessage('La localisation est temporairement indisponible.');
-        return;
-      }
-
-      if (!active) return;
-
-      setInitializing(false);
-
-      if (permission.granted) void locateMosques(true);
-    };
-
-    void initializeMosques();
+    setInitializing(false);
 
     return () => {
-      active = false;
       requestController.current?.abort();
       routeController.current?.abort();
     };
@@ -914,7 +921,7 @@ export default function MosquesScreen() {
       ? 'Recherche en cours…'
       : locationState === 'ready'
         ? 'Actualiser ma position'
-        : 'Utiliser ma position';
+        : 'Appuyer pour rechercher';
 
   return (
     <SafeAreaView edges={['top']} style={styles.safeArea}>
@@ -942,6 +949,7 @@ export default function MosquesScreen() {
       </View>
 
       <ScrollView
+        ref={scrollViewRef}
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
@@ -1256,7 +1264,12 @@ export default function MosquesScreen() {
           ) : null}
         </View>
 
-        <View style={styles.sectionHeader}>
+        <View
+          onLayout={(event: LayoutChangeEvent) => {
+            resultsSectionY.current = event.nativeEvent.layout.y;
+          }}
+          style={styles.sectionHeader}
+        >
           <View style={styles.sectionHeaderCopy}>
             <Text style={styles.sectionTitle}>
               {locationState === 'ready' ? 'Mosquées proches' : 'Explorer'}
@@ -1267,7 +1280,7 @@ export default function MosquesScreen() {
                 ? `${mosques.length} résultat${mosques.length > 1 ? 's' : ''} autour de vous`
                 : initializing
                   ? 'Préparation de la recherche…'
-                  : 'Activez votre position pour lancer la recherche'}
+                  : 'Appuyez sur le bouton pour chercher les mosquées proches'}
             </Text>
 
             {usingCachedResults ? (
@@ -1715,7 +1728,7 @@ const styles = StyleSheet.create({
   },
   heroCard: {
     overflow: 'hidden',
-    minHeight: 410,
+    height: 330,
     borderRadius: 28,
     borderWidth: 1,
     borderColor: 'rgba(236,196,102,0.48)',

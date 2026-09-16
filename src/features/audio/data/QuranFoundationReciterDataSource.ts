@@ -20,7 +20,12 @@ function canonicalReciterKey(value: string) {
 
 function displayReciterName(reciter: { id: number | string; name?: string }) {
   if (String(reciter.id) === "12") return "Ali Al-Hudhaify";
+  if (String(reciter.id) === "176") return "Ahmed Abdelhamid Tahoun";
   return reciter.name ?? String(reciter.id);
+}
+
+function displayReciterCountry(reciter: { id: number | string }) {
+  return String(reciter.id) === "176" ? "Égypte" : "";
 }
 
 function orderReciters(reciters: CatalogReciter[]) {
@@ -47,7 +52,7 @@ export class QuranFoundationReciterDataSource {
       name: displayReciterName(reciter),
 
       language: "ar",
-      country: "",
+      country: displayReciterCountry(reciter),
 
       style:
         reciter.style?.name?.toLowerCase() === "mujawwad"

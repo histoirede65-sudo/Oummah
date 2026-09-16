@@ -30,77 +30,77 @@ import {
 } from "../../features/profile/UserProfileRepository";
 import { colors } from "../../theme/colors";
 import { typography } from "../../theme/typography";
+import { useI18n, type TranslationKey } from "../../i18n";
 
 const TOTAL_STEPS = 5;
 
-const AGE_OPTIONS: { value: AgeRange; label: string }[] = [
-  { value: "under_18", label: "Moins de 18 ans" },
-  { value: "18_24", label: "18 à 24 ans" },
-  { value: "25_34", label: "25 à 34 ans" },
-  { value: "35_44", label: "35 à 44 ans" },
-  { value: "45_54", label: "45 à 54 ans" },
-  { value: "55_plus", label: "55 ans et plus" },
-  { value: "prefer_not_to_say", label: "Je préfère ne pas répondre" },
+const AGE_OPTIONS: { value: AgeRange; labelKey: TranslationKey }[] = [
+  { value: "under_18", labelKey: "onboarding.ageUnder18" },
+  { value: "18_24", labelKey: "onboarding.age18To24" },
+  { value: "25_34", labelKey: "onboarding.age25To34" },
+  { value: "35_44", labelKey: "onboarding.age35To44" },
+  { value: "45_54", labelKey: "onboarding.age45To54" },
+  { value: "55_plus", labelKey: "onboarding.age55Plus" },
+  { value: "prefer_not_to_say", labelKey: "onboarding.preferNotSay" },
 ];
 
-const LEVEL_OPTIONS: { value: DeclaredLevel; label: string }[] = [
-  { value: "beginner", label: "J’apprends encore les bases" },
+const LEVEL_OPTIONS: { value: DeclaredLevel; labelKey: TranslationKey }[] = [
+  { value: "beginner", labelKey: "onboarding.levelBeginner" },
   {
     value: "foundations",
-    label: "Je connais l’essentiel mais je manque de régularité",
+    labelKey: "onboarding.levelFoundations",
   },
   {
     value: "intermediate",
-    label: "Je pratique régulièrement et je souhaite progresser",
+    labelKey: "onboarding.levelIntermediate",
   },
   {
     value: "advanced",
-    label:
-      "J’ai de bonnes connaissances et je cherche un accompagnement plus approfondi",
+    labelKey: "onboarding.levelAdvanced",
   },
   {
     value: "adaptive",
-    label: "Je préfère que Wasil évalue progressivement mon niveau",
+    labelKey: "onboarding.levelAdaptive",
   },
 ];
 
 const REGULARITY_OPTIONS: {
   value: CurrentRegularity;
-  label: string;
+  labelKey: TranslationKey;
 }[] = [
-  { value: "not_regular", label: "Pas encore régulier" },
-  { value: "occasionally", label: "Occasionnellement" },
-  { value: "weekly", label: "Chaque semaine" },
-  { value: "almost_daily", label: "Presque tous les jours" },
-  { value: "daily", label: "Tous les jours" },
+  { value: "not_regular", labelKey: "onboarding.regularityNotYet" },
+  { value: "occasionally", labelKey: "onboarding.regularityOccasionally" },
+  { value: "weekly", labelKey: "onboarding.regularityWeekly" },
+  { value: "almost_daily", labelKey: "onboarding.regularityAlmostDaily" },
+  { value: "daily", labelKey: "onboarding.regularityDaily" },
 ];
 
 const TIME_OPTIONS = [5, 10, 15, 20, 30, 45, 60] as const;
 
-const GOAL_OPTIONS: { value: ProgressDomain; label: string }[] = [
-  { value: "prayer", label: "Améliorer mes prières" },
-  { value: "quran_reading", label: "Lire davantage le Coran" },
-  { value: "quran_memorization", label: "Mémoriser le Coran" },
-  { value: "arabic", label: "Apprendre l’arabe" },
-  { value: "hadith", label: "Apprendre les hadiths" },
-  { value: "dua", label: "Mémoriser des invocations" },
-  { value: "aqida", label: "Approfondir la croyance" },
-  { value: "fiqh", label: "Apprendre le fiqh" },
-  { value: "character", label: "Améliorer mon comportement" },
-  { value: "regularity", label: "Devenir plus régulier" },
+const GOAL_OPTIONS: { value: ProgressDomain; labelKey: TranslationKey }[] = [
+  { value: "prayer", labelKey: "onboarding.goalPrayer" },
+  { value: "quran_reading", labelKey: "onboarding.goalQuranReading" },
+  { value: "quran_memorization", labelKey: "onboarding.goalQuranMemorization" },
+  { value: "prophets", labelKey: "onboarding.goalProphets" },
+  { value: "hadith", labelKey: "onboarding.goalHadith" },
+  { value: "dua", labelKey: "onboarding.goalDua" },
+  { value: "fiqh", labelKey: "onboarding.goalFiqh" },
+  { value: "halal", labelKey: "onboarding.goalHalal" },
+  { value: "boycott", labelKey: "onboarding.goalResponsible" },
+  { value: "regularity", labelKey: "onboarding.goalRegularity" },
 ];
 
 const PREFERENCE_OPTIONS: {
   value: LearningPreference;
-  label: string;
+  labelKey: TranslationKey;
 }[] = [
-  { value: "short_sessions", label: "Sessions courtes" },
-  { value: "structured_program", label: "Programme structuré" },
-  { value: "audio", label: "Audio" },
-  { value: "reading", label: "Lecture" },
-  { value: "memorization", label: "Mémorisation" },
-  { value: "revision", label: "Révision" },
-  { value: "questions_with_wasil", label: "Questions avec Wasil" },
+  { value: "short_sessions", labelKey: "onboarding.preferenceShortSessions" },
+  { value: "structured_program", labelKey: "onboarding.preferenceStructuredProgram" },
+  { value: "audio", labelKey: "onboarding.preferenceAudio" },
+  { value: "reading", labelKey: "onboarding.preferenceReading" },
+  { value: "memorization", labelKey: "onboarding.preferenceMemorization" },
+  { value: "revision", labelKey: "onboarding.preferenceRevision" },
+  { value: "questions_with_wasil", labelKey: "onboarding.preferenceWasil" },
 ];
 
 type ChoiceProps = {
@@ -145,6 +145,7 @@ function normalizedStep(value: number) {
 }
 
 export default function ProfileOnboardingScreen() {
+  const { t } = useI18n();
   const [userId, setUserId] = useState<string | null>(null);
   const [step, setStep] = useState(1);
   const [displayName, setDisplayName] = useState("");
@@ -189,7 +190,7 @@ export default function ProfileOnboardingScreen() {
         setStep(normalizedStep(profile.onboardingStep));
       } catch {
         if (active) {
-          setError("Le profil n’a pas pu être chargé. Vérifiez votre connexion.");
+          setError(t("onboarding.profileLoadFailed"));
         }
       } finally {
         if (active) setLoading(false);
@@ -203,25 +204,25 @@ export default function ProfileOnboardingScreen() {
 
   const validationMessage = () => {
     if (step === TOTAL_STEPS) {
-      if (!displayName.trim()) return "Indiquez votre prénom ou votre pseudonyme.";
-      if (!ageRange) return "Choisissez une tranche d’âge.";
-      if (!declaredLevel) return "Choisissez la proposition qui vous correspond.";
-      if (!regularity) return "Indiquez votre régularité actuelle.";
-      if (dailyMinutes === null) return "Choisissez le temps disponible chaque jour.";
-      if (goals.length === 0) return "Choisissez au moins un objectif principal.";
+      if (!displayName.trim()) return t("onboarding.validationName");
+      if (!ageRange) return t("onboarding.validationAge");
+      if (!declaredLevel) return t("onboarding.validationLevel");
+      if (!regularity) return t("onboarding.validationRegularity");
+      if (dailyMinutes === null) return t("onboarding.validationTime");
+      if (goals.length === 0) return t("onboarding.validationGoal");
       if (preferences.length === 0) {
-        return "Choisissez au moins une préférence d’apprentissage.";
+        return t("onboarding.validationPreference");
       }
     }
     if (step === 1 && !displayName.trim()) {
-      return "Indiquez votre prénom ou votre pseudonyme.";
+      return t("onboarding.validationName");
     }
-    if (step === 1 && !ageRange) return "Choisissez une tranche d’âge.";
-    if (step === 2 && !declaredLevel) return "Choisissez la proposition qui vous correspond.";
-    if (step === 3 && !regularity) return "Indiquez votre régularité actuelle.";
-    if (step === 3 && dailyMinutes === null) return "Choisissez le temps disponible chaque jour.";
-    if (step === 4 && goals.length === 0) return "Choisissez au moins un objectif principal.";
-    if (step === 5 && preferences.length === 0) return "Choisissez au moins une préférence d’apprentissage.";
+    if (step === 1 && !ageRange) return t("onboarding.validationAge");
+    if (step === 2 && !declaredLevel) return t("onboarding.validationLevel");
+    if (step === 3 && !regularity) return t("onboarding.validationRegularity");
+    if (step === 3 && dailyMinutes === null) return t("onboarding.validationTime");
+    if (step === 4 && goals.length === 0) return t("onboarding.validationGoal");
+    if (step === 5 && preferences.length === 0) return t("onboarding.validationPreference");
     return null;
   };
 
@@ -274,7 +275,7 @@ export default function ProfileOnboardingScreen() {
         router.replace({ pathname: "/", params: { welcome: "1" } });
       }
     } catch {
-      setError("La sauvegarde a échoué. Vérifiez votre connexion puis réessayez.");
+      setError(t("onboarding.saveFailed"));
     } finally {
       savingRef.current = false;
       setSaving(false);
@@ -288,20 +289,20 @@ export default function ProfileOnboardingScreen() {
     else router.replace("/profile");
   };
 
-  const title = [
-    "Faisons connaissance",
-    "Votre point de départ",
-    "Votre rythme actuel",
-    "Vos objectifs principaux",
-    "Votre façon d’apprendre",
-  ][step - 1];
+  const title = t(([
+    "onboarding.titleIntroduction",
+    "onboarding.titleStartingPoint",
+    "onboarding.titleCurrentPace",
+    "onboarding.titleMainGoals",
+    "onboarding.titleLearningStyle",
+  ] as TranslationKey[])[step - 1]);
 
   if (loading) {
     return (
       <SafeAreaView style={styles.safeArea}>
         <View style={styles.loadingView}>
           <ActivityIndicator color={colors.goldLight} size="large" />
-          <Text style={styles.loadingText}>Préparation de votre profil…</Text>
+          <Text style={styles.loadingText}>{t("onboarding.preparingProfile")}</Text>
         </View>
       </SafeAreaView>
     );
@@ -315,7 +316,7 @@ export default function ProfileOnboardingScreen() {
       >
         <View style={styles.header}>
           <Pressable
-            accessibilityLabel="Revenir à l’étape précédente"
+            accessibilityLabel={t("onboarding.previousStep")}
             accessibilityRole="button"
             hitSlop={10}
             onPress={goBack}
@@ -325,10 +326,10 @@ export default function ProfileOnboardingScreen() {
             ]}
           >
             <Ionicons name="chevron-back" size={22} color={colors.text} />
-            <Text style={styles.backButtonText}>Retour</Text>
+            <Text style={styles.backButtonText}>{t("common.back")}</Text>
           </Pressable>
           <Text style={styles.stepLabel}>
-            ÉTAPE {step} SUR {TOTAL_STEPS}
+            {t("onboarding.stepProgress", { step, total: TOTAL_STEPS })}
           </Text>
           <View style={styles.headerSpacer} />
         </View>
@@ -344,29 +345,29 @@ export default function ProfileOnboardingScreen() {
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >
-          <Text style={styles.eyebrow}>PROFIL OUMMAH</Text>
+          <Text style={styles.eyebrow}>{t("onboarding.oummahProfile")}</Text>
           <Text style={styles.title}>{title}</Text>
 
           {step === 1 ? (
             <View style={styles.section}>
-              <Text style={styles.label}>Prénom ou pseudonyme</Text>
+              <Text style={styles.label}>{t("onboarding.nameOrNickname")}</Text>
               <TextInput
-                accessibilityLabel="Prénom ou pseudonyme"
+                accessibilityLabel={t("onboarding.nameOrNickname")}
                 autoCapitalize="words"
                 maxLength={50}
                 onChangeText={setDisplayName}
                 onPressIn={(event) => event.stopPropagation()}
-                placeholder="Comment souhaitez-vous être appelé ?"
+                placeholder={t("onboarding.nameQuestion")}
                 placeholderTextColor={colors.textMuted}
                 returnKeyType="done"
                 style={styles.input}
                 value={displayName}
               />
-              <Text style={styles.label}>Tranche d’âge</Text>
+              <Text style={styles.label}>{t("onboarding.ageRange")}</Text>
               {AGE_OPTIONS.map((option) => (
                 <Choice
                   key={option.value}
-                  label={option.label}
+                  label={t(option.labelKey)}
                   onPress={() => setAgeRange(option.value)}
                   selected={ageRange === option.value}
                 />
@@ -377,13 +378,12 @@ export default function ProfileOnboardingScreen() {
           {step === 2 ? (
             <View style={styles.section}>
               <Text style={styles.helper}>
-                Il n’y a pas de bonne ou de mauvaise réponse. Choisissez ce qui
-                décrit le mieux votre situation actuelle.
+                {t("onboarding.noWrongAnswer")}
               </Text>
               {LEVEL_OPTIONS.map((option) => (
                 <Choice
                   key={option.value}
-                  label={option.label}
+                  label={t(option.labelKey)}
                   onPress={() => setDeclaredLevel(option.value)}
                   selected={declaredLevel === option.value}
                 />
@@ -393,16 +393,16 @@ export default function ProfileOnboardingScreen() {
 
           {step === 3 ? (
             <View style={styles.section}>
-              <Text style={styles.label}>Régularité actuelle</Text>
+              <Text style={styles.label}>{t("onboarding.currentRegularity")}</Text>
               {REGULARITY_OPTIONS.map((option) => (
                 <Choice
                   key={option.value}
-                  label={option.label}
+                  label={t(option.labelKey)}
                   onPress={() => setRegularity(option.value)}
                   selected={regularity === option.value}
                 />
               ))}
-              <Text style={styles.label}>Temps disponible chaque jour</Text>
+              <Text style={styles.label}>{t("onboarding.dailyTime")}</Text>
               <View style={styles.timeGrid}>
                 {TIME_OPTIONS.map((minutes) => {
                   const selected = dailyMinutes === minutes;
@@ -435,11 +435,11 @@ export default function ProfileOnboardingScreen() {
 
           {step === 4 ? (
             <View style={styles.section}>
-              <Text style={styles.helper}>Vous pouvez choisir plusieurs objectifs.</Text>
+              <Text style={styles.helper}>{t("onboarding.multipleGoals")}</Text>
               {GOAL_OPTIONS.map((option) => (
                 <Choice
                   key={option.value}
-                  label={option.label}
+                  label={t(option.labelKey)}
                   onPress={() => setGoals(toggleValue(goals, option.value))}
                   selected={goals.includes(option.value)}
                 />
@@ -450,12 +450,12 @@ export default function ProfileOnboardingScreen() {
           {step === 5 ? (
             <View style={styles.section}>
               <Text style={styles.helper}>
-                Choisissez les formats qui vous aident le plus à progresser.
+                {t("onboarding.chooseHelpfulFormats")}
               </Text>
               {PREFERENCE_OPTIONS.map((option) => (
                 <Choice
                   key={option.value}
-                  label={option.label}
+                  label={t(option.labelKey)}
                   onPress={() =>
                     setPreferences(toggleValue(preferences, option.value))
                   }
@@ -493,7 +493,7 @@ export default function ProfileOnboardingScreen() {
             ) : (
               <>
                 <Text style={styles.primaryButtonText}>
-                  {step === TOTAL_STEPS ? "Terminer" : "Continuer"}
+                  {step === TOTAL_STEPS ? t("onboarding.finish") : t("onboarding.continue")}
                 </Text>
                 <Ionicons
                   name="arrow-forward"

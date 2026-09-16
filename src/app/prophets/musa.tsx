@@ -8,6 +8,7 @@ import { Animated, Image, Pressable, SafeAreaView, ScrollView, StyleSheet, Text,
 import { MUSA_CHAPTERS, type ProphetReference, type ProphetSourceKind } from "../../features/prophets/prophetsData";
 import { PROPHETS_PREVIEW } from "../../features/prophets/prophetsData";
 import { loadMusaProgress, saveMusaProgress } from "../../features/prophets/prophetProgress";
+import { PROPHET_AUDIO_EPISODES } from "../../features/prophets/audio/prophetAudioData";
 import { colors } from "../../theme/colors";
 import { typography } from "../../theme/typography";
 
@@ -157,7 +158,7 @@ export default function MusaStoryScreen() {
       <SafeAreaView style={styles.safeArea}>
         <View style={styles.header}>
           <Pressable onPress={() => showIntro ? router.back() : setShowIntro(true)} style={styles.backButton}><Ionicons name="chevron-back" size={22} color={colors.text} /></Pressable>
-          <View style={styles.headerCopy}><Text style={styles.headerEyebrow}>HISTOIRES DES PROPHÈTES</Text><Text style={styles.headerTitle}>Mûsâ عليه السلام</Text></View>
+          <View style={styles.headerCopy}><Text style={styles.headerEyebrow}>HISTOIRES DES PROPHÈTES</Text><Text style={styles.headerTitle}>Moussa عليه السلام</Text></View>
           <Pressable onPress={() => setShowMap((value) => !value)} style={[styles.backButton, showMap && styles.headerButtonActive]}><Ionicons name="map-outline" size={20} color={showMap ? colors.background : colors.goldLight} /></Pressable>
         </View>
 
@@ -187,12 +188,22 @@ export default function MusaStoryScreen() {
               <View style={styles.heroRim} />
               <View style={styles.heroCopy}>
                 <Text style={styles.introLabel}>PREMIER VOYAGE IMMERSIF</Text>
-                <Text style={styles.heroTitle}>Mûsâ عليه السلام</Text>
+                <Text style={styles.heroTitle}>Moussa عليه السلام</Text>
                 <Text style={styles.introSubtitle}>Du Nil au Sinaï — un récit raconté par les passages du Coran.</Text>
                 <Pressable onPress={() => { setShowIntro(false); scrollRef.current?.scrollTo({ y: 0, animated: false }); }} style={({ pressed }) => [styles.introButton, pressed && styles.pressed]}>
                   <Text style={styles.introButtonText}>{completed.length ? "Reprendre le voyage" : "Commencer le voyage"}</Text>
                   <Ionicons name="arrow-forward" size={17} color={colors.background} />
                 </Pressable>
+                {PROPHET_AUDIO_EPISODES.musa ? (
+                  <Pressable onPress={() => router.push("/prophets/audio/musa" as Href)} style={({ pressed }) => [styles.audioButton, pressed && styles.pressed]}>
+                    <Ionicons name="headset-outline" size={21} color={colors.goldLight} />
+                    <View style={styles.audioButtonCopy}>
+                      <Text style={styles.audioButtonTitle}>Écouter l’histoire complète</Text>
+                      <Text style={styles.audioButtonSubtitle}>Récit audio immersif de Moussa</Text>
+                    </View>
+                    <Ionicons name="play-circle" size={24} color={colors.goldLight} />
+                  </Pressable>
+                ) : null}
               </View>
             </View>
           ) : (
@@ -238,7 +249,7 @@ export default function MusaStoryScreen() {
           </Pressable>
 
           <View style={styles.globalProgressCard}>
-            <View style={styles.globalProgressHeader}><Text style={styles.globalProgressTitle}>Ton voyage avec Mûsâ</Text><Text style={styles.globalProgressValue}>{completed.length}/{MUSA_CHAPTERS.length}</Text></View>
+            <View style={styles.globalProgressHeader}><Text style={styles.globalProgressTitle}>Ton voyage avec Moussa</Text><Text style={styles.globalProgressValue}>{completed.length}/{MUSA_CHAPTERS.length}</Text></View>
             <View style={styles.globalTrack}><View style={[styles.globalFill, { width: `${Math.max(2, progress * 100)}%` }]} /></View>
           </View>
 
@@ -268,6 +279,7 @@ const styles = StyleSheet.create({
   content: { padding: 16, paddingBottom: 48 },
   hero: { height: 440, overflow: "hidden", borderRadius: 32, borderWidth: 1.2, borderColor: "rgba(227,181,90,0.42)", backgroundColor: colors.surface }, heroImageLayer: { position: "absolute", top: 0, left: 0, right: 0, bottom: 0 }, heroImage: { position: "absolute", top: 0, left: 0, right: 0, bottom: 0, width: "100%", height: "100%" }, heroRim: { position: "absolute", top: 8, right: 8, bottom: 8, left: 8, borderRadius: 25, borderWidth: 1, borderColor: "rgba(255,255,255,0.09)" },
   heroCopy: { flex: 1, justifyContent: "flex-end", padding: 22 }, introLabel: { color: colors.goldLight, fontFamily: typography.sans, fontSize: 11, fontWeight: "800", letterSpacing: 1.4 }, introSubtitle: { marginTop: 8, color: colors.textSecondary, fontFamily: typography.sans, fontSize: 18, lineHeight: 27 }, introButton: { marginTop: 18, minHeight: 48, paddingHorizontal: 16, borderRadius: 24, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 8, backgroundColor: colors.goldLight }, introButtonText: { color: colors.background, fontFamily: typography.sans, fontSize: 14, fontWeight: "800" }, chapterNumber: { color: colors.goldLight, fontFamily: typography.sans, fontSize: 11, fontWeight: "800", letterSpacing: 1.4 }, heroTitle: { marginTop: 7, color: colors.text, fontFamily: typography.serifSemibold, fontSize: 37, lineHeight: 42 }, heroSubtitle: { marginTop: 8, color: colors.textSecondary, fontFamily: typography.sans, fontSize: 18, lineHeight: 27 }, atmosphereRow: { marginTop: 14, flexDirection: "row", alignItems: "center", gap: 6 }, atmosphereText: { color: colors.goldLight, fontFamily: typography.sans, fontSize: 14, fontWeight: "700" },
+  audioButton: { marginTop: 10, minHeight: 62, paddingHorizontal: 16, borderRadius: 24, flexDirection: "row", alignItems: "center", gap: 12, borderWidth: 1, borderColor: "rgba(227,181,90,0.34)", backgroundColor: "rgba(227,181,90,0.07)" }, audioButtonCopy: { flex: 1 }, audioButtonTitle: { color: colors.text, fontFamily: typography.serifSemibold, fontSize: 20, fontWeight: "800" }, audioButtonSubtitle: { marginTop: 3, color: colors.textMuted, fontFamily: typography.sans, fontSize: 12.5 },
   chapterRail: { marginTop: 14, paddingHorizontal: 4, gap: 8 }, railDot: { width: 32, height: 32, borderRadius: 16, alignItems: "center", justifyContent: "center", borderWidth: 1, borderColor: colors.borderSoft, backgroundColor: colors.surface }, railDotActive: { borderColor: colors.goldLight, backgroundColor: "rgba(227,181,90,0.10)" }, railDotCompleted: { backgroundColor: colors.goldLight, borderColor: colors.goldLight }, railDotText: { color: colors.textMuted, fontFamily: typography.sans, fontSize: 11.5, fontWeight: "800" }, railDotTextActive: { color: colors.background },
   storyCard: { alignSelf: "stretch", overflow: "visible", marginTop: 16, padding: 18, borderRadius: 26, borderWidth: 1, borderColor: colors.borderSoft, backgroundColor: "rgba(23,16,38,0.84)" }, storyEyebrow: { color: colors.goldLight, fontFamily: typography.sans, fontSize: 10.5, fontWeight: "800", letterSpacing: 1.35 }, storyText: { marginTop: 14, color: colors.textSecondary, fontFamily: typography.sans, fontSize: 20, lineHeight: 33 }, storyParagraph: { marginTop: 13 },
   sourceSection: { marginTop: 22 }, sectionEyebrow: { color: colors.goldLight, fontFamily: typography.sans, fontSize: 10.5, fontWeight: "800", letterSpacing: 1.35 }, sectionTitle: { marginTop: 6, marginBottom: 14, color: colors.text, fontFamily: typography.serifSemibold, fontSize: 28, lineHeight: 33 },

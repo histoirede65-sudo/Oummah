@@ -1,0 +1,180 @@
+{
+  "batch": "scientific-review-batch-01",
+  "reviewedAt": "2026-09-16",
+  "scope": "E202, E211, E250, E407, E955",
+  "supabaseWritten": false,
+  "methodology": {
+    "classificationIsProposalOnly": true,
+    "hazardRiskSeparated": true,
+    "productExposureMeasured": false,
+    "note": "Une autorisation ou une ADI ne constitue pas une garantie d'absence de risque et ne permet pas d'estimer l'exposition individuelle sans quantite dans le produit."
+  },
+  "additives": [
+    {
+      "code": "E202",
+      "canonicalName": "Potassium sorbate",
+      "cas": ["24634-61-5"],
+      "chemicalFamily": "Sorbates; group evaluation with sorbic acid (E200) and potassium sorbate (E202)",
+      "openFoodTox": {
+        "subUuid": "464a5a2e-7618-49fb-9132-4a21e396caa8",
+        "refSubUuid": "d664a0b6-03c3-4d75-8dbb-1da59254a57c",
+        "matchingMethod": "cas_exact",
+        "referenceValuesRaw": [
+          {"type": "ADI", "lowerValue": "25", "Unit": "mg/kg bw/day"},
+          {"type": "ADI", "lowerValue": "3", "Unit": "mg/kg bw/day"},
+          {"type": "ADI", "lowerValue": "11", "Unit": "mg/kg bw/day"}
+        ]
+      },
+      "regulatoryStatus": {"euAuthorised": true, "conditions": "Authorised uses and maximum levels are defined by Regulation (EC) No 1333/2008 and its amendments; the product use category and level are not assessed here."},
+      "adi": {"value": "11", "unit": "mg sorbic acid/kg bw/day", "type": "group ADI", "status": "current EFSA follow-up value", "appliesTo": "sorbic acid (E200) and potassium sorbate (E202)"},
+      "adiAuthority": "EFSA",
+      "adiHistory": [
+        {"date": "2015-06-30", "value": "25", "unit": "mg sorbic acid/kg bw/day", "type": "group ADI", "sourceId": "e202-efsa-2015"},
+        {"date": "2018-12-10", "value": "3", "unit": "mg sorbic acid/kg bw/day", "type": "temporary group ADI discussed before follow-up", "sourceId": "e202-efsa-2018-followup"},
+        {"date": "2019-03-01", "value": "11", "unit": "mg sorbic acid/kg bw/day", "type": "group ADI", "sourceId": "e202-efsa-2019"}
+      ],
+      "healthEffects": [{"effectType": "genotoxicity", "finding": "No evidence of genotoxic activity was identified for sorbic acid or potassium sorbate in the EFSA re-evaluation.", "population": "general population; experimental toxicology evidence", "evidenceLevel": "strong", "sourceId": "e202-efsa-2015"}],
+      "sensitivePopulations": [],
+      "exposureAssessment": {"officialConclusion": "EFSA follow-up reported exposure estimates well below the new group ADI for all population groups at mean and high exposure levels.", "productSpecificConclusion": "The scanned product quantity is unknown; no individual exceedance can be inferred.", "concern": "unlikely", "sourceId": "e202-efsa-2019"},
+      "severity": "none",
+      "evidenceStrength": "strong",
+      "exposureConcern": "unlikely",
+      "scientificClassification": "no_particular_signal",
+      "scientificSummary": "EFSA evaluates sorbic acid and potassium sorbate as a group. The current group ADI is 11 mg sorbic acid/kg body weight/day, with exposure estimates below that value in the cited assessment. This does not establish the exposure from the scanned product.",
+      "sources": [
+        {"sourceId": "e202-efsa-2015", "organisation": "EFSA", "title": "Scientific Opinion on the re-evaluation of sorbic acid (E 200), potassium sorbate (E 202) and calcium sorbate (E 203)", "url": "https://doi.org/10.2903/j.efsa.2015.4144", "publishedAt": "2015-06-30", "accessedAt": "2026-09-16", "fieldsSupported": ["identity", "group_adi", "genotoxicity", "hazard"]},
+        {"sourceId": "e202-efsa-2019", "organisation": "EFSA", "title": "Opinion on the follow-up of the re-evaluation of sorbic acid and potassium sorbate", "url": "https://doi.org/10.2903/j.efsa.2019.5625", "publishedAt": "2019-03-01", "accessedAt": "2026-09-16", "fieldsSupported": ["current_group_adi", "exposure"]},
+        {"sourceId": "e202-eu-rules", "organisation": "European Commission", "title": "EU rules on food additives", "url": "https://food.ec.europa.eu/food-safety/food-improvement-agents/additives/eu-rules_en", "accessedAt": "2026-09-16", "fieldsSupported": ["regulatory_framework"]}
+      ],
+      "scientificReviewedAt": "2026-09-16",
+      "needsScientificReview": false,
+      "limitations": ["The ADI is group-based and expressed as sorbic acid.", "The product concentration is unavailable."]
+    },
+    {
+      "code": "E211",
+      "canonicalName": "Sodium benzoate",
+      "cas": ["532-32-1"],
+      "chemicalFamily": "Benzoic acid and benzoates (E210-E213)",
+      "openFoodTox": {"subUuid": "336142ca-3f21-41ea-a1d4-6ad41cc2da84", "refSubUuid": "64a45005-2e3c-4a9d-a932-5fa636761921", "matchingMethod": "cas_exact", "referenceValuesRaw": [{"type": "ADI", "lowerValue": "5", "Unit": "mg/kg bw/day"}, {"type": "ADI", "lowerValue": "5", "Unit": "mg/kg bw/day"}, {"type": "ADI", "lowerValue": "5", "Unit": "mg/kg bw/day"}]},
+      "regulatoryStatus": {"euAuthorised": true, "conditions": "Authorised uses and maximum levels are defined by Regulation (EC) No 1333/2008 and its amendments; no product-specific compliance conclusion is made."},
+      "adi": {"value": "5", "unit": "mg benzoic acid/kg bw/day", "type": "group ADI", "status": "current EFSA value", "appliesTo": "benzoic acid (E210), sodium benzoate (E211), potassium benzoate (E212) and calcium benzoate (E213)"},
+      "adiAuthority": "EFSA",
+      "adiHistory": [{"date": "2016-03", "value": "5", "unit": "mg benzoic acid/kg bw/day", "type": "group ADI", "sourceId": "e211-efsa-2016"}],
+      "healthEffects": [{"effectType": "general_toxicity", "finding": "EFSA used a four-generation reproductive toxicity study in rats with a NOAEL of 500 mg benzoic acid/kg bw/day as the pivotal basis for the group ADI.", "population": "experimental animals; not a diagnosis or product-specific risk estimate", "evidenceLevel": "strong", "sourceId": "e211-efsa-2016"}],
+      "sensitivePopulations": ["Toddlers and children in high-consumption exposure scenarios were specifically identified in the EFSA exposure assessment."],
+      "exposureAssessment": {"officialConclusion": "EFSA reported potential exceedance of the group ADI in particular scenarios for toddlers and children, including high consumers and carry-over exposure.", "productSpecificConclusion": "The scanned product quantity and total dietary exposure are unknown; the user's exposure cannot be classified.", "concern": "possible", "sourceId": "e211-efsa-2016"},
+      "severity": "low",
+      "evidenceStrength": "strong",
+      "exposureConcern": "possible",
+      "scientificClassification": "limited_concern",
+      "classificationRationale": {"decision": "limited_concern", "whyNotModerate": "EFSA describes low toxicity, no genotoxicity concern and no identified carcinogenic potential. The possible ADI exceedances concern population exposure scenarios, not measured exposure from this product. The evidence supports attention to exposure, but not a moderate severity signal for the scanned product.", "ruleApplication": "A documented exposure signal with low intrinsic severity and unmeasured product exposure is limited_concern, not moderate_concern."},
+      "scientificSummary": "Sodium benzoate is assessed within the benzoic acid/benzoates group. EFSA set a group ADI of 5 mg benzoic acid/kg body weight/day and identified possible population-level exceedance scenarios for some toddlers and children. Because the opinion describes low toxicity, no genotoxicity concern and no identified carcinogenic potential, and because product exposure is not measured, the OUMMAH proposal is limited_concern rather than moderate_concern.",
+      "sources": [
+        {"sourceId": "e211-efsa-2016", "organisation": "EFSA", "title": "Scientific Opinion on the re-evaluation of benzoic acid (E 210), sodium benzoate (E 211), potassium benzoate (E 212) and calcium benzoate (E 213)", "url": "https://doi.org/10.2903/j.efsa.2016.4433", "publishedAt": "2016-03", "accessedAt": "2026-09-16", "fieldsSupported": ["group_adi", "toxicology", "exposure", "sensitive_populations"]},
+        {"sourceId": "e211-eu-rules", "organisation": "European Commission", "title": "EU rules on food additives", "url": "https://food.ec.europa.eu/food-safety/food-improvement-agents/additives/eu-rules_en", "accessedAt": "2026-09-16", "fieldsSupported": ["regulatory_framework"]}
+      ],
+      "scientificReviewedAt": "2026-09-16",
+      "needsScientificReview": false,
+      "limitations": ["The ADI is group-based and expressed as benzoic acid.", "EFSA exposure scenarios do not measure this product."]
+    },
+    {
+      "code": "E250",
+      "canonicalName": "Sodium nitrite",
+      "cas": ["7632-00-0"],
+      "chemicalFamily": "Nitrites (E249-E250)",
+      "openFoodTox": {"subUuid": "436052b2-1c33-4ee7-bece-df5d6d7ce503", "refSubUuid": "6bfadada-3762-4140-89ea-bfa8257f2084", "matchingMethod": "cas_exact", "referenceValuesRaw": [{"type": "ADI", "lowerValue": "0.1", "Unit": "mg/kg bw/day"}]},
+      "regulatoryStatus": {"euAuthorised": true, "conditions": "Nitrites are authorised for specified food uses and levels under the EU additive framework; authorisation is not a zero-risk statement."},
+      "adi": {"value": "0-0.07", "unit": "mg nitrite ion/kg bw/day", "type": "ADI", "status": "current EFSA/JECFA reference identified in this review", "appliesTo": "nitrite ion; not a product-specific exposure value"},
+      "adiAuthority": "EFSA / JECFA",
+      "adiHistory": [
+        {"date": "1995", "value": "0-0.06", "unit": "mg nitrite ion/kg bw", "type": "ADI", "sourceId": "e250-jecfa-history"},
+        {"date": "2002", "value": "0-0.07", "unit": "mg nitrite ion/kg bw", "type": "ADI", "sourceId": "e250-jecfa-2002"},
+        {"date": "2017-06-15", "value": "0-0.07", "unit": "mg nitrite ion/kg bw/day", "type": "safe level confirmed by EFSA", "sourceId": "e250-efsa-2017"},
+        {"date": "OpenFoodTox 3.0", "value": "0.1", "unit": "mg/kg bw/day", "type": "raw value requiring reconciliation; not used as the current official value", "sourceId": "openfoodtox-e250"}
+      ],
+      "healthEffects": [
+        {"effectType": "methemoglobinemia", "finding": "JECFA notes that nitrite causes methemoglobinemia and that this can occur after a single dose; no acute reference dose was established from the data available at that meeting.", "population": "general population; infants are specifically addressed in the historical JECFA scope", "evidenceLevel": "strong", "sourceId": "e250-jecfa-2002"},
+        {"effectType": "nitrosamines", "finding": "EFSA identified potential concern from nitrosamine formation under some conditions and stated that further research was needed to address uncertainties and knowledge gaps.", "population": "general population; exposure-dependent", "evidenceLevel": "moderate", "sourceId": "e250-efsa-2017"}
+      ],
+      "sensitivePopulations": ["Children with high dietary exposure were noted in EFSA's additive-only assessment; infants and the historical JECFA scope require particular attention to the applicable conditions."],
+      "exposureAssessment": {"officialConclusion": "EFSA concluded that exposure to nitrites as food additives was within the safe level for population groups except a slight exceedance in children with diets high in foods containing these additives; considering all dietary sources, the safe level may be exceeded for all age groups.", "productSpecificConclusion": "The product concentration and total dietary nitrite exposure are unknown; no individual exceedance can be concluded.", "concern": "possible", "sourceId": "e250-efsa-2017"},
+      "severity": "moderate",
+      "evidenceStrength": "moderate",
+      "exposureConcern": "possible",
+      "scientificClassification": "limited_concern",
+      "scientificSummary": "Nitrite has a documented hazard mechanism at sufficient exposure, including methemoglobinemia, and EFSA discussed nitrosamine uncertainties. The official exposure assessment is conditional and product exposure is unknown, so this proposal does not classify E250 as high concern.",
+      "sources": [
+        {"sourceId": "e250-efsa-2017", "organisation": "EFSA", "title": "EFSA confirms safe levels for nitrites and nitrates added to food", "url": "https://www.efsa.europa.eu/en/press/news/170615", "publishedAt": "2017-06-15", "accessedAt": "2026-09-16", "fieldsSupported": ["ADI", "exposure", "nitrosamine_uncertainty"]},
+        {"sourceId": "e250-jecfa-2002", "organisation": "JECFA / WHO", "title": "Sodium nitrite evaluation", "url": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/4792", "publishedAt": "2002", "accessedAt": "2026-09-16", "fieldsSupported": ["identity", "ADI", "methemoglobinemia", "historical_values"]},
+        {"sourceId": "e250-eu-rules", "organisation": "European Commission", "title": "EU rules on food additives", "url": "https://food.ec.europa.eu/food-safety/food-improvement-agents/additives/eu-rules_en", "accessedAt": "2026-09-16", "fieldsSupported": ["regulatory_framework"]}
+      ],
+      "scientificReviewedAt": "2026-09-16",
+      "needsScientificReview": false,
+      "limitations": ["OpenFoodTox raw value 0.1 is not silently reconciled with the official 0-0.07 nitrite-ion value.", "Nitrosamine formation depends on conditions and exposure; it is not inferred for this product."]
+    },
+    {
+      "code": "E407",
+      "canonicalName": "Carrageenan",
+      "cas": ["9000-07-1"],
+      "chemicalFamily": "Food-grade carrageenan; distinct from degraded carrageenan/poligeenan",
+      "openFoodTox": {"subUuid": "7eff6564-8c1e-4f71-9529-3150dceda119", "refSubUuid": "68340d79-47ed-4705-8861-32427748a518", "matchingMethod": "cas_exact", "referenceValuesRaw": [{"type": "ADI", "lowerValue": "75", "Unit": "mg/kg bw/day"}]},
+      "regulatoryStatus": {"euAuthorised": true, "conditions": "EU authorisation and purity specifications apply. EU definition reserves carrageenan for the non-hydrolysed or otherwise non-chemically-degraded polymer."},
+      "adi": {"value": "0-75", "unit": "mg/kg bw/day", "type": "temporary group ADI", "status": "EFSA 2018 temporary value", "appliesTo": "carrageenan (E407) and processed Eucheuma seaweed (E407a)"},
+      "adiAuthority": "EFSA",
+      "adiHistory": [{"date": "2018-07-19", "value": "0-75", "unit": "mg/kg bw/day", "type": "temporary group ADI", "sourceId": "e407-efsa-2018"}],
+      "healthEffects": [
+        {"effectType": "genotoxicity", "finding": "EFSA reported no concern with respect to genotoxicity for carrageenan in the evaluated food-additive context.", "population": "general population; experimental evidence", "evidenceLevel": "moderate", "sourceId": "e407-efsa-2018"},
+        {"effectType": "carcinogenicity", "finding": "EFSA reported no concern with respect to carcinogenicity for the evaluated food-grade carrageenan preparations; unresolved chemistry and toxicology uncertainties remained.", "population": "general population; experimental evidence", "evidenceLevel": "moderate", "sourceId": "e407-efsa-2018"}
+      ],
+      "sensitivePopulations": ["Infants below 16 weeks were the subject of a specific EFSA data call; this is not a basis to generalise a risk to all foods or all age groups."],
+      "exposureAssessment": {"officialConclusion": "EFSA retained a temporary group ADI because of unresolved uncertainties and requested additional data, including characterisation of preparations and low-molecular-weight fractions.", "productSpecificConclusion": "The scanned product concentration and molecular-weight profile are unknown.", "concern": "unknown", "sourceId": "e407-efsa-2018"},
+      "severity": "moderate",
+      "evidenceStrength": "moderate",
+      "exposureConcern": "unknown",
+      "scientificClassification": "limited_concern",
+      "scientificSummary": "EFSA distinguished authorised food-grade carrageenan from unresolved questions about preparation characterisation and low-molecular-weight fractions. Poligeenan/degraded carrageenan findings must not be attributed automatically to E407 food additive.",
+      "sources": [
+        {"sourceId": "e407-efsa-2018", "organisation": "EFSA", "title": "Re-evaluation of carrageenan (E 407) and processed Eucheuma seaweed (E 407a) as food additives", "url": "https://doi.org/10.2903/j.efsa.2018.5238", "publishedAt": "2018-07-19", "accessedAt": "2026-09-16", "fieldsSupported": ["ADI", "hazard", "food_grade_vs_degraded", "uncertainties"]},
+        {"sourceId": "e407-efsa-data-call", "organisation": "EFSA", "title": "Call for technical and toxicological data on carrageenan (E 407)", "url": "https://www.efsa.europa.eu/en/consultations/call/call-technical-and-toxicological-data-carrageenan-e-407-uses-foods", "publishedAt": "2018-10-10", "accessedAt": "2026-09-16", "fieldsSupported": ["data_gaps", "infant_population"]},
+        {"sourceId": "e407-eu-rules", "organisation": "European Commission", "title": "EU rules on food additives", "url": "https://food.ec.europa.eu/food-safety/food-improvement-agents/additives/eu-rules_en", "accessedAt": "2026-09-16", "fieldsSupported": ["regulatory_framework"]}
+      ],
+      "scientificReviewedAt": "2026-09-16",
+      "needsScientificReview": false,
+      "limitations": ["The group ADI is temporary.", "The product's preparation and molecular-weight distribution are unknown.", "Poligeenan is not treated as equivalent to food-grade E407."]
+    },
+    {
+      "code": "E955",
+      "canonicalName": "Sucralose",
+      "cas": ["56038-13-2"],
+      "chemicalFamily": "Non-nutritive sweetener",
+      "openFoodTox": {"subUuid": "6078bad9-99c0-4f96-84bb-a7f4161e992b", "refSubUuid": "b787a611-b1e3-4478-a5c1-3cd8bfa6cbf9", "matchingMethod": "cas_exact", "referenceValuesRaw": [{"type": "ADI", "Unit": "mg/kg bw/day", "upperQualifier": "<=", "upperValue": "15"}]},
+      "regulatoryStatus": {"euAuthorised": true, "conditions": "Current authorised uses are governed by the EU additive framework; EFSA separately assessed a proposed extension to fine bakery wares."},
+      "adi": {"value": "15", "unit": "mg/kg bw/day", "type": "ADI", "status": "confirmed by EFSA 2026", "appliesTo": "sucralose E955"},
+      "adiAuthority": "EFSA",
+      "adiHistory": [{"date": "2026-02-16", "value": "15", "unit": "mg/kg bw/day", "type": "ADI confirmed; no change required", "sourceId": "e955-efsa-2026"}],
+      "healthEffects": [{"effectType": "toxicology", "finding": "EFSA's 2026 re-evaluation reported no safety concern for the reported authorised uses and no need to change the existing ADI; uncertainties remained for high-temperature baking extension scenarios and possible degradation products.", "population": "general population for authorised uses; high-temperature preparation is a specific uncertainty", "evidenceLevel": "strong", "sourceId": "e955-efsa-2026"}],
+      "sensitivePopulations": [],
+      "exposureAssessment": {"officialConclusion": "The highest EU dietary exposure estimate was below the ADI in all population groups for the assessed authorised uses.", "productSpecificConclusion": "The scanned product quantity is unknown; the official population estimate is not an individual product measurement.", "concern": "unlikely", "sourceId": "e955-efsa-2026"},
+      "severity": "low",
+      "evidenceStrength": "strong",
+      "exposureConcern": "unlikely",
+      "scientificClassification": "no_particular_signal",
+      "scientificSummary": "EFSA completed the sucralose re-evaluation in 2026, confirmed the ADI of 15 mg/kg body weight/day and reported exposure below the ADI for authorised uses. The conclusion does not extend automatically to unapproved high-temperature uses.",
+      "sources": [
+        {"sourceId": "e955-efsa-2026", "organisation": "EFSA", "title": "Re-evaluation of sucralose (E 955) as a food additive and evaluation of a new application on extension of use in fine bakery wares", "url": "https://doi.org/10.2903/j.efsa.2026.9854", "publishedAt": "2026-02-16", "accessedAt": "2026-09-16", "fieldsSupported": ["ADI", "exposure", "toxicology", "uncertainties"]},
+        {"sourceId": "e955-efsa-news", "organisation": "EFSA", "title": "EFSA finds sucralose safe when used as currently authorised; cannot confirm safety of extending its use", "url": "https://www.efsa.europa.eu/en/news/efsa-finds-sucralose-safe-when-used-currently-authorised-cannot-confirm-safety-extending-its", "publishedAt": "2026-02-17", "accessedAt": "2026-09-16", "fieldsSupported": ["regulatory_context", "exposure", "uncertainties"]},
+        {"sourceId": "e955-eu-rules", "organisation": "European Commission", "title": "EU rules on food additives", "url": "https://food.ec.europa.eu/food-safety/food-improvement-agents/additives/eu-rules_en", "accessedAt": "2026-09-16", "fieldsSupported": ["regulatory_framework"]}
+      ],
+      "scientificReviewedAt": "2026-09-16",
+      "needsScientificReview": false,
+      "limitations": ["The conclusion applies to assessed authorised uses, not automatically to high-temperature domestic baking or frying.", "The product concentration is unknown."]
+    }
+  ],
+  "summaryTable": [
+    {"code": "E202", "classificationProposed": "no_particular_signal", "evidenceStrength": "strong", "exposureConcern": "unlikely", "adi": "11 mg sorbic acid/kg bw/day (group ADI)", "reviewComplete": true},
+    {"code": "E211", "classificationProposed": "limited_concern", "evidenceStrength": "strong", "exposureConcern": "possible", "adi": "5 mg benzoic acid/kg bw/day (group ADI)", "reviewComplete": true},
+    {"code": "E250", "classificationProposed": "limited_concern", "evidenceStrength": "moderate", "exposureConcern": "possible", "adi": "0-0.07 mg nitrite ion/kg bw/day; OpenFoodTox raw 0.1 retained as discrepancy", "reviewComplete": true},
+    {"code": "E407", "classificationProposed": "limited_concern", "evidenceStrength": "moderate", "exposureConcern": "unknown", "adi": "0-75 mg/kg bw/day (temporary group ADI)", "reviewComplete": true},
+    {"code": "E955", "classificationProposed": "no_particular_signal", "evidenceStrength": "strong", "exposureConcern": "unlikely", "adi": "15 mg/kg bw/day", "reviewComplete": true}
+  ]
+}

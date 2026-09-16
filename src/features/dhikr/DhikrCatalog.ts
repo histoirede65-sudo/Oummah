@@ -24,6 +24,7 @@ export type DhikrCategory = {
   id: number;
   arabicTitle: string;
   frenchTitle: string;
+  englishTitle: string;
   section: DhikrSectionId;
   audioUrl?: string;
   items: readonly DhikrItem[];
@@ -141,6 +142,65 @@ const FRENCH_TITLES: Record<string, string> = {
   "الذكر عند المشعر الحرام": "Dhikr à Al-Mash‘ar Al-Harām",
 };
 
+const ENGLISH_TITLES: Record<string, string> = {
+  "أذكار الصباح والمساء": "Morning and evening adhkar",
+  "أذكار النوم": "Before sleep",
+  "أذكار الاستيقاظ من النوم": "Upon waking",
+  "دعاء دخول الخلاء": "When entering the restroom",
+  "دعاء الخروج من الخلاء": "When leaving the restroom",
+  "الذكر قبل الوضوء": "Before ablution",
+  "الذكر بعد الفراغ من الوضوء": "After ablution",
+  "الذكر عند الخروج من المنزل": "When leaving home",
+  "الذكر عند دخول المنزل": "When entering home",
+  "دعاء الذهاب إلى المسجد": "On the way to the mosque",
+  "دعاء دخول المسجد": "When entering the mosque",
+  "دعاء الخروج من المسجد": "When leaving the mosque",
+  "أذكار الآذان": "Around the adhan",
+  "دعاء ُلبْس الثوب": "When getting dressed",
+  "دعاء ُلبْس الثوب الجديد": "When wearing new clothes",
+  "الدعاء لمن لبس ثوبا جديدا": "For someone wearing new clothes",
+  "ما يقول إذا وضع ثوبه": "When undressing",
+  "دعاء الاستفتاح": "Opening supplication of the prayer",
+  "دعاء الركوع": "While bowing",
+  "دعاء الرفع من الركوع": "When rising from bowing",
+  "دعاء السجود": "While prostrating",
+  "دعاء الجلسة بين السجدتين": "Between the two prostrations",
+  "دعاء سجود التلاوة": "Prostration of recitation",
+  التشهد: "The tashahhud",
+  "الصلاة على النبي بعد التشهد": "Sending blessings upon the Prophet after the tashahhud",
+  "الدعاء بعد التشهد الأخير قبل السلام": "After the final tashahhud before the salam",
+  "أذكار بعد السلام من الصلاة": "After the prayer",
+  "دعاء صلاة الاستخارة": "The prayer of guidance",
+  "أذكار الكرب والهم والحزن": "During distress, anxiety, and sorrow",
+  "دعاء من أصابه شك في الإيمان": "When experiencing doubts about faith",
+  "دعاء قضاء الدين": "For repaying a debt",
+  "دعاء الوسوسة في الصلاة والقراءة": "Against whispers during prayer and recitation",
+  "دعاء من استصعب عليه أمر": "When something feels difficult",
+  "ما يقول ويفعل من أذنب ذنبا": "After committing a sin",
+  "دعاء طرد الشيطان ووساوسه": "For repelling Satan and his whispers",
+  "الدعاء عند إفطار الصائم": "When breaking the fast",
+  "الدعاء قبل الطعام": "Before eating",
+  "الدعاء عند الفراغ من الطعام": "After eating",
+  "دعاء الضيف لصاحب الطعام": "A guest’s supplication for the host",
+  "دعاء العطاس": "When sneezing",
+  "الدعاء للمتزوج": "For newlyweds",
+  "دعاء السفر": "Supplication for travel",
+  "دعاء الركوب": "When boarding a means of transport",
+  "دعاء دخول السوق": "When entering the market",
+  "الدعاء عند نزول المطر": "When it rains",
+  "الدعاء عند هبوب الريح": "When the wind blows",
+  "دعاء رؤية الهلال": "Upon seeing the new moon",
+  "ما يقول عند الغضب": "When angry",
+  "دعاء زيارة المريض": "When visiting the sick",
+  "دعاء المريض الذي يئس من حياته": "Supplication of a gravely ill person",
+  "دعاء التعزية": "When offering condolences",
+  "الدعاء للميت في الصلاة عليه": "Supplication for the deceased during the funeral prayer",
+  "دعاء زيارة القبور": "When visiting graves",
+  "دعاء الخوف من الشرك": "When fearing shirk",
+  "دعاء يوم عرفة": "Supplication for the Day of Arafah",
+  "الذكر عند المشعر الحرام": "Dhikr at Al-Mash‘ar Al-Haram",
+};
+
 function resolveUrl(path?: string) {
   if (!path) return undefined;
   if (/^https?:\/\//.test(path)) return path;
@@ -149,6 +209,10 @@ function resolveUrl(path?: string) {
 
 function frenchTitle(arabicTitle: string) {
   return FRENCH_TITLES[arabicTitle] ?? `Hisn al-Muslim · ${arabicTitle}`;
+}
+
+function englishTitle(arabicTitle: string) {
+  return ENGLISH_TITLES[arabicTitle] ?? `Hisn al-Muslim · ${arabicTitle}`;
 }
 
 export function classifyDhikrCategory(title: string): DhikrSectionId {
@@ -190,6 +254,7 @@ function normalizeCatalog(raw: readonly RawDhikrCategory[]): DhikrCategory[] {
       id: category.id,
       arabicTitle: category.category.trim(),
       frenchTitle: frenchTitle(category.category.trim()),
+      englishTitle: englishTitle(category.category.trim()),
       section: classifyDhikrCategory(category.category),
       audioUrl: resolveUrl(category.audio),
       items: category.array

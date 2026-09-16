@@ -1,0 +1,201 @@
+{
+  "reviewedAt": "2026-09-16",
+  "scope": "Coca-Cola Zero targeted documentary review: E150D, E331 and E960C",
+  "supabaseWritten": false,
+  "applicationChanges": false,
+  "methodology": {
+    "classificationIsProposalOnly": true,
+    "hazardRiskSeparated": true,
+    "productExposureMeasured": false,
+    "classificationRules": {
+      "high_concern": "serious + strong evidence + concerning exposure",
+      "moderate_concern": "moderate or serious effect + moderate or strong evidence + possible or concerning exposure",
+      "limited_concern": "documented but bounded signal, uncertainty, targeted sensitivity or exposure not established for the product",
+      "no_particular_signal": "authoritative assessment does not identify a particular signal in the evaluated authorised food-use conditions",
+      "insufficient_data": "identity, toxicology, exposure or applicability cannot be established reliably"
+    },
+    "note": "An ADI or an authorised use is not a guarantee of zero risk and does not estimate exposure from the scanned product without its additive quantity."
+  },
+  "additives": [
+    {
+      "code": "E150D",
+      "canonicalName": "Sulfite ammonia caramel / Caramel au sulfite d’ammonium",
+      "regulatoryStatus": {
+        "euAuthorised": true,
+        "euIdentity": "E 150d, sulphite ammonia caramel",
+        "conditions": "EU specifications and authorised-use conditions apply; E150d is a distinct caramel class made with sulphite and ammonium reactants."
+      },
+      "cas": ["8028-89-5"],
+      "identityAssessment": {
+        "distinguishedFrom": ["E150A plain caramel", "E150B caustic sulphite caramel", "E150C ammonia caramel"],
+        "note": "The four caramel classes are not interchangeable for identity or for transferring class-specific constituents. The specific EFSA conclusion cited here concerns E150d where stated; group-level caramel conclusions are labelled as such."
+      },
+      "openFoodTox": {
+        "status": "not_verified_in_local_top25_proposal",
+        "matchingMethod": null,
+        "note": "No E150D record was present in the inspected local food-additive-science-proposed-top25.json; no OpenFoodTox mapping is invented."
+      },
+      "adi": {
+        "value": "300",
+        "unit": "mg/kg bw/day",
+        "type": "group ADI",
+        "status": "EFSA 2011 group ADI for caramel colours; the 2012 refined exposure assessment reports lower exposure estimates",
+        "appliesTo": "E150a-E150d group, with a more restrictive 100 mg/kg bw/day value for E150c"
+      },
+      "adiAuthority": "EFSA",
+      "adiHistory": [
+        {"date": "2011-03-08", "value": "300", "unit": "mg/kg bw/day", "type": "group ADI; E150c has a 100 mg/kg bw/day specific limit", "sourceId": "e150-efsa-2011"},
+        {"date": "2012-12-19", "value": "300", "unit": "mg/kg bw/day", "type": "refined exposure assessment for E150a, E150c and E150d", "sourceId": "e150-efsa-2012-exposure"},
+        {"date": "1985", "value": "0-200", "unit": "mg/kg bw/day", "type": "JECFA Class IV ADI; 0-150 mg/kg bw/day on a solids basis", "sourceId": "e150d-jecfa-1985"}
+      ],
+      "healthEffects": [
+        {"effectType": "genotoxicity_and_carcinogenicity", "finding": "EFSA concluded that the caramel colours evaluated were neither genotoxic nor carcinogenic on the available evidence; this is not a finding about every constituent at every exposure.", "population": "general population in the evaluated food-additive context", "evidenceLevel": "strong", "sourceId": "e150-efsa-2011"},
+        {"effectType": "process_constituent_4_mei", "finding": "4-methylimidazole is a process-related constituent relevant to E150c and E150d. EFSA considered the maximum specified level sufficiently protective in its assessment and recommended keeping by-products as low as technologically feasible.", "population": "general population; exposure depends on colour composition and food intake", "evidenceLevel": "strong", "sourceId": "e150-efsa-2011"}
+      ],
+      "sensitivePopulations": ["High consumers and children were included in EFSA exposure scenarios; the scanned product amount and total dietary exposure are unknown."],
+      "exposureAssessment": {
+        "officialConclusion": "EFSA's refined assessment reported considerably lower exposure to E150d than in the earlier assessment; most estimates were below the relevant ADI framework, while high-consumer scenarios require the stated limits to be respected.",
+        "productSpecificConclusion": "No E150d concentration is available for the scanned product, so no individual ADI comparison is made.",
+        "concern": "unlikely",
+        "sourceId": "e150-efsa-2012-exposure"
+      },
+      "severity": "low",
+      "evidenceStrength": "strong",
+      "exposureConcern": "unlikely",
+      "scientificClassification": "no_particular_signal",
+      "scientificSummary": "For E150d specifically, EFSA's assessment of the caramel-colour group and its refined exposure work do not identify a particular signal in authorised food use. 4-MEI is a relevant process constituent and an IARC hazard classification for 4-MEI must not be converted into a product risk estimate or into a claim that E150d itself is carcinogenic. The conclusion must not be transferred automatically to E150a, E150b or E150c.",
+      "sources": [
+        {"sourceId": "e150-efsa-2011", "organisation": "EFSA", "title": "EFSA reviews safety of caramel colours", "url": "https://www.efsa.europa.eu/en/press/news/ans110308", "publishedAt": "2011-03-08", "accessedAt": "2026-09-16", "fieldsSupported": ["identity", "group_ADI", "4-MEI", "genotoxicity", "carcinogenicity"]},
+        {"sourceId": "e150-efsa-2012-exposure", "organisation": "EFSA", "title": "Caramel colours: consumer exposure lower than previously estimated", "url": "https://www.efsa.europa.eu/en/press/news/121219", "publishedAt": "2012-12-19", "accessedAt": "2026-09-16", "fieldsSupported": ["E150d_exposure", "refined_exposure"]},
+        {"sourceId": "e150d-jecfa-1985", "organisation": "JECFA / WHO", "title": "Caramel colour, Class IV", "url": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/1668", "publishedAt": "1985", "accessedAt": "2026-09-16", "fieldsSupported": ["identity", "CAS", "INS", "ADI"]},
+        {"sourceId": "e150-efsa-status", "organisation": "EFSA", "title": "Food colours", "url": "https://www.efsa.europa.eu/en/topics/topic/food-colours", "accessedAt": "2026-09-16", "fieldsSupported": ["EU_identity", "assessment_status"]},
+        {"sourceId": "e150-iarc-4-mei", "organisation": "IARC / WHO", "title": "Agents Classified by the IARC Monographs", "url": "https://monographs.iarc.who.int/agents-classified-by-the-iarc", "accessedAt": "2026-09-16", "fieldsSupported": ["4-MEI_hazard_classification_only"]}
+      ],
+      "scientificReviewedAt": "2026-09-16",
+      "needsScientificReview": true,
+      "limitations": ["The available EFSA ADI is a group assessment, not an E150d-only numerical ADI.", "The product concentration and the actual 4-MEI content are unavailable.", "4-MEI hazard classification is not equivalent to a risk estimate for E150d in this product.", "No verified OpenFoodTox mapping was found locally."]
+    },
+    {
+      "code": "E331",
+      "canonicalName": "Sodium citrates / Citrates de sodium",
+      "regulatoryStatus": {
+        "euAuthorised": true,
+        "euIdentity": "E 331(i) monosodium citrate; E 331(ii) disodium citrate; E 331(iii) trisodium citrate",
+        "conditions": "The E331 code covers three sodium citrate salts; applicable EU specifications, purity requirements and use conditions apply."
+      },
+      "cas": ["18996-35-5", "144-33-2", "68-04-2", "6132-04-3"],
+      "identityAssessment": {
+        "forms": [
+          {"subcode": "E331(i)", "name": "Monosodium citrate / sodium dihydrogen citrate", "cas": ["18996-35-5"]},
+          {"subcode": "E331(ii)", "name": "Disodium citrate", "cas": ["144-33-2"]},
+          {"subcode": "E331(iii)", "name": "Trisodium citrate", "cas": ["68-04-2", "6132-04-3"]}
+        ],
+        "note": "A product label reporting only E331 does not identify which sodium citrate salt is present. JECFA's group conclusion explicitly covers citric acid and its sodium, potassium, calcium and ammonium salts."
+      },
+      "openFoodTox": {
+        "status": "not_verified_in_local_top25_proposal",
+        "matchingMethod": null,
+        "note": "No E331 record was present in the inspected local food-additive-science-proposed-top25.json; no OpenFoodTox mapping is invented."
+      },
+      "adi": {
+        "value": null,
+        "unit": null,
+        "type": "group ADI",
+        "status": "JECFA: not limited / not specified",
+        "appliesTo": "Citric acid and its calcium, potassium, sodium and ammonium salts"
+      },
+      "adiAuthority": "JECFA / WHO",
+      "adiHistory": [
+        {"date": "1973", "value": null, "unit": null, "type": "group ADI not limited / not specified", "sourceId": "e331-jecfa-1973"},
+        {"date": "1979", "value": null, "unit": null, "type": "monosodium citrate included in the group ADI", "sourceId": "e331i-jecfa-1979"}
+      ],
+      "healthEffects": [
+        {"effectType": "systemic_toxicology", "finding": "JECFA relied on well-established citric-acid metabolic pathways and concluded that citric acid and its sodium, potassium and calcium salts do not constitute a significant toxicological hazard at intended food-additive use.", "population": "general population in the evaluated food-additive context", "evidenceLevel": "strong", "sourceId": "e331-jecfa-1973"},
+        {"effectType": "sodium_load", "finding": "The sodium contribution is a nutritional and dietary-context consideration, not a new toxicological classification of citrate. It cannot be quantified without the salt form and amount in the product.", "population": "people with sodium-restricted diets or relevant medical advice", "evidenceLevel": "moderate", "sourceId": "e331-eu-identity"}
+      ],
+      "sensitivePopulations": ["People following medically advised sodium restriction may require attention to total sodium intake; no product-specific sodium contribution is available."],
+      "exposureAssessment": {
+        "officialConclusion": "JECFA assigned a group ADI described as not limited / not specified for citric acid and its listed salts.",
+        "productSpecificConclusion": "The salt form, concentration and total sodium/citrate exposure from the scanned product are unknown.",
+        "concern": "unlikely",
+        "sourceId": "e331-jecfa-1973"
+      },
+      "severity": "none",
+      "evidenceStrength": "strong",
+      "exposureConcern": "unlikely",
+      "scientificClassification": "no_particular_signal",
+      "scientificSummary": "E331 is a regulatory group covering mono-, di- and trisodium citrate. JECFA's group assessment for citric acid and its sodium salts is not limited/not specified, supported by established metabolism and no significant toxicological hazard identified in the cited food-use assessment. This is not a statement that every individual has unlimited sodium tolerance, and the sodium amount cannot be inferred from E331 alone.",
+      "sources": [
+        {"sourceId": "e331-jecfa-1973", "organisation": "JECFA / WHO", "title": "Trisodium citrate", "url": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/349", "publishedAt": "1973", "accessedAt": "2026-09-16", "fieldsSupported": ["identity", "CAS", "INS", "group_ADI", "toxicology"]},
+        {"sourceId": "e331i-jecfa-1979", "organisation": "JECFA / WHO", "title": "Sodium dihydrogen citrate", "url": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2709", "publishedAt": "1979", "accessedAt": "2026-09-16", "fieldsSupported": ["E331i_identity", "CAS", "group_ADI"]},
+        {"sourceId": "e331-eu-identity", "organisation": "EFSA", "title": "Call for food additives usage level and/or concentration data in food and beverages intended for human consumption", "url": "https://www.efsa.europa.eu/en/data/call/160524", "publishedAt": "2016-05-10", "accessedAt": "2026-09-16", "fieldsSupported": ["E331_forms", "EU_subcodes"]},
+        {"sourceId": "e331-eu-rules", "organisation": "European Commission", "title": "EU rules on food additives", "url": "https://food.ec.europa.eu/food-safety/food-improvement-agents/additives/eu-rules_en", "accessedAt": "2026-09-16", "fieldsSupported": ["regulatory_framework"]}
+      ],
+      "scientificReviewedAt": "2026-09-16",
+      "needsScientificReview": true,
+      "limitations": ["E331 is a group code and the label may not reveal the salt form.", "The group ADI is historical and not a product-specific exposure estimate.", "Sodium load cannot be calculated from the E number alone.", "No verified OpenFoodTox mapping was found locally."]
+    },
+    {
+      "code": "E960C",
+      "canonicalName": "Enzymatically produced steviol glycosides / Glycosides de stéviol produits enzymatiquement",
+      "regulatoryStatus": {
+        "euAuthorised": true,
+        "euIdentity": "E 960c, enzymatically produced steviol glycosides",
+        "conditions": "E960c is a distinct EU category. It is included in the EU group steviol glycosides E960a-E960c and must meet the applicable compositional specifications."
+      },
+      "cas": [],
+      "identityAssessment": {
+        "distinguishedFrom": ["E960a steviol glycosides from Stevia", "E960b steviol glycosides from fermentation", "E960d glucosylated steviol glycosides"],
+        "note": "E960c is not treated as identical to E960a or E960d merely because all are steviol-glycoside sweeteners. The relevant coverage comes from the specific EU category and the JECFA methods/specifications assessment."
+      },
+      "openFoodTox": {
+        "status": "not_verified_in_local_top25_proposal",
+        "matchingMethod": null,
+        "note": "No E960C record was present in the inspected local food-additive-science-proposed-top25.json; no OpenFoodTox mapping is invented."
+      },
+      "adi": {
+        "value": "0-4",
+        "unit": "mg/kg bw/day expressed as steviol equivalents",
+        "type": "ADI",
+        "status": "JECFA ADI confirmed for steviol glycosides produced by the specified methods; EU regulatory group includes E960a-E960c",
+        "appliesTo": "Steviol glycosides meeting the applicable specifications and production-method conditions"
+      },
+      "adiAuthority": "JECFA / WHO",
+      "adiHistory": [
+        {"date": "2008", "value": "0-4", "unit": "mg/kg bw/day expressed as steviol", "type": "ADI established", "sourceId": "e960-jecfa-2008"},
+        {"date": "2019", "value": "0-4", "unit": "mg/kg bw/day expressed as steviol", "type": "ADI applies to steviol glycosides produced by four specified methods", "sourceId": "e960-jecfa-2019"},
+        {"date": "2026", "value": "0-4", "unit": "mg/kg bw/day expressed as steviol", "type": "ADI confirmed by JECFA; conservative high-consumer estimate may exceed the upper bound, but JECFA did not consider estimated exposure likely to present a health concern", "sourceId": "e960-jecfa-2026"}
+      ],
+      "healthEffects": [
+        {"effectType": "general_toxicology", "finding": "JECFA found no safety issue for steviol glycosides produced by one of the specified methods and meeting the existing specifications; the ADI was retained.", "population": "general population in intended food use; exposure-dependent", "evidenceLevel": "strong", "sourceId": "e960-jecfa-2019"},
+        {"effectType": "production_method_and_composition", "finding": "The conclusion depends on the authorised production method, purity and specifications; it is not a blanket conclusion for every steviol-related substance or unverified preparation.", "population": "all consumers; specification-dependent", "evidenceLevel": "strong", "sourceId": "e960-eu-2022"}
+      ],
+      "sensitivePopulations": ["High consumers, particularly children, are relevant to exposure assessment; the scanned product concentration and total dietary exposure are unknown."],
+      "exposureAssessment": {
+        "officialConclusion": "JECFA retained the ADI of 0-4 mg/kg bw/day expressed as steviol. Its 2026 summary describes conservative high-consumer estimates, including a possible upper-bound exceedance for some EU children, but concludes that estimated exposure is not likely to present a health concern.",
+        "productSpecificConclusion": "The quantity of E960c in the scanned product and the consumer's total steviol-glycoside exposure are unknown.",
+        "concern": "unlikely",
+        "sourceId": "e960-jecfa-2026"
+      },
+      "severity": "low",
+      "evidenceStrength": "strong",
+      "exposureConcern": "unlikely",
+      "scientificClassification": "no_particular_signal",
+      "scientificSummary": "E960c is kept distinct from E960a and E960d. The EU legislation places enzymatically produced steviol glycosides in the E960a-E960c group, while JECFA states that the 0-4 mg/kg bw/day ADI expressed as steviol applies to steviol glycosides produced by the specified methods. The classification is limited to compliant food-grade preparations and authorised use; it is not a claim of zero risk or a product-specific exposure calculation.",
+      "sources": [
+        {"sourceId": "e960-jecfa-2019", "organisation": "JECFA / WHO", "title": "Steviol glycosides", "url": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/267", "publishedAt": "2019", "accessedAt": "2026-09-16", "fieldsSupported": ["ADI", "specified_production_methods", "safety_conclusion"]},
+        {"sourceId": "e960-jecfa-2026", "organisation": "JECFA / WHO", "title": "Steviol glycosides", "url": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/267", "publishedAt": "2026", "accessedAt": "2026-09-16", "fieldsSupported": ["current_ADI", "high_consumer_exposure", "exposure_conclusion"]},
+        {"sourceId": "e960-eu-2022", "organisation": "European Commission", "title": "Commission Regulation (EU) 2022/1922", "url": "https://eur-lex.europa.eu/eli/reg/2022/1922/oj/eng", "publishedAt": "2022-10-10", "accessedAt": "2026-09-16", "fieldsSupported": ["E960c_identity", "EU_group_E960a_E960c", "specifications"]},
+        {"sourceId": "e960-efsa-status", "organisation": "EFSA", "title": "Sweeteners", "url": "https://www.efsa.europa.eu/en/topics/topic/sweeteners", "accessedAt": "2026-09-16", "fieldsSupported": ["E960c_identity", "EFSA_assessment_status"]}
+      ],
+      "scientificReviewedAt": "2026-09-16",
+      "needsScientificReview": false,
+      "limitations": ["The ADI is expressed as steviol equivalents, not as the mass of the labelled additive.", "Applicability depends on the production method and compositional specifications.", "The product concentration and total dietary exposure are unavailable.", "No verified OpenFoodTox mapping was found locally."]
+    }
+  ],
+  "summaryTable": [
+    {"code": "E150D", "currentClassification": "no_particular_signal", "proposedClassification": "no_particular_signal", "change": false, "evidenceStrength": "strong", "exposureConcern": "unlikely", "adi": "300 mg/kg bw/day group ADI (EFSA); JECFA 0-200 mg/kg bw/day for Class IV", "needsScientificReview": true},
+    {"code": "E331", "currentClassification": "insufficient_data", "proposedClassification": "no_particular_signal", "change": true, "evidenceStrength": "strong", "exposureConcern": "unlikely", "adi": "JECFA group ADI not limited/not specified", "needsScientificReview": true},
+    {"code": "E960C", "currentClassification": "no_exploitable_record", "proposedClassification": "no_particular_signal", "change": true, "evidenceStrength": "strong", "exposureConcern": "unlikely", "adi": "0-4 mg/kg bw/day expressed as steviol equivalents", "needsScientificReview": false}
+  ]
+}

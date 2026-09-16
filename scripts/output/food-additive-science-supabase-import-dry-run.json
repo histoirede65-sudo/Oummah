@@ -1,0 +1,1407 @@
+{
+  "mode": "dry-run",
+  "proposal": "C:\\Users\\bahri\\oummah\\scripts\\output\\food-additive-science-proposed-top25.json",
+  "inserts": [
+    {
+      "code": "E202",
+      "canonical_name": "Potassium sorbate",
+      "function_classes": [],
+      "regulatory_status": null,
+      "eu_authorized": null,
+      "eu_conditions": {
+        "openFoodTox": {
+          "casNumbers": [
+            "24634-61-5"
+          ],
+          "subUuid": "464a5a2e-7618-49fb-9132-4a21e396caa8",
+          "refSubUuid": "d664a0b6-03c3-4d75-8dbb-1da59254a57c",
+          "matchingMethod": "cas_exact",
+          "matchingConfidence": "high"
+        }
+      },
+      "adi_value": null,
+      "adi_unit": null,
+      "adi_display": null,
+      "adi_authority": null,
+      "severity": "none",
+      "evidence_strength": "insufficient",
+      "exposure_concern": "unknown",
+      "scientific_classification": "insufficient_data",
+      "scientific_summary": null,
+      "health_effects": [],
+      "sensitive_populations": [],
+      "exposure_assessment": {
+        "referenceValueStatus": "available",
+        "referenceValues": [
+          {
+            "type": "ADI",
+            "lowerValue": "25",
+            "Unit": "mg/kg bw/day"
+          },
+          {
+            "type": "ADI",
+            "lowerValue": "3",
+            "Unit": "mg/kg bw/day"
+          },
+          {
+            "type": "ADI",
+            "lowerValue": "11",
+            "Unit": "mg/kg bw/day"
+          }
+        ],
+        "criticalEndpoints": [],
+        "justifications": [],
+        "sourceVersion": "OpenFoodTox 3.0 / EFSA export repository",
+        "sourceFileHash": "5181661e921651d4087b544981e1e5a63b99532844eac0112732806a00a85eda",
+        "retrievedAt": "2026-09-16T13:22:16.770Z"
+      },
+      "assessment_history": [
+        {
+          "organisation": "EFSA",
+          "date": "2026-09-16T13:22:16.770Z",
+          "conclusion": "Import structure OpenFoodTox propose ; aucune classification scientifique deduite.",
+          "sourceId": "openfoodtox-e202"
+        }
+      ],
+      "sources": [
+        {
+          "sourceId": "openfoodtox-e202",
+          "organisation": "EFSA",
+          "sourceOrganization": "EFSA",
+          "sourceDataset": "OpenFoodTox 3.0",
+          "sourceType": "official_information",
+          "title": "OpenFoodTox 3.0 structured record",
+          "url": null,
+          "retrievedAt": "2026-09-16T13:22:16.770Z",
+          "sourceVersion": "OpenFoodTox 3.0 / EFSA export repository",
+          "sourceFileHash": "5181661e921651d4087b544981e1e5a63b99532844eac0112732806a00a85eda",
+          "ingestionVersion": "oummah-openfoodtox-supabase-import-v1",
+          "fieldsSupported": [
+            "identity",
+            "cas",
+            "reference_values",
+            "provenance"
+          ]
+        }
+      ],
+      "regulatory_source_updated_at": null,
+      "scientific_reviewed_at": null,
+      "needs_scientific_review": true,
+      "data_version": "1.0"
+    },
+    {
+      "code": "E322",
+      "canonical_name": "Lecithins",
+      "function_classes": [],
+      "regulatory_status": null,
+      "eu_authorized": null,
+      "eu_conditions": {
+        "openFoodTox": {
+          "casNumbers": [
+            "8002-43-5"
+          ],
+          "subUuid": "211272b1-2662-4daa-b106-139412f14136",
+          "refSubUuid": "acf6babd-17ae-4b54-832c-c43eed5b0d9b",
+          "matchingMethod": "nom_ou_alias_exact",
+          "matchingConfidence": "high"
+        }
+      },
+      "adi_value": null,
+      "adi_unit": null,
+      "adi_display": null,
+      "adi_authority": null,
+      "severity": "none",
+      "evidence_strength": "insufficient",
+      "exposure_concern": "unknown",
+      "scientific_classification": "insufficient_data",
+      "scientific_summary": null,
+      "health_effects": [],
+      "sensitive_populations": [],
+      "exposure_assessment": {
+        "referenceValueStatus": "reference_value_not_found",
+        "referenceValues": [],
+        "criticalEndpoints": [],
+        "justifications": [],
+        "sourceVersion": "OpenFoodTox 3.0 / EFSA export repository",
+        "sourceFileHash": "5181661e921651d4087b544981e1e5a63b99532844eac0112732806a00a85eda",
+        "retrievedAt": "2026-09-16T13:22:16.770Z"
+      },
+      "assessment_history": [
+        {
+          "organisation": "EFSA",
+          "date": "2026-09-16T13:22:16.770Z",
+          "conclusion": "Import structure OpenFoodTox propose ; aucune classification scientifique deduite.",
+          "sourceId": "openfoodtox-e322"
+        }
+      ],
+      "sources": [
+        {
+          "sourceId": "openfoodtox-e322",
+          "organisation": "EFSA",
+          "sourceOrganization": "EFSA",
+          "sourceDataset": "OpenFoodTox 3.0",
+          "sourceType": "official_information",
+          "title": "OpenFoodTox 3.0 structured record",
+          "url": null,
+          "retrievedAt": "2026-09-16T13:22:16.770Z",
+          "sourceVersion": "OpenFoodTox 3.0 / EFSA export repository",
+          "sourceFileHash": "5181661e921651d4087b544981e1e5a63b99532844eac0112732806a00a85eda",
+          "ingestionVersion": "oummah-openfoodtox-supabase-import-v1",
+          "fieldsSupported": [
+            "identity",
+            "cas",
+            "reference_values",
+            "provenance"
+          ]
+        }
+      ],
+      "regulatory_source_updated_at": null,
+      "scientific_reviewed_at": null,
+      "needs_scientific_review": true,
+      "data_version": "1.0"
+    },
+    {
+      "code": "E330",
+      "canonical_name": "Citric acid",
+      "function_classes": [],
+      "regulatory_status": null,
+      "eu_authorized": null,
+      "eu_conditions": {
+        "openFoodTox": {
+          "casNumbers": [
+            "77-92-9"
+          ],
+          "subUuid": "39cf5b57-4e50-49f0-8c49-6719ebb32d47",
+          "refSubUuid": "c4d38ae8-aec4-47b2-b02b-344dfbced691",
+          "matchingMethod": "cas_exact",
+          "matchingConfidence": "high"
+        }
+      },
+      "adi_value": null,
+      "adi_unit": null,
+      "adi_display": null,
+      "adi_authority": null,
+      "severity": "none",
+      "evidence_strength": "insufficient",
+      "exposure_concern": "unknown",
+      "scientific_classification": "insufficient_data",
+      "scientific_summary": null,
+      "health_effects": [],
+      "sensitive_populations": [],
+      "exposure_assessment": {
+        "referenceValueStatus": "reference_value_not_found",
+        "referenceValues": [],
+        "criticalEndpoints": [],
+        "justifications": [],
+        "sourceVersion": "OpenFoodTox 3.0 / EFSA export repository",
+        "sourceFileHash": "5181661e921651d4087b544981e1e5a63b99532844eac0112732806a00a85eda",
+        "retrievedAt": "2026-09-16T13:22:16.770Z"
+      },
+      "assessment_history": [
+        {
+          "organisation": "EFSA",
+          "date": "2026-09-16T13:22:16.770Z",
+          "conclusion": "Import structure OpenFoodTox propose ; aucune classification scientifique deduite.",
+          "sourceId": "openfoodtox-e330"
+        }
+      ],
+      "sources": [
+        {
+          "sourceId": "openfoodtox-e330",
+          "organisation": "EFSA",
+          "sourceOrganization": "EFSA",
+          "sourceDataset": "OpenFoodTox 3.0",
+          "sourceType": "official_information",
+          "title": "OpenFoodTox 3.0 structured record",
+          "url": null,
+          "retrievedAt": "2026-09-16T13:22:16.770Z",
+          "sourceVersion": "OpenFoodTox 3.0 / EFSA export repository",
+          "sourceFileHash": "5181661e921651d4087b544981e1e5a63b99532844eac0112732806a00a85eda",
+          "ingestionVersion": "oummah-openfoodtox-supabase-import-v1",
+          "fieldsSupported": [
+            "identity",
+            "cas",
+            "reference_values",
+            "provenance"
+          ]
+        }
+      ],
+      "regulatory_source_updated_at": null,
+      "scientific_reviewed_at": null,
+      "needs_scientific_review": true,
+      "data_version": "1.0"
+    },
+    {
+      "code": "E955",
+      "canonical_name": "Sucralose",
+      "function_classes": [],
+      "regulatory_status": null,
+      "eu_authorized": null,
+      "eu_conditions": {
+        "openFoodTox": {
+          "casNumbers": [
+            "56038-13-2"
+          ],
+          "subUuid": "6078bad9-99c0-4f96-84bb-a7f4161e992b",
+          "refSubUuid": "b787a611-b1e3-4478-a5c1-3cd8bfa6cbf9",
+          "matchingMethod": "cas_exact",
+          "matchingConfidence": "high"
+        }
+      },
+      "adi_value": null,
+      "adi_unit": null,
+      "adi_display": null,
+      "adi_authority": null,
+      "severity": "none",
+      "evidence_strength": "insufficient",
+      "exposure_concern": "unknown",
+      "scientific_classification": "insufficient_data",
+      "scientific_summary": null,
+      "health_effects": [],
+      "sensitive_populations": [],
+      "exposure_assessment": {
+        "referenceValueStatus": "available",
+        "referenceValues": [
+          {
+            "type": "ADI",
+            "Unit": "mg/kg bw/day",
+            "upperQualifier": "<=",
+            "upperValue": "15"
+          }
+        ],
+        "criticalEndpoints": [],
+        "justifications": [],
+        "sourceVersion": "OpenFoodTox 3.0 / EFSA export repository",
+        "sourceFileHash": "5181661e921651d4087b544981e1e5a63b99532844eac0112732806a00a85eda",
+        "retrievedAt": "2026-09-16T13:22:16.770Z"
+      },
+      "assessment_history": [
+        {
+          "organisation": "EFSA",
+          "date": "2026-09-16T13:22:16.770Z",
+          "conclusion": "Import structure OpenFoodTox propose ; aucune classification scientifique deduite.",
+          "sourceId": "openfoodtox-e955"
+        }
+      ],
+      "sources": [
+        {
+          "sourceId": "openfoodtox-e955",
+          "organisation": "EFSA",
+          "sourceOrganization": "EFSA",
+          "sourceDataset": "OpenFoodTox 3.0",
+          "sourceType": "official_information",
+          "title": "OpenFoodTox 3.0 structured record",
+          "url": null,
+          "retrievedAt": "2026-09-16T13:22:16.770Z",
+          "sourceVersion": "OpenFoodTox 3.0 / EFSA export repository",
+          "sourceFileHash": "5181661e921651d4087b544981e1e5a63b99532844eac0112732806a00a85eda",
+          "ingestionVersion": "oummah-openfoodtox-supabase-import-v1",
+          "fieldsSupported": [
+            "identity",
+            "cas",
+            "reference_values",
+            "provenance"
+          ]
+        }
+      ],
+      "regulatory_source_updated_at": null,
+      "scientific_reviewed_at": null,
+      "needs_scientific_review": true,
+      "data_version": "1.0"
+    },
+    {
+      "code": "E100",
+      "canonical_name": "Curcumin",
+      "function_classes": [],
+      "regulatory_status": null,
+      "eu_authorized": null,
+      "eu_conditions": {
+        "openFoodTox": {
+          "casNumbers": [
+            "458-37-7"
+          ],
+          "subUuid": "1ec9f394-7fbb-43a2-8d6b-6a1067cef59f",
+          "refSubUuid": "1de094c6-513a-4dc2-9afd-9cfa8c13569c",
+          "matchingMethod": "cas_exact",
+          "matchingConfidence": "high"
+        }
+      },
+      "adi_value": null,
+      "adi_unit": null,
+      "adi_display": null,
+      "adi_authority": null,
+      "severity": "none",
+      "evidence_strength": "insufficient",
+      "exposure_concern": "unknown",
+      "scientific_classification": "insufficient_data",
+      "scientific_summary": null,
+      "health_effects": [],
+      "sensitive_populations": [],
+      "exposure_assessment": {
+        "referenceValueStatus": "available",
+        "referenceValues": [
+          {
+            "type": "ADI",
+            "lowerValue": "3",
+            "Unit": "mg/kg bw/day"
+          }
+        ],
+        "criticalEndpoints": [],
+        "justifications": [],
+        "sourceVersion": "OpenFoodTox 3.0 / EFSA export repository",
+        "sourceFileHash": "5181661e921651d4087b544981e1e5a63b99532844eac0112732806a00a85eda",
+        "retrievedAt": "2026-09-16T13:22:16.770Z"
+      },
+      "assessment_history": [
+        {
+          "organisation": "EFSA",
+          "date": "2026-09-16T13:22:16.770Z",
+          "conclusion": "Import structure OpenFoodTox propose ; aucune classification scientifique deduite.",
+          "sourceId": "openfoodtox-e100"
+        }
+      ],
+      "sources": [
+        {
+          "sourceId": "openfoodtox-e100",
+          "organisation": "EFSA",
+          "sourceOrganization": "EFSA",
+          "sourceDataset": "OpenFoodTox 3.0",
+          "sourceType": "official_information",
+          "title": "OpenFoodTox 3.0 structured record",
+          "url": null,
+          "retrievedAt": "2026-09-16T13:22:16.770Z",
+          "sourceVersion": "OpenFoodTox 3.0 / EFSA export repository",
+          "sourceFileHash": "5181661e921651d4087b544981e1e5a63b99532844eac0112732806a00a85eda",
+          "ingestionVersion": "oummah-openfoodtox-supabase-import-v1",
+          "fieldsSupported": [
+            "identity",
+            "cas",
+            "reference_values",
+            "provenance"
+          ]
+        }
+      ],
+      "regulatory_source_updated_at": null,
+      "scientific_reviewed_at": null,
+      "needs_scientific_review": true,
+      "data_version": "1.0"
+    },
+    {
+      "code": "E101",
+      "canonical_name": "Riboflavins",
+      "function_classes": [],
+      "regulatory_status": null,
+      "eu_authorized": null,
+      "eu_conditions": {
+        "openFoodTox": {
+          "casNumbers": [
+            "83-88-5"
+          ],
+          "subUuid": "6bd4f020-5316-4ce1-a4d6-8a0df1c257eb",
+          "refSubUuid": "5eb42649-e1d7-46c4-9102-383262a50bb6",
+          "matchingMethod": "cas_exact",
+          "matchingConfidence": "high"
+        }
+      },
+      "adi_value": null,
+      "adi_unit": null,
+      "adi_display": null,
+      "adi_authority": null,
+      "severity": "none",
+      "evidence_strength": "insufficient",
+      "exposure_concern": "unknown",
+      "scientific_classification": "insufficient_data",
+      "scientific_summary": null,
+      "health_effects": [],
+      "sensitive_populations": [],
+      "exposure_assessment": {
+        "referenceValueStatus": "available",
+        "referenceValues": [
+          {
+            "type": "ADI",
+            "Unit": "mg/kg bw/day",
+            "upperQualifier": "<=",
+            "upperValue": "0.5"
+          }
+        ],
+        "criticalEndpoints": [],
+        "justifications": [],
+        "sourceVersion": "OpenFoodTox 3.0 / EFSA export repository",
+        "sourceFileHash": "5181661e921651d4087b544981e1e5a63b99532844eac0112732806a00a85eda",
+        "retrievedAt": "2026-09-16T13:22:16.770Z"
+      },
+      "assessment_history": [
+        {
+          "organisation": "EFSA",
+          "date": "2026-09-16T13:22:16.770Z",
+          "conclusion": "Import structure OpenFoodTox propose ; aucune classification scientifique deduite.",
+          "sourceId": "openfoodtox-e101"
+        }
+      ],
+      "sources": [
+        {
+          "sourceId": "openfoodtox-e101",
+          "organisation": "EFSA",
+          "sourceOrganization": "EFSA",
+          "sourceDataset": "OpenFoodTox 3.0",
+          "sourceType": "official_information",
+          "title": "OpenFoodTox 3.0 structured record",
+          "url": null,
+          "retrievedAt": "2026-09-16T13:22:16.770Z",
+          "sourceVersion": "OpenFoodTox 3.0 / EFSA export repository",
+          "sourceFileHash": "5181661e921651d4087b544981e1e5a63b99532844eac0112732806a00a85eda",
+          "ingestionVersion": "oummah-openfoodtox-supabase-import-v1",
+          "fieldsSupported": [
+            "identity",
+            "cas",
+            "reference_values",
+            "provenance"
+          ]
+        }
+      ],
+      "regulatory_source_updated_at": null,
+      "scientific_reviewed_at": null,
+      "needs_scientific_review": true,
+      "data_version": "1.0"
+    },
+    {
+      "code": "E120",
+      "canonical_name": "Cochineal carminic acid carmins",
+      "function_classes": [],
+      "regulatory_status": null,
+      "eu_authorized": null,
+      "eu_conditions": {
+        "openFoodTox": {
+          "casNumbers": [
+            "1260-17-9"
+          ],
+          "subUuid": "3256afd8-8a25-430e-9cd6-a48d7c7226e6",
+          "refSubUuid": "754e3b46-7fc6-4c69-9c02-38d6ce089ef8",
+          "matchingMethod": "nom_ou_alias_exact",
+          "matchingConfidence": "high"
+        }
+      },
+      "adi_value": null,
+      "adi_unit": null,
+      "adi_display": null,
+      "adi_authority": null,
+      "severity": "none",
+      "evidence_strength": "insufficient",
+      "exposure_concern": "unknown",
+      "scientific_classification": "insufficient_data",
+      "scientific_summary": null,
+      "health_effects": [],
+      "sensitive_populations": [],
+      "exposure_assessment": {
+        "referenceValueStatus": "reference_value_not_found",
+        "referenceValues": [],
+        "criticalEndpoints": [],
+        "justifications": [],
+        "sourceVersion": "OpenFoodTox 3.0 / EFSA export repository",
+        "sourceFileHash": "5181661e921651d4087b544981e1e5a63b99532844eac0112732806a00a85eda",
+        "retrievedAt": "2026-09-16T13:22:16.770Z"
+      },
+      "assessment_history": [
+        {
+          "organisation": "EFSA",
+          "date": "2026-09-16T13:22:16.770Z",
+          "conclusion": "Import structure OpenFoodTox propose ; aucune classification scientifique deduite.",
+          "sourceId": "openfoodtox-e120"
+        }
+      ],
+      "sources": [
+        {
+          "sourceId": "openfoodtox-e120",
+          "organisation": "EFSA",
+          "sourceOrganization": "EFSA",
+          "sourceDataset": "OpenFoodTox 3.0",
+          "sourceType": "official_information",
+          "title": "OpenFoodTox 3.0 structured record",
+          "url": null,
+          "retrievedAt": "2026-09-16T13:22:16.770Z",
+          "sourceVersion": "OpenFoodTox 3.0 / EFSA export repository",
+          "sourceFileHash": "5181661e921651d4087b544981e1e5a63b99532844eac0112732806a00a85eda",
+          "ingestionVersion": "oummah-openfoodtox-supabase-import-v1",
+          "fieldsSupported": [
+            "identity",
+            "cas",
+            "reference_values",
+            "provenance"
+          ]
+        }
+      ],
+      "regulatory_source_updated_at": null,
+      "scientific_reviewed_at": null,
+      "needs_scientific_review": true,
+      "data_version": "1.0"
+    },
+    {
+      "code": "E160A",
+      "canonical_name": "Carotenes",
+      "function_classes": [],
+      "regulatory_status": null,
+      "eu_authorized": null,
+      "eu_conditions": {
+        "openFoodTox": {
+          "casNumbers": [
+            "7235-40-7"
+          ],
+          "subUuid": "e616fda4-1673-4d4f-8bf4-be2bf777c824",
+          "refSubUuid": "7df80a57-db0e-4c72-ae4e-7afacf2b7f2c",
+          "matchingMethod": "nom_ou_alias_exact",
+          "matchingConfidence": "high"
+        }
+      },
+      "adi_value": null,
+      "adi_unit": null,
+      "adi_display": null,
+      "adi_authority": null,
+      "severity": "none",
+      "evidence_strength": "insufficient",
+      "exposure_concern": "unknown",
+      "scientific_classification": "insufficient_data",
+      "scientific_summary": null,
+      "health_effects": [],
+      "sensitive_populations": [],
+      "exposure_assessment": {
+        "referenceValueStatus": "reference_value_not_found",
+        "referenceValues": [],
+        "criticalEndpoints": [],
+        "justifications": [],
+        "sourceVersion": "OpenFoodTox 3.0 / EFSA export repository",
+        "sourceFileHash": "5181661e921651d4087b544981e1e5a63b99532844eac0112732806a00a85eda",
+        "retrievedAt": "2026-09-16T13:22:16.770Z"
+      },
+      "assessment_history": [
+        {
+          "organisation": "EFSA",
+          "date": "2026-09-16T13:22:16.770Z",
+          "conclusion": "Import structure OpenFoodTox propose ; aucune classification scientifique deduite.",
+          "sourceId": "openfoodtox-e160a"
+        }
+      ],
+      "sources": [
+        {
+          "sourceId": "openfoodtox-e160a",
+          "organisation": "EFSA",
+          "sourceOrganization": "EFSA",
+          "sourceDataset": "OpenFoodTox 3.0",
+          "sourceType": "official_information",
+          "title": "OpenFoodTox 3.0 structured record",
+          "url": null,
+          "retrievedAt": "2026-09-16T13:22:16.770Z",
+          "sourceVersion": "OpenFoodTox 3.0 / EFSA export repository",
+          "sourceFileHash": "5181661e921651d4087b544981e1e5a63b99532844eac0112732806a00a85eda",
+          "ingestionVersion": "oummah-openfoodtox-supabase-import-v1",
+          "fieldsSupported": [
+            "identity",
+            "cas",
+            "reference_values",
+            "provenance"
+          ]
+        }
+      ],
+      "regulatory_source_updated_at": null,
+      "scientific_reviewed_at": null,
+      "needs_scientific_review": true,
+      "data_version": "1.0"
+    },
+    {
+      "code": "E162",
+      "canonical_name": "Beetroot red",
+      "function_classes": [],
+      "regulatory_status": null,
+      "eu_authorized": null,
+      "eu_conditions": {
+        "openFoodTox": {
+          "casNumbers": [
+            "7659-95-2"
+          ],
+          "subUuid": "8decc310-cefa-40c8-a8e4-c6330654a7e6",
+          "refSubUuid": "0a01a661-5fd3-48ed-9f09-9a77f57c20bf",
+          "matchingMethod": "nom_ou_alias_exact",
+          "matchingConfidence": "high"
+        }
+      },
+      "adi_value": null,
+      "adi_unit": null,
+      "adi_display": null,
+      "adi_authority": null,
+      "severity": "none",
+      "evidence_strength": "insufficient",
+      "exposure_concern": "unknown",
+      "scientific_classification": "insufficient_data",
+      "scientific_summary": null,
+      "health_effects": [],
+      "sensitive_populations": [],
+      "exposure_assessment": {
+        "referenceValueStatus": "reference_value_not_found",
+        "referenceValues": [],
+        "criticalEndpoints": [],
+        "justifications": [],
+        "sourceVersion": "OpenFoodTox 3.0 / EFSA export repository",
+        "sourceFileHash": "5181661e921651d4087b544981e1e5a63b99532844eac0112732806a00a85eda",
+        "retrievedAt": "2026-09-16T13:22:16.770Z"
+      },
+      "assessment_history": [
+        {
+          "organisation": "EFSA",
+          "date": "2026-09-16T13:22:16.770Z",
+          "conclusion": "Import structure OpenFoodTox propose ; aucune classification scientifique deduite.",
+          "sourceId": "openfoodtox-e162"
+        }
+      ],
+      "sources": [
+        {
+          "sourceId": "openfoodtox-e162",
+          "organisation": "EFSA",
+          "sourceOrganization": "EFSA",
+          "sourceDataset": "OpenFoodTox 3.0",
+          "sourceType": "official_information",
+          "title": "OpenFoodTox 3.0 structured record",
+          "url": null,
+          "retrievedAt": "2026-09-16T13:22:16.770Z",
+          "sourceVersion": "OpenFoodTox 3.0 / EFSA export repository",
+          "sourceFileHash": "5181661e921651d4087b544981e1e5a63b99532844eac0112732806a00a85eda",
+          "ingestionVersion": "oummah-openfoodtox-supabase-import-v1",
+          "fieldsSupported": [
+            "identity",
+            "cas",
+            "reference_values",
+            "provenance"
+          ]
+        }
+      ],
+      "regulatory_source_updated_at": null,
+      "scientific_reviewed_at": null,
+      "needs_scientific_review": true,
+      "data_version": "1.0"
+    },
+    {
+      "code": "E170",
+      "canonical_name": "Calcium carbonate",
+      "function_classes": [],
+      "regulatory_status": null,
+      "eu_authorized": null,
+      "eu_conditions": {
+        "openFoodTox": {
+          "casNumbers": [
+            "471-34-1"
+          ],
+          "subUuid": "36ebb297-7e7a-40d6-8641-5136c49e3768",
+          "refSubUuid": "96dbdb72-28f9-42fe-a447-2a45038d08cf",
+          "matchingMethod": "cas_exact",
+          "matchingConfidence": "high"
+        }
+      },
+      "adi_value": null,
+      "adi_unit": null,
+      "adi_display": null,
+      "adi_authority": null,
+      "severity": "none",
+      "evidence_strength": "insufficient",
+      "exposure_concern": "unknown",
+      "scientific_classification": "insufficient_data",
+      "scientific_summary": null,
+      "health_effects": [],
+      "sensitive_populations": [],
+      "exposure_assessment": {
+        "referenceValueStatus": "reference_value_not_found",
+        "referenceValues": [],
+        "criticalEndpoints": [],
+        "justifications": [],
+        "sourceVersion": "OpenFoodTox 3.0 / EFSA export repository",
+        "sourceFileHash": "5181661e921651d4087b544981e1e5a63b99532844eac0112732806a00a85eda",
+        "retrievedAt": "2026-09-16T13:22:16.770Z"
+      },
+      "assessment_history": [
+        {
+          "organisation": "EFSA",
+          "date": "2026-09-16T13:22:16.770Z",
+          "conclusion": "Import structure OpenFoodTox propose ; aucune classification scientifique deduite.",
+          "sourceId": "openfoodtox-e170"
+        }
+      ],
+      "sources": [
+        {
+          "sourceId": "openfoodtox-e170",
+          "organisation": "EFSA",
+          "sourceOrganization": "EFSA",
+          "sourceDataset": "OpenFoodTox 3.0",
+          "sourceType": "official_information",
+          "title": "OpenFoodTox 3.0 structured record",
+          "url": null,
+          "retrievedAt": "2026-09-16T13:22:16.770Z",
+          "sourceVersion": "OpenFoodTox 3.0 / EFSA export repository",
+          "sourceFileHash": "5181661e921651d4087b544981e1e5a63b99532844eac0112732806a00a85eda",
+          "ingestionVersion": "oummah-openfoodtox-supabase-import-v1",
+          "fieldsSupported": [
+            "identity",
+            "cas",
+            "reference_values",
+            "provenance"
+          ]
+        }
+      ],
+      "regulatory_source_updated_at": null,
+      "scientific_reviewed_at": null,
+      "needs_scientific_review": true,
+      "data_version": "1.0"
+    },
+    {
+      "code": "E200",
+      "canonical_name": "Sorbic acid",
+      "function_classes": [],
+      "regulatory_status": null,
+      "eu_authorized": null,
+      "eu_conditions": {
+        "openFoodTox": {
+          "casNumbers": [
+            "110-44-1"
+          ],
+          "subUuid": "69fe48b6-da89-4a1f-9bba-1d3d8cd5138f",
+          "refSubUuid": "87d0d601-7e54-42c0-9aa2-0e2e431d0aec",
+          "matchingMethod": "cas_exact",
+          "matchingConfidence": "high"
+        }
+      },
+      "adi_value": null,
+      "adi_unit": null,
+      "adi_display": null,
+      "adi_authority": null,
+      "severity": "none",
+      "evidence_strength": "insufficient",
+      "exposure_concern": "unknown",
+      "scientific_classification": "insufficient_data",
+      "scientific_summary": null,
+      "health_effects": [],
+      "sensitive_populations": [],
+      "exposure_assessment": {
+        "referenceValueStatus": "available",
+        "referenceValues": [
+          {
+            "type": "ADI",
+            "lowerValue": "25",
+            "Unit": "mg/kg bw/day"
+          },
+          {
+            "type": "ADI",
+            "lowerValue": "25",
+            "Unit": "mg/kg bw/day"
+          },
+          {
+            "type": "ADI",
+            "lowerValue": "11",
+            "Unit": "mg/kg bw/day"
+          },
+          {
+            "type": "ADI",
+            "lowerValue": "3",
+            "Unit": "mg/kg bw/day"
+          }
+        ],
+        "criticalEndpoints": [],
+        "justifications": [],
+        "sourceVersion": "OpenFoodTox 3.0 / EFSA export repository",
+        "sourceFileHash": "5181661e921651d4087b544981e1e5a63b99532844eac0112732806a00a85eda",
+        "retrievedAt": "2026-09-16T13:22:16.770Z"
+      },
+      "assessment_history": [
+        {
+          "organisation": "EFSA",
+          "date": "2026-09-16T13:22:16.770Z",
+          "conclusion": "Import structure OpenFoodTox propose ; aucune classification scientifique deduite.",
+          "sourceId": "openfoodtox-e200"
+        }
+      ],
+      "sources": [
+        {
+          "sourceId": "openfoodtox-e200",
+          "organisation": "EFSA",
+          "sourceOrganization": "EFSA",
+          "sourceDataset": "OpenFoodTox 3.0",
+          "sourceType": "official_information",
+          "title": "OpenFoodTox 3.0 structured record",
+          "url": null,
+          "retrievedAt": "2026-09-16T13:22:16.770Z",
+          "sourceVersion": "OpenFoodTox 3.0 / EFSA export repository",
+          "sourceFileHash": "5181661e921651d4087b544981e1e5a63b99532844eac0112732806a00a85eda",
+          "ingestionVersion": "oummah-openfoodtox-supabase-import-v1",
+          "fieldsSupported": [
+            "identity",
+            "cas",
+            "reference_values",
+            "provenance"
+          ]
+        }
+      ],
+      "regulatory_source_updated_at": null,
+      "scientific_reviewed_at": null,
+      "needs_scientific_review": true,
+      "data_version": "1.0"
+    },
+    {
+      "code": "E211",
+      "canonical_name": "Sodium benzoate",
+      "function_classes": [],
+      "regulatory_status": null,
+      "eu_authorized": null,
+      "eu_conditions": {
+        "openFoodTox": {
+          "casNumbers": [
+            "532-32-1"
+          ],
+          "subUuid": "336142ca-3f21-41ea-a1d4-6ad41cc2da84",
+          "refSubUuid": "64a45005-2e3c-4a9d-a932-5fa636761921",
+          "matchingMethod": "cas_exact",
+          "matchingConfidence": "high"
+        }
+      },
+      "adi_value": null,
+      "adi_unit": null,
+      "adi_display": null,
+      "adi_authority": null,
+      "severity": "none",
+      "evidence_strength": "insufficient",
+      "exposure_concern": "unknown",
+      "scientific_classification": "insufficient_data",
+      "scientific_summary": null,
+      "health_effects": [],
+      "sensitive_populations": [],
+      "exposure_assessment": {
+        "referenceValueStatus": "available",
+        "referenceValues": [
+          {
+            "type": "ADI",
+            "lowerValue": "5",
+            "Unit": "mg/kg bw/day"
+          },
+          {
+            "type": "ADI",
+            "lowerValue": "5",
+            "Unit": "mg/kg bw/day"
+          },
+          {
+            "type": "ADI",
+            "lowerValue": "5",
+            "Unit": "mg/kg bw/day"
+          }
+        ],
+        "criticalEndpoints": [],
+        "justifications": [],
+        "sourceVersion": "OpenFoodTox 3.0 / EFSA export repository",
+        "sourceFileHash": "5181661e921651d4087b544981e1e5a63b99532844eac0112732806a00a85eda",
+        "retrievedAt": "2026-09-16T13:22:16.770Z"
+      },
+      "assessment_history": [
+        {
+          "organisation": "EFSA",
+          "date": "2026-09-16T13:22:16.770Z",
+          "conclusion": "Import structure OpenFoodTox propose ; aucune classification scientifique deduite.",
+          "sourceId": "openfoodtox-e211"
+        }
+      ],
+      "sources": [
+        {
+          "sourceId": "openfoodtox-e211",
+          "organisation": "EFSA",
+          "sourceOrganization": "EFSA",
+          "sourceDataset": "OpenFoodTox 3.0",
+          "sourceType": "official_information",
+          "title": "OpenFoodTox 3.0 structured record",
+          "url": null,
+          "retrievedAt": "2026-09-16T13:22:16.770Z",
+          "sourceVersion": "OpenFoodTox 3.0 / EFSA export repository",
+          "sourceFileHash": "5181661e921651d4087b544981e1e5a63b99532844eac0112732806a00a85eda",
+          "ingestionVersion": "oummah-openfoodtox-supabase-import-v1",
+          "fieldsSupported": [
+            "identity",
+            "cas",
+            "reference_values",
+            "provenance"
+          ]
+        }
+      ],
+      "regulatory_source_updated_at": null,
+      "scientific_reviewed_at": null,
+      "needs_scientific_review": true,
+      "data_version": "1.0"
+    },
+    {
+      "code": "E250",
+      "canonical_name": "Sodium nitrite",
+      "function_classes": [],
+      "regulatory_status": null,
+      "eu_authorized": null,
+      "eu_conditions": {
+        "openFoodTox": {
+          "casNumbers": [
+            "7632-00-0"
+          ],
+          "subUuid": "436052b2-1c33-4ee7-bece-df5d6d7ce503",
+          "refSubUuid": "6bfadada-3762-4140-89ea-bfa8257f2084",
+          "matchingMethod": "cas_exact",
+          "matchingConfidence": "high"
+        }
+      },
+      "adi_value": null,
+      "adi_unit": null,
+      "adi_display": null,
+      "adi_authority": null,
+      "severity": "none",
+      "evidence_strength": "insufficient",
+      "exposure_concern": "unknown",
+      "scientific_classification": "insufficient_data",
+      "scientific_summary": null,
+      "health_effects": [],
+      "sensitive_populations": [],
+      "exposure_assessment": {
+        "referenceValueStatus": "available",
+        "referenceValues": [
+          {
+            "type": "ADI",
+            "lowerValue": "0.1",
+            "Unit": "mg/kg bw/day"
+          }
+        ],
+        "criticalEndpoints": [],
+        "justifications": [],
+        "sourceVersion": "OpenFoodTox 3.0 / EFSA export repository",
+        "sourceFileHash": "5181661e921651d4087b544981e1e5a63b99532844eac0112732806a00a85eda",
+        "retrievedAt": "2026-09-16T13:22:16.770Z"
+      },
+      "assessment_history": [
+        {
+          "organisation": "EFSA",
+          "date": "2026-09-16T13:22:16.770Z",
+          "conclusion": "Import structure OpenFoodTox propose ; aucune classification scientifique deduite.",
+          "sourceId": "openfoodtox-e250"
+        }
+      ],
+      "sources": [
+        {
+          "sourceId": "openfoodtox-e250",
+          "organisation": "EFSA",
+          "sourceOrganization": "EFSA",
+          "sourceDataset": "OpenFoodTox 3.0",
+          "sourceType": "official_information",
+          "title": "OpenFoodTox 3.0 structured record",
+          "url": null,
+          "retrievedAt": "2026-09-16T13:22:16.770Z",
+          "sourceVersion": "OpenFoodTox 3.0 / EFSA export repository",
+          "sourceFileHash": "5181661e921651d4087b544981e1e5a63b99532844eac0112732806a00a85eda",
+          "ingestionVersion": "oummah-openfoodtox-supabase-import-v1",
+          "fieldsSupported": [
+            "identity",
+            "cas",
+            "reference_values",
+            "provenance"
+          ]
+        }
+      ],
+      "regulatory_source_updated_at": null,
+      "scientific_reviewed_at": null,
+      "needs_scientific_review": true,
+      "data_version": "1.0"
+    },
+    {
+      "code": "E270",
+      "canonical_name": "Lactic acid",
+      "function_classes": [],
+      "regulatory_status": null,
+      "eu_authorized": null,
+      "eu_conditions": {
+        "openFoodTox": {
+          "casNumbers": [
+            "598-82-3",
+            "79-33-4",
+            "50-21-5"
+          ],
+          "subUuid": "0163303e-05d1-4e5b-b654-fb36e9c85a60",
+          "refSubUuid": "4cdee6c5-b4b7-4135-9f7d-d528ee3c3aa5",
+          "matchingMethod": "cas_exact",
+          "matchingConfidence": "high"
+        }
+      },
+      "adi_value": null,
+      "adi_unit": null,
+      "adi_display": null,
+      "adi_authority": null,
+      "severity": "none",
+      "evidence_strength": "insufficient",
+      "exposure_concern": "unknown",
+      "scientific_classification": "insufficient_data",
+      "scientific_summary": null,
+      "health_effects": [],
+      "sensitive_populations": [],
+      "exposure_assessment": {
+        "referenceValueStatus": "reference_value_not_found",
+        "referenceValues": [],
+        "criticalEndpoints": [],
+        "justifications": [],
+        "sourceVersion": "OpenFoodTox 3.0 / EFSA export repository",
+        "sourceFileHash": "5181661e921651d4087b544981e1e5a63b99532844eac0112732806a00a85eda",
+        "retrievedAt": "2026-09-16T13:22:16.770Z"
+      },
+      "assessment_history": [
+        {
+          "organisation": "EFSA",
+          "date": "2026-09-16T13:22:16.770Z",
+          "conclusion": "Import structure OpenFoodTox propose ; aucune classification scientifique deduite.",
+          "sourceId": "openfoodtox-e270"
+        }
+      ],
+      "sources": [
+        {
+          "sourceId": "openfoodtox-e270",
+          "organisation": "EFSA",
+          "sourceOrganization": "EFSA",
+          "sourceDataset": "OpenFoodTox 3.0",
+          "sourceType": "official_information",
+          "title": "OpenFoodTox 3.0 structured record",
+          "url": null,
+          "retrievedAt": "2026-09-16T13:22:16.770Z",
+          "sourceVersion": "OpenFoodTox 3.0 / EFSA export repository",
+          "sourceFileHash": "5181661e921651d4087b544981e1e5a63b99532844eac0112732806a00a85eda",
+          "ingestionVersion": "oummah-openfoodtox-supabase-import-v1",
+          "fieldsSupported": [
+            "identity",
+            "cas",
+            "reference_values",
+            "provenance"
+          ]
+        }
+      ],
+      "regulatory_source_updated_at": null,
+      "scientific_reviewed_at": null,
+      "needs_scientific_review": true,
+      "data_version": "1.0"
+    },
+    {
+      "code": "E300",
+      "canonical_name": "Ascorbic acid",
+      "function_classes": [],
+      "regulatory_status": null,
+      "eu_authorized": null,
+      "eu_conditions": {
+        "openFoodTox": {
+          "casNumbers": [
+            "50-81-7"
+          ],
+          "subUuid": "66eac3e2-1273-4317-bd6f-325d59f944c4",
+          "refSubUuid": "34b613b5-d400-4b6d-9d5b-2f5b85610f9c",
+          "matchingMethod": "cas_exact",
+          "matchingConfidence": "high"
+        }
+      },
+      "adi_value": null,
+      "adi_unit": null,
+      "adi_display": null,
+      "adi_authority": null,
+      "severity": "none",
+      "evidence_strength": "insufficient",
+      "exposure_concern": "unknown",
+      "scientific_classification": "insufficient_data",
+      "scientific_summary": null,
+      "health_effects": [],
+      "sensitive_populations": [],
+      "exposure_assessment": {
+        "referenceValueStatus": "reference_value_not_found",
+        "referenceValues": [],
+        "criticalEndpoints": [],
+        "justifications": [],
+        "sourceVersion": "OpenFoodTox 3.0 / EFSA export repository",
+        "sourceFileHash": "5181661e921651d4087b544981e1e5a63b99532844eac0112732806a00a85eda",
+        "retrievedAt": "2026-09-16T13:22:16.770Z"
+      },
+      "assessment_history": [
+        {
+          "organisation": "EFSA",
+          "date": "2026-09-16T13:22:16.770Z",
+          "conclusion": "Import structure OpenFoodTox propose ; aucune classification scientifique deduite.",
+          "sourceId": "openfoodtox-e300"
+        }
+      ],
+      "sources": [
+        {
+          "sourceId": "openfoodtox-e300",
+          "organisation": "EFSA",
+          "sourceOrganization": "EFSA",
+          "sourceDataset": "OpenFoodTox 3.0",
+          "sourceType": "official_information",
+          "title": "OpenFoodTox 3.0 structured record",
+          "url": null,
+          "retrievedAt": "2026-09-16T13:22:16.770Z",
+          "sourceVersion": "OpenFoodTox 3.0 / EFSA export repository",
+          "sourceFileHash": "5181661e921651d4087b544981e1e5a63b99532844eac0112732806a00a85eda",
+          "ingestionVersion": "oummah-openfoodtox-supabase-import-v1",
+          "fieldsSupported": [
+            "identity",
+            "cas",
+            "reference_values",
+            "provenance"
+          ]
+        }
+      ],
+      "regulatory_source_updated_at": null,
+      "scientific_reviewed_at": null,
+      "needs_scientific_review": true,
+      "data_version": "1.0"
+    },
+    {
+      "code": "E306",
+      "canonical_name": "Tocopherol-rich extract",
+      "function_classes": [],
+      "regulatory_status": null,
+      "eu_authorized": null,
+      "eu_conditions": {
+        "openFoodTox": {
+          "casNumbers": [],
+          "subUuid": "00863a0a-4e4d-48c9-8826-d4f861136af7",
+          "refSubUuid": "fb3f6cf7-b852-4481-ac41-f37bdbc60c81",
+          "matchingMethod": "nom_ou_alias_exact",
+          "matchingConfidence": "high"
+        }
+      },
+      "adi_value": null,
+      "adi_unit": null,
+      "adi_display": null,
+      "adi_authority": null,
+      "severity": "none",
+      "evidence_strength": "insufficient",
+      "exposure_concern": "unknown",
+      "scientific_classification": "insufficient_data",
+      "scientific_summary": null,
+      "health_effects": [],
+      "sensitive_populations": [],
+      "exposure_assessment": {
+        "referenceValueStatus": "reference_value_not_found",
+        "referenceValues": [],
+        "criticalEndpoints": [],
+        "justifications": [],
+        "sourceVersion": "OpenFoodTox 3.0 / EFSA export repository",
+        "sourceFileHash": "5181661e921651d4087b544981e1e5a63b99532844eac0112732806a00a85eda",
+        "retrievedAt": "2026-09-16T13:22:16.770Z"
+      },
+      "assessment_history": [
+        {
+          "organisation": "EFSA",
+          "date": "2026-09-16T13:22:16.770Z",
+          "conclusion": "Import structure OpenFoodTox propose ; aucune classification scientifique deduite.",
+          "sourceId": "openfoodtox-e306"
+        }
+      ],
+      "sources": [
+        {
+          "sourceId": "openfoodtox-e306",
+          "organisation": "EFSA",
+          "sourceOrganization": "EFSA",
+          "sourceDataset": "OpenFoodTox 3.0",
+          "sourceType": "official_information",
+          "title": "OpenFoodTox 3.0 structured record",
+          "url": null,
+          "retrievedAt": "2026-09-16T13:22:16.770Z",
+          "sourceVersion": "OpenFoodTox 3.0 / EFSA export repository",
+          "sourceFileHash": "5181661e921651d4087b544981e1e5a63b99532844eac0112732806a00a85eda",
+          "ingestionVersion": "oummah-openfoodtox-supabase-import-v1",
+          "fieldsSupported": [
+            "identity",
+            "cas",
+            "reference_values",
+            "provenance"
+          ]
+        }
+      ],
+      "regulatory_source_updated_at": null,
+      "scientific_reviewed_at": null,
+      "needs_scientific_review": true,
+      "data_version": "1.0"
+    },
+    {
+      "code": "E407",
+      "canonical_name": "Carrageenan",
+      "function_classes": [],
+      "regulatory_status": null,
+      "eu_authorized": null,
+      "eu_conditions": {
+        "openFoodTox": {
+          "casNumbers": [
+            "9000-07-1"
+          ],
+          "subUuid": "7eff6564-8c1e-4f71-9529-3150dceda119",
+          "refSubUuid": "68340d79-47ed-4705-8861-32427748a518",
+          "matchingMethod": "cas_exact",
+          "matchingConfidence": "high"
+        }
+      },
+      "adi_value": null,
+      "adi_unit": null,
+      "adi_display": null,
+      "adi_authority": null,
+      "severity": "none",
+      "evidence_strength": "insufficient",
+      "exposure_concern": "unknown",
+      "scientific_classification": "insufficient_data",
+      "scientific_summary": null,
+      "health_effects": [],
+      "sensitive_populations": [],
+      "exposure_assessment": {
+        "referenceValueStatus": "available",
+        "referenceValues": [
+          {
+            "type": "ADI",
+            "lowerValue": "75",
+            "Unit": "mg/kg bw/day"
+          }
+        ],
+        "criticalEndpoints": [],
+        "justifications": [],
+        "sourceVersion": "OpenFoodTox 3.0 / EFSA export repository",
+        "sourceFileHash": "5181661e921651d4087b544981e1e5a63b99532844eac0112732806a00a85eda",
+        "retrievedAt": "2026-09-16T13:22:16.770Z"
+      },
+      "assessment_history": [
+        {
+          "organisation": "EFSA",
+          "date": "2026-09-16T13:22:16.770Z",
+          "conclusion": "Import structure OpenFoodTox propose ; aucune classification scientifique deduite.",
+          "sourceId": "openfoodtox-e407"
+        }
+      ],
+      "sources": [
+        {
+          "sourceId": "openfoodtox-e407",
+          "organisation": "EFSA",
+          "sourceOrganization": "EFSA",
+          "sourceDataset": "OpenFoodTox 3.0",
+          "sourceType": "official_information",
+          "title": "OpenFoodTox 3.0 structured record",
+          "url": null,
+          "retrievedAt": "2026-09-16T13:22:16.770Z",
+          "sourceVersion": "OpenFoodTox 3.0 / EFSA export repository",
+          "sourceFileHash": "5181661e921651d4087b544981e1e5a63b99532844eac0112732806a00a85eda",
+          "ingestionVersion": "oummah-openfoodtox-supabase-import-v1",
+          "fieldsSupported": [
+            "identity",
+            "cas",
+            "reference_values",
+            "provenance"
+          ]
+        }
+      ],
+      "regulatory_source_updated_at": null,
+      "scientific_reviewed_at": null,
+      "needs_scientific_review": true,
+      "data_version": "1.0"
+    }
+  ],
+  "existingEnrichments": [
+    {
+      "code": "E338",
+      "fieldsToAdd": [],
+      "fieldsToUpdate": {},
+      "fieldsPreserved": [],
+      "scientificFieldsPreserved": true
+    },
+    {
+      "code": "E950",
+      "fieldsToAdd": [],
+      "fieldsToUpdate": {},
+      "fieldsPreserved": [],
+      "scientificFieldsPreserved": true
+    },
+    {
+      "code": "E951",
+      "fieldsToAdd": [],
+      "fieldsToUpdate": {},
+      "fieldsPreserved": [],
+      "scientificFieldsPreserved": true
+    }
+  ],
+  "ignored": [
+    "E150D",
+    "E331",
+    "E621",
+    "E160C",
+    "E220"
+  ],
+  "schema": {
+    "table": "public.food_additive_science",
+    "dbColumns": [
+      "code",
+      "canonical_name",
+      "function_classes",
+      "regulatory_status",
+      "eu_authorized",
+      "eu_conditions",
+      "adi_value",
+      "adi_unit",
+      "adi_display",
+      "adi_authority",
+      "severity",
+      "evidence_strength",
+      "exposure_concern",
+      "scientific_classification",
+      "scientific_summary",
+      "health_effects",
+      "sensitive_populations",
+      "exposure_assessment",
+      "assessment_history",
+      "sources",
+      "regulatory_source_updated_at",
+      "scientific_reviewed_at",
+      "needs_scientific_review",
+      "data_version",
+      "created_at",
+      "updated_at"
+    ],
+    "proposalFields": [
+      "code",
+      "canonical_name",
+      "function_classes",
+      "regulatory_status",
+      "eu_authorized",
+      "eu_conditions",
+      "cas_numbers",
+      "opentox_substance_name",
+      "opentox_sub_uuid",
+      "opentox_ref_sub_uuid",
+      "matching_method",
+      "matching_confidence",
+      "reference_values",
+      "reference_value_status",
+      "adi_value",
+      "adi_unit",
+      "adi_display",
+      "adi_authority",
+      "assessment_date",
+      "efsa_document_ids",
+      "efsa_document_urls",
+      "population",
+      "critical_endpoints",
+      "justifications",
+      "severity",
+      "evidence_strength",
+      "exposure_concern",
+      "scientific_classification",
+      "classification_action",
+      "sources",
+      "sourceVersion",
+      "sourceFileHash",
+      "retrievedAt",
+      "needs_scientific_review",
+      "data_version"
+    ],
+    "unmappedProposalFields": [],
+    "migrationRequired": false
+  },
+  "noAutomaticScientificChange": true,
+  "summary": {
+    "newRecords": 17,
+    "existingEnrichments": 0,
+    "ignored": 5,
+    "fieldsToAdd": [],
+    "fieldsPreserved": [],
+    "noAutomaticScientificChange": true
+  }
+}

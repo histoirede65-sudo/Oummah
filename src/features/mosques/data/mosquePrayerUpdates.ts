@@ -63,20 +63,38 @@ export function applyApprovedMosquePrayerTimes(
 ): MosquePrayerSchedule {
   if (!approved) return schedule;
 
-  const adjust = (prayer: MosquePrayerSchedule['prayers'][number]) => {
-    const value = approved[prayer.key.toLowerCase() as 'fajr' | 'dhuhr' | 'asr' | 'maghrib' | 'isha'];
-    if (!value || !/^([01]\d|2[0-3]):[0-5]\d$/.test(value)) return prayer;
+  const toMinutes = (value: string) => {
     const [hours, minutes] = value.split(':').map(Number);
-    const date = new Date(prayer.timestamp);
-    date.setHours(hours, minutes, 0, 0);
-    return { ...prayer, time: value, timestamp: date.getTime() };
+    return hours * 60 + minutes;
+  };
+  const formatTime = (timestamp: number, timezone: string) => {
+    try {
+      return new Intl.DateTimeFormat('fr-FR', { timeZone: timezone, hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).format(new Date(timestamp));
+    } catch {
+      return new Date(timestamp).toISOString().slice(11, 16);
+    }
+  };
+  const offsets = new Map<string, number>();
+  const todayByKey = new Map(schedule.prayers.map((prayer) => [prayer.key, prayer]));
+  for (const prayer of schedule.prayers) {
+    const value = approved[prayer.key.toLowerCase() as 'fajr' | 'dhuhr' | 'asr' | 'maghrib' | 'isha'];
+    if (value && /^([01]\d|2[0-3]):[0-5]\d$/.test(value)) offsets.set(prayer.key, toMinutes(value) - toMinutes(prayer.time));
+  }
+  const adjust = (prayer: MosquePrayerSchedule['prayers'][number], future = false) => {
+    const offset = offsets.get(prayer.key);
+    if (offset === undefined) return prayer;
+    const source = todayByKey.get(prayer.key);
+    const approvedValue = source && approved[source.key.toLowerCase() as 'fajr' | 'dhuhr' | 'asr' | 'maghrib' | 'isha'];
+    const timestamp = future ? prayer.timestamp + offset * 60_000 : source ? source.timestamp + offset * 60_000 : undefined;
+    if (!approvedValue || timestamp === undefined) return prayer;
+    return { ...prayer, time: future ? formatTime(timestamp, schedule.timezone) : approvedValue, timestamp };
   };
 
   return {
     ...schedule,
-    prayers: schedule.prayers.map(adjust),
-    tomorrowPrayers: schedule.tomorrowPrayers.map(adjust),
-    tomorrowFajr: adjust(schedule.tomorrowFajr),
+    prayers: schedule.prayers.map((prayer) => adjust(prayer)),
+    tomorrowPrayers: schedule.tomorrowPrayers.map((prayer) => adjust(prayer, true)),
+    tomorrowFajr: adjust(schedule.tomorrowFajr, true),
   };
 }
 

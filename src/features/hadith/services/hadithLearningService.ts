@@ -1,5 +1,4 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import type { Hadith } from "../domain/Hadith";
 
 export type HadithLearningCadence = "daily" | "three-weekly" | "weekly";
 export type HadithReviewRating = "again" | "hard" | "good" | "easy";
@@ -44,6 +43,29 @@ export const HADITH_PROGRAM_TEMPLATES = [
   { id: "character", title: "Beau comportement", description: "Patience, douceur, vérité et fraternité.", query: "bon comportement", cadence: "three-weekly", targetCount: 30 },
 ] satisfies readonly Omit<HadithLearningProgram, "createdAt">[];
 
+export const HADITH_PROGRAM_TRANSLATION_KEYS = {
+  "one-day": {
+    title: "hadith.learning.program.oneDay.title",
+    description: "hadith.learning.program.oneDay.description",
+  },
+  "three-week": {
+    title: "hadith.learning.program.threeWeek.title",
+    description: "hadith.learning.program.threeWeek.description",
+  },
+  nawawi: {
+    title: "hadith.learning.program.nawawi.title",
+    description: "hadith.learning.program.nawawi.description",
+  },
+  character: {
+    title: "hadith.learning.program.character.title",
+    description: "hadith.learning.program.character.description",
+  },
+} as const;
+
+export function getHadithProgramTranslationKeys(programId: string) {
+  return HADITH_PROGRAM_TRANSLATION_KEYS[programId as keyof typeof HADITH_PROGRAM_TRANSLATION_KEYS] ?? null;
+}
+
 const DEFAULT_STATE: HadithLearningState = { version: 1, activeProgram: null, reviews: [], completedSessions: 0, memorizedIds: [], streak: 0 };
 
 function dateKey(date = new Date()) { return date.toISOString().slice(0, 10); }
@@ -68,7 +90,7 @@ export async function activateHadithProgram(template: Omit<HadithLearningProgram
 
 export function dueHadithReviews(state: HadithLearningState, now = Date.now()) { return state.reviews.filter((review) => review.nextReviewAt <= now).sort((a, b) => a.nextReviewAt - b.nextReviewAt); }
 
-export async function recordHadithReview(hadith: Hadith, rating: HadithReviewRating) {
+export async function recordHadithReview(hadith: { id: string; title: string }, rating: HadithReviewRating) {
   const state = await loadHadithLearningState();
   const current = state.reviews.find((item) => item.hadithId === hadith.id);
   const previousStage = current?.stage ?? 0;
@@ -92,4 +114,3 @@ export async function recordHadithReview(hadith: Hadith, rating: HadithReviewRat
   await saveHadithLearningState(next);
   return next;
 }
-

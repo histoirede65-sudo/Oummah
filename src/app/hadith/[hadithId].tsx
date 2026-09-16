@@ -13,8 +13,10 @@ import { WasilContextButton } from "../../components/wasil/WasilContextButton";
 import { hadithLibraryService } from "../../features/hadith-explorer/services/hadithLibraryService";
 import { colors } from "../../theme/colors";
 import { typography } from "../../theme/typography";
+import { useI18n } from "../../i18n";
 
 export default function HadithDetailScreen() {
+  const { language, t } = useI18n();
   const { hadithId } = useLocalSearchParams<{ hadithId: string }>();
   const [hadith, setHadith] = useState<Hadith | null>(null);
   const [favorite, setFavorite] = useState(false);
@@ -25,62 +27,62 @@ export default function HadithDetailScreen() {
     let active = true;
     if (!hadithId) return;
     setError(false);
-    void Promise.all([hadithRepository.get(hadithId), hadithLibraryService.isFavorite(hadithId)]).then(([value, saved]) => {
+    void Promise.all([hadithRepository.get(hadithId, language), hadithLibraryService.isFavorite(hadithId)]).then(([value, saved]) => {
       if (!active) return;
       setHadith(value); setFavorite(saved); void hadithLibraryService.markRead(value);
     }).catch(() => active && setError(true));
     return () => { active = false; };
-  }, [hadithId]);
+  }, [hadithId, language]);
 
   const toggleFavorite = async () => {
     if (!hadith) return;
     setFavorite(await hadithLibraryService.toggleFavorite(hadith));
   };
-  const share = () => hadith && Share.share({ message: `${hadith.arabic ? `${hadith.arabic}\n\n` : ""}${hadith.french}\n\n${hadith.attribution}\n${hadith.grade}\n${hadith.reference}\nSource : HadeethEnc — ${hadith.sourceUrl}` });
+  const share = () => hadith && Share.share({ message: `${hadith.arabic ? `${hadith.arabic}\n\n` : ""}${hadith.french}\n\n${hadith.attribution}\n${hadith.grade}\n${hadith.reference}\n${t("hadith.source")}: HadeethEnc — ${hadith.sourceUrl}` });
 
   return (
     <LinearGradient colors={["#080713", "#120A1D", "#080713"]} style={styles.screen}>
       <SafeAreaView edges={["top"]} style={styles.safe}>
         <View style={styles.headerWrap}>
-          <HadithScreenHeader title="Fiche du hadith" subtitle={hadith ? `Référence ${hadith.id}` : "Source vérifiable"} right={hadith ? <View style={styles.headerActions}><Pressable accessibilityLabel="Enregistrer" onPress={toggleFavorite} style={styles.round}><Ionicons name={favorite ? "bookmark" : "bookmark-outline"} size={19} color={colors.goldLight} /></Pressable><Pressable accessibilityLabel="Partager" onPress={share} style={styles.round}><Ionicons name="share-social-outline" size={19} color={colors.goldLight} /></Pressable></View> : null} />
+          <HadithScreenHeader title={t("hadith.detailTitle")} subtitle={hadith ? t("hadith.referenceNumber", { id: hadith.id }) : t("hadith.verifiableSource")} right={hadith ? <View style={styles.headerActions}><Pressable accessibilityLabel={t("hadith.save")} onPress={toggleFavorite} style={styles.round}><Ionicons name={favorite ? "bookmark" : "bookmark-outline"} size={19} color={colors.goldLight} /></Pressable><Pressable accessibilityLabel={t("common.share")} onPress={share} style={styles.round}><Ionicons name="share-social-outline" size={19} color={colors.goldLight} /></Pressable></View> : null} />
         </View>
-        {!hadith && !error ? <View style={styles.center}><ActivityIndicator color={colors.goldLight} /><Text style={styles.loading}>Chargement de la référence…</Text></View> : error ? <View style={styles.center}><Ionicons name="cloud-offline-outline" size={34} color={colors.textMuted} /><Text style={styles.errorTitle}>Fiche indisponible</Text><Text style={styles.errorText}>Une connexion est nécessaire lors de la première consultation. Elle restera ensuite accessible hors ligne.</Text></View> : hadith ? (
+        {!hadith && !error ? <View style={styles.center}><ActivityIndicator color={colors.goldLight} /><Text style={styles.loading}>{t("hadith.loadingReference")}</Text></View> : error ? <View style={styles.center}><Ionicons name="cloud-offline-outline" size={34} color={colors.textMuted} /><Text style={styles.errorTitle}>{t("hadith.detailUnavailable")}</Text><Text style={styles.errorText}>{t("hadith.firstViewConnection")}</Text></View> : hadith ? (
           <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.content}>
             <View style={styles.sourceLine}><HadithGradeBadge grade={hadith.grade} kind={hadith.gradeKind} /><Text numberOfLines={2} style={styles.attribution}>{hadith.attribution}</Text></View>
             <Text style={styles.title}>{hadith.title}</Text>
 
-            <View style={styles.translationCard}><Text style={styles.label}>TRADUCTION FRANÇAISE</Text><Text style={styles.french}>{hadith.french}</Text></View>
+            <View style={styles.translationCard}><Text style={styles.label}>{t("hadith.translationLabel")}</Text><Text style={styles.french}>{hadith.french}</Text></View>
 
               <View style={styles.wasilCard}>
               <LinearGradient colors={["rgba(227,181,90,0.18)", "rgba(73,42,91,0.58)", "rgba(27,18,40,0.82)"]} style={StyleSheet.absoluteFill} />
-              <WasilContextButton largeLabel prompt={`Explique-moi ce hadith de manière claire et fidèle.${hadith.id ? `\n\nIdentifiant : ${hadith.id}` : ""}${hadith.reference ? `\nRéférence : ${hadith.reference}` : ""}${hadith.french ? `\nTexte français : ${hadith.french}` : ""}${hadith.arabic ? `\nTexte arabe : ${hadith.arabic}` : ""}${hadith.attribution ? `\nNarrateur : ${hadith.attribution}` : ""}`} />
-                <Text style={styles.wasilSubtitle}>Demandez une explication claire et fidèle de ce hadith.</Text>
+              <WasilContextButton largeLabel prompt={t("hadith.detailWasilPrompt", { id: hadith.id, reference: hadith.reference, text: hadith.french, arabic: hadith.arabic, attribution: hadith.attribution })} />
+                <Text style={styles.wasilSubtitle}>{t("hadith.detailWasilSubtitle")}</Text>
               </View>
 
             {hadith.arabic ? <>
               <Pressable onPress={() => setArabicVisible((value) => !value)} style={styles.arabicToggle}>
-                <Text style={styles.arabicToggleText}>{arabicVisible ? "Masquer le texte arabe" : "Voir le texte arabe"}</Text>
+                <Text style={styles.arabicToggleText}>{arabicVisible ? t("hadith.hideArabic") : t("hadith.showArabic")}</Text>
                 <Ionicons name={arabicVisible ? "chevron-up" : "chevron-down"} size={17} color={colors.goldLight} />
               </Pressable>
               {arabicVisible ? <View style={styles.arabicCard}><Text style={styles.arabic}>{hadith.arabic}</Text></View> : null}
             </> : null}
 
-            <SectionTitle icon="bulb-outline" title="Comprendre ce hadith" />
-            <View style={styles.bodyCard}><Text style={styles.explanation}>{hadith.explanation || "Aucune explication française n’est fournie pour cette fiche par la source."}</Text></View>
+            <SectionTitle icon="bulb-outline" title={t("hadith.understandThisHadith")} />
+            <View style={styles.bodyCard}><Text style={styles.explanation}>{hadith.explanation || t("hadith.noExplanation")}</Text></View>
 
-            {hadith.lessons.length ? <><SectionTitle icon="leaf-outline" title="Enseignements" /><View style={styles.bodyCard}>{hadith.lessons.map((lesson, index) => <View key={`${index}-${lesson.slice(0, 12)}`} style={styles.lesson}><View style={styles.lessonNumber}><Text style={styles.lessonNumberText}>{index + 1}</Text></View><Text style={styles.lessonText}>{lesson}</Text></View>)}</View></> : null}
+            {hadith.lessons.length ? <><SectionTitle icon="leaf-outline" title={t("hadith.lessons")} /><View style={styles.bodyCard}>{hadith.lessons.map((lesson, index) => <View key={`${index}-${lesson.slice(0, 12)}`} style={styles.lesson}><View style={styles.lessonNumber}><Text style={styles.lessonNumberText}>{index + 1}</Text></View><Text style={styles.lessonText}>{lesson}</Text></View>)}</View></> : null}
 
-            <SectionTitle icon="finger-print-outline" title="Référence & authenticité" />
+            <SectionTitle icon="finger-print-outline" title={t("hadith.referenceAndAuthenticity")} />
             <View style={styles.referenceCard}>
-              <ReferenceRow label="Authenticité" value={hadith.grade} />
-              <ReferenceRow label="Attribution" value={hadith.attribution} />
-              <ReferenceRow label="Référence" value={hadith.reference} />
-              <ReferenceRow label="Source des données" value="HadeethEnc" />
-              <ReferenceRow label="Version" value={hadith.sourceVersion} last />
-              <Pressable onPress={() => Linking.openURL(hadith.sourceUrl)} style={styles.sourceButton}><Ionicons name="open-outline" size={16} color={colors.goldLight} /><Text style={styles.sourceButtonText}>Vérifier sur la source originale</Text></Pressable>
+              <ReferenceRow label={t("hadith.authenticity")} value={hadith.grade} />
+              <ReferenceRow label={t("hadith.attribution")} value={hadith.attribution} />
+              <ReferenceRow label={t("hadith.reference")} value={hadith.reference} />
+              <ReferenceRow label={t("hadith.dataSource")} value="HadeethEnc" />
+              <ReferenceRow label={t("hadith.version")} value={t("hadith.currentApiFeed")} last />
+              <Pressable onPress={() => Linking.openURL(hadith.sourceUrl)} style={styles.sourceButton}><Ionicons name="open-outline" size={16} color={colors.goldLight} /><Text style={styles.sourceButtonText}>{t("hadith.verifyOriginalSource")}</Text></Pressable>
             </View>
 
-            <View style={styles.disclaimer}><Ionicons name="information-circle-outline" size={19} color="#BBA6C8" /><Text style={styles.disclaimerText}>Classification reproduite telle qu’elle est fournie par la source. Pour une question juridique ou une divergence, consultez une personne qualifiée.</Text></View>
+            <View style={styles.disclaimer}><Ionicons name="information-circle-outline" size={19} color="#BBA6C8" /><Text style={styles.disclaimerText}>{t("hadith.classificationDisclaimer")}</Text></View>
           </ScrollView>
         ) : null}
       </SafeAreaView>

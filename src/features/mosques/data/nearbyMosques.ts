@@ -973,14 +973,25 @@ export async function getNearbyMosques(
   latitude: number,
   longitude: number,
   signal?: AbortSignal,
+  onProgress?: (mosques: NearbyMosque[]) => void,
+  initialMosques: NearbyMosque[] = [],
 ): Promise<NearbyMosque[]> {
   const { getNearbyMosquesFromGoogle } = await import('./googleNearbyMosques');
+  let progressMosques = initialMosques;
+  const publishProgress = (mosques: NearbyMosque[]) => {
+    if (mosques.length === 0 || signal?.aborted) return;
+    progressMosques = mergeMosqueLists(progressMosques, mosques);
+    onProgress?.(progressMosques);
+  };
   const nominatimPromise = getNearbyMosquesFromNominatim(
     latitude,
     longitude,
     signal,
   )
-    .then((mosques) => ({ mosques, error: null as unknown }))
+    .then((mosques) => {
+      publishProgress(mosques);
+      return { mosques, error: null as unknown };
+    })
     .catch((error: unknown) => ({
       mosques: [] as NearbyMosque[],
       error,
@@ -990,7 +1001,10 @@ export async function getNearbyMosques(
     longitude,
     signal,
   )
-    .then((mosques) => ({ mosques, error: null as unknown }))
+    .then((mosques) => {
+      publishProgress(mosques);
+      return { mosques, error: null as unknown };
+    })
     .catch((error: unknown) => ({
       mosques: [] as NearbyMosque[],
       error,
@@ -1000,13 +1014,19 @@ export async function getNearbyMosques(
     longitude,
     signal,
   )
-    .then((mosques) => ({ mosques, error: null as unknown }))
+    .then((mosques) => {
+      publishProgress(mosques);
+      return { mosques, error: null as unknown };
+    })
     .catch((error: unknown) => ({
       mosques: [] as NearbyMosque[],
       error,
     }));
   const googlePromise = getNearbyMosquesFromGoogle(latitude, longitude, signal)
-    .then((mosques) => ({ mosques, error: null as unknown }))
+    .then((mosques) => {
+      publishProgress(mosques);
+      return { mosques, error: null as unknown };
+    })
     .catch((error: unknown) => ({ mosques: [] as NearbyMosque[], error }));
   let payload: OverpassResponse;
 
@@ -1143,6 +1163,8 @@ export async function getNearbyMosques(
       mosques.push(mosque);
     }
   }
+
+  publishProgress(mosques);
 
   const [nominatim, photon, islamicApp, google] = await Promise.all([
     nominatimPromise,

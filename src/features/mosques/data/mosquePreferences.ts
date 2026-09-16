@@ -1,4 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { setPrayerScheduleSource } from './mosquePrayerTimes';
 
 export type StoredMosque = {
   id: string;
@@ -110,10 +111,10 @@ export async function getMainMosque(): Promise<StoredMosque | null> {
 }
 
 export async function setMainMosque(mosque: StoredMosque) {
-  await AsyncStorage.setItem(
-    MAIN_MOSQUE_KEY,
-    JSON.stringify(mosque),
-  );
+  await Promise.all([
+    AsyncStorage.setItem(MAIN_MOSQUE_KEY, JSON.stringify(mosque)),
+    setPrayerScheduleSource('mosque'),
+  ]);
 }
 
 export async function clearMainMosque() {

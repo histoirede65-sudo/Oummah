@@ -169,6 +169,43 @@ export default function AdminUserDetailScreen() {
     );
   };
 
+  const grantQuickCredits = (credits: 1 | 5 | 10) => {
+    if (!userId || saving) return;
+
+    Alert.alert(
+      "Offrir des crédits Wasil",
+      `Ajouter ${credits} crédit${credits > 1 ? "s" : ""} à ${user?.email ?? "cet utilisateur"} ?`,
+      [
+        { text: "Annuler", style: "cancel" },
+        {
+          text: "Ajouter",
+          onPress: async () => {
+            setSaving(true);
+            try {
+              await adjustAdminUserCredits(
+                userId,
+                credits,
+                "Crédits offerts par l’administrateur",
+              );
+              await load(true);
+              Alert.alert(
+                "Crédits ajoutés",
+                `${credits} crédit${credits > 1 ? "s ont" : " a"} bien été ajouté${credits > 1 ? "s" : ""}.`,
+              );
+            } catch (error) {
+              Alert.alert(
+                "Action impossible",
+                error instanceof Error ? error.message : "Réessayez.",
+              );
+            } finally {
+              setSaving(false);
+            }
+          },
+        },
+      ],
+    );
+  };
+
   const removeUser = () => {
     if (!userId || saving || !user) return;
 
@@ -317,7 +354,23 @@ export default function AdminUserDetailScreen() {
               </View>
             </View>
 
-            <Text style={styles.sectionTitle}>Modifier les crédits Wasil</Text>
+            <Text style={styles.sectionTitle}>Ajouter rapidement des crédits Wasil</Text>
+
+            <View style={styles.quickCreditsRow}>
+              {([1, 5, 10] as const).map((credits) => (
+                <Pressable
+                  key={credits}
+                  disabled={saving}
+                  onPress={() => grantQuickCredits(credits)}
+                  style={[styles.quickCreditButton, saving && styles.disabled]}
+                >
+                  <Ionicons name="flash-outline" size={17} color={colors.background} />
+                  <Text style={styles.quickCreditText}>+{credits}</Text>
+                </Pressable>
+              ))}
+            </View>
+
+            <Text style={styles.sectionTitle}>Ajustement personnalisé</Text>
 
             <View style={styles.formCard}>
               <View style={styles.modeRow}>
@@ -639,6 +692,25 @@ const styles = StyleSheet.create({
     color: colors.goldLight,
     fontFamily: typography.serifMedium,
     fontSize: 18,
+  },
+  quickCreditsRow: {
+    flexDirection: "row",
+    gap: 9,
+  },
+  quickCreditButton: {
+    flex: 1,
+    minHeight: 50,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 6,
+    borderRadius: 14,
+    backgroundColor: colors.goldLight,
+  },
+  quickCreditText: {
+    color: colors.background,
+    fontSize: 15,
+    fontWeight: "900",
   },
   formCard: {
     padding: 14,

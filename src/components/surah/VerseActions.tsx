@@ -30,7 +30,7 @@ export default function VerseActions({
 }: VerseActionsProps) {
   const { t } = useI18n();
   const actions = [
-    { label: 'Écouter', icon: 'play-outline' as const, onPress: onListen },
+    { label: t('common.listen'), icon: 'play-outline' as const, onPress: onListen },
     { label: t('common.tafsir'), icon: 'book-outline' as const, onPress: onTafsir },
     { label: t('quran.favorite'), icon: isFavorite ? 'star' as const : 'star-outline' as const, onPress: onFavorite },
     { label: t('common.bookmark'), icon: isBookmarked ? 'bookmark' as const : 'bookmark-outline' as const, onPress: onBookmark },

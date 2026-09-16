@@ -20,6 +20,14 @@ type ReadingApiVerse = {
   words?: ReadingWord[];
 };
 
+type ReadingApiChapter = {
+  id: number;
+  name_simple?: string;
+  translated_name?: { name?: string };
+};
+
+let englishSurahNamesRequest: Promise<ReadonlyMap<number, string>> | undefined;
+
 function isWord(word: ReadingWord) {
   return (word.charTypeName ?? word.char_type_name ?? "word") === "word";
 }
@@ -79,9 +87,37 @@ function mapVerse(raw: ReadingApiVerse): QuranFoundationVerse {
 }
 
 export const readingQuranRepository = {
-  async getVerses(surahId: number): Promise<QuranFoundationVerse[]> {
+  getEnglishSurahNames(): Promise<ReadonlyMap<number, string>> {
+    englishSurahNamesRequest ??= fetch(
+      "https://api.quran.com/api/v4/chapters?language=en",
+    )
+      .then(async (response) => {
+        if (!response.ok)
+          throw new Error(`Quran chapters API failed (${response.status})`);
+        const payload = (await response.json()) as {
+          chapters?: ReadingApiChapter[];
+        };
+        return new Map(
+          (payload.chapters ?? []).map((chapter) => [
+            chapter.id,
+            chapter.translated_name?.name || chapter.name_simple || "",
+          ]),
+        );
+      })
+      .catch((error) => {
+        englishSurahNamesRequest = undefined;
+        throw error;
+      });
+    return englishSurahNamesRequest;
+  },
+
+  async getVerses(
+    surahId: number,
+    language: "fr" | "en" = "fr",
+  ): Promise<QuranFoundationVerse[]> {
+    const translationResourceId = language === "en" ? 131 : 31;
     const response = await fetch(
-      `https://api.quran.com/api/v4/verses/by_chapter/${surahId}?language=fr&words=true&word_fields=text_uthmani,code_v1,code_v2,translation,transliteration&fields=text_uthmani,code_v1,code_v2,juz_number,hizb_number,page_number&translations=31&per_page=300`,
+      `https://api.quran.com/api/v4/verses/by_chapter/${surahId}?language=${language}&words=true&word_fields=text_uthmani,code_v1,code_v2,translation,transliteration&fields=text_uthmani,code_v1,code_v2,juz_number,hizb_number,page_number&translations=${translationResourceId}&per_page=300`,
     );
     if (!response.ok)
       throw new Error(`Lecture Quran API failed (${response.status})`);

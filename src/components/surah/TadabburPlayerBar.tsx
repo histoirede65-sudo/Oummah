@@ -13,6 +13,7 @@ import { useState } from "react";
 import type { TadabburDisplayVerse } from "./SyncedVerseList";
 import { colors } from "../../theme/colors";
 import { typography } from "../../theme/typography";
+import { useI18n } from "../../i18n";
 
 type TadabburPlayerBarProps = {
   verses: readonly TadabburDisplayVerse[];
@@ -29,6 +30,7 @@ export default function TadabburPlayerBar({
   onTogglePlay,
   onSelectVerse,
 }: TadabburPlayerBarProps) {
+  const { t } = useI18n();
   const [pickerVisible, setPickerVisible] = useState(false);
   const activeIndex = Math.max(
     0,
@@ -54,6 +56,8 @@ export default function TadabburPlayerBar({
         />
 
         <Pressable
+          accessibilityRole="button"
+          accessibilityLabel={t("tadabbur.previousVerse")}
           disabled={!previous}
           onPress={() => previous && selectVerse(previous)}
           style={({ pressed }) => [
@@ -66,6 +70,8 @@ export default function TadabburPlayerBar({
         </Pressable>
 
         <Pressable
+          accessibilityRole="button"
+          accessibilityLabel={t(isPlaying ? "tadabbur.pauseVerse" : "tadabbur.playVerse")}
           onPress={onTogglePlay}
           style={({ pressed }) => [
             styles.playButton,
@@ -80,6 +86,8 @@ export default function TadabburPlayerBar({
         </Pressable>
 
         <Pressable
+          accessibilityRole="button"
+          accessibilityLabel={t("tadabbur.nextVerse")}
           disabled={!next}
           onPress={() => next && selectVerse(next)}
           style={({ pressed }) => [
@@ -92,13 +100,15 @@ export default function TadabburPlayerBar({
         </Pressable>
 
         <Pressable
+          accessibilityRole="button"
+          accessibilityLabel={t("tadabbur.openVerseSelector")}
           onPress={() => setPickerVisible(true)}
           style={({ pressed }) => [
             styles.verseButton,
             pressed && styles.pressed,
           ]}
         >
-          <Text style={styles.verseLabel}>VERSET</Text>
+          <Text style={styles.verseLabel}>{t("tadabbur.verseUpper")}</Text>
           <Text style={styles.verseNumber}>{activeVerseId}</Text>
           <Ionicons name="chevron-up" size={12} color={colors.goldMuted} />
         </Pressable>
@@ -119,7 +129,7 @@ export default function TadabburPlayerBar({
             style={styles.sheet}
           >
             <View style={styles.handle} />
-            <Text style={styles.title}>Choisir un verset</Text>
+            <Text style={styles.title}>{t("tadabbur.chooseVerse")}</Text>
             <ScrollView
               style={styles.list}
               contentContainerStyle={styles.listContent}

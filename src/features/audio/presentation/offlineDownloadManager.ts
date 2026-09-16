@@ -1,4 +1,4 @@
-import * as FileSystem from 'expo/node_modules/expo-file-system/legacy';
+import * as FileSystem from 'expo-file-system/legacy';
 import type { AudioTrack } from '../../../core/audio';
 import type { AudioDownload } from '../../../core/repositories';
 import { storageService } from '../../../core/storage';

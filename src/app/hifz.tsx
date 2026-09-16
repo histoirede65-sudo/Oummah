@@ -3,7 +3,7 @@ import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import type { Href } from "expo-router";
 import { router } from "expo-router";
-import { useFocusEffect } from "@react-navigation/native";
+import { useFocusEffect } from "expo-router";
 import { useCallback, useMemo, useState } from "react";
 import {
   Alert,
@@ -1741,20 +1741,21 @@ const styles = StyleSheet.create({
   pickerNumberText: {
     color: colors.goldLight,
     fontFamily: typography.sans,
-    fontSize: 8,
+    fontSize: 11,
     fontWeight: "800",
   },
   pickerCopy: { flex: 1, marginLeft: 9 },
   pickerName: {
     color: colors.text,
-    fontFamily: typography.serifMedium,
-    fontSize: 15,
+    fontFamily: typography.sans,
+    fontSize: 19,
+    fontWeight: "700",
   },
   pickerMeta: {
-    marginTop: 1,
+    marginTop: 3,
     color: colors.textMuted,
     fontFamily: typography.sans,
-    fontSize: 7.5,
+    fontSize: 13,
   },
   pickerArabic: {
     marginRight: 9,

@@ -4,6 +4,7 @@ import { Platform } from "react-native";
 
 import { getValidSession } from "../auth/SupabaseAuthService";
 import { getPremiumAccess } from "../premium/PremiumAccessService";
+import { isNotificationPermissionGranted } from "./NotificationPermissions";
 
 function configuration() {
   const url = process.env.EXPO_PUBLIC_SUPABASE_URL?.trim().replace(/\/$/, "");
@@ -30,7 +31,7 @@ function projectId() {
 async function ensureAndroidChannel() {
   if (Platform.OS !== "android") return;
 
-  await Notifications.setNotificationChannelAsync("oummah-admin", {
+  await Notifications.setNotificationChannelAsync("oummah-admin-v2", {
     name: "Communications OUMMAH",
     importance: Notifications.AndroidImportance.HIGH,
     sound: "default",
@@ -54,7 +55,7 @@ export async function syncPushRegistration() {
   await ensureAndroidChannel();
 
   const existing = await Notifications.getPermissionsAsync();
-  let granted = existing.granted;
+  let granted = isNotificationPermissionGranted(existing);
 
   if (!granted) {
     const requested = await Notifications.requestPermissionsAsync({
@@ -64,7 +65,7 @@ export async function syncPushRegistration() {
         allowSound: true,
       },
     });
-    granted = requested.granted;
+    granted = isNotificationPermissionGranted(requested);
   }
 
   if (!granted) {

@@ -90,22 +90,27 @@ const PRAYER_HADITHS: Record<
   Fajr: [
     { text: "Celui qui accomplit la prière du Fajr est sous la protection d’Allah.", reference: "Sahih Muslim, 657" },
     { text: "Celui qui accomplit les prières de l’aube et de l’après-midi entrera au Paradis.", reference: "Sahih al-Bukhari, 574" },
+    { text: "La prière est une lumière.", reference: "Sahih Muslim, 223" },
   ],
   Dhuhr: [
     { text: "Parmi les œuvres les plus aimées d’Allah : la prière accomplie à son heure.", reference: "Sahih al-Bukhari, 527" },
     { text: "Les cinq prières effacent les fautes comme l’eau enlève les impuretés.", reference: "Sahih al-Bukhari, 528" },
+    { text: "La prière est une lumière.", reference: "Sahih Muslim, 223" },
   ],
   Asr: [
     { text: "Celui qui délaisse la prière du ‘Asr voit ses œuvres annulées.", reference: "Sahih al-Bukhari, 553" },
     { text: "Celui qui accomplit les prières de l’aube et de l’après-midi entrera au Paradis.", reference: "Sahih al-Bukhari, 574" },
+    { text: "Parmi les œuvres les plus aimées d’Allah : la prière accomplie à son heure.", reference: "Sahih al-Bukhari, 527" },
   ],
   Maghrib: [
     { text: "Les cinq prières effacent les fautes comme l’eau enlève les impuretés.", reference: "Sahih al-Bukhari, 528" },
     { text: "La prière est une lumière.", reference: "Sahih Muslim, 223" },
+    { text: "Parmi les œuvres les plus aimées d’Allah : la prière accomplie à son heure.", reference: "Sahih al-Bukhari, 527" },
   ],
   Isha: [
     { text: "Celui qui accomplit ‘Isha en groupe est comme s’il avait prié la moitié de la nuit.", reference: "Sahih Muslim, 656" },
     { text: "Si les gens savaient ce qu’il y a dans les prières de l’‘Isha et du Fajr, ils y viendraient même en rampant.", reference: "Sahih al-Bukhari, 721" },
+    { text: "La prière est une lumière.", reference: "Sahih Muslim, 223" },
   ],
 };
 
@@ -121,12 +126,20 @@ type NotificationMosque = Pick<
 >;
 
 Notifications.setNotificationHandler({
-  handleNotification: async () => ({
+  handleNotification: async (notification) => {
+    const data = notification.request.content.data as Record<string, unknown> | undefined;
+    const mode = data?.notificationMode;
+    return {
     shouldShowBanner: true,
     shouldShowList: true,
-    shouldPlaySound: true,
+    shouldPlaySound:
+      mode === "adhan" ||
+      mode === "notification" ||
+      mode === "sound" ||
+      mode === undefined,
     shouldSetBadge: false,
-  }),
+    };
+  },
 });
 
 function isGranted(status: Notifications.NotificationPermissionsStatus) {
@@ -144,29 +157,29 @@ async function configureAndroidChannels() {
 
   await Promise.all([
     ...(["makkah", "madinah", "egypt", "birds"] as const).map((voice) =>
-      Notifications.setNotificationChannelAsync(`adhan-sound-${voice}`, {
+      Notifications.setNotificationChannelAsync(`adhan-sound-${voice}-v5`, {
       name: `Adhan — ${voice === "makkah" ? "La Mecque" : voice === "madinah" ? "Médine" : voice === "egypt" ? "Égypte" : "Oiseaux apaisants"}`,
       importance: Notifications.AndroidImportance.HIGH,
-      sound: voice === "birds" ? "adhan_birds.wav" : `adhan_${voice}.mp3`,
+        sound: `adhan_${voice}_notification.wav`,
       vibrationPattern: [0, 280, 160, 280],
       lightColor: "#F2B53D",
       }),
     ),
-    Notifications.setNotificationChannelAsync("adhan-notification", {
+    Notifications.setNotificationChannelAsync("adhan-notification-v3", {
       name: "Notification Adhan",
       importance: Notifications.AndroidImportance.HIGH,
       sound: "default",
       vibrationPattern: [0, 280, 160, 280],
       lightColor: "#F2B53D",
     }),
-    Notifications.setNotificationChannelAsync("adhan-vibration", {
+    Notifications.setNotificationChannelAsync("adhan-vibration-v3", {
       name: "Adhan avec vibration",
       importance: Notifications.AndroidImportance.HIGH,
       sound: undefined,
       vibrationPattern: [0, 350, 180, 350],
       lightColor: "#F2B53D",
     }),
-    Notifications.setNotificationChannelAsync("adhan-silent", {
+    Notifications.setNotificationChannelAsync("adhan-silent-v3", {
       name: "Adhan silencieux",
       importance: Notifications.AndroidImportance.DEFAULT,
       sound: undefined,
@@ -236,7 +249,7 @@ async function cancelAdhanNotifications() {
 }
 
 function channelIdFor(mode: AdhanAlertMode, voice: AdhanVoice) {
-  return mode === "adhan" ? `adhan-sound-${voice}` : mode === "notification" ? "adhan-notification" : `adhan-${mode}`;
+  return mode === "adhan" ? `adhan-sound-${voice}-v5` : mode === "notification" ? "adhan-notification-v3" : `adhan-${mode}-v3`;
 }
 
 function contentFor(
@@ -250,7 +263,7 @@ function contentFor(
   return {
     title: isAdvanceReminder
       ? `${prayer.label} dans ${preferences.leadMinutes} min`
-      : `${prayer.label} — heure de prière`,
+      : `C’est l’heure de ${prayer.label}`,
     body: `« ${hadith.text} » — ${hadith.reference}`,
     categoryIdentifier: ADHAN_NOTIFICATION_CATEGORY,
     data: {
@@ -258,6 +271,7 @@ function contentFor(
       prayer: prayer.key,
       notificationOwner: NOTIFICATION_OWNER,
       notificationKey: `adhan:${prayer.key}:${prayer.timestamp}:${preferences.leadMinutes}`,
+      notificationMode: preferences.mode,
       hadithText: hadith.text,
       hadithReference: hadith.reference,
       ...(mosque
@@ -272,7 +286,7 @@ function contentFor(
     },
     sound:
       preferences.mode === "adhan"
-        ? preferences.voice === "birds" ? "adhan_birds.wav" : `adhan_${preferences.voice}.mp3`
+        ? `adhan_${preferences.voice}_notification.wav`
         : preferences.mode === "notification"
           ? "default"
           : false,

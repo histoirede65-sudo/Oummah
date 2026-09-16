@@ -389,6 +389,7 @@ function CompatibilityBridge({ children }: { children: ReactNode }) {
     await Promise.all([listeningSession.startNew(), resumeService.clear()]);
     setPersistedResume(null);
     await player.stop();
+    await audioDependencies.repositories.session.clear();
   }, [miniPlayerController, player]);
   const liveResume = useMemo(() => {
     if (!player.track || (!player.isPlaying && player.currentTime <= 0))

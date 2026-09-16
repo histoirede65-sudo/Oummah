@@ -17,6 +17,7 @@ import {
 import { useCallback, useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+import { useI18n } from "../../i18n";
 import { colors } from "../../theme/colors";
 import { getMyUnreadSupportCount } from "../../features/support/SupportService";
 import { typography } from "../../theme/typography";
@@ -36,12 +37,13 @@ import {
 } from "../../features/profile/UserProfileRepository";
 
 const LOCAL_DATA = [
-  { icon: "trending-up-outline", label: "Progression" },
-  { icon: "bookmark-outline", label: "Favoris" },
-  { icon: "options-outline", label: "Préférences" },
+  { icon: "trending-up-outline", labelKey: "profile.progress" },
+  { icon: "bookmark-outline", labelKey: "profile.favorites" },
+  { icon: "options-outline", labelKey: "profile.preferences" },
 ] as const;
 
 export default function ProfileScreen() {
+  const { language, setLanguage, t } = useI18n();
   const [supportUnreadCount, setSupportUnreadCount] = useState(0);
   const router = useRouter();
   const [session, setSession] = useState<SupabaseAuthSession | null>(null);
@@ -94,7 +96,7 @@ export default function ProfileScreen() {
   const saveDisplayName = async () => {
     const nextName = nameDraft.trim();
     if (!session || !nextName) {
-      Alert.alert("Prénom", "Indiquez le prénom ou le pseudonyme à afficher.");
+      Alert.alert(t("profile.name"), t("profile.nameRequired"));
       return;
     }
     setSavingName(true);
@@ -104,7 +106,7 @@ export default function ProfileScreen() {
       setDisplayName(profile.displayName?.trim() ?? nextName);
       setNameEditorOpen(false);
     } catch {
-      Alert.alert("Modification impossible", "Le prénom n’a pas pu être enregistré.");
+      Alert.alert(t("profile.updateFailed"), t("profile.nameSaveFailed"));
     } finally {
       setSavingName(false);
     }
@@ -113,13 +115,13 @@ export default function ProfileScreen() {
   const authenticateWithPassword = async () => {
     const normalizedEmail = email.trim().toLowerCase();
     if (!/^\S+@\S+\.\S+$/.test(normalizedEmail)) {
-      Alert.alert("Adresse e-mail", "Saisissez une adresse e-mail valide.");
+      Alert.alert(t("profile.emailAddress"), t("profile.emailInvalid"));
       return;
     }
     if (password.length < 6) {
       Alert.alert(
-        "Mot de passe",
-        "Choisissez un mot de passe d’au moins 6 caractères.",
+        t("profile.password"),
+        t("profile.passwordMinimum"),
       );
       return;
     }
@@ -135,8 +137,8 @@ export default function ProfileScreen() {
 
       if (authMode === "signup" && !nextSession) {
         Alert.alert(
-          "Compte créé",
-          "Consultez votre e-mail pour confirmer votre compte OUMMAH, puis connectez-vous.",
+          t("profile.accountCreated"),
+          t("profile.confirmEmail"),
         );
         return;
       }
@@ -147,13 +149,13 @@ export default function ProfileScreen() {
         return;
       }
       Alert.alert(
-        "Connexion réussie",
-        "Votre profil OUMMAH est maintenant connecté.",
+        t("profile.signInSuccess"),
+        t("profile.profileConnected"),
       );
     } catch (error) {
       Alert.alert(
-        "Connexion impossible",
-        error instanceof Error ? error.message : "Réessayez.",
+        t("profile.signInFailed"),
+        error instanceof Error ? error.message : t("profile.tryAgain"),
       );
     } finally {
       setLoading(false);
@@ -162,12 +164,12 @@ export default function ProfileScreen() {
 
   const disconnect = () => {
     Alert.alert(
-      "Se déconnecter",
-      "Votre progression locale restera sur cet appareil.",
+      t("profile.signOut"),
+      t("profile.signOutDescription"),
       [
-        { text: "Annuler", style: "cancel" },
+        { text: t("profile.cancel"), style: "cancel" },
         {
-          text: "Se déconnecter",
+          text: t("profile.signOut"),
           style: "destructive",
           onPress: async () => {
             await signOut();
@@ -180,21 +182,21 @@ export default function ProfileScreen() {
 
   const deleteAccount = () => {
     Alert.alert(
-      "Supprimer mon compte",
-      "Cette suppression est définitive. Votre compte et les données personnelles associées seront supprimés et ne pourront pas être récupérés.",
+      t("profile.deleteAccount"),
+      t("profile.deleteWarning"),
       [
-        { text: "Annuler", style: "cancel" },
+        { text: t("profile.cancel"), style: "cancel" },
         {
-          text: "Continuer",
+          text: t("profile.continue"),
           style: "destructive",
           onPress: () => {
             Alert.alert(
-              "Suppression définitive",
-              "Voulez-vous vraiment supprimer définitivement votre compte ?",
+              t("profile.finalDeletion"),
+              t("profile.finalDeletionQuestion"),
               [
-                { text: "Annuler", style: "cancel" },
+                { text: t("profile.cancel"), style: "cancel" },
                 {
-                  text: "Supprimer définitivement",
+                  text: t("profile.deletePermanently"),
                   style: "destructive",
                   onPress: async () => {
                     setDeletingAccount(true);
@@ -205,8 +207,8 @@ export default function ProfileScreen() {
                       router.replace("/profile");
                     } catch (error) {
                       Alert.alert(
-                        "Suppression impossible",
-                        error instanceof Error ? error.message : "Réessayez plus tard.",
+                        t("profile.deletionFailed"),
+                        error instanceof Error ? error.message : t("profile.tryAgainLater"),
                       );
                     } finally {
                       setDeletingAccount(false);
@@ -228,11 +230,36 @@ export default function ProfileScreen() {
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.header}>
-          <Text style={styles.eyebrow}>MON ESPACE</Text>
-          <Text style={styles.title}>Profil</Text>
+          <Text style={styles.eyebrow}>{t("profile.mySpace")}</Text>
+          <Text style={styles.title}>{t("profile.title")}</Text>
           <Text style={styles.subtitle}>
-            Votre parcours reste accessible, avec ou sans compte.
+            {t("profile.subtitle")}
           </Text>
+        </View>
+
+        <View style={styles.languageCard}>
+          <View style={styles.languageCopy}>
+            <Text style={styles.languageTitle}>{t("profile.language")}</Text>
+            <Text style={styles.languageSubtitle}>{t("profile.languageSubtitle")}</Text>
+          </View>
+          <View style={styles.languageChoices}>
+            {(["fr", "en"] as const).map((code) => {
+              const selected = language === code;
+              return (
+                <Pressable
+                  key={code}
+                  accessibilityRole="button"
+                  accessibilityState={{ selected }}
+                  onPress={() => setLanguage(code)}
+                  style={[styles.languageChoice, selected && styles.languageChoiceSelected]}
+                >
+                  <Text style={[styles.languageChoiceText, selected && styles.languageChoiceTextSelected]}>
+                    {code === "fr" ? "Français" : "English"}
+                  </Text>
+                </Pressable>
+              );
+            })}
+          </View>
         </View>
 
         <LinearGradient
@@ -250,18 +277,18 @@ export default function ProfileScreen() {
               <Text style={styles.profileTitle}>
                 {session
                   ? displayName
-                    ? `Salam, ${displayName}`
-                    : "Salam"
-                  : "Sans compte"}
+                    ? t("profile.greetingName", { name: displayName })
+                    : t("profile.greeting")
+                  : t("profile.noAccount")}
               </Text>
               <Text style={styles.profileSubtitle}>
-                {session?.user.email ?? "Profil local"}
+                {session?.user.email ?? t("profile.localProfile")}
               </Text>
             </View>
 
             {session ? (
               <Pressable
-                accessibilityLabel="Modifier mon prénom"
+                accessibilityLabel={t("profile.editName")}
                 accessibilityRole="button"
                 onPress={openNameEditor}
               >
@@ -270,7 +297,7 @@ export default function ProfileScreen() {
             ) : (
               <View style={styles.activeBadge}>
                 <View style={styles.activeDot} />
-                <Text style={styles.activeText}>ACTIF</Text>
+                <Text style={styles.activeText}>{t("profile.active")}</Text>
               </View>
             )}
           </View>
@@ -285,11 +312,11 @@ export default function ProfileScreen() {
             >
               <Ionicons name="pencil-outline" size={18} color={colors.goldLight} />
               <Text style={styles.localStatusText}>
-                {displayName ? "Profil OUMMAH" : "Ajouter mon prénom"}
+                {displayName ? t("profile.oummahProfile") : t("profile.addName")}
               </Text>
               <View style={[styles.activeBadge, isAdmin && styles.adminBadge]}>
                 <View style={[styles.activeDot, isAdmin && styles.adminDot]} />
-                <Text style={styles.activeText}>{isAdmin ? "ADMIN" : "ACTIF"}</Text>
+                <Text style={styles.activeText}>{isAdmin ? t("profile.admin") : t("profile.active")}</Text>
               </View>
             </Pressable>
           ) : (
@@ -300,7 +327,7 @@ export default function ProfileScreen() {
                 color={colors.goldLight}
               />
               <Text style={styles.localStatusText}>
-                Vos données sont enregistrées sur cet appareil.
+                {t("profile.dataStoredDevice")}
               </Text>
             </View>
           )}
@@ -315,8 +342,8 @@ export default function ProfileScreen() {
           >
             <Ionicons name="shield-checkmark-outline" size={21} color={colors.goldLight} />
             <View style={styles.adminButtonCopy}>
-              <Text style={styles.adminButtonTitle}>Espace administrateur</Text>
-              <Text style={styles.adminButtonSubtitle}>Pilotage, utilisateurs, crédits et mosquées</Text>
+              <Text style={styles.adminButtonTitle}>{t("profile.adminSpace")}</Text>
+              <Text style={styles.adminButtonSubtitle}>{t("profile.adminSubtitle")}</Text>
             </View>
             <Ionicons name="chevron-forward" size={19} color={colors.goldLight} />
           </Pressable>
@@ -333,9 +360,9 @@ export default function ProfileScreen() {
         >
           <Ionicons name="help-buoy-outline" size={20} color={colors.goldLight} />
           <View style={styles.supportButtonCopy}>
-            <Text style={styles.supportButtonTitle}>Aide et support</Text>
+            <Text style={styles.supportButtonTitle}>{t("profile.helpSupport")}</Text>
             <Text style={styles.supportButtonSubtitle}>
-              Signaler un bug, demander de l’aide ou faire une suggestion
+              {t("profile.helpSupportSubtitle")}
             </Text>
           </View>
           {supportUnreadCount > 0 ? (
@@ -348,12 +375,12 @@ export default function ProfileScreen() {
           <Ionicons name="chevron-forward" size={19} color={colors.goldLight} />
         </Pressable>
 
-        <Text style={styles.sectionLabel}>ENREGISTRÉ SUR CET APPAREIL</Text>
+        <Text style={styles.sectionLabel}>{t("profile.savedOnDevice")}</Text>
 
         <View style={styles.dataCard}>
           {LOCAL_DATA.map((item, index) => (
             <View
-              key={item.label}
+              key={item.labelKey}
               style={[
                 styles.dataRow,
                 index < LOCAL_DATA.length - 1 && styles.dataRowBorder,
@@ -362,7 +389,7 @@ export default function ProfileScreen() {
               <View style={styles.dataIcon}>
                 <Ionicons name={item.icon} size={18} color={colors.goldLight} />
               </View>
-              <Text style={styles.dataLabel}>{item.label}</Text>
+              <Text style={styles.dataLabel}>{t(item.labelKey)}</Text>
               <Ionicons
                 name="checkmark-circle"
                 size={20}
@@ -378,12 +405,12 @@ export default function ProfileScreen() {
           </View>
 
           <Text style={styles.backupTitle}>
-            {session ? "Profil sécurisé" : "Protéger ma progression"}
+            {session ? t("profile.securedProfile") : t("profile.protectProgress")}
           </Text>
           <Text style={styles.backupText}>
             {session
-              ? "Votre identité est vérifiée. Elle permettra de sécuriser vos crédits Wasil."
-              : "Créez un profil avec votre e-mail pour retrouver plus tard votre progression sur un autre appareil."}
+              ? t("profile.identityVerified")
+              : t("profile.createProfileDescription")}
           </Text>
 
           <Pressable
@@ -397,7 +424,7 @@ export default function ProfileScreen() {
               color="#25152B"
             />
             <Text style={styles.primaryButtonText}>
-              {session ? "Se déconnecter" : "Créer un profil"}
+              {session ? t("profile.signOut") : t("profile.createProfile")}
             </Text>
           </Pressable>
 
@@ -407,21 +434,21 @@ export default function ProfileScreen() {
               onPress={() => openAuth("signin")}
               style={styles.signInButton}
             >
-              <Text style={styles.signInText}>J’ai déjà un profil</Text>
+              <Text style={styles.signInText}>{t("profile.alreadyHaveProfile")}</Text>
             </Pressable>
           )}
 
           {session ? (
             <Pressable
               accessibilityRole="button"
-              accessibilityLabel="Supprimer mon compte"
+              accessibilityLabel={t("profile.deleteAccount")}
               disabled={deletingAccount}
               onPress={deleteAccount}
               style={({ pressed }) => [styles.deleteAccountButton, pressed && styles.premiumButtonPressed]}
             >
               <Ionicons name="trash-outline" size={18} color={colors.danger} />
               <Text style={styles.deleteAccountText}>
-                {deletingAccount ? "Suppression en cours…" : "Supprimer mon compte"}
+                {deletingAccount ? t("profile.deleting") : t("profile.deleteAccount")}
               </Text>
             </Pressable>
           ) : null}
@@ -435,25 +462,10 @@ export default function ProfileScreen() {
               color={colors.textMuted}
             />
             <Text style={styles.noticeText}>
-              Sans compte, vos données peuvent être perdues si l’application est
-              supprimée.
+              {t("profile.localDataWarning")}
             </Text>
           </View>
         )}
-
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel="Test récitation Hifz temporaire"
-          onPress={() => router.push("/dev/hifz-recitation-test")}
-          style={({ pressed }) => [styles.devTestButton, pressed && styles.premiumButtonPressed]}
-        >
-          <Ionicons name="mic-outline" size={19} color={colors.goldLight} />
-          <View style={styles.devTestCopy}>
-            <Text style={styles.devTestTitle}>Test récitation Hifz 🎙️</Text>
-            <Text style={styles.devTestSubtitle}>Accès temporaire · développement</Text>
-          </View>
-          <Ionicons name="chevron-forward" size={18} color={colors.goldLight} />
-        </Pressable>
       </ScrollView>
 
       <Modal
@@ -473,8 +485,8 @@ export default function ProfileScreen() {
           <View style={styles.authCard}>
             <View style={styles.authHeader}>
               <View>
-                <Text style={styles.authEyebrow}>MON PROFIL</Text>
-                <Text style={styles.authTitle}>Comment vous appeler ?</Text>
+                <Text style={styles.authEyebrow}>{t("profile.myProfile")}</Text>
+                <Text style={styles.authTitle}>{t("profile.whatShouldWeCallYou")}</Text>
               </View>
               <Pressable
                 disabled={savingName}
@@ -490,7 +502,7 @@ export default function ProfileScreen() {
               maxLength={50}
               onChangeText={setNameDraft}
               onSubmitEditing={() => void saveDisplayName()}
-              placeholder="Votre prénom ou pseudonyme"
+              placeholder={t("profile.namePlaceholder")}
               placeholderTextColor={colors.textMuted}
               returnKeyType="done"
               style={styles.authInput}
@@ -505,7 +517,7 @@ export default function ProfileScreen() {
               {savingName ? (
                 <ActivityIndicator color="#25152B" />
               ) : (
-                <Text style={styles.authButtonText}>Enregistrer</Text>
+                <Text style={styles.authButtonText}>{t("profile.save")}</Text>
               )}
             </Pressable>
           </View>
@@ -529,9 +541,9 @@ export default function ProfileScreen() {
           <View style={styles.authCard}>
             <View style={styles.authHeader}>
               <View>
-                <Text style={styles.authEyebrow}>PROFIL OUMMAH</Text>
+                <Text style={styles.authEyebrow}>{t("profile.oummahProfileUpper")}</Text>
                 <Text style={styles.authTitle}>
-                  {authMode === "signup" ? "Créer un compte" : "Se connecter"}
+                  {authMode === "signup" ? t("profile.createAccount") : t("profile.signIn")}
                 </Text>
               </View>
               <Pressable
@@ -544,8 +556,7 @@ export default function ProfileScreen() {
             </View>
 
             <Text style={styles.authText}>
-              Utilisez votre e-mail et un mot de passe. Aucun lien à ouvrir et
-              aucun retour vers Expo Go n’est nécessaire.
+              {t("profile.authDescription")}
             </Text>
 
             <TextInput
@@ -554,7 +565,7 @@ export default function ProfileScreen() {
               editable={!loading}
               keyboardType="email-address"
               onChangeText={setEmail}
-              placeholder="nom@exemple.com"
+              placeholder={t("profile.emailPlaceholder")}
               placeholderTextColor={colors.textMuted}
               style={styles.authInput}
               value={email}
@@ -566,14 +577,14 @@ export default function ProfileScreen() {
                 editable={!loading}
                 onChangeText={setPassword}
                 onSubmitEditing={authenticateWithPassword}
-                placeholder="Mot de passe"
+                placeholder={t("profile.password")}
                 placeholderTextColor={colors.textMuted}
                 secureTextEntry={!showPassword}
                 style={styles.passwordInput}
                 value={password}
               />
               <Pressable
-                accessibilityLabel={showPassword ? "Masquer le mot de passe" : "Afficher le mot de passe"}
+                accessibilityLabel={showPassword ? t("profile.hidePassword") : t("profile.showPassword")}
                 accessibilityRole="button"
                 onPress={() => setShowPassword((current) => !current)}
                 style={styles.passwordToggle}
@@ -599,7 +610,7 @@ export default function ProfileScreen() {
                 <ActivityIndicator color="#25152B" />
               ) : (
                 <Text style={styles.authButtonText}>
-                  {authMode === "signup" ? "Créer mon compte" : "Se connecter"}
+                  {authMode === "signup" ? t("profile.createMyAccount") : t("profile.signIn")}
                 </Text>
               )}
             </Pressable>
@@ -614,8 +625,8 @@ export default function ProfileScreen() {
             >
               <Text style={styles.signInText}>
                 {authMode === "signup"
-                  ? "J’ai déjà un compte"
-                  : "Créer un nouveau compte"}
+                  ? t("profile.alreadyHaveAccount")
+                  : t("profile.createNewAccount")}
               </Text>
             </Pressable>
           </View>
@@ -659,6 +670,57 @@ const styles = StyleSheet.create({
     fontFamily: typography.sans,
     fontSize: 12.5,
     lineHeight: 18,
+  },
+  languageCard: {
+    marginBottom: 14,
+    padding: 14,
+    flexDirection: "row",
+    alignItems: "center",
+    borderRadius: 18,
+    borderWidth: 1,
+    borderColor: colors.border,
+    backgroundColor: colors.card,
+  },
+  languageCopy: {
+    flex: 1,
+    paddingRight: 12,
+  },
+  languageTitle: {
+    color: colors.text,
+    fontFamily: typography.sans,
+    fontSize: 13,
+    fontWeight: "700",
+  },
+  languageSubtitle: {
+    marginTop: 3,
+    color: colors.textMuted,
+    fontFamily: typography.sans,
+    fontSize: 9.5,
+  },
+  languageChoices: {
+    flexDirection: "row",
+    padding: 3,
+    borderRadius: 13,
+    backgroundColor: "rgba(255,255,255,0.05)",
+  },
+  languageChoice: {
+    minWidth: 56,
+    paddingHorizontal: 9,
+    paddingVertical: 8,
+    alignItems: "center",
+    borderRadius: 10,
+  },
+  languageChoiceSelected: {
+    backgroundColor: colors.goldLight,
+  },
+  languageChoiceText: {
+    color: colors.textSecondary,
+    fontFamily: typography.sans,
+    fontSize: 10,
+    fontWeight: "700",
+  },
+  languageChoiceTextSelected: {
+    color: "#25152B",
   },
   profileCard: {
     padding: 17,
@@ -932,20 +994,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "flex-start",
   },
-  devTestButton: {
-    minHeight: 68,
-    marginTop: 18,
-    paddingHorizontal: 15,
-    flexDirection: "row",
-    alignItems: "center",
-    borderRadius: 18,
-    borderWidth: 1,
-    borderColor: "rgba(227,181,90,0.28)",
-    backgroundColor: "rgba(227,181,90,0.06)",
-  },
-  devTestCopy: { flex: 1, marginLeft: 11 },
-  devTestTitle: { color: colors.goldLight, fontFamily: typography.sans, fontSize: 13, fontWeight: "800" },
-  devTestSubtitle: { marginTop: 3, color: colors.textMuted, fontFamily: typography.sans, fontSize: 10.5 },
   noticeText: {
     flex: 1,
     marginLeft: 8,

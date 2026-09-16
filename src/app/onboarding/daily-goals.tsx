@@ -27,6 +27,7 @@ import {
 import type { ProgressDomain } from "../../core/repositories/UserRepository";
 import { colors } from "../../theme/colors";
 import { typography } from "../../theme/typography";
+import { useI18n, type TranslationKey } from "../../i18n";
 
 type Focus = DailyGoalSettings["focus"][number];
 
@@ -39,17 +40,17 @@ function progressDomainForFocus(focus: Focus): ProgressDomain {
 }
 
 const steps = [
-  { title: "Quel est ton objectif principal ?", options: [
-    ["prayer", "Être plus régulier dans mes prières"],
-    ["quran", "Lire plus de Coran"],
-    ["dhikr", "Faire plus de Dhikr"],
-    ["dua", "Apprendre des dou'as"],
-    ["hifz", "Mémoriser le Coran"],
-  ] as [Focus, string][] },
-  { title: "Combien de temps peux-tu consacrer chaque jour ?", options: [
-    ["5", "5 min"], ["10", "10 min"], ["20", "20 min"], ["30", "30 min+"],
-  ] as [string, string][] },
-  { title: "Souhaites-tu recevoir des rappels ?", options: [["yes", "Oui"], ["no", "Non"]] as [string, string][] },
+  { titleKey: "goalsOnboarding.mainGoal", options: [
+    ["prayer", "goalsOnboarding.prayer"],
+    ["quran", "goalsOnboarding.quran"],
+    ["dhikr", "goalsOnboarding.dhikr"],
+    ["dua", "goalsOnboarding.dua"],
+    ["hifz", "goalsOnboarding.hifz"],
+  ] as [Focus, TranslationKey][] },
+  { titleKey: "goalsOnboarding.dailyTime", options: [
+    ["5", "goalsOnboarding.fiveMinutes"], ["10", "goalsOnboarding.tenMinutes"], ["20", "goalsOnboarding.twentyMinutes"], ["30", "goalsOnboarding.thirtyMinutesPlus"],
+  ] as [string, TranslationKey][] },
+  { titleKey: "goalsOnboarding.reminders", options: [["yes", "goalsOnboarding.yes"], ["no", "goalsOnboarding.no"]] as [string, TranslationKey][] },
 ] as const;
 
 function Choice({ label, selected, onPress }: { label: string; selected: boolean; onPress: () => void }) {
@@ -62,6 +63,7 @@ function Choice({ label, selected, onPress }: { label: string; selected: boolean
 }
 
 export default function DailyGoalsOnboardingScreen() {
+  const { t } = useI18n();
   const { fresh } = useLocalSearchParams<{ fresh?: string }>();
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState<Record<number, string>>({});
@@ -92,7 +94,7 @@ export default function DailyGoalsOnboardingScreen() {
         }
         if (active) setUserId(session.user.id);
       } catch {
-        if (active) setError("L’onboarding n’a pas pu être chargé. Réessaie.");
+        if (active) setError(t("goalsOnboarding.loadFailed"));
       } finally {
         if (active) setLoading(false);
       }
@@ -103,10 +105,10 @@ export default function DailyGoalsOnboardingScreen() {
 
   const selected = step === 0 ? selectedGoals.length > 0 : answers[step];
   const summary = useMemo(() => [
-    selectedGoals.map((goal) => steps[0].options.find(([value]) => value === goal)?.[1]).filter(Boolean).join(", "),
-    steps[1].options.find(([value]) => value === answers[1])?.[1],
-    steps[2].options.find(([value]) => value === answers[2])?.[1],
-  ].filter(Boolean) as string[], [answers, selectedGoals]);
+    selectedGoals.map((goal) => steps[0].options.find(([value]) => value === goal)?.[1]).filter(Boolean).map((key) => t(key!)).join(", "),
+    (() => { const key = steps[1].options.find(([value]) => value === answers[1])?.[1]; return key ? t(key) : undefined; })(),
+    (() => { const key = steps[2].options.find(([value]) => value === answers[2])?.[1]; return key ? t(key) : undefined; })(),
+  ].filter(Boolean) as string[], [answers, selectedGoals, t]);
 
   const finish = async () => {
     if (!userId) return;
@@ -138,7 +140,7 @@ export default function DailyGoalsOnboardingScreen() {
       });
       router.replace("/daily-goals");
     } catch {
-      setError("La création de ton programme a échoué. Réessaie.");
+      setError(t("goalsOnboarding.creationFailed"));
     } finally {
       setSaving(false);
     }
@@ -146,7 +148,7 @@ export default function DailyGoalsOnboardingScreen() {
 
   const next = () => {
     if (!selected) {
-      setError("Choisis une réponse pour continuer.");
+      setError(t("goalsOnboarding.chooseAnswer"));
       return;
     }
     setError(null);
@@ -162,16 +164,16 @@ export default function DailyGoalsOnboardingScreen() {
       <View style={styles.header}>
         <Pressable accessibilityRole="button" onPress={() => step ? setStep((value) => value - 1) : router.replace("/profile")} style={styles.back}>
           <Ionicons name="chevron-back" size={22} color={colors.text} />
-          <Text style={styles.backText}>Retour</Text>
+          <Text style={styles.backText}>{t("common.back")}</Text>
         </Pressable>
-        <Text style={styles.step}>ÉTAPE {step + 1} SUR {steps.length}</Text>
+        <Text style={styles.step}>{t("onboarding.stepProgress", { step: step + 1, total: steps.length })}</Text>
       </View>
       <View style={styles.track}><View style={[styles.progress, { width: `${((step + 1) / steps.length) * 100}%` }]} /></View>
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-        {step === 0 ? <Text style={styles.eyebrow}>BIENVENUE DANS OUMMAH</Text> : null}
-        <Text style={styles.title}>{current.title}</Text>
-        {step === 0 ? <><Text style={styles.helper}>Quels objectifs souhaites-tu travailler ?</Text><Text style={styles.hint}>Tu peux en choisir plusieurs.</Text></> : null}
-        <View style={styles.options}>{current.options.map(([value, label]) => <Choice key={value} label={label} selected={step === 0 ? selectedGoals.includes(value as Focus) : selected === value} onPress={() => {
+        {step === 0 ? <Text style={styles.eyebrow}>{t("goalsOnboarding.welcome")}</Text> : null}
+        <Text style={styles.title}>{t(current.titleKey)}</Text>
+        {step === 0 ? <><Text style={styles.helper}>{t("goalsOnboarding.whichGoals")}</Text><Text style={styles.hint}>{t("goalsOnboarding.multipleChoices")}</Text></> : null}
+        <View style={styles.options}>{current.options.map(([value, labelKey]) => <Choice key={value} label={t(labelKey)} selected={step === 0 ? selectedGoals.includes(value as Focus) : selected === value} onPress={() => {
           if (step === 0) {
             const goal = value as Focus;
             setSelectedGoals((old) => old.includes(goal) ? old.filter((item) => item !== goal) : [...old, goal]);
@@ -180,9 +182,9 @@ export default function DailyGoalsOnboardingScreen() {
           }
         }} />)}</View>
         {error ? <Text style={styles.error}>{error}</Text> : null}
-        {step === steps.length - 1 && answers[2] ? <View style={styles.summary}><Text style={styles.summaryTitle}>BarakAllahou fik, ton programme est prêt</Text>{summary.map((item) => <Text key={item} style={styles.summaryItem}>• {item}</Text>)}</View> : null}
+        {step === steps.length - 1 && answers[2] ? <View style={styles.summary}><Text style={styles.summaryTitle}>{t("goalsOnboarding.programReady")}</Text>{summary.map((item) => <Text key={item} style={styles.summaryItem}>• {item}</Text>)}</View> : null}
       </ScrollView>
-      <View style={styles.footer}><Pressable disabled={saving || (step === 0 && selectedGoals.length === 0)} onPress={next} style={({ pressed }) => [styles.button, (saving || (step === 0 && selectedGoals.length === 0)) && styles.disabled, pressed && styles.pressed]}>{saving ? <ActivityIndicator color={colors.background} /> : <><Text style={styles.buttonText}>{step === steps.length - 1 ? "Commencer" : "Continuer"}</Text><Ionicons name="arrow-forward" size={18} color={colors.background} /></>}</Pressable></View>
+      <View style={styles.footer}><Pressable disabled={saving || (step === 0 && selectedGoals.length === 0)} onPress={next} style={({ pressed }) => [styles.button, (saving || (step === 0 && selectedGoals.length === 0)) && styles.disabled, pressed && styles.pressed]}>{saving ? <ActivityIndicator color={colors.background} /> : <><Text style={styles.buttonText}>{step === steps.length - 1 ? t("goalsOnboarding.start") : t("onboarding.continue")}</Text><Ionicons name="arrow-forward" size={18} color={colors.background} /></>}</Pressable></View>
     </SafeAreaView>
   );
 }

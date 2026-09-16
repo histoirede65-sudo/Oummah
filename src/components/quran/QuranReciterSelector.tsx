@@ -15,8 +15,10 @@ import { useReciter } from "../../context/ReciterProvider";
 import { getTrackSurahId } from "../../core/audio";
 import { colors } from "../../theme/colors";
 import { typography } from "../../theme/typography";
+import { useI18n } from "../../i18n";
 
 export default function QuranReciterSelector({ compact = false }: { compact?: boolean }) {
+  const { t } = useI18n();
   const [visible, setVisible] = useState(false);
   const { currentReciter, reciters, setCurrentReciter } = useReciter();
   const audio = useGlobalAudioPlayer();
@@ -51,7 +53,7 @@ export default function QuranReciterSelector({ compact = false }: { compact?: bo
     <>
       <Pressable
         accessibilityRole="button"
-        accessibilityLabel="Changer de récitateur"
+        accessibilityLabel={t("quran.changeReciter")}
         onPress={() => setVisible(true)}
         style={({ pressed }) => [
           styles.selector,
@@ -62,15 +64,16 @@ export default function QuranReciterSelector({ compact = false }: { compact?: bo
         <View style={[styles.iconShell, compact && styles.iconShellCompact]}>
           <Ionicons name="mic-outline" size={compact ? 14 : 17} color={colors.goldLight} />
         </View>
-        <View style={styles.copy}>
-          {!compact ? <Text style={styles.eyebrow}>RÉCITATEUR SÉLECTIONNÉ</Text> : null}
+        <View style={[styles.copy, compact && styles.copyCompact]}>
+          {!compact ? <Text style={styles.eyebrow}>{t("quran.selectedReciter")}</Text> : null}
+          {compact ? <Text style={styles.compactEyebrow}>{t("quran.reciter")}</Text> : null}
           <Text numberOfLines={1} style={[styles.name, compact && styles.nameCompact]}>
-            {currentReciter?.name ?? "Choisir une voix"}
+            {currentReciter?.name ?? t("quran.chooseVoice")}
           </Text>
         </View>
-        <View style={styles.changeAction}>
+        <View style={[styles.changeAction, compact && styles.changeActionCompact]}>
           <Text style={[styles.changeText, compact && styles.changeTextCompact]}>
-            Changer
+            {t("quran.change")}
           </Text>
           <Ionicons name="chevron-forward" size={14} color={colors.goldMuted} />
         </View>
@@ -91,8 +94,8 @@ export default function QuranReciterSelector({ compact = false }: { compact?: bo
             <View style={styles.handle} />
             <View style={styles.header}>
               <View>
-                <Text style={styles.sheetEyebrow}>ÉCOUTE DU CORAN</Text>
-                <Text style={styles.title}>Choisir un récitateur</Text>
+                <Text style={styles.sheetEyebrow}>{t("quran.quranListening")}</Text>
+                <Text style={styles.title}>{t("quran.chooseReciter")}</Text>
               </View>
               <Pressable onPress={() => setVisible(false)} style={styles.close}>
                 <Ionicons name="close" size={21} color={colors.text} />
@@ -192,6 +195,7 @@ const styles = StyleSheet.create({
   },
   iconShellCompact: { width: 30, height: 30, borderRadius: 11 },
   copy: { flex: 1, minWidth: 0, marginLeft: 10 },
+  copyCompact: { marginLeft: 9, paddingRight: 8 },
   eyebrow: {
     color: colors.goldMuted,
     fontFamily: typography.sans,
@@ -205,8 +209,27 @@ const styles = StyleSheet.create({
     fontFamily: typography.serifMedium,
     fontSize: 14,
   },
-  nameCompact: { marginTop: 0, fontSize: 12.5 },
+  compactEyebrow: {
+    marginBottom: 1,
+    color: colors.textMuted,
+    fontFamily: typography.sans,
+    fontSize: 7.5,
+    fontWeight: "700",
+    letterSpacing: 0.65,
+  },
+  nameCompact: {
+    marginTop: 0,
+    color: colors.text,
+    fontFamily: typography.sans,
+    fontSize: 13,
+    fontWeight: "700",
+  },
   changeAction: { marginLeft: 8, flexDirection: "row", alignItems: "center" },
+  changeActionCompact: {
+    minWidth: 76,
+    marginLeft: 0,
+    justifyContent: "flex-end",
+  },
   changeText: {
     marginRight: 2,
     color: colors.goldMuted,

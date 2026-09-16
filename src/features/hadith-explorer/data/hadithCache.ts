@@ -1,7 +1,8 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import type { Hadith, HadithSummary } from "../domain/Hadith";
 
-const DETAILS_KEY = "oumma:hadith:details:v1";
+const DETAILS_KEY = "oumma:hadith:details:v2";
+const LEGACY_DETAILS_KEY = "oumma:hadith:details:v1";
 const SEARCH_KEY = "oumma:hadith:search:v1";
 
 type DetailCache = Record<string, { value: Hadith; cachedAt: number }>;
@@ -17,19 +18,23 @@ async function read<T>(key: string, fallback: T): Promise<T> {
 }
 
 export const hadithCache = {
-  async get(id: string) {
+  async get(id: string, language: "fr" | "en" = "fr") {
     const cache = await read<DetailCache>(DETAILS_KEY, {});
-    return cache[id]?.value ?? null;
+    const localized = cache[`${language}:${id}`]?.value;
+    if (localized) return localized;
+    if (language !== "fr") return null;
+    const legacy = await read<DetailCache>(LEGACY_DETAILS_KEY, {});
+    return legacy[id]?.value ?? null;
   },
-  async put(value: Hadith) {
+  async put(value: Hadith, language: "fr" | "en" = "fr") {
     const cache = await read<DetailCache>(DETAILS_KEY, {});
-    cache[value.id] = { value, cachedAt: Date.now() };
+    cache[`${language}:${value.id}`] = { value, cachedAt: Date.now() };
     const entries = Object.entries(cache).sort((a, b) => b[1].cachedAt - a[1].cachedAt).slice(0, 250);
     await AsyncStorage.setItem(DETAILS_KEY, JSON.stringify(Object.fromEntries(entries)));
   },
   async all() {
     const cache = await read<DetailCache>(DETAILS_KEY, {});
-    return Object.values(cache).map((entry) => entry.value);
+    return Object.entries(cache).filter(([key]) => key.startsWith("fr:")).map(([, entry]) => entry.value);
   },
   async getSearch(key: string) {
     const cache = await read<SearchCache>(SEARCH_KEY, {});
@@ -42,5 +47,4 @@ export const hadithCache = {
     await AsyncStorage.setItem(SEARCH_KEY, JSON.stringify(Object.fromEntries(entries)));
   },
 };
-
 

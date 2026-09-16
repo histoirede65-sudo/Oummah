@@ -37,10 +37,16 @@ import {
     type StoredMosque,
 } from '../../features/mosques/data/mosquePreferences';
 import {
-    getApprovedMosquePrayerTimes,
+  getApprovedMosquePrayerTimes,
+  applyApprovedMosquePrayerTimes,
     proposeMosquePrayerTimes,
     type MosquePrayerTimes,
 } from '../../features/mosques/data/mosquePrayerUpdates';
+import {
+  getMosquePrayerSchedule,
+  loadPrayerCalculationSettings,
+  type MosquePrayerSchedule,
+} from '../../features/mosques/data/mosquePrayerTimes';
 import { colors } from '../../theme/colors';
 import { typography } from '../../theme/typography';
 
@@ -373,6 +379,7 @@ export default function MosqueDetailScreen() {
   const [savingMainMosque, setSavingMainMosque] = useState(false);
   const [enrichment, setEnrichment] = useState<MosqueEnrichment | null>(null);
   const [prayerTimes, setPrayerTimes] = useState<MosquePrayerTimes | null>(null);
+  const [prayerSchedule, setPrayerSchedule] = useState<MosquePrayerSchedule | null>(null);
   const [prayerModalVisible, setPrayerModalVisible] = useState(false);
   const [savingPrayerTimes, setSavingPrayerTimes] = useState(false);
   const [prayerForm, setPrayerForm] = useState({ fajr: '', dhuhr: '', asr: '', maghrib: '', isha: '', jumuah: '', note: '' });
@@ -516,6 +523,27 @@ export default function MosqueDetailScreen() {
       active = false;
     };
   }, [mosqueId]);
+
+  useEffect(() => {
+    let active = true;
+    const loadSchedule = async () => {
+      if (!mosque) return;
+      const [settings, approved] = await Promise.all([
+        loadPrayerCalculationSettings(),
+        getApprovedMosquePrayerTimes(mosque.id).catch(() => null),
+      ]);
+      const schedule = await getMosquePrayerSchedule(mosque.latitude, mosque.longitude, undefined, settings).catch(() => null);
+      if (active && schedule) {
+        setPrayerSchedule(
+          settings.scheduleSource === 'mosque'
+            ? applyApprovedMosquePrayerTimes(schedule, approved)
+            : schedule,
+        );
+      }
+    };
+    void loadSchedule();
+    return () => { active = false; };
+  }, [mosque]);
 
   useEffect(() => {
     let active = true;
@@ -843,6 +871,7 @@ export default function MosqueDetailScreen() {
         <MosquePrayerCountdown
           latitude={displayedMosque.latitude}
           longitude={displayedMosque.longitude}
+          mosqueId={displayedMosque.id}
         />
 
         <View style={styles.section}>
@@ -851,7 +880,7 @@ export default function MosqueDetailScreen() {
             {(['fajr','dhuhr','asr','maghrib','isha'] as const).map((key) => (
               <View key={key} style={styles.prayerTimeRow}>
                 <Text style={styles.prayerTimeLabel}>{key.charAt(0).toUpperCase() + key.slice(1)}</Text>
-                <Text style={styles.prayerTimeValue}>{prayerTimes?.[key] ?? 'Non renseigné'}</Text>
+                <Text style={styles.prayerTimeValue}>{prayerSchedule?.prayers.find((prayer) => prayer.key.toLowerCase() === key)?.time ?? prayerTimes?.[key] ?? 'Non renseigné'}</Text>
               </View>
             ))}
             <View style={styles.prayerTimeDivider} />

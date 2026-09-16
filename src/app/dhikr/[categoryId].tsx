@@ -28,6 +28,7 @@ import {
 import { useLearningAudioPlayer } from "../../features/learning-audio/useLearningAudioPlayer";
 import { colors } from "../../theme/colors";
 import { typography } from "../../theme/typography";
+import { useI18n } from "../../i18n";
 
 function formatTime(seconds: number) {
   if (!Number.isFinite(seconds) || seconds < 0) return "0:00";
@@ -37,6 +38,7 @@ function formatTime(seconds: number) {
 }
 
 export default function DhikrReaderScreen() {
+  const { language, t } = useI18n();
   const { categoryId, item: requestedItem } = useLocalSearchParams<{
     categoryId: string;
     item?: string;
@@ -102,6 +104,11 @@ export default function DhikrReaderScreen() {
   const isAudioLoading = learningAudio.pendingKey === current?.id;
   const audioProgress =
     learningAudio.activeKey === current?.id ? learningAudio.progress : 0;
+  const categoryTitle = category
+    ? language === "en"
+      ? category.englishTitle
+      : category.frenchTitle
+    : "";
 
   useEffect(() => {
     if (!category || !current) return;
@@ -173,15 +180,15 @@ export default function DhikrReaderScreen() {
   const share = useCallback(() => {
     if (!current || !category) return;
     void Share.share({
-      message: `${current.arabic}\n\n${category.frenchTitle}\nSource : ${current.source}`,
+      message: `${current.arabic}\n\n${categoryTitle}\n${t("dhikr.shareSource", { source: current.source })}`,
     });
-  }, [category, current]);
+  }, [category, categoryTitle, current, t]);
 
   if (loading) {
     return (
       <SafeAreaView style={styles.loadingScreen}>
         <ActivityIndicator color={colors.goldLight} />
-        <Text style={styles.loadingText}>Préparation de votre dhikr…</Text>
+        <Text style={styles.loadingText}>{t("dhikr.preparing")}</Text>
       </SafeAreaView>
     );
   }
@@ -195,10 +202,14 @@ export default function DhikrReaderScreen() {
           color={colors.goldLight}
         />
         <Text style={styles.loadingText}>
-          Ce dhikr est momentanément indisponible.
+          {t("dhikr.unavailable")}
         </Text>
-        <Pressable onPress={() => router.back()} style={styles.errorButton}>
-          <Text style={styles.errorButtonText}>Revenir</Text>
+        <Pressable
+          accessibilityLabel={t("dhikr.back")}
+          onPress={() => router.back()}
+          style={styles.errorButton}
+        >
+          <Text style={styles.errorButtonText}>{t("dhikr.back")}</Text>
         </Pressable>
       </SafeAreaView>
     );
@@ -207,18 +218,29 @@ export default function DhikrReaderScreen() {
   return (
     <SafeAreaView edges={["top"]} style={styles.safeArea}>
       <View style={styles.topBar}>
-        <Pressable onPress={() => router.back()} style={styles.circleButton}>
+        <Pressable
+          accessibilityLabel={t("common.back")}
+          onPress={() => router.back()}
+          style={styles.circleButton}
+        >
           <Ionicons name="arrow-back" size={21} color={colors.goldLight} />
         </Pressable>
         <View style={styles.titleCopy}>
           <Text numberOfLines={1} style={styles.title}>
-            {category.frenchTitle}
+            {categoryTitle}
           </Text>
           <Text style={styles.subtitle}>
-            Dhikr {safeIndex + 1} sur {items.length}
+            {t("dhikr.itemProgress", {
+              current: safeIndex + 1,
+              total: items.length,
+            })}
           </Text>
         </View>
-        <Pressable onPress={toggleFavorite} style={styles.circleButton}>
+        <Pressable
+          accessibilityLabel={t(isFavorite ? "dhikr.removeFavorite" : "dhikr.addFavorite")}
+          onPress={toggleFavorite}
+          style={styles.circleButton}
+        >
           <Ionicons
             name={isFavorite ? "heart" : "heart-outline"}
             size={20}
@@ -259,7 +281,11 @@ export default function DhikrReaderScreen() {
               />
               <Text style={styles.sourceText}>{current.source}</Text>
             </View>
-            <Pressable onPress={share} style={styles.shareButton}>
+            <Pressable
+              accessibilityLabel={t("dhikr.share")}
+              onPress={share}
+              style={styles.shareButton}
+            >
               <Ionicons
                 name="share-social-outline"
                 size={17}
@@ -279,14 +305,15 @@ export default function DhikrReaderScreen() {
                 size={14}
                 color={colors.goldLight}
               />
-              <Text style={styles.repeatText}>{target}× recommandé</Text>
+              <Text style={styles.repeatText}>{t("dhikr.recommended", { count: target })}</Text>
             </View>
-            <Text style={styles.orderText}>N° {current.order}</Text>
+            <Text style={styles.orderText}>{t("dhikr.order", { order: current.order })}</Text>
           </View>
         </View>
 
         <View style={styles.audioCard}>
           <Pressable
+            accessibilityLabel={t(isPlaying ? "dhikr.pauseRecitation" : "dhikr.playRecitation")}
             disabled={!currentAudioSource}
             onPress={toggleAudio}
             style={[styles.audioPlay, !currentAudioSource && styles.disabled]}
@@ -304,10 +331,10 @@ export default function DhikrReaderScreen() {
           <View style={styles.audioCopy}>
             <Text style={styles.audioTitle}>
               {isAudioLoading
-                ? "Chargement de la récitation…"
+                ? t("dhikr.loadingRecitation")
                 : currentAudioSource
-                  ? "Écouter pour apprendre"
-                  : "Audio indisponible pour ce dhikr"}
+                  ? t("dhikr.listenToLearn")
+                  : t("dhikr.audioUnavailable")}
             </Text>
             <Pressable
               onLayout={(event) =>
@@ -335,30 +362,49 @@ export default function DhikrReaderScreen() {
               </Text>
             </View>
           </View>
-          <Pressable onPress={learningAudio.cycleSpeed} style={styles.speedButton}>
+          <Pressable
+            accessibilityLabel={t("dhikr.changeSpeed")}
+            onPress={learningAudio.cycleSpeed}
+            style={styles.speedButton}
+          >
             <Text style={styles.speedText}>{learningAudio.speed}×</Text>
           </Pressable>
         </View>
         {learningAudio.error ? (
-          <Text style={styles.audioError}>{learningAudio.error}</Text>
+          <Text style={styles.audioError}>
+            {language === "fr" ? learningAudio.error : t("dhikr.audioPlaybackError")}
+          </Text>
         ) : null}
 
         <View style={styles.counterSection}>
           <View style={styles.counterHeading}>
             <View>
-              <Text style={styles.counterEyebrow}>COMPTEUR DE RÉPÉTITIONS</Text>
+              <Text style={styles.counterEyebrow}>{t("dhikr.repetitionCounter")}</Text>
               <Text style={styles.counterTitle}>
                 {complete
-                  ? "Terminé, mā shā’ Allāh"
-                  : `${target - currentCount} restant${target - currentCount > 1 ? "s" : ""}`}
+                  ? t("dhikr.completedMashaAllah")
+                  : t(
+                      target - currentCount > 1
+                        ? "dhikr.remainingPlural"
+                        : "dhikr.remaining",
+                      { count: target - currentCount },
+                    )}
               </Text>
             </View>
-            <Pressable onPress={resetCounter} style={styles.resetButton}>
+            <Pressable
+              accessibilityLabel={t("dhikr.resetAccessibility")}
+              onPress={resetCounter}
+              style={styles.resetButton}
+            >
               <Ionicons name="refresh" size={16} color={colors.textMuted} />
             </Pressable>
           </View>
 
           <Pressable
+            accessibilityLabel={t("dhikr.counterAccessibility", {
+              count: currentCount,
+              target,
+            })}
             onPress={incrementCounter}
             style={({ pressed }) => [
               styles.counterButton,
@@ -391,7 +437,7 @@ export default function DhikrReaderScreen() {
             <Text
               style={[styles.tapHint, complete && styles.counterTargetComplete]}
             >
-              {complete ? "COMPLÉTÉ" : "TOUCHEZ POUR COMPTER"}
+              {complete ? t("dhikr.completedUpper") : t("dhikr.tapToCount")}
             </Text>
           </Pressable>
         </View>
@@ -399,14 +445,16 @@ export default function DhikrReaderScreen() {
 
       <View style={styles.navigation}>
         <Pressable
+          accessibilityLabel={t("dhikr.previous")}
           disabled={safeIndex <= 0}
           onPress={() => changeItem(safeIndex - 1)}
           style={[styles.navButton, safeIndex <= 0 && styles.disabled]}
         >
           <Ionicons name="arrow-back" size={18} color={colors.goldLight} />
-          <Text style={styles.navText}>Précédent</Text>
+          <Text style={styles.navText}>{t("dhikr.previous")}</Text>
         </Pressable>
         <Pressable
+          accessibilityLabel={t("dhikr.next")}
           disabled={safeIndex >= items.length - 1}
           onPress={() => changeItem(safeIndex + 1)}
           style={[
@@ -415,7 +463,7 @@ export default function DhikrReaderScreen() {
             safeIndex >= items.length - 1 && styles.disabled,
           ]}
         >
-          <Text style={styles.navTextPrimary}>Suivant</Text>
+          <Text style={styles.navTextPrimary}>{t("dhikr.next")}</Text>
           <Ionicons name="arrow-forward" size={18} color={colors.background} />
         </Pressable>
       </View>

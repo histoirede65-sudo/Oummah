@@ -74,9 +74,12 @@ import {
 } from "../../features/wasil/WasilReminderService";
 import { SURAHS } from "../../data/surahs";
 import { getNearbyMosques } from "../../features/mosques/data/nearbyMosques";
+import { searchNearbyHalalPlaces } from "../../features/halal/data/HalalPlacesRepository";
+import type { HalalPlace } from "../../features/halal/domain/HalalPlace";
 import { colors } from "../../theme/colors";
 import { typography } from "../../theme/typography";
 import { getValidSession } from "../../features/auth/SupabaseAuthService";
+import { useI18n } from "../../i18n";
 
 function getSingleParam(value: string | string[] | undefined) {
   return Array.isArray(value) ? (value[0] ?? "") : (value ?? "");
@@ -669,10 +672,24 @@ function parseWasilAnswer(answer: WasilReply) {
   const hasExplicitNativeReferences =
     (answer.quranReferences?.length ?? 0) > 0 ||
     (answer.hadithReferences?.length ?? 0) > 0;
+  const structuredReferenceLabel = (() => {
+    if (!answer.reference || !answer.sourceUrl) return answer.reference;
+    try {
+      const host = new URL(answer.sourceUrl).hostname.replace(/^www\./, "");
+      const segments = answer.reference.split(/\s+·\s+/);
+      if (host === "binbaz.org.sa") {
+        return segments.find((segment) => /\bibn b(?:a|â)z\b/i.test(segment)) ??
+          answer.reference;
+      }
+    } catch {
+      // An invalid URL will still be shown as an unlinked reference below.
+    }
+    return answer.reference;
+  })();
   const structuredSources: WasilDisplaySource[] =
     answer.reference && !hasExplicitNativeReferences
       ? [{
-          label: answer.reference,
+          label: structuredReferenceLabel,
           url: answer.sourceUrl,
           verified: true,
         }]
@@ -817,6 +834,70 @@ function normalizeWasilLiteralNewlines(body: string) {
     .replace(/\\r/g, "\n");
 }
 
+function asksForNearbyHalalPlace(value: string) {
+  const normalized = value
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase();
+  const mentionsPlace = /\b(restaurant|resto|fast food|boucherie|epicerie|commerce|manger|repas)\b/.test(normalized);
+  const mentionsHalal = /\bhalal\b/.test(normalized);
+  const mentionsProximity = /\b(proche|pres|autour|alentour|a cote|plus proche|nearest|nearby)\b/.test(normalized)
+    || normalized.includes("chez moi")
+    || normalized.includes("de moi");
+  return mentionsHalal && (mentionsProximity || (mentionsPlace && normalized.includes("ou")));
+}
+
+type WasilHalalLocationContext = {
+  places: HalalPlace[];
+};
+
+async function resolveWasilHalalContext(question: string): Promise<WasilHalalLocationContext | undefined> {
+  if (!asksForNearbyHalalPlace(question)) return undefined;
+  const permission = await Location.requestForegroundPermissionsAsync();
+  if (permission.status !== Location.PermissionStatus.GRANTED) return undefined;
+  const lastKnown = await Location.getLastKnownPositionAsync({
+    maxAge: 5 * 60 * 1000,
+    requiredAccuracy: 2_000,
+  });
+  const position = lastKnown ?? await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.Balanced });
+  const result = await searchNearbyHalalPlaces(
+    { latitude: position.coords.latitude, longitude: position.coords.longitude },
+    10_000,
+  );
+  return { places: result.places.slice(0, 5) };
+}
+
+function buildNearbyHalalLocalReply(context?: WasilHalalLocationContext): WasilReply {
+  if (!context) {
+    return {
+      kind: "answer",
+      title: "Localisation nécessaire",
+      body: "Pour chercher une adresse halal proche, autorise OUMMAH à accéder à ta position. Cette recherche locale est gratuite et ne consomme aucun crédit Wasil.",
+      action: { label: "Ouvrir Halal autour de moi", route: "/halal" },
+    };
+  }
+  if (context.places.length === 0) {
+    return {
+      kind: "answer",
+      title: "Aucune adresse trouvée à proximité",
+      body: "Je n’ai trouvé aucune adresse renseignée dans un rayon de 10 km. Ouvre le module pour élargir la zone ou ajouter une adresse communautaire.",
+      action: { label: "Explorer le module Halal", route: "/halal" },
+    };
+  }
+  const body = context.places.map((place, index) =>
+    `${index + 1}. ${place.name}\n${place.distanceLabel} · ${place.verificationLabel}\n${place.address}`,
+  ).join("\n\n");
+  const googleAttribution = context.places.some((place) => place.source === "google")
+    ? "\n\nCertaines adresses sont fournies par Google Maps."
+    : "";
+  return {
+    kind: "answer",
+    title: context.places.length === 1 ? "Une adresse halal proche" : "Adresses halal proches de toi",
+    body: `${body}${googleAttribution}\n\nLe niveau de preuve est indiqué pour chaque adresse. Cette recherche ne consomme aucun crédit Wasil.`,
+    action: { label: "Voir sur la carte", route: "/halal" },
+  };
+}
+
 function renderWasilBody(body: string) {
   body = normalizeWasilLiteralNewlines(body);
   const paragraphs: { start: number; text: string }[] = [];
@@ -857,6 +938,7 @@ function WasilAnswerPresentation({
   answer: WasilReply;
   animateReferences?: boolean;
 }) {
+  const { t } = useI18n();
   const parsed = parseWasilAnswer(answer);
   const referenceOpacity = useRef(new Animated.Value(animateReferences ? 0 : 1)).current;
   const referenceTranslateY = useRef(new Animated.Value(animateReferences ? 7 : 0)).current;
@@ -864,7 +946,11 @@ function WasilAnswerPresentation({
     (source) =>
       !!source.quranTarget ||
       !!source.hadithTarget ||
-      !!getWasilReferenceRoute(source.label),
+      (source.verified && !!source.url) ||
+      (!source.url && !!getWasilReferenceRoute(source.label)),
+  );
+  const hasExternalSource = visibleSources.some(
+    (source) => !!source.url && !source.quranTarget && !source.hadithTarget,
   );
   const documentaryStatus = answer.documentaryStatus ??
     (visibleSources.some((source) => source.verified) ? "verified" : "none");
@@ -896,10 +982,18 @@ function WasilAnswerPresentation({
         <View style={styles.wasilSources}>
           <View style={styles.wasilSourceDivider} />
           <Text style={styles.wasilSourcesTitle}>
-            {visibleSources.length > 1 ? "Références OUMMAH" : "Référence OUMMAH"}
+            {hasExternalSource
+              ? t(visibleSources.length > 1
+                ? "wasil.verifiedReferences"
+                : "wasil.verifiedReference")
+              : t(visibleSources.length > 1
+                ? "wasil.oummahReferences"
+                : "wasil.oummahReference")}
           </Text>
           {visibleSources.map((source) => {
-            const referenceRoute = getWasilReferenceRoute(source.label);
+            const referenceRoute = source.url
+              ? null
+              : getWasilReferenceRoute(source.label);
             const nativeRoute =
               source.quranTarget ?? source.hadithTarget ?? referenceRoute;
             const canOpen = !!nativeRoute || !!source.url;
@@ -907,9 +1001,9 @@ function WasilAnswerPresentation({
             const isQuranReference = !!source.quranTarget;
             const isHadithReference = !!source.hadithTarget;
             const referenceHint = isQuranReference
-              ? "Ouvrir dans le Coran"
+              ? t("wasil.openInQuran")
               : isHadithReference
-                ? "Consulter le hadith"
+                ? t("wasil.openHadith")
                 : undefined;
             const visibleReferenceHint = animateReferences
               ? referenceHint
@@ -992,7 +1086,7 @@ function WasilAnswerPresentation({
               size={13}
               color={colors.goldLight}
             />
-            <Text style={styles.wasilVerifiedText}>Réponse vérifiée</Text>
+            <Text style={styles.wasilVerifiedText}>{t("wasil.verifiedAnswer")}</Text>
           </View>
         ) : documentaryStatus === "partial" ? (
           <View style={styles.wasilVerifiedBadge}>
@@ -1001,7 +1095,7 @@ function WasilAnswerPresentation({
               size={13}
               color={colors.goldLight}
             />
-            <Text style={styles.wasilVerifiedText}>Sources partielles</Text>
+            <Text style={styles.wasilVerifiedText}>{t("wasil.partialSources")}</Text>
           </View>
         ) : (
           <View />
@@ -1011,14 +1105,17 @@ function WasilAnswerPresentation({
   );
 }
 
-function getLastAssistantTitle(conversation: WasilConversationThread) {
+function getLastAssistantTitle(
+  conversation: WasilConversationThread,
+  fallbackTitle: string,
+) {
   for (let index = conversation.messages.length - 1; index >= 0; index -= 1) {
     const message = conversation.messages[index];
     if (message.role === "assistant") {
       return message.reply?.title ?? message.text;
     }
   }
-  return "Conversation avec Wasil";
+  return fallbackTitle;
 }
 
 export default function DalilScreen() {
@@ -1031,6 +1128,7 @@ export default function DalilScreen() {
     autoSubmit?: string | string[];
     requestKey?: string | string[];
   }>();
+  const { language, t } = useI18n();
   const [prompt, setPrompt] = useState("");
   const [examplesExpanded, setExamplesExpanded] = useState(false);
   const [submittedPrompt, setSubmittedPrompt] = useState("");
@@ -1043,8 +1141,8 @@ export default function DalilScreen() {
   const [energyPurchaseId, setEnergyPurchaseId] = useState<string | null>(null);
   const [energyFeedback, setEnergyFeedback] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const [loadingStatus, setLoadingStatus] = useState(
-    "Wasil comprend votre question…",
+  const [loadingStatus, setLoadingStatus] = useState(() =>
+    t("wasil.loadingUnderstand"),
   );
   const [historyVisible, setHistoryVisible] = useState(false);
   const [deletingConversationId, setDeletingConversationId] = useState("");
@@ -1112,10 +1210,12 @@ export default function DalilScreen() {
   const currentHour = new Date().getHours();
   const wasilGreeting =
     currentHour >= 5 && currentHour < 12
-      ? "Assalamu alaykum, comment puis-je vous accompagner ce matin ?"
+      ? t("wasil.greetingMorning")
       : currentHour >= 12 && currentHour < 18
-        ? "Assalamu alaykum, que souhaitez-vous approfondir aujourd’hui ?"
-        : "Assalamu alaykum, comment puis-je vous accompagner ce soir ?";
+        ? t("wasil.greetingAfternoon")
+        : t("wasil.greetingEvening");
+  const hasActiveConversation =
+    messages.length > 0 || Boolean(submittedPrompt && (reply || loading));
 
   const scrollToLatestMessage = useCallback(() => {
     requestAnimationFrame(() => {
@@ -1192,6 +1292,7 @@ export default function DalilScreen() {
     activeConversationId.current = createWasilConversationId();
     activeMessages.current = [];
     setMessages([]);
+    setPrompt("");
     setSubmittedPrompt("");
     setReply(null);
     setFailedPrompt("");
@@ -1199,7 +1300,12 @@ export default function DalilScreen() {
     setPendingReminder(null);
     setPendingReminderManagement(null);
     setPendingGoalAction(null);
+    setExamplesExpanded(false);
     setHistoryVisible(false);
+    Keyboard.dismiss();
+    requestAnimationFrame(() => {
+      conversationScrollRef.current?.scrollTo({ y: 0, animated: true });
+    });
   };
 
   useFocusEffect(
@@ -1429,11 +1535,11 @@ export default function DalilScreen() {
     loadingStatusTimers.current = [];
 
     if (!loading) {
-      setLoadingStatus("Wasil comprend votre question…");
+      setLoadingStatus(t("wasil.loadingUnderstand"));
       return;
     }
 
-    setLoadingStatus("Wasil comprend votre question…");
+    setLoadingStatus(t("wasil.loadingUnderstand"));
 
     const scheduleStatus = (delay: number, value: string) => {
       const timer = setTimeout(() => {
@@ -1442,16 +1548,16 @@ export default function DalilScreen() {
       loadingStatusTimers.current.push(timer);
     };
 
-    scheduleStatus(900, "Wasil rassemble les éléments utiles…");
-    scheduleStatus(2300, "Wasil consulte ses sources fiables…");
-    scheduleStatus(4600, "Wasil vérifie les références…");
-    scheduleStatus(7200, "Wasil prépare une réponse claire…");
+    scheduleStatus(900, t("wasil.loadingGather"));
+    scheduleStatus(2300, t("wasil.loadingSources"));
+    scheduleStatus(4600, t("wasil.loadingVerify"));
+    scheduleStatus(7200, t("wasil.loadingPrepare"));
 
     return () => {
       loadingStatusTimers.current.forEach(clearTimeout);
       loadingStatusTimers.current = [];
     };
-  }, [loading]);
+  }, [loading, t]);
 
   useEffect(() => {
     if (loadingVariationTimer.current) {
@@ -2166,6 +2272,25 @@ export default function DalilScreen() {
       return;
     }
 
+    if (asksForNearbyHalalPlace(trimmedPrompt)) {
+      Keyboard.dismiss();
+      setSubmittedPrompt(trimmedPrompt);
+      setPrompt("");
+      setReply(null);
+      setLoading(true);
+      try {
+        const halalContext = await resolveWasilHalalContext(trimmedPrompt).catch(() => undefined);
+        const halalReply = buildNearbyHalalLocalReply(halalContext);
+        setReply(halalReply);
+        setFailedPrompt("");
+        setLastMisunderstoodPrompt("");
+        await commitTurn(trimmedPrompt, halalReply);
+      } finally {
+        setLoading(false);
+      }
+      return;
+    }
+
     if (asksForNearbyMosque(trimmedPrompt)) {
       Keyboard.dismiss();
       setSubmittedPrompt(trimmedPrompt);
@@ -2246,14 +2371,15 @@ export default function DalilScreen() {
         kind: "unsupported-religious",
         title:
           apiError?.code === "AUTH_REQUIRED"
-            ? "Profil requis"
-            : "Wasil est indisponible",
+            ? t("wasil.profileRequired")
+            : t("wasil.unavailable"),
         body:
-          apiError?.message ??
-          "Réessayez dans quelques instants. Aucun crédit n’a été consommé.",
+          language === "fr" && apiError?.message
+            ? apiError.message
+            : t("wasil.retryNoCredit"),
         action:
           apiError?.code === "AUTH_REQUIRED"
-            ? { label: "Ouvrir mon profil", route: "/profile" }
+            ? { label: t("wasil.openProfile"), route: "/profile" }
             : undefined,
       };
       setReply(errorReply);
@@ -2344,10 +2470,10 @@ export default function DalilScreen() {
       }
     } catch (error) {
       Alert.alert(
-        "Suppression impossible",
-        error instanceof Error
+        t("wasil.deletionFailed"),
+        language === "fr" && error instanceof Error
           ? error.message
-          : "La conversation nâ€™a pas pu Ãªtre supprimÃ©e.",
+          : t("wasil.conversationDeletionFailed"),
       );
     } finally {
       deletingConversationIdRef.current = "";
@@ -2362,12 +2488,12 @@ export default function DalilScreen() {
       return;
     }
     Alert.alert(
-      "Supprimer cette conversation ?",
-      "Cette suppression est dÃ©finitive.",
+      t("wasil.deleteConversationQuestion"),
+      t("wasil.deletionPermanent"),
       [
-        { text: "Annuler", style: "cancel" },
+        { text: t("wasil.cancel"), style: "cancel" },
         {
-          text: "Supprimer",
+          text: t("wasil.delete"),
           style: "destructive",
           onPress: () => void deleteConversation(conversation),
         },
@@ -2391,7 +2517,7 @@ export default function DalilScreen() {
       >
         <View style={styles.header}>
           <Pressable
-            accessibilityLabel="Revenir en arrière"
+            accessibilityLabel={t("common.back")}
             onPress={() => router.back()}
             style={({ pressed }) => [
               styles.headerButton,
@@ -2405,13 +2531,30 @@ export default function DalilScreen() {
             <Text style={styles.headerTitle}>Wasil</Text>
             <View style={styles.statusRow}>
               <View style={styles.statusDot} />
-              <Text style={styles.statusText}>Compagnon OUMMAH</Text>
+              <Text style={styles.statusText}>{t("wasil.oummahCompanion")}</Text>
             </View>
           </View>
 
           <View style={styles.headerActions}>
             <Pressable
-              accessibilityLabel="Anciennes conversations"
+              accessibilityLabel={t("wasil.newConversationWithWasil")}
+              accessibilityRole="button"
+              disabled={loading}
+              onPress={startNewConversation}
+              style={({ pressed }) => [
+                styles.newConversationButton,
+                loading && styles.headerActionDisabled,
+                pressed && !loading && styles.pressed,
+              ]}
+            >
+              <Ionicons
+                name="create-outline"
+                size={18}
+                color={colors.goldLight}
+              />
+            </Pressable>
+            <Pressable
+              accessibilityLabel={t("wasil.previousConversations")}
               onPress={openHistory}
               style={({ pressed }) => [
                 styles.historyButton,
@@ -2429,7 +2572,7 @@ export default function DalilScreen() {
                 <Ionicons name="sparkles" size={11} color={colors.goldLight} />
                 <Text style={styles.creditText}>{balance}</Text>
                 <Pressable
-                  accessibilityLabel="Acheter de l’Énergie Wasil"
+                  accessibilityLabel={t("wasil.buyEnergy")}
                   accessibilityRole="button"
                   hitSlop={6}
                   onPress={() => void openEnergy()}
@@ -2450,7 +2593,12 @@ export default function DalilScreen() {
           contentContainerStyle={styles.content}
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
-          style={styles.conversationScroll}
+          style={[
+            styles.conversationScroll,
+            isAuthenticated &&
+              !hasActiveConversation &&
+              styles.conversationScrollCompact,
+          ]}
         >
           <View style={styles.hero}>
             <LinearGradient
@@ -2471,10 +2619,7 @@ export default function DalilScreen() {
                 <Text style={styles.wasilPillText}>WASIL</Text>
               </View>
               <Text style={styles.heroTitle}>{wasilGreeting}</Text>
-              <Text style={styles.heroText}>
-                Posez une question religieuse ou demandez à Wasil d’ouvrir un
-                espace d’OUMMAH.
-              </Text>
+              <Text style={styles.heroText}>{t("wasil.helpText")}</Text>
             </View>
 
             <Animated.View
@@ -2529,14 +2674,23 @@ export default function DalilScreen() {
             </Animated.View>
           </View>
 
-          {messages.length > 0 ||
-          (submittedPrompt && (reply || loading)) ? (
+          <View style={styles.aiInfoCard}>
+            <View style={styles.aiInfoIcon}>
+              <Ionicons name="information-outline" size={16} color={colors.goldLight} />
+            </View>
+            <View style={styles.aiInfoCopy}>
+              <Text style={styles.aiInfoTitle}>{t("wasil.about")}</Text>
+              <Text style={styles.aiInfoText}>{t("wasil.aiNotice")}</Text>
+            </View>
+          </View>
+
+          {hasActiveConversation ? (
             <View style={styles.previewConversation}>
               {messages.map((message) => {
                 if (message.role === "user") {
                   return (
                     <View key={message.id} style={styles.userMessage}>
-                      <Text style={styles.messageAuthor}>Vous</Text>
+                      <Text style={styles.messageAuthor}>{t("wasil.you")}</Text>
                       <Text style={styles.userMessageText}>{message.text}</Text>
                     </View>
                   );
@@ -2596,7 +2750,7 @@ export default function DalilScreen() {
                     scrollToNewTurnAnchor(event.nativeEvent.layout.y)
                   }
                 >
-                  <Text style={styles.messageAuthor}>Vous</Text>
+                  <Text style={styles.messageAuthor}>{t("wasil.you")}</Text>
                   <Text style={styles.userMessageText}>{submittedPrompt}</Text>
                 </View>
               ) : null}
@@ -2654,7 +2808,7 @@ export default function DalilScreen() {
                         size={14}
                         color={colors.goldLight}
                       />
-                      <Text style={styles.retryActionText}>RÃ©essayer</Text>
+                      <Text style={styles.retryActionText}>{t("wasil.retry")}</Text>
                     </Pressable>
                   ) : null}
                   {reply.action ? (
@@ -2686,10 +2840,7 @@ export default function DalilScreen() {
               size={18}
               color={colors.goldLight}
             />
-            <Text style={styles.scopeNoticeText}>
-              Wasil répond uniquement aux questions religieuses et s’appuie sur
-              des références vérifiées lorsqu’elles sont disponibles.
-            </Text>
+            <Text style={styles.scopeNoticeText}>{t("wasil.scopeNotice")}</Text>
           </View>
         </ScrollView>
 
@@ -2703,17 +2854,15 @@ export default function DalilScreen() {
                 <Ionicons name="person-add-outline" size={22} color="#16111B" />
               </View>
               <View style={styles.guestWasilCopy}>
-                <Text style={styles.guestWasilTitle}>Inscrivez-vous gratuitement</Text>
-                <Text style={styles.guestWasilText}>
-                  « Et quiconque place sa confiance en Allah, Il lui suffit. » — Coran, 65:3 Inscrivez-vous pour commencer à parler avec Wasil et recevoir vos crédits gratuits.
-                </Text>
-                <Text style={styles.guestWasilLink}>Créer mon profil →</Text>
+                <Text style={styles.guestWasilTitle}>{t("wasil.signUpFree")}</Text>
+                <Text style={styles.guestWasilText}>{`${t("home.wasilTrustVerse")} ${t("wasil.guestInviteCredits")}`}</Text>
+                <Text style={styles.guestWasilLink}>{t("wasil.createProfile")}</Text>
               </View>
             </Pressable>
           ) : (
           <View style={styles.composer}>
             <TextInput
-              accessibilityLabel="Écrire à Wasil"
+              accessibilityLabel={t("home.writeWasilQuestion")}
               blurOnSubmit={false}
               multiline
               onBlur={() => {
@@ -2727,14 +2876,14 @@ export default function DalilScreen() {
                 inputFocused.current = true;
               }}
               onSubmitEditing={() => void submitPrompt()}
-              placeholder="Demandez quelque chose à Wasil…"
+              placeholder={t("home.askWasil")}
               placeholderTextColor={colors.textMuted}
               returnKeyType="send"
               style={styles.input}
               value={prompt}
             />
             <Pressable
-              accessibilityLabel="Envoyer à Wasil"
+              accessibilityLabel={t("home.sendToWasil")}
               disabled={!prompt.trim() || loading}
               onPress={() => {
                 console.log("[WASIL_SEND_PRESS]");
@@ -2769,12 +2918,12 @@ export default function DalilScreen() {
                 ]}
               >
                 <Text style={styles.questionExamplesTitle}>
-                  Exemples de questions à poser à Wasil
+                  {t("wasil.questionExamples")}
                 </Text>
                 <Ionicons
                   name={examplesExpanded ? "chevron-up" : "chevron-down"}
                   size={15}
-                  color={colors.textMuted}
+                  color={colors.goldLight}
                 />
               </Pressable>
               {examplesExpanded ? (
@@ -2817,9 +2966,9 @@ export default function DalilScreen() {
           >
             <View style={styles.historyHandle} />
             <View style={styles.historyHeader}>
-              <Text style={styles.historyTitle}>Conversations</Text>
+              <Text style={styles.historyTitle}>{t("wasil.conversations")}</Text>
               <Pressable
-                accessibilityLabel="Fermer l’historique"
+                accessibilityLabel={t("wasil.closeHistory")}
                 onPress={() => setHistoryVisible(false)}
                 style={styles.historyClose}
               >
@@ -2847,16 +2996,16 @@ export default function DalilScreen() {
                 />
                 <View style={styles.historyItemCopy}>
                   <Text style={styles.historyQuestion}>
-                    Nouvelle conversation
+                    {t("wasil.newConversation")}
                   </Text>
                   <Text style={styles.historyAnswer}>
-                    Commencer un nouvel échange avec Wasil
+                    {t("wasil.startNewExchange")}
                   </Text>
                 </View>
               </Pressable>
               {conversations.length === 0 ? (
                 <Text style={styles.historyEmpty}>
-                  Vos anciennes conversations apparaîtront ici.
+                  {t("wasil.historyEmpty")}
                 </Text>
               ) : (
                 conversations.map((conversation) => (
@@ -2884,11 +3033,11 @@ export default function DalilScreen() {
                         {conversation.title}
                       </Text>
                       <Text numberOfLines={1} style={styles.historyAnswer}>
-                        {getLastAssistantTitle(conversation)}
+                        {getLastAssistantTitle(conversation, t("wasil.conversationWithWasil"))}
                       </Text>
                     </View>
                     <Pressable
-                      accessibilityLabel={`Supprimer la conversation ${conversation.title}`}
+                      accessibilityLabel={t("wasil.deleteConversation", { title: conversation.title })}
                       disabled={loading || Boolean(deletingConversationId)}
                       hitSlop={8}
                       onPress={(event) => {
@@ -3150,6 +3299,19 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end",
     gap: 7,
   },
+  newConversationButton: {
+    width: 34,
+    height: 34,
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 17,
+    borderWidth: 1,
+    borderColor: "rgba(227,181,90,0.36)",
+    backgroundColor: "rgba(227,181,90,0.10)",
+  },
+  headerActionDisabled: {
+    opacity: 0.42,
+  },
   historyButton: {
     width: 34,
     height: 34,
@@ -3232,6 +3394,9 @@ const styles = StyleSheet.create({
   conversationScroll: {
     flex: 1,
     flexShrink: 1,
+  },
+  conversationScrollCompact: {
+    flex: 0,
   },
   hero: {
     minHeight: 122,
@@ -3331,6 +3496,42 @@ const styles = StyleSheet.create({
   previewConversation: {
     marginTop: 18,
     gap: 9,
+  },
+  aiInfoCard: {
+    marginTop: 8,
+    paddingHorizontal: 10,
+    paddingVertical: 7,
+    flexDirection: "row",
+    alignItems: "flex-start",
+    gap: 8,
+    borderRadius: 13,
+    borderWidth: 1,
+    borderColor: "rgba(227,181,90,0.20)",
+    backgroundColor: "rgba(23,16,38,0.68)",
+  },
+  aiInfoIcon: {
+    width: 23,
+    height: 23,
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 12,
+    backgroundColor: "rgba(227,181,90,0.11)",
+  },
+  aiInfoCopy: {
+    flex: 1,
+  },
+  aiInfoTitle: {
+    color: colors.goldLight,
+    fontFamily: typography.sans,
+    fontSize: 11,
+    fontWeight: "700",
+  },
+  aiInfoText: {
+    marginTop: 2,
+    color: colors.textMuted,
+    fontFamily: typography.sans,
+    fontSize: 10,
+    lineHeight: 14,
   },
   userMessage: {
     maxWidth: "88%",
@@ -3531,13 +3732,13 @@ const styles = StyleSheet.create({
     fontWeight: "700",
   },
   scopeNotice: {
-    marginTop: 19,
-    paddingHorizontal: 13,
-    paddingVertical: 11,
+    marginTop: 10,
+    paddingHorizontal: 11,
+    paddingVertical: 8,
     flexDirection: "row",
     alignItems: "center",
-    gap: 9,
-    borderRadius: 15,
+    gap: 8,
+    borderRadius: 13,
     borderWidth: 1,
     borderColor: "rgba(227,181,90,0.14)",
     backgroundColor: "rgba(200,148,58,0.055)",
@@ -3546,8 +3747,8 @@ const styles = StyleSheet.create({
     flex: 1,
     color: colors.textMuted,
     fontFamily: typography.sans,
-    fontSize: 9.8,
-    lineHeight: 14,
+    fontSize: 9.4,
+    lineHeight: 13,
   },
   guestWasilCard: {
     flexDirection: 'row',
@@ -3593,7 +3794,7 @@ const styles = StyleSheet.create({
     elevation: 11,
     flexShrink: 0,
     paddingHorizontal: 13,
-    paddingTop: 9,
+    paddingTop: 7,
     paddingBottom: Platform.OS === "ios" ? 10 : 8,
     borderTopWidth: 1,
     borderTopColor: "rgba(255,255,255,0.055)",
@@ -3644,25 +3845,25 @@ const styles = StyleSheet.create({
     transform: [{ scale: 0.94 }],
   },
   questionExamples: {
-    marginTop: 4,
+    marginTop: 6,
   },
   questionExamplesToggle: {
-    minHeight: 32,
+    minHeight: 38,
     marginTop: 2,
-    paddingHorizontal: 10,
+    paddingHorizontal: 12,
     flexDirection: "row",
     alignItems: "center",
-    borderRadius: 10,
+    borderRadius: 12,
     borderWidth: 1,
-    borderColor: "rgba(227,181,90,0.28)",
-    backgroundColor: "rgba(227,181,90,0.09)",
+    borderColor: "rgba(227,181,90,0.42)",
+    backgroundColor: "rgba(227,181,90,0.12)",
   },
   questionExamplesTitle: {
     flex: 1,
     color: colors.goldLight,
     fontFamily: typography.sans,
-    fontSize: 11.5,
-    fontWeight: "600",
+    fontSize: 12,
+    fontWeight: "700",
   },
   questionExamplesList: {
     paddingTop: 2,

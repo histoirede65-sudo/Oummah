@@ -10,7 +10,6 @@ import { typography } from '../../theme/typography';
 import { useDoubleTapGesture } from './PlayerGestures';
 import ReciterImage from './ReciterImage';
 import ReciterTransition, { type ReciterTransitionData } from './ReciterTransition';
-import WaveVisualizer from './WaveVisualizer';
 
 type ReciterHeroProps = {
   previousReciter?: ReciterTransitionData;
@@ -36,6 +35,15 @@ type ReciterHeroProps = {
   onRangeStartChange: (value: number) => void;
   onRangeEndChange: (value: number) => void;
   onPlayRange: () => void;
+  onTogglePlay: () => void;
+  onStop: () => void;
+  onSkipBackward: () => void;
+  onSkipForward: () => void;
+  onPrevious: () => void;
+  onNext: () => void;
+  previousDisabled?: boolean;
+  nextDisabled?: boolean;
+  transportDisabled?: boolean;
 };
 
 const NOOP = () => undefined;
@@ -63,6 +71,15 @@ export default function ReciterHero({
   onRangeStartChange,
   onRangeEndChange,
   onPlayRange,
+  onTogglePlay,
+  onStop,
+  onSkipBackward,
+  onSkipForward,
+  onPrevious,
+  onNext,
+  previousDisabled = false,
+  nextDisabled = false,
+  transportDisabled = false,
 }: ReciterHeroProps) {
   const { t } = useI18n();
   const { currentReciter } = useReciter();
@@ -177,7 +194,7 @@ export default function ReciterHero({
                 {surahFrenchName}
               </Text>
 
-              <Text style={styles.subtitle}>Sourate {surahNumber}  •</Text>
+              <Text style={styles.subtitle}>{t('recitations.surahNumber', { number: surahNumber })}  •</Text>
 
               <Pressable
                 accessibilityRole="button"
@@ -186,10 +203,10 @@ export default function ReciterHero({
               >
               </Pressable>
               <View style={styles.rangePanel}>
-                <Text style={styles.rangeTitle}>Écouter une plage de versets</Text>
+                <Text style={styles.rangeTitle}>{t('audio.listenToVerseRange')}</Text>
                 <View style={styles.rangeControls}>
-                  <RangeControl label="De" value={rangeStart} minimum={1} maximum={rangeEnd} onChange={onRangeStartChange} />
-                  <RangeControl label="À" value={rangeEnd} minimum={rangeStart} maximum={verses} onChange={onRangeEndChange} />
+                  <RangeControl label={t('audio.from')} value={rangeStart} minimum={1} maximum={rangeEnd} onChange={onRangeStartChange} />
+                  <RangeControl label={t('audio.to')} value={rangeEnd} minimum={rangeStart} maximum={verses} onChange={onRangeEndChange} />
                   <Pressable onPress={onPlayRange} style={({ pressed }) => [styles.rangePlay, pressed && styles.pressed]}>
                     <Ionicons name="play" size={15} color={colors.background} />
                   </Pressable>
@@ -197,12 +214,72 @@ export default function ReciterHero({
               </View>
             </View>
 
-            <View style={styles.wave}>
-              <WaveVisualizer
-                isPlaying={isPlaying}
-                progress={0}
-                audioLevel={0.58}
-              />
+            <View style={styles.transportPosition}>
+              <LinearGradient
+                colors={['rgba(34,20,49,0.94)', 'rgba(12,9,24,0.97)']}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={styles.transportBar}
+              >
+                <Pressable
+                  accessibilityRole="button"
+                  accessibilityLabel={t('audio.restartOrPreviousSurah')}
+                  disabled={previousDisabled}
+                  onPress={onPrevious}
+                  style={({ pressed }) => [styles.transportButton, previousDisabled && styles.transportDisabled, pressed && styles.transportPressed]}
+                >
+                  <Ionicons name="play-skip-back" size={17} color={previousDisabled ? colors.textMuted : stylesConstants.premiumGoldLight} />
+                </Pressable>
+
+                <Pressable
+                  accessibilityRole="button"
+                  accessibilityLabel={t('audio.skipBackFiveSeconds')}
+                  disabled={transportDisabled}
+                  onPress={onSkipBackward}
+                  style={({ pressed }) => [styles.transportButton, transportDisabled && styles.transportDisabled, pressed && styles.transportPressed]}
+                >
+                  <Text style={[styles.seekLabel, transportDisabled && styles.seekLabelDisabled]}>−5</Text>
+                </Pressable>
+
+                <Pressable
+                  accessibilityRole="button"
+                  accessibilityLabel={isPlaying ? t('common.pause') : t('audio.startPlayback')}
+                  onPress={onTogglePlay}
+                  style={({ pressed }) => [styles.transportPlayButton, pressed && styles.transportPlayPressed]}
+                >
+                  <Ionicons name={isPlaying ? 'pause' : 'play'} size={20} color={colors.background} style={!isPlaying ? styles.transportPlayIcon : undefined} />
+                </Pressable>
+
+                <Pressable
+                  accessibilityRole="button"
+                  accessibilityLabel={t('audio.stopAndRestart')}
+                  disabled={transportDisabled}
+                  onPress={onStop}
+                  style={({ pressed }) => [styles.transportButton, transportDisabled && styles.transportDisabled, pressed && styles.transportPressed]}
+                >
+                  <Ionicons name="stop" size={14} color={transportDisabled ? colors.textMuted : stylesConstants.premiumGoldLight} />
+                </Pressable>
+
+                <Pressable
+                  accessibilityRole="button"
+                  accessibilityLabel={t('audio.skipForwardFiveSeconds')}
+                  disabled={transportDisabled}
+                  onPress={onSkipForward}
+                  style={({ pressed }) => [styles.transportButton, transportDisabled && styles.transportDisabled, pressed && styles.transportPressed]}
+                >
+                  <Text style={[styles.seekLabel, transportDisabled && styles.seekLabelDisabled]}>+5</Text>
+                </Pressable>
+
+                <Pressable
+                  accessibilityRole="button"
+                  accessibilityLabel={t('audio.next')}
+                  disabled={nextDisabled}
+                  onPress={onNext}
+                  style={({ pressed }) => [styles.transportButton, nextDisabled && styles.transportDisabled, pressed && styles.transportPressed]}
+                >
+                  <Ionicons name="play-skip-forward" size={17} color={nextDisabled ? colors.textMuted : stylesConstants.premiumGoldLight} />
+                </Pressable>
+              </LinearGradient>
             </View>
 
             {verseContent ? (
@@ -218,6 +295,7 @@ export default function ReciterHero({
 }
 
 function RangeControl({ label, value, minimum, maximum, onChange }: { label: string; value: number; minimum: number; maximum: number; onChange: (value: number) => void }) {
+  const { t } = useI18n();
   const [open, setOpen] = useState(false);
   return (
     <>
@@ -229,7 +307,7 @@ function RangeControl({ label, value, minimum, maximum, onChange }: { label: str
       <Modal visible={open} transparent animationType="fade" onRequestClose={() => setOpen(false)}>
         <Pressable style={styles.rangeModalBackdrop} onPress={() => setOpen(false)}>
           <Pressable style={styles.rangeModal} onPress={(event) => event.stopPropagation()}>
-            <Text style={styles.rangeModalTitle}>Verset {label.toLowerCase()}</Text>
+            <Text style={styles.rangeModalTitle}>{t('audio.verseBoundary', { boundary: label.toLowerCase() })}</Text>
             <ScrollView style={styles.rangeList} contentContainerStyle={styles.rangeListContent}>
               {Array.from({ length: maximum - minimum + 1 }, (_, index) => minimum + index).map((item) => (
                 <Pressable
@@ -441,12 +519,59 @@ const styles = StyleSheet.create({
     fontSize: 9.5,
   },
 
-  wave: {
+  transportPosition: {
     position: 'absolute',
     right: 24,
-    bottom: 18,
+    bottom: 10,
     left: 24,
   },
+
+  transportBar: {
+    height: 46,
+    paddingHorizontal: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    borderRadius: 23,
+    borderWidth: 1,
+    borderColor: 'rgba(216,182,90,0.48)',
+    shadowColor: stylesConstants.premiumGold,
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.2,
+    shadowRadius: 9,
+    elevation: 5,
+  },
+
+  transportButton: {
+    width: 32,
+    height: 32,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: 'rgba(216,182,90,0.25)',
+    backgroundColor: 'rgba(8,7,19,0.46)',
+  },
+
+  transportPlayButton: {
+    width: 40,
+    height: 40,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 20,
+    backgroundColor: stylesConstants.premiumGold,
+    shadowColor: stylesConstants.premiumGold,
+    shadowOpacity: 0.42,
+    shadowRadius: 7,
+    elevation: 5,
+  },
+
+  transportPlayIcon: { marginLeft: 2 },
+  transportPressed: { opacity: 0.58, transform: [{ scale: 0.94 }] },
+  transportPlayPressed: { opacity: 0.78, transform: [{ scale: 0.94 }] },
+  transportDisabled: { opacity: 0.34 },
+  seekLabel: { color: stylesConstants.premiumGoldLight, fontFamily: typography.sans, fontSize: 11, fontWeight: '800' },
+  seekLabelDisabled: { color: colors.textMuted },
 
   verseOverlay: {
     position: 'absolute',
@@ -492,7 +617,7 @@ const styles = StyleSheet.create({
   },
   topReciterName: { position: 'absolute', left: 58, right: 58, color: '#F4D98A', fontFamily: typography.serifMedium, fontSize: 25, fontWeight: '700', textAlign: 'center', textShadowColor: 'rgba(0,0,0,0.9)', textShadowOffset: { width: 0, height: 2 }, textShadowRadius: 7 },
   reciterHint: { marginTop: 3, color: colors.textMuted, fontFamily: typography.sans, fontSize: 9, textAlign: 'center' },
-  rangePanel: { alignSelf: 'flex-start', marginTop: 48, transform: [{ translateX: -24 }, { translateY: 80 }], padding: 9, borderRadius: 16, backgroundColor: 'rgba(8,7,19,0.68)', borderWidth: 1, borderColor: 'rgba(216,182,90,0.28)' },
+  rangePanel: { alignSelf: 'flex-start', marginTop: 48, transform: [{ translateX: -24 }, { translateY: 60 }], padding: 9, borderRadius: 16, backgroundColor: 'rgba(8,7,19,0.68)', borderWidth: 1, borderColor: 'rgba(216,182,90,0.28)' },
   rangeTitle: { color: colors.textSecondary, fontFamily: typography.sans, fontSize: 10, fontWeight: '700', textAlign: 'center' },
   rangeControls: { marginTop: 6, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 7 },
   rangeControl: { minWidth: 70, height: 34, paddingHorizontal: 5, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', borderRadius: 10, backgroundColor: 'rgba(126,78,151,0.28)' },

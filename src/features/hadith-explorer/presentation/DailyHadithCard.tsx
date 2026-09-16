@@ -6,6 +6,7 @@ import { typography } from "../../../theme/typography";
 import { WasilContextButton } from "../../../components/wasil/WasilContextButton";
 import type { Hadith } from "../domain/Hadith";
 import HadithGradeBadge from "./HadithGradeBadge";
+import { useI18n } from "../../../i18n";
 
 export default function DailyHadithCard({
   hadith,
@@ -18,6 +19,7 @@ export default function DailyHadithCard({
   onPress: () => void;
   wasilPrompt?: string;
 }) {
+  const { language, t } = useI18n();
   return (
     <Pressable
       disabled={!hadith}
@@ -36,10 +38,10 @@ export default function DailyHadithCard({
         <View>
           <View style={styles.eyebrowRow}>
             <View style={styles.eyebrowDot} />
-            <Text style={styles.eyebrow}>HADITH DU JOUR</Text>
+            <Text style={styles.eyebrow}>{t("hadith.daily")}</Text>
           </View>
           <Text style={styles.date}>
-            {new Intl.DateTimeFormat("fr-FR", {
+            {new Intl.DateTimeFormat(language === "en" ? "en-GB" : "fr-FR", {
               weekday: "long",
               day: "numeric",
               month: "long",
@@ -53,7 +55,7 @@ export default function DailyHadithCard({
       </View>
 
       {loading ? (
-        <Text style={styles.empty}>Chargement du hadith authentifié…</Text>
+        <Text style={styles.empty}>{t("hadith.loadingAuthenticated")}</Text>
       ) : hadith ? (
         <>
           <Text numberOfLines={5} style={styles.french}>
@@ -69,7 +71,7 @@ export default function DailyHadithCard({
             />
 
             <View style={styles.read}>
-              <Text style={styles.readText}>Lire & comprendre</Text>
+              <Text style={styles.readText}>{t("hadith.readAndUnderstand")}</Text>
               <View style={styles.readArrow}>
                 <Ionicons
                   name="arrow-forward"
@@ -82,17 +84,16 @@ export default function DailyHadithCard({
           {wasilPrompt ? <View style={styles.wasilSection}>
             <View style={styles.wasilDivider} />
             <WasilContextButton largeLabel prompt={wasilPrompt} />
-            <Text style={styles.wasilSubtitle}>Comprendre le sens, le contexte et les enseignements du hadith.</Text>
+            <Text style={styles.wasilSubtitle}>{t("hadith.wasilSubtitle")}</Text>
           </View> : null}
         </>
       ) : (
         <Text style={styles.empty}>
-          Connectez-vous une première fois pour rendre le hadith du jour
-          disponible hors ligne.
+          {t("hadith.offlineFirstConnection")}
         </Text>
       )}
 
-      <Text style={styles.credit}>Texte et classification : HadeethEnc</Text>
+      <Text style={styles.credit}>{t("hadith.textAndClassification")}</Text>
     </Pressable>
   );
 }

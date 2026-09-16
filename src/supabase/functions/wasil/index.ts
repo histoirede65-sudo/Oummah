@@ -39,6 +39,7 @@ import {
   consumeWasilWebBudget,
   type WasilWebBudget,
 } from "./engine/DocumentaryRetriever.ts";
+import { religiousScholarCorpus, wasilVerifiedFiqhPolicy } from "./engine/ReligiousSourcePolicy.ts";
 
 async function retrieveQuranKnowledgeSafely(
   ...args: Parameters<typeof retrieveQuranKnowledge>
@@ -82,6 +83,9 @@ type HadithReference = {
   title: string;
   grade: string | null;
   searchQuery: string;
+  repositoryId: string | null;
+  repositoryScore: number | null;
+  repositoryMatchedTerms: string[];
 };
 
 type WasilClassification =
@@ -187,6 +191,14 @@ function analyzeWasilQuery(question: string, mode: "standard" | "deep"): WasilQu
       guidance: "Commence par identifier clairement le prophète et son statut. Présente ensuite une vue d'ensemble ordonnée : étapes majeures de l'histoire, passages coraniques centraux, invocations éventuelles, liens entre les épisodes et leçons. Pour une question générale, couvre les épisodes indispensables sans te limiter à deux ou trois versets isolés, mais évite les détails secondaires qui alourdissent la lecture.",
       webPolicy: mode === "deep" ? "always" : "fallback",
       maxLocalSources: 8,
+    };
+  }
+  if (/\b(musique|musical|musicaux|instrument(?:s)? de musique|instruments? musicaux?|maazif|ma'azif)\b/.test(normalized)) {
+    return {
+      category: "fiqh", depth, maxOutputTokens,
+      guidance: "Réponds clairement sur le statut des instruments de musique en citant la preuve effectivement vérifiée et, si pertinent, les avis sourcés des savants demandés. Distingue le chant sans instruments et les exceptions reconnues ; mentionne les divergences documentées sans présenter une opinion comme un consensus.",
+      webPolicy: "always",
+      maxLocalSources: 7,
     };
   }
   if (/\b(peut-on|est-il permis|halal|haram|licite|interdit|obligatoire|fiqh|ablution|ghusl|jeune|divorce|heritage|riba|prier avec)\b/.test(normalized)) {
@@ -362,7 +374,10 @@ function buildProductionHadithSources(
       reference: displayReference,
       title: item.frenchMeaning,
       grade: item.grade,
-      searchQuery,
+    searchQuery,
+      repositoryId: item.id ?? null,
+      repositoryScore: item.repositoryScore ?? null,
+      repositoryMatchedTerms: item.repositoryMatchedTerms ?? [],
     };
     sources[sourceId] = {
       title: `${item.collection} ${item.reference}`,
@@ -462,6 +477,9 @@ function inferLocalHadithReference(
     searchQuery: compactHadithSearchQuery(source.title) ||
       compactHadithSearchQuery(source.body) ||
       sourceId,
+    repositoryId: null,
+    repositoryScore: null,
+    repositoryMatchedTerms: [],
   };
 }
 
@@ -566,12 +584,42 @@ function buildDocumentaryCandidates(input: {
   };
 }
 
+function selectStrictHadithFallback(input: {
+  question: string;
+  candidates: DocumentaryCandidate[];
+  hadithMetadata: Map<string, HadithReference>;
+}): string[] {
+  return input.candidates.filter((candidate) => candidate.kind === "hadith").filter((candidate) => {
+    const metadata = input.hadithMetadata.get(candidate.id);
+    const reference = metadata?.reference?.trim() || candidate.reference.trim();
+    const authenticated = Boolean(metadata?.grade?.trim()) ||
+      /sahih|sahihayn|bukhari|muslim|authent/i.test(reference);
+    const repositoryTerms = metadata?.repositoryMatchedTerms ?? [];
+    const score = metadata?.repositoryScore ?? 0;
+    const coherentTerms = repositoryTerms.filter((term) =>
+      term.trim().length >= 3 && normalizeQuestion(input.question).includes(normalizeQuestion(term)),
+    );
+    const accepted = Boolean(metadata) && score >= 0.70 &&
+      coherentTerms.length >= 2 && Boolean(reference) && authenticated;
+    console.log("WASIL_HADITH_DETERMINISTIC_FALLBACK", {
+      repositoryId: metadata?.repositoryId ?? null,
+      documentarySourceId: candidate.id,
+      repositoryScore: score,
+      repositoryMatchedTermCount: coherentTerms.length,
+      decision: accepted ? "selected" : "rejected",
+      reason: accepted ? "strong_repository_evidence" : "strict_criteria_not_met",
+    });
+    return accepted;
+  }).slice(0, 3).map((candidate) => candidate.id);
+}
+
 function applyDocumentaryVerification(input: {
   requestSources: Record<string, TrustedSource>;
   candidates: DocumentaryCandidate[];
   selection: DocumentaryVerificationSelection[] | null;
   deterministicFallbackSourceIds: string[];
   protectedSourceIds?: string[];
+  strictHadithFallbackSourceIds?: string[];
 }): {
   quranSourceIds: string[];
   hadithSourceIds: string[];
@@ -602,6 +650,22 @@ function applyDocumentaryVerification(input: {
       hadithSourceIds: orderedIds.filter((id) =>
         candidateById.get(id)?.kind === "hadith"
       ),
+      mode: "deterministic-fallback",
+    };
+  }
+
+  if (input.selection.length === 0) {
+    const orderedIds = [...new Set([
+      ...orderedProtectedIds,
+      ...(input.strictHadithFallbackSourceIds ?? []),
+    ])];
+    const selectedIds = new Set(orderedIds);
+    for (const candidate of input.candidates) {
+      if (!selectedIds.has(candidate.id)) delete input.requestSources[candidate.id];
+    }
+    return {
+      quranSourceIds: orderedIds.filter((id) => candidateById.get(id)?.kind === "quran"),
+      hadithSourceIds: orderedIds.filter((id) => candidateById.get(id)?.kind === "hadith"),
       mode: "deterministic-fallback",
     };
   }
@@ -694,6 +758,26 @@ function ensureRequestedCorpusCoverage(input: {
   }
 }
 
+function enforceExplicitHadithSourceIds(input: {
+  question: string;
+  parsedSourceIds: string[];
+  verifiedHadithSourceIds: string[];
+}): boolean {
+  if (!requestedDocumentaryCorpora(input.question).hadith) return true;
+  const verified = new Set(input.verifiedHadithSourceIds);
+  const selectedHadith = input.parsedSourceIds.filter((id) => verified.has(id));
+  if (selectedHadith.length > 0) {
+    input.parsedSourceIds.splice(
+      0,
+      input.parsedSourceIds.length,
+      ...selectedHadith,
+    );
+    return true;
+  }
+  input.parsedSourceIds.splice(0, input.parsedSourceIds.length);
+  return false;
+}
+
 function selectRelevantSources(
   question: string,
   profile: WasilQueryProfile,
@@ -768,6 +852,67 @@ function shouldUseWebSearch(
   return localSourceCount === 0;
 }
 
+function isPrimaryEvidenceSufficient(input: {
+  question: string;
+  profile: WasilQueryProfile;
+  hadithRecord: HadithRepositoryRecord | null;
+  expansion: IslamicQueryExpansion | null;
+  candidates: DocumentaryCandidate[];
+  requestedCorpora: { quran: boolean; hadith: boolean };
+}) {
+  const normalized = normalizeQuestion(input.question);
+  const scholarNames = religiousScholarCorpus
+    .filter((source) => source.sourceKind === "scholar" && source.scholar)
+    .flatMap((source) => [source.scholar!, ...(source.aliases ?? [])])
+    .map((name) => normalizeQuestion(name))
+    .filter((name) => name.length >= 4);
+  const asksForScholar = scholarNames.some((name) => normalized.includes(name)) ||
+    /\b(?:savant|shaykh|cheikh|imam)\b/iu.test(normalized);
+  const asksForDivergence = /\b(?:divergence|diff[eé]rence|madhhab|[eé]coles?|avis|consensus|ijma)\b/iu.test(normalized);
+  const complexPersonal = /\b(?:divorce|mariage|h[eé]ritage|takfir|serment|contrat|transaction|mon cas|ma situation|pour moi)\b/iu.test(normalized);
+  const interpretiveFiqh = input.profile.category === "fiqh" || input.profile.category === "aqidah";
+  const requestedKinds = input.requestedCorpora.quran && !input.requestedCorpora.hadith
+    ? ["quran"]
+    : input.requestedCorpora.hadith && !input.requestedCorpora.quran
+    ? ["hadith"]
+    : ["quran", "hadith"];
+  const directCandidates = input.candidates.filter((candidate) => {
+    if (!requestedKinds.includes(candidate.kind)) return false;
+    const evidenceTerms = [
+      ...(input.expansion?.evidenceTerms ?? []),
+      ...(input.expansion?.directEvidenceDescription ? [input.expansion.directEvidenceDescription] : []),
+    ];
+    const ranked = rankDocuments(
+      [candidate],
+      () => ({
+        canonicalName: input.expansion?.canonicalName ?? input.question,
+        queryTerms: evidenceTerms.length
+          ? evidenceTerms
+          : [input.question],
+        evidenceTerms: evidenceTerms.length ? evidenceTerms : [input.question],
+        relatedTerms: input.expansion?.relatedTerms ?? [],
+        reference: candidate.reference,
+        text: candidate.text,
+        kind: candidate.kind,
+        retrievalHits: 1,
+      }),
+      0.70,
+      1,
+      false,
+    );
+    return ranked.length > 0 && ranked[0].matchedTerms.length >= 2;
+  });
+  const quranCount = directCandidates.filter((candidate) => candidate.kind === "quran").length;
+  const hadithCount = directCandidates.filter((candidate) => candidate.kind === "hadith").length;
+  const authenticatedHadith = input.hadithRecord?.items.some((item) =>
+    /(?:sahih|authentique|bukhari|boukhari|muslim)/iu.test(`${item.reference} ${item.grade ?? ""}`),
+  ) ?? false;
+  const directPrimary = requestedKinds.includes("quran")
+    ? quranCount > 0
+    : hadithCount > 0 && authenticatedHadith;
+  return directPrimary && !asksForScholar && !asksForDivergence && !complexPersonal && !interpretiveFiqh;
+}
+
 function runInBackground(task: Promise<unknown>, label: string) {
   const guarded = task.catch((error) => {
     console.warn(label, error instanceof Error ? error.message : String(error));
@@ -811,7 +956,11 @@ const approvedReligiousDomains = [
   "azhar.eg",
   "dar-alifta.org",
   "aliftaa.jo",
-  "yaqeeninstitute.org",
+  "binbaz.org.sa",
+  "binothaimeen.net",
+  "alalbani.info",
+  "alfawzan.af.org.sa",
+  "alifta.gov.sa",
   "islamhouse.com",
   "citadelledumusulman.com",
 ];
@@ -920,9 +1069,7 @@ const trustedSources: Record<string, TrustedSource> = {
   "fiqh:four-sunni-schools": {
     title: "Les quatre écoles juridiques sunnites",
     body: "Dans l’islam sunnite, les quatre principales écoles juridiques sont l’école hanafite, l’école malikite, l’école chaféite et l’école hanbalite. Une école juridique, ou madhhab, est une tradition méthodologique de compréhension du droit musulman développée et transmise par des générations de savants ; elle ne se réduit pas à l’opinion personnelle de son imam éponyme. Ces écoles reconnaissent les mêmes sources fondamentales tout en pouvant différer dans leurs méthodes et dans certaines questions secondaires.",
-    reference: "Al-Azhar Observatory · Yaqeen Institute, What is a Madhhab?",
-    sourceUrl:
-      "https://yaqeeninstitute.org/read/paper/what-is-a-madhhab-exploring-the-role-of-islamic-schools-of-law",
+    reference: "Présentation générale des quatre écoles juridiques sunnites",
   },
   "wellbeing:sadness-and-distress": {
     title: "Réconfort face à la tristesse",
@@ -1883,15 +2030,21 @@ Deno.serve(async (request) => {
     // preserves latency while ensuring they receive exactly the same semantic
     // target and evidence vocabulary.
     const repositoryRetrievalStartedAt = performance.now();
-    const [quranTopic, directHadithRecord] = await Promise.all([
-      retrieveQuranKnowledgeSafely(effectiveQuestion, queryExpansion),
-      shouldRetrieveHadith
+    const quranStartedAt = performance.now();
+    const quranPromise = retrieveQuranKnowledgeSafely(effectiveQuestion, queryExpansion)
+      .then((value) => ({ value, ms: elapsedMs(quranStartedAt) }));
+    const hadithStartedAt = performance.now();
+    const hadithPromise = (shouldRetrieveHadith
         ? searchHadithRepository(effectiveQuestion, {
             force: true,
             expansion: queryExpansion,
             budget: webBudget,
           })
-        : Promise.resolve(null),
+        : Promise.resolve(null)
+      ).then((value) => ({ value, ms: elapsedMs(hadithStartedAt) }));
+    const [{ value: quranTopic, ms: quranRetrievalMs }, { value: directHadithRecord, ms: hadithRetrievalMs }] = await Promise.all([
+      quranPromise,
+      hadithPromise,
     ]);
     const repositoryRetrievalMs = markLatency(
       "repositoryRetrievalMs",
@@ -1954,8 +2107,18 @@ Deno.serve(async (request) => {
       protectedSourceIds: quranContext ? [quranContext.id] : [],
     });
     const documentaryCandidates = documentaryCandidateSet.candidates;
+    const primaryEvidenceSufficient = isPrimaryEvidenceSufficient({
+      question: effectiveQuestion,
+      profile: queryProfile,
+      hadithRecord: productionHadithRecord,
+      expansion: queryExpansion,
+      candidates: documentaryCandidates,
+      requestedCorpora,
+    });
     const semanticVerifierStartedAt = performance.now();
-    const semanticSelection = await verifyDocumentaryRelevance(
+    const semanticSelection = primaryEvidenceSufficient
+      ? null
+      : await verifyDocumentaryRelevance(
       effectiveQuestion,
       documentaryCandidates,
       {
@@ -1971,12 +2134,30 @@ Deno.serve(async (request) => {
       "semanticVerifierMs",
       semanticVerifierStartedAt,
     );
+    const hadithSkillRequired = Boolean(
+      v4Analysis?.brainPlan?.executionSteps.some((step) =>
+        step.skill === "hadith" && step.required
+      ),
+    );
+    const hadithFallbackEligible = requestedCorpora.hadith ||
+      queryProfile.category === "hadith" || hadithSkillRequired;
+    const strictHadithFallbackSourceIds = hadithFallbackEligible &&
+      (semanticSelection === null || semanticSelection.length === 0)
+      ? selectStrictHadithFallback({
+        question: effectiveQuestion,
+        candidates: documentaryCandidates,
+        hadithMetadata: productionHadith.metadata,
+      })
+      : [];
     const verifiedDocumentary = applyDocumentaryVerification({
       requestSources,
       candidates: documentaryCandidates,
       selection: semanticSelection,
       deterministicFallbackSourceIds:
-        documentaryCandidateSet.deterministicFallbackSourceIds,
+        hadithFallbackEligible
+          ? strictHadithFallbackSourceIds
+          : documentaryCandidateSet.deterministicFallbackSourceIds,
+      strictHadithFallbackSourceIds,
       protectedSourceIds: quranContext ? [quranContext.id] : [],
     });
     const documentaryQuranSourceIds = verifiedDocumentary.quranSourceIds;
@@ -2031,7 +2212,13 @@ Deno.serve(async (request) => {
       corpusCoverage.requiresQuranAndSunnah &&
       (!corpusCoverage.hasQuran || !corpusCoverage.hasHadith);
 
-    const stableUseWebSearch = requiresExternalEntitySources
+    const requiresVerifiedFiqhSources = queryProfile.category === "fiqh" ||
+      queryProfile.category === "aqidah";
+    const stableUseWebSearch = requiresVerifiedFiqhSources
+      ? true
+      : primaryEvidenceSufficient
+      ? false
+      : requiresExternalEntitySources
       ? true
       : hasInternalQuranTopic &&
           (queryProfile.category === "quran_overview" ||
@@ -2109,7 +2296,7 @@ Deno.serve(async (request) => {
       featureFlags.v4ProductionBrainGuidance || featureFlags.v4ExecutionPlan
         ? buildProductionBrainGuidance(v4Analysis?.brainPlan ?? null)
         : "";
-    const productionInstructions = `${stableInstructions}${brainGuidance}\n\nRÈGLE DOCUMENTAIRE UNIVERSELLE: avant de rédiger une réponse religieuse substantielle, examine séparément tous les corpus demandés. Privilégie toujours les preuves normatives directement liées à l’intention de la question. Une preuve générale, une sourate complète ou un récit historique ne doit jamais remplacer un verset ou un hadith plus direct lorsqu’il est disponible. Utilise les deux corpus lorsqu’ils sont réellement complémentaires, sans ajouter de citation décorative. Les cartes Hadith sont générées depuis les SOURCE_ID documentaires Hadith fournis (v4-hadith: ou hadith:). N’invente jamais de collection, de numéro ni de requête de navigation. Sélectionne ces SOURCE_ID seulement si le hadith est réellement utilisé dans le corps.`;
+    const productionInstructions = `${stableInstructions}${brainGuidance}${wasilVerifiedFiqhPolicy}\n\nRÈGLE DOCUMENTAIRE UNIVERSELLE: avant de rédiger une réponse religieuse substantielle, examine séparément tous les corpus demandés. Privilégie toujours les preuves normatives directement liées à l’intention de la question. Une preuve générale, une sourate complète ou un récit historique ne doit jamais remplacer un verset ou un hadith plus direct lorsqu’il est disponible. Utilise les deux corpus lorsqu’ils sont réellement complémentaires, sans ajouter de citation décorative. Les cartes Hadith sont générées depuis les SOURCE_ID documentaires Hadith fournis (v4-hadith: ou hadith:). N’invente jamais de collection, de numéro ni de requête de navigation. Sélectionne ces SOURCE_ID seulement si le hadith est réellement utilisé dans le corps.`;
 
     console.log("WASIL_PROMPT_SYSTEM_MEASUREMENT", {
       requestId,
@@ -2156,7 +2343,7 @@ Deno.serve(async (request) => {
             // corpus is missing locally, the search must actually run rather
             // than merely being offered to the model.
             tool_choice:
-              requiresExternalEntitySources || missingRequestedCorpus
+              requiresExternalEntitySources || missingRequestedCorpus || requiresVerifiedFiqhSources
                 ? "required"
                 : "auto",
             max_tool_calls: Math.min(webBudget.remaining, mode === "deep" ? 2 : 1),
@@ -2431,6 +2618,16 @@ Deno.serve(async (request) => {
       verifiedHadithSourceIds: documentaryHadithSourceIds,
       hadithMetadata: productionHadith.metadata,
     });
+    const hasVerifiedRequestedHadith = enforceExplicitHadithSourceIds({
+      question: effectiveQuestion,
+      parsedSourceIds: parsed.source_ids,
+      verifiedHadithSourceIds: documentaryHadithSourceIds,
+    });
+    if (requestedDocumentaryCorpora(effectiveQuestion).hadith &&
+      !hasVerifiedRequestedHadith) {
+      parsed.status = "insufficient_sources";
+      parsed.body = "Je n’ai pas trouvé de hadith suffisamment vérifié et directement pertinent pour répondre à cette demande.";
+    }
     parsed.quran_references = deduplicateQuranReferences(
       parsed.quran_references,
     );
@@ -2541,6 +2738,23 @@ Deno.serve(async (request) => {
       dominantStage: Object.entries(latencyStages)
         .filter(([stage]) => stage !== "totalMs")
         .sort((left, right) => right[1] - left[1])[0]?.[0] ?? null,
+      totalMs,
+    });
+
+    console.log("WASIL_RESEARCH_PERFORMANCE", {
+      requestId,
+      category: queryProfile.category,
+      mode,
+      cacheHit: productionHadithRecord?.cacheStatus === "hit",
+      cacheMiss: productionHadithRecord?.cacheStatus === "miss",
+      sourceCount: Object.keys(requestSources).length,
+      callCount: webBudget.used,
+      quranMs: quranRetrievalMs,
+      hadithMs: hadithRetrievalMs,
+      documentaryScholarMs: repositoryRetrievalMs,
+      verificationMs: semanticVerifierMs,
+      finalCallWithWebMs: useWebSearch ? openAiMs : 0,
+      finalGenerationMs: openAiMs,
       totalMs,
     });
 

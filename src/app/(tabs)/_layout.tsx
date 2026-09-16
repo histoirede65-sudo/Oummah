@@ -31,11 +31,11 @@ const tabs = [
     activeIcon: 'headset',
   },
   {
-    labelKey: 'nav.qibla',
+    label: 'Scan',
     route: 'community',
-    href: '/qibla',
-    icon: 'compass-outline',
-    activeIcon: 'compass',
+    href: '/boycott',
+    icon: 'qr-code-outline',
+    activeIcon: 'qr-code',
   },
   {
     labelKey: 'nav.profile',
@@ -141,6 +141,7 @@ export default function TabLayout() {
                   : state.routes[state.index]?.name === tab.route;
 
               const center = index === 2;
+              const scan = tab.route === 'community';
 
               return (
                 <Pressable
@@ -184,12 +185,24 @@ export default function TabLayout() {
                     </Animated.View>
                   ) : (
                     <View
-                      style={[styles.iconWrap, active && styles.iconActive]}
+                      style={[
+                        styles.iconWrap,
+                        scan && styles.scanGlow,
+                        active && styles.iconActive,
+                      ]}
                     >
                       <Ionicons
                         name={active ? tab.activeIcon : tab.icon}
                         size={20}
-                        color={active ? colors.primaryLight : colors.textMuted}
+                        color={
+                          scan
+                            ? active
+                              ? '#8FF0BC'
+                              : '#72DFA4'
+                            : active
+                              ? colors.primaryLight
+                              : colors.textMuted
+                        }
                       />
                     </View>
                   )}
@@ -201,7 +214,11 @@ export default function TabLayout() {
                       center && styles.centerLabel,
                     ]}
                   >
-                    {center ? 'Écouter' : t(tab.labelKey as TranslationKey)}
+                    {center
+                      ? 'Écouter'
+                      : 'label' in tab
+                        ? tab.label
+                        : t(tab.labelKey as TranslationKey)}
                   </Text>
                 </Pressable>
               );
@@ -256,12 +273,25 @@ const styles = StyleSheet.create({
     top: -18,
   },
 
+
+
   iconWrap: {
     width: 39,
     height: 29,
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 12,
+  },
+
+  scanGlow: {
+    backgroundColor: 'rgba(92,219,154,0.10)',
+    borderWidth: 1,
+    borderColor: 'rgba(114,223,164,0.22)',
+    shadowColor: '#63E6A7',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.55,
+    shadowRadius: 10,
+    elevation: 5,
   },
 
   iconActive: {
@@ -334,6 +364,7 @@ const styles = StyleSheet.create({
   labelActive: {
     color: colors.primaryLight,
   },
+
 
   centerLabel: {
     marginTop: 1,

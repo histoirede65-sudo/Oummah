@@ -2,7 +2,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import type { Href } from "expo-router";
 import { router, useFocusEffect } from "expo-router";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   Alert,
   Modal,
@@ -25,6 +25,7 @@ import {
 } from "../features/adhan/AdhanPreferences";
 import {
   getMosquePrayerSchedule,
+  loadPrayerCalculationSettings,
   type MosquePrayerSchedule,
 } from "../features/mosques/data/mosquePrayerTimes";
 import { getMainMosque, type StoredMosque } from "../features/mosques/data/mosquePreferences";
@@ -41,6 +42,7 @@ import {
   requestNotificationCenterPermission,
   saveNotificationCenterPreferences,
   saveReadNotificationIds,
+  subscribeNotificationReadStatus,
   syncNotificationCenterSchedule,
   type CenterAlertMode,
   type CenterReminderId,
@@ -100,36 +102,55 @@ export default function NotificationsScreen() {
   const [timePickerHour, setTimePickerHour] = useState(0);
   const [timePickerMinute, setTimePickerMinute] = useState(0);
 
+  useEffect(() => {
+    let active = true;
+    const unsubscribe = subscribeNotificationReadStatus(() => {
+      void loadReadNotificationIds().then((ids) => {
+        if (active) setReadIds(ids);
+      });
+    });
+    return () => {
+      active = false;
+      unsubscribe();
+    };
+  }, []);
+
   useFocusEffect(
     useCallback(() => {
       let active = true;
       void Promise.all([
         loadNotificationCenterPreferences(),
         loadAdhanPreferences(),
-        loadReadNotificationIds(),
         loadHifzState(),
         getMainMosque(),
         getActiveAnnouncements("notifications").catch(() => []),
-      ]).then(async ([nextPreferences, nextAdhanPreferences, nextReadIds, nextHifz, nextMosque, nextAnnouncements]) => {
+      ]).then(async ([nextPreferences, nextAdhanPreferences, nextHifz, nextMosque, nextAnnouncements]) => {
         if (!active) return;
         setPreferences(nextPreferences);
         setSavedPreferences(nextPreferences);
         setAdhanPreferences(nextAdhanPreferences);
         setSavedAdhanPreferences(nextAdhanPreferences);
-        setReadIds(nextReadIds);
+        const latestReadIds = await loadReadNotificationIds();
+        if (!active) return;
+        setReadIds(latestReadIds);
         setHifzState(nextHifz);
         setMosque(nextMosque);
         setAdminAnnouncements(nextAnnouncements);
         setLoaded(true);
 
         if (nextMosque) {
+          const calculation = await loadPrayerCalculationSettings();
           const calculatedSchedule = await getMosquePrayerSchedule(
             nextMosque.latitude,
             nextMosque.longitude,
+            undefined,
+            calculation,
           ).catch(() => null);
           const approved = await getApprovedMosquePrayerTimes(nextMosque.id).catch(() => null);
           const nextSchedule = calculatedSchedule
-            ? applyApprovedMosquePrayerTimes(calculatedSchedule, approved)
+            ? calculation.scheduleSource === "mosque"
+              ? applyApprovedMosquePrayerTimes(calculatedSchedule, approved)
+              : calculatedSchedule
             : null;
           if (active) setSchedule(nextSchedule);
         }
@@ -176,14 +197,29 @@ export default function NotificationsScreen() {
     setTimePickerMinute(Number.isFinite(minute) ? minute : 0);
   };
 
-  const saveReminderTime = () => {
-    if (!timePickerReminder) return;
+  const saveReminderTime = async () => {
+    if (!timePickerReminder || saving) return;
     const time = `${String(timePickerHour).padStart(2, "0")}:${String(timePickerMinute).padStart(2, "0")}`;
-    updatePreferences((current) => ({
-      ...current,
-      reminderTimes: { ...current.reminderTimes, [timePickerReminder]: time },
-    }));
+    const nextPreferences: NotificationCenterPreferences = {
+      ...preferences,
+      reminderTimes: { ...preferences.reminderTimes, [timePickerReminder]: time },
+    };
+
+    setSaving(true);
+    setPreferences(nextPreferences);
     setTimePickerReminder(null);
+    try {
+      await saveNotificationCenterPreferences(nextPreferences);
+      await syncNotificationCenterSchedule(nextPreferences, schedule, mosque?.name, hifzState);
+      setSavedPreferences(nextPreferences);
+    } catch {
+      Alert.alert(
+        "Horaire non enregistré",
+        "Impossible d’enregistrer ce nouvel horaire pour le moment. Réessayez dans quelques instants.",
+      );
+    } finally {
+      setSaving(false);
+    }
   };
 
   const hasPendingChanges = useMemo(
@@ -201,7 +237,7 @@ export default function NotificationsScreen() {
         saveNotificationCenterPreferences(preferences),
         saveAdhanPreferences(adhanPreferences),
       ]);
-      await syncNotificationCenterSchedule(preferences, schedule, mosque?.name);
+      await syncNotificationCenterSchedule(preferences, schedule, mosque?.name, hifzState);
       if (schedule) await syncAdhanNotifications(schedule, adhanPreferences);
       setSavedPreferences(preferences);
       setSavedAdhanPreferences(adhanPreferences);
@@ -241,6 +277,19 @@ export default function NotificationsScreen() {
     void saveReadNotificationIds(nextReadIds).catch(() => undefined);
   };
 
+  const openSettings = () => {
+    setSettingsVisible(true);
+  };
+
+  const closeSettings = () => {
+    setTimePickerReminder(null);
+    setSettingsVisible(false);
+  };
+
+  const activeTimeReminder = timePickerReminder
+    ? CENTER_REMINDERS.find((reminder) => reminder.id === timePickerReminder) ?? null
+    : null;
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <LinearGradient
@@ -255,7 +304,7 @@ export default function NotificationsScreen() {
         <View style={styles.headerCopy}>
           <Text allowFontScaling={false} style={styles.eyebrow}>VOTRE QUOTIDIEN</Text>
           <Text allowFontScaling={false} numberOfLines={1} style={styles.title}>Notifications</Text>
-          <Pressable onPress={() => setSettingsVisible(true)} style={styles.editNotificationsButton}>
+          <Pressable onPress={openSettings} style={styles.editNotificationsButton}>
             <Ionicons name="options-outline" size={18} color="#F2BE55" />
             <Text allowFontScaling={false} style={styles.editNotificationsText}>Modifier mes notifications</Text>
           </Pressable>
@@ -352,9 +401,9 @@ export default function NotificationsScreen() {
         </View>
       </ScrollView>
 
-      <Modal visible={settingsVisible} transparent animationType="slide" statusBarTranslucent onRequestClose={() => setSettingsVisible(false)}>
+      <Modal visible={settingsVisible} transparent animationType="slide" statusBarTranslucent onRequestClose={closeSettings}>
         <View style={styles.modalBackdrop}>
-          <Pressable style={StyleSheet.absoluteFill} onPress={() => setSettingsVisible(false)} />
+          <Pressable style={StyleSheet.absoluteFill} onPress={closeSettings} />
           <View style={styles.sheet}>
             <View style={styles.handle} />
             <View style={styles.sheetHeader}>
@@ -362,12 +411,22 @@ export default function NotificationsScreen() {
                 <Text style={styles.eyebrow}>PERSONNALISATION</Text>
                 <Text style={styles.sheetTitle}>Choisir mes rappels</Text>
               </View>
-              <Pressable onPress={() => setSettingsVisible(false)} style={styles.closeButton}>
+              <Pressable onPress={closeSettings} style={styles.closeButton}>
                 <Ionicons name="close" size={21} color="#FFF8EF" />
               </Pressable>
             </View>
 
             <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.sheetContent}>
+              <View style={styles.customizationHint}>
+                <View style={styles.customizationHintIcon}>
+                  <Ionicons name="time-outline" size={20} color="#F4C75E" />
+                </View>
+                <View style={styles.customizationHintCopy}>
+                  <Text style={styles.customizationHintTitle}>Vos notifications, à vos horaires</Text>
+                  <Text style={styles.customizationHintText}>Activez les rappels que vous souhaitez recevoir, puis touchez « Choisir l’heure » pour définir l’heure de chaque notification.</Text>
+                </View>
+              </View>
+
               <View style={styles.masterRow}>
                 <View style={styles.masterCopy}>
                   <Text style={styles.settingTitle}>Notifications sur le téléphone</Text>
@@ -388,7 +447,10 @@ export default function NotificationsScreen() {
                     key={mode.id}
                     onPress={() => {
                       updatePreferences((current) => ({ ...current, mode: mode.id }));
-                      setAdhanPreferences((current) => ({ ...current, mode: mode.id }));
+                      setAdhanPreferences((current) => ({
+                        ...current,
+                        mode: mode.id === "sound" ? "notification" : mode.id,
+                      }));
                     }}
                     style={[styles.modeChoice, preferences.mode === mode.id && styles.choiceActive]}
                   >
@@ -492,10 +554,16 @@ export default function NotificationsScreen() {
                         <View style={styles.settingCopy}>
                           <Text style={styles.settingTitle}>{reminder.title}</Text>
                           <Text style={styles.settingDescription}>{reminder.description}</Text>
-                          {section === "Dou‘as" && reminder.time ? (
-                            <Pressable onPress={() => openReminderTimePicker(reminder)} style={styles.reminderTimeButton}>
-                              <Ionicons name="time-outline" size={14} color="#F4C75E" />
+                          {reminder.time ? (
+                            <Pressable
+                              onPress={() => openReminderTimePicker(reminder)}
+                              style={({ pressed }) => [styles.reminderTimeButton, pressed && styles.reminderTimeButtonPressed]}
+                            >
+                              <Ionicons name="time-outline" size={15} color="#F4C75E" />
+                              <Text style={styles.reminderTimeAction}>CHOISIR L’HEURE</Text>
+                              <View style={styles.reminderTimeDivider} />
                               <Text style={styles.reminderTimeText}>{preferences.reminderTimes?.[reminder.id] ?? reminder.time}</Text>
+                              <Ionicons name="chevron-forward" size={13} color="#F4C75E" />
                             </Pressable>
                           ) : null}
                         </View>
@@ -530,30 +598,34 @@ export default function NotificationsScreen() {
                 {saving ? "Enregistrement…" : hasPendingChanges ? "Enregistrer mes notifications" : "Notifications enregistrées"}
               </Text>
             </Pressable>
+          </View>
+
           {timePickerReminder !== null ? (
             <View style={styles.timePickerOverlay}>
-              <Pressable style={styles.timePickerBackdrop} onPress={() => setTimePickerReminder(null)}>
-                <Pressable style={styles.timePickerCard} onPress={(event) => event.stopPropagation()}>
-                  <Text style={styles.timePickerTitle}>Choisir l’heure</Text>
-                  <View style={styles.timePickerValues}>
-                    <View style={styles.timePickerColumn}>
-                      <Pressable onPress={() => setTimePickerHour((value) => (value + 1) % 24)} style={styles.timePickerAdjust}><Ionicons name="chevron-up" size={22} color="#F4C75E" /></Pressable>
-                      <Text style={styles.timePickerValue}>{String(timePickerHour).padStart(2, "0")}</Text>
-                      <Pressable onPress={() => setTimePickerHour((value) => (value + 23) % 24)} style={styles.timePickerAdjust}><Ionicons name="chevron-down" size={22} color="#F4C75E" /></Pressable>
-                    </View>
-                    <Text style={styles.timePickerSeparator}>:</Text>
-                    <View style={styles.timePickerColumn}>
-                      <Pressable onPress={() => setTimePickerMinute((value) => (value + 5) % 60)} style={styles.timePickerAdjust}><Ionicons name="chevron-up" size={22} color="#F4C75E" /></Pressable>
-                      <Text style={styles.timePickerValue}>{String(timePickerMinute).padStart(2, "0")}</Text>
-                      <Pressable onPress={() => setTimePickerMinute((value) => (value + 55) % 60)} style={styles.timePickerAdjust}><Ionicons name="chevron-down" size={22} color="#F4C75E" /></Pressable>
-                    </View>
+              <Pressable style={StyleSheet.absoluteFill} onPress={() => setTimePickerReminder(null)} />
+              <View style={styles.timePickerCard}>
+                <Text style={styles.timePickerEyebrow}>HORAIRE DE LA NOTIFICATION</Text>
+                <Text style={styles.timePickerTitle}>{activeTimeReminder?.title ?? "Choisir l’heure"}</Text>
+                <Text style={styles.timePickerSubtitle}>Choisissez l’heure à laquelle vous souhaitez recevoir ce rappel.</Text>
+                <View style={styles.timePickerValues}>
+                  <View style={styles.timePickerColumn}>
+                    <Pressable onPress={() => setTimePickerHour((value) => (value + 1) % 24)} style={styles.timePickerAdjust}><Ionicons name="chevron-up" size={22} color="#F4C75E" /></Pressable>
+                    <Text style={styles.timePickerValue}>{String(timePickerHour).padStart(2, "0")}</Text>
+                    <Pressable onPress={() => setTimePickerHour((value) => (value + 23) % 24)} style={styles.timePickerAdjust}><Ionicons name="chevron-down" size={22} color="#F4C75E" /></Pressable>
                   </View>
-                  <Pressable onPress={saveReminderTime} style={styles.timePickerDone}><Text style={styles.timePickerDoneText}>Valider</Text></Pressable>
+                  <Text style={styles.timePickerSeparator}>:</Text>
+                  <View style={styles.timePickerColumn}>
+                    <Pressable onPress={() => setTimePickerMinute((value) => (value + 1) % 60)} style={styles.timePickerAdjust}><Ionicons name="chevron-up" size={22} color="#F4C75E" /></Pressable>
+                    <Text style={styles.timePickerValue}>{String(timePickerMinute).padStart(2, "0")}</Text>
+                    <Pressable onPress={() => setTimePickerMinute((value) => (value + 59) % 60)} style={styles.timePickerAdjust}><Ionicons name="chevron-down" size={22} color="#F4C75E" /></Pressable>
+                  </View>
+                </View>
+                <Pressable disabled={saving} onPress={() => void saveReminderTime()} style={[styles.timePickerDone, saving && styles.disabledChoice]}>
+                  <Text style={styles.timePickerDoneText}>{saving ? "Enregistrement…" : "Valider cette heure"}</Text>
                 </Pressable>
-              </Pressable>
+              </View>
             </View>
           ) : null}
-          </View>
         </View>
       </Modal>
 
@@ -617,6 +689,11 @@ const styles = StyleSheet.create({
   sheetTitle: { marginTop: 1, color: "#FFF8EF", fontFamily: typography.serifSemibold, fontSize: 22 },
   closeButton: { width: 36, height: 36, alignItems: "center", justifyContent: "center", borderRadius: 18, backgroundColor: "rgba(255,255,255,0.06)" },
   sheetContent: { paddingTop: 17, paddingBottom: 30 },
+  customizationHint: { marginBottom: 12, padding: 12, flexDirection: "row", alignItems: "flex-start", borderRadius: 17, borderWidth: 1, borderColor: "rgba(242,190,85,0.30)", backgroundColor: "rgba(242,190,85,0.075)" },
+  customizationHintIcon: { width: 36, height: 36, marginRight: 10, alignItems: "center", justifyContent: "center", borderRadius: 12, backgroundColor: "rgba(242,190,85,0.12)" },
+  customizationHintCopy: { flex: 1 },
+  customizationHintTitle: { color: "#FFE6AA", fontFamily: typography.serifMedium, fontSize: 13.5 },
+  customizationHintText: { marginTop: 3, color: "rgba(245,235,239,0.68)", fontFamily: typography.sans, fontSize: 9.8, lineHeight: 14 },
   masterRow: { minHeight: 66, paddingHorizontal: 13, flexDirection: "row", alignItems: "center", borderRadius: 18, borderWidth: 1, borderColor: "rgba(246,199,93,0.18)", backgroundColor: "rgba(255,255,255,0.045)" },
   masterCopy: { flex: 1, paddingRight: 10 },
   sectionLabel: { marginTop: 18, marginBottom: 8, color: "rgba(246,199,93,0.68)", fontFamily: typography.sans, fontSize: 8.5, fontWeight: "700", letterSpacing: 1.05 },
@@ -630,18 +707,22 @@ const styles = StyleSheet.create({
   settingCopy: { flex: 1, paddingRight: 10 },
   settingTitle: { color: "#FFF7EE", fontFamily: typography.serifMedium, fontSize: 14 },
   settingDescription: { marginTop: 2, color: "rgba(230,220,228,0.52)", fontFamily: typography.sans, fontSize: 9.5, lineHeight: 13 },
-  reminderTimeButton: { marginTop: 5, alignSelf: "flex-start", paddingHorizontal: 8, paddingVertical: 4, flexDirection: "row", alignItems: "center", gap: 5, borderRadius: 9, backgroundColor: "rgba(242,190,85,0.10)" },
-  reminderTimeText: { color: "#F4C75E", fontFamily: typography.sans, fontSize: 11, fontWeight: "800", fontVariant: ["tabular-nums"] },
+  reminderTimeButton: { minHeight: 34, marginTop: 7, alignSelf: "flex-start", paddingHorizontal: 9, flexDirection: "row", alignItems: "center", gap: 6, borderRadius: 11, borderWidth: 1, borderColor: "rgba(242,190,85,0.36)", backgroundColor: "rgba(242,190,85,0.12)" },
+  reminderTimeButtonPressed: { opacity: 0.72 },
+  reminderTimeAction: { color: "rgba(255,224,151,0.78)", fontFamily: typography.sans, fontSize: 8.1, fontWeight: "900", letterSpacing: 0.55 },
+  reminderTimeDivider: { width: 1, height: 14, backgroundColor: "rgba(242,190,85,0.28)" },
+  reminderTimeText: { color: "#FFD978", fontFamily: typography.sans, fontSize: 12, fontWeight: "900", fontVariant: ["tabular-nums"] },
   prayerChoicesBlock: { padding: 13, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: "rgba(255,255,255,0.07)" },
   prayerChoicesRow: { flexDirection: "row", flexWrap: "wrap", gap: 7 },
   prayerChoice: { minHeight: 36, paddingHorizontal: 10, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 5, borderRadius: 12, borderWidth: 1, borderColor: "rgba(255,255,255,0.08)", backgroundColor: "rgba(255,255,255,0.035)" },
   delayBlock: { padding: 13, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: "rgba(255,255,255,0.07)" },
   delayTitle: { marginBottom: 9, color: "#FFF7EE", fontFamily: typography.serifMedium, fontSize: 13 },
   delayRow: { flexDirection: "row", flexWrap: "wrap", gap: 7 },
-  timePickerBackdrop: { flex: 1, alignItems: "center", justifyContent: "center", padding: 24, backgroundColor: "rgba(3,4,9,0.74)" },
-  timePickerOverlay: { ...StyleSheet.absoluteFillObject, zIndex: 10 },
-  timePickerCard: { width: "100%", maxWidth: 330, padding: 20, borderRadius: 24, borderWidth: 1, borderColor: "rgba(255,227,172,0.18)", backgroundColor: "#17131C" },
-  timePickerTitle: { color: "#FFF8EF", fontFamily: typography.serifSemibold, fontSize: 20, textAlign: "center" },
+  timePickerOverlay: { ...StyleSheet.absoluteFillObject, zIndex: 100, elevation: 100, alignItems: "center", justifyContent: "center", padding: 24, backgroundColor: "rgba(3,4,9,0.88)" },
+  timePickerCard: { width: "100%", maxWidth: 330, padding: 20, borderRadius: 24, borderWidth: 1, borderColor: "rgba(255,227,172,0.24)", backgroundColor: "#17131C" },
+  timePickerEyebrow: { color: "rgba(242,190,85,0.72)", fontFamily: typography.sans, fontSize: 8.2, fontWeight: "900", letterSpacing: 0.95, textAlign: "center" },
+  timePickerTitle: { marginTop: 4, color: "#FFF8EF", fontFamily: typography.serifSemibold, fontSize: 20, textAlign: "center" },
+  timePickerSubtitle: { maxWidth: 250, marginTop: 6, alignSelf: "center", color: "rgba(235,225,232,0.60)", fontFamily: typography.sans, fontSize: 9.8, lineHeight: 14, textAlign: "center" },
   timePickerValues: { marginTop: 17, flexDirection: "row", alignItems: "center", justifyContent: "center" },
   timePickerColumn: { alignItems: "center" },
   timePickerAdjust: { width: 52, height: 38, alignItems: "center", justifyContent: "center", borderRadius: 12, backgroundColor: "rgba(242,190,85,0.08)" },

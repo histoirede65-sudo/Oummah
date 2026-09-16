@@ -2,7 +2,7 @@
   "expo": {
     "name": "Oummah",
     "slug": "oummah",
-    "version": "1.0.7",
+    "version": "1.0.13",
     "orientation": "portrait",
     "scheme": "oummah",
     "userInterfaceStyle": "automatic",
@@ -13,28 +13,33 @@
       "supportsTablet": true,
       "infoPlist": {
         "UIViewControllerBasedStatusBarAppearance": true,
-        "ITSAppUsesNonExemptEncryption": false,
-        "NSMicrophoneUsageDescription": "OUMMAH utilise le microphone uniquement pour tester la capture de récitation coranique.",
-        "UIBackgroundModes": [
-          "audio"
-        ],
-        "NSLocationWhenInUseUsageDescription": "OUMMAH utilise votre position lorsque vous utilisez l’application afin de calculer les horaires de prière correspondant à votre localisation et de vous aider à trouver les mosquées à proximité."
+        "ITSAppUsesNonExemptEncryption": false
+      },
+      "runtimeVersion": {
+        "policy": "appVersion"
       }
     },
     "android": {
       "package": "com.oummah.app",
-      "versionCode": 14,
       "permissions": [
         "SCHEDULE_EXACT_ALARM",
         "android.permission.RECORD_AUDIO",
-        "android.permission.MODIFY_AUDIO_SETTINGS"
+        "android.permission.MODIFY_AUDIO_SETTINGS",
+        "android.permission.FOREGROUND_SERVICE",
+        "android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK",
+        "SCHEDULE_EXACT_ALARM",
+        "android.permission.RECORD_AUDIO",
+        "android.permission.MODIFY_AUDIO_SETTINGS",
+        "android.permission.FOREGROUND_SERVICE",
+        "android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK"
       ],
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
       },
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "runtimeVersion": "1.0.0"
     },
     "web": {
       "bundler": "metro",
@@ -45,22 +50,18 @@
       "expo-font",
       "expo-sqlite",
       "expo-web-browser",
-      [
-        "expo-audio",
-        {
-          "enableBackgroundPlayback": true
-        }
-      ],
+      "expo-audio",
       [
         "expo-notifications",
         {
+          "icon": "./assets/images/notification-icon.png",
           "color": "#F2B53D",
-          "defaultChannel": "adhan-sound-makkah",
+          "defaultChannel": "adhan-sound",
           "sounds": [
-            "./assets/adhan/adhan_makkah.mp3",
-            "./assets/adhan/adhan_madinah.mp3",
-            "./assets/adhan/adhan_egypt.mp3",
-            "./assets/adhan/adhan_birds.wav"
+            "./assets/adhan/adhan_makkah_notification.wav",
+            "./assets/adhan/adhan_madinah_notification.wav",
+            "./assets/adhan/adhan_egypt_notification.wav",
+            "./assets/adhan/adhan_birds_notification.wav"
           ]
         }
       ],
@@ -69,7 +70,8 @@
         {
           "targetName": "PrayerTimesWidgetExtension",
           "bundleIdentifier": "com.oummah.app.prayerwidget",
-          "groupIdentifier": "group.com.oummah.app"
+          "groupIdentifier": "group.com.oummah.app",
+          "backgroundAsset": "home-mosque-sunset.jpg"
         }
       ]
     ],
@@ -101,9 +103,6 @@
       }
     },
     "owner": "bahrioummah",
-    "runtimeVersion": {
-      "policy": "appVersion"
-    },
     "updates": {
       "url": "https://u.expo.dev/cfc1e1ce-a09c-4279-861c-8c07e081d86c"
     }

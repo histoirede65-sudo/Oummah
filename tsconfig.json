@@ -16,6 +16,15 @@
     "**/*.tsx"
   ],
   "exclude": [
-    "supabase/functions"
+    "supabase/functions",
+    "src/src",
+    ".tmp-src3-audit",
+    "OUMMAH-parcours-premium-wasil",
+    "OUMMAH-src-mosque-premium",
+    "OUMMAH-WASIL-PREMIUM-v2",
+    "OUMMAH_HadeethEnc_Import_Reel",
+    "backups",
+    "tmp",
+    "dist"
   ]
 }

@@ -1,0 +1,3248 @@
+{
+  "sourceVersion": "OpenFoodTox 3.0 / EFSA export repository",
+  "sourceFileHash": "5181661e921651d4087b544981e1e5a63b99532844eac0112732806a00a85eda",
+  "retrievedAt": "2026-09-16T13:22:16.770Z",
+  "ingestionVersion": "oummah-openfoodtox-dry-run-v2",
+  "totalRowsAnalyzed": 36238,
+  "indexing": {
+    "buildCount": 1,
+    "casEntries": 5510,
+    "nameEntries": 10454,
+    "identifierEntries": 0,
+    "insEntries": 0
+  },
+  "mapping": {
+    "validReferenceSubstances": 7890,
+    "uniqueCas": 5510,
+    "uniqueNames": 10454,
+    "linkedSubstances": 7880,
+    "orphanSubstances": 0,
+    "toxRows": 19747,
+    "toxLinked": 19747,
+    "toxRelation": "SUB via Parent UUID",
+    "toxHitsSub": 19747,
+    "toxHitsRef": 0
+  },
+  "diagnosticSamples": {
+    "REF_SUB": [
+      {
+        "Document UUID": "936b96df-d06a-4762-a2e1-42e79341e905",
+        "Parent UUID": "",
+        "Inventory.CASNumber": "76738-75-5",
+        "ReferenceSubstanceName": "epi-alpha-Bisabolol",
+        "CAS name": "",
+        "CAS number": "",
+        "Name": ""
+      },
+      {
+        "Document UUID": "2042d676-4089-4937-9f38-18a0dfebe926",
+        "Parent UUID": "",
+        "Inventory.CASNumber": "24579-73-5",
+        "ReferenceSubstanceName": "Propamocarb",
+        "CAS name": "",
+        "CAS number": "",
+        "Name": "propyl 3-(dimethylamino)propylcarbamate|propyl N-[3-(dimethylamino)propyl]carbamate"
+      },
+      {
+        "Document UUID": "22c2c8d9-9ca9-4546-9120-afb353788bb7",
+        "Parent UUID": "",
+        "Inventory.CASNumber": "",
+        "ReferenceSubstanceName": "[(6-Ethyl-3-hydroxy-2-methylphenyl)amino](oxo)acetic acid",
+        "CAS name": "",
+        "CAS number": "",
+        "Name": ""
+      },
+      {
+        "Document UUID": "faba2316-c1a8-408f-b620-b62a0128a436",
+        "Parent UUID": "",
+        "Inventory.CASNumber": "",
+        "ReferenceSubstanceName": "b. serrata gum resin extract",
+        "CAS name": "",
+        "CAS number": "",
+        "Name": ""
+      },
+      {
+        "Document UUID": "7ee5f5bc-63ac-4c83-a1f1-bab48034016a",
+        "Parent UUID": "",
+        "Inventory.CASNumber": "",
+        "ReferenceSubstanceName": "L-threonine produced by E. Coli CGMCC 7.232",
+        "CAS name": "",
+        "CAS number": "",
+        "Name": ""
+      }
+    ],
+    "SUB": [
+      {
+        "Document UUID": "b0576600-39fd-4046-bcb7-133edb7e50b4",
+        "Parent UUID": "",
+        "ChemicalName": "Sulfoxaflor formulation (GF-2626)",
+        "ReferenceSubstance.ReferenceSubstance": "85e67cbb-93d2-47b8-b0ff-d60636db8fa2"
+      },
+      {
+        "Document UUID": "4cf9096f-df08-42c2-884a-17628a689963",
+        "Parent UUID": "",
+        "ChemicalName": "Geranyl benzoate",
+        "ReferenceSubstance.ReferenceSubstance": "0fc2842d-7f1a-43f2-af67-79250d87c7bb"
+      },
+      {
+        "Document UUID": "e4b01bb8-21a1-44e1-8cec-18ac6cfcf998",
+        "Parent UUID": "",
+        "ChemicalName": "{[hydroxy(methoxy)phosphoryl]sulfanyl}acetic acid",
+        "ReferenceSubstance.ReferenceSubstance": "85a53d87-aab3-4ade-9727-3c81b0450591"
+      },
+      {
+        "Document UUID": "cb298eb8-ff2e-4682-9a4d-0c56e1a12fd6",
+        "Parent UUID": "",
+        "ChemicalName": "L-Ergothioneine",
+        "ReferenceSubstance.ReferenceSubstance": "dcb0f513-adf6-4464-9f59-e30589a7b747"
+      },
+      {
+        "Document UUID": "9d534a34-19fe-4087-a7e0-9c27202feb4e",
+        "Parent UUID": "",
+        "ChemicalName": "phosphates",
+        "ReferenceSubstance.ReferenceSubstance": "2bc16335-e159-4c1b-98cf-ce519793f946"
+      }
+    ],
+    "FLEX_SUM.ToxRefValues": [
+      {
+        "Document UUID": "39c9a919-2d1f-4360-821c-6191960a4ec1",
+        "Parent UUID": "b6aa3947-5b20-4a16-8b44-86c6661dbc95",
+        "HumanHealthHazardCharacteristics.AcceptableDailyIntake.Adi.lowerQualifier": "",
+        "HumanHealthHazardCharacteristics.AcceptableDailyIntake.Adi.lowerValue": "",
+        "HumanHealthHazardCharacteristics.AcceptableDailyIntake.Adi.Unit": "",
+        "HumanHealthHazardCharacteristics.AcceptableDailyIntake.Adi.upperQualifier": "",
+        "HumanHealthHazardCharacteristics.AcceptableDailyIntake.Adi.upperValue": "",
+        "HumanHealthHazardCharacteristics.AcceptableOperatorExposureLevel.Aoel.Unit": "",
+        "HumanHealthHazardCharacteristics.AcuteAcceptableOperatorExposureLevel.Aaoel.Unit": "",
+        "HumanHealthHazardCharacteristics.AcuteReferenceDose.Arfd.lowerValue": "",
+        "HumanHealthHazardCharacteristics.AcuteReferenceDose.Arfd.Unit": "",
+        "HumanHealthHazardCharacteristics.AcuteReferenceDose.Arfd.upperQualifier": "",
+        "HumanHealthHazardCharacteristics.AcuteReferenceDose.Arfd.upperValue": "",
+        "HumanHealthHazardCharacteristics.AcuteReferenceDose.AssessmentBody": "",
+        "HumanHealthHazardCharacteristics.AcuteReferenceDose.AssessmentBody.Other": "",
+        "HumanHealthHazardCharacteristics.AcuteReferenceDose.CriticalEndpoint": "",
+        "HumanHealthHazardCharacteristics.AcuteReferenceDose.Justification": "",
+        "HumanHealthHazardCharacteristics.AcuteReferenceDose.JustificationAndComments": "",
+        "HumanHealthHazardCharacteristics.AcuteReferenceDose.JustificationOverallUf": "",
+        "HumanHealthHazardCharacteristics.AcuteReferenceDose.NoAllocated": "",
+        "HumanHealthHazardCharacteristics.AcuteReferenceDose.OverallUncertainty": "",
+        "HumanHealthHazardCharacteristics.AcuteReferenceDose.Population": "",
+        "HumanHealthHazardCharacteristics.OtherReferenceValues.AssessmentBody": "",
+        "HumanHealthHazardCharacteristics.OtherReferenceValues.AssessmentBody.Other": "",
+        "HumanHealthHazardCharacteristics.OtherReferenceValues.CriticalEndpoint": "",
+        "HumanHealthHazardCharacteristics.OtherReferenceValues.JustificationAndComments": "Remarks: Since vitamin K supplementation of feedingstuffs as MSB and MNB is in widespread routine use, the FEEDAP Panel considers that above-mentioned population exposure figures already include the contribution of edible tissues and products of animals fed vitamin K-supplemented diets. Moreover, MSB and MNB administration to farmed animals generates MK-4 residues which represent only a small fraction of total vitamin K active compounds in animal tissues. Therefore, the FEEDAP Panel considers that the use of MSB and MNB in animal nutrition does not give rise to safety concerns for consumers.",
+        "HumanHealthHazardCharacteristics.OtherReferenceValues.JustificationOverallUf": "",
+        "HumanHealthHazardCharacteristics.OtherReferenceValues.NoAllocated": "",
+        "HumanHealthHazardCharacteristics.OtherReferenceValues.OverallUncertainty": "",
+        "HumanHealthHazardCharacteristics.OtherReferenceValues.Population": "consumers",
+        "HumanHealthHazardCharacteristics.OtherReferenceValues.Population.Other": "",
+        "HumanHealthHazardCharacteristics.OtherReferenceValues.Population.Remarks": "",
+        "HumanHealthHazardCharacteristics.OtherReferenceValues.RefValue.lowerQualifier": "",
+        "HumanHealthHazardCharacteristics.OtherReferenceValues.RefValue.lowerValue": "",
+        "HumanHealthHazardCharacteristics.OtherReferenceValues.RefValue.Unit": "",
+        "HumanHealthHazardCharacteristics.OtherReferenceValues.RefValue.Unit.Other": "",
+        "HumanHealthHazardCharacteristics.OtherReferenceValues.RefValue.upperQualifier": "",
+        "HumanHealthHazardCharacteristics.OtherReferenceValues.RefValue.upperValue": "",
+        "HumanHealthHazardCharacteristics.OtherReferenceValues.ReferenceToEFSAOpinion": "398f9ad0-9b4d-4ab3-bd0d-3b64fed1927a",
+        "HumanHealthHazardCharacteristics.OtherReferenceValues.ReferenceValueDescriptor": "other:",
+        "HumanHealthHazardCharacteristics.OtherReferenceValues.ReferenceValueDescriptor.Other": "Not deemed necessary",
+        "HumanHealthHazardCharacteristics.OtherReferenceValues.ReferenceValueDescriptor.Remarks": ""
+      },
+      {
+        "Document UUID": "73c9ba20-50a8-4d44-98f1-d4fa8543daec",
+        "Parent UUID": "68bda50e-1b96-4a53-8c7c-4bf5bf8ac6b1",
+        "HumanHealthHazardCharacteristics.AcceptableDailyIntake.Adi.lowerQualifier": "",
+        "HumanHealthHazardCharacteristics.AcceptableDailyIntake.Adi.lowerValue": "",
+        "HumanHealthHazardCharacteristics.AcceptableDailyIntake.Adi.Unit": "",
+        "HumanHealthHazardCharacteristics.AcceptableDailyIntake.Adi.upperQualifier": "",
+        "HumanHealthHazardCharacteristics.AcceptableDailyIntake.Adi.upperValue": "",
+        "HumanHealthHazardCharacteristics.AcceptableOperatorExposureLevel.Aoel.Unit": "",
+        "HumanHealthHazardCharacteristics.AcuteAcceptableOperatorExposureLevel.Aaoel.Unit": "",
+        "HumanHealthHazardCharacteristics.AcuteReferenceDose.Arfd.lowerValue": "",
+        "HumanHealthHazardCharacteristics.AcuteReferenceDose.Arfd.Unit": "",
+        "HumanHealthHazardCharacteristics.AcuteReferenceDose.Arfd.upperQualifier": "",
+        "HumanHealthHazardCharacteristics.AcuteReferenceDose.Arfd.upperValue": "",
+        "HumanHealthHazardCharacteristics.AcuteReferenceDose.AssessmentBody": "",
+        "HumanHealthHazardCharacteristics.AcuteReferenceDose.AssessmentBody.Other": "",
+        "HumanHealthHazardCharacteristics.AcuteReferenceDose.CriticalEndpoint": "",
+        "HumanHealthHazardCharacteristics.AcuteReferenceDose.Justification": "",
+        "HumanHealthHazardCharacteristics.AcuteReferenceDose.JustificationAndComments": "",
+        "HumanHealthHazardCharacteristics.AcuteReferenceDose.JustificationOverallUf": "",
+        "HumanHealthHazardCharacteristics.AcuteReferenceDose.NoAllocated": "",
+        "HumanHealthHazardCharacteristics.AcuteReferenceDose.OverallUncertainty": "",
+        "HumanHealthHazardCharacteristics.AcuteReferenceDose.Population": "",
+        "HumanHealthHazardCharacteristics.OtherReferenceValues.AssessmentBody": "",
+        "HumanHealthHazardCharacteristics.OtherReferenceValues.AssessmentBody.Other": "",
+        "HumanHealthHazardCharacteristics.OtherReferenceValues.CriticalEndpoint": "",
+        "HumanHealthHazardCharacteristics.OtherReferenceValues.JustificationAndComments": "Assessment: additional data required; Remarks: METABOLISM: The candidate substances in the present group and supporting substances are expected to share common routes of absorption, distribution and metabolism, and exhibit similar toxicological properties. These metabolic pathways are unlikely to be saturated, given the low levels of exposure from their use as flavouring substances. However, due to the reactivity of the metabolites, the candidate substances cannot be predicted to be metabolised to innocuous products. GENOTOXICITY: The genotoxicity data available, often from limited or poorly reported studies, do not provide clear indication of concern for genotoxicity for the candidate substance. The genotoxicity data available do not preclude the evaluation of the candidate substance through the Procedure. OUTCOME ON THE NAMED COMPOUND: No safety concern based on intake calculated by the MSDI approach of the named compound. An adequate NOAEL exists for the candidate substance. OUTCOME ON THE MATERIAL OF COMMERCE: No safety concern at estimated level of intake of the material of commerce meeting the specification (based on intake calculated by the MSDI approach).",
+        "HumanHealthHazardCharacteristics.OtherReferenceValues.JustificationOverallUf": "",
+        "HumanHealthHazardCharacteristics.OtherReferenceValues.NoAllocated": "",
+        "HumanHealthHazardCharacteristics.OtherReferenceValues.OverallUncertainty": "",
+        "HumanHealthHazardCharacteristics.OtherReferenceValues.Population": "consumers",
+        "HumanHealthHazardCharacteristics.OtherReferenceValues.Population.Other": "",
+        "HumanHealthHazardCharacteristics.OtherReferenceValues.Population.Remarks": "",
+        "HumanHealthHazardCharacteristics.OtherReferenceValues.RefValue.lowerQualifier": "",
+        "HumanHealthHazardCharacteristics.OtherReferenceValues.RefValue.lowerValue": "30",
+        "HumanHealthHazardCharacteristics.OtherReferenceValues.RefValue.Unit": "µg/kg bw/day",
+        "HumanHealthHazardCharacteristics.OtherReferenceValues.RefValue.Unit.Other": "",
+        "HumanHealthHazardCharacteristics.OtherReferenceValues.RefValue.upperQualifier": "",
+        "HumanHealthHazardCharacteristics.OtherReferenceValues.RefValue.upperValue": "",
+        "HumanHealthHazardCharacteristics.OtherReferenceValues.ReferenceToEFSAOpinion": "00f251ab-5734-4d57-89c4-d15148c0bb53",
+        "HumanHealthHazardCharacteristics.OtherReferenceValues.ReferenceValueDescriptor": "other:",
+        "HumanHealthHazardCharacteristics.OtherReferenceValues.ReferenceValueDescriptor.Other": "TTC Cramer Class I",
+        "HumanHealthHazardCharacteristics.OtherReferenceValues.ReferenceValueDescriptor.Remarks": ""
+      },
+      {
+        "Document UUID": "4a40d15d-4b29-4215-9859-82d0e01c5c44",
+        "Parent UUID": "fdf8302d-1a52-4fc7-b6ca-9aa99070461d",
+        "HumanHealthHazardCharacteristics.AcceptableDailyIntake.Adi.lowerQualifier": "",
+        "HumanHealthHazardCharacteristics.AcceptableDailyIntake.Adi.lowerValue": "",
+        "HumanHealthHazardCharacteristics.AcceptableDailyIntake.Adi.Unit": "",
+        "HumanHealthHazardCharacteristics.AcceptableDailyIntake.Adi.upperQualifier": "",
+        "HumanHealthHazardCharacteristics.AcceptableDailyIntake.Adi.upperValue": "",
+        "HumanHealthHazardCharacteristics.AcceptableOperatorExposureLevel.Aoel.Unit": "",
+        "HumanHealthHazardCharacteristics.AcuteAcceptableOperatorExposureLevel.Aaoel.Unit": "",
+        "HumanHealthHazardCharacteristics.AcuteReferenceDose.Arfd.lowerValue": "",
+        "HumanHealthHazardCharacteristics.AcuteReferenceDose.Arfd.Unit": "",
+        "HumanHealthHazardCharacteristics.AcuteReferenceDose.Arfd.upperQualifier": "",
+        "HumanHealthHazardCharacteristics.AcuteReferenceDose.Arfd.upperValue": "",
+        "HumanHealthHazardCharacteristics.AcuteReferenceDose.AssessmentBody": "",
+        "HumanHealthHazardCharacteristics.AcuteReferenceDose.AssessmentBody.Other": "",
+        "HumanHealthHazardCharacteristics.AcuteReferenceDose.CriticalEndpoint": "",
+        "HumanHealthHazardCharacteristics.AcuteReferenceDose.Justification": "",
+        "HumanHealthHazardCharacteristics.AcuteReferenceDose.JustificationAndComments": "",
+        "HumanHealthHazardCharacteristics.AcuteReferenceDose.JustificationOverallUf": "",
+        "HumanHealthHazardCharacteristics.AcuteReferenceDose.NoAllocated": "",
+        "HumanHealthHazardCharacteristics.AcuteReferenceDose.OverallUncertainty": "",
+        "HumanHealthHazardCharacteristics.AcuteReferenceDose.Population": "",
+        "HumanHealthHazardCharacteristics.OtherReferenceValues.AssessmentBody": "",
+        "HumanHealthHazardCharacteristics.OtherReferenceValues.AssessmentBody.Other": "",
+        "HumanHealthHazardCharacteristics.OtherReferenceValues.CriticalEndpoint": "",
+        "HumanHealthHazardCharacteristics.OtherReferenceValues.JustificationAndComments": "Remarks: 1,4-Bis(hydroxymethyl)cyclohexane is authorised as a monomer for plastic materials and articles in contact with food (Commission Regulation (EU) No 10/2011) without any specific restriction.",
+        "HumanHealthHazardCharacteristics.OtherReferenceValues.JustificationOverallUf": "",
+        "HumanHealthHazardCharacteristics.OtherReferenceValues.NoAllocated": "",
+        "HumanHealthHazardCharacteristics.OtherReferenceValues.OverallUncertainty": "",
+        "HumanHealthHazardCharacteristics.OtherReferenceValues.Population": "consumers",
+        "HumanHealthHazardCharacteristics.OtherReferenceValues.Population.Other": "",
+        "HumanHealthHazardCharacteristics.OtherReferenceValues.Population.Remarks": "",
+        "HumanHealthHazardCharacteristics.OtherReferenceValues.RefValue.lowerQualifier": "",
+        "HumanHealthHazardCharacteristics.OtherReferenceValues.RefValue.lowerValue": "",
+        "HumanHealthHazardCharacteristics.OtherReferenceValues.RefValue.Unit": "",
+        "HumanHealthHazardCharacteristics.OtherReferenceValues.RefValue.Unit.Other": "",
+        "HumanHealthHazardCharacteristics.OtherReferenceValues.RefValue.upperQualifier": "",
+        "HumanHealthHazardCharacteristics.OtherReferenceValues.RefValue.upperValue": "",
+        "HumanHealthHazardCharacteristics.OtherReferenceValues.ReferenceToEFSAOpinion": "e3021a72-77f6-4cd9-b53b-1cebacf17843",
+        "HumanHealthHazardCharacteristics.OtherReferenceValues.ReferenceValueDescriptor": "other:",
+        "HumanHealthHazardCharacteristics.OtherReferenceValues.ReferenceValueDescriptor.Other": "Not deemed necessary",
+        "HumanHealthHazardCharacteristics.OtherReferenceValues.ReferenceValueDescriptor.Remarks": ""
+      },
+      {
+        "Document UUID": "b1382568-4f56-4dd9-ac36-be88fd013f8d",
+        "Parent UUID": "a807109f-a502-43d1-bf33-4b06de415e36",
+        "HumanHealthHazardCharacteristics.AcceptableDailyIntake.Adi.lowerQualifier": "",
+        "HumanHealthHazardCharacteristics.AcceptableDailyIntake.Adi.lowerValue": "",
+        "HumanHealthHazardCharacteristics.AcceptableDailyIntake.Adi.Unit": "",
+        "HumanHealthHazardCharacteristics.AcceptableDailyIntake.Adi.upperQualifier": "",
+        "HumanHealthHazardCharacteristics.AcceptableDailyIntake.Adi.upperValue": "",
+        "HumanHealthHazardCharacteristics.AcceptableOperatorExposureLevel.Aoel.Unit": "",
+        "HumanHealthHazardCharacteristics.AcuteAcceptableOperatorExposureLevel.Aaoel.Unit": "",
+        "HumanHealthHazardCharacteristics.AcuteReferenceDose.Arfd.lowerValue": "",
+        "HumanHealthHazardCharacteristics.AcuteReferenceDose.Arfd.Unit": "",
+        "HumanHealthHazardCharacteristics.AcuteReferenceDose.Arfd.upperQualifier": "",
+        "HumanHealthHazardCharacteristics.AcuteReferenceDose.Arfd.upperValue": "",
+        "HumanHealthHazardCharacteristics.AcuteReferenceDose.AssessmentBody": "",
+        "HumanHealthHazardCharacteristics.AcuteReferenceDose.AssessmentBody.Other": "",
+        "HumanHealthHazardCharacteristics.AcuteReferenceDose.CriticalEndpoint": "",
+        "HumanHealthHazardCharacteristics.AcuteReferenceDose.Justification": "",
+        "HumanHealthHazardCharacteristics.AcuteReferenceDose.JustificationAndComments": "",
+        "HumanHealthHazardCharacteristics.AcuteReferenceDose.JustificationOverallUf": "",
+        "HumanHealthHazardCharacteristics.AcuteReferenceDose.NoAllocated": "",
+        "HumanHealthHazardCharacteristics.AcuteReferenceDose.OverallUncertainty": "",
+        "HumanHealthHazardCharacteristics.AcuteReferenceDose.Population": "",
+        "HumanHealthHazardCharacteristics.OtherReferenceValues.AssessmentBody": "",
+        "HumanHealthHazardCharacteristics.OtherReferenceValues.AssessmentBody.Other": "",
+        "HumanHealthHazardCharacteristics.OtherReferenceValues.CriticalEndpoint": "",
+        "HumanHealthHazardCharacteristics.OtherReferenceValues.JustificationAndComments": "Remarks: The use of concentrated liquid L-lysine (base) produced by C. glutamicum â€˜A' in animal nutrition was considered of no concern for the target species, consumer and the environment.",
+        "HumanHealthHazardCharacteristics.OtherReferenceValues.JustificationOverallUf": "",
+        "HumanHealthHazardCharacteristics.OtherReferenceValues.NoAllocated": "",
+        "HumanHealthHazardCharacteristics.OtherReferenceValues.OverallUncertainty": "",
+        "HumanHealthHazardCharacteristics.OtherReferenceValues.Population": "other:",
+        "HumanHealthHazardCharacteristics.OtherReferenceValues.Population.Other": "Animal not used for food production - unspecified",
+        "HumanHealthHazardCharacteristics.OtherReferenceValues.Population.Remarks": "",
+        "HumanHealthHazardCharacteristics.OtherReferenceValues.RefValue.lowerQualifier": "",
+        "HumanHealthHazardCharacteristics.OtherReferenceValues.RefValue.lowerValue": "",
+        "HumanHealthHazardCharacteristics.OtherReferenceValues.RefValue.Unit": "",
+        "HumanHealthHazardCharacteristics.OtherReferenceValues.RefValue.Unit.Other": "",
+        "HumanHealthHazardCharacteristics.OtherReferenceValues.RefValue.upperQualifier": "",
+        "HumanHealthHazardCharacteristics.OtherReferenceValues.RefValue.upperValue": "",
+        "HumanHealthHazardCharacteristics.OtherReferenceValues.ReferenceToEFSAOpinion": "c4d6edc4-703d-4f3e-a4d2-98a8405a70d6",
+        "HumanHealthHazardCharacteristics.OtherReferenceValues.ReferenceValueDescriptor": "other:",
+        "HumanHealthHazardCharacteristics.OtherReferenceValues.ReferenceValueDescriptor.Other": "Not deemed necessary",
+        "HumanHealthHazardCharacteristics.OtherReferenceValues.ReferenceValueDescriptor.Remarks": ""
+      },
+      {
+        "Document UUID": "6721a0b0-2e0c-416f-88f1-7efa6a552d77",
+        "Parent UUID": "8d70bcf1-cfab-410f-8481-4fedb21e4bd5",
+        "HumanHealthHazardCharacteristics.AcceptableDailyIntake.Adi.lowerQualifier": "",
+        "HumanHealthHazardCharacteristics.AcceptableDailyIntake.Adi.lowerValue": "",
+        "HumanHealthHazardCharacteristics.AcceptableDailyIntake.Adi.Unit": "",
+        "HumanHealthHazardCharacteristics.AcceptableDailyIntake.Adi.upperQualifier": "",
+        "HumanHealthHazardCharacteristics.AcceptableDailyIntake.Adi.upperValue": "",
+        "HumanHealthHazardCharacteristics.AcceptableOperatorExposureLevel.Aoel.Unit": "",
+        "HumanHealthHazardCharacteristics.AcuteAcceptableOperatorExposureLevel.Aaoel.Unit": "",
+        "HumanHealthHazardCharacteristics.AcuteReferenceDose.Arfd.lowerValue": "",
+        "HumanHealthHazardCharacteristics.AcuteReferenceDose.Arfd.Unit": "",
+        "HumanHealthHazardCharacteristics.AcuteReferenceDose.Arfd.upperQualifier": "",
+        "HumanHealthHazardCharacteristics.AcuteReferenceDose.Arfd.upperValue": "",
+        "HumanHealthHazardCharacteristics.AcuteReferenceDose.AssessmentBody": "",
+        "HumanHealthHazardCharacteristics.AcuteReferenceDose.AssessmentBody.Other": "",
+        "HumanHealthHazardCharacteristics.AcuteReferenceDose.CriticalEndpoint": "",
+        "HumanHealthHazardCharacteristics.AcuteReferenceDose.Justification": "",
+        "HumanHealthHazardCharacteristics.AcuteReferenceDose.JustificationAndComments": "",
+        "HumanHealthHazardCharacteristics.AcuteReferenceDose.JustificationOverallUf": "",
+        "HumanHealthHazardCharacteristics.AcuteReferenceDose.NoAllocated": "",
+        "HumanHealthHazardCharacteristics.AcuteReferenceDose.OverallUncertainty": "",
+        "HumanHealthHazardCharacteristics.AcuteReferenceDose.Population": "",
+        "HumanHealthHazardCharacteristics.OtherReferenceValues.AssessmentBody": "",
+        "HumanHealthHazardCharacteristics.OtherReferenceValues.AssessmentBody.Other": "",
+        "HumanHealthHazardCharacteristics.OtherReferenceValues.CriticalEndpoint": "",
+        "HumanHealthHazardCharacteristics.OtherReferenceValues.JustificationAndComments": "Assessment: some concern; Remarks: No studies have been submitted to support the safety of the additive under assessment for the users. The additive has a pH < 2 and is considered corrosive to skin, eyes and mucous membranes. The additive is therefore considered a hazard for the users.",
+        "HumanHealthHazardCharacteristics.OtherReferenceValues.JustificationOverallUf": "",
+        "HumanHealthHazardCharacteristics.OtherReferenceValues.NoAllocated": "",
+        "HumanHealthHazardCharacteristics.OtherReferenceValues.OverallUncertainty": "",
+        "HumanHealthHazardCharacteristics.OtherReferenceValues.Population": "workers",
+        "HumanHealthHazardCharacteristics.OtherReferenceValues.Population.Other": "",
+        "HumanHealthHazardCharacteristics.OtherReferenceValues.Population.Remarks": "",
+        "HumanHealthHazardCharacteristics.OtherReferenceValues.RefValue.lowerQualifier": "",
+        "HumanHealthHazardCharacteristics.OtherReferenceValues.RefValue.lowerValue": "",
+        "HumanHealthHazardCharacteristics.OtherReferenceValues.RefValue.Unit": "",
+        "HumanHealthHazardCharacteristics.OtherReferenceValues.RefValue.Unit.Other": "",
+        "HumanHealthHazardCharacteristics.OtherReferenceValues.RefValue.upperQualifier": "",
+        "HumanHealthHazardCharacteristics.OtherReferenceValues.RefValue.upperValue": "",
+        "HumanHealthHazardCharacteristics.OtherReferenceValues.ReferenceToEFSAOpinion": "6570d058-8c56-4512-825c-b08e41231f57",
+        "HumanHealthHazardCharacteristics.OtherReferenceValues.ReferenceValueDescriptor": "other:",
+        "HumanHealthHazardCharacteristics.OtherReferenceValues.ReferenceValueDescriptor.Other": "margin of safety",
+        "HumanHealthHazardCharacteristics.OtherReferenceValues.ReferenceValueDescriptor.Remarks": ""
+      }
+    ]
+  },
+  "manualChecks": [
+    {
+      "query": "Aspartame",
+      "status": "matched",
+      "matches": [
+        {
+          "substance": "aspartame",
+          "cas": [
+            "22839-47-0"
+          ],
+          "referenceUuid": "f6f7b95d-a8c3-410d-9ee2-2325686bcd9b",
+          "evidence": {
+            "exactCas": false,
+            "exactId": false,
+            "exactName": true,
+            "exactIns": false
+          }
+        }
+      ]
+    },
+    {
+      "query": "Acesulfame K",
+      "status": "matched",
+      "matches": [
+        {
+          "substance": "acesulfame k",
+          "cas": [
+            "55589-62-3"
+          ],
+          "referenceUuid": "52e03a7b-36a0-4e7f-8362-e366373aa064",
+          "evidence": {
+            "exactCas": false,
+            "exactId": false,
+            "exactName": true,
+            "exactIns": false
+          }
+        }
+      ]
+    },
+    {
+      "query": "Phosphoric acid",
+      "status": "matched",
+      "matches": [
+        {
+          "substance": "phosphoric acid",
+          "cas": [
+            "7664-38-2"
+          ],
+          "referenceUuid": "12fc28ee-07ea-4b36-97ed-420391d86eaf",
+          "evidence": {
+            "exactCas": false,
+            "exactId": false,
+            "exactName": true,
+            "exactIns": false
+          }
+        }
+      ]
+    },
+    {
+      "query": "Citric acid",
+      "status": "matched",
+      "matches": [
+        {
+          "substance": "citric acid",
+          "cas": [
+            "77-92-9"
+          ],
+          "referenceUuid": "c4d38ae8-aec4-47b2-b02b-344dfbced691",
+          "evidence": {
+            "exactCas": false,
+            "exactId": false,
+            "exactName": true,
+            "exactIns": false
+          }
+        }
+      ]
+    },
+    {
+      "query": "Sodium benzoate",
+      "status": "matched",
+      "matches": [
+        {
+          "substance": "sodium benzoate",
+          "cas": [
+            "532-32-1"
+          ],
+          "referenceUuid": "64a45005-2e3c-4a9d-a932-5fa636761921",
+          "evidence": {
+            "exactCas": false,
+            "exactId": false,
+            "exactName": true,
+            "exactIns": false
+          }
+        }
+      ]
+    }
+  ],
+  "sheets": [
+    {
+      "name": "DATA_DICTIONARY",
+      "rows": 721,
+      "columns": [
+        "Table name",
+        "Field name",
+        "Field generic type",
+        "Field data type",
+        "Referenced IUCLID document",
+        "Max length",
+        "IUCLID phrase group ID",
+        "Required",
+        "Applicable IUCLID document(s)"
+      ]
+    },
+    {
+      "name": "REF_SUB",
+      "rows": 7890,
+      "columns": [
+        "Document UUID",
+        "Definition",
+        "Parent UUID",
+        "Description",
+        "Inventory.CASNumber",
+        "Inventory.InventoryEntry",
+        "IupacName",
+        "MolecularStructuralInfo.InChIKey",
+        "MolecularStructuralInfo.InChl",
+        "MolecularStructuralInfo.MolecularFormula",
+        "MolecularStructuralInfo.SmilesNotation",
+        "ReferenceSubstanceName",
+        "RelatedSubstances.GroupCategoryInfo",
+        "CAS name",
+        "CAS number",
+        "CMS-ID",
+        "COM NAME [EFSA OFT2.0]",
+        "EC number",
+        "EFSA PARAM CODE",
+        "Name",
+        "PARAM NAME",
+        "PUBCHEM CID",
+        "SUB NAME [EFSA OFT2.0]",
+        "Trade name",
+        "US EPA DTXSID"
+      ]
+    },
+    {
+      "name": "SUB",
+      "rows": 7880,
+      "columns": [
+        "Document UUID",
+        "Definition",
+        "Parent UUID",
+        "ChemicalName",
+        "OwnerLegalEntity",
+        "ReferenceSubstance.ReferenceSubstance",
+        "TypeOfSubstance.Composition",
+        "TypeOfSubstance.Composition.Other",
+        "TypeOfSubstance.Origin",
+        "TypeOfSubstance.Origin.Other"
+      ]
+    },
+    {
+      "name": "FLEX_SUM.ToxRefValues",
+      "rows": 19747,
+      "columns": [
+        "Document UUID",
+        "Definition",
+        "Parent UUID",
+        "Discussion.Discussion",
+        "HumanHealthHazardCharacteristics.AcceptableDailyIntake.Adi.lowerQualifier",
+        "HumanHealthHazardCharacteristics.AcceptableDailyIntake.Adi.lowerValue",
+        "HumanHealthHazardCharacteristics.AcceptableDailyIntake.Adi.Unit",
+        "HumanHealthHazardCharacteristics.AcceptableDailyIntake.Adi.upperQualifier",
+        "HumanHealthHazardCharacteristics.AcceptableDailyIntake.Adi.upperValue",
+        "HumanHealthHazardCharacteristics.AcceptableDailyIntake.AssessmentBody",
+        "HumanHealthHazardCharacteristics.AcceptableDailyIntake.AssessmentBody.Other",
+        "HumanHealthHazardCharacteristics.AcceptableDailyIntake.CriticalEndpoint",
+        "HumanHealthHazardCharacteristics.AcceptableDailyIntake.Justification",
+        "HumanHealthHazardCharacteristics.AcceptableDailyIntake.JustificationAndComments",
+        "HumanHealthHazardCharacteristics.AcceptableDailyIntake.JustificationOverallUf",
+        "HumanHealthHazardCharacteristics.AcceptableDailyIntake.NoAllocated",
+        "HumanHealthHazardCharacteristics.AcceptableDailyIntake.OverallUncertainty",
+        "HumanHealthHazardCharacteristics.AcceptableDailyIntake.Population",
+        "HumanHealthHazardCharacteristics.AcceptableDailyIntake.Population.Remarks",
+        "HumanHealthHazardCharacteristics.AcceptableOperatorExposureLevel.Aoel.Unit",
+        "HumanHealthHazardCharacteristics.AcceptableOperatorExposureLevel.Aoel.Value",
+        "HumanHealthHazardCharacteristics.AcceptableOperatorExposureLevel.AssessmentBody",
+        "HumanHealthHazardCharacteristics.AcceptableOperatorExposureLevel.AssessmentBody.Other",
+        "HumanHealthHazardCharacteristics.AcceptableOperatorExposureLevel.CriticalEndpoint",
+        "HumanHealthHazardCharacteristics.AcceptableOperatorExposureLevel.Justification",
+        "HumanHealthHazardCharacteristics.AcceptableOperatorExposureLevel.JustificationAndComments",
+        "HumanHealthHazardCharacteristics.AcceptableOperatorExposureLevel.JustificationOverallUf",
+        "HumanHealthHazardCharacteristics.AcceptableOperatorExposureLevel.NoAllocated",
+        "HumanHealthHazardCharacteristics.AcceptableOperatorExposureLevel.OralAbsorption",
+        "HumanHealthHazardCharacteristics.AcceptableOperatorExposureLevel.OverallUncertainty",
+        "HumanHealthHazardCharacteristics.AcceptableOperatorExposureLevel.Population",
+        "HumanHealthHazardCharacteristics.AcceptableOperatorExposureLevel.Population.Other",
+        "HumanHealthHazardCharacteristics.AcceptableOperatorExposureLevel.Population.Remarks",
+        "HumanHealthHazardCharacteristics.AcuteAcceptableOperatorExposureLevel.Aaoel.Unit",
+        "HumanHealthHazardCharacteristics.AcuteAcceptableOperatorExposureLevel.Aaoel.Value",
+        "HumanHealthHazardCharacteristics.AcuteAcceptableOperatorExposureLevel.CriticalEndpoint",
+        "HumanHealthHazardCharacteristics.AcuteAcceptableOperatorExposureLevel.Justification",
+        "HumanHealthHazardCharacteristics.AcuteAcceptableOperatorExposureLevel.JustificationAndComments",
+        "HumanHealthHazardCharacteristics.AcuteAcceptableOperatorExposureLevel.JustificationOverallUf",
+        "HumanHealthHazardCharacteristics.AcuteAcceptableOperatorExposureLevel.NoAllocated",
+        "HumanHealthHazardCharacteristics.AcuteAcceptableOperatorExposureLevel.OralAbsorption",
+        "HumanHealthHazardCharacteristics.AcuteAcceptableOperatorExposureLevel.OverallUncertainty",
+        "HumanHealthHazardCharacteristics.AcuteAcceptableOperatorExposureLevel.Population",
+        "HumanHealthHazardCharacteristics.AcuteAcceptableOperatorExposureLevel.Population.Other",
+        "HumanHealthHazardCharacteristics.AcuteAcceptableOperatorExposureLevel.Population.Remarks",
+        "HumanHealthHazardCharacteristics.AcuteReferenceDose.Arfd.lowerValue",
+        "HumanHealthHazardCharacteristics.AcuteReferenceDose.Arfd.Unit",
+        "HumanHealthHazardCharacteristics.AcuteReferenceDose.Arfd.upperQualifier",
+        "HumanHealthHazardCharacteristics.AcuteReferenceDose.Arfd.upperValue",
+        "HumanHealthHazardCharacteristics.AcuteReferenceDose.AssessmentBody",
+        "HumanHealthHazardCharacteristics.AcuteReferenceDose.AssessmentBody.Other",
+        "HumanHealthHazardCharacteristics.AcuteReferenceDose.CriticalEndpoint",
+        "HumanHealthHazardCharacteristics.AcuteReferenceDose.Justification",
+        "HumanHealthHazardCharacteristics.AcuteReferenceDose.JustificationAndComments",
+        "HumanHealthHazardCharacteristics.AcuteReferenceDose.JustificationOverallUf",
+        "HumanHealthHazardCharacteristics.AcuteReferenceDose.NoAllocated",
+        "HumanHealthHazardCharacteristics.AcuteReferenceDose.OverallUncertainty",
+        "HumanHealthHazardCharacteristics.AcuteReferenceDose.Population",
+        "HumanHealthHazardCharacteristics.OtherReferenceValues.AssessmentBody",
+        "HumanHealthHazardCharacteristics.OtherReferenceValues.AssessmentBody.Other",
+        "HumanHealthHazardCharacteristics.OtherReferenceValues.CriticalEndpoint",
+        "HumanHealthHazardCharacteristics.OtherReferenceValues.JustificationAndComments",
+        "HumanHealthHazardCharacteristics.OtherReferenceValues.JustificationOverallUf",
+        "HumanHealthHazardCharacteristics.OtherReferenceValues.NoAllocated",
+        "HumanHealthHazardCharacteristics.OtherReferenceValues.OverallUncertainty",
+        "HumanHealthHazardCharacteristics.OtherReferenceValues.Population",
+        "HumanHealthHazardCharacteristics.OtherReferenceValues.Population.Other",
+        "HumanHealthHazardCharacteristics.OtherReferenceValues.Population.Remarks",
+        "HumanHealthHazardCharacteristics.OtherReferenceValues.RefValue.lowerQualifier",
+        "HumanHealthHazardCharacteristics.OtherReferenceValues.RefValue.lowerValue",
+        "HumanHealthHazardCharacteristics.OtherReferenceValues.RefValue.Unit",
+        "HumanHealthHazardCharacteristics.OtherReferenceValues.RefValue.Unit.Other",
+        "HumanHealthHazardCharacteristics.OtherReferenceValues.RefValue.upperQualifier",
+        "HumanHealthHazardCharacteristics.OtherReferenceValues.RefValue.upperValue",
+        "HumanHealthHazardCharacteristics.OtherReferenceValues.ReferenceToEFSAOpinion",
+        "HumanHealthHazardCharacteristics.OtherReferenceValues.ReferenceValueDescriptor",
+        "HumanHealthHazardCharacteristics.OtherReferenceValues.ReferenceValueDescriptor.Other",
+        "HumanHealthHazardCharacteristics.OtherReferenceValues.ReferenceValueDescriptor.Remarks",
+        "KeyInformation.KeyInformation"
+      ]
+    }
+  ],
+  "summary": {
+    "analyzed": 25,
+    "reliableMatches": 20,
+    "ambiguous": 4,
+    "notFound": 1,
+    "withAdiOrTdi": 14,
+    "needsManualReview": 25
+  },
+  "existingCodes": [
+    "E150D",
+    "E331",
+    "E338",
+    "E950",
+    "E951"
+  ],
+  "wouldAdd": [
+    "E202",
+    "E322",
+    "E330",
+    "E955",
+    "E100",
+    "E101",
+    "E120",
+    "E160A",
+    "E162",
+    "E170",
+    "E200",
+    "E211",
+    "E250",
+    "E270",
+    "E300",
+    "E306",
+    "E407"
+  ],
+  "wouldReview": [
+    "E150D",
+    "E331",
+    "E338",
+    "E950",
+    "E951",
+    "E202",
+    "E322",
+    "E330",
+    "E621",
+    "E955",
+    "E100",
+    "E101",
+    "E120",
+    "E160A",
+    "E160C",
+    "E162",
+    "E170",
+    "E200",
+    "E211",
+    "E220",
+    "E250",
+    "E270",
+    "E300",
+    "E306",
+    "E407"
+  ],
+  "proposedRecords": [
+    {
+      "code": "E338",
+      "canonical_name": "Phosphoric acid",
+      "function_classes": [],
+      "regulatory_status": null,
+      "eu_authorized": null,
+      "eu_conditions": {},
+      "cas_numbers": [
+        "7664-38-2"
+      ],
+      "opentox_substance_name": "phosphoric acid",
+      "opentox_sub_uuid": "84b9d5c0-31b6-4704-ad41-a8969d33ceed",
+      "opentox_ref_sub_uuid": "12fc28ee-07ea-4b36-97ed-420391d86eaf",
+      "matching_method": "cas_exact",
+      "matching_confidence": "high",
+      "reference_values": [
+        {
+          "type": "ADI",
+          "lowerValue": "2.25",
+          "Unit": "mg/kg bw/day"
+        }
+      ],
+      "reference_value_status": "available",
+      "adi_value": null,
+      "adi_unit": null,
+      "adi_display": null,
+      "adi_authority": null,
+      "assessment_date": null,
+      "efsa_document_ids": [],
+      "efsa_document_urls": [],
+      "population": [],
+      "critical_endpoints": [],
+      "justifications": [],
+      "severity": null,
+      "evidence_strength": null,
+      "exposure_concern": null,
+      "scientific_classification": null,
+      "classification_action": "preserve_existing",
+      "sources": [
+        {
+          "sourceId": "openfoodtox-e338",
+          "organisation": "OpenFoodTox / EFSA",
+          "sourceType": "openfoodtox_record",
+          "title": "OpenFoodTox 3.0 record",
+          "url": null,
+          "retrievedAt": "2026-09-16T13:22:16.770Z"
+        }
+      ],
+      "sourceVersion": "OpenFoodTox 3.0 / EFSA export repository",
+      "sourceFileHash": "5181661e921651d4087b544981e1e5a63b99532844eac0112732806a00a85eda",
+      "retrievedAt": "2026-09-16T13:22:16.770Z",
+      "needs_scientific_review": false,
+      "data_version": "proposed-1.0"
+    },
+    {
+      "code": "E950",
+      "canonical_name": "Acesulfame potassium",
+      "function_classes": [],
+      "regulatory_status": null,
+      "eu_authorized": null,
+      "eu_conditions": {},
+      "cas_numbers": [
+        "55589-62-3"
+      ],
+      "opentox_substance_name": "acesulfame k",
+      "opentox_sub_uuid": "afcec1ee-175d-4930-b690-7d05e9721d04",
+      "opentox_ref_sub_uuid": "52e03a7b-36a0-4e7f-8362-e366373aa064",
+      "matching_method": "cas_exact",
+      "matching_confidence": "high",
+      "reference_values": [
+        {
+          "type": "ADI",
+          "Unit": "mg/kg bw/day",
+          "upperValue": "15"
+        },
+        {
+          "type": "ADI",
+          "lowerValue": "9",
+          "Unit": "mg/kg bw/day"
+        }
+      ],
+      "reference_value_status": "available",
+      "adi_value": null,
+      "adi_unit": null,
+      "adi_display": null,
+      "adi_authority": null,
+      "assessment_date": null,
+      "efsa_document_ids": [],
+      "efsa_document_urls": [],
+      "population": [],
+      "critical_endpoints": [],
+      "justifications": [],
+      "severity": null,
+      "evidence_strength": null,
+      "exposure_concern": null,
+      "scientific_classification": null,
+      "classification_action": "preserve_existing",
+      "sources": [
+        {
+          "sourceId": "openfoodtox-e950",
+          "organisation": "OpenFoodTox / EFSA",
+          "sourceType": "openfoodtox_record",
+          "title": "OpenFoodTox 3.0 record",
+          "url": null,
+          "retrievedAt": "2026-09-16T13:22:16.770Z"
+        }
+      ],
+      "sourceVersion": "OpenFoodTox 3.0 / EFSA export repository",
+      "sourceFileHash": "5181661e921651d4087b544981e1e5a63b99532844eac0112732806a00a85eda",
+      "retrievedAt": "2026-09-16T13:22:16.770Z",
+      "needs_scientific_review": false,
+      "data_version": "proposed-1.0"
+    },
+    {
+      "code": "E951",
+      "canonical_name": "Aspartame",
+      "function_classes": [],
+      "regulatory_status": null,
+      "eu_authorized": null,
+      "eu_conditions": {},
+      "cas_numbers": [
+        "22839-47-0"
+      ],
+      "opentox_substance_name": "aspartame",
+      "opentox_sub_uuid": "18e96029-acd9-47ce-be07-395401b9560d",
+      "opentox_ref_sub_uuid": "f6f7b95d-a8c3-410d-9ee2-2325686bcd9b",
+      "matching_method": "cas_exact",
+      "matching_confidence": "high",
+      "reference_values": [
+        {
+          "type": "ADI",
+          "lowerValue": "40",
+          "Unit": "mg/kg bw/day"
+        },
+        {
+          "type": "ADI",
+          "lowerValue": "40",
+          "Unit": "mg/kg bw/day"
+        },
+        {
+          "type": "ADI",
+          "lowerValue": "40",
+          "Unit": "mg/kg bw/day"
+        },
+        {
+          "type": "ADI",
+          "lowerValue": "40",
+          "Unit": "mg/kg bw/day"
+        },
+        {
+          "type": "ADI",
+          "lowerValue": "40",
+          "Unit": "mg/kg bw/day"
+        }
+      ],
+      "reference_value_status": "available",
+      "adi_value": null,
+      "adi_unit": null,
+      "adi_display": null,
+      "adi_authority": null,
+      "assessment_date": null,
+      "efsa_document_ids": [],
+      "efsa_document_urls": [],
+      "population": [],
+      "critical_endpoints": [],
+      "justifications": [],
+      "severity": null,
+      "evidence_strength": null,
+      "exposure_concern": null,
+      "scientific_classification": null,
+      "classification_action": "preserve_existing",
+      "sources": [
+        {
+          "sourceId": "openfoodtox-e951",
+          "organisation": "OpenFoodTox / EFSA",
+          "sourceType": "openfoodtox_record",
+          "title": "OpenFoodTox 3.0 record",
+          "url": null,
+          "retrievedAt": "2026-09-16T13:22:16.770Z"
+        }
+      ],
+      "sourceVersion": "OpenFoodTox 3.0 / EFSA export repository",
+      "sourceFileHash": "5181661e921651d4087b544981e1e5a63b99532844eac0112732806a00a85eda",
+      "retrievedAt": "2026-09-16T13:22:16.770Z",
+      "needs_scientific_review": false,
+      "data_version": "proposed-1.0"
+    },
+    {
+      "code": "E202",
+      "canonical_name": "Potassium sorbate",
+      "function_classes": [],
+      "regulatory_status": null,
+      "eu_authorized": null,
+      "eu_conditions": {},
+      "cas_numbers": [
+        "24634-61-5"
+      ],
+      "opentox_substance_name": "potassium sorbate",
+      "opentox_sub_uuid": "464a5a2e-7618-49fb-9132-4a21e396caa8",
+      "opentox_ref_sub_uuid": "d664a0b6-03c3-4d75-8dbb-1da59254a57c",
+      "matching_method": "cas_exact",
+      "matching_confidence": "high",
+      "reference_values": [
+        {
+          "type": "ADI",
+          "lowerValue": "25",
+          "Unit": "mg/kg bw/day"
+        },
+        {
+          "type": "ADI",
+          "lowerValue": "3",
+          "Unit": "mg/kg bw/day"
+        },
+        {
+          "type": "ADI",
+          "lowerValue": "11",
+          "Unit": "mg/kg bw/day"
+        }
+      ],
+      "reference_value_status": "available",
+      "adi_value": null,
+      "adi_unit": null,
+      "adi_display": null,
+      "adi_authority": null,
+      "assessment_date": null,
+      "efsa_document_ids": [],
+      "efsa_document_urls": [],
+      "population": [],
+      "critical_endpoints": [],
+      "justifications": [],
+      "severity": null,
+      "evidence_strength": null,
+      "exposure_concern": null,
+      "scientific_classification": "insufficient_data",
+      "classification_action": "requires_scientific_review",
+      "sources": [
+        {
+          "sourceId": "openfoodtox-e202",
+          "organisation": "OpenFoodTox / EFSA",
+          "sourceType": "openfoodtox_record",
+          "title": "OpenFoodTox 3.0 record",
+          "url": null,
+          "retrievedAt": "2026-09-16T13:22:16.770Z"
+        }
+      ],
+      "sourceVersion": "OpenFoodTox 3.0 / EFSA export repository",
+      "sourceFileHash": "5181661e921651d4087b544981e1e5a63b99532844eac0112732806a00a85eda",
+      "retrievedAt": "2026-09-16T13:22:16.770Z",
+      "needs_scientific_review": true,
+      "data_version": "proposed-1.0"
+    },
+    {
+      "code": "E322",
+      "canonical_name": "Lecithins",
+      "function_classes": [],
+      "regulatory_status": null,
+      "eu_authorized": null,
+      "eu_conditions": {},
+      "cas_numbers": [
+        "8002-43-5"
+      ],
+      "opentox_substance_name": "lecithins",
+      "opentox_sub_uuid": "211272b1-2662-4daa-b106-139412f14136",
+      "opentox_ref_sub_uuid": "acf6babd-17ae-4b54-832c-c43eed5b0d9b",
+      "matching_method": "nom_ou_alias_exact",
+      "matching_confidence": "high",
+      "reference_values": [],
+      "reference_value_status": "reference_value_not_found",
+      "adi_value": null,
+      "adi_unit": null,
+      "adi_display": null,
+      "adi_authority": null,
+      "assessment_date": null,
+      "efsa_document_ids": [],
+      "efsa_document_urls": [],
+      "population": [],
+      "critical_endpoints": [],
+      "justifications": [],
+      "severity": null,
+      "evidence_strength": null,
+      "exposure_concern": null,
+      "scientific_classification": "insufficient_data",
+      "classification_action": "requires_scientific_review",
+      "sources": [
+        {
+          "sourceId": "openfoodtox-e322",
+          "organisation": "OpenFoodTox / EFSA",
+          "sourceType": "openfoodtox_record",
+          "title": "OpenFoodTox 3.0 record",
+          "url": null,
+          "retrievedAt": "2026-09-16T13:22:16.770Z"
+        }
+      ],
+      "sourceVersion": "OpenFoodTox 3.0 / EFSA export repository",
+      "sourceFileHash": "5181661e921651d4087b544981e1e5a63b99532844eac0112732806a00a85eda",
+      "retrievedAt": "2026-09-16T13:22:16.770Z",
+      "needs_scientific_review": true,
+      "data_version": "proposed-1.0"
+    },
+    {
+      "code": "E330",
+      "canonical_name": "Citric acid",
+      "function_classes": [],
+      "regulatory_status": null,
+      "eu_authorized": null,
+      "eu_conditions": {},
+      "cas_numbers": [
+        "77-92-9"
+      ],
+      "opentox_substance_name": "citric acid",
+      "opentox_sub_uuid": "39cf5b57-4e50-49f0-8c49-6719ebb32d47",
+      "opentox_ref_sub_uuid": "c4d38ae8-aec4-47b2-b02b-344dfbced691",
+      "matching_method": "cas_exact",
+      "matching_confidence": "high",
+      "reference_values": [],
+      "reference_value_status": "reference_value_not_found",
+      "adi_value": null,
+      "adi_unit": null,
+      "adi_display": null,
+      "adi_authority": null,
+      "assessment_date": null,
+      "efsa_document_ids": [],
+      "efsa_document_urls": [],
+      "population": [],
+      "critical_endpoints": [],
+      "justifications": [],
+      "severity": null,
+      "evidence_strength": null,
+      "exposure_concern": null,
+      "scientific_classification": "insufficient_data",
+      "classification_action": "requires_scientific_review",
+      "sources": [
+        {
+          "sourceId": "openfoodtox-e330",
+          "organisation": "OpenFoodTox / EFSA",
+          "sourceType": "openfoodtox_record",
+          "title": "OpenFoodTox 3.0 record",
+          "url": null,
+          "retrievedAt": "2026-09-16T13:22:16.770Z"
+        }
+      ],
+      "sourceVersion": "OpenFoodTox 3.0 / EFSA export repository",
+      "sourceFileHash": "5181661e921651d4087b544981e1e5a63b99532844eac0112732806a00a85eda",
+      "retrievedAt": "2026-09-16T13:22:16.770Z",
+      "needs_scientific_review": true,
+      "data_version": "proposed-1.0"
+    },
+    {
+      "code": "E955",
+      "canonical_name": "Sucralose",
+      "function_classes": [],
+      "regulatory_status": null,
+      "eu_authorized": null,
+      "eu_conditions": {},
+      "cas_numbers": [
+        "56038-13-2"
+      ],
+      "opentox_substance_name": "sucralose",
+      "opentox_sub_uuid": "6078bad9-99c0-4f96-84bb-a7f4161e992b",
+      "opentox_ref_sub_uuid": "b787a611-b1e3-4478-a5c1-3cd8bfa6cbf9",
+      "matching_method": "cas_exact",
+      "matching_confidence": "high",
+      "reference_values": [
+        {
+          "type": "ADI",
+          "Unit": "mg/kg bw/day",
+          "upperQualifier": "<=",
+          "upperValue": "15"
+        }
+      ],
+      "reference_value_status": "available",
+      "adi_value": null,
+      "adi_unit": null,
+      "adi_display": null,
+      "adi_authority": null,
+      "assessment_date": null,
+      "efsa_document_ids": [],
+      "efsa_document_urls": [],
+      "population": [],
+      "critical_endpoints": [],
+      "justifications": [],
+      "severity": null,
+      "evidence_strength": null,
+      "exposure_concern": null,
+      "scientific_classification": "insufficient_data",
+      "classification_action": "requires_scientific_review",
+      "sources": [
+        {
+          "sourceId": "openfoodtox-e955",
+          "organisation": "OpenFoodTox / EFSA",
+          "sourceType": "openfoodtox_record",
+          "title": "OpenFoodTox 3.0 record",
+          "url": null,
+          "retrievedAt": "2026-09-16T13:22:16.770Z"
+        }
+      ],
+      "sourceVersion": "OpenFoodTox 3.0 / EFSA export repository",
+      "sourceFileHash": "5181661e921651d4087b544981e1e5a63b99532844eac0112732806a00a85eda",
+      "retrievedAt": "2026-09-16T13:22:16.770Z",
+      "needs_scientific_review": true,
+      "data_version": "proposed-1.0"
+    },
+    {
+      "code": "E100",
+      "canonical_name": "Curcumin",
+      "function_classes": [],
+      "regulatory_status": null,
+      "eu_authorized": null,
+      "eu_conditions": {},
+      "cas_numbers": [
+        "458-37-7"
+      ],
+      "opentox_substance_name": "curcumin",
+      "opentox_sub_uuid": "1ec9f394-7fbb-43a2-8d6b-6a1067cef59f",
+      "opentox_ref_sub_uuid": "1de094c6-513a-4dc2-9afd-9cfa8c13569c",
+      "matching_method": "cas_exact",
+      "matching_confidence": "high",
+      "reference_values": [
+        {
+          "type": "ADI",
+          "lowerValue": "3",
+          "Unit": "mg/kg bw/day"
+        }
+      ],
+      "reference_value_status": "available",
+      "adi_value": null,
+      "adi_unit": null,
+      "adi_display": null,
+      "adi_authority": null,
+      "assessment_date": null,
+      "efsa_document_ids": [],
+      "efsa_document_urls": [],
+      "population": [],
+      "critical_endpoints": [],
+      "justifications": [],
+      "severity": null,
+      "evidence_strength": null,
+      "exposure_concern": null,
+      "scientific_classification": "insufficient_data",
+      "classification_action": "requires_scientific_review",
+      "sources": [
+        {
+          "sourceId": "openfoodtox-e100",
+          "organisation": "OpenFoodTox / EFSA",
+          "sourceType": "openfoodtox_record",
+          "title": "OpenFoodTox 3.0 record",
+          "url": null,
+          "retrievedAt": "2026-09-16T13:22:16.770Z"
+        }
+      ],
+      "sourceVersion": "OpenFoodTox 3.0 / EFSA export repository",
+      "sourceFileHash": "5181661e921651d4087b544981e1e5a63b99532844eac0112732806a00a85eda",
+      "retrievedAt": "2026-09-16T13:22:16.770Z",
+      "needs_scientific_review": true,
+      "data_version": "proposed-1.0"
+    },
+    {
+      "code": "E101",
+      "canonical_name": "Riboflavins",
+      "function_classes": [],
+      "regulatory_status": null,
+      "eu_authorized": null,
+      "eu_conditions": {},
+      "cas_numbers": [
+        "83-88-5"
+      ],
+      "opentox_substance_name": "riboflavin",
+      "opentox_sub_uuid": "6bd4f020-5316-4ce1-a4d6-8a0df1c257eb",
+      "opentox_ref_sub_uuid": "5eb42649-e1d7-46c4-9102-383262a50bb6",
+      "matching_method": "cas_exact",
+      "matching_confidence": "high",
+      "reference_values": [
+        {
+          "type": "ADI",
+          "Unit": "mg/kg bw/day",
+          "upperQualifier": "<=",
+          "upperValue": "0.5"
+        }
+      ],
+      "reference_value_status": "available",
+      "adi_value": null,
+      "adi_unit": null,
+      "adi_display": null,
+      "adi_authority": null,
+      "assessment_date": null,
+      "efsa_document_ids": [],
+      "efsa_document_urls": [],
+      "population": [],
+      "critical_endpoints": [],
+      "justifications": [],
+      "severity": null,
+      "evidence_strength": null,
+      "exposure_concern": null,
+      "scientific_classification": "insufficient_data",
+      "classification_action": "requires_scientific_review",
+      "sources": [
+        {
+          "sourceId": "openfoodtox-e101",
+          "organisation": "OpenFoodTox / EFSA",
+          "sourceType": "openfoodtox_record",
+          "title": "OpenFoodTox 3.0 record",
+          "url": null,
+          "retrievedAt": "2026-09-16T13:22:16.770Z"
+        }
+      ],
+      "sourceVersion": "OpenFoodTox 3.0 / EFSA export repository",
+      "sourceFileHash": "5181661e921651d4087b544981e1e5a63b99532844eac0112732806a00a85eda",
+      "retrievedAt": "2026-09-16T13:22:16.770Z",
+      "needs_scientific_review": true,
+      "data_version": "proposed-1.0"
+    },
+    {
+      "code": "E120",
+      "canonical_name": "Cochineal carminic acid carmins",
+      "function_classes": [],
+      "regulatory_status": null,
+      "eu_authorized": null,
+      "eu_conditions": {},
+      "cas_numbers": [
+        "1260-17-9"
+      ],
+      "opentox_substance_name": "carminic acid",
+      "opentox_sub_uuid": "3256afd8-8a25-430e-9cd6-a48d7c7226e6",
+      "opentox_ref_sub_uuid": "754e3b46-7fc6-4c69-9c02-38d6ce089ef8",
+      "matching_method": "nom_ou_alias_exact",
+      "matching_confidence": "high",
+      "reference_values": [],
+      "reference_value_status": "reference_value_not_found",
+      "adi_value": null,
+      "adi_unit": null,
+      "adi_display": null,
+      "adi_authority": null,
+      "assessment_date": null,
+      "efsa_document_ids": [],
+      "efsa_document_urls": [],
+      "population": [],
+      "critical_endpoints": [],
+      "justifications": [],
+      "severity": null,
+      "evidence_strength": null,
+      "exposure_concern": null,
+      "scientific_classification": "insufficient_data",
+      "classification_action": "requires_scientific_review",
+      "sources": [
+        {
+          "sourceId": "openfoodtox-e120",
+          "organisation": "OpenFoodTox / EFSA",
+          "sourceType": "openfoodtox_record",
+          "title": "OpenFoodTox 3.0 record",
+          "url": null,
+          "retrievedAt": "2026-09-16T13:22:16.770Z"
+        }
+      ],
+      "sourceVersion": "OpenFoodTox 3.0 / EFSA export repository",
+      "sourceFileHash": "5181661e921651d4087b544981e1e5a63b99532844eac0112732806a00a85eda",
+      "retrievedAt": "2026-09-16T13:22:16.770Z",
+      "needs_scientific_review": true,
+      "data_version": "proposed-1.0"
+    },
+    {
+      "code": "E160A",
+      "canonical_name": "Carotenes",
+      "function_classes": [],
+      "regulatory_status": null,
+      "eu_authorized": null,
+      "eu_conditions": {},
+      "cas_numbers": [
+        "7235-40-7"
+      ],
+      "opentox_substance_name": "beta carotene",
+      "opentox_sub_uuid": "e616fda4-1673-4d4f-8bf4-be2bf777c824",
+      "opentox_ref_sub_uuid": "7df80a57-db0e-4c72-ae4e-7afacf2b7f2c",
+      "matching_method": "nom_ou_alias_exact",
+      "matching_confidence": "high",
+      "reference_values": [],
+      "reference_value_status": "reference_value_not_found",
+      "adi_value": null,
+      "adi_unit": null,
+      "adi_display": null,
+      "adi_authority": null,
+      "assessment_date": null,
+      "efsa_document_ids": [],
+      "efsa_document_urls": [],
+      "population": [],
+      "critical_endpoints": [],
+      "justifications": [],
+      "severity": null,
+      "evidence_strength": null,
+      "exposure_concern": null,
+      "scientific_classification": "insufficient_data",
+      "classification_action": "requires_scientific_review",
+      "sources": [
+        {
+          "sourceId": "openfoodtox-e160a",
+          "organisation": "OpenFoodTox / EFSA",
+          "sourceType": "openfoodtox_record",
+          "title": "OpenFoodTox 3.0 record",
+          "url": null,
+          "retrievedAt": "2026-09-16T13:22:16.770Z"
+        }
+      ],
+      "sourceVersion": "OpenFoodTox 3.0 / EFSA export repository",
+      "sourceFileHash": "5181661e921651d4087b544981e1e5a63b99532844eac0112732806a00a85eda",
+      "retrievedAt": "2026-09-16T13:22:16.770Z",
+      "needs_scientific_review": true,
+      "data_version": "proposed-1.0"
+    },
+    {
+      "code": "E162",
+      "canonical_name": "Beetroot red",
+      "function_classes": [],
+      "regulatory_status": null,
+      "eu_authorized": null,
+      "eu_conditions": {},
+      "cas_numbers": [
+        "7659-95-2"
+      ],
+      "opentox_substance_name": "beetroot red betanin",
+      "opentox_sub_uuid": "8decc310-cefa-40c8-a8e4-c6330654a7e6",
+      "opentox_ref_sub_uuid": "0a01a661-5fd3-48ed-9f09-9a77f57c20bf",
+      "matching_method": "nom_ou_alias_exact",
+      "matching_confidence": "high",
+      "reference_values": [],
+      "reference_value_status": "reference_value_not_found",
+      "adi_value": null,
+      "adi_unit": null,
+      "adi_display": null,
+      "adi_authority": null,
+      "assessment_date": null,
+      "efsa_document_ids": [],
+      "efsa_document_urls": [],
+      "population": [],
+      "critical_endpoints": [],
+      "justifications": [],
+      "severity": null,
+      "evidence_strength": null,
+      "exposure_concern": null,
+      "scientific_classification": "insufficient_data",
+      "classification_action": "requires_scientific_review",
+      "sources": [
+        {
+          "sourceId": "openfoodtox-e162",
+          "organisation": "OpenFoodTox / EFSA",
+          "sourceType": "openfoodtox_record",
+          "title": "OpenFoodTox 3.0 record",
+          "url": null,
+          "retrievedAt": "2026-09-16T13:22:16.770Z"
+        }
+      ],
+      "sourceVersion": "OpenFoodTox 3.0 / EFSA export repository",
+      "sourceFileHash": "5181661e921651d4087b544981e1e5a63b99532844eac0112732806a00a85eda",
+      "retrievedAt": "2026-09-16T13:22:16.770Z",
+      "needs_scientific_review": true,
+      "data_version": "proposed-1.0"
+    },
+    {
+      "code": "E170",
+      "canonical_name": "Calcium carbonate",
+      "function_classes": [],
+      "regulatory_status": null,
+      "eu_authorized": null,
+      "eu_conditions": {},
+      "cas_numbers": [
+        "471-34-1"
+      ],
+      "opentox_substance_name": "calcium carbonate",
+      "opentox_sub_uuid": "36ebb297-7e7a-40d6-8641-5136c49e3768",
+      "opentox_ref_sub_uuid": "96dbdb72-28f9-42fe-a447-2a45038d08cf",
+      "matching_method": "cas_exact",
+      "matching_confidence": "high",
+      "reference_values": [],
+      "reference_value_status": "reference_value_not_found",
+      "adi_value": null,
+      "adi_unit": null,
+      "adi_display": null,
+      "adi_authority": null,
+      "assessment_date": null,
+      "efsa_document_ids": [],
+      "efsa_document_urls": [],
+      "population": [],
+      "critical_endpoints": [],
+      "justifications": [],
+      "severity": null,
+      "evidence_strength": null,
+      "exposure_concern": null,
+      "scientific_classification": "insufficient_data",
+      "classification_action": "requires_scientific_review",
+      "sources": [
+        {
+          "sourceId": "openfoodtox-e170",
+          "organisation": "OpenFoodTox / EFSA",
+          "sourceType": "openfoodtox_record",
+          "title": "OpenFoodTox 3.0 record",
+          "url": null,
+          "retrievedAt": "2026-09-16T13:22:16.770Z"
+        }
+      ],
+      "sourceVersion": "OpenFoodTox 3.0 / EFSA export repository",
+      "sourceFileHash": "5181661e921651d4087b544981e1e5a63b99532844eac0112732806a00a85eda",
+      "retrievedAt": "2026-09-16T13:22:16.770Z",
+      "needs_scientific_review": true,
+      "data_version": "proposed-1.0"
+    },
+    {
+      "code": "E200",
+      "canonical_name": "Sorbic acid",
+      "function_classes": [],
+      "regulatory_status": null,
+      "eu_authorized": null,
+      "eu_conditions": {},
+      "cas_numbers": [
+        "110-44-1"
+      ],
+      "opentox_substance_name": "sorbic acid",
+      "opentox_sub_uuid": "69fe48b6-da89-4a1f-9bba-1d3d8cd5138f",
+      "opentox_ref_sub_uuid": "87d0d601-7e54-42c0-9aa2-0e2e431d0aec",
+      "matching_method": "cas_exact",
+      "matching_confidence": "high",
+      "reference_values": [
+        {
+          "type": "ADI",
+          "lowerValue": "25",
+          "Unit": "mg/kg bw/day"
+        },
+        {
+          "type": "ADI",
+          "lowerValue": "25",
+          "Unit": "mg/kg bw/day"
+        },
+        {
+          "type": "ADI",
+          "lowerValue": "11",
+          "Unit": "mg/kg bw/day"
+        },
+        {
+          "type": "ADI",
+          "lowerValue": "3",
+          "Unit": "mg/kg bw/day"
+        }
+      ],
+      "reference_value_status": "available",
+      "adi_value": null,
+      "adi_unit": null,
+      "adi_display": null,
+      "adi_authority": null,
+      "assessment_date": null,
+      "efsa_document_ids": [],
+      "efsa_document_urls": [],
+      "population": [],
+      "critical_endpoints": [],
+      "justifications": [],
+      "severity": null,
+      "evidence_strength": null,
+      "exposure_concern": null,
+      "scientific_classification": "insufficient_data",
+      "classification_action": "requires_scientific_review",
+      "sources": [
+        {
+          "sourceId": "openfoodtox-e200",
+          "organisation": "OpenFoodTox / EFSA",
+          "sourceType": "openfoodtox_record",
+          "title": "OpenFoodTox 3.0 record",
+          "url": null,
+          "retrievedAt": "2026-09-16T13:22:16.770Z"
+        }
+      ],
+      "sourceVersion": "OpenFoodTox 3.0 / EFSA export repository",
+      "sourceFileHash": "5181661e921651d4087b544981e1e5a63b99532844eac0112732806a00a85eda",
+      "retrievedAt": "2026-09-16T13:22:16.770Z",
+      "needs_scientific_review": true,
+      "data_version": "proposed-1.0"
+    },
+    {
+      "code": "E211",
+      "canonical_name": "Sodium benzoate",
+      "function_classes": [],
+      "regulatory_status": null,
+      "eu_authorized": null,
+      "eu_conditions": {},
+      "cas_numbers": [
+        "532-32-1"
+      ],
+      "opentox_substance_name": "sodium benzoate",
+      "opentox_sub_uuid": "336142ca-3f21-41ea-a1d4-6ad41cc2da84",
+      "opentox_ref_sub_uuid": "64a45005-2e3c-4a9d-a932-5fa636761921",
+      "matching_method": "cas_exact",
+      "matching_confidence": "high",
+      "reference_values": [
+        {
+          "type": "ADI",
+          "lowerValue": "5",
+          "Unit": "mg/kg bw/day"
+        },
+        {
+          "type": "ADI",
+          "lowerValue": "5",
+          "Unit": "mg/kg bw/day"
+        },
+        {
+          "type": "ADI",
+          "lowerValue": "5",
+          "Unit": "mg/kg bw/day"
+        }
+      ],
+      "reference_value_status": "available",
+      "adi_value": null,
+      "adi_unit": null,
+      "adi_display": null,
+      "adi_authority": null,
+      "assessment_date": null,
+      "efsa_document_ids": [],
+      "efsa_document_urls": [],
+      "population": [],
+      "critical_endpoints": [],
+      "justifications": [],
+      "severity": null,
+      "evidence_strength": null,
+      "exposure_concern": null,
+      "scientific_classification": "insufficient_data",
+      "classification_action": "requires_scientific_review",
+      "sources": [
+        {
+          "sourceId": "openfoodtox-e211",
+          "organisation": "OpenFoodTox / EFSA",
+          "sourceType": "openfoodtox_record",
+          "title": "OpenFoodTox 3.0 record",
+          "url": null,
+          "retrievedAt": "2026-09-16T13:22:16.770Z"
+        }
+      ],
+      "sourceVersion": "OpenFoodTox 3.0 / EFSA export repository",
+      "sourceFileHash": "5181661e921651d4087b544981e1e5a63b99532844eac0112732806a00a85eda",
+      "retrievedAt": "2026-09-16T13:22:16.770Z",
+      "needs_scientific_review": true,
+      "data_version": "proposed-1.0"
+    },
+    {
+      "code": "E250",
+      "canonical_name": "Sodium nitrite",
+      "function_classes": [],
+      "regulatory_status": null,
+      "eu_authorized": null,
+      "eu_conditions": {},
+      "cas_numbers": [
+        "7632-00-0"
+      ],
+      "opentox_substance_name": "sodium nitrite",
+      "opentox_sub_uuid": "436052b2-1c33-4ee7-bece-df5d6d7ce503",
+      "opentox_ref_sub_uuid": "6bfadada-3762-4140-89ea-bfa8257f2084",
+      "matching_method": "cas_exact",
+      "matching_confidence": "high",
+      "reference_values": [
+        {
+          "type": "ADI",
+          "lowerValue": "0.1",
+          "Unit": "mg/kg bw/day"
+        }
+      ],
+      "reference_value_status": "available",
+      "adi_value": null,
+      "adi_unit": null,
+      "adi_display": null,
+      "adi_authority": null,
+      "assessment_date": null,
+      "efsa_document_ids": [],
+      "efsa_document_urls": [],
+      "population": [],
+      "critical_endpoints": [],
+      "justifications": [],
+      "severity": null,
+      "evidence_strength": null,
+      "exposure_concern": null,
+      "scientific_classification": "insufficient_data",
+      "classification_action": "requires_scientific_review",
+      "sources": [
+        {
+          "sourceId": "openfoodtox-e250",
+          "organisation": "OpenFoodTox / EFSA",
+          "sourceType": "openfoodtox_record",
+          "title": "OpenFoodTox 3.0 record",
+          "url": null,
+          "retrievedAt": "2026-09-16T13:22:16.770Z"
+        }
+      ],
+      "sourceVersion": "OpenFoodTox 3.0 / EFSA export repository",
+      "sourceFileHash": "5181661e921651d4087b544981e1e5a63b99532844eac0112732806a00a85eda",
+      "retrievedAt": "2026-09-16T13:22:16.770Z",
+      "needs_scientific_review": true,
+      "data_version": "proposed-1.0"
+    },
+    {
+      "code": "E270",
+      "canonical_name": "Lactic acid",
+      "function_classes": [],
+      "regulatory_status": null,
+      "eu_authorized": null,
+      "eu_conditions": {},
+      "cas_numbers": [
+        "598-82-3",
+        "79-33-4",
+        "50-21-5"
+      ],
+      "opentox_substance_name": "lactic acid",
+      "opentox_sub_uuid": "0163303e-05d1-4e5b-b654-fb36e9c85a60",
+      "opentox_ref_sub_uuid": "4cdee6c5-b4b7-4135-9f7d-d528ee3c3aa5",
+      "matching_method": "cas_exact",
+      "matching_confidence": "high",
+      "reference_values": [],
+      "reference_value_status": "reference_value_not_found",
+      "adi_value": null,
+      "adi_unit": null,
+      "adi_display": null,
+      "adi_authority": null,
+      "assessment_date": null,
+      "efsa_document_ids": [],
+      "efsa_document_urls": [],
+      "population": [],
+      "critical_endpoints": [],
+      "justifications": [],
+      "severity": null,
+      "evidence_strength": null,
+      "exposure_concern": null,
+      "scientific_classification": "insufficient_data",
+      "classification_action": "requires_scientific_review",
+      "sources": [
+        {
+          "sourceId": "openfoodtox-e270",
+          "organisation": "OpenFoodTox / EFSA",
+          "sourceType": "openfoodtox_record",
+          "title": "OpenFoodTox 3.0 record",
+          "url": null,
+          "retrievedAt": "2026-09-16T13:22:16.770Z"
+        }
+      ],
+      "sourceVersion": "OpenFoodTox 3.0 / EFSA export repository",
+      "sourceFileHash": "5181661e921651d4087b544981e1e5a63b99532844eac0112732806a00a85eda",
+      "retrievedAt": "2026-09-16T13:22:16.770Z",
+      "needs_scientific_review": true,
+      "data_version": "proposed-1.0"
+    },
+    {
+      "code": "E300",
+      "canonical_name": "Ascorbic acid",
+      "function_classes": [],
+      "regulatory_status": null,
+      "eu_authorized": null,
+      "eu_conditions": {},
+      "cas_numbers": [
+        "50-81-7"
+      ],
+      "opentox_substance_name": "ascorbic acid",
+      "opentox_sub_uuid": "66eac3e2-1273-4317-bd6f-325d59f944c4",
+      "opentox_ref_sub_uuid": "34b613b5-d400-4b6d-9d5b-2f5b85610f9c",
+      "matching_method": "cas_exact",
+      "matching_confidence": "high",
+      "reference_values": [],
+      "reference_value_status": "reference_value_not_found",
+      "adi_value": null,
+      "adi_unit": null,
+      "adi_display": null,
+      "adi_authority": null,
+      "assessment_date": null,
+      "efsa_document_ids": [],
+      "efsa_document_urls": [],
+      "population": [],
+      "critical_endpoints": [],
+      "justifications": [],
+      "severity": null,
+      "evidence_strength": null,
+      "exposure_concern": null,
+      "scientific_classification": "insufficient_data",
+      "classification_action": "requires_scientific_review",
+      "sources": [
+        {
+          "sourceId": "openfoodtox-e300",
+          "organisation": "OpenFoodTox / EFSA",
+          "sourceType": "openfoodtox_record",
+          "title": "OpenFoodTox 3.0 record",
+          "url": null,
+          "retrievedAt": "2026-09-16T13:22:16.770Z"
+        }
+      ],
+      "sourceVersion": "OpenFoodTox 3.0 / EFSA export repository",
+      "sourceFileHash": "5181661e921651d4087b544981e1e5a63b99532844eac0112732806a00a85eda",
+      "retrievedAt": "2026-09-16T13:22:16.770Z",
+      "needs_scientific_review": true,
+      "data_version": "proposed-1.0"
+    },
+    {
+      "code": "E306",
+      "canonical_name": "Tocopherol-rich extract",
+      "function_classes": [],
+      "regulatory_status": null,
+      "eu_authorized": null,
+      "eu_conditions": {},
+      "cas_numbers": [],
+      "opentox_substance_name": "tocopherol rich extract",
+      "opentox_sub_uuid": "00863a0a-4e4d-48c9-8826-d4f861136af7",
+      "opentox_ref_sub_uuid": "fb3f6cf7-b852-4481-ac41-f37bdbc60c81",
+      "matching_method": "nom_ou_alias_exact",
+      "matching_confidence": "high",
+      "reference_values": [],
+      "reference_value_status": "reference_value_not_found",
+      "adi_value": null,
+      "adi_unit": null,
+      "adi_display": null,
+      "adi_authority": null,
+      "assessment_date": null,
+      "efsa_document_ids": [],
+      "efsa_document_urls": [],
+      "population": [],
+      "critical_endpoints": [],
+      "justifications": [],
+      "severity": null,
+      "evidence_strength": null,
+      "exposure_concern": null,
+      "scientific_classification": "insufficient_data",
+      "classification_action": "requires_scientific_review",
+      "sources": [
+        {
+          "sourceId": "openfoodtox-e306",
+          "organisation": "OpenFoodTox / EFSA",
+          "sourceType": "openfoodtox_record",
+          "title": "OpenFoodTox 3.0 record",
+          "url": null,
+          "retrievedAt": "2026-09-16T13:22:16.770Z"
+        }
+      ],
+      "sourceVersion": "OpenFoodTox 3.0 / EFSA export repository",
+      "sourceFileHash": "5181661e921651d4087b544981e1e5a63b99532844eac0112732806a00a85eda",
+      "retrievedAt": "2026-09-16T13:22:16.770Z",
+      "needs_scientific_review": true,
+      "data_version": "proposed-1.0"
+    },
+    {
+      "code": "E407",
+      "canonical_name": "Carrageenan",
+      "function_classes": [],
+      "regulatory_status": null,
+      "eu_authorized": null,
+      "eu_conditions": {},
+      "cas_numbers": [
+        "9000-07-1"
+      ],
+      "opentox_substance_name": "carrageenan",
+      "opentox_sub_uuid": "7eff6564-8c1e-4f71-9529-3150dceda119",
+      "opentox_ref_sub_uuid": "68340d79-47ed-4705-8861-32427748a518",
+      "matching_method": "cas_exact",
+      "matching_confidence": "high",
+      "reference_values": [
+        {
+          "type": "ADI",
+          "lowerValue": "75",
+          "Unit": "mg/kg bw/day"
+        }
+      ],
+      "reference_value_status": "available",
+      "adi_value": null,
+      "adi_unit": null,
+      "adi_display": null,
+      "adi_authority": null,
+      "assessment_date": null,
+      "efsa_document_ids": [],
+      "efsa_document_urls": [],
+      "population": [],
+      "critical_endpoints": [],
+      "justifications": [],
+      "severity": null,
+      "evidence_strength": null,
+      "exposure_concern": null,
+      "scientific_classification": "insufficient_data",
+      "classification_action": "requires_scientific_review",
+      "sources": [
+        {
+          "sourceId": "openfoodtox-e407",
+          "organisation": "OpenFoodTox / EFSA",
+          "sourceType": "openfoodtox_record",
+          "title": "OpenFoodTox 3.0 record",
+          "url": null,
+          "retrievedAt": "2026-09-16T13:22:16.770Z"
+        }
+      ],
+      "sourceVersion": "OpenFoodTox 3.0 / EFSA export repository",
+      "sourceFileHash": "5181661e921651d4087b544981e1e5a63b99532844eac0112732806a00a85eda",
+      "retrievedAt": "2026-09-16T13:22:16.770Z",
+      "needs_scientific_review": true,
+      "data_version": "proposed-1.0"
+    }
+  ],
+  "ambiguous": [
+    {
+      "codeE": "E150D",
+      "canonicalName": "Sulphite ammonia caramel",
+      "reason": "Multiple distinct OpenFoodTox substances matched; no automatic selection.",
+      "candidates": [
+        {
+          "substance": "ammonia caramel",
+          "cas": [
+            "8028-89-5"
+          ],
+          "subUuid": "5b68488b-a870-4f52-8a6e-4376c36c59b0",
+          "refSubUuid": "e54fc7d4-c759-4063-a5ff-fe3480c3df39",
+          "referenceValues": [
+            {
+              "type": "ADI",
+              "lowerValue": "100",
+              "Unit": "mg/kg bw/day"
+            }
+          ]
+        },
+        {
+          "substance": "sulphite ammonia caramel",
+          "cas": [],
+          "subUuid": "eb930667-7ba0-444d-90f8-5fbbf72aaf67",
+          "refSubUuid": "80f45b94-1b85-4278-84a2-588feb37d64b",
+          "referenceValues": [
+            {
+              "type": "ADI",
+              "lowerValue": "300",
+              "Unit": "mg/kg bw/day"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "codeE": "E621",
+      "canonicalName": "Monosodium glutamate",
+      "reason": "Multiple distinct OpenFoodTox substances matched; no automatic selection.",
+      "candidates": [
+        {
+          "substance": "monosodium glutamate",
+          "cas": [
+            "142-47-2"
+          ],
+          "subUuid": null,
+          "refSubUuid": "9f328241-bd02-4437-bf29-f550cd0baa40",
+          "referenceValues": []
+        },
+        {
+          "substance": "monosodium l glutamate",
+          "cas": [
+            "6106-04-3"
+          ],
+          "subUuid": "f621a045-2e5c-4285-b112-28d189cfaeab",
+          "refSubUuid": "17a0a34b-bd98-4db0-80c4-2611d8afe144",
+          "referenceValues": [
+            {
+              "type": "ADI",
+              "lowerValue": "30",
+              "Unit": "mg/kg bw/day"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "codeE": "E160C",
+      "canonicalName": "Paprika extract",
+      "reason": "Multiple distinct OpenFoodTox substances matched; no automatic selection.",
+      "candidates": [
+        {
+          "substance": "capsicum oleoresin",
+          "cas": [
+            "84603-55-4"
+          ],
+          "subUuid": "e032416f-4e72-48c2-8a73-f2db112cc144",
+          "refSubUuid": "5a37517c-84df-4ca6-a252-9efed7058fcc",
+          "referenceValues": []
+        },
+        {
+          "substance": "capsanthin",
+          "cas": [
+            "465-42-9"
+          ],
+          "subUuid": "2573881b-77e6-49b2-970c-c072723c49b9",
+          "refSubUuid": "02e45b1d-f504-409c-a14c-d5d28f420ad4",
+          "referenceValues": []
+        },
+        {
+          "substance": "paprika extract",
+          "cas": [],
+          "subUuid": "4c4b0265-e448-47d7-9bc5-66279f1ab129",
+          "refSubUuid": "1a8f5854-e4ed-4210-a681-b110eb85a350",
+          "referenceValues": [
+            {
+              "type": "ADI",
+              "lowerValue": "1.7",
+              "Unit": "mg/kg bw/day"
+            },
+            {
+              "type": "ADI",
+              "lowerValue": "24",
+              "Unit": "mg/kg bw/day"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "codeE": "E220",
+      "canonicalName": "Sulphur dioxide",
+      "reason": "Multiple distinct OpenFoodTox substances matched; no automatic selection.",
+      "candidates": [
+        {
+          "substance": "sulphur dioxide",
+          "cas": [
+            "7446-09-5"
+          ],
+          "subUuid": "537a02df-4c6c-405c-ae28-c91ce20c20e6",
+          "refSubUuid": "7005261a-d3e7-40cc-8d70-9abb6d9b8a9b",
+          "referenceValues": []
+        },
+        {
+          "substance": "sulfur dioxide",
+          "cas": [],
+          "subUuid": "64b8ae92-4333-4733-8274-b72312230e88",
+          "refSubUuid": "62240185-96aa-45df-9250-f1db33f4f593",
+          "referenceValues": []
+        }
+      ]
+    }
+  ],
+  "groups": {
+    "ready_for_structured_import": [
+      "E338",
+      "E950",
+      "E951",
+      "E202",
+      "E322",
+      "E330",
+      "E955",
+      "E100",
+      "E101",
+      "E120",
+      "E160A",
+      "E162",
+      "E170",
+      "E200",
+      "E211",
+      "E250",
+      "E270",
+      "E300",
+      "E306",
+      "E407"
+    ],
+    "needs_manual_identity_review": [
+      "E150D",
+      "E621",
+      "E160C",
+      "E220"
+    ],
+    "needs_scientific_review": [
+      "E202",
+      "E322",
+      "E330",
+      "E955",
+      "E100",
+      "E101",
+      "E120",
+      "E160A",
+      "E162",
+      "E170",
+      "E200",
+      "E211",
+      "E250",
+      "E270",
+      "E300",
+      "E306",
+      "E407"
+    ]
+  },
+  "existingDiffs": [
+    {
+      "codeE": "E150D",
+      "comparison": "no_new_data",
+      "details": "Aucune correspondance OpenFoodTox fiable supplémentaire."
+    },
+    {
+      "codeE": "E331",
+      "comparison": "no_new_data",
+      "details": "Aucune correspondance OpenFoodTox fiable supplémentaire."
+    },
+    {
+      "codeE": "E338",
+      "comparison": "information_supplementary",
+      "details": "OpenFoodTox apporte une identité et/ou des données structurées proposées, sans remplacement de la fiche existante."
+    },
+    {
+      "codeE": "E950",
+      "comparison": "information_supplementary",
+      "details": "OpenFoodTox apporte une identité et/ou des données structurées proposées, sans remplacement de la fiche existante."
+    },
+    {
+      "codeE": "E951",
+      "comparison": "information_supplementary",
+      "details": "OpenFoodTox apporte une identité et/ou des données structurées proposées, sans remplacement de la fiche existante."
+    }
+  ],
+  "proposals": [
+    {
+      "codeE": "E150D",
+      "canonicalName": "Sulphite ammonia caramel",
+      "status": "ambiguous",
+      "matchStatus": "ambiguous",
+      "matchConfidence": "none",
+      "candidates": [
+        {
+          "substance": "ammonia caramel",
+          "cas": [
+            "8028-89-5"
+          ],
+          "subUuid": "5b68488b-a870-4f52-8a6e-4376c36c59b0",
+          "refSubUuid": "e54fc7d4-c759-4063-a5ff-fe3480c3df39",
+          "efsaIdentifiers": [],
+          "sheet": "REF_SUB",
+          "evidence": {
+            "exactCas": true,
+            "exactId": false,
+            "exactName": true,
+            "exactIns": false
+          },
+          "toxicology": [
+            {
+              "type": "ADI",
+              "lowerValue": "100",
+              "Unit": "mg/kg bw/day"
+            }
+          ],
+          "referenceValues": [
+            {
+              "type": "ADI",
+              "lowerValue": "100",
+              "Unit": "mg/kg bw/day"
+            }
+          ]
+        },
+        {
+          "substance": "sulphite ammonia caramel",
+          "cas": [],
+          "subUuid": "eb930667-7ba0-444d-90f8-5fbbf72aaf67",
+          "refSubUuid": "80f45b94-1b85-4278-84a2-588feb37d64b",
+          "efsaIdentifiers": [],
+          "sheet": "REF_SUB",
+          "evidence": {
+            "exactCas": false,
+            "exactId": false,
+            "exactName": true,
+            "exactIns": false
+          },
+          "toxicology": [
+            {
+              "type": "ADI",
+              "lowerValue": "300",
+              "Unit": "mg/kg bw/day"
+            }
+          ],
+          "referenceValues": [
+            {
+              "type": "ADI",
+              "lowerValue": "300",
+              "Unit": "mg/kg bw/day"
+            }
+          ]
+        }
+      ],
+      "matchedRows": 2,
+      "needsManualReview": true,
+      "existingComparison": {
+        "codeE": "E150D",
+        "scientificReviewedAt": "2026-09-15",
+        "dataVersion": "1.0"
+      },
+      "reason": "Multiple distinct OpenFoodTox substances matched; no automatic selection."
+    },
+    {
+      "codeE": "E331",
+      "canonicalName": "Sodium citrates",
+      "status": "not_found",
+      "matchStatus": "unmatched",
+      "matchConfidence": "none",
+      "candidates": [],
+      "matchedRows": 0,
+      "needsManualReview": true,
+      "existingComparison": {
+        "codeE": "E331",
+        "scientificReviewedAt": "2026-09-16",
+        "dataVersion": "1.0"
+      },
+      "reason": "No exact match by CAS, identifier, INS, canonical name or alias."
+    },
+    {
+      "codeE": "E338",
+      "canonicalName": "Phosphoric acid",
+      "status": "matched",
+      "matchStatus": "matched",
+      "matchMethod": "cas_exact",
+      "matchConfidence": "high",
+      "candidates": [
+        {
+          "substance": "phosphoric acid",
+          "cas": [
+            "7664-38-2"
+          ],
+          "subUuid": "84b9d5c0-31b6-4704-ad41-a8969d33ceed",
+          "refSubUuid": "12fc28ee-07ea-4b36-97ed-420391d86eaf",
+          "efsaIdentifiers": [],
+          "sheet": "REF_SUB",
+          "evidence": {
+            "exactCas": true,
+            "exactId": false,
+            "exactName": true,
+            "exactIns": false
+          },
+          "toxicology": [
+            {
+              "type": "ADI",
+              "lowerValue": "2.25",
+              "Unit": "mg/kg bw/day"
+            }
+          ],
+          "referenceValues": [
+            {
+              "type": "ADI",
+              "lowerValue": "2.25",
+              "Unit": "mg/kg bw/day"
+            }
+          ]
+        }
+      ],
+      "matchedRows": 1,
+      "needsManualReview": true,
+      "existingComparison": {
+        "codeE": "E338",
+        "scientificReviewedAt": "2026-09-16",
+        "dataVersion": "1.0"
+      },
+      "reason": "Exact match found; human validation is still required."
+    },
+    {
+      "codeE": "E950",
+      "canonicalName": "Acesulfame potassium",
+      "status": "matched",
+      "matchStatus": "matched",
+      "matchMethod": "cas_exact",
+      "matchConfidence": "high",
+      "candidates": [
+        {
+          "substance": "acesulfame k",
+          "cas": [
+            "55589-62-3"
+          ],
+          "subUuid": "afcec1ee-175d-4930-b690-7d05e9721d04",
+          "refSubUuid": "52e03a7b-36a0-4e7f-8362-e366373aa064",
+          "efsaIdentifiers": [],
+          "sheet": "REF_SUB",
+          "evidence": {
+            "exactCas": true,
+            "exactId": false,
+            "exactName": true,
+            "exactIns": false
+          },
+          "toxicology": [
+            {
+              "type": "ADI",
+              "Unit": "mg/kg bw/day",
+              "upperValue": "15"
+            },
+            {
+              "type": "ADI",
+              "lowerValue": "9",
+              "Unit": "mg/kg bw/day"
+            }
+          ],
+          "referenceValues": [
+            {
+              "type": "ADI",
+              "Unit": "mg/kg bw/day",
+              "upperValue": "15"
+            },
+            {
+              "type": "ADI",
+              "lowerValue": "9",
+              "Unit": "mg/kg bw/day"
+            }
+          ]
+        }
+      ],
+      "matchedRows": 1,
+      "needsManualReview": true,
+      "existingComparison": {
+        "codeE": "E950",
+        "scientificReviewedAt": "2026-09-16",
+        "dataVersion": "1.0"
+      },
+      "reason": "Exact match found; human validation is still required."
+    },
+    {
+      "codeE": "E951",
+      "canonicalName": "Aspartame",
+      "status": "matched",
+      "matchStatus": "matched",
+      "matchMethod": "cas_exact",
+      "matchConfidence": "high",
+      "candidates": [
+        {
+          "substance": "aspartame",
+          "cas": [
+            "22839-47-0"
+          ],
+          "subUuid": "18e96029-acd9-47ce-be07-395401b9560d",
+          "refSubUuid": "f6f7b95d-a8c3-410d-9ee2-2325686bcd9b",
+          "efsaIdentifiers": [],
+          "sheet": "REF_SUB",
+          "evidence": {
+            "exactCas": true,
+            "exactId": false,
+            "exactName": true,
+            "exactIns": false
+          },
+          "toxicology": [
+            {
+              "type": "ADI",
+              "lowerValue": "40",
+              "Unit": "mg/kg bw/day"
+            },
+            {
+              "type": "ADI",
+              "lowerValue": "40",
+              "Unit": "mg/kg bw/day"
+            },
+            {
+              "type": "ADI",
+              "lowerValue": "40",
+              "Unit": "mg/kg bw/day"
+            },
+            {
+              "type": "ADI",
+              "lowerValue": "40",
+              "Unit": "mg/kg bw/day"
+            },
+            {
+              "type": "ADI",
+              "lowerValue": "40",
+              "Unit": "mg/kg bw/day"
+            }
+          ],
+          "referenceValues": [
+            {
+              "type": "ADI",
+              "lowerValue": "40",
+              "Unit": "mg/kg bw/day"
+            },
+            {
+              "type": "ADI",
+              "lowerValue": "40",
+              "Unit": "mg/kg bw/day"
+            },
+            {
+              "type": "ADI",
+              "lowerValue": "40",
+              "Unit": "mg/kg bw/day"
+            },
+            {
+              "type": "ADI",
+              "lowerValue": "40",
+              "Unit": "mg/kg bw/day"
+            },
+            {
+              "type": "ADI",
+              "lowerValue": "40",
+              "Unit": "mg/kg bw/day"
+            }
+          ]
+        }
+      ],
+      "matchedRows": 1,
+      "needsManualReview": true,
+      "existingComparison": {
+        "codeE": "E951",
+        "scientificReviewedAt": "2026-09-16",
+        "dataVersion": "1.0"
+      },
+      "reason": "Exact match found; human validation is still required."
+    },
+    {
+      "codeE": "E202",
+      "canonicalName": "Potassium sorbate",
+      "status": "matched",
+      "matchStatus": "matched",
+      "matchMethod": "cas_exact",
+      "matchConfidence": "high",
+      "candidates": [
+        {
+          "substance": "potassium sorbate",
+          "cas": [
+            "24634-61-5"
+          ],
+          "subUuid": "464a5a2e-7618-49fb-9132-4a21e396caa8",
+          "refSubUuid": "d664a0b6-03c3-4d75-8dbb-1da59254a57c",
+          "efsaIdentifiers": [],
+          "sheet": "REF_SUB",
+          "evidence": {
+            "exactCas": true,
+            "exactId": false,
+            "exactName": true,
+            "exactIns": false
+          },
+          "toxicology": [
+            {
+              "type": "ADI",
+              "lowerValue": "25",
+              "Unit": "mg/kg bw/day"
+            },
+            {
+              "type": "ADI",
+              "lowerValue": "3",
+              "Unit": "mg/kg bw/day"
+            },
+            {
+              "type": "ADI",
+              "lowerValue": "11",
+              "Unit": "mg/kg bw/day"
+            }
+          ],
+          "referenceValues": [
+            {
+              "type": "ADI",
+              "lowerValue": "25",
+              "Unit": "mg/kg bw/day"
+            },
+            {
+              "type": "ADI",
+              "lowerValue": "3",
+              "Unit": "mg/kg bw/day"
+            },
+            {
+              "type": "ADI",
+              "lowerValue": "11",
+              "Unit": "mg/kg bw/day"
+            }
+          ]
+        }
+      ],
+      "matchedRows": 1,
+      "needsManualReview": true,
+      "existingComparison": null,
+      "reason": "Exact match found; human validation is still required."
+    },
+    {
+      "codeE": "E322",
+      "canonicalName": "Lecithins",
+      "status": "matched",
+      "matchStatus": "matched",
+      "matchMethod": "nom_ou_alias_exact",
+      "matchConfidence": "high",
+      "candidates": [
+        {
+          "substance": "lecithins",
+          "cas": [
+            "8002-43-5"
+          ],
+          "subUuid": "211272b1-2662-4daa-b106-139412f14136",
+          "refSubUuid": "acf6babd-17ae-4b54-832c-c43eed5b0d9b",
+          "efsaIdentifiers": [],
+          "sheet": "REF_SUB",
+          "evidence": {
+            "exactCas": false,
+            "exactId": false,
+            "exactName": true,
+            "exactIns": false
+          },
+          "toxicology": {
+            "referenceValues": [],
+            "types": [],
+            "units": [],
+            "dates": [],
+            "sourceDocuments": [
+              "acf6babd-17ae-4b54-832c-c43eed5b0d9b"
+            ]
+          },
+          "referenceValues": []
+        }
+      ],
+      "matchedRows": 1,
+      "needsManualReview": true,
+      "existingComparison": null,
+      "reason": "Exact match found; human validation is still required."
+    },
+    {
+      "codeE": "E330",
+      "canonicalName": "Citric acid",
+      "status": "matched",
+      "matchStatus": "matched",
+      "matchMethod": "cas_exact",
+      "matchConfidence": "high",
+      "candidates": [
+        {
+          "substance": "citric acid",
+          "cas": [
+            "77-92-9"
+          ],
+          "subUuid": "39cf5b57-4e50-49f0-8c49-6719ebb32d47",
+          "refSubUuid": "c4d38ae8-aec4-47b2-b02b-344dfbced691",
+          "efsaIdentifiers": [],
+          "sheet": "REF_SUB",
+          "evidence": {
+            "exactCas": true,
+            "exactId": false,
+            "exactName": true,
+            "exactIns": false
+          },
+          "toxicology": {
+            "referenceValues": [],
+            "types": [],
+            "units": [],
+            "dates": [],
+            "sourceDocuments": [
+              "c4d38ae8-aec4-47b2-b02b-344dfbced691"
+            ]
+          },
+          "referenceValues": []
+        }
+      ],
+      "matchedRows": 1,
+      "needsManualReview": true,
+      "existingComparison": null,
+      "reason": "Exact match found; human validation is still required."
+    },
+    {
+      "codeE": "E621",
+      "canonicalName": "Monosodium glutamate",
+      "status": "ambiguous",
+      "matchStatus": "ambiguous",
+      "matchConfidence": "none",
+      "candidates": [
+        {
+          "substance": "monosodium glutamate",
+          "cas": [
+            "142-47-2"
+          ],
+          "subUuid": null,
+          "refSubUuid": "9f328241-bd02-4437-bf29-f550cd0baa40",
+          "efsaIdentifiers": [],
+          "sheet": "REF_SUB",
+          "evidence": {
+            "exactCas": true,
+            "exactId": false,
+            "exactName": true,
+            "exactIns": false
+          },
+          "toxicology": {
+            "referenceValues": [],
+            "types": [],
+            "units": [],
+            "dates": [],
+            "sourceDocuments": [
+              "9f328241-bd02-4437-bf29-f550cd0baa40"
+            ]
+          },
+          "referenceValues": []
+        },
+        {
+          "substance": "monosodium l glutamate",
+          "cas": [
+            "6106-04-3"
+          ],
+          "subUuid": "f621a045-2e5c-4285-b112-28d189cfaeab",
+          "refSubUuid": "17a0a34b-bd98-4db0-80c4-2611d8afe144",
+          "efsaIdentifiers": [],
+          "sheet": "REF_SUB",
+          "evidence": {
+            "exactCas": false,
+            "exactId": false,
+            "exactName": true,
+            "exactIns": false
+          },
+          "toxicology": [
+            {
+              "type": "ADI",
+              "lowerValue": "30",
+              "Unit": "mg/kg bw/day"
+            }
+          ],
+          "referenceValues": [
+            {
+              "type": "ADI",
+              "lowerValue": "30",
+              "Unit": "mg/kg bw/day"
+            }
+          ]
+        }
+      ],
+      "matchedRows": 2,
+      "needsManualReview": true,
+      "existingComparison": null,
+      "reason": "Multiple distinct OpenFoodTox substances matched; no automatic selection."
+    },
+    {
+      "codeE": "E955",
+      "canonicalName": "Sucralose",
+      "status": "matched",
+      "matchStatus": "matched",
+      "matchMethod": "cas_exact",
+      "matchConfidence": "high",
+      "candidates": [
+        {
+          "substance": "sucralose",
+          "cas": [
+            "56038-13-2"
+          ],
+          "subUuid": "6078bad9-99c0-4f96-84bb-a7f4161e992b",
+          "refSubUuid": "b787a611-b1e3-4478-a5c1-3cd8bfa6cbf9",
+          "efsaIdentifiers": [],
+          "sheet": "REF_SUB",
+          "evidence": {
+            "exactCas": true,
+            "exactId": false,
+            "exactName": true,
+            "exactIns": false
+          },
+          "toxicology": [
+            {
+              "type": "ADI",
+              "Unit": "mg/kg bw/day",
+              "upperQualifier": "<=",
+              "upperValue": "15"
+            }
+          ],
+          "referenceValues": [
+            {
+              "type": "ADI",
+              "Unit": "mg/kg bw/day",
+              "upperQualifier": "<=",
+              "upperValue": "15"
+            }
+          ]
+        }
+      ],
+      "matchedRows": 1,
+      "needsManualReview": true,
+      "existingComparison": null,
+      "reason": "Exact match found; human validation is still required."
+    },
+    {
+      "codeE": "E100",
+      "canonicalName": "Curcumin",
+      "status": "matched",
+      "matchStatus": "matched",
+      "matchMethod": "cas_exact",
+      "matchConfidence": "high",
+      "candidates": [
+        {
+          "substance": "curcumin",
+          "cas": [
+            "458-37-7"
+          ],
+          "subUuid": "1ec9f394-7fbb-43a2-8d6b-6a1067cef59f",
+          "refSubUuid": "1de094c6-513a-4dc2-9afd-9cfa8c13569c",
+          "efsaIdentifiers": [],
+          "sheet": "REF_SUB",
+          "evidence": {
+            "exactCas": true,
+            "exactId": false,
+            "exactName": true,
+            "exactIns": false
+          },
+          "toxicology": [
+            {
+              "type": "ADI",
+              "lowerValue": "3",
+              "Unit": "mg/kg bw/day"
+            }
+          ],
+          "referenceValues": [
+            {
+              "type": "ADI",
+              "lowerValue": "3",
+              "Unit": "mg/kg bw/day"
+            }
+          ]
+        }
+      ],
+      "matchedRows": 1,
+      "needsManualReview": true,
+      "existingComparison": null,
+      "reason": "Exact match found; human validation is still required."
+    },
+    {
+      "codeE": "E101",
+      "canonicalName": "Riboflavins",
+      "status": "matched",
+      "matchStatus": "matched",
+      "matchMethod": "cas_exact",
+      "matchConfidence": "high",
+      "candidates": [
+        {
+          "substance": "riboflavin",
+          "cas": [
+            "83-88-5"
+          ],
+          "subUuid": "6bd4f020-5316-4ce1-a4d6-8a0df1c257eb",
+          "refSubUuid": "5eb42649-e1d7-46c4-9102-383262a50bb6",
+          "efsaIdentifiers": [],
+          "sheet": "REF_SUB",
+          "evidence": {
+            "exactCas": true,
+            "exactId": false,
+            "exactName": true,
+            "exactIns": false
+          },
+          "toxicology": [
+            {
+              "type": "ADI",
+              "Unit": "mg/kg bw/day",
+              "upperQualifier": "<=",
+              "upperValue": "0.5"
+            }
+          ],
+          "referenceValues": [
+            {
+              "type": "ADI",
+              "Unit": "mg/kg bw/day",
+              "upperQualifier": "<=",
+              "upperValue": "0.5"
+            }
+          ]
+        }
+      ],
+      "matchedRows": 1,
+      "needsManualReview": true,
+      "existingComparison": null,
+      "reason": "Exact match found; human validation is still required."
+    },
+    {
+      "codeE": "E120",
+      "canonicalName": "Cochineal carminic acid carmins",
+      "status": "matched",
+      "matchStatus": "matched",
+      "matchMethod": "nom_ou_alias_exact",
+      "matchConfidence": "high",
+      "candidates": [
+        {
+          "substance": "carminic acid",
+          "cas": [
+            "1260-17-9"
+          ],
+          "subUuid": "3256afd8-8a25-430e-9cd6-a48d7c7226e6",
+          "refSubUuid": "754e3b46-7fc6-4c69-9c02-38d6ce089ef8",
+          "efsaIdentifiers": [],
+          "sheet": "REF_SUB",
+          "evidence": {
+            "exactCas": false,
+            "exactId": false,
+            "exactName": true,
+            "exactIns": false
+          },
+          "toxicology": {
+            "referenceValues": [],
+            "types": [],
+            "units": [],
+            "dates": [],
+            "sourceDocuments": [
+              "754e3b46-7fc6-4c69-9c02-38d6ce089ef8"
+            ]
+          },
+          "referenceValues": []
+        }
+      ],
+      "matchedRows": 1,
+      "needsManualReview": true,
+      "existingComparison": null,
+      "reason": "Exact match found; human validation is still required."
+    },
+    {
+      "codeE": "E160A",
+      "canonicalName": "Carotenes",
+      "status": "matched",
+      "matchStatus": "matched",
+      "matchMethod": "nom_ou_alias_exact",
+      "matchConfidence": "high",
+      "candidates": [
+        {
+          "substance": "beta carotene",
+          "cas": [
+            "7235-40-7"
+          ],
+          "subUuid": "e616fda4-1673-4d4f-8bf4-be2bf777c824",
+          "refSubUuid": "7df80a57-db0e-4c72-ae4e-7afacf2b7f2c",
+          "efsaIdentifiers": [],
+          "sheet": "REF_SUB",
+          "evidence": {
+            "exactCas": false,
+            "exactId": false,
+            "exactName": true,
+            "exactIns": false
+          },
+          "toxicology": {
+            "referenceValues": [],
+            "types": [],
+            "units": [],
+            "dates": [],
+            "sourceDocuments": [
+              "7df80a57-db0e-4c72-ae4e-7afacf2b7f2c"
+            ]
+          },
+          "referenceValues": []
+        }
+      ],
+      "matchedRows": 1,
+      "needsManualReview": true,
+      "existingComparison": null,
+      "reason": "Exact match found; human validation is still required."
+    },
+    {
+      "codeE": "E160C",
+      "canonicalName": "Paprika extract",
+      "status": "ambiguous",
+      "matchStatus": "ambiguous",
+      "matchConfidence": "none",
+      "candidates": [
+        {
+          "substance": "capsicum oleoresin",
+          "cas": [
+            "84603-55-4"
+          ],
+          "subUuid": "e032416f-4e72-48c2-8a73-f2db112cc144",
+          "refSubUuid": "5a37517c-84df-4ca6-a252-9efed7058fcc",
+          "efsaIdentifiers": [],
+          "sheet": "REF_SUB",
+          "evidence": {
+            "exactCas": false,
+            "exactId": false,
+            "exactName": true,
+            "exactIns": false
+          },
+          "toxicology": {
+            "referenceValues": [],
+            "types": [],
+            "units": [],
+            "dates": [],
+            "sourceDocuments": [
+              "5a37517c-84df-4ca6-a252-9efed7058fcc"
+            ]
+          },
+          "referenceValues": []
+        },
+        {
+          "substance": "capsanthin",
+          "cas": [
+            "465-42-9"
+          ],
+          "subUuid": "2573881b-77e6-49b2-970c-c072723c49b9",
+          "refSubUuid": "02e45b1d-f504-409c-a14c-d5d28f420ad4",
+          "efsaIdentifiers": [],
+          "sheet": "REF_SUB",
+          "evidence": {
+            "exactCas": false,
+            "exactId": false,
+            "exactName": true,
+            "exactIns": false
+          },
+          "toxicology": {
+            "referenceValues": [],
+            "types": [],
+            "units": [],
+            "dates": [],
+            "sourceDocuments": [
+              "02e45b1d-f504-409c-a14c-d5d28f420ad4"
+            ]
+          },
+          "referenceValues": []
+        },
+        {
+          "substance": "paprika extract",
+          "cas": [],
+          "subUuid": "4c4b0265-e448-47d7-9bc5-66279f1ab129",
+          "refSubUuid": "1a8f5854-e4ed-4210-a681-b110eb85a350",
+          "efsaIdentifiers": [],
+          "sheet": "REF_SUB",
+          "evidence": {
+            "exactCas": false,
+            "exactId": false,
+            "exactName": true,
+            "exactIns": false
+          },
+          "toxicology": [
+            {
+              "type": "ADI",
+              "lowerValue": "1.7",
+              "Unit": "mg/kg bw/day"
+            },
+            {
+              "type": "ADI",
+              "lowerValue": "24",
+              "Unit": "mg/kg bw/day"
+            }
+          ],
+          "referenceValues": [
+            {
+              "type": "ADI",
+              "lowerValue": "1.7",
+              "Unit": "mg/kg bw/day"
+            },
+            {
+              "type": "ADI",
+              "lowerValue": "24",
+              "Unit": "mg/kg bw/day"
+            }
+          ]
+        }
+      ],
+      "matchedRows": 3,
+      "needsManualReview": true,
+      "existingComparison": null,
+      "reason": "Multiple distinct OpenFoodTox substances matched; no automatic selection."
+    },
+    {
+      "codeE": "E162",
+      "canonicalName": "Beetroot red",
+      "status": "matched",
+      "matchStatus": "matched",
+      "matchMethod": "nom_ou_alias_exact",
+      "matchConfidence": "high",
+      "candidates": [
+        {
+          "substance": "beetroot red betanin",
+          "cas": [
+            "7659-95-2"
+          ],
+          "subUuid": "8decc310-cefa-40c8-a8e4-c6330654a7e6",
+          "refSubUuid": "0a01a661-5fd3-48ed-9f09-9a77f57c20bf",
+          "efsaIdentifiers": [],
+          "sheet": "REF_SUB",
+          "evidence": {
+            "exactCas": false,
+            "exactId": false,
+            "exactName": true,
+            "exactIns": false
+          },
+          "toxicology": {
+            "referenceValues": [],
+            "types": [],
+            "units": [],
+            "dates": [],
+            "sourceDocuments": [
+              "0a01a661-5fd3-48ed-9f09-9a77f57c20bf"
+            ]
+          },
+          "referenceValues": []
+        }
+      ],
+      "matchedRows": 1,
+      "needsManualReview": true,
+      "existingComparison": null,
+      "reason": "Exact match found; human validation is still required."
+    },
+    {
+      "codeE": "E170",
+      "canonicalName": "Calcium carbonate",
+      "status": "matched",
+      "matchStatus": "matched",
+      "matchMethod": "cas_exact",
+      "matchConfidence": "high",
+      "candidates": [
+        {
+          "substance": "calcium carbonate",
+          "cas": [
+            "471-34-1"
+          ],
+          "subUuid": "36ebb297-7e7a-40d6-8641-5136c49e3768",
+          "refSubUuid": "96dbdb72-28f9-42fe-a447-2a45038d08cf",
+          "efsaIdentifiers": [],
+          "sheet": "REF_SUB",
+          "evidence": {
+            "exactCas": true,
+            "exactId": false,
+            "exactName": true,
+            "exactIns": false
+          },
+          "toxicology": {
+            "referenceValues": [],
+            "types": [],
+            "units": [],
+            "dates": [],
+            "sourceDocuments": [
+              "96dbdb72-28f9-42fe-a447-2a45038d08cf"
+            ]
+          },
+          "referenceValues": []
+        }
+      ],
+      "matchedRows": 1,
+      "needsManualReview": true,
+      "existingComparison": null,
+      "reason": "Exact match found; human validation is still required."
+    },
+    {
+      "codeE": "E200",
+      "canonicalName": "Sorbic acid",
+      "status": "matched",
+      "matchStatus": "matched",
+      "matchMethod": "cas_exact",
+      "matchConfidence": "high",
+      "candidates": [
+        {
+          "substance": "sorbic acid",
+          "cas": [
+            "110-44-1"
+          ],
+          "subUuid": "69fe48b6-da89-4a1f-9bba-1d3d8cd5138f",
+          "refSubUuid": "87d0d601-7e54-42c0-9aa2-0e2e431d0aec",
+          "efsaIdentifiers": [],
+          "sheet": "REF_SUB",
+          "evidence": {
+            "exactCas": true,
+            "exactId": false,
+            "exactName": true,
+            "exactIns": false
+          },
+          "toxicology": [
+            {
+              "type": "ADI",
+              "lowerValue": "25",
+              "Unit": "mg/kg bw/day"
+            },
+            {
+              "type": "ADI",
+              "lowerValue": "25",
+              "Unit": "mg/kg bw/day"
+            },
+            {
+              "type": "ADI",
+              "lowerValue": "11",
+              "Unit": "mg/kg bw/day"
+            },
+            {
+              "type": "ADI",
+              "lowerValue": "3",
+              "Unit": "mg/kg bw/day"
+            }
+          ],
+          "referenceValues": [
+            {
+              "type": "ADI",
+              "lowerValue": "25",
+              "Unit": "mg/kg bw/day"
+            },
+            {
+              "type": "ADI",
+              "lowerValue": "25",
+              "Unit": "mg/kg bw/day"
+            },
+            {
+              "type": "ADI",
+              "lowerValue": "11",
+              "Unit": "mg/kg bw/day"
+            },
+            {
+              "type": "ADI",
+              "lowerValue": "3",
+              "Unit": "mg/kg bw/day"
+            }
+          ]
+        }
+      ],
+      "matchedRows": 1,
+      "needsManualReview": true,
+      "existingComparison": null,
+      "reason": "Exact match found; human validation is still required."
+    },
+    {
+      "codeE": "E211",
+      "canonicalName": "Sodium benzoate",
+      "status": "matched",
+      "matchStatus": "matched",
+      "matchMethod": "cas_exact",
+      "matchConfidence": "high",
+      "candidates": [
+        {
+          "substance": "sodium benzoate",
+          "cas": [
+            "532-32-1"
+          ],
+          "subUuid": "336142ca-3f21-41ea-a1d4-6ad41cc2da84",
+          "refSubUuid": "64a45005-2e3c-4a9d-a932-5fa636761921",
+          "efsaIdentifiers": [],
+          "sheet": "REF_SUB",
+          "evidence": {
+            "exactCas": true,
+            "exactId": false,
+            "exactName": true,
+            "exactIns": false
+          },
+          "toxicology": [
+            {
+              "type": "ADI",
+              "lowerValue": "5",
+              "Unit": "mg/kg bw/day"
+            },
+            {
+              "type": "ADI",
+              "lowerValue": "5",
+              "Unit": "mg/kg bw/day"
+            },
+            {
+              "type": "ADI",
+              "lowerValue": "5",
+              "Unit": "mg/kg bw/day"
+            }
+          ],
+          "referenceValues": [
+            {
+              "type": "ADI",
+              "lowerValue": "5",
+              "Unit": "mg/kg bw/day"
+            },
+            {
+              "type": "ADI",
+              "lowerValue": "5",
+              "Unit": "mg/kg bw/day"
+            },
+            {
+              "type": "ADI",
+              "lowerValue": "5",
+              "Unit": "mg/kg bw/day"
+            }
+          ]
+        }
+      ],
+      "matchedRows": 1,
+      "needsManualReview": true,
+      "existingComparison": null,
+      "reason": "Exact match found; human validation is still required."
+    },
+    {
+      "codeE": "E220",
+      "canonicalName": "Sulphur dioxide",
+      "status": "ambiguous",
+      "matchStatus": "ambiguous",
+      "matchConfidence": "none",
+      "candidates": [
+        {
+          "substance": "sulphur dioxide",
+          "cas": [
+            "7446-09-5"
+          ],
+          "subUuid": "537a02df-4c6c-405c-ae28-c91ce20c20e6",
+          "refSubUuid": "7005261a-d3e7-40cc-8d70-9abb6d9b8a9b",
+          "efsaIdentifiers": [],
+          "sheet": "REF_SUB",
+          "evidence": {
+            "exactCas": true,
+            "exactId": false,
+            "exactName": true,
+            "exactIns": false
+          },
+          "toxicology": {
+            "referenceValues": [],
+            "types": [],
+            "units": [],
+            "dates": [],
+            "sourceDocuments": [
+              "7005261a-d3e7-40cc-8d70-9abb6d9b8a9b"
+            ]
+          },
+          "referenceValues": []
+        },
+        {
+          "substance": "sulfur dioxide",
+          "cas": [],
+          "subUuid": "64b8ae92-4333-4733-8274-b72312230e88",
+          "refSubUuid": "62240185-96aa-45df-9250-f1db33f4f593",
+          "efsaIdentifiers": [],
+          "sheet": "REF_SUB",
+          "evidence": {
+            "exactCas": false,
+            "exactId": false,
+            "exactName": true,
+            "exactIns": false
+          },
+          "toxicology": {
+            "referenceValues": [],
+            "types": [],
+            "units": [],
+            "dates": [],
+            "sourceDocuments": [
+              "62240185-96aa-45df-9250-f1db33f4f593"
+            ]
+          },
+          "referenceValues": []
+        }
+      ],
+      "matchedRows": 2,
+      "needsManualReview": true,
+      "existingComparison": null,
+      "reason": "Multiple distinct OpenFoodTox substances matched; no automatic selection."
+    },
+    {
+      "codeE": "E250",
+      "canonicalName": "Sodium nitrite",
+      "status": "matched",
+      "matchStatus": "matched",
+      "matchMethod": "cas_exact",
+      "matchConfidence": "high",
+      "candidates": [
+        {
+          "substance": "sodium nitrite",
+          "cas": [
+            "7632-00-0"
+          ],
+          "subUuid": "436052b2-1c33-4ee7-bece-df5d6d7ce503",
+          "refSubUuid": "6bfadada-3762-4140-89ea-bfa8257f2084",
+          "efsaIdentifiers": [],
+          "sheet": "REF_SUB",
+          "evidence": {
+            "exactCas": true,
+            "exactId": false,
+            "exactName": true,
+            "exactIns": false
+          },
+          "toxicology": [
+            {
+              "type": "ADI",
+              "lowerValue": "0.1",
+              "Unit": "mg/kg bw/day"
+            }
+          ],
+          "referenceValues": [
+            {
+              "type": "ADI",
+              "lowerValue": "0.1",
+              "Unit": "mg/kg bw/day"
+            }
+          ]
+        }
+      ],
+      "matchedRows": 1,
+      "needsManualReview": true,
+      "existingComparison": null,
+      "reason": "Exact match found; human validation is still required."
+    },
+    {
+      "codeE": "E270",
+      "canonicalName": "Lactic acid",
+      "status": "matched",
+      "matchStatus": "matched",
+      "matchMethod": "cas_exact",
+      "matchConfidence": "high",
+      "candidates": [
+        {
+          "substance": "lactic acid",
+          "cas": [
+            "598-82-3",
+            "79-33-4",
+            "50-21-5"
+          ],
+          "subUuid": "0163303e-05d1-4e5b-b654-fb36e9c85a60",
+          "refSubUuid": "4cdee6c5-b4b7-4135-9f7d-d528ee3c3aa5",
+          "efsaIdentifiers": [],
+          "sheet": "REF_SUB",
+          "evidence": {
+            "exactCas": true,
+            "exactId": false,
+            "exactName": true,
+            "exactIns": false
+          },
+          "toxicology": {
+            "referenceValues": [],
+            "types": [],
+            "units": [],
+            "dates": [],
+            "sourceDocuments": [
+              "4cdee6c5-b4b7-4135-9f7d-d528ee3c3aa5"
+            ]
+          },
+          "referenceValues": []
+        }
+      ],
+      "matchedRows": 1,
+      "needsManualReview": true,
+      "existingComparison": null,
+      "reason": "Exact match found; human validation is still required."
+    },
+    {
+      "codeE": "E300",
+      "canonicalName": "Ascorbic acid",
+      "status": "matched",
+      "matchStatus": "matched",
+      "matchMethod": "cas_exact",
+      "matchConfidence": "high",
+      "candidates": [
+        {
+          "substance": "ascorbic acid",
+          "cas": [
+            "50-81-7"
+          ],
+          "subUuid": "66eac3e2-1273-4317-bd6f-325d59f944c4",
+          "refSubUuid": "34b613b5-d400-4b6d-9d5b-2f5b85610f9c",
+          "efsaIdentifiers": [],
+          "sheet": "REF_SUB",
+          "evidence": {
+            "exactCas": true,
+            "exactId": false,
+            "exactName": true,
+            "exactIns": false
+          },
+          "toxicology": {
+            "referenceValues": [],
+            "types": [],
+            "units": [],
+            "dates": [],
+            "sourceDocuments": [
+              "34b613b5-d400-4b6d-9d5b-2f5b85610f9c"
+            ]
+          },
+          "referenceValues": []
+        }
+      ],
+      "matchedRows": 1,
+      "needsManualReview": true,
+      "existingComparison": null,
+      "reason": "Exact match found; human validation is still required."
+    },
+    {
+      "codeE": "E306",
+      "canonicalName": "Tocopherol-rich extract",
+      "status": "matched",
+      "matchStatus": "matched",
+      "matchMethod": "nom_ou_alias_exact",
+      "matchConfidence": "high",
+      "candidates": [
+        {
+          "substance": "tocopherol rich extract",
+          "cas": [],
+          "subUuid": "00863a0a-4e4d-48c9-8826-d4f861136af7",
+          "refSubUuid": "fb3f6cf7-b852-4481-ac41-f37bdbc60c81",
+          "efsaIdentifiers": [],
+          "sheet": "REF_SUB",
+          "evidence": {
+            "exactCas": false,
+            "exactId": false,
+            "exactName": true,
+            "exactIns": false
+          },
+          "toxicology": {
+            "referenceValues": [],
+            "types": [],
+            "units": [],
+            "dates": [],
+            "sourceDocuments": [
+              "fb3f6cf7-b852-4481-ac41-f37bdbc60c81"
+            ]
+          },
+          "referenceValues": []
+        }
+      ],
+      "matchedRows": 1,
+      "needsManualReview": true,
+      "existingComparison": null,
+      "reason": "Exact match found; human validation is still required."
+    },
+    {
+      "codeE": "E407",
+      "canonicalName": "Carrageenan",
+      "status": "matched",
+      "matchStatus": "matched",
+      "matchMethod": "cas_exact",
+      "matchConfidence": "high",
+      "candidates": [
+        {
+          "substance": "carrageenan",
+          "cas": [
+            "9000-07-1"
+          ],
+          "subUuid": "7eff6564-8c1e-4f71-9529-3150dceda119",
+          "refSubUuid": "68340d79-47ed-4705-8861-32427748a518",
+          "efsaIdentifiers": [],
+          "sheet": "REF_SUB",
+          "evidence": {
+            "exactCas": true,
+            "exactId": false,
+            "exactName": true,
+            "exactIns": false
+          },
+          "toxicology": [
+            {
+              "type": "ADI",
+              "lowerValue": "75",
+              "Unit": "mg/kg bw/day"
+            }
+          ],
+          "referenceValues": [
+            {
+              "type": "ADI",
+              "lowerValue": "75",
+              "Unit": "mg/kg bw/day"
+            }
+          ]
+        }
+      ],
+      "matchedRows": 1,
+      "needsManualReview": true,
+      "existingComparison": null,
+      "reason": "Exact match found; human validation is still required."
+    }
+  ],
+  "input": {
+    "path": "C:\\Users\\bahri\\oummah\\scripts\\data\\OpenFoodTox-3.0.xlsx",
+    "bytes": 22595502
+  }
+}

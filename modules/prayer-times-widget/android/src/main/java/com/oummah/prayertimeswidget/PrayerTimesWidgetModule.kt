@@ -8,10 +8,12 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.LinearGradient
 import android.graphics.Paint
+import android.graphics.Rect
 import android.graphics.RectF
 import android.graphics.Shader
 import android.graphics.Typeface
@@ -88,7 +90,7 @@ class PrayerTimesWidgetProvider : AppWidgetProvider() {
         val views = RemoteViews(context.packageName, layoutId)
         views.setImageViewBitmap(
           if (horizontal) R.id.prayer_widget_art_horizontal else R.id.prayer_widget_art,
-          WidgetArt.draw(snapshot, now, progress, Build.VERSION.SDK_INT < Build.VERSION_CODES.N, horizontal),
+          WidgetArt.draw(context, snapshot, now, progress, Build.VERSION.SDK_INT < Build.VERSION_CODES.N, horizontal),
         )
         views.setOnClickPendingIntent(
           if (horizontal) R.id.prayer_widget_art_horizontal else R.id.prayer_widget_art,
@@ -215,123 +217,321 @@ class HorizontalPrayerTimesWidgetProvider : AppWidgetProvider() {
 
 private object WidgetArt {
   private const val W = 1400
-  private const val H = 720
+  private const val H_REGULAR = 720
+  private const val H_HORIZONTAL = 360
+
+  // Same palette as the validated iOS Home Screen widget.
+  private val surface = Color.rgb(23, 16, 38)
   private val gold = Color.rgb(227, 181, 90)
   private val ivory = Color.rgb(248, 244, 235)
-  private val secondary = Color.rgb(199, 190, 208)
+  private val secondary = Color.rgb(199, 190, 209)
   private val paint = Paint(Paint.ANTI_ALIAS_FLAG)
+  private var backgroundBitmap: Bitmap? = null
 
-  fun draw(snapshot: Snapshot?, now: Long, progress: ProgressState?, showStaticCountdown: Boolean, horizontal: Boolean = false): Bitmap {
-    val bitmap = Bitmap.createBitmap(W, H, Bitmap.Config.ARGB_8888)
+  fun draw(
+    context: Context,
+    snapshot: Snapshot?,
+    now: Long,
+    progress: ProgressState?,
+    showStaticCountdown: Boolean,
+    horizontal: Boolean = false,
+  ): Bitmap {
+    val height = if (horizontal) H_HORIZONTAL else H_REGULAR
+    val bitmap = Bitmap.createBitmap(W, height, Bitmap.Config.ARGB_8888)
     val canvas = Canvas(bitmap)
-    paint.shader = LinearGradient(0f, 0f, W.toFloat(), H.toFloat(), Color.rgb(8, 7, 24), Color.rgb(25, 18, 43), Shader.TileMode.CLAMP)
-    canvas.drawRect(0f, 0f, W.toFloat(), H.toFloat(), paint)
-    paint.shader = null
-    text(canvas, "لا إله إلا الله", W / 2f, 410f, 72f, Color.argb(28, Color.red(gold), Color.green(gold), Color.blue(gold)), true)
-    paint.color = Color.argb(188, 8, 7, 24)
-    canvas.drawRoundRect(RectF(18f, 16f, W - 18f, H - 16f), 54f, 54f, paint)
-    if (snapshot == null || progress == null) {
-      text(canvas, "Ouvrez OUMMAH pour synchroniser les horaires", W / 2f, H / 2f, 38f, ivory)
-      return bitmap
-    }
 
-    if (horizontal) {
-      drawHorizontal(canvas, snapshot, now, progress, showStaticCountdown)
+    drawBackground(context, canvas, height)
+    drawGeometryMotif(canvas, height, horizontal)
+
+    if (snapshot == null || progress == null) {
+      drawEmptyState(canvas, height, horizontal)
       return bitmap
     }
 
     val day = if (now >= snapshot.tomorrow.start) snapshot.tomorrow else snapshot.today
     val activeKey = activePrayerKey(day, now)
-    text(canvas, "☾", 74f, 72f, 48f, gold)
-    text(canvas, day.hijri, 145f, 70f, 27f, secondary, true, Paint.Align.LEFT)
-    text(canvas, "OUMMAH", W - 74f, 70f, 30f, gold, true, Paint.Align.RIGHT)
-    text(canvas, "Prochaine prière", W / 2f, 130f, 30f, secondary, true)
-    text(canvas, "${label(progress.next).uppercase()}  ·  ${progress.next?.time ?: "—"}", W / 2f, 190f, 55f, gold, true)
-    text(canvas, "dans", W / 2f, 235f, 29f, secondary, true)
-    if (showStaticCountdown) {
-      text(canvas, countdown(progress.next?.timestamp, now), W / 2f, 365f, 50f, ivory)
+
+    if (horizontal) {
+      drawCompactMedium(canvas, day, activeKey, progress, now, showStaticCountdown)
+    } else {
+      drawMedium(canvas, day, activeKey, progress, now, showStaticCountdown)
     }
-    drawProgress(canvas, progress)
-    text(canvas, "Prière actuelle", W / 2f, 445f, 30f, secondary, true)
-    drawPrayerRow(canvas, day, activeKey)
     return bitmap
   }
 
-  private fun drawHorizontal(canvas: Canvas, snapshot: Snapshot, now: Long, progress: ProgressState, showStaticCountdown: Boolean) {
-    val day = if (now >= snapshot.tomorrow.start) snapshot.tomorrow else snapshot.today
-    val activeKey = activePrayerKey(day, now)
-    text(canvas, "☾", 64f, 62f, 38f, gold)
-    text(canvas, day.hijri, 112f, 60f, 25f, secondary, true, Paint.Align.LEFT)
-    text(canvas, "OUMMAH", W - 64f, 60f, 28f, gold, true, Paint.Align.RIGHT)
-    text(canvas, "Prochaine prière", W / 2f, 118f, 28f, secondary, true)
-    text(canvas, "${label(progress.next).uppercase()}  ·  ${progress.next?.time ?: "—"}", W / 2f, 171f, 50f, gold, true)
-    text(canvas, "dans", W / 2f, 207f, 27f, secondary, true)
-    if (showStaticCountdown) text(canvas, countdown(progress.next?.timestamp, now), W / 2f, 260f, 42f, ivory)
-    drawProgressHorizontal(canvas, progress)
-    text(canvas, "Prière actuelle", W / 2f, 365f, 27f, secondary, true)
-    drawPrayerRowHorizontal(canvas, day, activeKey)
-  }
+  private fun drawBackground(context: Context, canvas: Canvas, height: Int) {
+    paint.shader = null
+    paint.style = Paint.Style.FILL
 
-  private fun drawProgressHorizontal(canvas: Canvas, progress: ProgressState) {
-    val left = 135f
-    val right = W - 135f
-    val barLeft = 275f
-    val barRight = W - 275f
-    text(canvas, "${label(progress.previous).uppercase()}  ${progress.previous?.time ?: "—"}", left, 247f, 23f, secondary, true, Paint.Align.LEFT)
-    text(canvas, "${label(progress.next).uppercase()}  ${progress.next?.time ?: "—"}", right, 247f, 23f, secondary, true, Paint.Align.RIGHT)
-    paint.color = Color.argb(75, 227, 181, 90)
-    canvas.drawRoundRect(RectF(barLeft, 241f, barRight, 249f), 4f, 4f, paint)
-    paint.color = gold
-    val marker = barLeft + (barRight - barLeft) * progress.progress
-    canvas.drawRoundRect(RectF(barLeft, 241f, marker, 249f), 4f, 4f, paint)
-    canvas.drawCircle(marker, 245f, 12f, paint)
-  }
+    val source = backgroundBitmap ?: BitmapFactory.decodeResource(
+      context.resources,
+      R.drawable.home_mosque_sunset,
+    )?.also { backgroundBitmap = it }
 
-  private fun drawPrayerRowHorizontal(canvas: Canvas, day: Day, activeKey: String?) {
-    val byKey = day.prayers.associateBy { it.key }
-    val items = listOf(byKey["Fajr"] to "☼", byKey["Dhuhr"] to "☀", byKey["Asr"] to "☀", byKey["Maghrib"] to "☁", byKey["Isha"] to "☾")
-    val start = 140f
-    val step = 280f
-    items.forEachIndexed { index, (prayer, icon) ->
-      prayer ?: return@forEachIndexed
-      val x = start + index * step
-      val active = prayer.key == activeKey
-      text(canvas, icon, x, 445f, if (active) 38f else 34f, if (active) gold else ivory, true)
-      text(canvas, prayer.label.uppercase(), x, 495f, if (active) 25f else 23f, if (active) gold else ivory, true)
-      text(canvas, prayer.time, x, 540f, if (active) 34f else 32f, if (active) gold else ivory)
+    if (source != null && source.width > 0 && source.height > 0) {
+      val targetRatio = W.toFloat() / height.toFloat()
+      val sourceRatio = source.width.toFloat() / source.height.toFloat()
+      val sourceRect = if (sourceRatio > targetRatio) {
+        val cropWidth = (source.height * targetRatio).toInt().coerceAtLeast(1)
+        val left = ((source.width - cropWidth) / 2).coerceAtLeast(0)
+        Rect(left, 0, (left + cropWidth).coerceAtMost(source.width), source.height)
+      } else {
+        val cropHeight = (source.width / targetRatio).toInt().coerceAtLeast(1)
+        val top = ((source.height - cropHeight) / 2).coerceAtLeast(0)
+        Rect(0, top, source.width, (top + cropHeight).coerceAtMost(source.height))
+      }
+      canvas.drawBitmap(source, sourceRect, RectF(0f, 0f, W.toFloat(), height.toFloat()), paint)
+    } else {
+      paint.color = surface
+      canvas.drawRect(0f, 0f, W.toFloat(), height.toFloat(), paint)
     }
+
+    // iOS: image + black 0.68 + OUMMAH surface 0.82.
+    paint.color = Color.argb(173, 0, 0, 0)
+    canvas.drawRect(0f, 0f, W.toFloat(), height.toFloat(), paint)
+    paint.color = Color.argb(209, Color.red(surface), Color.green(surface), Color.blue(surface))
+    canvas.drawRect(0f, 0f, W.toFloat(), height.toFloat(), paint)
   }
 
-  private fun drawProgress(canvas: Canvas, progress: ProgressState) {
-    val left = 210f
-    val right = W - 210f
-    val barLeft = 350f
-    val barRight = W - 350f
-    text(canvas, "${label(progress.previous).uppercase()}  ${progress.previous?.time ?: "—"}", left, 300f, 25f, secondary, true, Paint.Align.LEFT)
-    text(canvas, "${label(progress.next).uppercase()}  ${progress.next?.time ?: "—"}", right, 300f, 25f, secondary, true, Paint.Align.RIGHT)
-    paint.color = Color.argb(75, 227, 181, 90)
-    canvas.drawRoundRect(RectF(barLeft, 293f, barRight, 301f), 4f, 4f, paint)
+  private fun drawGeometryMotif(canvas: Canvas, height: Int, horizontal: Boolean) {
+    val motifColor = Color.argb(
+      if (horizontal) 38 else 44,
+      Color.red(gold),
+      Color.green(gold),
+      Color.blue(gold),
+    )
+    text(
+      canvas,
+      "لا إله إلا الله",
+      W / 2f,
+      if (horizontal) height * 0.63f else height * 0.58f,
+      if (horizontal) 112f else 164f,
+      motifColor,
+      serif = true,
+    )
+  }
+
+  private fun drawEmptyState(canvas: Canvas, height: Int, horizontal: Boolean) {
+    text(canvas, "☾", W / 2f, height * 0.39f, if (horizontal) 48f else 58f, gold, serif = true)
+    text(
+      canvas,
+      "Ouvrez OUMMAH pour synchroniser les horaires",
+      W / 2f,
+      height * 0.56f,
+      if (horizontal) 31f else 38f,
+      ivory,
+      serif = true,
+      bold = true,
+    )
+  }
+
+  /** Android 5x2 layout, visually aligned with the validated iOS systemMedium widget. */
+  private fun drawMedium(
+    canvas: Canvas,
+    day: Day,
+    activeKey: String?,
+    progress: ProgressState,
+    now: Long,
+    showStaticCountdown: Boolean,
+  ) {
+    // Header
+    text(canvas, "☾", 48f, 52f, 43f, gold, serif = true, align = Paint.Align.LEFT)
+    text(canvas, day.hijri, 102f, 50f, 36f, secondary, serif = true, align = Paint.Align.LEFT)
+    text(canvas, "OUMMAH", W - 42f, 50f, 36f, gold, serif = true, align = Paint.Align.RIGHT, bold = true)
+
+    // Next prayer block
+    text(canvas, "Prochaine prière", W / 2f, 96f, 36f, secondary, bold = true)
+    text(
+      canvas,
+      "${label(progress.next).uppercase()}  ·  ${progress.next?.time ?: "—"}",
+      W / 2f,
+      157f,
+      68f,
+      gold,
+      serif = true,
+      bold = true,
+    )
+    text(canvas, "dans", W / 2f, 198f, 36f, secondary, bold = true)
+    if (showStaticCountdown) {
+      text(canvas, countdown(progress.next?.timestamp, now), W / 2f, 284f, 84f, ivory, bold = true)
+    }
+
+    // Prayer-to-prayer progress
+    drawProgress(
+      canvas = canvas,
+      progress = progress,
+      y = 338f,
+      barLeft = 420f,
+      barRight = W - 420f,
+      labelSize = 38f,
+      barHeight = 12f,
+      markerRadius = 16f,
+    )
+
+    // Fine separator just like iOS.
+    paint.shader = null
+    paint.style = Paint.Style.FILL
+    paint.color = Color.argb(46, Color.red(gold), Color.green(gold), Color.blue(gold))
+    canvas.drawRect(34f, 382f, W - 34f, 386f, paint)
+
+    text(canvas, "Prière actuelle", W / 2f, 428f, 38f, secondary, serif = true, bold = true)
+    drawPrayerRow(
+      canvas = canvas,
+      day = day,
+      activeKey = activeKey,
+      iconY = 505f,
+      labelY = 560f,
+      timeY = 626f,
+      compact = false,
+    )
+  }
+
+  /** Android 5x1 layout: same iOS visual language, compressed for the shorter Android family. */
+  private fun drawCompactMedium(
+    canvas: Canvas,
+    day: Day,
+    activeKey: String?,
+    progress: ProgressState,
+    now: Long,
+    showStaticCountdown: Boolean,
+  ) {
+    text(canvas, "☾", 35f, 35f, 29f, gold, serif = true, align = Paint.Align.LEFT)
+    text(canvas, day.hijri, 73f, 34f, 24f, secondary, serif = true, align = Paint.Align.LEFT)
+    text(canvas, "OUMMAH", W - 34f, 34f, 25f, gold, serif = true, align = Paint.Align.RIGHT, bold = true)
+
+    text(canvas, "Prochaine prière", W / 2f, 68f, 23f, secondary, bold = true)
+    text(
+      canvas,
+      "${label(progress.next).uppercase()}  ·  ${progress.next?.time ?: "—"}",
+      W / 2f,
+      108f,
+      43f,
+      gold,
+      serif = true,
+      bold = true,
+    )
+    text(canvas, "dans", W / 2f, 136f, 22f, secondary, bold = true)
+    if (showStaticCountdown) {
+      text(canvas, countdown(progress.next?.timestamp, now), W / 2f, 185f, 45f, ivory, bold = true)
+    }
+
+    drawProgress(
+      canvas = canvas,
+      progress = progress,
+      y = 209f,
+      barLeft = 390f,
+      barRight = W - 390f,
+      labelSize = 24f,
+      barHeight = 8f,
+      markerRadius = 11f,
+    )
+
+    paint.shader = null
+    paint.style = Paint.Style.FILL
+    paint.color = Color.argb(46, Color.red(gold), Color.green(gold), Color.blue(gold))
+    canvas.drawRect(28f, 232f, W - 28f, 234f, paint)
+
+    text(canvas, "Prière actuelle", W / 2f, 260f, 24f, secondary, serif = true, bold = true)
+    drawPrayerRow(
+      canvas = canvas,
+      day = day,
+      activeKey = activeKey,
+      iconY = 294f,
+      labelY = 322f,
+      timeY = 351f,
+      compact = true,
+    )
+  }
+
+  private fun drawProgress(
+    canvas: Canvas,
+    progress: ProgressState,
+    y: Float,
+    barLeft: Float,
+    barRight: Float,
+    labelSize: Float,
+    barHeight: Float,
+    markerRadius: Float,
+  ) {
+    text(
+      canvas,
+      "${label(progress.previous).uppercase()}  ${progress.previous?.time ?: "—"}",
+      38f,
+      y + 6f,
+      labelSize,
+      secondary,
+      align = Paint.Align.LEFT,
+      bold = true,
+      widthScale = 1.12f,
+    )
+    text(
+      canvas,
+      "${label(progress.next).uppercase()}  ${progress.next?.time ?: "—"}",
+      W - 38f,
+      y + 6f,
+      labelSize,
+      secondary,
+      align = Paint.Align.RIGHT,
+      bold = true,
+      widthScale = 1.12f,
+    )
+
+    val top = y - barHeight / 2f
+    val bottom = y + barHeight / 2f
+    paint.shader = null
+    paint.style = Paint.Style.FILL
+    paint.color = Color.argb(56, Color.red(gold), Color.green(gold), Color.blue(gold))
+    canvas.drawRoundRect(RectF(barLeft, top, barRight, bottom), barHeight / 2f, barHeight / 2f, paint)
+
+    val marker = barLeft + (barRight - barLeft) * progress.progress.coerceIn(0f, 1f)
     paint.color = gold
-    val marker = barLeft + (barRight - barLeft) * progress.progress
-    canvas.drawRoundRect(RectF(barLeft, 293f, marker, 301f), 4f, 4f, paint)
-    canvas.drawCircle(marker, 297f, 13f, paint)
+    canvas.drawRoundRect(RectF(barLeft, top, marker.coerceAtLeast(barLeft + 3f), bottom), barHeight / 2f, barHeight / 2f, paint)
+    canvas.drawCircle(marker, y, markerRadius, paint)
   }
 
-  private fun drawPrayerRow(canvas: Canvas, day: Day, activeKey: String?) {
+  private fun drawPrayerRow(
+    canvas: Canvas,
+    day: Day,
+    activeKey: String?,
+    iconY: Float,
+    labelY: Float,
+    timeY: Float,
+    compact: Boolean,
+  ) {
     val byKey = day.prayers.associateBy { it.key }
     val items = listOf(
-      byKey["Fajr"] to "☼", byKey["Dhuhr"] to "☀", byKey["Asr"] to "☀",
-      byKey["Maghrib"] to "☁", byKey["Isha"] to "☾",
+      Triple(byKey["Fajr"], "☁", "Fajr"),
+      Triple(byKey["Dhuhr"], "☀", "Dhohr"),
+      Triple(byKey["Asr"], "☀", "Asr"),
+      Triple(byKey["Maghrib"], "☁", "Maghrib"),
+      Triple(byKey["Isha"], "☾", "Isha"),
     )
-    val start = 140f
-    val step = 280f
-    items.forEachIndexed { index, (prayer, icon) ->
+    val step = W / items.size.toFloat()
+
+    items.forEachIndexed { index, (prayer, icon, displayLabel) ->
       prayer ?: return@forEachIndexed
-      val x = start + index * step
+      val x = step * (index + 0.5f)
       val active = prayer.key == activeKey
-      text(canvas, icon, x, 535f, if (active) 45f else 40f, if (active) gold else ivory, true)
-      text(canvas, prayer.label.uppercase(), x, 595f, if (active) 28f else 25f, if (active) gold else ivory, true)
-      text(canvas, prayer.time, x, 648f, if (active) 39f else 36f, if (active) gold else ivory)
+      val color = if (active) gold else ivory
+      val iconSize = if (compact) {
+        if (active) 33f else 29f
+      } else {
+        if (active) 80f else 71f
+      }
+      val labelSize = if (compact) {
+        if (active) 23f else 21f
+      } else {
+        if (active) 48f else 44f
+      }
+      val timeSize = if (compact) {
+        if (active) 29f else 27f
+      } else {
+        if (active) 68f else 64f
+      }
+
+      text(canvas, icon, x, iconY, iconSize, color, serif = true, bold = active)
+      text(canvas, displayLabel.uppercase(), x, labelY, labelSize, color, bold = true, widthScale = 1.18f)
+      text(canvas, prayer.time, x, timeY, timeSize, color, bold = true, widthScale = 1.18f)
     }
   }
 
@@ -361,10 +561,26 @@ private object WidgetArt {
     return "%d:%02d:%02d".format(hours, minutes, seconds)
   }
 
-  private fun text(canvas: Canvas, value: String, x: Float, y: Float, size: Float, color: Int, serif: Boolean = false, align: Paint.Align = Paint.Align.CENTER) {
-    paint.typeface = Typeface.create(if (serif) "serif" else "sans-serif", Typeface.NORMAL)
+  private fun text(
+    canvas: Canvas,
+    value: String,
+    x: Float,
+    y: Float,
+    size: Float,
+    color: Int,
+    serif: Boolean = false,
+    align: Paint.Align = Paint.Align.CENTER,
+    bold: Boolean = false,
+    widthScale: Float = 1f,
+  ) {
+    paint.shader = null
+    paint.typeface = Typeface.create(
+      if (serif) "serif" else "sans-serif",
+      if (bold) Typeface.BOLD else Typeface.NORMAL,
+    )
     paint.textAlign = align
     paint.textSize = size
+    paint.textScaleX = widthScale
     paint.color = color
     paint.style = Paint.Style.FILL
     canvas.drawText(value, x, y, paint)

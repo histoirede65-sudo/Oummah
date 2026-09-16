@@ -29,15 +29,18 @@ function single(value: string | string[] | undefined) {
 }
 
 export default function AdminSupportThreadScreen() {
-  const params = useLocalSearchParams<{ id?: string }>();
+  const params = useLocalSearchParams<{ id?: string; status?: string; priority?: string }>();
   const ticketId = single(params.id);
+  const initialStatus = single(params.status) ?? "in_progress";
+  const initialPriority = single(params.priority) ?? "normal";
 
   const [messages, setMessages] = useState<AdminSupportMessage[]>([]);
   const [reply, setReply] = useState("");
-  const [status, setStatus] = useState("in_progress");
-  const [priority, setPriority] = useState("normal");
+  const [status, setStatus] = useState(initialStatus);
+  const [priority, setPriority] = useState(initialPriority);
   const [loading, setLoading] = useState(true);
   const [sending, setSending] = useState(false);
+  const [updating, setUpdating] = useState(false);
 
   const load = useCallback(async () => {
     if (!ticketId) {
@@ -85,8 +88,8 @@ export default function AdminSupportThreadScreen() {
   };
 
   const update = async () => {
-    if (!ticketId) return;
-
+    if (!ticketId || updating) return;
+    setUpdating(true);
     try {
       await adminUpdateSupportTicket(ticketId, status, priority);
       Alert.alert("Ticket mis à jour", "Le statut et la priorité sont enregistrés.");
@@ -95,6 +98,27 @@ export default function AdminSupportThreadScreen() {
         "Mise à jour impossible",
         error instanceof Error ? error.message : "Réessayez.",
       );
+    } finally {
+      setUpdating(false);
+    }
+  };
+
+  const resolveTicket = async () => {
+    if (!ticketId || updating) return;
+    setUpdating(true);
+    try {
+      await adminUpdateSupportTicket(ticketId, "resolved", priority);
+      setStatus("resolved");
+      Alert.alert("Ticket résolu", "Ce message a été retiré des demandes en cours.", [
+        { text: "OK", onPress: () => router.back() },
+      ]);
+    } catch (error) {
+      Alert.alert(
+        "Mise à jour impossible",
+        error instanceof Error ? error.message : "Réessayez.",
+      );
+    } finally {
+      setUpdating(false);
     }
   };
 
@@ -170,9 +194,16 @@ export default function AdminSupportThreadScreen() {
             ))}
           </ScrollView>
 
-          <Pressable onPress={() => void update()} style={styles.updateButton}>
-            <Text style={styles.updateText}>Enregistrer statut et priorité</Text>
+          <Pressable disabled={updating} onPress={() => void update()} style={[styles.updateButton, updating && styles.disabled]}>
+            <Text style={styles.updateText}>{updating ? "Enregistrement…" : "Enregistrer statut et priorité"}</Text>
           </Pressable>
+
+          {status !== "resolved" && status !== "closed" ? (
+            <Pressable disabled={updating} onPress={() => void resolveTicket()} style={[styles.resolveButton, updating && styles.disabled]}>
+              <Ionicons name="checkmark-circle" size={19} color={colors.background} />
+              <Text style={styles.resolveText}>Marquer comme résolu</Text>
+            </Pressable>
+          ) : null}
         </View>
 
         {loading ? (
@@ -312,6 +343,20 @@ const styles = StyleSheet.create({
     fontWeight: "800",
   },
   controlTextActive: { color: colors.background },
+  resolveButton: {
+    minHeight: 48,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 8,
+    borderRadius: 14,
+    backgroundColor: colors.goldLight,
+  },
+  resolveText: {
+    color: colors.background,
+    fontSize: 12.5,
+    fontWeight: "900",
+  },
   updateButton: {
     minHeight: 39,
     alignItems: "center",

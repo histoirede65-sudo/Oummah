@@ -18,6 +18,8 @@ export type HadithRepositoryItem = {
   frenchMeaning: string;
   relevance: string;
   sourceUrl?: string;
+  repositoryScore?: number;
+  repositoryMatchedTerms?: string[];
 };
 
 export type HadithRepositoryRecord = {
@@ -328,8 +330,13 @@ async function searchHadeethEnc(
     false,
   );
 
+  const scoredItems = rankedItems.map(({ item, score, matchedTerms }) => ({
+    ...item,
+    repositoryScore: score,
+    repositoryMatchedTerms: matchedTerms,
+  }));
   const items = deduplicateAndPrioritizeHadithItems(
-    rankedItems.map(({ item }) => item),
+    scoredItems,
     6,
   );
 

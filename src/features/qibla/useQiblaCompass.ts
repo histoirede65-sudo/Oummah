@@ -2,6 +2,7 @@ import * as Location from "expo-location";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import { normalizeDegrees, shortestAngle } from "./qiblaMath";
+import { readCachedQiblaLocation, saveCachedQiblaLocation } from "./qiblaPreferences";
 
 export type QiblaSensorQuality = "excellent" | "medium" | "low";
 
@@ -22,6 +23,8 @@ type CompassState = {
   error: string | null;
 };
 
+const HEADING_DEAD_ZONE = 0.25;
+
 const initialState: CompassState = {
   location: null,
   heading: null,
@@ -39,16 +42,16 @@ function circularLerp(from: number, to: number, factor: number) {
 function smoothingFactor(delta: number, accuracy: number | null) {
   const absolute = Math.abs(delta);
   if (absolute >= 35) return 0.58;
-  if (absolute >= 16) return 0.38;
-  if (absolute >= 6) return 0.24;
+  if (absolute >= 6) return 0.72;
+  if (absolute >= 2) return 0.38;
 
   // Expo reports compass calibration from 0 (none) to 3 (high).
   // Trust well-calibrated readings more so the compass follows movement
   // promptly, while filtering small movements from an uncertain sensor.
-  if (accuracy === 3) return 0.28;
-  if (accuracy === 2) return 0.18;
+  if (accuracy === 3) return 0.14;
+  if (accuracy === 2) return 0.12;
   if (accuracy === 1) return 0.1;
-  return 0.06;
+  return 0.08;
 }
 
 export function getQiblaSensorQuality(
@@ -64,9 +67,11 @@ export function useQiblaCompass() {
   const [state, setState] = useState<CompassState>(initialState);
   const [revision, setRevision] = useState(0);
   const smoothHeadingRef = useRef<number | null>(null);
+  const lastRawHeadingRef = useRef<number | null>(null);
 
   const restart = useCallback(() => {
     smoothHeadingRef.current = null;
+    lastRawHeadingRef.current = null;
     setRevision((value) => value + 1);
     setState((current) => ({
       ...current,
@@ -107,6 +112,20 @@ export function useQiblaCompass() {
     }
 
     async function start() {
+      const cached = await readCachedQiblaLocation().catch(() => null);
+      if (cached && stillCurrent()) {
+        setState((current) => ({
+          ...current,
+          location: {
+            latitude: cached.latitude,
+            longitude: cached.longitude,
+            accuracy: cached.accuracy,
+            city: "Dernière position connue",
+          },
+          loading: false,
+        }));
+      }
+
       const permission = await Location.requestForegroundPermissionsAsync();
       if (!stillCurrent()) return;
 
@@ -120,10 +139,53 @@ export function useQiblaCompass() {
         return;
       }
 
-      const lastKnown = await Location.getLastKnownPositionAsync({
-        maxAge: 5 * 60 * 1000,
-        requiredAccuracy: 2000,
-      }).catch(() => null);
+      // Start the compass immediately. Acquiring a fresh high-accuracy GPS
+      // position can take several seconds on some devices and must not block
+      // the first heading updates.
+      headingSubscription = await Location.watchHeadingAsync((sample) => {
+        if (!stillCurrent()) return;
+        const candidate =
+          sample.trueHeading >= 0 ? sample.trueHeading : sample.magHeading;
+        if (!Number.isFinite(candidate)) return;
+
+        const normalized = normalizeDegrees(candidate);
+        const previousRaw = lastRawHeadingRef.current;
+        if (
+          previousRaw !== null &&
+          Math.abs(shortestAngle(normalized - previousRaw)) < HEADING_DEAD_ZONE
+        ) {
+          return;
+        }
+        lastRawHeadingRef.current = normalized;
+        const previous = smoothHeadingRef.current;
+        const next =
+          previous === null
+            ? normalized
+            : circularLerp(
+                previous,
+                normalized,
+                smoothingFactor(shortestAngle(normalized - previous), sample.accuracy),
+              );
+
+        // Ignore sub-degree magnetic noise once the display has stabilised.
+        if (
+          previous !== null &&
+          Math.abs(shortestAngle(next - previous)) < 0.03
+        ) {
+          return;
+        }
+
+        smoothHeadingRef.current = next;
+        setState((currentState) => ({
+          ...currentState,
+          heading: next,
+          rawHeading: normalized,
+          headingAccuracy: sample.accuracy,
+          loading: currentState.location === null,
+        }));
+      });
+
+      const lastKnown = await Location.getLastKnownPositionAsync({ requiredAccuracy: 2000 }).catch(() => null);
 
       if (lastKnown && stillCurrent()) {
         const location: QiblaLocation = {
@@ -155,6 +217,12 @@ export function useQiblaCompass() {
           loading: false,
           error: null,
         }));
+        void saveCachedQiblaLocation({
+          latitude: location.latitude,
+          longitude: location.longitude,
+          accuracy: location.accuracy,
+          updatedAt: new Date().toISOString(),
+        }).catch(() => undefined);
         void updateCity(location.latitude, location.longitude);
       } else if (!lastKnown) {
         setState((previous) => ({
@@ -184,43 +252,15 @@ export function useQiblaCompass() {
               city: previous.location?.city ?? "Position actuelle",
             },
           }));
+          void saveCachedQiblaLocation({
+            latitude: next.coords.latitude,
+            longitude: next.coords.longitude,
+            accuracy: next.coords.accuracy,
+            updatedAt: new Date().toISOString(),
+          }).catch(() => undefined);
         },
       );
 
-      headingSubscription = await Location.watchHeadingAsync((sample) => {
-        if (!stillCurrent()) return;
-        const candidate =
-          sample.trueHeading >= 0 ? sample.trueHeading : sample.magHeading;
-        if (!Number.isFinite(candidate)) return;
-
-        const normalized = normalizeDegrees(candidate);
-        const previous = smoothHeadingRef.current;
-        const next =
-          previous === null
-            ? normalized
-            : circularLerp(
-                previous,
-                normalized,
-                smoothingFactor(shortestAngle(normalized - previous), sample.accuracy),
-              );
-
-        // Ignore sub-degree magnetic noise once the display has stabilised.
-        if (
-          previous !== null &&
-          Math.abs(shortestAngle(next - previous)) < 0.08
-        ) {
-          return;
-        }
-
-        smoothHeadingRef.current = next;
-        setState((currentState) => ({
-          ...currentState,
-          heading: next,
-          rawHeading: normalized,
-          headingAccuracy: sample.accuracy,
-          loading: currentState.location === null,
-        }));
-      });
     }
 
     void start().catch(() => {

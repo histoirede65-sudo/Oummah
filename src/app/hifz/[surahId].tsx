@@ -1,5 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
-import { useFocusEffect } from "@react-navigation/native";
+import { useFocusEffect } from "expo-router";
 import { useLocalSearchParams, router } from "expo-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
@@ -198,16 +198,16 @@ export default function HifzSurahDetail() {
               onPress={() => persistRange(startVerse, Math.max(startVerse, endVerse - 1))}
               style={[styles.rangeButton, endVerse <= startVerse && styles.rangeButtonDisabled]}
             >
-              <Ionicons name="remove" size={16} color={colors.goldLight} />
+              <Ionicons name="remove" size={22} color={colors.goldLight} />
             </Pressable>
             <Pressable
               onPress={() => openVersePicker("start")}
               style={({ pressed }) => [styles.rangeValue, pressed && styles.rangeValuePressed]}
             >
-              <Text style={styles.rangeLabel}>DU</Text>
+              <Text style={styles.rangeLabel}>DÉPART</Text>
               <View style={styles.rangeNumberRow}>
                 <Text style={styles.rangeNumber}>{startVerse}</Text>
-                <Ionicons name="chevron-down" size={12} color={colors.goldLight} />
+                <Ionicons name="chevron-down" size={19} color={colors.goldLight} />
               </View>
             </Pressable>
             <Text style={styles.rangeTo}>→</Text>
@@ -215,10 +215,10 @@ export default function HifzSurahDetail() {
               onPress={() => openVersePicker("end")}
               style={({ pressed }) => [styles.rangeValue, pressed && styles.rangeValuePressed]}
             >
-              <Text style={styles.rangeLabel}>AU</Text>
+              <Text style={styles.rangeLabel}>FIN</Text>
               <View style={styles.rangeNumberRow}>
                 <Text style={styles.rangeNumber}>{endVerse}</Text>
-                <Ionicons name="chevron-down" size={12} color={colors.goldLight} />
+                <Ionicons name="chevron-down" size={19} color={colors.goldLight} />
               </View>
             </Pressable>
             <Pressable
@@ -227,7 +227,7 @@ export default function HifzSurahDetail() {
               }
               style={styles.rangeButton}
             >
-              <Ionicons name="add" size={16} color={colors.goldLight} />
+              <Ionicons name="add" size={22} color={colors.goldLight} />
             </Pressable>
           </View>
           <Pressable onPress={planRange} style={styles.planButton}>
@@ -238,7 +238,7 @@ export default function HifzSurahDetail() {
                 : `Mémoriser les versets ${startVerse} à ${endVerse}`}
             </Text>
           </Pressable>
-          <Text style={styles.rangeHint}>Touchez les numéros pour choisir vos versets</Text>
+          <Text style={styles.rangeHint}>Touchez DÉPART et FIN pour choisir exactement les versets souhaités</Text>
         </View>
         <Modal visible={versePickerVisible} transparent animationType="slide" onRequestClose={() => setVersePickerVisible(false)}>
           <View style={styles.versePickerBackdrop}>
@@ -438,32 +438,33 @@ const styles = StyleSheet.create({
     fontSize: 19,
   },
   rangeText: {
-    marginTop: 2,
-    color: colors.textMuted,
+    marginTop: 3,
+    color: colors.textSecondary,
     fontFamily: typography.sans,
-    fontSize: 8.5,
+    fontSize: 10.5,
   },
   rangeControls: {
-    height: 50,
-    marginTop: 13,
+    height: 68,
+    marginTop: 15,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
     gap: 10,
   },
   rangeButton: {
-    width: 35,
-    height: 35,
+    width: 44,
+    height: 44,
     alignItems: "center",
     justifyContent: "center",
-    borderRadius: 18,
+    borderRadius: 22,
     borderWidth: 1,
-    borderColor: colors.borderSoft,
+    borderColor: "rgba(227,181,90,0.42)",
+    backgroundColor: "rgba(227,181,90,0.06)",
   },
   rangeButtonDisabled: { opacity: 0.35 },
   rangeValuePressed: { opacity: 0.65 },
-  rangeNumberRow: { flexDirection: "row", alignItems: "center", gap: 3 },
-  rangeHint: { marginTop: 8, color: colors.textMuted, fontFamily: typography.sans, fontSize: 10, textAlign: "center" },
+  rangeNumberRow: { flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 6 },
+  rangeHint: { marginTop: 10, color: colors.text, fontFamily: typography.sansBold, fontSize: 11, lineHeight: 16, textAlign: "center" },
   versePickerBackdrop: { flex: 1, justifyContent: "flex-end", backgroundColor: "rgba(7,5,11,0.72)" },
   versePickerCard: { maxHeight: "78%", padding: 22, paddingBottom: 28, borderTopLeftRadius: 26, borderTopRightRadius: 26, backgroundColor: colors.surface },
   versePickerList: { marginTop: 14 },
@@ -475,23 +476,33 @@ const styles = StyleSheet.create({
   versePickerItemTextSelected: { color: colors.goldLight, fontFamily: typography.sansBold },
   optionsHeader: { flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
   optionsTitle: { color: colors.goldLight, fontFamily: typography.serifMedium, fontSize: 22 },
-  rangeValue: { width: 48, alignItems: "center" },
+  rangeValue: {
+    width: 78,
+    minHeight: 58,
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: "rgba(227,181,90,0.38)",
+    backgroundColor: "rgba(227,181,90,0.07)",
+  },
   rangeLabel: {
-    color: colors.textMuted,
-    fontFamily: typography.sans,
-    fontSize: 7,
-    fontWeight: "800",
+    color: colors.goldLight,
+    fontFamily: typography.sansBold,
+    fontSize: 9,
+    letterSpacing: 0.8,
   },
   rangeNumber: {
     marginTop: 1,
     color: colors.text,
     fontFamily: typography.serifSemibold,
-    fontSize: 22,
+    fontSize: 31,
+    lineHeight: 35,
   },
   rangeTo: {
     color: colors.goldLight,
     fontFamily: typography.serifMedium,
-    fontSize: 18,
+    fontSize: 25,
   },
   planButton: {
     height: 44,

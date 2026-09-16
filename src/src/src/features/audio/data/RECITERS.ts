@@ -1,1 +1,0 @@
-export { RECITERS } from './MockReciterDataSource';

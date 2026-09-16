@@ -6,16 +6,18 @@ import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useMemo, useState } from "react";
 import { ActivityIndicator, Image, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { hadithRepository } from "../../../features/hadith-explorer/data/hadithRepository";
+import { getHadithPreviews, hadithRepository } from "../../../features/hadith-explorer/data/hadithRepository";
 import type { HadithSummary } from "../../../features/hadith-explorer/domain/Hadith";
 import { getHadithCollection } from "../../../features/hadith-explorer/domain/HadithCollection";
 import type { HadithDocumentaryCategory } from "../../../features/hadith-explorer/domain/HadithCollection";
 import HadithCard from "../../../features/hadith-explorer/presentation/HadithCard";
 import HadithScreenHeader from "../../../features/hadith-explorer/presentation/HadithScreenHeader";
+import type { HadithPreview } from "../../../features/hadith-explorer/presentation/hadithPreview";
 import { getHadithPreload } from "../../../features/hadith-explorer/services/hadithPreloader";
 import { hadithLibraryService, type HadithLibraryEntry } from "../../../features/hadith-explorer/services/hadithLibraryService";
 import { colors } from "../../../theme/colors";
 import { typography } from "../../../theme/typography";
+import { useI18n } from "../../../i18n";
 
 const PAGE_SIZE = 20;
 const COLLECTION_PROGRESS_PREFIX = "oumma:hadith:collection:last:v1:";
@@ -52,6 +54,7 @@ function collectionCover(id: string) {
 }
 
 export default function HadithCollectionDetailScreen() {
+  const { language, t } = useI18n();
   const { collectionId } = useLocalSearchParams<{ collectionId: string }>();
   const collection = useMemo(() => getHadithCollection(collectionId), [collectionId]);
   const [items, setItems] = useState<HadithSummary[]>([]);
@@ -60,6 +63,7 @@ export default function HadithCollectionDetailScreen() {
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
   const [lastRead, setLastRead] = useState<HadithLibraryEntry | null>(null);
   const [categories, setCategories] = useState<HadithDocumentaryCategory[]>([]);
+  const [previews, setPreviews] = useState<Record<string, HadithPreview>>({});
 
   useEffect(() => {
     let active = true;
@@ -76,7 +80,7 @@ export default function HadithCollectionDetailScreen() {
       setLoading(false);
     }).then(() => Promise.all([
       hadithRepository.searchCollection(collection),
-      hadithRepository.listCollectionCategories(collection),
+      hadithRepository.listCollectionCategories(collection, language),
       hadithLibraryService.history(),
       AsyncStorage.getItem(`${COLLECTION_PROGRESS_PREFIX}${collection.id}`),
     ]))
@@ -94,13 +98,25 @@ export default function HadithCollectionDetailScreen() {
     return () => {
       active = false;
     };
-  }, [collection]);
+  }, [collection, language]);
+
+  useEffect(() => {
+    setPreviews({});
+  }, [language, collection?.id]);
+
+  useEffect(() => {
+    let active = true;
+    const current = items.slice(0, visibleCount);
+    if (!current.length) return;
+    void getHadithPreviews(current, language).then((values) => { if (active) setPreviews((old) => ({ ...old, ...values })); });
+    return () => { active = false; };
+  }, [items, visibleCount, language]);
 
   if (!collection) {
     return (
       <LinearGradient colors={["#080713", "#120A1D", "#080713"]} style={styles.screen}>
         <SafeAreaView style={styles.center}>
-          <Text style={styles.emptyTitle}>Recueil introuvable</Text>
+          <Text style={styles.emptyTitle}>{t("hadith.collectionNotFound")}</Text>
         </SafeAreaView>
       </LinearGradient>
     );
@@ -117,13 +133,15 @@ export default function HadithCollectionDetailScreen() {
   );
   const visible = items.slice(0, visibleCount);
   const isNawawi = collection.id === "nawawi";
+  const collectionName = t(`hadith.collection.${collection.id}.name` as never);
+  const collectionDescription = t(`hadith.collection.${collection.id}.description` as never);
 
   return (
     <LinearGradient colors={["#080713", "#120A1D", "#080713"]} style={styles.screen}>
       <SafeAreaView edges={["top"]} style={styles.safe}>
         <View style={styles.header}>
           <HadithScreenHeader
-            title={collection.name}
+            title={collectionName}
             subtitle={collection.arabicName}
             right={(
               <View style={styles.headerActions}>
@@ -139,8 +157,8 @@ export default function HadithCollectionDetailScreen() {
           <LinearGradient colors={[`${collection.tone}E6`, "#201329"]} style={styles.hero}>
             {collectionCover(collection.id) ? <Image source={collectionCover(collection.id)} resizeMode="contain" style={styles.cover} /> : null}
             <View style={styles.heroCopy}>
-              <Text style={styles.heroTitle}>{collection.name}</Text>
-              <Text style={styles.heroDescription}>{collection.description}</Text>
+              <Text style={styles.heroTitle}>{collectionName}</Text>
+              <Text style={styles.heroDescription}>{collectionDescription}</Text>
               <View style={styles.heroStats}>
                 <View style={styles.heroStat}>
                   <Ionicons name="book-outline" size={19} color={colors.goldLight} />
@@ -151,19 +169,19 @@ export default function HadithCollectionDetailScreen() {
                 <View style={styles.heroStat}>
                   <Ionicons name="grid-outline" size={19} color={colors.goldLight} />
                   <Text style={styles.heroStatValue}>{categories.length}</Text>
-                  <Text style={styles.heroStatLabel}>catégories</Text>
+                  <Text style={styles.heroStatLabel}>{t("hadith.categoriesLower")}</Text>
                 </View>
                 <View style={styles.heroDivider} />
                 <View style={styles.heroStat}>
                   <Ionicons name="shield-checkmark-outline" size={19} color={colors.goldLight} />
                   <Text style={styles.heroStatValue}>✓</Text>
-                  <Text style={styles.heroStatLabel}>Authentique</Text>
+                  <Text style={styles.heroStatLabel}>{t("hadith.authentic")}</Text>
                 </View>
               </View>
             </View>
           </LinearGradient>
 
-          <Text style={styles.sectionTitle}>Explorer par catégorie</Text>
+          <Text style={styles.sectionTitle}>{t("hadith.exploreByCategory")}</Text>
           <View style={styles.categoryGrid}>
             {popularCategories.map((category) => (
               <Pressable
@@ -175,7 +193,7 @@ export default function HadithCollectionDetailScreen() {
                   <Ionicons name={categoryIcon(category.name)} size={22} color={colors.goldLight} />
                   <Ionicons name="chevron-forward" size={17} color={colors.goldLight} />
                 </View>
-                <Text style={styles.categoryName}>{category.name?.trim() || "Catégorie documentaire"}</Text>
+                <Text style={styles.categoryName}>{category.name?.trim() || t("hadith.documentaryCategory")}</Text>
                 <Text style={styles.categoryCount}>{category.hadithCount} hadiths</Text>
               </Pressable>
             ))}
@@ -187,7 +205,7 @@ export default function HadithCollectionDetailScreen() {
               style={({ pressed }) => [styles.allCategoriesButton, pressed && styles.pressed]}
             >
               <Ionicons name="grid-outline" size={21} color={colors.goldLight} />
-              <Text style={styles.allCategoriesText}>Voir toutes les catégories ({categories.length})</Text>
+              <Text style={styles.allCategoriesText}>{t("hadith.viewAllCategories", { count: categories.length })}</Text>
               <Ionicons name="chevron-forward" size={18} color={colors.goldLight} />
             </Pressable>
           ) : null}
@@ -195,7 +213,7 @@ export default function HadithCollectionDetailScreen() {
           {lastRead ? (
             <Pressable onPress={() => openHadith(lastRead.id)} style={({ pressed }) => [styles.lastCard, pressed && styles.pressed]}>
               <View style={styles.lastCopy}>
-                <Text style={styles.lastEyebrow}>DERNIER HADITH CONSULTÉ</Text>
+                <Text style={styles.lastEyebrow}>{t("hadith.lastViewedUpper")}</Text>
                 <Text style={styles.lastTitle}>{isNawawi ? lastRead.title?.trim() || `Hadith ${items.findIndex((item) => item.id === lastRead.id) + 1}` : lastRead.title?.trim() || lastRead.reference}</Text>
                 {!isNawawi ? <Text numberOfLines={1} style={styles.lastReference}>{lastRead.reference}</Text> : null}
               </View>
@@ -204,19 +222,22 @@ export default function HadithCollectionDetailScreen() {
           ) : null}
 
           <View style={styles.listHeader}>
-            <Text style={styles.sectionTitle}>Tous les hadiths disponibles</Text>
+            <Text style={styles.sectionTitle}>{t("hadith.allAvailable")}</Text>
             {!loading && !partialDisplayed ? <Text style={styles.count}>{items.length}</Text> : partialDisplayed || loading ? <ActivityIndicator color={colors.goldLight} /> : null}
           </View>
 
           {loading ? (
-            <View style={styles.state}><ActivityIndicator color={colors.goldLight} /><Text style={styles.stateText}>Chargement des références…</Text></View>
+            <View style={styles.state}><ActivityIndicator color={colors.goldLight} /><Text style={styles.stateText}>{t("hadith.loadingHadiths")}</Text></View>
           ) : items.length ? (
             <View style={styles.list}>
-              {visible.map((item, index) => <HadithCard key={item.id} title={isNawawi ? `Hadith ${index + 1}` : item.title} subtitle={isNawawi ? undefined : `Référence HadeethEnc · ${item.id}`} index={index} onPress={() => openHadith(item.id)} />)}
-              {visibleCount < items.length ? <Pressable onPress={() => setVisibleCount((value) => value + PAGE_SIZE)} style={styles.moreButton}><Text style={styles.moreText}>Afficher 20 hadiths supplémentaires</Text><Ionicons name="chevron-down" size={17} color={colors.goldLight} /></Pressable> : null}
+              {visible.map((item, index) => {
+                const preview = previews[item.id] ?? { title: t("hadith.loadingHadith"), subtitle: "" };
+                return <HadithCard key={item.id} title={preview.title} subtitle={preview.subtitle || undefined} index={index} onPress={() => openHadith(item.id)} />;
+              })}
+              {visibleCount < items.length ? <Pressable onPress={() => setVisibleCount((value) => value + PAGE_SIZE)} style={styles.moreButton}><Text style={styles.moreText}>{t("hadith.showTwentyMore")}</Text><Ionicons name="chevron-down" size={17} color={colors.goldLight} /></Pressable> : null}
             </View>
           ) : (
-            <View style={styles.state}><Ionicons name="cloud-offline-outline" size={31} color={colors.textMuted} /><Text style={styles.emptyTitle}>Aucune référence chargée</Text><Text style={styles.stateText}>Vérifiez la connexion puis revenez sur ce recueil.</Text></View>
+            <View style={styles.state}><Ionicons name="cloud-offline-outline" size={31} color={colors.textMuted} /><Text style={styles.emptyTitle}>{t("hadith.noHadithLoaded")}</Text><Text style={styles.stateText}>{t("hadith.checkConnectionCollection")}</Text></View>
           )}
         </ScrollView>
       </SafeAreaView>

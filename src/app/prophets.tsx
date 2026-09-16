@@ -6,6 +6,7 @@ import { router, useFocusEffect } from "expo-router";
 import { useCallback, useState } from "react";
 import { Pressable, SafeAreaView, ScrollView, StyleSheet, Text, View } from "react-native";
 
+import { PROPHET_AUDIO_EPISODES } from "../features/prophets/audio/prophetAudioData";
 import { MUSA_CHAPTERS, PROPHETS_PREVIEW } from "../features/prophets/prophetsData";
 import { loadMusaProgress } from "../features/prophets/prophetProgress";
 import { colors } from "../theme/colors";
@@ -48,19 +49,17 @@ export default function ProphetsScreen() {
         <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
           <LinearGradient colors={["rgba(55,28,72,0.92)", "rgba(22,14,36,0.96)"]} style={styles.introCard}>
             <Image source={PROPHETS_HOME_COVER} contentFit="cover" style={StyleSheet.absoluteFill} />
-            <LinearGradient colors={["rgba(8,7,19,0.18)", "rgba(8,7,19,0.78)", "rgba(8,7,19,0.98)"]} style={StyleSheet.absoluteFill} />
             <View style={styles.introOrnament}>
               <Ionicons name="book-outline" size={28} color={colors.goldLight} />
             </View>
             <Text style={styles.eyebrow}>UN VOYAGE À TRAVERS LA RÉVÉLATION</Text>
             <Text style={styles.introTitle}>Découvrir les récits des Prophètes</Text>
             <Text style={styles.introText}>
-              Parcours les prophètes nommés dans le Coran à travers une narration sourcée, immersive et respectueuse — sans romancer ce que les textes ne disent pas.
+              Parcours les prophètes nommés dans le Coran à travers une narration sourcée, immersive et respectueuse. Lis leurs récits ou écoute leurs histoires complètes, sans romancer ce que les textes ne disent pas.
             </Text>
             <View style={styles.sourceChips}>
               <View style={styles.sourceChip}><Ionicons name="book-outline" size={13} color={colors.goldLight} /><Text style={styles.sourceChipText}>CORAN</Text></View>
               <View style={styles.sourceChip}><Ionicons name="checkmark-circle-outline" size={13} color={colors.goldLight} /><Text style={styles.sourceChipText}>SUNNA AUTHENTIQUE</Text></View>
-              <View style={styles.sourceChip}><Ionicons name="library-outline" size={13} color={colors.goldLight} /><Text style={styles.sourceChipText}>TAFSIR</Text></View>
             </View>
           </LinearGradient>
 
@@ -74,7 +73,7 @@ export default function ProphetsScreen() {
             <View style={styles.featuredCopy}>
               <View style={styles.availablePill}><Ionicons name="sparkles" size={12} color={colors.background} /><Text style={styles.availablePillText}>DISPONIBLE</Text></View>
               <Text style={styles.featuredArabic}>مُوسَىٰ</Text>
-              <Text style={styles.featuredTitle}>Mûsâ عليه السلام</Text>
+              <Text style={styles.featuredTitle}>Moussa عليه السلام</Text>
               <Text style={styles.featuredText}>Du Nil au Sinaï — 15 chapitres racontés à partir des passages du Coran.</Text>
               <View style={styles.progressRow}>
                 <View style={styles.progressTrack}><View style={[styles.progressFill, { width: `${Math.max(3, progress * 100)}%` }]} /></View>
@@ -98,6 +97,7 @@ export default function ProphetsScreen() {
           <View style={styles.grid}>
             {PROPHETS_PREVIEW.map((prophet, index) => {
               const available = prophet.status === "available";
+              const hasAudio = Boolean(PROPHET_AUDIO_EPISODES[prophet.id]);
               return (
                 <Pressable
                   key={prophet.id}
@@ -106,7 +106,6 @@ export default function ProphetsScreen() {
                   style={({ pressed }) => [styles.prophetCard, prophet.id === "muhammad" && styles.prophetCardWide, available && styles.prophetCardAvailable, pressed && available && styles.pressed]}
                 >
                   {prophet.coverImage ? <Image source={prophet.coverImage} contentFit="cover" style={StyleSheet.absoluteFill} /> : null}
-                  <LinearGradient colors={["rgba(8,7,19,0.18)", "rgba(8,7,19,0.78)", "rgba(8,7,19,0.96)"]} style={StyleSheet.absoluteFill} />
                   <View style={[styles.numberCircle, available && styles.numberCircleAvailable]}>
                     {available ? <Ionicons name="sparkles" size={14} color={colors.background} /> : <Text style={styles.numberText}>{String(index + 1).padStart(2, "0")}</Text>}
                   </View>
@@ -117,6 +116,11 @@ export default function ProphetsScreen() {
                   <View style={[styles.statusPill, available && styles.statusPillAvailable]}>
                     <Text style={[styles.statusText, available && styles.statusTextAvailable]}>{available ? "EXPLORER" : "BIENTÔT"}</Text>
                   </View>
+                  {hasAudio ? (
+                    <View style={styles.audioBadge} pointerEvents="none">
+                      <Ionicons name="headset" size={14} color="#FFF7EC" />
+                    </View>
+                  ) : null}
                 </Pressable>
               );
             })}
@@ -198,6 +202,7 @@ const styles = StyleSheet.create({
   statusPillAvailable: { backgroundColor: "rgba(227,181,90,0.12)" },
   statusText: { color: colors.textMuted, fontFamily: typography.sans, fontSize: 7.5, fontWeight: "900", letterSpacing: 1 },
   statusTextAvailable: { color: colors.goldLight },
+  audioBadge: { position: "absolute", right: 11, bottom: 11, width: 28, height: 28, borderRadius: 14, alignItems: "center", justifyContent: "center", backgroundColor: "rgba(76,45,96,0.96)", borderWidth: 1, borderColor: "rgba(227,181,90,0.88)", shadowColor: "#000", shadowOpacity: 0.26, shadowRadius: 5, shadowOffset: { width: 0, height: 2 }, elevation: 4 },
   discoverySection: { marginTop: 24 },
   discoveryTitle: { marginTop: 5, marginBottom: 12, color: colors.text, fontFamily: typography.serifSemibold, fontSize: 24 },
   discoveryCard: { minHeight: 100, marginTop: 10, padding: 16, borderRadius: 24, overflow: "hidden", borderWidth: 1, borderColor: "rgba(227,181,90,0.28)", flexDirection: "row", alignItems: "center", gap: 13 },

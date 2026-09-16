@@ -125,7 +125,11 @@ export default function AdminSupportScreen() {
                 onPress={() =>
                   router.push({
                     pathname: "/admin/support/[id]",
-                    params: { id: ticket.id },
+                    params: {
+                      id: ticket.id,
+                      status: ticket.status,
+                      priority: ticket.priority,
+                    },
                   })
                 }
                 style={({ pressed }) => [

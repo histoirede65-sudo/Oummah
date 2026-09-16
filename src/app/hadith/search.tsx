@@ -14,14 +14,16 @@ import HadithSearchBar from "../../features/hadith-explorer/presentation/HadithS
 import { hadithLibraryService } from "../../features/hadith-explorer/services/hadithLibraryService";
 import { colors } from "../../theme/colors";
 import { typography } from "../../theme/typography";
+import { useI18n } from "../../i18n";
 
-const SUGGESTIONS = ["intention", "parents", "colère", "sourire", "mensonge", "jeûne", "prière", "patience"];
+const SUGGESTION_IDS = ["intention", "parents", "anger", "smile", "lying", "fasting", "prayer", "patience"] as const;
 
 function normalizeSearchTitle(value: string) {
   return value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLocaleLowerCase("fr").replace(/[^a-z0-9]+/g, "");
 }
 
 export default function HadithSearchScreen() {
+  const { language, t } = useI18n();
   const params = useLocalSearchParams<{ q?: string; theme?: string; collection?: string; collectionId?: string; view?: string }>();
   const [query, setQuery] = useState(params.q ?? params.collection ?? "");
   const [results, setResults] = useState<HadithSummary[]>([]);
@@ -32,8 +34,14 @@ export default function HadithSearchScreen() {
     let active = true;
     if (params.view === "favorites") {
       setLoading(true);
-      void hadithLibraryService.favorites().then((items) => {
-        if (active) { setResults(items.map(({ id, title }) => ({ id, title, translations: ["fr"] }))); setLoading(false); }
+      void hadithLibraryService.favorites().then(async (items) => {
+        const localized = language === "en"
+          ? await Promise.all(items.map(async ({ id, title }) => {
+              const hadith = await hadithRepository.get(id, "en").catch(() => null);
+              return { id, title: hadith?.title ?? title, translations: hadith ? ["en"] : ["fr"] };
+            }))
+          : items.map(({ id, title }) => ({ id, title, translations: ["fr"] }));
+        if (active) { setResults(localized); setLoading(false); }
       });
       return () => { active = false; };
     }
@@ -61,7 +69,7 @@ export default function HadithSearchScreen() {
           return hadithRepository.searchWithinCollection(collection, clean);
         }
 
-        return hadithRepository.search(clean);
+        return hadithRepository.search(clean, language);
       };
 
       void runSearch()
@@ -70,10 +78,10 @@ export default function HadithSearchScreen() {
         .finally(() => active && setLoading(false));
     }, 350);
     return () => { active = false; clearTimeout(timer); };
-  }, [query, params.view, params.collectionId, params.q, params.theme]);
+  }, [language, query, params.view, params.collectionId, params.q, params.theme]);
 
-  const title = params.view === "favorites" ? "Mes favoris" : params.theme ? params.theme : params.collection ? "Collection" : "Recherche";
-  const subtitle = params.view === "favorites" ? "Votre bibliothèque personnelle" : params.collection ?? "Recherche tolérante aux accents et petites fautes";
+  const title = params.view === "favorites" ? t("hadith.myFavorites") : params.theme ? params.theme : params.collection ? t("hadith.collection") : t("hadith.search");
+  const subtitle = params.view === "favorites" ? t("hadith.personalLibrary") : params.collection ?? t("hadith.searchTolerance");
   const unique = useMemo(() => Array.from(new Map(results.map((item) => [item.id, item])).values()), [results]);
 
   return (
@@ -82,12 +90,12 @@ export default function HadithSearchScreen() {
         <View style={styles.header}><HadithScreenHeader title={title} subtitle={subtitle} /></View>
         <ScrollView keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false} contentContainerStyle={styles.content}>
           {params.view !== "favorites" ? <HadithSearchBar value={query} onChangeText={setQuery} /> : null}
-          {!query && params.view !== "favorites" ? <><Text style={styles.prompt}>Que souhaitez-vous approfondir ?</Text><View style={styles.suggestions}>{SUGGESTIONS.map((value) => <Pressable key={value} onPress={() => setQuery(value)} style={styles.suggestion}><Text style={styles.suggestionText}>{value}</Text></Pressable>)}</View><View style={styles.hint}><Ionicons name="sparkles-outline" size={19} color={colors.goldLight} /><Text style={styles.hintText}>Vous pouvez écrire sans accents : « colere » retrouvera également « colère » dans le contenu déjà mis en cache.</Text></View></> : null}
-          {loading ? <View style={styles.state}><ActivityIndicator color={colors.goldLight} /><Text style={styles.stateText}>Recherche dans les références…</Text></View> : null}
-          {!loading && searched ? <Text style={styles.count}>{unique.length} résultat{unique.length > 1 ? "s" : ""}</Text> : null}
-          {!loading && searched && !unique.length ? <View style={styles.state}><Ionicons name="search-outline" size={31} color={colors.textMuted} /><Text style={styles.emptyTitle}>Aucun hadith trouvé</Text><Text style={styles.stateText}>Essayez un mot plus court ou vérifiez votre connexion. Les recherches déjà consultées restent disponibles hors ligne.</Text></View> : null}
-          <View style={styles.list}>{unique.map((item, index) => <HadithCard key={item.id} title={item.title} subtitle={`Référence HadeethEnc · ${item.id}`} index={index} onPress={() => router.push(`/hadith/${item.id}` as Href)} />)}</View>
-          <Text style={styles.credit}>Résultats fournis par HadeethEnc · contenu non modifié</Text>
+          {!query && params.view !== "favorites" ? <><Text style={styles.prompt}>{t("hadith.searchPrompt")}</Text><View style={styles.suggestions}>{SUGGESTION_IDS.map((id) => { const value = t(`hadith.suggestion.${id}` as never); return <Pressable key={id} onPress={() => setQuery(value)} style={styles.suggestion}><Text style={styles.suggestionText}>{value}</Text></Pressable>; })}</View><View style={styles.hint}><Ionicons name="sparkles-outline" size={19} color={colors.goldLight} /><Text style={styles.hintText}>{t("hadith.searchHint")}</Text></View></> : null}
+          {loading ? <View style={styles.state}><ActivityIndicator color={colors.goldLight} /><Text style={styles.stateText}>{t("hadith.searchingReferences")}</Text></View> : null}
+          {!loading && searched ? <Text style={styles.count}>{t("hadith.resultCount", { count: unique.length })}</Text> : null}
+          {!loading && searched && !unique.length ? <View style={styles.state}><Ionicons name="search-outline" size={31} color={colors.textMuted} /><Text style={styles.emptyTitle}>{t("hadith.noHadithFound")}</Text><Text style={styles.stateText}>{t("hadith.noResultsHelp")}</Text></View> : null}
+          <View style={styles.list}>{unique.map((item, index) => <HadithCard key={item.id} title={item.title} subtitle={t("hadith.hadeethEncReference", { id: item.id })} index={index} onPress={() => router.push(`/hadith/${item.id}` as Href)} />)}</View>
+          <Text style={styles.credit}>{t("hadith.searchCredit")}</Text>
         </ScrollView>
       </SafeAreaView>
     </LinearGradient>

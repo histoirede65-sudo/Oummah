@@ -2,66 +2,154 @@ import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import type { Href } from "expo-router";
 import { router } from "expo-router";
+import React, { useMemo, useState } from "react";
 import { Pressable, SafeAreaView, ScrollView, StyleSheet, Text, View } from "react-native";
 import { colors } from "../../theme/colors";
 import { typography } from "../../theme/typography";
 
-type Prophet = { id: string; name: string; arabic: string; note?: string };
-const CHRONOLOGY: Prophet[] = [
-  { id:"adam",name:"Âdam",arabic:"آدم",note:"Père de l’humanité" }, { id:"idris",name:"Idrîs",arabic:"إدريس" },
-  { id:"nuh",name:"Nûh",arabic:"نوح" }, { id:"hud",name:"Hûd",arabic:"هود" }, { id:"salih",name:"Sâlih",arabic:"صالح" },
-  { id:"ibrahim",name:"Ibrâhîm",arabic:"إبراهيم",note:"Une grande lignée prophétique" }, { id:"lut",name:"Lût",arabic:"لوط" },
-  { id:"ismail",name:"Ismâ‘îl",arabic:"إسماعيل" }, { id:"ishaq",name:"Ishâq",arabic:"إسحاق" }, { id:"yaqub",name:"Ya‘qûb",arabic:"يعقوب" },
-  { id:"yusuf",name:"Yûsuf",arabic:"يوسف" }, { id:"shuayb",name:"Shu‘ayb",arabic:"شعيب" }, { id:"ayyub",name:"Ayyûb",arabic:"أيوب" },
-  { id:"dhul-kifl",name:"Dhûl-Kifl",arabic:"ذو الكفل" }, { id:"musa",name:"Mûsâ",arabic:"موسى" }, { id:"harun",name:"Hârûn",arabic:"هارون" },
-  { id:"dawud",name:"Dâwûd",arabic:"داود" }, { id:"sulayman",name:"Sulaymân",arabic:"سليمان" }, { id:"ilyas",name:"Ilyâs",arabic:"إلياس" },
-  { id:"al-yasa",name:"Al-Yasa‘",arabic:"اليسع" }, { id:"yunus",name:"Yûnus",arabic:"يونس" }, { id:"zakariya",name:"Zakariyyâ",arabic:"زكريا" },
-  { id:"yahya",name:"Yahyâ",arabic:"يحيى" }, { id:"isa",name:"‘Îsâ",arabic:"عيسى" }, { id:"muhammad",name:"Muhammad ﷺ",arabic:"محمد",note:"Dernier des prophètes" },
+type NodeKind = "prophet" | "family" | "group";
+type TreeNode = { id: string; name: string; arabic?: string; x: number; y: number; w?: number; kind?: NodeKind; note?: string };
+type LinkKind = "direct" | "distant" | "family";
+type TreeLink = { from: string; to: string; kind: LinkKind };
+
+const BASE_W = 1040;
+const BASE_H = 1510;
+const NODE_H = 74;
+
+const NODES: TreeNode[] = [
+  { id:"adam",name:"Âdam",arabic:"آدم",x:430,y:35,note:"Père de l’humanité" },
+  { id:"idris",name:"Idrîs",arabic:"إدريس",x:430,y:145,note:"Lien généalogique précis non affirmé" },
+  { id:"nuh",name:"Nûh",arabic:"نوح",x:430,y:255,note:"Après le Déluge" },
+
+  { id:"hud",name:"Hûd",arabic:"هود",x:80,y:375,note:"Peuple de ‘Âd" },
+  { id:"salih",name:"Sâlih",arabic:"صالح",x:80,y:485,note:"Peuple de Thamûd" },
+  { id:"ibrahim",name:"Ibrâhîm",arabic:"إبراهيم",x:430,y:425,w:190,note:"Grande lignée prophétique" },
+  { id:"lut",name:"Lût",arabic:"لوط",x:760,y:425,note:"Contemporain d’Ibrâhîm" },
+  { id:"shuayb",name:"Shu‘ayb",arabic:"شعيب",x:80,y:595,note:"Madyan" },
+
+  { id:"ismail",name:"Ismâ‘îl",arabic:"إسماعيل",x:300,y:570,w:175 },
+  { id:"ishaq",name:"Ishâq",arabic:"إسحاق",x:560,y:570,w:175 },
+  { id:"muhammad",name:"Muhammad ﷺ",arabic:"محمد",x:220,y:810,w:210,note:"Descendance lointaine d’Ismâ‘îl" },
+  { id:"yaqub",name:"Ya‘qûb / Israël",arabic:"يعقوب",x:560,y:690,w:190 },
+  { id:"yusuf",name:"Yûsuf",arabic:"يوسف",x:700,y:810,w:175 },
+  { id:"ayyub",name:"Ayyûb",arabic:"أيوب",x:850,y:690,note:"Parenté précise non affichée" },
+  { id:"dhul-kifl",name:"Dhûl-Kifl",arabic:"ذو الكفل",x:850,y:810,note:"Parenté précise non affichée" },
+
+  { id:"banu-israil",name:"Banû Isrâ’îl",x:515,y:920,w:285,kind:"group",note:"Grande branche issue de Ya‘qûb" },
+  { id:"musa",name:"Mûsâ",arabic:"موسى",x:390,y:1040,w:175 },
+  { id:"harun",name:"Hârûn",arabic:"هارون",x:610,y:1040,w:175 },
+  { id:"dawud",name:"Dâwûd",arabic:"داود",x:160,y:1160,w:175 },
+  { id:"sulayman",name:"Sulaymân",arabic:"سليمان",x:160,y:1280,w:175 },
+  { id:"ilyas",name:"Ilyâs",arabic:"إلياس",x:80,y:705,w:175,note:"Lignée précise non affichée" },
+  { id:"al-yasa",name:"Al-Yasa‘",arabic:"اليسع",x:80,y:815,w:175,note:"Lignée précise non affichée" },
+  { id:"yunus",name:"Yûnus",arabic:"يونس",x:80,y:925,w:175,note:"Lignée précise non affichée" },
+  { id:"zakariya",name:"Zakariyyâ",arabic:"زكريا",x:820,y:1040,w:175 },
+  { id:"yahya",name:"Yahyâ",arabic:"يحيى",x:820,y:1160,w:175 },
+  { id:"maryam",name:"Maryam",arabic:"مريم",x:820,y:1280,w:175,kind:"family",note:"Mère de ‘Îsâ" },
+  { id:"isa",name:"‘Îsâ",arabic:"عيسى",x:820,y:1400,w:175 },
 ];
 
-function ProphetNode({ p, accent=false }: { p: Prophet; accent?: boolean }) {
-  return <Pressable onPress={() => router.push(`/prophets/${p.id}?chapter=0` as Href)} style={({pressed})=>[styles.node,accent&&styles.nodeAccent,pressed&&styles.pressed]}>
-    <View style={styles.nodeText}><Text style={styles.nodeName}>{p.name}</Text><Text style={styles.nodeArabic}>{p.arabic}</Text>{p.note?<Text style={styles.nodeNote}>{p.note}</Text>:null}</View>
-    <Ionicons name="chevron-forward" size={16} color={colors.goldLight}/>
+const LINKS: TreeLink[] = [
+  {from:"adam",to:"idris",kind:"distant"},{from:"idris",to:"nuh",kind:"distant"},
+  {from:"nuh",to:"ibrahim",kind:"distant"},
+  {from:"ibrahim",to:"ismail",kind:"direct"},{from:"ibrahim",to:"ishaq",kind:"direct"},
+  {from:"ismail",to:"muhammad",kind:"distant"},{from:"ishaq",to:"yaqub",kind:"direct"},{from:"yaqub",to:"yusuf",kind:"direct"},
+  {from:"yaqub",to:"banu-israil",kind:"distant"},{from:"banu-israil",to:"musa",kind:"distant"},{from:"banu-israil",to:"harun",kind:"distant"},
+  {from:"banu-israil",to:"dawud",kind:"distant"},{from:"dawud",to:"sulayman",kind:"direct"},
+  {from:"banu-israil",to:"zakariya",kind:"distant"},{from:"banu-israil",to:"maryam",kind:"distant"},
+  {from:"zakariya",to:"yahya",kind:"direct"},{from:"maryam",to:"isa",kind:"direct"},
+];
+
+const SIDE_PROPHETS = ["hud","salih","lut","shuayb","ilyas","al-yasa","yunus","ayyub","dhul-kifl"];
+
+function TreeCard({ node, scale }: { node: TreeNode; scale: number }) {
+  const w=(node.w??160)*scale; const h=NODE_H*scale;
+  const isGroup=node.kind==="group"; const isFamily=node.kind==="family"; const isMuhammad=node.id==="muhammad";
+  const clickable=node.kind!=="group" && node.id!=="maryam";
+  return <Pressable disabled={!clickable} onPress={()=>clickable&&router.push(`/prophets/${node.id}?chapter=0` as Href)}
+    style={({pressed})=>[styles.treeNode,{left:node.x*scale,top:node.y*scale,width:w,height:h,borderRadius:17*scale,paddingHorizontal:12*scale,paddingVertical:8*scale},isGroup&&styles.groupNode,isFamily&&styles.familyNode,isMuhammad&&styles.muhammadNode,pressed&&styles.pressed]}>
+    <Text numberOfLines={1} style={[styles.treeName,{fontSize:15*scale},isGroup&&styles.groupText,isMuhammad&&styles.muhammadName]}>{node.name}</Text>
+    {node.arabic?<Text style={[styles.treeArabic,{fontSize:18*scale},isMuhammad&&styles.muhammadArabic]}>{node.arabic}</Text>:null}
+    {node.note?<Text numberOfLines={1} style={[styles.treeNote,{fontSize:7.8*scale},isMuhammad&&styles.muhammadNote]}>{node.note}</Text>:null}
   </Pressable>;
 }
-function Relation({ icon="git-branch-outline", title, text, certainty="ÉTABLI" }: {icon?: keyof typeof Ionicons.glyphMap;title:string;text:string;certainty?:string}) {
-  return <View style={styles.relation}><Ionicons name={icon} size={19} color={colors.goldLight}/><View style={{flex:1}}><View style={styles.relationHead}><Text style={styles.relTitle}>{title}</Text><Text style={styles.certainty}>{certainty}</Text></View><Text style={styles.relText}>{text}</Text></View></View>;
+
+function LinkLine({ link, scale }: { link: TreeLink; scale:number }) {
+  const a=NODES.find(n=>n.id===link.from)!; const b=NODES.find(n=>n.id===link.to)!;
+  const aw=(a.w??160), bw=(b.w??160);
+  const ax=(a.x+aw/2)*scale, ay=(a.y+NODE_H)*scale;
+  const bx=(b.x+bw/2)*scale, by=b.y*scale;
+  const mid=(ay+by)/2;
+  const lineColor=link.kind==="direct"?"rgba(229,190,96,.88)":link.kind==="family"?"rgba(130,176,255,.72)":"rgba(229,190,96,.42)";
+  const thickness=Math.max(1,2*scale);
+  return <>
+    <View pointerEvents="none" style={{position:"absolute",left:ax-thickness/2,top:ay,width:thickness,height:Math.max(1,mid-ay),backgroundColor:lineColor}}/>
+    <View pointerEvents="none" style={{position:"absolute",left:Math.min(ax,bx),top:mid,width:Math.max(thickness,Math.abs(bx-ax)),height:thickness,backgroundColor:lineColor,opacity:link.kind==="distant"?.7:1}}/>
+    <View pointerEvents="none" style={{position:"absolute",left:bx-thickness/2,top:mid,width:thickness,height:Math.max(1,by-mid),backgroundColor:lineColor}}/>
+  </>;
 }
+
+
+const EVIDENCE = [
+  {
+    title:"Le Coran donne les grandes branches",
+    text:"Maryam 19:58 distingue les descendants d’Âdam, ceux liés à Nûh, puis les descendances d’Ibrâhîm et d’Israël. C’est la charpente générale retenue ici.",
+    ref:"Coran 19:58",
+  },
+  {
+    title:"Une chaîne donnée par le Prophète ﷺ",
+    text:"Le Prophète ﷺ nomme explicitement Yûsuf fils de Ya‘qûb, fils d’Ishâq, fils d’Ibrâhîm. Cette branche est donc affichée comme filiation directe.",
+    ref:"Sahih al-Bukhari 3382 / 3390",
+  },
+  {
+    title:"La lignée de Muhammad ﷺ",
+    text:"Le Prophète ﷺ a indiqué qu’Allah a choisi Kinâna parmi les descendants d’Ismâ‘îl, puis Quraysh, Banû Hâshim, puis lui-même. Les générations intermédiaires ne sont pas inventées dans l’arbre.",
+    ref:"Sahih Muslim 2276",
+  },
+  {
+    title:"Dâwûd et Sulaymân",
+    text:"Le Prophète ﷺ dit « Sulaymân fils de Dâwûd » dans un hadith authentique. Leur lien père-fils est donc affiché comme direct.",
+    ref:"Sahih al-Bukhari 3424",
+  },
+];
+
 export default function GenealogyScreen(){
- return <LinearGradient colors={[colors.background,colors.backgroundSecondary,colors.background]} style={styles.screen}><SafeAreaView style={styles.safe}>
-  <View style={styles.header}><Pressable onPress={()=>router.back()} style={styles.back}><Ionicons name="chevron-back" size={23} color={colors.text}/></Pressable><Text style={styles.headerTitle}>Arbre des Prophètes</Text><View style={{width:44}}/></View>
-  <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-   <LinearGradient colors={["rgba(64,32,78,.96)","rgba(18,12,31,.99)"]} style={styles.hero}>
-    <View style={styles.rootIcon}><Ionicons name="git-network-outline" size={30} color={colors.goldLight}/></View>
-    <Text style={styles.kicker}>DE ÂDAM À MUHAMMAD ﷺ</Text><Text style={styles.heroTitle}>Une humanité, des lignées prophétiques</Text>
-    <Text style={styles.heroText}>L’arbre commence par Âdam عليه السلام : tous les êtres humains descendent de lui. Le Coran parle ensuite de prophètes issus de la descendance d’Âdam, de ceux portés avec Nûh, puis des descendances d’Ibrâhîm et d’Israël.</Text>
-    <View style={styles.adamBanner}><Text style={styles.adamArabic}>آدم</Text><View style={{flex:1}}><Text style={styles.adamTitle}>Âdam عليه السلام</Text><Text style={styles.adamText}>Racine commune de l’humanité</Text></View><Ionicons name="people" size={24} color={colors.goldLight}/></View>
-   </LinearGradient>
+  const [scale,setScale]=useState(.86);
+  const canvas=useMemo(()=>({width:BASE_W*scale,height:BASE_H*scale}),[scale]);
+  const change=(delta:number)=>setScale(v=>Math.max(.64,Math.min(1.15,Math.round((v+delta)*100)/100)));
+  return <LinearGradient colors={[colors.background,colors.backgroundSecondary,colors.background]} style={styles.screen}><SafeAreaView style={styles.safe}>
+    <View style={styles.header}><Pressable onPress={()=>router.back()} style={styles.back}><Ionicons name="chevron-back" size={23} color={colors.text}/></Pressable><View style={{flex:1}}><Text style={styles.headerTitle}>Arbre des Prophètes</Text><Text style={styles.headerSub}>Explore les lignées et ouvre chaque histoire</Text></View><View style={styles.zoom}><Pressable onPress={()=>change(-.08)} style={styles.zoomBtn}><Ionicons name="remove" size={18} color={colors.goldLight}/></Pressable><Text style={styles.zoomText}>{Math.round(scale*100)}%</Text><Pressable onPress={()=>change(.08)} style={styles.zoomBtn}><Ionicons name="add" size={18} color={colors.goldLight}/></Pressable></View></View>
 
-   <View style={styles.legend}><Text style={styles.legendTitle}>COMMENT LIRE L’ARBRE</Text><Text style={styles.legendText}>Les liens père → fils ou frères ne sont affichés comme tels que lorsqu’ils sont établis. Les grandes branches de descendance sont signalées sans inventer les générations manquantes. L’ordre ci-dessous est chronologique indicatif : le Coran ne donne pas une datation complète des 25 prophètes.</Text></View>
+    <View style={styles.legendBar}>
+      <View style={styles.legendItem}><View style={[styles.legendLine,{backgroundColor:"rgba(229,190,96,.88)"}]}/><Text style={styles.legendSmall}>père / fils établi</Text></View>
+      <View style={styles.legendItem}><View style={[styles.legendLine,{backgroundColor:"rgba(229,190,96,.42)"}]}/><Text style={styles.legendSmall}>descendance lointaine</Text></View>
+      <View style={styles.legendItem}><View style={styles.legendBox}/><Text style={styles.legendSmall}>repère de branche</Text></View>
+    </View>
 
-   <Text style={styles.sectionTitle}>La grande lignée</Text><Text style={styles.sectionIntro}>Les 25 prophètes du module, d’Âdam à Muhammad ﷺ. Appuie sur un nom pour ouvrir son histoire.</Text>
-   <View style={styles.timeline}>{CHRONOLOGY.map((p,i)=><View key={p.id} style={styles.timelineRow}><View style={styles.rail}><View style={[styles.dot,(p.id==="adam"||p.id==="ibrahim"||p.id==="muhammad")&&styles.dotAccent]}/>{i<CHRONOLOGY.length-1?<View style={styles.railLine}/>:null}</View><View style={{flex:1}}><ProphetNode p={p} accent={p.id==="adam"||p.id==="ibrahim"||p.id==="muhammad"}/></View></View>)}</View>
-
-   <Text style={styles.sectionTitle}>Liens de parenté établis</Text><Text style={styles.sectionIntro}>Cette vue complète la chronologie en montrant les liens familiaux importants sans transformer une succession prophétique en fausse filiation.</Text>
-   <View style={styles.relations}>
-    <Relation title="Ibrâhîm → Ismâ‘îl" text="Père et fils. La branche d’Ismâ‘îl conduit, après de nombreuses générations non affichées, à Muhammad ﷺ."/>
-    <Relation title="Ibrâhîm → Ishâq → Ya‘qûb" text="Ishâq est fils d’Ibrâhîm ; Ya‘qûb est fils d’Ishâq. Ya‘qûb est aussi appelé Israël."/>
-    <Relation title="Ya‘qûb → Yûsuf" text="Yûsuf est l’un des fils de Ya‘qûb عليهما السلام."/>
-    <Relation icon="people-outline" title="Mûsâ ↔ Hârûn" text="Deux frères et deux prophètes, envoyés ensemble face à Pharaon."/>
-    <Relation title="Dâwûd → Sulaymân" text="Père et fils ; Sulaymân hérita de Dâwûd."/>
-    <Relation title="Zakariyyâ → Yahyâ" text="Père et fils. La naissance de Yahyâ est annoncée à Zakariyyâ dans le Coran."/>
-    <Relation icon="woman-outline" title="Maryam → ‘Îsâ" text="Mère et fils. ‘Îsâ عليه السلام naît miraculeusement sans père."/>
-    <Relation icon="people-outline" title="Yahyâ ↔ ‘Îsâ" text="Ils appartiennent à la même famille pieuse autour de la maison de ‘Imrân. Le lien précis de cousins est rapporté dans la tradition exégétique ; le Coran établit surtout la proximité de leurs familles et le rôle de Zakariyyâ auprès de Maryam." certainty="LIEN FAMILIAL"/>
-   </View>
-
-   <LinearGradient colors={["rgba(227,181,90,.10)","rgba(23,16,38,.86)"]} style={styles.branchCard}><Text style={styles.branchKicker}>BRANCHE D’IBRÂHÎM</Text><Text style={styles.branchBig}>Ibrâhîm</Text><View style={styles.fork}><View style={styles.forkCol}><Text style={styles.forkName}>Ismâ‘îl</Text><Text style={styles.forkArrow}>↓</Text><Text style={styles.unknown}>générations intermédiaires</Text><Text style={styles.forkArrow}>↓</Text><Text style={styles.forkEnd}>Muhammad ﷺ</Text></View><View style={styles.forkDivider}/><View style={styles.forkCol}><Text style={styles.forkName}>Ishâq</Text><Text style={styles.forkArrow}>↓</Text><Text style={styles.forkName}>Ya‘qûb / Israël</Text><Text style={styles.forkArrow}>↓</Text><Text style={styles.unknown}>grande branche des Banû Isrâ’îl</Text></View></View></LinearGradient>
-
-   <View style={styles.sources}><Text style={styles.sourceTitle}>REPÈRES DE SOURCES</Text><Text style={styles.sourceText}>Coran 19:58 — descendants d’Âdam, de ceux portés avec Nûh, d’Ibrâhîm et d’Israël.</Text><Text style={styles.sourceText}>Coran 3:33–37 — famille de ‘Imrân, Maryam et prise en charge par Zakariyyâ.</Text><Text style={styles.sourceText}>Coran 6:84–86 ; 29:27 — prophètes dans la descendance d’Ibrâhîm.</Text><Text style={styles.sourceText}>Sahih Muslim 2365 — unité de la mission prophétique et absence de prophète entre ‘Îsâ et Muhammad ﷺ.</Text></View>
-  </ScrollView>
- </SafeAreaView></LinearGradient>;
+    <ScrollView style={styles.vertical} contentContainerStyle={styles.verticalContent} showsVerticalScrollIndicator={false}>
+      <View style={styles.evidenceSection}>
+        <View style={styles.evidenceHeadingRow}><Ionicons name="book-outline" size={18} color={colors.goldLight}/><View style={{flex:1}}><Text style={styles.evidenceTitle}>Les textes qui fondent cet arbre</Text><Text style={styles.evidenceSubtitle}>Coran et hadiths authentiques d’abord ; les chaînes non établies ne sont pas complétées.</Text></View></View>
+        {EVIDENCE.map((item,index)=><View key={item.ref} style={[styles.evidenceCard,index===0&&styles.evidenceCardFirst]}>
+          <View style={styles.evidenceIndex}><Text style={styles.evidenceIndexText}>{index+1}</Text></View>
+          <View style={{flex:1}}><Text style={styles.evidenceCardTitle}>{item.title}</Text><Text style={styles.evidenceText}>{item.text}</Text><Text style={styles.evidenceRef}>{item.ref}</Text></View>
+        </View>)}
+      </View>
+      <View style={styles.notice}><Ionicons name="information-circle-outline" size={18} color={colors.goldLight}/><Text style={styles.noticeText}>L’arbre n’invente pas les générations absentes. Un trait clair indique une filiation directe établie ; un trait plus discret signale seulement une grande descendance ou un repère traditionnel.</Text></View>
+      <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{paddingHorizontal:12,paddingBottom:20}}>
+        <View style={[styles.canvas,{width:canvas.width,height:canvas.height}]}>
+          {LINKS.map((l,i)=><LinkLine key={`${l.from}-${l.to}-${i}`} link={l} scale={scale}/>)}
+          {NODES.map(n=><TreeCard key={n.id} node={n} scale={scale}/>)}
+          <View style={[styles.sideLabel,{left:42*scale,top:265*scale,width:210*scale}]}><Text style={[styles.sideLabelTitle,{fontSize:10*scale}]}>AUTRES PROPHÈTES DU MODULE</Text><Text style={[styles.sideLabelText,{fontSize:8*scale}]}>Leur lien de parenté exact avec cette branche n’est pas affiché lorsqu’il n’est pas suffisamment établi.</Text></View>
+          {SIDE_PROPHETS.map(id=>{const n=NODES.find(x=>x.id===id)!;return <View key={`side-${id}`} style={[styles.sideMarker,{left:(n.x-18)*scale,top:(n.y+24)*scale,width:7*scale,height:7*scale,borderRadius:4*scale}]}/>})}
+          <View style={[styles.brotherLine,{left:548*scale,top:1074*scale,width:60*scale,height:2*scale}]}/>
+          <Text style={[styles.brotherText,{left:540*scale,top:1082*scale,fontSize:7*scale}]}>frères</Text>
+        </View>
+      </ScrollView>
+      <View style={styles.sources}><Text style={styles.sourceTitle}>REPÈRES & SOURCES</Text><Text style={styles.sourceText}>Coran 14:39 : Ibrâhîm remercie Allah de lui avoir accordé Ismâ‘îl et Ishâq.</Text><Text style={styles.sourceText}>Coran 12:6 + Sahih al-Bukhari 3382/3390 : Ibrâhîm → Ishâq → Ya‘qûb → Yûsuf.</Text><Text style={styles.sourceText}>Sahih Muslim 2276 : Muhammad ﷺ appartient à Banû Hâshim, issus de Quraysh, issus de Kinâna, parmi les descendants d’Ismâ‘îl.</Text><Text style={styles.sourceText}>Sahih al-Bukhari 3424 : Sulaymân est explicitement appelé fils de Dâwûd.</Text><Text style={styles.sourceText}>Coran 19:58, 29:27 et 6:84–86 : grandes descendances prophétiques. Lorsque la parenté exacte n’est pas établie par un texte sûr, l’arbre n’ajoute pas de lien direct.</Text></View>
+    </ScrollView>
+  </SafeAreaView></LinearGradient>;
 }
+
 const styles=StyleSheet.create({
- screen:{flex:1},safe:{flex:1},header:{minHeight:74,paddingHorizontal:16,flexDirection:"row",alignItems:"center"},back:{width:44,height:44,borderRadius:22,borderWidth:1,borderColor:colors.borderSoft,alignItems:"center",justifyContent:"center",backgroundColor:"rgba(255,255,255,.04)"},headerTitle:{flex:1,textAlign:"center",color:colors.text,fontFamily:typography.serifSemibold,fontSize:22},content:{padding:16,paddingBottom:70},hero:{padding:23,borderRadius:30,borderWidth:1,borderColor:"rgba(227,181,90,.32)"},rootIcon:{width:54,height:54,borderRadius:19,alignItems:"center",justifyContent:"center",backgroundColor:"rgba(227,181,90,.10)",borderWidth:1,borderColor:"rgba(227,181,90,.18)"},kicker:{marginTop:17,color:colors.goldLight,fontSize:9,fontWeight:"900",letterSpacing:1.4},heroTitle:{marginTop:8,color:colors.text,fontFamily:typography.serifSemibold,fontSize:30,lineHeight:36},heroText:{marginTop:10,color:colors.textSecondary,fontSize:13.5,lineHeight:21},adamBanner:{marginTop:19,padding:14,borderRadius:20,flexDirection:"row",alignItems:"center",gap:12,backgroundColor:"rgba(8,7,19,.44)",borderWidth:1,borderColor:"rgba(227,181,90,.22)"},adamArabic:{color:colors.goldLight,fontFamily:typography.arabic,fontSize:28},adamTitle:{color:colors.text,fontFamily:typography.serifSemibold,fontSize:17},adamText:{marginTop:2,color:colors.textMuted,fontSize:10.5},legend:{marginTop:13,padding:15,borderRadius:20,backgroundColor:"rgba(23,16,38,.78)",borderWidth:1,borderColor:colors.borderSoft},legendTitle:{color:colors.goldLight,fontSize:8.5,fontWeight:"900",letterSpacing:1.1},legendText:{marginTop:7,color:colors.textSecondary,fontSize:11.5,lineHeight:18},sectionTitle:{marginTop:28,color:colors.text,fontFamily:typography.serifSemibold,fontSize:25},sectionIntro:{marginTop:6,marginBottom:13,color:colors.textSecondary,fontSize:12.5,lineHeight:19},timeline:{paddingRight:2},timelineRow:{flexDirection:"row",gap:10},rail:{width:20,alignItems:"center"},dot:{marginTop:26,width:8,height:8,borderRadius:4,backgroundColor:colors.border},dotAccent:{width:12,height:12,borderRadius:6,backgroundColor:colors.goldLight,shadowColor:colors.goldLight,shadowOpacity:.35,shadowRadius:7},railLine:{width:1,flex:1,minHeight:58,backgroundColor:"rgba(227,181,90,.22)"},node:{minHeight:66,marginBottom:8,paddingHorizontal:15,paddingVertical:11,borderRadius:20,borderWidth:1,borderColor:"rgba(227,181,90,.17)",backgroundColor:"rgba(23,16,38,.88)",flexDirection:"row",alignItems:"center",gap:10},nodeAccent:{borderColor:"rgba(227,181,90,.48)",backgroundColor:"rgba(227,181,90,.075)"},nodeText:{flex:1},nodeName:{color:colors.text,fontFamily:typography.serifSemibold,fontSize:17},nodeArabic:{marginTop:1,color:colors.textMuted,fontFamily:typography.arabic,fontSize:15},nodeNote:{marginTop:3,color:colors.goldLight,fontSize:9,fontWeight:"700"},relations:{gap:9},relation:{padding:14,borderRadius:18,flexDirection:"row",gap:10,backgroundColor:"rgba(23,16,38,.82)",borderWidth:1,borderColor:"rgba(227,181,90,.14)"},relationHead:{flexDirection:"row",alignItems:"center",justifyContent:"space-between",gap:8},relTitle:{flex:1,color:colors.text,fontWeight:"800",fontSize:12.5},certainty:{color:colors.goldLight,fontSize:7.5,fontWeight:"900",letterSpacing:.8},relText:{marginTop:4,color:colors.textSecondary,fontSize:11.5,lineHeight:17},branchCard:{marginTop:22,padding:18,borderRadius:25,borderWidth:1,borderColor:"rgba(227,181,90,.25)"},branchKicker:{color:colors.goldLight,fontSize:8.5,fontWeight:"900",letterSpacing:1.2,textAlign:"center"},branchBig:{marginTop:6,color:colors.text,fontFamily:typography.serifSemibold,fontSize:24,textAlign:"center"},fork:{marginTop:15,flexDirection:"row"},forkCol:{flex:1,alignItems:"center",paddingHorizontal:6},forkDivider:{width:1,backgroundColor:"rgba(227,181,90,.20)"},forkName:{color:colors.text,fontFamily:typography.serifSemibold,fontSize:15,textAlign:"center"},forkArrow:{color:colors.goldLight,fontSize:15,marginVertical:4},forkEnd:{color:colors.goldLight,fontFamily:typography.serifSemibold,fontSize:15,textAlign:"center"},unknown:{color:colors.textMuted,fontSize:9.5,lineHeight:14,textAlign:"center"},sources:{marginTop:22,padding:17,borderRadius:22,borderWidth:1,borderColor:colors.borderSoft,backgroundColor:"rgba(23,16,38,.75)"},sourceTitle:{color:colors.goldLight,fontSize:9,fontWeight:"900",letterSpacing:1.1},sourceText:{marginTop:7,color:colors.textSecondary,fontSize:11.5,lineHeight:18},pressed:{opacity:.82,transform:[{scale:.992}]}
+  screen:{flex:1},safe:{flex:1},header:{minHeight:76,paddingHorizontal:14,flexDirection:"row",alignItems:"center",gap:10},back:{width:42,height:42,borderRadius:15,borderWidth:1,borderColor:colors.borderSoft,alignItems:"center",justifyContent:"center",backgroundColor:"rgba(255,255,255,.04)"},headerTitle:{color:colors.text,fontFamily:typography.serifSemibold,fontSize:20},headerSub:{marginTop:2,color:colors.textMuted,fontSize:9.5},zoom:{flexDirection:"row",alignItems:"center",gap:5,padding:4,borderRadius:14,borderWidth:1,borderColor:"rgba(227,181,90,.20)",backgroundColor:"rgba(23,16,38,.82)"},zoomBtn:{width:30,height:30,borderRadius:10,alignItems:"center",justifyContent:"center",backgroundColor:"rgba(227,181,90,.08)"},zoomText:{minWidth:34,textAlign:"center",color:colors.textSecondary,fontSize:9,fontWeight:"800"},legendBar:{marginHorizontal:14,marginBottom:8,padding:10,borderRadius:16,flexDirection:"row",flexWrap:"wrap",gap:12,backgroundColor:"rgba(23,16,38,.78)",borderWidth:1,borderColor:colors.borderSoft},legendItem:{flexDirection:"row",alignItems:"center",gap:6},legendLine:{width:22,height:2,borderRadius:2},legendBox:{width:12,height:12,borderRadius:4,borderWidth:1,borderColor:"rgba(126,165,235,.55)",backgroundColor:"rgba(75,111,181,.12)"},legendSmall:{color:colors.textMuted,fontSize:8.5},vertical:{flex:1},verticalContent:{paddingBottom:40},evidenceSection:{marginHorizontal:14,marginBottom:10,padding:13,borderRadius:20,borderWidth:1,borderColor:"rgba(227,181,90,.24)",backgroundColor:"rgba(23,16,38,.80)"},evidenceHeadingRow:{flexDirection:"row",alignItems:"flex-start",gap:9,marginBottom:9},evidenceTitle:{color:colors.text,fontFamily:typography.serifSemibold,fontSize:15},evidenceSubtitle:{marginTop:2,color:colors.textMuted,fontSize:9.5,lineHeight:14},evidenceCard:{flexDirection:"row",gap:9,paddingVertical:10,borderTopWidth:1,borderTopColor:"rgba(255,255,255,.06)"},evidenceCardFirst:{borderTopWidth:0,paddingTop:4},evidenceIndex:{marginTop:1,width:22,height:22,borderRadius:8,alignItems:"center",justifyContent:"center",backgroundColor:"rgba(227,181,90,.10)",borderWidth:1,borderColor:"rgba(227,181,90,.25)"},evidenceIndexText:{color:colors.goldLight,fontSize:9,fontWeight:"900"},evidenceCardTitle:{color:colors.textSecondary,fontSize:11,fontWeight:"800"},evidenceText:{marginTop:3,color:colors.textMuted,fontSize:10,lineHeight:15},evidenceRef:{marginTop:5,color:colors.goldLight,fontSize:9,fontWeight:"800"},notice:{marginHorizontal:14,marginBottom:10,padding:12,borderRadius:17,flexDirection:"row",gap:8,backgroundColor:"rgba(227,181,90,.07)",borderWidth:1,borderColor:"rgba(227,181,90,.18)"},noticeText:{flex:1,color:colors.textSecondary,fontSize:10.5,lineHeight:16},canvas:{position:"relative",borderRadius:28,borderWidth:1,borderColor:"rgba(227,181,90,.20)",backgroundColor:"rgba(10,8,20,.72)",overflow:"hidden"},treeNode:{position:"absolute",justifyContent:"center",alignItems:"center",borderWidth:1.2,borderColor:"rgba(227,181,90,.38)",backgroundColor:"rgba(27,20,43,.96)",shadowColor:"#000",shadowOpacity:.22,shadowRadius:7,shadowOffset:{width:0,height:4}},groupNode:{borderColor:"rgba(126,165,235,.45)",backgroundColor:"rgba(52,73,119,.24)"},familyNode:{borderColor:"rgba(205,132,184,.42)",backgroundColor:"rgba(79,39,69,.28)"},treeName:{color:colors.text,fontFamily:typography.serifSemibold,textAlign:"center"},groupText:{color:"#C6D6FF"},treeArabic:{marginTop:1,color:colors.goldLight,fontFamily:typography.arabic,textAlign:"center"},treeNote:{marginTop:2,color:colors.textMuted,textAlign:"center"},muhammadNode:{borderWidth:1.8,borderColor:"rgba(227,181,90,.85)",backgroundColor:"rgba(84,58,12,.42)",shadowColor:"rgba(227,181,90,.45)",shadowOpacity:.34,shadowRadius:10,shadowOffset:{width:0,height:5}},muhammadName:{color:"#FFF4D4"},muhammadArabic:{color:"#FFD885"},muhammadNote:{color:"rgba(255,240,205,.82)"},pressed:{opacity:.78,transform:[{scale:.985}]},sideLabel:{position:"absolute",padding:8,borderRadius:12,borderWidth:1,borderColor:"rgba(255,255,255,.08)",backgroundColor:"rgba(255,255,255,.025)"},sideLabelTitle:{color:colors.goldLight,fontWeight:"900",letterSpacing:.8},sideLabelText:{marginTop:4,color:colors.textMuted,lineHeight:12},sideMarker:{position:"absolute",backgroundColor:"rgba(227,181,90,.65)"},brotherLine:{position:"absolute",backgroundColor:"rgba(126,165,235,.72)"},brotherText:{position:"absolute",color:"rgba(166,192,246,.9)",fontWeight:"800"},sources:{margin:14,padding:16,borderRadius:20,borderWidth:1,borderColor:colors.borderSoft,backgroundColor:"rgba(23,16,38,.75)"},sourceTitle:{color:colors.goldLight,fontSize:9,fontWeight:"900",letterSpacing:1.1},sourceText:{marginTop:7,color:colors.textSecondary,fontSize:11,lineHeight:17}
 });

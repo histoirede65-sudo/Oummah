@@ -2,30 +2,67 @@
 import 'react-native-gesture-handler';
 import 'react-native-reanimated';
 
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Notifications from 'expo-notifications';
 import { router, Stack } from 'expo-router';
 import { useFonts } from 'expo-font';
 import { useEffect, useRef, useState } from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { Animated, Easing, Image, Linking, StyleSheet, Text, View } from 'react-native';
+import { Alert, Animated, AppState, Easing, Image, InteractionManager, Linking, Platform, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { AudioPlayerProvider } from '../context/AudioPlayerProvider';
 import { ReciterProvider } from '../context/ReciterProvider';
 import MiniPlayer from '../features/audio/presentation/MiniPlayer';
+import { ProphetAudioProvider } from '../features/prophets/audio/ProphetAudioProvider';
+import ProphetAudioMiniPlayer from '../features/prophets/audio/ProphetAudioMiniPlayer';
 import { I18nProvider } from '../i18n/I18nProvider';
 import { syncPushRegistration } from '../features/notifications/PushRegistrationService';
-import { verseOfDayRoute } from '../features/notifications/NotificationCenter';
+import { isNotificationPermissionGranted } from '../features/notifications/NotificationPermissions';
+import { loadNotificationCenterPreferences, notificationResponseReadId, requestNotificationCenterPermission, saveNotificationCenterPreferences, saveReadNotificationIds, syncNotificationCenterSchedule, verseOfDayRoute } from '../features/notifications/NotificationCenter';
+import { syncJumuahNotification } from '../features/jumuah/JumuahService';
 import AnalyticsRouteTracker from '../features/analytics/AnalyticsRouteTracker';
+import FirstVisitGuideHost from '../components/FirstVisitGuideHost';
 import { trackAnalyticsEvent } from '../features/analytics/AnalyticsService';
 import { STOP_ADHAN_ACTION } from '../features/adhan/AdhanNotifications';
-import { syncJumuahNotification } from '../features/jumuah/JumuahService';
+import { loadHifzState } from '../features/hifz/HifzStore';
+import { getMainMosque } from '../features/mosques/data/mosquePreferences';
+import { getMosquePrayerSchedule, loadPrayerCalculationSettings, type MosquePrayerSchedule } from '../features/mosques/data/mosquePrayerTimes';
+import { applyApprovedMosquePrayerTimes, getApprovedMosquePrayerTimes } from '../features/mosques/data/mosquePrayerUpdates';
 import cormorantRegular from '../../assets/fonts/CormorantGaramond-Regular.ttf';
 import cormorantMedium from '../../assets/fonts/CormorantGaramond-Medium.ttf';
 import cormorantSemibold from '../../assets/fonts/CormorantGaramond-SemiBold.ttf';
 import uthmanicHafs from '../../assets/fonts/quran/UthmanicHafs1Ver18.ttf';
 
 
+const REVIEW_LAUNCH_COUNT_KEY = '@oummah/review/launch-count-v1';
+const REVIEW_NEXT_PROMPT_KEY = '@oummah/review/next-prompt-v1';
+const REVIEW_COMPLETED_KEY = '@oummah/review/completed-v1';
+const NOTIFICATION_PERMISSION_REPAIR_KEY = '@oummah/notifications/permission-repair-v1';
+const FIRST_REVIEW_PROMPT_AT = 3;
+const REVIEW_REMIND_LATER_AFTER = 10;
+
+async function openOummahStoreReview() {
+  const primaryUrl =
+    Platform.OS === 'ios'
+      ? 'itms-apps://itunes.apple.com/app/id6797700838?action=write-review'
+      : 'market://details?id=com.oummah.app';
+  const fallbackUrl =
+    Platform.OS === 'ios'
+      ? 'https://apps.apple.com/fr/app/oummah/id6797700838?action=write-review'
+      : 'https://play.google.com/store/apps/details?id=com.oummah.app';
+
+  try {
+    if (await Linking.canOpenURL(primaryUrl)) {
+      await Linking.openURL(primaryUrl);
+      return;
+    }
+  } catch {
+    // Use the web store URL below.
+  }
+
+  await Linking.openURL(fallbackUrl).catch(() => undefined);
+}
 
 function AppLaunchAnimation({
   appReady,
@@ -317,6 +354,113 @@ function AppLaunchAnimation({
 
 export default function RootLayout() {
   const [launchVisible, setLaunchVisible] = useState(true);
+  const [notificationSettingsRequired, setNotificationSettingsRequired] = useState(false);
+  const startupTasksStarted = useRef(false);
+  const notificationPermissionRef = useRef<Promise<boolean> | null>(null);
+  const waitingForNotificationSettingsRef = useRef(false);
+
+  useEffect(() => {
+    // Déclencher la demande au montage, sans attendre les polices, l’intro
+    // ou une session connectée. Ne pas redemander après une décision système.
+    if (notificationPermissionRef.current) return;
+    notificationPermissionRef.current = (async () => {
+      if (Platform.OS === 'web') return false;
+      const current = await Notifications.getPermissionsAsync();
+      if (isNotificationPermissionGranted(current)) {
+        const repairDone = await AsyncStorage.getItem(NOTIFICATION_PERMISSION_REPAIR_KEY);
+        if (repairDone !== '1') {
+          const preferences = await loadNotificationCenterPreferences();
+          if (!preferences.systemEnabled) {
+            await saveNotificationCenterPreferences({ ...preferences, systemEnabled: true });
+          }
+          await AsyncStorage.setItem(NOTIFICATION_PERMISSION_REPAIR_KEY, '1');
+        }
+        return true;
+      }
+      if (current.status !== 'undetermined' || !current.canAskAgain) {
+        setNotificationSettingsRequired(true);
+        return false;
+      }
+      const granted = await requestNotificationCenterPermission('sound');
+      if (granted) {
+        const preferences = await loadNotificationCenterPreferences();
+        await saveNotificationCenterPreferences({ ...preferences, systemEnabled: true });
+        await AsyncStorage.setItem(NOTIFICATION_PERMISSION_REPAIR_KEY, '1');
+      }
+      return granted;
+    })().catch(() => false);
+  }, []);
+
+  useEffect(() => {
+    if (launchVisible || !notificationSettingsRequired) return;
+
+    const timer = setTimeout(() => {
+      Alert.alert(
+        'Notifications désactivées',
+        'Autorisez les notifications dans les réglages du téléphone pour recevoir les rappels OUMMAH.',
+        [
+          { text: 'Plus tard', style: 'cancel' },
+          {
+            text: 'Ouvrir les réglages',
+            onPress: () => {
+              waitingForNotificationSettingsRef.current = true;
+              void Linking.openSettings().catch(() => undefined);
+            },
+          },
+        ],
+      );
+      setNotificationSettingsRequired(false);
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [launchVisible, notificationSettingsRequired]);
+
+  useEffect(() => {
+    const subscription = AppState.addEventListener('change', (state) => {
+      if (state !== 'active' || !waitingForNotificationSettingsRef.current) return;
+      waitingForNotificationSettingsRef.current = false;
+
+      void Notifications.getPermissionsAsync()
+        .then(async (permission) => {
+          if (!isNotificationPermissionGranted(permission)) return;
+          const preferences = await loadNotificationCenterPreferences();
+          await saveNotificationCenterPreferences({ ...preferences, systemEnabled: true });
+          await AsyncStorage.setItem(NOTIFICATION_PERMISSION_REPAIR_KEY, '1');
+          await syncJumuahNotification().catch(() => false);
+          await syncPushRegistration().catch(() => undefined);
+
+          const [hifzState, mosque, calculation] = await Promise.all([
+            loadHifzState(),
+            getMainMosque(),
+            loadPrayerCalculationSettings(),
+          ]);
+          let schedule: MosquePrayerSchedule | null = null;
+          if (mosque) {
+            const calculated = await getMosquePrayerSchedule(
+              mosque.latitude,
+              mosque.longitude,
+              undefined,
+              calculation,
+            ).catch(() => null);
+            const approved = await getApprovedMosquePrayerTimes(mosque.id).catch(() => null);
+            schedule = calculated
+              ? calculation.scheduleSource === 'mosque'
+                ? applyApprovedMosquePrayerTimes(calculated, approved)
+                : calculated
+              : null;
+          }
+          await syncNotificationCenterSchedule(
+            { ...preferences, systemEnabled: true },
+            schedule,
+            mosque?.name,
+            hifzState,
+          );
+        })
+        .catch(() => undefined);
+    });
+
+    return () => subscription.remove();
+  }, []);
 
   const [fontsLoaded, fontError] = useFonts({
     'CormorantGaramond-Regular': cormorantRegular,
@@ -327,20 +471,197 @@ export default function RootLayout() {
   const appReady = fontsLoaded || Boolean(fontError);
 
   useEffect(() => {
-    void syncPushRegistration()
-      .then((result) => {
-        if (__DEV__) console.info("[PushDiagnostic] résultat syncPushRegistration", result);
-      })
-      .catch((error) => {
-        if (__DEV__) console.warn("[PushDiagnostic] syncPushRegistration a échoué", error);
-      });
-    void syncJumuahNotification().catch(() => undefined);
-    void trackAnalyticsEvent({
-      eventName: 'app_open',
-      module: 'home',
-      route: '/',
+    if (!appReady || launchVisible || Platform.OS === 'web') return;
+
+    let cancelled = false;
+    let promptVisible = false;
+    const timers: ReturnType<typeof setTimeout>[] = [];
+
+    const interactionTask = InteractionManager.runAfterInteractions(() => {
+      timers.push(
+        setTimeout(() => {
+          if (cancelled) return;
+
+          void (async () => {
+            const values = await AsyncStorage.multiGet([
+              REVIEW_LAUNCH_COUNT_KEY,
+              REVIEW_NEXT_PROMPT_KEY,
+              REVIEW_COMPLETED_KEY,
+            ]);
+            if (cancelled) return;
+
+            const stored = Object.fromEntries(values);
+            if (stored[REVIEW_COMPLETED_KEY] === '1') return;
+
+            const currentCount = Number.parseInt(stored[REVIEW_LAUNCH_COUNT_KEY] ?? '0', 10);
+            const launchCount = (Number.isFinite(currentCount) ? currentCount : 0) + 1;
+            await AsyncStorage.setItem(REVIEW_LAUNCH_COUNT_KEY, String(launchCount));
+            if (cancelled) return;
+
+            const storedNextPrompt = Number.parseInt(
+              stored[REVIEW_NEXT_PROMPT_KEY] ?? String(FIRST_REVIEW_PROMPT_AT),
+              10,
+            );
+            const nextPromptAt = Number.isFinite(storedNextPrompt)
+              ? storedNextPrompt
+              : FIRST_REVIEW_PROMPT_AT;
+
+            if (launchCount < nextPromptAt) return;
+
+            promptVisible = true;
+            const postpone = () => {
+              promptVisible = false;
+              void AsyncStorage.setItem(
+                REVIEW_NEXT_PROMPT_KEY,
+                String(launchCount + REVIEW_REMIND_LATER_AFTER),
+              );
+            };
+
+            Alert.alert(
+              'Vous aimez OUMMAH ? ⭐️',
+              'Votre avis nous aide énormément à améliorer OUMMAH et à la faire connaître.',
+              [
+                {
+                  text: 'Plus tard',
+                  style: 'cancel',
+                  onPress: postpone,
+                },
+                {
+                  text: 'Noter OUMMAH',
+                  onPress: () => {
+                    promptVisible = false;
+                    void AsyncStorage.setItem(REVIEW_COMPLETED_KEY, '1');
+                    void openOummahStoreReview();
+                  },
+                },
+              ],
+              {
+                cancelable: true,
+                onDismiss: postpone,
+              },
+            );
+          })().catch(() => undefined);
+        }, 1200),
+      );
     });
-  }, []);
+
+    return () => {
+      cancelled = true;
+      interactionTask.cancel();
+      timers.forEach(clearTimeout);
+      if (promptVisible) promptVisible = false;
+    };
+  }, [appReady, launchVisible]);
+
+  useEffect(() => {
+    // Les tâches ci-dessous sont utiles, mais aucune n'est nécessaire pour afficher
+    // le premier écran. On attend donc que l'intro soit terminée et que les
+    // interactions initiales soient passées, pour éviter le pic CPU / stockage /
+    // réseau au moment précis où l'accueil apparaît.
+    if (!appReady || launchVisible || startupTasksStarted.current) return;
+
+    startupTasksStarted.current = true;
+    let cancelled = false;
+    const timers: ReturnType<typeof setTimeout>[] = [];
+
+    const permissionReady = notificationPermissionRef.current ?? Promise.resolve(false);
+
+    const interactionTask = InteractionManager.runAfterInteractions(() => {
+      if (cancelled) return;
+
+      // Analytics : léger, mais non bloquant pour le premier rendu.
+      timers.push(
+        setTimeout(() => {
+          if (cancelled) return;
+          void trackAnalyticsEvent({
+            eventName: 'app_open',
+            module: 'home',
+            route: '/',
+          });
+        }, 150),
+      );
+
+      // Joumou'a : rappel global hebdomadaire, indépendant d'une mosquée
+      // ou des préférences du centre. Il reste soumis à l'autorisation système.
+      timers.push(
+        setTimeout(() => {
+          if (cancelled) return;
+          void permissionReady
+            .then((granted) => {
+              if (cancelled || !granted) return false;
+              return syncJumuahNotification();
+            })
+            .catch(() => false);
+        }, 700),
+      );
+
+      // Push : permissions/token/session/réseau, donc légèrement après l'accueil.
+      timers.push(
+        setTimeout(() => {
+          if (cancelled) return;
+          void permissionReady
+            .then((granted) => {
+              if (cancelled || !granted) return;
+              return syncPushRegistration();
+            })
+            .then((result) => {
+              if (__DEV__) console.info("[PushDiagnostic] résultat syncPushRegistration", result);
+            })
+            .catch((error) => {
+              if (__DEV__) console.warn("[PushDiagnostic] syncPushRegistration a échoué", error);
+            });
+        }, 900),
+      );
+
+      // Centre de notifications : le plus coûteux (stockage + calculs + éventuelle
+      // reprogrammation). On le décale davantage, sans changer sa logique.
+      timers.push(
+        setTimeout(() => {
+          if (cancelled) return;
+          void permissionReady.then(() => Promise.all([
+            loadNotificationCenterPreferences(),
+            loadHifzState(),
+            getMainMosque(),
+            loadPrayerCalculationSettings(),
+          ]))
+            .then(async ([preferences, hifzState, mosque, calculation]) => {
+              if (cancelled || !preferences.systemEnabled) return;
+
+              let schedule: MosquePrayerSchedule | null = null;
+              if (mosque) {
+                const calculated = await getMosquePrayerSchedule(
+                  mosque.latitude,
+                  mosque.longitude,
+                  undefined,
+                  calculation,
+                ).catch(() => null);
+                const approved = await getApprovedMosquePrayerTimes(mosque.id).catch(() => null);
+                schedule = calculated
+                  ? calculation.scheduleSource === 'mosque'
+                    ? applyApprovedMosquePrayerTimes(calculated, approved)
+                    : calculated
+                  : null;
+              }
+
+              if (cancelled) return;
+              return syncNotificationCenterSchedule(
+                preferences,
+                schedule,
+                mosque?.name,
+                hifzState,
+              );
+            })
+            .catch(() => undefined);
+        }, 1600),
+      );
+    });
+
+    return () => {
+      cancelled = true;
+      interactionTask.cancel();
+      timers.forEach(clearTimeout);
+    };
+  }, [appReady, launchVisible]);
 
   useEffect(() => {
     if (!appReady) return;
@@ -348,7 +669,13 @@ export default function RootLayout() {
     const openNotificationRoute = async (
       response: Notifications.NotificationResponse | null,
     ) => {
-      const data = response?.notification.request.content.data;
+      if (!response) return;
+      const data = response.notification.request.content.data;
+      const readId = notificationResponseReadId(response.notification);
+      if (readId) {
+        // A storage error must not prevent the notification from opening its page.
+        await saveReadNotificationIds([readId]).catch(() => undefined);
+      }
       const isAdhanNotification = data?.notificationOwner === 'oummah-adhan';
       if (isAdhanNotification && response) {
         await Notifications.dismissNotificationAsync(
@@ -422,6 +749,7 @@ export default function RootLayout() {
           <I18nProvider>
             <ReciterProvider>
               <AudioPlayerProvider>
+                <ProphetAudioProvider>
                 <AnalyticsRouteTracker />
                 <Stack
                   screenOptions={{
@@ -447,6 +775,9 @@ export default function RootLayout() {
                   />
                 </Stack>
                 <MiniPlayer />
+                <ProphetAudioMiniPlayer />
+                <FirstVisitGuideHost enabled={!launchVisible} />
+                </ProphetAudioProvider>
               </AudioPlayerProvider>
             </ReciterProvider>
           </I18nProvider>

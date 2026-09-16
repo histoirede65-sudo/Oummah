@@ -20,6 +20,7 @@ type ApiHadith = {
   categories?: (string | number)[];
   reference?: string;
 };
+type ApiCategory = { id?: string | number; title?: string; hadeeths_count?: string | number; parent_id?: string | number | null };
 
 type SupabaseRow = {
   hadith_id: string;
@@ -50,6 +51,8 @@ export type SupabaseSourceCategoryAssignment = {
   hadith_id: string;
   source_category_id: string;
 };
+
+export type HadithPreviewRow = Pick<SupabaseRow, "hadith_id" | "translation_text">;
 
 async function getJson<T>(path: string): Promise<T> {
   const response = await fetch(`${API_ROOT}${path}`);
@@ -87,7 +90,7 @@ async function getSupabase<T>(query: string): Promise<T> {
 }
 
 function supabaseRowToSummary(row: SupabaseRow): HadithSummary {
-  return { id: row.hadith_id, title: row.source_reference?.trim() || "Hadith", translations: [row.language_code ?? "fr"] };
+  return { id: row.hadith_id, title: row.translation_text?.trim() || row.source_reference?.trim() || "Hadith", translations: [row.language_code ?? "fr"] };
 }
 
 function supabaseRowToHadith(row: SupabaseRow): Hadith {
@@ -132,9 +135,42 @@ export async function fetchSupabaseHadith(id: string): Promise<Hadith> {
   return value;
 }
 
+export async function resolveHadeethEncHadithId(id: string): Promise<string> {
+  if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(id)) return id;
+  const rows = await getSupabaseFrom<{ source_hadith_id?: string | number | null }[]>(
+    "hadiths",
+    `select=source_hadith_id&id=eq.${encodeURIComponent(id)}&limit=1`,
+  );
+  const sourceId = rows[0]?.source_hadith_id;
+  if (sourceId == null || String(sourceId).trim() === "") throw new Error("Identifiant HadeethEnc introuvable.");
+  return String(sourceId);
+}
+
+export async function resolveHadeethEncHadithIds(ids: readonly string[]): Promise<Map<string, string>> {
+  const result = new Map<string, string>();
+  const uuids = ids.filter((id) => /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(id));
+  ids.filter((id) => !uuids.includes(id)).forEach((id) => result.set(id, id));
+  if (!uuids.length) return result;
+  const rows = await getSupabaseFrom<{ id: string; source_hadith_id?: string | number | null }[]>(
+    "hadiths",
+    `select=id,source_hadith_id&id=in.(${uuids.join(",")})&limit=${uuids.length}`,
+  );
+  rows.forEach((row) => {
+    if (row.source_hadith_id != null && String(row.source_hadith_id).trim()) result.set(row.id, String(row.source_hadith_id));
+  });
+  return result;
+}
+
+export async function fetchSupabaseHadithPreviews(ids: readonly string[]): Promise<HadithPreviewRow[]> {
+  if (!ids.length) return [];
+  return getSupabase<HadithPreviewRow[]>(
+    `select=hadith_id,translation_text&hadith_id=in.(${ids.join(",")})&language_code=eq.fr&limit=${ids.length}`,
+  );
+}
+
 export async function fetchSupabaseCollectionPage(sourceReferences: readonly string[], offset: number, limit: number, collectionId?: string): Promise<HadithSummary[]> {
   const collectionFilter = collectionId === "nawawi" ? "&corpus_version=eq.fawazahmed0-hadith-api%401%3Anawawi%3Aara%2Bfra" : "";
-  const rows = await getSupabase<SupabaseRow[]>(`select=hadith_id,source_reference&language_code=eq.fr${collectionFilter}&order=hadith_id&offset=${offset}&limit=${limit}`);
+  const rows = await getSupabase<SupabaseRow[]>(`select=hadith_id,source_reference,language_code&language_code=eq.fr${collectionFilter}&order=hadith_id&offset=${offset}&limit=${limit}`);
   const normalizedReferences = sourceReferences.map((reference) => normalizeCollectionReference(reference));
   if (collectionId === "nawawi") return rows.map(supabaseRowToSummary);
   return rows
@@ -184,6 +220,13 @@ export async function fetchSupabaseSourceCategories(): Promise<SupabaseSourceCat
   return rows;
 }
 
+export async function fetchHadeethEncCategories(language: "fr" | "en"): Promise<SupabaseSourceCategory[]> {
+  const rows = await getJson<ApiCategory[]>(`/categories/list/?language=${language}`);
+  return rows
+    .filter((row) => row.id != null && row.title?.trim())
+    .map((row) => ({ id: String(row.id), language_code: language, source_category_label: row.title?.trim() || "" }));
+}
+
 export async function fetchSupabaseSourceCategoryAssignments(
   categoryIds: readonly string[],
   hadithIds: readonly string[],
@@ -213,39 +256,39 @@ function summaries(payload: ApiList): HadithSummary[] {
     .map((row) => ({ id: String(row.id), title: row.title ?? "", translations: row.translations ?? [] }));
 }
 
-export async function fetchHadith(id: string): Promise<Hadith> {
-  const item = await getJson<ApiHadith>(`/hadeeths/one/?language=fr&id=${encodeURIComponent(id)}`);
-  const grade = item.grade?.trim() || "Non classé";
+export async function fetchHadith(id: string, language: "fr" | "en" = "fr"): Promise<Hadith> {
+  const item = await getJson<ApiHadith>(`/hadeeths/one/?language=${language}&id=${encodeURIComponent(id)}`);
+  const grade = item.grade?.trim() || (language === "en" ? "Unclassified" : "Non classé");
   return {
     id: String(item.id ?? id),
     title: item.title?.trim() || "Hadith",
     arabic: item.hadeeth_ar?.trim() || "",
     french: item.hadeeth?.trim() || "",
-    attribution: item.attribution?.trim() || "Attribution non précisée",
+    attribution: item.attribution?.trim() || (language === "en" ? "Attribution not specified" : "Attribution non précisée"),
     grade,
     gradeKind: classifyHadithGrade(grade),
     explanation: item.explanation?.trim() || "",
     lessons: (item.hints ?? []).filter(Boolean),
     categories: (item.categories ?? []).map(String),
-    reference: item.reference?.trim() || "Référence détaillée non fournie",
+    reference: item.reference?.trim() || (language === "en" ? "Detailed reference not provided" : "Référence détaillée non fournie"),
     sourceName: "HadeethEnc",
-    sourceUrl: `https://hadeethenc.com/fr/browse/hadith/${encodeURIComponent(String(item.id ?? id))}`,
-    sourceVersion: "Flux API courant",
+    sourceUrl: `https://hadeethenc.com/${language}/browse/hadith/${encodeURIComponent(String(item.id ?? id))}`,
+    sourceVersion: language === "en" ? "Current API feed" : "Flux API courant",
   };
 }
 
-export async function searchHadiths(phrase: string): Promise<HadithSummary[]> {
-  const payload = await getJson<ApiList>(`/hadeeths/search/?language=fr&phrase=${encodeURIComponent(phrase)}`);
+export async function searchHadiths(phrase: string, language: "fr" | "en" = "fr"): Promise<HadithSummary[]> {
+  const payload = await getJson<ApiList>(`/hadeeths/search/?language=${language}&phrase=${encodeURIComponent(phrase)}`);
   return summaries(payload);
 }
 
 export async function searchSupabaseHadiths(phrase: string): Promise<HadithSummary[]> {
   const value = encodeURIComponent(`*${phrase.trim()}*`);
-  const rows = await getSupabase<SupabaseRow[]>(`select=hadith_id,source_reference,language_code&language_code=eq.fr&translation_text=ilike.${value}&limit=10000`);
+  const rows = await getSupabase<SupabaseRow[]>(`select=hadith_id,source_reference,translation_text,language_code&language_code=eq.fr&translation_text=ilike.${value}&limit=10000`);
   return rows.map(supabaseRowToSummary);
 }
 
-export async function fetchHadithPage(page = 1, perPage = 20, categoryId = "5"): Promise<HadithSummary[]> {
-  const payload = await getJson<ApiList>(`/hadeeths/list/?language=fr&category_id=${encodeURIComponent(categoryId)}&page=${page}&per_page=${perPage}`);
+export async function fetchHadithPage(page = 1, perPage = 20, categoryId = "5", language: "fr" | "en" = "fr"): Promise<HadithSummary[]> {
+  const payload = await getJson<ApiList>(`/hadeeths/list/?language=${language}&category_id=${encodeURIComponent(categoryId)}&page=${page}&per_page=${perPage}`);
   return summaries(payload);
 }

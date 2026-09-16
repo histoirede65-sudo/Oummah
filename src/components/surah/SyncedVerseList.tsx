@@ -38,6 +38,7 @@ import { readingPreferencesStore } from "../../features/quran/ReadingPreferences
 import { QuranArabicText } from "../../features/quran/QuranArabicText";
 import { QuranWordHighlight } from "../../features/quran/QuranWordHighlight";
 import { sanitizeTranslationText } from "../../features/quran/TranslationText";
+import { useI18n } from "../../i18n";
 import {
   activeVerseAt,
   getActiveWordTimestamp,
@@ -130,12 +131,6 @@ function verseKey(verse: QuranFoundationVerse) {
     verse.verseKey ??
     (verse as QuranFoundationVerse & { verse_key?: string }).verse_key
   );
-}
-
-function clipWords(text: string, maxWords: number) {
-  const words = sanitizeTranslationText(text).split(" ").filter(Boolean);
-  if (words.length <= maxWords) return words.join(" ");
-  return `${words.slice(0, maxWords).join(" ")}…`;
 }
 
 function verseArabic(verse: QuranFoundationVerse) {
@@ -272,6 +267,7 @@ export default function SyncedVerseList({
   onTimelineReady,
   onTadabburUpdate,
 }: SyncedVerseListProps) {
+  const { language, t } = useI18n();
   const { width } = useWindowDimensions();
   const [verses, setVerses] = useState<readonly QuranFoundationVerse[]>([]);
   const [rawTiming, setRawTiming] = useState<{
@@ -320,7 +316,7 @@ export default function SyncedVerseList({
     setLoading(true);
 
     void quranFoundationRepository
-      .getVerses(surahId)
+      .getVerses(surahId, language)
       .then((nextVerses) => {
         if (!active || syncSessionIdRef.current !== syncSessionId) return;
         setVerses(nextVerses);
@@ -334,7 +330,7 @@ export default function SyncedVerseList({
     return () => {
       active = false;
     };
-  }, [surahId, syncSessionId]);
+  }, [language, surahId, syncSessionId]);
 
   useEffect(() => {
     let active = true;
@@ -628,15 +624,15 @@ export default function SyncedVerseList({
       >
         <Text style={styles.emptyTitle}>
           {!visibleFontsLoaded || loading
-            ? "Chargement des versets…"
-            : "Versets indisponibles"}
+            ? t("syncedVerses.loadingVerses")
+            : t("syncedVerses.unavailable")}
         </Text>
         <Text style={styles.emptyText}>
           {!visibleFontsLoaded
-            ? "Chargement de la police Quran exacte."
+            ? t("syncedVerses.loadingFont")
             : loading
-              ? "La synchronisation arrive dans un instant."
-              : "Le texte de cette sourate n’a pas encore été reçu."}
+              ? t("syncedVerses.syncComing")
+              : t("syncedVerses.textNotReceived")}
         </Text>
       </View>
     );
@@ -682,10 +678,11 @@ function VerseModeTabs({
   mode: VerseDisplayMode;
   onChange: (mode: VerseDisplayMode) => void;
 }) {
+  const { t } = useI18n();
   const tabs: { mode: VerseDisplayMode; label: string }[] = [
-    { mode: "arabic", label: "Versets" },
-    { mode: "translation", label: "Traduction" },
-    { mode: "transliteration", label: "Phonétique" },
+    { mode: "arabic", label: t("syncedVerses.verses") },
+    { mode: "translation", label: t("surahReader.translation") },
+    { mode: "transliteration", label: t("surahReader.transliteration") },
   ];
 
   return (
@@ -780,6 +777,7 @@ const SyncedVerseRow = memo(
     screenWidth: number;
     preferredArabicSize: number;
   }) {
+    const { t } = useI18n();
     const active = useSharedValue(isActive ? 1 : 0);
 
     useEffect(() => {
@@ -814,9 +812,7 @@ const SyncedVerseRow = memo(
               .map((text, index) => ({ position: index + 1, text })),
       [verse],
     );
-    const translationExcerpt = verse.translation
-      ? clipWords(verse.translation, 18)
-      : "";
+    const translationExcerpt = verse.translation ?? "";
     const translationFull = verse.translation ?? "";
     const transliterationFull = verse.transliteration ?? "";
 
@@ -833,7 +829,7 @@ const SyncedVerseRow = memo(
             <Text style={styles.numberText}>{verse.id}</Text>
           </View>
           <Text style={styles.statusText}>
-            {isActive ? "En cours" : "À suivre"}
+            {isActive ? t("syncedVerses.current") : t("syncedVerses.upNext")}
           </Text>
         </View>
         {mode === "arabic" ? (
@@ -848,7 +844,7 @@ const SyncedVerseRow = memo(
               preferredArabicSize={preferredArabicSize}
             />
             {translationExcerpt ? (
-              <Text numberOfLines={3} style={styles.translation}>
+              <Text style={styles.translation}>
                 {translationExcerpt}
               </Text>
             ) : null}
@@ -1012,11 +1008,12 @@ const styles = StyleSheet.create({
     color: ARABIC_READING_COLOR,
   },
   translation: {
-    marginTop: 3,
-    color: colors.textSecondary,
+    marginTop: 6,
+    color: colors.text,
     fontFamily: typography.sans,
-    fontSize: 12,
-    lineHeight: 17,
+    fontSize: 14,
+    lineHeight: 21,
+    fontWeight: "500",
     textAlign: "left",
   },
   translationOnly: {

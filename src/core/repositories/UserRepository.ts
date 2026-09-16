@@ -40,6 +40,9 @@ export type ProgressDomain =
   | "aqida"
   | "fiqh"
   | "character"
+  | "prophets"
+  | "halal"
+  | "boycott"
   | "regularity";
 
 export type UserProfile = {

@@ -32,7 +32,7 @@ export default function QuranHeader({
       </View>
       <Pressable
         accessibilityLabel={
-          favoritesActive ? 'Afficher toutes les sourates' : t('common.favorites')
+          favoritesActive ? t('quran.showAllSurahs') : t('common.favorites')
         }
         onPress={onFavoritePress}
         style={({ pressed }) => [styles.button, pressed && styles.pressed]}

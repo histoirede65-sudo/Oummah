@@ -33,11 +33,11 @@ export default function PlayerOptions({ repeatMode, sleepTimer, playbackRate, on
       ? t('audio.timerMinutes', { minutes: sleepTimer })
       : t('audio.timer');
   const downloadLabel = downloadState === 'downloaded'
-    ? 'Hors ligne'
+    ? t('audio.offline')
     : downloadState === 'downloading' || downloadState === 'queued'
       ? `${Math.round(downloadProgress * 100)}%`
       : downloadState === 'failed'
-        ? 'Erreur'
+        ? t('audio.error')
         : t('audio.download');
   const options = [
     { id: 'speed', label: `${playbackRate}x`, icon: 'speedometer-outline' as const, active: playbackRate !== 1, onPress: onCycleSpeed },

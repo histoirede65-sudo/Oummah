@@ -14,11 +14,10 @@ export type Hadith = {
   reference: string;
   sourceName: "HadeethEnc";
   sourceUrl: string;
-  sourceVersion: "Flux API courant";
+  sourceVersion: string;
 };
 
 export type HadithSummary = Pick<Hadith, "id" | "title"> & {
   translations: string[];
 };
-
 

@@ -61,7 +61,7 @@ export default function QuranQuickActions({
           />
           <View style={styles.utilityCopy}>
             <Text style={styles.utilityTitle}>{t("common.bookmarks")}</Text>
-            <Text style={styles.utilitySubtitle}>Vos versets enregistrés</Text>
+            <Text style={styles.utilitySubtitle}>{t("quran.savedVerses")}</Text>
           </View>
           <Ionicons name="chevron-forward" size={15} color={colors.textMuted} />
         </Pressable>
@@ -76,8 +76,8 @@ export default function QuranQuickActions({
           />
           <Ionicons name="headset-outline" size={20} color={colors.goldLight} />
           <View style={styles.utilityCopy}>
-            <Text style={styles.utilityTitle}>Écouter</Text>
-            <Text style={styles.utilitySubtitle}>Récitateurs & audio</Text>
+            <Text style={styles.utilityTitle}>{t("common.listen")}</Text>
+            <Text style={styles.utilitySubtitle}>{t("quran.recitersAndAudio")}</Text>
           </View>
           <Ionicons name="chevron-forward" size={15} color={colors.textMuted} />
         </Pressable>
@@ -92,8 +92,8 @@ export default function QuranQuickActions({
         />
         <Ionicons name="school-outline" size={20} color={colors.goldLight} />
         <View style={styles.utilityCopy}>
-          <Text style={styles.utilityTitle}>Mémoriser</Text>
-          <Text style={styles.utilitySubtitle}>Mon programme de Hifz</Text>
+          <Text style={styles.utilityTitle}>{t("quran.memorize")}</Text>
+          <Text style={styles.utilitySubtitle}>{t("quran.myHifzProgram")}</Text>
         </View>
         <Ionicons name="arrow-forward" size={15} color={colors.goldLight} />
       </Pressable>

@@ -1,634 +1,220 @@
 import { Ionicons } from "@expo/vector-icons";
-import { router, useFocusEffect } from "expo-router";
-import { useCallback, useMemo, useState } from "react";
-import {
-  ActivityIndicator,
-  Alert,
-  Pressable,
-  RefreshControl,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-} from "react-native";
+import { router, useFocusEffect, type Href } from "expo-router";
+import { useCallback, useRef, useState } from "react";
+import { ActivityIndicator, Pressable, RefreshControl, ScrollView, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import {
-  adjustAdminUserCredits,
-  getAdminDashboard,
-  getAdminUsers,
-  type AdminDashboard,
-  type AdminUserRow,
-} from "../../features/admin/AdminService";
-import { getValidSession } from "../../features/auth/SupabaseAuthService";
+import { getAdminDashboard, getAdminUsers, type AdminDashboard, type AdminUserRow } from "../../features/admin/AdminService";
+import { getAdminAlertCounts, getAdminAttentionState, type AdminAlertCounts, type AdminAttentionState } from "../../features/admin/AdminAlertsService";
 import { isOummahAdminSession } from "../../features/auth/AdminAccess";
-import { colors } from "../../theme/colors";
-import { getAdminSupportCounts } from "../../features/support/AdminSupportService";
-import { getAdminAlertCounts, getAdminAttentionState, type AdminAttentionState } from "../../features/admin/AdminAlertsService";
+import { getValidSession } from "../../features/auth/SupabaseAuthService";
 import { adminListMosquePrayerTimeUpdates } from "../../features/mosques/data/mosquePrayerUpdates";
+import { getAdminSupportCounts } from "../../features/support/AdminSupportService";
+import { colors } from "../../theme/colors";
 import { typography } from "../../theme/typography";
 
-const EMPTY_DASHBOARD: AdminDashboard = {
-  usersTotal: 0,
-  usersToday: 0,
-  mosquePending: 0,
-  mosqueApproved: 0,
-  mosqueRejected: 0,
-  walletsTotal: 0,
-  creditsAvailable: 0,
-  creditsSpent: 0,
-  mosqueReportsPending: 0,
-  adminActionsToday: 0,
+type Summary = {
+  dashboard: AdminDashboard | null;
+  support: Awaited<ReturnType<typeof getAdminSupportCounts>> | null;
+  alerts: AdminAlertCounts | null;
+  prayerTimes: number | null;
+  attention: AdminAttentionState | null;
+  users: AdminUserRow[];
 };
+type Entry = { title: string; subtitle: string; route: Href; badge?: number };
+type Group = "mosques" | "finance" | "communication" | "advanced";
 
-function MetricCard({
-  icon,
-  label,
-  value,
-}: {
+function Badge({ count }: { count?: number }) {
+  if (!count || count < 1) return null;
+  return <View style={styles.badge}><Text style={styles.badgeText}>{count > 99 ? "99+" : count}</Text></View>;
+}
+
+function MenuRow({ title, subtitle, icon, onPress, badge, expanded }: {
+  title: string;
+  subtitle: string;
   icon: keyof typeof Ionicons.glyphMap;
-  label: string;
-  value: number;
+  onPress: () => void;
+  badge?: number;
+  expanded?: boolean;
 }) {
   return (
-    <View style={styles.metricCard}>
-      <View style={styles.metricIcon}>
-        <Ionicons name={icon} size={19} color={colors.goldLight} />
+    <Pressable onPress={onPress} accessibilityRole="button"
+      accessibilityState={expanded === undefined ? undefined : { expanded }}
+      style={({ pressed }) => [styles.menuRow, pressed && styles.pressed]}>
+      <View style={styles.menuIcon}><Ionicons name={icon} size={22} color={colors.goldLight} /></View>
+      <View style={styles.rowCopy}>
+        <Text style={styles.rowTitle}>{title}</Text>
+        <Text style={styles.rowSubtitle}>{subtitle}</Text>
       </View>
-      <Text style={styles.metricValue}>{value.toLocaleString("fr-FR")}</Text>
-      <Text style={styles.metricLabel}>{label}</Text>
-    </View>
+      <Badge count={badge} />
+      <Ionicons name={expanded === undefined ? "chevron-forward" : expanded ? "chevron-up" : "chevron-down"} size={18} color={colors.textMuted} />
+    </Pressable>
   );
 }
 
+function Submenu({ entries }: { entries: Entry[] }) {
+  return <View style={styles.submenu}>{entries.map((entry) => (
+    <Pressable key={entry.title} onPress={() => router.push(entry.route)} accessibilityRole="button"
+      style={({ pressed }) => [styles.subRow, pressed && styles.pressed]}>
+      <View style={styles.rowCopy}>
+        <Text style={styles.subTitle}>{entry.title}</Text>
+        <Text style={styles.rowSubtitle}>{entry.subtitle}</Text>
+      </View>
+      <Badge count={entry.badge} />
+      <Ionicons name="chevron-forward" size={16} color={colors.textMuted} />
+    </Pressable>
+  ))}</View>;
+}
+
 export default function AdminHomeScreen() {
-  const [dashboard, setDashboard] = useState(EMPTY_DASHBOARD);
-  const [users, setUsers] = useState<AdminUserRow[]>([]);
-  const [search, setSearch] = useState("");
+  const [summary, setSummary] = useState<Summary>({ dashboard: null, support: null, alerts: null, prayerTimes: null, attention: null, users: [] });
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
-  const [actingUserId, setActingUserId] = useState<string | null>(null);
-  const [supportCounts, setSupportCounts] = useState({
-    open: 0,
-    inProgress: 0,
-    urgent: 0,
-    unread: 0,
-  });
-  const [alertCounts, setAlertCounts] = useState({
-    open: 0,
-    critical: 0,
-    warning: 0,
-    info: 0,
-  });
-  const [pendingPrayerTimes, setPendingPrayerTimes] = useState(0);
-  const [attention, setAttention] = useState<AdminAttentionState>({ attentionCount: 0, actionCount: 0, unreadCount: 0, items: [] });
+  const [error, setError] = useState("");
+  const [openGroup, setOpenGroup] = useState<Group | null>(null);
+  const requestId = useRef(0);
 
-  const load = useCallback(async (silent = false) => {
-    if (!silent) setLoading(true);
-
+  const load = useCallback(async (refresh = false) => {
+    const id = ++requestId.current;
+    if (refresh) setRefreshing(true); else setLoading(true);
+    setError("");
     try {
       const session = await getValidSession(true);
+      if (id !== requestId.current) return;
       if (!isOummahAdminSession(session)) {
-        Alert.alert("Accès refusé", "Ce compte n’est pas administrateur.");
         router.replace("/profile");
         return;
       }
-
-      const [
-        nextDashboard,
-        nextUsers,
-        nextSupportCounts,
-        nextAlertCounts,
-        nextPrayerTimes,
-        nextAttention,
-      ] = await Promise.all([
-        getAdminDashboard(),
-        getAdminUsers(search),
-        getAdminSupportCounts().catch(() => ({
-          open: 0,
-          inProgress: 0,
-          urgent: 0,
-          unread: 0,
-        })),
-        getAdminAlertCounts(true).catch(() => ({
-          open: 0,
-          critical: 0,
-          warning: 0,
-          info: 0,
-        })),
-        adminListMosquePrayerTimeUpdates().catch(() => []),
-        getAdminAttentionState().catch(() => ({ attentionCount: 0, actionCount: 0, unreadCount: 0, items: [] })),
+      const [dashboard, support, alerts, prayerTimes, attention, users] = await Promise.allSettled([
+        getAdminDashboard(), getAdminSupportCounts(), getAdminAlertCounts(true),
+        adminListMosquePrayerTimeUpdates(), getAdminAttentionState(), getAdminUsers("", 5000),
       ]);
-
-      setDashboard(nextDashboard);
-      setUsers(nextUsers);
-      setSupportCounts(nextSupportCounts);
-      setAlertCounts(nextAlertCounts);
-      setPendingPrayerTimes(nextPrayerTimes.length);
-      setAttention(nextAttention);
-    } catch (error) {
-      Alert.alert(
-        "Administration",
-        error instanceof Error ? error.message : "Chargement impossible.",
-      );
+      if (id !== requestId.current) return;
+      setSummary({
+        dashboard: dashboard.status === "fulfilled" ? dashboard.value : null,
+        support: support.status === "fulfilled" ? support.value : null,
+        alerts: alerts.status === "fulfilled" ? alerts.value : null,
+        prayerTimes: prayerTimes.status === "fulfilled" ? prayerTimes.value.length : null,
+        attention: attention.status === "fulfilled" ? attention.value : null,
+        users: users.status === "fulfilled" ? users.value : [],
+      });
+      if ([dashboard, support, alerts, prayerTimes, attention, users].some((result) => result.status === "rejected")) {
+        setError("Certaines informations n’ont pas pu être chargées. Vous pouvez réessayer.");
+      }
+    } catch {
+      if (id === requestId.current) setError("Chargement impossible. Vérifiez votre connexion puis réessayez.");
     } finally {
-      setLoading(false);
-      setRefreshing(false);
+      if (id === requestId.current) { setLoading(false); setRefreshing(false); }
     }
-  }, [search]);
+  }, []);
 
-  useFocusEffect(
-    useCallback(() => {
-      void load();
-    }, [load]),
-  );
+  useFocusEffect(useCallback(() => {
+    void load();
+    return () => { requestId.current += 1; };
+  }, [load]));
 
-  const adjustCredits = useCallback(
-    (user: AdminUserRow, amount: number) => {
-      const action = amount > 0 ? "ajouter" : "retirer";
-      Alert.alert(
-        "Crédits Wasil",
-        `Confirmer : ${action} ${Math.abs(amount)} crédits à ${user.email} ?`,
-        [
-          { text: "Annuler", style: "cancel" },
-          {
-            text: "Confirmer",
-            style: amount < 0 ? "destructive" : "default",
-            onPress: async () => {
-              setActingUserId(user.userId);
-              try {
-                await adjustAdminUserCredits(
-                  user.userId,
-                  amount,
-                  `Ajustement depuis l’espace admin (${amount > 0 ? "+" : ""}${amount})`,
-                );
-                await load(true);
-              } catch (error) {
-                Alert.alert(
-                  "Action impossible",
-                  error instanceof Error ? error.message : "Réessayez.",
-                );
-              } finally {
-                setActingUserId(null);
-              }
-            },
-          },
-        ],
-      );
-    },
-    [load],
-  );
-
-  const filteredTitle = useMemo(
-    () => search.trim() ? `Résultats utilisateurs` : "Utilisateurs récents",
-    [search],
-  );
+  const toggle = (group: Group) => setOpenGroup((current) => current === group ? null : group);
+  const { dashboard, support, alerts, prayerTimes, attention, users } = summary;
+  const mosqueCount = (dashboard?.mosquePending ?? 0) + (dashboard?.mosqueReportsPending ?? 0) + (prayerTimes ?? 0);
+  const critical = (alerts?.critical ?? 0) > 0;
+  const showAttention = !alerts || !attention || alerts.open > 0 || attention.actionCount > 0 || attention.unreadCount > 0;
+  const alertSubtitle = attention
+    ? `${attention.actionCount} à traiter · ${attention.unreadCount} information${attention.unreadCount === 1 ? "" : "s"} non lue${attention.unreadCount === 1 ? "" : "s"}`
+    : alerts ? `${alerts.open} alerte${alerts.open === 1 ? "" : "s"} ouverte${alerts.open === 1 ? "" : "s"}` : "Consulter les alertes et les demandes";
 
   return (
-    <SafeAreaView style={styles.safeArea} edges={["top"]}>
+    <SafeAreaView style={styles.safe} edges={["top", "bottom"]}>
       <View style={styles.header}>
-        <Pressable onPress={() => router.back()} style={styles.headerButton}>
+        <Pressable onPress={() => router.back()} style={styles.headerButton} accessibilityRole="button" accessibilityLabel="Retour">
           <Ionicons name="arrow-back" size={22} color={colors.goldLight} />
         </Pressable>
-        <View style={styles.headerCopy}>
-          <Text style={styles.eyebrow}>ESPACE ADMIN</Text>
-          <Text style={styles.title}>Pilotage OUMMAH</Text>
-        </View>
-        <Pressable onPress={() => void load()} style={styles.headerButton}>
+        <View style={styles.headerCopy}><Text style={styles.eyebrow}>OUMMAH</Text><Text style={styles.title}>Administration</Text></View>
+        <Pressable onPress={() => void load(true)} disabled={loading || refreshing} style={styles.headerButton} accessibilityRole="button" accessibilityLabel="Actualiser">
           <Ionicons name="refresh" size={20} color={colors.goldLight} />
         </Pressable>
       </View>
+      {loading ? <ActivityIndicator style={styles.loader} color={colors.goldLight} /> : (
+        <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}
+          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => void load(true)} tintColor={colors.goldLight} />}>
+          {error ? <Pressable onPress={() => void load(true)} accessibilityRole="button" style={styles.errorBox}><Text style={styles.errorText}>{error}</Text><Text style={styles.retry}>Réessayer</Text></Pressable> : null}
 
-      {loading ? (
-        <ActivityIndicator style={styles.loader} color={colors.goldLight} />
-      ) : (
-        <ScrollView
-          contentContainerStyle={styles.content}
-          showsVerticalScrollIndicator={false}
-          refreshControl={
-            <RefreshControl
-              refreshing={refreshing}
-              onRefresh={() => {
-                setRefreshing(true);
-                void load(true);
-              }}
-              tintColor={colors.goldLight}
-            />
-          }
-        >
-          <View style={styles.attentionCard}>
-            <View style={styles.attentionHeader}>
-              <View>
-                <Text style={styles.sectionTitle}>À traiter</Text>
-                <Text style={styles.attentionMeta}>{attention.actionCount} action{attention.actionCount > 1 ? "s" : ""} en attente · {attention.unreadCount} information{attention.unreadCount > 1 ? "s" : ""} non lue{attention.unreadCount > 1 ? "s" : ""}</Text>
-              </View>
-              <Pressable onPress={() => router.push("/admin/alerts")}><Text style={styles.attentionLink}>Tout voir</Text></Pressable>
-            </View>
-            {attention.items.slice(0, 5).map((item) => (
-              <Pressable key={item.id} onPress={() => router.push("/admin/alerts")} style={styles.attentionRow}>
-                <View style={[styles.attentionDot, item.requiresAction && styles.attentionDotAction]} />
-                <View style={styles.attentionCopy}>
-                  <Text style={styles.attentionTitle}>{item.title}</Text>
-                  <Text style={styles.attentionDescription}>{item.description}</Text>
-                </View>
-              </Pressable>
-            ))}
-            {attention.items.length === 0 ? <Text style={styles.attentionEmpty}>Aucune alerte nécessitant votre attention.</Text> : null}
+          <View style={styles.stats}>
+            <View style={styles.stat}><Text style={styles.statValue}>{dashboard?.usersTotal.toLocaleString("fr-FR") ?? "—"}</Text><Text style={styles.statLabel}>Utilisateurs</Text></View>
+            <View style={styles.statDivider} />
+            <View style={styles.stat}><Text style={styles.statValue}>{dashboard?.usersToday.toLocaleString("fr-FR") ?? "—"}</Text><Text style={styles.statLabel}>Inscrits aujourd’hui</Text></View>
           </View>
 
-          <Text style={styles.sectionTitle}>Activité récente</Text>
-          <Pressable
-            onPress={() => router.push("/admin/cockpit")}
-            style={({ pressed }) => [
-              styles.founderCockpitCard,
-              pressed && styles.pressed,
-            ]}
-          >
-            <View style={styles.founderCockpitIcon}>
-              <Ionicons name="speedometer-outline" size={24} color={colors.goldLight} />
+          {showAttention ? <Pressable onPress={() => router.push("/admin/alerts")} accessibilityRole="button"
+            style={({ pressed }) => [styles.attention, critical && styles.attentionCritical, pressed && styles.pressed]}>
+            <Ionicons name={critical ? "warning-outline" : "notifications-outline"} size={22} color={critical ? colors.danger : colors.goldLight} />
+            <View style={styles.rowCopy}>
+              <Text style={styles.rowTitle}>{critical ? `${alerts!.critical} alerte${alerts!.critical === 1 ? "" : "s"} importante${alerts!.critical === 1 ? "" : "s"}` : "À surveiller"}</Text>
+              <Text style={styles.rowSubtitle}>{alertSubtitle}</Text>
             </View>
-            <View style={styles.founderCockpitCopy}>
-              <Text style={styles.founderCockpitEyebrow}>VUE FONDATEUR</Text>
-              <Text style={styles.founderCockpitTitle}>Centre de pilotage global</Text>
-              <Text style={styles.founderCockpitSubtitle}>
-                Activité, Premium, revenus, Wasil, alertes et support
-              </Text>
-            </View>
-            <Ionicons name="chevron-forward" size={21} color={colors.goldLight} />
-          </Pressable>
+            <Ionicons name="chevron-forward" size={18} color={colors.textMuted} />
+          </Pressable> : null}
 
-          <Text style={styles.sectionTitle}>Vue d’ensemble</Text>
-          <View style={styles.metricsGrid}>
-            <MetricCard icon="people-outline" label="Utilisateurs" value={dashboard.usersTotal} />
-            <MetricCard icon="person-add-outline" label="Aujourd’hui" value={dashboard.usersToday} />
-            <MetricCard icon="flash-outline" label="Crédits disponibles" value={dashboard.creditsAvailable} />
-            <MetricCard icon="analytics-outline" label="Crédits consommés" value={dashboard.creditsSpent} />
-            <MetricCard icon="flag-outline" label="Signalements en attente" value={dashboard.mosqueReportsPending} />
-            <MetricCard icon="pulse-outline" label="Actions admin aujourd’hui" value={dashboard.adminActionsToday} />
+          <Text style={styles.sectionTitle}>L’essentiel</Text>
+          <View style={styles.menu}>
+            <MenuRow title="Utilisateurs" subtitle="Rechercher un compte et gérer ses crédits" icon="people-outline" onPress={() => router.push("/admin/users")} />
+            <MenuRow title="Support" subtitle={support ? `${support.open} ouvert${support.open === 1 ? "" : "s"} · ${support.urgent} urgent${support.urgent === 1 ? "" : "s"}` : "Répondre aux demandes des utilisateurs"} icon="chatbubbles-outline" badge={support?.unread} onPress={() => router.push("/admin/support")} />
+            <MenuRow title="Mosquées" subtitle="Propositions, horaires et signalements" icon="business-outline" badge={mosqueCount} expanded={openGroup === "mosques"} onPress={() => toggle("mosques")} />
+            {openGroup === "mosques" ? <Submenu entries={[
+              { title: "Valider les mosquées", subtitle: "Accepter ou refuser les propositions", route: "/admin/mosques", badge: dashboard?.mosquePending },
+              { title: "Valider les horaires", subtitle: "Prières et heure de Joumou’a", route: "/admin/mosque-prayer-times", badge: prayerTimes ?? undefined },
+              { title: "Traiter les signalements", subtitle: "Corriger les erreurs remontées", route: "/admin/mosque-reports", badge: dashboard?.mosqueReportsPending },
+            ]} /> : null}
+            <MenuRow title="Abonnements & revenus" subtitle="Premium, crédits Wasil et finances" icon="diamond-outline" expanded={openGroup === "finance"} onPress={() => toggle("finance")} />
+            {openGroup === "finance" ? <Submenu entries={[
+              { title: "Gérer Premium & Wasil", subtitle: "Accès Premium et crédits des utilisateurs", route: "/admin/premium-wasil" },
+              { title: "Voir les revenus", subtitle: "Ventes, abonnements et remboursements", route: "/admin/revenuecat-finance" },
+              { title: "Suivre les coûts Wasil", subtitle: "Dépenses IA et rentabilité", route: "/admin/wasil-finance" },
+            ]} /> : null}
+            <MenuRow title="Communication" subtitle="Envoyer une notification ou publier une annonce" icon="megaphone-outline" expanded={openGroup === "communication"} onPress={() => toggle("communication")} />
+            {openGroup === "communication" ? <Submenu entries={[
+              { title: "Envoyer une notification", subtitle: "Un message sur le téléphone des utilisateurs", route: "/admin/push-notifications" },
+              { title: "Publier une annonce", subtitle: "Un message visible dans l’application", route: "/admin/announcements" },
+            ]} /> : null}
+            <MenuRow title="Statistiques" subtitle="Fréquentation et modules les plus utilisés" icon="bar-chart-outline" onPress={() => router.push("/admin/analytics")} />
           </View>
 
-          <Pressable
-            onPress={() => router.push("/admin/mosques")}
-            style={({ pressed }) => [styles.mosqueCard, pressed && styles.pressed]}
-          >
-            <View style={styles.mosqueIcon}>
-              <Ionicons name="business-outline" size={24} color={colors.background} />
-            </View>
-            <View style={styles.mosqueCopy}>
-              <Text style={styles.mosqueTitle}>Modération des mosquées</Text>
-              <Text style={styles.mosqueSubtitle}>
-                {dashboard.mosquePending} proposition{dashboard.mosquePending === 1 ? "" : "s"} en attente
-              </Text>
-              <Text style={styles.mosqueStats}>
-                {dashboard.mosqueApproved} validées · {dashboard.mosqueRejected} refusées
-              </Text>
-            </View>
-            <Ionicons name="chevron-forward" size={20} color={colors.goldLight} />
-          </Pressable>
-
-          <Pressable
-            onPress={() => router.push("/admin/mosque-prayer-times")}
-            style={({ pressed }) => [styles.mosqueCard, pressed && styles.pressed]}
-          >
-            <View style={styles.mosqueIcon}>
-            <Ionicons name="time-outline" size={24} color={colors.background} />
-            </View>
-            <View style={styles.mosqueCopy}>
-              <Text style={styles.mosqueTitle}>Horaires des mosquées</Text>
-              <Text style={styles.mosqueSubtitle}>Valider les horaires proposés et l’heure de Joumou’a</Text>
-            </View>
-            {pendingPrayerTimes > 0 ? (
-              <View style={styles.pendingPrayerBadge}>
-                <Text style={styles.pendingPrayerBadgeText}>
-                  {pendingPrayerTimes > 99 ? "99+" : pendingPrayerTimes}
-                </Text>
-              </View>
-            ) : null}
-            <Ionicons name="chevron-forward" size={20} color={colors.goldLight} />
-          </Pressable>
-
-          <Pressable
-            onPress={() => router.push("/admin/alerts")}
-            style={({ pressed }) => [
-              styles.alertAdminCard,
-              pressed && styles.pressed,
-            ]}
-          >
-            <View
-              style={[
-                styles.alertAdminIcon,
-                alertCounts.critical > 0 && styles.alertAdminIconCritical,
-              ]}
-            >
-              <Ionicons
-                name="warning-outline"
-                size={22}
-                color={
-                  alertCounts.critical > 0
-                    ? "#F28B82"
-                    : colors.goldLight
-                }
-              />
-            </View>
-            <View style={styles.alertAdminCopy}>
-              <Text style={styles.alertAdminTitle}>Centre d’alertes</Text>
-              <Text style={styles.alertAdminSubtitle}>
-                {alertCounts.critical} critiques · {alertCounts.warning} avertissements
-              </Text>
-            </View>
-            {alertCounts.open > 0 ? (
-              <View style={styles.alertAdminBadge}>
-                <Text style={styles.alertAdminBadgeText}>
-                  {alertCounts.open > 99 ? "99+" : alertCounts.open}
-                </Text>
-              </View>
-            ) : null}
-            <Ionicons name="chevron-forward" size={20} color={colors.goldLight} />
-          </Pressable>
-
-          <Pressable
-            onPress={() => router.push("/admin/support")}
-            style={({ pressed }) => [
-              styles.supportAdminCard,
-              pressed && styles.pressed,
-            ]}
-          >
-            <View style={styles.supportAdminIcon}>
-              <Ionicons name="help-buoy-outline" size={22} color={colors.goldLight} />
-            </View>
-            <View style={styles.supportAdminCopy}>
-              <Text style={styles.supportAdminTitle}>Support utilisateurs</Text>
-              <Text style={styles.supportAdminSubtitle}>
-                {supportCounts.open} ouverts · {supportCounts.inProgress} en cours · {supportCounts.urgent} urgents
-              </Text>
-            </View>
-            {supportCounts.unread > 0 ? (
-              <View style={styles.supportAdminUnread}>
-                <Text style={styles.supportAdminUnreadText}>
-                  {supportCounts.unread > 99 ? "99+" : supportCounts.unread}
-                </Text>
-              </View>
-            ) : null}
-            <Ionicons name="chevron-forward" size={20} color={colors.goldLight} />
-          </Pressable>
-
-          <Pressable
-            onPress={() => router.push("/admin/revenuecat-control")}
-            style={({ pressed }) => [
-              styles.revenueControlCard,
-              pressed && styles.pressed,
-            ]}
-          >
-            <View style={styles.revenueControlIcon}>
-              <Ionicons name="git-compare-outline" size={22} color={colors.goldLight} />
-            </View>
-            <View style={styles.revenueControlCopy}>
-              <Text style={styles.revenueControlTitle}>Contrôle RevenueCat</Text>
-              <Text style={styles.revenueControlSubtitle}>
-                Événements, comptes non reliés et réconciliation
-              </Text>
-            </View>
-            <Ionicons name="chevron-forward" size={20} color={colors.goldLight} />
-          </Pressable>
-
-          <Pressable
-            onPress={() => router.push("/admin/revenuecat-finance")}
-            style={({ pressed }) => [
-              styles.revenueAdminCard,
-              pressed && styles.pressed,
-            ]}
-          >
-            <View style={styles.revenueAdminIcon}>
-              <Ionicons name="trending-up-outline" size={22} color={colors.goldLight} />
-            </View>
-            <View style={styles.revenueAdminCopy}>
-              <Text style={styles.revenueAdminTitle}>Revenus & abonnements</Text>
-              <Text style={styles.revenueAdminSubtitle}>
-                RevenueCat, remboursements, produits et alertes Wasil
-              </Text>
-            </View>
-            <Ionicons name="chevron-forward" size={20} color={colors.goldLight} />
-          </Pressable>
-
-          <Pressable
-            onPress={() => router.push("/admin/wasil-finance")}
-            style={({ pressed }) => [
-              styles.wasilFinanceCard,
-              pressed && styles.pressed,
-            ]}
-          >
-            <View style={styles.wasilFinanceIcon}>
-              <Ionicons name="calculator-outline" size={22} color={colors.goldLight} />
-            </View>
-            <View style={styles.wasilFinanceCopy}>
-              <Text style={styles.wasilFinanceTitle}>Finances Wasil</Text>
-              <Text style={styles.wasilFinanceSubtitle}>
-                Coûts IA, revenus, marge et projections
-              </Text>
-            </View>
-            <Ionicons name="chevron-forward" size={20} color={colors.goldLight} />
-          </Pressable>
-
-          <Pressable
-            onPress={() => router.push("/admin/premium-wasil")}
-            style={({ pressed }) => [
-              styles.premiumAdminCard,
-              pressed && styles.pressed,
-            ]}
-          >
-            <View style={styles.premiumAdminIcon}>
-              <Ionicons name="diamond-outline" size={22} color={colors.goldLight} />
-            </View>
-            <View style={styles.premiumAdminCopy}>
-              <Text style={styles.premiumAdminTitle}>Premium & Wasil</Text>
-              <Text style={styles.premiumAdminSubtitle}>
-                Abonnements manuels, crédits, ventes et coûts détectés
-              </Text>
-            </View>
-            <Ionicons name="chevron-forward" size={20} color={colors.goldLight} />
-          </Pressable>
-
-          <Pressable
-            onPress={() => router.push("/admin/team")}
-            style={({ pressed }) => [
-              styles.teamAdminCard,
-              pressed && styles.pressed,
-            ]}
-          >
-            <View style={styles.teamAdminIcon}>
-              <Ionicons name="shield-checkmark-outline" size={22} color={colors.goldLight} />
-            </View>
-            <View style={styles.teamAdminCopy}>
-              <Text style={styles.teamAdminTitle}>Équipe administratrice</Text>
-              <Text style={styles.teamAdminSubtitle}>
-                Gérer les rôles et les accès à l’administration
-              </Text>
-            </View>
-            <Ionicons name="chevron-forward" size={20} color={colors.goldLight} />
-          </Pressable>
-
-          <Pressable
-            onPress={() => router.push("/admin/activity")}
-            style={({ pressed }) => [
-              styles.activityAdminCard,
-              pressed && styles.pressed,
-            ]}
-          >
-            <View style={styles.activityAdminIcon}>
-              <Ionicons name="pulse-outline" size={22} color={colors.goldLight} />
-            </View>
-            <View style={styles.activityAdminCopy}>
-              <Text style={styles.activityAdminTitle}>Journal d’activité</Text>
-              <Text style={styles.activityAdminSubtitle}>
-                Validations, refus, signalements et crédits
-              </Text>
-            </View>
-            <Ionicons name="chevron-forward" size={20} color={colors.goldLight} />
-          </Pressable>
-
-          <Pressable
-            onPress={() => router.push("/admin/mosque-reports")}
-            style={({ pressed }) => [styles.reportAdminCard, pressed && styles.pressed]}
-          >
-            <View style={styles.reportAdminIcon}>
-              <Ionicons name="flag-outline" size={22} color="#F28B82" />
-            </View>
-            <View style={styles.reportAdminCopy}>
-              <Text style={styles.reportAdminTitle}>Signalements des mosquées</Text>
-              <Text style={styles.reportAdminSubtitle}>Vérifier les erreurs remontées par les utilisateurs</Text>
-            </View>
-            <Ionicons name="chevron-forward" size={20} color={colors.goldLight} />
-          </Pressable>
-
-          <Pressable
-            onPress={() => router.push("/admin/push-notifications")}
-            style={({ pressed }) => [
-              styles.pushAdminCard,
-              pressed && styles.pressed,
-            ]}
-          >
-            <View style={styles.pushAdminIcon}>
-              <Ionicons name="notifications-outline" size={22} color={colors.goldLight} />
-            </View>
-            <View style={styles.pushAdminCopy}>
-              <Text style={styles.pushAdminTitle}>Notifications push</Text>
-              <Text style={styles.pushAdminSubtitle}>
-                Envoyer un message à tous, aux gratuits ou aux Premium
-              </Text>
-            </View>
-            <Ionicons name="chevron-forward" size={20} color={colors.goldLight} />
-          </Pressable>
-
-          <Text style={styles.sectionTitle}>Utilisateurs et crédits Wasil</Text>
-          <View style={styles.searchWrap}>
-            <Ionicons name="search-outline" size={18} color={colors.textMuted} />
-            <TextInput
-              value={search}
-              onChangeText={setSearch}
-              onSubmitEditing={() => void load()}
-              placeholder="Rechercher une adresse e-mail"
-              placeholderTextColor={colors.textMuted}
-              autoCapitalize="none"
-              keyboardType="email-address"
-              returnKeyType="search"
-              style={styles.searchInput}
-            />
-            {search ? (
-              <Pressable onPress={() => setSearch("")}>
-                <Ionicons name="close-circle" size={18} color={colors.textMuted} />
-              </Pressable>
-            ) : null}
+          <View style={styles.advanced}>
+            <MenuRow title="Options avancées" subtitle="Équipe, historique et contrôles techniques" icon="options-outline" expanded={openGroup === "advanced"} onPress={() => toggle("advanced")} />
+            {openGroup === "advanced" ? <Submenu entries={[
+              { title: "Centre d’alertes", subtitle: "Toutes les alertes et informations", route: "/admin/alerts" },
+              { title: "Tableau de bord détaillé", subtitle: "Indicateurs complets et projections", route: "/admin/cockpit" },
+              { title: "Contrôle des achats", subtitle: "Vérifications et synchronisation RevenueCat", route: "/admin/revenuecat-control" },
+              { title: "Équipe administratrice", subtitle: "Rôles et accès", route: "/admin/team" },
+              { title: "Historique des actions", subtitle: "Validations et modifications effectuées", route: "/admin/activity" },
+              { title: "Réglages des alertes", subtitle: "Seuils et surveillance", route: "/admin/alert-settings" },
+            ]} /> : null}
           </View>
 
           <View style={styles.usersHeader}>
-            <Text style={styles.usersTitle}>{filteredTitle}</Text>
-            <Pressable onPress={() => void load()}>
-              <Text style={styles.searchButton}>Rechercher</Text>
+            <View>
+              <Text style={styles.sectionTitle}>Tous les utilisateurs</Text>
+              <Text style={styles.usersCount}>{users.length} compte{users.length === 1 ? "" : "s"} affiché{users.length === 1 ? "" : "s"}</Text>
+            </View>
+            <Pressable onPress={() => router.push("/admin/users")} accessibilityRole="button">
+              <Text style={styles.allUsersLink}>Rechercher</Text>
             </Pressable>
           </View>
 
-          {users.length === 0 ? (
-            <Text style={styles.empty}>Aucun utilisateur trouvé.</Text>
-          ) : (
-            users.map((user) => {
-              const acting = actingUserId === user.userId;
-              return (
-                <View key={user.userId} style={styles.userCard}>
-                  <View style={styles.userTop}>
-                    <View style={styles.userAvatar}>
-                      <Ionicons name="person-outline" size={18} color={colors.goldLight} />
-                    </View>
-                    <View style={styles.userCopy}>
-                      <Text style={styles.userEmail} numberOfLines={1}>{user.email}</Text>
-                      <Text style={styles.userDate}>
-                        Inscrit le {new Date(user.createdAt).toLocaleDateString("fr-FR")}
-                      </Text>
-                    </View>
-                    <View style={styles.balanceBadge}>
-                      <Text style={styles.balanceValue}>{user.balance}</Text>
-                      <Text style={styles.balanceLabel}>crédits</Text>
-                    </View>
-                  </View>
-
-                  <Text style={styles.spentText}>
-                    Total consommé : {user.totalSpent.toLocaleString("fr-FR")}
-                  </Text>
-
-                  <Pressable
-                    onPress={() =>
-                      router.push({
-                        pathname: "/admin/users/[id]",
-                        params: { id: user.userId },
-                      })
-                    }
-                    style={({ pressed }) => [
-                      styles.userDetailButton,
-                      pressed && styles.pressed,
-                    ]}
-                  >
-                    <Ionicons
-                      name="person-circle-outline"
-                      size={17}
-                      color={colors.goldLight}
-                    />
-                    <Text style={styles.userDetailButtonText}>
-                      Ouvrir la fiche utilisateur
-                    </Text>
-                    <Ionicons
-                      name="chevron-forward"
-                      size={16}
-                      color={colors.textMuted}
-                    />
-                  </Pressable>
-
-                  <View style={styles.creditActions}>
-                    <Pressable
-                      disabled={acting}
-                      onPress={() => adjustCredits(user, -10)}
-                      style={[styles.creditButton, styles.negativeButton]}
-                    >
-                      <Text style={styles.negativeText}>−10</Text>
-                    </Pressable>
-                    <Pressable
-                      disabled={acting}
-                      onPress={() => adjustCredits(user, 10)}
-                      style={styles.creditButton}
-                    >
-                      <Text style={styles.creditText}>{acting ? "…" : "+10"}</Text>
-                    </Pressable>
-                    <Pressable
-                      disabled={acting}
-                      onPress={() => adjustCredits(user, 50)}
-                      style={styles.creditButton}
-                    >
-                      <Text style={styles.creditText}>+50</Text>
-                    </Pressable>
-                  </View>
-                </View>
-              );
-            })
-          )}
+          {users.map((user) => (
+            <Pressable
+              key={user.userId}
+              onPress={() => router.push({ pathname: "/admin/users/[id]", params: { id: user.userId } })}
+              accessibilityRole="button"
+              style={({ pressed }) => [styles.userCard, pressed && styles.pressed]}
+            >
+              <View style={styles.rowCopy}>
+                <Text style={styles.userEmail} numberOfLines={1}>{user.email}</Text>
+                <Text style={styles.userDate}>Inscrit le {new Date(user.createdAt).toLocaleDateString("fr-FR")}</Text>
+              </View>
+              <Text style={styles.userBalance}>{user.balance.toLocaleString("fr-FR")} crédits</Text>
+              <Ionicons name="chevron-forward" size={16} color={colors.textMuted} />
+            </Pressable>
+          ))}
         </ScrollView>
       )}
     </SafeAreaView>
@@ -636,459 +222,43 @@ export default function AdminHomeScreen() {
 }
 
 const styles = StyleSheet.create({
-  attentionCard: { marginBottom: 16, padding: 15, borderRadius: 22, borderWidth: 1, borderColor: "rgba(227,181,90,0.28)", backgroundColor: "rgba(42,23,56,0.72)" },
-  attentionHeader: { flexDirection: "row", alignItems: "flex-start", justifyContent: "space-between" },
-  attentionMeta: { marginTop: -10, color: colors.textMuted, fontFamily: typography.sans, fontSize: 9 },
-  attentionLink: { color: colors.goldLight, fontFamily: typography.sans, fontSize: 10, fontWeight: "800" },
-  attentionRow: { minHeight: 46, marginTop: 10, paddingTop: 9, flexDirection: "row", alignItems: "center", borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: "rgba(255,255,255,0.08)" },
-  attentionDot: { width: 8, height: 8, marginRight: 10, borderRadius: 4, backgroundColor: colors.textMuted },
-  attentionDotAction: { backgroundColor: colors.danger },
-  attentionCopy: { flex: 1 },
-  attentionTitle: { color: colors.text, fontFamily: typography.sans, fontSize: 11, fontWeight: "800" },
-  attentionDescription: { marginTop: 2, color: colors.textMuted, fontFamily: typography.sans, fontSize: 9 },
-  attentionEmpty: { marginTop: 12, color: colors.textMuted, fontFamily: typography.sans, fontSize: 10 },
-  safeArea: { flex: 1, backgroundColor: colors.background },
-  header: { minHeight: 72, paddingHorizontal: 18, flexDirection: "row", alignItems: "center", justifyContent: "space-between", borderBottomWidth: 1, borderBottomColor: colors.border },
-  headerButton: { width: 42, height: 42, borderRadius: 21, alignItems: "center", justifyContent: "center", backgroundColor: colors.card },
-  headerCopy: { alignItems: "center" },
-  eyebrow: { color: colors.goldMuted, fontSize: 8, fontWeight: "800", letterSpacing: 1.25 },
-  title: { marginTop: 2, color: colors.text, fontFamily: typography.serifSemibold, fontSize: 23 },
+  safe: { flex: 1, backgroundColor: colors.background },
+  header: { minHeight: 76, paddingHorizontal: 16, flexDirection: "row", alignItems: "center", gap: 10, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: colors.borderSoft },
+  headerCopy: { flex: 1, alignItems: "center" },
+  headerButton: { width: 44, height: 44, borderRadius: 16, backgroundColor: colors.card, alignItems: "center", justifyContent: "center" },
+  eyebrow: { color: colors.goldMuted, fontSize: 9, fontWeight: "700", letterSpacing: 2 },
+  title: { color: colors.text, fontFamily: typography.serifSemibold, fontSize: 26 },
   loader: { marginTop: 70 },
-  content: { padding: 18, paddingBottom: 60 },
-  sectionTitle: { marginTop: 8, marginBottom: 12, color: colors.goldLight, fontFamily: typography.serifMedium, fontSize: 18 },
-  metricsGrid: { flexDirection: "row", flexWrap: "wrap", gap: 10 },
-  founderCockpitCard: {
-    minHeight: 106,
-    marginBottom: 18,
-    padding: 15,
-    borderRadius: 20,
-    borderWidth: 1,
-    borderColor: "rgba(241,188,79,0.32)",
-    backgroundColor: "rgba(241,188,79,0.07)",
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  founderCockpitIcon: {
-    width: 50,
-    height: 50,
-    borderRadius: 17,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "rgba(241,188,79,0.11)",
-  },
-  founderCockpitCopy: {
-    flex: 1,
-    marginHorizontal: 13,
-  },
-  founderCockpitEyebrow: {
-    color: colors.goldMuted,
-    fontSize: 7.5,
-    fontWeight: "900",
-    letterSpacing: 1,
-  },
-  founderCockpitTitle: {
-    marginTop: 3,
-    color: colors.text,
-    fontFamily: typography.serifMedium,
-    fontSize: 16,
-  },
-  founderCockpitSubtitle: {
-    marginTop: 5,
-    color: colors.textMuted,
-    fontSize: 9.5,
-    lineHeight: 14,
-  },
-  metricCard: { width: "48%", minHeight: 126, padding: 14, borderRadius: 18, borderWidth: 1, borderColor: colors.border, backgroundColor: colors.card },
-  metricIcon: { width: 36, height: 36, borderRadius: 12, alignItems: "center", justifyContent: "center", backgroundColor: "rgba(241,188,79,0.10)" },
-  metricValue: { marginTop: 12, color: colors.text, fontFamily: typography.serifSemibold, fontSize: 25 },
-  metricLabel: { marginTop: 3, color: colors.textMuted, fontSize: 11 },
-  mosqueCard: { marginTop: 18, marginBottom: 18, minHeight: 100, padding: 15, borderRadius: 20, borderWidth: 1, borderColor: "rgba(241,188,79,0.28)", backgroundColor: "rgba(241,188,79,0.08)", flexDirection: "row", alignItems: "center" },
-  pendingPrayerBadge: { minWidth: 22, height: 22, marginRight: 8, paddingHorizontal: 6, borderRadius: 11, backgroundColor: "#D93025", alignItems: "center", justifyContent: "center" },
-  pendingPrayerBadgeText: { color: "#FFFFFF", fontFamily: typography.sansBold, fontSize: 11 },
-  mosqueIcon: { width: 48, height: 48, borderRadius: 15, alignItems: "center", justifyContent: "center", backgroundColor: colors.goldLight },
-  mosqueCopy: { flex: 1, marginHorizontal: 13 },
-  mosqueTitle: { color: colors.text, fontFamily: typography.serifMedium, fontSize: 16 },
-  mosqueSubtitle: { marginTop: 3, color: colors.goldLight, fontWeight: "700", fontSize: 11 },
-  mosqueStats: { marginTop: 3, color: colors.textMuted, fontSize: 10 },
-  alertAdminCard: {
-    minHeight: 82,
-    marginBottom: 12,
-    padding: 14,
-    borderRadius: 18,
-    borderWidth: 1,
-    borderColor: "rgba(241,188,79,0.24)",
-    backgroundColor: "rgba(241,188,79,0.06)",
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  alertAdminIcon: {
-    width: 44,
-    height: 44,
-    borderRadius: 14,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "rgba(241,188,79,0.10)",
-  },
-  alertAdminIconCritical: {
-    backgroundColor: "rgba(242,139,130,0.10)",
-  },
-  alertAdminCopy: {
-    flex: 1,
-    marginHorizontal: 12,
-  },
-  alertAdminTitle: {
-    color: colors.text,
-    fontFamily: typography.serifMedium,
-    fontSize: 15,
-  },
-  alertAdminSubtitle: {
-    marginTop: 4,
-    color: colors.textMuted,
-    fontSize: 10,
-    lineHeight: 14,
-  },
-  alertAdminBadge: {
-    minWidth: 25,
-    height: 25,
-    marginRight: 8,
-    paddingHorizontal: 6,
-    alignItems: "center",
-    justifyContent: "center",
-    borderRadius: 13,
-    backgroundColor: "#F28B82",
-  },
-  alertAdminBadgeText: {
-    color: colors.background,
-    fontSize: 9,
-    fontWeight: "900",
-  },
-  supportAdminCard: {
-    minHeight: 82,
-    marginBottom: 12,
-    padding: 14,
-    borderRadius: 18,
-    borderWidth: 1,
-    borderColor: "rgba(241,188,79,0.24)",
-    backgroundColor: "rgba(241,188,79,0.06)",
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  supportAdminIcon: {
-    width: 44,
-    height: 44,
-    borderRadius: 14,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "rgba(241,188,79,0.10)",
-  },
-  supportAdminUnread: {
-    minWidth: 25,
-    height: 25,
-    marginRight: 8,
-    paddingHorizontal: 6,
-    alignItems: "center",
-    justifyContent: "center",
-    borderRadius: 13,
-    backgroundColor: "#F28B82",
-  },
-  supportAdminUnreadText: {
-    color: colors.background,
-    fontSize: 9,
-    fontWeight: "900",
-  },
-  supportAdminCopy: {
-    flex: 1,
-    marginHorizontal: 12,
-  },
-  supportAdminTitle: {
-    color: colors.text,
-    fontFamily: typography.serifMedium,
-    fontSize: 15,
-  },
-  supportAdminSubtitle: {
-    marginTop: 4,
-    color: colors.textMuted,
-    fontSize: 10,
-    lineHeight: 14,
-  },
-  revenueControlCard: {
-    minHeight: 82,
-    marginBottom: 12,
-    padding: 14,
-    borderRadius: 18,
-    borderWidth: 1,
-    borderColor: "rgba(241,188,79,0.24)",
-    backgroundColor: "rgba(241,188,79,0.06)",
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  revenueControlIcon: {
-    width: 44,
-    height: 44,
-    borderRadius: 14,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "rgba(241,188,79,0.10)",
-  },
-  revenueControlCopy: {
-    flex: 1,
-    marginHorizontal: 12,
-  },
-  revenueControlTitle: {
-    color: colors.text,
-    fontFamily: typography.serifMedium,
-    fontSize: 15,
-  },
-  revenueControlSubtitle: {
-    marginTop: 4,
-    color: colors.textMuted,
-    fontSize: 10,
-    lineHeight: 14,
-  },
-  revenueAdminCard: {
-    minHeight: 82,
-    marginBottom: 12,
-    padding: 14,
-    borderRadius: 18,
-    borderWidth: 1,
-    borderColor: "rgba(241,188,79,0.24)",
-    backgroundColor: "rgba(241,188,79,0.06)",
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  revenueAdminIcon: {
-    width: 44,
-    height: 44,
-    borderRadius: 14,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "rgba(241,188,79,0.10)",
-  },
-  revenueAdminCopy: {
-    flex: 1,
-    marginHorizontal: 12,
-  },
-  revenueAdminTitle: {
-    color: colors.text,
-    fontFamily: typography.serifMedium,
-    fontSize: 15,
-  },
-  revenueAdminSubtitle: {
-    marginTop: 4,
-    color: colors.textMuted,
-    fontSize: 10,
-    lineHeight: 14,
-  },
-  wasilFinanceCard: {
-    minHeight: 82,
-    marginBottom: 12,
-    padding: 14,
-    borderRadius: 18,
-    borderWidth: 1,
-    borderColor: "rgba(241,188,79,0.24)",
-    backgroundColor: "rgba(241,188,79,0.06)",
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  wasilFinanceIcon: {
-    width: 44,
-    height: 44,
-    borderRadius: 14,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "rgba(241,188,79,0.10)",
-  },
-  wasilFinanceCopy: {
-    flex: 1,
-    marginHorizontal: 12,
-  },
-  wasilFinanceTitle: {
-    color: colors.text,
-    fontFamily: typography.serifMedium,
-    fontSize: 15,
-  },
-  wasilFinanceSubtitle: {
-    marginTop: 4,
-    color: colors.textMuted,
-    fontSize: 10,
-    lineHeight: 14,
-  },
-  premiumAdminCard: {
-    minHeight: 82,
-    marginBottom: 12,
-    padding: 14,
-    borderRadius: 18,
-    borderWidth: 1,
-    borderColor: "rgba(241,188,79,0.24)",
-    backgroundColor: "rgba(241,188,79,0.06)",
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  premiumAdminIcon: {
-    width: 44,
-    height: 44,
-    borderRadius: 14,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "rgba(241,188,79,0.10)",
-  },
-  premiumAdminCopy: {
-    flex: 1,
-    marginHorizontal: 12,
-  },
-  premiumAdminTitle: {
-    color: colors.text,
-    fontFamily: typography.serifMedium,
-    fontSize: 15,
-  },
-  premiumAdminSubtitle: {
-    marginTop: 4,
-    color: colors.textMuted,
-    fontSize: 10,
-    lineHeight: 14,
-  },
-  teamAdminCard: {
-    minHeight: 82,
-    marginBottom: 12,
-    padding: 14,
-    borderRadius: 18,
-    borderWidth: 1,
-    borderColor: "rgba(241,188,79,0.24)",
-    backgroundColor: "rgba(241,188,79,0.06)",
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  teamAdminIcon: {
-    width: 44,
-    height: 44,
-    borderRadius: 14,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "rgba(241,188,79,0.10)",
-  },
-  teamAdminCopy: {
-    flex: 1,
-    marginHorizontal: 12,
-  },
-  teamAdminTitle: {
-    color: colors.text,
-    fontFamily: typography.serifMedium,
-    fontSize: 15,
-  },
-  teamAdminSubtitle: {
-    marginTop: 4,
-    color: colors.textMuted,
-    fontSize: 10,
-    lineHeight: 14,
-  },
-  activityAdminCard: {
-    minHeight: 82,
-    marginBottom: 12,
-    padding: 14,
-    borderRadius: 18,
-    borderWidth: 1,
-    borderColor: "rgba(241,188,79,0.24)",
-    backgroundColor: "rgba(241,188,79,0.06)",
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  activityAdminIcon: {
-    width: 44,
-    height: 44,
-    borderRadius: 14,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "rgba(241,188,79,0.10)",
-  },
-  activityAdminCopy: {
-    flex: 1,
-    marginHorizontal: 12,
-  },
-  activityAdminTitle: {
-    color: colors.text,
-    fontFamily: typography.serifMedium,
-    fontSize: 15,
-  },
-  activityAdminSubtitle: {
-    marginTop: 4,
-    color: colors.textMuted,
-    fontSize: 10,
-    lineHeight: 14,
-  },
-  reportAdminCard: { minHeight: 82, marginBottom: 18, padding: 14, borderRadius: 18, borderWidth: 1, borderColor: "rgba(242,139,130,0.22)", backgroundColor: "rgba(242,139,130,0.05)", flexDirection: "row", alignItems: "center" },
-  reportAdminIcon: { width: 44, height: 44, borderRadius: 14, alignItems: "center", justifyContent: "center", backgroundColor: "rgba(242,139,130,0.10)" },
-  reportAdminCopy: { flex: 1, marginHorizontal: 12 },
-  reportAdminTitle: { color: colors.text, fontFamily: typography.serifMedium, fontSize: 15 },
-  reportAdminSubtitle: { marginTop: 4, color: colors.textMuted, fontSize: 10, lineHeight: 14 },
-  pushAdminCard: {
-    minHeight: 82,
-    marginBottom: 18,
-    padding: 14,
-    borderRadius: 18,
-    borderWidth: 1,
-    borderColor: "rgba(241,188,79,0.24)",
-    backgroundColor: "rgba(241,188,79,0.06)",
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  pushAdminIcon: {
-    width: 44,
-    height: 44,
-    borderRadius: 14,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "rgba(241,188,79,0.10)",
-  },
-  pushAdminCopy: { flex: 1, marginHorizontal: 12 },
-  pushAdminTitle: {
-    color: colors.text,
-    fontFamily: typography.serifMedium,
-    fontSize: 15,
-  },
-  pushAdminSubtitle: {
-    marginTop: 4,
-    color: colors.textMuted,
-    fontSize: 10,
-    lineHeight: 14,
-  },
-  searchWrap: { minHeight: 48, paddingHorizontal: 13, flexDirection: "row", alignItems: "center", gap: 9, borderRadius: 14, borderWidth: 1, borderColor: colors.border, backgroundColor: colors.card },
-  searchInput: { flex: 1, color: colors.text, fontSize: 13 },
-  usersHeader: { marginTop: 16, marginBottom: 9, flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
-  usersTitle: { color: colors.textSecondary, fontSize: 12, fontWeight: "700" },
-  searchButton: { color: colors.goldLight, fontSize: 11, fontWeight: "800" },
-  empty: { paddingVertical: 30, textAlign: "center", color: colors.textMuted },
-  userCard: { marginBottom: 11, padding: 14, borderRadius: 17, borderWidth: 1, borderColor: colors.border, backgroundColor: colors.card },
-  userTop: { flexDirection: "row", alignItems: "center" },
-  userAvatar: { width: 38, height: 38, borderRadius: 13, alignItems: "center", justifyContent: "center", backgroundColor: "rgba(241,188,79,0.10)" },
-  userCopy: { flex: 1, marginHorizontal: 10 },
-  userEmail: { color: colors.text, fontSize: 12.5, fontWeight: "700" },
-  userDate: { marginTop: 3, color: colors.textMuted, fontSize: 9.5 },
-  balanceBadge: { minWidth: 58, paddingVertical: 5, paddingHorizontal: 8, alignItems: "center", borderRadius: 11, backgroundColor: "rgba(241,188,79,0.12)" },
-  balanceValue: { color: colors.goldLight, fontSize: 15, fontWeight: "800" },
-  balanceLabel: { color: colors.textMuted, fontSize: 8 },
-  spentText: { marginTop: 11, color: colors.textMuted, fontSize: 10 },
-  userDetailButton: {
-    minHeight: 42,
-    marginTop: 11,
-    paddingHorizontal: 12,
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: "rgba(241,188,79,0.24)",
-    backgroundColor: "rgba(241,188,79,0.05)",
-  },
-  userDetailButtonText: {
-    flex: 1,
-    color: colors.goldLight,
-    fontSize: 10.5,
-    fontWeight: "800",
-  },
-  creditActions: { marginTop: 10, flexDirection: "row", gap: 8 },
-  creditButton: { flex: 1, minHeight: 38, alignItems: "center", justifyContent: "center", borderRadius: 11, backgroundColor: colors.goldLight },
-  negativeButton: { borderWidth: 1, borderColor: "#F28B82", backgroundColor: "transparent" },
-  creditText: { color: colors.background, fontWeight: "800" },
-  negativeText: { color: "#F28B82", fontWeight: "800" },
-  pressed: { opacity: 0.75 },
+  content: { padding: 16, paddingBottom: 32 },
+  stats: { flexDirection: "row", alignItems: "center", paddingVertical: 14, marginBottom: 14 },
+  stat: { flex: 1, alignItems: "center", paddingHorizontal: 8 },
+  statValue: { color: colors.text, fontSize: 26, fontWeight: "700" },
+  statLabel: { color: colors.textSecondary, marginTop: 4, fontSize: 12, textAlign: "center" },
+  statDivider: { width: 1, height: 32, backgroundColor: colors.borderSoft },
+  attention: { padding: 14, flexDirection: "row", alignItems: "center", gap: 12, borderRadius: 16, backgroundColor: colors.surfaceAlt, borderWidth: 1, borderColor: colors.borderSoft },
+  attentionCritical: { borderColor: colors.danger },
+  sectionTitle: { color: colors.goldLight, fontSize: 13, fontWeight: "700", marginTop: 24, marginBottom: 10 },
+  menu: { borderWidth: 1, borderColor: colors.borderSoft, borderRadius: 20, overflow: "hidden", backgroundColor: colors.card },
+  menuRow: { minHeight: 80, padding: 14, flexDirection: "row", alignItems: "center", gap: 12, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: colors.borderSoft },
+  menuIcon: { width: 40, height: 40, borderRadius: 13, alignItems: "center", justifyContent: "center", backgroundColor: "rgba(227,181,90,0.08)" },
+  rowCopy: { flex: 1, minWidth: 0 },
+  rowTitle: { color: colors.text, fontSize: 15, fontWeight: "700" },
+  rowSubtitle: { marginTop: 4, color: colors.textSecondary, fontSize: 12, lineHeight: 17 },
+  badge: { minWidth: 23, borderRadius: 12, paddingHorizontal: 6, paddingVertical: 3, alignItems: "center", backgroundColor: colors.goldLight },
+  badgeText: { color: colors.background, fontSize: 11, fontWeight: "800" },
+  submenu: { paddingLeft: 22, paddingRight: 14, backgroundColor: colors.backgroundSecondary },
+  subRow: { minHeight: 68, paddingVertical: 13, gap: 10, flexDirection: "row", alignItems: "center", borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: colors.borderSoft },
+  subTitle: { color: colors.text, fontSize: 14, fontWeight: "600" },
+  advanced: { marginTop: 22, borderRadius: 18, overflow: "hidden", borderWidth: 1, borderColor: colors.borderSoft },
+  usersHeader: { marginTop: 10, flexDirection: "row", alignItems: "flex-end", justifyContent: "space-between" },
+  usersCount: { marginTop: -6, color: colors.textMuted, fontSize: 11 },
+  allUsersLink: { paddingVertical: 10, color: colors.goldLight, fontSize: 12, fontWeight: "700" },
+  userCard: { minHeight: 68, marginTop: 9, paddingHorizontal: 14, flexDirection: "row", alignItems: "center", gap: 10, borderRadius: 16, borderWidth: 1, borderColor: colors.borderSoft, backgroundColor: colors.card },
+  userEmail: { color: colors.text, fontSize: 13, fontWeight: "700" },
+  userDate: { marginTop: 4, color: colors.textMuted, fontSize: 10.5 },
+  userBalance: { color: colors.goldLight, fontSize: 11, fontWeight: "700" },
+  errorBox: { padding: 14, borderRadius: 14, backgroundColor: colors.surfaceAlt, marginBottom: 10 },
+  errorText: { color: colors.textSecondary, fontSize: 13, lineHeight: 19 },
+  retry: { marginTop: 8, color: colors.goldLight, fontWeight: "700" },
+  pressed: { opacity: 0.7 },
 });

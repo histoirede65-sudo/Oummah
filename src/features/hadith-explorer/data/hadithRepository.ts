@@ -3,15 +3,19 @@ import type { HadithCollection, HadithDocumentaryCategory } from "../domain/Hadi
 import {
   fetchHadith,
   fetchHadithPage,
+  fetchHadeethEncCategories,
   fetchSupabaseCollectionPage,
   fetchSupabaseHadith,
+  fetchSupabaseHadithPreviews,
   fetchSupabaseSourceCategories,
   fetchSupabaseSourceCategoryAssignments,
   searchSupabaseHadiths,
   searchHadiths,
+  resolveHadeethEncHadithIds,
 } from "./hadithDataSource";
 import { hadithCache } from "./hadithCache";
 import { getHadithCategoryCache, isHadithCategoryCacheFresh, putHadithCategoryCache } from "./hadithCategoryCache";
+import { createHadithPreview, type HadithPreview } from "../presentation/hadithPreview";
 
 export function normalizeHadithQuery(value: string) {
   return value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLocaleLowerCase("fr").trim();
@@ -45,14 +49,86 @@ const collectionItemsCache = new Map<string, Promise<HadithSummary[]>>();
 const collectionCategoriesCache = new Map<string, HadithDocumentaryCategory[]>();
 const collectionCategoriesRequests = new Map<string, Promise<HadithDocumentaryCategory[]>>();
 const collectionCategoryItemsCache = new Map<string, HadithSummary[]>();
+const previewMemoryCache = new Map<string, HadithPreview>();
+const previewRequests = new Map<string, Promise<HadithPreview>>();
+const detailRequests = new Map<string, Promise<Hadith>>();
 
-async function refreshCollectionCategories(collection: HadithCollection, cacheKey: string) {
+async function mapWithConcurrency<T, R>(items: readonly T[], concurrency: number, worker: (item: T) => Promise<R>): Promise<R[]> {
+  const results: R[] = [];
+  let cursor = 0;
+  const run = async () => {
+    while (cursor < items.length) {
+      const index = cursor++;
+      results[index] = await worker(items[index]);
+    }
+  };
+  await Promise.all(Array.from({ length: Math.min(concurrency, items.length) }, run));
+  return results;
+}
+
+export async function getHadithPreviews(items: readonly HadithSummary[], language: "fr" | "en"): Promise<Record<string, HadithPreview>> {
+  const result: Record<string, HadithPreview> = {};
+  const missing = items.filter((item) => {
+    const key = `${language}:${item.id}`;
+    const cached = previewMemoryCache.get(key);
+    if (cached) result[item.id] = cached;
+    return !cached;
+  });
+  if (language === "fr" && missing.length) {
+    const rows = await fetchSupabaseHadithPreviews(missing.map((item) => item.id)).catch(() => []);
+    rows.forEach((row) => {
+      const preview = createHadithPreview(row.translation_text ?? "");
+      previewMemoryCache.set(`fr:${row.hadith_id}`, preview);
+      result[row.hadith_id] = preview;
+    });
+  }
+  const remaining = missing.filter((item) => !result[item.id]);
+  const officialIds = language === "en"
+    ? await resolveHadeethEncHadithIds(remaining.map((item) => item.id)).catch(() => new Map<string, string>())
+    : new Map<string, string>();
+  await mapWithConcurrency(remaining, 4, async (item) => {
+    const key = `${language}:${item.id}`;
+    const existing = previewRequests.get(key);
+    const request = existing ?? (async () => {
+      const hadith = await hadithRepository.get(officialIds.get(item.id) ?? item.id, language);
+      const preview = createHadithPreview(hadith.french);
+      previewMemoryCache.set(key, preview);
+      return preview;
+    })();
+    previewRequests.set(key, request);
+    try { result[item.id] = await request; } catch { result[item.id] = createHadithPreview(item.title); }
+    finally { previewRequests.delete(key); }
+    return result[item.id];
+  });
+  return result;
+}
+
+async function refreshCollectionCategories(collection: HadithCollection, cacheKey: string, language: "fr" | "en") {
   const inFlight = collectionCategoriesRequests.get(cacheKey);
   if (inFlight) return inFlight;
   const request = (async () => {
     const items = await hadithRepository.searchCollection(collection);
-    const categories = await fetchSupabaseSourceCategories();
-    const assignments = await fetchSupabaseSourceCategoryAssignments(categories.map((category) => category.id), items.map((item) => item.id));
+    const storedCategories = await fetchSupabaseSourceCategories();
+    let categories = storedCategories;
+    if (language === "en") {
+      const [officialFrench, officialEnglish] = await Promise.all([
+        fetchHadeethEncCategories("fr").catch(() => []),
+        fetchHadeethEncCategories("en").catch(() => []),
+      ]);
+      const englishByOfficialId = new Map(officialEnglish.map((category) => [category.id, category.source_category_label ?? ""]));
+      const englishByFrenchLabel = new Map(
+        officialFrench.map((category) => [normalizeHadithQuery(category.source_category_label ?? ""), englishByOfficialId.get(category.id) ?? ""]),
+      );
+      categories = storedCategories.map((category) => ({
+        ...category,
+        source_category_label: englishByOfficialId.get(category.id)
+          || englishByFrenchLabel.get(normalizeHadithQuery(category.source_category_label ?? ""))
+          || category.source_category_label,
+      }));
+    }
+    const collectionHadithIds = new Set(items.map((item) => item.id));
+    const assignments = (await fetchSupabaseSourceCategoryAssignments(categories.map((category) => category.id), []))
+      .filter((assignment) => collectionHadithIds.has(assignment.hadith_id));
     const counts = new Map<string, Set<string>>();
     for (const assignment of assignments) {
       const ids = counts.get(assignment.source_category_id) ?? new Set<string>();
@@ -61,10 +137,10 @@ async function refreshCollectionCategories(collection: HadithCollection, cacheKe
     }
     const result = categories
       .filter((category) => counts.has(category.id))
-      .map((category) => ({ id: category.id, name: category.source_category_label?.trim() || "Catégorie", hadithCount: counts.get(category.id)?.size ?? 0 }))
-      .sort((a, b) => a.name.localeCompare(b.name, "fr"));
+      .map((category) => ({ id: category.id, name: category.source_category_label?.trim() || (language === "en" ? "Category" : "Catégorie"), hadithCount: counts.get(category.id)?.size ?? 0 }))
+      .sort((a, b) => a.name.localeCompare(b.name, language));
     collectionCategoriesCache.set(cacheKey, result);
-    await putHadithCategoryCache(collection.id, result);
+    await putHadithCategoryCache(`${collection.id}:${language}:v2`, result);
     return result;
   })();
   collectionCategoriesRequests.set(cacheKey, request);
@@ -73,21 +149,40 @@ async function refreshCollectionCategories(collection: HadithCollection, cacheKe
 }
 
 export const hadithRepository = {
-  async get(id: string): Promise<Hadith> {
-    try {
-      const value = await fetchSupabaseHadith(id).catch(() => fetchHadith(id));
-      await hadithCache.put(value);
-      return value;
-    } catch (error) {
-      const cached = await hadithCache.get(id);
-      if (cached) return cached;
-      throw error;
-    }
+  async get(id: string, language: "fr" | "en" = "fr"): Promise<Hadith> {
+    const cached = await hadithCache.get(id, language);
+    if (cached) return cached;
+    const key = `${language}:${id}`;
+    const inFlight = detailRequests.get(key);
+    if (inFlight) return inFlight;
+    const request = (async () => {
+      if (language === "en") {
+        const officialId = await resolveHadeethEncHadithIds([id]).then((ids) => ids.get(id) ?? id);
+        const officialCached = await hadithCache.get(officialId, language);
+        if (officialCached) return officialCached;
+        const value = await fetchHadith(officialId, "en");
+        await hadithCache.put(value, language);
+        return value;
+      }
+      try {
+        const value = await fetchSupabaseHadith(id).catch(() => fetchHadith(id));
+        await hadithCache.put(value, language);
+        return value;
+      } catch (error) {
+        const fallback = await hadithCache.get(id, language);
+        if (fallback) return fallback;
+        throw error;
+      }
+    })();
+    detailRequests.set(key, request);
+    request.finally(() => detailRequests.delete(key)).catch(() => undefined);
+    return request;
   },
 
-  async search(query: string): Promise<HadithSummary[]> {
+  async search(query: string, language: "fr" | "en" = "fr"): Promise<HadithSummary[]> {
     const normalized = normalizeHadithQuery(query);
     if (!normalized) return [];
+    if (language === "en") return searchHadiths(query, "en");
     try {
       const value = await searchHadiths(query);
       await hadithCache.putSearch(normalized, value);
@@ -207,17 +302,17 @@ export const hadithRepository = {
     }
   },
 
-  async listCollectionCategories(collection: HadithCollection): Promise<HadithDocumentaryCategory[]> {
-    const cacheKey = normalizeHadithQuery(`collection:${collection.id}:categories`);
+  async listCollectionCategories(collection: HadithCollection, language: "fr" | "en" = "fr"): Promise<HadithDocumentaryCategory[]> {
+    const cacheKey = normalizeHadithQuery(`collection:${collection.id}:categories:${language}:v2`);
     const cached = collectionCategoriesCache.get(cacheKey);
     if (cached) return cached;
-    const persistent = await getHadithCategoryCache(collection.id);
+    const persistent = await getHadithCategoryCache(`${collection.id}:${language}:v2`);
     if (persistent) {
       collectionCategoriesCache.set(cacheKey, persistent.categories);
-      if (!isHadithCategoryCacheFresh(persistent)) void refreshCollectionCategories(collection, cacheKey).catch(() => undefined);
+      if (!isHadithCategoryCacheFresh(persistent)) void refreshCollectionCategories(collection, cacheKey, language).catch(() => undefined);
       return persistent.categories;
     }
-    return refreshCollectionCategories(collection, cacheKey);
+    return refreshCollectionCategories(collection, cacheKey, language);
   },
 
   async searchCollectionCategory(collection: HadithCollection, categoryId: string): Promise<HadithSummary[]> {
@@ -225,21 +320,26 @@ export const hadithRepository = {
     const cached = collectionCategoryItemsCache.get(cacheKey);
     if (cached) return cached;
     const items = await this.searchCollection(collection);
-    const assignments = await fetchSupabaseSourceCategoryAssignments([categoryId], items.map((item) => item.id));
+    const collectionHadithIds = new Set(items.map((item) => item.id));
+    const assignments = (await fetchSupabaseSourceCategoryAssignments([categoryId], []))
+      .filter((assignment) => collectionHadithIds.has(assignment.hadith_id));
     const ids = new Set(assignments.map((assignment) => assignment.hadith_id));
     const result = items.filter((item) => ids.has(item.id));
     collectionCategoryItemsCache.set(cacheKey, result);
     return result;
   },
 
-  async daily(): Promise<Hadith | null> {
+  async daily(language: "fr" | "en" = "fr"): Promise<Hadith | null> {
     try {
-      const page = await fetchHadithPage(1, 40);
+      // Keep one canonical daily selection for every language. Only the
+      // official translation fetched for the selected identifier changes.
+      const page = await fetchHadithPage(1, 40, "5", "fr");
       if (!page.length) return null;
       const start = new Date(new Date().getFullYear(), 0, 0);
       const day = Math.floor((Date.now() - start.getTime()) / 86400000);
-      return this.get(page[day % page.length].id);
+      return this.get(page[day % page.length].id, language);
     } catch {
+      if (language === "en") return null;
       const local = await hadithCache.all();
       return local[0] ?? null;
     }

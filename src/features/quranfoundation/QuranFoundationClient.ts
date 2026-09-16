@@ -178,9 +178,19 @@ type QuranComTranslationVerse = {
   }[];
 };
 
-async function getFrenchTranslations(chapter: number) {
+type QuranTranslationLanguage = "fr" | "en";
+
+function translationResource(language: QuranTranslationLanguage) {
+  return language === "en" ? 131 : 31;
+}
+
+async function getChapterTranslations(
+  chapter: number,
+  language: QuranTranslationLanguage,
+) {
+  const resource = translationResource(language);
   const response = await fetch(
-    `https://api.quran.com/api/v4/verses/by_chapter/${chapter}?language=fr&words=false&translations=31&per_page=300`,
+    `https://api.quran.com/api/v4/verses/by_chapter/${chapter}?language=${language}&words=false&translations=${resource}&per_page=300`,
   );
   if (!response.ok) return new Map<string, string>();
   const payload = (await response.json()) as {
@@ -216,9 +226,13 @@ async function getUnicodeUthmaniTexts(chapter: number) {
   );
 }
 
-async function getCompleteChapterVerses(chapter: number) {
+async function getCompleteChapterVerses(
+  chapter: number,
+  language: QuranTranslationLanguage,
+) {
+  const resource = translationResource(language);
   const response = await fetch(
-    `https://api.quran.com/api/v4/verses/by_chapter/${chapter}?language=fr&words=true&word_fields=text_uthmani,translation,transliteration&fields=text_uthmani,juz_number,hizb_number,page_number&translations=31&per_page=300`,
+    `https://api.quran.com/api/v4/verses/by_chapter/${chapter}?language=${language}&words=true&word_fields=text_uthmani,translation,transliteration&fields=text_uthmani,juz_number,hizb_number,page_number&translations=${resource}&per_page=300`,
   );
   if (!response.ok) return [];
   const payload = (await response.json()) as {
@@ -230,7 +244,7 @@ async function getCompleteChapterVerses(chapter: number) {
 export class QuranFoundationClient {
   private surahsCache?: Promise<QuranFoundationSurah[]>;
   private recitersCache?: Promise<QuranFoundationReciter[]>;
-  private versesCache = new Map<number, QuranFoundationVerse[]>();
+  private versesCache = new Map<string, QuranFoundationVerse[]>();
   private recitationsCache = new Map<string, QuranFoundationRecitation>();
   private pendingRetries = new Set<string>();
 
@@ -276,22 +290,26 @@ export class QuranFoundationClient {
     return this.surahsCache;
   }
 
-  async getVerses(chapter: number): Promise<QuranFoundationVerse[]> {
-    const storageKey = cacheKey("verses", String(chapter));
-    const memoryCached = this.versesCache.get(chapter);
+  async getVerses(
+    chapter: number,
+    language: QuranTranslationLanguage = "fr",
+  ): Promise<QuranFoundationVerse[]> {
+    const languageChapterKey = `${language}:${chapter}`;
+    const storageKey = cacheKey("verses", languageChapterKey);
+    const memoryCached = this.versesCache.get(languageChapterKey);
     if (memoryCached) return memoryCached;
     try {
-      const verses = await this.fetchVerses(chapter);
-      this.versesCache.set(chapter, verses);
+      const verses = await this.fetchVerses(chapter, language);
+      this.versesCache.set(languageChapterKey, verses);
       writeCache(storageKey, verses);
       return verses;
     } catch (error) {
       const persisted = await readCache<QuranFoundationVerse[]>(storageKey);
       if (persisted?.length) {
-        this.versesCache.set(chapter, persisted);
+        this.versesCache.set(languageChapterKey, persisted);
         this.retryLater(storageKey, async () => {
-          const verses = await this.fetchVerses(chapter);
-          this.versesCache.set(chapter, verses);
+          const verses = await this.fetchVerses(chapter, language);
+          this.versesCache.set(languageChapterKey, verses);
           writeCache(storageKey, verses);
         });
         return persisted;
@@ -300,27 +318,31 @@ export class QuranFoundationClient {
     }
   }
 
-  private async fetchVerses(chapter: number): Promise<QuranFoundationVerse[]> {
-    console.info(`[verses] before API chapter=${chapter}`);
+  private async fetchVerses(
+    chapter: number,
+    language: QuranTranslationLanguage,
+  ): Promise<QuranFoundationVerse[]> {
+    const resource = translationResource(language);
+    console.info(`[verses] before API chapter=${chapter} language=${language}`);
     const payload = await this.request<unknown>(
-      `/quran-content?chapter=${chapter}&language=fr&page=1&per_page=300&translations=31`,
+      `/quran-content?chapter=${chapter}&language=${language}&page=1&per_page=300&translations=${resource}`,
     );
     const edgeVerses = collectVerses(payload);
-    const completeVerses = await getCompleteChapterVerses(chapter);
+    const completeVerses = await getCompleteChapterVerses(chapter, language);
     const collected =
       completeVerses.length > edgeVerses.length ? completeVerses : edgeVerses;
     console.info(
       `[verses] after API chapter=${chapter} raw=${collected.length}`,
     );
     const mapped = collected.map((verse) => mapVerse(verse, chapter));
-    const [frenchTranslations, unicodeUthmaniTexts] = await Promise.all([
-      getFrenchTranslations(chapter),
+    const [chapterTranslations, unicodeUthmaniTexts] = await Promise.all([
+      getChapterTranslations(chapter, language),
       getUnicodeUthmaniTexts(chapter),
     ]);
     const translated = mapped.map((verse) => ({
       ...verse,
       textUthmani: unicodeUthmaniTexts.get(verse.verseKey) ?? verse.textUthmani,
-      translation: frenchTranslations.get(verse.verseKey) ?? verse.translation,
+      translation: chapterTranslations.get(verse.verseKey) ?? verse.translation,
     }));
     console.info(
       `[verses] after mapping chapter=${chapter} mapped=${translated.length} withText=${translated.filter((verse) => verse.textUthmani.length > 0).length}`,
