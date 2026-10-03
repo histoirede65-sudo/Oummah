@@ -60,7 +60,7 @@ export default function DuaWallAdminScreen() {
           refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => { setRefreshing(true); void load(true); }} />}
           contentContainerStyle={s.content}
         >
-          {items.length === 0 ? <Text style={s.empty}>Rien à modérer.</Text> : items.map((item) => {
+          {items.length === 0 ? <Text style={s.empty}>Aucun signalement. Les duas et les réponses sont publiées directement et masquées automatiquement à 3 signalements.</Text> : items.map((item) => {
             const pending = item.kind === 'post' && item.status === 'pending';
             return (
               <View key={`${item.kind}-${item.id}`} style={s.card}>
