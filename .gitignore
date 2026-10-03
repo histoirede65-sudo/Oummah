@@ -52,3 +52,7 @@ scripts/output/product-alternatives/
 scripts/output/product-alternatives*.log
 scripts/output/preview-batch.png
 __pycache__/
+
+# full-project zip backups: too big for GitHub (100 MB limit), keep them local
+/src*.zip
+/backups/*.zip
