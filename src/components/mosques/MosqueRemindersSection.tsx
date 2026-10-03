@@ -70,8 +70,11 @@ export default function MosqueRemindersSection({ mosque, hasJumuahTime }: Props)
       <View style={styles.card}>
         <View style={styles.row}>
           <View style={styles.copy}>
-            <Text style={styles.title}>Événements</Text>
-            <Text style={styles.text}>Un rappel 2 heures avant chaque événement de la mosquée.</Text>
+            <Text style={styles.title}>Annonces et événements</Text>
+            <Text style={styles.text}>
+              Une notification dès qu’une annonce ou un événement est publié (compte connecté), et un rappel
+              2 heures avant chaque événement.
+            </Text>
           </View>
           <Switch
             value={events}

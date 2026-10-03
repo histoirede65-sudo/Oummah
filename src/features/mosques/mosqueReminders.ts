@@ -2,6 +2,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Location from 'expo-location';
 import * as Notifications from 'expo-notifications';
 import { Platform } from 'react-native';
+import { getValidSession } from '../auth/SupabaseAuthService';
+import { resolveMosqueId } from './data/mosqueIdentity';
 import { getMosquePosts } from './data/mosquePosts';
 import { getMosquePrayerSchedule, loadPrayerCalculationSettings } from './data/mosquePrayerTimes';
 import {
@@ -68,8 +70,36 @@ export async function saveMosqueReminderSettings(settings: MosqueReminderSetting
   if (enabling) all[settings.mosque.id] = settings;
   else delete all[settings.mosque.id];
   await AsyncStorage.setItem(SETTINGS_KEY, JSON.stringify(all));
+  void syncPostSubscription(settings.mosque, settings.events);
   await refreshMosqueReminders(true);
   return { ok: true };
+}
+
+// ----- New announcements: server push --------------------------------------------------------
+// Logged-in users subscribed to a mosque get a push as soon as an announcement or event is validated
+// (sent by the database). Logged out, only the local 2 h reminder works.
+
+async function syncPostSubscription(mosque: MosqueReminderSettings['mosque'], subscribed: boolean) {
+  const url = process.env.EXPO_PUBLIC_SUPABASE_URL?.trim().replace(/\/+$/, '');
+  const key = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY?.trim() || process.env.EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY?.trim();
+  const session = await getValidSession().catch(() => null);
+  if (!url || !key || !session?.accessToken) return;
+  const mosqueId = await resolveMosqueId(mosque);
+  if (!mosqueId) return;
+  const headers = { apikey: key, Authorization: `Bearer ${session.accessToken}`, 'Content-Type': 'application/json' };
+  try {
+    if (subscribed) {
+      await fetch(`${url}/rest/v1/mosque_post_subscriptions?on_conflict=user_id,mosque_id`, {
+        method: 'POST',
+        headers: { ...headers, Prefer: 'resolution=ignore-duplicates,return=minimal' },
+        body: JSON.stringify({ mosque_id: mosqueId }),
+      });
+    } else {
+      await fetch(`${url}/rest/v1/mosque_post_subscriptions?mosque_id=eq.${mosqueId}`, { method: 'DELETE', headers });
+    }
+  } catch {
+    // Retried at the next refresh.
+  }
 }
 
 // ----- Permissions and position --------------------------------------------------------------
@@ -227,6 +257,8 @@ export function refreshMosqueReminders(force = false): Promise<void> {
       if (!force && Date.now() - last < REFRESH_INTERVAL_MS) return;
       await AsyncStorage.setItem(REFRESHED_AT_KEY, String(Date.now())).catch(() => undefined);
       const all = Object.values(await readAll());
+      // Subscriptions made logged out (or offline) reach the account at the next refresh.
+      for (const settings of all) if (settings.events) void syncPostSubscription(settings.mosque, true);
       const scheduled = await Notifications.getAllScheduledNotificationsAsync().catch(() => []);
       await Promise.all(scheduled
         .filter((item) => (item.content.data as Record<string, unknown> | undefined)?.notificationOwner === OWNER)
