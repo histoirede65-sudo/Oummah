@@ -56,3 +56,6 @@ __pycache__/
 # full-project zip backups: too big for GitHub (100 MB limit), keep them local
 /src*.zip
 /backups/*.zip
+
+# Claude Code personal permissions
+.claude/settings.local.json

@@ -1,79 +1,129 @@
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
+import type { Href } from 'expo-router';
 import { router, useFocusEffect } from 'expo-router';
 import { useCallback, useState } from 'react';
 import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
+import Animated, { FadeIn } from 'react-native-reanimated';
 
 import type { MosquePrayerSchedule } from '../features/mosques/data/mosquePrayerTimes';
-import { colors } from '../theme/colors';
-import { typography } from '../theme/typography';
+import { alarmTime, clock, formatDuration } from '../features/tahajjud/tahajjudNight';
+import { loadTahajjudSettings, type TahajjudSettings } from '../features/tahajjud/TahajjudStore';
+import { useTahajjudNight } from '../features/tahajjud/useTahajjudNight';
+import { night, nightType } from './tahajjud/theme';
+import { ValidateSheet } from './tahajjud/ValidateSheet';
+import { WeekMoons } from './tahajjud/WeekMoons';
 
 type Props = { schedule: MosquePrayerSchedule | null };
 
-function time(timestamp: number) {
-  return new Date(timestamp).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
-}
-
+/**
+ * Tahajjud on the home screen: appears at ‘Isha, follows the night (before the last third → during →
+ * validated), disappears after Fajr.
+ */
 export default function HomeTahajjudCard({ schedule }: Props) {
-  const [now, setNow] = useState(Date.now());
+  const view = useTahajjudNight(schedule);
+  const [settings, setSettings] = useState<TahajjudSettings | null>(null);
+  const [sheet, setSheet] = useState(false);
+
   useFocusEffect(useCallback(() => {
-    setNow(Date.now());
-    const timer = setInterval(() => setNow(Date.now()), 30_000);
-    return () => clearInterval(timer);
+    void loadTahajjudSettings().then(setSettings);
   }, []));
 
-  const isha = schedule?.prayers.find(prayer => prayer.key === 'Isha')?.timestamp;
-  const maghrib = schedule?.prayers.find(prayer => prayer.key === 'Maghrib')?.timestamp;
-  const todayFajr = schedule?.prayers.find(prayer => prayer.key === 'Fajr')?.timestamp;
-  const tomorrowFajr = schedule?.tomorrowFajr.timestamp;
-  if (!isha || !maghrib || !todayFajr || !tomorrowFajr) return null;
+  const { state, now } = view;
+  if (!state || state.phase === 'day') return null;
+  const tonight = state.night;
+  const inLastThird = state.phase === 'lastThird';
+  const wakeUp = settings?.alarm.enabled ? alarmTime(tonight, settings.alarm.mode, settings.alarm.customTime) : null;
 
-  const beforeFajr = now < todayFajr;
-  const afterIsha = now >= isha && now < tomorrowFajr;
-  if (!beforeFajr && !afterIsha) return null;
-
-  const fajr = beforeFajr ? todayFajr : tomorrowFajr;
-  const lastThird = afterIsha ? maghrib + (tomorrowFajr - maghrib) * 2 / 3 : null;
-  const inLastThird = lastThird != null && now >= lastThird;
+  const title = view.validated ? 'Nuit accomplie' : inLastThird ? 'Dernier tiers en cours' : `Dernier tiers à ${clock(tonight.lastThirdStart)}`;
+  const detail = view.validated
+    ? view.streak > 1 ? `${view.streak} nuits de suite` : 'Qu’Allah l’accepte'
+    : inLastThird
+      ? `encore ${formatDuration(tonight.fajr - now)} · Fajr à ${clock(tonight.fajr)}`
+      : `dans ${formatDuration(tonight.lastThirdStart - now)} · Fajr à ${clock(tonight.fajr)}`;
 
   return (
-    <Pressable accessibilityRole="button" accessibilityLabel="Ouvrir Tahajjud" onPress={() => router.push('/tahajjud')} style={styles.outer}>
+    <Animated.View entering={FadeIn.duration(500)} style={styles.outer}>
       <View style={styles.card}>
-        {/* The card has the photo's proportions (2172 × 724): the whole photo is shown, never cropped. */}
-        <Image
-          source={require('../assets/images/home/tahajjud-night-card-wide.png')}
-          resizeMode="cover"
-          style={styles.backgroundImage}
-        />
-        {/* Darkens only the right-hand sky, under the text; the moon and the city stay visible. */}
-        <LinearGradient
-          colors={['rgba(10,7,22,0)', 'rgba(10,7,22,0.35)', 'rgba(10,7,22,0.82)']}
-          locations={[0, 0.38, 0.72]}
-          start={{ x: 0, y: 0.5 }}
-          end={{ x: 1, y: 0.5 }}
-          style={StyleSheet.absoluteFill}
-        />
-        <View style={styles.copy}>
-          <Text style={styles.eyebrow}>LA NUIT D’OUMMAH</Text>
-          <Text style={styles.title}>Votre moment Tahajjud</Text>
-          <Text style={styles.detail}>
-            {inLastThird ? 'Le dernier tiers est arrivé' : lastThird && !beforeFajr ? `Dernier tiers à ${time(lastThird)}` : `La nuit se termine à ${time(fajr)}`}
-            {' · '}Fajr à {time(fajr)}
-          </Text>
-          <Text style={styles.action}>Ouvrir mon espace <Ionicons name="arrow-forward" size={13} color={colors.goldLight} /></Text>
+        <Pressable accessibilityRole="button" accessibilityLabel="Ouvrir Tahajjud" onPress={() => router.push('/tahajjud' as Href)} style={styles.photo}>
+          {/* The band has the photo's proportions (2172 × 724): the whole photo is shown. */}
+          <Image source={require('../assets/images/home/tahajjud-night-card-wide.png')} resizeMode="cover" style={styles.backgroundImage} />
+          <LinearGradient
+            colors={['rgba(10,7,22,0)', 'rgba(10,7,22,0.35)', 'rgba(10,7,22,0.85)']}
+            locations={[0, 0.38, 0.72]}
+            start={{ x: 0, y: 0.5 }}
+            end={{ x: 1, y: 0.5 }}
+            style={StyleSheet.absoluteFill}
+          />
+          <View style={styles.copy}>
+            <View style={styles.eyebrowRow}>
+              {inLastThird && !view.validated ? <View style={styles.liveDot} /> : null}
+              <Text style={styles.eyebrow}>{view.validated ? 'TAHAJJUD' : inLastThird ? 'C’EST LE MOMENT' : 'CETTE NUIT'}</Text>
+            </View>
+            <Text style={styles.title} numberOfLines={1} adjustsFontSizeToFit>{title}</Text>
+            <Text style={styles.detail} numberOfLines={1}>{detail}</Text>
+          </View>
+        </Pressable>
+
+        <View style={styles.actions}>
+          {view.validated ? (
+            <Pressable onPress={() => router.push('/tahajjud/stats' as Href)} style={styles.weekRow}>
+              <View style={styles.week}>
+                <WeekMoons nights={view.nights} pauses={view.pauses} currentNight={state.validatableKey ?? tonight.key} size={16} />
+              </View>
+              <Ionicons name="chevron-forward" size={16} color={night.muted} />
+            </Pressable>
+          ) : inLastThird ? (
+            <Pressable onPress={() => setSheet(true)} style={({ pressed }) => [styles.flex, pressed && styles.pressed]}>
+              <LinearGradient colors={[night.goldSoft, night.gold]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.primary}>
+                <Ionicons name="moon" size={17} color={night.sky0} />
+                <Text style={styles.primaryText}>J’ai prié Tahajjud</Text>
+              </LinearGradient>
+            </Pressable>
+          ) : (
+            <>
+              <Pressable onPress={() => router.push('/tahajjud/alarm' as Href)} style={({ pressed }) => [styles.chip, pressed && styles.pressed]}>
+                <Ionicons name="alarm-outline" size={16} color={night.goldSoft} />
+                <Text style={styles.chipText}>{wakeUp ? `Réveil ${clock(wakeUp)}` : 'Régler mon réveil'}</Text>
+              </Pressable>
+              <Pressable onPress={() => router.push('/tahajjud/duas' as Href)} style={({ pressed }) => [styles.chip, pressed && styles.pressed]}>
+                <Ionicons name="heart-outline" size={16} color={night.goldSoft} />
+                <Text style={styles.chipText}>Mes duas</Text>
+              </Pressable>
+            </>
+          )}
         </View>
       </View>
-    </Pressable>
+
+      <ValidateSheet
+        visible={sheet}
+        late={false}
+        streak={view.streak + 1}
+        onClose={() => setSheet(false)}
+        onConfirm={view.validate}
+      />
+    </Animated.View>
   );
 }
 
 const styles = StyleSheet.create({
   outer: { marginHorizontal: 12, marginTop: 12 },
-  card: { overflow: 'hidden', borderRadius: 22, borderWidth: 1, borderColor: colors.goldDark, aspectRatio: 2172 / 724, paddingVertical: 10, paddingHorizontal: 14, flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end', backgroundColor: '#0C102C' },
+  card: { overflow: 'hidden', borderRadius: 22, borderWidth: 1, borderColor: 'rgba(227,181,90,0.45)', backgroundColor: '#0B0820' },
+  photo: { aspectRatio: 2172 / 724, paddingVertical: 10, paddingHorizontal: 14, flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end' },
   backgroundImage: { position: 'absolute', top: 0, right: 0, bottom: 0, left: 0, width: '100%', height: '100%' },
   copy: { width: '60%' },
-  eyebrow: { color: colors.goldLight, letterSpacing: 2, fontSize: 8.5, fontWeight: '700' },
-  title: { color: colors.text, fontFamily: typography.serifMedium, fontSize: 18, marginTop: 2 },
-  detail: { color: colors.textSecondary, fontSize: 11, marginTop: 3, lineHeight: 15 },
-  action: { color: colors.goldLight, fontSize: 11.5, fontWeight: '700', marginTop: 5 },
+  eyebrowRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
+  liveDot: { width: 6, height: 6, borderRadius: 3, backgroundColor: night.goldSoft },
+  eyebrow: { color: night.goldSoft, letterSpacing: 2, fontSize: 8.5, ...nightType.bold },
+  title: { color: night.text, fontSize: 20, marginTop: 3, ...nightType.display },
+  detail: { color: night.textSoft, fontSize: 11.5, marginTop: 2, ...nightType.medium },
+  actions: { flexDirection: 'row', gap: 8, padding: 10, borderTopWidth: 1, borderTopColor: 'rgba(227,181,90,0.18)' },
+  flex: { flex: 1 },
+  chip: { flex: 1, height: 40, borderRadius: 20, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 7, backgroundColor: 'rgba(227,181,90,0.1)', borderWidth: 1, borderColor: 'rgba(227,181,90,0.28)' },
+  chipText: { color: night.text, fontSize: 13, ...nightType.semibold },
+  primary: { height: 42, borderRadius: 21, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8 },
+  primaryText: { color: night.sky0, fontSize: 14, ...nightType.bold },
+  weekRow: { flex: 1, flexDirection: 'row', alignItems: 'center', gap: 10, paddingHorizontal: 6 },
+  week: { flex: 1 },
+  pressed: { opacity: 0.85 },
 });
