@@ -11,6 +11,7 @@ import { GlassCard, shellStyles, TahajjudShell } from '../../components/tahajjud
 import { night, nightType } from '../../components/tahajjud/theme';
 import { getCommunityProfile, isSignedIn, type CommunityProfile } from '../../features/tahajjud/tahajjudCommunity';
 import { timeAgo } from '../../features/tahajjud/duaWall';
+import { getGroups, type GroupSummary } from '../../features/tahajjud/tahajjudGroups';
 import {
   blockMember,
   ENCOURAGEMENTS,
@@ -89,12 +90,18 @@ export default function TahajjudFriendsScreen() {
   const [encourage, setEncourage] = useState<Friend | null>(null);
   const [showBlocked, setShowBlocked] = useState(false);
   const [conversations, setConversations] = useState<Record<string, Conversation>>({});
+  const [groups, setGroups] = useState<GroupSummary[]>([]);
   const searchSeq = useRef(0);
 
   const load = useCallback(async () => {
     try {
-      const [overview, threads] = await Promise.all([getFriendsOverview(), getConversations().catch(() => [])]);
+      const [overview, threads, myGroups] = await Promise.all([
+        getFriendsOverview(),
+        getConversations().catch(() => []),
+        getGroups().catch(() => null),
+      ]);
       setData(overview);
+      if (myGroups) setGroups(myGroups);
       setConversations(Object.fromEntries(threads.map((thread) => [thread.userId, thread])));
       if (overview.encouragements.some((item) => item.unread)) void markEncouragementsRead().catch(() => undefined);
     } catch {
@@ -242,6 +249,51 @@ export default function TahajjudFriendsScreen() {
           </GlassCard>
         </Animated.View>
       ) : null}
+
+      <View style={[styles.sectionHead, styles.section]}>
+        <Text style={[shellStyles.sectionLabel, styles.noMargin]}>Mes groupes{groups.length ? ` · ${groups.length}` : ''}</Text>
+        <Pressable onPress={() => router.push('/tahajjud/group-new' as Href)} style={styles.newGroup}>
+          <Ionicons name="add" size={17} color={night.sky0} />
+          <Text style={styles.newGroupText}>Créer</Text>
+        </Pressable>
+      </View>
+      {groups.length === 0 ? (
+        <Pressable onPress={() => router.push('/tahajjud/group-new' as Href)}>
+          <GlassCard style={styles.groupEmpty}>
+            <Ionicons name="people-circle-outline" size={30} color={night.lavender} />
+            <Text style={styles.groupEmptyText}>Créez un groupe avec vos amis pour vous parler et vous programmer des rappels (Tahajjud, lecture, Witr…).</Text>
+          </GlassCard>
+        </Pressable>
+      ) : (
+        <GlassCard style={styles.block}>
+          {groups.map((group, index) => (
+            <Pressable
+              key={group.id}
+              onPress={() => router.push({ pathname: '/tahajjud/group', params: { id: group.id, name: group.name } } as unknown as Href)}
+              style={[styles.row, index > 0 && styles.rowBorder]}
+            >
+              <View style={styles.groupIcon}><Ionicons name="people" size={19} color={night.sky0} /></View>
+              <View style={styles.flex}>
+                <View style={styles.groupTitleRow}>
+                  <Text style={styles.name} numberOfLines={1}>{group.name}</Text>
+                  {group.muted ? <Ionicons name="notifications-off-outline" size={14} color={night.muted} /> : null}
+                </View>
+                <Text style={[styles.groupLast, group.unread > 0 && styles.lastMessageUnread]} numberOfLines={1}>
+                  {group.lastKind === 'reminder' ? '⏰ ' : ''}
+                  {group.lastKind === 'text' && group.lastSender ? `${group.lastSender} : ` : ''}
+                  {group.lastBody ?? `${group.members} membre${group.members > 1 ? 's' : ''}`}
+                </Text>
+              </View>
+              <View style={styles.groupSide}>
+                <Text style={styles.time}>{timeAgo(group.lastAt)}</Text>
+                {group.unread ? (
+                  <View style={styles.badgeInline}><Text style={styles.badgeText}>{group.unread > 9 ? '9+' : group.unread}</Text></View>
+                ) : null}
+              </View>
+            </Pressable>
+          ))}
+        </GlassCard>
+      )}
 
       {data?.encouragements.length ? (
         <>
@@ -421,6 +473,17 @@ const styles = StyleSheet.create({
   weekDot: { width: 9, height: 9, borderRadius: 5, backgroundColor: 'rgba(255,255,255,0.1)' },
   weekDotOn: { backgroundColor: night.goldSoft },
   weekText: { marginLeft: 6, color: night.muted, fontSize: 13, ...nightType.medium },
+  sectionHead: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 },
+  noMargin: { marginBottom: 0 },
+  newGroup: { flexDirection: 'row', alignItems: 'center', gap: 4, paddingHorizontal: 12, paddingVertical: 7, borderRadius: 16, backgroundColor: night.gold },
+  newGroupText: { color: night.sky0, fontSize: 14, ...nightType.bold },
+  groupEmpty: { flexDirection: 'row', alignItems: 'center', gap: 12 },
+  groupEmptyText: { flex: 1, color: night.textSoft, fontSize: 15, lineHeight: 21, ...nightType.body },
+  groupIcon: { width: 42, height: 42, borderRadius: 21, alignItems: 'center', justifyContent: 'center', backgroundColor: night.lavender },
+  groupTitleRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
+  groupLast: { marginTop: 2, color: night.muted, fontSize: 14, ...nightType.medium },
+  groupSide: { alignItems: 'flex-end', gap: 5 },
+  badgeInline: { minWidth: 20, height: 20, borderRadius: 10, paddingHorizontal: 5, alignItems: 'center', justifyContent: 'center', backgroundColor: night.success },
   messageButton: { width: 40, height: 36, borderRadius: 18, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: night.goldLine },
   badge: {
     position: 'absolute', top: -6, right: -6, minWidth: 20, height: 20, borderRadius: 10, paddingHorizontal: 5,

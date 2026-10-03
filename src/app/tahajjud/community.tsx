@@ -15,7 +15,6 @@ import {
   getMyPresence,
   getTahajjudLive,
   isSignedIn,
-  MAP_THRESHOLD,
   withdrawTahajjud,
   type CommunityProfile,
   type PresenceStatus,
@@ -131,23 +130,8 @@ export default function TahajjudCommunityScreen() {
       </Animated.View>
 
       <Animated.View entering={FadeInDown.delay(120).duration(500)}>
-        {live && live.awake >= MAP_THRESHOLD ? (
-          <>
-            <CommunityMap zones={live.zones} />
-            <Text style={styles.mapNote}>Chaque halo réunit au moins 3 membres dans une zone d’environ 30 km.</Text>
-          </>
-        ) : (
-          <GlassCard style={styles.mapSoon}>
-            <Ionicons name="earth" size={34} color={night.lavender} />
-            <Text style={styles.mapSoonTitle}>La carte s’allume bientôt</Text>
-            <Text style={styles.mapSoonText}>
-              Elle apparaît dès {MAP_THRESHOLD} membres réveillés dans la nuit. Chaque déclaration rapproche ce moment.
-            </Text>
-            <View style={styles.progressTrack}>
-              <View style={[styles.progressFill, { width: `${Math.min(100, ((live?.awake ?? 0) / MAP_THRESHOLD) * 100)}%` }]} />
-            </View>
-          </GlassCard>
-        )}
+        <CommunityMap zones={live?.zones ?? []} />
+        <Text style={styles.mapNote}>Chaque halo réunit au moins 3 membres dans une zone d’environ 30 km.</Text>
       </Animated.View>
 
       <Animated.View entering={FadeInDown.delay(220).duration(500)}>
@@ -236,11 +220,6 @@ const styles = StyleSheet.create({
   prayedText: { color: night.sky0, fontSize: 15, ...nightType.bold },
   loader: { marginVertical: 40 },
   mapNote: { marginTop: 8, color: night.muted, fontSize: 13, lineHeight: 18, textAlign: 'center', ...nightType.body },
-  mapSoon: { marginTop: 14, alignItems: 'center', gap: 8, paddingVertical: 24 },
-  mapSoonTitle: { color: night.text, fontSize: 22, ...nightType.display },
-  mapSoonText: { color: night.textSoft, fontSize: 15, lineHeight: 21, textAlign: 'center', ...nightType.body },
-  progressTrack: { marginTop: 8, alignSelf: 'stretch', height: 6, borderRadius: 3, backgroundColor: 'rgba(255,255,255,0.08)' },
-  progressFill: { height: 6, borderRadius: 3, backgroundColor: night.lavender },
   section: { marginTop: 26 },
   actionCard: { gap: 14 },
   actionText: { color: night.text, fontSize: 17, lineHeight: 24, ...nightType.medium },

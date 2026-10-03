@@ -28,9 +28,6 @@ export type LiveZone = { lat: number; lng: number; count: number };
 export type TahajjudLive = { awake: number; prayed: number; friends: number; friendsPrayed: number; zones: LiveZone[]; generatedAt: string };
 export type PresenceStatus = 'awake' | 'prayed';
 
-/** Below this many members awake, the map stays off (a near-empty map says the opposite). */
-export const MAP_THRESHOLD = 20;
-
 const PROFILE_CACHE_KEY = 'oummah.tahajjud.community-profile.v1';
 
 function config() {

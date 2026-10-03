@@ -4,6 +4,7 @@ import { Platform } from "react-native";
 
 import { getValidSession } from "../auth/SupabaseAuthService";
 import { getPremiumAccess } from "../premium/PremiumAccessService";
+import { ensureCommunityChannels } from "../tahajjud/communityChannels";
 import { isNotificationPermissionGranted } from "./NotificationPermissions";
 
 function configuration() {
@@ -38,6 +39,7 @@ async function ensureAndroidChannel() {
     vibrationPattern: [0, 250, 140, 250],
     lightColor: "#F1BC4F",
   });
+  await ensureCommunityChannels();
 }
 
 export async function syncPushRegistration() {
