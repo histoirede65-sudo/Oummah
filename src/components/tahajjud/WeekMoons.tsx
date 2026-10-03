@@ -48,6 +48,6 @@ const styles = StyleSheet.create({
   },
   paused: { borderStyle: 'dashed', borderColor: 'rgba(183,171,242,0.2)' },
   today: { borderColor: night.gold },
-  day: { color: night.muted, fontSize: 11, ...nightType.semibold },
+  day: { color: night.muted, fontSize: 14, ...nightType.semibold },
   dayToday: { color: night.goldSoft },
 });

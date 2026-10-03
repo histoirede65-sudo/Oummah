@@ -4,7 +4,7 @@
  * À faire relire avant publication.
  */
 
-export type Source = { arabic?: string; text: string; source: string };
+export type Source = { arabic?: string; /** Phonetic transcription of the Arabic. */ phonetic?: string; text: string; source: string };
 
 export type GuideStep = {
   id: string;
@@ -22,21 +22,25 @@ export type GuideTab = { id: 'understand' | 'pray' | 'tips'; label: string; intr
 export const NIGHT_VERSES: Source[] = [
   {
     arabic: 'وَمِنَ ٱلَّيْلِ فَتَهَجَّدْ بِهِۦ نَافِلَةً لَّكَ عَسَىٰٓ أَن يَبْعَثَكَ رَبُّكَ مَقَامًا مَّحْمُودًا',
+    phonetic: 'Wa mina-l-layli fa-tahajjad bihî nâfilatan lak, ‘asâ an yab‘athaka rabbuka maqâman mahmûdâ',
     text: 'Et de la nuit, consacre une partie à la prière (Tahajjud), une prière surérogatoire pour toi. Il se peut que ton Seigneur te ressuscite en une position de gloire.',
     source: 'Sourate Al-Isra, 17:79',
   },
   {
     arabic: 'تَتَجَافَىٰ جُنُوبُهُمْ عَنِ ٱلْمَضَاجِعِ يَدْعُونَ رَبَّهُمْ خَوْفًا وَطَمَعًا',
+    phonetic: 'Tatajâfâ junûbuhum ‘ani-l-madâji‘i yad‘ûna rabbahum khawfan wa tama‘â',
     text: 'Ils s’arrachent de leurs lits pour invoquer leur Seigneur, par crainte et par espoir.',
     source: 'Sourate As-Sajda, 32:16',
   },
   {
     arabic: 'كَانُوا۟ قَلِيلًا مِّنَ ٱلَّيْلِ مَا يَهْجَعُونَ ۝ وَبِٱلْأَسْحَارِ هُمْ يَسْتَغْفِرُونَ',
+    phonetic: 'Kânû qalîlan mina-l-layli mâ yahja‘ûn. Wa bi-l-ashâri hum yastaghfirûn',
     text: 'Ils dormaient peu la nuit, et aux dernières heures de la nuit, ils imploraient le pardon.',
     source: 'Sourate Adh-Dhariyat, 51:17-18',
   },
   {
     arabic: 'وَٱلَّذِينَ يَبِيتُونَ لِرَبِّهِمْ سُجَّدًا وَقِيَٰمًا',
+    phonetic: 'Wa-lladhîna yabîtûna li-rabbihim sujjadan wa qiyâmâ',
     text: 'Et ceux qui passent la nuit prosternés et debout devant leur Seigneur.',
     source: 'Sourate Al-Furqan, 25:64',
   },
@@ -59,6 +63,7 @@ export const NIGHT_HADITHS: Source[] = [
 
 export const WAKING_DUA: Source = {
   arabic: 'الْحَمْدُ لِلَّهِ الَّذِي أَحْيَانَا بَعْدَ مَا أَمَاتَنَا وَإِلَيْهِ النُّشُورُ',
+  phonetic: 'Al-hamdu lillâhi-lladhî ahyânâ ba‘da mâ amâtanâ wa ilayhi-n-nushûr',
   text: 'Louange à Allah qui nous a rendu la vie après nous avoir fait mourir, et c’est vers Lui que se fera la résurrection.',
   source: 'Al-Bukhari 6312',
 };
@@ -67,19 +72,32 @@ export const NIGHT_DUAS: Source[] = [
   WAKING_DUA,
   {
     arabic: 'لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ، وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ، الْحَمْدُ لِلَّهِ، وَسُبْحَانَ اللَّهِ، وَلَا إِلَهَ إِلَّا اللَّهُ، وَاللَّهُ أَكْبَرُ، وَلَا حَوْلَ وَلَا قُوَّةَ إِلَّا بِاللَّهِ، اللَّهُمَّ اغْفِرْ لِي',
+    phonetic: 'Lâ ilâha illa-llâhu wahdahu lâ sharîka lah, lahu-l-mulku wa lahu-l-hamd, wa huwa ‘alâ kulli shay’in qadîr. Al-hamdu lillâh, wa subhâna-llâh, wa lâ ilâha illa-llâh, wa-llâhu akbar, wa lâ hawla wa lâ quwwata illâ billâh. Allâhumma-ghfir lî',
     text: 'Celui qui se réveille la nuit et dit ces paroles puis « Ô Allah, pardonne-moi », ou invoque, est exaucé ; et s’il fait ses ablutions et prie, sa prière est acceptée.',
     source: 'Al-Bukhari 1154',
   },
   {
     arabic: 'اللَّهُمَّ اهْدِنِي فِيمَنْ هَدَيْتَ، وَعَافِنِي فِيمَنْ عَافَيْتَ، وَتَوَلَّنِي فِيمَنْ تَوَلَّيْتَ، وَبَارِكْ لِي فِيمَا أَعْطَيْتَ، وَقِنِي شَرَّ مَا قَضَيْتَ، فَإِنَّكَ تَقْضِي وَلَا يُقْضَى عَلَيْكَ، وَإِنَّهُ لَا يَذِلُّ مَنْ وَالَيْتَ، تَبَارَكْتَ رَبَّنَا وَتَعَالَيْتَ',
+    phonetic: 'Allâhumma-hdinî fîman hadayt, wa ‘âfinî fîman ‘âfayt, wa tawallanî fîman tawallayt, wa bârik lî fîmâ a‘tayt, wa qinî sharra mâ qadayt, fa-innaka taqdî wa lâ yuqdâ ‘alayk, wa innahu lâ yadhillu man wâlayt, tabârakta rabbanâ wa ta‘âlayt',
     text: 'Ô Allah, guide-moi parmi ceux que Tu as guidés, préserve-moi parmi ceux que Tu as préservés, prends-moi sous Ta protection parmi ceux que Tu as pris sous Ta protection, bénis pour moi ce que Tu m’as donné, protège-moi du mal de ce que Tu as décrété… Béni sois-Tu, notre Seigneur, et exalté. (Qunut du Witr)',
     source: 'Abu Dawud 1425, At-Tirmidhi 464, An-Nasa’i 1745',
   },
   {
     arabic: 'سُبْحَانَ الْمَلِكِ الْقُدُّوسِ',
+    phonetic: 'Subhâna-l-Maliki-l-Quddûs',
     text: 'Gloire au Roi, le Très-Saint. — trois fois, après le Witr.',
     source: 'Abu Dawud 1430, An-Nasa’i 1699',
   },
+];
+
+/** Passages to read at night, opened in OUMMAH's Quran (sourate, and first verse when relevant). */
+export const NIGHT_READINGS: { id: string; title: string; reference: string; why: string; surah: number; verse?: number }[] = [
+  { id: 'mulk', title: 'Al-Mulk', reference: 'Sourate 67', surah: 67, why: 'Le Prophète ﷺ ne dormait pas avant de l’avoir lue (At-Tirmidhi 2892).' },
+  { id: 'sajda', title: 'As-Sajda', reference: 'Sourate 32', surah: 32, why: 'Lue chaque soir avec Al-Mulk (At-Tirmidhi 2892). « Ils s’arrachent de leurs lits… » (32:16).' },
+  { id: 'imran', title: 'Fin d’Al ‘Imran', reference: '3:190-200', surah: 3, verse: 190, why: 'Récitée par le Prophète ﷺ en se réveillant la nuit (Al-Bukhari 4569).' },
+  { id: 'baqara', title: 'Fin d’Al-Baqara', reference: '2:285-286', surah: 2, verse: 285, why: 'Ces deux versets suffisent à celui qui les récite la nuit (Al-Bukhari 5009, Muslim 807).' },
+  { id: 'muzzammil', title: 'Al-Muzzammil', reference: 'Sourate 73', surah: 73, why: 'La sourate de la prière de la nuit : « Lève-toi la nuit, sauf une petite partie ».' },
+  { id: 'isra', title: 'Al-Isra', reference: '17:78-82', surah: 17, verse: 78, why: 'Le verset de Tahajjud (17:79).' },
 ];
 
 export const GUIDE: GuideTab[] = [
@@ -140,7 +158,7 @@ export const GUIDE: GuideTab[] = [
       {
         id: 'sujud', icon: 'heart-outline', title: '5. Prolonger la récitation et les prosternations',
         body: 'Récitez ce que vous connaissez, sans vous presser. Dans la prosternation, demandez à Allah tout ce dont vous avez besoin, dans votre langue en dehors de la prière obligatoire.',
-        action: { label: 'Lire quelques versets', route: '/surah/73' },
+        action: { label: 'Lire quelques versets', route: '/tahajjud/readings' },
       },
       {
         id: 'witr', icon: 'star-outline', title: '6. Terminer par le Witr',

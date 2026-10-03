@@ -176,9 +176,10 @@ export default function TahajjudScreen() {
               <GlassCard gold style={styles.verseCard}>
                 <Text style={shellStyles.sectionLabel}>Pour cette nuit</Text>
                 {verse.arabic ? <Text style={styles.arabic}>{verse.arabic}</Text> : null}
+                {verse.phonetic ? <Text style={styles.phonetic}>{verse.phonetic}</Text> : null}
                 <Text style={styles.verseText}>{verse.text}</Text>
                 <Text style={styles.verseSource}>{verse.source}</Text>
-                <Pressable onPress={() => router.push('/surah/73' as Href)} style={styles.readButton}>
+                <Pressable onPress={() => router.push('/tahajjud/readings' as Href)} style={styles.readButton}>
                   <Ionicons name="book" size={15} color={night.goldSoft} />
                   <Text style={styles.readText}>Lire quelques versets</Text>
                 </Pressable>
@@ -200,46 +201,47 @@ export default function TahajjudScreen() {
 }
 
 const styles = StyleSheet.create({
-  eyebrow: { color: night.gold, fontSize: 11, letterSpacing: 1.8, textTransform: 'uppercase', ...nightType.bold },
-  title: { marginTop: 4, color: night.text, fontSize: 52, lineHeight: 56, ...nightType.display },
-  subtitle: { marginTop: 2, color: night.textSoft, fontSize: 15, ...nightType.body },
+  eyebrow: { color: night.gold, fontSize: 14, letterSpacing: 1.8, textTransform: 'uppercase', ...nightType.bold },
+  title: { marginTop: 4, color: night.text, fontSize: 54, lineHeight: 58, ...nightType.display },
+  subtitle: { marginTop: 2, color: night.textSoft, fontSize: 18, ...nightType.body },
   loader: { height: 280, alignItems: 'center', justifyContent: 'center' },
   errorCard: { marginTop: 30, alignItems: 'center', gap: 12 },
-  errorText: { color: night.textSoft, fontSize: 14, textAlign: 'center', lineHeight: 20, ...nightType.body },
+  errorText: { color: night.textSoft, fontSize: 17, textAlign: 'center', lineHeight: 24, ...nightType.body },
   retry: { paddingHorizontal: 20, paddingVertical: 10, borderRadius: 20, borderWidth: 1, borderColor: night.goldLine },
   retryText: { color: night.goldSoft, ...nightType.semibold },
   arcWrap: { marginTop: 18, alignItems: 'center' },
-  centerLabel: { color: night.muted, fontSize: 10, letterSpacing: 2.2, marginBottom: 4, ...nightType.bold },
+  centerLabel: { color: night.muted, fontSize: 12, letterSpacing: 2.2, marginBottom: 4, ...nightType.bold },
   centerLabelGold: { color: night.goldSoft, marginBottom: 0 },
-  centerBig: { color: night.text, fontSize: 46, lineHeight: 50, ...nightType.display },
-  centerSub: { marginTop: 2, color: night.textSoft, fontSize: 13, ...nightType.medium },
+  centerBig: { color: night.text, fontSize: 48, lineHeight: 52, ...nightType.display },
+  centerSub: { marginTop: 2, color: night.textSoft, fontSize: 16, ...nightType.medium },
   liveRow: { flexDirection: 'row', alignItems: 'center', gap: 7, marginBottom: 4 },
   liveDot: { width: 7, height: 7, borderRadius: 4, backgroundColor: night.goldSoft },
   cta: { marginTop: 22, minHeight: 58, borderRadius: 29, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10, paddingHorizontal: 20 },
-  ctaText: { color: night.sky0, fontSize: 16, ...nightType.bold },
+  ctaText: { color: night.sky0, fontSize: 20, ...nightType.bold },
   ctaDone: { backgroundColor: 'rgba(127,216,166,0.1)', borderWidth: 1, borderColor: 'rgba(127,216,166,0.3)' },
   ctaDoneText: { color: night.success },
   undo: { position: 'absolute', right: 18 },
-  undoText: { color: night.muted, fontSize: 12, ...nightType.medium },
+  undoText: { color: night.muted, fontSize: 15, ...nightType.medium },
   lateLink: { marginTop: 12, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6 },
-  lateText: { color: night.goldSoft, fontSize: 13, ...nightType.medium },
+  lateText: { color: night.goldSoft, fontSize: 16, ...nightType.medium },
   grid: { marginTop: 24, flexDirection: 'row', flexWrap: 'wrap', gap: 10 },
   tile: { width: '31.5%', flexGrow: 1, minHeight: 104, borderRadius: 22, padding: 13, backgroundColor: night.glass, borderWidth: 1, borderColor: night.line },
   tileSoon: { opacity: 0.55 },
   tileIcon: { width: 38, height: 38, borderRadius: 19, alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(227,181,90,0.12)' },
   tileIconSoon: { backgroundColor: 'rgba(255,255,255,0.05)' },
-  tileLabel: { marginTop: 10, color: night.text, fontSize: 14, ...nightType.semibold },
+  tileLabel: { marginTop: 10, color: night.text, fontSize: 17, ...nightType.semibold },
   tileLabelSoon: { color: night.textSoft },
-  tileHint: { marginTop: 2, color: night.muted, fontSize: 11, ...nightType.body },
+  tileHint: { marginTop: 2, color: night.muted, fontSize: 14, ...nightType.body },
   weekCard: { marginTop: 16 },
   weekHeader: { flexDirection: 'row', justifyContent: 'space-between' },
   streakPill: { flexDirection: 'row', alignItems: 'center', gap: 4, height: 22, paddingHorizontal: 9, borderRadius: 11, backgroundColor: 'rgba(227,181,90,0.12)' },
-  streakText: { color: night.goldSoft, fontSize: 12, ...nightType.bold },
+  streakText: { color: night.goldSoft, fontSize: 15, ...nightType.bold },
   verseCard: { marginTop: 16 },
-  arabic: { color: night.moon, fontSize: 22, lineHeight: 40, textAlign: 'right', writingDirection: 'rtl', ...nightType.arabic },
-  verseText: { marginTop: 10, color: night.textSoft, fontSize: 15, lineHeight: 23, ...nightType.body },
-  verseSource: { marginTop: 8, color: night.gold, fontSize: 12, ...nightType.semibold },
+  phonetic: { marginTop: 8, color: night.goldSoft, fontSize: 16, lineHeight: 23, fontStyle: 'italic', ...nightType.medium },
+  arabic: { color: night.moon, fontSize: 24, lineHeight: 42, textAlign: 'right', writingDirection: 'rtl', ...nightType.arabic },
+  verseText: { marginTop: 10, color: night.textSoft, fontSize: 18, lineHeight: 27, ...nightType.body },
+  verseSource: { marginTop: 8, color: night.gold, fontSize: 15, ...nightType.semibold },
   readButton: { marginTop: 14, alignSelf: 'flex-start', flexDirection: 'row', alignItems: 'center', gap: 7, paddingHorizontal: 14, paddingVertical: 9, borderRadius: 18, borderWidth: 1, borderColor: night.goldLine },
-  readText: { color: night.goldSoft, fontSize: 13, ...nightType.semibold },
+  readText: { color: night.goldSoft, fontSize: 16, ...nightType.semibold },
   pressed: { opacity: 0.85, transform: [{ scale: 0.985 }] },
 });

@@ -13,9 +13,9 @@ export const night = {
   goldSoft: '#F4D995',
   moon: '#F7EDD2',
   lavender: '#B7ABF2',
-  text: '#F8F4EE',
-  textSoft: '#CFC6E2',
-  muted: '#8F86A8',
+  text: '#FFFFFF',
+  textSoft: '#F2EEFA',
+  muted: '#C5BDDA',
   success: '#7FD8A6',
 } as const;
 

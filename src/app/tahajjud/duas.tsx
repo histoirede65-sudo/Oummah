@@ -155,6 +155,7 @@ export default function TahajjudDuasScreen() {
           {NIGHT_DUAS.map((dua) => (
             <GlassCard key={dua.source} style={styles.sourceCard}>
               {dua.arabic ? <Text style={styles.arabic}>{dua.arabic}</Text> : null}
+              {dua.phonetic ? <Text style={styles.phonetic}>{dua.phonetic}</Text> : null}
               <Text style={styles.sourceText}>{dua.text}</Text>
               <Text style={styles.sourceRef}>{dua.source}</Text>
             </GlassCard>
@@ -212,13 +213,13 @@ const styles = StyleSheet.create({
   tabs: { flexDirection: 'row', padding: 4, borderRadius: 18, backgroundColor: night.glass, borderWidth: 1, borderColor: night.line, marginBottom: 16 },
   tab: { flex: 1, height: 38, borderRadius: 14, alignItems: 'center', justifyContent: 'center' },
   tabOn: { backgroundColor: night.gold },
-  tabText: { color: night.textSoft, fontSize: 14, ...nightType.semibold },
+  tabText: { color: night.textSoft, fontSize: 17, ...nightType.semibold },
   tabTextOn: { color: night.sky0, ...nightType.bold },
   section: { marginTop: 24 },
-  prompt: { color: night.text, fontSize: 21, ...nightType.display },
+  prompt: { color: night.text, fontSize: 23, ...nightType.display },
   promptSpaced: { marginTop: 18 },
   addRow: { marginTop: 12, flexDirection: 'row', alignItems: 'flex-end', gap: 10 },
-  input: { flex: 1, minHeight: 48, maxHeight: 140, borderRadius: 16, paddingHorizontal: 14, paddingTop: 13, paddingBottom: 13, backgroundColor: 'rgba(0,0,0,0.25)', borderWidth: 1, borderColor: night.line, color: night.text, fontSize: 15, ...nightType.body },
+  input: { flex: 1, minHeight: 48, maxHeight: 140, borderRadius: 16, paddingHorizontal: 14, paddingTop: 13, paddingBottom: 13, backgroundColor: 'rgba(0,0,0,0.25)', borderWidth: 1, borderColor: night.line, color: night.text, fontSize: 18, ...nightType.body },
   journalInput: { marginTop: 10, minHeight: 90, textAlignVertical: 'top' },
   addButton: { width: 48, height: 48, borderRadius: 24, backgroundColor: night.gold, alignItems: 'center', justifyContent: 'center' },
   addDisabled: { opacity: 0.4 },
@@ -227,19 +228,20 @@ const styles = StyleSheet.create({
   check: { marginTop: 1, width: 26, height: 26, borderRadius: 13, borderWidth: 1.5, borderColor: night.gold, alignItems: 'center', justifyContent: 'center' },
   checkOn: { backgroundColor: night.gold },
   duaCopy: { flex: 1 },
-  duaText: { color: night.text, fontSize: 15, lineHeight: 22, ...nightType.medium },
+  duaText: { color: night.text, fontSize: 18, lineHeight: 26, ...nightType.medium },
   duaTextDone: { color: night.goldSoft },
   duaActions: { marginTop: 10, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   duaAction: { flexDirection: 'row', alignItems: 'center', gap: 5 },
-  duaActionText: { color: night.muted, fontSize: 12, ...nightType.medium },
+  duaActionText: { color: night.muted, fontSize: 15, ...nightType.medium },
   duaActionOn: { color: night.goldSoft },
   sourceCard: { marginBottom: 10 },
-  arabic: { color: night.moon, fontSize: 21, lineHeight: 38, textAlign: 'right', writingDirection: 'rtl', ...nightType.arabic },
-  sourceText: { marginTop: 8, color: night.textSoft, fontSize: 14, lineHeight: 21, ...nightType.body },
-  sourceRef: { marginTop: 8, color: night.gold, fontSize: 12, ...nightType.semibold },
+  phonetic: { marginTop: 8, color: night.goldSoft, fontSize: 16, lineHeight: 23, fontStyle: 'italic', ...nightType.medium },
+  arabic: { color: night.moon, fontSize: 23, lineHeight: 40, textAlign: 'right', writingDirection: 'rtl', ...nightType.arabic },
+  sourceText: { marginTop: 8, color: night.textSoft, fontSize: 17, lineHeight: 25, ...nightType.body },
+  sourceRef: { marginTop: 8, color: night.gold, fontSize: 15, ...nightType.semibold },
   link: { marginTop: 6, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 7, padding: 12 },
-  linkText: { color: night.goldSoft, fontSize: 14, ...nightType.semibold },
-  privacy: { marginTop: 12, color: night.muted, fontSize: 11.5, ...nightType.body },
-  historyDate: { color: night.gold, fontSize: 12, letterSpacing: 1, textTransform: 'uppercase', ...nightType.bold },
-  historyNote: { marginTop: 6, color: night.muted, fontSize: 13, lineHeight: 19, fontStyle: 'italic', ...nightType.body },
+  linkText: { color: night.goldSoft, fontSize: 17, ...nightType.semibold },
+  privacy: { marginTop: 12, color: night.muted, fontSize: 14, ...nightType.body },
+  historyDate: { color: night.gold, fontSize: 15, letterSpacing: 1, textTransform: 'uppercase', ...nightType.bold },
+  historyNote: { marginTop: 6, color: night.muted, fontSize: 16, lineHeight: 22, fontStyle: 'italic', ...nightType.body },
 });

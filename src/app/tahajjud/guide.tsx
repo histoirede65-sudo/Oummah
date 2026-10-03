@@ -31,6 +31,7 @@ function Step({ step, index, last }: { step: GuideStep; index: number; last: boo
             {step.proof ? (
               <View style={styles.proof}>
                 {step.proof.arabic ? <Text style={styles.arabic}>{step.proof.arabic}</Text> : null}
+                {step.proof.phonetic ? <Text style={styles.phonetic}>{step.proof.phonetic}</Text> : null}
                 <Text style={styles.proofText}>« {step.proof.text} »</Text>
                 <Text style={styles.proofSource}>{step.proof.source}</Text>
               </View>
@@ -81,9 +82,9 @@ const styles = StyleSheet.create({
   tabs: { flexDirection: 'row', padding: 4, borderRadius: 18, backgroundColor: night.glass, borderWidth: 1, borderColor: night.line },
   tab: { flex: 1, height: 38, borderRadius: 14, alignItems: 'center', justifyContent: 'center' },
   tabOn: { backgroundColor: night.gold },
-  tabText: { color: night.textSoft, fontSize: 13, ...nightType.semibold },
+  tabText: { color: night.textSoft, fontSize: 16, ...nightType.semibold },
   tabTextOn: { color: night.sky0, ...nightType.bold },
-  intro: { marginTop: 18, marginBottom: 18, color: night.textSoft, fontSize: 15, lineHeight: 22, ...nightType.body },
+  intro: { marginTop: 18, marginBottom: 18, color: night.textSoft, fontSize: 18, lineHeight: 26, ...nightType.body },
   stepRow: { flexDirection: 'row', gap: 12 },
   rail: { width: 38, alignItems: 'center' },
   node: { width: 38, height: 38, borderRadius: 19, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: night.goldLine, backgroundColor: 'rgba(227,181,90,0.08)' },
@@ -92,14 +93,15 @@ const styles = StyleSheet.create({
   card: { flex: 1, marginBottom: 12, borderRadius: 20, padding: 16, backgroundColor: night.glass, borderWidth: 1, borderColor: night.line },
   cardOpen: { borderColor: night.goldLine },
   cardHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 8 },
-  stepTitle: { flex: 1, color: night.text, fontSize: 16, ...nightType.semibold },
-  body: { marginTop: 10, color: night.textSoft, fontSize: 14, lineHeight: 21, ...nightType.body },
+  stepTitle: { flex: 1, color: night.text, fontSize: 20, ...nightType.semibold },
+  body: { marginTop: 10, color: night.textSoft, fontSize: 17, lineHeight: 25, ...nightType.body },
   proof: { marginTop: 12, padding: 14, borderRadius: 16, backgroundColor: 'rgba(0,0,0,0.22)', borderLeftWidth: 2, borderLeftColor: night.gold },
-  arabic: { color: night.moon, fontSize: 20, lineHeight: 36, textAlign: 'right', writingDirection: 'rtl', marginBottom: 8, ...nightType.arabic },
-  proofText: { color: night.textSoft, fontSize: 13.5, lineHeight: 20, fontStyle: 'italic', ...nightType.body },
-  proofSource: { marginTop: 8, color: night.gold, fontSize: 12, ...nightType.semibold },
+  phonetic: { marginBottom: 10, color: night.goldSoft, fontSize: 16, lineHeight: 23, fontStyle: 'italic', ...nightType.medium },
+  arabic: { color: night.moon, fontSize: 22, lineHeight: 38, textAlign: 'right', writingDirection: 'rtl', marginBottom: 8, ...nightType.arabic },
+  proofText: { color: night.textSoft, fontSize: 17, lineHeight: 24, fontStyle: 'italic', ...nightType.body },
+  proofSource: { marginTop: 8, color: night.gold, fontSize: 15, ...nightType.semibold },
   tip: { marginTop: 12, flexDirection: 'row', gap: 8 },
-  tipText: { flex: 1, color: night.muted, fontSize: 12.5, lineHeight: 18, ...nightType.body },
+  tipText: { flex: 1, color: night.muted, fontSize: 16, lineHeight: 21, ...nightType.body },
   action: { marginTop: 14, alignSelf: 'flex-start', flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: 14, paddingVertical: 9, borderRadius: 18, backgroundColor: night.gold },
-  actionText: { color: night.sky0, fontSize: 13, ...nightType.bold },
+  actionText: { color: night.sky0, fontSize: 16, ...nightType.bold },
 });

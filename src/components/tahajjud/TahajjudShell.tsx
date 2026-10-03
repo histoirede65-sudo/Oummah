@@ -52,7 +52,7 @@ export function GlassCard({ children, style, gold = false }: { children: ReactNo
 }
 
 export const shellStyles = StyleSheet.create({
-  sectionLabel: { color: night.muted, fontSize: 11, letterSpacing: 2.2, textTransform: 'uppercase', marginBottom: 12, ...nightType.bold },
+  sectionLabel: { color: night.muted, fontSize: 14, letterSpacing: 2.2, textTransform: 'uppercase', marginBottom: 12, ...nightType.bold },
 });
 
 const styles = StyleSheet.create({
@@ -63,8 +63,8 @@ const styles = StyleSheet.create({
   header: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingTop: 6, paddingBottom: 14 },
   back: { width: 40, height: 40, borderRadius: 20, alignItems: 'center', justifyContent: 'center', backgroundColor: night.glassStrong, borderWidth: 1, borderColor: night.line },
   headerCopy: { flex: 1 },
-  eyebrow: { color: night.gold, fontSize: 10, letterSpacing: 2.4, textTransform: 'uppercase', ...nightType.bold },
-  title: { color: night.text, fontSize: 30, lineHeight: 34, ...nightType.display },
+  eyebrow: { color: night.gold, fontSize: 12, letterSpacing: 2.4, textTransform: 'uppercase', ...nightType.bold },
+  title: { color: night.text, fontSize: 32, lineHeight: 36, ...nightType.display },
   card: { borderRadius: 24, padding: 18, backgroundColor: night.glass, borderWidth: 1, borderColor: night.line },
   cardGold: { borderColor: night.goldLine, backgroundColor: 'rgba(227,181,90,0.06)' },
 });
