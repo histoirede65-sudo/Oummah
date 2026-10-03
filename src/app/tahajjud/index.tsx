@@ -50,7 +50,7 @@ export default function TahajjudScreen() {
     { icon: 'heart-outline', label: 'Mes duas', hint: 'Préparer ma nuit', route: '/tahajjud/duas' },
     { icon: 'checkmark-circle-outline', label: 'J’ai prié', hint: view.validated ? 'Nuit enregistrée' : 'Valider ma nuit', onPress: () => view.canValidate && setSheet(true) },
     { icon: 'stats-chart-outline', label: 'Statistiques', hint: 'Calendrier · défis', route: '/tahajjud/stats' },
-    { icon: 'people-outline', label: 'Mur des duas', hint: 'Bientôt', soon: true },
+    { icon: 'people-outline', label: 'Mur des duas', hint: 'Dire Amine', route: '/tahajjud/wall' },
     { icon: 'chatbubbles-outline', label: 'Amis', hint: 'Bientôt', soon: true },
   ];
 
