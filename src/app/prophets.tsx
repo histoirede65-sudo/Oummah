@@ -12,8 +12,8 @@ import { loadMusaProgress } from "../features/prophets/prophetProgress";
 import { colors } from "../theme/colors";
 import { typography } from "../theme/typography";
 
-const MUSA_COVER = require("../assets/images/prophets/musa-scenes/moussa.png");
-const PROPHETS_HOME_COVER = require("../assets/images/prophets/prophets-home-premium.png");
+const MUSA_COVER = require("../assets/images/prophets/musa-scenes/moussa.jpg");
+const PROPHETS_HOME_COVER = require("../assets/images/prophets/prophets-home-premium.jpg");
 
 export default function ProphetsScreen() {
   const [completedCount, setCompletedCount] = useState(0);

@@ -1,9 +1,9 @@
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import * as Linking from "expo-linking";
-import { useLocalSearchParams } from "expo-router";
-import { useEffect, useState } from "react";
-import { ActivityIndicator, Pressable, ScrollView, Share, StyleSheet, Text, View } from "react-native";
+import { useFocusEffect, useLocalSearchParams } from "expo-router";
+import { useCallback, useEffect, useState } from "react";
+import { ActivityIndicator, Alert, Pressable, ScrollView, Share, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { hadithRepository } from "../../features/hadith-explorer/data/hadithRepository";
 import type { Hadith } from "../../features/hadith-explorer/domain/Hadith";
@@ -14,6 +14,8 @@ import { hadithLibraryService } from "../../features/hadith-explorer/services/ha
 import { colors } from "../../theme/colors";
 import { typography } from "../../theme/typography";
 import { useI18n } from "../../i18n";
+import { goalProgressBridge } from "../../features/daily-goals/services/goalProgressBridge";
+import { loadReadConfirmations, onLocalMidnight, setReadConfirmation } from "../../features/reading-progress/ReadingValidationStore";
 
 export default function HadithDetailScreen() {
   const { language, t } = useI18n();
@@ -22,14 +24,29 @@ export default function HadithDetailScreen() {
   const [favorite, setFavorite] = useState(false);
   const [error, setError] = useState(false);
   const [arabicVisible, setArabicVisible] = useState(false);
+  const [readingConfirmed, setReadingConfirmed] = useState(false);
+  const [savingReading, setSavingReading] = useState(false);
+  useFocusEffect(useCallback(() => {
+    if (!hadith) return;
+    let active = true;
+    void loadReadConfirmations('hadith').then(ids => {
+      if (active) setReadingConfirmed(ids.has(String(hadith.id)));
+    });
+    return () => { active = false; };
+  }, [hadith]));
+  useEffect(() => onLocalMidnight(() => setReadingConfirmed(false)), []);
 
   useEffect(() => {
     let active = true;
     if (!hadithId) return;
     setError(false);
+    setReadingConfirmed(false);
     void Promise.all([hadithRepository.get(hadithId, language), hadithLibraryService.isFavorite(hadithId)]).then(([value, saved]) => {
       if (!active) return;
       setHadith(value); setFavorite(saved); void hadithLibraryService.markRead(value);
+      void loadReadConfirmations('hadith').then(ids => {
+        if (active) setReadingConfirmed(ids.has(String(value.id)));
+      });
     }).catch(() => active && setError(true));
     return () => { active = false; };
   }, [hadithId, language]);
@@ -39,6 +56,20 @@ export default function HadithDetailScreen() {
     setFavorite(await hadithLibraryService.toggleFavorite(hadith));
   };
   const share = () => hadith && Share.share({ message: `${hadith.arabic ? `${hadith.arabic}\n\n` : ""}${hadith.french}\n\n${hadith.attribution}\n${hadith.grade}\n${hadith.reference}\n${t("hadith.source")}: HadeethEnc — ${hadith.sourceUrl}` });
+  const confirmReading = async () => {
+    if (!hadith || savingReading) return;
+    const id = String(hadith.id);
+    const selected = !readingConfirmed;
+    setSavingReading(true);
+    try {
+      await setReadConfirmation('hadith', id, selected);
+      await goalProgressBridge.setEvidence('hadith_read', id, selected);
+      setReadingConfirmed(selected);
+    } catch {
+      await setReadConfirmation('hadith', id, !selected).catch(() => undefined);
+      Alert.alert('Enregistrement impossible', 'Réessayez dans un instant.');
+    } finally { setSavingReading(false); }
+  };
 
   return (
     <LinearGradient colors={["#080713", "#120A1D", "#080713"]} style={styles.screen}>
@@ -52,6 +83,10 @@ export default function HadithDetailScreen() {
             <Text style={styles.title}>{hadith.title}</Text>
 
             <View style={styles.translationCard}><Text style={styles.label}>{t("hadith.translationLabel")}</Text><Text style={styles.french}>{hadith.french}</Text></View>
+            <Pressable accessibilityRole="button" onPress={() => void confirmReading()} disabled={savingReading} style={[styles.readButton, readingConfirmed && styles.readButtonDone]}>
+              <Ionicons name={readingConfirmed ? "checkmark-circle" : "ellipse-outline"} size={22} color={readingConfirmed ? colors.success : colors.goldLight} />
+              <Text style={styles.readButtonText}>{readingConfirmed ? "Hadith lu · appuyer pour décocher" : "J’ai lu ce hadith"}</Text>
+            </Pressable>
 
               <View style={styles.wasilCard}>
               <LinearGradient colors={["rgba(227,181,90,0.18)", "rgba(73,42,91,0.58)", "rgba(27,18,40,0.82)"]} style={StyleSheet.absoluteFill} />
@@ -99,6 +134,9 @@ const styles = StyleSheet.create({
   sourceLine: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: 12 }, attribution: { flex: 1, color: colors.textMuted, fontFamily: typography.sans, fontSize: 10.5, textAlign: "right" }, title: { color: colors.text, fontFamily: typography.sans, fontSize: 25, lineHeight: 30, marginTop: 17, marginBottom: 17 }, wasilCard: { marginTop: 13, minHeight: 53, padding: 7, borderRadius: 18, overflow: "hidden", backgroundColor: "rgba(73,42,91,0.42)", borderWidth: 1, borderColor: "rgba(227,181,90,0.56)", shadowColor: colors.goldLight, shadowOpacity: 0.28, shadowRadius: 12, shadowOffset: { width: 0, height: 4 }, elevation: 5 }, wasilSubtitle: { color: "#FFF1C9", fontFamily: typography.sans, fontSize: 10.5, lineHeight: 15, fontWeight: "600", textAlign: "center", marginTop: 5 },
   arabicCard: { padding: 22, borderRadius: 25, backgroundColor: "rgba(46,29,58,0.82)", borderWidth: 1, borderColor: "rgba(227,181,90,0.24)" }, arabicToggle: { minHeight: 42, marginTop: 11, paddingHorizontal: 15, borderRadius: 15, flexDirection: "row", alignItems: "center", justifyContent: "space-between", backgroundColor: "rgba(227,181,90,0.08)", borderWidth: 1, borderColor: "rgba(227,181,90,0.18)" }, arabicToggleText: { color: colors.goldLight, fontFamily: typography.sans, fontSize: 11, fontWeight: "700" }, arabic: { color: "#FFF8EC", textAlign: "right", writingDirection: "rtl", fontFamily: "UthmanicHafs", fontSize: 25, lineHeight: 46 },
   translationCard: { marginTop: 11, padding: 21, borderRadius: 25, backgroundColor: "rgba(25,18,37,0.9)", borderWidth: 1, borderColor: "rgba(124,82,146,0.22)" }, label: { color: colors.goldLight, fontFamily: typography.sans, fontSize: 9, fontWeight: "800", letterSpacing: 1.4, marginBottom: 12 }, french: { color: colors.text, fontFamily: typography.sans, fontSize: 19, lineHeight: 28 },
+  readButton: { alignSelf: "flex-end", marginTop: 12, flexDirection: "row", alignItems: "center", gap: 8, borderRadius: 14, borderWidth: 1, borderColor: colors.goldLight, paddingHorizontal: 15, paddingVertical: 12, backgroundColor: "rgba(227,181,90,0.2)", shadowColor: colors.goldLight, shadowOpacity: 0.35, shadowRadius: 9, elevation: 4 },
+  readButtonDone: { borderColor: colors.success, backgroundColor: "rgba(98,197,139,0.17)", shadowColor: colors.success, shadowOpacity: 0.8, shadowRadius: 17, elevation: 9 },
+  readButtonText: { color: colors.text, fontFamily: typography.sans, fontSize: 13, fontWeight: "800" },
   sectionTitle: { marginTop: 28, marginBottom: 11, flexDirection: "row", alignItems: "center", gap: 8 }, sectionTitleText: { color: colors.text, fontFamily: typography.sans, fontSize: 20 }, bodyCard: { padding: 19, borderRadius: 22, backgroundColor: "rgba(28,19,41,0.76)" }, explanation: { color: colors.textSecondary, fontFamily: typography.sans, fontSize: 16, lineHeight: 25 },
   lesson: { flexDirection: "row", alignItems: "flex-start", gap: 11, marginBottom: 13 }, lessonNumber: { width: 23, height: 23, borderRadius: 9, alignItems: "center", justifyContent: "center", backgroundColor: "rgba(227,181,90,0.11)" }, lessonNumberText: { color: colors.goldLight, fontFamily: typography.sans, fontSize: 10, fontWeight: "700" }, lessonText: { flex: 1, color: colors.textSecondary, fontFamily: typography.sans, fontSize: 16, lineHeight: 25 },
   referenceCard: { padding: 17, borderRadius: 23, backgroundColor: "rgba(25,18,37,0.9)", borderWidth: 1, borderColor: "rgba(98,197,139,0.16)" }, referenceRow: { paddingVertical: 11, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: "rgba(255,255,255,0.08)", gap: 5 }, referenceLabel: { color: colors.textMuted, fontFamily: typography.sans, fontSize: 9.5, textTransform: "uppercase", letterSpacing: 0.7 }, referenceValue: { color: colors.text, fontFamily: typography.sans, fontSize: 12, lineHeight: 17 }, sourceButton: { marginTop: 14, height: 44, borderRadius: 15, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 7, backgroundColor: "rgba(227,181,90,0.09)" }, sourceButtonText: { color: colors.goldLight, fontFamily: typography.sans, fontSize: 11, fontWeight: "700" }, disclaimer: { marginTop: 17, flexDirection: "row", gap: 10, padding: 15, borderRadius: 19, backgroundColor: "rgba(139,103,158,0.1)" }, disclaimerText: { flex: 1, color: "#A99DAF", fontFamily: typography.sans, fontSize: 10.5, lineHeight: 16 },

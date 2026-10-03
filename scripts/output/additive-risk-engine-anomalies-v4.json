@@ -1,0 +1,11 @@
+{
+  "schemaVersion": "4.0",
+  "auditVersion": "v4",
+  "generatedAt": "2026-09-30T23:19:37.849Z",
+  "anomalies": {
+    "suspectedFalseSafe": [],
+    "referenceOnlyClassified": [],
+    "insufficientEvidenceForClassification": [],
+    "e338MustRemainInsufficient": []
+  }
+}

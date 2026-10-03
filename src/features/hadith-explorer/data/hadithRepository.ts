@@ -126,9 +126,10 @@ async function refreshCollectionCategories(collection: HadithCollection, cacheKe
           || category.source_category_label,
       }));
     }
-    const collectionHadithIds = new Set(items.map((item) => item.id));
-    const assignments = (await fetchSupabaseSourceCategoryAssignments(categories.map((category) => category.id), []))
-      .filter((assignment) => collectionHadithIds.has(assignment.hadith_id));
+    const assignments = await fetchSupabaseSourceCategoryAssignments(
+      categories.map((category) => category.id),
+      items.map((item) => item.id),
+    );
     const counts = new Map<string, Set<string>>();
     for (const assignment of assignments) {
       const ids = counts.get(assignment.source_category_id) ?? new Set<string>();
@@ -320,9 +321,10 @@ export const hadithRepository = {
     const cached = collectionCategoryItemsCache.get(cacheKey);
     if (cached) return cached;
     const items = await this.searchCollection(collection);
-    const collectionHadithIds = new Set(items.map((item) => item.id));
-    const assignments = (await fetchSupabaseSourceCategoryAssignments([categoryId], []))
-      .filter((assignment) => collectionHadithIds.has(assignment.hadith_id));
+    const assignments = await fetchSupabaseSourceCategoryAssignments(
+      [categoryId],
+      items.map((item) => item.id),
+    );
     const ids = new Set(assignments.map((assignment) => assignment.hadith_id));
     const result = items.filter((item) => ids.has(item.id));
     collectionCategoryItemsCache.set(cacheKey, result);

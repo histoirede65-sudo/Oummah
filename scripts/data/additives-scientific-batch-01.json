@@ -1,0 +1,69 @@
+[
+  {
+    "code": "E621",
+    "names": { "fr": "Glutamate monosodique", "en": "Monosodium glutamate" },
+    "aliases": ["monosodium L-glutamate", "MSG"],
+    "function": "flavour_enhancer",
+    "regulatoryStatus": { "eu": "Référence à vérifier dans la base de la liste de l’Union", "notes": ["Aucune conclusion de risque OUMMAH n’est déduite de cette fiche."] },
+    "authorityEvaluations": [],
+    "potentialEffects": [],
+    "restrictions": [],
+    "evidenceLevel": "insufficient",
+    "sources": [
+      { "sourceId": "ec-eu-additives-database-e621", "organisation": "European Commission", "sourceType": "regulatory_database", "title": "EU Food Additives Database / Union list reference", "url": "https://food.ec.europa.eu/food-safety/food-improvement-agents/additives/database_en", "retrievedAt": "2026-09-30", "fieldsSupported": ["identity", "regulatory_status"] },
+      { "sourceId": "efsa-e621-2026-call", "organisation": "EFSA", "sourceType": "official_information", "title": "Open call for food additives analytical data and use levels", "url": "https://www.efsa.europa.eu/en/call/open-call-food-additives-analytical-data-and-use-levels-food-and-beverages-intended-human", "retrievedAt": "2026-09-30", "fieldsSupported": ["identity", "review_status"] }
+    ],
+    "lastReviewedAt": "2026-09-30",
+    "dataVersion": "reviewed-1.0",
+    "needsScientificReview": true
+  },
+  {
+    "code": "E150D",
+    "names": { "fr": "Caramel au sulfite d’ammonium", "en": "Sulphite ammonia caramel" },
+    "aliases": ["caramel colour IV", "ammonia caramel"],
+    "function": "colour",
+    "regulatoryStatus": { "eu": "Référence à vérifier dans la base de la liste de l’Union", "notes": [] },
+    "authorityEvaluations": [], "potentialEffects": [], "restrictions": [], "evidenceLevel": "insufficient",
+    "sources": [
+      { "sourceId": "ec-eu-additives-database-e150d", "organisation": "European Commission", "sourceType": "regulatory_database", "title": "EU Food Additives Database / Union list reference", "url": "https://food.ec.europa.eu/food-safety/food-improvement-agents/additives/database_en", "retrievedAt": "2026-09-30", "fieldsSupported": ["identity", "regulatory_status"] },
+      { "sourceId": "efsa-food-colours-topic", "organisation": "EFSA", "sourceType": "official_information", "title": "Food colours", "url": "https://www.efsa.europa.eu/en/topics/topic/food-colours", "retrievedAt": "2026-09-30", "fieldsSupported": ["review_scope"] }
+    ],
+    "lastReviewedAt": "2026-09-30", "dataVersion": "reviewed-1.0", "needsScientificReview": true
+  },
+  {
+    "code": "E331",
+    "names": { "fr": "Citrates de sodium", "en": "Sodium citrates" },
+    "aliases": ["sodium citrate"], "function": "acidity_regulator",
+    "regulatoryStatus": { "eu": "Référence à vérifier dans la base de la liste de l’Union", "notes": [] },
+    "authorityEvaluations": [], "potentialEffects": [], "restrictions": [], "evidenceLevel": "insufficient",
+    "sources": [{ "sourceId": "ec-eu-additives-database-e331", "organisation": "European Commission", "sourceType": "regulatory_database", "title": "EU Food Additives Database / Union list reference", "url": "https://food.ec.europa.eu/food-safety/food-improvement-agents/additives/database_en", "retrievedAt": "2026-09-30", "fieldsSupported": ["identity", "regulatory_status"] }],
+    "lastReviewedAt": "2026-09-30", "dataVersion": "reviewed-1.0", "needsScientificReview": true
+  },
+  {
+    "code": "E306",
+    "names": { "fr": "Extraits riches en tocophérols", "en": "Tocopherol-rich extract" },
+    "aliases": ["mixed tocopherols"], "function": "antioxidant",
+    "regulatoryStatus": { "eu": "Référence à vérifier dans la base de la liste de l’Union", "notes": [] },
+    "authorityEvaluations": [], "potentialEffects": [], "restrictions": [], "evidenceLevel": "insufficient",
+    "sources": [{ "sourceId": "ec-eu-additives-database-e306", "organisation": "European Commission", "sourceType": "regulatory_database", "title": "EU Food Additives Database / Union list reference", "url": "https://food.ec.europa.eu/food-safety/food-improvement-agents/additives/database_en", "retrievedAt": "2026-09-30", "fieldsSupported": ["identity", "regulatory_status"] }],
+    "lastReviewedAt": "2026-09-30", "dataVersion": "reviewed-1.0", "needsScientificReview": true
+  },
+  {
+    "code": "E160C",
+    "names": { "fr": "Extrait de paprika", "en": "Paprika extract" },
+    "aliases": ["paprika oleoresin"], "function": "colour",
+    "regulatoryStatus": { "eu": "Référence à vérifier dans la base de la liste de l’Union", "notes": [] },
+    "authorityEvaluations": [], "potentialEffects": [], "restrictions": [], "evidenceLevel": "insufficient",
+    "sources": [{ "sourceId": "ec-eu-additives-database-e160c", "organisation": "European Commission", "sourceType": "regulatory_database", "title": "EU Food Additives Database / Union list reference", "url": "https://food.ec.europa.eu/food-safety/food-improvement-agents/additives/database_en", "retrievedAt": "2026-09-30", "fieldsSupported": ["identity", "regulatory_status"] }],
+    "lastReviewedAt": "2026-09-30", "dataVersion": "reviewed-1.0", "needsScientificReview": true
+  },
+  {
+    "code": "E220",
+    "names": { "fr": "Dioxyde de soufre", "en": "Sulphur dioxide" },
+    "aliases": ["sulfur dioxide"], "function": "preservative",
+    "regulatoryStatus": { "eu": "Référence à vérifier dans la base de la liste de l’Union", "notes": [] },
+    "authorityEvaluations": [], "potentialEffects": [], "restrictions": [], "evidenceLevel": "insufficient",
+    "sources": [{ "sourceId": "ec-eu-additives-database-e220", "organisation": "European Commission", "sourceType": "regulatory_database", "title": "EU Food Additives Database / Union list reference", "url": "https://food.ec.europa.eu/food-safety/food-improvement-agents/additives/database_en", "retrievedAt": "2026-09-30", "fieldsSupported": ["identity", "regulatory_status"] }],
+    "lastReviewedAt": "2026-09-30", "dataVersion": "reviewed-1.0", "needsScientificReview": true
+  }
+]

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef } from 'react';
 import { Animated, Easing, PanResponder, type GestureResponderHandlers, type ViewStyle } from 'react-native';
 
 export type PlayerGestureDirection = 'up' | 'down' | 'left' | 'right' | null;
@@ -77,13 +77,22 @@ export function usePlayerSwipeGestures(options: PlayerSwipeGestureOptions): Play
     });
   }, [opacity, options, reset, translateX, translateY]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (options.surface === 'mini' && options.active) {
+      // Initialize before the first visible frame; only this animation owns entrance.
+      animation.current?.stop();
+      translateX.setValue(0);
       translateY.setValue(12);
       opacity.setValue(0);
-      reset();
+      const entering = Animated.parallel([
+        Animated.timing(translateY, { toValue: 0, duration: 220, easing: Easing.out(Easing.cubic), useNativeDriver: true, isInteraction: false }),
+        Animated.timing(opacity, { toValue: 1, duration: 220, easing: Easing.out(Easing.cubic), useNativeDriver: true, isInteraction: false }),
+      ]);
+      animation.current = entering;
+      entering.start();
+      return () => entering.stop();
     }
-  }, [opacity, options.active, options.surface, reset, translateY]);
+  }, [opacity, options.active, options.surface, translateX, translateY]);
 
   useEffect(() => () => animation.current?.stop(), []);
 

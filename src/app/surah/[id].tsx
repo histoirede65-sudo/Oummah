@@ -1,8 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import { useFocusEffect } from "expo-router";
 import { createAudioPlayer, useAudioPlayerStatus } from "expo-audio";
-import * as Clipboard from "expo-clipboard";
-import { router, useLocalSearchParams, type Href } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import {
   memo,
   useCallback,
@@ -12,19 +11,15 @@ import {
   useState,
 } from "react";
 import {
-  ActionSheetIOS,
   ActivityIndicator,
   Alert,
   FlatList,
-  Platform,
   Pressable,
-  Share,
   StyleSheet,
   Text,
   TextInput,
   useWindowDimensions,
   View,
-  type AlertButton,
   type ListRenderItem,
   type ViewToken,
 } from "react-native";
@@ -33,7 +28,6 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useGlobalAudioPlayer } from "../../context/AudioPlayerProvider";
 import { useReciter } from "../../context/ReciterProvider";
 import { offlineRepository } from "../../core/offline";
-import { hapticsService } from "../../core/settings";
 import { SURAHS } from "../../data/surahs";
 import { ARABIC_READING_FONT_FAMILY } from "../../features/quran/ArabicReadingPresentation";
 import { QuranArabicText } from "../../features/quran/QuranArabicText";
@@ -51,12 +45,12 @@ import {
   readingPreferencesStore,
   type ReadingMode,
   type ReadingPreferences,
-  type ReadingTheme,
 } from "../../features/quran/ReadingPreferences";
 import { readingQuranRepository } from "../../features/quran/ReadingQuranRepository";
 import { sanitizeTranslationText } from "../../features/quran/TranslationText";
 import { quranFoundationRepository } from "../../features/quranfoundation/QuranFoundationRepository";
 import { goalProgressBridge } from "../../features/daily-goals/services/goalProgressBridge";
+import { loadReadConfirmations, onLocalMidnight, setReadConfirmation } from "../../features/reading-progress/ReadingValidationStore";
 import type {
   QuranFoundationRecitation,
   QuranFoundationVerse,
@@ -137,9 +131,11 @@ const VerseRow = memo(function VerseRow({
   verse,
   settings,
   screenWidth,
-  onPress,
   onListen,
   onOpenTafsir,
+  onConfirmRead,
+  isRead,
+  isSavingRead,
   isPlaying,
   isActive,
   activeWordPosition,
@@ -149,9 +145,11 @@ const VerseRow = memo(function VerseRow({
   verse: QuranFoundationVerse;
   settings: ReadingPreferences;
   screenWidth: number;
-  onPress: (verse: QuranFoundationVerse) => void;
   onListen: (verse: QuranFoundationVerse) => void;
   onOpenTafsir: (verse: QuranFoundationVerse) => void;
+  onConfirmRead: (verse: QuranFoundationVerse) => void;
+  isRead: boolean;
+  isSavingRead: boolean;
   isPlaying: boolean;
   isActive: boolean;
   activeWordPosition: number | null;
@@ -171,11 +169,12 @@ const VerseRow = memo(function VerseRow({
       verse.textUthmani.replace(/\s+/g, " ").trim().split(" ").filter(Boolean),
     [verse.textUthmani],
   );
+  const officialTranslation =
+    sanitizeTranslationText(
+      verse.translation || verse.translations?.[0]?.text,
+    ) || t("surahReader.translationUnavailable");
   return (
-    <Pressable
-      onPress={() => onPress(verse)}
-      onLongPress={() => onPress(verse)}
-      delayLongPress={350}
+    <View
       style={[
         styles.verse,
         settings.columnWidth === "wide" && styles.verseWide,
@@ -218,31 +217,22 @@ const VerseRow = memo(function VerseRow({
         />
       </View>
       {showArabic ? (
-      <QuranArabicText
+        <QuranArabicText
           selectable
           screenWidth={screenWidth}
-          preferredSize={settings.arabicSize}
+          preferredSize={48}
         >
           {isActive ? (() => {
             let visualWordPosition = 0;
             return arabicWords.map((word, index) => {
               const isPauseMark = isQuranicPauseMark(word);
               const wordPosition = isPauseMark ? null : ++visualWordPosition;
-              if (verse.verseKey === "2:5") {
-                console.log("[QURAN-VISUAL-MAPPING-2-5]", {
-                  text: word,
-                  wordPosition,
-                });
-              }
               return (
                 <QuranWordHighlight
                   key={`${index}-${word}`}
                   text={`${word}${index < arabicWords.length - 1 ? " " : ""}`}
                   fontFamily={ARABIC_READING_FONT_FAMILY}
-                  isActive={
-                    wordPosition !== null &&
-                    wordPosition === activeWordPosition
-                  }
+                  isActive={wordPosition !== null && wordPosition === activeWordPosition}
                   isRead={
                     wordPosition !== null &&
                     lastReadWordPosition !== null &&
@@ -268,21 +258,32 @@ const VerseRow = memo(function VerseRow({
         </Text>
       ) : null}
       {showTranslation ? (
-        <Text
-          selectable
-          style={[
-            styles.translation,
-            {
-              fontSize: settings.translationSize,
-              lineHeight: settings.translationSize * 1.55,
-            },
-          ]}
-        >
-          {sanitizeTranslationText(
-            verse.translation || verse.translations?.[0]?.text,
-          ) || t("surahReader.translationUnavailable")}
-        </Text>
+        <View style={styles.translationContainer}>
+          <Text
+            numberOfLines={0}
+            style={[
+              styles.translation,
+              {
+                fontSize: settings.translationSize,
+                lineHeight: settings.translationSize * 1.55,
+              },
+            ]}
+          >
+            {officialTranslation}
+          </Text>
+        </View>
       ) : null}
+
+      <Pressable
+        accessibilityRole="button"
+        accessibilityLabel={isRead ? t("surahReader.unmarkVerseReadLabel", { verse: verse.id }) : t("surahReader.markVerseReadLabel", { verse: verse.id })}
+        disabled={isSavingRead}
+        onPress={() => onConfirmRead(verse)}
+        style={[styles.readVerseButton, isRead && styles.readVerseButtonDone]}
+      >
+        <Ionicons name={isRead ? "checkmark-circle" : "ellipse-outline"} size={21} color={isRead ? colors.success : colors.goldLight} />
+        <Text style={styles.readVerseText}>{t(isRead ? "surahReader.verseRead" : "surahReader.markVerseRead")}</Text>
+      </Pressable>
 
       <Pressable
         accessibilityRole="button"
@@ -309,7 +310,7 @@ const VerseRow = memo(function VerseRow({
 
         <Ionicons name="chevron-forward" size={18} color={colors.goldLight} />
       </Pressable>
-    </Pressable>
+    </View>
   );
 });
 
@@ -354,6 +355,14 @@ export default function SurahReadingScreen() {
   const currentVerseRef = useRef(requestedVerseNumber ?? 1);
   const verseLoadRequestRef = useRef(0);
   const [verses, setVerses] = useState<QuranFoundationVerse[]>([]);
+  const [readVerseKeys, setReadVerseKeys] = useState<Set<string>>(new Set());
+  const [savingReadKeys, setSavingReadKeys] = useState<Set<string>>(new Set());
+  useFocusEffect(useCallback(() => {
+    let active = true;
+    void loadReadConfirmations('quran').then(value => { if (active) setReadVerseKeys(value); });
+    return () => { active = false; };
+  }, []));
+  useEffect(() => onLocalMidnight(() => setReadVerseKeys(new Set())), []);
   const [englishSurahName, setEnglishSurahName] = useState<string>();
   const [loading, setLoading] = useState(true);
   const [deepLinkPositioned, setDeepLinkPositioned] = useState(
@@ -994,138 +1003,11 @@ export default function SurahReadingScreen() {
     versePlayerStatus.currentTime,
     versePlayerStatus.playing,
   ]);
-  const verseShareText = (verse: QuranFoundationVerse) =>
-    `${verse.textUthmani}\n\n${sanitizeTranslationText(verse.translation ?? verse.translations?.[0]?.text)}\n— ${t("quran.title")} ${verse.verseKey}`;
-  const runVerseAction = async (
-    verse: QuranFoundationVerse,
-    action: number,
-  ) => {
-    const verseKey = verse.verseKey as `${number}:${number}`;
-    if (action === 0) return listenToVerse(verse);
-    if (action === 1) {
-      const favorites = await offlineRepository.getFavorites();
-      const id = `verse:${verseKey}`;
-      await offlineRepository.saveFavorites(
-        favorites.some((item) => item.id === id)
-          ? favorites.filter((item) => item.id !== id)
-          : [
-              ...favorites,
-              {
-                id,
-                type: "verse",
-                targetId: verseKey,
-                createdAt: new Date().toISOString(),
-              },
-            ],
-      );
-      void hapticsService.favorite();
-    }
-    if (action === 2) {
-      const bookmarks = await offlineRepository.getBookmarks();
-      const existing = bookmarks.find((item) => item.verseKey === verseKey);
-      await offlineRepository.saveBookmarks(
-        existing
-          ? bookmarks.filter((item) => item.verseKey !== verseKey)
-          : [
-              ...bookmarks,
-              { id: verseKey, verseKey, createdAt: new Date().toISOString() },
-            ],
-      );
-      void hapticsService.bookmark();
-    }
-    if (action === 3) {
-      await Clipboard.setStringAsync(verseShareText(verse));
-      Alert.alert(
-        t("surahReader.copied"),
-        t("surahReader.verseCopied", { verse: verseKey }),
-      );
-    }
-    if (action === 4) await Share.share({ message: verseShareText(verse) });
-    if (action === 5) {
-      goalProgressBridge.record({
-        metric: "quran_tafsir_read",
-        evidenceId: verseKey,
-      });
-      router.push({
-        pathname: "/tafsir/[verseKey]",
-        params: { verseKey },
-      });
-    }
-    if (action === 6) {
-      router.push(`/hifz/session?surah=${surahId}&verse=${verse.id}` as Href);
-    }
-    if (action === 7) {
-      const bookmarks = await offlineRepository.getBookmarks();
-      const existing = bookmarks.find((item) => item.verseKey === verseKey);
-      if (Platform.OS === "ios") {
-        Alert.prompt(
-          t("surahReader.addNote"),
-          t("surahReader.verseTitle", { verse: verseKey }),
-          async (note) => {
-            const next = bookmarks.filter((item) => item.verseKey !== verseKey);
-            if (note.trim())
-              next.push({
-                id: verseKey,
-                verseKey,
-                note: note.trim(),
-                createdAt: existing?.createdAt ?? new Date().toISOString(),
-              });
-            await offlineRepository.saveBookmarks(next);
-          },
-          "plain-text",
-          existing?.note,
-        );
-      } else {
-        Alert.alert(
-          t("surahReader.addNote"),
-          t("surahReader.notesIosOnly"),
-        );
-      }
-    }
-  };
-  const actions = (verse: QuranFoundationVerse) => {
-    const options = [
-      t("surahReader.listenToVerse"),
-      t("surahReader.addFavorite"),
-      t("surahReader.addBookmark"),
-      t("surahReader.copy"),
-      t("common.share"),
-      t("surahReader.openTafsir"),
-      t("surahReader.memorizeVerse"),
-      t("surahReader.addNote"),
-      t("surahReader.cancel"),
-    ];
-    if (Platform.OS === "ios") {
-      ActionSheetIOS.showActionSheetWithOptions(
-        { title: t("surahReader.verseTitle", { verse: verse.verseKey }), options, cancelButtonIndex: 8 },
-        (index) => {
-          if (index < 8) void runVerseAction(verse, index);
-        },
-      );
-      return;
-    }
-    const buttons: AlertButton[] = options.slice(0, 8).map((text, index) => ({
-      text,
-      onPress: () => void runVerseAction(verse, index),
-    }));
-    buttons.push({ text: t("surahReader.cancel"), style: "cancel" });
-    Alert.alert(
-      t("surahReader.verseTitle", { verse: verse.verseKey }),
-      t("surahReader.chooseAction"),
-      buttons,
-    );
-  };
   const listenToVerseRef = useRef(listenToVerse);
-  const actionsRef = useRef(actions);
   listenToVerseRef.current = listenToVerse;
-  actionsRef.current = actions;
   const handleVerseListen = useCallback((verse: QuranFoundationVerse) => {
     void listenToVerseRef.current(verse);
   }, []);
-  const handleVerseActions = useCallback(
-    (verse: QuranFoundationVerse) => actionsRef.current(verse),
-    [],
-  );
   const handleOpenTafsir = useCallback((verse: QuranFoundationVerse) => {
     goalProgressBridge.record({
       metric: "quran_tafsir_read",
@@ -1136,6 +1018,24 @@ export default function SurahReadingScreen() {
       params: { verseKey: verse.verseKey },
     });
   }, []);
+  const handleConfirmRead = useCallback((verse: QuranFoundationVerse) => {
+    const key = verse.verseKey;
+    if (savingReadKeys.has(key)) return;
+    const selected = !readVerseKeys.has(key);
+    setSavingReadKeys(previous => new Set(previous).add(key));
+    void (async () => {
+      try {
+        const next = await setReadConfirmation('quran', key, selected);
+        await goalProgressBridge.setEvidence('quran_verses_read', `read:${key}`, selected);
+        setReadVerseKeys(next);
+      } catch {
+        await setReadConfirmation('quran', key, !selected).catch(() => undefined);
+        Alert.alert('Enregistrement impossible', 'Réessayez dans un instant.');
+      } finally {
+        setSavingReadKeys(previous => { const next = new Set(previous); next.delete(key); return next; });
+      }
+    })();
+  }, [readVerseKeys, savingReadKeys]);
 
   useEffect(() => {
     if (!activeVerse || !currentReciter) return;
@@ -1163,9 +1063,11 @@ export default function SurahReadingScreen() {
         verse={item}
         settings={settings}
         screenWidth={screenWidth}
-        onPress={handleVerseActions}
         onListen={handleVerseListen}
         onOpenTafsir={handleOpenTafsir}
+        onConfirmRead={handleConfirmRead}
+        isRead={readVerseKeys.has(item.verseKey)}
+        isSavingRead={savingReadKeys.has(item.verseKey)}
         isPlaying={playingVerseKey === item.verseKey}
         isActive={activeVerse?.verseKey === item.verseKey}
         activeWordPosition={
@@ -1185,11 +1087,13 @@ export default function SurahReadingScreen() {
       activeVerse?.verseKey,
       activeWordState.activeWordPosition,
       handleOpenTafsir,
-      handleVerseActions,
+      handleConfirmRead,
       handleVerseListen,
       isWordSyncUnavailable,
       lastReadWordPosition,
       playingVerseKey,
+      readVerseKeys,
+      savingReadKeys,
       screenWidth,
       settings,
     ],
@@ -1209,10 +1113,6 @@ export default function SurahReadingScreen() {
         ) {
           setDeepLinkPositioned(true);
         }
-        goalProgressBridge.record({
-          metric: "quran_verses_read",
-          evidenceId: first.item.verseKey,
-        });
       }
     },
   ).current;
@@ -1247,12 +1147,7 @@ export default function SurahReadingScreen() {
     setVerseJumpValue("");
   }, [surah.verses, t, verseJumpValue, verses]);
 
-  const palette =
-    settings.theme === "light"
-      ? "#F7F3EA"
-      : settings.theme === "sepia"
-        ? "#241D16"
-        : colors.background;
+  const palette = colors.background;
 
   return (
     <SafeAreaView
@@ -1341,81 +1236,6 @@ export default function SurahReadingScreen() {
               </Pressable>
             )}
           />
-          <View style={styles.settingRow}>
-            <Text style={styles.settingLabel}>{t("surahReader.arabic")}</Text>
-            <Pressable
-              onPress={() =>
-                updateSettings({
-                  arabicSize: Math.max(20, settings.arabicSize - 2),
-                })
-              }
-            >
-              <Text style={styles.adjust}>A−</Text>
-            </Pressable>
-            <Pressable
-              onPress={() =>
-                updateSettings({
-                  arabicSize: Math.min(48, settings.arabicSize + 2),
-                })
-              }
-            >
-              <Text style={styles.adjust}>A+</Text>
-            </Pressable>
-            <Pressable
-              accessibilityRole="switch"
-              accessibilityState={{ checked: settings.showTransliteration }}
-              onPress={() =>
-                updateSettings({
-                  showTransliteration: !settings.showTransliteration,
-                })
-              }
-              style={[
-                styles.transliterationToggle,
-                settings.showTransliteration &&
-                  styles.transliterationToggleActive,
-              ]}
-            >
-              <Ionicons
-                name="text-outline"
-                size={14}
-                color={
-                  settings.showTransliteration
-                    ? colors.background
-                    : colors.goldLight
-                }
-              />
-              <Text
-                style={[
-                  styles.transliterationToggleText,
-                  settings.showTransliteration &&
-                    styles.transliterationToggleTextActive,
-                ]}
-              >
-                {t("surahReader.transliteration")}
-              </Text>
-            </Pressable>
-          </View>
-          <View style={styles.settingRow}>
-            <Text style={styles.settingLabel}>{t("surahReader.theme")}</Text>
-            {(["dark", "sepia", "light"] as ReadingTheme[]).map((theme) => (
-              <Pressable
-                key={theme}
-                onPress={() => updateSettings({ theme })}
-                style={[
-                  styles.themeDot,
-                  {
-                    backgroundColor:
-                      theme === "light"
-                        ? "#F7F3EA"
-                        : theme === "sepia"
-                          ? "#6B5237"
-                          : "#090711",
-                  },
-                  settings.theme === theme && styles.themeActive,
-                ]}
-              />
-            ))}
-          </View>
         </View>
       ) : null}
       {loading ? (
@@ -1440,7 +1260,10 @@ export default function SurahReadingScreen() {
             maxToRenderPerBatch={8}
             updateCellsBatchingPeriod={40}
             windowSize={7}
-            removeClippedSubviews
+            // Some long translations were clipped before their final line on
+            // iOS. Keep every reading cell fully measured; this only affects
+            // the Quran reading screen, not the listening screen.
+            removeClippedSubviews={false}
             onScrollToIndexFailed={({ averageItemLength, index }) => {
               listRef.current?.scrollToOffset({
                 offset: averageItemLength * index,
@@ -1767,12 +1590,19 @@ const styles = StyleSheet.create({
     fontSize: 11,
     textAlign: "center",
   },
-  translation: {
+  translationContainer: {
+    width: "100%",
+    flexShrink: 0,
     marginTop: 28,
     paddingTop: 22,
     borderTopWidth: StyleSheet.hairlineWidth,
     borderColor: "rgba(224,188,112,0.16)",
-    color: colors.textSecondary,
+    overflow: "visible",
+  },
+  translation: {
+    width: "100%",
+    flexShrink: 0,
+    color: "#FFFFFF",
   },
   transliteration: {
     marginTop: 22,
@@ -1857,6 +1687,25 @@ const styles = StyleSheet.create({
     borderColor: "rgba(224,188,112,0.42)",
     backgroundColor: "rgba(126,72,148,0.13)",
   },
+  readVerseButton: {
+    marginTop: 22,
+    alignSelf: "flex-end",
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    paddingHorizontal: 15,
+    paddingVertical: 11,
+    borderRadius: 15,
+    borderWidth: 1,
+    borderColor: colors.goldLight,
+    backgroundColor: "rgba(227,181,90,0.2)",
+    shadowColor: colors.goldLight,
+    shadowOpacity: 0.35,
+    shadowRadius: 9,
+    elevation: 4,
+  },
+  readVerseButtonDone: { borderColor: colors.success, backgroundColor: "rgba(98,197,139,0.17)", shadowColor: colors.success, shadowOpacity: 0.8, shadowRadius: 17, elevation: 9 },
+  readVerseText: { color: colors.text, fontSize: 14, fontWeight: "800" },
   tafsirButtonPressed: {
     opacity: 0.72,
     transform: [{ scale: 0.99 }],

@@ -7,7 +7,7 @@ const SETTINGS_KEY = "oumma:daily-goals:settings:v1";
 
 export const DEFAULT_DAILY_GOAL_SETTINGS: DailyGoalSettings = {
   dailyMinutes: 10,
-  focus: ["quran", "dhikr", "hifz", "dua", "hadith"],
+  focus: ["quran", "prayer", "dhikr", "hifz", "dua", "hadith"],
   onboardingComplete: false,
 };
 
@@ -41,7 +41,7 @@ export async function readDailyGoalSettings() {
   try {
     const parsed = JSON.parse(raw) as Partial<DailyGoalSettings>;
     const focus = parsed.onboardingComplete
-      ? parsed.focus
+      ? [...new Set([...(parsed.focus ?? []), "prayer" as const])]
       : [
           ...new Set([
             ...DEFAULT_DAILY_GOAL_SETTINGS.focus,

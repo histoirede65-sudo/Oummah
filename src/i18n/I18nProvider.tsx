@@ -2,7 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
 import { I18nManager, type FlexStyle, type TextStyle } from 'react-native';
 
-import { defaultLanguage, languages, resolveLanguage, type LanguageCode, type TextDirection } from './config';
+import { languages, type LanguageCode, type TextDirection } from './config';
 import { fr, type TranslationKey } from './fr';
 
 type TranslationValues = Record<string, string | number>;
@@ -20,13 +20,6 @@ export interface I18nContextValue {
 const I18nContext = createContext<I18nContextValue | null>(null);
 const LANGUAGE_STORAGE_KEY = '@oummah/language/v1';
 
-function deviceLanguage(): LanguageCode {
-  try {
-    return resolveLanguage(Intl.DateTimeFormat().resolvedOptions().locale);
-  } catch {
-    return defaultLanguage;
-  }
-}
 
 function interpolate(message: string, values?: TranslationValues): string {
   if (!values) return message;
@@ -38,29 +31,22 @@ function interpolate(message: string, values?: TranslationValues): string {
 I18nManager.allowRTL(true);
 I18nManager.swapLeftAndRightInRTL?.(true);
 
-export function I18nProvider({ children, initialLanguage }: { children: ReactNode; initialLanguage?: LanguageCode }) {
-  const [language, setStoredLanguage] = useState<LanguageCode>(initialLanguage ?? deviceLanguage);
+export function I18nProvider({ children }: { children: ReactNode; initialLanguage?: LanguageCode }) {
+  // Version française uniquement : l'anglais reste dans le code pour une réactivation future,
+  // mais ne peut plus être sélectionné ni restauré depuis un ancien réglage.
+  const [language, setStoredLanguage] = useState<LanguageCode>('fr');
   const definition = languages[language];
 
   useEffect(() => {
-    let active = true;
-
-    AsyncStorage.getItem(LANGUAGE_STORAGE_KEY)
-      .then((storedLanguage) => {
-        if (active && storedLanguage && storedLanguage in languages) {
-          setStoredLanguage(storedLanguage as LanguageCode);
-        }
-      })
-      .catch(() => undefined);
-
-    return () => {
-      active = false;
-    };
+    // Réinitialise aussi les utilisateurs qui avaient déjà enregistré "en".
+    setStoredLanguage('fr');
+    void AsyncStorage.setItem(LANGUAGE_STORAGE_KEY, 'fr').catch(() => undefined);
   }, []);
 
-  const setLanguage = useCallback((nextLanguage: LanguageCode) => {
-    setStoredLanguage(nextLanguage);
-    void AsyncStorage.setItem(LANGUAGE_STORAGE_KEY, nextLanguage).catch(() => undefined);
+  const setLanguage = useCallback((_nextLanguage: LanguageCode) => {
+    // Garde volontairement l'API existante pour ne rien casser ailleurs.
+    setStoredLanguage('fr');
+    void AsyncStorage.setItem(LANGUAGE_STORAGE_KEY, 'fr').catch(() => undefined);
   }, []);
 
   const value = useMemo<I18nContextValue>(() => {

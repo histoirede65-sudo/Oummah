@@ -35,7 +35,7 @@ const learningModules = [
     labelKey: "home.moduleProphets",
     subtitleKey: "home.moduleProphetsSubtitle",
     route: "/prophets",
-    image: require("../assets/images/prophets/prophets-home-premium.png"),
+    image: require("../assets/images/prophets/prophets-home-premium.jpg"),
   },
   {
     labelKey: "home.moduleCompanions",

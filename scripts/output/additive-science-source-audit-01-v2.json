@@ -1,0 +1,1869 @@
+{
+  "schemaVersion": "2.0",
+  "generatedAt": "2026-09-30T19:28:11.226Z",
+  "input": {
+    "totalRequested": 30,
+    "codes": [
+      "E102",
+      "E104",
+      "E110",
+      "E122",
+      "E123",
+      "E124",
+      "E127",
+      "E129",
+      "E131",
+      "E132",
+      "E133",
+      "E140",
+      "E141",
+      "E142",
+      "E150A",
+      "E150B",
+      "E150C",
+      "E150D",
+      "E151",
+      "E153",
+      "E155",
+      "E160B",
+      "E160C",
+      "E160D",
+      "E160E",
+      "E161B",
+      "E161G",
+      "E163",
+      "E171",
+      "E172"
+    ]
+  },
+  "discoverySources": [
+    {
+      "category": "food-colours",
+      "url": "https://www.efsa.europa.eu/en/topics/topic/food-colours",
+      "scope": "food_additive_human"
+    }
+  ],
+  "otherOfficialSources": [
+    {
+      "authority": "JECFA",
+      "url": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home"
+    },
+    {
+      "authority": "JECFA specifications",
+      "url": "https://www.fao.org/food/food-safety-quality/scientific-advice/jecfa/jecfa-additives/en/"
+    },
+    {
+      "authority": "ANSES",
+      "url": "https://www.anses.fr/en/search"
+    },
+    {
+      "authority": "ECHA",
+      "url": "https://echa.europa.eu/search-for-chemicals"
+    },
+    {
+      "authority": "CIRC/IARC",
+      "url": "https://www.iarc.who.int/search/"
+    }
+  ],
+  "totals": {
+    "totalCodes": 30,
+    "codesWithEfsaSource": 28,
+    "codesWithEfsaAssessmentLink": 28,
+    "codesWithAssessmentUnavailable": 25,
+    "codesWithJecfaSource": 0,
+    "codesWithOtherOfficialSource": 0,
+    "codesWithExactMatch": 0,
+    "codesWithStrongMatch": 2,
+    "codesWithPossibleOnly": 1,
+    "codesWithNoOfficialDiscoveryData": 2,
+    "codesWithAmbiguousMatch": 1,
+    "codesWithNoOfficialMatch": 2,
+    "codesWithADI": 0,
+    "codesWithExposureAssessment": 0,
+    "codesWithEffects": 0,
+    "codesWithAuthorityConclusion": 0,
+    "documentsFoundTotal": 3,
+    "profilesAutomatable": 2,
+    "feedCasesRejected": 0,
+    "familyAssessments": 0,
+    "familyCandidateGroups": [
+      [
+        "E150A",
+        "E150B",
+        "E150C",
+        "E150D"
+      ],
+      [
+        "E160A",
+        "E160C",
+        "E160D",
+        "E160E"
+      ],
+      [
+        "E161B",
+        "E161G"
+      ]
+    ]
+  },
+  "previousAudit": {
+    "efsa": 0,
+    "jecfa": 0,
+    "exact": 0,
+    "strong": 0,
+    "automatable": 0
+  },
+  "items": [
+    {
+      "code": "E102",
+      "canonicalName": "Tartrazine",
+      "efsaDiscovery": {
+        "found": true,
+        "discoveryPage": "https://www.efsa.europa.eu/en/topics/topic/food-colours",
+        "assessmentLinksFound": 1,
+        "assessmentFetchFailures": [
+          {
+            "url": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2009.1331",
+            "status": 403
+          }
+        ],
+        "assessmentsFound": 0,
+        "assessments": [],
+        "latestAssessment": null
+      },
+      "jecfaDiscovery": {
+        "found": false,
+        "authority": "JECFA",
+        "matchedName": null,
+        "assessmentFound": false,
+        "adiFound": false,
+        "status": 200,
+        "query": "E102 Tartrazine"
+      },
+      "otherOfficialSources": [
+        {
+          "authority": "JECFA specifications",
+          "url": "https://www.fao.org/food/food-safety-quality/scientific-advice/jecfa/jecfa-additives/en/",
+          "status": null
+        },
+        {
+          "authority": "ANSES",
+          "url": "https://www.anses.fr/en/search",
+          "status": null
+        },
+        {
+          "authority": "ECHA",
+          "url": "https://echa.europa.eu/search-for-chemicals",
+          "status": null
+        },
+        {
+          "authority": "CIRC/IARC",
+          "url": "https://www.iarc.who.int/search/",
+          "status": null
+        }
+      ],
+      "bestMatchConfidence": null,
+      "automatable": false,
+      "reasonIfNotAutomatable": "Official discovery row found, but linked assessment was not accessible or not a strong match."
+    },
+    {
+      "code": "E104",
+      "canonicalName": "Quinoline Yellow",
+      "efsaDiscovery": {
+        "found": true,
+        "discoveryPage": "https://www.efsa.europa.eu/en/topics/topic/food-colours",
+        "assessmentLinksFound": 2,
+        "assessmentFetchFailures": [
+          {
+            "url": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2015.4070",
+            "status": 403
+          },
+          {
+            "url": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2009.1329",
+            "status": 403
+          }
+        ],
+        "assessmentsFound": 0,
+        "assessments": [],
+        "latestAssessment": null
+      },
+      "jecfaDiscovery": {
+        "found": false,
+        "authority": "JECFA",
+        "matchedName": null,
+        "assessmentFound": false,
+        "adiFound": false,
+        "status": 200,
+        "query": "E104 Quinoline Yellow"
+      },
+      "otherOfficialSources": [
+        {
+          "authority": "JECFA specifications",
+          "url": "https://www.fao.org/food/food-safety-quality/scientific-advice/jecfa/jecfa-additives/en/",
+          "status": null
+        },
+        {
+          "authority": "ANSES",
+          "url": "https://www.anses.fr/en/search",
+          "status": null
+        },
+        {
+          "authority": "ECHA",
+          "url": "https://echa.europa.eu/search-for-chemicals",
+          "status": null
+        },
+        {
+          "authority": "CIRC/IARC",
+          "url": "https://www.iarc.who.int/search/",
+          "status": null
+        }
+      ],
+      "bestMatchConfidence": null,
+      "automatable": false,
+      "reasonIfNotAutomatable": "Official discovery row found, but linked assessment was not accessible or not a strong match."
+    },
+    {
+      "code": "E110",
+      "canonicalName": "Sunset Yellow FCF/Orange Yellow S",
+      "efsaDiscovery": {
+        "found": true,
+        "discoveryPage": "https://www.efsa.europa.eu/en/topics/topic/food-colours",
+        "assessmentLinksFound": 2,
+        "assessmentFetchFailures": [
+          {
+            "url": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2014.3765",
+            "status": 403
+          },
+          {
+            "url": "https://doi.org/10.2903/j.efsa.2009.1330",
+            "status": 403
+          }
+        ],
+        "assessmentsFound": 0,
+        "assessments": [],
+        "latestAssessment": null
+      },
+      "jecfaDiscovery": {
+        "found": false,
+        "authority": "JECFA",
+        "matchedName": null,
+        "assessmentFound": false,
+        "adiFound": false,
+        "status": 200,
+        "query": "E110 Sunset Yellow FCF/Orange Yellow S"
+      },
+      "otherOfficialSources": [
+        {
+          "authority": "JECFA specifications",
+          "url": "https://www.fao.org/food/food-safety-quality/scientific-advice/jecfa/jecfa-additives/en/",
+          "status": null
+        },
+        {
+          "authority": "ANSES",
+          "url": "https://www.anses.fr/en/search",
+          "status": null
+        },
+        {
+          "authority": "ECHA",
+          "url": "https://echa.europa.eu/search-for-chemicals",
+          "status": null
+        },
+        {
+          "authority": "CIRC/IARC",
+          "url": "https://www.iarc.who.int/search/",
+          "status": null
+        }
+      ],
+      "bestMatchConfidence": null,
+      "automatable": false,
+      "reasonIfNotAutomatable": "Official discovery row found, but linked assessment was not accessible or not a strong match."
+    },
+    {
+      "code": "E122",
+      "canonicalName": "Azorubine, Carmoisine",
+      "efsaDiscovery": {
+        "found": true,
+        "discoveryPage": "https://www.efsa.europa.eu/en/topics/topic/food-colours",
+        "assessmentLinksFound": 2,
+        "assessmentFetchFailures": [
+          {
+            "url": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2015.4072",
+            "status": 403
+          },
+          {
+            "url": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2009.1332",
+            "status": 403
+          }
+        ],
+        "assessmentsFound": 0,
+        "assessments": [],
+        "latestAssessment": null
+      },
+      "jecfaDiscovery": {
+        "found": false,
+        "authority": "JECFA",
+        "matchedName": null,
+        "assessmentFound": false,
+        "adiFound": false,
+        "status": 200,
+        "query": "E122 Azorubine, Carmoisine"
+      },
+      "otherOfficialSources": [
+        {
+          "authority": "JECFA specifications",
+          "url": "https://www.fao.org/food/food-safety-quality/scientific-advice/jecfa/jecfa-additives/en/",
+          "status": null
+        },
+        {
+          "authority": "ANSES",
+          "url": "https://www.anses.fr/en/search",
+          "status": null
+        },
+        {
+          "authority": "ECHA",
+          "url": "https://echa.europa.eu/search-for-chemicals",
+          "status": null
+        },
+        {
+          "authority": "CIRC/IARC",
+          "url": "https://www.iarc.who.int/search/",
+          "status": null
+        }
+      ],
+      "bestMatchConfidence": null,
+      "automatable": false,
+      "reasonIfNotAutomatable": "Official discovery row found, but linked assessment was not accessible or not a strong match."
+    },
+    {
+      "code": "E123",
+      "canonicalName": "Amaranth",
+      "efsaDiscovery": {
+        "found": true,
+        "discoveryPage": "https://www.efsa.europa.eu/en/topics/topic/food-colours",
+        "assessmentLinksFound": 2,
+        "assessmentFetchFailures": [
+          {
+            "url": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2013.3442",
+            "status": 403
+          },
+          {
+            "url": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2010.1649",
+            "status": 403
+          }
+        ],
+        "assessmentsFound": 0,
+        "assessments": [],
+        "latestAssessment": null
+      },
+      "jecfaDiscovery": {
+        "found": false,
+        "authority": "JECFA",
+        "matchedName": null,
+        "assessmentFound": false,
+        "adiFound": false,
+        "status": 200,
+        "query": "E123 Amaranth"
+      },
+      "otherOfficialSources": [
+        {
+          "authority": "JECFA specifications",
+          "url": "https://www.fao.org/food/food-safety-quality/scientific-advice/jecfa/jecfa-additives/en/",
+          "status": null
+        },
+        {
+          "authority": "ANSES",
+          "url": "https://www.anses.fr/en/search",
+          "status": null
+        },
+        {
+          "authority": "ECHA",
+          "url": "https://echa.europa.eu/search-for-chemicals",
+          "status": null
+        },
+        {
+          "authority": "CIRC/IARC",
+          "url": "https://www.iarc.who.int/search/",
+          "status": null
+        }
+      ],
+      "bestMatchConfidence": null,
+      "automatable": false,
+      "reasonIfNotAutomatable": "Official discovery row found, but linked assessment was not accessible or not a strong match."
+    },
+    {
+      "code": "E124",
+      "canonicalName": "Ponceau 4R, Cochineal Red A",
+      "efsaDiscovery": {
+        "found": true,
+        "discoveryPage": "https://www.efsa.europa.eu/en/topics/topic/food-colours",
+        "assessmentLinksFound": 2,
+        "assessmentFetchFailures": [
+          {
+            "url": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2015.4073",
+            "status": 403
+          },
+          {
+            "url": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2009.1328",
+            "status": 403
+          }
+        ],
+        "assessmentsFound": 0,
+        "assessments": [],
+        "latestAssessment": null
+      },
+      "jecfaDiscovery": {
+        "found": false,
+        "authority": "JECFA",
+        "matchedName": null,
+        "assessmentFound": false,
+        "adiFound": false,
+        "status": 200,
+        "query": "E124 Ponceau 4R, Cochineal Red A"
+      },
+      "otherOfficialSources": [
+        {
+          "authority": "JECFA specifications",
+          "url": "https://www.fao.org/food/food-safety-quality/scientific-advice/jecfa/jecfa-additives/en/",
+          "status": null
+        },
+        {
+          "authority": "ANSES",
+          "url": "https://www.anses.fr/en/search",
+          "status": null
+        },
+        {
+          "authority": "ECHA",
+          "url": "https://echa.europa.eu/search-for-chemicals",
+          "status": null
+        },
+        {
+          "authority": "CIRC/IARC",
+          "url": "https://www.iarc.who.int/search/",
+          "status": null
+        }
+      ],
+      "bestMatchConfidence": null,
+      "automatable": false,
+      "reasonIfNotAutomatable": "Official discovery row found, but linked assessment was not accessible or not a strong match."
+    },
+    {
+      "code": "E127",
+      "canonicalName": "Erythrosine",
+      "efsaDiscovery": {
+        "found": true,
+        "discoveryPage": "https://www.efsa.europa.eu/en/topics/topic/food-colours",
+        "assessmentLinksFound": 1,
+        "assessmentFetchFailures": [
+          {
+            "url": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2011.1854",
+            "status": 403
+          }
+        ],
+        "assessmentsFound": 0,
+        "assessments": [],
+        "latestAssessment": null
+      },
+      "jecfaDiscovery": {
+        "found": false,
+        "authority": "JECFA",
+        "matchedName": null,
+        "assessmentFound": false,
+        "adiFound": false,
+        "status": 200,
+        "query": "E127 Erythrosine"
+      },
+      "otherOfficialSources": [
+        {
+          "authority": "JECFA specifications",
+          "url": "https://www.fao.org/food/food-safety-quality/scientific-advice/jecfa/jecfa-additives/en/",
+          "status": null
+        },
+        {
+          "authority": "ANSES",
+          "url": "https://www.anses.fr/en/search",
+          "status": null
+        },
+        {
+          "authority": "ECHA",
+          "url": "https://echa.europa.eu/search-for-chemicals",
+          "status": null
+        },
+        {
+          "authority": "CIRC/IARC",
+          "url": "https://www.iarc.who.int/search/",
+          "status": null
+        }
+      ],
+      "bestMatchConfidence": null,
+      "automatable": false,
+      "reasonIfNotAutomatable": "Official discovery row found, but linked assessment was not accessible or not a strong match."
+    },
+    {
+      "code": "E129",
+      "canonicalName": "Allura Red AC",
+      "efsaDiscovery": {
+        "found": true,
+        "discoveryPage": "https://www.efsa.europa.eu/en/topics/topic/food-colours",
+        "assessmentLinksFound": 2,
+        "assessmentFetchFailures": [
+          {
+            "url": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2015.4007",
+            "status": 403
+          },
+          {
+            "url": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2009.1327",
+            "status": 403
+          }
+        ],
+        "assessmentsFound": 0,
+        "assessments": [],
+        "latestAssessment": null
+      },
+      "jecfaDiscovery": {
+        "found": false,
+        "authority": "JECFA",
+        "matchedName": null,
+        "assessmentFound": false,
+        "adiFound": false,
+        "status": 200,
+        "query": "E129 Allura Red AC"
+      },
+      "otherOfficialSources": [
+        {
+          "authority": "JECFA specifications",
+          "url": "https://www.fao.org/food/food-safety-quality/scientific-advice/jecfa/jecfa-additives/en/",
+          "status": null
+        },
+        {
+          "authority": "ANSES",
+          "url": "https://www.anses.fr/en/search",
+          "status": null
+        },
+        {
+          "authority": "ECHA",
+          "url": "https://echa.europa.eu/search-for-chemicals",
+          "status": null
+        },
+        {
+          "authority": "CIRC/IARC",
+          "url": "https://www.iarc.who.int/search/",
+          "status": null
+        }
+      ],
+      "bestMatchConfidence": null,
+      "automatable": false,
+      "reasonIfNotAutomatable": "Official discovery row found, but linked assessment was not accessible or not a strong match."
+    },
+    {
+      "code": "E131",
+      "canonicalName": "Patent Blue V",
+      "efsaDiscovery": {
+        "found": true,
+        "discoveryPage": "https://www.efsa.europa.eu/en/topics/topic/food-colours",
+        "assessmentLinksFound": 1,
+        "assessmentFetchFailures": [
+          {
+            "url": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2013.2818",
+            "status": 403
+          }
+        ],
+        "assessmentsFound": 0,
+        "assessments": [],
+        "latestAssessment": null
+      },
+      "jecfaDiscovery": {
+        "found": false,
+        "authority": "JECFA",
+        "matchedName": null,
+        "assessmentFound": false,
+        "adiFound": false,
+        "status": 200,
+        "query": "E131 Patent Blue V"
+      },
+      "otherOfficialSources": [
+        {
+          "authority": "JECFA specifications",
+          "url": "https://www.fao.org/food/food-safety-quality/scientific-advice/jecfa/jecfa-additives/en/",
+          "status": null
+        },
+        {
+          "authority": "ANSES",
+          "url": "https://www.anses.fr/en/search",
+          "status": null
+        },
+        {
+          "authority": "ECHA",
+          "url": "https://echa.europa.eu/search-for-chemicals",
+          "status": null
+        },
+        {
+          "authority": "CIRC/IARC",
+          "url": "https://www.iarc.who.int/search/",
+          "status": null
+        }
+      ],
+      "bestMatchConfidence": null,
+      "automatable": false,
+      "reasonIfNotAutomatable": "Official discovery row found, but linked assessment was not accessible or not a strong match."
+    },
+    {
+      "code": "E132",
+      "canonicalName": "Indigotine, Indigo carmine",
+      "efsaDiscovery": {
+        "found": true,
+        "discoveryPage": "https://www.efsa.europa.eu/en/topics/topic/food-colours",
+        "assessmentLinksFound": 1,
+        "assessmentFetchFailures": [
+          {
+            "url": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2023.8103",
+            "status": 403
+          }
+        ],
+        "assessmentsFound": 0,
+        "assessments": [],
+        "latestAssessment": null
+      },
+      "jecfaDiscovery": {
+        "found": false,
+        "authority": "JECFA",
+        "matchedName": null,
+        "assessmentFound": false,
+        "adiFound": false,
+        "status": 200,
+        "query": "E132 Indigotine, Indigo carmine"
+      },
+      "otherOfficialSources": [
+        {
+          "authority": "JECFA specifications",
+          "url": "https://www.fao.org/food/food-safety-quality/scientific-advice/jecfa/jecfa-additives/en/",
+          "status": null
+        },
+        {
+          "authority": "ANSES",
+          "url": "https://www.anses.fr/en/search",
+          "status": null
+        },
+        {
+          "authority": "ECHA",
+          "url": "https://echa.europa.eu/search-for-chemicals",
+          "status": null
+        },
+        {
+          "authority": "CIRC/IARC",
+          "url": "https://www.iarc.who.int/search/",
+          "status": null
+        }
+      ],
+      "bestMatchConfidence": null,
+      "automatable": false,
+      "reasonIfNotAutomatable": "Official discovery row found, but linked assessment was not accessible or not a strong match."
+    },
+    {
+      "code": "E133",
+      "canonicalName": "Brilliant Blue FCF",
+      "efsaDiscovery": {
+        "found": true,
+        "discoveryPage": "https://www.efsa.europa.eu/en/topics/topic/food-colours",
+        "assessmentLinksFound": 1,
+        "assessmentFetchFailures": [
+          {
+            "url": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2010.1853",
+            "status": 403
+          }
+        ],
+        "assessmentsFound": 0,
+        "assessments": [],
+        "latestAssessment": null
+      },
+      "jecfaDiscovery": {
+        "found": false,
+        "authority": "JECFA",
+        "matchedName": null,
+        "assessmentFound": false,
+        "adiFound": false,
+        "status": 200,
+        "query": "E133 Brilliant Blue FCF"
+      },
+      "otherOfficialSources": [
+        {
+          "authority": "JECFA specifications",
+          "url": "https://www.fao.org/food/food-safety-quality/scientific-advice/jecfa/jecfa-additives/en/",
+          "status": null
+        },
+        {
+          "authority": "ANSES",
+          "url": "https://www.anses.fr/en/search",
+          "status": null
+        },
+        {
+          "authority": "ECHA",
+          "url": "https://echa.europa.eu/search-for-chemicals",
+          "status": null
+        },
+        {
+          "authority": "CIRC/IARC",
+          "url": "https://www.iarc.who.int/search/",
+          "status": null
+        }
+      ],
+      "bestMatchConfidence": null,
+      "automatable": false,
+      "reasonIfNotAutomatable": "Official discovery row found, but linked assessment was not accessible or not a strong match."
+    },
+    {
+      "code": "E140",
+      "canonicalName": "Chlorophylls and Chlorophyllins",
+      "efsaDiscovery": {
+        "found": false,
+        "discoveryPage": "https://www.efsa.europa.eu/en/topics/topic/food-colours",
+        "assessmentLinksFound": 0,
+        "assessmentFetchFailures": [],
+        "assessmentsFound": 0,
+        "assessments": [],
+        "latestAssessment": null
+      },
+      "jecfaDiscovery": {
+        "found": false,
+        "authority": "JECFA",
+        "matchedName": null,
+        "assessmentFound": false,
+        "adiFound": false,
+        "status": 200,
+        "query": "E140 Chlorophylls and Chlorophyllins"
+      },
+      "otherOfficialSources": [
+        {
+          "authority": "JECFA specifications",
+          "url": "https://www.fao.org/food/food-safety-quality/scientific-advice/jecfa/jecfa-additives/en/",
+          "status": null
+        },
+        {
+          "authority": "ANSES",
+          "url": "https://www.anses.fr/en/search",
+          "status": null
+        },
+        {
+          "authority": "ECHA",
+          "url": "https://echa.europa.eu/search-for-chemicals",
+          "status": null
+        },
+        {
+          "authority": "CIRC/IARC",
+          "url": "https://www.iarc.who.int/search/",
+          "status": null
+        }
+      ],
+      "bestMatchConfidence": null,
+      "automatable": false,
+      "reasonIfNotAutomatable": "No official individual or family assessment was discovered for this code."
+    },
+    {
+      "code": "E141",
+      "canonicalName": "Copper complexes of chlorophylls and chlorophyllins",
+      "efsaDiscovery": {
+        "found": true,
+        "discoveryPage": "https://www.efsa.europa.eu/en/topics/topic/food-colours",
+        "assessmentLinksFound": 2,
+        "assessmentFetchFailures": [
+          {
+            "url": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2015.4089",
+            "status": 403
+          }
+        ],
+        "assessmentsFound": 1,
+        "assessments": [
+          {
+            "authority": "EFSA",
+            "documentTitle": "Open EFSA",
+            "publicationYear": null,
+            "url": "https://open.efsa.europa.eu/questions/EFSA-Q-2024-00398?search=2021-00562",
+            "doi": null,
+            "additiveCode": "E141",
+            "matchedName": "Copper complexes of chlorophylls, chlorophyllins",
+            "matchConfidence": "possible",
+            "assessmentStatus": "follow-up",
+            "assessmentScope": "food_additive_human",
+            "coveredCodes": [
+              "E141"
+            ],
+            "assessmentType": "individualAssessment",
+            "authorityConclusion": null,
+            "adi": null,
+            "tdi": null,
+            "otherReferenceValues": [],
+            "identifiedEffects": [],
+            "exposureFindings": null,
+            "populationsOfConcern": [],
+            "restrictionsOrRecommendations": [],
+            "uncertaintyNotes": [
+              "Abstract not accessible; metadata only."
+            ],
+            "sourceExcerpt": ""
+          }
+        ],
+        "latestAssessment": null
+      },
+      "jecfaDiscovery": {
+        "found": false,
+        "authority": "JECFA",
+        "matchedName": null,
+        "assessmentFound": false,
+        "adiFound": false,
+        "status": 200,
+        "query": "E141 Copper complexes of chlorophylls and chlorophyllins"
+      },
+      "otherOfficialSources": [
+        {
+          "authority": "JECFA specifications",
+          "url": "https://www.fao.org/food/food-safety-quality/scientific-advice/jecfa/jecfa-additives/en/",
+          "status": null
+        },
+        {
+          "authority": "ANSES",
+          "url": "https://www.anses.fr/en/search",
+          "status": null
+        },
+        {
+          "authority": "ECHA",
+          "url": "https://echa.europa.eu/search-for-chemicals",
+          "status": null
+        },
+        {
+          "authority": "CIRC/IARC",
+          "url": "https://www.iarc.who.int/search/",
+          "status": null
+        }
+      ],
+      "bestMatchConfidence": "possible",
+      "automatable": false,
+      "reasonIfNotAutomatable": "Official discovery row found, but linked assessment was not accessible or not a strong match."
+    },
+    {
+      "code": "E142",
+      "canonicalName": "Green S",
+      "efsaDiscovery": {
+        "found": true,
+        "discoveryPage": "https://www.efsa.europa.eu/en/topics/topic/food-colours",
+        "assessmentLinksFound": 1,
+        "assessmentFetchFailures": [
+          {
+            "url": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2010.1851",
+            "status": 403
+          }
+        ],
+        "assessmentsFound": 0,
+        "assessments": [],
+        "latestAssessment": null
+      },
+      "jecfaDiscovery": {
+        "found": false,
+        "authority": "JECFA",
+        "matchedName": null,
+        "assessmentFound": false,
+        "adiFound": false,
+        "status": 200,
+        "query": "E142 Green S"
+      },
+      "otherOfficialSources": [
+        {
+          "authority": "JECFA specifications",
+          "url": "https://www.fao.org/food/food-safety-quality/scientific-advice/jecfa/jecfa-additives/en/",
+          "status": null
+        },
+        {
+          "authority": "ANSES",
+          "url": "https://www.anses.fr/en/search",
+          "status": null
+        },
+        {
+          "authority": "ECHA",
+          "url": "https://echa.europa.eu/search-for-chemicals",
+          "status": null
+        },
+        {
+          "authority": "CIRC/IARC",
+          "url": "https://www.iarc.who.int/search/",
+          "status": null
+        }
+      ],
+      "bestMatchConfidence": null,
+      "automatable": false,
+      "reasonIfNotAutomatable": "Official discovery row found, but linked assessment was not accessible or not a strong match."
+    },
+    {
+      "code": "E150A",
+      "canonicalName": "Plain caramel",
+      "efsaDiscovery": {
+        "found": true,
+        "discoveryPage": "https://www.efsa.europa.eu/en/topics/topic/food-colours",
+        "assessmentLinksFound": 2,
+        "assessmentFetchFailures": [
+          {
+            "url": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2012.3030",
+            "status": 403
+          },
+          {
+            "url": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2011.2004",
+            "status": 403
+          }
+        ],
+        "assessmentsFound": 0,
+        "assessments": [],
+        "latestAssessment": null
+      },
+      "jecfaDiscovery": {
+        "found": false,
+        "authority": "JECFA",
+        "matchedName": null,
+        "assessmentFound": false,
+        "adiFound": false,
+        "status": 200,
+        "query": "E150A Plain caramel"
+      },
+      "otherOfficialSources": [
+        {
+          "authority": "JECFA specifications",
+          "url": "https://www.fao.org/food/food-safety-quality/scientific-advice/jecfa/jecfa-additives/en/",
+          "status": null
+        },
+        {
+          "authority": "ANSES",
+          "url": "https://www.anses.fr/en/search",
+          "status": null
+        },
+        {
+          "authority": "ECHA",
+          "url": "https://echa.europa.eu/search-for-chemicals",
+          "status": null
+        },
+        {
+          "authority": "CIRC/IARC",
+          "url": "https://www.iarc.who.int/search/",
+          "status": null
+        }
+      ],
+      "bestMatchConfidence": null,
+      "automatable": false,
+      "reasonIfNotAutomatable": "Official discovery row found, but linked assessment was not accessible or not a strong match."
+    },
+    {
+      "code": "E150B",
+      "canonicalName": "Caustic sulphite caramel",
+      "efsaDiscovery": {
+        "found": true,
+        "discoveryPage": "https://www.efsa.europa.eu/en/topics/topic/food-colours",
+        "assessmentLinksFound": 2,
+        "assessmentFetchFailures": [
+          {
+            "url": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2012.3030",
+            "status": 403
+          },
+          {
+            "url": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2011.2004",
+            "status": 403
+          }
+        ],
+        "assessmentsFound": 0,
+        "assessments": [],
+        "latestAssessment": null
+      },
+      "jecfaDiscovery": {
+        "found": false,
+        "authority": "JECFA",
+        "matchedName": null,
+        "assessmentFound": false,
+        "adiFound": false,
+        "status": 200,
+        "query": "E150B Caustic sulphite caramel"
+      },
+      "otherOfficialSources": [
+        {
+          "authority": "JECFA specifications",
+          "url": "https://www.fao.org/food/food-safety-quality/scientific-advice/jecfa/jecfa-additives/en/",
+          "status": null
+        },
+        {
+          "authority": "ANSES",
+          "url": "https://www.anses.fr/en/search",
+          "status": null
+        },
+        {
+          "authority": "ECHA",
+          "url": "https://echa.europa.eu/search-for-chemicals",
+          "status": null
+        },
+        {
+          "authority": "CIRC/IARC",
+          "url": "https://www.iarc.who.int/search/",
+          "status": null
+        }
+      ],
+      "bestMatchConfidence": null,
+      "automatable": false,
+      "reasonIfNotAutomatable": "Official discovery row found, but linked assessment was not accessible or not a strong match."
+    },
+    {
+      "code": "E150C",
+      "canonicalName": "Ammonia caramel",
+      "efsaDiscovery": {
+        "found": true,
+        "discoveryPage": "https://www.efsa.europa.eu/en/topics/topic/food-colours",
+        "assessmentLinksFound": 2,
+        "assessmentFetchFailures": [
+          {
+            "url": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2012.3030",
+            "status": 403
+          },
+          {
+            "url": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2011.2004",
+            "status": 403
+          }
+        ],
+        "assessmentsFound": 0,
+        "assessments": [],
+        "latestAssessment": null
+      },
+      "jecfaDiscovery": {
+        "found": false,
+        "authority": "JECFA",
+        "matchedName": null,
+        "assessmentFound": false,
+        "adiFound": false,
+        "status": 200,
+        "query": "E150C Ammonia caramel"
+      },
+      "otherOfficialSources": [
+        {
+          "authority": "JECFA specifications",
+          "url": "https://www.fao.org/food/food-safety-quality/scientific-advice/jecfa/jecfa-additives/en/",
+          "status": null
+        },
+        {
+          "authority": "ANSES",
+          "url": "https://www.anses.fr/en/search",
+          "status": null
+        },
+        {
+          "authority": "ECHA",
+          "url": "https://echa.europa.eu/search-for-chemicals",
+          "status": null
+        },
+        {
+          "authority": "CIRC/IARC",
+          "url": "https://www.iarc.who.int/search/",
+          "status": null
+        }
+      ],
+      "bestMatchConfidence": null,
+      "automatable": false,
+      "reasonIfNotAutomatable": "Official discovery row found, but linked assessment was not accessible or not a strong match."
+    },
+    {
+      "code": "E150D",
+      "canonicalName": "Sulphite ammonia caramel",
+      "efsaDiscovery": {
+        "found": true,
+        "discoveryPage": "https://www.efsa.europa.eu/en/topics/topic/food-colours",
+        "assessmentLinksFound": 2,
+        "assessmentFetchFailures": [
+          {
+            "url": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2012.3030",
+            "status": 403
+          },
+          {
+            "url": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2011.2004",
+            "status": 403
+          }
+        ],
+        "assessmentsFound": 0,
+        "assessments": [],
+        "latestAssessment": null
+      },
+      "jecfaDiscovery": {
+        "found": false,
+        "authority": "JECFA",
+        "matchedName": null,
+        "assessmentFound": false,
+        "adiFound": false,
+        "status": 200,
+        "query": "E150D Sulphite ammonia caramel"
+      },
+      "otherOfficialSources": [
+        {
+          "authority": "JECFA specifications",
+          "url": "https://www.fao.org/food/food-safety-quality/scientific-advice/jecfa/jecfa-additives/en/",
+          "status": null
+        },
+        {
+          "authority": "ANSES",
+          "url": "https://www.anses.fr/en/search",
+          "status": null
+        },
+        {
+          "authority": "ECHA",
+          "url": "https://echa.europa.eu/search-for-chemicals",
+          "status": null
+        },
+        {
+          "authority": "CIRC/IARC",
+          "url": "https://www.iarc.who.int/search/",
+          "status": null
+        }
+      ],
+      "bestMatchConfidence": null,
+      "automatable": false,
+      "reasonIfNotAutomatable": "Official discovery row found, but linked assessment was not accessible or not a strong match."
+    },
+    {
+      "code": "E151",
+      "canonicalName": "Brilliant Black PN",
+      "efsaDiscovery": {
+        "found": true,
+        "discoveryPage": "https://www.efsa.europa.eu/en/topics/topic/food-colours",
+        "assessmentLinksFound": 2,
+        "assessmentFetchFailures": [
+          {
+            "url": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2015.3960",
+            "status": 403
+          },
+          {
+            "url": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2010.1540",
+            "status": 403
+          }
+        ],
+        "assessmentsFound": 0,
+        "assessments": [],
+        "latestAssessment": null
+      },
+      "jecfaDiscovery": {
+        "found": false,
+        "authority": "JECFA",
+        "matchedName": null,
+        "assessmentFound": false,
+        "adiFound": false,
+        "status": 200,
+        "query": "E151 Brilliant Black PN"
+      },
+      "otherOfficialSources": [
+        {
+          "authority": "JECFA specifications",
+          "url": "https://www.fao.org/food/food-safety-quality/scientific-advice/jecfa/jecfa-additives/en/",
+          "status": null
+        },
+        {
+          "authority": "ANSES",
+          "url": "https://www.anses.fr/en/search",
+          "status": null
+        },
+        {
+          "authority": "ECHA",
+          "url": "https://echa.europa.eu/search-for-chemicals",
+          "status": null
+        },
+        {
+          "authority": "CIRC/IARC",
+          "url": "https://www.iarc.who.int/search/",
+          "status": null
+        }
+      ],
+      "bestMatchConfidence": null,
+      "automatable": false,
+      "reasonIfNotAutomatable": "Official discovery row found, but linked assessment was not accessible or not a strong match."
+    },
+    {
+      "code": "E153",
+      "canonicalName": "Vegetable carbon",
+      "efsaDiscovery": {
+        "found": true,
+        "discoveryPage": "https://www.efsa.europa.eu/en/topics/topic/food-colours",
+        "assessmentLinksFound": 2,
+        "assessmentFetchFailures": [
+          {
+            "url": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2012.2592",
+            "status": 403
+          }
+        ],
+        "assessmentsFound": 1,
+        "assessments": [
+          {
+            "authority": "EFSA",
+            "documentTitle": "Open EFSA",
+            "publicationYear": null,
+            "url": "https://open.efsa.europa.eu/questions/EFSA-Q-2022-00830",
+            "doi": null,
+            "additiveCode": "E153",
+            "matchedName": "Vegetable carbon",
+            "matchConfidence": "strong",
+            "assessmentStatus": "follow-up",
+            "assessmentScope": "food_additive_human",
+            "coveredCodes": [
+              "E153"
+            ],
+            "assessmentType": "individualAssessment",
+            "authorityConclusion": null,
+            "adi": null,
+            "tdi": null,
+            "otherReferenceValues": [],
+            "identifiedEffects": [],
+            "exposureFindings": null,
+            "populationsOfConcern": [],
+            "restrictionsOrRecommendations": [],
+            "uncertaintyNotes": [
+              "Abstract not accessible; metadata only."
+            ],
+            "sourceExcerpt": ""
+          }
+        ],
+        "latestAssessment": {
+          "authority": "EFSA",
+          "documentTitle": "Open EFSA",
+          "publicationYear": null,
+          "url": "https://open.efsa.europa.eu/questions/EFSA-Q-2022-00830",
+          "doi": null,
+          "additiveCode": "E153",
+          "matchedName": "Vegetable carbon",
+          "matchConfidence": "strong",
+          "assessmentStatus": "follow-up",
+          "assessmentScope": "food_additive_human",
+          "coveredCodes": [
+            "E153"
+          ],
+          "assessmentType": "individualAssessment",
+          "authorityConclusion": null,
+          "adi": null,
+          "tdi": null,
+          "otherReferenceValues": [],
+          "identifiedEffects": [],
+          "exposureFindings": null,
+          "populationsOfConcern": [],
+          "restrictionsOrRecommendations": [],
+          "uncertaintyNotes": [
+            "Abstract not accessible; metadata only."
+          ],
+          "sourceExcerpt": ""
+        }
+      },
+      "jecfaDiscovery": {
+        "found": false,
+        "authority": "JECFA",
+        "matchedName": null,
+        "assessmentFound": false,
+        "adiFound": false,
+        "status": 200,
+        "query": "E153 Vegetable carbon"
+      },
+      "otherOfficialSources": [
+        {
+          "authority": "JECFA specifications",
+          "url": "https://www.fao.org/food/food-safety-quality/scientific-advice/jecfa/jecfa-additives/en/",
+          "status": null
+        },
+        {
+          "authority": "ANSES",
+          "url": "https://www.anses.fr/en/search",
+          "status": null
+        },
+        {
+          "authority": "ECHA",
+          "url": "https://echa.europa.eu/search-for-chemicals",
+          "status": null
+        },
+        {
+          "authority": "CIRC/IARC",
+          "url": "https://www.iarc.who.int/search/",
+          "status": null
+        }
+      ],
+      "bestMatchConfidence": "strong",
+      "automatable": true,
+      "reasonIfNotAutomatable": null
+    },
+    {
+      "code": "E155",
+      "canonicalName": "Brown HT",
+      "efsaDiscovery": {
+        "found": true,
+        "discoveryPage": "https://www.efsa.europa.eu/en/topics/topic/food-colours",
+        "assessmentLinksFound": 2,
+        "assessmentFetchFailures": [
+          {
+            "url": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2014.3719",
+            "status": 403
+          },
+          {
+            "url": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2010.1536",
+            "status": 403
+          }
+        ],
+        "assessmentsFound": 0,
+        "assessments": [],
+        "latestAssessment": null
+      },
+      "jecfaDiscovery": {
+        "found": false,
+        "authority": "JECFA",
+        "matchedName": null,
+        "assessmentFound": false,
+        "adiFound": false,
+        "status": 200,
+        "query": "E155 Brown HT"
+      },
+      "otherOfficialSources": [
+        {
+          "authority": "JECFA specifications",
+          "url": "https://www.fao.org/food/food-safety-quality/scientific-advice/jecfa/jecfa-additives/en/",
+          "status": null
+        },
+        {
+          "authority": "ANSES",
+          "url": "https://www.anses.fr/en/search",
+          "status": null
+        },
+        {
+          "authority": "ECHA",
+          "url": "https://echa.europa.eu/search-for-chemicals",
+          "status": null
+        },
+        {
+          "authority": "CIRC/IARC",
+          "url": "https://www.iarc.who.int/search/",
+          "status": null
+        }
+      ],
+      "bestMatchConfidence": null,
+      "automatable": false,
+      "reasonIfNotAutomatable": "Official discovery row found, but linked assessment was not accessible or not a strong match."
+    },
+    {
+      "code": "E160B",
+      "canonicalName": "Annatto, Bixin, Norbixin/Deleted from the Union List of authorised additives",
+      "efsaDiscovery": {
+        "found": false,
+        "discoveryPage": "https://www.efsa.europa.eu/en/topics/topic/food-colours",
+        "assessmentLinksFound": 0,
+        "assessmentFetchFailures": [],
+        "assessmentsFound": 0,
+        "assessments": [],
+        "latestAssessment": null
+      },
+      "jecfaDiscovery": {
+        "found": false,
+        "authority": "JECFA",
+        "matchedName": null,
+        "assessmentFound": false,
+        "adiFound": false,
+        "status": 200,
+        "query": "E160B Annatto, Bixin, Norbixin/Deleted from the Union List of authorised additives"
+      },
+      "otherOfficialSources": [
+        {
+          "authority": "JECFA specifications",
+          "url": "https://www.fao.org/food/food-safety-quality/scientific-advice/jecfa/jecfa-additives/en/",
+          "status": null
+        },
+        {
+          "authority": "ANSES",
+          "url": "https://www.anses.fr/en/search",
+          "status": null
+        },
+        {
+          "authority": "ECHA",
+          "url": "https://echa.europa.eu/search-for-chemicals",
+          "status": null
+        },
+        {
+          "authority": "CIRC/IARC",
+          "url": "https://www.iarc.who.int/search/",
+          "status": null
+        }
+      ],
+      "bestMatchConfidence": null,
+      "automatable": false,
+      "reasonIfNotAutomatable": "No official individual or family assessment was discovered for this code."
+    },
+    {
+      "code": "E160C",
+      "canonicalName": "Paprika extract, capsanthin, capsorubin",
+      "efsaDiscovery": {
+        "found": true,
+        "discoveryPage": "https://www.efsa.europa.eu/en/topics/topic/food-colours",
+        "assessmentLinksFound": 1,
+        "assessmentFetchFailures": [
+          {
+            "url": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2015.4320",
+            "status": 403
+          }
+        ],
+        "assessmentsFound": 0,
+        "assessments": [],
+        "latestAssessment": null
+      },
+      "jecfaDiscovery": {
+        "found": false,
+        "authority": "JECFA",
+        "matchedName": null,
+        "assessmentFound": false,
+        "adiFound": false,
+        "status": 200,
+        "query": "E160C Paprika extract, capsanthin, capsorubin"
+      },
+      "otherOfficialSources": [
+        {
+          "authority": "JECFA specifications",
+          "url": "https://www.fao.org/food/food-safety-quality/scientific-advice/jecfa/jecfa-additives/en/",
+          "status": null
+        },
+        {
+          "authority": "ANSES",
+          "url": "https://www.anses.fr/en/search",
+          "status": null
+        },
+        {
+          "authority": "ECHA",
+          "url": "https://echa.europa.eu/search-for-chemicals",
+          "status": null
+        },
+        {
+          "authority": "CIRC/IARC",
+          "url": "https://www.iarc.who.int/search/",
+          "status": null
+        }
+      ],
+      "bestMatchConfidence": null,
+      "automatable": false,
+      "reasonIfNotAutomatable": "Official discovery row found, but linked assessment was not accessible or not a strong match."
+    },
+    {
+      "code": "E160D",
+      "canonicalName": "Lycopene",
+      "efsaDiscovery": {
+        "found": true,
+        "discoveryPage": "https://www.efsa.europa.eu/en/topics/topic/food-colours",
+        "assessmentLinksFound": 2,
+        "assessmentFetchFailures": [
+          {
+            "url": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2017.5064",
+            "status": 403
+          },
+          {
+            "url": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2008.674",
+            "status": 403
+          }
+        ],
+        "assessmentsFound": 0,
+        "assessments": [],
+        "latestAssessment": null
+      },
+      "jecfaDiscovery": {
+        "found": false,
+        "authority": "JECFA",
+        "matchedName": null,
+        "assessmentFound": false,
+        "adiFound": false,
+        "status": 200,
+        "query": "E160D Lycopene"
+      },
+      "otherOfficialSources": [
+        {
+          "authority": "JECFA specifications",
+          "url": "https://www.fao.org/food/food-safety-quality/scientific-advice/jecfa/jecfa-additives/en/",
+          "status": null
+        },
+        {
+          "authority": "ANSES",
+          "url": "https://www.anses.fr/en/search",
+          "status": null
+        },
+        {
+          "authority": "ECHA",
+          "url": "https://echa.europa.eu/search-for-chemicals",
+          "status": null
+        },
+        {
+          "authority": "CIRC/IARC",
+          "url": "https://www.iarc.who.int/search/",
+          "status": null
+        }
+      ],
+      "bestMatchConfidence": null,
+      "automatable": false,
+      "reasonIfNotAutomatable": "Official discovery row found, but linked assessment was not accessible or not a strong match."
+    },
+    {
+      "code": "E160E",
+      "canonicalName": "Beta-apo-8'-carotenal (C 30)",
+      "efsaDiscovery": {
+        "found": true,
+        "discoveryPage": "https://www.efsa.europa.eu/en/topics/topic/food-colours",
+        "assessmentLinksFound": 1,
+        "assessmentFetchFailures": [
+          {
+            "url": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2014.3492",
+            "status": 403
+          }
+        ],
+        "assessmentsFound": 0,
+        "assessments": [],
+        "latestAssessment": null
+      },
+      "jecfaDiscovery": {
+        "found": false,
+        "authority": "JECFA",
+        "matchedName": null,
+        "assessmentFound": false,
+        "adiFound": false,
+        "status": 200,
+        "query": "E160E Beta-apo-8'-carotenal (C 30)"
+      },
+      "otherOfficialSources": [
+        {
+          "authority": "JECFA specifications",
+          "url": "https://www.fao.org/food/food-safety-quality/scientific-advice/jecfa/jecfa-additives/en/",
+          "status": null
+        },
+        {
+          "authority": "ANSES",
+          "url": "https://www.anses.fr/en/search",
+          "status": null
+        },
+        {
+          "authority": "ECHA",
+          "url": "https://echa.europa.eu/search-for-chemicals",
+          "status": null
+        },
+        {
+          "authority": "CIRC/IARC",
+          "url": "https://www.iarc.who.int/search/",
+          "status": null
+        }
+      ],
+      "bestMatchConfidence": null,
+      "automatable": false,
+      "reasonIfNotAutomatable": "Official discovery row found, but linked assessment was not accessible or not a strong match."
+    },
+    {
+      "code": "E161B",
+      "canonicalName": "Lutein",
+      "efsaDiscovery": {
+        "found": true,
+        "discoveryPage": "https://www.efsa.europa.eu/en/topics/topic/food-colours",
+        "assessmentLinksFound": 1,
+        "assessmentFetchFailures": [
+          {
+            "url": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2010.1678",
+            "status": 403
+          }
+        ],
+        "assessmentsFound": 0,
+        "assessments": [],
+        "latestAssessment": null
+      },
+      "jecfaDiscovery": {
+        "found": false,
+        "authority": "JECFA",
+        "matchedName": null,
+        "assessmentFound": false,
+        "adiFound": false,
+        "status": 200,
+        "query": "E161B Lutein"
+      },
+      "otherOfficialSources": [
+        {
+          "authority": "JECFA specifications",
+          "url": "https://www.fao.org/food/food-safety-quality/scientific-advice/jecfa/jecfa-additives/en/",
+          "status": null
+        },
+        {
+          "authority": "ANSES",
+          "url": "https://www.anses.fr/en/search",
+          "status": null
+        },
+        {
+          "authority": "ECHA",
+          "url": "https://echa.europa.eu/search-for-chemicals",
+          "status": null
+        },
+        {
+          "authority": "CIRC/IARC",
+          "url": "https://www.iarc.who.int/search/",
+          "status": null
+        }
+      ],
+      "bestMatchConfidence": null,
+      "automatable": false,
+      "reasonIfNotAutomatable": "Official discovery row found, but linked assessment was not accessible or not a strong match."
+    },
+    {
+      "code": "E161G",
+      "canonicalName": "Canthaxanthin",
+      "efsaDiscovery": {
+        "found": true,
+        "discoveryPage": "https://www.efsa.europa.eu/en/topics/topic/food-colours",
+        "assessmentLinksFound": 1,
+        "assessmentFetchFailures": [
+          {
+            "url": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2010.1852",
+            "status": 403
+          }
+        ],
+        "assessmentsFound": 0,
+        "assessments": [],
+        "latestAssessment": null
+      },
+      "jecfaDiscovery": {
+        "found": false,
+        "authority": "JECFA",
+        "matchedName": null,
+        "assessmentFound": false,
+        "adiFound": false,
+        "status": 200,
+        "query": "E161G Canthaxanthin"
+      },
+      "otherOfficialSources": [
+        {
+          "authority": "JECFA specifications",
+          "url": "https://www.fao.org/food/food-safety-quality/scientific-advice/jecfa/jecfa-additives/en/",
+          "status": null
+        },
+        {
+          "authority": "ANSES",
+          "url": "https://www.anses.fr/en/search",
+          "status": null
+        },
+        {
+          "authority": "ECHA",
+          "url": "https://echa.europa.eu/search-for-chemicals",
+          "status": null
+        },
+        {
+          "authority": "CIRC/IARC",
+          "url": "https://www.iarc.who.int/search/",
+          "status": null
+        }
+      ],
+      "bestMatchConfidence": null,
+      "automatable": false,
+      "reasonIfNotAutomatable": "Official discovery row found, but linked assessment was not accessible or not a strong match."
+    },
+    {
+      "code": "E163",
+      "canonicalName": "Anthocyanins",
+      "efsaDiscovery": {
+        "found": true,
+        "discoveryPage": "https://www.efsa.europa.eu/en/topics/topic/food-colours",
+        "assessmentLinksFound": 1,
+        "assessmentFetchFailures": [
+          {
+            "url": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2013.3145",
+            "status": 403
+          }
+        ],
+        "assessmentsFound": 0,
+        "assessments": [],
+        "latestAssessment": null
+      },
+      "jecfaDiscovery": {
+        "found": false,
+        "authority": "JECFA",
+        "matchedName": null,
+        "assessmentFound": false,
+        "adiFound": false,
+        "status": 200,
+        "query": "E163 Anthocyanins"
+      },
+      "otherOfficialSources": [
+        {
+          "authority": "JECFA specifications",
+          "url": "https://www.fao.org/food/food-safety-quality/scientific-advice/jecfa/jecfa-additives/en/",
+          "status": null
+        },
+        {
+          "authority": "ANSES",
+          "url": "https://www.anses.fr/en/search",
+          "status": null
+        },
+        {
+          "authority": "ECHA",
+          "url": "https://echa.europa.eu/search-for-chemicals",
+          "status": null
+        },
+        {
+          "authority": "CIRC/IARC",
+          "url": "https://www.iarc.who.int/search/",
+          "status": null
+        }
+      ],
+      "bestMatchConfidence": null,
+      "automatable": false,
+      "reasonIfNotAutomatable": "Official discovery row found, but linked assessment was not accessible or not a strong match."
+    },
+    {
+      "code": "E171",
+      "canonicalName": "Titanium dioxide",
+      "efsaDiscovery": {
+        "found": true,
+        "discoveryPage": "https://www.efsa.europa.eu/en/topics/topic/food-colours",
+        "assessmentLinksFound": 2,
+        "assessmentFetchFailures": [
+          {
+            "url": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2021.6585",
+            "status": 403
+          },
+          {
+            "url": "https://doi.org/10.2903/j.efsa.2016.4545",
+            "status": 403
+          }
+        ],
+        "assessmentsFound": 0,
+        "assessments": [],
+        "latestAssessment": null
+      },
+      "jecfaDiscovery": {
+        "found": false,
+        "authority": "JECFA",
+        "matchedName": null,
+        "assessmentFound": false,
+        "adiFound": false,
+        "status": 200,
+        "query": "E171 Titanium dioxide"
+      },
+      "otherOfficialSources": [
+        {
+          "authority": "JECFA specifications",
+          "url": "https://www.fao.org/food/food-safety-quality/scientific-advice/jecfa/jecfa-additives/en/",
+          "status": null
+        },
+        {
+          "authority": "ANSES",
+          "url": "https://www.anses.fr/en/search",
+          "status": null
+        },
+        {
+          "authority": "ECHA",
+          "url": "https://echa.europa.eu/search-for-chemicals",
+          "status": null
+        },
+        {
+          "authority": "CIRC/IARC",
+          "url": "https://www.iarc.who.int/search/",
+          "status": null
+        }
+      ],
+      "bestMatchConfidence": null,
+      "automatable": false,
+      "reasonIfNotAutomatable": "Official discovery row found, but linked assessment was not accessible or not a strong match."
+    },
+    {
+      "code": "E172",
+      "canonicalName": "Iron oxides and hydroxides",
+      "efsaDiscovery": {
+        "found": true,
+        "discoveryPage": "https://www.efsa.europa.eu/en/topics/topic/food-colours",
+        "assessmentLinksFound": 2,
+        "assessmentFetchFailures": [
+          {
+            "url": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2015.4317",
+            "status": 403
+          }
+        ],
+        "assessmentsFound": 1,
+        "assessments": [
+          {
+            "authority": "EFSA",
+            "documentTitle": "Open EFSA",
+            "publicationYear": null,
+            "url": "https://open.efsa.europa.eu/questions/EFSA-Q-2021-00178",
+            "doi": null,
+            "additiveCode": "E172",
+            "matchedName": "Iron oxides and hydroxides",
+            "matchConfidence": "strong",
+            "assessmentStatus": "follow-up",
+            "assessmentScope": "food_additive_human",
+            "coveredCodes": [
+              "E172"
+            ],
+            "assessmentType": "individualAssessment",
+            "authorityConclusion": null,
+            "adi": null,
+            "tdi": null,
+            "otherReferenceValues": [],
+            "identifiedEffects": [],
+            "exposureFindings": null,
+            "populationsOfConcern": [],
+            "restrictionsOrRecommendations": [],
+            "uncertaintyNotes": [
+              "Abstract not accessible; metadata only."
+            ],
+            "sourceExcerpt": ""
+          }
+        ],
+        "latestAssessment": {
+          "authority": "EFSA",
+          "documentTitle": "Open EFSA",
+          "publicationYear": null,
+          "url": "https://open.efsa.europa.eu/questions/EFSA-Q-2021-00178",
+          "doi": null,
+          "additiveCode": "E172",
+          "matchedName": "Iron oxides and hydroxides",
+          "matchConfidence": "strong",
+          "assessmentStatus": "follow-up",
+          "assessmentScope": "food_additive_human",
+          "coveredCodes": [
+            "E172"
+          ],
+          "assessmentType": "individualAssessment",
+          "authorityConclusion": null,
+          "adi": null,
+          "tdi": null,
+          "otherReferenceValues": [],
+          "identifiedEffects": [],
+          "exposureFindings": null,
+          "populationsOfConcern": [],
+          "restrictionsOrRecommendations": [],
+          "uncertaintyNotes": [
+            "Abstract not accessible; metadata only."
+          ],
+          "sourceExcerpt": ""
+        }
+      },
+      "jecfaDiscovery": {
+        "found": false,
+        "authority": "JECFA",
+        "matchedName": null,
+        "assessmentFound": false,
+        "adiFound": false,
+        "status": 200,
+        "query": "E172 Iron oxides and hydroxides"
+      },
+      "otherOfficialSources": [
+        {
+          "authority": "JECFA specifications",
+          "url": "https://www.fao.org/food/food-safety-quality/scientific-advice/jecfa/jecfa-additives/en/",
+          "status": null
+        },
+        {
+          "authority": "ANSES",
+          "url": "https://www.anses.fr/en/search",
+          "status": null
+        },
+        {
+          "authority": "ECHA",
+          "url": "https://echa.europa.eu/search-for-chemicals",
+          "status": null
+        },
+        {
+          "authority": "CIRC/IARC",
+          "url": "https://www.iarc.who.int/search/",
+          "status": null
+        }
+      ],
+      "bestMatchConfidence": "strong",
+      "automatable": true,
+      "reasonIfNotAutomatable": null
+    }
+  ],
+  "cache": {
+    "path": "scripts\\output\\additive-science-source-cache.v2.json",
+    "entries": 41
+  },
+  "interpretation": "Discovery and explicit-source extraction only. No evaluateAdditiveRisk, OUMMAH classification, colour, health score or Supabase write was performed."
+}

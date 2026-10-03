@@ -1,110 +1,114 @@
-{
-  "expo": {
-    "name": "Oummah",
-    "slug": "oummah",
-    "version": "1.0.13",
-    "orientation": "portrait",
-    "scheme": "oummah",
-    "userInterfaceStyle": "automatic",
-    "icon": "./assets/images/icon.png",
-    "newArchEnabled": true,
-    "ios": {
-      "bundleIdentifier": "com.oummah.app",
-      "supportsTablet": true,
-      "infoPlist": {
-        "UIViewControllerBasedStatusBarAppearance": true,
-        "ITSAppUsesNonExemptEncryption": false
-      },
-      "runtimeVersion": {
-        "policy": "appVersion"
-      }
-    },
-    "android": {
-      "package": "com.oummah.app",
-      "permissions": [
-        "SCHEDULE_EXACT_ALARM",
-        "android.permission.RECORD_AUDIO",
-        "android.permission.MODIFY_AUDIO_SETTINGS",
-        "android.permission.FOREGROUND_SERVICE",
-        "android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK",
-        "SCHEDULE_EXACT_ALARM",
-        "android.permission.RECORD_AUDIO",
-        "android.permission.MODIFY_AUDIO_SETTINGS",
-        "android.permission.FOREGROUND_SERVICE",
-        "android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK"
-      ],
-      "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
-        "backgroundColor": "#FFFFFF"
-      },
-      "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false,
-      "runtimeVersion": "1.0.0"
-    },
-    "web": {
-      "bundler": "metro",
-      "output": "static"
-    },
-    "plugins": [
-      "expo-router",
-      "expo-font",
-      "expo-sqlite",
-      "expo-web-browser",
-      "expo-audio",
-      [
-        "expo-notifications",
-        {
-          "icon": "./assets/images/notification-icon.png",
-          "color": "#F2B53D",
-          "defaultChannel": "adhan-sound",
-          "sounds": [
-            "./assets/adhan/adhan_makkah_notification.wav",
-            "./assets/adhan/adhan_madinah_notification.wav",
-            "./assets/adhan/adhan_egypt_notification.wav",
-            "./assets/adhan/adhan_birds_notification.wav"
-          ]
-        }
-      ],
-      [
-        "./modules/prayer-times-widget/app.plugin.js",
-        {
-          "targetName": "PrayerTimesWidgetExtension",
-          "bundleIdentifier": "com.oummah.app.prayerwidget",
-          "groupIdentifier": "group.com.oummah.app",
-          "backgroundAsset": "home-mosque-sunset.jpg"
-        }
-      ]
-    ],
-    "experiments": {
-      "typedRoutes": false,
-      "reactCompiler": true
-    },
-    "extra": {
-      "router": {},
-      "eas": {
-        "projectId": "cfc1e1ce-a09c-4279-861c-8c07e081d86c",
-        "build": {
-          "experimental": {
-            "ios": {
-              "appExtensions": [
-                {
-                  "targetName": "PrayerTimesWidgetExtension",
-                  "bundleIdentifier": "com.oummah.app.prayerwidget",
-                  "entitlements": {
-                    "com.apple.security.application-groups": [
-                      "group.com.oummah.app"
-                    ]
-                  }
-                }
-              ]
-            }
-          }
-        }
-      }
-    },
-    "owner": "bahrioummah",
-    "updates": {
-      "url": "https://u.expo.dev/cfc1e1ce-a09c-4279-861c-8c07e081d86c"
-    }
-  }
+﻿{
+    "expo":  {
+                 "name":  "Oummah",
+                 "slug":  "oummah",
+                 "version":  "1.0.14",
+                 "orientation":  "portrait",
+                 "scheme":  "oummah",
+                 "userInterfaceStyle":  "automatic",
+                 "icon":  "./assets/images/icon.png",
+                 "newArchEnabled":  true,
+                 "ios":  {
+                             "bundleIdentifier":  "com.oummah.app",
+                             "supportsTablet":  true,
+                             "infoPlist":  {
+                                               "UIViewControllerBasedStatusBarAppearance":  true,
+                                               "ITSAppUsesNonExemptEncryption":  false
+                                           },
+                             "runtimeVersion":  {
+                                                    "policy":  "appVersion"
+                                                }
+                         },
+                 "android":  {
+                                 "package":  "com.oummah.app",
+                                 "permissions":  [
+                                                     "SCHEDULE_EXACT_ALARM",
+                                                     "android.permission.RECORD_AUDIO",
+                                                     "android.permission.MODIFY_AUDIO_SETTINGS",
+                                                     "android.permission.FOREGROUND_SERVICE",
+                                                     "android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK",
+                                                     "SCHEDULE_EXACT_ALARM",
+                                                     "android.permission.RECORD_AUDIO",
+                                                     "android.permission.MODIFY_AUDIO_SETTINGS",
+                                                     "android.permission.FOREGROUND_SERVICE",
+                                                     "android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK"
+                                                 ],
+                                 "adaptiveIcon":  {
+                                                      "foregroundImage":  "./assets/images/adaptive-icon.png",
+                                                      "backgroundColor":  "#FFFFFF"
+                                                  },
+                                 "edgeToEdgeEnabled":  true,
+                                 "predictiveBackGestureEnabled":  false,
+                                 "runtimeVersion":  "1.0.0"
+                             },
+                 "web":  {
+                             "bundler":  "metro",
+                             "output":  "static"
+                         },
+                 "plugins":  [
+                                 "expo-router",
+                                 "expo-font",
+                                 "expo-sqlite",
+                                 "expo-web-browser",
+                                 "expo-audio",
+                                 [
+                                     "expo-notifications",
+                                     {
+                                         "icon":  "./assets/images/notification-icon.png",
+                                         "color":  "#F2B53D",
+                                         "defaultChannel":  "adhan-sound",
+                                         "sounds":  [
+                                                        "./assets/adhan/adhan_makkah_notification.wav",
+                                                        "./assets/adhan/adhan_madinah_notification.wav",
+                                                        "./assets/adhan/adhan_egypt_notification.wav",
+                                                        "./assets/adhan/adhan_birds_notification.wav",
+                                                        "./assets/sounds/oummah_message.wav"
+                                                    ]
+                                     }
+                                 ],
+                                 [
+                                     "./modules/prayer-times-widget/app.plugin.js",
+                                     {
+                                         "targetName":  "PrayerTimesWidgetExtension",
+                                         "bundleIdentifier":  "com.oummah.app.prayerwidget",
+                                         "groupIdentifier":  "group.com.oummah.app",
+                                         "backgroundAsset":  "home-mosque-sunset.jpg"
+                                     }
+                                 ],
+                                 "expo-video"
+                             ],
+                 "experiments":  {
+                                     "typedRoutes":  false,
+                                     "reactCompiler":  true
+                                 },
+                 "extra":  {
+                               "router":  {
+
+                                          },
+                               "eas":  {
+                                           "projectId":  "cfc1e1ce-a09c-4279-861c-8c07e081d86c",
+                                           "build":  {
+                                                         "experimental":  {
+                                                                              "ios":  {
+                                                                                          "appExtensions":  [
+                                                                                                                {
+                                                                                                                    "targetName":  "PrayerTimesWidgetExtension",
+                                                                                                                    "bundleIdentifier":  "com.oummah.app.prayerwidget",
+                                                                                                                    "entitlements":  {
+                                                                                                                                         "com.apple.security.application-groups":  [
+                                                                                                                                                                                       "group.com.oummah.app"
+                                                                                                                                                                                   ]
+                                                                                                                                     }
+                                                                                                                }
+                                                                                                            ]
+                                                                                      }
+                                                                          }
+                                                     }
+                                       }
+                           },
+                 "owner":  "bahrioummah",
+                 "updates":  {
+                                 "url":  "https://u.expo.dev/cfc1e1ce-a09c-4279-861c-8c07e081d86c"
+                             }
+             }
 }

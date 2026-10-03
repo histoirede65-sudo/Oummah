@@ -5,7 +5,10 @@ import { router } from "expo-router";
 import { useEffect, useMemo, useState } from "react";
 import {
   ActivityIndicator,
+  Alert,
+  KeyboardAvoidingView,
   Modal,
+  Platform,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -140,6 +143,24 @@ export default function DailyGoalsScreen() {
     setAddVisible(false);
   };
 
+  const confirmDeleteGoal = (goal: DailyGoal) => {
+    if (!goal.personal) return;
+    Alert.alert(
+      "Supprimer cet objectif ?",
+      goal.title,
+      [
+        { text: "Annuler", style: "cancel" },
+        {
+          text: "Supprimer",
+          style: "destructive",
+          onPress: () => {
+            void model.removePersonal(goal.id);
+          },
+        },
+      ],
+    );
+  };
+
   const choosePace = async (dailyMinutes: DailyGoalSettings["dailyMinutes"]) => {
     const next = {
       ...(settings ?? {
@@ -186,6 +207,14 @@ export default function DailyGoalsScreen() {
 
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <DailyProgressHero summary={model.summary} streak={weekly.activeDays} />
+        <Pressable onPress={() => router.push("/progression")} style={({ pressed }) => [styles.progressionLink, styles.progressionLinkOffset, pressed && styles.pressed]}>
+          <View style={styles.progressionIcon}><Ionicons name="trending-up-outline" size={22} color={colors.goldLight} /></View>
+          <View style={styles.progressionCopy}>
+            <Text style={styles.progressionLinkText}>Ma progression</Text>
+            <Text style={styles.progressionSubtitle}>Semaine • Mois • Année</Text>
+          </View>
+          <Ionicons name="chevron-forward" size={16} color={colors.goldLight} />
+        </Pressable>
         <Pressable onPress={() => setSettingsVisible(true)} style={({ pressed }) => [styles.manageGoalsButton, pressed && styles.pressed]}>
           <Ionicons name="options-outline" size={19} color={colors.background} />
           <Text style={styles.manageGoalsText}>Modifier mes objectifs</Text>
@@ -227,7 +256,7 @@ export default function DailyGoalsScreen() {
         <Text style={styles.sectionLabel}>VOTRE PRIORITÉ</Text>
         <EssentialGoalCard goal={model.essential} onPress={() => void openGoal(model.essential!)} />
         <View style={styles.sectionHeading}><Text style={styles.sectionTitle}>Aujourd’hui</Text><Text style={styles.sectionMeta}>{model.summary.completed}/{model.summary.total} terminés</Text></View>
-        <View style={styles.goals}>{orderedGoals.map((goal) => <DailyGoalCard key={goal.id} goal={goal} onPress={() => void openGoal(goal)} />)}</View>
+        <View style={styles.goals}>{orderedGoals.map((goal) => <DailyGoalCard key={goal.id} goal={goal} onPress={() => void openGoal(goal)} onDelete={() => confirmDeleteGoal(goal)} />)}</View>
         <Pressable onPress={() => setAddVisible(true)} style={styles.addButton}><Ionicons name="add" size={18} color={colors.goldLight} /><Text style={styles.addText}>Ajouter un objectif personnel</Text></Pressable>
         <Text style={styles.sectionLabel}>VOTRE RÉGULARITÉ</Text>
         <WeeklySummaryCard activeDays={weekly.activeDays} regularity={weekly.regularity} />
@@ -243,11 +272,46 @@ export default function DailyGoalsScreen() {
       </ScrollView>
 
       <Modal visible={addVisible} transparent animationType="fade" onRequestClose={() => setAddVisible(false)}>
-        <Pressable onPress={() => setAddVisible(false)} style={styles.backdrop}><Pressable onPress={(event) => event.stopPropagation()} style={styles.modalCard}>
-          <Text style={styles.modalEyebrow}>MES OBJECTIFS</Text><Text style={styles.modalTitle}>Ajouter une intention</Text><Text style={styles.modalText}>Une action simple, personnelle et réaliste pour aujourd’hui.</Text>
-          <TextInput value={personalTitle} onChangeText={setPersonalTitle} placeholder="Ex. Appeler mes parents" placeholderTextColor={colors.textMuted} autoFocus style={styles.input} />
-          <View style={styles.modalActions}><Pressable onPress={() => setAddVisible(false)} style={styles.secondaryButton}><Text style={styles.secondaryText}>Annuler</Text></Pressable><Pressable onPress={() => void addGoal()} style={styles.primaryButton}><Text style={styles.primaryText}>Ajouter</Text></Pressable></View>
-        </Pressable></Pressable>
+        <KeyboardAvoidingView
+          style={styles.keyboardAvoider}
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          keyboardVerticalOffset={Platform.OS === "ios" ? 12 : 0}
+        >
+          <Pressable onPress={() => setAddVisible(false)} style={styles.backdrop}>
+            <Pressable onPress={(event) => event.stopPropagation()} style={styles.modalCard}>
+              <Text style={styles.modalEyebrow}>MES OBJECTIFS</Text>
+              <Text style={styles.modalTitle}>Ajouter un objectif personnel</Text>
+              <Text style={styles.modalText}>Écrivez l’action que vous souhaitez accomplir aujourd’hui. Elle apparaîtra ensuite dans votre liste et vous pourrez la cocher une fois terminée.</Text>
+              <Text style={styles.inputLabel}>Votre objectif</Text>
+              <TextInput
+                value={personalTitle}
+                onChangeText={setPersonalTitle}
+                placeholder="Ex. Appeler mes parents"
+                placeholderTextColor={colors.textMuted}
+                autoFocus
+                maxLength={80}
+                returnKeyType="done"
+                onSubmitEditing={() => void addGoal()}
+                selectionColor={colors.goldLight}
+                style={styles.input}
+              />
+              <View style={styles.inputFooter}>
+                <Text style={styles.inputHint}>Un objectif simple et réalisable pour aujourd’hui.</Text>
+                <Text style={styles.inputCount}>{personalTitle.length}/80</Text>
+              </View>
+              <View style={styles.modalActions}>
+                <Pressable onPress={() => setAddVisible(false)} style={styles.secondaryButton}><Text style={styles.secondaryText}>Annuler</Text></Pressable>
+                <Pressable
+                  disabled={!personalTitle.trim()}
+                  onPress={() => void addGoal()}
+                  style={[styles.primaryButton, !personalTitle.trim() && styles.primaryButtonDisabled]}
+                >
+                  <Text style={[styles.primaryText, !personalTitle.trim() && styles.primaryTextDisabled]}>Ajouter l’objectif</Text>
+                </Pressable>
+              </View>
+            </Pressable>
+          </Pressable>
+        </KeyboardAvoidingView>
       </Modal>
 
       <Modal visible={settingsVisible} transparent animationType="slide" onRequestClose={() => setSettingsVisible(false)}>
@@ -295,13 +359,17 @@ const styles = StyleSheet.create({
   pathPrimaryText: { color: colors.background, fontFamily: typography.sans, fontSize: 11, fontWeight: "800" },
   sectionLabel: { marginTop: 19, marginBottom: 8, color: colors.goldMuted, fontFamily: typography.sans, fontSize: 10, fontWeight: "800", letterSpacing: 1.05 },
   sectionHeading: { marginTop: 22, marginBottom: 9, flexDirection: "row", alignItems: "center", justifyContent: "space-between" }, sectionTitle: { color: colors.text, fontFamily: typography.serifSemibold, fontSize: 22 }, sectionMeta: { color: colors.textMuted, fontFamily: typography.sans, fontSize: 11.5 },
-  goals: { gap: 8 }, addButton: { minHeight: 48, marginTop: 10, flexDirection: "row", alignItems: "center", justifyContent: "center", borderRadius: 17, borderWidth: 1, borderStyle: "dashed", borderColor: "rgba(241,188,79,0.30)" }, addText: { marginLeft: 7, color: colors.goldLight, fontFamily: typography.sans, fontSize: 13, fontWeight: "700" },
+  goals: { gap: 8 }, progressionLink: { minHeight: 70, paddingHorizontal: 14, paddingVertical: 12, flexDirection: "row", alignItems: "center", borderRadius: 17, borderWidth: 1, borderColor: "rgba(227,181,90,0.28)", backgroundColor: "rgba(98,197,139,0.07)" }, progressionIcon: { width: 42, height: 42, alignItems: "center", justifyContent: "center", borderRadius: 13, backgroundColor: "rgba(98,197,139,0.11)" }, progressionCopy: { flex: 1, marginLeft: 12 }, progressionLinkText: { color: colors.text, fontFamily: typography.serifSemibold, fontSize: 18 }, progressionSubtitle: { marginTop: 2, color: colors.goldMuted, fontFamily: typography.sans, fontSize: 11.5, fontWeight: "600" }, addButton: { minHeight: 48, marginTop: 10, flexDirection: "row", alignItems: "center", justifyContent: "center", borderRadius: 17, borderWidth: 1, borderStyle: "dashed", borderColor: "rgba(241,188,79,0.30)" }, addText: { marginLeft: 7, color: colors.goldLight, fontFamily: typography.sans, fontSize: 13, fontWeight: "700" },
   footerNote: { marginTop: 15, color: colors.textMuted, fontFamily: typography.serifMedium, fontSize: 11.5, lineHeight: 15, textAlign: "center" },
+  progressionLinkOffset: { marginTop: 6 },
   eveningCard: { minHeight: 92, marginTop: 10, padding: 13, flexDirection: "row", alignItems: "center", borderRadius: 20, borderWidth: 1, borderColor: "rgba(241,188,79,0.13)", backgroundColor: "rgba(74,40,88,0.16)" }, eveningIcon: { width: 39, height: 39, alignItems: "center", justifyContent: "center", borderRadius: 14, backgroundColor: "rgba(241,188,79,0.08)" }, eveningCopy: { flex: 1, minWidth: 0, marginLeft: 11 }, eveningEyebrow: { color: colors.goldMuted, fontFamily: typography.sans, fontSize: 9.5, fontWeight: "800", letterSpacing: 0.9 }, eveningTitle: { marginTop: 4, color: colors.text, fontFamily: typography.serifMedium, fontSize: 15 }, eveningText: { marginTop: 4, color: colors.textMuted, fontFamily: typography.sans, fontSize: 11.2, lineHeight: 14 },
+  keyboardAvoider: { flex: 1 },
   backdrop: { flex: 1, justifyContent: "flex-end", padding: 12, backgroundColor: "rgba(3,4,10,0.74)" }, modalCard: { padding: 20, borderRadius: 25, borderWidth: 1, borderColor: "rgba(241,188,79,0.20)", backgroundColor: colors.backgroundSecondary },
   modalEyebrow: { color: colors.goldMuted, fontFamily: typography.sans, fontSize: 10, fontWeight: "800", letterSpacing: 1.1 }, modalTitle: { marginTop: 4, color: colors.text, fontFamily: typography.serifSemibold, fontSize: 25 }, modalText: { marginTop: 7, color: colors.textSecondary, fontFamily: typography.sans, fontSize: 13, lineHeight: 17 },
-  input: { height: 50, marginTop: 17, paddingHorizontal: 14, borderRadius: 16, borderWidth: 1, borderColor: "rgba(255,255,255,0.10)", backgroundColor: "rgba(255,255,255,0.04)", color: colors.text, fontFamily: typography.sans, fontSize: 15 }, modalActions: { marginTop: 15, flexDirection: "row", gap: 8 },
-  secondaryButton: { minHeight: 46, flex: 1, alignItems: "center", justifyContent: "center", borderRadius: 15, backgroundColor: "rgba(255,255,255,0.06)" }, secondaryText: { color: colors.textSecondary, fontFamily: typography.sans, fontSize: 13, fontWeight: "700" }, primaryButton: { minHeight: 46, flex: 1, alignItems: "center", justifyContent: "center", borderRadius: 15, backgroundColor: colors.goldLight }, primaryText: { color: colors.background, fontFamily: typography.sans, fontSize: 13, fontWeight: "800" },
+  inputLabel: { marginTop: 17, marginBottom: 7, color: colors.textSecondary, fontFamily: typography.sans, fontSize: 12, fontWeight: "800" },
+  input: { height: 50, paddingHorizontal: 14, borderRadius: 16, borderWidth: 1, borderColor: "rgba(241,188,79,0.24)", backgroundColor: "rgba(255,255,255,0.055)", color: colors.text, fontFamily: typography.sans, fontSize: 15 },
+  inputFooter: { marginTop: 7, flexDirection: "row", alignItems: "center" }, inputHint: { flex: 1, color: colors.textMuted, fontFamily: typography.sans, fontSize: 10.5 }, inputCount: { marginLeft: 8, color: colors.goldMuted, fontFamily: typography.sans, fontSize: 10.5, fontWeight: "700" }, modalActions: { marginTop: 15, flexDirection: "row", gap: 8 },
+  secondaryButton: { minHeight: 46, flex: 1, alignItems: "center", justifyContent: "center", borderRadius: 15, backgroundColor: "rgba(255,255,255,0.06)" }, secondaryText: { color: colors.textSecondary, fontFamily: typography.sans, fontSize: 13, fontWeight: "700" }, primaryButton: { minHeight: 46, flex: 1.35, alignItems: "center", justifyContent: "center", borderRadius: 15, backgroundColor: colors.goldLight }, primaryButtonDisabled: { backgroundColor: "rgba(241,188,79,0.20)" }, primaryText: { color: colors.background, fontFamily: typography.sans, fontSize: 13, fontWeight: "800" }, primaryTextDisabled: { color: colors.textMuted },
   settingsSheet: { paddingTop: 10, paddingHorizontal: 20, paddingBottom: 26, borderRadius: 28, borderWidth: 1, borderColor: "rgba(241,188,79,0.20)", backgroundColor: colors.backgroundSecondary }, handle: { width: 42, height: 4, marginBottom: 18, alignSelf: "center", borderRadius: 2, backgroundColor: "rgba(255,255,255,0.18)" }, paces: { marginTop: 18, flexDirection: "row", gap: 7 }, pace: { height: 65, flex: 1, alignItems: "center", justifyContent: "center", borderRadius: 17, borderWidth: 1, borderColor: "rgba(255,255,255,0.08)", backgroundColor: "rgba(255,255,255,0.035)" }, paceActive: { borderColor: colors.goldLight, backgroundColor: "rgba(241,188,79,0.11)" }, paceValue: { color: colors.textSecondary, fontFamily: typography.serifSemibold, fontSize: 22 }, paceValueActive: { color: colors.goldLight }, paceLabel: { marginTop: 1, color: colors.textMuted, fontFamily: typography.sans, fontSize: 9, fontWeight: "800" }, paceLabelActive: { color: colors.goldMuted }, calmNote: { marginTop: 15, color: colors.textMuted, fontFamily: typography.sans, fontSize: 11.5, lineHeight: 15 }, primaryButtonWide: { minHeight: 48, marginTop: 17, alignItems: "center", justifyContent: "center", borderRadius: 16, backgroundColor: colors.goldLight },
   focusTitle: { marginTop: 19, marginBottom: 9, color: colors.textSecondary, fontFamily: typography.serifMedium, fontSize: 16 }, focuses: { flexDirection: "row", flexWrap: "wrap", gap: 7 }, focus: { minHeight: 38, paddingHorizontal: 11, flexDirection: "row", alignItems: "center", borderRadius: 13, borderWidth: 1, borderColor: "rgba(255,255,255,0.08)", backgroundColor: "rgba(255,255,255,0.03)" }, focusActive: { borderColor: "rgba(241,188,79,0.42)", backgroundColor: "rgba(241,188,79,0.09)" }, focusText: { marginLeft: 6, color: colors.textMuted, fontFamily: typography.sans, fontSize: 11.5, fontWeight: "700" }, focusTextActive: { color: colors.goldLight },
 });

@@ -1,5 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
+import * as Location from "expo-location";
 import type { Href } from "expo-router";
 import { router, useFocusEffect } from "expo-router";
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -25,6 +26,7 @@ import {
 } from "../features/adhan/AdhanPreferences";
 import {
   getMosquePrayerSchedule,
+  ADHAN_SCHEDULE_DAYS,
   loadPrayerCalculationSettings,
   type MosquePrayerSchedule,
 } from "../features/mosques/data/mosquePrayerTimes";
@@ -54,6 +56,22 @@ import { getActiveAnnouncements, type PublicAnnouncement } from "../features/ann
 import { typography } from "../theme/typography";
 
 type Filter = "all" | NotificationCenterItem["category"];
+
+async function getNotificationPrayerLocation(mosque: StoredMosque | null) {
+  if (mosque) return { latitude: mosque.latitude, longitude: mosque.longitude };
+
+  const permission = await Location.getForegroundPermissionsAsync().catch(() => null);
+  if (!permission?.granted) return null;
+
+  const lastKnown = await Location.getLastKnownPositionAsync().catch(() => null);
+  const position = lastKnown ?? await Location.getCurrentPositionAsync({
+    accuracy: Location.Accuracy.Balanced,
+  }).catch(() => null);
+
+  return position
+    ? { latitude: position.coords.latitude, longitude: position.coords.longitude }
+    : null;
+}
 
 const FILTERS: ReadonlyArray<{ id: Filter; label: string }> = [
   { id: "all", label: "Tout" },
@@ -101,7 +119,6 @@ export default function NotificationsScreen() {
   const [timePickerReminder, setTimePickerReminder] = useState<CenterReminderId | null>(null);
   const [timePickerHour, setTimePickerHour] = useState(0);
   const [timePickerMinute, setTimePickerMinute] = useState(0);
-
   useEffect(() => {
     let active = true;
     const unsubscribe = subscribeNotificationReadStatus(() => {
@@ -138,22 +155,26 @@ export default function NotificationsScreen() {
         setAdminAnnouncements(nextAnnouncements);
         setLoaded(true);
 
-        if (nextMosque) {
+        const prayerLocation = await getNotificationPrayerLocation(nextMosque);
+        if (prayerLocation) {
           const calculation = await loadPrayerCalculationSettings();
           const calculatedSchedule = await getMosquePrayerSchedule(
-            nextMosque.latitude,
-            nextMosque.longitude,
+            prayerLocation.latitude,
+            prayerLocation.longitude,
             undefined,
             calculation,
+            ADHAN_SCHEDULE_DAYS,
           ).catch(() => null);
-          const approved = await getApprovedMosquePrayerTimes(nextMosque.id).catch(() => null);
+          const approved = nextMosque
+            ? await getApprovedMosquePrayerTimes(nextMosque.id).catch(() => null)
+            : null;
           const nextSchedule = calculatedSchedule
-            ? calculation.scheduleSource === "mosque"
+            ? nextMosque && calculation.scheduleSource === "mosque"
               ? applyApprovedMosquePrayerTimes(calculatedSchedule, approved)
               : calculatedSchedule
             : null;
           if (active) setSchedule(nextSchedule);
-        }
+        } else if (active) setSchedule(null);
       });
       return () => {
         active = false;
@@ -545,7 +566,7 @@ export default function NotificationsScreen() {
                 </View>
               </View>
 
-              {["Dou‘as", "Apprentissage", "Inspiration"].map((section) => (
+              {["Objectifs", "Dou‘as", "Apprentissage", "Inspiration"].map((section) => (
                 <View key={section}>
                   <Text style={styles.sectionLabel}>{section.toUpperCase()}</Text>
                   <View style={styles.settingsGroup}>

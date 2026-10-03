@@ -13,7 +13,7 @@ import { colors } from "../../theme/colors";
 import { typography } from "../../theme/typography";
 
 const SOURCE_LABELS: Record<ProphetSourceKind, string> = { QURAN: "CORAN", SUNNA: "SUNNA AUTHENTIQUE", TAFSIR: "TAFSIR" };
-const MUSA_COVER = PROPHETS_PREVIEW.find((prophet) => prophet.id === "musa")?.coverImage ?? require("../../assets/images/prophets/musa-scenes/moussa.png");
+const MUSA_COVER = PROPHETS_PREVIEW.find((prophet) => prophet.id === "musa")?.coverImage ?? require("../../assets/images/prophets/musa-scenes/moussa.jpg");
 
 function SourceChip({ kind }: { kind: ProphetSourceKind }) {
   const icon = kind === "QURAN" ? "book-outline" : kind === "SUNNA" ? "checkmark-circle-outline" : "library-outline";

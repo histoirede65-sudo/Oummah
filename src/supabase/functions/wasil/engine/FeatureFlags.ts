@@ -42,3 +42,4 @@ export function getWasilFeatureFlags(): WasilFeatureFlags {
     v4ExecutionPlan: envFlag("WASIL_V4_EXECUTION_PLAN", false),
   };
 }
+

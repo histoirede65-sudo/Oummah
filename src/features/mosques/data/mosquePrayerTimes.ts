@@ -35,31 +35,51 @@ export type PrayerCalculationSettings = {
   scheduleSource: 'mosque' | 'calculation';
 };
 
+export const DEFAULT_PRAYER_SCHEDULE_DAYS = 2;
+// Five prayers per day × seven days keeps the native pending-notification
+// queue comfortably below iOS limits while covering several days offline.
+export const ADHAN_SCHEDULE_DAYS = 7;
+
 export const DEFAULT_PRAYER_CALCULATION_SETTINGS: PrayerCalculationSettings = {
-  mode: 'preset', method: 12, fajrAngle: 18, ishaAngle: 18, scheduleSource: 'mosque',
+  mode: 'custom', method: 12, fajrAngle: 15, ishaAngle: 15, scheduleSource: 'mosque',
 };
 
-export const PRAYER_CALCULATION_METHODS = [
-  { method: 12, label: 'UOIF / France' },
-  { method: 3, label: 'Muslim World League' },
-  { method: 2, label: 'ISNA' },
-  { method: 5, label: 'Egyptian General Authority' },
-  { method: 4, label: 'Umm al-Qura University, Makkah' },
-  { method: 1, label: 'University of Islamic Sciences, Karachi' },
-] as const;
-
 const CALCULATION_SETTINGS_KEY = 'oummah.prayer.calculation-settings.v1';
+
+const SUPPORTED_PRAYER_ANGLES = [12, 15, 16, 17, 17.5, 18, 18.5, 19.5, 20] as const;
+
+function isSupportedPrayerAngle(value: unknown): value is number {
+  return typeof value === 'number'
+    && Number.isFinite(value)
+    && SUPPORTED_PRAYER_ANGLES.includes(value as typeof SUPPORTED_PRAYER_ANGLES[number]);
+}
+
 export async function loadPrayerCalculationSettings(): Promise<PrayerCalculationSettings> {
   try {
     const raw = await AsyncStorage.getItem(CALCULATION_SETTINGS_KEY);
     if (!raw) return DEFAULT_PRAYER_CALCULATION_SETTINGS;
     const value = JSON.parse(raw) as Partial<PrayerCalculationSettings>;
-    return {
+    const fajrAngle = isSupportedPrayerAngle(value.fajrAngle)
+      ? value.fajrAngle
+      : DEFAULT_PRAYER_CALCULATION_SETTINGS.fajrAngle;
+    const ishaAngle = isSupportedPrayerAngle(value.ishaAngle)
+      ? value.ishaAngle
+      : DEFAULT_PRAYER_CALCULATION_SETTINGS.ishaAngle;
+    const migrated: PrayerCalculationSettings = {
       ...DEFAULT_PRAYER_CALCULATION_SETTINGS,
       ...value,
-      mode: value.mode === 'custom' ? 'custom' : 'preset',
+      // France is the only calculation preset. Legacy method IDs are ignored.
+      mode: 'custom',
+      method: 12,
+      fajrAngle,
+      ishaAngle,
       scheduleSource: value.scheduleSource === 'calculation' ? 'calculation' : 'mosque',
     };
+    // Persist the normalized value so an old country/method cannot be reused later.
+    if (JSON.stringify(migrated) !== raw) {
+      await AsyncStorage.setItem(CALCULATION_SETTINGS_KEY, JSON.stringify(migrated));
+    }
+    return migrated;
   } catch { return DEFAULT_PRAYER_CALCULATION_SETTINGS; }
 }
 export async function savePrayerCalculationSettings(value: PrayerCalculationSettings): Promise<void> {
@@ -339,6 +359,7 @@ function buildPrayer(
 function buildSchedule(
   todayResponse: AladhanTimingsResponse,
   tomorrowResponse: AladhanTimingsResponse,
+  futureResponses: readonly AladhanTimingsResponse[],
   dateKey: string,
 ): MosquePrayerSchedule {
   const timezone =
@@ -352,6 +373,9 @@ function buildSchedule(
     buildPrayer(tomorrowResponse, key, label),
   );
   const tomorrowFajr = tomorrowPrayers[0];
+  const futurePrayers = futureResponses.flatMap((response) =>
+    PRAYER_DEFINITIONS.map(({ key, label }) => buildPrayer(response, key, label)),
+  );
 
   return {
     dateKey,
@@ -367,6 +391,7 @@ function buildSchedule(
     prayers,
     tomorrowPrayers,
     tomorrowFajr,
+    futurePrayers,
     fromCache: false,
   };
 }
@@ -506,6 +531,7 @@ export async function getMosquePrayerSchedule(
   longitude: number,
   signal?: AbortSignal,
   calculation: PrayerCalculationSettings = DEFAULT_PRAYER_CALCULATION_SETTINGS,
+  requestedDays: number = DEFAULT_PRAYER_SCHEDULE_DAYS,
 ): Promise<MosquePrayerSchedule> {
   const today = new Date();
   today.setHours(12, 0, 0, 0);
@@ -519,17 +545,23 @@ export async function getMosquePrayerSchedule(
   );
 
   try {
-    const [todayResponse, tomorrowResponse] = await Promise.all([
-      fetchPrayerDay(today, latitude, longitude, signal, calculation),
-      fetchPrayerDay(getDateOffset(today, 1), latitude, longitude, signal, calculation),
-    ]);
+    const scheduleDays = Math.min(
+      ADHAN_SCHEDULE_DAYS,
+      Math.max(DEFAULT_PRAYER_SCHEDULE_DAYS, Math.floor(requestedDays)),
+    );
+    const responses = await Promise.all(
+      Array.from({ length: scheduleDays }, (_, dayOffset) =>
+        fetchPrayerDay(getDateOffset(today, dayOffset), latitude, longitude, signal, calculation),
+      ),
+    );
+    const [todayResponse, tomorrowResponse, ...futureResponses] = responses;
 
     const schedule = buildSchedule(
       todayResponse,
       tomorrowResponse,
+      futureResponses,
       dateKey,
     );
-    schedule.futurePrayers = [];
 
     await writeCachedSchedule(
       cacheKey,

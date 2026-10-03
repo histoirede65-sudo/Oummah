@@ -5,13 +5,22 @@ import type { DailyPlan } from "../domain/DailyPlan";
 import { isGoalComplete } from "../domain/DailyGoal";
 import { goalRepository, summarizeDailyPlan } from "../data/goalRepository";
 import { goalProgressBridge } from "../services/goalProgressBridge";
+import { dateKey, loadHifzState } from "../../hifz/HifzStore";
 
 export function useDailyGoalsViewModel() {
   const [plan, setPlan] = useState<DailyPlan | null>(null);
   const [loading, setLoading] = useState(true);
 
   const refresh = useCallback(async () => {
-    const next = await goalRepository.getToday();
+    let next = await goalRepository.getToday();
+    // Recover a completed review whose goal event was lost when an older build closed.
+    const reviewGoal = next.goals.find((goal) => goal.metric === "hifz_review_completed");
+    if (reviewGoal && reviewGoal.progress.current < reviewGoal.progress.target) {
+      const hifz = await loadHifzState();
+      if (hifz.sessions.some((session) => session.date === dateKey() && session.completed === true)) {
+        next = await goalRepository.setEvidence("hifz_review_completed", `review:${next.dateKey}`, true);
+      }
+    }
     setPlan(next);
     setLoading(false);
     return next;
@@ -50,5 +59,11 @@ export function useDailyGoalsViewModel() {
     goalProgressBridge.notify(next);
   }, []);
 
-  return { plan, summary, essential, loading, refresh, toggle, addPersonal };
+  const removePersonal = useCallback(async (goalId: string) => {
+    const next = await goalRepository.removePersonal(goalId);
+    setPlan(next);
+    goalProgressBridge.notify(next);
+  }, []);
+
+  return { plan, summary, essential, loading, refresh, toggle, addPersonal, removePersonal };
 }

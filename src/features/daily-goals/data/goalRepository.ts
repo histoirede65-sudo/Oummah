@@ -38,12 +38,35 @@ async function getToday(): Promise<DailyPlan> {
     const existingById = new Map(stored.goals.map((goal) => [goal.id, goal]));
     const program = templates.map((goal) => {
       const existing = existingById.get(goal.id);
-      return existing ? { ...goal, progress: existing.progress } : goal;
+      if (!existing) return goal;
+      if (existing.metric !== goal.metric) return goal;
+      if (goal.metric === "dhikr_count") return { ...goal, progress: { ...existing.progress, target: goal.progress.target, current: Math.min(existing.progress.current, goal.progress.target), completedAt: existing.progress.current >= goal.progress.target ? existing.progress.completedAt ?? new Date().toISOString() : undefined } };
+      if (goal.metric !== "quran_verses_read" && goal.metric !== "dua_read") return { ...goal, progress: existing.progress };
+      // Earlier builds counted verses on display and duas via the repetition
+      // counter. Keep only explicit reading confirmations for today's plan.
+      const evidence = [...new Set(existing.progress.evidence.filter(id => id.startsWith("read:")))];
+      const current = Math.min(goal.progress.target, evidence.length);
+      return { ...goal, progress: {
+        ...existing.progress,
+        evidence,
+        current,
+        completedAt: current >= goal.progress.target ? existing.progress.completedAt ?? new Date().toISOString() : undefined,
+      } };
     });
     const personal = stored.goals.filter((goal) => goal.personal);
     const nextIds = [...program, ...personal].map((goal) => goal.id).join("|");
     const storedIds = stored.goals.map((goal) => goal.id).join("|");
-    if (nextIds === storedIds) return stored;
+    const staleTemplateMetrics = program.some(goal => {
+      const previous = existingById.get(goal.id);
+      return previous && previous.metric !== goal.metric;
+    });
+    const staleReadingProgress = stored.goals.some(goal => {
+      if (goal.metric !== "quran_verses_read" && goal.metric !== "dua_read") return false;
+      const count = new Set(goal.progress.evidence.filter(id => id.startsWith("read:"))).size;
+      return goal.progress.evidence.length !== count || goal.progress.current !== Math.min(goal.progress.target, count);
+    });
+    const staleDhikrTarget = stored.goals.some(goal => goal.metric === "dhikr_count" && goal.progress.target !== (settings.dailyMinutes <= 5 ? 33 : 99));
+    if (nextIds === storedIds && !staleReadingProgress && !staleTemplateMetrics && !staleDhikrTarget) return stored;
     const migrated = {
       ...stored,
       goals: [...program, ...personal],
@@ -67,6 +90,24 @@ async function save(plan: DailyPlan) {
   const next = { ...plan, updatedAt: new Date().toISOString() };
   await writeDailyPlan(next);
   return next;
+}
+
+async function setEvidence(metric: DailyGoal["metric"], evidenceId: string, selected: boolean) {
+  const plan = await getToday();
+  const goals = plan.goals.map(goal => {
+    if (goal.metric !== metric || goal.validation !== "automatic") return goal;
+    const evidence = new Set(goal.progress.evidence);
+    if (selected) evidence.add(evidenceId);
+    else evidence.delete(evidenceId);
+    const current = Math.min(goal.progress.target, evidence.size);
+    return { ...goal, progress: {
+      ...goal.progress,
+      evidence: [...evidence],
+      current,
+      completedAt: current >= goal.progress.target ? goal.progress.completedAt ?? new Date().toISOString() : undefined,
+    } };
+  });
+  return save({ ...plan, goals });
 }
 
 async function toggle(goalId: string) {
@@ -105,6 +146,13 @@ async function addPersonal(title: string, estimatedMinutes = 5) {
   return save({ ...plan, goals: [...plan.goals, newGoal] });
 }
 
+async function removePersonal(goalId: string) {
+  const plan = await getToday();
+  const goals = plan.goals.filter((goal) => goal.id !== goalId || !goal.personal);
+  if (goals.length === plan.goals.length) return plan;
+  return save({ ...plan, goals });
+}
+
 async function saveSettings(settings: DailyGoalSettings) {
   await writeDailyGoalSettings(settings);
   return settings;
@@ -138,8 +186,10 @@ async function updateProgram(settings: DailyGoalSettings) {
 export const goalRepository = {
   getToday,
   save,
+  setEvidence,
   toggle,
   addPersonal,
+  removePersonal,
   readSettings: readDailyGoalSettings,
   saveSettings,
   updateProgram,

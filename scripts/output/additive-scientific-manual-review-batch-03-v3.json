@@ -1,0 +1,185 @@
+{
+  "schemaVersion": "1.0",
+  "generatedAt": "2026-09-30T20:01:33.309Z",
+  "batch": 3,
+  "sourceAudit": "scripts\\output\\additive-science-source-audit-priority-321-v3.json",
+  "items": [
+    {
+      "code": "E331",
+      "name": "Sodium citrates",
+      "status": "possible_match",
+      "candidateSources": [
+        "WHO/JECFA"
+      ],
+      "candidateMatches": {
+        "efsa": {
+          "confidence": "rejected",
+          "assessmentCount": 0
+        },
+        "jecfa": {
+          "confidence": "possible",
+          "evaluationCount": 5,
+          "ins": [
+            "331III",
+            "331"
+          ]
+        }
+      },
+      "recommendedReviewAction": "Vérification manuelle de l’identité, de la source officielle et du périmètre avant génération."
+    },
+    {
+      "code": "E332",
+      "name": "Potassium citrates",
+      "status": "possible_match",
+      "candidateSources": [
+        "WHO/JECFA"
+      ],
+      "candidateMatches": {
+        "efsa": {
+          "confidence": "rejected",
+          "assessmentCount": 0
+        },
+        "jecfa": {
+          "confidence": "possible",
+          "evaluationCount": 5,
+          "ins": [
+            "332"
+          ]
+        }
+      },
+      "recommendedReviewAction": "Vérification manuelle de l’identité, de la source officielle et du périmètre avant génération."
+    },
+    {
+      "code": "E341",
+      "name": "Calcium phosphates",
+      "status": "possible_match",
+      "candidateSources": [
+        "WHO/JECFA"
+      ],
+      "candidateMatches": {
+        "efsa": {
+          "confidence": "rejected",
+          "assessmentCount": 0
+        },
+        "jecfa": {
+          "confidence": "possible",
+          "evaluationCount": 15,
+          "ins": [
+            "341"
+          ]
+        }
+      },
+      "recommendedReviewAction": "Vérification manuelle de l’identité, de la source officielle et du périmètre avant génération."
+    },
+    {
+      "code": "E343",
+      "name": "Magnesium phosphates",
+      "status": "possible_match",
+      "candidateSources": [
+        "WHO/JECFA"
+      ],
+      "candidateMatches": {
+        "efsa": {
+          "confidence": "rejected",
+          "assessmentCount": 0
+        },
+        "jecfa": {
+          "confidence": "possible",
+          "evaluationCount": 6,
+          "ins": [
+            "343"
+          ]
+        }
+      },
+      "recommendedReviewAction": "Vérification manuelle de l’identité, de la source officielle et du périmètre avant génération."
+    },
+    {
+      "code": "E352",
+      "name": "Calcium malates",
+      "status": "possible_match",
+      "candidateSources": [
+        "WHO/JECFA"
+      ],
+      "candidateMatches": {
+        "efsa": {
+          "confidence": "rejected",
+          "assessmentCount": 0
+        },
+        "jecfa": {
+          "confidence": "possible",
+          "evaluationCount": 2,
+          "ins": [
+            "352II"
+          ]
+        }
+      },
+      "recommendedReviewAction": "Vérification manuelle de l’identité, de la source officielle et du périmètre avant génération."
+    },
+    {
+      "code": "E380",
+      "name": "Triammonium citrate",
+      "status": "possible_match",
+      "candidateSources": [
+        "WHO/JECFA"
+      ],
+      "candidateMatches": {
+        "efsa": {
+          "confidence": "rejected",
+          "assessmentCount": 0
+        },
+        "jecfa": {
+          "confidence": "possible",
+          "evaluationCount": 4,
+          "ins": [
+            "380"
+          ]
+        }
+      },
+      "recommendedReviewAction": "Vérification manuelle de l’identité, de la source officielle et du périmètre avant génération."
+    },
+    {
+      "code": "E420",
+      "name": "Sorbitols",
+      "status": "possible_match",
+      "candidateSources": [
+        "WHO/JECFA"
+      ],
+      "candidateMatches": {
+        "efsa": {
+          "confidence": "rejected",
+          "assessmentCount": 0
+        },
+        "jecfa": {
+          "confidence": "possible",
+          "evaluationCount": 7,
+          "ins": [
+            "420"
+          ]
+        }
+      },
+      "recommendedReviewAction": "Vérification manuelle de l’identité, de la source officielle et du périmètre avant génération."
+    },
+    {
+      "code": "E425",
+      "name": "Konjac",
+      "status": "possible_match",
+      "candidateSources": [
+        "WHO/JECFA"
+      ],
+      "candidateMatches": {
+        "efsa": {
+          "confidence": "rejected",
+          "assessmentCount": 0
+        },
+        "jecfa": {
+          "confidence": "possible",
+          "evaluationCount": 2,
+          "ins": [
+            "425"
+          ]
+        }
+      },
+      "recommendedReviewAction": "Vérification manuelle de l’identité, de la source officielle et du périmètre avant génération."
+    }
+  ]
+}

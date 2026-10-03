@@ -313,11 +313,13 @@ const styles = StyleSheet.create({
   avatarSelected: { backgroundColor: colors.goldLight },
   reciterCopy: { flex: 1, minWidth: 0, marginHorizontal: 10 },
   reciterName: {
-    color: colors.textSecondary,
-    fontFamily: typography.serifMedium,
-    fontSize: 13.5,
+    color: "#FFFFFF",
+    fontFamily: typography.sans,
+    fontSize: 15,
+    lineHeight: 20,
+    fontWeight: "700",
   },
-  reciterNameSelected: { color: colors.goldLight },
+  reciterNameSelected: { color: "#FFFFFF" },
   reciterMeta: {
     marginTop: 2,
     color: colors.textMuted,

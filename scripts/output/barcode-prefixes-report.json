@@ -1,0 +1,3367 @@
+{
+  "The Coca-Cola Company": {
+    "entity": "coca-cola",
+    "validated": [
+      {
+        "prefix": "5449000",
+        "seen_for_group": 373,
+        "branded_products": 184,
+        "purity": 0.766,
+        "top_outside_brand": "nestea",
+        "top_outside_share": 0.033,
+        "others": {
+          "None": 36,
+          "Nestlé": 7
+        }
+      },
+      {
+        "prefix": "5038862",
+        "seen_for_group": 85,
+        "branded_products": 198,
+        "purity": 0.995,
+        "top_outside_brand": "innocence",
+        "top_outside_share": 0.005,
+        "others": {
+          "None": 1
+        }
+      },
+      {
+        "prefix": "5000112",
+        "seen_for_group": 55,
+        "branded_products": 156,
+        "purity": 0.891,
+        "top_outside_brand": "nestea",
+        "top_outside_share": 0.013,
+        "others": {
+          "None": 15,
+          "Nestlé": 2
+        }
+      },
+      {
+        "prefix": "7501295",
+        "seen_for_group": 22,
+        "branded_products": 22,
+        "purity": 1.0,
+        "top_outside_brand": "",
+        "top_outside_share": 0.0,
+        "others": {}
+      },
+      {
+        "prefix": "8004996",
+        "seen_for_group": 13,
+        "branded_products": 41,
+        "purity": 0.927,
+        "top_outside_brand": "rossi",
+        "top_outside_share": 0.073,
+        "others": {
+          "None": 3
+        }
+      },
+      {
+        "prefix": "9300675",
+        "seen_for_group": 12,
+        "branded_products": 150,
+        "purity": 0.8,
+        "top_outside_brand": "keri",
+        "top_outside_share": 0.067,
+        "others": {
+          "None": 30
+        }
+      },
+      {
+        "prefix": "7896504",
+        "seen_for_group": 12,
+        "branded_products": 12,
+        "purity": 1.0,
+        "top_outside_brand": "",
+        "top_outside_share": 0.0,
+        "others": {}
+      },
+      {
+        "prefix": "7771609",
+        "seen_for_group": 11,
+        "branded_products": 56,
+        "purity": 0.946,
+        "top_outside_brand": "ades",
+        "top_outside_share": 0.018,
+        "others": {
+          "None": 3
+        }
+      },
+      {
+        "prefix": "8901764",
+        "seen_for_group": 7,
+        "branded_products": 69,
+        "purity": 0.841,
+        "top_outside_brand": "kinley",
+        "top_outside_share": 0.029,
+        "others": {
+          "None": 10,
+          "PepsiCo": 1
+        }
+      },
+      {
+        "prefix": "9555589",
+        "seen_for_group": 5,
+        "branded_products": 32,
+        "purity": 0.812,
+        "top_outside_brand": "heaven and earth",
+        "top_outside_share": 0.062,
+        "others": {
+          "None": 6
+        }
+      },
+      {
+        "prefix": "7898341",
+        "seen_for_group": 5,
+        "branded_products": 13,
+        "purity": 0.923,
+        "top_outside_brand": "integral medica",
+        "top_outside_share": 0.077,
+        "others": {
+          "None": 1
+        }
+      },
+      {
+        "prefix": "8992761",
+        "seen_for_group": 3,
+        "branded_products": 26,
+        "purity": 0.769,
+        "top_outside_brand": "schweppes",
+        "top_outside_share": 0.077,
+        "others": {
+          "None": 6
+        }
+      },
+      {
+        "prefix": "7801610",
+        "seen_for_group": 3,
+        "branded_products": 38,
+        "purity": 0.895,
+        "top_outside_brand": "sprinte",
+        "top_outside_share": 0.026,
+        "others": {
+          "None": 4
+        }
+      },
+      {
+        "prefix": "8935049",
+        "seen_for_group": 3,
+        "branded_products": 26,
+        "purity": 0.808,
+        "top_outside_brand": "danisa",
+        "top_outside_share": 0.038,
+        "others": {
+          "None": 5
+        }
+      },
+      {
+        "prefix": "7771200",
+        "seen_for_group": 3,
+        "branded_products": 10,
+        "purity": 1.0,
+        "top_outside_brand": "",
+        "top_outside_share": 0.0,
+        "others": {}
+      }
+    ],
+    "rejected": [
+      {
+        "prefix": "7501055",
+        "seen_for_group": 68,
+        "branded_products": 167,
+        "purity": 0.593,
+        "top_outside_brand": "alpura",
+        "top_outside_share": 0.281,
+        "others": {
+          "None": 68
+        }
+      },
+      {
+        "prefix": "8718226",
+        "seen_for_group": 40,
+        "branded_products": 96,
+        "purity": 0.312,
+        "top_outside_brand": "kleinste soepfabriek",
+        "top_outside_share": 0.135,
+        "others": {
+          "None": 66
+        }
+      },
+      {
+        "prefix": "7790895",
+        "seen_for_group": 31,
+        "branded_products": 141,
+        "purity": 0.745,
+        "top_outside_brand": "ades",
+        "top_outside_share": 0.121,
+        "others": {
+          "None": 36
+        }
+      },
+      {
+        "prefix": "7894900",
+        "seen_for_group": 29,
+        "branded_products": 175,
+        "purity": 0.737,
+        "top_outside_brand": "ades",
+        "top_outside_share": 0.097,
+        "others": {
+          "None": 46
+        }
+      },
+      {
+        "prefix": "7802820",
+        "seen_for_group": 10,
+        "branded_products": 34,
+        "purity": 0.735,
+        "top_outside_brand": "vital",
+        "top_outside_share": 0.088,
+        "others": {
+          "None": 9
+        }
+      },
+      {
+        "prefix": "7750182",
+        "seen_for_group": 7,
+        "branded_products": 78,
+        "purity": 0.756,
+        "top_outside_brand": "san luis",
+        "top_outside_share": 0.09,
+        "others": {
+          "None": 19
+        }
+      },
+      {
+        "prefix": "8425402",
+        "seen_for_group": 6,
+        "branded_products": 59,
+        "purity": 0.017,
+        "top_outside_brand": "yoeco",
+        "top_outside_share": 0.153,
+        "others": {
+          "None": 58
+        }
+      },
+      {
+        "prefix": "7790154",
+        "seen_for_group": 5,
+        "branded_products": 12,
+        "purity": 0.833,
+        "top_outside_brand": "pyrus",
+        "top_outside_share": 0.167,
+        "others": {
+          "None": 2
+        }
+      },
+      {
+        "prefix": "8720157",
+        "seen_for_group": 5,
+        "branded_products": 89,
+        "purity": 0.056,
+        "top_outside_brand": "coolbest",
+        "top_outside_share": 0.258,
+        "others": {
+          "None": 84
+        }
+      },
+      {
+        "prefix": "9350167",
+        "seen_for_group": 5,
+        "branded_products": 26,
+        "purity": 0.192,
+        "top_outside_brand": "core powerfoods",
+        "top_outside_share": 0.692,
+        "others": {
+          "None": 21
+        }
+      },
+      {
+        "prefix": "4902102",
+        "seen_for_group": 4,
+        "branded_products": 115,
+        "purity": 0.548,
+        "top_outside_brand": "",
+        "top_outside_share": 0.165,
+        "others": {
+          "None": 52
+        }
+      },
+      {
+        "prefix": "4890008",
+        "seen_for_group": 3,
+        "branded_products": 56,
+        "purity": 0.464,
+        "top_outside_brand": "schweppes",
+        "top_outside_share": 0.214,
+        "others": {
+          "None": 25,
+          "Nestlé": 5
+        }
+      },
+      {
+        "prefix": "8851959",
+        "seen_for_group": 3,
+        "branded_products": 61,
+        "purity": 0.803,
+        "top_outside_brand": "schweppes",
+        "top_outside_share": 0.148,
+        "others": {
+          "None": 12
+        }
+      },
+      {
+        "prefix": "8847100",
+        "seen_for_group": 3,
+        "branded_products": 45,
+        "purity": 0.289,
+        "top_outside_brand": "royal elephant",
+        "top_outside_share": 0.111,
+        "others": {
+          "None": 32
+        }
+      },
+      {
+        "prefix": "7840058",
+        "seen_for_group": 3,
+        "branded_products": 7,
+        "purity": 1.0,
+        "top_outside_brand": "",
+        "top_outside_share": 0.0,
+        "others": {}
+      },
+      {
+        "prefix": "5942321",
+        "seen_for_group": 3,
+        "branded_products": 24,
+        "purity": 0.667,
+        "top_outside_brand": "dorna",
+        "top_outside_share": 0.125,
+        "others": {
+          "None": 8
+        }
+      },
+      {
+        "prefix": "8436046",
+        "seen_for_group": 3,
+        "branded_products": 112,
+        "purity": 0.018,
+        "top_outside_brand": "quamtrax",
+        "top_outside_share": 0.357,
+        "others": {
+          "None": 110
+        }
+      },
+      {
+        "prefix": "7411001",
+        "seen_for_group": 3,
+        "branded_products": 9,
+        "purity": 0.889,
+        "top_outside_brand": "milpa real",
+        "top_outside_share": 0.111,
+        "others": {
+          "None": 1
+        }
+      },
+      {
+        "prefix": "8007490",
+        "seen_for_group": 3,
+        "branded_products": 70,
+        "purity": 0.043,
+        "top_outside_brand": "fini",
+        "top_outside_share": 0.9,
+        "others": {
+          "None": 67
+        }
+      },
+      {
+        "prefix": "7613404",
+        "seen_for_group": 3,
+        "branded_products": 174,
+        "purity": 0.0,
+        "top_outside_brand": "migros",
+        "top_outside_share": 0.448,
+        "others": {
+          "None": 174
+        }
+      },
+      {
+        "prefix": "7610632",
+        "seen_for_group": 3,
+        "branded_products": 129,
+        "purity": 0.023,
+        "top_outside_brand": "migros",
+        "top_outside_share": 0.419,
+        "others": {
+          "None": 126
+        }
+      },
+      {
+        "prefix": "7702766",
+        "seen_for_group": 3,
+        "branded_products": 3,
+        "purity": 1.0,
+        "top_outside_brand": "",
+        "top_outside_share": 0.0,
+        "others": {}
+      }
+    ]
+  },
+  "PepsiCo": {
+    "entity": "pepsico",
+    "validated": [
+      {
+        "prefix": "8410199",
+        "seen_for_group": 55,
+        "branded_products": 175,
+        "purity": 0.806,
+        "top_outside_brand": "matutano",
+        "top_outside_share": 0.08,
+        "others": {
+          "None": 34
+        }
+      },
+      {
+        "prefix": "5000328",
+        "seen_for_group": 49,
+        "branded_products": 154,
+        "purity": 0.89,
+        "top_outside_brand": "snack a jacks",
+        "top_outside_share": 0.019,
+        "others": {
+          "None": 17
+        }
+      },
+      {
+        "prefix": "5900259",
+        "seen_for_group": 17,
+        "branded_products": 166,
+        "purity": 0.922,
+        "top_outside_brand": "star",
+        "top_outside_share": 0.042,
+        "others": {
+          "None": 13
+        }
+      },
+      {
+        "prefix": "5601363",
+        "seen_for_group": 10,
+        "branded_products": 60,
+        "purity": 0.883,
+        "top_outside_brand": "chipicao",
+        "top_outside_share": 0.067,
+        "others": {
+          "None": 7
+        }
+      },
+      {
+        "prefix": "4803925",
+        "seen_for_group": 8,
+        "branded_products": 28,
+        "purity": 0.75,
+        "top_outside_brand": "lipton",
+        "top_outside_share": 0.071,
+        "others": {
+          "None": 7
+        }
+      },
+      {
+        "prefix": "7792170",
+        "seen_for_group": 7,
+        "branded_products": 36,
+        "purity": 1.0,
+        "top_outside_brand": "",
+        "top_outside_share": 0.0,
+        "others": {}
+      },
+      {
+        "prefix": "5201024",
+        "seen_for_group": 7,
+        "branded_products": 127,
+        "purity": 0.835,
+        "top_outside_brand": "tasty",
+        "top_outside_share": 0.047,
+        "others": {
+          "None": 21
+        }
+      },
+      {
+        "prefix": "8858998",
+        "seen_for_group": 7,
+        "branded_products": 51,
+        "purity": 0.784,
+        "top_outside_brand": "",
+        "top_outside_share": 0.078,
+        "others": {
+          "None": 11
+        }
+      },
+      {
+        "prefix": "6221031",
+        "seen_for_group": 7,
+        "branded_products": 63,
+        "purity": 0.794,
+        "top_outside_brand": "",
+        "top_outside_share": 0.048,
+        "others": {
+          "None": 13
+        }
+      },
+      {
+        "prefix": "9313820",
+        "seen_for_group": 7,
+        "branded_products": 45,
+        "purity": 1.0,
+        "top_outside_brand": "",
+        "top_outside_share": 0.0,
+        "others": {}
+      },
+      {
+        "prefix": "7501761",
+        "seen_for_group": 6,
+        "branded_products": 74,
+        "purity": 0.959,
+        "top_outside_brand": "aunt jemima",
+        "top_outside_share": 0.041,
+        "others": {
+          "None": 3
+        }
+      },
+      {
+        "prefix": "5000108",
+        "seen_for_group": 6,
+        "branded_products": 171,
+        "purity": 0.889,
+        "top_outside_brand": "snack a jacks",
+        "top_outside_share": 0.023,
+        "others": {
+          "None": 18,
+          "Nestlé": 1
+        }
+      },
+      {
+        "prefix": "6130743",
+        "seen_for_group": 6,
+        "branded_products": 29,
+        "purity": 1.0,
+        "top_outside_brand": "",
+        "top_outside_share": 0.0,
+        "others": {}
+      },
+      {
+        "prefix": "6924743",
+        "seen_for_group": 5,
+        "branded_products": 99,
+        "purity": 0.949,
+        "top_outside_brand": "",
+        "top_outside_share": 0.03,
+        "others": {
+          "None": 5
+        }
+      },
+      {
+        "prefix": "4690388",
+        "seen_for_group": 4,
+        "branded_products": 99,
+        "purity": 0.859,
+        "top_outside_brand": "team",
+        "top_outside_share": 0.061,
+        "others": {
+          "None": 14
+        }
+      },
+      {
+        "prefix": "4710543",
+        "seen_for_group": 4,
+        "branded_products": 29,
+        "purity": 0.897,
+        "top_outside_brand": "lays taiwan",
+        "top_outside_share": 0.034,
+        "others": {
+          "None": 3
+        }
+      },
+      {
+        "prefix": "5011555",
+        "seen_for_group": 4,
+        "branded_products": 27,
+        "purity": 0.889,
+        "top_outside_brand": "ashley s",
+        "top_outside_share": 0.037,
+        "others": {
+          "None": 3
+        }
+      },
+      {
+        "prefix": "8690624",
+        "seen_for_group": 3,
+        "branded_products": 51,
+        "purity": 0.961,
+        "top_outside_brand": "frito lay",
+        "top_outside_share": 0.039,
+        "others": {
+          "None": 2
+        }
+      },
+      {
+        "prefix": "1200108",
+        "seen_for_group": 3,
+        "branded_products": 29,
+        "purity": 0.931,
+        "top_outside_brand": "frito lay",
+        "top_outside_share": 0.034,
+        "others": {
+          "None": 2
+        }
+      }
+    ],
+    "rejected": [
+      {
+        "prefix": "3168930",
+        "seen_for_group": 146,
+        "branded_products": 192,
+        "purity": 0.76,
+        "top_outside_brand": "tropicana",
+        "top_outside_share": 0.104,
+        "others": {
+          "None": 46
+        }
+      },
+      {
+        "prefix": "7500478",
+        "seen_for_group": 55,
+        "branded_products": 137,
+        "purity": 0.664,
+        "top_outside_brand": "sabritas",
+        "top_outside_share": 0.219,
+        "others": {
+          "None": 46
+        }
+      },
+      {
+        "prefix": "4060800",
+        "seen_for_group": 42,
+        "branded_products": 176,
+        "purity": 0.807,
+        "top_outside_brand": "lipton",
+        "top_outside_share": 0.102,
+        "others": {
+          "None": 32,
+          "The Coca-Cola Company": 2
+        }
+      },
+      {
+        "prefix": "3502110",
+        "seen_for_group": 37,
+        "branded_products": 189,
+        "purity": 0.402,
+        "top_outside_brand": "lipton",
+        "top_outside_share": 0.291,
+        "others": {
+          "None": 113
+        }
+      },
+      {
+        "prefix": "7501000",
+        "seen_for_group": 36,
+        "branded_products": 168,
+        "purity": 0.351,
+        "top_outside_brand": "bimbo",
+        "top_outside_share": 0.238,
+        "others": {
+          "None": 88,
+          "Nestlé": 21
+        }
+      },
+      {
+        "prefix": "8710398",
+        "seen_for_group": 34,
+        "branded_products": 188,
+        "purity": 0.777,
+        "top_outside_brand": "duyvis",
+        "top_outside_share": 0.106,
+        "others": {
+          "None": 42
+        }
+      },
+      {
+        "prefix": "5410188",
+        "seen_for_group": 33,
+        "branded_products": 184,
+        "purity": 0.261,
+        "top_outside_brand": "tropicana",
+        "top_outside_share": 0.538,
+        "others": {
+          "None": 136
+        }
+      },
+      {
+        "prefix": "8718692",
+        "seen_for_group": 26,
+        "branded_products": 153,
+        "purity": 0.503,
+        "top_outside_brand": "de vegetarische slager",
+        "top_outside_share": 0.229,
+        "others": {
+          "None": 76
+        }
+      },
+      {
+        "prefix": "8714100",
+        "seen_for_group": 25,
+        "branded_products": 180,
+        "purity": 0.028,
+        "top_outside_brand": "knorr",
+        "top_outside_share": 0.217,
+        "others": {
+          "None": 175
+        }
+      },
+      {
+        "prefix": "4062139",
+        "seen_for_group": 20,
+        "branded_products": 165,
+        "purity": 0.794,
+        "top_outside_brand": "lipton",
+        "top_outside_share": 0.145,
+        "others": {
+          "None": 33,
+          "The Coca-Cola Company": 1
+        }
+      },
+      {
+        "prefix": "5900497",
+        "seen_for_group": 20,
+        "branded_products": 126,
+        "purity": 0.587,
+        "top_outside_brand": "lipton",
+        "top_outside_share": 0.317,
+        "others": {
+          "None": 50,
+          "The Coca-Cola Company": 2
+        }
+      },
+      {
+        "prefix": "8422174",
+        "seen_for_group": 19,
+        "branded_products": 44,
+        "purity": 0.682,
+        "top_outside_brand": "tropicana",
+        "top_outside_share": 0.25,
+        "others": {
+          "None": 13,
+          "The Coca-Cola Company": 1
+        }
+      },
+      {
+        "prefix": "7892840",
+        "seen_for_group": 18,
+        "branded_products": 166,
+        "purity": 0.44,
+        "top_outside_brand": "elma chips",
+        "top_outside_share": 0.247,
+        "others": {
+          "None": 93
+        }
+      },
+      {
+        "prefix": "9310015",
+        "seen_for_group": 17,
+        "branded_products": 146,
+        "purity": 0.274,
+        "top_outside_brand": "smith s",
+        "top_outside_share": 0.219,
+        "others": {
+          "None": 106
+        }
+      },
+      {
+        "prefix": "7501011",
+        "seen_for_group": 12,
+        "branded_products": 167,
+        "purity": 0.246,
+        "top_outside_brand": "sabritas",
+        "top_outside_share": 0.449,
+        "others": {
+          "None": 126
+        }
+      },
+      {
+        "prefix": "8719128",
+        "seen_for_group": 11,
+        "branded_products": 79,
+        "purity": 0.722,
+        "top_outside_brand": "kiosk",
+        "top_outside_share": 0.076,
+        "others": {
+          "None": 22
+        }
+      },
+      {
+        "prefix": "6111252",
+        "seen_for_group": 10,
+        "branded_products": 58,
+        "purity": 0.724,
+        "top_outside_brand": "sakia el hamra",
+        "top_outside_share": 0.052,
+        "others": {
+          "None": 16
+        }
+      },
+      {
+        "prefix": "7310070",
+        "seen_for_group": 9,
+        "branded_products": 94,
+        "purity": 0.223,
+        "top_outside_brand": "carlsberg",
+        "top_outside_share": 0.138,
+        "others": {
+          "None": 45,
+          "Carlsberg": 28
+        }
+      },
+      {
+        "prefix": "7791813",
+        "seen_for_group": 9,
+        "branded_products": 52,
+        "purity": 0.788,
+        "top_outside_brand": "paso de los toros",
+        "top_outside_share": 0.115,
+        "others": {
+          "None": 11
+        }
+      },
+      {
+        "prefix": "8902080",
+        "seen_for_group": 9,
+        "branded_products": 86,
+        "purity": 0.593,
+        "top_outside_brand": "tropicana",
+        "top_outside_share": 0.326,
+        "others": {
+          "None": 34,
+          "The Coca-Cola Company": 1
+        }
+      },
+      {
+        "prefix": "5949000",
+        "seen_for_group": 9,
+        "branded_products": 51,
+        "purity": 0.765,
+        "top_outside_brand": "lipton",
+        "top_outside_share": 0.118,
+        "others": {
+          "None": 12
+        }
+      },
+      {
+        "prefix": "5942204",
+        "seen_for_group": 8,
+        "branded_products": 48,
+        "purity": 0.854,
+        "top_outside_brand": "lipton",
+        "top_outside_share": 0.083,
+        "others": {
+          "None": 7
+        }
+      },
+      {
+        "prefix": "8718309",
+        "seen_for_group": 7,
+        "branded_products": 40,
+        "purity": 0.45,
+        "top_outside_brand": "justnuts",
+        "top_outside_share": 0.125,
+        "others": {
+          "None": 22
+        }
+      },
+      {
+        "prefix": "7702189",
+        "seen_for_group": 7,
+        "branded_products": 79,
+        "purity": 0.468,
+        "top_outside_brand": "frito lay",
+        "top_outside_share": 0.367,
+        "others": {
+          "None": 42
+        }
+      },
+      {
+        "prefix": "8715600",
+        "seen_for_group": 7,
+        "branded_products": 113,
+        "purity": 0.265,
+        "top_outside_brand": "rivella",
+        "top_outside_share": 0.186,
+        "others": {
+          "None": 82,
+          "The Coca-Cola Company": 1
+        }
+      },
+      {
+        "prefix": "5941000",
+        "seen_for_group": 6,
+        "branded_products": 99,
+        "purity": 0.818,
+        "top_outside_brand": "star",
+        "top_outside_share": 0.141,
+        "others": {
+          "None": 18
+        }
+      },
+      {
+        "prefix": "7290010",
+        "seen_for_group": 5,
+        "branded_products": 70,
+        "purity": 0.171,
+        "top_outside_brand": "",
+        "top_outside_share": 0.371,
+        "others": {
+          "None": 55,
+          "Nestlé": 3
+        }
+      },
+      {
+        "prefix": "7501031",
+        "seen_for_group": 5,
+        "branded_products": 44,
+        "purity": 0.432,
+        "top_outside_brand": "jumex",
+        "top_outside_share": 0.159,
+        "others": {
+          "None": 24,
+          "The Coca-Cola Company": 1
+        }
+      },
+      {
+        "prefix": "7801620",
+        "seen_for_group": 5,
+        "branded_products": 56,
+        "purity": 0.196,
+        "top_outside_brand": "watts",
+        "top_outside_share": 0.196,
+        "others": {
+          "None": 44,
+          "Nestlé": 1
+        }
+      },
+      {
+        "prefix": "6091034",
+        "seen_for_group": 5,
+        "branded_products": 18,
+        "purity": 0.389,
+        "top_outside_brand": "lipton",
+        "top_outside_share": 0.611,
+        "others": {
+          "None": 11
+        }
+      },
+      {
+        "prefix": "7290006",
+        "seen_for_group": 4,
+        "branded_products": 98,
+        "purity": 0.122,
+        "top_outside_brand": "",
+        "top_outside_share": 0.327,
+        "others": {
+          "None": 84,
+          "Nestlé": 1,
+          "Bright Dairy & Food / Tnuva": 1
+        }
+      },
+      {
+        "prefix": "7290005",
+        "seen_for_group": 4,
+        "branded_products": 57,
+        "purity": 0.123,
+        "top_outside_brand": "yarden",
+        "top_outside_share": 0.316,
+        "others": {
+          "None": 49,
+          "The Coca-Cola Company": 1
+        }
+      },
+      {
+        "prefix": "7290113",
+        "seen_for_group": 4,
+        "branded_products": 55,
+        "purity": 0.527,
+        "top_outside_brand": "",
+        "top_outside_share": 0.2,
+        "others": {
+          "None": 26
+        }
+      },
+      {
+        "prefix": "8934588",
+        "seen_for_group": 4,
+        "branded_products": 20,
+        "purity": 0.8,
+        "top_outside_brand": "twister",
+        "top_outside_share": 0.1,
+        "others": {
+          "None": 4
+        }
+      },
+      {
+        "prefix": "7758574",
+        "seen_for_group": 4,
+        "branded_products": 36,
+        "purity": 0.5,
+        "top_outside_brand": "frito lay",
+        "top_outside_share": 0.306,
+        "others": {
+          "None": 18
+        }
+      },
+      {
+        "prefix": "6223001",
+        "seen_for_group": 4,
+        "branded_products": 62,
+        "purity": 0.145,
+        "top_outside_brand": "",
+        "top_outside_share": 0.113,
+        "others": {
+          "None": 50,
+          "Nestlé": 3
+        }
+      },
+      {
+        "prefix": "8901491",
+        "seen_for_group": 4,
+        "branded_products": 109,
+        "purity": 0.743,
+        "top_outside_brand": "kurkure",
+        "top_outside_share": 0.101,
+        "others": {
+          "None": 28
+        }
+      },
+      {
+        "prefix": "9400566",
+        "seen_for_group": 4,
+        "branded_products": 52,
+        "purity": 0.135,
+        "top_outside_brand": "bluebird",
+        "top_outside_share": 0.442,
+        "others": {
+          "None": 45
+        }
+      },
+      {
+        "prefix": "9415767",
+        "seen_for_group": 4,
+        "branded_products": 69,
+        "purity": 0.116,
+        "top_outside_brand": "v",
+        "top_outside_share": 0.188,
+        "others": {
+          "None": 61
+        }
+      },
+      {
+        "prefix": "7591031",
+        "seen_for_group": 4,
+        "branded_products": 26,
+        "purity": 0.385,
+        "top_outside_brand": "yukery",
+        "top_outside_share": 0.231,
+        "others": {
+          "None": 16
+        }
+      },
+      {
+        "prefix": "5741000",
+        "seen_for_group": 4,
+        "branded_products": 116,
+        "purity": 0.172,
+        "top_outside_brand": "faxe kondi",
+        "top_outside_share": 0.164,
+        "others": {
+          "None": 96
+        }
+      },
+      {
+        "prefix": "8711200",
+        "seen_for_group": 4,
+        "branded_products": 188,
+        "purity": 0.005,
+        "top_outside_brand": "knorr",
+        "top_outside_share": 0.452,
+        "others": {
+          "None": 187
+        }
+      },
+      {
+        "prefix": "8594008",
+        "seen_for_group": 4,
+        "branded_products": 112,
+        "purity": 0.188,
+        "top_outside_brand": "lucina",
+        "top_outside_share": 0.152,
+        "others": {
+          "None": 91
+        }
+      },
+      {
+        "prefix": "7290013",
+        "seen_for_group": 3,
+        "branded_products": 80,
+        "purity": 0.062,
+        "top_outside_brand": "",
+        "top_outside_share": 0.35,
+        "others": {
+          "None": 52,
+          "Nestlé": 18,
+          "The Coca-Cola Company": 5
+        }
+      },
+      {
+        "prefix": "7290002",
+        "seen_for_group": 3,
+        "branded_products": 93,
+        "purity": 0.075,
+        "top_outside_brand": "",
+        "top_outside_share": 0.29,
+        "others": {
+          "None": 86
+        }
+      },
+      {
+        "prefix": "4770477",
+        "seen_for_group": 3,
+        "branded_products": 95,
+        "purity": 0.179,
+        "top_outside_brand": "kalnapilis",
+        "top_outside_share": 0.305,
+        "others": {
+          "None": 78
+        }
+      },
+      {
+        "prefix": "8850718",
+        "seen_for_group": 3,
+        "branded_products": 150,
+        "purity": 0.833,
+        "top_outside_brand": "",
+        "top_outside_share": 0.12,
+        "others": {
+          "None": 25
+        }
+      },
+      {
+        "prefix": "6009710",
+        "seen_for_group": 3,
+        "branded_products": 59,
+        "purity": 0.339,
+        "top_outside_brand": "futurelife",
+        "top_outside_share": 0.102,
+        "others": {
+          "None": 39
+        }
+      },
+      {
+        "prefix": "8606017",
+        "seen_for_group": 3,
+        "branded_products": 80,
+        "purity": 0.263,
+        "top_outside_brand": "chipsy",
+        "top_outside_share": 0.237,
+        "others": {
+          "None": 59
+        }
+      },
+      {
+        "prefix": "8964002",
+        "seen_for_group": 3,
+        "branded_products": 41,
+        "purity": 0.293,
+        "top_outside_brand": "peak freans",
+        "top_outside_share": 0.122,
+        "others": {
+          "None": 29
+        }
+      },
+      {
+        "prefix": "6009510",
+        "seen_for_group": 3,
+        "branded_products": 40,
+        "purity": 0.525,
+        "top_outside_brand": "simba",
+        "top_outside_share": 0.45,
+        "others": {
+          "None": 19
+        }
+      },
+      {
+        "prefix": "8001160",
+        "seen_for_group": 3,
+        "branded_products": 80,
+        "purity": 0.637,
+        "top_outside_brand": "lipton",
+        "top_outside_share": 0.163,
+        "others": {
+          "None": 29
+        }
+      },
+      {
+        "prefix": "4260301",
+        "seen_for_group": 3,
+        "branded_products": 29,
+        "purity": 0.138,
+        "top_outside_brand": "fanta",
+        "top_outside_share": 0.207,
+        "others": {
+          "None": 14,
+          "The Coca-Cola Company": 11
+        }
+      },
+      {
+        "prefix": "4600494",
+        "seen_for_group": 3,
+        "branded_products": 46,
+        "purity": 0.109,
+        "top_outside_brand": "",
+        "top_outside_share": 0.283,
+        "others": {
+          "None": 41
+        }
+      },
+      {
+        "prefix": "6413600",
+        "seen_for_group": 3,
+        "branded_products": 105,
+        "purity": 0.19,
+        "top_outside_brand": "hartwall",
+        "top_outside_share": 0.524,
+        "others": {
+          "None": 84,
+          "L'Oréal Groupe": 1
+        }
+      },
+      {
+        "prefix": "7290000",
+        "seen_for_group": 3,
+        "branded_products": 113,
+        "purity": 0.027,
+        "top_outside_brand": "",
+        "top_outside_share": 0.425,
+        "others": {
+          "None": 96,
+          "Nestlé": 9,
+          "Bright Dairy & Food / Tnuva": 5
+        }
+      },
+      {
+        "prefix": "4810285",
+        "seen_for_group": 3,
+        "branded_products": 9,
+        "purity": 0.444,
+        "top_outside_brand": "",
+        "top_outside_share": 0.333,
+        "others": {
+          "None": 5
+        }
+      },
+      {
+        "prefix": "7410738",
+        "seen_for_group": 3,
+        "branded_products": 3,
+        "purity": 1.0,
+        "top_outside_brand": "",
+        "top_outside_share": 0.0,
+        "others": {}
+      }
+    ]
+  },
+  "Elbit Systems": {
+    "entity": "elbit-systems",
+    "validated": [],
+    "rejected": []
+  },
+  "Israel Aerospace Industries (IAI)": {
+    "entity": "iai",
+    "validated": [],
+    "rejected": []
+  },
+  "Mekorot": {
+    "entity": "mekorot",
+    "validated": [],
+    "rejected": []
+  },
+  "Netafim": {
+    "entity": "netafim",
+    "validated": [],
+    "rejected": []
+  },
+  "Adama": {
+    "entity": "adama",
+    "validated": [],
+    "rejected": []
+  },
+  "Ahava": {
+    "entity": "ahava",
+    "validated": [],
+    "rejected": []
+  },
+  "ICL / Israel Chemicals": {
+    "entity": "icl",
+    "validated": [],
+    "rejected": []
+  },
+  "Electra Group": {
+    "entity": "electra-group",
+    "validated": [],
+    "rejected": []
+  },
+  "BAE Systems": {
+    "entity": "bae-systems",
+    "validated": [],
+    "rejected": []
+  },
+  "Boeing": {
+    "entity": "boeing",
+    "validated": [],
+    "rejected": []
+  },
+  "Caterpillar": {
+    "entity": "caterpillar",
+    "validated": [],
+    "rejected": []
+  },
+  "FANUC": {
+    "entity": "fanuc",
+    "validated": [],
+    "rejected": []
+  },
+  "General Dynamics": {
+    "entity": "general-dynamics",
+    "validated": [],
+    "rejected": []
+  },
+  "Hikvision": {
+    "entity": "hikvision",
+    "validated": [],
+    "rejected": []
+  },
+  "Honeywell": {
+    "entity": "honeywell",
+    "validated": [],
+    "rejected": []
+  },
+  "L3Harris": {
+    "entity": "l3harris",
+    "validated": [],
+    "rejected": []
+  },
+  "Leonardo": {
+    "entity": "leonardo",
+    "validated": [],
+    "rejected": [
+      {
+        "prefix": "8058774",
+        "seen_for_group": 3,
+        "branded_products": 57,
+        "purity": 0.07,
+        "top_outside_brand": "amio",
+        "top_outside_share": 0.702,
+        "others": {
+          "None": 53
+        }
+      },
+      {
+        "prefix": "3572174",
+        "seen_for_group": 3,
+        "branded_products": 5,
+        "purity": 0.6,
+        "top_outside_brand": "villa tadini",
+        "top_outside_share": 0.2,
+        "others": {
+          "None": 2
+        }
+      },
+      {
+        "prefix": "8412591",
+        "seen_for_group": 3,
+        "branded_products": 4,
+        "purity": 0.75,
+        "top_outside_brand": "al borde del mar",
+        "top_outside_share": 0.25,
+        "others": {
+          "None": 1
+        }
+      }
+    ]
+  },
+  "Lockheed Martin": {
+    "entity": "lockheed-martin",
+    "validated": [],
+    "rejected": []
+  },
+  "Nammo": {
+    "entity": "nammo",
+    "validated": [],
+    "rejected": []
+  },
+  "Northrop Grumman": {
+    "entity": "northrop-grumman",
+    "validated": [],
+    "rejected": []
+  },
+  "Oshkosh": {
+    "entity": "oshkosh",
+    "validated": [],
+    "rejected": []
+  },
+  "RENK Group": {
+    "entity": "renk",
+    "validated": [],
+    "rejected": []
+  },
+  "Rheinmetall": {
+    "entity": "rheinmetall",
+    "validated": [],
+    "rejected": []
+  },
+  "Rolls-Royce Holdings": {
+    "entity": "rolls-royce",
+    "validated": [],
+    "rejected": []
+  },
+  "RTX / Raytheon": {
+    "entity": "rtx",
+    "validated": [],
+    "rejected": []
+  },
+  "Sturm, Ruger & Co.": {
+    "entity": "sturm-ruger",
+    "validated": [],
+    "rejected": []
+  },
+  "Textron": {
+    "entity": "textron",
+    "validated": [],
+    "rejected": []
+  },
+  "ThyssenKrupp": {
+    "entity": "thyssenkrupp",
+    "validated": [],
+    "rejected": []
+  },
+  "TKH Security": {
+    "entity": "tkh-security",
+    "validated": [],
+    "rejected": []
+  },
+  "Alstom": {
+    "entity": "alstom",
+    "validated": [],
+    "rejected": []
+  },
+  "Bright Dairy & Food / Tnuva": {
+    "entity": "bright-dairy",
+    "validated": [],
+    "rejected": []
+  },
+  "CAF": {
+    "entity": "caf",
+    "validated": [],
+    "rejected": []
+  },
+  "Carlsberg": {
+    "entity": "carlsberg",
+    "validated": [
+      {
+        "prefix": "8007950",
+        "seen_for_group": 12,
+        "branded_products": 30,
+        "purity": 0.867,
+        "top_outside_brand": "tuborg",
+        "top_outside_share": 0.067,
+        "others": {
+          "None": 4
+        }
+      }
+    ],
+    "rejected": [
+      {
+        "prefix": "7310070",
+        "seen_for_group": 17,
+        "branded_products": 94,
+        "purity": 0.298,
+        "top_outside_brand": "pepsi",
+        "top_outside_share": 0.138,
+        "others": {
+          "None": 45,
+          "PepsiCo": 21
+        }
+      },
+      {
+        "prefix": "3080216",
+        "seen_for_group": 12,
+        "branded_products": 177,
+        "purity": 0.068,
+        "top_outside_brand": "tourtel",
+        "top_outside_share": 0.232,
+        "others": {
+          "None": 165
+        }
+      },
+      {
+        "prefix": "5900014",
+        "seen_for_group": 5,
+        "branded_products": 54,
+        "purity": 0.167,
+        "top_outside_brand": "somersby",
+        "top_outside_share": 0.389,
+        "others": {
+          "None": 45
+        }
+      },
+      {
+        "prefix": "5740600",
+        "seen_for_group": 5,
+        "branded_products": 20,
+        "purity": 0.65,
+        "top_outside_brand": "coca cola",
+        "top_outside_share": 0.1,
+        "others": {
+          "The Coca-Cola Company": 4,
+          "None": 3
+        }
+      },
+      {
+        "prefix": "5010153",
+        "seen_for_group": 4,
+        "branded_products": 20,
+        "purity": 0.5,
+        "top_outside_brand": "san miguel",
+        "top_outside_share": 0.25,
+        "others": {
+          "None": 10
+        }
+      },
+      {
+        "prefix": "4770349",
+        "seen_for_group": 3,
+        "branded_products": 90,
+        "purity": 0.078,
+        "top_outside_brand": "svyturys",
+        "top_outside_share": 0.3,
+        "others": {
+          "None": 76,
+          "L'Oréal Groupe": 7
+        }
+      },
+      {
+        "prefix": "5740700",
+        "seen_for_group": 3,
+        "branded_products": 60,
+        "purity": 0.067,
+        "top_outside_brand": "fanta",
+        "top_outside_share": 0.233,
+        "others": {
+          "None": 28,
+          "The Coca-Cola Company": 27,
+          "Nestlé": 1
+        }
+      },
+      {
+        "prefix": "3858887",
+        "seen_for_group": 3,
+        "branded_products": 22,
+        "purity": 0.182,
+        "top_outside_brand": "somersby",
+        "top_outside_share": 0.182,
+        "others": {
+          "None": 18
+        }
+      }
+    ]
+  },
+  "Carrefour": {
+    "entity": "carrefour",
+    "validated": [
+      {
+        "prefix": "3560070",
+        "seen_for_group": 64,
+        "branded_products": 190,
+        "purity": 0.874,
+        "top_outside_brand": "grand jury",
+        "top_outside_share": 0.053,
+        "others": {
+          "None": 24
+        }
+      },
+      {
+        "prefix": "3560071",
+        "seen_for_group": 55,
+        "branded_products": 179,
+        "purity": 0.933,
+        "top_outside_brand": "en cuisine",
+        "top_outside_share": 0.028,
+        "others": {
+          "None": 12
+        }
+      },
+      {
+        "prefix": "8431876",
+        "seen_for_group": 35,
+        "branded_products": 196,
+        "purity": 0.898,
+        "top_outside_brand": "de nuestra tierra",
+        "top_outside_share": 0.071,
+        "others": {
+          "None": 20
+        }
+      },
+      {
+        "prefix": "5400101",
+        "seen_for_group": 30,
+        "branded_products": 179,
+        "purity": 0.989,
+        "top_outside_brand": "vvv",
+        "top_outside_share": 0.006,
+        "others": {
+          "None": 2
+        }
+      },
+      {
+        "prefix": "3523680",
+        "seen_for_group": 11,
+        "branded_products": 105,
+        "purity": 0.79,
+        "top_outside_brand": "la cave d augustin florent",
+        "top_outside_share": 0.01,
+        "others": {
+          "None": 22
+        }
+      },
+      {
+        "prefix": "8012666",
+        "seen_for_group": 8,
+        "branded_products": 189,
+        "purity": 0.963,
+        "top_outside_brand": "terre d italia",
+        "top_outside_share": 0.016,
+        "others": {
+          "None": 7
+        }
+      }
+    ],
+    "rejected": [
+      {
+        "prefix": "3245390",
+        "seen_for_group": 18,
+        "branded_products": 182,
+        "purity": 0.363,
+        "top_outside_brand": "grand jury",
+        "top_outside_share": 0.56,
+        "others": {
+          "None": 116
+        }
+      },
+      {
+        "prefix": "3245415",
+        "seen_for_group": 3,
+        "branded_products": 127,
+        "purity": 0.701,
+        "top_outside_brand": "la cave d augustin florent",
+        "top_outside_share": 0.126,
+        "others": {
+          "None": 38
+        }
+      }
+    ]
+  },
+  "Cemex": {
+    "entity": "cemex",
+    "validated": [],
+    "rejected": []
+  },
+  "Heidelberg Materials": {
+    "entity": "heidelberg-materials",
+    "validated": [],
+    "rejected": []
+  },
+  "Orbia / Netafim": {
+    "entity": "orbia",
+    "validated": [],
+    "rejected": []
+  },
+  "RE/MAX": {
+    "entity": "remax",
+    "validated": [],
+    "rejected": []
+  },
+  "WSP Global": {
+    "entity": "wsp-global",
+    "validated": [],
+    "rejected": []
+  },
+  "Disney+": {
+    "entity": "disney-plus",
+    "validated": [],
+    "rejected": [
+      {
+        "prefix": "5030765",
+        "seen_for_group": 4,
+        "branded_products": 46,
+        "purity": 0.196,
+        "top_outside_brand": "thorntons",
+        "top_outside_share": 0.304,
+        "others": {
+          "None": 37
+        }
+      },
+      {
+        "prefix": "5425019",
+        "seen_for_group": 3,
+        "branded_products": 20,
+        "purity": 0.15,
+        "top_outside_brand": "zaga zoe",
+        "top_outside_share": 0.3,
+        "others": {
+          "None": 17
+        }
+      }
+    ]
+  },
+  "Nestlé": {
+    "entity": "nestle",
+    "validated": [
+      {
+        "prefix": "7613036",
+        "seen_for_group": 202,
+        "branded_products": 178,
+        "purity": 0.865,
+        "top_outside_brand": "herta",
+        "top_outside_share": 0.039,
+        "others": {
+          "None": 24
+        }
+      },
+      {
+        "prefix": "7613034",
+        "seen_for_group": 138,
+        "branded_products": 179,
+        "purity": 0.821,
+        "top_outside_brand": "herta",
+        "top_outside_share": 0.067,
+        "others": {
+          "None": 32
+        }
+      },
+      {
+        "prefix": "7613287",
+        "seen_for_group": 120,
+        "branded_products": 154,
+        "purity": 0.87,
+        "top_outside_brand": "starbucks",
+        "top_outside_share": 0.026,
+        "others": {
+          "None": 20
+        }
+      },
+      {
+        "prefix": "8445290",
+        "seen_for_group": 95,
+        "branded_products": 129,
+        "purity": 0.868,
+        "top_outside_brand": "starbucks",
+        "top_outside_share": 0.023,
+        "others": {
+          "None": 17
+        }
+      },
+      {
+        "prefix": "7613033",
+        "seen_for_group": 92,
+        "branded_products": 168,
+        "purity": 0.881,
+        "top_outside_brand": "cailler",
+        "top_outside_share": 0.024,
+        "others": {
+          "None": 20
+        }
+      },
+      {
+        "prefix": "3023290",
+        "seen_for_group": 90,
+        "branded_products": 171,
+        "purity": 0.871,
+        "top_outside_brand": "siggi s",
+        "top_outside_share": 0.064,
+        "others": {
+          "None": 22
+        }
+      },
+      {
+        "prefix": "3266191",
+        "seen_for_group": 70,
+        "branded_products": 199,
+        "purity": 0.98,
+        "top_outside_brand": "sirop derable du canada",
+        "top_outside_share": 0.005,
+        "others": {
+          "None": 4
+        }
+      },
+      {
+        "prefix": "7613031",
+        "seen_for_group": 66,
+        "branded_products": 180,
+        "purity": 0.878,
+        "top_outside_brand": "cailler",
+        "top_outside_share": 0.067,
+        "others": {
+          "None": 22
+        }
+      },
+      {
+        "prefix": "7613032",
+        "seen_for_group": 66,
+        "branded_products": 163,
+        "purity": 0.859,
+        "top_outside_brand": "solis",
+        "top_outside_share": 0.018,
+        "others": {
+          "None": 23
+        }
+      },
+      {
+        "prefix": "8000300",
+        "seen_for_group": 64,
+        "branded_products": 177,
+        "purity": 0.932,
+        "top_outside_brand": "perugina",
+        "top_outside_share": 0.028,
+        "others": {
+          "None": 12
+        }
+      },
+      {
+        "prefix": "7891000",
+        "seen_for_group": 59,
+        "branded_products": 174,
+        "purity": 0.759,
+        "top_outside_brand": "natures heart",
+        "top_outside_share": 0.029,
+        "others": {
+          "None": 42
+        }
+      },
+      {
+        "prefix": "7613037",
+        "seen_for_group": 49,
+        "branded_products": 158,
+        "purity": 0.842,
+        "top_outside_brand": "starbucks",
+        "top_outside_share": 0.044,
+        "others": {
+          "None": 25
+        }
+      },
+      {
+        "prefix": "3033710",
+        "seen_for_group": 34,
+        "branded_products": 184,
+        "purity": 0.929,
+        "top_outside_brand": "chef",
+        "top_outside_share": 0.027,
+        "others": {
+          "None": 13
+        }
+      },
+      {
+        "prefix": "5900020",
+        "seen_for_group": 32,
+        "branded_products": 167,
+        "purity": 0.904,
+        "top_outside_brand": "fitness",
+        "top_outside_share": 0.054,
+        "others": {
+          "None": 16
+        }
+      },
+      {
+        "prefix": "8445291",
+        "seen_for_group": 30,
+        "branded_products": 136,
+        "purity": 0.838,
+        "top_outside_brand": "d onofrio",
+        "top_outside_share": 0.015,
+        "others": {
+          "None": 22
+        }
+      },
+      {
+        "prefix": "7613038",
+        "seen_for_group": 27,
+        "branded_products": 160,
+        "purity": 0.769,
+        "top_outside_brand": "herta",
+        "top_outside_share": 0.056,
+        "others": {
+          "None": 37
+        }
+      },
+      {
+        "prefix": "7630039",
+        "seen_for_group": 25,
+        "branded_products": 105,
+        "purity": 0.99,
+        "top_outside_brand": "nespreso",
+        "top_outside_share": 0.01,
+        "others": {
+          "None": 1
+        }
+      },
+      {
+        "prefix": "9000295",
+        "seen_for_group": 24,
+        "branded_products": 139,
+        "purity": 0.993,
+        "top_outside_brand": "bon ri hofer",
+        "top_outside_share": 0.007,
+        "others": {
+          "None": 1
+        }
+      },
+      {
+        "prefix": "7613039",
+        "seen_for_group": 23,
+        "branded_products": 155,
+        "purity": 0.813,
+        "top_outside_brand": "herta",
+        "top_outside_share": 0.052,
+        "others": {
+          "None": 29
+        }
+      },
+      {
+        "prefix": "3760381",
+        "seen_for_group": 23,
+        "branded_products": 27,
+        "purity": 0.852,
+        "top_outside_brand": "my brazil",
+        "top_outside_share": 0.037,
+        "others": {
+          "None": 4
+        }
+      },
+      {
+        "prefix": "3179732",
+        "seen_for_group": 23,
+        "branded_products": 37,
+        "purity": 1.0,
+        "top_outside_brand": "",
+        "top_outside_share": 0.0,
+        "others": {}
+      },
+      {
+        "prefix": "3179730",
+        "seen_for_group": 21,
+        "branded_products": 62,
+        "purity": 0.935,
+        "top_outside_brand": "saint lambert",
+        "top_outside_share": 0.016,
+        "others": {
+          "None": 4
+        }
+      },
+      {
+        "prefix": "9556001",
+        "seen_for_group": 18,
+        "branded_products": 147,
+        "purity": 0.946,
+        "top_outside_brand": "maggie",
+        "top_outside_share": 0.02,
+        "others": {
+          "None": 8
+        }
+      },
+      {
+        "prefix": "7501058",
+        "seen_for_group": 17,
+        "branded_products": 174,
+        "purity": 0.92,
+        "top_outside_brand": "fitness",
+        "top_outside_share": 0.011,
+        "others": {
+          "None": 14
+        }
+      },
+      {
+        "prefix": "7630428",
+        "seen_for_group": 17,
+        "branded_products": 156,
+        "purity": 0.981,
+        "top_outside_brand": "nespress",
+        "top_outside_share": 0.006,
+        "others": {
+          "None": 3
+        }
+      },
+      {
+        "prefix": "4902201",
+        "seen_for_group": 16,
+        "branded_products": 174,
+        "purity": 0.954,
+        "top_outside_brand": "",
+        "top_outside_share": 0.04,
+        "others": {
+          "None": 8
+        }
+      },
+      {
+        "prefix": "7630047",
+        "seen_for_group": 16,
+        "branded_products": 95,
+        "purity": 1.0,
+        "top_outside_brand": "",
+        "top_outside_share": 0.0,
+        "others": {}
+      },
+      {
+        "prefix": "3800020",
+        "seen_for_group": 15,
+        "branded_products": 175,
+        "purity": 0.869,
+        "top_outside_brand": "florina",
+        "top_outside_share": 0.069,
+        "others": {
+          "None": 23
+        }
+      },
+      {
+        "prefix": "7610100",
+        "seen_for_group": 13,
+        "branded_products": 143,
+        "purity": 0.86,
+        "top_outside_brand": "cailler",
+        "top_outside_share": 0.07,
+        "others": {
+          "None": 20
+        }
+      },
+      {
+        "prefix": "8002270",
+        "seen_for_group": 12,
+        "branded_products": 192,
+        "purity": 0.896,
+        "top_outside_brand": "san pellegrino",
+        "top_outside_share": 0.062,
+        "others": {
+          "None": 20
+        }
+      },
+      {
+        "prefix": "6294003",
+        "seen_for_group": 11,
+        "branded_products": 96,
+        "purity": 0.938,
+        "top_outside_brand": "libby s",
+        "top_outside_share": 0.01,
+        "others": {
+          "None": 5,
+          "Carrefour": 1
+        }
+      },
+      {
+        "prefix": "3387390",
+        "seen_for_group": 11,
+        "branded_products": 80,
+        "purity": 0.85,
+        "top_outside_brand": "fitness",
+        "top_outside_share": 0.05,
+        "others": {
+          "None": 12
+        }
+      },
+      {
+        "prefix": "8053041",
+        "seen_for_group": 10,
+        "branded_products": 74,
+        "purity": 1.0,
+        "top_outside_brand": "",
+        "top_outside_share": 0.0,
+        "others": {}
+      },
+      {
+        "prefix": "5900571",
+        "seen_for_group": 10,
+        "branded_products": 55,
+        "purity": 0.818,
+        "top_outside_brand": "top",
+        "top_outside_share": 0.055,
+        "others": {
+          "None": 10
+        }
+      },
+      {
+        "prefix": "7630311",
+        "seen_for_group": 9,
+        "branded_products": 147,
+        "purity": 0.966,
+        "top_outside_brand": "nesspresso",
+        "top_outside_share": 0.02,
+        "others": {
+          "None": 5
+        }
+      },
+      {
+        "prefix": "4008211",
+        "seen_for_group": 9,
+        "branded_products": 40,
+        "purity": 0.925,
+        "top_outside_brand": "movenpack",
+        "top_outside_share": 0.025,
+        "others": {
+          "None": 3
+        }
+      },
+      {
+        "prefix": "7630030",
+        "seen_for_group": 6,
+        "branded_products": 32,
+        "purity": 0.906,
+        "top_outside_brand": "nesspresso",
+        "top_outside_share": 0.062,
+        "others": {
+          "None": 3
+        }
+      },
+      {
+        "prefix": "5011546",
+        "seen_for_group": 6,
+        "branded_products": 41,
+        "purity": 0.976,
+        "top_outside_brand": "herta",
+        "top_outside_share": 0.024,
+        "others": {
+          "None": 1
+        }
+      },
+      {
+        "prefix": "3033210",
+        "seen_for_group": 6,
+        "branded_products": 30,
+        "purity": 0.967,
+        "top_outside_brand": "perlamande",
+        "top_outside_share": 0.033,
+        "others": {
+          "None": 1
+        }
+      },
+      {
+        "prefix": "8410100",
+        "seen_for_group": 5,
+        "branded_products": 180,
+        "purity": 0.922,
+        "top_outside_brand": "litoral",
+        "top_outside_share": 0.022,
+        "others": {
+          "None": 14
+        }
+      },
+      {
+        "prefix": "8850125",
+        "seen_for_group": 5,
+        "branded_products": 51,
+        "purity": 0.922,
+        "top_outside_brand": "la frutta",
+        "top_outside_share": 0.02,
+        "others": {
+          "None": 4
+        }
+      },
+      {
+        "prefix": "7460123",
+        "seen_for_group": 5,
+        "branded_products": 42,
+        "purity": 0.976,
+        "top_outside_brand": "impulso",
+        "top_outside_share": 0.024,
+        "others": {
+          "None": 1
+        }
+      },
+      {
+        "prefix": "6033000",
+        "seen_for_group": 5,
+        "branded_products": 55,
+        "purity": 0.836,
+        "top_outside_brand": "gloria",
+        "top_outside_share": 0.018,
+        "others": {
+          "None": 9
+        }
+      },
+      {
+        "prefix": "6424908",
+        "seen_for_group": 5,
+        "branded_products": 14,
+        "purity": 1.0,
+        "top_outside_brand": "",
+        "top_outside_share": 0.0,
+        "others": {}
+      },
+      {
+        "prefix": "6111018",
+        "seen_for_group": 4,
+        "branded_products": 58,
+        "purity": 1.0,
+        "top_outside_brand": "",
+        "top_outside_share": 0.0,
+        "others": {}
+      },
+      {
+        "prefix": "9002100",
+        "seen_for_group": 4,
+        "branded_products": 71,
+        "purity": 0.972,
+        "top_outside_brand": "maggie",
+        "top_outside_share": 0.014,
+        "others": {
+          "None": 2
+        }
+      },
+      {
+        "prefix": "4005500",
+        "seen_for_group": 4,
+        "branded_products": 179,
+        "purity": 0.983,
+        "top_outside_brand": "gewurze",
+        "top_outside_share": 0.006,
+        "others": {
+          "None": 3
+        }
+      },
+      {
+        "prefix": "8901058",
+        "seen_for_group": 4,
+        "branded_products": 155,
+        "purity": 0.981,
+        "top_outside_brand": "noodles",
+        "top_outside_share": 0.006,
+        "others": {
+          "None": 3
+        }
+      },
+      {
+        "prefix": "5000189",
+        "seen_for_group": 4,
+        "branded_products": 14,
+        "purity": 0.857,
+        "top_outside_brand": "sun pat",
+        "top_outside_share": 0.071,
+        "others": {
+          "None": 2
+        }
+      },
+      {
+        "prefix": "8850124",
+        "seen_for_group": 4,
+        "branded_products": 43,
+        "purity": 0.93,
+        "top_outside_brand": "f n",
+        "top_outside_share": 0.023,
+        "others": {
+          "None": 3
+        }
+      },
+      {
+        "prefix": "6001056",
+        "seen_for_group": 4,
+        "branded_products": 30,
+        "purity": 0.9,
+        "top_outside_brand": "provita",
+        "top_outside_share": 0.067,
+        "others": {
+          "None": 3
+        }
+      },
+      {
+        "prefix": "6001068",
+        "seen_for_group": 3,
+        "branded_products": 65,
+        "purity": 0.785,
+        "top_outside_brand": "medium cream daily powder blend",
+        "top_outside_share": 0.046,
+        "others": {
+          "None": 14
+        }
+      },
+      {
+        "prefix": "7630054",
+        "seen_for_group": 3,
+        "branded_products": 90,
+        "purity": 0.944,
+        "top_outside_brand": "buondi",
+        "top_outside_share": 0.022,
+        "others": {
+          "None": 5
+        }
+      },
+      {
+        "prefix": "8690632",
+        "seen_for_group": 3,
+        "branded_products": 122,
+        "purity": 0.918,
+        "top_outside_brand": "starbucks",
+        "top_outside_share": 0.041,
+        "others": {
+          "None": 10
+        }
+      },
+      {
+        "prefix": "6181002",
+        "seen_for_group": 3,
+        "branded_products": 25,
+        "purity": 1.0,
+        "top_outside_brand": "",
+        "top_outside_share": 0.0,
+        "others": {}
+      },
+      {
+        "prefix": "8888082",
+        "seen_for_group": 3,
+        "branded_products": 23,
+        "purity": 1.0,
+        "top_outside_brand": "",
+        "top_outside_share": 0.0,
+        "others": {}
+      },
+      {
+        "prefix": "4800361",
+        "seen_for_group": 3,
+        "branded_products": 116,
+        "purity": 0.974,
+        "top_outside_brand": "coca cola cc co",
+        "top_outside_share": 0.009,
+        "others": {
+          "None": 2,
+          "The Coca-Cola Company": 1
+        }
+      }
+    ],
+    "rejected": [
+      {
+        "prefix": "7613035",
+        "seen_for_group": 201,
+        "branded_products": 183,
+        "purity": 0.792,
+        "top_outside_brand": "herta",
+        "top_outside_share": 0.109,
+        "others": {
+          "None": 38
+        }
+      },
+      {
+        "prefix": "9300605",
+        "seen_for_group": 32,
+        "branded_products": 171,
+        "purity": 0.602,
+        "top_outside_brand": "uncle tobys",
+        "top_outside_share": 0.228,
+        "others": {
+          "None": 68
+        }
+      },
+      {
+        "prefix": "7310240",
+        "seen_for_group": 26,
+        "branded_products": 184,
+        "purity": 0.62,
+        "top_outside_brand": "anamma",
+        "top_outside_share": 0.109,
+        "others": {
+          "None": 70
+        }
+      },
+      {
+        "prefix": "7613030",
+        "seen_for_group": 22,
+        "branded_products": 167,
+        "purity": 0.808,
+        "top_outside_brand": "findus",
+        "top_outside_share": 0.084,
+        "others": {
+          "None": 32
+        }
+      },
+      {
+        "prefix": "4002334",
+        "seen_for_group": 19,
+        "branded_products": 179,
+        "purity": 0.246,
+        "top_outside_brand": "bauer",
+        "top_outside_share": 0.615,
+        "others": {
+          "None": 135
+        }
+      },
+      {
+        "prefix": "9310761",
+        "seen_for_group": 14,
+        "branded_products": 81,
+        "purity": 0.173,
+        "top_outside_brand": "on the menu",
+        "top_outside_share": 0.42,
+        "others": {
+          "None": 67
+        }
+      },
+      {
+        "prefix": "4006581",
+        "seen_for_group": 14,
+        "branded_products": 64,
+        "purity": 0.5,
+        "top_outside_brand": "eilles",
+        "top_outside_share": 0.125,
+        "others": {
+          "None": 32
+        }
+      },
+      {
+        "prefix": "7290000",
+        "seen_for_group": 13,
+        "branded_products": 113,
+        "purity": 0.08,
+        "top_outside_brand": "",
+        "top_outside_share": 0.416,
+        "others": {
+          "None": 96,
+          "Bright Dairy & Food / Tnuva": 5,
+          "PepsiCo": 3
+        }
+      },
+      {
+        "prefix": "8593893",
+        "seen_for_group": 12,
+        "branded_products": 156,
+        "purity": 0.679,
+        "top_outside_brand": "orion",
+        "top_outside_share": 0.122,
+        "others": {
+          "None": 50
+        }
+      },
+      {
+        "prefix": "5449000",
+        "seen_for_group": 12,
+        "branded_products": 184,
+        "purity": 0.038,
+        "top_outside_brand": "coca cola",
+        "top_outside_share": 0.342,
+        "others": {
+          "The Coca-Cola Company": 141,
+          "None": 36
+        }
+      },
+      {
+        "prefix": "3154230",
+        "seen_for_group": 11,
+        "branded_products": 184,
+        "purity": 0.141,
+        "top_outside_brand": "herta",
+        "top_outside_share": 0.821,
+        "others": {
+          "None": 158
+        }
+      },
+      {
+        "prefix": "7290115",
+        "seen_for_group": 10,
+        "branded_products": 49,
+        "purity": 0.347,
+        "top_outside_brand": "",
+        "top_outside_share": 0.408,
+        "others": {
+          "None": 29,
+          "PepsiCo": 3
+        }
+      },
+      {
+        "prefix": "7290111",
+        "seen_for_group": 10,
+        "branded_products": 69,
+        "purity": 0.551,
+        "top_outside_brand": "",
+        "top_outside_share": 0.145,
+        "others": {
+          "None": 31
+        }
+      },
+      {
+        "prefix": "7702024",
+        "seen_for_group": 9,
+        "branded_products": 144,
+        "purity": 0.736,
+        "top_outside_brand": "fitness",
+        "top_outside_share": 0.014,
+        "others": {
+          "None": 38
+        }
+      },
+      {
+        "prefix": "7290013",
+        "seen_for_group": 9,
+        "branded_products": 80,
+        "purity": 0.225,
+        "top_outside_brand": "",
+        "top_outside_share": 0.35,
+        "others": {
+          "None": 52,
+          "PepsiCo": 5,
+          "The Coca-Cola Company": 5
+        }
+      },
+      {
+        "prefix": "8000270",
+        "seen_for_group": 9,
+        "branded_products": 123,
+        "purity": 0.797,
+        "top_outside_brand": "delverde",
+        "top_outside_share": 0.122,
+        "others": {
+          "None": 25
+        }
+      },
+      {
+        "prefix": "4088700",
+        "seen_for_group": 9,
+        "branded_products": 128,
+        "purity": 0.023,
+        "top_outside_brand": "aldi",
+        "top_outside_share": 0.117,
+        "others": {
+          "None": 125
+        }
+      },
+      {
+        "prefix": "4011800",
+        "seen_for_group": 8,
+        "branded_products": 189,
+        "purity": 0.063,
+        "top_outside_brand": "corny",
+        "top_outside_share": 0.487,
+        "others": {
+          "None": 177
+        }
+      },
+      {
+        "prefix": "7501072",
+        "seen_for_group": 7,
+        "branded_products": 8,
+        "purity": 1.0,
+        "top_outside_brand": "",
+        "top_outside_share": 0.0,
+        "others": {}
+      },
+      {
+        "prefix": "8051369",
+        "seen_for_group": 6,
+        "branded_products": 59,
+        "purity": 0.78,
+        "top_outside_brand": "motta",
+        "top_outside_share": 0.102,
+        "others": {
+          "None": 13
+        }
+      },
+      {
+        "prefix": "7640140",
+        "seen_for_group": 6,
+        "branded_products": 35,
+        "purity": 0.514,
+        "top_outside_brand": "migros",
+        "top_outside_share": 0.171,
+        "others": {
+          "None": 17
+        }
+      },
+      {
+        "prefix": "7340024",
+        "seen_for_group": 6,
+        "branded_products": 12,
+        "purity": 0.917,
+        "top_outside_brand": "halsans",
+        "top_outside_share": 0.083,
+        "others": {
+          "None": 1
+        }
+      },
+      {
+        "prefix": "3048431",
+        "seen_for_group": 6,
+        "branded_products": 15,
+        "purity": 0.667,
+        "top_outside_brand": "abatilles",
+        "top_outside_share": 0.133,
+        "others": {
+          "None": 5
+        }
+      },
+      {
+        "prefix": "3274664",
+        "seen_for_group": 6,
+        "branded_products": 164,
+        "purity": 0.616,
+        "top_outside_brand": "pilpa",
+        "top_outside_share": 0.134,
+        "others": {
+          "None": 63
+        }
+      },
+      {
+        "prefix": "4009233",
+        "seen_for_group": 6,
+        "branded_products": 63,
+        "purity": 0.54,
+        "top_outside_brand": "wagner",
+        "top_outside_share": 0.397,
+        "others": {
+          "None": 29
+        }
+      },
+      {
+        "prefix": "5000243",
+        "seen_for_group": 5,
+        "branded_products": 33,
+        "purity": 0.879,
+        "top_outside_brand": "dolce gusto",
+        "top_outside_share": 0.121,
+        "others": {
+          "None": 4
+        }
+      },
+      {
+        "prefix": "7290118",
+        "seen_for_group": 5,
+        "branded_products": 17,
+        "purity": 0.529,
+        "top_outside_brand": "",
+        "top_outside_share": 0.176,
+        "others": {
+          "None": 7,
+          "Bright Dairy & Food / Tnuva": 1
+        }
+      },
+      {
+        "prefix": "7290109",
+        "seen_for_group": 5,
+        "branded_products": 54,
+        "purity": 0.574,
+        "top_outside_brand": "",
+        "top_outside_share": 0.185,
+        "others": {
+          "None": 23
+        }
+      },
+      {
+        "prefix": "8858705",
+        "seen_for_group": 5,
+        "branded_products": 29,
+        "purity": 0.345,
+        "top_outside_brand": "magnolia",
+        "top_outside_share": 0.276,
+        "others": {
+          "None": 19
+        }
+      },
+      {
+        "prefix": "7610900",
+        "seen_for_group": 5,
+        "branded_products": 168,
+        "purity": 0.03,
+        "top_outside_brand": "emmi",
+        "top_outside_share": 0.72,
+        "others": {
+          "None": 163
+        }
+      },
+      {
+        "prefix": "5000112",
+        "seen_for_group": 5,
+        "branded_products": 156,
+        "purity": 0.013,
+        "top_outside_brand": "coca cola",
+        "top_outside_share": 0.436,
+        "others": {
+          "The Coca-Cola Company": 139,
+          "None": 15
+        }
+      },
+      {
+        "prefix": "8710400",
+        "seen_for_group": 4,
+        "branded_products": 186,
+        "purity": 0.011,
+        "top_outside_brand": "albert heijn",
+        "top_outside_share": 0.871,
+        "others": {
+          "None": 184
+        }
+      },
+      {
+        "prefix": "8585002",
+        "seen_for_group": 4,
+        "branded_products": 175,
+        "purity": 0.646,
+        "top_outside_brand": "rajo",
+        "top_outside_share": 0.149,
+        "others": {
+          "None": 62
+        }
+      },
+      {
+        "prefix": "4740029",
+        "seen_for_group": 4,
+        "branded_products": 44,
+        "purity": 0.295,
+        "top_outside_brand": "poltsamaa",
+        "top_outside_share": 0.568,
+        "others": {
+          "None": 31
+        }
+      },
+      {
+        "prefix": "8023401",
+        "seen_for_group": 4,
+        "branded_products": 6,
+        "purity": 1.0,
+        "top_outside_brand": "",
+        "top_outside_share": 0.0,
+        "others": {}
+      },
+      {
+        "prefix": "8000815",
+        "seen_for_group": 4,
+        "branded_products": 8,
+        "purity": 0.5,
+        "top_outside_brand": "san pellegrino",
+        "top_outside_share": 0.125,
+        "others": {
+          "None": 4
+        }
+      },
+      {
+        "prefix": "5900334",
+        "seen_for_group": 4,
+        "branded_products": 164,
+        "purity": 0.043,
+        "top_outside_brand": "tymbark",
+        "top_outside_share": 0.78,
+        "others": {
+          "None": 157
+        }
+      },
+      {
+        "prefix": "4260449",
+        "seen_for_group": 4,
+        "branded_products": 32,
+        "purity": 0.281,
+        "top_outside_brand": "ahoj brause",
+        "top_outside_share": 0.156,
+        "others": {
+          "None": 23
+        }
+      },
+      {
+        "prefix": "8595646",
+        "seen_for_group": 4,
+        "branded_products": 66,
+        "purity": 0.076,
+        "top_outside_brand": "relax",
+        "top_outside_share": 0.576,
+        "others": {
+          "None": 61
+        }
+      },
+      {
+        "prefix": "8001050",
+        "seen_for_group": 4,
+        "branded_products": 4,
+        "purity": 1.0,
+        "top_outside_brand": "",
+        "top_outside_share": 0.0,
+        "others": {}
+      },
+      {
+        "prefix": "3423720",
+        "seen_for_group": 4,
+        "branded_products": 166,
+        "purity": 0.271,
+        "top_outside_brand": "bio soleil",
+        "top_outside_share": 0.639,
+        "others": {
+          "None": 121
+        }
+      },
+      {
+        "prefix": "7610026",
+        "seen_for_group": 4,
+        "branded_products": 70,
+        "purity": 0.5,
+        "top_outside_brand": "findus",
+        "top_outside_share": 0.4,
+        "others": {
+          "None": 35
+        }
+      },
+      {
+        "prefix": "7640154",
+        "seen_for_group": 3,
+        "branded_products": 26,
+        "purity": 0.5,
+        "top_outside_brand": "farmy ch",
+        "top_outside_share": 0.077,
+        "others": {
+          "None": 13
+        }
+      },
+      {
+        "prefix": "9356335",
+        "seen_for_group": 3,
+        "branded_products": 53,
+        "purity": 0.057,
+        "top_outside_brand": "fitness outcomes",
+        "top_outside_share": 0.208,
+        "others": {
+          "None": 50
+        }
+      },
+      {
+        "prefix": "8850011",
+        "seen_for_group": 3,
+        "branded_products": 12,
+        "purity": 0.917,
+        "top_outside_brand": "nestcafe",
+        "top_outside_share": 0.083,
+        "others": {
+          "None": 1
+        }
+      },
+      {
+        "prefix": "8410168",
+        "seen_for_group": 3,
+        "branded_products": 2,
+        "purity": 1.0,
+        "top_outside_brand": "",
+        "top_outside_share": 0.0,
+        "others": {}
+      }
+    ]
+  },
+  "L'Oréal Groupe": {
+    "entity": "l-oreal-groupe",
+    "validated": [
+      {
+        "prefix": "3600551",
+        "seen_for_group": 108,
+        "branded_products": 130,
+        "purity": 0.808,
+        "top_outside_brand": "mennen",
+        "top_outside_share": 0.069,
+        "others": {
+          "None": 25
+        }
+      },
+      {
+        "prefix": "3337875",
+        "seen_for_group": 106,
+        "branded_products": 127,
+        "purity": 0.921,
+        "top_outside_brand": "roche posay",
+        "top_outside_share": 0.008,
+        "others": {
+          "None": 10
+        }
+      },
+      {
+        "prefix": "3606000",
+        "seen_for_group": 36,
+        "branded_products": 54,
+        "purity": 0.944,
+        "top_outside_brand": "test",
+        "top_outside_share": 0.019,
+        "others": {
+          "None": 3
+        }
+      },
+      {
+        "prefix": "3474630",
+        "seen_for_group": 23,
+        "branded_products": 38,
+        "purity": 0.921,
+        "top_outside_brand": "matrix",
+        "top_outside_share": 0.026,
+        "others": {
+          "None": 3
+        }
+      },
+      {
+        "prefix": "3600523",
+        "seen_for_group": 22,
+        "branded_products": 106,
+        "purity": 0.868,
+        "top_outside_brand": "elnett",
+        "top_outside_share": 0.066,
+        "others": {
+          "None": 14
+        }
+      },
+      {
+        "prefix": "3337872",
+        "seen_for_group": 22,
+        "branded_products": 43,
+        "purity": 0.953,
+        "top_outside_brand": "alani",
+        "top_outside_share": 0.023,
+        "others": {
+          "None": 1,
+          "Nestlé": 1
+        }
+      },
+      {
+        "prefix": "3600524",
+        "seen_for_group": 21,
+        "branded_products": 62,
+        "purity": 0.935,
+        "top_outside_brand": "elvital",
+        "top_outside_share": 0.032,
+        "others": {
+          "None": 4
+        }
+      },
+      {
+        "prefix": "3337871",
+        "seen_for_group": 21,
+        "branded_products": 30,
+        "purity": 0.9,
+        "top_outside_brand": "dercos",
+        "top_outside_share": 0.067,
+        "others": {
+          "None": 3
+        }
+      },
+      {
+        "prefix": "3600541",
+        "seen_for_group": 17,
+        "branded_products": 162,
+        "purity": 0.944,
+        "top_outside_brand": "olia",
+        "top_outside_share": 0.019,
+        "others": {
+          "None": 9
+        }
+      },
+      {
+        "prefix": "3474636",
+        "seen_for_group": 14,
+        "branded_products": 42,
+        "purity": 0.857,
+        "top_outside_brand": "metastase",
+        "top_outside_share": 0.024,
+        "others": {
+          "None": 6
+        }
+      },
+      {
+        "prefix": "3600522",
+        "seen_for_group": 11,
+        "branded_products": 127,
+        "purity": 0.937,
+        "top_outside_brand": "studio",
+        "top_outside_share": 0.039,
+        "others": {
+          "None": 8
+        }
+      },
+      {
+        "prefix": "3433422",
+        "seen_for_group": 8,
+        "branded_products": 13,
+        "purity": 0.923,
+        "top_outside_brand": "la riche posay",
+        "top_outside_share": 0.077,
+        "others": {
+          "None": 1
+        }
+      },
+      {
+        "prefix": "3610340",
+        "seen_for_group": 7,
+        "branded_products": 41,
+        "purity": 0.78,
+        "top_outside_brand": "ultra doux",
+        "top_outside_share": 0.049,
+        "others": {
+          "None": 9
+        }
+      },
+      {
+        "prefix": "3474637",
+        "seen_for_group": 6,
+        "branded_products": 15,
+        "purity": 0.867,
+        "top_outside_brand": "keratase paris",
+        "top_outside_share": 0.067,
+        "others": {
+          "None": 2
+        }
+      },
+      {
+        "prefix": "3600520",
+        "seen_for_group": 5,
+        "branded_products": 41,
+        "purity": 0.878,
+        "top_outside_brand": "casting",
+        "top_outside_share": 0.049,
+        "others": {
+          "None": 5
+        }
+      },
+      {
+        "prefix": "7899706",
+        "seen_for_group": 5,
+        "branded_products": 14,
+        "purity": 0.857,
+        "top_outside_brand": "gatnier",
+        "top_outside_share": 0.071,
+        "others": {
+          "None": 2
+        }
+      },
+      {
+        "prefix": "7509552",
+        "seen_for_group": 4,
+        "branded_products": 66,
+        "purity": 0.833,
+        "top_outside_brand": "elvive",
+        "top_outside_share": 0.076,
+        "others": {
+          "None": 11
+        }
+      },
+      {
+        "prefix": "8901526",
+        "seen_for_group": 3,
+        "branded_products": 45,
+        "purity": 1.0,
+        "top_outside_brand": "",
+        "top_outside_share": 0.0,
+        "others": {}
+      }
+    ],
+    "rejected": [
+      {
+        "prefix": "3600550",
+        "seen_for_group": 142,
+        "branded_products": 137,
+        "purity": 0.635,
+        "top_outside_brand": "dessange",
+        "top_outside_share": 0.139,
+        "others": {
+          "None": 50
+        }
+      },
+      {
+        "prefix": "3600542",
+        "seen_for_group": 65,
+        "branded_products": 104,
+        "purity": 0.846,
+        "top_outside_brand": "loving",
+        "top_outside_share": 0.106,
+        "others": {
+          "None": 16
+        }
+      },
+      {
+        "prefix": "3700194",
+        "seen_for_group": 9,
+        "branded_products": 11,
+        "purity": 0.818,
+        "top_outside_brand": "khiels",
+        "top_outside_share": 0.091,
+        "others": {
+          "None": 2
+        }
+      },
+      {
+        "prefix": "3760099",
+        "seen_for_group": 9,
+        "branded_products": 26,
+        "purity": 0.346,
+        "top_outside_brand": "b com bio",
+        "top_outside_share": 0.115,
+        "others": {
+          "None": 17
+        }
+      },
+      {
+        "prefix": "9319944",
+        "seen_for_group": 9,
+        "branded_products": 9,
+        "purity": 1.0,
+        "top_outside_brand": "",
+        "top_outside_share": 0.0,
+        "others": {}
+      },
+      {
+        "prefix": "3058320",
+        "seen_for_group": 7,
+        "branded_products": 17,
+        "purity": 0.647,
+        "top_outside_brand": "mennen",
+        "top_outside_share": 0.176,
+        "others": {
+          "None": 6
+        }
+      },
+      {
+        "prefix": "3600530",
+        "seen_for_group": 6,
+        "branded_products": 57,
+        "purity": 0.456,
+        "top_outside_brand": "maybelline",
+        "top_outside_share": 0.421,
+        "others": {
+          "None": 31
+        }
+      },
+      {
+        "prefix": "3614271",
+        "seen_for_group": 6,
+        "branded_products": 11,
+        "purity": 0.545,
+        "top_outside_brand": "yves saint laurent",
+        "top_outside_share": 0.364,
+        "others": {
+          "None": 5
+        }
+      },
+      {
+        "prefix": "3614273",
+        "seen_for_group": 5,
+        "branded_products": 9,
+        "purity": 0.667,
+        "top_outside_brand": "giorgio armani",
+        "top_outside_share": 0.222,
+        "others": {
+          "None": 3
+        }
+      },
+      {
+        "prefix": "3614272",
+        "seen_for_group": 5,
+        "branded_products": 9,
+        "purity": 0.556,
+        "top_outside_brand": "yves saint laurent",
+        "top_outside_share": 0.333,
+        "others": {
+          "None": 4
+        }
+      },
+      {
+        "prefix": "3605970",
+        "seen_for_group": 5,
+        "branded_products": 10,
+        "purity": 0.8,
+        "top_outside_brand": "kiels",
+        "top_outside_share": 0.2,
+        "others": {
+          "None": 2
+        }
+      },
+      {
+        "prefix": "3605972",
+        "seen_for_group": 5,
+        "branded_products": 10,
+        "purity": 0.7,
+        "top_outside_brand": "kiehl",
+        "top_outside_share": 0.1,
+        "others": {
+          "None": 3
+        }
+      },
+      {
+        "prefix": "3605971",
+        "seen_for_group": 5,
+        "branded_products": 11,
+        "purity": 0.909,
+        "top_outside_brand": "it",
+        "top_outside_share": 0.091,
+        "others": {
+          "None": 1
+        }
+      },
+      {
+        "prefix": "3367729",
+        "seen_for_group": 5,
+        "branded_products": 6,
+        "purity": 1.0,
+        "top_outside_brand": "",
+        "top_outside_share": 0.0,
+        "others": {}
+      },
+      {
+        "prefix": "3605540",
+        "seen_for_group": 5,
+        "branded_products": 5,
+        "purity": 1.0,
+        "top_outside_brand": "",
+        "top_outside_share": 0.0,
+        "others": {}
+      },
+      {
+        "prefix": "6111056",
+        "seen_for_group": 5,
+        "branded_products": 8,
+        "purity": 0.625,
+        "top_outside_brand": "hslltdhkrtsnmmjntlttbqrng",
+        "top_outside_share": 0.125,
+        "others": {
+          "None": 3
+        }
+      },
+      {
+        "prefix": "9312825",
+        "seen_for_group": 4,
+        "branded_products": 4,
+        "purity": 1.0,
+        "top_outside_brand": "",
+        "top_outside_share": 0.0,
+        "others": {}
+      },
+      {
+        "prefix": "3600531",
+        "seen_for_group": 4,
+        "branded_products": 74,
+        "purity": 0.622,
+        "top_outside_brand": "maybelline",
+        "top_outside_share": 0.365,
+        "others": {
+          "None": 28
+        }
+      },
+      {
+        "prefix": "3612623",
+        "seen_for_group": 4,
+        "branded_products": 6,
+        "purity": 1.0,
+        "top_outside_brand": "",
+        "top_outside_share": 0.0,
+        "others": {}
+      },
+      {
+        "prefix": "3612622",
+        "seen_for_group": 4,
+        "branded_products": 7,
+        "purity": 1.0,
+        "top_outside_brand": "",
+        "top_outside_share": 0.0,
+        "others": {}
+      },
+      {
+        "prefix": "3058325",
+        "seen_for_group": 3,
+        "branded_products": 6,
+        "purity": 0.667,
+        "top_outside_brand": "mennen",
+        "top_outside_share": 0.333,
+        "others": {
+          "None": 2
+        }
+      },
+      {
+        "prefix": "3605975",
+        "seen_for_group": 3,
+        "branded_products": 5,
+        "purity": 0.8,
+        "top_outside_brand": "kiehl d",
+        "top_outside_share": 0.2,
+        "others": {
+          "None": 1
+        }
+      },
+      {
+        "prefix": "3351500",
+        "seen_for_group": 3,
+        "branded_products": 3,
+        "purity": 1.0,
+        "top_outside_brand": "",
+        "top_outside_share": 0.0,
+        "others": {}
+      },
+      {
+        "prefix": "3605522",
+        "seen_for_group": 3,
+        "branded_products": 4,
+        "purity": 0.75,
+        "top_outside_brand": "giorgio armani",
+        "top_outside_share": 0.25,
+        "others": {
+          "None": 1
+        }
+      },
+      {
+        "prefix": "3605521",
+        "seen_for_group": 3,
+        "branded_products": 5,
+        "purity": 0.6,
+        "top_outside_brand": "giorgio armani",
+        "top_outside_share": 0.4,
+        "others": {
+          "None": 2
+        }
+      }
+    ]
+  },
+  "Israel Aerospace Industries": {
+    "entity": "israel-aerospace-industries",
+    "validated": [],
+    "rejected": []
+  },
+  "ICL Group": {
+    "entity": "icl-group",
+    "validated": [],
+    "rejected": []
+  },
+  "Osem-Nestlé": {
+    "entity": "osem-nestle",
+    "validated": [],
+    "rejected": []
+  },
+  "Teva": {
+    "entity": "teva",
+    "validated": [],
+    "rejected": [
+      {
+        "prefix": "3564700",
+        "seen_for_group": 6,
+        "branded_products": 199,
+        "purity": 0.0,
+        "top_outside_brand": "marque repere",
+        "top_outside_share": 0.186,
+        "others": {
+          "None": 199
+        }
+      },
+      {
+        "prefix": "5017007",
+        "seen_for_group": 5,
+        "branded_products": 10,
+        "purity": 0.5,
+        "top_outside_brand": "teva uk",
+        "top_outside_share": 0.2,
+        "others": {
+          "None": 5
+        }
+      }
+    ]
+  }
+}

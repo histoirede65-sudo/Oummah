@@ -294,3 +294,4 @@ export function rankDocuments<T>(
   if (retained.length > 0) return retained.slice(0, maximumItems);
   return allowFallback ? scored.slice(0, Math.min(2, maximumItems)) : [];
 }
+

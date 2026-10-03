@@ -1,5 +1,7 @@
 import type { AudioPlayer as ExpoPlayer, AudioStatus as ExpoStatus } from 'expo-audio';
 
+import { getOummahLockScreenArtworkUri } from '../lockScreenArtwork';
+
 import {
   getTrackReciter,
   getTrackUri,
@@ -78,7 +80,7 @@ export class ExpoAudioPlayerAdapter implements AudioPlayer {
         title: track.title,
         artist: reciter.name,
         albumTitle: 'OUMMAH',
-        artworkUrl: track.artworkUri ?? (reciter.photoUri?.startsWith('http') ? reciter.photoUri : undefined),
+        artworkUrl: track.artworkUri ?? getOummahLockScreenArtworkUri(),
       }, { showSeekBackward: true, showSeekForward: true });
     } catch {
       // Unsupported on some web and development runtimes.

@@ -1,0 +1,32 @@
+{
+  "schemaVersion": "1.0",
+  "generatedAt": "2026-09-30T20:01:33.343Z",
+  "batch": 8,
+  "sourceAuditGeneratedAt": "2026-09-30T20:01:27.448Z",
+  "codes": [
+    "E1505",
+    "E1517",
+    "E1518",
+    "E1519",
+    "E1520",
+    "E1521"
+  ],
+  "totals": {
+    "priorityCodes": 6,
+    "automaticProfilesGenerated": 3,
+    "completeProfilesGenerated": 2,
+    "incompleteProfilesGenerated": 1,
+    "manualReviewCount": 3,
+    "noOfficialMatchCount": 3,
+    "sourceExtractionFailedCount": 0,
+    "ambiguousCount": 0,
+    "possibleMatchCount": 0,
+    "profilesWithEFSA": 3,
+    "profilesWithJECFA": 0,
+    "profilesWithBothAuthorities": 0,
+    "profilesWithReferenceValues": 2,
+    "profilesWithPotentialEffects": 2,
+    "familyAssessments": 0,
+    "authorityDisagreements": 0
+  }
+}

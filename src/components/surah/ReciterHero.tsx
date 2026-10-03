@@ -25,6 +25,7 @@ type ReciterHeroProps = {
   onReciterDoubleTap?: () => void;
   focusContent?: ReactNode;
   verseContent?: ReactNode;
+  progressContent?: ReactNode;
   surahNumber: number;
   surahArabicName: string;
   surahFrenchName: string;
@@ -62,6 +63,7 @@ export default function ReciterHero({
   onReciterDoubleTap = NOOP,
   focusContent,
   verseContent,
+  progressContent,
   surahNumber,
   surahFrenchName,
   onBack,
@@ -84,6 +86,7 @@ export default function ReciterHero({
   const { t } = useI18n();
   const { currentReciter } = useReciter();
   const portraitGesture = useDoubleTapGesture(onReciterDoubleTap);
+  const [rangeExpanded, setRangeExpanded] = useState(false);
 
   const reciter = useMemo<ReciterTransitionData | null>(
     () =>
@@ -105,7 +108,7 @@ export default function ReciterHero({
   const palette = getReciterPalette(reciter.id);
 
   return (
-    <View style={[styles.hero, { height }]}>
+    <View style={[styles.hero, { height: height + (rangeExpanded ? 58 : 0) }]}>
       <LinearGradient
         pointerEvents="none"
         colors={palette.background}
@@ -121,7 +124,9 @@ export default function ReciterHero({
         previousReciter={previousReciter}
         nextReciter={nextReciter}
       >
-        <ReciterImage isPlaying={isPlaying} />
+        <View style={[styles.artwork, { height: height - 175 }]}>
+          <ReciterImage isPlaying={isPlaying} />
+        </View>
 
         <LinearGradient
           pointerEvents="none"
@@ -164,7 +169,6 @@ export default function ReciterHero({
                   <Ionicons name="ellipsis-horizontal" size={20} color={colors.text} />
                 </Pressable>
               </View>
-              <Text numberOfLines={1} style={styles.topReciterName}>{reciter.name}</Text>
             </View>
 
             <Pressable
@@ -181,7 +185,10 @@ export default function ReciterHero({
               </Animated.View>
             </Pressable>
 
-            <View style={styles.identity}>
+            <View style={[styles.identity, rangeExpanded && { bottom: 242 }]}>
+              <Pressable onPress={onReciterPress} accessibilityRole="button" accessibilityLabel={t('recitations.viewReciter', { name: reciter.name })}>
+                <Text style={styles.topReciterName}>{reciter.name}</Text>
+              </Pressable>
               <Text
                 numberOfLines={1}
                 adjustsFontSizeToFit
@@ -191,30 +198,18 @@ export default function ReciterHero({
                   surahFrenchName.length > 14 && styles.titleLong,
                 ]}
               >
-                {surahFrenchName}
+                {surahName}
               </Text>
 
-              <Text style={styles.subtitle}>{t('recitations.surahNumber', { number: surahNumber })}  •</Text>
+              <Text style={styles.subtitle}>{surahFrenchName}</Text>
 
-              <Pressable
-                accessibilityRole="button"
-                accessibilityLabel={t('recitations.viewReciter', { name: reciter.name })}
-                onPress={onReciterPress}
-              >
+              <Pressable onPress={onFavorite} accessibilityRole="button" accessibilityLabel={t('recitations.favorite')} accessibilityState={{ selected: isFavorite }} style={styles.surahFavorite}>
+                <Ionicons name={isFavorite ? 'heart' : 'heart-outline'} size={22} color={colors.goldLight} />
               </Pressable>
-              <View style={styles.rangePanel}>
-                <Text style={styles.rangeTitle}>{t('audio.listenToVerseRange')}</Text>
-                <View style={styles.rangeControls}>
-                  <RangeControl label={t('audio.from')} value={rangeStart} minimum={1} maximum={rangeEnd} onChange={onRangeStartChange} />
-                  <RangeControl label={t('audio.to')} value={rangeEnd} minimum={rangeStart} maximum={verses} onChange={onRangeEndChange} />
-                  <Pressable onPress={onPlayRange} style={({ pressed }) => [styles.rangePlay, pressed && styles.pressed]}>
-                    <Ionicons name="play" size={15} color={colors.background} />
-                  </Pressable>
-                </View>
-              </View>
             </View>
 
             <View style={styles.transportPosition}>
+              {progressContent}
               <LinearGradient
                 colors={['rgba(34,20,49,0.94)', 'rgba(12,9,24,0.97)']}
                 start={{ x: 0, y: 0 }}
@@ -280,6 +275,20 @@ export default function ReciterHero({
                   <Ionicons name="play-skip-forward" size={17} color={nextDisabled ? colors.textMuted : stylesConstants.premiumGoldLight} />
                 </Pressable>
               </LinearGradient>
+              <View style={styles.rangePanel}>
+                <Pressable onPress={() => setRangeExpanded((value) => !value)} accessibilityRole="button" accessibilityState={{ expanded: rangeExpanded }} style={styles.rangeSummary}>
+                  <Text style={styles.rangeTitle}>{t('audio.listenToVerseRange')}</Text>
+                  <Text style={styles.rangeValue}>{rangeStart} – {rangeEnd}</Text>
+                  <Ionicons name={rangeExpanded ? 'chevron-up' : 'chevron-down'} size={16} color={colors.goldMuted} />
+                </Pressable>
+                {rangeExpanded ? <View style={styles.rangeControls}>
+                  <RangeControl label={t('audio.from')} value={rangeStart} minimum={1} maximum={rangeEnd} onChange={onRangeStartChange} />
+                  <RangeControl label={t('audio.to')} value={rangeEnd} minimum={rangeStart} maximum={verses} onChange={onRangeEndChange} />
+                  <Pressable onPress={onPlayRange} accessibilityLabel={t('audio.startPlayback')} style={({ pressed }) => [styles.rangePlay, pressed && styles.pressed]}>
+                    <Ionicons name="play" size={15} color={colors.background} />
+                  </Pressable>
+                </View> : null}
+              </View>
             </View>
 
             {verseContent ? (
@@ -348,6 +357,9 @@ function getReciterPalette(id: string): {
 }
 
 const styles = StyleSheet.create({
+  artwork: { position: 'absolute', top: 0, left: 0, right: 0, overflow: 'hidden' },
+  surahFavorite: { position: 'absolute', bottom: 8, right: 0, width: 44, height: 44, borderRadius: 22, borderWidth: 1, borderColor: colors.borderSoft, alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(8,7,19,0.5)' },
+  rangeSummary: { minHeight: 40, flexDirection: 'row', alignItems: 'center', gap: 8 },
   hero: {
     position: 'relative',
     marginTop: 0,
@@ -416,41 +428,39 @@ const styles = StyleSheet.create({
 
   identity: {
     position: 'absolute',
-    top: 150,
+    bottom: 184,
     left: 24,
     right: 24,
-    maxWidth: 'none',
-    alignItems: 'flex-end',
+    alignItems: 'flex-start',
+    paddingRight: 46,
     zIndex: 4,
   },
 
   title: {
-    transform: [{ translateY: 187 }],
     color: colors.text,
     fontFamily: typography.serifSemibold,
     fontSize: 29,
     lineHeight: 34,
     fontWeight: '700',
-    textAlign: 'right',
+    textAlign: 'left',
     textShadowColor: 'rgba(0,0,0,0.82)',
     textShadowOffset: { width: 0, height: 2 },
     textShadowRadius: 18,
   },
 
   titleLong: {
-    maxWidth: '44%',
+    maxWidth: '100%',
     fontSize: 21,
     lineHeight: 25,
   },
 
   subtitle: {
-    transform: [{ translateY: 187 }],
     marginTop: 5,
     color: stylesConstants.premiumGold,
     fontFamily: typography.sans,
     fontSize: 15,
     fontWeight: '700',
-    textAlign: 'right',
+    textAlign: 'left',
   },
 
   reciter: {
@@ -527,13 +537,14 @@ const styles = StyleSheet.create({
   },
 
   transportBar: {
-    height: 46,
-    paddingHorizontal: 10,
+    height: 62,
+    marginTop: 6,
+    paddingHorizontal: 0,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     borderRadius: 23,
-    borderWidth: 1,
+    borderWidth: 0,
     borderColor: 'rgba(216,182,90,0.48)',
     shadowColor: stylesConstants.premiumGold,
     shadowOffset: { width: 0, height: 3 },
@@ -543,22 +554,22 @@ const styles = StyleSheet.create({
   },
 
   transportButton: {
-    width: 32,
-    height: 32,
+    width: 40,
+    height: 40,
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: 16,
+    borderRadius: 20,
     borderWidth: 1,
     borderColor: 'rgba(216,182,90,0.25)',
     backgroundColor: 'rgba(8,7,19,0.46)',
   },
 
   transportPlayButton: {
-    width: 40,
-    height: 40,
+    width: 48,
+    height: 48,
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: 20,
+    borderRadius: 24,
     backgroundColor: stylesConstants.premiumGold,
     shadowColor: stylesConstants.premiumGold,
     shadowOpacity: 0.42,
@@ -589,7 +600,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 76,
     right: 0,
-    bottom: 72,
+    bottom: 190,
     width: '58%',
     zIndex: 2,
     alignItems: 'center',
@@ -615,10 +626,10 @@ const styles = StyleSheet.create({
     letterSpacing: 2.2,
     textAlign: 'right',
   },
-  topReciterName: { position: 'absolute', left: 58, right: 58, color: '#F4D98A', fontFamily: typography.serifMedium, fontSize: 25, fontWeight: '700', textAlign: 'center', textShadowColor: 'rgba(0,0,0,0.9)', textShadowOffset: { width: 0, height: 2 }, textShadowRadius: 7 },
+  topReciterName: { marginBottom: 8, color: colors.text, fontFamily: typography.serifMedium, fontSize: 17, lineHeight: 22, textShadowColor: 'rgba(0,0,0,0.9)', textShadowOffset: { width: 0, height: 2 }, textShadowRadius: 7 },
   reciterHint: { marginTop: 3, color: colors.textMuted, fontFamily: typography.sans, fontSize: 9, textAlign: 'center' },
-  rangePanel: { alignSelf: 'flex-start', marginTop: 48, transform: [{ translateX: -24 }, { translateY: 60 }], padding: 9, borderRadius: 16, backgroundColor: 'rgba(8,7,19,0.68)', borderWidth: 1, borderColor: 'rgba(216,182,90,0.28)' },
-  rangeTitle: { color: colors.textSecondary, fontFamily: typography.sans, fontSize: 10, fontWeight: '700', textAlign: 'center' },
+  rangePanel: { marginTop: 8, paddingHorizontal: 10, paddingVertical: 3, borderRadius: 16, backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.borderSoft },
+  rangeTitle: { flex: 1, color: colors.text, fontFamily: typography.sans, fontSize: 11, fontWeight: '600' },
   rangeControls: { marginTop: 6, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 7 },
   rangeControl: { minWidth: 70, height: 34, paddingHorizontal: 5, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', borderRadius: 10, backgroundColor: 'rgba(126,78,151,0.28)' },
   rangeLabel: { marginRight: 4, color: colors.textMuted, fontFamily: typography.sans, fontSize: 9 },

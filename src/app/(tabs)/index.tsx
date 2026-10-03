@@ -10,6 +10,9 @@ import HomeAnnouncementBanner from "../../components/HomeAnnouncementBanner";
 import AllahNamesHomeSection from "../../components/AllahNamesHomeSection";
 import HomeShortcuts from "../../components/HomeShortcuts";
 import PrayerCard from "../../components/PrayerCard";
+import HomeTahajjudCard from "../../components/HomeTahajjudCard";
+import type { MosquePrayerSchedule } from "../../features/mosques/data/mosquePrayerTimes";
+import { saveTasbihPrayerSchedule } from "../../features/dhikr/TasbihStore";
 import { useI18n } from "../../i18n";
 import { colors } from "../../theme/colors";
 import { typography } from "../../theme/typography";
@@ -20,6 +23,7 @@ export default function HomeScreen() {
   const dashboardHorizontalPadding = width < 350 ? 7 : width < 390 ? 9 : width > 430 ? 16 : 11;
   const { welcome } = useLocalSearchParams<{ welcome?: string }>();
   const [showWelcome, setShowWelcome] = useState(false);
+  const [prayerSchedule, setPrayerSchedule] = useState<MosquePrayerSchedule | null>(null);
   const welcomeOpacity = useRef(new Animated.Value(0)).current;
   const welcomeScale = useRef(new Animated.Value(0.88)).current;
   const scrollRef = useRef<ScrollView>(null);
@@ -78,7 +82,11 @@ export default function HomeScreen() {
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >
-          <PrayerCard />
+          <PrayerCard onScheduleChange={(schedule) => {
+            setPrayerSchedule(schedule);
+            void saveTasbihPrayerSchedule(schedule).catch(() => undefined);
+          }} />
+          <HomeTahajjudCard schedule={prayerSchedule} />
           <HomeAnnouncementBanner />
           <View
             onLayout={(event) => {

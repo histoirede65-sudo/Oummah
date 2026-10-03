@@ -1,0 +1,614 @@
+{
+  "schemaVersion": "1.0",
+  "generatedAt": "2026-09-30T23:33:00.286Z",
+  "dimensions": {
+    "hazard": 5,
+    "evidence": 4,
+    "exposure": 5
+  },
+  "totalCombinations": 100,
+  "explicitlyDecided": 100,
+  "intentionalInsufficientData": 71,
+  "combinations": [
+    {
+      "hazard": "none_identified",
+      "evidence": "insufficient",
+      "exposure": "below_concern",
+      "riskLevel": "insufficient_data"
+    },
+    {
+      "hazard": "none_identified",
+      "evidence": "insufficient",
+      "exposure": "unlikely_concern",
+      "riskLevel": "insufficient_data"
+    },
+    {
+      "hazard": "none_identified",
+      "evidence": "insufficient",
+      "exposure": "possible_concern",
+      "riskLevel": "insufficient_data"
+    },
+    {
+      "hazard": "none_identified",
+      "evidence": "insufficient",
+      "exposure": "concerning",
+      "riskLevel": "insufficient_data"
+    },
+    {
+      "hazard": "none_identified",
+      "evidence": "insufficient",
+      "exposure": "unknown",
+      "riskLevel": "insufficient_data"
+    },
+    {
+      "hazard": "none_identified",
+      "evidence": "limited",
+      "exposure": "below_concern",
+      "riskLevel": "limited"
+    },
+    {
+      "hazard": "none_identified",
+      "evidence": "limited",
+      "exposure": "unlikely_concern",
+      "riskLevel": "limited"
+    },
+    {
+      "hazard": "none_identified",
+      "evidence": "limited",
+      "exposure": "possible_concern",
+      "riskLevel": "insufficient_data"
+    },
+    {
+      "hazard": "none_identified",
+      "evidence": "limited",
+      "exposure": "concerning",
+      "riskLevel": "insufficient_data"
+    },
+    {
+      "hazard": "none_identified",
+      "evidence": "limited",
+      "exposure": "unknown",
+      "riskLevel": "insufficient_data"
+    },
+    {
+      "hazard": "none_identified",
+      "evidence": "moderate",
+      "exposure": "below_concern",
+      "riskLevel": "safe"
+    },
+    {
+      "hazard": "none_identified",
+      "evidence": "moderate",
+      "exposure": "unlikely_concern",
+      "riskLevel": "safe"
+    },
+    {
+      "hazard": "none_identified",
+      "evidence": "moderate",
+      "exposure": "possible_concern",
+      "riskLevel": "insufficient_data"
+    },
+    {
+      "hazard": "none_identified",
+      "evidence": "moderate",
+      "exposure": "concerning",
+      "riskLevel": "moderate"
+    },
+    {
+      "hazard": "none_identified",
+      "evidence": "moderate",
+      "exposure": "unknown",
+      "riskLevel": "insufficient_data"
+    },
+    {
+      "hazard": "none_identified",
+      "evidence": "strong",
+      "exposure": "below_concern",
+      "riskLevel": "safe"
+    },
+    {
+      "hazard": "none_identified",
+      "evidence": "strong",
+      "exposure": "unlikely_concern",
+      "riskLevel": "safe"
+    },
+    {
+      "hazard": "none_identified",
+      "evidence": "strong",
+      "exposure": "possible_concern",
+      "riskLevel": "limited"
+    },
+    {
+      "hazard": "none_identified",
+      "evidence": "strong",
+      "exposure": "concerning",
+      "riskLevel": "moderate"
+    },
+    {
+      "hazard": "none_identified",
+      "evidence": "strong",
+      "exposure": "unknown",
+      "riskLevel": "insufficient_data"
+    },
+    {
+      "hazard": "low",
+      "evidence": "insufficient",
+      "exposure": "below_concern",
+      "riskLevel": "insufficient_data"
+    },
+    {
+      "hazard": "low",
+      "evidence": "insufficient",
+      "exposure": "unlikely_concern",
+      "riskLevel": "insufficient_data"
+    },
+    {
+      "hazard": "low",
+      "evidence": "insufficient",
+      "exposure": "possible_concern",
+      "riskLevel": "insufficient_data"
+    },
+    {
+      "hazard": "low",
+      "evidence": "insufficient",
+      "exposure": "concerning",
+      "riskLevel": "insufficient_data"
+    },
+    {
+      "hazard": "low",
+      "evidence": "insufficient",
+      "exposure": "unknown",
+      "riskLevel": "insufficient_data"
+    },
+    {
+      "hazard": "low",
+      "evidence": "limited",
+      "exposure": "below_concern",
+      "riskLevel": "insufficient_data"
+    },
+    {
+      "hazard": "low",
+      "evidence": "limited",
+      "exposure": "unlikely_concern",
+      "riskLevel": "insufficient_data"
+    },
+    {
+      "hazard": "low",
+      "evidence": "limited",
+      "exposure": "possible_concern",
+      "riskLevel": "insufficient_data"
+    },
+    {
+      "hazard": "low",
+      "evidence": "limited",
+      "exposure": "concerning",
+      "riskLevel": "insufficient_data"
+    },
+    {
+      "hazard": "low",
+      "evidence": "limited",
+      "exposure": "unknown",
+      "riskLevel": "insufficient_data"
+    },
+    {
+      "hazard": "low",
+      "evidence": "moderate",
+      "exposure": "below_concern",
+      "riskLevel": "limited"
+    },
+    {
+      "hazard": "low",
+      "evidence": "moderate",
+      "exposure": "unlikely_concern",
+      "riskLevel": "limited"
+    },
+    {
+      "hazard": "low",
+      "evidence": "moderate",
+      "exposure": "possible_concern",
+      "riskLevel": "moderate"
+    },
+    {
+      "hazard": "low",
+      "evidence": "moderate",
+      "exposure": "concerning",
+      "riskLevel": "moderate"
+    },
+    {
+      "hazard": "low",
+      "evidence": "moderate",
+      "exposure": "unknown",
+      "riskLevel": "insufficient_data"
+    },
+    {
+      "hazard": "low",
+      "evidence": "strong",
+      "exposure": "below_concern",
+      "riskLevel": "limited"
+    },
+    {
+      "hazard": "low",
+      "evidence": "strong",
+      "exposure": "unlikely_concern",
+      "riskLevel": "limited"
+    },
+    {
+      "hazard": "low",
+      "evidence": "strong",
+      "exposure": "possible_concern",
+      "riskLevel": "moderate"
+    },
+    {
+      "hazard": "low",
+      "evidence": "strong",
+      "exposure": "concerning",
+      "riskLevel": "moderate"
+    },
+    {
+      "hazard": "low",
+      "evidence": "strong",
+      "exposure": "unknown",
+      "riskLevel": "insufficient_data"
+    },
+    {
+      "hazard": "moderate",
+      "evidence": "insufficient",
+      "exposure": "below_concern",
+      "riskLevel": "insufficient_data"
+    },
+    {
+      "hazard": "moderate",
+      "evidence": "insufficient",
+      "exposure": "unlikely_concern",
+      "riskLevel": "insufficient_data"
+    },
+    {
+      "hazard": "moderate",
+      "evidence": "insufficient",
+      "exposure": "possible_concern",
+      "riskLevel": "insufficient_data"
+    },
+    {
+      "hazard": "moderate",
+      "evidence": "insufficient",
+      "exposure": "concerning",
+      "riskLevel": "insufficient_data"
+    },
+    {
+      "hazard": "moderate",
+      "evidence": "insufficient",
+      "exposure": "unknown",
+      "riskLevel": "insufficient_data"
+    },
+    {
+      "hazard": "moderate",
+      "evidence": "limited",
+      "exposure": "below_concern",
+      "riskLevel": "insufficient_data"
+    },
+    {
+      "hazard": "moderate",
+      "evidence": "limited",
+      "exposure": "unlikely_concern",
+      "riskLevel": "insufficient_data"
+    },
+    {
+      "hazard": "moderate",
+      "evidence": "limited",
+      "exposure": "possible_concern",
+      "riskLevel": "insufficient_data"
+    },
+    {
+      "hazard": "moderate",
+      "evidence": "limited",
+      "exposure": "concerning",
+      "riskLevel": "insufficient_data"
+    },
+    {
+      "hazard": "moderate",
+      "evidence": "limited",
+      "exposure": "unknown",
+      "riskLevel": "insufficient_data"
+    },
+    {
+      "hazard": "moderate",
+      "evidence": "moderate",
+      "exposure": "below_concern",
+      "riskLevel": "limited"
+    },
+    {
+      "hazard": "moderate",
+      "evidence": "moderate",
+      "exposure": "unlikely_concern",
+      "riskLevel": "limited"
+    },
+    {
+      "hazard": "moderate",
+      "evidence": "moderate",
+      "exposure": "possible_concern",
+      "riskLevel": "moderate"
+    },
+    {
+      "hazard": "moderate",
+      "evidence": "moderate",
+      "exposure": "concerning",
+      "riskLevel": "moderate"
+    },
+    {
+      "hazard": "moderate",
+      "evidence": "moderate",
+      "exposure": "unknown",
+      "riskLevel": "insufficient_data"
+    },
+    {
+      "hazard": "moderate",
+      "evidence": "strong",
+      "exposure": "below_concern",
+      "riskLevel": "limited"
+    },
+    {
+      "hazard": "moderate",
+      "evidence": "strong",
+      "exposure": "unlikely_concern",
+      "riskLevel": "limited"
+    },
+    {
+      "hazard": "moderate",
+      "evidence": "strong",
+      "exposure": "possible_concern",
+      "riskLevel": "moderate"
+    },
+    {
+      "hazard": "moderate",
+      "evidence": "strong",
+      "exposure": "concerning",
+      "riskLevel": "moderate"
+    },
+    {
+      "hazard": "moderate",
+      "evidence": "strong",
+      "exposure": "unknown",
+      "riskLevel": "insufficient_data"
+    },
+    {
+      "hazard": "serious",
+      "evidence": "insufficient",
+      "exposure": "below_concern",
+      "riskLevel": "insufficient_data"
+    },
+    {
+      "hazard": "serious",
+      "evidence": "insufficient",
+      "exposure": "unlikely_concern",
+      "riskLevel": "insufficient_data"
+    },
+    {
+      "hazard": "serious",
+      "evidence": "insufficient",
+      "exposure": "possible_concern",
+      "riskLevel": "insufficient_data"
+    },
+    {
+      "hazard": "serious",
+      "evidence": "insufficient",
+      "exposure": "concerning",
+      "riskLevel": "insufficient_data"
+    },
+    {
+      "hazard": "serious",
+      "evidence": "insufficient",
+      "exposure": "unknown",
+      "riskLevel": "insufficient_data"
+    },
+    {
+      "hazard": "serious",
+      "evidence": "limited",
+      "exposure": "below_concern",
+      "riskLevel": "insufficient_data"
+    },
+    {
+      "hazard": "serious",
+      "evidence": "limited",
+      "exposure": "unlikely_concern",
+      "riskLevel": "insufficient_data"
+    },
+    {
+      "hazard": "serious",
+      "evidence": "limited",
+      "exposure": "possible_concern",
+      "riskLevel": "insufficient_data"
+    },
+    {
+      "hazard": "serious",
+      "evidence": "limited",
+      "exposure": "concerning",
+      "riskLevel": "insufficient_data"
+    },
+    {
+      "hazard": "serious",
+      "evidence": "limited",
+      "exposure": "unknown",
+      "riskLevel": "insufficient_data"
+    },
+    {
+      "hazard": "serious",
+      "evidence": "moderate",
+      "exposure": "below_concern",
+      "riskLevel": "insufficient_data"
+    },
+    {
+      "hazard": "serious",
+      "evidence": "moderate",
+      "exposure": "unlikely_concern",
+      "riskLevel": "insufficient_data"
+    },
+    {
+      "hazard": "serious",
+      "evidence": "moderate",
+      "exposure": "possible_concern",
+      "riskLevel": "insufficient_data"
+    },
+    {
+      "hazard": "serious",
+      "evidence": "moderate",
+      "exposure": "concerning",
+      "riskLevel": "insufficient_data"
+    },
+    {
+      "hazard": "serious",
+      "evidence": "moderate",
+      "exposure": "unknown",
+      "riskLevel": "insufficient_data"
+    },
+    {
+      "hazard": "serious",
+      "evidence": "strong",
+      "exposure": "below_concern",
+      "riskLevel": "moderate"
+    },
+    {
+      "hazard": "serious",
+      "evidence": "strong",
+      "exposure": "unlikely_concern",
+      "riskLevel": "moderate"
+    },
+    {
+      "hazard": "serious",
+      "evidence": "strong",
+      "exposure": "possible_concern",
+      "riskLevel": "moderate"
+    },
+    {
+      "hazard": "serious",
+      "evidence": "strong",
+      "exposure": "concerning",
+      "riskLevel": "high"
+    },
+    {
+      "hazard": "serious",
+      "evidence": "strong",
+      "exposure": "unknown",
+      "riskLevel": "insufficient_data"
+    },
+    {
+      "hazard": "unknown",
+      "evidence": "insufficient",
+      "exposure": "below_concern",
+      "riskLevel": "insufficient_data"
+    },
+    {
+      "hazard": "unknown",
+      "evidence": "insufficient",
+      "exposure": "unlikely_concern",
+      "riskLevel": "insufficient_data"
+    },
+    {
+      "hazard": "unknown",
+      "evidence": "insufficient",
+      "exposure": "possible_concern",
+      "riskLevel": "insufficient_data"
+    },
+    {
+      "hazard": "unknown",
+      "evidence": "insufficient",
+      "exposure": "concerning",
+      "riskLevel": "insufficient_data"
+    },
+    {
+      "hazard": "unknown",
+      "evidence": "insufficient",
+      "exposure": "unknown",
+      "riskLevel": "insufficient_data"
+    },
+    {
+      "hazard": "unknown",
+      "evidence": "limited",
+      "exposure": "below_concern",
+      "riskLevel": "insufficient_data"
+    },
+    {
+      "hazard": "unknown",
+      "evidence": "limited",
+      "exposure": "unlikely_concern",
+      "riskLevel": "insufficient_data"
+    },
+    {
+      "hazard": "unknown",
+      "evidence": "limited",
+      "exposure": "possible_concern",
+      "riskLevel": "insufficient_data"
+    },
+    {
+      "hazard": "unknown",
+      "evidence": "limited",
+      "exposure": "concerning",
+      "riskLevel": "insufficient_data"
+    },
+    {
+      "hazard": "unknown",
+      "evidence": "limited",
+      "exposure": "unknown",
+      "riskLevel": "insufficient_data"
+    },
+    {
+      "hazard": "unknown",
+      "evidence": "moderate",
+      "exposure": "below_concern",
+      "riskLevel": "insufficient_data"
+    },
+    {
+      "hazard": "unknown",
+      "evidence": "moderate",
+      "exposure": "unlikely_concern",
+      "riskLevel": "insufficient_data"
+    },
+    {
+      "hazard": "unknown",
+      "evidence": "moderate",
+      "exposure": "possible_concern",
+      "riskLevel": "insufficient_data"
+    },
+    {
+      "hazard": "unknown",
+      "evidence": "moderate",
+      "exposure": "concerning",
+      "riskLevel": "insufficient_data"
+    },
+    {
+      "hazard": "unknown",
+      "evidence": "moderate",
+      "exposure": "unknown",
+      "riskLevel": "insufficient_data"
+    },
+    {
+      "hazard": "unknown",
+      "evidence": "strong",
+      "exposure": "below_concern",
+      "riskLevel": "insufficient_data"
+    },
+    {
+      "hazard": "unknown",
+      "evidence": "strong",
+      "exposure": "unlikely_concern",
+      "riskLevel": "insufficient_data"
+    },
+    {
+      "hazard": "unknown",
+      "evidence": "strong",
+      "exposure": "possible_concern",
+      "riskLevel": "insufficient_data"
+    },
+    {
+      "hazard": "unknown",
+      "evidence": "strong",
+      "exposure": "concerning",
+      "riskLevel": "insufficient_data"
+    },
+    {
+      "hazard": "unknown",
+      "evidence": "strong",
+      "exposure": "unknown",
+      "riskLevel": "insufficient_data"
+    }
+  ]
+}

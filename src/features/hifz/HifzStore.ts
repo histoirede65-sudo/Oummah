@@ -17,6 +17,8 @@ export type HifzSession = {
   learned: number;
   reviewed: number;
   surahIds: number[];
+  completed?: boolean;
+  completedAt?: string;
 };
 
 export type HifzState = {

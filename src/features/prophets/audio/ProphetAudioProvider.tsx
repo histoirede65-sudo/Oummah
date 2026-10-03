@@ -15,11 +15,15 @@ import {
 } from "react";
 
 import type { ProphetAudioEpisode } from "./prophetAudioData";
+import { getCachedProphetAudio } from "./prophetAudioCache";
+import { getOummahLockScreenArtworkUri } from "../../audio/lockScreenArtwork";
 
 type ProphetAudioContextValue = {
   episode: ProphetAudioEpisode | null;
   isPlaying: boolean;
   isLoading: boolean;
+  downloadProgress: number | null;
+  error: string | null;
   currentTime: number;
   duration: number;
   progress: number;
@@ -43,6 +47,8 @@ export function ProphetAudioProvider({ children }: { children: ReactNode }) {
   const status = useAudioPlayerStatus(player);
   const [episode, setEpisode] = useState<ProphetAudioEpisode | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [downloadProgress, setDownloadProgress] = useState<number | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const loadedEpisodeId = useRef<string | null>(null);
 
   const configureBackgroundSession = useCallback(async () => {
@@ -62,6 +68,7 @@ export function ProphetAudioProvider({ children }: { children: ReactNode }) {
             title: nextEpisode.title,
             artist: "OUMMAH · Histoires des prophètes",
             albumTitle: nextEpisode.prophetName,
+            artworkUrl: getOummahLockScreenArtworkUri(),
           },
           {
             showSeekBackward: true,
@@ -78,16 +85,18 @@ export function ProphetAudioProvider({ children }: { children: ReactNode }) {
   const startEpisode = useCallback(
     async (nextEpisode: ProphetAudioEpisode) => {
       setIsLoading(true);
+      setError(null);
       try {
         await configureBackgroundSession();
+        setEpisode(nextEpisode);
 
         if (loadedEpisodeId.current !== nextEpisode.id) {
           player.pause();
-          player.replace(nextEpisode.audioSource);
+          const localUri = await getCachedProphetAudio(nextEpisode, setDownloadProgress);
+          player.replace({ uri: localUri });
           loadedEpisodeId.current = nextEpisode.id;
         }
 
-        setEpisode(nextEpisode);
         activateLockScreen(nextEpisode);
 
         const duration = status.duration || player.duration || 0;
@@ -97,8 +106,16 @@ export function ProphetAudioProvider({ children }: { children: ReactNode }) {
         }
 
         player.play();
+      } catch (cause) {
+        const message = cause instanceof Error
+          ? cause.message
+          : "Impossible de télécharger cette histoire. Vérifie ta connexion puis réessaie.";
+        setError(message);
+        setEpisode(null);
+        throw cause;
       } finally {
         setIsLoading(false);
+        setDownloadProgress(null);
       }
     },
     [activateLockScreen, configureBackgroundSession, player, status.currentTime, status.duration],
@@ -201,6 +218,8 @@ export function ProphetAudioProvider({ children }: { children: ReactNode }) {
       episode,
       isPlaying: Boolean(status.playing),
       isLoading,
+      downloadProgress,
+      error,
       currentTime,
       duration,
       progress: duration > 0 ? Math.min(1, currentTime / duration) : 0,
@@ -217,6 +236,8 @@ export function ProphetAudioProvider({ children }: { children: ReactNode }) {
       duration,
       episode,
       isLoading,
+      downloadProgress,
+      error,
       seekBy,
       seekTo,
       startEpisode,

@@ -9,16 +9,16 @@ import Reanimated, { Easing, FadeInDown } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { useReciter } from '../../../context/ReciterProvider';
+import { useGlobalAudioPlayer } from '../../../context/AudioPlayerProvider';
 import { audioDependencies } from '../../../features/audio/audioDependencies';
 import { SURAHS } from '../../../data/surahs';
 import {
-  ListeningHeader,
+  SearchBar,
   ReciterAvatar,
   SurahAudioRow,
   listeningStyles,
 } from '../../../features/audio/presentation/ListeningComponents';
 import { preloadReciterPortraits } from '../../../features/audio/presentation/audioPreload';
-import { localizeReciterCountry } from '../../../features/audio/presentation/reciterCountry';
 import { useOfflineDownloads } from '../../../features/audio/presentation/useOfflineDownloads';
 import { useSurahCatalogViewModel } from '../../../features/audio/presentation/viewmodels/useSurahCatalogViewModel';
 import type { SurahCatalogItem } from '../../../features/audio/domain/audio';
@@ -29,6 +29,9 @@ import { typography } from '../../../theme/typography';
 
 export default function ReciterDetailScreen() {
   const { language, t } = useI18n();
+  const audio = useGlobalAudioPlayer();
+  const [search, setSearch] = useState('');
+  const [storageExpanded, setStorageExpanded] = useState(false);
   const { reciterId: routeReciterId, returnTo } = useLocalSearchParams<{ reciterId?: string; returnTo?: string }>();
   const { currentReciter, reciters } = useReciter();
   const reciterId = routeReciterId ?? currentReciter?.id;
@@ -67,15 +70,6 @@ export default function ReciterDetailScreen() {
       isDownloaded: false,
     }));
   }, [items, reciter, reciterId]);
-
-  const totalDuration = useMemo(() => {
-    const seconds = displayedItems.reduce((total, item) => total + (item.track.durationHint ?? 0), 0);
-    const hours = Math.floor(seconds / 3600);
-    const minutes = Math.round((seconds % 3600) / 60);
-    return hours > 0
-      ? t('recitations.durationHoursMinutes', { hours, minutes })
-      : t('recitations.durationMinutes', { minutes });
-  }, [displayedItems, t]);
 
   useEffect(() => {
     let active = true;
@@ -221,11 +215,18 @@ export default function ReciterDetailScreen() {
   );
 
   const keyExtractor = useCallback((item: (typeof displayedItems)[number]) => item.track.id, []);
+  const filteredItems = useMemo(() => {
+    const normalize = (value: string) => value.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+    const query = normalize(search.trim());
+    return displayedItems.filter(({ surah }) => normalize(`${surah.id} ${surah.transliteration} ${surah.arabicName} ${language === 'en' ? englishSurahNames.get(surah.id) ?? '' : surah.frenchName}`).includes(query));
+  }, [displayedItems, search, language, englishSurahNames]);
+  const canResume = audio.listeningResume?.reciterId === reciterId;
 
   return (
     <SafeAreaView edges={['top']} style={listeningStyles.safeArea}>
       <FlatList
-        data={displayedItems}
+        data={filteredItems}
+        keyboardShouldPersistTaps="handled"
         keyExtractor={keyExtractor}
         renderItem={renderSurah}
         ItemSeparatorComponent={SurahSeparator}
@@ -238,14 +239,16 @@ export default function ReciterDetailScreen() {
         removeClippedSubviews
         ListHeaderComponent={
           <>
-            <ListeningHeader
-              title={reciter?.name ?? t('recitations.reciters')}
-              subtitle={t('recitations.reciterSurahs')}
-              onBack={goBack}
-              onAction={changeReciter}
-              actionIcon="swap-horizontal-outline"
-              actionAccessibilityLabel={t('recitations.changeReciter')}
-            />
+            <View style={styles.pageHeader}>
+              <Pressable onPress={goBack} accessibilityLabel={t('common.back')} style={styles.headerBack}>
+                <Ionicons name="arrow-back" size={22} color={colors.goldMuted} />
+              </Pressable>
+              <Text style={styles.pageTitle}>{language === 'en' ? 'Your reciter' : 'Votre récitateur'}</Text>
+              <Pressable onPress={changeReciter} accessibilityLabel={t('recitations.changeReciter')} style={styles.changeButton}>
+                <Ionicons name="swap-horizontal-outline" size={16} color={colors.goldMuted} />
+                <Text style={styles.changeText}>{language === 'en' ? 'Change' : 'Changer'}</Text>
+              </Pressable>
+            </View>
 
             {reciter ? (
               <Reanimated.View entering={FadeInDown.duration(420).easing(Easing.out(Easing.cubic))}>
@@ -255,6 +258,7 @@ export default function ReciterDetailScreen() {
                   end={{ x: 1, y: 1 }}
                   style={styles.hero}
                 >
+                  <View style={styles.profileRow}>
                   <View style={styles.portraitFrame}>
                     {reciter.image ? (
                       <Image
@@ -269,12 +273,27 @@ export default function ReciterDetailScreen() {
                     )}
                   </View>
 
-                  <Text numberOfLines={2} style={styles.name}>
+                  <View style={styles.profileCopy}>
+                  <Text style={styles.name}>
                     {reciter.name}
                   </Text>
                   <Text style={styles.meta}>
-                    {localizeReciterCountry(reciter.country, language)} · {t(`recitations.style.${reciter.style}`)} · {totalDuration}
+                    {t(`recitations.style.${reciter.style}`)} · {t('recitations.surahCount', { count: reciter.availableSurahs ?? displayedItems.length })}
                   </Text>
+                  </View>
+                  </View>
+                </LinearGradient>
+
+                  <Pressable style={styles.primaryPlay} onPress={() => {
+                    if (canResume) {
+                      void audio.resumeListening().then((session) => {
+                        if (session) router.push(`/listen/${session.surahId}?reciterId=${session.reciterId}&autoplay=1&returnTo=${encodeURIComponent(`/listen/reciter/${reciterId}`)}` as Href);
+                      }).catch(() => undefined);
+                    } else openSurah(displayedItems[0]?.surah.id ?? 1);
+                  }}>
+                    <Ionicons name="play" size={20} color={colors.background} />
+                    <Text style={styles.primaryPlayText}>{canResume ? t('recitations.continueListening') : (language === 'en' ? 'Listen to Al-Fatiha' : 'Écouter Al-Fatiha')}</Text>
+                  </Pressable>
 
                   <View style={styles.actions}>
                     <ActionButton
@@ -287,7 +306,7 @@ export default function ReciterDetailScreen() {
                     />
                     <ActionButton
                       icon="download-outline"
-                      label={t('recitations.downloadAllShort')}
+                      label={language === 'en' ? 'Download all' : 'Tout télécharger'}
                       onPress={() => {
                         void downloadAll();
                       }}
@@ -298,12 +317,15 @@ export default function ReciterDetailScreen() {
                       onPress={playRandom}
                     />
                   </View>
-                </LinearGradient>
 
                 <View style={styles.storageCard}>
+                  <Pressable onPress={() => setStorageExpanded((value) => !value)} accessibilityRole="button" accessibilityState={{ expanded: storageExpanded }}>
+                  <View style={styles.storageHeading}>
                   <Text style={styles.storageTitle}>
                     {t('recitations.offlineStorage')}
                   </Text>
+                  <Ionicons name={storageExpanded ? 'chevron-up' : 'chevron-down'} size={16} color={colors.goldMuted} />
+                  </View>
                   <Text style={styles.storageText}>
                     {t('recitations.storageStats', {
                       count: offline.stats.downloadedCount,
@@ -311,6 +333,8 @@ export default function ReciterDetailScreen() {
                       free: formatBytes(offline.stats.freeBytes, language),
                     })}
                   </Text>
+                  </Pressable>
+                  {storageExpanded ? (
                   <View style={styles.storageActions}>
                     <Pressable onPress={removeReciterDownloads} style={styles.storageAction}>
                       <Ionicons name="trash-outline" size={14} color={colors.goldMuted} />
@@ -325,11 +349,16 @@ export default function ReciterDetailScreen() {
                       </Text>
                     </Pressable>
                   </View>
+                  ) : null}
                 </View>
 
                 <Text style={styles.sectionTitle}>
                   {t('recitations.allSurahs')}
                 </Text>
+                <View style={{ marginBottom: 12 }}>
+                  <SearchBar value={search} onChangeText={setSearch} placeholder={language === 'en' ? 'Search for a surah…' : 'Rechercher une sourate…'} />
+                </View>
+                {filteredItems.length === 0 ? <Text style={styles.storageText}>{language === 'en' ? 'No surah found' : 'Aucune sourate trouvée'}</Text> : null}
               </Reanimated.View>
             ) : null}
           </>
@@ -379,8 +408,18 @@ function formatBytes(bytes: number, language: 'fr' | 'en') {
 }
 
 const styles = StyleSheet.create({
+  pageHeader: { flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 18, marginTop: 12 },
+  headerBack: { width: 42, height: 42, borderRadius: 21, borderWidth: 1, borderColor: colors.borderSoft, alignItems: 'center', justifyContent: 'center' },
+  pageTitle: { flex: 1, color: colors.text, fontFamily: typography.serifMedium, fontSize: 23 },
+  changeButton: { flexDirection: 'row', alignItems: 'center', gap: 5, padding: 9, borderRadius: 20, borderWidth: 1, borderColor: colors.borderSoft },
+  changeText: { color: colors.text, fontSize: 11 },
+  profileRow: { flexDirection: 'row', alignItems: 'center', gap: 14, width: '100%' },
+  profileCopy: { flex: 1, minWidth: 0 },
+  primaryPlay: { marginTop: 14, minHeight: 48, padding: 12, borderRadius: 24, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10, backgroundColor: colors.goldLight },
+  primaryPlayText: { flexShrink: 1, color: colors.background, fontFamily: typography.sans, fontSize: 14, fontWeight: '800' },
+  storageHeading: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   hero: {
-    padding: 18,
+    padding: 12,
     alignItems: 'center',
     borderRadius: 28,
     borderWidth: 1,
@@ -394,8 +433,8 @@ const styles = StyleSheet.create({
   },
 
   portraitFrame: {
-    width: '100%',
-    height: 270,
+    width: 104,
+    height: 130,
     overflow: 'hidden',
     alignItems: 'center',
     justifyContent: 'center',
@@ -409,12 +448,12 @@ const styles = StyleSheet.create({
   },
 
   name: {
-    marginTop: 16,
+    marginTop: 0,
     color: colors.text,
     fontFamily: typography.serifMedium,
-    fontSize: 28,
-    lineHeight: 32,
-    textAlign: 'center',
+    fontSize: 23,
+    lineHeight: 28,
+    textAlign: 'left',
   },
 
   meta: {
@@ -423,19 +462,20 @@ const styles = StyleSheet.create({
     fontFamily: typography.sans,
     fontSize: 10,
     fontWeight: '600',
-    textAlign: 'center',
+    textAlign: 'left',
   },
 
   actions: {
     width: '100%',
-    marginTop: 18,
+    marginTop: 12,
     flexDirection: 'row',
     gap: 8,
   },
 
   action: {
     flex: 1,
-    minHeight: 48,
+    minHeight: 54,
+    paddingHorizontal: 4,
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 18,
@@ -454,6 +494,7 @@ const styles = StyleSheet.create({
     color: colors.text,
     fontFamily: typography.sans,
     fontSize: 9,
+    textAlign: 'center',
     fontWeight: '700',
   },
 

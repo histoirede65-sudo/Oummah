@@ -1,0 +1,1215 @@
+{
+  "schemaVersion": "1.0",
+  "generatedAt": "2026-09-30T20:03:00.712Z",
+  "sourceAudit": "scripts\\output\\additive-science-source-audit-priority-321-v3.json",
+  "items": [
+    {
+      "code": "E110",
+      "name": "Sunset Yellow FCF/Orange Yellow S",
+      "status": "possible_match",
+      "candidateSources": [
+        "WHO/JECFA"
+      ],
+      "candidateMatches": {
+        "efsa": {
+          "confidence": "rejected",
+          "assessmentCount": 0
+        },
+        "jecfa": {
+          "confidence": "possible",
+          "evaluationCount": 8,
+          "ins": [
+            "110"
+          ]
+        }
+      },
+      "recommendedReviewAction": "Vérification manuelle de l’identité, de la source officielle et du périmètre avant génération."
+    },
+    {
+      "code": "E1200",
+      "name": "Polydextrose",
+      "status": "possible_match",
+      "candidateSources": [
+        "WHO/JECFA"
+      ],
+      "candidateMatches": {
+        "efsa": {
+          "confidence": "rejected",
+          "assessmentCount": 0
+        },
+        "jecfa": {
+          "confidence": "possible",
+          "evaluationCount": 2,
+          "ins": [
+            "1200"
+          ]
+        }
+      },
+      "recommendedReviewAction": "Vérification manuelle de l’identité, de la source officielle et du périmètre avant génération."
+    },
+    {
+      "code": "E140",
+      "name": "Chlorophylls and Chlorophyllins",
+      "status": "possible_match",
+      "candidateSources": [
+        "WHO/JECFA"
+      ],
+      "candidateMatches": {
+        "efsa": {
+          "confidence": "rejected",
+          "assessmentCount": 0
+        },
+        "jecfa": {
+          "confidence": "possible",
+          "evaluationCount": 3,
+          "ins": [
+            "140"
+          ]
+        }
+      },
+      "recommendedReviewAction": "Vérification manuelle de l’identité, de la source officielle et du périmètre avant génération."
+    },
+    {
+      "code": "E1404",
+      "name": "Oxidised starch",
+      "status": "no_match",
+      "candidateSources": [],
+      "candidateMatches": {
+        "efsa": {
+          "confidence": "rejected",
+          "assessmentCount": 0
+        },
+        "jecfa": {
+          "confidence": "rejected",
+          "evaluationCount": 0,
+          "ins": []
+        }
+      },
+      "recommendedReviewAction": "Vérification manuelle de l’identité, de la source officielle et du périmètre avant génération."
+    },
+    {
+      "code": "E141",
+      "name": "Copper complexes of chlorophylls and chlorophyllins",
+      "status": "possible_match",
+      "candidateSources": [
+        "WHO/JECFA"
+      ],
+      "candidateMatches": {
+        "efsa": {
+          "confidence": "rejected",
+          "assessmentCount": 0
+        },
+        "jecfa": {
+          "confidence": "possible",
+          "evaluationCount": 6,
+          "ins": [
+            "141"
+          ]
+        }
+      },
+      "recommendedReviewAction": "Vérification manuelle de l’identité, de la source officielle et du périmètre avant génération."
+    },
+    {
+      "code": "E1410",
+      "name": "Monostarch phosphate",
+      "status": "no_match",
+      "candidateSources": [],
+      "candidateMatches": {
+        "efsa": {
+          "confidence": "rejected",
+          "assessmentCount": 0
+        },
+        "jecfa": {
+          "confidence": "rejected",
+          "evaluationCount": 0,
+          "ins": []
+        }
+      },
+      "recommendedReviewAction": "Vérification manuelle de l’identité, de la source officielle et du périmètre avant génération."
+    },
+    {
+      "code": "E1412",
+      "name": "Distarch phosphate",
+      "status": "no_match",
+      "candidateSources": [],
+      "candidateMatches": {
+        "efsa": {
+          "confidence": "rejected",
+          "assessmentCount": 0
+        },
+        "jecfa": {
+          "confidence": "rejected",
+          "evaluationCount": 0,
+          "ins": []
+        }
+      },
+      "recommendedReviewAction": "Vérification manuelle de l’identité, de la source officielle et du périmètre avant génération."
+    },
+    {
+      "code": "E1414",
+      "name": "Acetylated distarch phosphate",
+      "status": "no_match",
+      "candidateSources": [],
+      "candidateMatches": {
+        "efsa": {
+          "confidence": "rejected",
+          "assessmentCount": 0
+        },
+        "jecfa": {
+          "confidence": "rejected",
+          "evaluationCount": 0,
+          "ins": []
+        }
+      },
+      "recommendedReviewAction": "Vérification manuelle de l’identité, de la source officielle et du périmètre avant génération."
+    },
+    {
+      "code": "E1420",
+      "name": "Acetylated starch",
+      "status": "no_match",
+      "candidateSources": [],
+      "candidateMatches": {
+        "efsa": {
+          "confidence": "rejected",
+          "assessmentCount": 0
+        },
+        "jecfa": {
+          "confidence": "rejected",
+          "evaluationCount": 0,
+          "ins": []
+        }
+      },
+      "recommendedReviewAction": "Vérification manuelle de l’identité, de la source officielle et du périmètre avant génération."
+    },
+    {
+      "code": "E1422",
+      "name": "Acetylated distarch adipate",
+      "status": "no_match",
+      "candidateSources": [],
+      "candidateMatches": {
+        "efsa": {
+          "confidence": "rejected",
+          "assessmentCount": 0
+        },
+        "jecfa": {
+          "confidence": "rejected",
+          "evaluationCount": 0,
+          "ins": []
+        }
+      },
+      "recommendedReviewAction": "Vérification manuelle de l’identité, de la source officielle et du périmètre avant génération."
+    },
+    {
+      "code": "E1440",
+      "name": "Hydroxy propyl starch",
+      "status": "no_match",
+      "candidateSources": [],
+      "candidateMatches": {
+        "efsa": {
+          "confidence": "rejected",
+          "assessmentCount": 0
+        },
+        "jecfa": {
+          "confidence": "rejected",
+          "evaluationCount": 0,
+          "ins": []
+        }
+      },
+      "recommendedReviewAction": "Vérification manuelle de l’identité, de la source officielle et du périmètre avant génération."
+    },
+    {
+      "code": "E1442",
+      "name": "Hydroxy propyl distarch phosphate",
+      "status": "no_match",
+      "candidateSources": [],
+      "candidateMatches": {
+        "efsa": {
+          "confidence": "rejected",
+          "assessmentCount": 0
+        },
+        "jecfa": {
+          "confidence": "rejected",
+          "evaluationCount": 0,
+          "ins": []
+        }
+      },
+      "recommendedReviewAction": "Vérification manuelle de l’identité, de la source officielle et du périmètre avant génération."
+    },
+    {
+      "code": "E1451",
+      "name": "Acetylated oxidised starch",
+      "status": "no_match",
+      "candidateSources": [],
+      "candidateMatches": {
+        "efsa": {
+          "confidence": "rejected",
+          "assessmentCount": 0
+        },
+        "jecfa": {
+          "confidence": "rejected",
+          "evaluationCount": 0,
+          "ins": []
+        }
+      },
+      "recommendedReviewAction": "Vérification manuelle de l’identité, de la source officielle et du périmètre avant génération."
+    },
+    {
+      "code": "E1452",
+      "name": "Starch Aluminium Octenyl Succinate",
+      "status": "no_match",
+      "candidateSources": [],
+      "candidateMatches": {
+        "efsa": {
+          "confidence": "rejected",
+          "assessmentCount": 0
+        },
+        "jecfa": {
+          "confidence": "rejected",
+          "evaluationCount": 0,
+          "ins": []
+        }
+      },
+      "recommendedReviewAction": "Vérification manuelle de l’identité, de la source officielle et du périmètre avant génération."
+    },
+    {
+      "code": "E1517",
+      "name": "Glyceryl diacetate (diacetin)",
+      "status": "no_match",
+      "candidateSources": [],
+      "candidateMatches": {
+        "efsa": {
+          "confidence": "rejected",
+          "assessmentCount": 0
+        },
+        "jecfa": {
+          "confidence": "rejected",
+          "evaluationCount": 0,
+          "ins": []
+        }
+      },
+      "recommendedReviewAction": "Vérification manuelle de l’identité, de la source officielle et du périmètre avant génération."
+    },
+    {
+      "code": "E1518",
+      "name": "Glyceryl triacetate (triacetin)",
+      "status": "no_match",
+      "candidateSources": [],
+      "candidateMatches": {
+        "efsa": {
+          "confidence": "rejected",
+          "assessmentCount": 0
+        },
+        "jecfa": {
+          "confidence": "rejected",
+          "evaluationCount": 0,
+          "ins": []
+        }
+      },
+      "recommendedReviewAction": "Vérification manuelle de l’identité, de la source officielle et du périmètre avant génération."
+    },
+    {
+      "code": "E1520",
+      "name": "Propane-1, 2-diol (propylene glycol)",
+      "status": "no_match",
+      "candidateSources": [],
+      "candidateMatches": {
+        "efsa": {
+          "confidence": "rejected",
+          "assessmentCount": 0
+        },
+        "jecfa": {
+          "confidence": "rejected",
+          "evaluationCount": 0,
+          "ins": []
+        }
+      },
+      "recommendedReviewAction": "Vérification manuelle de l’identité, de la source officielle et du périmètre avant génération."
+    },
+    {
+      "code": "E160B",
+      "name": "Annatto, Bixin, Norbixin/Deleted from the Union List of authorised additives",
+      "status": "no_match",
+      "candidateSources": [],
+      "candidateMatches": {
+        "efsa": {
+          "confidence": "rejected",
+          "assessmentCount": 0
+        },
+        "jecfa": {
+          "confidence": "rejected",
+          "evaluationCount": 0,
+          "ins": []
+        }
+      },
+      "recommendedReviewAction": "Vérification manuelle de l’identité, de la source officielle et du périmètre avant génération."
+    },
+    {
+      "code": "E160C",
+      "name": "Paprika extract, capsanthin, capsorubin",
+      "status": "no_match",
+      "candidateSources": [],
+      "candidateMatches": {
+        "efsa": {
+          "confidence": "rejected",
+          "assessmentCount": 0
+        },
+        "jecfa": {
+          "confidence": "rejected",
+          "evaluationCount": 0,
+          "ins": []
+        }
+      },
+      "recommendedReviewAction": "Vérification manuelle de l’identité, de la source officielle et du périmètre avant génération."
+    },
+    {
+      "code": "E173",
+      "name": "Aluminium",
+      "status": "possible_match",
+      "candidateSources": [
+        "WHO/JECFA"
+      ],
+      "candidateMatches": {
+        "efsa": {
+          "confidence": "rejected",
+          "assessmentCount": 0
+        },
+        "jecfa": {
+          "confidence": "possible",
+          "evaluationCount": 4,
+          "ins": [
+            "173"
+          ]
+        }
+      },
+      "recommendedReviewAction": "Vérification manuelle de l’identité, de la source officielle et du périmètre avant génération."
+    },
+    {
+      "code": "E262",
+      "name": "Sodium acetates",
+      "status": "possible_match",
+      "candidateSources": [
+        "WHO/JECFA"
+      ],
+      "candidateMatches": {
+        "efsa": {
+          "confidence": "rejected",
+          "assessmentCount": 0
+        },
+        "jecfa": {
+          "confidence": "possible",
+          "evaluationCount": 2,
+          "ins": [
+            "262"
+          ]
+        }
+      },
+      "recommendedReviewAction": "Vérification manuelle de l’identité, de la source officielle et du périmètre avant génération."
+    },
+    {
+      "code": "E285",
+      "name": "Sodium tetraborate (borax)",
+      "status": "no_match",
+      "candidateSources": [],
+      "candidateMatches": {
+        "efsa": {
+          "confidence": "rejected",
+          "assessmentCount": 0
+        },
+        "jecfa": {
+          "confidence": "rejected",
+          "evaluationCount": 0,
+          "ins": []
+        }
+      },
+      "recommendedReviewAction": "Vérification manuelle de l’identité, de la source officielle et du périmètre avant génération."
+    },
+    {
+      "code": "E304",
+      "name": "Fatty acid esters of ascorbic acid",
+      "status": "possible_match",
+      "candidateSources": [
+        "WHO/JECFA"
+      ],
+      "candidateMatches": {
+        "efsa": {
+          "confidence": "rejected",
+          "assessmentCount": 0
+        },
+        "jecfa": {
+          "confidence": "possible",
+          "evaluationCount": 4,
+          "ins": [
+            "304"
+          ]
+        }
+      },
+      "recommendedReviewAction": "Vérification manuelle de l’identité, de la source officielle et du périmètre avant génération."
+    },
+    {
+      "code": "E331",
+      "name": "Sodium citrates",
+      "status": "possible_match",
+      "candidateSources": [
+        "WHO/JECFA"
+      ],
+      "candidateMatches": {
+        "efsa": {
+          "confidence": "rejected",
+          "assessmentCount": 0
+        },
+        "jecfa": {
+          "confidence": "possible",
+          "evaluationCount": 5,
+          "ins": [
+            "331III",
+            "331"
+          ]
+        }
+      },
+      "recommendedReviewAction": "Vérification manuelle de l’identité, de la source officielle et du périmètre avant génération."
+    },
+    {
+      "code": "E332",
+      "name": "Potassium citrates",
+      "status": "possible_match",
+      "candidateSources": [
+        "WHO/JECFA"
+      ],
+      "candidateMatches": {
+        "efsa": {
+          "confidence": "rejected",
+          "assessmentCount": 0
+        },
+        "jecfa": {
+          "confidence": "possible",
+          "evaluationCount": 5,
+          "ins": [
+            "332"
+          ]
+        }
+      },
+      "recommendedReviewAction": "Vérification manuelle de l’identité, de la source officielle et du périmètre avant génération."
+    },
+    {
+      "code": "E341",
+      "name": "Calcium phosphates",
+      "status": "possible_match",
+      "candidateSources": [
+        "WHO/JECFA"
+      ],
+      "candidateMatches": {
+        "efsa": {
+          "confidence": "rejected",
+          "assessmentCount": 0
+        },
+        "jecfa": {
+          "confidence": "possible",
+          "evaluationCount": 15,
+          "ins": [
+            "341"
+          ]
+        }
+      },
+      "recommendedReviewAction": "Vérification manuelle de l’identité, de la source officielle et du périmètre avant génération."
+    },
+    {
+      "code": "E343",
+      "name": "Magnesium phosphates",
+      "status": "possible_match",
+      "candidateSources": [
+        "WHO/JECFA"
+      ],
+      "candidateMatches": {
+        "efsa": {
+          "confidence": "rejected",
+          "assessmentCount": 0
+        },
+        "jecfa": {
+          "confidence": "possible",
+          "evaluationCount": 6,
+          "ins": [
+            "343"
+          ]
+        }
+      },
+      "recommendedReviewAction": "Vérification manuelle de l’identité, de la source officielle et du périmètre avant génération."
+    },
+    {
+      "code": "E352",
+      "name": "Calcium malates",
+      "status": "possible_match",
+      "candidateSources": [
+        "WHO/JECFA"
+      ],
+      "candidateMatches": {
+        "efsa": {
+          "confidence": "rejected",
+          "assessmentCount": 0
+        },
+        "jecfa": {
+          "confidence": "possible",
+          "evaluationCount": 2,
+          "ins": [
+            "352II"
+          ]
+        }
+      },
+      "recommendedReviewAction": "Vérification manuelle de l’identité, de la source officielle et du périmètre avant génération."
+    },
+    {
+      "code": "E380",
+      "name": "Triammonium citrate",
+      "status": "possible_match",
+      "candidateSources": [
+        "WHO/JECFA"
+      ],
+      "candidateMatches": {
+        "efsa": {
+          "confidence": "rejected",
+          "assessmentCount": 0
+        },
+        "jecfa": {
+          "confidence": "possible",
+          "evaluationCount": 4,
+          "ins": [
+            "380"
+          ]
+        }
+      },
+      "recommendedReviewAction": "Vérification manuelle de l’identité, de la source officielle et du périmètre avant génération."
+    },
+    {
+      "code": "E420",
+      "name": "Sorbitols",
+      "status": "possible_match",
+      "candidateSources": [
+        "WHO/JECFA"
+      ],
+      "candidateMatches": {
+        "efsa": {
+          "confidence": "rejected",
+          "assessmentCount": 0
+        },
+        "jecfa": {
+          "confidence": "possible",
+          "evaluationCount": 7,
+          "ins": [
+            "420"
+          ]
+        }
+      },
+      "recommendedReviewAction": "Vérification manuelle de l’identité, de la source officielle et du périmètre avant génération."
+    },
+    {
+      "code": "E425",
+      "name": "Konjac",
+      "status": "possible_match",
+      "candidateSources": [
+        "WHO/JECFA"
+      ],
+      "candidateMatches": {
+        "efsa": {
+          "confidence": "rejected",
+          "assessmentCount": 0
+        },
+        "jecfa": {
+          "confidence": "possible",
+          "evaluationCount": 2,
+          "ins": [
+            "425"
+          ]
+        }
+      },
+      "recommendedReviewAction": "Vérification manuelle de l’identité, de la source officielle et du périmètre avant génération."
+    },
+    {
+      "code": "E442",
+      "name": "Ammonium phosphatides",
+      "status": "possible_match",
+      "candidateSources": [
+        "WHO/JECFA"
+      ],
+      "candidateMatches": {
+        "efsa": {
+          "confidence": "rejected",
+          "assessmentCount": 0
+        },
+        "jecfa": {
+          "confidence": "possible",
+          "evaluationCount": 4,
+          "ins": [
+            "442"
+          ]
+        }
+      },
+      "recommendedReviewAction": "Vérification manuelle de l’identité, de la source officielle et du périmètre avant génération."
+    },
+    {
+      "code": "E445",
+      "name": "Glycerol esters of wood rosins",
+      "status": "possible_match",
+      "candidateSources": [
+        "WHO/JECFA"
+      ],
+      "candidateMatches": {
+        "efsa": {
+          "confidence": "rejected",
+          "assessmentCount": 0
+        },
+        "jecfa": {
+          "confidence": "possible",
+          "evaluationCount": 15,
+          "ins": [
+            "445"
+          ]
+        }
+      },
+      "recommendedReviewAction": "Vérification manuelle de l’identité, de la source officielle et du périmètre avant génération."
+    },
+    {
+      "code": "E450",
+      "name": "Diphosphates",
+      "status": "possible_match",
+      "candidateSources": [
+        "WHO/JECFA"
+      ],
+      "candidateMatches": {
+        "efsa": {
+          "confidence": "rejected",
+          "assessmentCount": 0
+        },
+        "jecfa": {
+          "confidence": "possible",
+          "evaluationCount": 19,
+          "ins": [
+            "450V",
+            "450I",
+            "450VII",
+            "450",
+            "450VI",
+            "450III"
+          ]
+        }
+      },
+      "recommendedReviewAction": "Vérification manuelle de l’identité, de la source officielle et du périmètre avant génération."
+    },
+    {
+      "code": "E451",
+      "name": "Triphosphates",
+      "status": "possible_match",
+      "candidateSources": [
+        "WHO/JECFA"
+      ],
+      "candidateMatches": {
+        "efsa": {
+          "confidence": "rejected",
+          "assessmentCount": 0
+        },
+        "jecfa": {
+          "confidence": "possible",
+          "evaluationCount": 12,
+          "ins": [
+            "451I",
+            "451II"
+          ]
+        }
+      },
+      "recommendedReviewAction": "Vérification manuelle de l’identité, de la source officielle et du périmètre avant génération."
+    },
+    {
+      "code": "E463A",
+      "name": "Low-substituted hydroxypropyl cellulose (L-HPC)",
+      "status": "no_match",
+      "candidateSources": [],
+      "candidateMatches": {
+        "efsa": {
+          "confidence": "rejected",
+          "assessmentCount": 0
+        },
+        "jecfa": {
+          "confidence": "rejected",
+          "evaluationCount": 0,
+          "ins": []
+        }
+      },
+      "recommendedReviewAction": "Vérification manuelle de l’identité, de la source officielle et du périmètre avant génération."
+    },
+    {
+      "code": "E466",
+      "name": "Sodium carboxy methyl cellulose, cellulose gum",
+      "status": "possible_match",
+      "candidateSources": [
+        "WHO/JECFA"
+      ],
+      "candidateMatches": {
+        "efsa": {
+          "confidence": "rejected",
+          "assessmentCount": 0
+        },
+        "jecfa": {
+          "confidence": "possible",
+          "evaluationCount": 6,
+          "ins": [
+            "466"
+          ]
+        }
+      },
+      "recommendedReviewAction": "Vérification manuelle de l’identité, de la source officielle et du périmètre avant génération."
+    },
+    {
+      "code": "E470A",
+      "name": "Sodium, potassium and calcium salts of fatty acids",
+      "status": "no_match",
+      "candidateSources": [],
+      "candidateMatches": {
+        "efsa": {
+          "confidence": "rejected",
+          "assessmentCount": 0
+        },
+        "jecfa": {
+          "confidence": "rejected",
+          "evaluationCount": 0,
+          "ins": []
+        }
+      },
+      "recommendedReviewAction": "Vérification manuelle de l’identité, de la source officielle et du périmètre avant génération."
+    },
+    {
+      "code": "E499",
+      "name": "Stigmasterol-rich plant sterols",
+      "status": "no_match",
+      "candidateSources": [],
+      "candidateMatches": {
+        "efsa": {
+          "confidence": "rejected",
+          "assessmentCount": 0
+        },
+        "jecfa": {
+          "confidence": "rejected",
+          "evaluationCount": 0,
+          "ins": []
+        }
+      },
+      "recommendedReviewAction": "Vérification manuelle de l’identité, de la source officielle et du périmètre avant génération."
+    },
+    {
+      "code": "E503",
+      "name": "Ammonium carbonates",
+      "status": "possible_match",
+      "candidateSources": [
+        "WHO/JECFA"
+      ],
+      "candidateMatches": {
+        "efsa": {
+          "confidence": "rejected",
+          "assessmentCount": 0
+        },
+        "jecfa": {
+          "confidence": "possible",
+          "evaluationCount": 3,
+          "ins": [
+            "503II",
+            "503I"
+          ]
+        }
+      },
+      "recommendedReviewAction": "Vérification manuelle de l’identité, de la source officielle et du périmètre avant génération."
+    },
+    {
+      "code": "E504",
+      "name": "Magnesium carbonates",
+      "status": "possible_match",
+      "candidateSources": [
+        "WHO/JECFA"
+      ],
+      "candidateMatches": {
+        "efsa": {
+          "confidence": "rejected",
+          "assessmentCount": 0
+        },
+        "jecfa": {
+          "confidence": "possible",
+          "evaluationCount": 5,
+          "ins": [
+            "504II",
+            "504I"
+          ]
+        }
+      },
+      "recommendedReviewAction": "Vérification manuelle de l’identité, de la source officielle et du périmètre avant génération."
+    },
+    {
+      "code": "E534",
+      "name": "Iron (III) meso-Tartrate",
+      "status": "no_match",
+      "candidateSources": [],
+      "candidateMatches": {
+        "efsa": {
+          "confidence": "rejected",
+          "assessmentCount": 0
+        },
+        "jecfa": {
+          "confidence": "rejected",
+          "evaluationCount": 0,
+          "ins": []
+        }
+      },
+      "recommendedReviewAction": "Vérification manuelle de l’identité, de la source officielle et du périmètre avant génération."
+    },
+    {
+      "code": "E575",
+      "name": "Glucono-delta-lactone",
+      "status": "possible_match",
+      "candidateSources": [
+        "WHO/JECFA"
+      ],
+      "candidateMatches": {
+        "efsa": {
+          "confidence": "rejected",
+          "assessmentCount": 0
+        },
+        "jecfa": {
+          "confidence": "possible",
+          "evaluationCount": 5,
+          "ins": [
+            "575"
+          ]
+        }
+      },
+      "recommendedReviewAction": "Vérification manuelle de l’identité, de la source officielle et du périmètre avant génération."
+    },
+    {
+      "code": "E577",
+      "name": "Potassium gluconate",
+      "status": "possible_match",
+      "candidateSources": [
+        "WHO/JECFA"
+      ],
+      "candidateMatches": {
+        "efsa": {
+          "confidence": "rejected",
+          "assessmentCount": 0
+        },
+        "jecfa": {
+          "confidence": "possible",
+          "evaluationCount": 6,
+          "ins": [
+            "577",
+            "576",
+            "578",
+            "580"
+          ]
+        }
+      },
+      "recommendedReviewAction": "Vérification manuelle de l’identité, de la source officielle et du périmètre avant génération."
+    },
+    {
+      "code": "E578",
+      "name": "Calcium gluconate",
+      "status": "possible_match",
+      "candidateSources": [
+        "WHO/JECFA"
+      ],
+      "candidateMatches": {
+        "efsa": {
+          "confidence": "rejected",
+          "assessmentCount": 0
+        },
+        "jecfa": {
+          "confidence": "possible",
+          "evaluationCount": 4,
+          "ins": [
+            "576",
+            "578",
+            "580"
+          ]
+        }
+      },
+      "recommendedReviewAction": "Vérification manuelle de l’identité, de la source officielle et du périmètre avant génération."
+    },
+    {
+      "code": "E579",
+      "name": "Ferrous gluconate",
+      "status": "possible_match",
+      "candidateSources": [
+        "WHO/JECFA"
+      ],
+      "candidateMatches": {
+        "efsa": {
+          "confidence": "rejected",
+          "assessmentCount": 0
+        },
+        "jecfa": {
+          "confidence": "possible",
+          "evaluationCount": 2,
+          "ins": [
+            "579"
+          ]
+        }
+      },
+      "recommendedReviewAction": "Vérification manuelle de l’identité, de la source officielle et du périmètre avant génération."
+    },
+    {
+      "code": "E622",
+      "name": "Monopotassium glutamate",
+      "status": "possible_match",
+      "candidateSources": [
+        "WHO/JECFA"
+      ],
+      "candidateMatches": {
+        "efsa": {
+          "confidence": "rejected",
+          "assessmentCount": 0
+        },
+        "jecfa": {
+          "confidence": "possible",
+          "evaluationCount": 3,
+          "ins": [
+            "622"
+          ]
+        }
+      },
+      "recommendedReviewAction": "Vérification manuelle de l’identité, de la source officielle et du périmètre avant génération."
+    },
+    {
+      "code": "E624",
+      "name": "Monoammonium glutamate",
+      "status": "possible_match",
+      "candidateSources": [
+        "WHO/JECFA"
+      ],
+      "candidateMatches": {
+        "efsa": {
+          "confidence": "rejected",
+          "assessmentCount": 0
+        },
+        "jecfa": {
+          "confidence": "possible",
+          "evaluationCount": 2,
+          "ins": [
+            "624"
+          ]
+        }
+      },
+      "recommendedReviewAction": "Vérification manuelle de l’identité, de la source officielle et du périmètre avant génération."
+    },
+    {
+      "code": "E628",
+      "name": "Dipotassium guanylate",
+      "status": "possible_match",
+      "candidateSources": [
+        "WHO/JECFA"
+      ],
+      "candidateMatches": {
+        "efsa": {
+          "confidence": "rejected",
+          "assessmentCount": 0
+        },
+        "jecfa": {
+          "confidence": "possible",
+          "evaluationCount": 2,
+          "ins": [
+            "628"
+          ]
+        }
+      },
+      "recommendedReviewAction": "Vérification manuelle de l’identité, de la source officielle et du périmètre avant génération."
+    },
+    {
+      "code": "E630",
+      "name": "Inosinic acid",
+      "status": "possible_match",
+      "candidateSources": [
+        "WHO/JECFA"
+      ],
+      "candidateMatches": {
+        "efsa": {
+          "confidence": "rejected",
+          "assessmentCount": 0
+        },
+        "jecfa": {
+          "confidence": "possible",
+          "evaluationCount": 2,
+          "ins": [
+            "630"
+          ]
+        }
+      },
+      "recommendedReviewAction": "Vérification manuelle de l’identité, de la source officielle et du périmètre avant génération."
+    },
+    {
+      "code": "E632",
+      "name": "Dipotassium inosinate",
+      "status": "possible_match",
+      "candidateSources": [
+        "WHO/JECFA"
+      ],
+      "candidateMatches": {
+        "efsa": {
+          "confidence": "rejected",
+          "assessmentCount": 0
+        },
+        "jecfa": {
+          "confidence": "possible",
+          "evaluationCount": 2,
+          "ins": [
+            "632"
+          ]
+        }
+      },
+      "recommendedReviewAction": "Vérification manuelle de l’identité, de la source officielle et du périmètre avant génération."
+    },
+    {
+      "code": "E640",
+      "name": "Glycine and its sodium salt",
+      "status": "no_match",
+      "candidateSources": [],
+      "candidateMatches": {
+        "efsa": {
+          "confidence": "rejected",
+          "assessmentCount": 0
+        },
+        "jecfa": {
+          "confidence": "rejected",
+          "evaluationCount": 0,
+          "ins": []
+        }
+      },
+      "recommendedReviewAction": "Vérification manuelle de l’identité, de la source officielle et du périmètre avant génération."
+    },
+    {
+      "code": "E650",
+      "name": "Zinc acetate",
+      "status": "no_match",
+      "candidateSources": [],
+      "candidateMatches": {
+        "efsa": {
+          "confidence": "rejected",
+          "assessmentCount": 0
+        },
+        "jecfa": {
+          "confidence": "rejected",
+          "evaluationCount": 0,
+          "ins": []
+        }
+      },
+      "recommendedReviewAction": "Vérification manuelle de l’identité, de la source officielle et du périmètre avant génération."
+    },
+    {
+      "code": "E905A",
+      "name": "High viscosity mineral oils",
+      "status": "no_match",
+      "candidateSources": [],
+      "candidateMatches": {
+        "efsa": {
+          "confidence": "rejected",
+          "assessmentCount": 0
+        },
+        "jecfa": {
+          "confidence": "rejected",
+          "evaluationCount": 0,
+          "ins": []
+        }
+      },
+      "recommendedReviewAction": "Vérification manuelle de l’identité, de la source officielle et du périmètre avant génération."
+    },
+    {
+      "code": "E914",
+      "name": "Oxidised polyethylene wax",
+      "status": "no_match",
+      "candidateSources": [],
+      "candidateMatches": {
+        "efsa": {
+          "confidence": "rejected",
+          "assessmentCount": 0
+        },
+        "jecfa": {
+          "confidence": "rejected",
+          "evaluationCount": 0,
+          "ins": []
+        }
+      },
+      "recommendedReviewAction": "Vérification manuelle de l’identité, de la source officielle et du périmètre avant génération."
+    },
+    {
+      "code": "E952",
+      "name": "Cyclamic acid and its Na and Ca salts",
+      "status": "possible_match",
+      "candidateSources": [
+        "WHO/JECFA"
+      ],
+      "candidateMatches": {
+        "efsa": {
+          "confidence": "rejected",
+          "assessmentCount": 0
+        },
+        "jecfa": {
+          "confidence": "possible",
+          "evaluationCount": 6,
+          "ins": [
+            "952"
+          ]
+        }
+      },
+      "recommendedReviewAction": "Vérification manuelle de l’identité, de la source officielle et du périmètre avant génération."
+    },
+    {
+      "code": "E954",
+      "name": "Saccharin and its Na, K and Ca salts",
+      "status": "possible_match",
+      "candidateSources": [
+        "WHO/JECFA"
+      ],
+      "candidateMatches": {
+        "efsa": {
+          "confidence": "rejected",
+          "assessmentCount": 0
+        },
+        "jecfa": {
+          "confidence": "possible",
+          "evaluationCount": 5,
+          "ins": [
+            "954"
+          ]
+        }
+      },
+      "recommendedReviewAction": "Vérification manuelle de l’identité, de la source officielle et du périmètre avant génération."
+    },
+    {
+      "code": "E960A",
+      "name": "Steviol glycosides from Stevia",
+      "status": "no_match",
+      "candidateSources": [],
+      "candidateMatches": {
+        "efsa": {
+          "confidence": "rejected",
+          "assessmentCount": 0
+        },
+        "jecfa": {
+          "confidence": "rejected",
+          "evaluationCount": 0,
+          "ins": []
+        }
+      },
+      "recommendedReviewAction": "Vérification manuelle de l’identité, de la source officielle et du périmètre avant génération."
+    },
+    {
+      "code": "E960B",
+      "name": "Steviol glycosides from fermentation’",
+      "status": "no_match",
+      "candidateSources": [],
+      "candidateMatches": {
+        "efsa": {
+          "confidence": "rejected",
+          "assessmentCount": 0
+        },
+        "jecfa": {
+          "confidence": "rejected",
+          "evaluationCount": 0,
+          "ins": []
+        }
+      },
+      "recommendedReviewAction": "Vérification manuelle de l’identité, de la source officielle et du périmètre avant génération."
+    }
+  ]
+}

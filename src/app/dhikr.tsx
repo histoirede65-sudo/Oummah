@@ -3,10 +3,11 @@ import * as Haptics from "expo-haptics";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import type { Href } from "expo-router";
-import { router } from "expo-router";
+import { router, useFocusEffect } from "expo-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   ActivityIndicator,
+  AppState,
   Linking,
   Pressable,
   ScrollView,
@@ -20,8 +21,11 @@ import { useGlobalAudioPlayer } from "../context/AudioPlayerProvider";
 import { TASBIH_PRESETS } from "../features/dhikr/TasbihPresets";
 import {
   loadTasbihState,
+  loadTasbihPrayerSchedule,
+  incrementTasbihTotalToday,
   saveTasbihState,
   tasbihDayKey,
+  tasbihPrayerCycleKey,
 } from "../features/dhikr/TasbihStore";
 import { useLearningAudioPlayer } from "../features/learning-audio/useLearningAudioPlayer";
 import { ARABIC_READING_FONT_FAMILY } from "../features/quran/ArabicReadingPresentation";
@@ -45,9 +49,12 @@ export default function DhikrScreen() {
   const [counts, setCounts] = useState<Record<string, number>>({});
   const [totalToday, setTotalToday] = useState(0);
   const [ready, setReady] = useState(false);
+  const prayerCycleKey = useRef<string | null>(null);
+  const dayKey = useRef(tasbihDayKey());
   const saveTimer = useRef<ReturnType<typeof setTimeout> | undefined>(
     undefined,
   );
+  const latestState = useRef({ counts, totalToday, stepIndex });
   const { pause: pauseQuranAudio } = useGlobalAudioPlayer();
   const learningAudio = useLearningAudioPlayer({
     pauseCompetingAudio: pauseQuranAudio,
@@ -55,6 +62,7 @@ export default function DhikrScreen() {
 
   const preset = CORE_TASBIH;
   const safeStepIndex = Math.min(stepIndex, preset.steps.length - 1);
+  latestState.current = { counts, totalToday, stepIndex: safeStepIndex };
   const step = preset.steps[safeStepIndex];
   const count = counts[step.id] ?? 0;
   const complete = count >= step.target;
@@ -75,19 +83,67 @@ export default function DhikrScreen() {
 
   useEffect(() => {
     let active = true;
-    loadTasbihState()
-      .then((stored) => {
-        if (!active || !stored) return;
+    Promise.all([loadTasbihState(), loadTasbihPrayerSchedule()])
+      .then(([stored, schedule]) => {
+        if (!active) return;
         const today = tasbihDayKey();
-        setStepIndex(Math.min(2, Math.max(0, stored.stepIndex)));
-        setCounts(stored.counts ?? {});
-        setTotalToday(stored.dayKey === today ? stored.totalToday : 0);
+        const cycle = tasbihPrayerCycleKey(schedule);
+        prayerCycleKey.current = cycle ?? stored?.prayerCycleKey ?? null;
+        dayKey.current = today;
+        const reset = stored?.dayKey !== today || Boolean(cycle && stored?.prayerCycleKey && cycle !== stored.prayerCycleKey);
+        setStepIndex(reset ? 0 : Math.min(2, Math.max(0, stored?.stepIndex ?? 0)));
+        setCounts(reset ? {} : stored?.counts ?? {});
+        setTotalToday(stored?.dayKey === today ? stored.totalToday : 0);
       })
       .finally(() => active && setReady(true));
     return () => {
       active = false;
     };
   }, []);
+
+  useFocusEffect(useCallback(() => {
+    if (!ready) return;
+    let active = true;
+    const checkPrayer = async () => {
+      const today = tasbihDayKey();
+      if (today !== dayKey.current) {
+        dayKey.current = today;
+        setCounts({});
+        setStepIndex(0);
+        setTotalToday(0);
+      }
+      const schedule = await loadTasbihPrayerSchedule();
+      if (!active) return;
+      const cycle = tasbihPrayerCycleKey(schedule);
+      if (!cycle) return;
+      if (prayerCycleKey.current && prayerCycleKey.current !== cycle) {
+        setCounts({});
+        setStepIndex(0);
+      }
+      prayerCycleKey.current = cycle;
+    };
+    void checkPrayer();
+    const timer = setInterval(() => void checkPrayer(), 30_000);
+    const subscription = AppState.addEventListener("change", (state) => {
+      if (state === "active") void checkPrayer();
+    });
+    return () => {
+      active = false;
+      clearInterval(timer);
+      subscription.remove();
+      if (saveTimer.current) clearTimeout(saveTimer.current);
+      const latest = latestState.current;
+      void saveTasbihState({
+        presetId: preset.id,
+        stepIndex: latest.stepIndex,
+        counts: latest.counts,
+        totalToday: latest.totalToday,
+        dayKey: tasbihDayKey(),
+        prayerCycleKey: prayerCycleKey.current ?? undefined,
+        updatedAt: Date.now(),
+      }).catch(() => undefined);
+    };
+  }, [ready]));
 
   useEffect(() => {
     if (!ready) return;
@@ -99,6 +155,7 @@ export default function DhikrScreen() {
         counts,
         totalToday,
         dayKey: tasbihDayKey(),
+        prayerCycleKey: prayerCycleKey.current ?? undefined,
         updatedAt: Date.now(),
       }).catch(() => undefined);
     }, 180);
@@ -108,17 +165,15 @@ export default function DhikrScreen() {
   }, [counts, preset.id, ready, safeStepIndex, totalToday]);
 
   const increment = useCallback(() => {
-    if (complete) return;
     const next = count + 1;
     setCounts((current) => ({ ...current, [step.id]: next }));
-    setTotalToday((value) => {
-      const nextTotal = value + 1;
+    void incrementTasbihTotalToday().then((nextTotal) => {
+      setTotalToday(nextTotal);
       goalProgressBridge.record({
         metric: "dhikr_count",
         absolute: nextTotal,
       });
-      return nextTotal;
-    });
+    }).catch(() => undefined);
     if (next === step.target) {
       void Haptics.notificationAsync(
         Haptics.NotificationFeedbackType.Success,
@@ -128,17 +183,15 @@ export default function DhikrScreen() {
         () => undefined,
       );
     }
-  }, [complete, count, step.id, step.target]);
+  }, [count, step.id, step.target]);
 
   const undo = useCallback(() => {
     if (count <= 0) return;
     setCounts((current) => ({ ...current, [step.id]: count - 1 }));
-    setTotalToday((value) => Math.max(0, value - 1));
     void Haptics.selectionAsync().catch(() => undefined);
   }, [count, step.id]);
 
   const reset = useCallback(() => {
-    setTotalToday((value) => Math.max(0, value - count));
     setCounts((current) => ({ ...current, [step.id]: 0 }));
     void Haptics.notificationAsync(
       Haptics.NotificationFeedbackType.Warning,
@@ -205,10 +258,6 @@ export default function DhikrScreen() {
           <Text style={styles.title}>{t("dhikr.title")}</Text>
           <Text style={styles.subtitle}>{t("dhikr.subtitle")}</Text>
         </View>
-        <View style={styles.todayPill}>
-          <Text style={styles.todayValue}>{totalToday}</Text>
-          <Text style={styles.todayLabel}>{t("dhikr.todayShort")}</Text>
-        </View>
       </View>
 
       <ScrollView
@@ -238,10 +287,26 @@ export default function DhikrScreen() {
               <Text style={styles.heroEyebrow}>
                 {t("dhikr.heroEyebrow")}
               </Text>
+              <Text style={styles.heroHadith}>
+                Le Prophète ﷺ a demandé de compter les invocations sur les doigts : ils seront interrogés et appelés à témoigner.
+              </Text>
+              <Pressable onPress={() => void Linking.openURL("https://sunnah.com/abudawud:1501")}>
+                <Text style={styles.heroHadithSource}>Sunan Abû Dâwûd 1501 · jugé hasan par Al-Albânî ↗</Text>
+              </Pressable>
               <Text style={styles.heroTitle}>{t("dhikr.heroTitle")}</Text>
               <Text style={styles.heroText}>{t("dhikr.heroText")}</Text>
             </View>
           </View>
+        </View>
+
+        <View style={styles.todayCard}>
+          <View style={{ flex: 1 }}>
+            <Text style={styles.todayCardEyebrow}>MON DHIKR AUJOURD’HUI</Text>
+            <Text style={styles.todayCardHint}>Le total continue après chaque remise à zéro</Text>
+          </View>
+          <Text accessibilityLabel={`${totalToday} dhikr aujourd’hui`} style={styles.todayCardValue}>
+            {totalToday}
+          </Text>
         </View>
 
         <View style={styles.formulaTabs}>
@@ -496,6 +561,15 @@ export default function DhikrScreen() {
             </Pressable>
           </View>
         ) : null}
+
+        <View style={styles.hadithSection}>
+          <Text style={styles.hadithHeading}>Compter le dhikr avec ses doigts</Text>
+          <Text style={styles.hadithBody}>‘Abd Allâh ibn ‘Amr rapporte avoir vu le Prophète ﷺ compter le tasbîh avec ses doigts. Une version précise : avec sa main droite.</Text>
+          <Pressable onPress={() => void Linking.openURL("https://sunnah.com/abudawud:1502")}>
+            <Text style={styles.hadithSource}>Sunan Abû Dâwûd 1502 · jugé sahih par Al-Albânî ↗</Text>
+          </Pressable>
+          <Text style={styles.hadithNote}>À propos du chapelet : ces récits authentifiés décrivent le comptage avec les doigts. Ils ne rapportent pas que le Prophète ﷺ utilisait un chapelet.</Text>
+        </View>
       </ScrollView>
     </SafeAreaView>
   );
@@ -530,28 +604,15 @@ const styles = StyleSheet.create({
     fontFamily: typography.sans,
     fontSize: 10.5,
   },
-  todayPill: {
-    minWidth: 48,
-    height: 44,
-    alignItems: "center",
-    justifyContent: "center",
-    borderRadius: 16,
-    borderWidth: 1,
-    borderColor: colors.borderSoft,
-    backgroundColor: colors.surface,
-  },
-  todayValue: {
-    color: colors.goldLight,
-    fontFamily: typography.serifSemibold,
-    fontSize: 16,
-  },
-  todayLabel: {
-    color: colors.textMuted,
-    fontFamily: typography.sans,
-    fontSize: 6.5,
-    fontWeight: "800",
-    letterSpacing: 0.8,
-  },
+  todayCard: { marginTop: 14, minHeight: 88, paddingHorizontal: 19, paddingVertical: 12, borderRadius: 21, borderWidth: 1, borderColor: colors.goldLight, backgroundColor: "rgba(66,34,77,0.92)", flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
+  todayCardEyebrow: { color: colors.goldLight, fontFamily: typography.sans, fontSize: 11, fontWeight: "800", letterSpacing: 1 },
+  todayCardHint: { marginTop: 5, color: colors.textSecondary, fontFamily: typography.sans, fontSize: 10 },
+  todayCardValue: { minWidth: 75, marginLeft: 10, color: colors.text, fontFamily: typography.serifSemibold, fontSize: 39, textAlign: "right" },
+  hadithSection: { marginTop: 22, padding: 18, borderRadius: 22, borderWidth: 1, borderColor: colors.borderSoft, backgroundColor: colors.surface },
+  hadithHeading: { color: colors.goldLight, fontFamily: typography.serifSemibold, fontSize: 19 },
+  hadithBody: { marginTop: 15, color: colors.text, fontFamily: typography.sans, fontSize: 13, lineHeight: 20 },
+  hadithSource: { marginTop: 7, color: colors.goldLight, fontFamily: typography.sans, fontSize: 11, textDecorationLine: "underline" },
+  hadithNote: { marginTop: 17, paddingTop: 14, borderTopWidth: 1, borderTopColor: colors.borderSoft, color: colors.textSecondary, fontFamily: typography.sans, fontSize: 12, lineHeight: 19 },
   content: { paddingHorizontal: 14, paddingBottom: 120 },
   hero: {
     height: 222,
@@ -563,17 +624,16 @@ const styles = StyleSheet.create({
   },
   heroGlass: {
     position: "absolute",
-    right: 11,
-    bottom: 11,
-    left: 11,
-    minHeight: 91,
+    right: 0,
+    bottom: 0,
+    left: 0,
+    minHeight: 180,
     padding: 13,
     flexDirection: "row",
     alignItems: "center",
-    borderRadius: 22,
-    borderWidth: 1,
-    borderColor: "rgba(255,247,230,0.25)",
-    backgroundColor: "rgba(10,7,18,0.76)",
+    borderRadius: 0,
+    borderWidth: 0,
+    backgroundColor: "transparent",
   },
   heroIcon: {
     width: 43,
@@ -585,7 +645,22 @@ const styles = StyleSheet.create({
     borderColor: "rgba(227,181,90,0.42)",
     backgroundColor: "rgba(73,35,89,0.58)",
   },
-  heroCopy: { flex: 1, marginLeft: 12 },
+  heroCopy: { flex: 1, marginLeft: 12, transform: [{ translateY: -7 }] },
+  heroHadith: {
+    marginTop: 5,
+    color: colors.textSecondary,
+    fontFamily: typography.sans,
+    fontSize: 16,
+    lineHeight: 22,
+    fontStyle: "italic",
+  },
+  heroHadithSource: {
+    marginTop: 2,
+    color: colors.goldLight,
+    fontFamily: typography.sans,
+    fontSize: 13,
+    textDecorationLine: "underline",
+  },
   heroEyebrow: {
     color: colors.goldLight,
     fontFamily: typography.sans,

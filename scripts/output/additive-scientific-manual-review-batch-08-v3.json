@@ -1,0 +1,62 @@
+{
+  "schemaVersion": "1.0",
+  "generatedAt": "2026-09-30T20:01:33.343Z",
+  "batch": 8,
+  "sourceAudit": "scripts\\output\\additive-science-source-audit-priority-321-v3.json",
+  "items": [
+    {
+      "code": "E1517",
+      "name": "Glyceryl diacetate (diacetin)",
+      "status": "no_match",
+      "candidateSources": [],
+      "candidateMatches": {
+        "efsa": {
+          "confidence": "rejected",
+          "assessmentCount": 0
+        },
+        "jecfa": {
+          "confidence": "rejected",
+          "evaluationCount": 0,
+          "ins": []
+        }
+      },
+      "recommendedReviewAction": "Vérification manuelle de l’identité, de la source officielle et du périmètre avant génération."
+    },
+    {
+      "code": "E1518",
+      "name": "Glyceryl triacetate (triacetin)",
+      "status": "no_match",
+      "candidateSources": [],
+      "candidateMatches": {
+        "efsa": {
+          "confidence": "rejected",
+          "assessmentCount": 0
+        },
+        "jecfa": {
+          "confidence": "rejected",
+          "evaluationCount": 0,
+          "ins": []
+        }
+      },
+      "recommendedReviewAction": "Vérification manuelle de l’identité, de la source officielle et du périmètre avant génération."
+    },
+    {
+      "code": "E1520",
+      "name": "Propane-1, 2-diol (propylene glycol)",
+      "status": "no_match",
+      "candidateSources": [],
+      "candidateMatches": {
+        "efsa": {
+          "confidence": "rejected",
+          "assessmentCount": 0
+        },
+        "jecfa": {
+          "confidence": "rejected",
+          "evaluationCount": 0,
+          "ins": []
+        }
+      },
+      "recommendedReviewAction": "Vérification manuelle de l’identité, de la source officielle et du périmètre avant génération."
+    }
+  ]
+}

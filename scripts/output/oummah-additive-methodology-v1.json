@@ -1,0 +1,157 @@
+{
+  "schemaVersion": "oummah-additive-methodology-v1",
+  "methodologyVersion": "oummah-additive-scientific-concern-v1",
+  "generatedAt": "2026-10-01T10:56:39.400Z",
+  "definition": {
+    "scientificConcern": "Niveau de préoccupation scientifique intrinsèque justifié par les données officielles disponibles ; ce n’est pas le risque réel dans un produit précis.",
+    "exposureRisk": "Axe séparé décrivant les données d’exposition et leur comparaison éventuelle à une référence ; il ne crée pas le danger intrinsèque."
+  },
+  "levels": [
+    "no_identified_concern",
+    "limited",
+    "moderate",
+    "high",
+    "insufficient_data"
+  ],
+  "rules": [
+    {
+      "id": "SCV1_LIMITED_USABLE_CONDITIONAL",
+      "applicableHazardClasses": "any usable CLP class",
+      "requiredFoodRelevance": [
+        "conditionally_relevant",
+        "concentration_dependent"
+      ],
+      "routeRequirements": [
+        "ingestion or route not contradicting food exposure"
+      ],
+      "concentrationRequirements": [
+        "intrinsic, specific limit or concentration-dependent context retained"
+      ],
+      "blockingConditions": [
+        "major limitation, non-food route, handling-only or non-harmonised signal"
+      ],
+      "outputConcernLevel": "limited",
+      "rationale": "A food-relevant official signal exists, but its interpretation remains conditional or concentration-dependent."
+    },
+    {
+      "id": "SCV1_MODERATE_DIRECT_SYSTEMIC",
+      "applicableHazardClasses": [
+        "carcinogenicity",
+        "mutagenicity",
+        "reproductive_toxicity",
+        "stot_repeated"
+      ],
+      "requiredFoodRelevance": [
+        "directly_relevant"
+      ],
+      "routeRequirements": [
+        "explicitly compatible ingestion route"
+      ],
+      "concentrationRequirements": [
+        "no unresolved concentration limitation"
+      ],
+      "blockingConditions": [
+        "missing scope/provenance, route mismatch, major limitation"
+      ],
+      "outputConcernLevel": "moderate",
+      "rationale": "A robust systemic hazard signal is directly relevant to food exposure and is not blocked by a major limitation."
+    },
+    {
+      "id": "SCV1_HIGH_DIRECT_SYSTEMIC_STRONG",
+      "applicableHazardClasses": [
+        "carcinogenicity",
+        "mutagenicity",
+        "reproductive_toxicity",
+        "stot_repeated"
+      ],
+      "requiredFoodRelevance": [
+        "directly_relevant"
+      ],
+      "routeRequirements": [
+        "explicit ingestion route"
+      ],
+      "concentrationRequirements": [
+        "intrinsic or resolved food-use scope"
+      ],
+      "blockingConditions": [
+        "any major limitation, uncertain scope, route mismatch, incomplete provenance"
+      ],
+      "outputConcernLevel": "high",
+      "rationale": "Reserved for a strong harmonised systemic signal with direct food relevance and complete scope/provenance."
+    },
+    {
+      "id": "SCV1_INSUFFICIENT_NO_USABLE_SIGNAL",
+      "applicableHazardClasses": "none or excluded/contextual signals only",
+      "requiredFoodRelevance": [
+        "no usable food-relevant signal"
+      ],
+      "routeRequirements": [
+        "not applicable"
+      ],
+      "concentrationRequirements": [
+        "not applicable"
+      ],
+      "blockingConditions": [
+        "absence of explicit reassuring structured conclusion"
+      ],
+      "outputConcernLevel": "insufficient_data",
+      "rationale": "Absence of a usable signal is not evidence of no concern."
+    },
+    {
+      "id": "SCV1_NO_IDENTIFIED_CONCERN_EXPLICIT_REASSURANCE",
+      "applicableHazardClasses": "any, only with explicit structured reassurance",
+      "requiredFoodRelevance": [
+        "explicit food-scope reassuring conclusion"
+      ],
+      "routeRequirements": [
+        "food additive human scope"
+      ],
+      "concentrationRequirements": [
+        "assessment scope and limitations retained"
+      ],
+      "blockingConditions": [
+        "free text only, unknown scope, contradictory data"
+      ],
+      "outputConcernLevel": "no_identified_concern",
+      "rationale": "This level is emitted only from an explicit structured reassuring assessment, never from missing data."
+    }
+  ],
+  "acceptedSources": [
+    "classification CLP harmonisée officielle et FoodAdditiveHazardRelevance",
+    "OpenFoodTox/EFSA structuré",
+    "évaluations JECFA structurées"
+  ],
+  "exclusions": [
+    "aucune donnée Yuka ou d’une autre application",
+    "aucun danger de manipulation, physique ou environnemental dans ScientificConcern",
+    "aucune inférence depuis l’absence de données",
+    "aucune règle par E-number"
+  ],
+  "safeguards": {
+    "noRuntimeChanges": true,
+    "noSupabaseChanges": true,
+    "noScoreChanges": true,
+    "noUiChanges": true,
+    "exposureRiskSeparate": true,
+    "highRequiresDirectFoodRelevance": true,
+    "acuteToxAloneCannotExceedLimited": true,
+    "absenceOfSignalIsNotNoConcern": true
+  },
+  "limitations": [
+    "Les 17K CLP harmonisés exacts restent rares dans le catalogue.",
+    "Les voies, concentrations et scopes ne sont pas toujours résolus pour l’usage alimentaire.",
+    "Les références ADI/JECFA ne sont pas une mesure d’exposition individuelle.",
+    "Cette V1 ne produit pas de conclusion clinique ou réglementaire pour un consommateur précis."
+  ],
+  "sources": {
+    "clp": "https://eur-lex.europa.eu/eli/reg/2008/1272/2026-07-01",
+    "echaAnnexVI": "https://echa.europa.eu/information-on-chemicals/annex-vi-to-clp",
+    "openFoodTox": "structured profiles in scripts/data/additives-scientific-master-v3-effects.json",
+    "jecfa": "structured evaluations retained in the scientific master profiles"
+  },
+  "datasets": {
+    "catalog": "src/features/boycott/data/eu-additive-catalog.json",
+    "profiles": "scripts/data/additives-scientific-master-v3-effects.json",
+    "relevanceAudit": "scripts/output/additive-clp-food-relevance-audit-v1.json"
+  }
+}

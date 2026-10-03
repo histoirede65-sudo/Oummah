@@ -7,6 +7,9 @@ import type {
   MosquePrayerKey,
   MosquePrayerSchedule,
 } from "../mosques/data/mosquePrayerTimes";
+import { isGoalComplete } from "../daily-goals/domain/DailyGoal";
+import { goalRepository } from "../daily-goals/data/goalRepository";
+import { goalProgressBridge } from "../daily-goals/services/goalProgressBridge";
 import { isNotificationPermissionGranted } from "./NotificationPermissions";
 
 export type CenterReminderId =
@@ -20,6 +23,7 @@ export type CenterReminderId =
   | "hifz"
   | "verse-of-day"
   | "hadith-of-day"
+  | "daily-goals"
   | "jummah";
 
 export type CenterAlertMode = "sound" | "vibration" | "silent";
@@ -47,7 +51,7 @@ export const CENTER_REMINDERS: ReadonlyArray<{
   id: CenterReminderId;
   title: string;
   description: string;
-  section: "Prières" | "Dou‘as" | "Apprentissage" | "Inspiration";
+  section: "Prières" | "Dou‘as" | "Apprentissage" | "Inspiration" | "Objectifs";
   time?: string;
 }> = [
   { id: "jummah", title: "Préparer Joumou‘a", description: "Le vendredi avant l’heure de votre mosquée", section: "Prières" },
@@ -61,6 +65,7 @@ export const CENTER_REMINDERS: ReadonlyArray<{
   { id: "hifz", title: "Objectif mémorisation", description: "Versets restant à apprendre aujourd’hui", section: "Apprentissage", time: "18:00" },
   { id: "verse-of-day", title: "Verset du jour", description: "S’il n’a pas encore été consulté", section: "Inspiration", time: "13:00" },
   { id: "hadith-of-day", title: "Hadith du jour", description: "Un rappel authentique chaque soir", section: "Inspiration", time: "21:00" },
+  { id: "daily-goals", title: "Rappel des objectifs", description: "Un rappel s’il te reste des objectifs à accomplir", section: "Objectifs", time: "20:00" },
 ];
 
 export const DEFAULT_NOTIFICATION_CENTER_PREFERENCES: NotificationCenterPreferences = {
@@ -77,6 +82,7 @@ export const DEFAULT_NOTIFICATION_CENTER_PREFERENCES: NotificationCenterPreferen
     hifz: true,
     "verse-of-day": true,
     "hadith-of-day": true,
+    "daily-goals": false,
     jummah: true,
   },
   reminderTimes: {
@@ -94,6 +100,8 @@ const PREFERENCES_KEY = "oumma:notification-center-preferences:v1";
 const READ_IDS_KEY = "oumma:notification-center-read:v1";
 const SCHEDULED_IDS_KEY = "oumma:notification-center-scheduled:v1";
 const NOTIFICATION_OWNER = "oummah-notification-center";
+const DAILY_GOALS_OWNER = "oummah-daily-goals-reminder";
+const DAILY_GOALS_SCHEDULED_KEY = "oumma:daily-goals-reminder-scheduled:v1";
 const readStatusListeners = new Set<() => void>();
 const LEGACY_PRAYER_TITLES = ["fajr", "dhuhr", "dohr", "asr", "maghrib", "isha"] as const;
 const DAILY_VERSE_SELECTION = [
@@ -262,6 +270,7 @@ function isLegacyPassedPrayerNotification(title: unknown, body: unknown) {
 
 function isCenterScheduledNotification(notification: Notifications.NotificationRequest) {
   const data = notification.content.data as Record<string, unknown> | undefined;
+  if (data?.notificationOwner === DAILY_GOALS_OWNER) return false;
   if (data?.notificationOwner === NOTIFICATION_OWNER) return true;
   if (typeof data?.reminderId === "string" && CENTER_REMINDERS.some((item) => item.id === data.reminderId)) return true;
 
@@ -570,6 +579,102 @@ function notificationContent(
   };
 }
 
+function dailyGoalsNotificationCopy(remainingGoals: Array<{ title: string }>) {
+  const labels = remainingGoals.slice(0, 2).map((goal) => goal.title).join(", ");
+  const extra = remainingGoals.length > 2
+    ? ` et ${remainingGoals.length - 2} autre${remainingGoals.length - 2 > 1 ? "s" : ""}`
+    : "";
+  return {
+    title: remainingGoals.length === 1 ? "Un dernier objectif aujourd’hui" : "Tes objectifs du jour",
+    body: `Il te reste : ${labels}${extra}.`,
+  };
+}
+
+async function cancelDailyGoalsReminder() {
+  const raw = await AsyncStorage.getItem(DAILY_GOALS_SCHEDULED_KEY).catch(() => null);
+  let storedIds: string[] = [];
+  if (raw) {
+    try {
+      const parsed = JSON.parse(raw);
+      storedIds = Array.isArray(parsed) ? parsed.filter((id): id is string => typeof id === "string") : [];
+    } catch {
+      storedIds = [];
+    }
+  }
+
+  const discoveredIds = (await Notifications.getAllScheduledNotificationsAsync().catch(() => []))
+    .filter((notification) => {
+      const data = notification.content.data as Record<string, unknown> | undefined;
+      return data?.notificationOwner === DAILY_GOALS_OWNER;
+    })
+    .map((notification) => notification.identifier);
+
+  await Promise.all(
+    [...new Set([...storedIds, ...discoveredIds])].map((id) =>
+      Notifications.cancelScheduledNotificationAsync(id).catch(() => undefined),
+    ),
+  );
+  await AsyncStorage.removeItem(DAILY_GOALS_SCHEDULED_KEY);
+}
+
+let dailyGoalsReminderSyncQueue: Promise<void> = Promise.resolve();
+
+async function syncDailyGoalsReminderInternal(preferences: NotificationCenterPreferences) {
+  await cancelDailyGoalsReminder();
+  if (!preferences.systemEnabled || !preferences.reminders["daily-goals"]) return;
+
+  const permission = await Notifications.getPermissionsAsync();
+  if (!isNotificationPermissionGranted(permission)) return;
+
+  const plan = await goalRepository.getToday();
+  const remainingGoals = plan.goals.filter((goal) => !isGoalComplete(goal));
+  if (!remainingGoals.length) return;
+
+  const reminder = CENTER_REMINDERS.find((item) => item.id === "daily-goals");
+  if (!reminder) return;
+  const [hour, minute] = (preferences.reminderTimes?.["daily-goals"] ?? reminder.time ?? "20:00")
+    .split(":")
+    .map(Number);
+  const now = new Date();
+  const fireAt = new Date(now);
+  fireAt.setHours(Number.isFinite(hour) ? hour : 20, Number.isFinite(minute) ? minute : 0, 0, 0);
+  if (fireAt <= now) fireAt.setDate(fireAt.getDate() + 1);
+
+  await configureChannel(preferences.mode);
+  const copy = dailyGoalsNotificationCopy(remainingGoals);
+  const id = await Notifications.scheduleNotificationAsync({
+    content: {
+      title: copy.title,
+      body: copy.body,
+      data: {
+        route: "/daily-goals",
+        reminderId: "daily-goals",
+        notificationOwner: DAILY_GOALS_OWNER,
+        notificationMode: preferences.mode,
+        dateKey: localDateKey(fireAt),
+      },
+      sound: preferences.mode === "sound" ? "default" : false,
+      vibrate: preferences.mode === "vibration" ? [0, 300, 180, 300] : [],
+      color: "#F2B53D",
+    },
+    trigger: {
+      type: Notifications.SchedulableTriggerInputTypes.DATE,
+      date: fireAt,
+      channelId: `oummah-reminders-${preferences.mode}-v3`,
+    },
+  });
+  await AsyncStorage.setItem(DAILY_GOALS_SCHEDULED_KEY, JSON.stringify([id]));
+}
+
+export function syncDailyGoalsReminder(preferences?: NotificationCenterPreferences) {
+  const run = async () => {
+    const nextPreferences = preferences ?? await loadNotificationCenterPreferences();
+    await syncDailyGoalsReminderInternal(nextPreferences);
+  };
+  dailyGoalsReminderSyncQueue = dailyGoalsReminderSyncQueue.then(run, run);
+  return dailyGoalsReminderSyncQueue;
+}
+
 async function syncNotificationCenterScheduleInternal(
   preferences: NotificationCenterPreferences,
   schedule: MosquePrayerSchedule | null,
@@ -577,6 +682,7 @@ async function syncNotificationCenterScheduleInternal(
   hifzState: HifzState | null = null,
 ) {
   await cancelScheduledCenterNotifications();
+  await syncDailyGoalsReminder(preferences);
   if (!preferences.systemEnabled) return;
 
   const permission = await Notifications.getPermissionsAsync();
@@ -586,6 +692,7 @@ async function syncNotificationCenterScheduleInternal(
   const ids: string[] = [];
 
   for (const reminder of CENTER_REMINDERS) {
+    if (reminder.id === "daily-goals") continue;
     if (!preferences.reminders[reminder.id] || !reminder.time) continue;
     if (reminder.id === "hifz" && hifzRemaining(hifzState, new Date()) === 0) continue;
     const [hour, minute] = (preferences.reminderTimes?.[reminder.id] ?? reminder.time).split(":").map(Number);
@@ -649,3 +756,7 @@ export function syncNotificationCenterSchedule(
   notificationCenterSyncQueue = notificationCenterSyncQueue.then(run, run);
   return notificationCenterSyncQueue;
 }
+
+goalProgressBridge.subscribe(() => {
+  void syncDailyGoalsReminder().catch(() => undefined);
+});

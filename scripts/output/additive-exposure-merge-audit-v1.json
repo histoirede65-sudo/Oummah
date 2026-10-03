@@ -1,0 +1,1036 @@
+{
+  "schemaVersion": "1.0",
+  "generatedAt": "2026-09-30T23:08:14.875Z",
+  "sourceAudit": "scripts/output/jecfa-intake-exposure-audit-v3.json",
+  "intakeAuditStatusCounts": {
+    "NO_INTAKE_FIELD": 6813,
+    "PARSED_EXPOSURE": 372,
+    "INTAKE_PRESENT_REFERENCE_ONLY": 150,
+    "INTAKE_PRESENT_NO_EXPLICIT_COMPARISON": 114,
+    "PARSE_FAILED": 4
+  },
+  "validMatchPolicy": "JECFA exact or strong only; possible_match excluded",
+  "totals": {
+    "profilesEnriched": 94,
+    "profilesWithActualExposure": 13,
+    "profilesReferenceOnly": 202,
+    "profilesWithMultipleExposureScenarios": 12,
+    "profilesWithExplicitComparison": 6,
+    "profilesWithAuthorityConclusion": 5,
+    "profilesWithExposureUncertainty": 4
+  },
+  "items": [
+    {
+      "code": "E102",
+      "jecfaMatch": "exact_or_strong",
+      "assessmentsAdded": 0,
+      "scenariosAdded": 0,
+      "referenceValuesAdded": -36,
+      "conclusionsAdded": 0,
+      "uncertaintiesAdded": 0,
+      "provenanceComplete": true
+    },
+    {
+      "code": "E104",
+      "jecfaMatch": "exact_or_strong",
+      "assessmentsAdded": 0,
+      "scenariosAdded": 0,
+      "referenceValuesAdded": -18,
+      "conclusionsAdded": 0,
+      "uncertaintiesAdded": 0,
+      "provenanceComplete": true
+    },
+    {
+      "code": "E123",
+      "jecfaMatch": "exact_or_strong",
+      "assessmentsAdded": 0,
+      "scenariosAdded": 0,
+      "referenceValuesAdded": -2,
+      "conclusionsAdded": 0,
+      "uncertaintiesAdded": 0,
+      "provenanceComplete": true
+    },
+    {
+      "code": "E127",
+      "jecfaMatch": "exact_or_strong",
+      "assessmentsAdded": 9,
+      "scenariosAdded": 3,
+      "referenceValuesAdded": 2,
+      "conclusionsAdded": 0,
+      "uncertaintiesAdded": 0,
+      "provenanceComplete": true
+    },
+    {
+      "code": "E129",
+      "jecfaMatch": "exact_or_strong",
+      "assessmentsAdded": 0,
+      "scenariosAdded": 0,
+      "referenceValuesAdded": -165,
+      "conclusionsAdded": 0,
+      "uncertaintiesAdded": 0,
+      "provenanceComplete": true
+    },
+    {
+      "code": "E131",
+      "jecfaMatch": "exact_or_strong",
+      "assessmentsAdded": 0,
+      "scenariosAdded": 0,
+      "referenceValuesAdded": -15,
+      "conclusionsAdded": 0,
+      "uncertaintiesAdded": 0,
+      "provenanceComplete": true
+    },
+    {
+      "code": "E133",
+      "jecfaMatch": "exact_or_strong",
+      "assessmentsAdded": 3,
+      "scenariosAdded": 3,
+      "referenceValuesAdded": -12,
+      "conclusionsAdded": 0,
+      "uncertaintiesAdded": 0,
+      "provenanceComplete": true
+    },
+    {
+      "code": "E142",
+      "jecfaMatch": "exact_or_strong",
+      "assessmentsAdded": 0,
+      "scenariosAdded": 0,
+      "referenceValuesAdded": -2,
+      "conclusionsAdded": 0,
+      "uncertaintiesAdded": 0,
+      "provenanceComplete": true
+    },
+    {
+      "code": "E151",
+      "jecfaMatch": "exact_or_strong",
+      "assessmentsAdded": 0,
+      "scenariosAdded": 0,
+      "referenceValuesAdded": -4,
+      "conclusionsAdded": 0,
+      "uncertaintiesAdded": 0,
+      "provenanceComplete": true
+    },
+    {
+      "code": "E153",
+      "jecfaMatch": "exact_or_strong",
+      "assessmentsAdded": 0,
+      "scenariosAdded": 0,
+      "referenceValuesAdded": -2,
+      "conclusionsAdded": 0,
+      "uncertaintiesAdded": 0,
+      "provenanceComplete": true
+    },
+    {
+      "code": "E155",
+      "jecfaMatch": "exact_or_strong",
+      "assessmentsAdded": 0,
+      "scenariosAdded": 0,
+      "referenceValuesAdded": -3,
+      "conclusionsAdded": 0,
+      "uncertaintiesAdded": 0,
+      "provenanceComplete": true
+    },
+    {
+      "code": "E160D",
+      "jecfaMatch": "exact_or_strong",
+      "assessmentsAdded": 0,
+      "scenariosAdded": 0,
+      "referenceValuesAdded": -4,
+      "conclusionsAdded": 0,
+      "uncertaintiesAdded": 0,
+      "provenanceComplete": true
+    },
+    {
+      "code": "E161G",
+      "jecfaMatch": "exact_or_strong",
+      "assessmentsAdded": 3,
+      "scenariosAdded": 1,
+      "referenceValuesAdded": 2,
+      "conclusionsAdded": 0,
+      "uncertaintiesAdded": 0,
+      "provenanceComplete": true
+    },
+    {
+      "code": "E163",
+      "jecfaMatch": "exact_or_strong",
+      "assessmentsAdded": 0,
+      "scenariosAdded": 0,
+      "referenceValuesAdded": -1,
+      "conclusionsAdded": 0,
+      "uncertaintiesAdded": 0,
+      "provenanceComplete": true
+    },
+    {
+      "code": "E212",
+      "jecfaMatch": "exact_or_strong",
+      "assessmentsAdded": 0,
+      "scenariosAdded": 0,
+      "referenceValuesAdded": -4,
+      "conclusionsAdded": 0,
+      "uncertaintiesAdded": 0,
+      "provenanceComplete": true
+    },
+    {
+      "code": "E234",
+      "jecfaMatch": "exact_or_strong",
+      "assessmentsAdded": 0,
+      "scenariosAdded": 0,
+      "referenceValuesAdded": -1,
+      "conclusionsAdded": 0,
+      "uncertaintiesAdded": 0,
+      "provenanceComplete": true
+    },
+    {
+      "code": "E235",
+      "jecfaMatch": "exact_or_strong",
+      "assessmentsAdded": 0,
+      "scenariosAdded": 0,
+      "referenceValuesAdded": -3,
+      "conclusionsAdded": 0,
+      "uncertaintiesAdded": 0,
+      "provenanceComplete": true
+    },
+    {
+      "code": "E243",
+      "jecfaMatch": "exact_or_strong",
+      "assessmentsAdded": 0,
+      "scenariosAdded": 0,
+      "referenceValuesAdded": -1,
+      "conclusionsAdded": 0,
+      "uncertaintiesAdded": 0,
+      "provenanceComplete": true
+    },
+    {
+      "code": "E246",
+      "jecfaMatch": "exact_or_strong",
+      "assessmentsAdded": 2,
+      "scenariosAdded": 2,
+      "referenceValuesAdded": 0,
+      "conclusionsAdded": 0,
+      "uncertaintiesAdded": 0,
+      "provenanceComplete": true
+    },
+    {
+      "code": "E263",
+      "jecfaMatch": "exact_or_strong",
+      "assessmentsAdded": 0,
+      "scenariosAdded": 0,
+      "referenceValuesAdded": -23,
+      "conclusionsAdded": 0,
+      "uncertaintiesAdded": 0,
+      "provenanceComplete": true
+    },
+    {
+      "code": "E281",
+      "jecfaMatch": "exact_or_strong",
+      "assessmentsAdded": 0,
+      "scenariosAdded": 0,
+      "referenceValuesAdded": -32,
+      "conclusionsAdded": 0,
+      "uncertaintiesAdded": 0,
+      "provenanceComplete": true
+    },
+    {
+      "code": "E290",
+      "jecfaMatch": "exact_or_strong",
+      "assessmentsAdded": 0,
+      "scenariosAdded": 0,
+      "referenceValuesAdded": -8,
+      "conclusionsAdded": 0,
+      "uncertaintiesAdded": 0,
+      "provenanceComplete": true
+    },
+    {
+      "code": "E296",
+      "jecfaMatch": "exact_or_strong",
+      "assessmentsAdded": 0,
+      "scenariosAdded": 0,
+      "referenceValuesAdded": -51,
+      "conclusionsAdded": 0,
+      "uncertaintiesAdded": 0,
+      "provenanceComplete": true
+    },
+    {
+      "code": "E297",
+      "jecfaMatch": "exact_or_strong",
+      "assessmentsAdded": 0,
+      "scenariosAdded": 0,
+      "referenceValuesAdded": -72,
+      "conclusionsAdded": 0,
+      "uncertaintiesAdded": 0,
+      "provenanceComplete": true
+    },
+    {
+      "code": "E301",
+      "jecfaMatch": "exact_or_strong",
+      "assessmentsAdded": 0,
+      "scenariosAdded": 0,
+      "referenceValuesAdded": -37,
+      "conclusionsAdded": 0,
+      "uncertaintiesAdded": 0,
+      "provenanceComplete": true
+    },
+    {
+      "code": "E307",
+      "jecfaMatch": "exact_or_strong",
+      "assessmentsAdded": 0,
+      "scenariosAdded": 0,
+      "referenceValuesAdded": -17,
+      "conclusionsAdded": 0,
+      "uncertaintiesAdded": 0,
+      "provenanceComplete": true
+    },
+    {
+      "code": "E310",
+      "jecfaMatch": "exact_or_strong",
+      "assessmentsAdded": 0,
+      "scenariosAdded": 0,
+      "referenceValuesAdded": -130,
+      "conclusionsAdded": 0,
+      "uncertaintiesAdded": 0,
+      "provenanceComplete": true
+    },
+    {
+      "code": "E315",
+      "jecfaMatch": "exact_or_strong",
+      "assessmentsAdded": 0,
+      "scenariosAdded": 0,
+      "referenceValuesAdded": -2,
+      "conclusionsAdded": 0,
+      "uncertaintiesAdded": 0,
+      "provenanceComplete": true
+    },
+    {
+      "code": "E316",
+      "jecfaMatch": "exact_or_strong",
+      "assessmentsAdded": 0,
+      "scenariosAdded": 0,
+      "referenceValuesAdded": -1,
+      "conclusionsAdded": 0,
+      "uncertaintiesAdded": 0,
+      "provenanceComplete": true
+    },
+    {
+      "code": "E327",
+      "jecfaMatch": "exact_or_strong",
+      "assessmentsAdded": 0,
+      "scenariosAdded": 0,
+      "referenceValuesAdded": -44,
+      "conclusionsAdded": 0,
+      "uncertaintiesAdded": 0,
+      "provenanceComplete": true
+    },
+    {
+      "code": "E355",
+      "jecfaMatch": "exact_or_strong",
+      "assessmentsAdded": 2,
+      "scenariosAdded": 1,
+      "referenceValuesAdded": 3,
+      "conclusionsAdded": 0,
+      "uncertaintiesAdded": 0,
+      "provenanceComplete": true
+    },
+    {
+      "code": "E363",
+      "jecfaMatch": "exact_or_strong",
+      "assessmentsAdded": 0,
+      "scenariosAdded": 0,
+      "referenceValuesAdded": -26,
+      "conclusionsAdded": 0,
+      "uncertaintiesAdded": 0,
+      "provenanceComplete": true
+    },
+    {
+      "code": "E392",
+      "jecfaMatch": "exact_or_strong",
+      "assessmentsAdded": 3,
+      "scenariosAdded": 2,
+      "referenceValuesAdded": 1,
+      "conclusionsAdded": 0,
+      "uncertaintiesAdded": 0,
+      "provenanceComplete": true
+    },
+    {
+      "code": "E400",
+      "jecfaMatch": "exact_or_strong",
+      "assessmentsAdded": 0,
+      "scenariosAdded": 0,
+      "referenceValuesAdded": -13,
+      "conclusionsAdded": 0,
+      "uncertaintiesAdded": 0,
+      "provenanceComplete": true
+    },
+    {
+      "code": "E401",
+      "jecfaMatch": "exact_or_strong",
+      "assessmentsAdded": 0,
+      "scenariosAdded": 0,
+      "referenceValuesAdded": -80,
+      "conclusionsAdded": 0,
+      "uncertaintiesAdded": 0,
+      "provenanceComplete": true
+    },
+    {
+      "code": "E402",
+      "jecfaMatch": "exact_or_strong",
+      "assessmentsAdded": 0,
+      "scenariosAdded": 0,
+      "referenceValuesAdded": -50,
+      "conclusionsAdded": 0,
+      "uncertaintiesAdded": 0,
+      "provenanceComplete": true
+    },
+    {
+      "code": "E403",
+      "jecfaMatch": "exact_or_strong",
+      "assessmentsAdded": 0,
+      "scenariosAdded": 0,
+      "referenceValuesAdded": -9,
+      "conclusionsAdded": 0,
+      "uncertaintiesAdded": 0,
+      "provenanceComplete": true
+    },
+    {
+      "code": "E404",
+      "jecfaMatch": "exact_or_strong",
+      "assessmentsAdded": 0,
+      "scenariosAdded": 0,
+      "referenceValuesAdded": -9,
+      "conclusionsAdded": 0,
+      "uncertaintiesAdded": 0,
+      "provenanceComplete": true
+    },
+    {
+      "code": "E405",
+      "jecfaMatch": "exact_or_strong",
+      "assessmentsAdded": 0,
+      "scenariosAdded": 0,
+      "referenceValuesAdded": -2,
+      "conclusionsAdded": 0,
+      "uncertaintiesAdded": 0,
+      "provenanceComplete": true
+    },
+    {
+      "code": "E412",
+      "jecfaMatch": "exact_or_strong",
+      "assessmentsAdded": 0,
+      "scenariosAdded": 0,
+      "referenceValuesAdded": -137,
+      "conclusionsAdded": 0,
+      "uncertaintiesAdded": 0,
+      "provenanceComplete": true
+    },
+    {
+      "code": "E415",
+      "jecfaMatch": "exact_or_strong",
+      "assessmentsAdded": 0,
+      "scenariosAdded": 0,
+      "referenceValuesAdded": -153,
+      "conclusionsAdded": 0,
+      "uncertaintiesAdded": 0,
+      "provenanceComplete": true
+    },
+    {
+      "code": "E416",
+      "jecfaMatch": "exact_or_strong",
+      "assessmentsAdded": 0,
+      "scenariosAdded": 0,
+      "referenceValuesAdded": -7,
+      "conclusionsAdded": 0,
+      "uncertaintiesAdded": 0,
+      "provenanceComplete": true
+    },
+    {
+      "code": "E417",
+      "jecfaMatch": "exact_or_strong",
+      "assessmentsAdded": 0,
+      "scenariosAdded": 0,
+      "referenceValuesAdded": -1,
+      "conclusionsAdded": 0,
+      "uncertaintiesAdded": 0,
+      "provenanceComplete": true
+    },
+    {
+      "code": "E431",
+      "jecfaMatch": "exact_or_strong",
+      "assessmentsAdded": 0,
+      "scenariosAdded": 0,
+      "referenceValuesAdded": -2,
+      "conclusionsAdded": 0,
+      "uncertaintiesAdded": 0,
+      "provenanceComplete": true
+    },
+    {
+      "code": "E444",
+      "jecfaMatch": "exact_or_strong",
+      "assessmentsAdded": 0,
+      "scenariosAdded": 0,
+      "referenceValuesAdded": -1,
+      "conclusionsAdded": 0,
+      "uncertaintiesAdded": 0,
+      "provenanceComplete": true
+    },
+    {
+      "code": "E456",
+      "jecfaMatch": "exact_or_strong",
+      "assessmentsAdded": 0,
+      "scenariosAdded": 0,
+      "referenceValuesAdded": -10,
+      "conclusionsAdded": 0,
+      "uncertaintiesAdded": 0,
+      "provenanceComplete": true
+    },
+    {
+      "code": "E459",
+      "jecfaMatch": "exact_or_strong",
+      "assessmentsAdded": 0,
+      "scenariosAdded": 0,
+      "referenceValuesAdded": -3,
+      "conclusionsAdded": 0,
+      "uncertaintiesAdded": 0,
+      "provenanceComplete": true
+    },
+    {
+      "code": "E462",
+      "jecfaMatch": "exact_or_strong",
+      "assessmentsAdded": 0,
+      "scenariosAdded": 0,
+      "referenceValuesAdded": -33,
+      "conclusionsAdded": 0,
+      "uncertaintiesAdded": 0,
+      "provenanceComplete": true
+    },
+    {
+      "code": "E464",
+      "jecfaMatch": "exact_or_strong",
+      "assessmentsAdded": 0,
+      "scenariosAdded": 0,
+      "referenceValuesAdded": -34,
+      "conclusionsAdded": 0,
+      "uncertaintiesAdded": 0,
+      "provenanceComplete": true
+    },
+    {
+      "code": "E473",
+      "jecfaMatch": "exact_or_strong",
+      "assessmentsAdded": 0,
+      "scenariosAdded": 0,
+      "referenceValuesAdded": -4,
+      "conclusionsAdded": 0,
+      "uncertaintiesAdded": 0,
+      "provenanceComplete": true
+    },
+    {
+      "code": "E474",
+      "jecfaMatch": "exact_or_strong",
+      "assessmentsAdded": 0,
+      "scenariosAdded": 0,
+      "referenceValuesAdded": -1,
+      "conclusionsAdded": 0,
+      "uncertaintiesAdded": 0,
+      "provenanceComplete": true
+    },
+    {
+      "code": "E475",
+      "jecfaMatch": "exact_or_strong",
+      "assessmentsAdded": 0,
+      "scenariosAdded": 0,
+      "referenceValuesAdded": -2,
+      "conclusionsAdded": 0,
+      "uncertaintiesAdded": 0,
+      "provenanceComplete": true
+    },
+    {
+      "code": "E477",
+      "jecfaMatch": "exact_or_strong",
+      "assessmentsAdded": 0,
+      "scenariosAdded": 0,
+      "referenceValuesAdded": -1,
+      "conclusionsAdded": 0,
+      "uncertaintiesAdded": 0,
+      "provenanceComplete": true
+    },
+    {
+      "code": "E491",
+      "jecfaMatch": "exact_or_strong",
+      "assessmentsAdded": 2,
+      "scenariosAdded": 1,
+      "referenceValuesAdded": 1,
+      "conclusionsAdded": 1,
+      "uncertaintiesAdded": 1,
+      "provenanceComplete": true
+    },
+    {
+      "code": "E493",
+      "jecfaMatch": "exact_or_strong",
+      "assessmentsAdded": 4,
+      "scenariosAdded": 2,
+      "referenceValuesAdded": -45,
+      "conclusionsAdded": 2,
+      "uncertaintiesAdded": 2,
+      "provenanceComplete": true
+    },
+    {
+      "code": "E494",
+      "jecfaMatch": "exact_or_strong",
+      "assessmentsAdded": 2,
+      "scenariosAdded": 1,
+      "referenceValuesAdded": 1,
+      "conclusionsAdded": 1,
+      "uncertaintiesAdded": 1,
+      "provenanceComplete": true
+    },
+    {
+      "code": "E495",
+      "jecfaMatch": "exact_or_strong",
+      "assessmentsAdded": 2,
+      "scenariosAdded": 1,
+      "referenceValuesAdded": 1,
+      "conclusionsAdded": 1,
+      "uncertaintiesAdded": 1,
+      "provenanceComplete": true
+    },
+    {
+      "code": "E501",
+      "jecfaMatch": "exact_or_strong",
+      "assessmentsAdded": 0,
+      "scenariosAdded": 0,
+      "referenceValuesAdded": -1,
+      "conclusionsAdded": 0,
+      "uncertaintiesAdded": 0,
+      "provenanceComplete": true
+    },
+    {
+      "code": "E509",
+      "jecfaMatch": "exact_or_strong",
+      "assessmentsAdded": 0,
+      "scenariosAdded": 0,
+      "referenceValuesAdded": -6,
+      "conclusionsAdded": 0,
+      "uncertaintiesAdded": 0,
+      "provenanceComplete": true
+    },
+    {
+      "code": "E511",
+      "jecfaMatch": "exact_or_strong",
+      "assessmentsAdded": 0,
+      "scenariosAdded": 0,
+      "referenceValuesAdded": -7,
+      "conclusionsAdded": 0,
+      "uncertaintiesAdded": 0,
+      "provenanceComplete": true
+    },
+    {
+      "code": "E512",
+      "jecfaMatch": "exact_or_strong",
+      "assessmentsAdded": 0,
+      "scenariosAdded": 0,
+      "referenceValuesAdded": 2,
+      "conclusionsAdded": 0,
+      "uncertaintiesAdded": 0,
+      "provenanceComplete": true
+    },
+    {
+      "code": "E513",
+      "jecfaMatch": "exact_or_strong",
+      "assessmentsAdded": 0,
+      "scenariosAdded": 0,
+      "referenceValuesAdded": -3,
+      "conclusionsAdded": 0,
+      "uncertaintiesAdded": 0,
+      "provenanceComplete": true
+    },
+    {
+      "code": "E515",
+      "jecfaMatch": "exact_or_strong",
+      "assessmentsAdded": 0,
+      "scenariosAdded": 0,
+      "referenceValuesAdded": -4,
+      "conclusionsAdded": 0,
+      "uncertaintiesAdded": 0,
+      "provenanceComplete": true
+    },
+    {
+      "code": "E516",
+      "jecfaMatch": "exact_or_strong",
+      "assessmentsAdded": 0,
+      "scenariosAdded": 0,
+      "referenceValuesAdded": -11,
+      "conclusionsAdded": 0,
+      "uncertaintiesAdded": 0,
+      "provenanceComplete": true
+    },
+    {
+      "code": "E520",
+      "jecfaMatch": "exact_or_strong",
+      "assessmentsAdded": 0,
+      "scenariosAdded": 0,
+      "referenceValuesAdded": -3,
+      "conclusionsAdded": 0,
+      "uncertaintiesAdded": 0,
+      "provenanceComplete": true
+    },
+    {
+      "code": "E541",
+      "jecfaMatch": "exact_or_strong",
+      "assessmentsAdded": 0,
+      "scenariosAdded": 0,
+      "referenceValuesAdded": 4,
+      "conclusionsAdded": 0,
+      "uncertaintiesAdded": 0,
+      "provenanceComplete": true
+    },
+    {
+      "code": "E552",
+      "jecfaMatch": "exact_or_strong",
+      "assessmentsAdded": 0,
+      "scenariosAdded": 0,
+      "referenceValuesAdded": -3,
+      "conclusionsAdded": 0,
+      "uncertaintiesAdded": 0,
+      "provenanceComplete": true
+    },
+    {
+      "code": "E554",
+      "jecfaMatch": "exact_or_strong",
+      "assessmentsAdded": 0,
+      "scenariosAdded": 0,
+      "referenceValuesAdded": -29,
+      "conclusionsAdded": 0,
+      "uncertaintiesAdded": 0,
+      "provenanceComplete": true
+    },
+    {
+      "code": "E555",
+      "jecfaMatch": "exact_or_strong",
+      "assessmentsAdded": 0,
+      "scenariosAdded": 0,
+      "referenceValuesAdded": -2,
+      "conclusionsAdded": 0,
+      "uncertaintiesAdded": 0,
+      "provenanceComplete": true
+    },
+    {
+      "code": "E556",
+      "jecfaMatch": "exact_or_strong",
+      "assessmentsAdded": 0,
+      "scenariosAdded": 0,
+      "referenceValuesAdded": -3,
+      "conclusionsAdded": 0,
+      "uncertaintiesAdded": 0,
+      "provenanceComplete": true
+    },
+    {
+      "code": "E558",
+      "jecfaMatch": "exact_or_strong",
+      "assessmentsAdded": 0,
+      "scenariosAdded": 0,
+      "referenceValuesAdded": -122,
+      "conclusionsAdded": 0,
+      "uncertaintiesAdded": 0,
+      "provenanceComplete": true
+    },
+    {
+      "code": "E576",
+      "jecfaMatch": "exact_or_strong",
+      "assessmentsAdded": 0,
+      "scenariosAdded": 0,
+      "referenceValuesAdded": -1,
+      "conclusionsAdded": 0,
+      "uncertaintiesAdded": 0,
+      "provenanceComplete": true
+    },
+    {
+      "code": "E585",
+      "jecfaMatch": "exact_or_strong",
+      "assessmentsAdded": 0,
+      "scenariosAdded": 0,
+      "referenceValuesAdded": 1,
+      "conclusionsAdded": 0,
+      "uncertaintiesAdded": 0,
+      "provenanceComplete": true
+    },
+    {
+      "code": "E620",
+      "jecfaMatch": "exact_or_strong",
+      "assessmentsAdded": 0,
+      "scenariosAdded": 0,
+      "referenceValuesAdded": -30,
+      "conclusionsAdded": 0,
+      "uncertaintiesAdded": 0,
+      "provenanceComplete": true
+    },
+    {
+      "code": "E625",
+      "jecfaMatch": "exact_or_strong",
+      "assessmentsAdded": 0,
+      "scenariosAdded": 0,
+      "referenceValuesAdded": -5,
+      "conclusionsAdded": 0,
+      "uncertaintiesAdded": 0,
+      "provenanceComplete": true
+    },
+    {
+      "code": "E635",
+      "jecfaMatch": "exact_or_strong",
+      "assessmentsAdded": 0,
+      "scenariosAdded": 0,
+      "referenceValuesAdded": -14,
+      "conclusionsAdded": 0,
+      "uncertaintiesAdded": 0,
+      "provenanceComplete": true
+    },
+    {
+      "code": "E641",
+      "jecfaMatch": "exact_or_strong",
+      "assessmentsAdded": 0,
+      "scenariosAdded": 0,
+      "referenceValuesAdded": -25,
+      "conclusionsAdded": 0,
+      "uncertaintiesAdded": 0,
+      "provenanceComplete": true
+    },
+    {
+      "code": "E901",
+      "jecfaMatch": "exact_or_strong",
+      "assessmentsAdded": 0,
+      "scenariosAdded": 0,
+      "referenceValuesAdded": -4,
+      "conclusionsAdded": 0,
+      "uncertaintiesAdded": 0,
+      "provenanceComplete": true
+    },
+    {
+      "code": "E902",
+      "jecfaMatch": "exact_or_strong",
+      "assessmentsAdded": 0,
+      "scenariosAdded": 0,
+      "referenceValuesAdded": -198,
+      "conclusionsAdded": 0,
+      "uncertaintiesAdded": 0,
+      "provenanceComplete": true
+    },
+    {
+      "code": "E903",
+      "jecfaMatch": "exact_or_strong",
+      "assessmentsAdded": 0,
+      "scenariosAdded": 0,
+      "referenceValuesAdded": -31,
+      "conclusionsAdded": 0,
+      "uncertaintiesAdded": 0,
+      "provenanceComplete": true
+    },
+    {
+      "code": "E905",
+      "jecfaMatch": "exact_or_strong",
+      "assessmentsAdded": 0,
+      "scenariosAdded": 0,
+      "referenceValuesAdded": -13,
+      "conclusionsAdded": 0,
+      "uncertaintiesAdded": 0,
+      "provenanceComplete": true
+    },
+    {
+      "code": "E907",
+      "jecfaMatch": "exact_or_strong",
+      "assessmentsAdded": 0,
+      "scenariosAdded": 0,
+      "referenceValuesAdded": -2,
+      "conclusionsAdded": 0,
+      "uncertaintiesAdded": 0,
+      "provenanceComplete": true
+    },
+    {
+      "code": "E920",
+      "jecfaMatch": "exact_or_strong",
+      "assessmentsAdded": 0,
+      "scenariosAdded": 0,
+      "referenceValuesAdded": -33,
+      "conclusionsAdded": 0,
+      "uncertaintiesAdded": 0,
+      "provenanceComplete": true
+    },
+    {
+      "code": "E942",
+      "jecfaMatch": "exact_or_strong",
+      "assessmentsAdded": 0,
+      "scenariosAdded": 0,
+      "referenceValuesAdded": -1,
+      "conclusionsAdded": 0,
+      "uncertaintiesAdded": 0,
+      "provenanceComplete": true
+    },
+    {
+      "code": "E953",
+      "jecfaMatch": "exact_or_strong",
+      "assessmentsAdded": 0,
+      "scenariosAdded": 0,
+      "referenceValuesAdded": -1,
+      "conclusionsAdded": 0,
+      "uncertaintiesAdded": 0,
+      "provenanceComplete": true
+    },
+    {
+      "code": "E957",
+      "jecfaMatch": "exact_or_strong",
+      "assessmentsAdded": 2,
+      "scenariosAdded": 1,
+      "referenceValuesAdded": -92,
+      "conclusionsAdded": 0,
+      "uncertaintiesAdded": 0,
+      "provenanceComplete": true
+    },
+    {
+      "code": "E959",
+      "jecfaMatch": "exact_or_strong",
+      "assessmentsAdded": 2,
+      "scenariosAdded": 2,
+      "referenceValuesAdded": -92,
+      "conclusionsAdded": 1,
+      "uncertaintiesAdded": 0,
+      "provenanceComplete": true
+    },
+    {
+      "code": "E961",
+      "jecfaMatch": "exact_or_strong",
+      "assessmentsAdded": 0,
+      "scenariosAdded": 0,
+      "referenceValuesAdded": -1,
+      "conclusionsAdded": 0,
+      "uncertaintiesAdded": 0,
+      "provenanceComplete": true
+    },
+    {
+      "code": "E966",
+      "jecfaMatch": "exact_or_strong",
+      "assessmentsAdded": 0,
+      "scenariosAdded": 0,
+      "referenceValuesAdded": -2,
+      "conclusionsAdded": 0,
+      "uncertaintiesAdded": 0,
+      "provenanceComplete": true
+    },
+    {
+      "code": "E968",
+      "jecfaMatch": "exact_or_strong",
+      "assessmentsAdded": 0,
+      "scenariosAdded": 0,
+      "referenceValuesAdded": -57,
+      "conclusionsAdded": 0,
+      "uncertaintiesAdded": 0,
+      "provenanceComplete": true
+    },
+    {
+      "code": "E969",
+      "jecfaMatch": "exact_or_strong",
+      "assessmentsAdded": 1,
+      "scenariosAdded": 2,
+      "referenceValuesAdded": 2,
+      "conclusionsAdded": 0,
+      "uncertaintiesAdded": 0,
+      "provenanceComplete": true
+    },
+    {
+      "code": "E1204",
+      "jecfaMatch": "exact_or_strong",
+      "assessmentsAdded": 0,
+      "scenariosAdded": 0,
+      "referenceValuesAdded": -1,
+      "conclusionsAdded": 0,
+      "uncertaintiesAdded": 0,
+      "provenanceComplete": true
+    },
+    {
+      "code": "E1205",
+      "jecfaMatch": "exact_or_strong",
+      "assessmentsAdded": 0,
+      "scenariosAdded": 0,
+      "referenceValuesAdded": -50,
+      "conclusionsAdded": 0,
+      "uncertaintiesAdded": 0,
+      "provenanceComplete": true
+    },
+    {
+      "code": "E1206",
+      "jecfaMatch": "exact_or_strong",
+      "assessmentsAdded": 0,
+      "scenariosAdded": 0,
+      "referenceValuesAdded": -16,
+      "conclusionsAdded": 0,
+      "uncertaintiesAdded": 0,
+      "provenanceComplete": true
+    }
+  ],
+  "spotChecks": [
+    {
+      "code": "E951",
+      "enriched": false,
+      "exposureAssessments": 0,
+      "jecfaReferenceValues": 0,
+      "latestExposureAssessment": null
+    },
+    {
+      "code": "E338",
+      "enriched": false,
+      "exposureAssessments": 0,
+      "jecfaReferenceValues": 0,
+      "latestExposureAssessment": null
+    },
+    {
+      "code": "E150D",
+      "enriched": false,
+      "exposureAssessments": 0,
+      "jecfaReferenceValues": 0,
+      "latestExposureAssessment": null
+    },
+    {
+      "code": "E250",
+      "enriched": false,
+      "exposureAssessments": 0,
+      "jecfaReferenceValues": 0,
+      "latestExposureAssessment": null
+    },
+    {
+      "code": "E621",
+      "enriched": false,
+      "exposureAssessments": 0,
+      "jecfaReferenceValues": 3,
+      "latestExposureAssessment": null
+    },
+    {
+      "code": "E955",
+      "enriched": false,
+      "exposureAssessments": 0,
+      "jecfaReferenceValues": 0,
+      "latestExposureAssessment": null
+    },
+    {
+      "code": "E202",
+      "enriched": false,
+      "exposureAssessments": 0,
+      "jecfaReferenceValues": 0,
+      "latestExposureAssessment": null
+    },
+    {
+      "code": "E330",
+      "enriched": false,
+      "exposureAssessments": 0,
+      "jecfaReferenceValues": 0,
+      "latestExposureAssessment": null
+    },
+    {
+      "code": "E407",
+      "enriched": false,
+      "exposureAssessments": 0,
+      "jecfaReferenceValues": 0,
+      "latestExposureAssessment": null
+    },
+    {
+      "code": "E471",
+      "enriched": false,
+      "exposureAssessments": 0,
+      "jecfaReferenceValues": 6,
+      "latestExposureAssessment": null
+    }
+  ]
+}

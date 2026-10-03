@@ -1,0 +1,566 @@
+{
+  "schemaVersion": "additive-official-hazard-evidence-framework-audit-v1",
+  "mode": "methodology-audit-only",
+  "officialFrameworks": [
+    {
+      "organisation": "EFSA",
+      "scope": "weight of evidence, relevance, biological relevance and uncertainty",
+      "finding": "Le poids de preuve intègre pertinence, fiabilité, cohérence et jugement expert ; il ne fournit pas une échelle universelle automatique.",
+      "sourceUrls": [
+        "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2017.4971",
+        "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2017.4970",
+        "https://www.efsa.europa.eu/en/topics/topic/uncertainty-scientific-assessments"
+      ]
+    },
+    {
+      "organisation": "ECHA / EU CLP",
+      "scope": "classification of intrinsic health hazards",
+      "finding": "Le CLP fournit des classes et catégories avec critères explicites pour certains dangers, notamment CMR et STOT ; il ne transforme pas un endpoint OpenFoodTox incomplet en classification.",
+      "sourceUrls": [
+        "https://echa.europa.eu/guidance-documents/guidance-on-clp-application-criteria",
+        "https://eur-lex.europa.eu/eli/reg/2008/1272/2017-06-01"
+      ]
+    },
+    {
+      "organisation": "OECD",
+      "scope": "weight of evidence for chemical assessment",
+      "finding": "Le WoE est un processus transparent d’intégration de lignes de preuve ; il dépend de la question, de la pertinence, de la fiabilité et de la cohérence.",
+      "sourceUrls": [
+        "https://www.oecd.org/en/publications/guiding-principles-and-key-elements-for-establishing-a-weight-of-evidence-for-chemical-assessment_69b366a9-en.html"
+      ]
+    },
+    {
+      "organisation": "IARC",
+      "scope": "carcinogenic hazard identification only",
+      "finding": "IARC distingue la force des preuves humaines, animales et mécanistiques pour l’identification du danger cancérogène ; ce cadre ne doit pas être généralisé aux autres endpoints.",
+      "sourceUrls": [
+        "https://monographs.iarc.who.int/iarc-monographs-preamble-preamble-to-the-iarc-monographs/"
+      ]
+    }
+  ],
+  "criticalEndpointMeaning": {
+    "conclusion": "CriticalEndpoint désigne un endpoint retenu comme déterminant ou relié à une valeur toxicologique de référence dans le dossier ; il ne signifie pas automatiquement effet grave.",
+    "severityInference": "NOT_SUPPORTED without the linked endpoint interpretation, study results, relevance and official classification criteria."
+  },
+  "referencePointMeaning": {
+    "NOAEL": "dose sans effet indésirable observé dans les conditions de l’étude ; ne mesure pas à elle seule la gravité intrinsèque.",
+    "LOAEL": "dose minimale avec effet indésirable observé dans les conditions de l’étude ; ne constitue pas une catégorie de danger.",
+    "BMD": "dose issue d’un modèle dose-réponse à partir d’un niveau de réponse défini ; dépend du modèle et du point de réponse.",
+    "BMDL": "borne inférieure de confiance de la BMD ; exprime l’incertitude statistique du point de départ, pas une gravité.",
+    "conclusion": "Aucun de ces points de départ ne doit être converti directement en severity."
+  },
+  "evidenceMethodology": {
+    "dimensions": [
+      "relevance",
+      "reliability",
+      "consistency",
+      "uncertainty",
+      "biological relevance",
+      "convergence of lines of evidence"
+    ],
+    "humanAnimalInVitro": "Les cadres officiels n’assignent pas automatiquement human=strong, animal=moderate ou in_vitro=limited ; le poids dépend de la question, de la pertinence, de la qualité, de la cohérence et de l’extrapolation.",
+    "possibleOummahScale": "Une échelle OUMMAH limited/moderate/strong serait au minimum CONDITIONAL et nécessiterait une règle documentée de WoE, pas un simple comptage des types d’études."
+  },
+  "rawEndpointAudit": {
+    "rawEndpointLabelsDistinct": 9,
+    "labelsMostFrequent": [
+      {
+        "label": "chronic toxicity: oral",
+        "occurrences": 37
+      },
+      {
+        "label": "toxicity to reproduction: other studies",
+        "occurrences": 16
+      },
+      {
+        "label": "sub-chronic toxicity: oral",
+        "occurrences": 13
+      },
+      {
+        "label": "chronic toxicity: other route",
+        "occurrences": 12
+      },
+      {
+        "label": "additional toxicological information",
+        "occurrences": 8
+      },
+      {
+        "label": "sub-chronic toxicity: other route",
+        "occurrences": 5
+      },
+      {
+        "label": "toxic effects on livestock and pets",
+        "occurrences": 4
+      },
+      {
+        "label": "short-term repeated dose toxicity: oral",
+        "occurrences": 3
+      },
+      {
+        "label": "two-generation reproductive toxicity",
+        "occurrences": 1
+      }
+    ],
+    "currentClassDistribution": {
+      "carcinogenicity": 0,
+      "genotoxicity": 0,
+      "reproductive": 41,
+      "developmental": 0,
+      "neurotoxicity": 0,
+      "organ_toxicity": 0,
+      "haematological": 0,
+      "immunological": 0,
+      "endocrine_related": 0,
+      "gastrointestinal": 0,
+      "metabolic": 0,
+      "general_toxicity": 281,
+      "other": 0,
+      "unknown": 34
+    },
+    "taxonomyAssessment": {
+      "directClassesObserved": [
+        "reproductive",
+        "general_toxicity",
+        "unknown"
+      ],
+      "absentInCurrentLabels": [
+        "carcinogenicity",
+        "genotoxicity",
+        "developmental",
+        "neurotoxicity",
+        "organ_toxicity",
+        "haematological",
+        "immunological",
+        "endocrine_related",
+        "gastrointestinal",
+        "metabolic"
+      ],
+      "conclusion": "La taxonomie actuelle couvre peu de libellés bruts : elle reste descriptive et ne doit pas être traitée comme une gravité."
+    }
+  },
+  "frameworkMappings": [
+    {
+      "rawEndpointType": "additional toxicological information",
+      "currentNormalizedClass": "unknown",
+      "officialFrameworkMatch": {
+        "framework": "EFSA / OpenFoodTox",
+        "hazardClass": null,
+        "categorySystem": null,
+        "criteriaAvailable": false,
+        "mappingFeasibility": "not_supported",
+        "reason": "Le libellé ne constitue pas une classe de danger réglementaire directement transposable."
+      }
+    },
+    {
+      "rawEndpointType": "chronic toxicity: oral",
+      "currentNormalizedClass": "general_toxicity",
+      "officialFrameworkMatch": {
+        "framework": "EU CLP / ECHA",
+        "hazardClass": "STOT repeated exposure",
+        "categorySystem": "1 / 2",
+        "criteriaAvailable": true,
+        "mappingFeasibility": "conditional",
+        "reason": "Le type d’étude est pertinent pour STOT, mais il manque les éléments complets de classification : organe cible, pertinence, dose et critères CLP."
+      }
+    },
+    {
+      "rawEndpointType": "chronic toxicity: other route",
+      "currentNormalizedClass": "general_toxicity",
+      "officialFrameworkMatch": {
+        "framework": "EU CLP / ECHA",
+        "hazardClass": "STOT repeated exposure",
+        "categorySystem": "1 / 2",
+        "criteriaAvailable": true,
+        "mappingFeasibility": "conditional",
+        "reason": "Le type d’étude est pertinent pour STOT, mais il manque les éléments complets de classification : organe cible, pertinence, dose et critères CLP."
+      }
+    },
+    {
+      "rawEndpointType": "short-term repeated dose toxicity: oral",
+      "currentNormalizedClass": "general_toxicity",
+      "officialFrameworkMatch": {
+        "framework": "EU CLP / ECHA",
+        "hazardClass": "STOT repeated exposure",
+        "categorySystem": "1 / 2",
+        "criteriaAvailable": true,
+        "mappingFeasibility": "conditional",
+        "reason": "Le type d’étude est pertinent pour STOT, mais il manque les éléments complets de classification : organe cible, pertinence, dose et critères CLP."
+      }
+    },
+    {
+      "rawEndpointType": "sub-chronic toxicity: oral",
+      "currentNormalizedClass": "general_toxicity",
+      "officialFrameworkMatch": {
+        "framework": "EU CLP / ECHA",
+        "hazardClass": "STOT repeated exposure",
+        "categorySystem": "1 / 2",
+        "criteriaAvailable": true,
+        "mappingFeasibility": "conditional",
+        "reason": "Le type d’étude est pertinent pour STOT, mais il manque les éléments complets de classification : organe cible, pertinence, dose et critères CLP."
+      }
+    },
+    {
+      "rawEndpointType": "sub-chronic toxicity: other route",
+      "currentNormalizedClass": "general_toxicity",
+      "officialFrameworkMatch": {
+        "framework": "EU CLP / ECHA",
+        "hazardClass": "STOT repeated exposure",
+        "categorySystem": "1 / 2",
+        "criteriaAvailable": true,
+        "mappingFeasibility": "conditional",
+        "reason": "Le type d’étude est pertinent pour STOT, mais il manque les éléments complets de classification : organe cible, pertinence, dose et critères CLP."
+      }
+    },
+    {
+      "rawEndpointType": "toxic effects on livestock and pets",
+      "currentNormalizedClass": "general_toxicity",
+      "officialFrameworkMatch": {
+        "framework": "EFSA / OpenFoodTox",
+        "hazardClass": null,
+        "categorySystem": null,
+        "criteriaAvailable": false,
+        "mappingFeasibility": "not_supported",
+        "reason": "Le libellé ne constitue pas une classe de danger réglementaire directement transposable."
+      }
+    },
+    {
+      "rawEndpointType": "toxicity to reproduction: other studies",
+      "currentNormalizedClass": "reproductive",
+      "officialFrameworkMatch": {
+        "framework": "EU CLP / ECHA",
+        "hazardClass": "reproductive toxicity",
+        "categorySystem": "1A / 1B / 2",
+        "criteriaAvailable": true,
+        "mappingFeasibility": "conditional",
+        "reason": "Le libellé indique un domaine CLP pertinent, mais les critères complets et la classification officielle ne sont pas présents dans la base."
+      }
+    },
+    {
+      "rawEndpointType": "two-generation reproductive toxicity",
+      "currentNormalizedClass": "reproductive",
+      "officialFrameworkMatch": {
+        "framework": "EU CLP / ECHA",
+        "hazardClass": "reproductive toxicity",
+        "categorySystem": "1A / 1B / 2",
+        "criteriaAvailable": true,
+        "mappingFeasibility": "conditional",
+        "reason": "Le libellé indique un domaine CLP pertinent, mais les critères complets et la classification officielle ne sont pas présents dans la base."
+      }
+    }
+  ],
+  "severityFeasibility": {
+    "direct": 0,
+    "conditional": 79,
+    "notSupported": 262,
+    "signal": "CONDITIONAL",
+    "rationale": "Les cadres CLP/ECHA sont utilisables conditionnellement pour certains types, mais aucun code ne possède une classification réglementaire complète dans HazardEvidenceBasis."
+  },
+  "evidenceFeasibility": {
+    "direct": 0,
+    "conditional": 91,
+    "notSupported": 250,
+    "signal": "CONDITIONAL",
+    "rationale": "EFSA/OECD définissent un processus WoE, mais la base ne contient pas encore toutes les évaluations de pertinence, fiabilité, cohérence et incertitude nécessaires à une attribution automatique."
+  },
+  "potentialCoverage": {
+    "codesPotentiallyClassifiableForSeverity": 79,
+    "codesPotentiallyClassifiableForEvidence": 91,
+    "codesPotentiallyClassifiableForBoth": 79,
+    "codesStillInsufficient": 143,
+    "interpretation": "Ces nombres désignent des candidats à une évaluation méthodologique conditionnelle, pas des classifications produites."
+  },
+  "sevenCodeChecks": [
+    {
+      "code": "E102",
+      "rawEndpointLabels": [
+        "chronic toxicity: other route"
+      ],
+      "currentNormalizedClasses": [
+        "general_toxicity"
+      ],
+      "officialFrameworks": [
+        {
+          "framework": "EU CLP / ECHA",
+          "hazardClass": "STOT repeated exposure",
+          "categorySystem": "1 / 2",
+          "criteriaAvailable": true,
+          "mappingFeasibility": "conditional",
+          "reason": "Le type d’étude est pertinent pour STOT, mais il manque les éléments complets de classification : organe cible, pertinence, dose et critères CLP."
+        }
+      ],
+      "severityDerivable": "CONDITIONAL",
+      "evidenceDerivable": "CONDITIONAL",
+      "missingInformation": []
+    },
+    {
+      "code": "E122",
+      "rawEndpointLabels": [
+        "chronic toxicity: other route"
+      ],
+      "currentNormalizedClasses": [
+        "general_toxicity"
+      ],
+      "officialFrameworks": [
+        {
+          "framework": "EU CLP / ECHA",
+          "hazardClass": "STOT repeated exposure",
+          "categorySystem": "1 / 2",
+          "criteriaAvailable": true,
+          "mappingFeasibility": "conditional",
+          "reason": "Le type d’étude est pertinent pour STOT, mais il manque les éléments complets de classification : organe cible, pertinence, dose et critères CLP."
+        }
+      ],
+      "severityDerivable": "CONDITIONAL",
+      "evidenceDerivable": "CONDITIONAL",
+      "missingInformation": []
+    },
+    {
+      "code": "E124",
+      "rawEndpointLabels": [
+        "chronic toxicity: oral"
+      ],
+      "currentNormalizedClasses": [
+        "general_toxicity"
+      ],
+      "officialFrameworks": [
+        {
+          "framework": "EU CLP / ECHA",
+          "hazardClass": "STOT repeated exposure",
+          "categorySystem": "1 / 2",
+          "criteriaAvailable": true,
+          "mappingFeasibility": "conditional",
+          "reason": "Le type d’étude est pertinent pour STOT, mais il manque les éléments complets de classification : organe cible, pertinence, dose et critères CLP."
+        }
+      ],
+      "severityDerivable": "CONDITIONAL",
+      "evidenceDerivable": "CONDITIONAL",
+      "missingInformation": []
+    },
+    {
+      "code": "E129",
+      "rawEndpointLabels": [
+        "toxicity to reproduction: other studies",
+        "chronic toxicity: oral"
+      ],
+      "currentNormalizedClasses": [
+        "reproductive",
+        "general_toxicity"
+      ],
+      "officialFrameworks": [
+        {
+          "framework": "EU CLP / ECHA",
+          "hazardClass": "STOT repeated exposure",
+          "categorySystem": "1 / 2",
+          "criteriaAvailable": true,
+          "mappingFeasibility": "conditional",
+          "reason": "Le type d’étude est pertinent pour STOT, mais il manque les éléments complets de classification : organe cible, pertinence, dose et critères CLP."
+        },
+        {
+          "framework": "EU CLP / ECHA",
+          "hazardClass": "reproductive toxicity",
+          "categorySystem": "1A / 1B / 2",
+          "criteriaAvailable": true,
+          "mappingFeasibility": "conditional",
+          "reason": "Le libellé indique un domaine CLP pertinent, mais les critères complets et la classification officielle ne sont pas présents dans la base."
+        }
+      ],
+      "severityDerivable": "CONDITIONAL",
+      "evidenceDerivable": "CONDITIONAL",
+      "missingInformation": []
+    },
+    {
+      "code": "E132",
+      "rawEndpointLabels": [
+        "chronic toxicity: oral"
+      ],
+      "currentNormalizedClasses": [
+        "general_toxicity"
+      ],
+      "officialFrameworks": [
+        {
+          "framework": "EU CLP / ECHA",
+          "hazardClass": "STOT repeated exposure",
+          "categorySystem": "1 / 2",
+          "criteriaAvailable": true,
+          "mappingFeasibility": "conditional",
+          "reason": "Le type d’étude est pertinent pour STOT, mais il manque les éléments complets de classification : organe cible, pertinence, dose et critères CLP."
+        }
+      ],
+      "severityDerivable": "CONDITIONAL",
+      "evidenceDerivable": "CONDITIONAL",
+      "missingInformation": []
+    },
+    {
+      "code": "E133",
+      "rawEndpointLabels": [
+        "chronic toxicity: oral",
+        "chronic toxicity: other route"
+      ],
+      "currentNormalizedClasses": [
+        "general_toxicity"
+      ],
+      "officialFrameworks": [
+        {
+          "framework": "EU CLP / ECHA",
+          "hazardClass": "STOT repeated exposure",
+          "categorySystem": "1 / 2",
+          "criteriaAvailable": true,
+          "mappingFeasibility": "conditional",
+          "reason": "Le type d’étude est pertinent pour STOT, mais il manque les éléments complets de classification : organe cible, pertinence, dose et critères CLP."
+        },
+        {
+          "framework": "EU CLP / ECHA",
+          "hazardClass": "STOT repeated exposure",
+          "categorySystem": "1 / 2",
+          "criteriaAvailable": true,
+          "mappingFeasibility": "conditional",
+          "reason": "Le type d’étude est pertinent pour STOT, mais il manque les éléments complets de classification : organe cible, pertinence, dose et critères CLP."
+        }
+      ],
+      "severityDerivable": "CONDITIONAL",
+      "evidenceDerivable": "CONDITIONAL",
+      "missingInformation": []
+    },
+    {
+      "code": "E171",
+      "rawEndpointLabels": [
+        "chronic toxicity: oral"
+      ],
+      "currentNormalizedClasses": [
+        "general_toxicity"
+      ],
+      "officialFrameworks": [
+        {
+          "framework": "EU CLP / ECHA",
+          "hazardClass": "STOT repeated exposure",
+          "categorySystem": "1 / 2",
+          "criteriaAvailable": true,
+          "mappingFeasibility": "conditional",
+          "reason": "Le type d’étude est pertinent pour STOT, mais il manque les éléments complets de classification : organe cible, pertinence, dose et critères CLP."
+        }
+      ],
+      "severityDerivable": "CONDITIONAL",
+      "evidenceDerivable": "CONDITIONAL",
+      "missingInformation": []
+    }
+  ],
+  "methodologySources": [
+    {
+      "organisation": "EFSA",
+      "documentTitle": "Guidance on the use of the weight of evidence approach in scientific assessments",
+      "year": 2017,
+      "url": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2017.4971",
+      "methodologyArea": "weight of evidence; relevance; reliability; consistency; lines of evidence"
+    },
+    {
+      "organisation": "EFSA",
+      "documentTitle": "Guidance on the assessment of the biological relevance of data in scientific assessments",
+      "year": 2017,
+      "url": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2017.4970",
+      "methodologyArea": "biological relevance; adverse effect; uncertainty"
+    },
+    {
+      "organisation": "EFSA",
+      "documentTitle": "Uncertainty in scientific assessments",
+      "year": 2022,
+      "url": "https://www.efsa.europa.eu/en/topics/topic/uncertainty-scientific-assessments",
+      "methodologyArea": "uncertainty analysis and communication"
+    },
+    {
+      "organisation": "ECHA",
+      "documentTitle": "Guidance on the Application of the CLP Criteria",
+      "year": null,
+      "url": "https://echa.europa.eu/guidance-documents/guidance-on-clp-application-criteria",
+      "methodologyArea": "health hazard classification criteria"
+    },
+    {
+      "organisation": "European Union",
+      "documentTitle": "Regulation (EC) No 1272/2008 (CLP), Annex I",
+      "year": 2008,
+      "url": "https://eur-lex.europa.eu/eli/reg/2008/1272/2017-06-01",
+      "methodologyArea": "carcinogenicity; germ cell mutagenicity; reproductive toxicity; STOT"
+    },
+    {
+      "organisation": "OECD",
+      "documentTitle": "Guiding Principles and Key Elements for Establishing a Weight of Evidence for Chemical Assessment",
+      "year": 2019,
+      "url": "https://www.oecd.org/en/publications/guiding-principles-and-key-elements-for-establishing-a-weight-of-evidence-for-chemical-assessment_69b366a9-en.html",
+      "methodologyArea": "transparent weight-of-evidence process"
+    },
+    {
+      "organisation": "IARC",
+      "documentTitle": "Preamble to the IARC Monographs",
+      "year": 2019,
+      "url": "https://monographs.iarc.who.int/iarc-monographs-preamble-preamble-to-the-iarc-monographs/",
+      "methodologyArea": "carcinogenic hazard only; human, animal and mechanistic evidence"
+    }
+  ],
+  "recommendedArchitecture": {
+    "deriveHazardSeverityFromOfficialFramework": {
+      "status": "PAPER_ONLY",
+      "inputs": [
+        "criticalEndpoints",
+        "sourceEndpointLabels",
+        "linked study results",
+        "study context",
+        "species",
+        "reference points",
+        "official classification fields",
+        "relevance and uncertainty"
+      ],
+      "frameworks": [
+        "EU CLP / ECHA for applicable hazard classes",
+        "EFSA biological relevance and uncertainty guidance",
+        "IARC only for carcinogenicity"
+      ],
+      "conditions": [
+        "require explicit class-relevant data",
+        "keep hazard separate from exposure and risk",
+        "return unknown when criteria or provenance are incomplete"
+      ],
+      "forbiddenShortcuts": [
+        "CriticalEndpoint -> serious",
+        "NOAEL/BMDL -> severity",
+        "human/animal/in_vitro -> fixed evidence level"
+      ]
+    },
+    "deriveEvidenceStrengthFromOfficialFramework": {
+      "status": "PAPER_ONLY",
+      "inputs": [
+        "lines of evidence",
+        "relevance",
+        "reliability",
+        "consistency",
+        "uncertainty",
+        "biological relevance",
+        "study context"
+      ],
+      "frameworks": [
+        "EFSA WoE guidance",
+        "OECD WoE principles",
+        "IARC only for carcinogenic evidence"
+      ],
+      "conditions": [
+        "formulate the assessment question",
+        "document included and excluded evidence",
+        "integrate lines of evidence transparently",
+        "return unknown when reliability/relevance/consistency are not assessable"
+      ]
+    },
+    "unknownPolicy": "Toute donnée insuffisante, ambiguë ou non reliée conserve unknown et ne reçoit aucune gravité ou preuve automatique."
+  },
+  "conclusion": {
+    "scientificConcernRule": "PARTIALLY",
+    "reason": "Les cadres officiels existent et permettent une méthode conditionnelle, mais OpenFoodTox ne fournit pas encore systématiquement les critères de classification, la pertinence biologique, la cohérence et la qualité détaillée nécessaires à une règle générale automatique."
+  },
+  "validation": {
+    "basisModified": false,
+    "profilesModified": false,
+    "potentialEffectsModified": false,
+    "severityCreated": false,
+    "evidenceLevelCreated": false,
+    "riskEngineModified": false,
+    "supabaseUpsertPerformed": false,
+    "uiModified": false
+  }
+}

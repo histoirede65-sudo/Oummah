@@ -1,0 +1,1913 @@
+{
+  "schemaVersion": "2.0",
+  "auditVersion": "v2",
+  "generatedAt": "2026-09-30T23:07:27.579Z",
+  "anomalies": {
+    "suspectedFalseSafe": [],
+    "suspectedOverclassification": [],
+    "suspectedUnderclassification": [],
+    "insufficientEvidenceForClassification": [],
+    "familyScopeConcern": [
+      {
+        "code": "E150A",
+        "riskLevel": "insufficient_data",
+        "familyOnly": false,
+        "assessmentScopes": [
+          "family",
+          "individual",
+          "individual",
+          "individual"
+        ]
+      },
+      {
+        "code": "E150B",
+        "riskLevel": "insufficient_data",
+        "familyOnly": false,
+        "assessmentScopes": [
+          "family"
+        ]
+      },
+      {
+        "code": "E150C",
+        "riskLevel": "insufficient_data",
+        "familyOnly": false,
+        "assessmentScopes": [
+          "family",
+          "individual",
+          "individual"
+        ]
+      },
+      {
+        "code": "E150D",
+        "riskLevel": "insufficient_data",
+        "familyOnly": false,
+        "assessmentScopes": [
+          "family"
+        ]
+      },
+      {
+        "code": "E160D",
+        "riskLevel": "insufficient_data",
+        "familyOnly": false,
+        "assessmentScopes": [
+          "individual",
+          "individual",
+          "individual",
+          "group",
+          "individual"
+        ]
+      },
+      {
+        "code": "E203",
+        "riskLevel": "insufficient_data",
+        "familyOnly": true,
+        "assessmentScopes": [
+          "group"
+        ]
+      },
+      {
+        "code": "E210",
+        "riskLevel": "insufficient_data",
+        "familyOnly": false,
+        "assessmentScopes": [
+          "individual",
+          "individual",
+          "group",
+          "individual",
+          "group",
+          "individual",
+          "group",
+          "individual",
+          "individual",
+          "group",
+          "individual",
+          "individual",
+          "individual",
+          "individual",
+          "individual",
+          "individual",
+          "group",
+          "individual",
+          "individual"
+        ]
+      },
+      {
+        "code": "E212",
+        "riskLevel": "insufficient_data",
+        "familyOnly": false,
+        "assessmentScopes": [
+          "individual",
+          "group",
+          "group"
+        ]
+      },
+      {
+        "code": "E213",
+        "riskLevel": "insufficient_data",
+        "familyOnly": false,
+        "assessmentScopes": [
+          "individual",
+          "group",
+          "group"
+        ]
+      },
+      {
+        "code": "E214",
+        "riskLevel": "insufficient_data",
+        "familyOnly": false,
+        "assessmentScopes": [
+          "individual",
+          "group",
+          "group",
+          "group"
+        ]
+      },
+      {
+        "code": "E218",
+        "riskLevel": "insufficient_data",
+        "familyOnly": false,
+        "assessmentScopes": [
+          "individual",
+          "group",
+          "group",
+          "group"
+        ]
+      },
+      {
+        "code": "E220",
+        "riskLevel": "insufficient_data",
+        "familyOnly": true,
+        "assessmentScopes": [
+          "group"
+        ]
+      },
+      {
+        "code": "E221",
+        "riskLevel": "insufficient_data",
+        "familyOnly": true,
+        "assessmentScopes": [
+          "group",
+          "group"
+        ]
+      },
+      {
+        "code": "E222",
+        "riskLevel": "insufficient_data",
+        "familyOnly": true,
+        "assessmentScopes": [
+          "group"
+        ]
+      },
+      {
+        "code": "E223",
+        "riskLevel": "insufficient_data",
+        "familyOnly": false,
+        "assessmentScopes": [
+          "individual",
+          "group",
+          "group",
+          "group"
+        ]
+      },
+      {
+        "code": "E224",
+        "riskLevel": "insufficient_data",
+        "familyOnly": false,
+        "assessmentScopes": [
+          "individual",
+          "group"
+        ]
+      },
+      {
+        "code": "E227",
+        "riskLevel": "insufficient_data",
+        "familyOnly": true,
+        "assessmentScopes": [
+          "group",
+          "group"
+        ]
+      },
+      {
+        "code": "E228",
+        "riskLevel": "insufficient_data",
+        "familyOnly": true,
+        "assessmentScopes": [
+          "group",
+          "group"
+        ]
+      },
+      {
+        "code": "E261",
+        "riskLevel": "insufficient_data",
+        "familyOnly": true,
+        "assessmentScopes": [
+          "group"
+        ]
+      },
+      {
+        "code": "E280",
+        "riskLevel": "insufficient_data",
+        "familyOnly": false,
+        "assessmentScopes": [
+          "individual",
+          "group",
+          "individual",
+          "individual",
+          "group",
+          "group",
+          "individual"
+        ]
+      },
+      {
+        "code": "E281",
+        "riskLevel": "insufficient_data",
+        "familyOnly": false,
+        "assessmentScopes": [
+          "individual",
+          "individual",
+          "group"
+        ]
+      },
+      {
+        "code": "E282",
+        "riskLevel": "insufficient_data",
+        "familyOnly": false,
+        "assessmentScopes": [
+          "individual",
+          "group",
+          "group"
+        ]
+      },
+      {
+        "code": "E283",
+        "riskLevel": "insufficient_data",
+        "familyOnly": false,
+        "assessmentScopes": [
+          "individual",
+          "group"
+        ]
+      },
+      {
+        "code": "E296",
+        "riskLevel": "insufficient_data",
+        "familyOnly": false,
+        "assessmentScopes": [
+          "individual",
+          "individual",
+          "individual",
+          "group",
+          "group"
+        ]
+      },
+      {
+        "code": "E297",
+        "riskLevel": "insufficient_data",
+        "familyOnly": true,
+        "assessmentScopes": [
+          "group",
+          "group",
+          "group",
+          "group",
+          "group"
+        ]
+      },
+      {
+        "code": "E301",
+        "riskLevel": "insufficient_data",
+        "familyOnly": false,
+        "assessmentScopes": [
+          "individual",
+          "individual",
+          "group"
+        ]
+      },
+      {
+        "code": "E302",
+        "riskLevel": "insufficient_data",
+        "familyOnly": false,
+        "assessmentScopes": [
+          "individual",
+          "group"
+        ]
+      },
+      {
+        "code": "E307",
+        "riskLevel": "insufficient_data",
+        "familyOnly": true,
+        "assessmentScopes": [
+          "group",
+          "group",
+          "individual",
+          "group",
+          "group",
+          "group",
+          "individual"
+        ]
+      },
+      {
+        "code": "E334",
+        "riskLevel": "insufficient_data",
+        "familyOnly": false,
+        "assessmentScopes": [
+          "individual",
+          "group",
+          "group"
+        ]
+      },
+      {
+        "code": "E350",
+        "riskLevel": "insufficient_data",
+        "familyOnly": true,
+        "assessmentScopes": [
+          "group",
+          "group",
+          "group",
+          "group"
+        ]
+      },
+      {
+        "code": "E351",
+        "riskLevel": "insufficient_data",
+        "familyOnly": true,
+        "assessmentScopes": [
+          "individual",
+          "group",
+          "individual",
+          "group",
+          "group",
+          "individual",
+          "group"
+        ]
+      },
+      {
+        "code": "E353",
+        "riskLevel": "insufficient_data",
+        "familyOnly": false,
+        "assessmentScopes": [
+          "individual",
+          "individual",
+          "group"
+        ]
+      },
+      {
+        "code": "E355",
+        "riskLevel": "insufficient_data",
+        "familyOnly": true,
+        "assessmentScopes": [
+          "group",
+          "group",
+          "individual"
+        ]
+      },
+      {
+        "code": "E356",
+        "riskLevel": "insufficient_data",
+        "familyOnly": true,
+        "assessmentScopes": [
+          "individual",
+          "group"
+        ]
+      },
+      {
+        "code": "E357",
+        "riskLevel": "insufficient_data",
+        "familyOnly": true,
+        "assessmentScopes": [
+          "individual",
+          "group"
+        ]
+      },
+      {
+        "code": "E432",
+        "riskLevel": "insufficient_data",
+        "familyOnly": true,
+        "assessmentScopes": [
+          "group",
+          "individual",
+          "group",
+          "individual"
+        ]
+      },
+      {
+        "code": "E433",
+        "riskLevel": "insufficient_data",
+        "familyOnly": false,
+        "assessmentScopes": [
+          "individual",
+          "group",
+          "individual",
+          "group",
+          "individual"
+        ]
+      },
+      {
+        "code": "E434",
+        "riskLevel": "insufficient_data",
+        "familyOnly": true,
+        "assessmentScopes": [
+          "group",
+          "individual",
+          "group",
+          "individual"
+        ]
+      },
+      {
+        "code": "E435",
+        "riskLevel": "insufficient_data",
+        "familyOnly": true,
+        "assessmentScopes": [
+          "group",
+          "individual",
+          "individual",
+          "group",
+          "individual",
+          "individual"
+        ]
+      },
+      {
+        "code": "E436",
+        "riskLevel": "insufficient_data",
+        "familyOnly": true,
+        "assessmentScopes": [
+          "group",
+          "individual",
+          "group",
+          "individual"
+        ]
+      },
+      {
+        "code": "E440",
+        "riskLevel": "insufficient_data",
+        "familyOnly": true,
+        "assessmentScopes": [
+          "individual",
+          "individual",
+          "group"
+        ]
+      },
+      {
+        "code": "E461",
+        "riskLevel": "insufficient_data",
+        "familyOnly": false,
+        "assessmentScopes": [
+          "individual",
+          "group",
+          "group",
+          "group",
+          "individual",
+          "group",
+          "group",
+          "group",
+          "group",
+          "group",
+          "group"
+        ]
+      },
+      {
+        "code": "E462",
+        "riskLevel": "insufficient_data",
+        "familyOnly": false,
+        "assessmentScopes": [
+          "individual",
+          "individual",
+          "group"
+        ]
+      },
+      {
+        "code": "E463",
+        "riskLevel": "insufficient_data",
+        "familyOnly": false,
+        "assessmentScopes": [
+          "individual",
+          "group",
+          "group",
+          "group",
+          "individual",
+          "group",
+          "group",
+          "group",
+          "group",
+          "group",
+          "group"
+        ]
+      },
+      {
+        "code": "E464",
+        "riskLevel": "insufficient_data",
+        "familyOnly": false,
+        "assessmentScopes": [
+          "individual",
+          "individual",
+          "individual",
+          "group"
+        ]
+      },
+      {
+        "code": "E465",
+        "riskLevel": "insufficient_data",
+        "familyOnly": false,
+        "assessmentScopes": [
+          "individual",
+          "group",
+          "group"
+        ]
+      },
+      {
+        "code": "E468",
+        "riskLevel": "insufficient_data",
+        "familyOnly": false,
+        "assessmentScopes": [
+          "individual",
+          "group"
+        ]
+      },
+      {
+        "code": "E469",
+        "riskLevel": "insufficient_data",
+        "familyOnly": false,
+        "assessmentScopes": [
+          "individual",
+          "group",
+          "group",
+          "group"
+        ]
+      },
+      {
+        "code": "E473",
+        "riskLevel": "insufficient_data",
+        "familyOnly": false,
+        "assessmentScopes": [
+          "individual",
+          "individual",
+          "individual",
+          "individual",
+          "individual",
+          "individual",
+          "group",
+          "individual",
+          "individual",
+          "group",
+          "individual",
+          "group"
+        ]
+      },
+      {
+        "code": "E474",
+        "riskLevel": "insufficient_data",
+        "familyOnly": false,
+        "assessmentScopes": [
+          "individual",
+          "individual",
+          "group"
+        ]
+      },
+      {
+        "code": "E491",
+        "riskLevel": "insufficient_data",
+        "familyOnly": false,
+        "assessmentScopes": [
+          "individual",
+          "group",
+          "group",
+          "group"
+        ]
+      },
+      {
+        "code": "E492",
+        "riskLevel": "insufficient_data",
+        "familyOnly": false,
+        "assessmentScopes": [
+          "individual",
+          "group",
+          "group",
+          "group"
+        ]
+      },
+      {
+        "code": "E493",
+        "riskLevel": "insufficient_data",
+        "familyOnly": false,
+        "assessmentScopes": [
+          "individual",
+          "group",
+          "group",
+          "group",
+          "group"
+        ]
+      },
+      {
+        "code": "E494",
+        "riskLevel": "insufficient_data",
+        "familyOnly": false,
+        "assessmentScopes": [
+          "individual",
+          "group",
+          "group"
+        ]
+      },
+      {
+        "code": "E495",
+        "riskLevel": "insufficient_data",
+        "familyOnly": false,
+        "assessmentScopes": [
+          "individual",
+          "group",
+          "group",
+          "group"
+        ]
+      },
+      {
+        "code": "E500",
+        "riskLevel": "insufficient_data",
+        "familyOnly": true,
+        "assessmentScopes": [
+          "individual",
+          "individual",
+          "group",
+          "individual",
+          "individual",
+          "individual",
+          "individual",
+          "group"
+        ]
+      },
+      {
+        "code": "E501",
+        "riskLevel": "insufficient_data",
+        "familyOnly": true,
+        "assessmentScopes": [
+          "group",
+          "group",
+          "individual"
+        ]
+      },
+      {
+        "code": "E508",
+        "riskLevel": "insufficient_data",
+        "familyOnly": false,
+        "assessmentScopes": [
+          "individual",
+          "group",
+          "group",
+          "group"
+        ]
+      },
+      {
+        "code": "E551",
+        "riskLevel": "insufficient_data",
+        "familyOnly": false,
+        "assessmentScopes": [
+          "individual",
+          "individual",
+          "individual",
+          "group",
+          "individual",
+          "individual",
+          "group"
+        ]
+      },
+      {
+        "code": "E552",
+        "riskLevel": "insufficient_data",
+        "familyOnly": false,
+        "assessmentScopes": [
+          "individual",
+          "individual",
+          "group"
+        ]
+      },
+      {
+        "code": "E554",
+        "riskLevel": "insufficient_data",
+        "familyOnly": false,
+        "assessmentScopes": [
+          "individual",
+          "individual",
+          "individual",
+          "group",
+          "individual",
+          "individual",
+          "group",
+          "individual",
+          "individual",
+          "group",
+          "individual",
+          "individual",
+          "group",
+          "individual",
+          "individual",
+          "group"
+        ]
+      },
+      {
+        "code": "E556",
+        "riskLevel": "insufficient_data",
+        "familyOnly": true,
+        "assessmentScopes": [
+          "individual",
+          "group",
+          "individual",
+          "group",
+          "individual",
+          "group",
+          "individual",
+          "group"
+        ]
+      },
+      {
+        "code": "E559",
+        "riskLevel": "insufficient_data",
+        "familyOnly": true,
+        "assessmentScopes": [
+          "individual",
+          "group",
+          "individual",
+          "group"
+        ]
+      },
+      {
+        "code": "E576",
+        "riskLevel": "insufficient_data",
+        "familyOnly": true,
+        "assessmentScopes": [
+          "group",
+          "group"
+        ]
+      },
+      {
+        "code": "E620",
+        "riskLevel": "insufficient_data",
+        "familyOnly": false,
+        "assessmentScopes": [
+          "individual",
+          "individual",
+          "group"
+        ]
+      },
+      {
+        "code": "E621",
+        "riskLevel": "insufficient_data",
+        "familyOnly": true,
+        "assessmentScopes": [
+          "group",
+          "group",
+          "group"
+        ]
+      },
+      {
+        "code": "E623",
+        "riskLevel": "insufficient_data",
+        "familyOnly": true,
+        "assessmentScopes": [
+          "group"
+        ]
+      },
+      {
+        "code": "E625",
+        "riskLevel": "insufficient_data",
+        "familyOnly": false,
+        "assessmentScopes": [
+          "individual",
+          "individual",
+          "group"
+        ]
+      },
+      {
+        "code": "E626",
+        "riskLevel": "insufficient_data",
+        "familyOnly": true,
+        "assessmentScopes": [
+          "group"
+        ]
+      },
+      {
+        "code": "E629",
+        "riskLevel": "insufficient_data",
+        "familyOnly": true,
+        "assessmentScopes": [
+          "group"
+        ]
+      },
+      {
+        "code": "E633",
+        "riskLevel": "insufficient_data",
+        "familyOnly": true,
+        "assessmentScopes": [
+          "group"
+        ]
+      },
+      {
+        "code": "E905",
+        "riskLevel": "insufficient_data",
+        "familyOnly": false,
+        "assessmentScopes": [
+          "individual",
+          "group",
+          "individual",
+          "individual",
+          "individual",
+          "group",
+          "individual",
+          "individual",
+          "individual",
+          "individual",
+          "group",
+          "individual",
+          "individual",
+          "group",
+          "individual"
+        ]
+      },
+      {
+        "code": "E957",
+        "riskLevel": "insufficient_data",
+        "familyOnly": false,
+        "assessmentScopes": [
+          "individual",
+          "group",
+          "individual"
+        ]
+      },
+      {
+        "code": "E964",
+        "riskLevel": "insufficient_data",
+        "familyOnly": false,
+        "assessmentScopes": [
+          "individual",
+          "group"
+        ]
+      },
+      {
+        "code": "E999",
+        "riskLevel": "insufficient_data",
+        "familyOnly": false,
+        "assessmentScopes": [
+          "individual",
+          "individual",
+          "group",
+          "individual",
+          "group"
+        ]
+      }
+    ],
+    "contaminantScopeConcern": [],
+    "groupAdiConcern": [
+      {
+        "code": "E203",
+        "riskLevel": "insufficient_data",
+        "groupValues": [
+          {
+            "type": "group_ADI",
+            "value": 25,
+            "lower": null,
+            "upper": null,
+            "unit": "mg/kg bw/day",
+            "rawText": "0-25 mg/kg bw Comments: Group ADI as the sum of sorbic acid and calcium, potassium and sodium sorbates (expressed as sorbic acid)",
+            "authority": "JECFA",
+            "year": 1973,
+            "scope": "group",
+            "groupName": "Group ADI as the sum of sorbic acid and calcium, potassium and sodium sorbates (expressed as sorbic acid)",
+            "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2088"
+          }
+        ]
+      },
+      {
+        "code": "E210",
+        "riskLevel": "insufficient_data",
+        "groupValues": [
+          {
+            "type": "group_ADI",
+            "value": null,
+            "lower": null,
+            "upper": null,
+            "unit": "mg/kg bw/day",
+            "rawText": "0–20 mg/kg bw Comments: Applying a chemical specific adjustment factor of 2 for interspecies toxicokinetics variation instead of the default factor of 4.0, the Committee established a group ADI of 0–20 mg/kg bw, which applies to benzoic acid, the benzoate salts (calcium, potassium and sodium), benzaldehyde, benzyl acetate, benzyl alcohol and benzyl benzoate, expressed as benzoic acid equivalents. The Committee withdrew the previous group ADI of 0–5 mg/kg bw.",
+            "authority": "JECFA",
+            "year": 2021,
+            "scope": "group",
+            "groupName": "group ADI of 0–20 mg/kg bw, which applies to benzoic acid, the benzoate salts (calcium, potassium and sodium), benzaldehyde, benzyl acetate, benzyl alcohol and benzyl benzoate, expressed as benzoic acid equivalents",
+            "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/126"
+          },
+          {
+            "type": "group_ADI",
+            "value": null,
+            "lower": null,
+            "upper": null,
+            "unit": "mg/kg bw/day",
+            "rawText": "0–20 mg/kg bw Comments: Applying a chemical specific adjustment factor of 2 for interspecies toxicokinetics variation instead of the default factor of 4.0, the Committee established a group ADI of 0–20 mg/kg bw, which applies to benzoic acid, the benzoate salts (calcium, potassium and sodium), benzaldehyde, benzyl acetate, benzyl alcohol and benzyl benzoate, expressed as benzoic acid equivalents. The Committee withdrew the previous group ADI of 0–5 mg/kg bw.",
+            "authority": "JECFA",
+            "year": 2021,
+            "scope": "group",
+            "groupName": "group ADI of 0–20 mg/kg bw, which applies to benzoic acid, the benzoate salts (calcium, potassium and sodium), benzaldehyde, benzyl acetate, benzyl alcohol and benzyl benzoate, expressed as benzoic acid equivalents",
+            "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/126"
+          },
+          {
+            "type": "group_ADI",
+            "value": null,
+            "lower": null,
+            "upper": null,
+            "unit": "mg/kg bw/day",
+            "rawText": "0–20 mg/kg bw Comments: Applying a chemical specific adjustment factor of 2 for interspecies toxicokinetics variation instead of the default factor of 4.0, the Committee established a group ADI of 0–20 mg/kg bw, which applies to benzoic acid, the benzoate salts (calcium, potassium and sodium), benzaldehyde, benzyl acetate, benzyl alcohol and benzyl benzoate, expressed as benzoic acid equivalents. The Committee withdrew the previous group ADI of 0–5 mg/kg bw.",
+            "authority": "JECFA",
+            "year": 2021,
+            "scope": "group",
+            "groupName": "group ADI of 0–20 mg/kg bw, which applies to benzoic acid, the benzoate salts (calcium, potassium and sodium), benzaldehyde, benzyl acetate, benzyl alcohol and benzyl benzoate, expressed as benzoic acid equivalents",
+            "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/126"
+          },
+          {
+            "type": "group_ADI",
+            "value": null,
+            "lower": null,
+            "upper": null,
+            "unit": "mg/kg bw/day",
+            "rawText": "0–20 mg/kg bw Comments: Applying a chemical specific adjustment factor of 2 for interspecies toxicokinetics variation instead of the default factor of 4.0, the Committee established a group ADI of 0–20 mg/kg bw, which applies to benzoic acid, the benzoate salts (calcium, potassium and sodium), benzaldehyde, benzyl acetate, benzyl alcohol and benzyl benzoate, expressed as benzoic acid equivalents. The Committee withdrew the previous group ADI of 0–5 mg/kg bw.",
+            "authority": "JECFA",
+            "year": 2021,
+            "scope": "group",
+            "groupName": "group ADI of 0–20 mg/kg bw, which applies to benzoic acid, the benzoate salts (calcium, potassium and sodium), benzaldehyde, benzyl acetate, benzyl alcohol and benzyl benzoate, expressed as benzoic acid equivalents",
+            "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/126"
+          },
+          {
+            "type": "group_ADI",
+            "value": null,
+            "lower": null,
+            "upper": null,
+            "unit": "mg/kg bw/day",
+            "rawText": "0–20 mg/kg bw Comments: Applying a chemical specific adjustment factor of 2 for interspecies toxicokinetics variation instead of the default factor of 4.0, the Committee established a group ADI of 0–20 mg/kg bw, which applies to benzoic acid, the benzoate salts (calcium, potassium and sodium), benzaldehyde, benzyl acetate, benzyl alcohol and benzyl benzoate, expressed as benzoic acid equivalents. The Committee withdrew the previous group ADI of 0–5 mg/kg bw.",
+            "authority": "JECFA",
+            "year": 2021,
+            "scope": "group",
+            "groupName": "group ADI of 0–20 mg/kg bw, which applies to benzoic acid, the benzoate salts (calcium, potassium and sodium), benzaldehyde, benzyl acetate, benzyl alcohol and benzyl benzoate, expressed as benzoic acid equivalents",
+            "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/126"
+          }
+        ]
+      },
+      {
+        "code": "E212",
+        "riskLevel": "insufficient_data",
+        "groupValues": [
+          {
+            "type": "group_ADI",
+            "value": null,
+            "lower": null,
+            "upper": null,
+            "unit": "mg/kg bw/day",
+            "rawText": "0–20 mg/kg bw Comments: Applying a chemical specific adjustment factor of 2 for interspecies toxicokinetics variation instead of the default factor of 4.0, the Committee established a group ADI of 0–20 mg/kg bw, which applies to benzoic acid, the benzoate salts (calcium, potassium and sodium), benzaldehyde, benzyl acetate, benzyl alcohol and benzyl benzoate, expressed as benzoic acid equivalents. The Committee withdrew the previous group ADI of 0–5 mg/kg bw.",
+            "authority": "JECFA",
+            "year": 2021,
+            "scope": "group",
+            "groupName": "group ADI of 0–20 mg/kg bw, which applies to benzoic acid, the benzoate salts (calcium, potassium and sodium), benzaldehyde, benzyl acetate, benzyl alcohol and benzyl benzoate, expressed as benzoic acid equivalents",
+            "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2283"
+          },
+          {
+            "type": "group_ADI",
+            "value": null,
+            "lower": 5,
+            "upper": 5,
+            "unit": "mg/kg bw/day",
+            "rawText": "0-5 mg/kg bw Comments: The 1996 group ADI of 0-5 mg/kg bw for benzoic acid, the benzoate salts (calcium, potassium and sodium), benzaldehyde, benzyl acetate, benzyl alcohol and benzyl benzoate, expressed as benzoic acid equivalents, was maintained at the fifty-seventh meeting (2001). Intake: See BENZOATES",
+            "authority": "JECFA",
+            "year": 1996,
+            "scope": "group",
+            "groupName": "group ADI of 0-5 mg/kg bw for benzoic acid, the benzoate salts (calcium, potassium and sodium), benzaldehyde, benzyl acetate, benzyl alcohol and benzyl benzoate, expressed as benzoic acid equivalents, was maintained at the fifty-seventh meeting (2001)",
+            "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2283"
+          }
+        ]
+      },
+      {
+        "code": "E213",
+        "riskLevel": "insufficient_data",
+        "groupValues": [
+          {
+            "type": "group_ADI",
+            "value": null,
+            "lower": 5,
+            "upper": 5,
+            "unit": "mg/kg bw/day",
+            "rawText": "0-5 mg/kg bw Comments: The 1996 group ADI of 0-5 mg/kg bw for benzoic acid, the benzoate salts (calcium, potassium and sodium), benzaldehyde, benzyl acetate, benzyl alcohol and benzyl benzoate, expressed as benzoic acid equivalents, was maintained at the fifty-seventh meeting (2001). Intake: See BENZOATES",
+            "authority": "JECFA",
+            "year": 1996,
+            "scope": "group",
+            "groupName": "group ADI of 0-5 mg/kg bw for benzoic acid, the benzoate salts (calcium, potassium and sodium), benzaldehyde, benzyl acetate, benzyl alcohol and benzyl benzoate, expressed as benzoic acid equivalents, was maintained at the fifty-seventh meeting (2001)",
+            "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/452"
+          },
+          {
+            "type": "group_ADI",
+            "value": null,
+            "lower": 5,
+            "upper": 5,
+            "unit": "mg/kg bw/day",
+            "rawText": "0-5 mg/kg bw Comments: The 1996 group ADI of 0-5 mg/kg bw for benzoic acid, the benzoate salts (calcium, potassium and sodium), benzaldehyde, benzyl acetate, benzyl alcohol and benzyl benzoate, expressed as benzoic acid equivalents, was maintained at the fifty-seventh meeting (2001). Intake: See BENZOATES",
+            "authority": "JECFA",
+            "year": 1996,
+            "scope": "group",
+            "groupName": "group ADI of 0-5 mg/kg bw for benzoic acid, the benzoate salts (calcium, potassium and sodium), benzaldehyde, benzyl acetate, benzyl alcohol and benzyl benzoate, expressed as benzoic acid equivalents, was maintained at the fifty-seventh meeting (2001)",
+            "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/452"
+          }
+        ]
+      },
+      {
+        "code": "E214",
+        "riskLevel": "insufficient_data",
+        "groupValues": [
+          {
+            "type": "group_ADI",
+            "value": 10,
+            "lower": null,
+            "upper": null,
+            "unit": "mg/kg bw/day",
+            "rawText": "0-10 mg/kg bw Comments: Group ADI as the sum of the ethyl and methyl esters of p-hydroxybenzoic acid. In view of the adverse effects in male rats, propyl paraben (propyl p-hydroxybenzoate) was excluded from the group ADI for the parabens used in food (TRS 940-JECFA 67/30, 2006)",
+            "authority": "JECFA",
+            "year": 1973,
+            "scope": "group",
+            "groupName": "Group ADI as the sum of the ethyl and methyl esters of p-hydroxybenzoic acid",
+            "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/371"
+          },
+          {
+            "type": "group_ADI",
+            "value": 10,
+            "lower": null,
+            "upper": null,
+            "unit": "mg/kg bw/day",
+            "rawText": "0-10 mg/kg bw Comments: Group ADI as the sum of the ethyl and methyl esters of p-hydroxybenzoic acid. In view of the adverse effects in male rats, propyl paraben (propyl p-hydroxybenzoate) was excluded from the group ADI for the parabens used in food (TRS 940-JECFA 67/30, 2006)",
+            "authority": "JECFA",
+            "year": 1973,
+            "scope": "group",
+            "groupName": "Group ADI as the sum of the ethyl and methyl esters of p-hydroxybenzoic acid",
+            "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/371"
+          },
+          {
+            "type": "group_ADI",
+            "value": 10,
+            "lower": null,
+            "upper": null,
+            "unit": "mg/kg bw/day",
+            "rawText": "0-10 mg/kg bw Comments: Group ADI as the sum of the ethyl and methyl esters of p-hydroxybenzoic acid. In view of the adverse effects in male rats, propyl paraben (propyl p-hydroxybenzoate) was excluded from the group ADI for the parabens used in food (TRS 940-JECFA 67/30, 2006)",
+            "authority": "JECFA",
+            "year": 1973,
+            "scope": "group",
+            "groupName": "Group ADI as the sum of the ethyl and methyl esters of p-hydroxybenzoic acid",
+            "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/371"
+          }
+        ]
+      },
+      {
+        "code": "E218",
+        "riskLevel": "insufficient_data",
+        "groupValues": [
+          {
+            "type": "group_ADI",
+            "value": 10,
+            "lower": null,
+            "upper": null,
+            "unit": "mg/kg bw/day",
+            "rawText": "0-10 mg/kg bw Comments: Group ADI as the sum of the ethyl and methyl esters of p-hydroxybenzoic acid. In view of the adverse effects in male rats, propyl paraben (propyl p-hydroxybenzoate) was excluded from the group ADI for the parabens used in food (TRS 940-JECFA 67/30, 2006)",
+            "authority": "JECFA",
+            "year": 1973,
+            "scope": "group",
+            "groupName": "Group ADI as the sum of the ethyl and methyl esters of p-hydroxybenzoic acid",
+            "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/342"
+          },
+          {
+            "type": "group_ADI",
+            "value": 10,
+            "lower": null,
+            "upper": null,
+            "unit": "mg/kg bw/day",
+            "rawText": "0-10 mg/kg bw Comments: Group ADI as the sum of the ethyl and methyl esters of p-hydroxybenzoic acid. In view of the adverse effects in male rats, propyl paraben (propyl p-hydroxybenzoate) was excluded from the group ADI for the parabens used in food (TRS 940-JECFA 67/30, 2006)",
+            "authority": "JECFA",
+            "year": 1973,
+            "scope": "group",
+            "groupName": "Group ADI as the sum of the ethyl and methyl esters of p-hydroxybenzoic acid",
+            "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/342"
+          },
+          {
+            "type": "group_ADI",
+            "value": 10,
+            "lower": null,
+            "upper": null,
+            "unit": "mg/kg bw/day",
+            "rawText": "0-10 mg/kg bw Comments: Group ADI as the sum of the ethyl and methyl esters of p-hydroxybenzoic acid. In view of the adverse effects in male rats, propyl paraben (propyl p-hydroxybenzoate) was excluded from the group ADI for the parabens used in food (TRS 940-JECFA 67/30, 2006)",
+            "authority": "JECFA",
+            "year": 1973,
+            "scope": "group",
+            "groupName": "Group ADI as the sum of the ethyl and methyl esters of p-hydroxybenzoic acid",
+            "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/342"
+          }
+        ]
+      },
+      {
+        "code": "E220",
+        "riskLevel": "insufficient_data",
+        "groupValues": [
+          {
+            "type": "group_ADI",
+            "value": 0.7,
+            "lower": null,
+            "upper": null,
+            "unit": "mg/kg bw/day",
+            "rawText": "0-0.7 mg/kg bw Comments: Group ADI, expressed as sulfur dioxide, for calcium hydrogen sulfite, calcium metabisulfite, calcium sulfite, potassium hydrogen sulfite, potassium metabisulfite, potassium sulfite, sodium hydrogen sulfite, sodium metabisulfite, sodium sulfite, sodium thiosulfate, and sulfur dioxide Intake: See SULFITES",
+            "authority": "JECFA",
+            "year": 1998,
+            "scope": "group",
+            "groupName": "Group ADI, expressed as sulfur dioxide, for calcium hydrogen sulfite, calcium metabisulfite, calcium sulfite, potassium hydrogen sulfite, potassium metabisulfite, potassium sulfite, sodium hydrogen sulfite, sodium metabisulfite, sodium sulfite, sodium thiosulfate, and sulfur dioxide Intake: See SULFITES",
+            "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/985"
+          }
+        ]
+      },
+      {
+        "code": "E221",
+        "riskLevel": "insufficient_data",
+        "groupValues": [
+          {
+            "type": "group_ADI",
+            "value": 0.7,
+            "lower": null,
+            "upper": null,
+            "unit": "mg/kg bw/day",
+            "rawText": "0-0.7 mg/kg bw Comments: Group ADI, expressed as sulfur dioxide, for calcium hydrogen sulfite, calcium metabisulfite, calcium sulfite, potassium hydrogen sulfite, potassium metabisulfite, potassium sulfite, sodium hydrogen sulfite, sodium metabisulfite, sodium sulfite, sodium thiosulfate, and sulfur dioxide Intake: See SULFITES",
+            "authority": "JECFA",
+            "year": 1998,
+            "scope": "group",
+            "groupName": "Group ADI, expressed as sulfur dioxide, for calcium hydrogen sulfite, calcium metabisulfite, calcium sulfite, potassium hydrogen sulfite, potassium metabisulfite, potassium sulfite, sodium hydrogen sulfite, sodium metabisulfite, sodium sulfite, sodium thiosulfate, and sulfur dioxide Intake: See SULFITES",
+            "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2821"
+          },
+          {
+            "type": "group_ADI",
+            "value": 0.7,
+            "lower": null,
+            "upper": null,
+            "unit": "mg/kg bw/day",
+            "rawText": "0-0.7 mg/kg bw Comments: Group ADI, expressed as sulfur dioxide, for calcium hydrogen sulfite, calcium metabisulfite, calcium sulfite, potassium hydrogen sulfite, potassium metabisulfite, potassium sulfite, sodium hydrogen sulfite, sodium metabisulfite, sodium sulfite, sodium thiosulfate, and sulfur dioxide Intake: See SULFITES",
+            "authority": "JECFA",
+            "year": 1998,
+            "scope": "group",
+            "groupName": "Group ADI, expressed as sulfur dioxide, for calcium hydrogen sulfite, calcium metabisulfite, calcium sulfite, potassium hydrogen sulfite, potassium metabisulfite, potassium sulfite, sodium hydrogen sulfite, sodium metabisulfite, sodium sulfite, sodium thiosulfate, and sulfur dioxide Intake: See SULFITES",
+            "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2821"
+          }
+        ]
+      },
+      {
+        "code": "E222",
+        "riskLevel": "insufficient_data",
+        "groupValues": [
+          {
+            "type": "group_ADI",
+            "value": 0.7,
+            "lower": null,
+            "upper": null,
+            "unit": "mg/kg bw/day",
+            "rawText": "0-0.7 mg/kg bw Comments: Group ADI, expressed as sulfur dioxide, for calcium hydrogen sulfite, calcium metabisulfite, calcium sulfite, potassium hydrogen sulfite, potassium metabisulfite, potassium sulfite, sodium hydrogen sulfite, sodium metabisulfite, sodium sulfite, sodium thiosulfate, and sulfur dioxide Intake: See SULFITES",
+            "authority": "JECFA",
+            "year": 1998,
+            "scope": "group",
+            "groupName": "Group ADI, expressed as sulfur dioxide, for calcium hydrogen sulfite, calcium metabisulfite, calcium sulfite, potassium hydrogen sulfite, potassium metabisulfite, potassium sulfite, sodium hydrogen sulfite, sodium metabisulfite, sodium sulfite, sodium thiosulfate, and sulfur dioxide Intake: See SULFITES",
+            "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2269"
+          }
+        ]
+      },
+      {
+        "code": "E223",
+        "riskLevel": "insufficient_data",
+        "groupValues": [
+          {
+            "type": "group_ADI",
+            "value": 0.7,
+            "lower": null,
+            "upper": null,
+            "unit": "mg/kg bw/day",
+            "rawText": "0-0.7 mg/kg bw Comments: Group ADI, expressed as sulfur dioxide, for calcium hydrogen sulfite, calcium metabisulfite, calcium sulfite, potassium hydrogen sulfite, potassium metabisulfite, potassium sulfite, sodium hydrogen sulfite, sodium metabisulfite, sodium sulfite, sodium thiosulfate, and sulfur dioxide Intake: See SULFITES",
+            "authority": "JECFA",
+            "year": 1998,
+            "scope": "group",
+            "groupName": "Group ADI, expressed as sulfur dioxide, for calcium hydrogen sulfite, calcium metabisulfite, calcium sulfite, potassium hydrogen sulfite, potassium metabisulfite, potassium sulfite, sodium hydrogen sulfite, sodium metabisulfite, sodium sulfite, sodium thiosulfate, and sulfur dioxide Intake: See SULFITES",
+            "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/1824"
+          },
+          {
+            "type": "group_ADI",
+            "value": 0.7,
+            "lower": null,
+            "upper": null,
+            "unit": "mg/kg bw/day",
+            "rawText": "0-0.7 mg/kg bw Comments: Group ADI, expressed as sulfur dioxide, for calcium hydrogen sulfite, calcium metabisulfite, calcium sulfite, potassium hydrogen sulfite, potassium metabisulfite, potassium sulfite, sodium hydrogen sulfite, sodium metabisulfite, sodium sulfite, sodium thiosulfate, and sulfur dioxide Intake: See SULFITES",
+            "authority": "JECFA",
+            "year": 1998,
+            "scope": "group",
+            "groupName": "Group ADI, expressed as sulfur dioxide, for calcium hydrogen sulfite, calcium metabisulfite, calcium sulfite, potassium hydrogen sulfite, potassium metabisulfite, potassium sulfite, sodium hydrogen sulfite, sodium metabisulfite, sodium sulfite, sodium thiosulfate, and sulfur dioxide Intake: See SULFITES",
+            "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/1824"
+          },
+          {
+            "type": "group_ADI",
+            "value": 0.7,
+            "lower": null,
+            "upper": null,
+            "unit": "mg/kg bw/day",
+            "rawText": "0-0.7 mg/kg bw Comments: Group ADI, expressed as sulfur dioxide, for calcium hydrogen sulfite, calcium metabisulfite, calcium sulfite, potassium hydrogen sulfite, potassium metabisulfite, potassium sulfite, sodium hydrogen sulfite, sodium metabisulfite, sodium sulfite, sodium thiosulfate, and sulfur dioxide Intake: See SULFITES",
+            "authority": "JECFA",
+            "year": 1998,
+            "scope": "group",
+            "groupName": "Group ADI, expressed as sulfur dioxide, for calcium hydrogen sulfite, calcium metabisulfite, calcium sulfite, potassium hydrogen sulfite, potassium metabisulfite, potassium sulfite, sodium hydrogen sulfite, sodium metabisulfite, sodium sulfite, sodium thiosulfate, and sulfur dioxide Intake: See SULFITES",
+            "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/1824"
+          }
+        ]
+      },
+      {
+        "code": "E224",
+        "riskLevel": "insufficient_data",
+        "groupValues": [
+          {
+            "type": "group_ADI",
+            "value": 0.7,
+            "lower": null,
+            "upper": null,
+            "unit": "mg/kg bw/day",
+            "rawText": "0-0.7 mg/kg bw Comments: Group ADI, expressed as sulfur dioxide, for calcium hydrogen sulfite, calcium metabisulfite, calcium sulfite, potassium hydrogen sulfite, potassium metabisulfite, potassium sulfite, sodium hydrogen sulfite, sodium metabisulfite, sodium sulfite, sodium thiosulfate, and sulfur dioxide Intake: See SULFITES",
+            "authority": "JECFA",
+            "year": 1998,
+            "scope": "group",
+            "groupName": "Group ADI, expressed as sulfur dioxide, for calcium hydrogen sulfite, calcium metabisulfite, calcium sulfite, potassium hydrogen sulfite, potassium metabisulfite, potassium sulfite, sodium hydrogen sulfite, sodium metabisulfite, sodium sulfite, sodium thiosulfate, and sulfur dioxide Intake: See SULFITES",
+            "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2272"
+          }
+        ]
+      },
+      {
+        "code": "E227",
+        "riskLevel": "insufficient_data",
+        "groupValues": [
+          {
+            "type": "group_ADI",
+            "value": 0.7,
+            "lower": null,
+            "upper": null,
+            "unit": "mg/kg bw/day",
+            "rawText": "0-0.7 mg/kg bw Comments: Group ADI, expressed as sulfur dioxide, for calcium hydrogen sulfite, calcium metabisulfite, calcium sulfite, potassium hydrogen sulfite, potassium metabisulfite, potassium sulfite, sodium hydrogen sulfite, sodium metabisulfite, sodium sulfite, sodium thiosulfate, and sulfur dioxide Intake: See SULFITES",
+            "authority": "JECFA",
+            "year": 1998,
+            "scope": "group",
+            "groupName": "Group ADI, expressed as sulfur dioxide, for calcium hydrogen sulfite, calcium metabisulfite, calcium sulfite, potassium hydrogen sulfite, potassium metabisulfite, potassium sulfite, sodium hydrogen sulfite, sodium metabisulfite, sodium sulfite, sodium thiosulfate, and sulfur dioxide Intake: See SULFITES",
+            "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/81"
+          },
+          {
+            "type": "group_ADI",
+            "value": 0.7,
+            "lower": null,
+            "upper": null,
+            "unit": "mg/kg bw/day",
+            "rawText": "0-0.7 mg/kg bw Comments: Group ADI, expressed as sulfur dioxide, for calcium hydrogen sulfite, calcium metabisulfite, calcium sulfite, potassium hydrogen sulfite, potassium metabisulfite, potassium sulfite, sodium hydrogen sulfite, sodium metabisulfite, sodium sulfite, sodium thiosulfate, and sulfur dioxide Intake: See SULFITES",
+            "authority": "JECFA",
+            "year": 1998,
+            "scope": "group",
+            "groupName": "Group ADI, expressed as sulfur dioxide, for calcium hydrogen sulfite, calcium metabisulfite, calcium sulfite, potassium hydrogen sulfite, potassium metabisulfite, potassium sulfite, sodium hydrogen sulfite, sodium metabisulfite, sodium sulfite, sodium thiosulfate, and sulfur dioxide Intake: See SULFITES",
+            "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/81"
+          }
+        ]
+      },
+      {
+        "code": "E228",
+        "riskLevel": "insufficient_data",
+        "groupValues": [
+          {
+            "type": "group_ADI",
+            "value": 0.7,
+            "lower": null,
+            "upper": null,
+            "unit": "mg/kg bw/day",
+            "rawText": "0-0.7 mg/kg bw Comments: Considered for specification only. Group ADI, expressed as sulfur dioxide, for calcium hydrogen sulfite, calcium metabisulfite, calcium sulfite, potassium hydrogen sulfite, potassium metabisulfite, potassium sulfite, sodium hydrogen sulfite, sodium metabisulfite, sodium sulfite, sodium thiosulfate, and sulfur dioxide.",
+            "authority": "JECFA",
+            "year": 2026,
+            "scope": "group",
+            "groupName": "Group ADI, expressed as sulfur dioxide, for calcium hydrogen sulfite, calcium metabisulfite, calcium sulfite, potassium hydrogen sulfite, potassium metabisulfite, potassium sulfite, sodium hydrogen sulfite, sodium metabisulfite, sodium sulfite, sodium thiosulfate, and sulfur dioxide",
+            "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2445"
+          },
+          {
+            "type": "group_ADI",
+            "value": 0.7,
+            "lower": null,
+            "upper": null,
+            "unit": "mg/kg bw/day",
+            "rawText": "0-0.7 mg/kg bw Comments: Group ADI, expressed as sulfur dioxide, for calcium hydrogen sulfite, calcium metabisulfite, calcium sulfite, potassium hydrogen sulfite, potassium metabisulfite, potassium sulfite, sodium hydrogen sulfite, sodium metabisulfite, sodium sulfite, sodium thiosulfate, and sulfur dioxide Intake: See SULFITES",
+            "authority": "JECFA",
+            "year": 1998,
+            "scope": "group",
+            "groupName": "Group ADI, expressed as sulfur dioxide, for calcium hydrogen sulfite, calcium metabisulfite, calcium sulfite, potassium hydrogen sulfite, potassium metabisulfite, potassium sulfite, sodium hydrogen sulfite, sodium metabisulfite, sodium sulfite, sodium thiosulfate, and sulfur dioxide Intake: See SULFITES",
+            "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2445"
+          }
+        ]
+      },
+      {
+        "code": "E307",
+        "riskLevel": "insufficient_data",
+        "groupValues": [
+          {
+            "type": "group_ADI",
+            "value": 2,
+            "lower": null,
+            "upper": null,
+            "unit": "mg/kg bw/day",
+            "rawText": "0.15-2 mg/kg bw Comments: Group ADI for dl-alpha-tocopherol and d-alpha-tocopherol concentrate, singly or in combination. The lower value represents the daily dietary allowance recommended by the USA National Academy of Sciences/National Research Council. The upper value represents the maximum value for the ADI.",
+            "authority": "JECFA",
+            "year": 1986,
+            "scope": "group",
+            "groupName": "Group ADI for dl-alpha-tocopherol and d-alpha-tocopherol concentrate, singly or in combination",
+            "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/21"
+          },
+          {
+            "type": "group_ADI",
+            "value": 2,
+            "lower": null,
+            "upper": null,
+            "unit": "mg/kg bw/day",
+            "rawText": "0.15-2 mg/kg bw Comments: Group ADI for dl-alpha-tocopherol and d-alpha-tocopherol concentrate, singly or in combination. The lower value represents the daily dietary allowance recommended by the USA National Academy of Sciences/National Research Council. The upper value represents the maximum value for the ADI.",
+            "authority": "JECFA",
+            "year": 1986,
+            "scope": "group",
+            "groupName": "Group ADI for dl-alpha-tocopherol and d-alpha-tocopherol concentrate, singly or in combination",
+            "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/21"
+          },
+          {
+            "type": "group_ADI",
+            "value": 2,
+            "lower": null,
+            "upper": null,
+            "unit": "mg/kg bw/day",
+            "rawText": "0.15-2 mg/kg bw Comments: Group ADI for dl-alpha-tocopherol and d-alpha-tocopherol concentrate, singly or in combination. The lower value represents the daily dietary allowance recommended by the USA National Academy of Sciences/National Research Council. The upper value represents the maximum value for the ADI.",
+            "authority": "JECFA",
+            "year": 1986,
+            "scope": "group",
+            "groupName": "Group ADI for dl-alpha-tocopherol and d-alpha-tocopherol concentrate, singly or in combination",
+            "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/21"
+          },
+          {
+            "type": "group_ADI",
+            "value": 2,
+            "lower": null,
+            "upper": null,
+            "unit": "mg/kg bw/day",
+            "rawText": "0.15-2 mg/kg bw Comments: Group ADI for dl-alpha-tocopherol and d-alpha-tocopherol concentrate, singly or in combination. The lower value represents the daily dietary allowance recommended by the USA National Academy of Sciences/National Research Council. The upper value represents the maximum value for the ADI.",
+            "authority": "JECFA",
+            "year": 1986,
+            "scope": "group",
+            "groupName": "Group ADI for dl-alpha-tocopherol and d-alpha-tocopherol concentrate, singly or in combination",
+            "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/21"
+          },
+          {
+            "type": "group_ADI",
+            "value": 2,
+            "lower": null,
+            "upper": null,
+            "unit": "mg/kg bw/day",
+            "rawText": "0.15-2 mg/kg bw Comments: Group ADI for dl-alpha-tocopherol and d-alpha-tocopherol concentrate, singly or in combination. The lower value represents the daily dietary allowance recommended by the USA National Academy of Sciences/National Research Council. The upper value represents the maximum value for the ADI.",
+            "authority": "JECFA",
+            "year": 1986,
+            "scope": "group",
+            "groupName": "Group ADI for dl-alpha-tocopherol and d-alpha-tocopherol concentrate, singly or in combination",
+            "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/21"
+          }
+        ]
+      },
+      {
+        "code": "E334",
+        "riskLevel": "insufficient_data",
+        "groupValues": [
+          {
+            "type": "group_ADI",
+            "value": 30,
+            "lower": null,
+            "upper": null,
+            "unit": "mg/kg bw/day",
+            "rawText": "0-30 mg/kg bw Comments: At the 84th JECFA meeting the Committee concluded that the group ADI for L(+)-tartaric acid and its sodium, potassium, potassium sodium salts should also include metatartaric acid. As metatartaric acid undergoes enzymatic hydrolysis to tartaric acid prior to systemic absorption, the biochemical and toxicological data on tartaric acid considered at previous meetings are relevant to the safety assessment of metatartaric acid. Previously evaluated and new studies suggest no change to the group ADI previously established for L(+)-tartaric acid and its sodium, potassium and potassium–sodium salts, expressed as L(+)-tartaric acid. The Committee concluded that metatartaric acid (when used in winemaking) should be included in the group ADI of 0–30 mg/kg bw for L(+)-tartaric acid and its sodium, potassium, potassium–sodium salts, expressed as L(+)-tartaric acid.",
+            "authority": "JECFA",
+            "year": 2017,
+            "scope": "group",
+            "groupName": "group ADI for L(+)-tartaric acid and its sodium, potassium, potassium sodium salts should also include metatartaric acid",
+            "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/4746"
+          },
+          {
+            "type": "group_ADI",
+            "value": 30,
+            "lower": null,
+            "upper": null,
+            "unit": "mg/kg bw/day",
+            "rawText": "0-30 mg/kg bw Comments: Group ADI for L(+)-tartaric acid and its sodium, potassium, potassium sodium salts",
+            "authority": "JECFA",
+            "year": 1977,
+            "scope": "group",
+            "groupName": "Group ADI for L(+)-tartaric acid and its sodium, potassium, potassium sodium salts",
+            "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/4746"
+          }
+        ]
+      },
+      {
+        "code": "E353",
+        "riskLevel": "insufficient_data",
+        "groupValues": [
+          {
+            "type": "group_ADI",
+            "value": 30,
+            "lower": null,
+            "upper": null,
+            "unit": "mg/kg bw/day",
+            "rawText": "0-30 mg/kg bw Comments: As metatartaric acid undergoes enzymatic hydrolysis to tartaric acid prior to systemic absorption, the biochemical and toxicological data on tartaric acid considered at previous meetings are relevant to the safety assessment of metatartaric acid. Previously evaluated and new studies suggest no change to the group ADI previously established for L(+)-tartaric acid and its sodium, potassium and potassium–sodium salts, expressed as L(+)-tartaric acid. The Committee concluded that metatartaric acid (when used in winemaking) should be included in the group ADI of 0–30 mg/kg bw for L(+)-tartaric acid and its sodium, potassium, potassium–sodium salts, expressed as L(+)-tartaric acid.",
+            "authority": "JECFA",
+            "year": 2017,
+            "scope": "group",
+            "groupName": "group ADI previously established for L(+)-tartaric acid and its sodium, potassium and potassium–sodium salts, expressed as L(+)-tartaric acid",
+            "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/6462"
+          }
+        ]
+      },
+      {
+        "code": "E355",
+        "riskLevel": "insufficient_data",
+        "groupValues": [
+          {
+            "type": "group_ADI",
+            "value": 5,
+            "lower": null,
+            "upper": null,
+            "unit": "mg/kg bw/day",
+            "rawText": "0-5 mg/kg bw Comments: Considered for exposure only. Intake: JECFA noted that the estimates of dietary exposure calculated at the current meeting are overestimated for a number of reasons. JECFA concluded that most of these conservative dietary exposure estimates greatly exceed the current group ADI of 0–5 mg/kg bw. Further, JECFA noted that there is the potential for exceedances of the current group ADI as a result of normal daily consumption amounts of an individual food. JECFA noted that hazard assessment procedures have evolved and additional relevant data may have become available since the numerical ADI was established at its Ninth meeting in 1965, indicating that a re-evaluation of the toxicology of adipic acid is needed.",
+            "authority": "JECFA",
+            "year": 2025,
+            "scope": "group",
+            "groupName": "group ADI of 0–5 mg/kg bw",
+            "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/194"
+          },
+          {
+            "type": "group_ADI",
+            "value": null,
+            "lower": 5,
+            "upper": 5,
+            "unit": "mg/kg bw/day",
+            "rawText": "0-5 mg/kg bw (General use, 1977); No safety concern at current levels of intake when used as a flavouring agent (Flavour use, 1999) Comments: General use (1977): Group ADI of 0-5 mg/kg bw for adipic acid and its potassium, sodium and ammonium salts.",
+            "authority": "JECFA",
+            "year": 1999,
+            "scope": "group",
+            "groupName": "Group ADI of 0-5 mg/kg bw for adipic acid and its potassium, sodium and ammonium salts",
+            "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/194"
+          }
+        ]
+      },
+      {
+        "code": "E356",
+        "riskLevel": "insufficient_data",
+        "groupValues": [
+          {
+            "type": "group_ADI",
+            "value": 5,
+            "lower": null,
+            "upper": null,
+            "unit": "mg/kg bw/day",
+            "rawText": "0-5 mg/kg bw Comments: Group ADI for adipic acid and its potassium, sodium and ammonium salts",
+            "authority": "JECFA",
+            "year": 1977,
+            "scope": "group",
+            "groupName": "Group ADI for adipic acid and its potassium, sodium and ammonium salts",
+            "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2972"
+          }
+        ]
+      },
+      {
+        "code": "E357",
+        "riskLevel": "insufficient_data",
+        "groupValues": [
+          {
+            "type": "group_ADI",
+            "value": 5,
+            "lower": null,
+            "upper": null,
+            "unit": "mg/kg bw/day",
+            "rawText": "0-5 mg/kg bw Comments: Group ADI for adipic acid and its potassium, sodium and ammonium salts",
+            "authority": "JECFA",
+            "year": 1977,
+            "scope": "group",
+            "groupName": "Group ADI for adipic acid and its potassium, sodium and ammonium salts",
+            "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/3636"
+          }
+        ]
+      },
+      {
+        "code": "E432",
+        "riskLevel": "insufficient_data",
+        "groupValues": [
+          {
+            "type": "group_ADI",
+            "value": null,
+            "lower": 25,
+            "upper": 2500,
+            "unit": "mg/kg bw/day",
+            "rawText": "Group ADI of 0-25 mg/kg bw as total polyoxyethylene (20) sorbitan esters Comments: JECFA considered that the toxicological data reviewed support the previously identified NOAEL of 2500 mg/kg bw per day, the highest dose tested in two long-term toxicity studies in rats, used to establish the group ADI of 0–25 mg/kg bw for the polysorbates. JECFA therefore confirmed the group ADI of 0–25 mg/kg bw for the polyoxyethylene (20) sorbitan monoesters of lauric, oleic, palmitic and stearic acid and the triester of stearic acid. Intake: The highest estimate of dietary exposure was 24.5 mg/kg bw per day, for children aged 1–17 years in Europe. This estimate is within the upper bound of the group ADI. JECFA concluded that the use of polysorbates in accordance with the current uses and maximum levels in the GSFA does not pose a safety concern.",
+            "authority": "JECFA",
+            "year": 2026,
+            "scope": "group",
+            "groupName": "Group ADI of 0-25 mg/kg bw as total polyoxyethylene (20) sorbitan esters Comments: JECFA considered that the toxicological data reviewed support the previously identified NOAEL of 2500 mg/kg bw per day, the highest dose tested in two long-term toxicity studies in rats, used to establish the group ADI of 0–25 mg/kg bw for the polysorbates",
+            "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/1139"
+          },
+          {
+            "type": "group_ADI",
+            "value": null,
+            "lower": 25,
+            "upper": 2500,
+            "unit": "mg/kg bw/day",
+            "rawText": "Group ADI of 0-25 mg/kg bw as total polyoxyethylene (20) sorbitan esters Comments: JECFA considered that the toxicological data reviewed support the previously identified NOAEL of 2500 mg/kg bw per day, the highest dose tested in two long-term toxicity studies in rats, used to establish the group ADI of 0–25 mg/kg bw for the polysorbates. JECFA therefore confirmed the group ADI of 0–25 mg/kg bw for the polyoxyethylene (20) sorbitan monoesters of lauric, oleic, palmitic and stearic acid and the triester of stearic acid. Intake: The highest estimate of dietary exposure was 24.5 mg/kg bw per day, for children aged 1–17 years in Europe. This estimate is within the upper bound of the group ADI. JECFA concluded that the use of polysorbates in accordance with the current uses and maximum levels in the GSFA does not pose a safety concern.",
+            "authority": "JECFA",
+            "year": 2026,
+            "scope": "group",
+            "groupName": "Group ADI of 0-25 mg/kg bw as total polyoxyethylene (20) sorbitan esters Comments: JECFA considered that the toxicological data reviewed support the previously identified NOAEL of 2500 mg/kg bw per day, the highest dose tested in two long-term toxicity studies in rats, used to establish the group ADI of 0–25 mg/kg bw for the polysorbates",
+            "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/1139"
+          }
+        ]
+      },
+      {
+        "code": "E433",
+        "riskLevel": "insufficient_data",
+        "groupValues": [
+          {
+            "type": "group_ADI",
+            "value": null,
+            "lower": 25,
+            "upper": 2500,
+            "unit": "mg/kg bw/day",
+            "rawText": "Group ADI of 0-25 mg/kg bw as total polyoxyethylene (20) sorbitan esters Comments: JECFA considered that the toxicological data reviewed support the previously identified NOAEL of 2500 mg/kg bw per day, the highest dose tested in two long-term toxicity studies in rats, used to establish the group ADI of 0–25 mg/kg bw for the polysorbates. JECFA therefore confirmed the group ADI of 0–25 mg/kg bw for the polyoxyethylene (20) sorbitan monoesters of lauric, oleic, palmitic and stearic acid and the triester of stearic acid. Intake: The highest estimate of dietary exposure was 24.5 mg/kg bw per day, for children aged 1–17 years in Europe. This estimate is within the upper bound of the group ADI. JECFA concluded that the use of polysorbates in accordance with the current uses and maximum levels in the GSFA does not pose a safety concern.",
+            "authority": "JECFA",
+            "year": 2026,
+            "scope": "group",
+            "groupName": "Group ADI of 0-25 mg/kg bw as total polyoxyethylene (20) sorbitan esters Comments: JECFA considered that the toxicological data reviewed support the previously identified NOAEL of 2500 mg/kg bw per day, the highest dose tested in two long-term toxicity studies in rats, used to establish the group ADI of 0–25 mg/kg bw for the polysorbates",
+            "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2507"
+          },
+          {
+            "type": "group_ADI",
+            "value": null,
+            "lower": 25,
+            "upper": 2500,
+            "unit": "mg/kg bw/day",
+            "rawText": "Group ADI of 0-25 mg/kg bw as total polyoxyethylene (20) sorbitan esters Comments: JECFA considered that the toxicological data reviewed support the previously identified NOAEL of 2500 mg/kg bw per day, the highest dose tested in two long-term toxicity studies in rats, used to establish the group ADI of 0–25 mg/kg bw for the polysorbates. JECFA therefore confirmed the group ADI of 0–25 mg/kg bw for the polyoxyethylene (20) sorbitan monoesters of lauric, oleic, palmitic and stearic acid and the triester of stearic acid. Intake: The highest estimate of dietary exposure was 24.5 mg/kg bw per day, for children aged 1–17 years in Europe. This estimate is within the upper bound of the group ADI. JECFA concluded that the use of polysorbates in accordance with the current uses and maximum levels in the GSFA does not pose a safety concern.",
+            "authority": "JECFA",
+            "year": 2026,
+            "scope": "group",
+            "groupName": "Group ADI of 0-25 mg/kg bw as total polyoxyethylene (20) sorbitan esters Comments: JECFA considered that the toxicological data reviewed support the previously identified NOAEL of 2500 mg/kg bw per day, the highest dose tested in two long-term toxicity studies in rats, used to establish the group ADI of 0–25 mg/kg bw for the polysorbates",
+            "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2507"
+          }
+        ]
+      },
+      {
+        "code": "E434",
+        "riskLevel": "insufficient_data",
+        "groupValues": [
+          {
+            "type": "group_ADI",
+            "value": null,
+            "lower": 25,
+            "upper": 2500,
+            "unit": "mg/kg bw/day",
+            "rawText": "Group ADI of 0-25 mg/kg bw as total polyoxyethylene (20) sorbitan esters Comments: JECFA considered that the toxicological data reviewed support the previously identified NOAEL of 2500 mg/kg bw per day, the highest dose tested in two long-term toxicity studies in rats, used to establish the group ADI of 0–25 mg/kg bw for the polysorbates. JECFA therefore confirmed the group ADI of 0–25 mg/kg bw for the polyoxyethylene (20) sorbitan monoesters of lauric, oleic, palmitic and stearic acid and the triester of stearic acid. Intake: The highest estimate of dietary exposure was 24.5 mg/kg bw per day, for children aged 1–17 years in Europe. This estimate is within the upper bound of the group ADI. JECFA concluded that the use of polysorbates in accordance with the current uses and maximum levels in the GSFA does not pose a safety concern.",
+            "authority": "JECFA",
+            "year": 2026,
+            "scope": "group",
+            "groupName": "Group ADI of 0-25 mg/kg bw as total polyoxyethylene (20) sorbitan esters Comments: JECFA considered that the toxicological data reviewed support the previously identified NOAEL of 2500 mg/kg bw per day, the highest dose tested in two long-term toxicity studies in rats, used to establish the group ADI of 0–25 mg/kg bw for the polysorbates",
+            "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/396"
+          },
+          {
+            "type": "group_ADI",
+            "value": null,
+            "lower": 25,
+            "upper": 2500,
+            "unit": "mg/kg bw/day",
+            "rawText": "Group ADI of 0-25 mg/kg bw as total polyoxyethylene (20) sorbitan esters Comments: JECFA considered that the toxicological data reviewed support the previously identified NOAEL of 2500 mg/kg bw per day, the highest dose tested in two long-term toxicity studies in rats, used to establish the group ADI of 0–25 mg/kg bw for the polysorbates. JECFA therefore confirmed the group ADI of 0–25 mg/kg bw for the polyoxyethylene (20) sorbitan monoesters of lauric, oleic, palmitic and stearic acid and the triester of stearic acid. Intake: The highest estimate of dietary exposure was 24.5 mg/kg bw per day, for children aged 1–17 years in Europe. This estimate is within the upper bound of the group ADI. JECFA concluded that the use of polysorbates in accordance with the current uses and maximum levels in the GSFA does not pose a safety concern.",
+            "authority": "JECFA",
+            "year": 2026,
+            "scope": "group",
+            "groupName": "Group ADI of 0-25 mg/kg bw as total polyoxyethylene (20) sorbitan esters Comments: JECFA considered that the toxicological data reviewed support the previously identified NOAEL of 2500 mg/kg bw per day, the highest dose tested in two long-term toxicity studies in rats, used to establish the group ADI of 0–25 mg/kg bw for the polysorbates",
+            "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/396"
+          }
+        ]
+      },
+      {
+        "code": "E435",
+        "riskLevel": "insufficient_data",
+        "groupValues": [
+          {
+            "type": "group_ADI",
+            "value": null,
+            "lower": 25,
+            "upper": 2500,
+            "unit": "mg/kg bw/day",
+            "rawText": "Group ADI of 0-25 mg/kg bw as total polyoxyethylene (20) sorbitan esters Comments: JECFA considered that the toxicological data reviewed support the previously identified NOAEL of 2500 mg/kg bw per day, the highest dose tested in two long-term toxicity studies in rats, used to establish the group ADI of 0–25 mg/kg bw for the polysorbates. JECFA therefore confirmed the group ADI of 0–25 mg/kg bw for the polyoxyethylene (20) sorbitan monoesters of lauric, oleic, palmitic and stearic acid and the triester of stearic acid. Intake: The highest estimate of dietary exposure was 24.5 mg/kg bw per day, for children aged 1–17 years in Europe. This estimate is within the upper bound of the group ADI. JECFA concluded that the use of polysorbates in accordance with the current uses and maximum levels in the GSFA does not pose a safety concern.",
+            "authority": "JECFA",
+            "year": 2026,
+            "scope": "group",
+            "groupName": "Group ADI of 0-25 mg/kg bw as total polyoxyethylene (20) sorbitan esters Comments: JECFA considered that the toxicological data reviewed support the previously identified NOAEL of 2500 mg/kg bw per day, the highest dose tested in two long-term toxicity studies in rats, used to establish the group ADI of 0–25 mg/kg bw for the polysorbates",
+            "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/397"
+          },
+          {
+            "type": "group_ADI",
+            "value": null,
+            "lower": 25,
+            "upper": 2500,
+            "unit": "mg/kg bw/day",
+            "rawText": "Group ADI of 0-25 mg/kg bw as total polyoxyethylene (20) sorbitan esters Comments: JECFA considered that the toxicological data reviewed support the previously identified NOAEL of 2500 mg/kg bw per day, the highest dose tested in two long-term toxicity studies in rats, used to establish the group ADI of 0–25 mg/kg bw for the polysorbates. JECFA therefore confirmed the group ADI of 0–25 mg/kg bw for the polyoxyethylene (20) sorbitan monoesters of lauric, oleic, palmitic and stearic acid and the triester of stearic acid. Intake: The highest estimate of dietary exposure was 24.5 mg/kg bw per day, for children aged 1–17 years in Europe. This estimate is within the upper bound of the group ADI. JECFA concluded that the use of polysorbates in accordance with the current uses and maximum levels in the GSFA does not pose a safety concern.",
+            "authority": "JECFA",
+            "year": 2026,
+            "scope": "group",
+            "groupName": "Group ADI of 0-25 mg/kg bw as total polyoxyethylene (20) sorbitan esters Comments: JECFA considered that the toxicological data reviewed support the previously identified NOAEL of 2500 mg/kg bw per day, the highest dose tested in two long-term toxicity studies in rats, used to establish the group ADI of 0–25 mg/kg bw for the polysorbates",
+            "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/397"
+          }
+        ]
+      },
+      {
+        "code": "E436",
+        "riskLevel": "insufficient_data",
+        "groupValues": [
+          {
+            "type": "group_ADI",
+            "value": null,
+            "lower": 25,
+            "upper": 2500,
+            "unit": "mg/kg bw/day",
+            "rawText": "Group ADI of 0-25 mg/kg bw as total polyoxyethylene (20) sorbitan esters Comments: JECFA considered that the toxicological data reviewed support the previously identified NOAEL of 2500 mg/kg bw per day, the highest dose tested in two long-term toxicity studies in rats, used to establish the group ADI of 0–25 mg/kg bw for the polysorbates. JECFA therefore confirmed the group ADI of 0–25 mg/kg bw for the polyoxyethylene (20) sorbitan monoesters of lauric, oleic, palmitic and stearic acid and the triester of stearic acid. Intake: The highest estimate of dietary exposure was 24.5 mg/kg bw per day, for children aged 1–17 years in Europe. This estimate is within the upper bound of the group ADI. JECFA concluded that the use of polysorbates in accordance with the current uses and maximum levels in the GSFA does not pose a safety concern",
+            "authority": "JECFA",
+            "year": 2026,
+            "scope": "group",
+            "groupName": "Group ADI of 0-25 mg/kg bw as total polyoxyethylene (20) sorbitan esters Comments: JECFA considered that the toxicological data reviewed support the previously identified NOAEL of 2500 mg/kg bw per day, the highest dose tested in two long-term toxicity studies in rats, used to establish the group ADI of 0–25 mg/kg bw for the polysorbates",
+            "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2528"
+          },
+          {
+            "type": "group_ADI",
+            "value": null,
+            "lower": 25,
+            "upper": 2500,
+            "unit": "mg/kg bw/day",
+            "rawText": "Group ADI of 0-25 mg/kg bw as total polyoxyethylene (20) sorbitan esters Comments: JECFA considered that the toxicological data reviewed support the previously identified NOAEL of 2500 mg/kg bw per day, the highest dose tested in two long-term toxicity studies in rats, used to establish the group ADI of 0–25 mg/kg bw for the polysorbates. JECFA therefore confirmed the group ADI of 0–25 mg/kg bw for the polyoxyethylene (20) sorbitan monoesters of lauric, oleic, palmitic and stearic acid and the triester of stearic acid. Intake: The highest estimate of dietary exposure was 24.5 mg/kg bw per day, for children aged 1–17 years in Europe. This estimate is within the upper bound of the group ADI. JECFA concluded that the use of polysorbates in accordance with the current uses and maximum levels in the GSFA does not pose a safety concern",
+            "authority": "JECFA",
+            "year": 2026,
+            "scope": "group",
+            "groupName": "Group ADI of 0-25 mg/kg bw as total polyoxyethylene (20) sorbitan esters Comments: JECFA considered that the toxicological data reviewed support the previously identified NOAEL of 2500 mg/kg bw per day, the highest dose tested in two long-term toxicity studies in rats, used to establish the group ADI of 0–25 mg/kg bw for the polysorbates",
+            "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2528"
+          }
+        ]
+      },
+      {
+        "code": "E473",
+        "riskLevel": "insufficient_data",
+        "groupValues": [
+          {
+            "type": "group_ADI",
+            "value": 30,
+            "lower": null,
+            "upper": null,
+            "unit": "mg/kg bw/day",
+            "rawText": "0-30 mg/kg bw Comments: Group ADI for sucrose esters of fatty acids and sucroglycerides",
+            "authority": "JECFA",
+            "year": 1997,
+            "scope": "group",
+            "groupName": "Group ADI for sucrose esters of fatty acids and sucroglycerides",
+            "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2736"
+          },
+          {
+            "type": "group_ADI",
+            "value": 30,
+            "lower": null,
+            "upper": null,
+            "unit": "mg/kg bw/day",
+            "rawText": "0-30 mg/kg bw Comments: Group ADI for sucrose esters of fatty acids and sucroglycerides",
+            "authority": "JECFA",
+            "year": 1997,
+            "scope": "group",
+            "groupName": "Group ADI for sucrose esters of fatty acids and sucroglycerides",
+            "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2736"
+          },
+          {
+            "type": "group_ADI",
+            "value": null,
+            "lower": null,
+            "upper": null,
+            "unit": "mg/kg bw/day",
+            "rawText": "0–30 Comments: group ADI of 0–30 mg/kg body weight for sucrose esters of fatty acids, sucroglycerides and SOE type I and type II",
+            "authority": "JECFA",
+            "year": 2009,
+            "scope": "group",
+            "groupName": "group ADI of 0–30 mg/kg body weight for sucrose esters of fatty acids, sucroglycerides and SOE type I and type II",
+            "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2736"
+          }
+        ]
+      },
+      {
+        "code": "E474",
+        "riskLevel": "insufficient_data",
+        "groupValues": [
+          {
+            "type": "group_ADI",
+            "value": 30,
+            "lower": null,
+            "upper": null,
+            "unit": "mg/kg bw/day",
+            "rawText": "0-30 mg/kg bw Comments: Group ADI for sucrose esters of fatty acids and sucroglycerides",
+            "authority": "JECFA",
+            "year": 1997,
+            "scope": "group",
+            "groupName": "Group ADI for sucrose esters of fatty acids and sucroglycerides",
+            "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2341"
+          }
+        ]
+      },
+      {
+        "code": "E491",
+        "riskLevel": "insufficient_data",
+        "groupValues": [
+          {
+            "type": "group_ADI",
+            "value": 25,
+            "lower": null,
+            "upper": null,
+            "unit": "mg/kg bw/day",
+            "rawText": "0-25 mg/kg bw Comments: Considered for specification only. Group ADI. As the sum of the sorbitan esters of lauric, oleic, palmitic and stearic acid.",
+            "authority": "JECFA",
+            "year": 2020,
+            "scope": "group",
+            "groupName": "Group ADI",
+            "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2271"
+          },
+          {
+            "type": "group_ADI",
+            "value": 25,
+            "lower": null,
+            "upper": null,
+            "unit": "mg/kg bw/day",
+            "rawText": "0-25 mg/kg bw Comments: Group ADI. As the sum of the sorbitan esters of lauric, oleic, palmitic and stearic acid",
+            "authority": "JECFA",
+            "year": 1973,
+            "scope": "group",
+            "groupName": "Group ADI",
+            "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2271"
+          }
+        ]
+      },
+      {
+        "code": "E492",
+        "riskLevel": "insufficient_data",
+        "groupValues": [
+          {
+            "type": "group_ADI",
+            "value": 25,
+            "lower": null,
+            "upper": null,
+            "unit": "mg/kg bw/day",
+            "rawText": "0-25 mg/kg bw Comments: Considered for specification only. Group ADI as the sum of the sorbitan esters of lauric, oleic, palmitic and stearic acid.",
+            "authority": "JECFA",
+            "year": 2020,
+            "scope": "group",
+            "groupName": "Group ADI as the sum of the sorbitan esters of lauric, oleic, palmitic and stearic acid",
+            "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/3983"
+          },
+          {
+            "type": "group_ADI",
+            "value": 25,
+            "lower": null,
+            "upper": null,
+            "unit": "mg/kg bw/day",
+            "rawText": "0-25 mg/kg bw Comments: Group ADI. As the sum of the sorbitan esters of lauric, oleic, palmitic and stearic acid",
+            "authority": "JECFA",
+            "year": 1973,
+            "scope": "group",
+            "groupName": "Group ADI",
+            "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/3983"
+          }
+        ]
+      },
+      {
+        "code": "E493",
+        "riskLevel": "insufficient_data",
+        "groupValues": [
+          {
+            "type": "group_ADI",
+            "value": 25,
+            "lower": null,
+            "upper": null,
+            "unit": "mg/kg bw/day",
+            "rawText": "0-25 mg/kg bw Comments: Group ADI as the sum of the sorbitan esters of lauric, oleic, palmitic and stearic acid.",
+            "authority": "JECFA",
+            "year": 1982,
+            "scope": "group",
+            "groupName": "Group ADI as the sum of the sorbitan esters of lauric, oleic, palmitic and stearic acid",
+            "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/246"
+          },
+          {
+            "type": "group_ADI",
+            "value": 25,
+            "lower": null,
+            "upper": null,
+            "unit": "mg/kg bw/day",
+            "rawText": "0-25 mg/kg bw Comments: Group ADI as the sum of the sorbitan esters of lauric, oleic, palmitic and stearic acid.",
+            "authority": "JECFA",
+            "year": 1982,
+            "scope": "group",
+            "groupName": "Group ADI as the sum of the sorbitan esters of lauric, oleic, palmitic and stearic acid",
+            "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/246"
+          }
+        ]
+      },
+      {
+        "code": "E494",
+        "riskLevel": "insufficient_data",
+        "groupValues": [
+          {
+            "type": "group_ADI",
+            "value": 25,
+            "lower": null,
+            "upper": null,
+            "unit": "mg/kg bw/day",
+            "rawText": "0-25 mg/kg bw Comments: Group ADI. As the sum of the sorbitan esters of lauric, oleic, palmitic and stearic acid",
+            "authority": "JECFA",
+            "year": 1982,
+            "scope": "group",
+            "groupName": "Group ADI",
+            "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/3008"
+          }
+        ]
+      },
+      {
+        "code": "E495",
+        "riskLevel": "insufficient_data",
+        "groupValues": [
+          {
+            "type": "group_ADI",
+            "value": 25,
+            "lower": null,
+            "upper": null,
+            "unit": "mg/kg bw/day",
+            "rawText": "0-25 mg/kg bw Comments: Considered for specification only. Group ADI. As the sum of the sorbitan esters of lauric, oleic, palmitic and stearic acid.",
+            "authority": "JECFA",
+            "year": 2020,
+            "scope": "group",
+            "groupName": "Group ADI",
+            "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/3009"
+          },
+          {
+            "type": "group_ADI",
+            "value": 25,
+            "lower": null,
+            "upper": null,
+            "unit": "mg/kg bw/day",
+            "rawText": "0-25 mg/kg bw Comments: Group ADI. As the sum of the sorbitan esters of lauric, oleic, palmitic and stearic acid",
+            "authority": "JECFA",
+            "year": 1973,
+            "scope": "group",
+            "groupName": "Group ADI",
+            "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/3009"
+          }
+        ]
+      },
+      {
+        "code": "E905",
+        "riskLevel": "insufficient_data",
+        "groupValues": [
+          {
+            "type": "group_ADI",
+            "value": 20,
+            "lower": null,
+            "upper": null,
+            "unit": "mg/kg bw/day",
+            "rawText": "0-20 mg/kg bw Comments: Including HMPW (high-melting-point wax) and HSW (high-sulfur wax); Group ADI allocated to HMPW and HSW",
+            "authority": "JECFA",
+            "year": 1995,
+            "scope": "group",
+            "groupName": "Group ADI allocated to HMPW and HSW",
+            "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/282"
+          }
+        ]
+      },
+      {
+        "code": "E999",
+        "riskLevel": "insufficient_data",
+        "groupValues": [
+          {
+            "type": "group_ADI",
+            "value": null,
+            "lower": 1,
+            "upper": 500,
+            "unit": "mg/kg bw/day",
+            "rawText": "0-1 mg quillaia saponins/kg bw Comments: Group ADI with quillaia extract (type 2) Intake: An assessment of dietary exposure considered the additional use of quillaia extract type 1 in semi-frozen carbonated and non-carbonated beverages (up to 500 mg/kg product). Using a model diet approach, high-percentile consumption was estimated to lead to an exposure of 44 to 157% of the ADI, assuming the presence of quillaia extract type 1 at 295 mg/l in all water-based flavoured drinks. Using a probabilistic exposure assessment and assuming that the frequency and amount per eating occasion are independent variables, the estimated dietary exposure was below the ADI at the 90th percentile. Assuming 100% dependency between frequency and amount consumed, it was estimated that 100-700 individuals per million over the whole population could exceed the ADI under these conditions.",
+            "authority": "JECFA",
+            "year": 2005,
+            "scope": "group",
+            "groupName": "Group ADI with quillaia extract (type 2) Intake: An assessment of dietary exposure considered the additional use of quillaia extract type 1 in semi-frozen carbonated and non-carbonated beverages (up to 500 mg/kg product)",
+            "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2305"
+          },
+          {
+            "type": "group_ADI",
+            "value": 1,
+            "lower": null,
+            "upper": null,
+            "unit": "mg/kg bw/day",
+            "rawText": "0-1 mg quillaia saponins/kg bw Comments: Group ADI with quillaia extract (type 1)",
+            "authority": "JECFA",
+            "year": 2005,
+            "scope": "group",
+            "groupName": "Group ADI with quillaia extract (type 1)",
+            "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2305"
+          }
+        ]
+      }
+    ]
+  }
+}

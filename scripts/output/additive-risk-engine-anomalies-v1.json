@@ -1,0 +1,3431 @@
+{
+  "schemaVersion": "1.0",
+  "generatedAt": "2026-09-30T20:15:32.623Z",
+  "anomalies": {
+    "suspectedFalseSafe": [],
+    "suspectedOverclassification": [],
+    "suspectedUnderclassification": [],
+    "insufficientEvidenceForClassification": [
+      {
+        "code": "E102",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E104",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E122",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E123",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E124",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E127",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E129",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E131",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E132",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E133",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E142",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E150A",
+        "riskLevel": "limited",
+        "evidenceLevel": "moderate",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E150B",
+        "riskLevel": "limited",
+        "evidenceLevel": "moderate",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E150C",
+        "riskLevel": "limited",
+        "evidenceLevel": "moderate",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E150D",
+        "riskLevel": "limited",
+        "evidenceLevel": "moderate",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E151",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E153",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E155",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E160D",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E160E",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E161B",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E161G",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E163",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E171",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E172",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E174",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E175",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E180",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E203",
+        "riskLevel": "limited",
+        "evidenceLevel": "limited",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E210",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E212",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E213",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E214",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E218",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E220",
+        "riskLevel": "limited",
+        "evidenceLevel": "limited",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E221",
+        "riskLevel": "limited",
+        "evidenceLevel": "limited",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E222",
+        "riskLevel": "limited",
+        "evidenceLevel": "limited",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E223",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E224",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E227",
+        "riskLevel": "limited",
+        "evidenceLevel": "limited",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E228",
+        "riskLevel": "limited",
+        "evidenceLevel": "limited",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E234",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E235",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E239",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E242",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E243",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E246",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E249",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E251",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E252",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E260",
+        "riskLevel": "limited",
+        "evidenceLevel": "limited",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E261",
+        "riskLevel": "limited",
+        "evidenceLevel": "limited",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E263",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E267",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E280",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E281",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E282",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E283",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E284",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E290",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E296",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E297",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E301",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E302",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E306",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E307",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E308",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E309",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E310",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E315",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E316",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E319",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E320",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E321",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E322A",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E325",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E326",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E327",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E333",
+        "riskLevel": "limited",
+        "evidenceLevel": "limited",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E334",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E335",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E336",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E337",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E339",
+        "riskLevel": "limited",
+        "evidenceLevel": "limited",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E340",
+        "riskLevel": "limited",
+        "evidenceLevel": "limited",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E350",
+        "riskLevel": "limited",
+        "evidenceLevel": "limited",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E351",
+        "riskLevel": "limited",
+        "evidenceLevel": "limited",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E353",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E354",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E355",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E356",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E357",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E363",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E385",
+        "riskLevel": "limited",
+        "evidenceLevel": "limited",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E392",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E400",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E401",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E402",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E403",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E404",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E405",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E406",
+        "riskLevel": "limited",
+        "evidenceLevel": "limited",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E407A",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E410",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E412",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E413",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E414",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E415",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E416",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E417",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E418",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E421",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E422",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E423",
+        "riskLevel": "limited",
+        "evidenceLevel": "limited",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E426",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E427",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E431",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E432",
+        "riskLevel": "limited",
+        "evidenceLevel": "limited",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E433",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E434",
+        "riskLevel": "limited",
+        "evidenceLevel": "limited",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E435",
+        "riskLevel": "limited",
+        "evidenceLevel": "limited",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E436",
+        "riskLevel": "limited",
+        "evidenceLevel": "limited",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E440",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E444",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E452",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E456",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E459",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E460",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E461",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E462",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E463",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E464",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E465",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E468",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E469",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E470B",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E471",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E472A",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E472B",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E472C",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E472D",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E472E",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E472F",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E473",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E474",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E475",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E476",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E477",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E479B",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E481",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E482",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E483",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E491",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E492",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E493",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E494",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E495",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E500",
+        "riskLevel": "limited",
+        "evidenceLevel": "limited",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E501",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E507",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E508",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E509",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E511",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E512",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E513",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E514",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E515",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E516",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E517",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E520",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E521",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E522",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E523",
+        "riskLevel": "limited",
+        "evidenceLevel": "limited",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E524",
+        "riskLevel": "limited",
+        "evidenceLevel": "limited",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E525",
+        "riskLevel": "limited",
+        "evidenceLevel": "limited",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E526",
+        "riskLevel": "limited",
+        "evidenceLevel": "limited",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E527",
+        "riskLevel": "limited",
+        "evidenceLevel": "limited",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E528",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E529",
+        "riskLevel": "limited",
+        "evidenceLevel": "limited",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E530",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E535",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E536",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E538",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E541",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E551",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E552",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E553A",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E553B",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E554",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E555",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E556",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E558",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E559",
+        "riskLevel": "limited",
+        "evidenceLevel": "limited",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E576",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E585",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E586",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E620",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E621",
+        "riskLevel": "limited",
+        "evidenceLevel": "limited",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E623",
+        "riskLevel": "limited",
+        "evidenceLevel": "limited",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E625",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E626",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E627",
+        "riskLevel": "limited",
+        "evidenceLevel": "limited",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E629",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E631",
+        "riskLevel": "limited",
+        "evidenceLevel": "limited",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E633",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E634",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E635",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E641",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E900",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E901",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E902",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E903",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E904",
+        "riskLevel": "limited",
+        "evidenceLevel": "limited",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E905",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E907",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E912",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E920",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E926",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E927B",
+        "riskLevel": "limited",
+        "evidenceLevel": "limited",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E939",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E941",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E942",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E943A",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E943B",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E944",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E949",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E953",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E957",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E959",
+        "riskLevel": "limited",
+        "evidenceLevel": "limited",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E960D",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E961",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E962",
+        "riskLevel": "limited",
+        "evidenceLevel": "limited",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E964",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E965",
+        "riskLevel": "limited",
+        "evidenceLevel": "limited",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E966",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E967",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E968",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E969",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E999",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E1103",
+        "riskLevel": "limited",
+        "evidenceLevel": "limited",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E1105",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E1201",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E1202",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E1203",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E1204",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E1205",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E1206",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E1207",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E1208",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E1209",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E1450",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E1519",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      },
+      {
+        "code": "E1521",
+        "riskLevel": "limited",
+        "evidenceLevel": "strong",
+        "exposure": "unknown"
+      }
+    ],
+    "familyScopeConcern": [
+      {
+        "code": "E150A",
+        "riskLevel": "limited",
+        "familyOnly": false,
+        "assessmentScopes": [
+          "family",
+          "individual",
+          "individual",
+          "individual"
+        ]
+      },
+      {
+        "code": "E150B",
+        "riskLevel": "limited",
+        "familyOnly": false,
+        "assessmentScopes": [
+          "family"
+        ]
+      },
+      {
+        "code": "E150C",
+        "riskLevel": "limited",
+        "familyOnly": false,
+        "assessmentScopes": [
+          "family",
+          "individual",
+          "individual"
+        ]
+      },
+      {
+        "code": "E150D",
+        "riskLevel": "limited",
+        "familyOnly": false,
+        "assessmentScopes": [
+          "family"
+        ]
+      },
+      {
+        "code": "E160D",
+        "riskLevel": "limited",
+        "familyOnly": false,
+        "assessmentScopes": [
+          "individual",
+          "individual",
+          "individual",
+          "group",
+          "individual"
+        ]
+      },
+      {
+        "code": "E203",
+        "riskLevel": "limited",
+        "familyOnly": true,
+        "assessmentScopes": [
+          "group"
+        ]
+      },
+      {
+        "code": "E210",
+        "riskLevel": "limited",
+        "familyOnly": false,
+        "assessmentScopes": [
+          "individual",
+          "individual",
+          "group",
+          "individual",
+          "group",
+          "individual",
+          "group",
+          "individual",
+          "individual",
+          "group",
+          "individual",
+          "individual",
+          "individual",
+          "individual",
+          "individual",
+          "individual",
+          "group",
+          "individual",
+          "individual"
+        ]
+      },
+      {
+        "code": "E212",
+        "riskLevel": "limited",
+        "familyOnly": false,
+        "assessmentScopes": [
+          "individual",
+          "group",
+          "group"
+        ]
+      },
+      {
+        "code": "E213",
+        "riskLevel": "limited",
+        "familyOnly": false,
+        "assessmentScopes": [
+          "individual",
+          "group",
+          "group"
+        ]
+      },
+      {
+        "code": "E214",
+        "riskLevel": "limited",
+        "familyOnly": false,
+        "assessmentScopes": [
+          "individual",
+          "group",
+          "group",
+          "group"
+        ]
+      },
+      {
+        "code": "E218",
+        "riskLevel": "limited",
+        "familyOnly": false,
+        "assessmentScopes": [
+          "individual",
+          "group",
+          "group",
+          "group"
+        ]
+      },
+      {
+        "code": "E220",
+        "riskLevel": "limited",
+        "familyOnly": true,
+        "assessmentScopes": [
+          "group"
+        ]
+      },
+      {
+        "code": "E221",
+        "riskLevel": "limited",
+        "familyOnly": true,
+        "assessmentScopes": [
+          "group",
+          "group"
+        ]
+      },
+      {
+        "code": "E222",
+        "riskLevel": "limited",
+        "familyOnly": true,
+        "assessmentScopes": [
+          "group"
+        ]
+      },
+      {
+        "code": "E223",
+        "riskLevel": "limited",
+        "familyOnly": false,
+        "assessmentScopes": [
+          "individual",
+          "group",
+          "group",
+          "group"
+        ]
+      },
+      {
+        "code": "E224",
+        "riskLevel": "limited",
+        "familyOnly": false,
+        "assessmentScopes": [
+          "individual",
+          "group"
+        ]
+      },
+      {
+        "code": "E227",
+        "riskLevel": "limited",
+        "familyOnly": true,
+        "assessmentScopes": [
+          "group",
+          "group"
+        ]
+      },
+      {
+        "code": "E228",
+        "riskLevel": "limited",
+        "familyOnly": true,
+        "assessmentScopes": [
+          "group",
+          "group"
+        ]
+      },
+      {
+        "code": "E261",
+        "riskLevel": "limited",
+        "familyOnly": true,
+        "assessmentScopes": [
+          "group"
+        ]
+      },
+      {
+        "code": "E280",
+        "riskLevel": "limited",
+        "familyOnly": false,
+        "assessmentScopes": [
+          "individual",
+          "group",
+          "individual",
+          "individual",
+          "group",
+          "group",
+          "individual"
+        ]
+      },
+      {
+        "code": "E281",
+        "riskLevel": "limited",
+        "familyOnly": false,
+        "assessmentScopes": [
+          "individual",
+          "individual",
+          "group"
+        ]
+      },
+      {
+        "code": "E282",
+        "riskLevel": "limited",
+        "familyOnly": false,
+        "assessmentScopes": [
+          "individual",
+          "group",
+          "group"
+        ]
+      },
+      {
+        "code": "E283",
+        "riskLevel": "limited",
+        "familyOnly": false,
+        "assessmentScopes": [
+          "individual",
+          "group"
+        ]
+      },
+      {
+        "code": "E296",
+        "riskLevel": "limited",
+        "familyOnly": false,
+        "assessmentScopes": [
+          "individual",
+          "individual",
+          "individual",
+          "group",
+          "group"
+        ]
+      },
+      {
+        "code": "E297",
+        "riskLevel": "limited",
+        "familyOnly": true,
+        "assessmentScopes": [
+          "group",
+          "group",
+          "group",
+          "group",
+          "group"
+        ]
+      },
+      {
+        "code": "E301",
+        "riskLevel": "limited",
+        "familyOnly": false,
+        "assessmentScopes": [
+          "individual",
+          "individual",
+          "group"
+        ]
+      },
+      {
+        "code": "E302",
+        "riskLevel": "limited",
+        "familyOnly": false,
+        "assessmentScopes": [
+          "individual",
+          "group"
+        ]
+      },
+      {
+        "code": "E307",
+        "riskLevel": "limited",
+        "familyOnly": true,
+        "assessmentScopes": [
+          "group",
+          "group",
+          "individual",
+          "group",
+          "group",
+          "group",
+          "individual"
+        ]
+      },
+      {
+        "code": "E334",
+        "riskLevel": "limited",
+        "familyOnly": false,
+        "assessmentScopes": [
+          "individual",
+          "group",
+          "group"
+        ]
+      },
+      {
+        "code": "E350",
+        "riskLevel": "limited",
+        "familyOnly": true,
+        "assessmentScopes": [
+          "group",
+          "group",
+          "group",
+          "group"
+        ]
+      },
+      {
+        "code": "E351",
+        "riskLevel": "limited",
+        "familyOnly": true,
+        "assessmentScopes": [
+          "individual",
+          "group",
+          "individual",
+          "group",
+          "group",
+          "individual",
+          "group"
+        ]
+      },
+      {
+        "code": "E353",
+        "riskLevel": "limited",
+        "familyOnly": false,
+        "assessmentScopes": [
+          "individual",
+          "individual",
+          "group"
+        ]
+      },
+      {
+        "code": "E355",
+        "riskLevel": "limited",
+        "familyOnly": true,
+        "assessmentScopes": [
+          "group",
+          "group",
+          "individual"
+        ]
+      },
+      {
+        "code": "E356",
+        "riskLevel": "limited",
+        "familyOnly": true,
+        "assessmentScopes": [
+          "individual",
+          "group"
+        ]
+      },
+      {
+        "code": "E357",
+        "riskLevel": "limited",
+        "familyOnly": true,
+        "assessmentScopes": [
+          "individual",
+          "group"
+        ]
+      },
+      {
+        "code": "E432",
+        "riskLevel": "limited",
+        "familyOnly": true,
+        "assessmentScopes": [
+          "group",
+          "individual",
+          "group",
+          "individual"
+        ]
+      },
+      {
+        "code": "E433",
+        "riskLevel": "limited",
+        "familyOnly": false,
+        "assessmentScopes": [
+          "individual",
+          "group",
+          "individual",
+          "group",
+          "individual"
+        ]
+      },
+      {
+        "code": "E434",
+        "riskLevel": "limited",
+        "familyOnly": true,
+        "assessmentScopes": [
+          "group",
+          "individual",
+          "group",
+          "individual"
+        ]
+      },
+      {
+        "code": "E435",
+        "riskLevel": "limited",
+        "familyOnly": true,
+        "assessmentScopes": [
+          "group",
+          "individual",
+          "individual",
+          "group",
+          "individual",
+          "individual"
+        ]
+      },
+      {
+        "code": "E436",
+        "riskLevel": "limited",
+        "familyOnly": true,
+        "assessmentScopes": [
+          "group",
+          "individual",
+          "group",
+          "individual"
+        ]
+      },
+      {
+        "code": "E440",
+        "riskLevel": "limited",
+        "familyOnly": true,
+        "assessmentScopes": [
+          "individual",
+          "individual",
+          "group"
+        ]
+      },
+      {
+        "code": "E461",
+        "riskLevel": "limited",
+        "familyOnly": false,
+        "assessmentScopes": [
+          "individual",
+          "group",
+          "group",
+          "group",
+          "individual",
+          "group",
+          "group",
+          "group",
+          "group",
+          "group",
+          "group"
+        ]
+      },
+      {
+        "code": "E462",
+        "riskLevel": "limited",
+        "familyOnly": false,
+        "assessmentScopes": [
+          "individual",
+          "individual",
+          "group"
+        ]
+      },
+      {
+        "code": "E463",
+        "riskLevel": "limited",
+        "familyOnly": false,
+        "assessmentScopes": [
+          "individual",
+          "group",
+          "group",
+          "group",
+          "individual",
+          "group",
+          "group",
+          "group",
+          "group",
+          "group",
+          "group"
+        ]
+      },
+      {
+        "code": "E464",
+        "riskLevel": "limited",
+        "familyOnly": false,
+        "assessmentScopes": [
+          "individual",
+          "individual",
+          "individual",
+          "group"
+        ]
+      },
+      {
+        "code": "E465",
+        "riskLevel": "limited",
+        "familyOnly": false,
+        "assessmentScopes": [
+          "individual",
+          "group",
+          "group"
+        ]
+      },
+      {
+        "code": "E468",
+        "riskLevel": "limited",
+        "familyOnly": false,
+        "assessmentScopes": [
+          "individual",
+          "group"
+        ]
+      },
+      {
+        "code": "E469",
+        "riskLevel": "limited",
+        "familyOnly": false,
+        "assessmentScopes": [
+          "individual",
+          "group",
+          "group",
+          "group"
+        ]
+      },
+      {
+        "code": "E473",
+        "riskLevel": "limited",
+        "familyOnly": false,
+        "assessmentScopes": [
+          "individual",
+          "individual",
+          "individual",
+          "individual",
+          "individual",
+          "individual",
+          "group",
+          "individual",
+          "individual",
+          "group",
+          "individual",
+          "group"
+        ]
+      },
+      {
+        "code": "E474",
+        "riskLevel": "limited",
+        "familyOnly": false,
+        "assessmentScopes": [
+          "individual",
+          "individual",
+          "group"
+        ]
+      },
+      {
+        "code": "E491",
+        "riskLevel": "limited",
+        "familyOnly": false,
+        "assessmentScopes": [
+          "individual",
+          "group",
+          "group",
+          "group"
+        ]
+      },
+      {
+        "code": "E492",
+        "riskLevel": "limited",
+        "familyOnly": false,
+        "assessmentScopes": [
+          "individual",
+          "group",
+          "group",
+          "group"
+        ]
+      },
+      {
+        "code": "E493",
+        "riskLevel": "limited",
+        "familyOnly": false,
+        "assessmentScopes": [
+          "individual",
+          "group",
+          "group",
+          "group",
+          "group"
+        ]
+      },
+      {
+        "code": "E494",
+        "riskLevel": "limited",
+        "familyOnly": false,
+        "assessmentScopes": [
+          "individual",
+          "group",
+          "group"
+        ]
+      },
+      {
+        "code": "E495",
+        "riskLevel": "limited",
+        "familyOnly": false,
+        "assessmentScopes": [
+          "individual",
+          "group",
+          "group",
+          "group"
+        ]
+      },
+      {
+        "code": "E500",
+        "riskLevel": "limited",
+        "familyOnly": true,
+        "assessmentScopes": [
+          "individual",
+          "individual",
+          "group",
+          "individual",
+          "individual",
+          "individual",
+          "individual",
+          "group"
+        ]
+      },
+      {
+        "code": "E501",
+        "riskLevel": "limited",
+        "familyOnly": true,
+        "assessmentScopes": [
+          "group",
+          "group",
+          "individual"
+        ]
+      },
+      {
+        "code": "E508",
+        "riskLevel": "limited",
+        "familyOnly": false,
+        "assessmentScopes": [
+          "individual",
+          "group",
+          "group",
+          "group"
+        ]
+      },
+      {
+        "code": "E551",
+        "riskLevel": "limited",
+        "familyOnly": false,
+        "assessmentScopes": [
+          "individual",
+          "individual",
+          "individual",
+          "group",
+          "individual",
+          "individual",
+          "group"
+        ]
+      },
+      {
+        "code": "E552",
+        "riskLevel": "limited",
+        "familyOnly": false,
+        "assessmentScopes": [
+          "individual",
+          "individual",
+          "group"
+        ]
+      },
+      {
+        "code": "E554",
+        "riskLevel": "limited",
+        "familyOnly": false,
+        "assessmentScopes": [
+          "individual",
+          "individual",
+          "individual",
+          "group",
+          "individual",
+          "individual",
+          "group",
+          "individual",
+          "individual",
+          "group",
+          "individual",
+          "individual",
+          "group",
+          "individual",
+          "individual",
+          "group"
+        ]
+      },
+      {
+        "code": "E556",
+        "riskLevel": "limited",
+        "familyOnly": true,
+        "assessmentScopes": [
+          "individual",
+          "group",
+          "individual",
+          "group",
+          "individual",
+          "group",
+          "individual",
+          "group"
+        ]
+      },
+      {
+        "code": "E559",
+        "riskLevel": "limited",
+        "familyOnly": true,
+        "assessmentScopes": [
+          "individual",
+          "group",
+          "individual",
+          "group"
+        ]
+      },
+      {
+        "code": "E576",
+        "riskLevel": "limited",
+        "familyOnly": true,
+        "assessmentScopes": [
+          "group",
+          "group"
+        ]
+      },
+      {
+        "code": "E620",
+        "riskLevel": "limited",
+        "familyOnly": false,
+        "assessmentScopes": [
+          "individual",
+          "individual",
+          "group"
+        ]
+      },
+      {
+        "code": "E621",
+        "riskLevel": "limited",
+        "familyOnly": true,
+        "assessmentScopes": [
+          "group",
+          "group",
+          "group"
+        ]
+      },
+      {
+        "code": "E623",
+        "riskLevel": "limited",
+        "familyOnly": true,
+        "assessmentScopes": [
+          "group"
+        ]
+      },
+      {
+        "code": "E625",
+        "riskLevel": "limited",
+        "familyOnly": false,
+        "assessmentScopes": [
+          "individual",
+          "individual",
+          "group"
+        ]
+      },
+      {
+        "code": "E626",
+        "riskLevel": "limited",
+        "familyOnly": true,
+        "assessmentScopes": [
+          "group"
+        ]
+      },
+      {
+        "code": "E629",
+        "riskLevel": "limited",
+        "familyOnly": true,
+        "assessmentScopes": [
+          "group"
+        ]
+      },
+      {
+        "code": "E633",
+        "riskLevel": "limited",
+        "familyOnly": true,
+        "assessmentScopes": [
+          "group"
+        ]
+      },
+      {
+        "code": "E905",
+        "riskLevel": "limited",
+        "familyOnly": false,
+        "assessmentScopes": [
+          "individual",
+          "group",
+          "individual",
+          "individual",
+          "individual",
+          "group",
+          "individual",
+          "individual",
+          "individual",
+          "individual",
+          "group",
+          "individual",
+          "individual",
+          "group",
+          "individual"
+        ]
+      },
+      {
+        "code": "E957",
+        "riskLevel": "limited",
+        "familyOnly": false,
+        "assessmentScopes": [
+          "individual",
+          "group",
+          "individual"
+        ]
+      },
+      {
+        "code": "E964",
+        "riskLevel": "limited",
+        "familyOnly": false,
+        "assessmentScopes": [
+          "individual",
+          "group"
+        ]
+      },
+      {
+        "code": "E999",
+        "riskLevel": "limited",
+        "familyOnly": false,
+        "assessmentScopes": [
+          "individual",
+          "individual",
+          "group",
+          "individual",
+          "group"
+        ]
+      }
+    ],
+    "contaminantScopeConcern": [],
+    "groupAdiConcern": [
+      {
+        "code": "E203",
+        "riskLevel": "limited",
+        "groupValues": [
+          {
+            "type": "group_ADI",
+            "value": 25,
+            "lower": null,
+            "upper": null,
+            "unit": "mg/kg bw/day",
+            "rawText": "0-25 mg/kg bw Comments: Group ADI as the sum of sorbic acid and calcium, potassium and sodium sorbates (expressed as sorbic acid)",
+            "authority": "JECFA",
+            "year": 1973,
+            "scope": "group",
+            "groupName": "Group ADI as the sum of sorbic acid and calcium, potassium and sodium sorbates (expressed as sorbic acid)",
+            "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2088"
+          }
+        ]
+      },
+      {
+        "code": "E210",
+        "riskLevel": "limited",
+        "groupValues": [
+          {
+            "type": "group_ADI",
+            "value": null,
+            "lower": null,
+            "upper": null,
+            "unit": "mg/kg bw/day",
+            "rawText": "0–20 mg/kg bw Comments: Applying a chemical specific adjustment factor of 2 for interspecies toxicokinetics variation instead of the default factor of 4.0, the Committee established a group ADI of 0–20 mg/kg bw, which applies to benzoic acid, the benzoate salts (calcium, potassium and sodium), benzaldehyde, benzyl acetate, benzyl alcohol and benzyl benzoate, expressed as benzoic acid equivalents. The Committee withdrew the previous group ADI of 0–5 mg/kg bw.",
+            "authority": "JECFA",
+            "year": 2021,
+            "scope": "group",
+            "groupName": "group ADI of 0–20 mg/kg bw, which applies to benzoic acid, the benzoate salts (calcium, potassium and sodium), benzaldehyde, benzyl acetate, benzyl alcohol and benzyl benzoate, expressed as benzoic acid equivalents",
+            "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/126"
+          },
+          {
+            "type": "group_ADI",
+            "value": null,
+            "lower": null,
+            "upper": null,
+            "unit": "mg/kg bw/day",
+            "rawText": "0–20 mg/kg bw Comments: Applying a chemical specific adjustment factor of 2 for interspecies toxicokinetics variation instead of the default factor of 4.0, the Committee established a group ADI of 0–20 mg/kg bw, which applies to benzoic acid, the benzoate salts (calcium, potassium and sodium), benzaldehyde, benzyl acetate, benzyl alcohol and benzyl benzoate, expressed as benzoic acid equivalents. The Committee withdrew the previous group ADI of 0–5 mg/kg bw.",
+            "authority": "JECFA",
+            "year": 2021,
+            "scope": "group",
+            "groupName": "group ADI of 0–20 mg/kg bw, which applies to benzoic acid, the benzoate salts (calcium, potassium and sodium), benzaldehyde, benzyl acetate, benzyl alcohol and benzyl benzoate, expressed as benzoic acid equivalents",
+            "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/126"
+          },
+          {
+            "type": "group_ADI",
+            "value": null,
+            "lower": null,
+            "upper": null,
+            "unit": "mg/kg bw/day",
+            "rawText": "0–20 mg/kg bw Comments: Applying a chemical specific adjustment factor of 2 for interspecies toxicokinetics variation instead of the default factor of 4.0, the Committee established a group ADI of 0–20 mg/kg bw, which applies to benzoic acid, the benzoate salts (calcium, potassium and sodium), benzaldehyde, benzyl acetate, benzyl alcohol and benzyl benzoate, expressed as benzoic acid equivalents. The Committee withdrew the previous group ADI of 0–5 mg/kg bw.",
+            "authority": "JECFA",
+            "year": 2021,
+            "scope": "group",
+            "groupName": "group ADI of 0–20 mg/kg bw, which applies to benzoic acid, the benzoate salts (calcium, potassium and sodium), benzaldehyde, benzyl acetate, benzyl alcohol and benzyl benzoate, expressed as benzoic acid equivalents",
+            "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/126"
+          },
+          {
+            "type": "group_ADI",
+            "value": null,
+            "lower": null,
+            "upper": null,
+            "unit": "mg/kg bw/day",
+            "rawText": "0–20 mg/kg bw Comments: Applying a chemical specific adjustment factor of 2 for interspecies toxicokinetics variation instead of the default factor of 4.0, the Committee established a group ADI of 0–20 mg/kg bw, which applies to benzoic acid, the benzoate salts (calcium, potassium and sodium), benzaldehyde, benzyl acetate, benzyl alcohol and benzyl benzoate, expressed as benzoic acid equivalents. The Committee withdrew the previous group ADI of 0–5 mg/kg bw.",
+            "authority": "JECFA",
+            "year": 2021,
+            "scope": "group",
+            "groupName": "group ADI of 0–20 mg/kg bw, which applies to benzoic acid, the benzoate salts (calcium, potassium and sodium), benzaldehyde, benzyl acetate, benzyl alcohol and benzyl benzoate, expressed as benzoic acid equivalents",
+            "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/126"
+          },
+          {
+            "type": "group_ADI",
+            "value": null,
+            "lower": null,
+            "upper": null,
+            "unit": "mg/kg bw/day",
+            "rawText": "0–20 mg/kg bw Comments: Applying a chemical specific adjustment factor of 2 for interspecies toxicokinetics variation instead of the default factor of 4.0, the Committee established a group ADI of 0–20 mg/kg bw, which applies to benzoic acid, the benzoate salts (calcium, potassium and sodium), benzaldehyde, benzyl acetate, benzyl alcohol and benzyl benzoate, expressed as benzoic acid equivalents. The Committee withdrew the previous group ADI of 0–5 mg/kg bw.",
+            "authority": "JECFA",
+            "year": 2021,
+            "scope": "group",
+            "groupName": "group ADI of 0–20 mg/kg bw, which applies to benzoic acid, the benzoate salts (calcium, potassium and sodium), benzaldehyde, benzyl acetate, benzyl alcohol and benzyl benzoate, expressed as benzoic acid equivalents",
+            "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/126"
+          }
+        ]
+      },
+      {
+        "code": "E212",
+        "riskLevel": "limited",
+        "groupValues": [
+          {
+            "type": "group_ADI",
+            "value": null,
+            "lower": null,
+            "upper": null,
+            "unit": "mg/kg bw/day",
+            "rawText": "0–20 mg/kg bw Comments: Applying a chemical specific adjustment factor of 2 for interspecies toxicokinetics variation instead of the default factor of 4.0, the Committee established a group ADI of 0–20 mg/kg bw, which applies to benzoic acid, the benzoate salts (calcium, potassium and sodium), benzaldehyde, benzyl acetate, benzyl alcohol and benzyl benzoate, expressed as benzoic acid equivalents. The Committee withdrew the previous group ADI of 0–5 mg/kg bw.",
+            "authority": "JECFA",
+            "year": 2021,
+            "scope": "group",
+            "groupName": "group ADI of 0–20 mg/kg bw, which applies to benzoic acid, the benzoate salts (calcium, potassium and sodium), benzaldehyde, benzyl acetate, benzyl alcohol and benzyl benzoate, expressed as benzoic acid equivalents",
+            "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2283"
+          },
+          {
+            "type": "group_ADI",
+            "value": null,
+            "lower": 5,
+            "upper": 5,
+            "unit": "mg/kg bw/day",
+            "rawText": "0-5 mg/kg bw Comments: The 1996 group ADI of 0-5 mg/kg bw for benzoic acid, the benzoate salts (calcium, potassium and sodium), benzaldehyde, benzyl acetate, benzyl alcohol and benzyl benzoate, expressed as benzoic acid equivalents, was maintained at the fifty-seventh meeting (2001). Intake: See BENZOATES",
+            "authority": "JECFA",
+            "year": 1996,
+            "scope": "group",
+            "groupName": "group ADI of 0-5 mg/kg bw for benzoic acid, the benzoate salts (calcium, potassium and sodium), benzaldehyde, benzyl acetate, benzyl alcohol and benzyl benzoate, expressed as benzoic acid equivalents, was maintained at the fifty-seventh meeting (2001)",
+            "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2283"
+          }
+        ]
+      },
+      {
+        "code": "E213",
+        "riskLevel": "limited",
+        "groupValues": [
+          {
+            "type": "group_ADI",
+            "value": null,
+            "lower": 5,
+            "upper": 5,
+            "unit": "mg/kg bw/day",
+            "rawText": "0-5 mg/kg bw Comments: The 1996 group ADI of 0-5 mg/kg bw for benzoic acid, the benzoate salts (calcium, potassium and sodium), benzaldehyde, benzyl acetate, benzyl alcohol and benzyl benzoate, expressed as benzoic acid equivalents, was maintained at the fifty-seventh meeting (2001). Intake: See BENZOATES",
+            "authority": "JECFA",
+            "year": 1996,
+            "scope": "group",
+            "groupName": "group ADI of 0-5 mg/kg bw for benzoic acid, the benzoate salts (calcium, potassium and sodium), benzaldehyde, benzyl acetate, benzyl alcohol and benzyl benzoate, expressed as benzoic acid equivalents, was maintained at the fifty-seventh meeting (2001)",
+            "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/452"
+          },
+          {
+            "type": "group_ADI",
+            "value": null,
+            "lower": 5,
+            "upper": 5,
+            "unit": "mg/kg bw/day",
+            "rawText": "0-5 mg/kg bw Comments: The 1996 group ADI of 0-5 mg/kg bw for benzoic acid, the benzoate salts (calcium, potassium and sodium), benzaldehyde, benzyl acetate, benzyl alcohol and benzyl benzoate, expressed as benzoic acid equivalents, was maintained at the fifty-seventh meeting (2001). Intake: See BENZOATES",
+            "authority": "JECFA",
+            "year": 1996,
+            "scope": "group",
+            "groupName": "group ADI of 0-5 mg/kg bw for benzoic acid, the benzoate salts (calcium, potassium and sodium), benzaldehyde, benzyl acetate, benzyl alcohol and benzyl benzoate, expressed as benzoic acid equivalents, was maintained at the fifty-seventh meeting (2001)",
+            "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/452"
+          }
+        ]
+      },
+      {
+        "code": "E214",
+        "riskLevel": "limited",
+        "groupValues": [
+          {
+            "type": "group_ADI",
+            "value": 10,
+            "lower": null,
+            "upper": null,
+            "unit": "mg/kg bw/day",
+            "rawText": "0-10 mg/kg bw Comments: Group ADI as the sum of the ethyl and methyl esters of p-hydroxybenzoic acid. In view of the adverse effects in male rats, propyl paraben (propyl p-hydroxybenzoate) was excluded from the group ADI for the parabens used in food (TRS 940-JECFA 67/30, 2006)",
+            "authority": "JECFA",
+            "year": 1973,
+            "scope": "group",
+            "groupName": "Group ADI as the sum of the ethyl and methyl esters of p-hydroxybenzoic acid",
+            "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/371"
+          },
+          {
+            "type": "group_ADI",
+            "value": 10,
+            "lower": null,
+            "upper": null,
+            "unit": "mg/kg bw/day",
+            "rawText": "0-10 mg/kg bw Comments: Group ADI as the sum of the ethyl and methyl esters of p-hydroxybenzoic acid. In view of the adverse effects in male rats, propyl paraben (propyl p-hydroxybenzoate) was excluded from the group ADI for the parabens used in food (TRS 940-JECFA 67/30, 2006)",
+            "authority": "JECFA",
+            "year": 1973,
+            "scope": "group",
+            "groupName": "Group ADI as the sum of the ethyl and methyl esters of p-hydroxybenzoic acid",
+            "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/371"
+          },
+          {
+            "type": "group_ADI",
+            "value": 10,
+            "lower": null,
+            "upper": null,
+            "unit": "mg/kg bw/day",
+            "rawText": "0-10 mg/kg bw Comments: Group ADI as the sum of the ethyl and methyl esters of p-hydroxybenzoic acid. In view of the adverse effects in male rats, propyl paraben (propyl p-hydroxybenzoate) was excluded from the group ADI for the parabens used in food (TRS 940-JECFA 67/30, 2006)",
+            "authority": "JECFA",
+            "year": 1973,
+            "scope": "group",
+            "groupName": "Group ADI as the sum of the ethyl and methyl esters of p-hydroxybenzoic acid",
+            "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/371"
+          }
+        ]
+      },
+      {
+        "code": "E218",
+        "riskLevel": "limited",
+        "groupValues": [
+          {
+            "type": "group_ADI",
+            "value": 10,
+            "lower": null,
+            "upper": null,
+            "unit": "mg/kg bw/day",
+            "rawText": "0-10 mg/kg bw Comments: Group ADI as the sum of the ethyl and methyl esters of p-hydroxybenzoic acid. In view of the adverse effects in male rats, propyl paraben (propyl p-hydroxybenzoate) was excluded from the group ADI for the parabens used in food (TRS 940-JECFA 67/30, 2006)",
+            "authority": "JECFA",
+            "year": 1973,
+            "scope": "group",
+            "groupName": "Group ADI as the sum of the ethyl and methyl esters of p-hydroxybenzoic acid",
+            "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/342"
+          },
+          {
+            "type": "group_ADI",
+            "value": 10,
+            "lower": null,
+            "upper": null,
+            "unit": "mg/kg bw/day",
+            "rawText": "0-10 mg/kg bw Comments: Group ADI as the sum of the ethyl and methyl esters of p-hydroxybenzoic acid. In view of the adverse effects in male rats, propyl paraben (propyl p-hydroxybenzoate) was excluded from the group ADI for the parabens used in food (TRS 940-JECFA 67/30, 2006)",
+            "authority": "JECFA",
+            "year": 1973,
+            "scope": "group",
+            "groupName": "Group ADI as the sum of the ethyl and methyl esters of p-hydroxybenzoic acid",
+            "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/342"
+          },
+          {
+            "type": "group_ADI",
+            "value": 10,
+            "lower": null,
+            "upper": null,
+            "unit": "mg/kg bw/day",
+            "rawText": "0-10 mg/kg bw Comments: Group ADI as the sum of the ethyl and methyl esters of p-hydroxybenzoic acid. In view of the adverse effects in male rats, propyl paraben (propyl p-hydroxybenzoate) was excluded from the group ADI for the parabens used in food (TRS 940-JECFA 67/30, 2006)",
+            "authority": "JECFA",
+            "year": 1973,
+            "scope": "group",
+            "groupName": "Group ADI as the sum of the ethyl and methyl esters of p-hydroxybenzoic acid",
+            "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/342"
+          }
+        ]
+      },
+      {
+        "code": "E220",
+        "riskLevel": "limited",
+        "groupValues": [
+          {
+            "type": "group_ADI",
+            "value": 0.7,
+            "lower": null,
+            "upper": null,
+            "unit": "mg/kg bw/day",
+            "rawText": "0-0.7 mg/kg bw Comments: Group ADI, expressed as sulfur dioxide, for calcium hydrogen sulfite, calcium metabisulfite, calcium sulfite, potassium hydrogen sulfite, potassium metabisulfite, potassium sulfite, sodium hydrogen sulfite, sodium metabisulfite, sodium sulfite, sodium thiosulfate, and sulfur dioxide Intake: See SULFITES",
+            "authority": "JECFA",
+            "year": 1998,
+            "scope": "group",
+            "groupName": "Group ADI, expressed as sulfur dioxide, for calcium hydrogen sulfite, calcium metabisulfite, calcium sulfite, potassium hydrogen sulfite, potassium metabisulfite, potassium sulfite, sodium hydrogen sulfite, sodium metabisulfite, sodium sulfite, sodium thiosulfate, and sulfur dioxide Intake: See SULFITES",
+            "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/985"
+          }
+        ]
+      },
+      {
+        "code": "E221",
+        "riskLevel": "limited",
+        "groupValues": [
+          {
+            "type": "group_ADI",
+            "value": 0.7,
+            "lower": null,
+            "upper": null,
+            "unit": "mg/kg bw/day",
+            "rawText": "0-0.7 mg/kg bw Comments: Group ADI, expressed as sulfur dioxide, for calcium hydrogen sulfite, calcium metabisulfite, calcium sulfite, potassium hydrogen sulfite, potassium metabisulfite, potassium sulfite, sodium hydrogen sulfite, sodium metabisulfite, sodium sulfite, sodium thiosulfate, and sulfur dioxide Intake: See SULFITES",
+            "authority": "JECFA",
+            "year": 1998,
+            "scope": "group",
+            "groupName": "Group ADI, expressed as sulfur dioxide, for calcium hydrogen sulfite, calcium metabisulfite, calcium sulfite, potassium hydrogen sulfite, potassium metabisulfite, potassium sulfite, sodium hydrogen sulfite, sodium metabisulfite, sodium sulfite, sodium thiosulfate, and sulfur dioxide Intake: See SULFITES",
+            "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2821"
+          },
+          {
+            "type": "group_ADI",
+            "value": 0.7,
+            "lower": null,
+            "upper": null,
+            "unit": "mg/kg bw/day",
+            "rawText": "0-0.7 mg/kg bw Comments: Group ADI, expressed as sulfur dioxide, for calcium hydrogen sulfite, calcium metabisulfite, calcium sulfite, potassium hydrogen sulfite, potassium metabisulfite, potassium sulfite, sodium hydrogen sulfite, sodium metabisulfite, sodium sulfite, sodium thiosulfate, and sulfur dioxide Intake: See SULFITES",
+            "authority": "JECFA",
+            "year": 1998,
+            "scope": "group",
+            "groupName": "Group ADI, expressed as sulfur dioxide, for calcium hydrogen sulfite, calcium metabisulfite, calcium sulfite, potassium hydrogen sulfite, potassium metabisulfite, potassium sulfite, sodium hydrogen sulfite, sodium metabisulfite, sodium sulfite, sodium thiosulfate, and sulfur dioxide Intake: See SULFITES",
+            "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2821"
+          }
+        ]
+      },
+      {
+        "code": "E222",
+        "riskLevel": "limited",
+        "groupValues": [
+          {
+            "type": "group_ADI",
+            "value": 0.7,
+            "lower": null,
+            "upper": null,
+            "unit": "mg/kg bw/day",
+            "rawText": "0-0.7 mg/kg bw Comments: Group ADI, expressed as sulfur dioxide, for calcium hydrogen sulfite, calcium metabisulfite, calcium sulfite, potassium hydrogen sulfite, potassium metabisulfite, potassium sulfite, sodium hydrogen sulfite, sodium metabisulfite, sodium sulfite, sodium thiosulfate, and sulfur dioxide Intake: See SULFITES",
+            "authority": "JECFA",
+            "year": 1998,
+            "scope": "group",
+            "groupName": "Group ADI, expressed as sulfur dioxide, for calcium hydrogen sulfite, calcium metabisulfite, calcium sulfite, potassium hydrogen sulfite, potassium metabisulfite, potassium sulfite, sodium hydrogen sulfite, sodium metabisulfite, sodium sulfite, sodium thiosulfate, and sulfur dioxide Intake: See SULFITES",
+            "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2269"
+          }
+        ]
+      },
+      {
+        "code": "E223",
+        "riskLevel": "limited",
+        "groupValues": [
+          {
+            "type": "group_ADI",
+            "value": 0.7,
+            "lower": null,
+            "upper": null,
+            "unit": "mg/kg bw/day",
+            "rawText": "0-0.7 mg/kg bw Comments: Group ADI, expressed as sulfur dioxide, for calcium hydrogen sulfite, calcium metabisulfite, calcium sulfite, potassium hydrogen sulfite, potassium metabisulfite, potassium sulfite, sodium hydrogen sulfite, sodium metabisulfite, sodium sulfite, sodium thiosulfate, and sulfur dioxide Intake: See SULFITES",
+            "authority": "JECFA",
+            "year": 1998,
+            "scope": "group",
+            "groupName": "Group ADI, expressed as sulfur dioxide, for calcium hydrogen sulfite, calcium metabisulfite, calcium sulfite, potassium hydrogen sulfite, potassium metabisulfite, potassium sulfite, sodium hydrogen sulfite, sodium metabisulfite, sodium sulfite, sodium thiosulfate, and sulfur dioxide Intake: See SULFITES",
+            "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/1824"
+          },
+          {
+            "type": "group_ADI",
+            "value": 0.7,
+            "lower": null,
+            "upper": null,
+            "unit": "mg/kg bw/day",
+            "rawText": "0-0.7 mg/kg bw Comments: Group ADI, expressed as sulfur dioxide, for calcium hydrogen sulfite, calcium metabisulfite, calcium sulfite, potassium hydrogen sulfite, potassium metabisulfite, potassium sulfite, sodium hydrogen sulfite, sodium metabisulfite, sodium sulfite, sodium thiosulfate, and sulfur dioxide Intake: See SULFITES",
+            "authority": "JECFA",
+            "year": 1998,
+            "scope": "group",
+            "groupName": "Group ADI, expressed as sulfur dioxide, for calcium hydrogen sulfite, calcium metabisulfite, calcium sulfite, potassium hydrogen sulfite, potassium metabisulfite, potassium sulfite, sodium hydrogen sulfite, sodium metabisulfite, sodium sulfite, sodium thiosulfate, and sulfur dioxide Intake: See SULFITES",
+            "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/1824"
+          },
+          {
+            "type": "group_ADI",
+            "value": 0.7,
+            "lower": null,
+            "upper": null,
+            "unit": "mg/kg bw/day",
+            "rawText": "0-0.7 mg/kg bw Comments: Group ADI, expressed as sulfur dioxide, for calcium hydrogen sulfite, calcium metabisulfite, calcium sulfite, potassium hydrogen sulfite, potassium metabisulfite, potassium sulfite, sodium hydrogen sulfite, sodium metabisulfite, sodium sulfite, sodium thiosulfate, and sulfur dioxide Intake: See SULFITES",
+            "authority": "JECFA",
+            "year": 1998,
+            "scope": "group",
+            "groupName": "Group ADI, expressed as sulfur dioxide, for calcium hydrogen sulfite, calcium metabisulfite, calcium sulfite, potassium hydrogen sulfite, potassium metabisulfite, potassium sulfite, sodium hydrogen sulfite, sodium metabisulfite, sodium sulfite, sodium thiosulfate, and sulfur dioxide Intake: See SULFITES",
+            "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/1824"
+          }
+        ]
+      },
+      {
+        "code": "E224",
+        "riskLevel": "limited",
+        "groupValues": [
+          {
+            "type": "group_ADI",
+            "value": 0.7,
+            "lower": null,
+            "upper": null,
+            "unit": "mg/kg bw/day",
+            "rawText": "0-0.7 mg/kg bw Comments: Group ADI, expressed as sulfur dioxide, for calcium hydrogen sulfite, calcium metabisulfite, calcium sulfite, potassium hydrogen sulfite, potassium metabisulfite, potassium sulfite, sodium hydrogen sulfite, sodium metabisulfite, sodium sulfite, sodium thiosulfate, and sulfur dioxide Intake: See SULFITES",
+            "authority": "JECFA",
+            "year": 1998,
+            "scope": "group",
+            "groupName": "Group ADI, expressed as sulfur dioxide, for calcium hydrogen sulfite, calcium metabisulfite, calcium sulfite, potassium hydrogen sulfite, potassium metabisulfite, potassium sulfite, sodium hydrogen sulfite, sodium metabisulfite, sodium sulfite, sodium thiosulfate, and sulfur dioxide Intake: See SULFITES",
+            "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2272"
+          }
+        ]
+      },
+      {
+        "code": "E227",
+        "riskLevel": "limited",
+        "groupValues": [
+          {
+            "type": "group_ADI",
+            "value": 0.7,
+            "lower": null,
+            "upper": null,
+            "unit": "mg/kg bw/day",
+            "rawText": "0-0.7 mg/kg bw Comments: Group ADI, expressed as sulfur dioxide, for calcium hydrogen sulfite, calcium metabisulfite, calcium sulfite, potassium hydrogen sulfite, potassium metabisulfite, potassium sulfite, sodium hydrogen sulfite, sodium metabisulfite, sodium sulfite, sodium thiosulfate, and sulfur dioxide Intake: See SULFITES",
+            "authority": "JECFA",
+            "year": 1998,
+            "scope": "group",
+            "groupName": "Group ADI, expressed as sulfur dioxide, for calcium hydrogen sulfite, calcium metabisulfite, calcium sulfite, potassium hydrogen sulfite, potassium metabisulfite, potassium sulfite, sodium hydrogen sulfite, sodium metabisulfite, sodium sulfite, sodium thiosulfate, and sulfur dioxide Intake: See SULFITES",
+            "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/81"
+          },
+          {
+            "type": "group_ADI",
+            "value": 0.7,
+            "lower": null,
+            "upper": null,
+            "unit": "mg/kg bw/day",
+            "rawText": "0-0.7 mg/kg bw Comments: Group ADI, expressed as sulfur dioxide, for calcium hydrogen sulfite, calcium metabisulfite, calcium sulfite, potassium hydrogen sulfite, potassium metabisulfite, potassium sulfite, sodium hydrogen sulfite, sodium metabisulfite, sodium sulfite, sodium thiosulfate, and sulfur dioxide Intake: See SULFITES",
+            "authority": "JECFA",
+            "year": 1998,
+            "scope": "group",
+            "groupName": "Group ADI, expressed as sulfur dioxide, for calcium hydrogen sulfite, calcium metabisulfite, calcium sulfite, potassium hydrogen sulfite, potassium metabisulfite, potassium sulfite, sodium hydrogen sulfite, sodium metabisulfite, sodium sulfite, sodium thiosulfate, and sulfur dioxide Intake: See SULFITES",
+            "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/81"
+          }
+        ]
+      },
+      {
+        "code": "E228",
+        "riskLevel": "limited",
+        "groupValues": [
+          {
+            "type": "group_ADI",
+            "value": 0.7,
+            "lower": null,
+            "upper": null,
+            "unit": "mg/kg bw/day",
+            "rawText": "0-0.7 mg/kg bw Comments: Considered for specification only. Group ADI, expressed as sulfur dioxide, for calcium hydrogen sulfite, calcium metabisulfite, calcium sulfite, potassium hydrogen sulfite, potassium metabisulfite, potassium sulfite, sodium hydrogen sulfite, sodium metabisulfite, sodium sulfite, sodium thiosulfate, and sulfur dioxide.",
+            "authority": "JECFA",
+            "year": 2026,
+            "scope": "group",
+            "groupName": "Group ADI, expressed as sulfur dioxide, for calcium hydrogen sulfite, calcium metabisulfite, calcium sulfite, potassium hydrogen sulfite, potassium metabisulfite, potassium sulfite, sodium hydrogen sulfite, sodium metabisulfite, sodium sulfite, sodium thiosulfate, and sulfur dioxide",
+            "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2445"
+          },
+          {
+            "type": "group_ADI",
+            "value": 0.7,
+            "lower": null,
+            "upper": null,
+            "unit": "mg/kg bw/day",
+            "rawText": "0-0.7 mg/kg bw Comments: Group ADI, expressed as sulfur dioxide, for calcium hydrogen sulfite, calcium metabisulfite, calcium sulfite, potassium hydrogen sulfite, potassium metabisulfite, potassium sulfite, sodium hydrogen sulfite, sodium metabisulfite, sodium sulfite, sodium thiosulfate, and sulfur dioxide Intake: See SULFITES",
+            "authority": "JECFA",
+            "year": 1998,
+            "scope": "group",
+            "groupName": "Group ADI, expressed as sulfur dioxide, for calcium hydrogen sulfite, calcium metabisulfite, calcium sulfite, potassium hydrogen sulfite, potassium metabisulfite, potassium sulfite, sodium hydrogen sulfite, sodium metabisulfite, sodium sulfite, sodium thiosulfate, and sulfur dioxide Intake: See SULFITES",
+            "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2445"
+          }
+        ]
+      },
+      {
+        "code": "E307",
+        "riskLevel": "limited",
+        "groupValues": [
+          {
+            "type": "group_ADI",
+            "value": 2,
+            "lower": null,
+            "upper": null,
+            "unit": "mg/kg bw/day",
+            "rawText": "0.15-2 mg/kg bw Comments: Group ADI for dl-alpha-tocopherol and d-alpha-tocopherol concentrate, singly or in combination. The lower value represents the daily dietary allowance recommended by the USA National Academy of Sciences/National Research Council. The upper value represents the maximum value for the ADI.",
+            "authority": "JECFA",
+            "year": 1986,
+            "scope": "group",
+            "groupName": "Group ADI for dl-alpha-tocopherol and d-alpha-tocopherol concentrate, singly or in combination",
+            "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/21"
+          },
+          {
+            "type": "group_ADI",
+            "value": 2,
+            "lower": null,
+            "upper": null,
+            "unit": "mg/kg bw/day",
+            "rawText": "0.15-2 mg/kg bw Comments: Group ADI for dl-alpha-tocopherol and d-alpha-tocopherol concentrate, singly or in combination. The lower value represents the daily dietary allowance recommended by the USA National Academy of Sciences/National Research Council. The upper value represents the maximum value for the ADI.",
+            "authority": "JECFA",
+            "year": 1986,
+            "scope": "group",
+            "groupName": "Group ADI for dl-alpha-tocopherol and d-alpha-tocopherol concentrate, singly or in combination",
+            "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/21"
+          },
+          {
+            "type": "group_ADI",
+            "value": 2,
+            "lower": null,
+            "upper": null,
+            "unit": "mg/kg bw/day",
+            "rawText": "0.15-2 mg/kg bw Comments: Group ADI for dl-alpha-tocopherol and d-alpha-tocopherol concentrate, singly or in combination. The lower value represents the daily dietary allowance recommended by the USA National Academy of Sciences/National Research Council. The upper value represents the maximum value for the ADI.",
+            "authority": "JECFA",
+            "year": 1986,
+            "scope": "group",
+            "groupName": "Group ADI for dl-alpha-tocopherol and d-alpha-tocopherol concentrate, singly or in combination",
+            "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/21"
+          },
+          {
+            "type": "group_ADI",
+            "value": 2,
+            "lower": null,
+            "upper": null,
+            "unit": "mg/kg bw/day",
+            "rawText": "0.15-2 mg/kg bw Comments: Group ADI for dl-alpha-tocopherol and d-alpha-tocopherol concentrate, singly or in combination. The lower value represents the daily dietary allowance recommended by the USA National Academy of Sciences/National Research Council. The upper value represents the maximum value for the ADI.",
+            "authority": "JECFA",
+            "year": 1986,
+            "scope": "group",
+            "groupName": "Group ADI for dl-alpha-tocopherol and d-alpha-tocopherol concentrate, singly or in combination",
+            "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/21"
+          },
+          {
+            "type": "group_ADI",
+            "value": 2,
+            "lower": null,
+            "upper": null,
+            "unit": "mg/kg bw/day",
+            "rawText": "0.15-2 mg/kg bw Comments: Group ADI for dl-alpha-tocopherol and d-alpha-tocopherol concentrate, singly or in combination. The lower value represents the daily dietary allowance recommended by the USA National Academy of Sciences/National Research Council. The upper value represents the maximum value for the ADI.",
+            "authority": "JECFA",
+            "year": 1986,
+            "scope": "group",
+            "groupName": "Group ADI for dl-alpha-tocopherol and d-alpha-tocopherol concentrate, singly or in combination",
+            "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/21"
+          }
+        ]
+      },
+      {
+        "code": "E334",
+        "riskLevel": "limited",
+        "groupValues": [
+          {
+            "type": "group_ADI",
+            "value": 30,
+            "lower": null,
+            "upper": null,
+            "unit": "mg/kg bw/day",
+            "rawText": "0-30 mg/kg bw Comments: At the 84th JECFA meeting the Committee concluded that the group ADI for L(+)-tartaric acid and its sodium, potassium, potassium sodium salts should also include metatartaric acid. As metatartaric acid undergoes enzymatic hydrolysis to tartaric acid prior to systemic absorption, the biochemical and toxicological data on tartaric acid considered at previous meetings are relevant to the safety assessment of metatartaric acid. Previously evaluated and new studies suggest no change to the group ADI previously established for L(+)-tartaric acid and its sodium, potassium and potassium–sodium salts, expressed as L(+)-tartaric acid. The Committee concluded that metatartaric acid (when used in winemaking) should be included in the group ADI of 0–30 mg/kg bw for L(+)-tartaric acid and its sodium, potassium, potassium–sodium salts, expressed as L(+)-tartaric acid.",
+            "authority": "JECFA",
+            "year": 2017,
+            "scope": "group",
+            "groupName": "group ADI for L(+)-tartaric acid and its sodium, potassium, potassium sodium salts should also include metatartaric acid",
+            "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/4746"
+          },
+          {
+            "type": "group_ADI",
+            "value": 30,
+            "lower": null,
+            "upper": null,
+            "unit": "mg/kg bw/day",
+            "rawText": "0-30 mg/kg bw Comments: Group ADI for L(+)-tartaric acid and its sodium, potassium, potassium sodium salts",
+            "authority": "JECFA",
+            "year": 1977,
+            "scope": "group",
+            "groupName": "Group ADI for L(+)-tartaric acid and its sodium, potassium, potassium sodium salts",
+            "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/4746"
+          }
+        ]
+      },
+      {
+        "code": "E353",
+        "riskLevel": "limited",
+        "groupValues": [
+          {
+            "type": "group_ADI",
+            "value": 30,
+            "lower": null,
+            "upper": null,
+            "unit": "mg/kg bw/day",
+            "rawText": "0-30 mg/kg bw Comments: As metatartaric acid undergoes enzymatic hydrolysis to tartaric acid prior to systemic absorption, the biochemical and toxicological data on tartaric acid considered at previous meetings are relevant to the safety assessment of metatartaric acid. Previously evaluated and new studies suggest no change to the group ADI previously established for L(+)-tartaric acid and its sodium, potassium and potassium–sodium salts, expressed as L(+)-tartaric acid. The Committee concluded that metatartaric acid (when used in winemaking) should be included in the group ADI of 0–30 mg/kg bw for L(+)-tartaric acid and its sodium, potassium, potassium–sodium salts, expressed as L(+)-tartaric acid.",
+            "authority": "JECFA",
+            "year": 2017,
+            "scope": "group",
+            "groupName": "group ADI previously established for L(+)-tartaric acid and its sodium, potassium and potassium–sodium salts, expressed as L(+)-tartaric acid",
+            "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/6462"
+          }
+        ]
+      },
+      {
+        "code": "E355",
+        "riskLevel": "limited",
+        "groupValues": [
+          {
+            "type": "group_ADI",
+            "value": 5,
+            "lower": null,
+            "upper": null,
+            "unit": "mg/kg bw/day",
+            "rawText": "0-5 mg/kg bw Comments: Considered for exposure only. Intake: JECFA noted that the estimates of dietary exposure calculated at the current meeting are overestimated for a number of reasons. JECFA concluded that most of these conservative dietary exposure estimates greatly exceed the current group ADI of 0–5 mg/kg bw. Further, JECFA noted that there is the potential for exceedances of the current group ADI as a result of normal daily consumption amounts of an individual food. JECFA noted that hazard assessment procedures have evolved and additional relevant data may have become available since the numerical ADI was established at its Ninth meeting in 1965, indicating that a re-evaluation of the toxicology of adipic acid is needed.",
+            "authority": "JECFA",
+            "year": 2025,
+            "scope": "group",
+            "groupName": "group ADI of 0–5 mg/kg bw",
+            "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/194"
+          },
+          {
+            "type": "group_ADI",
+            "value": null,
+            "lower": 5,
+            "upper": 5,
+            "unit": "mg/kg bw/day",
+            "rawText": "0-5 mg/kg bw (General use, 1977); No safety concern at current levels of intake when used as a flavouring agent (Flavour use, 1999) Comments: General use (1977): Group ADI of 0-5 mg/kg bw for adipic acid and its potassium, sodium and ammonium salts.",
+            "authority": "JECFA",
+            "year": 1999,
+            "scope": "group",
+            "groupName": "Group ADI of 0-5 mg/kg bw for adipic acid and its potassium, sodium and ammonium salts",
+            "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/194"
+          }
+        ]
+      },
+      {
+        "code": "E356",
+        "riskLevel": "limited",
+        "groupValues": [
+          {
+            "type": "group_ADI",
+            "value": 5,
+            "lower": null,
+            "upper": null,
+            "unit": "mg/kg bw/day",
+            "rawText": "0-5 mg/kg bw Comments: Group ADI for adipic acid and its potassium, sodium and ammonium salts",
+            "authority": "JECFA",
+            "year": 1977,
+            "scope": "group",
+            "groupName": "Group ADI for adipic acid and its potassium, sodium and ammonium salts",
+            "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2972"
+          }
+        ]
+      },
+      {
+        "code": "E357",
+        "riskLevel": "limited",
+        "groupValues": [
+          {
+            "type": "group_ADI",
+            "value": 5,
+            "lower": null,
+            "upper": null,
+            "unit": "mg/kg bw/day",
+            "rawText": "0-5 mg/kg bw Comments: Group ADI for adipic acid and its potassium, sodium and ammonium salts",
+            "authority": "JECFA",
+            "year": 1977,
+            "scope": "group",
+            "groupName": "Group ADI for adipic acid and its potassium, sodium and ammonium salts",
+            "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/3636"
+          }
+        ]
+      },
+      {
+        "code": "E432",
+        "riskLevel": "limited",
+        "groupValues": [
+          {
+            "type": "group_ADI",
+            "value": null,
+            "lower": 25,
+            "upper": 2500,
+            "unit": "mg/kg bw/day",
+            "rawText": "Group ADI of 0-25 mg/kg bw as total polyoxyethylene (20) sorbitan esters Comments: JECFA considered that the toxicological data reviewed support the previously identified NOAEL of 2500 mg/kg bw per day, the highest dose tested in two long-term toxicity studies in rats, used to establish the group ADI of 0–25 mg/kg bw for the polysorbates. JECFA therefore confirmed the group ADI of 0–25 mg/kg bw for the polyoxyethylene (20) sorbitan monoesters of lauric, oleic, palmitic and stearic acid and the triester of stearic acid. Intake: The highest estimate of dietary exposure was 24.5 mg/kg bw per day, for children aged 1–17 years in Europe. This estimate is within the upper bound of the group ADI. JECFA concluded that the use of polysorbates in accordance with the current uses and maximum levels in the GSFA does not pose a safety concern.",
+            "authority": "JECFA",
+            "year": 2026,
+            "scope": "group",
+            "groupName": "Group ADI of 0-25 mg/kg bw as total polyoxyethylene (20) sorbitan esters Comments: JECFA considered that the toxicological data reviewed support the previously identified NOAEL of 2500 mg/kg bw per day, the highest dose tested in two long-term toxicity studies in rats, used to establish the group ADI of 0–25 mg/kg bw for the polysorbates",
+            "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/1139"
+          },
+          {
+            "type": "group_ADI",
+            "value": null,
+            "lower": 25,
+            "upper": 2500,
+            "unit": "mg/kg bw/day",
+            "rawText": "Group ADI of 0-25 mg/kg bw as total polyoxyethylene (20) sorbitan esters Comments: JECFA considered that the toxicological data reviewed support the previously identified NOAEL of 2500 mg/kg bw per day, the highest dose tested in two long-term toxicity studies in rats, used to establish the group ADI of 0–25 mg/kg bw for the polysorbates. JECFA therefore confirmed the group ADI of 0–25 mg/kg bw for the polyoxyethylene (20) sorbitan monoesters of lauric, oleic, palmitic and stearic acid and the triester of stearic acid. Intake: The highest estimate of dietary exposure was 24.5 mg/kg bw per day, for children aged 1–17 years in Europe. This estimate is within the upper bound of the group ADI. JECFA concluded that the use of polysorbates in accordance with the current uses and maximum levels in the GSFA does not pose a safety concern.",
+            "authority": "JECFA",
+            "year": 2026,
+            "scope": "group",
+            "groupName": "Group ADI of 0-25 mg/kg bw as total polyoxyethylene (20) sorbitan esters Comments: JECFA considered that the toxicological data reviewed support the previously identified NOAEL of 2500 mg/kg bw per day, the highest dose tested in two long-term toxicity studies in rats, used to establish the group ADI of 0–25 mg/kg bw for the polysorbates",
+            "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/1139"
+          }
+        ]
+      },
+      {
+        "code": "E433",
+        "riskLevel": "limited",
+        "groupValues": [
+          {
+            "type": "group_ADI",
+            "value": null,
+            "lower": 25,
+            "upper": 2500,
+            "unit": "mg/kg bw/day",
+            "rawText": "Group ADI of 0-25 mg/kg bw as total polyoxyethylene (20) sorbitan esters Comments: JECFA considered that the toxicological data reviewed support the previously identified NOAEL of 2500 mg/kg bw per day, the highest dose tested in two long-term toxicity studies in rats, used to establish the group ADI of 0–25 mg/kg bw for the polysorbates. JECFA therefore confirmed the group ADI of 0–25 mg/kg bw for the polyoxyethylene (20) sorbitan monoesters of lauric, oleic, palmitic and stearic acid and the triester of stearic acid. Intake: The highest estimate of dietary exposure was 24.5 mg/kg bw per day, for children aged 1–17 years in Europe. This estimate is within the upper bound of the group ADI. JECFA concluded that the use of polysorbates in accordance with the current uses and maximum levels in the GSFA does not pose a safety concern.",
+            "authority": "JECFA",
+            "year": 2026,
+            "scope": "group",
+            "groupName": "Group ADI of 0-25 mg/kg bw as total polyoxyethylene (20) sorbitan esters Comments: JECFA considered that the toxicological data reviewed support the previously identified NOAEL of 2500 mg/kg bw per day, the highest dose tested in two long-term toxicity studies in rats, used to establish the group ADI of 0–25 mg/kg bw for the polysorbates",
+            "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2507"
+          },
+          {
+            "type": "group_ADI",
+            "value": null,
+            "lower": 25,
+            "upper": 2500,
+            "unit": "mg/kg bw/day",
+            "rawText": "Group ADI of 0-25 mg/kg bw as total polyoxyethylene (20) sorbitan esters Comments: JECFA considered that the toxicological data reviewed support the previously identified NOAEL of 2500 mg/kg bw per day, the highest dose tested in two long-term toxicity studies in rats, used to establish the group ADI of 0–25 mg/kg bw for the polysorbates. JECFA therefore confirmed the group ADI of 0–25 mg/kg bw for the polyoxyethylene (20) sorbitan monoesters of lauric, oleic, palmitic and stearic acid and the triester of stearic acid. Intake: The highest estimate of dietary exposure was 24.5 mg/kg bw per day, for children aged 1–17 years in Europe. This estimate is within the upper bound of the group ADI. JECFA concluded that the use of polysorbates in accordance with the current uses and maximum levels in the GSFA does not pose a safety concern.",
+            "authority": "JECFA",
+            "year": 2026,
+            "scope": "group",
+            "groupName": "Group ADI of 0-25 mg/kg bw as total polyoxyethylene (20) sorbitan esters Comments: JECFA considered that the toxicological data reviewed support the previously identified NOAEL of 2500 mg/kg bw per day, the highest dose tested in two long-term toxicity studies in rats, used to establish the group ADI of 0–25 mg/kg bw for the polysorbates",
+            "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2507"
+          }
+        ]
+      },
+      {
+        "code": "E434",
+        "riskLevel": "limited",
+        "groupValues": [
+          {
+            "type": "group_ADI",
+            "value": null,
+            "lower": 25,
+            "upper": 2500,
+            "unit": "mg/kg bw/day",
+            "rawText": "Group ADI of 0-25 mg/kg bw as total polyoxyethylene (20) sorbitan esters Comments: JECFA considered that the toxicological data reviewed support the previously identified NOAEL of 2500 mg/kg bw per day, the highest dose tested in two long-term toxicity studies in rats, used to establish the group ADI of 0–25 mg/kg bw for the polysorbates. JECFA therefore confirmed the group ADI of 0–25 mg/kg bw for the polyoxyethylene (20) sorbitan monoesters of lauric, oleic, palmitic and stearic acid and the triester of stearic acid. Intake: The highest estimate of dietary exposure was 24.5 mg/kg bw per day, for children aged 1–17 years in Europe. This estimate is within the upper bound of the group ADI. JECFA concluded that the use of polysorbates in accordance with the current uses and maximum levels in the GSFA does not pose a safety concern.",
+            "authority": "JECFA",
+            "year": 2026,
+            "scope": "group",
+            "groupName": "Group ADI of 0-25 mg/kg bw as total polyoxyethylene (20) sorbitan esters Comments: JECFA considered that the toxicological data reviewed support the previously identified NOAEL of 2500 mg/kg bw per day, the highest dose tested in two long-term toxicity studies in rats, used to establish the group ADI of 0–25 mg/kg bw for the polysorbates",
+            "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/396"
+          },
+          {
+            "type": "group_ADI",
+            "value": null,
+            "lower": 25,
+            "upper": 2500,
+            "unit": "mg/kg bw/day",
+            "rawText": "Group ADI of 0-25 mg/kg bw as total polyoxyethylene (20) sorbitan esters Comments: JECFA considered that the toxicological data reviewed support the previously identified NOAEL of 2500 mg/kg bw per day, the highest dose tested in two long-term toxicity studies in rats, used to establish the group ADI of 0–25 mg/kg bw for the polysorbates. JECFA therefore confirmed the group ADI of 0–25 mg/kg bw for the polyoxyethylene (20) sorbitan monoesters of lauric, oleic, palmitic and stearic acid and the triester of stearic acid. Intake: The highest estimate of dietary exposure was 24.5 mg/kg bw per day, for children aged 1–17 years in Europe. This estimate is within the upper bound of the group ADI. JECFA concluded that the use of polysorbates in accordance with the current uses and maximum levels in the GSFA does not pose a safety concern.",
+            "authority": "JECFA",
+            "year": 2026,
+            "scope": "group",
+            "groupName": "Group ADI of 0-25 mg/kg bw as total polyoxyethylene (20) sorbitan esters Comments: JECFA considered that the toxicological data reviewed support the previously identified NOAEL of 2500 mg/kg bw per day, the highest dose tested in two long-term toxicity studies in rats, used to establish the group ADI of 0–25 mg/kg bw for the polysorbates",
+            "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/396"
+          }
+        ]
+      },
+      {
+        "code": "E435",
+        "riskLevel": "limited",
+        "groupValues": [
+          {
+            "type": "group_ADI",
+            "value": null,
+            "lower": 25,
+            "upper": 2500,
+            "unit": "mg/kg bw/day",
+            "rawText": "Group ADI of 0-25 mg/kg bw as total polyoxyethylene (20) sorbitan esters Comments: JECFA considered that the toxicological data reviewed support the previously identified NOAEL of 2500 mg/kg bw per day, the highest dose tested in two long-term toxicity studies in rats, used to establish the group ADI of 0–25 mg/kg bw for the polysorbates. JECFA therefore confirmed the group ADI of 0–25 mg/kg bw for the polyoxyethylene (20) sorbitan monoesters of lauric, oleic, palmitic and stearic acid and the triester of stearic acid. Intake: The highest estimate of dietary exposure was 24.5 mg/kg bw per day, for children aged 1–17 years in Europe. This estimate is within the upper bound of the group ADI. JECFA concluded that the use of polysorbates in accordance with the current uses and maximum levels in the GSFA does not pose a safety concern.",
+            "authority": "JECFA",
+            "year": 2026,
+            "scope": "group",
+            "groupName": "Group ADI of 0-25 mg/kg bw as total polyoxyethylene (20) sorbitan esters Comments: JECFA considered that the toxicological data reviewed support the previously identified NOAEL of 2500 mg/kg bw per day, the highest dose tested in two long-term toxicity studies in rats, used to establish the group ADI of 0–25 mg/kg bw for the polysorbates",
+            "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/397"
+          },
+          {
+            "type": "group_ADI",
+            "value": null,
+            "lower": 25,
+            "upper": 2500,
+            "unit": "mg/kg bw/day",
+            "rawText": "Group ADI of 0-25 mg/kg bw as total polyoxyethylene (20) sorbitan esters Comments: JECFA considered that the toxicological data reviewed support the previously identified NOAEL of 2500 mg/kg bw per day, the highest dose tested in two long-term toxicity studies in rats, used to establish the group ADI of 0–25 mg/kg bw for the polysorbates. JECFA therefore confirmed the group ADI of 0–25 mg/kg bw for the polyoxyethylene (20) sorbitan monoesters of lauric, oleic, palmitic and stearic acid and the triester of stearic acid. Intake: The highest estimate of dietary exposure was 24.5 mg/kg bw per day, for children aged 1–17 years in Europe. This estimate is within the upper bound of the group ADI. JECFA concluded that the use of polysorbates in accordance with the current uses and maximum levels in the GSFA does not pose a safety concern.",
+            "authority": "JECFA",
+            "year": 2026,
+            "scope": "group",
+            "groupName": "Group ADI of 0-25 mg/kg bw as total polyoxyethylene (20) sorbitan esters Comments: JECFA considered that the toxicological data reviewed support the previously identified NOAEL of 2500 mg/kg bw per day, the highest dose tested in two long-term toxicity studies in rats, used to establish the group ADI of 0–25 mg/kg bw for the polysorbates",
+            "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/397"
+          }
+        ]
+      },
+      {
+        "code": "E436",
+        "riskLevel": "limited",
+        "groupValues": [
+          {
+            "type": "group_ADI",
+            "value": null,
+            "lower": 25,
+            "upper": 2500,
+            "unit": "mg/kg bw/day",
+            "rawText": "Group ADI of 0-25 mg/kg bw as total polyoxyethylene (20) sorbitan esters Comments: JECFA considered that the toxicological data reviewed support the previously identified NOAEL of 2500 mg/kg bw per day, the highest dose tested in two long-term toxicity studies in rats, used to establish the group ADI of 0–25 mg/kg bw for the polysorbates. JECFA therefore confirmed the group ADI of 0–25 mg/kg bw for the polyoxyethylene (20) sorbitan monoesters of lauric, oleic, palmitic and stearic acid and the triester of stearic acid. Intake: The highest estimate of dietary exposure was 24.5 mg/kg bw per day, for children aged 1–17 years in Europe. This estimate is within the upper bound of the group ADI. JECFA concluded that the use of polysorbates in accordance with the current uses and maximum levels in the GSFA does not pose a safety concern",
+            "authority": "JECFA",
+            "year": 2026,
+            "scope": "group",
+            "groupName": "Group ADI of 0-25 mg/kg bw as total polyoxyethylene (20) sorbitan esters Comments: JECFA considered that the toxicological data reviewed support the previously identified NOAEL of 2500 mg/kg bw per day, the highest dose tested in two long-term toxicity studies in rats, used to establish the group ADI of 0–25 mg/kg bw for the polysorbates",
+            "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2528"
+          },
+          {
+            "type": "group_ADI",
+            "value": null,
+            "lower": 25,
+            "upper": 2500,
+            "unit": "mg/kg bw/day",
+            "rawText": "Group ADI of 0-25 mg/kg bw as total polyoxyethylene (20) sorbitan esters Comments: JECFA considered that the toxicological data reviewed support the previously identified NOAEL of 2500 mg/kg bw per day, the highest dose tested in two long-term toxicity studies in rats, used to establish the group ADI of 0–25 mg/kg bw for the polysorbates. JECFA therefore confirmed the group ADI of 0–25 mg/kg bw for the polyoxyethylene (20) sorbitan monoesters of lauric, oleic, palmitic and stearic acid and the triester of stearic acid. Intake: The highest estimate of dietary exposure was 24.5 mg/kg bw per day, for children aged 1–17 years in Europe. This estimate is within the upper bound of the group ADI. JECFA concluded that the use of polysorbates in accordance with the current uses and maximum levels in the GSFA does not pose a safety concern",
+            "authority": "JECFA",
+            "year": 2026,
+            "scope": "group",
+            "groupName": "Group ADI of 0-25 mg/kg bw as total polyoxyethylene (20) sorbitan esters Comments: JECFA considered that the toxicological data reviewed support the previously identified NOAEL of 2500 mg/kg bw per day, the highest dose tested in two long-term toxicity studies in rats, used to establish the group ADI of 0–25 mg/kg bw for the polysorbates",
+            "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2528"
+          }
+        ]
+      },
+      {
+        "code": "E473",
+        "riskLevel": "limited",
+        "groupValues": [
+          {
+            "type": "group_ADI",
+            "value": 30,
+            "lower": null,
+            "upper": null,
+            "unit": "mg/kg bw/day",
+            "rawText": "0-30 mg/kg bw Comments: Group ADI for sucrose esters of fatty acids and sucroglycerides",
+            "authority": "JECFA",
+            "year": 1997,
+            "scope": "group",
+            "groupName": "Group ADI for sucrose esters of fatty acids and sucroglycerides",
+            "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2736"
+          },
+          {
+            "type": "group_ADI",
+            "value": 30,
+            "lower": null,
+            "upper": null,
+            "unit": "mg/kg bw/day",
+            "rawText": "0-30 mg/kg bw Comments: Group ADI for sucrose esters of fatty acids and sucroglycerides",
+            "authority": "JECFA",
+            "year": 1997,
+            "scope": "group",
+            "groupName": "Group ADI for sucrose esters of fatty acids and sucroglycerides",
+            "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2736"
+          },
+          {
+            "type": "group_ADI",
+            "value": null,
+            "lower": null,
+            "upper": null,
+            "unit": "mg/kg bw/day",
+            "rawText": "0–30 Comments: group ADI of 0–30 mg/kg body weight for sucrose esters of fatty acids, sucroglycerides and SOE type I and type II",
+            "authority": "JECFA",
+            "year": 2009,
+            "scope": "group",
+            "groupName": "group ADI of 0–30 mg/kg body weight for sucrose esters of fatty acids, sucroglycerides and SOE type I and type II",
+            "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2736"
+          }
+        ]
+      },
+      {
+        "code": "E474",
+        "riskLevel": "limited",
+        "groupValues": [
+          {
+            "type": "group_ADI",
+            "value": 30,
+            "lower": null,
+            "upper": null,
+            "unit": "mg/kg bw/day",
+            "rawText": "0-30 mg/kg bw Comments: Group ADI for sucrose esters of fatty acids and sucroglycerides",
+            "authority": "JECFA",
+            "year": 1997,
+            "scope": "group",
+            "groupName": "Group ADI for sucrose esters of fatty acids and sucroglycerides",
+            "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2341"
+          }
+        ]
+      },
+      {
+        "code": "E491",
+        "riskLevel": "limited",
+        "groupValues": [
+          {
+            "type": "group_ADI",
+            "value": 25,
+            "lower": null,
+            "upper": null,
+            "unit": "mg/kg bw/day",
+            "rawText": "0-25 mg/kg bw Comments: Considered for specification only. Group ADI. As the sum of the sorbitan esters of lauric, oleic, palmitic and stearic acid.",
+            "authority": "JECFA",
+            "year": 2020,
+            "scope": "group",
+            "groupName": "Group ADI",
+            "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2271"
+          },
+          {
+            "type": "group_ADI",
+            "value": 25,
+            "lower": null,
+            "upper": null,
+            "unit": "mg/kg bw/day",
+            "rawText": "0-25 mg/kg bw Comments: Group ADI. As the sum of the sorbitan esters of lauric, oleic, palmitic and stearic acid",
+            "authority": "JECFA",
+            "year": 1973,
+            "scope": "group",
+            "groupName": "Group ADI",
+            "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2271"
+          }
+        ]
+      },
+      {
+        "code": "E492",
+        "riskLevel": "limited",
+        "groupValues": [
+          {
+            "type": "group_ADI",
+            "value": 25,
+            "lower": null,
+            "upper": null,
+            "unit": "mg/kg bw/day",
+            "rawText": "0-25 mg/kg bw Comments: Considered for specification only. Group ADI as the sum of the sorbitan esters of lauric, oleic, palmitic and stearic acid.",
+            "authority": "JECFA",
+            "year": 2020,
+            "scope": "group",
+            "groupName": "Group ADI as the sum of the sorbitan esters of lauric, oleic, palmitic and stearic acid",
+            "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/3983"
+          },
+          {
+            "type": "group_ADI",
+            "value": 25,
+            "lower": null,
+            "upper": null,
+            "unit": "mg/kg bw/day",
+            "rawText": "0-25 mg/kg bw Comments: Group ADI. As the sum of the sorbitan esters of lauric, oleic, palmitic and stearic acid",
+            "authority": "JECFA",
+            "year": 1973,
+            "scope": "group",
+            "groupName": "Group ADI",
+            "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/3983"
+          }
+        ]
+      },
+      {
+        "code": "E493",
+        "riskLevel": "limited",
+        "groupValues": [
+          {
+            "type": "group_ADI",
+            "value": 25,
+            "lower": null,
+            "upper": null,
+            "unit": "mg/kg bw/day",
+            "rawText": "0-25 mg/kg bw Comments: Group ADI as the sum of the sorbitan esters of lauric, oleic, palmitic and stearic acid.",
+            "authority": "JECFA",
+            "year": 1982,
+            "scope": "group",
+            "groupName": "Group ADI as the sum of the sorbitan esters of lauric, oleic, palmitic and stearic acid",
+            "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/246"
+          },
+          {
+            "type": "group_ADI",
+            "value": 25,
+            "lower": null,
+            "upper": null,
+            "unit": "mg/kg bw/day",
+            "rawText": "0-25 mg/kg bw Comments: Group ADI as the sum of the sorbitan esters of lauric, oleic, palmitic and stearic acid.",
+            "authority": "JECFA",
+            "year": 1982,
+            "scope": "group",
+            "groupName": "Group ADI as the sum of the sorbitan esters of lauric, oleic, palmitic and stearic acid",
+            "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/246"
+          }
+        ]
+      },
+      {
+        "code": "E494",
+        "riskLevel": "limited",
+        "groupValues": [
+          {
+            "type": "group_ADI",
+            "value": 25,
+            "lower": null,
+            "upper": null,
+            "unit": "mg/kg bw/day",
+            "rawText": "0-25 mg/kg bw Comments: Group ADI. As the sum of the sorbitan esters of lauric, oleic, palmitic and stearic acid",
+            "authority": "JECFA",
+            "year": 1982,
+            "scope": "group",
+            "groupName": "Group ADI",
+            "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/3008"
+          }
+        ]
+      },
+      {
+        "code": "E495",
+        "riskLevel": "limited",
+        "groupValues": [
+          {
+            "type": "group_ADI",
+            "value": 25,
+            "lower": null,
+            "upper": null,
+            "unit": "mg/kg bw/day",
+            "rawText": "0-25 mg/kg bw Comments: Considered for specification only. Group ADI. As the sum of the sorbitan esters of lauric, oleic, palmitic and stearic acid.",
+            "authority": "JECFA",
+            "year": 2020,
+            "scope": "group",
+            "groupName": "Group ADI",
+            "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/3009"
+          },
+          {
+            "type": "group_ADI",
+            "value": 25,
+            "lower": null,
+            "upper": null,
+            "unit": "mg/kg bw/day",
+            "rawText": "0-25 mg/kg bw Comments: Group ADI. As the sum of the sorbitan esters of lauric, oleic, palmitic and stearic acid",
+            "authority": "JECFA",
+            "year": 1973,
+            "scope": "group",
+            "groupName": "Group ADI",
+            "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/3009"
+          }
+        ]
+      },
+      {
+        "code": "E905",
+        "riskLevel": "limited",
+        "groupValues": [
+          {
+            "type": "group_ADI",
+            "value": 20,
+            "lower": null,
+            "upper": null,
+            "unit": "mg/kg bw/day",
+            "rawText": "0-20 mg/kg bw Comments: Including HMPW (high-melting-point wax) and HSW (high-sulfur wax); Group ADI allocated to HMPW and HSW",
+            "authority": "JECFA",
+            "year": 1995,
+            "scope": "group",
+            "groupName": "Group ADI allocated to HMPW and HSW",
+            "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/282"
+          }
+        ]
+      },
+      {
+        "code": "E999",
+        "riskLevel": "limited",
+        "groupValues": [
+          {
+            "type": "group_ADI",
+            "value": null,
+            "lower": 1,
+            "upper": 500,
+            "unit": "mg/kg bw/day",
+            "rawText": "0-1 mg quillaia saponins/kg bw Comments: Group ADI with quillaia extract (type 2) Intake: An assessment of dietary exposure considered the additional use of quillaia extract type 1 in semi-frozen carbonated and non-carbonated beverages (up to 500 mg/kg product). Using a model diet approach, high-percentile consumption was estimated to lead to an exposure of 44 to 157% of the ADI, assuming the presence of quillaia extract type 1 at 295 mg/l in all water-based flavoured drinks. Using a probabilistic exposure assessment and assuming that the frequency and amount per eating occasion are independent variables, the estimated dietary exposure was below the ADI at the 90th percentile. Assuming 100% dependency between frequency and amount consumed, it was estimated that 100-700 individuals per million over the whole population could exceed the ADI under these conditions.",
+            "authority": "JECFA",
+            "year": 2005,
+            "scope": "group",
+            "groupName": "Group ADI with quillaia extract (type 2) Intake: An assessment of dietary exposure considered the additional use of quillaia extract type 1 in semi-frozen carbonated and non-carbonated beverages (up to 500 mg/kg product)",
+            "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2305"
+          },
+          {
+            "type": "group_ADI",
+            "value": 1,
+            "lower": null,
+            "upper": null,
+            "unit": "mg/kg bw/day",
+            "rawText": "0-1 mg quillaia saponins/kg bw Comments: Group ADI with quillaia extract (type 1)",
+            "authority": "JECFA",
+            "year": 2005,
+            "scope": "group",
+            "groupName": "Group ADI with quillaia extract (type 1)",
+            "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2305"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,1290 @@
+{
+  "schemaVersion": "1.0",
+  "auditVersion": "16C-v1",
+  "generatedAt": "2026-09-30T23:26:54.974Z",
+  "mode": "offline-audit-only",
+  "engineSource": "src/features/boycott/additiveRiskEngine.ts",
+  "masterSource": "scripts/data/additives-scientific-master-v2-exposure.json",
+  "profileFieldCoverage": {
+    "datasetProfiles": 262,
+    "potentialEffects": 168,
+    "potentialEffectsWithSeverity": 168,
+    "potentialEffectsWithExploitableSeverity": 168,
+    "potentialEffectsWithEvidenceLevel": 168,
+    "potentialEffectsWithExploitableEvidenceLevel": 168,
+    "potentialEffectsAppliesToAdditive": 168,
+    "potentialEffectsAppliesToFamily": 0,
+    "potentialEffectsAppliesToContaminant": 9,
+    "potentialEffectsAppliesToMetabolite": 0,
+    "potentialEffectsAppliesToDegradationProduct": 0,
+    "authorityEvaluations": 253,
+    "efsa": 170,
+    "jecfa": 226,
+    "efsaAndJecfa": 143,
+    "profileEvidenceLevel": 262
+  },
+  "hazardEngineFieldUsage": {
+    "reads": [
+      "potentialEffects via allEffects()",
+      "effect.appliesTo",
+      "effect.severity",
+      "profile.assessment.severity",
+      "profile.evidenceLevel for none_identified fallback",
+      "healthEffects legacy fallback"
+    ],
+    "excludes": [
+      "effect.evidenceLevel for hazard level",
+      "effect.evidenceContext",
+      "effect.authority",
+      "effect.scope",
+      "assessmentScope directly",
+      "authority conclusion directly"
+    ]
+  },
+  "evidenceEngineFieldUsage": {
+    "reads": [
+      "profile.evidenceLevel",
+      "profile.assessment.evidenceStrength",
+      "potentialEffects via allEffects()",
+      "effect.evidenceLevel",
+      "effect.appliesTo",
+      "authorityEvaluations.assessmentScope",
+      "authorityEvaluations.coveredCodes"
+    ],
+    "excludes": [
+      "authorityEvaluations.authority for evidence strength",
+      "authorityEvaluations.conclusion",
+      "effect.evidenceContext",
+      "assessmentScope except family guard"
+    ]
+  },
+  "hazardBlockingReasonCounts": {
+    "CORRECTLY_CONSUMED": 168
+  },
+  "evidenceBlockingReasonCounts": {
+    "CORRECTLY_CONSUMED": 253,
+    "TRULY_INSUFFICIENT_EVIDENCE": 9
+  },
+  "profilesWithRelevantHazardDataIgnored": [],
+  "profilesWithRelevantEvidenceDataIgnored": [],
+  "explicitExposureProfiles": [
+    {
+      "code": "E161G",
+      "potentialEffects": [],
+      "rawPotentialEffects": [],
+      "profileEvidenceLevel": "strong",
+      "authorityEvaluations": [
+        {
+          "authority": "JECFA",
+          "conclusion": null,
+          "assessmentScope": "individual",
+          "coveredCodes": [
+            "E161G"
+          ]
+        }
+      ],
+      "authorities": [
+        "JECFA"
+      ],
+      "derivedHazard": {
+        "level": "none_identified",
+        "reasons": [
+          "Aucun danger pertinent identifié dans les signaux additifs disponibles."
+        ]
+      },
+      "derivedEvidence": {
+        "level": "strong",
+        "reasons": [
+          "Niveau de preuve normalisé : strong."
+        ]
+      },
+      "derivedExposure": {
+        "level": "concerning",
+        "reasons": [
+          "Structured exposure level: concerning.",
+          "JECFA: Intake estimates based on food additive levels in the draft General Standard for Food Additives being developed by the Codex Committee on Food Additives and Contaminants, integrated with national food consumption data, exceeded the ADI of 0-0.03 mg/kg bw.",
+          "JECFA: Indirect exposure through the use of canthaxanthin as a colourant in animal feeds is the major source of canthaxanthin in food.",
+          "JECFA: The Expert Committee concluded that long-term intake of canthaxanthin is unlikely to exceed the ADI."
+        ]
+      },
+      "sufficiency": {
+        "sufficient": true,
+        "missingSignals": [],
+        "availableSignals": [
+          "danger",
+          "evidence",
+          "exposure"
+        ],
+        "reasons": [
+          "Aucun danger pertinent identifié dans les signaux additifs disponibles.",
+          "Niveau de preuve normalisé : strong.",
+          "Structured exposure level: concerning.",
+          "JECFA: Intake estimates based on food additive levels in the draft General Standard for Food Additives being developed by the Codex Committee on Food Additives and Contaminants, integrated with national food consumption data, exceeded the ADI of 0-0.03 mg/kg bw.",
+          "JECFA: Indirect exposure through the use of canthaxanthin as a colourant in animal feeds is the major source of canthaxanthin in food.",
+          "JECFA: The Expert Committee concluded that long-term intake of canthaxanthin is unlikely to exceed the ADI."
+        ]
+      },
+      "finalEvaluation": {
+        "riskLevel": "insufficient_data",
+        "confidence": "medium",
+        "reasons": [
+          "Aucun danger pertinent identifié dans les signaux additifs disponibles.",
+          "Niveau de preuve normalisé : strong.",
+          "Structured exposure level: concerning.",
+          "JECFA: Intake estimates based on food additive levels in the draft General Standard for Food Additives being developed by the Codex Committee on Food Additives and Contaminants, integrated with national food consumption data, exceeded the ADI of 0-0.03 mg/kg bw.",
+          "JECFA: Indirect exposure through the use of canthaxanthin as a colourant in animal feeds is the major source of canthaxanthin in food.",
+          "JECFA: The Expert Committee concluded that long-term intake of canthaxanthin is unlikely to exceed the ADI."
+        ],
+        "evidenceSummary": "Preuves fortes disponibles.",
+        "exposureSummary": "0-0.03 mg/kg bw Intake: 1999, TRS 896-JECFA 53/97,122; FAS 44-JECFA 53/493. Intake estimates based on food additive levels in the draft General Standard for Food Additives being developed by the Codex Committee on Food Additives and Contaminants, integrated with national food consumption data, exceeded the ADI of 0-0.03 mg/kg bw. Indirect exposure through the use of canthaxanthin as a colourant in animal feeds is the major source of canthaxanthin in food. The Expert Committee concluded that long-term intake of canthaxanthin is unlikely to exceed the ADI.; 0-0.03 mg/kg; ADI"
+      },
+      "finalRisk": "insufficient_data",
+      "blockingReasons": [
+        "classification_matrix_no_matching_rule"
+      ]
+    },
+    {
+      "code": "E491",
+      "potentialEffects": [
+        {
+          "effect": "Discussion.Discussion: The Panel on Food Additives and Nutrient Sources added to Food (ANS) provides a scientific opinion re-evaluating the safety of sorbitan monostearate (E 491), sorbitan tristearate (E 492), sorbitan monolaurate (E 493), sorbitan monooleate (E 494) and sorbitan monopalmitate (E 495) when used as food additives. KeyInformation.KeyInformation: Mutagenic: Negative; Carcinogenic: Negative",
+          "severity": "none",
+          "evidenceLevel": "limited",
+          "appliesTo": "additive",
+          "evidenceContext": "food_additive_human"
+        },
+        {
+          "effect": "Discussion.Discussion: The Panel on Food Additives and Nutrient Sources added to Food (ANS) provides a scientific opinion re-evaluating the safety of sorbitan monostearate (E 491), sorbitan tristearate (E 492), sorbitan monolaurate (E 493), sorbitan monooleate (E 494) and sorbitan monopalmitate (E 495) when used as food additives. KeyInformation.KeyInformation: Genotoxic: Negative",
+          "severity": "none",
+          "evidenceLevel": "limited",
+          "appliesTo": "additive",
+          "evidenceContext": "food_additive_human"
+        }
+      ],
+      "rawPotentialEffects": [
+        {
+          "effect": "Discussion.Discussion: The Panel on Food Additives and Nutrient Sources added to Food (ANS) provides a scientific opinion re-evaluating the safety of sorbitan monostearate (E 491), sorbitan tristearate (E 492), sorbitan monolaurate (E 493), sorbitan monooleate (E 494) and sorbitan monopalmitate (E 495) when used as food additives. KeyInformation.KeyInformation: Mutagenic: Negative; Carcinogenic: Negative",
+          "severity": "none",
+          "evidenceLevel": "limited",
+          "appliesTo": "additive",
+          "evidenceContext": "food_additive_human"
+        },
+        {
+          "effect": "Discussion.Discussion: The Panel on Food Additives and Nutrient Sources added to Food (ANS) provides a scientific opinion re-evaluating the safety of sorbitan monostearate (E 491), sorbitan tristearate (E 492), sorbitan monolaurate (E 493), sorbitan monooleate (E 494) and sorbitan monopalmitate (E 495) when used as food additives. KeyInformation.KeyInformation: Genotoxic: Negative",
+          "severity": "none",
+          "evidenceLevel": "limited",
+          "appliesTo": "additive",
+          "evidenceContext": "food_additive_human"
+        }
+      ],
+      "profileEvidenceLevel": "strong",
+      "authorityEvaluations": [
+        {
+          "authority": "EFSA",
+          "conclusion": null,
+          "assessmentScope": "individual",
+          "coveredCodes": [
+            "E491"
+          ]
+        },
+        {
+          "authority": "JECFA",
+          "conclusion": null,
+          "assessmentScope": "group",
+          "coveredCodes": [
+            "E491"
+          ]
+        },
+        {
+          "authority": "JECFA",
+          "conclusion": null,
+          "assessmentScope": "group",
+          "coveredCodes": [
+            "E491"
+          ]
+        },
+        {
+          "authority": "JECFA",
+          "conclusion": null,
+          "assessmentScope": "group",
+          "coveredCodes": [
+            "E491"
+          ]
+        }
+      ],
+      "authorities": [
+        "EFSA",
+        "JECFA"
+      ],
+      "derivedHazard": {
+        "level": "none_identified",
+        "reasons": [
+          "Danger additif maximal observé : none."
+        ]
+      },
+      "derivedEvidence": {
+        "level": "limited",
+        "reasons": [
+          "Niveau de preuve normalisé : limited."
+        ]
+      },
+      "derivedExposure": {
+        "level": "below_concern",
+        "reasons": [
+          "Structured exposure level: below_concern.",
+          "Exposure scope: group.",
+          "JECFA: The highest dietary exposure estimate of 24 mg/kg bw per day for the sum of sorbitan esters of fatty acids using reported use levels is below the temporary group ADI of 0–25 mg/kg bw.",
+          "JECFA: JECFA therefore concluded that the highest exposure estimates, which are based on data from the EU, could be underestimated relative to exposure based on GSFA permissions.",
+          "Exposure uncertainty: JECFA therefore concluded that the highest exposure estimates, which are based on data from the EU, could be underestimated relative to exposure based on GSFA permissions."
+        ]
+      },
+      "sufficiency": {
+        "sufficient": true,
+        "missingSignals": [],
+        "availableSignals": [
+          "danger",
+          "evidence",
+          "exposure"
+        ],
+        "reasons": [
+          "Danger additif maximal observé : none.",
+          "Niveau de preuve normalisé : limited.",
+          "Structured exposure level: below_concern.",
+          "Exposure scope: group.",
+          "JECFA: The highest dietary exposure estimate of 24 mg/kg bw per day for the sum of sorbitan esters of fatty acids using reported use levels is below the temporary group ADI of 0–25 mg/kg bw.",
+          "JECFA: JECFA therefore concluded that the highest exposure estimates, which are based on data from the EU, could be underestimated relative to exposure based on GSFA permissions.",
+          "Exposure uncertainty: JECFA therefore concluded that the highest exposure estimates, which are based on data from the EU, could be underestimated relative to exposure based on GSFA permissions."
+        ]
+      },
+      "finalEvaluation": {
+        "riskLevel": "insufficient_data",
+        "confidence": "high",
+        "reasons": [
+          "Danger additif maximal observé : none.",
+          "Niveau de preuve normalisé : limited.",
+          "Structured exposure level: below_concern.",
+          "Exposure scope: group.",
+          "JECFA: The highest dietary exposure estimate of 24 mg/kg bw per day for the sum of sorbitan esters of fatty acids using reported use levels is below the temporary group ADI of 0–25 mg/kg bw.",
+          "JECFA: JECFA therefore concluded that the highest exposure estimates, which are based on data from the EU, could be underestimated relative to exposure based on GSFA permissions.",
+          "Exposure uncertainty: JECFA therefore concluded that the highest exposure estimates, which are based on data from the EU, could be underestimated relative to exposure based on GSFA permissions."
+        ],
+        "evidenceSummary": "Preuves limitées disponibles.",
+        "exposureSummary": "Temporary group ADI of 0-25 mg/kg bw as total polyoxyethylene (20) sorbitan esters Comments: The previous JECFA derived a group ADI of 0–25 mg/kg bw for the sum of sorbitan fatty acid esters (INS No. 491–495), based on the NOAEL of 2500 mg/kg bw per day and applying an uncertainty factor of 100. However, the genotoxicity studies available to the current JECFA provided an indication of the clastogenic effects of sorbitan monostearate, requiring further investigation. In the absence of the additional data that were available to EFSA, JECFA was not able to conclude on the potential for genotoxicity and withdrew the group ADI of 0–25 mg/kg bw, establishing a temporary group ADI of 0–25 mg/kg bw. Intake: The highest dietary exposure estimate of 24 mg/kg bw per day for the sum of sorbitan esters of fatty acids using reported use levels is below the temporary group ADI of 0–25 mg/kg bw. However, use levels for the sum of the five individual sorbitan esters of fatty acids were not considered for important food categories such as water-based flavoured drinks (carbonated, non-carbonated and concentrates), soybean-based beverages, dry and precooked pasta, or eggs and egg-based desserts because they were not available to JECFA. JECFA therefore concluded that the highest exposure estimates, which are based on data from the EU, could be underestimated relative to exposure based on GSFA permissions.; 0-25 mg/kg bw Comments: Considered for specification only. Group ADI. As the sum of the sorbitan esters of lauric, oleic, palmitic and stearic acid.; 0-25 mg/kg bw Comments: Group ADI. As the sum of the sorbitan esters of lauric, oleic, palmitic and stearic acid; 0–25 mg/kg"
+      },
+      "finalRisk": "insufficient_data",
+      "blockingReasons": [
+        "classification_matrix_no_matching_rule"
+      ]
+    },
+    {
+      "code": "E493",
+      "potentialEffects": [
+        {
+          "effect": "Discussion.Discussion: EFSA shall deliver an opinion on the safety for the target animals, consumer, user and the environment and on the efficacy of the product sorbitan monolaurate, when used under the proposed conditions of use (the additive is intended to be used as a emulsifier in feed materials and compound feed quantum satis but with a maximum content of 85 mg sorbitan monolaurate/kg complete feed). KeyInformation.KeyInformation: Mutagenic: Negative; Carcinogenic: No data",
+          "severity": "none",
+          "evidenceLevel": "limited",
+          "appliesTo": "additive",
+          "evidenceContext": "food_additive_human"
+        },
+        {
+          "effect": "Discussion.Discussion: The Panel on Food Additives and Nutrient Sources added to Food (ANS) provides a scientific opinion re-evaluating the safety of sorbitan monostearate (E 491), sorbitan tristearate (E 492), sorbitan monolaurate (E 493), sorbitan monooleate (E 494) and sorbitan monopalmitate (E 495) when used as food additives. KeyInformation.KeyInformation: Mutagenic: Negative; Carcinogenic: Negative",
+          "severity": "none",
+          "evidenceLevel": "limited",
+          "appliesTo": "additive",
+          "evidenceContext": "food_additive_human"
+        },
+        {
+          "effect": "Discussion.Discussion: The Panel on Food Additives and Nutrient Sources added to Food (ANS) provides a scientific opinion re-evaluating the safety of sorbitan monostearate (E 491), sorbitan tristearate (E 492), sorbitan monolaurate (E 493), sorbitan monooleate (E 494) and sorbitan monopalmitate (E 495) when used as food additives. KeyInformation.KeyInformation: Genotoxic: Negative",
+          "severity": "none",
+          "evidenceLevel": "limited",
+          "appliesTo": "additive",
+          "evidenceContext": "food_additive_human"
+        },
+        {
+          "effect": "Discussion.Discussion: EFSA shall deliver an opinion on the safety for the target animals, consumer, user and the environment and on the efficacy of the product sorbitan monolaurate, when used under the proposed conditions of use (the additive is intended to be used as a emulsifier in feed materials and compound feed quantum satis but with a maximum content of 85 mg sorbitan monolaurate/kg complete feed). KeyInformation.KeyInformation: Genotoxic: Negative",
+          "severity": "none",
+          "evidenceLevel": "limited",
+          "appliesTo": "additive",
+          "evidenceContext": "food_additive_human"
+        }
+      ],
+      "rawPotentialEffects": [
+        {
+          "effect": "Discussion.Discussion: EFSA shall deliver an opinion on the safety for the target animals, consumer, user and the environment and on the efficacy of the product sorbitan monolaurate, when used under the proposed conditions of use (the additive is intended to be used as a emulsifier in feed materials and compound feed quantum satis but with a maximum content of 85 mg sorbitan monolaurate/kg complete feed). KeyInformation.KeyInformation: Mutagenic: Negative; Carcinogenic: No data",
+          "severity": "none",
+          "evidenceLevel": "limited",
+          "appliesTo": "additive",
+          "evidenceContext": "food_additive_human"
+        },
+        {
+          "effect": "Discussion.Discussion: The Panel on Food Additives and Nutrient Sources added to Food (ANS) provides a scientific opinion re-evaluating the safety of sorbitan monostearate (E 491), sorbitan tristearate (E 492), sorbitan monolaurate (E 493), sorbitan monooleate (E 494) and sorbitan monopalmitate (E 495) when used as food additives. KeyInformation.KeyInformation: Mutagenic: Negative; Carcinogenic: Negative",
+          "severity": "none",
+          "evidenceLevel": "limited",
+          "appliesTo": "additive",
+          "evidenceContext": "food_additive_human"
+        },
+        {
+          "effect": "Discussion.Discussion: The Panel on Food Additives and Nutrient Sources added to Food (ANS) provides a scientific opinion re-evaluating the safety of sorbitan monostearate (E 491), sorbitan tristearate (E 492), sorbitan monolaurate (E 493), sorbitan monooleate (E 494) and sorbitan monopalmitate (E 495) when used as food additives. KeyInformation.KeyInformation: Genotoxic: Negative",
+          "severity": "none",
+          "evidenceLevel": "limited",
+          "appliesTo": "additive",
+          "evidenceContext": "food_additive_human"
+        },
+        {
+          "effect": "Discussion.Discussion: EFSA shall deliver an opinion on the safety for the target animals, consumer, user and the environment and on the efficacy of the product sorbitan monolaurate, when used under the proposed conditions of use (the additive is intended to be used as a emulsifier in feed materials and compound feed quantum satis but with a maximum content of 85 mg sorbitan monolaurate/kg complete feed). KeyInformation.KeyInformation: Genotoxic: Negative",
+          "severity": "none",
+          "evidenceLevel": "limited",
+          "appliesTo": "additive",
+          "evidenceContext": "food_additive_human"
+        }
+      ],
+      "profileEvidenceLevel": "strong",
+      "authorityEvaluations": [
+        {
+          "authority": "EFSA",
+          "conclusion": null,
+          "assessmentScope": "individual",
+          "coveredCodes": [
+            "E493"
+          ]
+        },
+        {
+          "authority": "JECFA",
+          "conclusion": null,
+          "assessmentScope": "group",
+          "coveredCodes": [
+            "E493"
+          ]
+        },
+        {
+          "authority": "JECFA",
+          "conclusion": null,
+          "assessmentScope": "group",
+          "coveredCodes": [
+            "E493"
+          ]
+        },
+        {
+          "authority": "JECFA",
+          "conclusion": null,
+          "assessmentScope": "group",
+          "coveredCodes": [
+            "E493"
+          ]
+        },
+        {
+          "authority": "JECFA",
+          "conclusion": null,
+          "assessmentScope": "group",
+          "coveredCodes": [
+            "E493"
+          ]
+        }
+      ],
+      "authorities": [
+        "EFSA",
+        "JECFA"
+      ],
+      "derivedHazard": {
+        "level": "none_identified",
+        "reasons": [
+          "Danger additif maximal observé : none."
+        ]
+      },
+      "derivedEvidence": {
+        "level": "limited",
+        "reasons": [
+          "Niveau de preuve normalisé : limited."
+        ]
+      },
+      "derivedExposure": {
+        "level": "below_concern",
+        "reasons": [
+          "Structured exposure level: below_concern.",
+          "Exposure scope: group.",
+          "JECFA: The highest dietary exposure estimate of 24 mg/kg bw per day for the sum of sorbitan esters of fatty acids using reported use levels is below the temporary group ADI of 0–25 mg/kg bw.",
+          "JECFA: JECFA therefore concluded that the highest exposure estimates, which are based on data from the EU, could be underestimated relative to exposure based on GSFA permissions.",
+          "Exposure uncertainty: JECFA therefore concluded that the highest exposure estimates, which are based on data from the EU, could be underestimated relative to exposure based on GSFA permissions."
+        ]
+      },
+      "sufficiency": {
+        "sufficient": true,
+        "missingSignals": [],
+        "availableSignals": [
+          "danger",
+          "evidence",
+          "exposure"
+        ],
+        "reasons": [
+          "Danger additif maximal observé : none.",
+          "Niveau de preuve normalisé : limited.",
+          "Structured exposure level: below_concern.",
+          "Exposure scope: group.",
+          "JECFA: The highest dietary exposure estimate of 24 mg/kg bw per day for the sum of sorbitan esters of fatty acids using reported use levels is below the temporary group ADI of 0–25 mg/kg bw.",
+          "JECFA: JECFA therefore concluded that the highest exposure estimates, which are based on data from the EU, could be underestimated relative to exposure based on GSFA permissions.",
+          "Exposure uncertainty: JECFA therefore concluded that the highest exposure estimates, which are based on data from the EU, could be underestimated relative to exposure based on GSFA permissions."
+        ]
+      },
+      "finalEvaluation": {
+        "riskLevel": "insufficient_data",
+        "confidence": "high",
+        "reasons": [
+          "Danger additif maximal observé : none.",
+          "Niveau de preuve normalisé : limited.",
+          "Structured exposure level: below_concern.",
+          "Exposure scope: group.",
+          "JECFA: The highest dietary exposure estimate of 24 mg/kg bw per day for the sum of sorbitan esters of fatty acids using reported use levels is below the temporary group ADI of 0–25 mg/kg bw.",
+          "JECFA: JECFA therefore concluded that the highest exposure estimates, which are based on data from the EU, could be underestimated relative to exposure based on GSFA permissions.",
+          "Exposure uncertainty: JECFA therefore concluded that the highest exposure estimates, which are based on data from the EU, could be underestimated relative to exposure based on GSFA permissions."
+        ],
+        "evidenceSummary": "Preuves limitées disponibles.",
+        "exposureSummary": "Assessment: low concern; Remarks: The results of three tolerance studies showed that dairy cows tolerated a concentration of 850 mg sorbitan monolaurate/kg feed (10x the proposed maximum content) and chickens for fattening and weaned piglets tolerated a concentration of 8,500 mg sorbitan monolaurate; other:; Aquatic animal not used for food production - unspecified; 89730da1-d927-4c49-9868-0f3de0646672; margin of safety; e003133e-a969-4a3b-add9-de20e9424804; Remarks: The result of the tolerance study showed that weaned piglets tolerated a concentration of 8,500 mg sorbitan monolaurate/kg feed (100x the proposed maximum content). The FEEDAP Panel therefore concludes that sorbitan monolaurate is safe for these animal species at the proposed maximum conten; Pigs - unspecified - Juvenile; 100; dimensionless; fe4b06c7-3078-4090-9f27-20429c02aa66; Remarks: The result of the tolerance study showed that chickens for fattening tolerated a concentration of 8,500 mg sorbitan monolaurate/kg feed (100x the proposed maximum content). The FEEDAP Panel therefore concludes that sorbitan monolaurate is safe for these animal species at the proposed maximu; chicken for fattening; Chicken broilers; Aquatic animal for food production - unspecified; Animal not used for food production - unspecified; Assessment: some concern; Remarks: Users are unlikely to be exposed to sorbitan monolaurate via inhalation. Sorbitan monolaurate is irritant to skin and eyes and it is not considered a skin sensitiser.; workers; 6b626c4f-d801-4bfd-b8f0-64258a8f48ef; Remarks: The result of the tolerance study showed that dairy cows tolerated a concentration of 850 mg sorbitan monolaurate/kg feed (10x the proposed maximum content). The FEEDAP Panel therefore concludes that sorbitan monolaurate is safe for these animal species at the proposed maximum content of 85; dairy cow; Cattle for milk production; 10; Animal for food production - unspecified; Assessment: low concern; Remarks: The EFSA Panel on Additives and Products or Substances used in Animal Feed (FEEDAP) concluded that sorbitan monolaurate is safe for all animal species at the proposed maximum content of 85 mg/kg complete feed and that the use of sorbitan monolaurate in animal nutrit; consumers; Temporary group ADI of 0-25 mg/kg bw as total polyoxyethylene (20) sorbitan esters Comments: The previous JECFA derived a group ADI of 0–25 mg/kg bw for the sum of sorbitan fatty acid esters (INS No. 491–495), based on the NOAEL of 2500 mg/kg bw per day and applying an uncertainty factor of 100. However, the genotoxicity studies available to the current JECFA provided an indication of the clastogenic effects of sorbitan monostearate, requiring further investigation. In the absence of the additional data that were available to EFSA, JECFA was not able to conclude on the potential for genotoxicity and withdrew the group ADI of 0–25 mg/kg bw, establishing a temporary group ADI of 0–25 mg/kg bw. Intake: The highest dietary exposure estimate of 24 mg/kg bw per day for the sum of sorbitan esters of fatty acids using reported use levels is below the temporary group ADI of 0–25 mg/kg bw. However, use levels for the sum of the five individual sorbitan esters of fatty acids were not considered for important food categories such as water-based flavoured drinks (carbonated, non-carbonated and concentrates), soybean-based beverages, dry and precooked pasta, or eggs and egg-based desserts because they were not available to JECFA. JECFA therefore concluded that the highest exposure estimates, which are based on data from the EU, could be underestimated relative to exposure based on GSFA permissions.; 0-25 mg/kg bw Comments: Group ADI as the sum of the sorbitan esters of lauric, oleic, palmitic and stearic acid.; 0–25 mg/kg; 0–25 mg/kg"
+      },
+      "finalRisk": "insufficient_data",
+      "blockingReasons": [
+        "classification_matrix_no_matching_rule"
+      ]
+    },
+    {
+      "code": "E494",
+      "potentialEffects": [
+        {
+          "effect": "Discussion.Discussion: The Panel on Food Additives and Nutrient Sources added to Food (ANS) provides a scientific opinion re-evaluating the safety of sorbitan monostearate (E 491), sorbitan tristearate (E 492), sorbitan monolaurate (E 493), sorbitan monooleate (E 494) and sorbitan monopalmitate (E 495) when used as food additives. KeyInformation.KeyInformation: Mutagenic: Negative; Carcinogenic: Negative",
+          "severity": "none",
+          "evidenceLevel": "limited",
+          "appliesTo": "additive",
+          "evidenceContext": "food_additive_human"
+        },
+        {
+          "effect": "Discussion.Discussion: The Panel on Food Additives and Nutrient Sources added to Food (ANS) provides a scientific opinion re-evaluating the safety of sorbitan monostearate (E 491), sorbitan tristearate (E 492), sorbitan monolaurate (E 493), sorbitan monooleate (E 494) and sorbitan monopalmitate (E 495) when used as food additives. KeyInformation.KeyInformation: Genotoxic: Negative",
+          "severity": "none",
+          "evidenceLevel": "limited",
+          "appliesTo": "additive",
+          "evidenceContext": "food_additive_human"
+        }
+      ],
+      "rawPotentialEffects": [
+        {
+          "effect": "Discussion.Discussion: The Panel on Food Additives and Nutrient Sources added to Food (ANS) provides a scientific opinion re-evaluating the safety of sorbitan monostearate (E 491), sorbitan tristearate (E 492), sorbitan monolaurate (E 493), sorbitan monooleate (E 494) and sorbitan monopalmitate (E 495) when used as food additives. KeyInformation.KeyInformation: Mutagenic: Negative; Carcinogenic: Negative",
+          "severity": "none",
+          "evidenceLevel": "limited",
+          "appliesTo": "additive",
+          "evidenceContext": "food_additive_human"
+        },
+        {
+          "effect": "Discussion.Discussion: The Panel on Food Additives and Nutrient Sources added to Food (ANS) provides a scientific opinion re-evaluating the safety of sorbitan monostearate (E 491), sorbitan tristearate (E 492), sorbitan monolaurate (E 493), sorbitan monooleate (E 494) and sorbitan monopalmitate (E 495) when used as food additives. KeyInformation.KeyInformation: Genotoxic: Negative",
+          "severity": "none",
+          "evidenceLevel": "limited",
+          "appliesTo": "additive",
+          "evidenceContext": "food_additive_human"
+        }
+      ],
+      "profileEvidenceLevel": "strong",
+      "authorityEvaluations": [
+        {
+          "authority": "EFSA",
+          "conclusion": null,
+          "assessmentScope": "individual",
+          "coveredCodes": [
+            "E494"
+          ]
+        },
+        {
+          "authority": "JECFA",
+          "conclusion": null,
+          "assessmentScope": "group",
+          "coveredCodes": [
+            "E494"
+          ]
+        },
+        {
+          "authority": "JECFA",
+          "conclusion": null,
+          "assessmentScope": "group",
+          "coveredCodes": [
+            "E494"
+          ]
+        }
+      ],
+      "authorities": [
+        "EFSA",
+        "JECFA"
+      ],
+      "derivedHazard": {
+        "level": "none_identified",
+        "reasons": [
+          "Danger additif maximal observé : none."
+        ]
+      },
+      "derivedEvidence": {
+        "level": "limited",
+        "reasons": [
+          "Niveau de preuve normalisé : limited."
+        ]
+      },
+      "derivedExposure": {
+        "level": "below_concern",
+        "reasons": [
+          "Structured exposure level: below_concern.",
+          "Exposure scope: group.",
+          "JECFA: The highest dietary exposure estimate of 24 mg/kg bw per day for the sum of sorbitan esters of fatty acids using reported use levels is below the temporary group ADI of 0–25 mg/kg bw.",
+          "JECFA: JECFA therefore concluded that the highest exposure estimates, which are based on data from the EU, could be underestimated relative to exposure based on GSFA permissions.",
+          "Exposure uncertainty: JECFA therefore concluded that the highest exposure estimates, which are based on data from the EU, could be underestimated relative to exposure based on GSFA permissions."
+        ]
+      },
+      "sufficiency": {
+        "sufficient": true,
+        "missingSignals": [],
+        "availableSignals": [
+          "danger",
+          "evidence",
+          "exposure"
+        ],
+        "reasons": [
+          "Danger additif maximal observé : none.",
+          "Niveau de preuve normalisé : limited.",
+          "Structured exposure level: below_concern.",
+          "Exposure scope: group.",
+          "JECFA: The highest dietary exposure estimate of 24 mg/kg bw per day for the sum of sorbitan esters of fatty acids using reported use levels is below the temporary group ADI of 0–25 mg/kg bw.",
+          "JECFA: JECFA therefore concluded that the highest exposure estimates, which are based on data from the EU, could be underestimated relative to exposure based on GSFA permissions.",
+          "Exposure uncertainty: JECFA therefore concluded that the highest exposure estimates, which are based on data from the EU, could be underestimated relative to exposure based on GSFA permissions."
+        ]
+      },
+      "finalEvaluation": {
+        "riskLevel": "insufficient_data",
+        "confidence": "high",
+        "reasons": [
+          "Danger additif maximal observé : none.",
+          "Niveau de preuve normalisé : limited.",
+          "Structured exposure level: below_concern.",
+          "Exposure scope: group.",
+          "JECFA: The highest dietary exposure estimate of 24 mg/kg bw per day for the sum of sorbitan esters of fatty acids using reported use levels is below the temporary group ADI of 0–25 mg/kg bw.",
+          "JECFA: JECFA therefore concluded that the highest exposure estimates, which are based on data from the EU, could be underestimated relative to exposure based on GSFA permissions.",
+          "Exposure uncertainty: JECFA therefore concluded that the highest exposure estimates, which are based on data from the EU, could be underestimated relative to exposure based on GSFA permissions."
+        ],
+        "evidenceSummary": "Preuves limitées disponibles.",
+        "exposureSummary": "Temporary group ADI of 0-25 mg/kg bw as total polyoxyethylene (20) sorbitan esters Comments: The previous JECFA derived a group ADI of 0–25 mg/kg bw for the sum of sorbitan fatty acid esters (INS No. 491–495), based on the NOAEL of 2500 mg/kg bw per day and applying an uncertainty factor of 100. However, the genotoxicity studies available to the current JECFA provided an indication of the clastogenic effects of sorbitan monostearate, requiring further investigation. In the absence of the additional data that were available to EFSA, JECFA was not able to conclude on the potential for genotoxicity and withdrew the group ADI of 0–25 mg/kg bw, establishing a temporary group ADI of 0–25 mg/kg bw. Intake: The highest dietary exposure estimate of 24 mg/kg bw per day for the sum of sorbitan esters of fatty acids using reported use levels is below the temporary group ADI of 0–25 mg/kg bw. However, use levels for the sum of the five individual sorbitan esters of fatty acids were not considered for important food categories such as water-based flavoured drinks (carbonated, non-carbonated and concentrates), soybean-based beverages, dry and precooked pasta, or eggs and egg-based desserts because they were not available to JECFA. JECFA therefore concluded that the highest exposure estimates, which are based on data from the EU, could be underestimated relative to exposure based on GSFA permissions.; 0-25 mg/kg bw Comments: Group ADI. As the sum of the sorbitan esters of lauric, oleic, palmitic and stearic acid; 0–25 mg/kg"
+      },
+      "finalRisk": "insufficient_data",
+      "blockingReasons": [
+        "classification_matrix_no_matching_rule"
+      ]
+    },
+    {
+      "code": "E495",
+      "potentialEffects": [
+        {
+          "effect": "Discussion.Discussion: The Panel on Food Additives and Nutrient Sources added to Food (ANS) provides a scientific opinion re-evaluating the safety of sorbitan monostearate (E 491), sorbitan tristearate (E 492), sorbitan monolaurate (E 493), sorbitan monooleate (E 494) and sorbitan monopalmitate (E 495) when used as food additives. KeyInformation.KeyInformation: Mutagenic: Negative; Carcinogenic: Negative",
+          "severity": "none",
+          "evidenceLevel": "limited",
+          "appliesTo": "additive",
+          "evidenceContext": "food_additive_human"
+        },
+        {
+          "effect": "Discussion.Discussion: The Panel on Food Additives and Nutrient Sources added to Food (ANS) provides a scientific opinion re-evaluating the safety of sorbitan monostearate (E 491), sorbitan tristearate (E 492), sorbitan monolaurate (E 493), sorbitan monooleate (E 494) and sorbitan monopalmitate (E 495) when used as food additives. KeyInformation.KeyInformation: Genotoxic: Negative",
+          "severity": "none",
+          "evidenceLevel": "limited",
+          "appliesTo": "additive",
+          "evidenceContext": "food_additive_human"
+        }
+      ],
+      "rawPotentialEffects": [
+        {
+          "effect": "Discussion.Discussion: The Panel on Food Additives and Nutrient Sources added to Food (ANS) provides a scientific opinion re-evaluating the safety of sorbitan monostearate (E 491), sorbitan tristearate (E 492), sorbitan monolaurate (E 493), sorbitan monooleate (E 494) and sorbitan monopalmitate (E 495) when used as food additives. KeyInformation.KeyInformation: Mutagenic: Negative; Carcinogenic: Negative",
+          "severity": "none",
+          "evidenceLevel": "limited",
+          "appliesTo": "additive",
+          "evidenceContext": "food_additive_human"
+        },
+        {
+          "effect": "Discussion.Discussion: The Panel on Food Additives and Nutrient Sources added to Food (ANS) provides a scientific opinion re-evaluating the safety of sorbitan monostearate (E 491), sorbitan tristearate (E 492), sorbitan monolaurate (E 493), sorbitan monooleate (E 494) and sorbitan monopalmitate (E 495) when used as food additives. KeyInformation.KeyInformation: Genotoxic: Negative",
+          "severity": "none",
+          "evidenceLevel": "limited",
+          "appliesTo": "additive",
+          "evidenceContext": "food_additive_human"
+        }
+      ],
+      "profileEvidenceLevel": "strong",
+      "authorityEvaluations": [
+        {
+          "authority": "EFSA",
+          "conclusion": null,
+          "assessmentScope": "individual",
+          "coveredCodes": [
+            "E495"
+          ]
+        },
+        {
+          "authority": "JECFA",
+          "conclusion": null,
+          "assessmentScope": "group",
+          "coveredCodes": [
+            "E495"
+          ]
+        },
+        {
+          "authority": "JECFA",
+          "conclusion": null,
+          "assessmentScope": "group",
+          "coveredCodes": [
+            "E495"
+          ]
+        },
+        {
+          "authority": "JECFA",
+          "conclusion": null,
+          "assessmentScope": "group",
+          "coveredCodes": [
+            "E495"
+          ]
+        }
+      ],
+      "authorities": [
+        "EFSA",
+        "JECFA"
+      ],
+      "derivedHazard": {
+        "level": "none_identified",
+        "reasons": [
+          "Danger additif maximal observé : none."
+        ]
+      },
+      "derivedEvidence": {
+        "level": "limited",
+        "reasons": [
+          "Niveau de preuve normalisé : limited."
+        ]
+      },
+      "derivedExposure": {
+        "level": "below_concern",
+        "reasons": [
+          "Structured exposure level: below_concern.",
+          "Exposure scope: group.",
+          "JECFA: The highest dietary exposure estimate of 24 mg/kg bw per day for the sum of sorbitan esters of fatty acids using reported use levels is below the temporary group ADI of 0–25 mg/kg bw.",
+          "JECFA: JECFA therefore concluded that the highest exposure estimates, which are based on data from the EU, could be underestimated relative to exposure based on GSFA permissions.",
+          "Exposure uncertainty: JECFA therefore concluded that the highest exposure estimates, which are based on data from the EU, could be underestimated relative to exposure based on GSFA permissions."
+        ]
+      },
+      "sufficiency": {
+        "sufficient": true,
+        "missingSignals": [],
+        "availableSignals": [
+          "danger",
+          "evidence",
+          "exposure"
+        ],
+        "reasons": [
+          "Danger additif maximal observé : none.",
+          "Niveau de preuve normalisé : limited.",
+          "Structured exposure level: below_concern.",
+          "Exposure scope: group.",
+          "JECFA: The highest dietary exposure estimate of 24 mg/kg bw per day for the sum of sorbitan esters of fatty acids using reported use levels is below the temporary group ADI of 0–25 mg/kg bw.",
+          "JECFA: JECFA therefore concluded that the highest exposure estimates, which are based on data from the EU, could be underestimated relative to exposure based on GSFA permissions.",
+          "Exposure uncertainty: JECFA therefore concluded that the highest exposure estimates, which are based on data from the EU, could be underestimated relative to exposure based on GSFA permissions."
+        ]
+      },
+      "finalEvaluation": {
+        "riskLevel": "insufficient_data",
+        "confidence": "high",
+        "reasons": [
+          "Danger additif maximal observé : none.",
+          "Niveau de preuve normalisé : limited.",
+          "Structured exposure level: below_concern.",
+          "Exposure scope: group.",
+          "JECFA: The highest dietary exposure estimate of 24 mg/kg bw per day for the sum of sorbitan esters of fatty acids using reported use levels is below the temporary group ADI of 0–25 mg/kg bw.",
+          "JECFA: JECFA therefore concluded that the highest exposure estimates, which are based on data from the EU, could be underestimated relative to exposure based on GSFA permissions.",
+          "Exposure uncertainty: JECFA therefore concluded that the highest exposure estimates, which are based on data from the EU, could be underestimated relative to exposure based on GSFA permissions."
+        ],
+        "evidenceSummary": "Preuves limitées disponibles.",
+        "exposureSummary": "Temporary group ADI of 0-25 mg/kg bw as total polyoxyethylene (20) sorbitan esters Comments: The previous JECFA derived a group ADI of 0–25 mg/kg bw for the sum of sorbitan fatty acid esters (INS No. 491–495), based on the NOAEL of 2500 mg/kg bw per day and applying an uncertainty factor of 100. However, the genotoxicity studies available to the current JECFA provided an indication of the clastogenic effects of sorbitan monostearate, requiring further investigation. In the absence of the additional data that were available to EFSA, JECFA was not able to conclude on the potential for genotoxicity and withdrew the group ADI of 0–25 mg/kg bw, establishing a temporary group ADI of 0–25 mg/kg bw. Intake: The highest dietary exposure estimate of 24 mg/kg bw per day for the sum of sorbitan esters of fatty acids using reported use levels is below the temporary group ADI of 0–25 mg/kg bw. However, use levels for the sum of the five individual sorbitan esters of fatty acids were not considered for important food categories such as water-based flavoured drinks (carbonated, non-carbonated and concentrates), soybean-based beverages, dry and precooked pasta, or eggs and egg-based desserts because they were not available to JECFA. JECFA therefore concluded that the highest exposure estimates, which are based on data from the EU, could be underestimated relative to exposure based on GSFA permissions.; 0-25 mg/kg bw Comments: Considered for specification only. Group ADI. As the sum of the sorbitan esters of lauric, oleic, palmitic and stearic acid.; 0-25 mg/kg bw Comments: Group ADI. As the sum of the sorbitan esters of lauric, oleic, palmitic and stearic acid; 0–25 mg/kg"
+      },
+      "finalRisk": "insufficient_data",
+      "blockingReasons": [
+        "classification_matrix_no_matching_rule"
+      ]
+    },
+    {
+      "code": "E959",
+      "potentialEffects": [],
+      "rawPotentialEffects": [],
+      "profileEvidenceLevel": "limited",
+      "authorityEvaluations": [
+        {
+          "authority": "JECFA",
+          "conclusion": null,
+          "assessmentScope": "individual",
+          "coveredCodes": [
+            "E959"
+          ]
+        }
+      ],
+      "authorities": [
+        "JECFA"
+      ],
+      "derivedHazard": {
+        "level": "none_identified",
+        "reasons": [
+          "Aucun danger pertinent identifié dans les signaux additifs disponibles."
+        ]
+      },
+      "derivedEvidence": {
+        "level": "limited",
+        "reasons": [
+          "Niveau de preuve normalisé : limited."
+        ]
+      },
+      "derivedExposure": {
+        "level": "below_concern",
+        "reasons": [
+          "Structured exposure level: below_concern.",
+          "JECFA: JECFA considered the dietary exposure estimate of 1.8 mg/kg bw per day, the upper end of the range of high exposures in children, appropriate for the safety evaluation of NHDC.",
+          "JECFA: The dietary exposure for NHDC of 1.8 mg/kg bw per day is below the temporary ADI and does not represent a safety concern for the proposed uses and the proposed maximum levels."
+        ]
+      },
+      "sufficiency": {
+        "sufficient": true,
+        "missingSignals": [],
+        "availableSignals": [
+          "danger",
+          "evidence",
+          "exposure"
+        ],
+        "reasons": [
+          "Aucun danger pertinent identifié dans les signaux additifs disponibles.",
+          "Niveau de preuve normalisé : limited.",
+          "Structured exposure level: below_concern.",
+          "JECFA: JECFA considered the dietary exposure estimate of 1.8 mg/kg bw per day, the upper end of the range of high exposures in children, appropriate for the safety evaluation of NHDC.",
+          "JECFA: The dietary exposure for NHDC of 1.8 mg/kg bw per day is below the temporary ADI and does not represent a safety concern for the proposed uses and the proposed maximum levels."
+        ]
+      },
+      "finalEvaluation": {
+        "riskLevel": "insufficient_data",
+        "confidence": "high",
+        "reasons": [
+          "Aucun danger pertinent identifié dans les signaux additifs disponibles.",
+          "Niveau de preuve normalisé : limited.",
+          "Structured exposure level: below_concern.",
+          "JECFA: JECFA considered the dietary exposure estimate of 1.8 mg/kg bw per day, the upper end of the range of high exposures in children, appropriate for the safety evaluation of NHDC.",
+          "JECFA: The dietary exposure for NHDC of 1.8 mg/kg bw per day is below the temporary ADI and does not represent a safety concern for the proposed uses and the proposed maximum levels."
+        ],
+        "evidenceSummary": "Preuves limitées disponibles.",
+        "exposureSummary": "992aea80-d5b1-4530-a5ad-431a2a20d875; Remarks: Subgroup: sheep for milk production (dairy sheep). The maximum safe intake which can be considered as safe for the target animal was derived from a NOAEL of 500 mg/kg bw/day (no effects were detected on growth, hematology, reproduction and histopathology) determined by SCF (EC (European Com; 100.0; sheep; Sheep for milk production; 5; mg/kg bw/day; 7e43eeed-6ba9-4c52-b545-17a884d33d06; other:; MSI/FC; Remarks: The maximum safe intake which can be considered as safe for the target animal was derived from a NOAEL of 500 mg/kg bw/day (no effects were detected on growth, hematology, reproduction and histopathology) determined by SCF (EC (European Commission), 1989, online. Reports of the Scientific C; salmon; dog; Dogs as pet; Remarks: The maximum recommended dose for fish is 30 mg NHDC/kg complete feed.; Fish; 30; mg/kg; 12a68062-6315-4943-ac7c-f36078d01887; Pigs - for reproduction; Sheep for meat production; cattle for fattening; Cattle for meat production - less than 1 year old; Assessment: no concern; Remarks: The use of neohesperidine dihydrochalcone as a feed additive in fish is not expected to result in increased consumer exposure. Therefore, the FEEDAP Panel considers that use of neohesperidine dihydrochalcone as a feed additive for fish is safe for the consumer.; consumers; margin of safety; Cattle for meat production; Pigs - less than 1 year old; Remarks: METABOLISM: The substance can be predicted to be metabolised to innocuous products. OUTCOME ON THE NAMED COMPOUND: No safety concern based on intake calculated by the MSDI approach of the named compound. OUTCOME ON THE MATERIAL OF COMMERCE: No safety concern at estimated level of intake of ; 1.5; µg/kg bw/day; 63f1a9f7-0f9f-4151-a931-055fa3e6ad4d; TTC Cramer Class III; pig for fattening; Pigs for meat production; dairy cow; Cattle for milk production; Temporary ADI of 0–3.8 mg/kg bw per day Comments: JECFA established a temporary ADI (pending the submission of a reproductive toxicity study that assesses the reproductive capacity of the F1 generation) of 0–3.8 mg/kg bw per day for NHDC by applying a 200-fold uncertainty factor to the NOAEL of 760 mg/kg bw per day from a 90-day oral toxicity study in rats. Intake: JECFA considered the dietary exposure estimate of 1.8 mg/kg bw per day, the upper end of the range of high exposures in children, appropriate for the safety evaluation of NHDC. The dietary exposure for NHDC of 1.8 mg/kg bw per day is below the temporary ADI and does not represent a safety concern for the proposed uses and the proposed maximum levels.; temporary ADI"
+      },
+      "finalRisk": "insufficient_data",
+      "blockingReasons": [
+        "classification_matrix_no_matching_rule"
+      ]
+    }
+  ],
+  "representativeSamples": {
+    "serious": null,
+    "moderate": null,
+    "low": null,
+    "strongEvidence": null,
+    "moderateEvidence": null,
+    "efsaAndJecfa": {
+      "code": "E102",
+      "name": "Tartrazine",
+      "potentialEffects": [
+        {
+          "effect": "Discussion.Discussion: The Panel on Food Additives and Nutrient Sources added to Food provides a scientific opinion re-evaluating the safety of Tartrazine (E 102). KeyInformation.KeyInformation: Mutagenic: Negative; Carcinogenic: Negative",
+          "severity": "none",
+          "evidenceLevel": "limited",
+          "appliesTo": "additive",
+          "evidenceContext": "food_additive_human"
+        },
+        {
+          "effect": "Discussion.Discussion: Following a request from the European Commission, the EFSA Panel on Additives and Products or Substances used in Animal Feed (FEEDAP) was asked to deliver a scientific opinion on the safety and efficacy of tartrazine (E 102) for cats and dogs, ornamental fish, grain-eating ornamental birds and small rodents. KeyInformation.KeyInformation: Mutagenic: Negative; Carcinogenic: Negative",
+          "severity": "none",
+          "evidenceLevel": "limited",
+          "appliesTo": "additive",
+          "evidenceContext": "food_additive_human"
+        },
+        {
+          "effect": "Discussion.Discussion: The European Safety Authority asks its scientific Panel on Food Additives and Nutrient Sources added to food (ANS) to provide an updated Scientific Opinion on the re-evaluation of Allura Red AC (E 129) as a food additive. KeyInformation.KeyInformation: Mutagenic: Ambiguous; Carcinogenic: Negative",
+          "severity": "none",
+          "evidenceLevel": "limited",
+          "appliesTo": "additive",
+          "evidenceContext": "food_additive_human"
+        },
+        {
+          "effect": "Discussion.Discussion: Following a request from the European Commission, the EFSA Panel on Additives and Products or Substances used in Animal Feed (FEEDAP) was asked to deliver a scientific opinion on the safety and efficacy of tartrazine (E 102) for cats and dogs, ornamental fish, grain-eating ornamental birds and small rodents. KeyInformation.KeyInformation: Genotoxic: Negative",
+          "severity": "none",
+          "evidenceLevel": "limited",
+          "appliesTo": "additive",
+          "evidenceContext": "food_additive_human"
+        },
+        {
+          "effect": "Discussion.Discussion: The European Safety Authority asks its scientific Panel on Food Additives and Nutrient Sources added to food (ANS) to provide an updated Scientific Opinion on the re-evaluation of Allura Red AC (E 129) as a food additive. KeyInformation.KeyInformation: Genotoxic: Ambiguous",
+          "severity": "none",
+          "evidenceLevel": "limited",
+          "appliesTo": "additive",
+          "evidenceContext": "food_additive_human"
+        },
+        {
+          "effect": "Discussion.Discussion: The Panel on Food Additives and Nutrient Sources added to Food provides a scientific opinion re-evaluating the safety of Tartrazine (E 102). KeyInformation.KeyInformation: Genotoxic: Negative",
+          "severity": "none",
+          "evidenceLevel": "limited",
+          "appliesTo": "additive",
+          "evidenceContext": "food_additive_human"
+        },
+        {
+          "effect": "KeyInformation.KeyInformation: Absorption rate - oral (%): < 5",
+          "severity": "none",
+          "evidenceLevel": "limited",
+          "appliesTo": "additive",
+          "evidenceContext": "food_additive_human"
+        }
+      ],
+      "rawPotentialEffects": [
+        {
+          "effect": "Discussion.Discussion: The Panel on Food Additives and Nutrient Sources added to Food provides a scientific opinion re-evaluating the safety of Tartrazine (E 102). KeyInformation.KeyInformation: Mutagenic: Negative; Carcinogenic: Negative",
+          "severity": "none",
+          "evidenceLevel": "limited",
+          "appliesTo": "additive",
+          "evidenceContext": "food_additive_human"
+        },
+        {
+          "effect": "Discussion.Discussion: Following a request from the European Commission, the EFSA Panel on Additives and Products or Substances used in Animal Feed (FEEDAP) was asked to deliver a scientific opinion on the safety and efficacy of tartrazine (E 102) for cats and dogs, ornamental fish, grain-eating ornamental birds and small rodents. KeyInformation.KeyInformation: Mutagenic: Negative; Carcinogenic: Negative",
+          "severity": "none",
+          "evidenceLevel": "limited",
+          "appliesTo": "additive",
+          "evidenceContext": "food_additive_human"
+        },
+        {
+          "effect": "Discussion.Discussion: The European Safety Authority asks its scientific Panel on Food Additives and Nutrient Sources added to food (ANS) to provide an updated Scientific Opinion on the re-evaluation of Allura Red AC (E 129) as a food additive. KeyInformation.KeyInformation: Mutagenic: Ambiguous; Carcinogenic: Negative",
+          "severity": "none",
+          "evidenceLevel": "limited",
+          "appliesTo": "additive",
+          "evidenceContext": "food_additive_human"
+        },
+        {
+          "effect": "Discussion.Discussion: Following a request from the European Commission, the EFSA Panel on Additives and Products or Substances used in Animal Feed (FEEDAP) was asked to deliver a scientific opinion on the safety and efficacy of tartrazine (E 102) for cats and dogs, ornamental fish, grain-eating ornamental birds and small rodents. KeyInformation.KeyInformation: Genotoxic: Negative",
+          "severity": "none",
+          "evidenceLevel": "limited",
+          "appliesTo": "additive",
+          "evidenceContext": "food_additive_human"
+        },
+        {
+          "effect": "Discussion.Discussion: The European Safety Authority asks its scientific Panel on Food Additives and Nutrient Sources added to food (ANS) to provide an updated Scientific Opinion on the re-evaluation of Allura Red AC (E 129) as a food additive. KeyInformation.KeyInformation: Genotoxic: Ambiguous",
+          "severity": "none",
+          "evidenceLevel": "limited",
+          "appliesTo": "additive",
+          "evidenceContext": "food_additive_human"
+        },
+        {
+          "effect": "Discussion.Discussion: The Panel on Food Additives and Nutrient Sources added to Food provides a scientific opinion re-evaluating the safety of Tartrazine (E 102). KeyInformation.KeyInformation: Genotoxic: Negative",
+          "severity": "none",
+          "evidenceLevel": "limited",
+          "appliesTo": "additive",
+          "evidenceContext": "food_additive_human"
+        },
+        {
+          "effect": "KeyInformation.KeyInformation: Absorption rate - oral (%): < 5",
+          "severity": "none",
+          "evidenceLevel": "limited",
+          "appliesTo": "additive",
+          "evidenceContext": "food_additive_human"
+        }
+      ],
+      "profileEvidenceLevel": "strong",
+      "authorityEvaluations": [
+        {
+          "authority": "EFSA",
+          "conclusion": null,
+          "assessmentScope": "individual",
+          "coveredCodes": [
+            "E102"
+          ]
+        },
+        {
+          "authority": "EFSA",
+          "conclusion": null,
+          "assessmentScope": "individual",
+          "coveredCodes": [
+            "E102"
+          ]
+        },
+        {
+          "authority": "JECFA",
+          "conclusion": null,
+          "assessmentScope": "individual",
+          "coveredCodes": [
+            "E102"
+          ]
+        },
+        {
+          "authority": "JECFA",
+          "conclusion": null,
+          "assessmentScope": "individual",
+          "coveredCodes": [
+            "E102"
+          ]
+        },
+        {
+          "authority": "JECFA",
+          "conclusion": null,
+          "assessmentScope": "individual",
+          "coveredCodes": [
+            "E102"
+          ]
+        },
+        {
+          "authority": "JECFA",
+          "conclusion": null,
+          "assessmentScope": "individual",
+          "coveredCodes": [
+            "E102"
+          ]
+        },
+        {
+          "authority": "JECFA",
+          "conclusion": null,
+          "assessmentScope": "individual",
+          "coveredCodes": [
+            "E102"
+          ]
+        },
+        {
+          "authority": "JECFA",
+          "conclusion": null,
+          "assessmentScope": "individual",
+          "coveredCodes": [
+            "E102"
+          ]
+        }
+      ],
+      "authorities": [
+        "EFSA",
+        "JECFA"
+      ],
+      "derivedHazard": {
+        "level": "none_identified",
+        "reasons": [
+          "Danger additif maximal observé : none."
+        ]
+      },
+      "derivedEvidence": {
+        "level": "limited",
+        "reasons": [
+          "Niveau de preuve normalisé : limited."
+        ]
+      },
+      "derivedExposure": {
+        "level": "unknown",
+        "reasons": [
+          "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+        ]
+      }
+    },
+    "individualAssessment": {
+      "code": "E102",
+      "name": "Tartrazine",
+      "potentialEffects": [
+        {
+          "effect": "Discussion.Discussion: The Panel on Food Additives and Nutrient Sources added to Food provides a scientific opinion re-evaluating the safety of Tartrazine (E 102). KeyInformation.KeyInformation: Mutagenic: Negative; Carcinogenic: Negative",
+          "severity": "none",
+          "evidenceLevel": "limited",
+          "appliesTo": "additive",
+          "evidenceContext": "food_additive_human"
+        },
+        {
+          "effect": "Discussion.Discussion: Following a request from the European Commission, the EFSA Panel on Additives and Products or Substances used in Animal Feed (FEEDAP) was asked to deliver a scientific opinion on the safety and efficacy of tartrazine (E 102) for cats and dogs, ornamental fish, grain-eating ornamental birds and small rodents. KeyInformation.KeyInformation: Mutagenic: Negative; Carcinogenic: Negative",
+          "severity": "none",
+          "evidenceLevel": "limited",
+          "appliesTo": "additive",
+          "evidenceContext": "food_additive_human"
+        },
+        {
+          "effect": "Discussion.Discussion: The European Safety Authority asks its scientific Panel on Food Additives and Nutrient Sources added to food (ANS) to provide an updated Scientific Opinion on the re-evaluation of Allura Red AC (E 129) as a food additive. KeyInformation.KeyInformation: Mutagenic: Ambiguous; Carcinogenic: Negative",
+          "severity": "none",
+          "evidenceLevel": "limited",
+          "appliesTo": "additive",
+          "evidenceContext": "food_additive_human"
+        },
+        {
+          "effect": "Discussion.Discussion: Following a request from the European Commission, the EFSA Panel on Additives and Products or Substances used in Animal Feed (FEEDAP) was asked to deliver a scientific opinion on the safety and efficacy of tartrazine (E 102) for cats and dogs, ornamental fish, grain-eating ornamental birds and small rodents. KeyInformation.KeyInformation: Genotoxic: Negative",
+          "severity": "none",
+          "evidenceLevel": "limited",
+          "appliesTo": "additive",
+          "evidenceContext": "food_additive_human"
+        },
+        {
+          "effect": "Discussion.Discussion: The European Safety Authority asks its scientific Panel on Food Additives and Nutrient Sources added to food (ANS) to provide an updated Scientific Opinion on the re-evaluation of Allura Red AC (E 129) as a food additive. KeyInformation.KeyInformation: Genotoxic: Ambiguous",
+          "severity": "none",
+          "evidenceLevel": "limited",
+          "appliesTo": "additive",
+          "evidenceContext": "food_additive_human"
+        },
+        {
+          "effect": "Discussion.Discussion: The Panel on Food Additives and Nutrient Sources added to Food provides a scientific opinion re-evaluating the safety of Tartrazine (E 102). KeyInformation.KeyInformation: Genotoxic: Negative",
+          "severity": "none",
+          "evidenceLevel": "limited",
+          "appliesTo": "additive",
+          "evidenceContext": "food_additive_human"
+        },
+        {
+          "effect": "KeyInformation.KeyInformation: Absorption rate - oral (%): < 5",
+          "severity": "none",
+          "evidenceLevel": "limited",
+          "appliesTo": "additive",
+          "evidenceContext": "food_additive_human"
+        }
+      ],
+      "rawPotentialEffects": [
+        {
+          "effect": "Discussion.Discussion: The Panel on Food Additives and Nutrient Sources added to Food provides a scientific opinion re-evaluating the safety of Tartrazine (E 102). KeyInformation.KeyInformation: Mutagenic: Negative; Carcinogenic: Negative",
+          "severity": "none",
+          "evidenceLevel": "limited",
+          "appliesTo": "additive",
+          "evidenceContext": "food_additive_human"
+        },
+        {
+          "effect": "Discussion.Discussion: Following a request from the European Commission, the EFSA Panel on Additives and Products or Substances used in Animal Feed (FEEDAP) was asked to deliver a scientific opinion on the safety and efficacy of tartrazine (E 102) for cats and dogs, ornamental fish, grain-eating ornamental birds and small rodents. KeyInformation.KeyInformation: Mutagenic: Negative; Carcinogenic: Negative",
+          "severity": "none",
+          "evidenceLevel": "limited",
+          "appliesTo": "additive",
+          "evidenceContext": "food_additive_human"
+        },
+        {
+          "effect": "Discussion.Discussion: The European Safety Authority asks its scientific Panel on Food Additives and Nutrient Sources added to food (ANS) to provide an updated Scientific Opinion on the re-evaluation of Allura Red AC (E 129) as a food additive. KeyInformation.KeyInformation: Mutagenic: Ambiguous; Carcinogenic: Negative",
+          "severity": "none",
+          "evidenceLevel": "limited",
+          "appliesTo": "additive",
+          "evidenceContext": "food_additive_human"
+        },
+        {
+          "effect": "Discussion.Discussion: Following a request from the European Commission, the EFSA Panel on Additives and Products or Substances used in Animal Feed (FEEDAP) was asked to deliver a scientific opinion on the safety and efficacy of tartrazine (E 102) for cats and dogs, ornamental fish, grain-eating ornamental birds and small rodents. KeyInformation.KeyInformation: Genotoxic: Negative",
+          "severity": "none",
+          "evidenceLevel": "limited",
+          "appliesTo": "additive",
+          "evidenceContext": "food_additive_human"
+        },
+        {
+          "effect": "Discussion.Discussion: The European Safety Authority asks its scientific Panel on Food Additives and Nutrient Sources added to food (ANS) to provide an updated Scientific Opinion on the re-evaluation of Allura Red AC (E 129) as a food additive. KeyInformation.KeyInformation: Genotoxic: Ambiguous",
+          "severity": "none",
+          "evidenceLevel": "limited",
+          "appliesTo": "additive",
+          "evidenceContext": "food_additive_human"
+        },
+        {
+          "effect": "Discussion.Discussion: The Panel on Food Additives and Nutrient Sources added to Food provides a scientific opinion re-evaluating the safety of Tartrazine (E 102). KeyInformation.KeyInformation: Genotoxic: Negative",
+          "severity": "none",
+          "evidenceLevel": "limited",
+          "appliesTo": "additive",
+          "evidenceContext": "food_additive_human"
+        },
+        {
+          "effect": "KeyInformation.KeyInformation: Absorption rate - oral (%): < 5",
+          "severity": "none",
+          "evidenceLevel": "limited",
+          "appliesTo": "additive",
+          "evidenceContext": "food_additive_human"
+        }
+      ],
+      "profileEvidenceLevel": "strong",
+      "authorityEvaluations": [
+        {
+          "authority": "EFSA",
+          "conclusion": null,
+          "assessmentScope": "individual",
+          "coveredCodes": [
+            "E102"
+          ]
+        },
+        {
+          "authority": "EFSA",
+          "conclusion": null,
+          "assessmentScope": "individual",
+          "coveredCodes": [
+            "E102"
+          ]
+        },
+        {
+          "authority": "JECFA",
+          "conclusion": null,
+          "assessmentScope": "individual",
+          "coveredCodes": [
+            "E102"
+          ]
+        },
+        {
+          "authority": "JECFA",
+          "conclusion": null,
+          "assessmentScope": "individual",
+          "coveredCodes": [
+            "E102"
+          ]
+        },
+        {
+          "authority": "JECFA",
+          "conclusion": null,
+          "assessmentScope": "individual",
+          "coveredCodes": [
+            "E102"
+          ]
+        },
+        {
+          "authority": "JECFA",
+          "conclusion": null,
+          "assessmentScope": "individual",
+          "coveredCodes": [
+            "E102"
+          ]
+        },
+        {
+          "authority": "JECFA",
+          "conclusion": null,
+          "assessmentScope": "individual",
+          "coveredCodes": [
+            "E102"
+          ]
+        },
+        {
+          "authority": "JECFA",
+          "conclusion": null,
+          "assessmentScope": "individual",
+          "coveredCodes": [
+            "E102"
+          ]
+        }
+      ],
+      "authorities": [
+        "EFSA",
+        "JECFA"
+      ],
+      "derivedHazard": {
+        "level": "none_identified",
+        "reasons": [
+          "Danger additif maximal observé : none."
+        ]
+      },
+      "derivedEvidence": {
+        "level": "limited",
+        "reasons": [
+          "Niveau de preuve normalisé : limited."
+        ]
+      },
+      "derivedExposure": {
+        "level": "unknown",
+        "reasons": [
+          "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+        ]
+      }
+    },
+    "familyAssessment": {
+      "code": "E150A",
+      "name": "Plain caramel",
+      "potentialEffects": [
+        {
+          "effect": "Discussion.Discussion: The ANS Panel provides a scientific opinion re-evaluating the safety of the caramel colours (E150a (Class I), E150b (Class II), E150c (Class III), E150d (Class IV)) used as food additives. KeyInformation.KeyInformation: Mutagenic: Negative; Carcinogenic: No data",
+          "severity": "none",
+          "evidenceLevel": "limited",
+          "appliesTo": "additive",
+          "evidenceContext": "food_additive_human"
+        },
+        {
+          "effect": "Discussion.Discussion: The ANS Panel provides a scientific opinion re-evaluating the safety of the caramel colours (E150a (Class I), E150b (Class II), E150c (Class III), E150d (Class IV)) used as food additives. KeyInformation.KeyInformation: Genotoxic: Negative",
+          "severity": "none",
+          "evidenceLevel": "limited",
+          "appliesTo": "additive",
+          "evidenceContext": "food_additive_human"
+        }
+      ],
+      "rawPotentialEffects": [
+        {
+          "effect": "Discussion.Discussion: The ANS Panel provides a scientific opinion re-evaluating the safety of the caramel colours (E150a (Class I), E150b (Class II), E150c (Class III), E150d (Class IV)) used as food additives. KeyInformation.KeyInformation: Mutagenic: Negative; Carcinogenic: No data",
+          "severity": "none",
+          "evidenceLevel": "limited",
+          "appliesTo": "additive",
+          "evidenceContext": "food_additive_human"
+        },
+        {
+          "effect": "Discussion.Discussion: The ANS Panel provides a scientific opinion re-evaluating the safety of the caramel colours (E150a (Class I), E150b (Class II), E150c (Class III), E150d (Class IV)) used as food additives. KeyInformation.KeyInformation: Genotoxic: Negative",
+          "severity": "none",
+          "evidenceLevel": "limited",
+          "appliesTo": "additive",
+          "evidenceContext": "food_additive_human"
+        }
+      ],
+      "profileEvidenceLevel": "moderate",
+      "authorityEvaluations": [
+        {
+          "authority": "EFSA",
+          "conclusion": null,
+          "assessmentScope": "family",
+          "coveredCodes": [
+            "E150A",
+            "E150B",
+            "E150C",
+            "E150D"
+          ]
+        },
+        {
+          "authority": "JECFA",
+          "conclusion": null,
+          "assessmentScope": "individual",
+          "coveredCodes": [
+            "E150A"
+          ]
+        },
+        {
+          "authority": "JECFA",
+          "conclusion": null,
+          "assessmentScope": "individual",
+          "coveredCodes": [
+            "E150A"
+          ]
+        },
+        {
+          "authority": "JECFA",
+          "conclusion": null,
+          "assessmentScope": "individual",
+          "coveredCodes": [
+            "E150A"
+          ]
+        }
+      ],
+      "authorities": [
+        "EFSA",
+        "JECFA"
+      ],
+      "derivedHazard": {
+        "level": "none_identified",
+        "reasons": [
+          "Danger additif maximal observé : none."
+        ]
+      },
+      "derivedEvidence": {
+        "level": "limited",
+        "reasons": [
+          "Niveau de preuve normalisé : limited.",
+          "La portée familiale est conservée et réduit la précision individuelle."
+        ]
+      },
+      "derivedExposure": {
+        "level": "unknown",
+        "reasons": [
+          "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+        ]
+      }
+    }
+  },
+  "interpretation": {
+    "integrationBugCount": 0,
+    "normalizationGapCount": 0,
+    "scientificDataInsufficientCount": 9,
+    "correctSafetyGuardCount": 0,
+    "matrixConservativeGuardCount": 6,
+    "matrixConservativeGuardCodes": [
+      "E161G",
+      "E491",
+      "E493",
+      "E494",
+      "E495",
+      "E959"
+    ],
+    "mainCauseOfGlobalInsufficientData": "Les axes ne sont pas tous insuffisants : les 6 profils à exposition explicite ont des axes suffisants mais aucune branche de la matrice finale ne couvre leur combinaison. Les autres profils restent gris lorsqu’un axe manque réellement, principalement l’exposition explicite ou la preuve exploitable."
+  },
+  "noRulesModified": true
+}

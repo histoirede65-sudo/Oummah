@@ -1,0 +1,1574 @@
+{
+  "schemaVersion": "3.0",
+  "generatedAt": "2026-09-30T20:01:33.343Z",
+  "batch": 8,
+  "sourceAudit": "scripts\\output\\additive-science-source-audit-priority-321-v3.json",
+  "profiles": [
+    {
+      "code": "E1505",
+      "names": {
+        "en": "Triethyl citrate"
+      },
+      "aliases": [],
+      "function": null,
+      "regulatoryStatus": {
+        "eu": "PUBLISHED",
+        "notes": [
+          "Fonction réglementaire UE conservée séparément ; aucune fonction scientifique déduite."
+        ]
+      },
+      "authorityEvaluations": [],
+      "referenceValues": [],
+      "authorityDisagreement": null,
+      "exposure": {
+        "referenceValues": [],
+        "estimatedExposure": null,
+        "exceedance": null,
+        "populationsAtRisk": [],
+        "notes": [
+          "Aucune exposition individuelle ni aucun dépassement n’est déduit de ces sources."
+        ]
+      },
+      "potentialEffects": [],
+      "restrictions": [],
+      "evidenceLevel": "insufficient",
+      "sources": [
+        {
+          "sourceId": "openfoodtox-e1505",
+          "organisation": "EFSA",
+          "sourceType": "official_information",
+          "title": "EFSA OpenFoodTox 3.0 structured record",
+          "url": "https://www.efsa.europa.eu/en/data-report/chemical-hazards-database-openfoodtox",
+          "retrievedAt": "2026-09-30",
+          "fieldsSupported": [
+            "identity",
+            "assessment_reference",
+            "reference_values",
+            "assessment_scope"
+          ]
+        }
+      ],
+      "lastReviewedAt": "2026-09-30",
+      "dataVersion": "reviewed-1.0",
+      "needsScientificReview": true,
+      "completeness": {
+        "complete": false,
+        "missingFields": [
+          "authorityEvaluations",
+          "referenceValues"
+        ],
+        "reviewReasons": [
+          "no_explicit_source_conclusion"
+        ]
+      }
+    },
+    {
+      "code": "E1519",
+      "names": {
+        "en": "Benzyl alcohol"
+      },
+      "aliases": [],
+      "function": null,
+      "regulatoryStatus": {
+        "eu": "PUBLISHED",
+        "notes": [
+          "Fonction réglementaire UE conservée séparément ; aucune fonction scientifique déduite."
+        ]
+      },
+      "authorityEvaluations": [
+        {
+          "authority": "EFSA",
+          "year": 2019,
+          "conclusion": null,
+          "url": "https://doi.org/10.2903/j.efsa.2019.5876",
+          "evaluationType": "structured_assessment",
+          "scope": "food_additive_human",
+          "assessmentIdentifier": "EFSA-Q-2011-00590",
+          "sourceDataset": "OpenFoodTox 3.0",
+          "assessmentScope": "individual",
+          "coveredCodes": [
+            "E1519"
+          ]
+        }
+      ],
+      "referenceValues": [
+        {
+          "type": "ADI",
+          "lower": 0,
+          "upper": 0,
+          "unit": null,
+          "rawText": null,
+          "authority": "EFSA",
+          "year": 2019,
+          "scope": "food_additive_human",
+          "source": "https://doi.org/10.2903/j.efsa.2019.5876"
+        },
+        {
+          "type": "other_reference_value",
+          "value": "Remarks: METABOLISM: The flavouring substance is expected to be metabolised to innocuous substances. GENOTOXICITY (JECFA, 2002): In view of the mainly negative results in the assays in vitro and the uniformly negative results in well recognized assays in vivo, the Committee concluded that the group ",
+          "unit": null,
+          "rawText": "Remarks: METABOLISM: The flavouring substance is expected to be metabolised to innocuous substances. GENOTOXICITY (JECFA, 2002): In view of the mainly negative results in the assays in vitro and the uniformly negative results in well recognized assays in vivo, the Committee concluded that the group ",
+          "authority": "EFSA",
+          "year": 2019,
+          "scope": "non_human_or_non_food",
+          "source": "https://doi.org/10.2903/j.efsa.2019.5876",
+          "field": "HumanHealthHazardCharacteristics.OtherReferenceValues.JustificationAndComments"
+        },
+        {
+          "type": "other_reference_value",
+          "value": "consumers",
+          "unit": null,
+          "rawText": "consumers",
+          "authority": "EFSA",
+          "year": 2019,
+          "scope": "food_additive_human",
+          "source": "https://doi.org/10.2903/j.efsa.2019.5876",
+          "field": "HumanHealthHazardCharacteristics.OtherReferenceValues.Population"
+        },
+        {
+          "type": "other_reference_value",
+          "value": "30",
+          "unit": null,
+          "rawText": "30",
+          "authority": "EFSA",
+          "year": 2019,
+          "scope": "food_additive_human",
+          "source": "https://doi.org/10.2903/j.efsa.2019.5876",
+          "field": "HumanHealthHazardCharacteristics.OtherReferenceValues.RefValue.lowerValue"
+        },
+        {
+          "type": "other_reference_value",
+          "value": "µg/kg bw/day",
+          "unit": null,
+          "rawText": "µg/kg bw/day",
+          "authority": "EFSA",
+          "year": 2019,
+          "scope": "food_additive_human",
+          "source": "https://doi.org/10.2903/j.efsa.2019.5876",
+          "field": "HumanHealthHazardCharacteristics.OtherReferenceValues.RefValue.Unit"
+        },
+        {
+          "type": "other_reference_value",
+          "value": "6fde9517-9d54-4c3f-8d85-832da344ed51",
+          "unit": null,
+          "rawText": "6fde9517-9d54-4c3f-8d85-832da344ed51",
+          "authority": "EFSA",
+          "year": 2019,
+          "scope": "food_additive_human",
+          "source": "https://doi.org/10.2903/j.efsa.2019.5876",
+          "field": "HumanHealthHazardCharacteristics.OtherReferenceValues.ReferenceToEFSAOpinion"
+        },
+        {
+          "type": "other_reference_value",
+          "value": "other:",
+          "unit": null,
+          "rawText": "other:",
+          "authority": "EFSA",
+          "year": 2019,
+          "scope": "food_additive_human",
+          "source": "https://doi.org/10.2903/j.efsa.2019.5876",
+          "field": "HumanHealthHazardCharacteristics.OtherReferenceValues.ReferenceValueDescriptor"
+        },
+        {
+          "type": "other_reference_value",
+          "value": "TTC Cramer Class I",
+          "unit": null,
+          "rawText": "TTC Cramer Class I",
+          "authority": "EFSA",
+          "year": 2019,
+          "scope": "food_additive_human",
+          "source": "https://doi.org/10.2903/j.efsa.2019.5876",
+          "field": "HumanHealthHazardCharacteristics.OtherReferenceValues.ReferenceValueDescriptor.Other"
+        },
+        {
+          "type": "ADI",
+          "lower": 0,
+          "upper": 0,
+          "unit": null,
+          "rawText": null,
+          "authority": "EFSA",
+          "year": 2019,
+          "scope": "food_additive_human",
+          "source": "https://doi.org/10.2903/j.efsa.2019.5876"
+        },
+        {
+          "type": "other_reference_value",
+          "value": "Assessment: low concern; Remarks: The use levels proposed for the use of benzoic acid as feed flavouring are considerably lower than the maximum use levels proposed for other uses of benzoic acid and salts (e.g. 5000 mg/kg complete piglet feed; Regulation No (EC) 226/2012). Therefore the FEEDAP Pane",
+          "unit": null,
+          "rawText": "Assessment: low concern; Remarks: The use levels proposed for the use of benzoic acid as feed flavouring are considerably lower than the maximum use levels proposed for other uses of benzoic acid and salts (e.g. 5000 mg/kg complete piglet feed; Regulation No (EC) 226/2012). Therefore the FEEDAP Pane",
+          "authority": "EFSA",
+          "year": 2019,
+          "scope": "non_human_or_non_food",
+          "source": "https://doi.org/10.2903/j.efsa.2019.5876",
+          "field": "HumanHealthHazardCharacteristics.OtherReferenceValues.JustificationAndComments"
+        },
+        {
+          "type": "other_reference_value",
+          "value": "other:",
+          "unit": null,
+          "rawText": "other:",
+          "authority": "EFSA",
+          "year": 2019,
+          "scope": "food_additive_human",
+          "source": "https://doi.org/10.2903/j.efsa.2019.5876",
+          "field": "HumanHealthHazardCharacteristics.OtherReferenceValues.Population"
+        },
+        {
+          "type": "other_reference_value",
+          "value": "Aquatic animal for food production - unspecified",
+          "unit": null,
+          "rawText": "Aquatic animal for food production - unspecified",
+          "authority": "EFSA",
+          "year": 2019,
+          "scope": "non_human_or_non_food",
+          "source": "https://doi.org/10.2903/j.efsa.2019.5876",
+          "field": "HumanHealthHazardCharacteristics.OtherReferenceValues.Population.Other"
+        },
+        {
+          "type": "other_reference_value",
+          "value": "182eb15b-0bbf-4552-ad4f-af5476524e42",
+          "unit": null,
+          "rawText": "182eb15b-0bbf-4552-ad4f-af5476524e42",
+          "authority": "EFSA",
+          "year": 2019,
+          "scope": "food_additive_human",
+          "source": "https://doi.org/10.2903/j.efsa.2019.5876",
+          "field": "HumanHealthHazardCharacteristics.OtherReferenceValues.ReferenceToEFSAOpinion"
+        },
+        {
+          "type": "other_reference_value",
+          "value": "other:",
+          "unit": null,
+          "rawText": "other:",
+          "authority": "EFSA",
+          "year": 2019,
+          "scope": "food_additive_human",
+          "source": "https://doi.org/10.2903/j.efsa.2019.5876",
+          "field": "HumanHealthHazardCharacteristics.OtherReferenceValues.ReferenceValueDescriptor"
+        },
+        {
+          "type": "other_reference_value",
+          "value": "margin of safety",
+          "unit": null,
+          "rawText": "margin of safety",
+          "authority": "EFSA",
+          "year": 2019,
+          "scope": "food_additive_human",
+          "source": "https://doi.org/10.2903/j.efsa.2019.5876",
+          "field": "HumanHealthHazardCharacteristics.OtherReferenceValues.ReferenceValueDescriptor.Other"
+        },
+        {
+          "type": "ADI",
+          "lower": 0,
+          "upper": 5,
+          "unit": "mg/kg bw/day",
+          "rawText": null,
+          "authority": "EFSA",
+          "year": 2019,
+          "scope": "food_additive_human",
+          "source": "https://doi.org/10.2903/j.efsa.2019.5876"
+        },
+        {
+          "type": "ADI",
+          "lower": 4,
+          "upper": 0,
+          "unit": "mg/kg bw/day",
+          "rawText": null,
+          "authority": "EFSA",
+          "year": 2019,
+          "scope": "food_additive_human",
+          "source": "https://doi.org/10.2903/j.efsa.2019.5876"
+        },
+        {
+          "type": "ADI",
+          "lower": 0,
+          "upper": 0,
+          "unit": null,
+          "rawText": null,
+          "authority": "EFSA",
+          "year": 2019,
+          "scope": "food_additive_human",
+          "source": "https://doi.org/10.2903/j.efsa.2019.5876"
+        },
+        {
+          "type": "other_reference_value",
+          "value": "Remarks: METABOLISM: The flavouring substance is expected to be metabolised to innocuous substances. GENOTOXICITY (JECFA, 2002): A total of 12 benzyl derivatives in the group have been tested for genotoxicity. In view of the mainly negative results in the assays in vitro and the uniformly negative r",
+          "unit": null,
+          "rawText": "Remarks: METABOLISM: The flavouring substance is expected to be metabolised to innocuous substances. GENOTOXICITY (JECFA, 2002): A total of 12 benzyl derivatives in the group have been tested for genotoxicity. In view of the mainly negative results in the assays in vitro and the uniformly negative r",
+          "authority": "EFSA",
+          "year": 2019,
+          "scope": "non_human_or_non_food",
+          "source": "https://doi.org/10.2903/j.efsa.2019.5876",
+          "field": "HumanHealthHazardCharacteristics.OtherReferenceValues.JustificationAndComments"
+        },
+        {
+          "type": "other_reference_value",
+          "value": "consumers",
+          "unit": null,
+          "rawText": "consumers",
+          "authority": "EFSA",
+          "year": 2019,
+          "scope": "food_additive_human",
+          "source": "https://doi.org/10.2903/j.efsa.2019.5876",
+          "field": "HumanHealthHazardCharacteristics.OtherReferenceValues.Population"
+        },
+        {
+          "type": "other_reference_value",
+          "value": "30",
+          "unit": null,
+          "rawText": "30",
+          "authority": "EFSA",
+          "year": 2019,
+          "scope": "food_additive_human",
+          "source": "https://doi.org/10.2903/j.efsa.2019.5876",
+          "field": "HumanHealthHazardCharacteristics.OtherReferenceValues.RefValue.lowerValue"
+        },
+        {
+          "type": "other_reference_value",
+          "value": "µg/kg bw/day",
+          "unit": null,
+          "rawText": "µg/kg bw/day",
+          "authority": "EFSA",
+          "year": 2019,
+          "scope": "food_additive_human",
+          "source": "https://doi.org/10.2903/j.efsa.2019.5876",
+          "field": "HumanHealthHazardCharacteristics.OtherReferenceValues.RefValue.Unit"
+        },
+        {
+          "type": "other_reference_value",
+          "value": "5bb5101f-976c-44f0-8c98-9c02bf2cd41c",
+          "unit": null,
+          "rawText": "5bb5101f-976c-44f0-8c98-9c02bf2cd41c",
+          "authority": "EFSA",
+          "year": 2019,
+          "scope": "food_additive_human",
+          "source": "https://doi.org/10.2903/j.efsa.2019.5876",
+          "field": "HumanHealthHazardCharacteristics.OtherReferenceValues.ReferenceToEFSAOpinion"
+        },
+        {
+          "type": "other_reference_value",
+          "value": "other:",
+          "unit": null,
+          "rawText": "other:",
+          "authority": "EFSA",
+          "year": 2019,
+          "scope": "food_additive_human",
+          "source": "https://doi.org/10.2903/j.efsa.2019.5876",
+          "field": "HumanHealthHazardCharacteristics.OtherReferenceValues.ReferenceValueDescriptor"
+        },
+        {
+          "type": "other_reference_value",
+          "value": "TTC Cramer Class I",
+          "unit": null,
+          "rawText": "TTC Cramer Class I",
+          "authority": "EFSA",
+          "year": 2019,
+          "scope": "food_additive_human",
+          "source": "https://doi.org/10.2903/j.efsa.2019.5876",
+          "field": "HumanHealthHazardCharacteristics.OtherReferenceValues.ReferenceValueDescriptor.Other"
+        },
+        {
+          "type": "ADI",
+          "lower": 0,
+          "upper": 0,
+          "unit": null,
+          "rawText": null,
+          "authority": "EFSA",
+          "year": 2019,
+          "scope": "food_additive_human",
+          "source": "https://doi.org/10.2903/j.efsa.2019.5876"
+        },
+        {
+          "type": "other_reference_value",
+          "value": "Assessment: some concern; Remarks: All compounds of chemical group 23 should be considered as irritants to skin, eyes and respiratory tract, skin sensitisers and harmful if swallowed.",
+          "unit": null,
+          "rawText": "Assessment: some concern; Remarks: All compounds of chemical group 23 should be considered as irritants to skin, eyes and respiratory tract, skin sensitisers and harmful if swallowed.",
+          "authority": "EFSA",
+          "year": 2019,
+          "scope": "non_human_or_non_food",
+          "source": "https://doi.org/10.2903/j.efsa.2019.5876",
+          "field": "HumanHealthHazardCharacteristics.OtherReferenceValues.JustificationAndComments"
+        },
+        {
+          "type": "other_reference_value",
+          "value": "workers",
+          "unit": null,
+          "rawText": "workers",
+          "authority": "EFSA",
+          "year": 2019,
+          "scope": "non_human_or_non_food",
+          "source": "https://doi.org/10.2903/j.efsa.2019.5876",
+          "field": "HumanHealthHazardCharacteristics.OtherReferenceValues.Population"
+        },
+        {
+          "type": "other_reference_value",
+          "value": "182eb15b-0bbf-4552-ad4f-af5476524e42",
+          "unit": null,
+          "rawText": "182eb15b-0bbf-4552-ad4f-af5476524e42",
+          "authority": "EFSA",
+          "year": 2019,
+          "scope": "food_additive_human",
+          "source": "https://doi.org/10.2903/j.efsa.2019.5876",
+          "field": "HumanHealthHazardCharacteristics.OtherReferenceValues.ReferenceToEFSAOpinion"
+        },
+        {
+          "type": "other_reference_value",
+          "value": "other:",
+          "unit": null,
+          "rawText": "other:",
+          "authority": "EFSA",
+          "year": 2019,
+          "scope": "food_additive_human",
+          "source": "https://doi.org/10.2903/j.efsa.2019.5876",
+          "field": "HumanHealthHazardCharacteristics.OtherReferenceValues.ReferenceValueDescriptor"
+        },
+        {
+          "type": "other_reference_value",
+          "value": "critical study not identified",
+          "unit": null,
+          "rawText": "critical study not identified",
+          "authority": "EFSA",
+          "year": 2019,
+          "scope": "food_additive_human",
+          "source": "https://doi.org/10.2903/j.efsa.2019.5876",
+          "field": "HumanHealthHazardCharacteristics.OtherReferenceValues.ReferenceValueDescriptor.Other"
+        },
+        {
+          "type": "ADI",
+          "lower": 0,
+          "upper": 0,
+          "unit": null,
+          "rawText": null,
+          "authority": "EFSA",
+          "year": 2019,
+          "scope": "food_additive_human",
+          "source": "https://doi.org/10.2903/j.efsa.2019.5876"
+        },
+        {
+          "type": "other_reference_value",
+          "value": "Assessment: low concern; Remarks: The use levels proposed for the use of benzoic acid as feed flavouring are considerably lower than the maximum use levels proposed for other uses of benzoic acid and salts (e.g. 5000 mg/kg complete piglet feed; Regulation No (EC) 226/2012). Therefore the FEEDAP Pane",
+          "unit": null,
+          "rawText": "Assessment: low concern; Remarks: The use levels proposed for the use of benzoic acid as feed flavouring are considerably lower than the maximum use levels proposed for other uses of benzoic acid and salts (e.g. 5000 mg/kg complete piglet feed; Regulation No (EC) 226/2012). Therefore the FEEDAP Pane",
+          "authority": "EFSA",
+          "year": 2019,
+          "scope": "non_human_or_non_food",
+          "source": "https://doi.org/10.2903/j.efsa.2019.5876",
+          "field": "HumanHealthHazardCharacteristics.OtherReferenceValues.JustificationAndComments"
+        },
+        {
+          "type": "other_reference_value",
+          "value": "other:",
+          "unit": null,
+          "rawText": "other:",
+          "authority": "EFSA",
+          "year": 2019,
+          "scope": "food_additive_human",
+          "source": "https://doi.org/10.2903/j.efsa.2019.5876",
+          "field": "HumanHealthHazardCharacteristics.OtherReferenceValues.Population"
+        },
+        {
+          "type": "other_reference_value",
+          "value": "Animal for food production - unspecified",
+          "unit": null,
+          "rawText": "Animal for food production - unspecified",
+          "authority": "EFSA",
+          "year": 2019,
+          "scope": "non_human_or_non_food",
+          "source": "https://doi.org/10.2903/j.efsa.2019.5876",
+          "field": "HumanHealthHazardCharacteristics.OtherReferenceValues.Population.Other"
+        },
+        {
+          "type": "other_reference_value",
+          "value": "182eb15b-0bbf-4552-ad4f-af5476524e42",
+          "unit": null,
+          "rawText": "182eb15b-0bbf-4552-ad4f-af5476524e42",
+          "authority": "EFSA",
+          "year": 2019,
+          "scope": "food_additive_human",
+          "source": "https://doi.org/10.2903/j.efsa.2019.5876",
+          "field": "HumanHealthHazardCharacteristics.OtherReferenceValues.ReferenceToEFSAOpinion"
+        },
+        {
+          "type": "other_reference_value",
+          "value": "other:",
+          "unit": null,
+          "rawText": "other:",
+          "authority": "EFSA",
+          "year": 2019,
+          "scope": "food_additive_human",
+          "source": "https://doi.org/10.2903/j.efsa.2019.5876",
+          "field": "HumanHealthHazardCharacteristics.OtherReferenceValues.ReferenceValueDescriptor"
+        },
+        {
+          "type": "other_reference_value",
+          "value": "margin of safety",
+          "unit": null,
+          "rawText": "margin of safety",
+          "authority": "EFSA",
+          "year": 2019,
+          "scope": "food_additive_human",
+          "source": "https://doi.org/10.2903/j.efsa.2019.5876",
+          "field": "HumanHealthHazardCharacteristics.OtherReferenceValues.ReferenceValueDescriptor.Other"
+        },
+        {
+          "type": "ADI",
+          "lower": 0,
+          "upper": 0,
+          "unit": null,
+          "rawText": null,
+          "authority": "EFSA",
+          "year": 2019,
+          "scope": "food_additive_human",
+          "source": "https://doi.org/10.2903/j.efsa.2019.5876"
+        },
+        {
+          "type": "other_reference_value",
+          "value": "Assessment: low concern; Remarks: Benzoates, benzyl derivatives and salicylates are rapidly absorbed, distributed, metabolised and excreted. Mammals, birds and fish share a similar metabolic capacity to handle these compounds and produce hydrophilic metabolites with low affinity for tissues which ar",
+          "unit": null,
+          "rawText": "Assessment: low concern; Remarks: Benzoates, benzyl derivatives and salicylates are rapidly absorbed, distributed, metabolised and excreted. Mammals, birds and fish share a similar metabolic capacity to handle these compounds and produce hydrophilic metabolites with low affinity for tissues which ar",
+          "authority": "EFSA",
+          "year": 2019,
+          "scope": "non_human_or_non_food",
+          "source": "https://doi.org/10.2903/j.efsa.2019.5876",
+          "field": "HumanHealthHazardCharacteristics.OtherReferenceValues.JustificationAndComments"
+        },
+        {
+          "type": "other_reference_value",
+          "value": "consumers",
+          "unit": null,
+          "rawText": "consumers",
+          "authority": "EFSA",
+          "year": 2019,
+          "scope": "food_additive_human",
+          "source": "https://doi.org/10.2903/j.efsa.2019.5876",
+          "field": "HumanHealthHazardCharacteristics.OtherReferenceValues.Population"
+        },
+        {
+          "type": "other_reference_value",
+          "value": "182eb15b-0bbf-4552-ad4f-af5476524e42",
+          "unit": null,
+          "rawText": "182eb15b-0bbf-4552-ad4f-af5476524e42",
+          "authority": "EFSA",
+          "year": 2019,
+          "scope": "food_additive_human",
+          "source": "https://doi.org/10.2903/j.efsa.2019.5876",
+          "field": "HumanHealthHazardCharacteristics.OtherReferenceValues.ReferenceToEFSAOpinion"
+        },
+        {
+          "type": "other_reference_value",
+          "value": "other:",
+          "unit": null,
+          "rawText": "other:",
+          "authority": "EFSA",
+          "year": 2019,
+          "scope": "food_additive_human",
+          "source": "https://doi.org/10.2903/j.efsa.2019.5876",
+          "field": "HumanHealthHazardCharacteristics.OtherReferenceValues.ReferenceValueDescriptor"
+        },
+        {
+          "type": "other_reference_value",
+          "value": "margin of safety",
+          "unit": null,
+          "rawText": "margin of safety",
+          "authority": "EFSA",
+          "year": 2019,
+          "scope": "food_additive_human",
+          "source": "https://doi.org/10.2903/j.efsa.2019.5876",
+          "field": "HumanHealthHazardCharacteristics.OtherReferenceValues.ReferenceValueDescriptor.Other"
+        },
+        {
+          "type": "ADI",
+          "lower": 0,
+          "upper": 0,
+          "unit": null,
+          "rawText": null,
+          "authority": "EFSA",
+          "year": 2019,
+          "scope": "food_additive_human",
+          "source": "https://doi.org/10.2903/j.efsa.2019.5876"
+        },
+        {
+          "type": "other_reference_value",
+          "value": "Assessment: low concern; Remarks: The use levels proposed for the use of benzoic acid as feed flavouring are considerably lower than the maximum use levels proposed for other uses of benzoic acid and salts (e.g. 5000 mg/kg complete piglet feed; Regulation No (EC) 226/2012). Therefore the FEEDAP Pane",
+          "unit": null,
+          "rawText": "Assessment: low concern; Remarks: The use levels proposed for the use of benzoic acid as feed flavouring are considerably lower than the maximum use levels proposed for other uses of benzoic acid and salts (e.g. 5000 mg/kg complete piglet feed; Regulation No (EC) 226/2012). Therefore the FEEDAP Pane",
+          "authority": "EFSA",
+          "year": 2019,
+          "scope": "non_human_or_non_food",
+          "source": "https://doi.org/10.2903/j.efsa.2019.5876",
+          "field": "HumanHealthHazardCharacteristics.OtherReferenceValues.JustificationAndComments"
+        },
+        {
+          "type": "other_reference_value",
+          "value": "other:",
+          "unit": null,
+          "rawText": "other:",
+          "authority": "EFSA",
+          "year": 2019,
+          "scope": "food_additive_human",
+          "source": "https://doi.org/10.2903/j.efsa.2019.5876",
+          "field": "HumanHealthHazardCharacteristics.OtherReferenceValues.Population"
+        },
+        {
+          "type": "other_reference_value",
+          "value": "Animal not used for food production - unspecified",
+          "unit": null,
+          "rawText": "Animal not used for food production - unspecified",
+          "authority": "EFSA",
+          "year": 2019,
+          "scope": "non_human_or_non_food",
+          "source": "https://doi.org/10.2903/j.efsa.2019.5876",
+          "field": "HumanHealthHazardCharacteristics.OtherReferenceValues.Population.Other"
+        },
+        {
+          "type": "other_reference_value",
+          "value": "182eb15b-0bbf-4552-ad4f-af5476524e42",
+          "unit": null,
+          "rawText": "182eb15b-0bbf-4552-ad4f-af5476524e42",
+          "authority": "EFSA",
+          "year": 2019,
+          "scope": "food_additive_human",
+          "source": "https://doi.org/10.2903/j.efsa.2019.5876",
+          "field": "HumanHealthHazardCharacteristics.OtherReferenceValues.ReferenceToEFSAOpinion"
+        },
+        {
+          "type": "other_reference_value",
+          "value": "other:",
+          "unit": null,
+          "rawText": "other:",
+          "authority": "EFSA",
+          "year": 2019,
+          "scope": "food_additive_human",
+          "source": "https://doi.org/10.2903/j.efsa.2019.5876",
+          "field": "HumanHealthHazardCharacteristics.OtherReferenceValues.ReferenceValueDescriptor"
+        },
+        {
+          "type": "other_reference_value",
+          "value": "margin of safety",
+          "unit": null,
+          "rawText": "margin of safety",
+          "authority": "EFSA",
+          "year": 2019,
+          "scope": "food_additive_human",
+          "source": "https://doi.org/10.2903/j.efsa.2019.5876",
+          "field": "HumanHealthHazardCharacteristics.OtherReferenceValues.ReferenceValueDescriptor.Other"
+        }
+      ],
+      "authorityDisagreement": null,
+      "exposure": {
+        "referenceValues": [
+          {
+            "type": "ADI",
+            "lower": 0,
+            "upper": 0,
+            "unit": null,
+            "rawText": null,
+            "authority": "EFSA",
+            "year": 2019,
+            "scope": "food_additive_human",
+            "source": "https://doi.org/10.2903/j.efsa.2019.5876"
+          },
+          {
+            "type": "other_reference_value",
+            "value": "Remarks: METABOLISM: The flavouring substance is expected to be metabolised to innocuous substances. GENOTOXICITY (JECFA, 2002): In view of the mainly negative results in the assays in vitro and the uniformly negative results in well recognized assays in vivo, the Committee concluded that the group ",
+            "unit": null,
+            "rawText": "Remarks: METABOLISM: The flavouring substance is expected to be metabolised to innocuous substances. GENOTOXICITY (JECFA, 2002): In view of the mainly negative results in the assays in vitro and the uniformly negative results in well recognized assays in vivo, the Committee concluded that the group ",
+            "authority": "EFSA",
+            "year": 2019,
+            "scope": "non_human_or_non_food",
+            "source": "https://doi.org/10.2903/j.efsa.2019.5876",
+            "field": "HumanHealthHazardCharacteristics.OtherReferenceValues.JustificationAndComments"
+          },
+          {
+            "type": "other_reference_value",
+            "value": "consumers",
+            "unit": null,
+            "rawText": "consumers",
+            "authority": "EFSA",
+            "year": 2019,
+            "scope": "food_additive_human",
+            "source": "https://doi.org/10.2903/j.efsa.2019.5876",
+            "field": "HumanHealthHazardCharacteristics.OtherReferenceValues.Population"
+          },
+          {
+            "type": "other_reference_value",
+            "value": "30",
+            "unit": null,
+            "rawText": "30",
+            "authority": "EFSA",
+            "year": 2019,
+            "scope": "food_additive_human",
+            "source": "https://doi.org/10.2903/j.efsa.2019.5876",
+            "field": "HumanHealthHazardCharacteristics.OtherReferenceValues.RefValue.lowerValue"
+          },
+          {
+            "type": "other_reference_value",
+            "value": "µg/kg bw/day",
+            "unit": null,
+            "rawText": "µg/kg bw/day",
+            "authority": "EFSA",
+            "year": 2019,
+            "scope": "food_additive_human",
+            "source": "https://doi.org/10.2903/j.efsa.2019.5876",
+            "field": "HumanHealthHazardCharacteristics.OtherReferenceValues.RefValue.Unit"
+          },
+          {
+            "type": "other_reference_value",
+            "value": "6fde9517-9d54-4c3f-8d85-832da344ed51",
+            "unit": null,
+            "rawText": "6fde9517-9d54-4c3f-8d85-832da344ed51",
+            "authority": "EFSA",
+            "year": 2019,
+            "scope": "food_additive_human",
+            "source": "https://doi.org/10.2903/j.efsa.2019.5876",
+            "field": "HumanHealthHazardCharacteristics.OtherReferenceValues.ReferenceToEFSAOpinion"
+          },
+          {
+            "type": "other_reference_value",
+            "value": "other:",
+            "unit": null,
+            "rawText": "other:",
+            "authority": "EFSA",
+            "year": 2019,
+            "scope": "food_additive_human",
+            "source": "https://doi.org/10.2903/j.efsa.2019.5876",
+            "field": "HumanHealthHazardCharacteristics.OtherReferenceValues.ReferenceValueDescriptor"
+          },
+          {
+            "type": "other_reference_value",
+            "value": "TTC Cramer Class I",
+            "unit": null,
+            "rawText": "TTC Cramer Class I",
+            "authority": "EFSA",
+            "year": 2019,
+            "scope": "food_additive_human",
+            "source": "https://doi.org/10.2903/j.efsa.2019.5876",
+            "field": "HumanHealthHazardCharacteristics.OtherReferenceValues.ReferenceValueDescriptor.Other"
+          },
+          {
+            "type": "ADI",
+            "lower": 0,
+            "upper": 0,
+            "unit": null,
+            "rawText": null,
+            "authority": "EFSA",
+            "year": 2019,
+            "scope": "food_additive_human",
+            "source": "https://doi.org/10.2903/j.efsa.2019.5876"
+          },
+          {
+            "type": "other_reference_value",
+            "value": "Assessment: low concern; Remarks: The use levels proposed for the use of benzoic acid as feed flavouring are considerably lower than the maximum use levels proposed for other uses of benzoic acid and salts (e.g. 5000 mg/kg complete piglet feed; Regulation No (EC) 226/2012). Therefore the FEEDAP Pane",
+            "unit": null,
+            "rawText": "Assessment: low concern; Remarks: The use levels proposed for the use of benzoic acid as feed flavouring are considerably lower than the maximum use levels proposed for other uses of benzoic acid and salts (e.g. 5000 mg/kg complete piglet feed; Regulation No (EC) 226/2012). Therefore the FEEDAP Pane",
+            "authority": "EFSA",
+            "year": 2019,
+            "scope": "non_human_or_non_food",
+            "source": "https://doi.org/10.2903/j.efsa.2019.5876",
+            "field": "HumanHealthHazardCharacteristics.OtherReferenceValues.JustificationAndComments"
+          },
+          {
+            "type": "other_reference_value",
+            "value": "other:",
+            "unit": null,
+            "rawText": "other:",
+            "authority": "EFSA",
+            "year": 2019,
+            "scope": "food_additive_human",
+            "source": "https://doi.org/10.2903/j.efsa.2019.5876",
+            "field": "HumanHealthHazardCharacteristics.OtherReferenceValues.Population"
+          },
+          {
+            "type": "other_reference_value",
+            "value": "Aquatic animal for food production - unspecified",
+            "unit": null,
+            "rawText": "Aquatic animal for food production - unspecified",
+            "authority": "EFSA",
+            "year": 2019,
+            "scope": "non_human_or_non_food",
+            "source": "https://doi.org/10.2903/j.efsa.2019.5876",
+            "field": "HumanHealthHazardCharacteristics.OtherReferenceValues.Population.Other"
+          },
+          {
+            "type": "other_reference_value",
+            "value": "182eb15b-0bbf-4552-ad4f-af5476524e42",
+            "unit": null,
+            "rawText": "182eb15b-0bbf-4552-ad4f-af5476524e42",
+            "authority": "EFSA",
+            "year": 2019,
+            "scope": "food_additive_human",
+            "source": "https://doi.org/10.2903/j.efsa.2019.5876",
+            "field": "HumanHealthHazardCharacteristics.OtherReferenceValues.ReferenceToEFSAOpinion"
+          },
+          {
+            "type": "other_reference_value",
+            "value": "other:",
+            "unit": null,
+            "rawText": "other:",
+            "authority": "EFSA",
+            "year": 2019,
+            "scope": "food_additive_human",
+            "source": "https://doi.org/10.2903/j.efsa.2019.5876",
+            "field": "HumanHealthHazardCharacteristics.OtherReferenceValues.ReferenceValueDescriptor"
+          },
+          {
+            "type": "other_reference_value",
+            "value": "margin of safety",
+            "unit": null,
+            "rawText": "margin of safety",
+            "authority": "EFSA",
+            "year": 2019,
+            "scope": "food_additive_human",
+            "source": "https://doi.org/10.2903/j.efsa.2019.5876",
+            "field": "HumanHealthHazardCharacteristics.OtherReferenceValues.ReferenceValueDescriptor.Other"
+          },
+          {
+            "type": "ADI",
+            "lower": 0,
+            "upper": 5,
+            "unit": "mg/kg bw/day",
+            "rawText": null,
+            "authority": "EFSA",
+            "year": 2019,
+            "scope": "food_additive_human",
+            "source": "https://doi.org/10.2903/j.efsa.2019.5876"
+          },
+          {
+            "type": "ADI",
+            "lower": 4,
+            "upper": 0,
+            "unit": "mg/kg bw/day",
+            "rawText": null,
+            "authority": "EFSA",
+            "year": 2019,
+            "scope": "food_additive_human",
+            "source": "https://doi.org/10.2903/j.efsa.2019.5876"
+          },
+          {
+            "type": "ADI",
+            "lower": 0,
+            "upper": 0,
+            "unit": null,
+            "rawText": null,
+            "authority": "EFSA",
+            "year": 2019,
+            "scope": "food_additive_human",
+            "source": "https://doi.org/10.2903/j.efsa.2019.5876"
+          },
+          {
+            "type": "other_reference_value",
+            "value": "Remarks: METABOLISM: The flavouring substance is expected to be metabolised to innocuous substances. GENOTOXICITY (JECFA, 2002): A total of 12 benzyl derivatives in the group have been tested for genotoxicity. In view of the mainly negative results in the assays in vitro and the uniformly negative r",
+            "unit": null,
+            "rawText": "Remarks: METABOLISM: The flavouring substance is expected to be metabolised to innocuous substances. GENOTOXICITY (JECFA, 2002): A total of 12 benzyl derivatives in the group have been tested for genotoxicity. In view of the mainly negative results in the assays in vitro and the uniformly negative r",
+            "authority": "EFSA",
+            "year": 2019,
+            "scope": "non_human_or_non_food",
+            "source": "https://doi.org/10.2903/j.efsa.2019.5876",
+            "field": "HumanHealthHazardCharacteristics.OtherReferenceValues.JustificationAndComments"
+          },
+          {
+            "type": "other_reference_value",
+            "value": "consumers",
+            "unit": null,
+            "rawText": "consumers",
+            "authority": "EFSA",
+            "year": 2019,
+            "scope": "food_additive_human",
+            "source": "https://doi.org/10.2903/j.efsa.2019.5876",
+            "field": "HumanHealthHazardCharacteristics.OtherReferenceValues.Population"
+          },
+          {
+            "type": "other_reference_value",
+            "value": "30",
+            "unit": null,
+            "rawText": "30",
+            "authority": "EFSA",
+            "year": 2019,
+            "scope": "food_additive_human",
+            "source": "https://doi.org/10.2903/j.efsa.2019.5876",
+            "field": "HumanHealthHazardCharacteristics.OtherReferenceValues.RefValue.lowerValue"
+          },
+          {
+            "type": "other_reference_value",
+            "value": "µg/kg bw/day",
+            "unit": null,
+            "rawText": "µg/kg bw/day",
+            "authority": "EFSA",
+            "year": 2019,
+            "scope": "food_additive_human",
+            "source": "https://doi.org/10.2903/j.efsa.2019.5876",
+            "field": "HumanHealthHazardCharacteristics.OtherReferenceValues.RefValue.Unit"
+          },
+          {
+            "type": "other_reference_value",
+            "value": "5bb5101f-976c-44f0-8c98-9c02bf2cd41c",
+            "unit": null,
+            "rawText": "5bb5101f-976c-44f0-8c98-9c02bf2cd41c",
+            "authority": "EFSA",
+            "year": 2019,
+            "scope": "food_additive_human",
+            "source": "https://doi.org/10.2903/j.efsa.2019.5876",
+            "field": "HumanHealthHazardCharacteristics.OtherReferenceValues.ReferenceToEFSAOpinion"
+          },
+          {
+            "type": "other_reference_value",
+            "value": "other:",
+            "unit": null,
+            "rawText": "other:",
+            "authority": "EFSA",
+            "year": 2019,
+            "scope": "food_additive_human",
+            "source": "https://doi.org/10.2903/j.efsa.2019.5876",
+            "field": "HumanHealthHazardCharacteristics.OtherReferenceValues.ReferenceValueDescriptor"
+          },
+          {
+            "type": "other_reference_value",
+            "value": "TTC Cramer Class I",
+            "unit": null,
+            "rawText": "TTC Cramer Class I",
+            "authority": "EFSA",
+            "year": 2019,
+            "scope": "food_additive_human",
+            "source": "https://doi.org/10.2903/j.efsa.2019.5876",
+            "field": "HumanHealthHazardCharacteristics.OtherReferenceValues.ReferenceValueDescriptor.Other"
+          },
+          {
+            "type": "ADI",
+            "lower": 0,
+            "upper": 0,
+            "unit": null,
+            "rawText": null,
+            "authority": "EFSA",
+            "year": 2019,
+            "scope": "food_additive_human",
+            "source": "https://doi.org/10.2903/j.efsa.2019.5876"
+          },
+          {
+            "type": "other_reference_value",
+            "value": "Assessment: some concern; Remarks: All compounds of chemical group 23 should be considered as irritants to skin, eyes and respiratory tract, skin sensitisers and harmful if swallowed.",
+            "unit": null,
+            "rawText": "Assessment: some concern; Remarks: All compounds of chemical group 23 should be considered as irritants to skin, eyes and respiratory tract, skin sensitisers and harmful if swallowed.",
+            "authority": "EFSA",
+            "year": 2019,
+            "scope": "non_human_or_non_food",
+            "source": "https://doi.org/10.2903/j.efsa.2019.5876",
+            "field": "HumanHealthHazardCharacteristics.OtherReferenceValues.JustificationAndComments"
+          },
+          {
+            "type": "other_reference_value",
+            "value": "workers",
+            "unit": null,
+            "rawText": "workers",
+            "authority": "EFSA",
+            "year": 2019,
+            "scope": "non_human_or_non_food",
+            "source": "https://doi.org/10.2903/j.efsa.2019.5876",
+            "field": "HumanHealthHazardCharacteristics.OtherReferenceValues.Population"
+          },
+          {
+            "type": "other_reference_value",
+            "value": "182eb15b-0bbf-4552-ad4f-af5476524e42",
+            "unit": null,
+            "rawText": "182eb15b-0bbf-4552-ad4f-af5476524e42",
+            "authority": "EFSA",
+            "year": 2019,
+            "scope": "food_additive_human",
+            "source": "https://doi.org/10.2903/j.efsa.2019.5876",
+            "field": "HumanHealthHazardCharacteristics.OtherReferenceValues.ReferenceToEFSAOpinion"
+          },
+          {
+            "type": "other_reference_value",
+            "value": "other:",
+            "unit": null,
+            "rawText": "other:",
+            "authority": "EFSA",
+            "year": 2019,
+            "scope": "food_additive_human",
+            "source": "https://doi.org/10.2903/j.efsa.2019.5876",
+            "field": "HumanHealthHazardCharacteristics.OtherReferenceValues.ReferenceValueDescriptor"
+          },
+          {
+            "type": "other_reference_value",
+            "value": "critical study not identified",
+            "unit": null,
+            "rawText": "critical study not identified",
+            "authority": "EFSA",
+            "year": 2019,
+            "scope": "food_additive_human",
+            "source": "https://doi.org/10.2903/j.efsa.2019.5876",
+            "field": "HumanHealthHazardCharacteristics.OtherReferenceValues.ReferenceValueDescriptor.Other"
+          },
+          {
+            "type": "ADI",
+            "lower": 0,
+            "upper": 0,
+            "unit": null,
+            "rawText": null,
+            "authority": "EFSA",
+            "year": 2019,
+            "scope": "food_additive_human",
+            "source": "https://doi.org/10.2903/j.efsa.2019.5876"
+          },
+          {
+            "type": "other_reference_value",
+            "value": "Assessment: low concern; Remarks: The use levels proposed for the use of benzoic acid as feed flavouring are considerably lower than the maximum use levels proposed for other uses of benzoic acid and salts (e.g. 5000 mg/kg complete piglet feed; Regulation No (EC) 226/2012). Therefore the FEEDAP Pane",
+            "unit": null,
+            "rawText": "Assessment: low concern; Remarks: The use levels proposed for the use of benzoic acid as feed flavouring are considerably lower than the maximum use levels proposed for other uses of benzoic acid and salts (e.g. 5000 mg/kg complete piglet feed; Regulation No (EC) 226/2012). Therefore the FEEDAP Pane",
+            "authority": "EFSA",
+            "year": 2019,
+            "scope": "non_human_or_non_food",
+            "source": "https://doi.org/10.2903/j.efsa.2019.5876",
+            "field": "HumanHealthHazardCharacteristics.OtherReferenceValues.JustificationAndComments"
+          },
+          {
+            "type": "other_reference_value",
+            "value": "other:",
+            "unit": null,
+            "rawText": "other:",
+            "authority": "EFSA",
+            "year": 2019,
+            "scope": "food_additive_human",
+            "source": "https://doi.org/10.2903/j.efsa.2019.5876",
+            "field": "HumanHealthHazardCharacteristics.OtherReferenceValues.Population"
+          },
+          {
+            "type": "other_reference_value",
+            "value": "Animal for food production - unspecified",
+            "unit": null,
+            "rawText": "Animal for food production - unspecified",
+            "authority": "EFSA",
+            "year": 2019,
+            "scope": "non_human_or_non_food",
+            "source": "https://doi.org/10.2903/j.efsa.2019.5876",
+            "field": "HumanHealthHazardCharacteristics.OtherReferenceValues.Population.Other"
+          },
+          {
+            "type": "other_reference_value",
+            "value": "182eb15b-0bbf-4552-ad4f-af5476524e42",
+            "unit": null,
+            "rawText": "182eb15b-0bbf-4552-ad4f-af5476524e42",
+            "authority": "EFSA",
+            "year": 2019,
+            "scope": "food_additive_human",
+            "source": "https://doi.org/10.2903/j.efsa.2019.5876",
+            "field": "HumanHealthHazardCharacteristics.OtherReferenceValues.ReferenceToEFSAOpinion"
+          },
+          {
+            "type": "other_reference_value",
+            "value": "other:",
+            "unit": null,
+            "rawText": "other:",
+            "authority": "EFSA",
+            "year": 2019,
+            "scope": "food_additive_human",
+            "source": "https://doi.org/10.2903/j.efsa.2019.5876",
+            "field": "HumanHealthHazardCharacteristics.OtherReferenceValues.ReferenceValueDescriptor"
+          },
+          {
+            "type": "other_reference_value",
+            "value": "margin of safety",
+            "unit": null,
+            "rawText": "margin of safety",
+            "authority": "EFSA",
+            "year": 2019,
+            "scope": "food_additive_human",
+            "source": "https://doi.org/10.2903/j.efsa.2019.5876",
+            "field": "HumanHealthHazardCharacteristics.OtherReferenceValues.ReferenceValueDescriptor.Other"
+          },
+          {
+            "type": "ADI",
+            "lower": 0,
+            "upper": 0,
+            "unit": null,
+            "rawText": null,
+            "authority": "EFSA",
+            "year": 2019,
+            "scope": "food_additive_human",
+            "source": "https://doi.org/10.2903/j.efsa.2019.5876"
+          },
+          {
+            "type": "other_reference_value",
+            "value": "Assessment: low concern; Remarks: Benzoates, benzyl derivatives and salicylates are rapidly absorbed, distributed, metabolised and excreted. Mammals, birds and fish share a similar metabolic capacity to handle these compounds and produce hydrophilic metabolites with low affinity for tissues which ar",
+            "unit": null,
+            "rawText": "Assessment: low concern; Remarks: Benzoates, benzyl derivatives and salicylates are rapidly absorbed, distributed, metabolised and excreted. Mammals, birds and fish share a similar metabolic capacity to handle these compounds and produce hydrophilic metabolites with low affinity for tissues which ar",
+            "authority": "EFSA",
+            "year": 2019,
+            "scope": "non_human_or_non_food",
+            "source": "https://doi.org/10.2903/j.efsa.2019.5876",
+            "field": "HumanHealthHazardCharacteristics.OtherReferenceValues.JustificationAndComments"
+          },
+          {
+            "type": "other_reference_value",
+            "value": "consumers",
+            "unit": null,
+            "rawText": "consumers",
+            "authority": "EFSA",
+            "year": 2019,
+            "scope": "food_additive_human",
+            "source": "https://doi.org/10.2903/j.efsa.2019.5876",
+            "field": "HumanHealthHazardCharacteristics.OtherReferenceValues.Population"
+          },
+          {
+            "type": "other_reference_value",
+            "value": "182eb15b-0bbf-4552-ad4f-af5476524e42",
+            "unit": null,
+            "rawText": "182eb15b-0bbf-4552-ad4f-af5476524e42",
+            "authority": "EFSA",
+            "year": 2019,
+            "scope": "food_additive_human",
+            "source": "https://doi.org/10.2903/j.efsa.2019.5876",
+            "field": "HumanHealthHazardCharacteristics.OtherReferenceValues.ReferenceToEFSAOpinion"
+          },
+          {
+            "type": "other_reference_value",
+            "value": "other:",
+            "unit": null,
+            "rawText": "other:",
+            "authority": "EFSA",
+            "year": 2019,
+            "scope": "food_additive_human",
+            "source": "https://doi.org/10.2903/j.efsa.2019.5876",
+            "field": "HumanHealthHazardCharacteristics.OtherReferenceValues.ReferenceValueDescriptor"
+          },
+          {
+            "type": "other_reference_value",
+            "value": "margin of safety",
+            "unit": null,
+            "rawText": "margin of safety",
+            "authority": "EFSA",
+            "year": 2019,
+            "scope": "food_additive_human",
+            "source": "https://doi.org/10.2903/j.efsa.2019.5876",
+            "field": "HumanHealthHazardCharacteristics.OtherReferenceValues.ReferenceValueDescriptor.Other"
+          },
+          {
+            "type": "ADI",
+            "lower": 0,
+            "upper": 0,
+            "unit": null,
+            "rawText": null,
+            "authority": "EFSA",
+            "year": 2019,
+            "scope": "food_additive_human",
+            "source": "https://doi.org/10.2903/j.efsa.2019.5876"
+          },
+          {
+            "type": "other_reference_value",
+            "value": "Assessment: low concern; Remarks: The use levels proposed for the use of benzoic acid as feed flavouring are considerably lower than the maximum use levels proposed for other uses of benzoic acid and salts (e.g. 5000 mg/kg complete piglet feed; Regulation No (EC) 226/2012). Therefore the FEEDAP Pane",
+            "unit": null,
+            "rawText": "Assessment: low concern; Remarks: The use levels proposed for the use of benzoic acid as feed flavouring are considerably lower than the maximum use levels proposed for other uses of benzoic acid and salts (e.g. 5000 mg/kg complete piglet feed; Regulation No (EC) 226/2012). Therefore the FEEDAP Pane",
+            "authority": "EFSA",
+            "year": 2019,
+            "scope": "non_human_or_non_food",
+            "source": "https://doi.org/10.2903/j.efsa.2019.5876",
+            "field": "HumanHealthHazardCharacteristics.OtherReferenceValues.JustificationAndComments"
+          },
+          {
+            "type": "other_reference_value",
+            "value": "other:",
+            "unit": null,
+            "rawText": "other:",
+            "authority": "EFSA",
+            "year": 2019,
+            "scope": "food_additive_human",
+            "source": "https://doi.org/10.2903/j.efsa.2019.5876",
+            "field": "HumanHealthHazardCharacteristics.OtherReferenceValues.Population"
+          },
+          {
+            "type": "other_reference_value",
+            "value": "Animal not used for food production - unspecified",
+            "unit": null,
+            "rawText": "Animal not used for food production - unspecified",
+            "authority": "EFSA",
+            "year": 2019,
+            "scope": "non_human_or_non_food",
+            "source": "https://doi.org/10.2903/j.efsa.2019.5876",
+            "field": "HumanHealthHazardCharacteristics.OtherReferenceValues.Population.Other"
+          },
+          {
+            "type": "other_reference_value",
+            "value": "182eb15b-0bbf-4552-ad4f-af5476524e42",
+            "unit": null,
+            "rawText": "182eb15b-0bbf-4552-ad4f-af5476524e42",
+            "authority": "EFSA",
+            "year": 2019,
+            "scope": "food_additive_human",
+            "source": "https://doi.org/10.2903/j.efsa.2019.5876",
+            "field": "HumanHealthHazardCharacteristics.OtherReferenceValues.ReferenceToEFSAOpinion"
+          },
+          {
+            "type": "other_reference_value",
+            "value": "other:",
+            "unit": null,
+            "rawText": "other:",
+            "authority": "EFSA",
+            "year": 2019,
+            "scope": "food_additive_human",
+            "source": "https://doi.org/10.2903/j.efsa.2019.5876",
+            "field": "HumanHealthHazardCharacteristics.OtherReferenceValues.ReferenceValueDescriptor"
+          },
+          {
+            "type": "other_reference_value",
+            "value": "margin of safety",
+            "unit": null,
+            "rawText": "margin of safety",
+            "authority": "EFSA",
+            "year": 2019,
+            "scope": "food_additive_human",
+            "source": "https://doi.org/10.2903/j.efsa.2019.5876",
+            "field": "HumanHealthHazardCharacteristics.OtherReferenceValues.ReferenceValueDescriptor.Other"
+          }
+        ],
+        "estimatedExposure": null,
+        "exceedance": null,
+        "populationsAtRisk": [],
+        "notes": [
+          "Aucune exposition individuelle ni aucun dépassement n’est déduit de ces sources."
+        ]
+      },
+      "potentialEffects": [
+        {
+          "effect": "Discussion.Discussion: The Scientific Panel on Food Food Contact Materials, Enzymes, Flavourings and Processing Aids (the Panel) was asked to provide scientific advice to the Commission on the implications for human health of chemically defined flavouring substances used in or on foodstuffs in the Member States. In particular, the Panel was requested to consider the Joint FAO/WHO Expert Committee on Food Additives (the JECFA) evaluations of flavouring substances assessed since 2000, and to decide whether no further ev KeyInformation.KeyInformation: Mutagenic: Negative; Carcinogenic: Negative",
+          "severity": "none",
+          "evidenceLevel": "limited",
+          "appliesTo": "additive",
+          "evidenceContext": "food_additive_human",
+          "authority": "EFSA",
+          "source": "https://doi.org/10.2903/j.efsa.2019.5876"
+        },
+        {
+          "effect": "Discussion.Discussion: The Scientific Panel on Food Additives, Flavourings, Processing Aids and Materials in Contact with Food (the Panel) is asked to advise the Commission on the implications for human health of chemically defined flavouring substances used in or on foodstuffs in the Member States. In particular the Scientific Panel is requested to consider the Joint FAO/WHO Expert Committee on Food Additives (the JECFA) evaluations of flavouring substances assessed since 2000, and to decide whether no further evalua KeyInformation.KeyInformation: Mutagenic: Negative; Carcinogenic: No data",
+          "severity": "none",
+          "evidenceLevel": "limited",
+          "appliesTo": "additive",
+          "evidenceContext": "food_additive_human",
+          "authority": "EFSA",
+          "source": "https://doi.org/10.2903/j.efsa.2019.5876"
+        },
+        {
+          "effect": "Discussion.Discussion: Following a request from the European Commission, the Panel on Additives and Products or Substances used in Animal Feed (FEEDAP) was asked to deliver a scientific opinion on the safety and efficacy of 36 compounds (benzyl alcohols, aldehydes, acids, esters and acetals belonging to chemical group 23) when used as flavourings for all animal species. KeyInformation.KeyInformation: Mutagenic: No data; Carcinogenic: No data",
+          "severity": "none",
+          "evidenceLevel": "limited",
+          "appliesTo": "additive",
+          "evidenceContext": "food_additive_human",
+          "authority": "EFSA",
+          "source": "https://doi.org/10.2903/j.efsa.2019.5876"
+        },
+        {
+          "effect": "Discussion.Discussion: The European Commission asks the European Food Safety Authority for a scientific opinion on the evaluation of the substances currently on the list in the Annex to Commission Directive 96/3/EC5 as acceptable previous cargoes for edible fats and oils. The evaluation should be based on the SCF criteria and the criteria proposed by the CCFO as reviewed by the Panel on Contaminants in Food Chain in 200910 for acceptable previous cargoes for edible fats and oils. KeyInformation.KeyInformation: Mutagenic: Negative; Carcinogenic: Negative",
+          "severity": "none",
+          "evidenceLevel": "limited",
+          "appliesTo": "contaminant",
+          "evidenceContext": "food_additive_human",
+          "authority": "EFSA",
+          "source": "https://doi.org/10.2903/j.efsa.2019.5876"
+        },
+        {
+          "effect": "Discussion.Discussion: The Panel on Food Additives and Flavourings (FAF) provided a scientific opinion re-evaluating the safety of benzyl alcohol (E 1519) when used as a food additive. KeyInformation.KeyInformation: Mutagenic: Negative; Carcinogenic: Negative",
+          "severity": "none",
+          "evidenceLevel": "limited",
+          "appliesTo": "additive",
+          "evidenceContext": "food_additive_human",
+          "authority": "EFSA",
+          "source": "https://doi.org/10.2903/j.efsa.2019.5876"
+        },
+        {
+          "effect": "Discussion.Discussion: Following a request from the European Commission, the Panel on Additives and Products or Substances used in Animal Feed (FEEDAP) was asked to deliver a scientific opinion on the safety and efficacy of 36 compounds (benzyl alcohols, aldehydes, acids, esters and acetals belonging to chemical group 23) when used as flavourings for all animal species. KeyInformation.KeyInformation: Genotoxic: No data",
+          "severity": "none",
+          "evidenceLevel": "limited",
+          "appliesTo": "additive",
+          "evidenceContext": "food_additive_human",
+          "authority": "EFSA",
+          "source": "https://doi.org/10.2903/j.efsa.2019.5876"
+        },
+        {
+          "effect": "Discussion.Discussion: The European Commission asks the European Food Safety Authority for a scientific opinion on the evaluation of the substances currently on the list in the Annex to Commission Directive 96/3/EC5 as acceptable previous cargoes for edible fats and oils. The evaluation should be based on the SCF criteria and the criteria proposed by the CCFO as reviewed by the Panel on Contaminants in Food Chain in 200910 for acceptable previous cargoes for edible fats and oils. KeyInformation.KeyInformation: Genotoxic: Negative",
+          "severity": "none",
+          "evidenceLevel": "limited",
+          "appliesTo": "contaminant",
+          "evidenceContext": "food_additive_human",
+          "authority": "EFSA",
+          "source": "https://doi.org/10.2903/j.efsa.2019.5876"
+        },
+        {
+          "effect": "Discussion.Discussion: The Scientific Panel on Food Food Contact Materials, Enzymes, Flavourings and Processing Aids (the Panel) was asked to provide scientific advice to the Commission on the implications for human health of chemically defined flavouring substances used in or on foodstuffs in the Member States. In particular, the Panel was requested to consider the Joint FAO/WHO Expert Committee on Food Additives (the JECFA) evaluations of flavouring substances assessed since 2000, and to decide whether no further ev KeyInformation.KeyInformation: Genotoxic: Negative",
+          "severity": "none",
+          "evidenceLevel": "limited",
+          "appliesTo": "additive",
+          "evidenceContext": "food_additive_human",
+          "authority": "EFSA",
+          "source": "https://doi.org/10.2903/j.efsa.2019.5876"
+        },
+        {
+          "effect": "Discussion.Discussion: The Panel on Food Additives and Flavourings (FAF) provided a scientific opinion re-evaluating the safety of benzyl alcohol (E 1519) when used as a food additive. KeyInformation.KeyInformation: Genotoxic: Negative",
+          "severity": "none",
+          "evidenceLevel": "limited",
+          "appliesTo": "additive",
+          "evidenceContext": "food_additive_human",
+          "authority": "EFSA",
+          "source": "https://doi.org/10.2903/j.efsa.2019.5876"
+        },
+        {
+          "effect": "Discussion.Discussion: The Scientific Panel on Food Additives, Flavourings, Processing Aids and Materials in Contact with Food (the Panel) is asked to advise the Commission on the implications for human health of chemically defined flavouring substances used in or on foodstuffs in the Member States. In particular the Scientific Panel is requested to consider the Joint FAO/WHO Expert Committee on Food Additives (the JECFA) evaluations of flavouring substances assessed since 2000, and to decide whether no further evalua KeyInformation.KeyInformation: Genotoxic: Negative",
+          "severity": "none",
+          "evidenceLevel": "limited",
+          "appliesTo": "additive",
+          "evidenceContext": "food_additive_human",
+          "authority": "EFSA",
+          "source": "https://doi.org/10.2903/j.efsa.2019.5876"
+        }
+      ],
+      "restrictions": [],
+      "evidenceLevel": "strong",
+      "sources": [
+        {
+          "sourceId": "openfoodtox-e1519",
+          "organisation": "EFSA",
+          "sourceType": "official_information",
+          "title": "EFSA OpenFoodTox 3.0 structured record",
+          "url": "https://doi.org/10.2903/j.efsa.2019.5876",
+          "retrievedAt": "2026-09-30",
+          "fieldsSupported": [
+            "identity",
+            "assessment_reference",
+            "reference_values",
+            "assessment_scope"
+          ]
+        }
+      ],
+      "lastReviewedAt": "2026-09-30",
+      "dataVersion": "reviewed-1.0",
+      "needsScientificReview": false,
+      "completeness": {
+        "complete": true,
+        "missingFields": [],
+        "reviewReasons": [
+          "no_explicit_source_conclusion"
+        ]
+      }
+    },
+    {
+      "code": "E1521",
+      "names": {
+        "en": "Polyethylene glycol"
+      },
+      "aliases": [],
+      "function": null,
+      "regulatoryStatus": {
+        "eu": "PUBLISHED",
+        "notes": [
+          "Fonction réglementaire UE conservée séparément ; aucune fonction scientifique déduite."
+        ]
+      },
+      "authorityEvaluations": [
+        {
+          "authority": "EFSA",
+          "year": 2013,
+          "conclusion": null,
+          "url": "https://doi.org/10.2903/j.efsa.2013.3245",
+          "evaluationType": "structured_assessment",
+          "scope": "food_additive_human",
+          "assessmentIdentifier": "EFSA-Q-2011-00191",
+          "sourceDataset": "OpenFoodTox 3.0",
+          "assessmentScope": "individual",
+          "coveredCodes": [
+            "E1521"
+          ]
+        }
+      ],
+      "referenceValues": [
+        {
+          "type": "ADI",
+          "lower": 0,
+          "upper": 0,
+          "unit": null,
+          "rawText": null,
+          "authority": "EFSA",
+          "year": 2013,
+          "scope": "food_additive_human",
+          "source": "https://doi.org/10.2903/j.efsa.2013.3245"
+        },
+        {
+          "type": "other_reference_value",
+          "value": "Remarks: Polyethyleneglycol is authorised as additive for plastic materials and articles in contact with foods, with no specific restriction (FCM Substance No 638).",
+          "unit": null,
+          "rawText": "Remarks: Polyethyleneglycol is authorised as additive for plastic materials and articles in contact with foods, with no specific restriction (FCM Substance No 638).",
+          "authority": "EFSA",
+          "year": 2013,
+          "scope": "non_human_or_non_food",
+          "source": "https://doi.org/10.2903/j.efsa.2013.3245",
+          "field": "HumanHealthHazardCharacteristics.OtherReferenceValues.JustificationAndComments"
+        },
+        {
+          "type": "other_reference_value",
+          "value": "consumers",
+          "unit": null,
+          "rawText": "consumers",
+          "authority": "EFSA",
+          "year": 2013,
+          "scope": "food_additive_human",
+          "source": "https://doi.org/10.2903/j.efsa.2013.3245",
+          "field": "HumanHealthHazardCharacteristics.OtherReferenceValues.Population"
+        },
+        {
+          "type": "other_reference_value",
+          "value": "fb76b9da-ddb6-4293-9b1a-0096fc2aa2a0",
+          "unit": null,
+          "rawText": "fb76b9da-ddb6-4293-9b1a-0096fc2aa2a0",
+          "authority": "EFSA",
+          "year": 2013,
+          "scope": "food_additive_human",
+          "source": "https://doi.org/10.2903/j.efsa.2013.3245",
+          "field": "HumanHealthHazardCharacteristics.OtherReferenceValues.ReferenceToEFSAOpinion"
+        },
+        {
+          "type": "other_reference_value",
+          "value": "other:",
+          "unit": null,
+          "rawText": "other:",
+          "authority": "EFSA",
+          "year": 2013,
+          "scope": "food_additive_human",
+          "source": "https://doi.org/10.2903/j.efsa.2013.3245",
+          "field": "HumanHealthHazardCharacteristics.OtherReferenceValues.ReferenceValueDescriptor"
+        },
+        {
+          "type": "other_reference_value",
+          "value": "Not deemed necessary",
+          "unit": null,
+          "rawText": "Not deemed necessary",
+          "authority": "EFSA",
+          "year": 2013,
+          "scope": "food_additive_human",
+          "source": "https://doi.org/10.2903/j.efsa.2013.3245",
+          "field": "HumanHealthHazardCharacteristics.OtherReferenceValues.ReferenceValueDescriptor.Other"
+        }
+      ],
+      "authorityDisagreement": null,
+      "exposure": {
+        "referenceValues": [
+          {
+            "type": "ADI",
+            "lower": 0,
+            "upper": 0,
+            "unit": null,
+            "rawText": null,
+            "authority": "EFSA",
+            "year": 2013,
+            "scope": "food_additive_human",
+            "source": "https://doi.org/10.2903/j.efsa.2013.3245"
+          },
+          {
+            "type": "other_reference_value",
+            "value": "Remarks: Polyethyleneglycol is authorised as additive for plastic materials and articles in contact with foods, with no specific restriction (FCM Substance No 638).",
+            "unit": null,
+            "rawText": "Remarks: Polyethyleneglycol is authorised as additive for plastic materials and articles in contact with foods, with no specific restriction (FCM Substance No 638).",
+            "authority": "EFSA",
+            "year": 2013,
+            "scope": "non_human_or_non_food",
+            "source": "https://doi.org/10.2903/j.efsa.2013.3245",
+            "field": "HumanHealthHazardCharacteristics.OtherReferenceValues.JustificationAndComments"
+          },
+          {
+            "type": "other_reference_value",
+            "value": "consumers",
+            "unit": null,
+            "rawText": "consumers",
+            "authority": "EFSA",
+            "year": 2013,
+            "scope": "food_additive_human",
+            "source": "https://doi.org/10.2903/j.efsa.2013.3245",
+            "field": "HumanHealthHazardCharacteristics.OtherReferenceValues.Population"
+          },
+          {
+            "type": "other_reference_value",
+            "value": "fb76b9da-ddb6-4293-9b1a-0096fc2aa2a0",
+            "unit": null,
+            "rawText": "fb76b9da-ddb6-4293-9b1a-0096fc2aa2a0",
+            "authority": "EFSA",
+            "year": 2013,
+            "scope": "food_additive_human",
+            "source": "https://doi.org/10.2903/j.efsa.2013.3245",
+            "field": "HumanHealthHazardCharacteristics.OtherReferenceValues.ReferenceToEFSAOpinion"
+          },
+          {
+            "type": "other_reference_value",
+            "value": "other:",
+            "unit": null,
+            "rawText": "other:",
+            "authority": "EFSA",
+            "year": 2013,
+            "scope": "food_additive_human",
+            "source": "https://doi.org/10.2903/j.efsa.2013.3245",
+            "field": "HumanHealthHazardCharacteristics.OtherReferenceValues.ReferenceValueDescriptor"
+          },
+          {
+            "type": "other_reference_value",
+            "value": "Not deemed necessary",
+            "unit": null,
+            "rawText": "Not deemed necessary",
+            "authority": "EFSA",
+            "year": 2013,
+            "scope": "food_additive_human",
+            "source": "https://doi.org/10.2903/j.efsa.2013.3245",
+            "field": "HumanHealthHazardCharacteristics.OtherReferenceValues.ReferenceValueDescriptor.Other"
+          }
+        ],
+        "estimatedExposure": null,
+        "exceedance": null,
+        "populationsAtRisk": [],
+        "notes": [
+          "Aucune exposition individuelle ni aucun dépassement n’est déduit de ces sources."
+        ]
+      },
+      "potentialEffects": [
+        {
+          "effect": "Discussion.Discussion: The EFSA is required to carry out a risk assessment on the risks originating from the migration into food of the substances, iron, polyethyleneglycol, disodium pyrophosphate, monosodium phosphate and sodium chloride, used in oxygen absorbing components in food contact materials, and deliver a scientific opinion, according to the Regulation (EC) No 1935/2004 of the European Parliament and of the Council on materials and articles intended to come into contact with food. KeyInformation.KeyInformation: Mutagenic: No data; Carcinogenic: No data",
+          "severity": "none",
+          "evidenceLevel": "limited",
+          "appliesTo": "additive",
+          "evidenceContext": "food_additive_human",
+          "authority": "EFSA",
+          "source": "https://doi.org/10.2903/j.efsa.2013.3245"
+        },
+        {
+          "effect": "Discussion.Discussion: The EFSA is required to carry out a risk assessment on the risks originating from the migration into food of the substances, iron, polyethyleneglycol, disodium pyrophosphate, monosodium phosphate and sodium chloride, used in oxygen absorbing components in food contact materials, and deliver a scientific opinion, according to the Regulation (EC) No 1935/2004 of the European Parliament and of the Council on materials and articles intended to come into contact with food. KeyInformation.KeyInformation: Genotoxic: No data",
+          "severity": "none",
+          "evidenceLevel": "limited",
+          "appliesTo": "additive",
+          "evidenceContext": "food_additive_human",
+          "authority": "EFSA",
+          "source": "https://doi.org/10.2903/j.efsa.2013.3245"
+        }
+      ],
+      "restrictions": [],
+      "evidenceLevel": "strong",
+      "sources": [
+        {
+          "sourceId": "openfoodtox-e1521",
+          "organisation": "EFSA",
+          "sourceType": "official_information",
+          "title": "EFSA OpenFoodTox 3.0 structured record",
+          "url": "https://doi.org/10.2903/j.efsa.2013.3245",
+          "retrievedAt": "2026-09-30",
+          "fieldsSupported": [
+            "identity",
+            "assessment_reference",
+            "reference_values",
+            "assessment_scope"
+          ]
+        }
+      ],
+      "lastReviewedAt": "2026-09-30",
+      "dataVersion": "reviewed-1.0",
+      "needsScientificReview": false,
+      "completeness": {
+        "complete": true,
+        "missingFields": [],
+        "reviewReasons": [
+          "no_explicit_source_conclusion"
+        ]
+      }
+    }
+  ]
+}

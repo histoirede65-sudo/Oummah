@@ -1,0 +1,283 @@
+{
+  "schemaVersion": "1.0",
+  "generatedAt": "2026-09-30T20:01:33.333Z",
+  "batch": 6,
+  "sourceAudit": "scripts\\output\\additive-science-source-audit-priority-321-v3.json",
+  "items": [
+    {
+      "code": "E575",
+      "name": "Glucono-delta-lactone",
+      "status": "possible_match",
+      "candidateSources": [
+        "WHO/JECFA"
+      ],
+      "candidateMatches": {
+        "efsa": {
+          "confidence": "rejected",
+          "assessmentCount": 0
+        },
+        "jecfa": {
+          "confidence": "possible",
+          "evaluationCount": 5,
+          "ins": [
+            "575"
+          ]
+        }
+      },
+      "recommendedReviewAction": "Vérification manuelle de l’identité, de la source officielle et du périmètre avant génération."
+    },
+    {
+      "code": "E577",
+      "name": "Potassium gluconate",
+      "status": "possible_match",
+      "candidateSources": [
+        "WHO/JECFA"
+      ],
+      "candidateMatches": {
+        "efsa": {
+          "confidence": "rejected",
+          "assessmentCount": 0
+        },
+        "jecfa": {
+          "confidence": "possible",
+          "evaluationCount": 6,
+          "ins": [
+            "577",
+            "576",
+            "578",
+            "580"
+          ]
+        }
+      },
+      "recommendedReviewAction": "Vérification manuelle de l’identité, de la source officielle et du périmètre avant génération."
+    },
+    {
+      "code": "E578",
+      "name": "Calcium gluconate",
+      "status": "possible_match",
+      "candidateSources": [
+        "WHO/JECFA"
+      ],
+      "candidateMatches": {
+        "efsa": {
+          "confidence": "rejected",
+          "assessmentCount": 0
+        },
+        "jecfa": {
+          "confidence": "possible",
+          "evaluationCount": 4,
+          "ins": [
+            "576",
+            "578",
+            "580"
+          ]
+        }
+      },
+      "recommendedReviewAction": "Vérification manuelle de l’identité, de la source officielle et du périmètre avant génération."
+    },
+    {
+      "code": "E579",
+      "name": "Ferrous gluconate",
+      "status": "possible_match",
+      "candidateSources": [
+        "WHO/JECFA"
+      ],
+      "candidateMatches": {
+        "efsa": {
+          "confidence": "rejected",
+          "assessmentCount": 0
+        },
+        "jecfa": {
+          "confidence": "possible",
+          "evaluationCount": 2,
+          "ins": [
+            "579"
+          ]
+        }
+      },
+      "recommendedReviewAction": "Vérification manuelle de l’identité, de la source officielle et du périmètre avant génération."
+    },
+    {
+      "code": "E622",
+      "name": "Monopotassium glutamate",
+      "status": "possible_match",
+      "candidateSources": [
+        "WHO/JECFA"
+      ],
+      "candidateMatches": {
+        "efsa": {
+          "confidence": "rejected",
+          "assessmentCount": 0
+        },
+        "jecfa": {
+          "confidence": "possible",
+          "evaluationCount": 3,
+          "ins": [
+            "622"
+          ]
+        }
+      },
+      "recommendedReviewAction": "Vérification manuelle de l’identité, de la source officielle et du périmètre avant génération."
+    },
+    {
+      "code": "E624",
+      "name": "Monoammonium glutamate",
+      "status": "possible_match",
+      "candidateSources": [
+        "WHO/JECFA"
+      ],
+      "candidateMatches": {
+        "efsa": {
+          "confidence": "rejected",
+          "assessmentCount": 0
+        },
+        "jecfa": {
+          "confidence": "possible",
+          "evaluationCount": 2,
+          "ins": [
+            "624"
+          ]
+        }
+      },
+      "recommendedReviewAction": "Vérification manuelle de l’identité, de la source officielle et du périmètre avant génération."
+    },
+    {
+      "code": "E628",
+      "name": "Dipotassium guanylate",
+      "status": "possible_match",
+      "candidateSources": [
+        "WHO/JECFA"
+      ],
+      "candidateMatches": {
+        "efsa": {
+          "confidence": "rejected",
+          "assessmentCount": 0
+        },
+        "jecfa": {
+          "confidence": "possible",
+          "evaluationCount": 2,
+          "ins": [
+            "628"
+          ]
+        }
+      },
+      "recommendedReviewAction": "Vérification manuelle de l’identité, de la source officielle et du périmètre avant génération."
+    },
+    {
+      "code": "E630",
+      "name": "Inosinic acid",
+      "status": "possible_match",
+      "candidateSources": [
+        "WHO/JECFA"
+      ],
+      "candidateMatches": {
+        "efsa": {
+          "confidence": "rejected",
+          "assessmentCount": 0
+        },
+        "jecfa": {
+          "confidence": "possible",
+          "evaluationCount": 2,
+          "ins": [
+            "630"
+          ]
+        }
+      },
+      "recommendedReviewAction": "Vérification manuelle de l’identité, de la source officielle et du périmètre avant génération."
+    },
+    {
+      "code": "E632",
+      "name": "Dipotassium inosinate",
+      "status": "possible_match",
+      "candidateSources": [
+        "WHO/JECFA"
+      ],
+      "candidateMatches": {
+        "efsa": {
+          "confidence": "rejected",
+          "assessmentCount": 0
+        },
+        "jecfa": {
+          "confidence": "possible",
+          "evaluationCount": 2,
+          "ins": [
+            "632"
+          ]
+        }
+      },
+      "recommendedReviewAction": "Vérification manuelle de l’identité, de la source officielle et du périmètre avant génération."
+    },
+    {
+      "code": "E640",
+      "name": "Glycine and its sodium salt",
+      "status": "no_match",
+      "candidateSources": [],
+      "candidateMatches": {
+        "efsa": {
+          "confidence": "rejected",
+          "assessmentCount": 0
+        },
+        "jecfa": {
+          "confidence": "rejected",
+          "evaluationCount": 0,
+          "ins": []
+        }
+      },
+      "recommendedReviewAction": "Vérification manuelle de l’identité, de la source officielle et du périmètre avant génération."
+    },
+    {
+      "code": "E650",
+      "name": "Zinc acetate",
+      "status": "no_match",
+      "candidateSources": [],
+      "candidateMatches": {
+        "efsa": {
+          "confidence": "rejected",
+          "assessmentCount": 0
+        },
+        "jecfa": {
+          "confidence": "rejected",
+          "evaluationCount": 0,
+          "ins": []
+        }
+      },
+      "recommendedReviewAction": "Vérification manuelle de l’identité, de la source officielle et du périmètre avant génération."
+    },
+    {
+      "code": "E905A",
+      "name": "High viscosity mineral oils",
+      "status": "no_match",
+      "candidateSources": [],
+      "candidateMatches": {
+        "efsa": {
+          "confidence": "rejected",
+          "assessmentCount": 0
+        },
+        "jecfa": {
+          "confidence": "rejected",
+          "evaluationCount": 0,
+          "ins": []
+        }
+      },
+      "recommendedReviewAction": "Vérification manuelle de l’identité, de la source officielle et du périmètre avant génération."
+    },
+    {
+      "code": "E914",
+      "name": "Oxidised polyethylene wax",
+      "status": "no_match",
+      "candidateSources": [],
+      "candidateMatches": {
+        "efsa": {
+          "confidence": "rejected",
+          "assessmentCount": 0
+        },
+        "jecfa": {
+          "confidence": "rejected",
+          "evaluationCount": 0,
+          "ins": []
+        }
+      },
+      "recommendedReviewAction": "Vérification manuelle de l’identité, de la source officielle et du périmètre avant génération."
+    }
+  ]
+}

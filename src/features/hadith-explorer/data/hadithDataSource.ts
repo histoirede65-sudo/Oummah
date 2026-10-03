@@ -72,7 +72,7 @@ async function getSupabaseFrom<T>(resource: string, query: string): Promise<T> {
   });
   if (!response.ok) {
     const body = await response.text();
-    console.error("[Hadith Supabase HTTP]", {
+    console.log("[Hadith Supabase HTTP]", {
       resource,
       url: `${SUPABASE_URL}/rest/v1/${resource}?${query}`,
       status: response.status,
@@ -239,13 +239,24 @@ export async function fetchSupabaseSourceCategoryAssignments(
   }
 
   const categoryIdSet = new Set(categoryIds);
-  const rows: SupabaseSourceCategoryAssignment[] = [];
-  for (let index = 0; index < hadithIds.length; index += 10) {
-    const batch = hadithIds.slice(index, index + 10);
-    const query = `select=hadith_id,source_category_id&hadith_id=in.(${batch.join(",")})&validation_status=eq.validated&limit=10000`;
-    const batchRows = await getSupabaseFrom<SupabaseSourceCategoryAssignment[]>("hadith_source_category_assignments", query);
-    rows.push(...batchRows.filter((row) => categoryIdSet.has(row.source_category_id)));
+  const batches: string[][] = [];
+  const batchSize = 50;
+  for (let index = 0; index < hadithIds.length; index += batchSize) {
+    batches.push(hadithIds.slice(index, index + batchSize));
   }
+
+  const rows: SupabaseSourceCategoryAssignment[] = [];
+  let cursor = 0;
+  const run = async () => {
+    while (cursor < batches.length) {
+      const batch = batches[cursor++];
+      const query = `select=hadith_id,source_category_id&hadith_id=in.(${batch.join(",")})&validation_status=eq.validated&limit=10000`;
+      const batchRows = await getSupabaseFrom<SupabaseSourceCategoryAssignment[]>("hadith_source_category_assignments", query);
+      rows.push(...batchRows.filter((row) => categoryIdSet.has(row.source_category_id)));
+    }
+  };
+
+  await Promise.all(Array.from({ length: Math.min(4, batches.length) }, run));
   return rows;
 }
 

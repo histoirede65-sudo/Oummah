@@ -41,6 +41,8 @@ export interface QuranFoundationVerse {
     char_type_name?: string;
     translation?: {
       text?: string;
+      languageName?: string;
+      language_name?: string;
     };
     transliteration?: {
       text?: string;

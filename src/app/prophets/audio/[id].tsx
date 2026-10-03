@@ -4,6 +4,7 @@ import { router, Stack, useLocalSearchParams } from "expo-router";
 import { useMemo, useRef, useState } from "react";
 import {
   Image,
+  Alert,
   LayoutChangeEvent,
   PanResponder,
   Pressable,
@@ -36,6 +37,7 @@ export default function ProphetAudioScreen() {
     episode,
     isPlaying,
     isLoading,
+    downloadProgress,
     currentTime,
     duration,
     progress,
@@ -72,7 +74,12 @@ export default function ProphetAudioScreen() {
       void togglePlay();
       return;
     }
-    void startEpisode(audioEpisode);
+    void startEpisode(audioEpisode).catch(() => {
+      Alert.alert(
+        "Téléchargement impossible",
+        "Vérifie ta connexion internet puis réessaie. Une fois téléchargée, cette histoire restera disponible hors connexion.",
+      );
+    });
   };
 
   if (!audioEpisode) {
@@ -186,7 +193,13 @@ export default function ProphetAudioScreen() {
             <View style={styles.nowPlayingRow}>
               <View style={styles.waveBadge}><Ionicons name="pulse" size={20} color="#F3C46E" /></View>
               <View style={styles.nowPlayingCopy}>
-                <Text style={styles.nowPlayingKicker}>{displayIsLoading ? "PRÉPARATION DU RÉCIT" : displayIsPlaying ? "LECTURE EN COURS" : "PRÊT À ÉCOUTER"}</Text>
+                <Text style={styles.nowPlayingKicker}>
+                  {displayIsLoading
+                    ? `TÉLÉCHARGEMENT · ${Math.round((downloadProgress ?? 0) * 100)} %`
+                    : displayIsPlaying
+                      ? "LECTURE EN COURS"
+                      : "PRÊT À ÉCOUTER"}
+                </Text>
                 <Text style={styles.nowPlayingTitle}>{audioEpisode.prophetName} · paix sur lui</Text>
               </View>
             </View>

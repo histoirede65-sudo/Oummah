@@ -18,7 +18,7 @@ export function createDailyGoalTemplates(
   settings: DailyGoalSettings,
 ): DailyGoal[] {
   const quranTarget = settings.dailyMinutes <= 5 ? 3 : settings.dailyMinutes >= 20 ? 10 : 5;
-  const dhikrTarget = settings.dailyMinutes <= 5 ? 33 : 100;
+  const dhikrTarget = settings.dailyMinutes <= 5 ? 33 : 99;
   const includeListening = settings.dailyMinutes >= 20;
 
   const goals: DailyGoal[] = [
@@ -53,13 +53,26 @@ export function createDailyGoalTemplates(
       title: "Réviser un verset",
       subtitle: "Une petite étape de mémorisation",
       category: "hifz",
-      metric: "hifz_verses_learned",
+      metric: "hifz_review_completed",
       validation: "automatic",
       estimatedMinutes: 3,
       essential: false,
       sourceRoute: "/hifz",
       target: 1,
       unit: "verset",
+    }),
+    goal({
+      id: "program-prayers",
+      title: "Faire les 5 prières",
+      subtitle: "Validez chaque prière après l’avoir accomplie",
+      category: "prayer",
+      metric: "prayer_completed",
+      validation: "automatic",
+      estimatedMinutes: 5,
+      essential: false,
+      sourceRoute: "/",
+      target: 5,
+      unit: "prière",
     }),
     goal({
       id: "program-dua",
@@ -76,8 +89,8 @@ export function createDailyGoalTemplates(
     }),
     goal({
       id: "program-hadith",
-      title: "Lire le hadith du jour",
-      subtitle: "Lisez l’enseignement proposé aujourd’hui",
+      title: "Lire un hadith",
+      subtitle: "Validez votre lecture dans la fiche du hadith",
       category: "hadith",
       metric: "hadith_read",
       validation: "automatic",

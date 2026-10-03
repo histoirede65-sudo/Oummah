@@ -1,0 +1,115 @@
+--- a/src/app/listen/[surahId].tsx
++++ b/src/app/listen/[surahId].tsx
+@@ -286,34 +286,10 @@
+   const currentReciterId = transitionReciters?.current.id;
+   const requestedReciterId =
+     reciterId ?? currentReciter?.id ?? activeReciter?.id;
+-  const requestedTimelineKey = `${requestedReciterId ?? "no-reciter"}:${surah.id}`;
+   audioReadyRef.current = isLoaded;
+   const handleTimelineReady = useCallback((key: string) => {
+     timelineReadyKeyRef.current = key;
+   }, []);
+-  const waitForTimeline = useCallback(
+-    (key: string, timeoutMs = 5000) =>
+-      new Promise<boolean>((resolve) => {
+-        if (timelineReadyKeyRef.current === key) {
+-          resolve(true);
+-          return;
+-        }
+-        const startedAt = Date.now();
+-        const check = () => {
+-          if (timelineReadyKeyRef.current === key) {
+-            resolve(true);
+-            return;
+-          }
+-          if (!mountedRef.current || Date.now() - startedAt >= timeoutMs) {
+-            resolve(false);
+-            return;
+-          }
+-          setTimeout(check, 25);
+-        };
+-        setTimeout(check, 25);
+-      }),
+-    [],
+-  );
+   const waitForAudioReady = useCallback(
+     (timeoutMs = 10_000) =>
+       new Promise<boolean>((resolve) => {
+@@ -346,22 +322,17 @@
+       await loadSurah(surah.id, false, requestedReciterId);
+       if (surah.id === 1) await seekTo(0);
+     }
+-    const [timelineReady, audioReady] = await Promise.all([
+-      waitForTimeline(requestedTimelineKey),
+-      waitForAudioReady(),
+-    ]);
+-    return timelineReady && audioReady;
++    // Verse timestamps enrich highlighting, but playback only needs audio.
++    return waitForAudioReady();
+   }, [
+     activeReciter?.id,
+     activeSurahId,
+     isLoaded,
+     loadSurah,
+     requestedReciterId,
+-    requestedTimelineKey,
+     seekTo,
+     surah.id,
+     waitForAudioReady,
+-    waitForTimeline,
+   ]);
+   const handleTogglePlay = useCallback(() => {
+     const requestId = ++playRequestRef.current;
+--- a/src/components/surah/SyncedVerseList.tsx
++++ b/src/components/surah/SyncedVerseList.tsx
+@@ -551,8 +551,7 @@
+   useEffect(() => {
+     if (
+       !reciterId ||
+-      !rawTimestamps ||
+-      wordTimestamps.length === 0 ||
++      timestamps.length === 0 ||
+       syncedVerses.length === 0 ||
+       !visibleFontsLoaded
+     )
+@@ -567,6 +566,7 @@
+     reciterId,
+     surahId,
+     syncedVerses.length,
++    timestamps.length,
+     visibleFontsLoaded,
+     wordTimestamps.length,
+   ]);
+--- a/src/features/quranfoundation/QuranFoundationClient.ts
++++ b/src/features/quranfoundation/QuranFoundationClient.ts
+@@ -366,20 +366,26 @@
+     const identity = `${reciter}:${chapter}`;
+     const storageKey = cacheKey("recitation", identity);
+     const memoryCached = this.recitationsCache.get(identity);
+-    if (memoryCached) return memoryCached;
++    // An audio response without timings must be refreshed: keeping it forever
++    // prevents synchronization even after the upstream data is repaired.
++    if (memoryCached?.timestamps?.length) return memoryCached;
+     const fetchRecitation = async () => {
+       const recitation = await this.request<QuranFoundationRecitation>(
+         `/quran-audio?chapter=${chapter}&reciter=${reciter}`,
+       );
+-      this.recitationsCache.set(identity, recitation);
+-      writeCache(storageKey, recitation);
++      if (recitation.timestamps?.length) {
++        this.recitationsCache.set(identity, recitation);
++        writeCache(storageKey, recitation);
++      } else if (__DEV__) {
++        console.warn(`[quran-sync] no verse timings for chapter=${chapter} reciter=${reciter}`);
++      }
+       return recitation;
+     };
+     try {
+       return await fetchRecitation();
+     } catch (error) {
+       const persisted = await readCache<QuranFoundationRecitation>(storageKey);
+-      if (persisted) {
++      if (persisted?.timestamps?.length) {
+         this.recitationsCache.set(identity, persisted);
+         this.retryLater(storageKey, async () => {
+           await fetchRecitation();

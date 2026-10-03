@@ -33,8 +33,9 @@ export default function HomeGoalsSection() {
       };
     }, []),
   );
-  const visibleGoals = goalsModel.plan?.goals.slice(0, 3) ?? [];
-  const nextGoal = goalsModel.plan?.goals.find((goal) => !isGoalComplete(goal));
+  const allGoals = goalsModel.plan?.goals ?? [];
+  const visibleGoals = allGoals.slice(0, 6);
+  const dailyProgress = Math.max(0, Math.min(1, goalsModel.summary?.progress ?? 0));
   return (
     <View style={styles.section}>
       <View style={styles.dailyRow}>
@@ -47,6 +48,8 @@ export default function HomeGoalsSection() {
         style={({ pressed }) => [
           styles.card,
           styles.goalsCard,
+          visibleGoals.length > 3 && styles.goalsCardExpanded,
+          isAuthenticated && styles.authenticatedGoalsCard,
           !isAuthenticated && styles.signupCard,
           pressed && styles.pressed,
         ]}
@@ -63,7 +66,23 @@ export default function HomeGoalsSection() {
             <Text style={styles.signupLink}>{t('home.createProfileArrow')}</Text>
           </View>
         ) : (
-        <>
+        <View style={styles.authenticatedContent}>
+        <View
+          pointerEvents="none"
+          style={[
+            styles.progressBackgroundFill,
+            dailyProgress >= 1
+              ? { right: 0 }
+              : { width: `${dailyProgress * 100}%` },
+          ]}
+        >
+          <LinearGradient
+            colors={['rgba(98,197,139,0.18)', 'rgba(98,197,139,0.30)']}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 0 }}
+            style={StyleSheet.absoluteFill}
+          />
+        </View>
         <View style={styles.heading}>
           <Text style={styles.title}>{t('home.goalsToday')}</Text>
           <Text style={styles.counter}>
@@ -82,10 +101,13 @@ export default function HomeGoalsSection() {
         {visibleGoals.map((goal) => {
           const done = isGoalComplete(goal);
           return (
-          <View key={goal.id} style={styles.goal}>
+          <View
+            key={goal.id}
+            style={[styles.goal, visibleGoals.length > 3 && styles.goalCompact]}
+          >
             <Ionicons
               name={done ? 'checkmark-circle' : 'ellipse-outline'}
-              size={16}
+              size={visibleGoals.length > 3 ? 14 : 16}
               color="#F2B535"
             />
             <Text numberOfLines={1} style={styles.goalText}>
@@ -93,17 +115,12 @@ export default function HomeGoalsSection() {
             </Text>
             <View style={[styles.check, done && styles.checkDone]}>
               {done ? (
-                <Ionicons name="checkmark" size={12} color="#11131A" />
+                <Ionicons name="checkmark" size={10} color="#11131A" />
               ) : null}
             </View>
           </View>
         )})}
-        {nextGoal ? (
-          <Text numberOfLines={1} style={styles.nextGoal}>
-            {t('home.nextGoal', { goal: nextGoal.title })}
-          </Text>
-        ) : null}
-        </>
+        </View>
         )}
       </Pressable>
     </View>
@@ -174,6 +191,22 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(17,21,29,0.8)',
   },
   goalsCard: { flex: 0, height: 134, padding: 11 },
+  goalsCardExpanded: { height: 150 },
+  authenticatedGoalsCard: { padding: 0 },
+  authenticatedContent: {
+    flex: 1,
+    padding: 11,
+    overflow: 'hidden',
+  },
+  progressBackgroundFill: {
+    position: 'absolute',
+    top: 0,
+    bottom: 0,
+    left: 0,
+    overflow: 'hidden',
+    borderTopLeftRadius: 17,
+    borderBottomLeftRadius: 17,
+  },
   signupCard: {
     justifyContent: 'center',
     borderColor: 'rgba(227,181,90,0.28)',
@@ -235,27 +268,25 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 6,
   },
+  goalCompact: {
+    height: 15,
+  },
   goalText: {
     flex: 1,
     color: colors.text,
     fontFamily: typography.sans,
-    fontSize: 9.5,
+    fontSize: 10.5,
+    lineHeight: 12,
   },
   check: {
-    width: 16,
-    height: 16,
+    width: 13,
+    height: 13,
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: 8,
-    borderWidth: 1.5,
+    borderRadius: 7,
+    borderWidth: 1.25,
     borderColor: '#9197A0',
   },
   checkDone: { borderColor: '#F3B52F', backgroundColor: '#F3B52F' },
-  nextGoal: {
-    marginTop: 3,
-    color: colors.textMuted,
-    fontFamily: typography.sans,
-    fontSize: 7.8,
-  },
   pressed: { opacity: 0.72 },
 });

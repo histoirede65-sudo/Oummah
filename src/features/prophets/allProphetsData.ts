@@ -11,54 +11,54 @@ export type ProphetStory = {
 
 const noImage = 0 as unknown as number;
 const ADAM_CHAPTER_IMAGES = [
-  require("../../assets/images/prophets/adam-chapter-01.png"),
-  require("../../assets/images/prophets/adam-chapter-02.png"),
-  require("../../assets/images/prophets/adam-chapter-03.png"),
-  require("../../assets/images/prophets/adam-chapter-04.png"),
+  require("../../assets/images/prophets/adam-chapter-01.jpg"),
+  require("../../assets/images/prophets/adam-chapter-02.jpg"),
+  require("../../assets/images/prophets/adam-chapter-03.jpg"),
+  require("../../assets/images/prophets/adam-chapter-04.jpg"),
 ];
 const NUH_CHAPTER_IMAGES = [
-  require("../../assets/images/prophets/nuh-chapter-01.png"),
-  require("../../assets/images/prophets/nuh-chapter-02.png"),
-  require("../../assets/images/prophets/nuh-chapter-03.png"),
-  require("../../assets/images/prophets/nuh-chapter-04.png"),
-  require("../../assets/images/prophets/nuh-chapter-05.png"),
-  require("../../assets/images/prophets/nuh-chapter-06.png"),
+  require("../../assets/images/prophets/nuh-chapter-01.jpg"),
+  require("../../assets/images/prophets/nuh-chapter-02.jpg"),
+  require("../../assets/images/prophets/nuh-chapter-03.jpg"),
+  require("../../assets/images/prophets/nuh-chapter-04.jpg"),
+  require("../../assets/images/prophets/nuh-chapter-05.jpg"),
+  require("../../assets/images/prophets/nuh-chapter-06.jpg"),
 ];
 const HUD_CHAPTER_IMAGES = [
-  require("../../assets/images/prophets/hud-chapter-01.png"),
-  require("../../assets/images/prophets/hud-chapter-02.png"),
-  require("../../assets/images/prophets/hud-chapter-03.png"),
+  require("../../assets/images/prophets/hud-chapter-01.jpg"),
+  require("../../assets/images/prophets/hud-chapter-02.jpg"),
+  require("../../assets/images/prophets/hud-chapter-03.jpg"),
 ];
 const SALIH_CHAPTER_IMAGES = [
-  require("../../assets/images/prophets/salih-chapter-01.png"),
-  require("../../assets/images/prophets/salih-chapter-02.png"),
-  require("../../assets/images/prophets/salih-chapter-03.png"),
-  require("../../assets/images/prophets/salih-chapter-04.png"),
+  require("../../assets/images/prophets/salih-chapter-01.jpg"),
+  require("../../assets/images/prophets/salih-chapter-02.jpg"),
+  require("../../assets/images/prophets/salih-chapter-03.jpg"),
+  require("../../assets/images/prophets/salih-chapter-04.jpg"),
 ];
 const IBRAHIM_CHAPTER_IMAGES = [
-  require("../../assets/images/prophets/ibrahim-chapter-07.png"),
-  require("../../assets/images/prophets/ibrahim-chapter-02.png"),
-  require("../../assets/images/prophets/ibrahim-chapter-06.png"),
-  require("../../assets/images/prophets/ibrahim-chapter-01.png"),
-  require("../../assets/images/prophets/ibrahim-chapter-03.png"),
-  require("../../assets/images/prophets/ibrahim-chapter-05.png"),
-  require("../../assets/images/prophets/ibrahim-chapter-04.png"),
-  require("../../assets/images/prophets/ibrahim-chapter-08.png"),
+  require("../../assets/images/prophets/ibrahim-chapter-07.jpg"),
+  require("../../assets/images/prophets/ibrahim-chapter-02.jpg"),
+  require("../../assets/images/prophets/ibrahim-chapter-06.jpg"),
+  require("../../assets/images/prophets/ibrahim-chapter-01.jpg"),
+  require("../../assets/images/prophets/ibrahim-chapter-03.jpg"),
+  require("../../assets/images/prophets/ibrahim-chapter-05.jpg"),
+  require("../../assets/images/prophets/ibrahim-chapter-04.jpg"),
+  require("../../assets/images/prophets/ibrahim-chapter-08.jpg"),
 ];
 const LUT_CHAPTER_IMAGES = [
-  require("../../assets/images/prophets/lut-chapter-01.png"),
-  require("../../assets/images/prophets/lut-chapter-02.png"),
-  require("../../assets/images/prophets/lut-chapter-03.png"),
-  require("../../assets/images/prophets/lut-chapter-04.png"),
+  require("../../assets/images/prophets/lut-chapter-01.jpg"),
+  require("../../assets/images/prophets/lut-chapter-02.jpg"),
+  require("../../assets/images/prophets/lut-chapter-03.jpg"),
+  require("../../assets/images/prophets/lut-chapter-04.jpg"),
 ];
 const ISMAIL_CHAPTER_IMAGES = [
-  require("../../assets/images/prophets/ismail-chapter-03.png"),
-  require("../../assets/images/prophets/ismail-chapter-01.png"),
-  require("../../assets/images/prophets/ismail-chapter-02.png"),
+  require("../../assets/images/prophets/ismail-chapter-03.jpg"),
+  require("../../assets/images/prophets/ismail-chapter-01.jpg"),
+  require("../../assets/images/prophets/ismail-chapter-02.jpg"),
 ];
 const ISHAQ_CHAPTER_IMAGES = [
-  require("../../assets/images/prophets/ishaq-chapter-01.png"),
-  require("../../assets/images/prophets/ishaq-chapter-02.png"),
+  require("../../assets/images/prophets/ishaq-chapter-01.jpg"),
+  require("../../assets/images/prophets/ishaq-chapter-02.jpg"),
 ];
 
 const IDRIS_CHAPTER_IMAGES = [

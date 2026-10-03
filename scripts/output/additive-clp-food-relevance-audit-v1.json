@@ -1,0 +1,3102 @@
+{
+  "schemaVersion": "additive-clp-food-relevance-audit-v1",
+  "mode": "offline-audit-only",
+  "source": {
+    "clpAudit": "scripts/output/additive-official-substance-hazard-classification-audit-v3.json",
+    "profiles": "scripts/data/additives-scientific-master-v3-effects.json",
+    "methodology": "generic class/route/concentration rules; no E-number-specific rules"
+  },
+  "counts": {
+    "matchedClpCodes": 21,
+    "matchedHumanHealthCodes": 20,
+    "directlyRelevantCount": 0,
+    "conditionallyRelevantCount": 2,
+    "routeSpecificCount": 5,
+    "concentrationDependentCount": 4,
+    "handlingOnlyCount": 19,
+    "insufficientContextCount": 0,
+    "notRelevantCount": 11,
+    "usableHazardSignalCount": 6,
+    "contextualOnlyCount": 5,
+    "doNotUseForFoodConcernCount": 30
+  },
+  "distribution": {
+    "directly_relevant": 0,
+    "conditionally_relevant": 2,
+    "route_specific": 5,
+    "concentration_dependent": 4,
+    "occupational_or_handling_only": 19,
+    "insufficient_context": 0,
+    "not_relevant_to_food_score": 11
+  },
+  "signalGroups": {
+    "USABLE_HAZARD_SIGNAL": [
+      {
+        "hazardClass": "Acute Tox. 4 *",
+        "relevance": "concentration_dependent"
+      },
+      {
+        "hazardClass": "Acute Tox. 4 *",
+        "relevance": "concentration_dependent"
+      },
+      {
+        "hazardClass": "Acute Tox. 3 *",
+        "relevance": "concentration_dependent"
+      },
+      {
+        "hazardClass": "Acute Tox. 4",
+        "relevance": "conditionally_relevant"
+      },
+      {
+        "hazardClass": "Acute Tox. 4 *",
+        "relevance": "concentration_dependent"
+      },
+      {
+        "hazardClass": "Acute Tox. 4",
+        "relevance": "conditionally_relevant"
+      }
+    ],
+    "CONTEXTUAL_ONLY": [
+      {
+        "hazardClass": "Carc. 2",
+        "relevance": "route_specific"
+      },
+      {
+        "hazardClass": "STOT RE 1",
+        "relevance": "route_specific"
+      },
+      {
+        "hazardClass": "Acute Tox. 3",
+        "relevance": "route_specific"
+      },
+      {
+        "hazardClass": "STOT SE 1",
+        "relevance": "route_specific"
+      },
+      {
+        "hazardClass": "Acute Tox. 3 *",
+        "relevance": "route_specific"
+      }
+    ],
+    "DO_NOT_USE_FOR_FOOD_CONCERN": [
+      {
+        "hazardClass": "Skin Irrit. 2",
+        "relevance": "occupational_or_handling_only"
+      },
+      {
+        "hazardClass": "Eye Dam. 1",
+        "relevance": "occupational_or_handling_only"
+      },
+      {
+        "hazardClass": "Press. Gas",
+        "relevance": "not_relevant_to_food_score"
+      },
+      {
+        "hazardClass": "Skin. Corr. 1B",
+        "relevance": "occupational_or_handling_only"
+      },
+      {
+        "hazardClass": "Eye Dam. 1",
+        "relevance": "occupational_or_handling_only"
+      },
+      {
+        "hazardClass": "Flam. Sol. 2",
+        "relevance": "not_relevant_to_food_score"
+      },
+      {
+        "hazardClass": "Skin Sens. 1",
+        "relevance": "occupational_or_handling_only"
+      },
+      {
+        "hazardClass": "Ox. Sol. 2",
+        "relevance": "not_relevant_to_food_score"
+      },
+      {
+        "hazardClass": "Aquatic Acute 1",
+        "relevance": "not_relevant_to_food_score"
+      },
+      {
+        "hazardClass": "Flam. Liq. 3",
+        "relevance": "not_relevant_to_food_score"
+      },
+      {
+        "hazardClass": "Skin Corr. 1A",
+        "relevance": "occupational_or_handling_only"
+      },
+      {
+        "hazardClass": "Skin Corr. 1B",
+        "relevance": "occupational_or_handling_only"
+      },
+      {
+        "hazardClass": "Eye Irrit. 2",
+        "relevance": "occupational_or_handling_only"
+      },
+      {
+        "hazardClass": "Skin Sens. 1",
+        "relevance": "occupational_or_handling_only"
+      },
+      {
+        "hazardClass": "Aquatic Acute 1",
+        "relevance": "not_relevant_to_food_score"
+      },
+      {
+        "hazardClass": "Aquatic Chronic 1",
+        "relevance": "not_relevant_to_food_score"
+      },
+      {
+        "hazardClass": "Eye Irrit. 2",
+        "relevance": "occupational_or_handling_only"
+      },
+      {
+        "hazardClass": "Eye Irrit. 2",
+        "relevance": "occupational_or_handling_only"
+      },
+      {
+        "hazardClass": "Press. Gas",
+        "relevance": "not_relevant_to_food_score"
+      },
+      {
+        "hazardClass": "Skin Corr. 1A",
+        "relevance": "occupational_or_handling_only"
+      },
+      {
+        "hazardClass": "Eye Irrit. 2",
+        "relevance": "occupational_or_handling_only"
+      },
+      {
+        "hazardClass": "Skin Corr. 1A",
+        "relevance": "occupational_or_handling_only"
+      },
+      {
+        "hazardClass": "Skin Corr. 1A",
+        "relevance": "occupational_or_handling_only"
+      },
+      {
+        "hazardClass": "Skin Corr. 1A",
+        "relevance": "occupational_or_handling_only"
+      },
+      {
+        "hazardClass": "Skin Corr. 1B",
+        "relevance": "occupational_or_handling_only"
+      },
+      {
+        "hazardClass": "Aquatic Acute 1",
+        "relevance": "not_relevant_to_food_score"
+      },
+      {
+        "hazardClass": "Flam. Gas 1",
+        "relevance": "not_relevant_to_food_score"
+      },
+      {
+        "hazardClass": "Press. Gas",
+        "relevance": "not_relevant_to_food_score"
+      },
+      {
+        "hazardClass": "Eye Irrit. 2",
+        "relevance": "occupational_or_handling_only"
+      },
+      {
+        "hazardClass": "Skin Sens. 1B",
+        "relevance": "occupational_or_handling_only"
+      }
+    ]
+  },
+  "codeResults": [
+    {
+      "code": "E171",
+      "eNumber": "E171",
+      "additiveName": "Titanium dioxide",
+      "clpHazards": [
+        {
+          "hazardClass": "Carc. 2",
+          "category": "",
+          "hazardStatement": "H351 (inhalation)",
+          "specificConcentrationLimit": null,
+          "notes": null,
+          "sourceReference": null,
+          "domain": "humanHealthHazards",
+          "foodAdditiveRelevance": "potentially_relevant",
+          "reason": "Classe CLP de danger pour la santé humaine ; le contexte d’exposition alimentaire reste à examiner séparément."
+        }
+      ],
+      "foodAdditiveRelevance": [
+        {
+          "hazardClass": "Carc. 2",
+          "category": null,
+          "relevance": "route_specific",
+          "exposureRoute": "inhalation",
+          "concentrationContext": {
+            "value": "intrinsic",
+            "values": []
+          },
+          "supportingFoodSafetyData": [
+            {
+              "type": "ADI",
+              "authority": "EFSA",
+              "year": 2021,
+              "rawText": null,
+              "source": "https://doi.org/10.2903/j.efsa.2021.6585"
+            },
+            {
+              "authority": "EFSA",
+              "year": 2019,
+              "assessmentIdentifier": "EFSA-Q-2018-00625",
+              "source": "https://doi.org/10.2903/j.efsa.2019.5760"
+            },
+            {
+              "authority": "EFSA",
+              "year": 2021,
+              "assessmentIdentifier": "EFSA-Q-2020-00262",
+              "source": "https://doi.org/10.2903/j.efsa.2021.6585"
+            },
+            {
+              "authority": "EFSA",
+              "year": 2004,
+              "assessmentIdentifier": "EFSA-Q-2004-103",
+              "source": "https://doi.org/10.2903/j.efsa.2005.163"
+            },
+            {
+              "authority": "EFSA",
+              "year": 2016,
+              "assessmentIdentifier": "EFSA-Q-2011-00348",
+              "source": "https://doi.org/10.2903/j.efsa.2016.4545"
+            },
+            {
+              "authority": "EFSA",
+              "year": 2018,
+              "assessmentIdentifier": "EFSA-Q-2018-00271",
+              "source": "https://doi.org/10.2903/j.efsa.2018.5366"
+            },
+            {
+              "authority": "JECFA",
+              "year": 2023,
+              "assessmentIdentifier": "JECFA-97-2023",
+              "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/17"
+            },
+            {
+              "authority": "JECFA",
+              "year": 1969,
+              "assessmentIdentifier": "JECFA-13-1969",
+              "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/17"
+            }
+          ],
+          "conflictingOrLimitingData": [
+            "Aucune exposition alimentaire individuelle liée dans les données locales.",
+            "no_explicit_source_conclusion"
+          ],
+          "reasons": [
+            "Classe potentiellement systémique, mais la classification intrinsèque ne démontre pas un risque alimentaire aux usages autorisés."
+          ],
+          "provenance": [
+            {
+              "sourceOrganisation": "European Union / EUR-Lex",
+              "regulation": "Regulation (EC) No 1272/2008",
+              "annex": "VI",
+              "part": "3",
+              "table": "3",
+              "consolidatedDate": "2026-07-01",
+              "sourceUrl": "https://eur-lex.europa.eu/eli/reg/2008/1272/2026-07-01",
+              "sourceLocation": "Annex VI / Part 3 / Table 3"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "code": "E210",
+      "eNumber": "E210",
+      "additiveName": "Benzoic acid",
+      "clpHazards": [
+        {
+          "hazardClass": "STOT RE 1",
+          "category": "",
+          "hazardStatement": "H372 (lungs) (inhalation) H315 H318",
+          "specificConcentrationLimit": null,
+          "notes": null,
+          "sourceReference": null,
+          "domain": "humanHealthHazards",
+          "foodAdditiveRelevance": "potentially_relevant",
+          "reason": "Classe CLP de danger pour la santé humaine ; le contexte d’exposition alimentaire reste à examiner séparément."
+        },
+        {
+          "hazardClass": "Skin Irrit. 2",
+          "category": "",
+          "hazardStatement": "H372 (lungs) (inhalation) H315 H318",
+          "specificConcentrationLimit": null,
+          "notes": null,
+          "sourceReference": null,
+          "domain": "other",
+          "foodAdditiveRelevance": "context_required",
+          "reason": "Classe conservée ; sa pertinence alimentaire et humaine doit être vérifiée au cas par cas."
+        },
+        {
+          "hazardClass": "Eye Dam. 1",
+          "category": "",
+          "hazardStatement": "H372 (lungs) (inhalation) H315 H318",
+          "specificConcentrationLimit": null,
+          "notes": null,
+          "sourceReference": null,
+          "domain": "humanHealthHazards",
+          "foodAdditiveRelevance": "potentially_relevant",
+          "reason": "Classe CLP de danger pour la santé humaine ; le contexte d’exposition alimentaire reste à examiner séparément."
+        }
+      ],
+      "foodAdditiveRelevance": [
+        {
+          "hazardClass": "STOT RE 1",
+          "category": null,
+          "relevance": "route_specific",
+          "exposureRoute": "inhalation",
+          "concentrationContext": {
+            "value": "intrinsic",
+            "values": []
+          },
+          "supportingFoodSafetyData": [
+            {
+              "type": "ADI",
+              "authority": "EFSA",
+              "year": 2016,
+              "rawText": null,
+              "source": "https://doi.org/10.2903/j.efsa.2016.4433"
+            },
+            {
+              "type": "ADI",
+              "authority": "JECFA",
+              "year": 2002,
+              "rawText": "0-5 mg/kg bw (1996) Comments: No safety concern at current levels of intake when used as a flavouring agent (2002) Intake: See BENZOATES",
+              "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/126"
+            },
+            {
+              "type": "ADI",
+              "authority": "JECFA",
+              "year": 2002,
+              "rawText": "No safety concern at current levels of intake when used as a flavouring agent",
+              "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/126"
+            },
+            {
+              "authority": "EFSA",
+              "year": 2009,
+              "assessmentIdentifier": "EFSA-Q-2008-298, EFSA-Q-2007-182, EFSA-Q-2007-199, EFSA-Q-2008-295, EFSA-Q-2008-001, EFSA-Q-2007-006, EFSA-Q-2006-315, EFSA-Q-2007-007",
+              "source": "https://doi.org/10.2903/j.efsa.2009.961"
+            },
+            {
+              "authority": "EFSA",
+              "year": 2016,
+              "assessmentIdentifier": "EFSA-Q-2011-00004, EFSA-Q-2011-00003, EFSA-Q-2011-00002, EFSA-Q-2011-00001",
+              "source": "https://doi.org/10.2903/j.efsa.2016.4433"
+            },
+            {
+              "authority": "JECFA",
+              "year": 2021,
+              "assessmentIdentifier": "JECFA-92-2021",
+              "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/126"
+            },
+            {
+              "authority": "JECFA",
+              "year": 2002,
+              "assessmentIdentifier": "JECFA-46-2002",
+              "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/126"
+            },
+            {
+              "authority": "JECFA",
+              "year": 2002,
+              "assessmentIdentifier": "JECFA-2002",
+              "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/126"
+            }
+          ],
+          "conflictingOrLimitingData": [
+            "Aucune exposition alimentaire individuelle liée dans les données locales.",
+            "no_explicit_source_conclusion"
+          ],
+          "reasons": [
+            "Classe potentiellement systémique, mais la classification intrinsèque ne démontre pas un risque alimentaire aux usages autorisés."
+          ],
+          "provenance": [
+            {
+              "sourceOrganisation": "European Union / EUR-Lex",
+              "regulation": "Regulation (EC) No 1272/2008",
+              "annex": "VI",
+              "part": "3",
+              "table": "3",
+              "consolidatedDate": "2026-07-01",
+              "sourceUrl": "https://eur-lex.europa.eu/eli/reg/2008/1272/2026-07-01",
+              "sourceLocation": "Annex VI / Part 3 / Table 3"
+            }
+          ]
+        },
+        {
+          "hazardClass": "Skin Irrit. 2",
+          "category": null,
+          "relevance": "occupational_or_handling_only",
+          "exposureRoute": "contact_cutaneous_or_ocular",
+          "concentrationContext": {
+            "value": "intrinsic",
+            "values": []
+          },
+          "supportingFoodSafetyData": [
+            {
+              "type": "ADI",
+              "authority": "EFSA",
+              "year": 2016,
+              "rawText": null,
+              "source": "https://doi.org/10.2903/j.efsa.2016.4433"
+            },
+            {
+              "type": "ADI",
+              "authority": "JECFA",
+              "year": 2002,
+              "rawText": "0-5 mg/kg bw (1996) Comments: No safety concern at current levels of intake when used as a flavouring agent (2002) Intake: See BENZOATES",
+              "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/126"
+            },
+            {
+              "type": "ADI",
+              "authority": "JECFA",
+              "year": 2002,
+              "rawText": "No safety concern at current levels of intake when used as a flavouring agent",
+              "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/126"
+            },
+            {
+              "authority": "EFSA",
+              "year": 2009,
+              "assessmentIdentifier": "EFSA-Q-2008-298, EFSA-Q-2007-182, EFSA-Q-2007-199, EFSA-Q-2008-295, EFSA-Q-2008-001, EFSA-Q-2007-006, EFSA-Q-2006-315, EFSA-Q-2007-007",
+              "source": "https://doi.org/10.2903/j.efsa.2009.961"
+            },
+            {
+              "authority": "EFSA",
+              "year": 2016,
+              "assessmentIdentifier": "EFSA-Q-2011-00004, EFSA-Q-2011-00003, EFSA-Q-2011-00002, EFSA-Q-2011-00001",
+              "source": "https://doi.org/10.2903/j.efsa.2016.4433"
+            },
+            {
+              "authority": "JECFA",
+              "year": 2021,
+              "assessmentIdentifier": "JECFA-92-2021",
+              "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/126"
+            },
+            {
+              "authority": "JECFA",
+              "year": 2002,
+              "assessmentIdentifier": "JECFA-46-2002",
+              "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/126"
+            },
+            {
+              "authority": "JECFA",
+              "year": 2002,
+              "assessmentIdentifier": "JECFA-2002",
+              "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/126"
+            }
+          ],
+          "conflictingOrLimitingData": [
+            "Aucune exposition alimentaire individuelle liée dans les données locales.",
+            "no_explicit_source_conclusion"
+          ],
+          "reasons": [
+            "Le signal décrit principalement un danger de contact avec la substance concentrée.",
+            "Aucune extrapolation automatique vers le risque alimentaire."
+          ],
+          "provenance": [
+            {
+              "sourceOrganisation": "European Union / EUR-Lex",
+              "regulation": "Regulation (EC) No 1272/2008",
+              "annex": "VI",
+              "part": "3",
+              "table": "3",
+              "consolidatedDate": "2026-07-01",
+              "sourceUrl": "https://eur-lex.europa.eu/eli/reg/2008/1272/2026-07-01",
+              "sourceLocation": "Annex VI / Part 3 / Table 3"
+            }
+          ]
+        },
+        {
+          "hazardClass": "Eye Dam. 1",
+          "category": null,
+          "relevance": "occupational_or_handling_only",
+          "exposureRoute": "contact_cutaneous_or_ocular",
+          "concentrationContext": {
+            "value": "intrinsic",
+            "values": []
+          },
+          "supportingFoodSafetyData": [
+            {
+              "type": "ADI",
+              "authority": "EFSA",
+              "year": 2016,
+              "rawText": null,
+              "source": "https://doi.org/10.2903/j.efsa.2016.4433"
+            },
+            {
+              "type": "ADI",
+              "authority": "JECFA",
+              "year": 2002,
+              "rawText": "0-5 mg/kg bw (1996) Comments: No safety concern at current levels of intake when used as a flavouring agent (2002) Intake: See BENZOATES",
+              "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/126"
+            },
+            {
+              "type": "ADI",
+              "authority": "JECFA",
+              "year": 2002,
+              "rawText": "No safety concern at current levels of intake when used as a flavouring agent",
+              "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/126"
+            },
+            {
+              "authority": "EFSA",
+              "year": 2009,
+              "assessmentIdentifier": "EFSA-Q-2008-298, EFSA-Q-2007-182, EFSA-Q-2007-199, EFSA-Q-2008-295, EFSA-Q-2008-001, EFSA-Q-2007-006, EFSA-Q-2006-315, EFSA-Q-2007-007",
+              "source": "https://doi.org/10.2903/j.efsa.2009.961"
+            },
+            {
+              "authority": "EFSA",
+              "year": 2016,
+              "assessmentIdentifier": "EFSA-Q-2011-00004, EFSA-Q-2011-00003, EFSA-Q-2011-00002, EFSA-Q-2011-00001",
+              "source": "https://doi.org/10.2903/j.efsa.2016.4433"
+            },
+            {
+              "authority": "JECFA",
+              "year": 2021,
+              "assessmentIdentifier": "JECFA-92-2021",
+              "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/126"
+            },
+            {
+              "authority": "JECFA",
+              "year": 2002,
+              "assessmentIdentifier": "JECFA-46-2002",
+              "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/126"
+            },
+            {
+              "authority": "JECFA",
+              "year": 2002,
+              "assessmentIdentifier": "JECFA-2002",
+              "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/126"
+            }
+          ],
+          "conflictingOrLimitingData": [
+            "Aucune exposition alimentaire individuelle liée dans les données locales.",
+            "no_explicit_source_conclusion"
+          ],
+          "reasons": [
+            "Le signal décrit principalement un danger de contact avec la substance concentrée.",
+            "Aucune extrapolation automatique vers le risque alimentaire."
+          ],
+          "provenance": [
+            {
+              "sourceOrganisation": "European Union / EUR-Lex",
+              "regulation": "Regulation (EC) No 1272/2008",
+              "annex": "VI",
+              "part": "3",
+              "table": "3",
+              "consolidatedDate": "2026-07-01",
+              "sourceUrl": "https://eur-lex.europa.eu/eli/reg/2008/1272/2026-07-01",
+              "sourceLocation": "Annex VI / Part 3 / Table 3"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "code": "E220",
+      "eNumber": "E220",
+      "additiveName": "Sulphur dioxide",
+      "clpHazards": [
+        {
+          "hazardClass": "Press. Gas",
+          "category": "",
+          "hazardStatement": "H331 H370 (respiratory system) (inhalation) H314",
+          "specificConcentrationLimit": null,
+          "notes": null,
+          "sourceReference": null,
+          "domain": "physicalHazards",
+          "foodAdditiveRelevance": "context_required",
+          "reason": "Classe de danger physique conservée, sans influence sur le futur score Santé alimentaire."
+        },
+        {
+          "hazardClass": "Acute Tox. 3",
+          "category": "",
+          "hazardStatement": "H331 H370 (respiratory system) (inhalation) H314",
+          "specificConcentrationLimit": null,
+          "notes": null,
+          "sourceReference": null,
+          "domain": "humanHealthHazards",
+          "foodAdditiveRelevance": "potentially_relevant",
+          "reason": "Classe CLP de danger pour la santé humaine ; le contexte d’exposition alimentaire reste à examiner séparément."
+        },
+        {
+          "hazardClass": "STOT SE 1",
+          "category": "",
+          "hazardStatement": "H331 H370 (respiratory system) (inhalation) H314",
+          "specificConcentrationLimit": null,
+          "notes": null,
+          "sourceReference": null,
+          "domain": "humanHealthHazards",
+          "foodAdditiveRelevance": "potentially_relevant",
+          "reason": "Classe CLP de danger pour la santé humaine ; le contexte d’exposition alimentaire reste à examiner séparément."
+        },
+        {
+          "hazardClass": "Skin. Corr. 1B",
+          "category": "",
+          "hazardStatement": "H331 H370 (respiratory system) (inhalation) H314",
+          "specificConcentrationLimit": null,
+          "notes": null,
+          "sourceReference": null,
+          "domain": "humanHealthHazards",
+          "foodAdditiveRelevance": "potentially_relevant",
+          "reason": "Classe CLP de danger pour la santé humaine ; le contexte d’exposition alimentaire reste à examiner séparément."
+        }
+      ],
+      "foodAdditiveRelevance": [
+        {
+          "hazardClass": "Press. Gas",
+          "category": null,
+          "relevance": "not_relevant_to_food_score",
+          "exposureRoute": "not_applicable",
+          "concentrationContext": {
+            "value": "intrinsic",
+            "values": []
+          },
+          "supportingFoodSafetyData": [
+            {
+              "type": "ADI",
+              "authority": "EFSA",
+              "year": null,
+              "rawText": null,
+              "source": null
+            },
+            {
+              "authority": "JECFA",
+              "year": 1998,
+              "assessmentIdentifier": "JECFA-49-1998",
+              "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/985"
+            }
+          ],
+          "conflictingOrLimitingData": [
+            "Aucune exposition alimentaire individuelle liée dans les données locales.",
+            "no_explicit_source_conclusion"
+          ],
+          "reasons": [
+            "La classe CLP est environnementale ou physique, pas un signal de danger alimentaire humain."
+          ],
+          "provenance": [
+            {
+              "sourceOrganisation": "European Union / EUR-Lex",
+              "regulation": "Regulation (EC) No 1272/2008",
+              "annex": "VI",
+              "part": "3",
+              "table": "3",
+              "consolidatedDate": "2026-07-01",
+              "sourceUrl": "https://eur-lex.europa.eu/eli/reg/2008/1272/2026-07-01",
+              "sourceLocation": "Annex VI / Part 3 / Table 3"
+            }
+          ]
+        },
+        {
+          "hazardClass": "Acute Tox. 3",
+          "category": null,
+          "relevance": "route_specific",
+          "exposureRoute": "inhalation",
+          "concentrationContext": {
+            "value": "intrinsic",
+            "values": []
+          },
+          "supportingFoodSafetyData": [
+            {
+              "type": "ADI",
+              "authority": "EFSA",
+              "year": null,
+              "rawText": null,
+              "source": null
+            },
+            {
+              "authority": "JECFA",
+              "year": 1998,
+              "assessmentIdentifier": "JECFA-49-1998",
+              "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/985"
+            }
+          ],
+          "conflictingOrLimitingData": [
+            "Aucune exposition alimentaire individuelle liée dans les données locales.",
+            "no_explicit_source_conclusion"
+          ],
+          "reasons": [
+            "La voie orale n’est pas établie comme voie unique par les données CLP disponibles."
+          ],
+          "provenance": [
+            {
+              "sourceOrganisation": "European Union / EUR-Lex",
+              "regulation": "Regulation (EC) No 1272/2008",
+              "annex": "VI",
+              "part": "3",
+              "table": "3",
+              "consolidatedDate": "2026-07-01",
+              "sourceUrl": "https://eur-lex.europa.eu/eli/reg/2008/1272/2026-07-01",
+              "sourceLocation": "Annex VI / Part 3 / Table 3"
+            }
+          ]
+        },
+        {
+          "hazardClass": "STOT SE 1",
+          "category": null,
+          "relevance": "route_specific",
+          "exposureRoute": "inhalation",
+          "concentrationContext": {
+            "value": "intrinsic",
+            "values": []
+          },
+          "supportingFoodSafetyData": [
+            {
+              "type": "ADI",
+              "authority": "EFSA",
+              "year": null,
+              "rawText": null,
+              "source": null
+            },
+            {
+              "authority": "JECFA",
+              "year": 1998,
+              "assessmentIdentifier": "JECFA-49-1998",
+              "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/985"
+            }
+          ],
+          "conflictingOrLimitingData": [
+            "Aucune exposition alimentaire individuelle liée dans les données locales.",
+            "no_explicit_source_conclusion"
+          ],
+          "reasons": [
+            "Classe potentiellement systémique, mais la classification intrinsèque ne démontre pas un risque alimentaire aux usages autorisés."
+          ],
+          "provenance": [
+            {
+              "sourceOrganisation": "European Union / EUR-Lex",
+              "regulation": "Regulation (EC) No 1272/2008",
+              "annex": "VI",
+              "part": "3",
+              "table": "3",
+              "consolidatedDate": "2026-07-01",
+              "sourceUrl": "https://eur-lex.europa.eu/eli/reg/2008/1272/2026-07-01",
+              "sourceLocation": "Annex VI / Part 3 / Table 3"
+            }
+          ]
+        },
+        {
+          "hazardClass": "Skin. Corr. 1B",
+          "category": null,
+          "relevance": "occupational_or_handling_only",
+          "exposureRoute": "contact_cutaneous_or_ocular",
+          "concentrationContext": {
+            "value": "intrinsic",
+            "values": []
+          },
+          "supportingFoodSafetyData": [
+            {
+              "type": "ADI",
+              "authority": "EFSA",
+              "year": null,
+              "rawText": null,
+              "source": null
+            },
+            {
+              "authority": "JECFA",
+              "year": 1998,
+              "assessmentIdentifier": "JECFA-49-1998",
+              "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/985"
+            }
+          ],
+          "conflictingOrLimitingData": [
+            "Aucune exposition alimentaire individuelle liée dans les données locales.",
+            "no_explicit_source_conclusion"
+          ],
+          "reasons": [
+            "Le signal décrit principalement un danger de contact avec la substance concentrée.",
+            "Aucune extrapolation automatique vers le risque alimentaire."
+          ],
+          "provenance": [
+            {
+              "sourceOrganisation": "European Union / EUR-Lex",
+              "regulation": "Regulation (EC) No 1272/2008",
+              "annex": "VI",
+              "part": "3",
+              "table": "3",
+              "consolidatedDate": "2026-07-01",
+              "sourceUrl": "https://eur-lex.europa.eu/eli/reg/2008/1272/2026-07-01",
+              "sourceLocation": "Annex VI / Part 3 / Table 3"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "code": "E222",
+      "eNumber": "E222",
+      "additiveName": "Sodium hydrogen sulphite",
+      "clpHazards": [
+        {
+          "hazardClass": "Acute Tox. 4 *",
+          "category": "",
+          "hazardStatement": "H302",
+          "specificConcentrationLimit": null,
+          "notes": null,
+          "sourceReference": null,
+          "domain": "humanHealthHazards",
+          "foodAdditiveRelevance": "potentially_relevant",
+          "reason": "Classe CLP de danger pour la santé humaine ; le contexte d’exposition alimentaire reste à examiner séparément."
+        }
+      ],
+      "foodAdditiveRelevance": [
+        {
+          "hazardClass": "Acute Tox. 4 *",
+          "category": null,
+          "relevance": "concentration_dependent",
+          "exposureRoute": "ingestion",
+          "concentrationContext": {
+            "value": "concentration_dependent",
+            "values": []
+          },
+          "supportingFoodSafetyData": [
+            {
+              "authority": "JECFA",
+              "year": 1998,
+              "assessmentIdentifier": "JECFA-27-1998",
+              "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2269"
+            }
+          ],
+          "conflictingOrLimitingData": [
+            "Aucune exposition alimentaire individuelle liée dans les données locales.",
+            "no_explicit_source_conclusion"
+          ],
+          "reasons": [
+            "La voie orale est explicitement présente, mais la pertinence alimentaire dépend de l’exposition et de la dose.",
+            "La classification comporte un contexte de concentration/limite à conserver sans créer de seuil."
+          ],
+          "provenance": [
+            {
+              "sourceOrganisation": "European Union / EUR-Lex",
+              "regulation": "Regulation (EC) No 1272/2008",
+              "annex": "VI",
+              "part": "3",
+              "table": "3",
+              "consolidatedDate": "2026-07-01",
+              "sourceUrl": "https://eur-lex.europa.eu/eli/reg/2008/1272/2026-07-01",
+              "sourceLocation": "Annex VI / Part 3 / Table 3"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "code": "E223",
+      "eNumber": "E223",
+      "additiveName": "Sodium metabisulphite",
+      "clpHazards": [
+        {
+          "hazardClass": "Acute Tox. 4 *",
+          "category": "",
+          "hazardStatement": "H302 H318",
+          "specificConcentrationLimit": null,
+          "notes": null,
+          "sourceReference": null,
+          "domain": "humanHealthHazards",
+          "foodAdditiveRelevance": "potentially_relevant",
+          "reason": "Classe CLP de danger pour la santé humaine ; le contexte d’exposition alimentaire reste à examiner séparément."
+        },
+        {
+          "hazardClass": "Eye Dam. 1",
+          "category": "",
+          "hazardStatement": "H302 H318",
+          "specificConcentrationLimit": null,
+          "notes": null,
+          "sourceReference": null,
+          "domain": "humanHealthHazards",
+          "foodAdditiveRelevance": "potentially_relevant",
+          "reason": "Classe CLP de danger pour la santé humaine ; le contexte d’exposition alimentaire reste à examiner séparément."
+        }
+      ],
+      "foodAdditiveRelevance": [
+        {
+          "hazardClass": "Acute Tox. 4 *",
+          "category": null,
+          "relevance": "concentration_dependent",
+          "exposureRoute": "ingestion",
+          "concentrationContext": {
+            "value": "concentration_dependent",
+            "values": []
+          },
+          "supportingFoodSafetyData": [
+            {
+              "authority": "EFSA",
+              "year": 2016,
+              "assessmentIdentifier": "EFSA-Q-2015-00465, EFSA-Q-2011-00452, EFSA-Q-2011-00451, EFSA-Q-2011-00450, EFSA-Q-2011-00449, EFSA-Q-2011-00448, EFSA-Q-2011-00447, EFSA-Q-2011-00446, EFSA-Q-2011-00445",
+              "source": "https://doi.org/10.2903/j.efsa.2016.4438"
+            },
+            {
+              "authority": "JECFA",
+              "year": 1998,
+              "assessmentIdentifier": "JECFA-27-1998",
+              "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/1824"
+            }
+          ],
+          "conflictingOrLimitingData": [
+            "Aucune exposition alimentaire individuelle liée dans les données locales.",
+            "no_explicit_source_conclusion"
+          ],
+          "reasons": [
+            "La voie orale est explicitement présente, mais la pertinence alimentaire dépend de l’exposition et de la dose.",
+            "La classification comporte un contexte de concentration/limite à conserver sans créer de seuil."
+          ],
+          "provenance": [
+            {
+              "sourceOrganisation": "European Union / EUR-Lex",
+              "regulation": "Regulation (EC) No 1272/2008",
+              "annex": "VI",
+              "part": "3",
+              "table": "3",
+              "consolidatedDate": "2026-07-01",
+              "sourceUrl": "https://eur-lex.europa.eu/eli/reg/2008/1272/2026-07-01",
+              "sourceLocation": "Annex VI / Part 3 / Table 3"
+            }
+          ]
+        },
+        {
+          "hazardClass": "Eye Dam. 1",
+          "category": null,
+          "relevance": "occupational_or_handling_only",
+          "exposureRoute": "contact_cutaneous_or_ocular",
+          "concentrationContext": {
+            "value": "intrinsic",
+            "values": []
+          },
+          "supportingFoodSafetyData": [
+            {
+              "authority": "EFSA",
+              "year": 2016,
+              "assessmentIdentifier": "EFSA-Q-2015-00465, EFSA-Q-2011-00452, EFSA-Q-2011-00451, EFSA-Q-2011-00450, EFSA-Q-2011-00449, EFSA-Q-2011-00448, EFSA-Q-2011-00447, EFSA-Q-2011-00446, EFSA-Q-2011-00445",
+              "source": "https://doi.org/10.2903/j.efsa.2016.4438"
+            },
+            {
+              "authority": "JECFA",
+              "year": 1998,
+              "assessmentIdentifier": "JECFA-27-1998",
+              "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/1824"
+            }
+          ],
+          "conflictingOrLimitingData": [
+            "Aucune exposition alimentaire individuelle liée dans les données locales.",
+            "no_explicit_source_conclusion"
+          ],
+          "reasons": [
+            "Le signal décrit principalement un danger de contact avec la substance concentrée.",
+            "Aucune extrapolation automatique vers le risque alimentaire."
+          ],
+          "provenance": [
+            {
+              "sourceOrganisation": "European Union / EUR-Lex",
+              "regulation": "Regulation (EC) No 1272/2008",
+              "annex": "VI",
+              "part": "3",
+              "table": "3",
+              "consolidatedDate": "2026-07-01",
+              "sourceUrl": "https://eur-lex.europa.eu/eli/reg/2008/1272/2026-07-01",
+              "sourceLocation": "Annex VI / Part 3 / Table 3"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "code": "E239",
+      "eNumber": "E239",
+      "additiveName": "Hexamethylene tetramine",
+      "clpHazards": [
+        {
+          "hazardClass": "Flam. Sol. 2",
+          "category": "",
+          "hazardStatement": "H228 H317",
+          "specificConcentrationLimit": null,
+          "notes": null,
+          "sourceReference": null,
+          "domain": "physicalHazards",
+          "foodAdditiveRelevance": "context_required",
+          "reason": "Classe de danger physique conservée, sans influence sur le futur score Santé alimentaire."
+        },
+        {
+          "hazardClass": "Skin Sens. 1",
+          "category": "",
+          "hazardStatement": "H228 H317",
+          "specificConcentrationLimit": null,
+          "notes": null,
+          "sourceReference": null,
+          "domain": "humanHealthHazards",
+          "foodAdditiveRelevance": "potentially_relevant",
+          "reason": "Classe CLP de danger pour la santé humaine ; le contexte d’exposition alimentaire reste à examiner séparément."
+        }
+      ],
+      "foodAdditiveRelevance": [
+        {
+          "hazardClass": "Flam. Sol. 2",
+          "category": null,
+          "relevance": "not_relevant_to_food_score",
+          "exposureRoute": "not_applicable",
+          "concentrationContext": {
+            "value": "intrinsic",
+            "values": []
+          },
+          "supportingFoodSafetyData": [
+            {
+              "type": "ADI",
+              "authority": "EFSA",
+              "year": 2014,
+              "rawText": null,
+              "source": "https://doi.org/10.2903/j.efsa.2014.3696"
+            },
+            {
+              "type": "ADI",
+              "authority": "JECFA",
+              "year": 1973,
+              "rawText": "0-0.15 mg/kg bw",
+              "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/1720"
+            },
+            {
+              "authority": "EFSA",
+              "year": 2014,
+              "assessmentIdentifier": "EFSA-Q-2011-00458",
+              "source": "https://doi.org/10.2903/j.efsa.2014.3696"
+            },
+            {
+              "authority": "JECFA",
+              "year": 1973,
+              "assessmentIdentifier": "JECFA-17-1973",
+              "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/1720"
+            }
+          ],
+          "conflictingOrLimitingData": [
+            "Aucune exposition alimentaire individuelle liée dans les données locales.",
+            "no_explicit_source_conclusion"
+          ],
+          "reasons": [
+            "La classe CLP est environnementale ou physique, pas un signal de danger alimentaire humain."
+          ],
+          "provenance": [
+            {
+              "sourceOrganisation": "European Union / EUR-Lex",
+              "regulation": "Regulation (EC) No 1272/2008",
+              "annex": "VI",
+              "part": "3",
+              "table": "3",
+              "consolidatedDate": "2026-07-01",
+              "sourceUrl": "https://eur-lex.europa.eu/eli/reg/2008/1272/2026-07-01",
+              "sourceLocation": "Annex VI / Part 3 / Table 3"
+            }
+          ]
+        },
+        {
+          "hazardClass": "Skin Sens. 1",
+          "category": null,
+          "relevance": "occupational_or_handling_only",
+          "exposureRoute": "contact_cutaneous_or_ocular",
+          "concentrationContext": {
+            "value": "intrinsic",
+            "values": []
+          },
+          "supportingFoodSafetyData": [
+            {
+              "type": "ADI",
+              "authority": "EFSA",
+              "year": 2014,
+              "rawText": null,
+              "source": "https://doi.org/10.2903/j.efsa.2014.3696"
+            },
+            {
+              "type": "ADI",
+              "authority": "JECFA",
+              "year": 1973,
+              "rawText": "0-0.15 mg/kg bw",
+              "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/1720"
+            },
+            {
+              "authority": "EFSA",
+              "year": 2014,
+              "assessmentIdentifier": "EFSA-Q-2011-00458",
+              "source": "https://doi.org/10.2903/j.efsa.2014.3696"
+            },
+            {
+              "authority": "JECFA",
+              "year": 1973,
+              "assessmentIdentifier": "JECFA-17-1973",
+              "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/1720"
+            }
+          ],
+          "conflictingOrLimitingData": [
+            "Aucune exposition alimentaire individuelle liée dans les données locales.",
+            "no_explicit_source_conclusion"
+          ],
+          "reasons": [
+            "Le signal décrit principalement un danger de contact avec la substance concentrée.",
+            "Aucune extrapolation automatique vers le risque alimentaire."
+          ],
+          "provenance": [
+            {
+              "sourceOrganisation": "European Union / EUR-Lex",
+              "regulation": "Regulation (EC) No 1272/2008",
+              "annex": "VI",
+              "part": "3",
+              "table": "3",
+              "consolidatedDate": "2026-07-01",
+              "sourceUrl": "https://eur-lex.europa.eu/eli/reg/2008/1272/2026-07-01",
+              "sourceLocation": "Annex VI / Part 3 / Table 3"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "code": "E249",
+      "eNumber": "E249",
+      "additiveName": "Potassium nitrite",
+      "clpHazards": [
+        {
+          "hazardClass": "Ox. Sol. 2",
+          "category": "",
+          "hazardStatement": "H272 H301 H400",
+          "specificConcentrationLimit": null,
+          "notes": null,
+          "sourceReference": null,
+          "domain": "physicalHazards",
+          "foodAdditiveRelevance": "context_required",
+          "reason": "Classe de danger physique conservée, sans influence sur le futur score Santé alimentaire."
+        },
+        {
+          "hazardClass": "Acute Tox. 3 *",
+          "category": "",
+          "hazardStatement": "H272 H301 H400",
+          "specificConcentrationLimit": null,
+          "notes": null,
+          "sourceReference": null,
+          "domain": "humanHealthHazards",
+          "foodAdditiveRelevance": "potentially_relevant",
+          "reason": "Classe CLP de danger pour la santé humaine ; le contexte d’exposition alimentaire reste à examiner séparément."
+        },
+        {
+          "hazardClass": "Aquatic Acute 1",
+          "category": "",
+          "hazardStatement": "H272 H301 H400",
+          "specificConcentrationLimit": null,
+          "notes": null,
+          "sourceReference": null,
+          "domain": "environmentalHazards",
+          "foodAdditiveRelevance": "not_relevant_to_health_score",
+          "reason": "Classe environnementale conservée mais exclue du futur score Santé alimentaire."
+        }
+      ],
+      "foodAdditiveRelevance": [
+        {
+          "hazardClass": "Ox. Sol. 2",
+          "category": null,
+          "relevance": "not_relevant_to_food_score",
+          "exposureRoute": "not_applicable",
+          "concentrationContext": {
+            "value": "intrinsic",
+            "values": []
+          },
+          "supportingFoodSafetyData": [
+            {
+              "type": "ADI",
+              "authority": "EFSA",
+              "year": 2017,
+              "rawText": null,
+              "source": "https://doi.org/10.2903/j.efsa.2017.4786"
+            },
+            {
+              "type": "ADI",
+              "authority": "JECFA",
+              "year": 2002,
+              "rawText": "0-0.07 mg/kg bw Comments: Evaluated as nitrite and expressed as nitrite ion, ADI applies to all sources of intake but not to infants below the age of 3 months. JECFA established an ADI of 0-0.07 mg/kg/bw, expressed as nitrite ion, on the basis of the NOEL of 6.7 mg/kg bw/day for effects on the heart and lung in a 2-year study in rats and a safety factor of 100. Nitrite causes methemoglobinemia. JECFA noted that as this might occur after a single dose, it would be appreciate to establish an acute reference dose for nitrite. The data available for review at the present JECFA meeting were however not relevant for establishing an acute reference dose.",
+              "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2842"
+            },
+            {
+              "type": "ADI",
+              "authority": "JECFA",
+              "year": 1995,
+              "rawText": "0-0.06 mg/kg bw Comments: Expressed as nitrite ion; ADI applies to all sources of intake but not to infants below the age of 3 months",
+              "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2842"
+            },
+            {
+              "authority": "EFSA",
+              "year": 2017,
+              "assessmentIdentifier": "EFSA-Q-2011-00461, EFSA-Q-2011-00460",
+              "source": "https://doi.org/10.2903/j.efsa.2017.4786"
+            },
+            {
+              "authority": "JECFA",
+              "year": 2002,
+              "assessmentIdentifier": "JECFA-59-2002",
+              "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2842"
+            },
+            {
+              "authority": "JECFA",
+              "year": 1995,
+              "assessmentIdentifier": "JECFA-44-1995",
+              "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2842"
+            }
+          ],
+          "conflictingOrLimitingData": [
+            "Aucune exposition alimentaire individuelle liée dans les données locales.",
+            "no_explicit_source_conclusion"
+          ],
+          "reasons": [
+            "La classe CLP est environnementale ou physique, pas un signal de danger alimentaire humain."
+          ],
+          "provenance": [
+            {
+              "sourceOrganisation": "European Union / EUR-Lex",
+              "regulation": "Regulation (EC) No 1272/2008",
+              "annex": "VI",
+              "part": "3",
+              "table": "3",
+              "consolidatedDate": "2026-07-01",
+              "sourceUrl": "https://eur-lex.europa.eu/eli/reg/2008/1272/2026-07-01",
+              "sourceLocation": "Annex VI / Part 3 / Table 3"
+            }
+          ]
+        },
+        {
+          "hazardClass": "Acute Tox. 3 *",
+          "category": null,
+          "relevance": "concentration_dependent",
+          "exposureRoute": "ingestion",
+          "concentrationContext": {
+            "value": "concentration_dependent",
+            "values": []
+          },
+          "supportingFoodSafetyData": [
+            {
+              "type": "ADI",
+              "authority": "EFSA",
+              "year": 2017,
+              "rawText": null,
+              "source": "https://doi.org/10.2903/j.efsa.2017.4786"
+            },
+            {
+              "type": "ADI",
+              "authority": "JECFA",
+              "year": 2002,
+              "rawText": "0-0.07 mg/kg bw Comments: Evaluated as nitrite and expressed as nitrite ion, ADI applies to all sources of intake but not to infants below the age of 3 months. JECFA established an ADI of 0-0.07 mg/kg/bw, expressed as nitrite ion, on the basis of the NOEL of 6.7 mg/kg bw/day for effects on the heart and lung in a 2-year study in rats and a safety factor of 100. Nitrite causes methemoglobinemia. JECFA noted that as this might occur after a single dose, it would be appreciate to establish an acute reference dose for nitrite. The data available for review at the present JECFA meeting were however not relevant for establishing an acute reference dose.",
+              "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2842"
+            },
+            {
+              "type": "ADI",
+              "authority": "JECFA",
+              "year": 1995,
+              "rawText": "0-0.06 mg/kg bw Comments: Expressed as nitrite ion; ADI applies to all sources of intake but not to infants below the age of 3 months",
+              "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2842"
+            },
+            {
+              "authority": "EFSA",
+              "year": 2017,
+              "assessmentIdentifier": "EFSA-Q-2011-00461, EFSA-Q-2011-00460",
+              "source": "https://doi.org/10.2903/j.efsa.2017.4786"
+            },
+            {
+              "authority": "JECFA",
+              "year": 2002,
+              "assessmentIdentifier": "JECFA-59-2002",
+              "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2842"
+            },
+            {
+              "authority": "JECFA",
+              "year": 1995,
+              "assessmentIdentifier": "JECFA-44-1995",
+              "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2842"
+            }
+          ],
+          "conflictingOrLimitingData": [
+            "Aucune exposition alimentaire individuelle liée dans les données locales.",
+            "no_explicit_source_conclusion"
+          ],
+          "reasons": [
+            "La voie orale est explicitement présente, mais la pertinence alimentaire dépend de l’exposition et de la dose.",
+            "La classification comporte un contexte de concentration/limite à conserver sans créer de seuil."
+          ],
+          "provenance": [
+            {
+              "sourceOrganisation": "European Union / EUR-Lex",
+              "regulation": "Regulation (EC) No 1272/2008",
+              "annex": "VI",
+              "part": "3",
+              "table": "3",
+              "consolidatedDate": "2026-07-01",
+              "sourceUrl": "https://eur-lex.europa.eu/eli/reg/2008/1272/2026-07-01",
+              "sourceLocation": "Annex VI / Part 3 / Table 3"
+            }
+          ]
+        },
+        {
+          "hazardClass": "Aquatic Acute 1",
+          "category": null,
+          "relevance": "not_relevant_to_food_score",
+          "exposureRoute": "not_applicable",
+          "concentrationContext": {
+            "value": "intrinsic",
+            "values": []
+          },
+          "supportingFoodSafetyData": [
+            {
+              "type": "ADI",
+              "authority": "EFSA",
+              "year": 2017,
+              "rawText": null,
+              "source": "https://doi.org/10.2903/j.efsa.2017.4786"
+            },
+            {
+              "type": "ADI",
+              "authority": "JECFA",
+              "year": 2002,
+              "rawText": "0-0.07 mg/kg bw Comments: Evaluated as nitrite and expressed as nitrite ion, ADI applies to all sources of intake but not to infants below the age of 3 months. JECFA established an ADI of 0-0.07 mg/kg/bw, expressed as nitrite ion, on the basis of the NOEL of 6.7 mg/kg bw/day for effects on the heart and lung in a 2-year study in rats and a safety factor of 100. Nitrite causes methemoglobinemia. JECFA noted that as this might occur after a single dose, it would be appreciate to establish an acute reference dose for nitrite. The data available for review at the present JECFA meeting were however not relevant for establishing an acute reference dose.",
+              "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2842"
+            },
+            {
+              "type": "ADI",
+              "authority": "JECFA",
+              "year": 1995,
+              "rawText": "0-0.06 mg/kg bw Comments: Expressed as nitrite ion; ADI applies to all sources of intake but not to infants below the age of 3 months",
+              "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2842"
+            },
+            {
+              "authority": "EFSA",
+              "year": 2017,
+              "assessmentIdentifier": "EFSA-Q-2011-00461, EFSA-Q-2011-00460",
+              "source": "https://doi.org/10.2903/j.efsa.2017.4786"
+            },
+            {
+              "authority": "JECFA",
+              "year": 2002,
+              "assessmentIdentifier": "JECFA-59-2002",
+              "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2842"
+            },
+            {
+              "authority": "JECFA",
+              "year": 1995,
+              "assessmentIdentifier": "JECFA-44-1995",
+              "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2842"
+            }
+          ],
+          "conflictingOrLimitingData": [
+            "Aucune exposition alimentaire individuelle liée dans les données locales.",
+            "no_explicit_source_conclusion"
+          ],
+          "reasons": [
+            "La classe CLP est environnementale ou physique, pas un signal de danger alimentaire humain."
+          ],
+          "provenance": [
+            {
+              "sourceOrganisation": "European Union / EUR-Lex",
+              "regulation": "Regulation (EC) No 1272/2008",
+              "annex": "VI",
+              "part": "3",
+              "table": "3",
+              "consolidatedDate": "2026-07-01",
+              "sourceUrl": "https://eur-lex.europa.eu/eli/reg/2008/1272/2026-07-01",
+              "sourceLocation": "Annex VI / Part 3 / Table 3"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "code": "E260",
+      "eNumber": "E260",
+      "additiveName": "Acetic acid",
+      "clpHazards": [
+        {
+          "hazardClass": "Flam. Liq. 3",
+          "category": "",
+          "hazardStatement": "H226 H314",
+          "specificConcentrationLimit": null,
+          "notes": null,
+          "sourceReference": null,
+          "domain": "physicalHazards",
+          "foodAdditiveRelevance": "context_required",
+          "reason": "Classe de danger physique conservée, sans influence sur le futur score Santé alimentaire."
+        },
+        {
+          "hazardClass": "Skin Corr. 1A",
+          "category": "",
+          "hazardStatement": "H226 H314",
+          "specificConcentrationLimit": null,
+          "notes": null,
+          "sourceReference": null,
+          "domain": "humanHealthHazards",
+          "foodAdditiveRelevance": "potentially_relevant",
+          "reason": "Classe CLP de danger pour la santé humaine ; le contexte d’exposition alimentaire reste à examiner séparément."
+        }
+      ],
+      "foodAdditiveRelevance": [
+        {
+          "hazardClass": "Flam. Liq. 3",
+          "category": null,
+          "relevance": "not_relevant_to_food_score",
+          "exposureRoute": "not_applicable",
+          "concentrationContext": {
+            "value": "intrinsic",
+            "values": []
+          },
+          "supportingFoodSafetyData": [
+            {
+              "type": "ADI",
+              "authority": "EFSA",
+              "year": null,
+              "rawText": null,
+              "source": null
+            },
+            {
+              "type": "ADI",
+              "authority": "JECFA",
+              "year": 2002,
+              "rawText": "No safety concern at current levels of intake when used as a flavouring agent",
+              "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/1436"
+            },
+            {
+              "type": "ADI",
+              "authority": "JECFA",
+              "year": 2004,
+              "rawText": "No safety concern at current levels of intake when used as a flavouring agent Comments: Small residues of acetic acid on food (which has been treated with antimicrobial washing solutions) at the time of consumption would not pose a safety concern",
+              "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/1436"
+            },
+            {
+              "authority": "JECFA",
+              "year": 2002,
+              "assessmentIdentifier": "JECFA-2002",
+              "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/1436"
+            },
+            {
+              "authority": "JECFA",
+              "year": 2004,
+              "assessmentIdentifier": "JECFA-49-2004",
+              "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/1436"
+            }
+          ],
+          "conflictingOrLimitingData": [
+            "Aucune exposition alimentaire individuelle liée dans les données locales.",
+            "no_explicit_source_conclusion"
+          ],
+          "reasons": [
+            "La classe CLP est environnementale ou physique, pas un signal de danger alimentaire humain."
+          ],
+          "provenance": [
+            {
+              "sourceOrganisation": "European Union / EUR-Lex",
+              "regulation": "Regulation (EC) No 1272/2008",
+              "annex": "VI",
+              "part": "3",
+              "table": "3",
+              "consolidatedDate": "2026-07-01",
+              "sourceUrl": "https://eur-lex.europa.eu/eli/reg/2008/1272/2026-07-01",
+              "sourceLocation": "Annex VI / Part 3 / Table 3"
+            }
+          ]
+        },
+        {
+          "hazardClass": "Skin Corr. 1A",
+          "category": null,
+          "relevance": "occupational_or_handling_only",
+          "exposureRoute": "contact_cutaneous_or_ocular",
+          "concentrationContext": {
+            "value": "intrinsic",
+            "values": []
+          },
+          "supportingFoodSafetyData": [
+            {
+              "type": "ADI",
+              "authority": "EFSA",
+              "year": null,
+              "rawText": null,
+              "source": null
+            },
+            {
+              "type": "ADI",
+              "authority": "JECFA",
+              "year": 2002,
+              "rawText": "No safety concern at current levels of intake when used as a flavouring agent",
+              "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/1436"
+            },
+            {
+              "type": "ADI",
+              "authority": "JECFA",
+              "year": 2004,
+              "rawText": "No safety concern at current levels of intake when used as a flavouring agent Comments: Small residues of acetic acid on food (which has been treated with antimicrobial washing solutions) at the time of consumption would not pose a safety concern",
+              "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/1436"
+            },
+            {
+              "authority": "JECFA",
+              "year": 2002,
+              "assessmentIdentifier": "JECFA-2002",
+              "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/1436"
+            },
+            {
+              "authority": "JECFA",
+              "year": 2004,
+              "assessmentIdentifier": "JECFA-49-2004",
+              "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/1436"
+            }
+          ],
+          "conflictingOrLimitingData": [
+            "Aucune exposition alimentaire individuelle liée dans les données locales.",
+            "no_explicit_source_conclusion"
+          ],
+          "reasons": [
+            "Le signal décrit principalement un danger de contact avec la substance concentrée.",
+            "Aucune extrapolation automatique vers le risque alimentaire."
+          ],
+          "provenance": [
+            {
+              "sourceOrganisation": "European Union / EUR-Lex",
+              "regulation": "Regulation (EC) No 1272/2008",
+              "annex": "VI",
+              "part": "3",
+              "table": "3",
+              "consolidatedDate": "2026-07-01",
+              "sourceUrl": "https://eur-lex.europa.eu/eli/reg/2008/1272/2026-07-01",
+              "sourceLocation": "Annex VI / Part 3 / Table 3"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "code": "E280",
+      "eNumber": "E280",
+      "additiveName": "Propionic acid",
+      "clpHazards": [
+        {
+          "hazardClass": "Skin Corr. 1B",
+          "category": "",
+          "hazardStatement": "H314",
+          "specificConcentrationLimit": null,
+          "notes": null,
+          "sourceReference": null,
+          "domain": "humanHealthHazards",
+          "foodAdditiveRelevance": "potentially_relevant",
+          "reason": "Classe CLP de danger pour la santé humaine ; le contexte d’exposition alimentaire reste à examiner séparément."
+        }
+      ],
+      "foodAdditiveRelevance": [
+        {
+          "hazardClass": "Skin Corr. 1B",
+          "category": null,
+          "relevance": "occupational_or_handling_only",
+          "exposureRoute": "contact_cutaneous_or_ocular",
+          "concentrationContext": {
+            "value": "intrinsic",
+            "values": []
+          },
+          "supportingFoodSafetyData": [
+            {
+              "type": "ADI",
+              "authority": "EFSA",
+              "year": 2014,
+              "rawText": null,
+              "source": "https://doi.org/10.2903/j.efsa.2014.3779"
+            },
+            {
+              "type": "ADI",
+              "authority": "JECFA",
+              "year": 1999,
+              "rawText": "No safety concern at current levels of intake when used as a flavouring agent",
+              "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/491"
+            },
+            {
+              "type": "ADI",
+              "authority": "JECFA",
+              "year": 2004,
+              "rawText": "No safety concern at current levels of intake when used as a flavouring agent",
+              "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/491"
+            },
+            {
+              "authority": "EFSA",
+              "year": 2014,
+              "assessmentIdentifier": "EFSA-Q-2011-00464, EFSA-Q-2011-00465, EFSA-Q-2011-00466, EFSA-Q-2011-00467",
+              "source": "https://doi.org/10.2903/j.efsa.2014.3779"
+            },
+            {
+              "authority": "JECFA",
+              "year": 1997,
+              "assessmentIdentifier": "JECFA-49-1997",
+              "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/491"
+            },
+            {
+              "authority": "JECFA",
+              "year": 1999,
+              "assessmentIdentifier": "JECFA-1999",
+              "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/491"
+            },
+            {
+              "authority": "JECFA",
+              "year": 2004,
+              "assessmentIdentifier": "JECFA-2004",
+              "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/491"
+            }
+          ],
+          "conflictingOrLimitingData": [
+            "Aucune exposition alimentaire individuelle liée dans les données locales.",
+            "no_explicit_source_conclusion"
+          ],
+          "reasons": [
+            "Le signal décrit principalement un danger de contact avec la substance concentrée.",
+            "Aucune extrapolation automatique vers le risque alimentaire."
+          ],
+          "provenance": [
+            {
+              "sourceOrganisation": "European Union / EUR-Lex",
+              "regulation": "Regulation (EC) No 1272/2008",
+              "annex": "VI",
+              "part": "3",
+              "table": "3",
+              "consolidatedDate": "2026-07-01",
+              "sourceUrl": "https://eur-lex.europa.eu/eli/reg/2008/1272/2026-07-01",
+              "sourceLocation": "Annex VI / Part 3 / Table 3"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "code": "E297",
+      "eNumber": "E297",
+      "additiveName": "Fumaric acid",
+      "clpHazards": [
+        {
+          "hazardClass": "Eye Irrit. 2",
+          "category": "",
+          "hazardStatement": "H319",
+          "specificConcentrationLimit": null,
+          "notes": null,
+          "sourceReference": null,
+          "domain": "humanHealthHazards",
+          "foodAdditiveRelevance": "potentially_relevant",
+          "reason": "Classe CLP de danger pour la santé humaine ; le contexte d’exposition alimentaire reste à examiner séparément."
+        }
+      ],
+      "foodAdditiveRelevance": [
+        {
+          "hazardClass": "Eye Irrit. 2",
+          "category": null,
+          "relevance": "occupational_or_handling_only",
+          "exposureRoute": "contact_cutaneous_or_ocular",
+          "concentrationContext": {
+            "value": "intrinsic",
+            "values": []
+          },
+          "supportingFoodSafetyData": [
+            {
+              "type": "ADI",
+              "authority": "EFSA",
+              "year": null,
+              "rawText": null,
+              "source": null
+            },
+            {
+              "authority": "JECFA",
+              "year": 1999,
+              "assessmentIdentifier": "JECFA-35-1999",
+              "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/109"
+            }
+          ],
+          "conflictingOrLimitingData": [
+            "Aucune exposition alimentaire individuelle liée dans les données locales.",
+            "no_explicit_source_conclusion"
+          ],
+          "reasons": [
+            "Le signal décrit principalement un danger de contact avec la substance concentrée.",
+            "Aucune extrapolation automatique vers le risque alimentaire."
+          ],
+          "provenance": [
+            {
+              "sourceOrganisation": "European Union / EUR-Lex",
+              "regulation": "Regulation (EC) No 1272/2008",
+              "annex": "VI",
+              "part": "3",
+              "table": "3",
+              "consolidatedDate": "2026-07-01",
+              "sourceUrl": "https://eur-lex.europa.eu/eli/reg/2008/1272/2026-07-01",
+              "sourceLocation": "Annex VI / Part 3 / Table 3"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "code": "E310",
+      "eNumber": "E310",
+      "additiveName": "Propyl gallate",
+      "clpHazards": [
+        {
+          "hazardClass": "Acute Tox. 4",
+          "category": "",
+          "hazardStatement": "H302 H317 H400 H410",
+          "specificConcentrationLimit": null,
+          "notes": null,
+          "sourceReference": null,
+          "domain": "humanHealthHazards",
+          "foodAdditiveRelevance": "potentially_relevant",
+          "reason": "Classe CLP de danger pour la santé humaine ; le contexte d’exposition alimentaire reste à examiner séparément."
+        },
+        {
+          "hazardClass": "Skin Sens. 1",
+          "category": "",
+          "hazardStatement": "H302 H317 H400 H410",
+          "specificConcentrationLimit": null,
+          "notes": null,
+          "sourceReference": null,
+          "domain": "humanHealthHazards",
+          "foodAdditiveRelevance": "potentially_relevant",
+          "reason": "Classe CLP de danger pour la santé humaine ; le contexte d’exposition alimentaire reste à examiner séparément."
+        },
+        {
+          "hazardClass": "Aquatic Acute 1",
+          "category": "",
+          "hazardStatement": "H302 H317 H400 H410",
+          "specificConcentrationLimit": null,
+          "notes": null,
+          "sourceReference": null,
+          "domain": "environmentalHazards",
+          "foodAdditiveRelevance": "not_relevant_to_health_score",
+          "reason": "Classe environnementale conservée mais exclue du futur score Santé alimentaire."
+        },
+        {
+          "hazardClass": "Aquatic Chronic 1",
+          "category": "",
+          "hazardStatement": "H302 H317 H400 H410",
+          "specificConcentrationLimit": null,
+          "notes": null,
+          "sourceReference": null,
+          "domain": "environmentalHazards",
+          "foodAdditiveRelevance": "not_relevant_to_health_score",
+          "reason": "Classe environnementale conservée mais exclue du futur score Santé alimentaire."
+        }
+      ],
+      "foodAdditiveRelevance": [
+        {
+          "hazardClass": "Acute Tox. 4",
+          "category": null,
+          "relevance": "conditionally_relevant",
+          "exposureRoute": "ingestion",
+          "concentrationContext": {
+            "value": "intrinsic",
+            "values": []
+          },
+          "supportingFoodSafetyData": [
+            {
+              "type": "ADI",
+              "authority": "EFSA",
+              "year": 2014,
+              "rawText": null,
+              "source": "https://doi.org/10.2903/j.efsa.2014.3642"
+            },
+            {
+              "type": "ADI",
+              "authority": "JECFA",
+              "year": 1996,
+              "rawText": "0-1.4 mg/kg bw (1993) Comments: The 1993 ADI was maintained at the forty-sixth meeting (1996)",
+              "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/1272"
+            },
+            {
+              "authority": "EFSA",
+              "year": 2014,
+              "assessmentIdentifier": "EFSA-Q-2011-00479",
+              "source": "https://doi.org/10.2903/j.efsa.2014.3642"
+            },
+            {
+              "authority": "JECFA",
+              "year": 1996,
+              "assessmentIdentifier": "JECFA-46-1996",
+              "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/1272"
+            }
+          ],
+          "conflictingOrLimitingData": [
+            "Aucune exposition alimentaire individuelle liée dans les données locales.",
+            "no_explicit_source_conclusion"
+          ],
+          "reasons": [
+            "La voie orale est explicitement présente, mais la pertinence alimentaire dépend de l’exposition et de la dose."
+          ],
+          "provenance": [
+            {
+              "sourceOrganisation": "European Union / EUR-Lex",
+              "regulation": "Regulation (EC) No 1272/2008",
+              "annex": "VI",
+              "part": "3",
+              "table": "3",
+              "consolidatedDate": "2026-07-01",
+              "sourceUrl": "https://eur-lex.europa.eu/eli/reg/2008/1272/2026-07-01",
+              "sourceLocation": "Annex VI / Part 3 / Table 3"
+            }
+          ]
+        },
+        {
+          "hazardClass": "Skin Sens. 1",
+          "category": null,
+          "relevance": "occupational_or_handling_only",
+          "exposureRoute": "contact_cutaneous_or_ocular",
+          "concentrationContext": {
+            "value": "intrinsic",
+            "values": []
+          },
+          "supportingFoodSafetyData": [
+            {
+              "type": "ADI",
+              "authority": "EFSA",
+              "year": 2014,
+              "rawText": null,
+              "source": "https://doi.org/10.2903/j.efsa.2014.3642"
+            },
+            {
+              "type": "ADI",
+              "authority": "JECFA",
+              "year": 1996,
+              "rawText": "0-1.4 mg/kg bw (1993) Comments: The 1993 ADI was maintained at the forty-sixth meeting (1996)",
+              "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/1272"
+            },
+            {
+              "authority": "EFSA",
+              "year": 2014,
+              "assessmentIdentifier": "EFSA-Q-2011-00479",
+              "source": "https://doi.org/10.2903/j.efsa.2014.3642"
+            },
+            {
+              "authority": "JECFA",
+              "year": 1996,
+              "assessmentIdentifier": "JECFA-46-1996",
+              "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/1272"
+            }
+          ],
+          "conflictingOrLimitingData": [
+            "Aucune exposition alimentaire individuelle liée dans les données locales.",
+            "no_explicit_source_conclusion"
+          ],
+          "reasons": [
+            "Le signal décrit principalement un danger de contact avec la substance concentrée.",
+            "Aucune extrapolation automatique vers le risque alimentaire."
+          ],
+          "provenance": [
+            {
+              "sourceOrganisation": "European Union / EUR-Lex",
+              "regulation": "Regulation (EC) No 1272/2008",
+              "annex": "VI",
+              "part": "3",
+              "table": "3",
+              "consolidatedDate": "2026-07-01",
+              "sourceUrl": "https://eur-lex.europa.eu/eli/reg/2008/1272/2026-07-01",
+              "sourceLocation": "Annex VI / Part 3 / Table 3"
+            }
+          ]
+        },
+        {
+          "hazardClass": "Aquatic Acute 1",
+          "category": null,
+          "relevance": "not_relevant_to_food_score",
+          "exposureRoute": "not_applicable",
+          "concentrationContext": {
+            "value": "intrinsic",
+            "values": []
+          },
+          "supportingFoodSafetyData": [
+            {
+              "type": "ADI",
+              "authority": "EFSA",
+              "year": 2014,
+              "rawText": null,
+              "source": "https://doi.org/10.2903/j.efsa.2014.3642"
+            },
+            {
+              "type": "ADI",
+              "authority": "JECFA",
+              "year": 1996,
+              "rawText": "0-1.4 mg/kg bw (1993) Comments: The 1993 ADI was maintained at the forty-sixth meeting (1996)",
+              "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/1272"
+            },
+            {
+              "authority": "EFSA",
+              "year": 2014,
+              "assessmentIdentifier": "EFSA-Q-2011-00479",
+              "source": "https://doi.org/10.2903/j.efsa.2014.3642"
+            },
+            {
+              "authority": "JECFA",
+              "year": 1996,
+              "assessmentIdentifier": "JECFA-46-1996",
+              "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/1272"
+            }
+          ],
+          "conflictingOrLimitingData": [
+            "Aucune exposition alimentaire individuelle liée dans les données locales.",
+            "no_explicit_source_conclusion"
+          ],
+          "reasons": [
+            "La classe CLP est environnementale ou physique, pas un signal de danger alimentaire humain."
+          ],
+          "provenance": [
+            {
+              "sourceOrganisation": "European Union / EUR-Lex",
+              "regulation": "Regulation (EC) No 1272/2008",
+              "annex": "VI",
+              "part": "3",
+              "table": "3",
+              "consolidatedDate": "2026-07-01",
+              "sourceUrl": "https://eur-lex.europa.eu/eli/reg/2008/1272/2026-07-01",
+              "sourceLocation": "Annex VI / Part 3 / Table 3"
+            }
+          ]
+        },
+        {
+          "hazardClass": "Aquatic Chronic 1",
+          "category": null,
+          "relevance": "not_relevant_to_food_score",
+          "exposureRoute": "not_applicable",
+          "concentrationContext": {
+            "value": "intrinsic",
+            "values": []
+          },
+          "supportingFoodSafetyData": [
+            {
+              "type": "ADI",
+              "authority": "EFSA",
+              "year": 2014,
+              "rawText": null,
+              "source": "https://doi.org/10.2903/j.efsa.2014.3642"
+            },
+            {
+              "type": "ADI",
+              "authority": "JECFA",
+              "year": 1996,
+              "rawText": "0-1.4 mg/kg bw (1993) Comments: The 1993 ADI was maintained at the forty-sixth meeting (1996)",
+              "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/1272"
+            },
+            {
+              "authority": "EFSA",
+              "year": 2014,
+              "assessmentIdentifier": "EFSA-Q-2011-00479",
+              "source": "https://doi.org/10.2903/j.efsa.2014.3642"
+            },
+            {
+              "authority": "JECFA",
+              "year": 1996,
+              "assessmentIdentifier": "JECFA-46-1996",
+              "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/1272"
+            }
+          ],
+          "conflictingOrLimitingData": [
+            "Aucune exposition alimentaire individuelle liée dans les données locales.",
+            "no_explicit_source_conclusion"
+          ],
+          "reasons": [
+            "La classe CLP est environnementale ou physique, pas un signal de danger alimentaire humain."
+          ],
+          "provenance": [
+            {
+              "sourceOrganisation": "European Union / EUR-Lex",
+              "regulation": "Regulation (EC) No 1272/2008",
+              "annex": "VI",
+              "part": "3",
+              "table": "3",
+              "consolidatedDate": "2026-07-01",
+              "sourceUrl": "https://eur-lex.europa.eu/eli/reg/2008/1272/2026-07-01",
+              "sourceLocation": "Annex VI / Part 3 / Table 3"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "code": "E355",
+      "eNumber": "E355",
+      "additiveName": "Adipic acid",
+      "clpHazards": [
+        {
+          "hazardClass": "Eye Irrit. 2",
+          "category": "",
+          "hazardStatement": "H319",
+          "specificConcentrationLimit": null,
+          "notes": null,
+          "sourceReference": null,
+          "domain": "humanHealthHazards",
+          "foodAdditiveRelevance": "potentially_relevant",
+          "reason": "Classe CLP de danger pour la santé humaine ; le contexte d’exposition alimentaire reste à examiner séparément."
+        }
+      ],
+      "foodAdditiveRelevance": [
+        {
+          "hazardClass": "Eye Irrit. 2",
+          "category": null,
+          "relevance": "occupational_or_handling_only",
+          "exposureRoute": "contact_cutaneous_or_ocular",
+          "concentrationContext": {
+            "value": "intrinsic",
+            "values": []
+          },
+          "supportingFoodSafetyData": [
+            {
+              "type": "ADI",
+              "authority": "JECFA",
+              "year": 1977,
+              "rawText": "0-5 mg/kg bw Comments: JECFA noted that in a two-year study that adipic acid causes diarrhoea in rats. The no-effect level in this study was 1% of the diet. An ADI of 0-5 mg/kg bw was established on the bases of the free acid. The is applicable to the potassium, sodium and ammonium salts as well as the free acid.",
+              "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/194"
+            },
+            {
+              "authority": "JECFA",
+              "year": 2025,
+              "assessmentIdentifier": "JECFA-100-2025",
+              "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/194"
+            },
+            {
+              "authority": "JECFA",
+              "year": 1999,
+              "assessmentIdentifier": "JECFA-21-1999",
+              "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/194"
+            },
+            {
+              "authority": "JECFA",
+              "year": 1977,
+              "assessmentIdentifier": "JECFA-21-1977",
+              "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/194"
+            }
+          ],
+          "conflictingOrLimitingData": [
+            "no_explicit_source_conclusion"
+          ],
+          "reasons": [
+            "Le signal décrit principalement un danger de contact avec la substance concentrée.",
+            "Aucune extrapolation automatique vers le risque alimentaire."
+          ],
+          "provenance": [
+            {
+              "sourceOrganisation": "European Union / EUR-Lex",
+              "regulation": "Regulation (EC) No 1272/2008",
+              "annex": "VI",
+              "part": "3",
+              "table": "3",
+              "consolidatedDate": "2026-07-01",
+              "sourceUrl": "https://eur-lex.europa.eu/eli/reg/2008/1272/2026-07-01",
+              "sourceLocation": "Annex VI / Part 3 / Table 3"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "code": "E500",
+      "eNumber": "E500",
+      "additiveName": "Sodium carbonates",
+      "clpHazards": [
+        {
+          "hazardClass": "Eye Irrit. 2",
+          "category": "",
+          "hazardStatement": "H319",
+          "specificConcentrationLimit": null,
+          "notes": null,
+          "sourceReference": null,
+          "domain": "humanHealthHazards",
+          "foodAdditiveRelevance": "potentially_relevant",
+          "reason": "Classe CLP de danger pour la santé humaine ; le contexte d’exposition alimentaire reste à examiner séparément."
+        }
+      ],
+      "foodAdditiveRelevance": [
+        {
+          "hazardClass": "Eye Irrit. 2",
+          "category": null,
+          "relevance": "occupational_or_handling_only",
+          "exposureRoute": "contact_cutaneous_or_ocular",
+          "concentrationContext": {
+            "value": "intrinsic",
+            "values": []
+          },
+          "supportingFoodSafetyData": [
+            {
+              "type": "ADI",
+              "authority": "EFSA",
+              "year": null,
+              "rawText": null,
+              "source": null
+            },
+            {
+              "authority": "JECFA",
+              "year": 1965,
+              "assessmentIdentifier": "JECFA-09-1965",
+              "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/625"
+            },
+            {
+              "authority": "JECFA",
+              "year": 1981,
+              "assessmentIdentifier": "JECFA-25-1981",
+              "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/625"
+            }
+          ],
+          "conflictingOrLimitingData": [
+            "Aucune exposition alimentaire individuelle liée dans les données locales.",
+            "no_explicit_source_conclusion"
+          ],
+          "reasons": [
+            "Le signal décrit principalement un danger de contact avec la substance concentrée.",
+            "Aucune extrapolation automatique vers le risque alimentaire."
+          ],
+          "provenance": [
+            {
+              "sourceOrganisation": "European Union / EUR-Lex",
+              "regulation": "Regulation (EC) No 1272/2008",
+              "annex": "VI",
+              "part": "3",
+              "table": "3",
+              "consolidatedDate": "2026-07-01",
+              "sourceUrl": "https://eur-lex.europa.eu/eli/reg/2008/1272/2026-07-01",
+              "sourceLocation": "Annex VI / Part 3 / Table 3"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "code": "E507",
+      "eNumber": "E507",
+      "additiveName": "Hydrochloric acid",
+      "clpHazards": [
+        {
+          "hazardClass": "Press. Gas",
+          "category": "",
+          "hazardStatement": "H331 H314",
+          "specificConcentrationLimit": null,
+          "notes": null,
+          "sourceReference": null,
+          "domain": "physicalHazards",
+          "foodAdditiveRelevance": "context_required",
+          "reason": "Classe de danger physique conservée, sans influence sur le futur score Santé alimentaire."
+        },
+        {
+          "hazardClass": "Acute Tox. 3 *",
+          "category": "",
+          "hazardStatement": "H331 H314",
+          "specificConcentrationLimit": null,
+          "notes": null,
+          "sourceReference": null,
+          "domain": "humanHealthHazards",
+          "foodAdditiveRelevance": "potentially_relevant",
+          "reason": "Classe CLP de danger pour la santé humaine ; le contexte d’exposition alimentaire reste à examiner séparément."
+        },
+        {
+          "hazardClass": "Skin Corr. 1A",
+          "category": "",
+          "hazardStatement": "H331 H314",
+          "specificConcentrationLimit": null,
+          "notes": null,
+          "sourceReference": null,
+          "domain": "humanHealthHazards",
+          "foodAdditiveRelevance": "potentially_relevant",
+          "reason": "Classe CLP de danger pour la santé humaine ; le contexte d’exposition alimentaire reste à examiner séparément."
+        }
+      ],
+      "foodAdditiveRelevance": [
+        {
+          "hazardClass": "Press. Gas",
+          "category": null,
+          "relevance": "not_relevant_to_food_score",
+          "exposureRoute": "not_applicable",
+          "concentrationContext": {
+            "value": "intrinsic",
+            "values": []
+          },
+          "supportingFoodSafetyData": [
+            {
+              "type": "ADI",
+              "authority": "EFSA",
+              "year": 2019,
+              "rawText": null,
+              "source": "https://doi.org/10.2903/j.efsa.2019.5751"
+            },
+            {
+              "authority": "EFSA",
+              "year": 2019,
+              "assessmentIdentifier": "EFSA-Q-2011-00657, EFSA-Q-2011-00658, EFSA-Q-2011-00659, EFSA-Q-2011-00660",
+              "source": "https://doi.org/10.2903/j.efsa.2019.5751"
+            },
+            {
+              "authority": "JECFA",
+              "year": 1965,
+              "assessmentIdentifier": "JECFA-46-1965",
+              "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2799"
+            }
+          ],
+          "conflictingOrLimitingData": [
+            "Aucune exposition alimentaire individuelle liée dans les données locales.",
+            "no_explicit_source_conclusion"
+          ],
+          "reasons": [
+            "La classe CLP est environnementale ou physique, pas un signal de danger alimentaire humain."
+          ],
+          "provenance": [
+            {
+              "sourceOrganisation": "European Union / EUR-Lex",
+              "regulation": "Regulation (EC) No 1272/2008",
+              "annex": "VI",
+              "part": "3",
+              "table": "3",
+              "consolidatedDate": "2026-07-01",
+              "sourceUrl": "https://eur-lex.europa.eu/eli/reg/2008/1272/2026-07-01",
+              "sourceLocation": "Annex VI / Part 3 / Table 3"
+            }
+          ]
+        },
+        {
+          "hazardClass": "Acute Tox. 3 *",
+          "category": null,
+          "relevance": "route_specific",
+          "exposureRoute": "inhalation",
+          "concentrationContext": {
+            "value": "concentration_dependent",
+            "values": []
+          },
+          "supportingFoodSafetyData": [
+            {
+              "type": "ADI",
+              "authority": "EFSA",
+              "year": 2019,
+              "rawText": null,
+              "source": "https://doi.org/10.2903/j.efsa.2019.5751"
+            },
+            {
+              "authority": "EFSA",
+              "year": 2019,
+              "assessmentIdentifier": "EFSA-Q-2011-00657, EFSA-Q-2011-00658, EFSA-Q-2011-00659, EFSA-Q-2011-00660",
+              "source": "https://doi.org/10.2903/j.efsa.2019.5751"
+            },
+            {
+              "authority": "JECFA",
+              "year": 1965,
+              "assessmentIdentifier": "JECFA-46-1965",
+              "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2799"
+            }
+          ],
+          "conflictingOrLimitingData": [
+            "Aucune exposition alimentaire individuelle liée dans les données locales.",
+            "no_explicit_source_conclusion"
+          ],
+          "reasons": [
+            "La voie orale n’est pas établie comme voie unique par les données CLP disponibles.",
+            "La classification comporte un contexte de concentration/limite à conserver sans créer de seuil."
+          ],
+          "provenance": [
+            {
+              "sourceOrganisation": "European Union / EUR-Lex",
+              "regulation": "Regulation (EC) No 1272/2008",
+              "annex": "VI",
+              "part": "3",
+              "table": "3",
+              "consolidatedDate": "2026-07-01",
+              "sourceUrl": "https://eur-lex.europa.eu/eli/reg/2008/1272/2026-07-01",
+              "sourceLocation": "Annex VI / Part 3 / Table 3"
+            }
+          ]
+        },
+        {
+          "hazardClass": "Skin Corr. 1A",
+          "category": null,
+          "relevance": "occupational_or_handling_only",
+          "exposureRoute": "contact_cutaneous_or_ocular",
+          "concentrationContext": {
+            "value": "intrinsic",
+            "values": []
+          },
+          "supportingFoodSafetyData": [
+            {
+              "type": "ADI",
+              "authority": "EFSA",
+              "year": 2019,
+              "rawText": null,
+              "source": "https://doi.org/10.2903/j.efsa.2019.5751"
+            },
+            {
+              "authority": "EFSA",
+              "year": 2019,
+              "assessmentIdentifier": "EFSA-Q-2011-00657, EFSA-Q-2011-00658, EFSA-Q-2011-00659, EFSA-Q-2011-00660",
+              "source": "https://doi.org/10.2903/j.efsa.2019.5751"
+            },
+            {
+              "authority": "JECFA",
+              "year": 1965,
+              "assessmentIdentifier": "JECFA-46-1965",
+              "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2799"
+            }
+          ],
+          "conflictingOrLimitingData": [
+            "Aucune exposition alimentaire individuelle liée dans les données locales.",
+            "no_explicit_source_conclusion"
+          ],
+          "reasons": [
+            "Le signal décrit principalement un danger de contact avec la substance concentrée.",
+            "Aucune extrapolation automatique vers le risque alimentaire."
+          ],
+          "provenance": [
+            {
+              "sourceOrganisation": "European Union / EUR-Lex",
+              "regulation": "Regulation (EC) No 1272/2008",
+              "annex": "VI",
+              "part": "3",
+              "table": "3",
+              "consolidatedDate": "2026-07-01",
+              "sourceUrl": "https://eur-lex.europa.eu/eli/reg/2008/1272/2026-07-01",
+              "sourceLocation": "Annex VI / Part 3 / Table 3"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "code": "E509",
+      "eNumber": "E509",
+      "additiveName": "Calcium chloride",
+      "clpHazards": [
+        {
+          "hazardClass": "Eye Irrit. 2",
+          "category": "",
+          "hazardStatement": "H319",
+          "specificConcentrationLimit": null,
+          "notes": null,
+          "sourceReference": null,
+          "domain": "humanHealthHazards",
+          "foodAdditiveRelevance": "potentially_relevant",
+          "reason": "Classe CLP de danger pour la santé humaine ; le contexte d’exposition alimentaire reste à examiner séparément."
+        }
+      ],
+      "foodAdditiveRelevance": [
+        {
+          "hazardClass": "Eye Irrit. 2",
+          "category": null,
+          "relevance": "occupational_or_handling_only",
+          "exposureRoute": "contact_cutaneous_or_ocular",
+          "concentrationContext": {
+            "value": "intrinsic",
+            "values": []
+          },
+          "supportingFoodSafetyData": [
+            {
+              "type": "ADI",
+              "authority": "EFSA",
+              "year": 2019,
+              "rawText": null,
+              "source": "https://doi.org/10.2903/j.efsa.2019.5751"
+            },
+            {
+              "authority": "EFSA",
+              "year": 2019,
+              "assessmentIdentifier": "EFSA-Q-2011-00657, EFSA-Q-2011-00658, EFSA-Q-2011-00659, EFSA-Q-2011-00660",
+              "source": "https://doi.org/10.2903/j.efsa.2019.5751"
+            },
+            {
+              "authority": "JECFA",
+              "year": 1973,
+              "assessmentIdentifier": "JECFA-17-1973",
+              "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/458"
+            }
+          ],
+          "conflictingOrLimitingData": [
+            "Aucune exposition alimentaire individuelle liée dans les données locales.",
+            "no_explicit_source_conclusion"
+          ],
+          "reasons": [
+            "Le signal décrit principalement un danger de contact avec la substance concentrée.",
+            "Aucune extrapolation automatique vers le risque alimentaire."
+          ],
+          "provenance": [
+            {
+              "sourceOrganisation": "European Union / EUR-Lex",
+              "regulation": "Regulation (EC) No 1272/2008",
+              "annex": "VI",
+              "part": "3",
+              "table": "3",
+              "consolidatedDate": "2026-07-01",
+              "sourceUrl": "https://eur-lex.europa.eu/eli/reg/2008/1272/2026-07-01",
+              "sourceLocation": "Annex VI / Part 3 / Table 3"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "code": "E513",
+      "eNumber": "E513",
+      "additiveName": "Sulphuric acid",
+      "clpHazards": [
+        {
+          "hazardClass": "Skin Corr. 1A",
+          "category": "",
+          "hazardStatement": "H314",
+          "specificConcentrationLimit": null,
+          "notes": null,
+          "sourceReference": null,
+          "domain": "humanHealthHazards",
+          "foodAdditiveRelevance": "potentially_relevant",
+          "reason": "Classe CLP de danger pour la santé humaine ; le contexte d’exposition alimentaire reste à examiner séparément."
+        }
+      ],
+      "foodAdditiveRelevance": [
+        {
+          "hazardClass": "Skin Corr. 1A",
+          "category": null,
+          "relevance": "occupational_or_handling_only",
+          "exposureRoute": "contact_cutaneous_or_ocular",
+          "concentrationContext": {
+            "value": "intrinsic",
+            "values": []
+          },
+          "supportingFoodSafetyData": [
+            {
+              "type": "ADI",
+              "authority": "EFSA",
+              "year": 2019,
+              "rawText": null,
+              "source": "https://doi.org/10.2903/j.efsa.2019.5868"
+            },
+            {
+              "authority": "EFSA",
+              "year": 2019,
+              "assessmentIdentifier": "EFSA-Q-2011-00662, EFSA-Q-2011-00663, EFSA-Q-2011-00664, EFSA-Q-2011-00665, EFSA-Q-2011-00666, EFSA-Q-2011-00667, EFSA-Q-2011-00668",
+              "source": "https://doi.org/10.2903/j.efsa.2019.5868"
+            },
+            {
+              "authority": "JECFA",
+              "year": 1976,
+              "assessmentIdentifier": "JECFA-20-1976",
+              "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2101"
+            }
+          ],
+          "conflictingOrLimitingData": [
+            "Aucune exposition alimentaire individuelle liée dans les données locales.",
+            "no_explicit_source_conclusion"
+          ],
+          "reasons": [
+            "Le signal décrit principalement un danger de contact avec la substance concentrée.",
+            "Aucune extrapolation automatique vers le risque alimentaire."
+          ],
+          "provenance": [
+            {
+              "sourceOrganisation": "European Union / EUR-Lex",
+              "regulation": "Regulation (EC) No 1272/2008",
+              "annex": "VI",
+              "part": "3",
+              "table": "3",
+              "consolidatedDate": "2026-07-01",
+              "sourceUrl": "https://eur-lex.europa.eu/eli/reg/2008/1272/2026-07-01",
+              "sourceLocation": "Annex VI / Part 3 / Table 3"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "code": "E524",
+      "eNumber": "E524",
+      "additiveName": "Sodium hydroxide",
+      "clpHazards": [
+        {
+          "hazardClass": "Skin Corr. 1A",
+          "category": "",
+          "hazardStatement": "H314",
+          "specificConcentrationLimit": null,
+          "notes": null,
+          "sourceReference": null,
+          "domain": "humanHealthHazards",
+          "foodAdditiveRelevance": "potentially_relevant",
+          "reason": "Classe CLP de danger pour la santé humaine ; le contexte d’exposition alimentaire reste à examiner séparément."
+        }
+      ],
+      "foodAdditiveRelevance": [
+        {
+          "hazardClass": "Skin Corr. 1A",
+          "category": null,
+          "relevance": "occupational_or_handling_only",
+          "exposureRoute": "contact_cutaneous_or_ocular",
+          "concentrationContext": {
+            "value": "intrinsic",
+            "values": []
+          },
+          "supportingFoodSafetyData": [
+            {
+              "type": "ADI",
+              "authority": "EFSA",
+              "year": null,
+              "rawText": null,
+              "source": null
+            },
+            {
+              "authority": "JECFA",
+              "year": 1965,
+              "assessmentIdentifier": "JECFA-09-1965",
+              "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/1388"
+            }
+          ],
+          "conflictingOrLimitingData": [
+            "Aucune exposition alimentaire individuelle liée dans les données locales.",
+            "no_explicit_source_conclusion"
+          ],
+          "reasons": [
+            "Le signal décrit principalement un danger de contact avec la substance concentrée.",
+            "Aucune extrapolation automatique vers le risque alimentaire."
+          ],
+          "provenance": [
+            {
+              "sourceOrganisation": "European Union / EUR-Lex",
+              "regulation": "Regulation (EC) No 1272/2008",
+              "annex": "VI",
+              "part": "3",
+              "table": "3",
+              "consolidatedDate": "2026-07-01",
+              "sourceUrl": "https://eur-lex.europa.eu/eli/reg/2008/1272/2026-07-01",
+              "sourceLocation": "Annex VI / Part 3 / Table 3"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "code": "E525",
+      "eNumber": "E525",
+      "additiveName": "Potassium hydroxide",
+      "clpHazards": [
+        {
+          "hazardClass": "Acute Tox. 4 *",
+          "category": "",
+          "hazardStatement": "H302 H314",
+          "specificConcentrationLimit": null,
+          "notes": null,
+          "sourceReference": null,
+          "domain": "humanHealthHazards",
+          "foodAdditiveRelevance": "potentially_relevant",
+          "reason": "Classe CLP de danger pour la santé humaine ; le contexte d’exposition alimentaire reste à examiner séparément."
+        },
+        {
+          "hazardClass": "Skin Corr. 1A",
+          "category": "",
+          "hazardStatement": "H302 H314",
+          "specificConcentrationLimit": null,
+          "notes": null,
+          "sourceReference": null,
+          "domain": "humanHealthHazards",
+          "foodAdditiveRelevance": "potentially_relevant",
+          "reason": "Classe CLP de danger pour la santé humaine ; le contexte d’exposition alimentaire reste à examiner séparément."
+        }
+      ],
+      "foodAdditiveRelevance": [
+        {
+          "hazardClass": "Acute Tox. 4 *",
+          "category": null,
+          "relevance": "concentration_dependent",
+          "exposureRoute": "ingestion",
+          "concentrationContext": {
+            "value": "concentration_dependent",
+            "values": []
+          },
+          "supportingFoodSafetyData": [
+            {
+              "type": "ADI",
+              "authority": "EFSA",
+              "year": null,
+              "rawText": null,
+              "source": null
+            },
+            {
+              "authority": "JECFA",
+              "year": 1965,
+              "assessmentIdentifier": "JECFA-09-1965",
+              "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/1387"
+            }
+          ],
+          "conflictingOrLimitingData": [
+            "Aucune exposition alimentaire individuelle liée dans les données locales.",
+            "no_explicit_source_conclusion"
+          ],
+          "reasons": [
+            "La voie orale est explicitement présente, mais la pertinence alimentaire dépend de l’exposition et de la dose.",
+            "La classification comporte un contexte de concentration/limite à conserver sans créer de seuil."
+          ],
+          "provenance": [
+            {
+              "sourceOrganisation": "European Union / EUR-Lex",
+              "regulation": "Regulation (EC) No 1272/2008",
+              "annex": "VI",
+              "part": "3",
+              "table": "3",
+              "consolidatedDate": "2026-07-01",
+              "sourceUrl": "https://eur-lex.europa.eu/eli/reg/2008/1272/2026-07-01",
+              "sourceLocation": "Annex VI / Part 3 / Table 3"
+            }
+          ]
+        },
+        {
+          "hazardClass": "Skin Corr. 1A",
+          "category": null,
+          "relevance": "occupational_or_handling_only",
+          "exposureRoute": "contact_cutaneous_or_ocular",
+          "concentrationContext": {
+            "value": "intrinsic",
+            "values": []
+          },
+          "supportingFoodSafetyData": [
+            {
+              "type": "ADI",
+              "authority": "EFSA",
+              "year": null,
+              "rawText": null,
+              "source": null
+            },
+            {
+              "authority": "JECFA",
+              "year": 1965,
+              "assessmentIdentifier": "JECFA-09-1965",
+              "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/1387"
+            }
+          ],
+          "conflictingOrLimitingData": [
+            "Aucune exposition alimentaire individuelle liée dans les données locales.",
+            "no_explicit_source_conclusion"
+          ],
+          "reasons": [
+            "Le signal décrit principalement un danger de contact avec la substance concentrée.",
+            "Aucune extrapolation automatique vers le risque alimentaire."
+          ],
+          "provenance": [
+            {
+              "sourceOrganisation": "European Union / EUR-Lex",
+              "regulation": "Regulation (EC) No 1272/2008",
+              "annex": "VI",
+              "part": "3",
+              "table": "3",
+              "consolidatedDate": "2026-07-01",
+              "sourceUrl": "https://eur-lex.europa.eu/eli/reg/2008/1272/2026-07-01",
+              "sourceLocation": "Annex VI / Part 3 / Table 3"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "code": "E527",
+      "eNumber": "E527",
+      "additiveName": "Ammonium hydroxide",
+      "clpHazards": [
+        {
+          "hazardClass": "Skin Corr. 1B",
+          "category": "",
+          "hazardStatement": "H314 H400",
+          "specificConcentrationLimit": null,
+          "notes": null,
+          "sourceReference": null,
+          "domain": "humanHealthHazards",
+          "foodAdditiveRelevance": "potentially_relevant",
+          "reason": "Classe CLP de danger pour la santé humaine ; le contexte d’exposition alimentaire reste à examiner séparément."
+        },
+        {
+          "hazardClass": "Aquatic Acute 1",
+          "category": "",
+          "hazardStatement": "H314 H400",
+          "specificConcentrationLimit": null,
+          "notes": null,
+          "sourceReference": null,
+          "domain": "environmentalHazards",
+          "foodAdditiveRelevance": "not_relevant_to_health_score",
+          "reason": "Classe environnementale conservée mais exclue du futur score Santé alimentaire."
+        }
+      ],
+      "foodAdditiveRelevance": [
+        {
+          "hazardClass": "Skin Corr. 1B",
+          "category": null,
+          "relevance": "occupational_or_handling_only",
+          "exposureRoute": "contact_cutaneous_or_ocular",
+          "concentrationContext": {
+            "value": "intrinsic",
+            "values": []
+          },
+          "supportingFoodSafetyData": [
+            {
+              "type": "ADI",
+              "authority": "EFSA",
+              "year": null,
+              "rawText": null,
+              "source": null
+            },
+            {
+              "authority": "JECFA",
+              "year": 1965,
+              "assessmentIdentifier": "JECFA-46-1965",
+              "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/134"
+            }
+          ],
+          "conflictingOrLimitingData": [
+            "Aucune exposition alimentaire individuelle liée dans les données locales.",
+            "no_explicit_source_conclusion"
+          ],
+          "reasons": [
+            "Le signal décrit principalement un danger de contact avec la substance concentrée.",
+            "Aucune extrapolation automatique vers le risque alimentaire."
+          ],
+          "provenance": [
+            {
+              "sourceOrganisation": "European Union / EUR-Lex",
+              "regulation": "Regulation (EC) No 1272/2008",
+              "annex": "VI",
+              "part": "3",
+              "table": "3",
+              "consolidatedDate": "2026-07-01",
+              "sourceUrl": "https://eur-lex.europa.eu/eli/reg/2008/1272/2026-07-01",
+              "sourceLocation": "Annex VI / Part 3 / Table 3"
+            }
+          ]
+        },
+        {
+          "hazardClass": "Aquatic Acute 1",
+          "category": null,
+          "relevance": "not_relevant_to_food_score",
+          "exposureRoute": "not_applicable",
+          "concentrationContext": {
+            "value": "intrinsic",
+            "values": []
+          },
+          "supportingFoodSafetyData": [
+            {
+              "type": "ADI",
+              "authority": "EFSA",
+              "year": null,
+              "rawText": null,
+              "source": null
+            },
+            {
+              "authority": "JECFA",
+              "year": 1965,
+              "assessmentIdentifier": "JECFA-46-1965",
+              "source": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/134"
+            }
+          ],
+          "conflictingOrLimitingData": [
+            "Aucune exposition alimentaire individuelle liée dans les données locales.",
+            "no_explicit_source_conclusion"
+          ],
+          "reasons": [
+            "La classe CLP est environnementale ou physique, pas un signal de danger alimentaire humain."
+          ],
+          "provenance": [
+            {
+              "sourceOrganisation": "European Union / EUR-Lex",
+              "regulation": "Regulation (EC) No 1272/2008",
+              "annex": "VI",
+              "part": "3",
+              "table": "3",
+              "consolidatedDate": "2026-07-01",
+              "sourceUrl": "https://eur-lex.europa.eu/eli/reg/2008/1272/2026-07-01",
+              "sourceLocation": "Annex VI / Part 3 / Table 3"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "code": "E949",
+      "eNumber": "E949",
+      "additiveName": "Hydrogen",
+      "clpHazards": [
+        {
+          "hazardClass": "Flam. Gas 1",
+          "category": "",
+          "hazardStatement": "H220",
+          "specificConcentrationLimit": null,
+          "notes": null,
+          "sourceReference": null,
+          "domain": "physicalHazards",
+          "foodAdditiveRelevance": "context_required",
+          "reason": "Classe de danger physique conservée, sans influence sur le futur score Santé alimentaire."
+        },
+        {
+          "hazardClass": "Press. Gas",
+          "category": "",
+          "hazardStatement": "H220",
+          "specificConcentrationLimit": null,
+          "notes": null,
+          "sourceReference": null,
+          "domain": "physicalHazards",
+          "foodAdditiveRelevance": "context_required",
+          "reason": "Classe de danger physique conservée, sans influence sur le futur score Santé alimentaire."
+        }
+      ],
+      "foodAdditiveRelevance": [
+        {
+          "hazardClass": "Flam. Gas 1",
+          "category": null,
+          "relevance": "not_relevant_to_food_score",
+          "exposureRoute": "not_applicable",
+          "concentrationContext": {
+            "value": "intrinsic",
+            "values": []
+          },
+          "supportingFoodSafetyData": [
+            {
+              "type": "ADI",
+              "authority": "EFSA",
+              "year": 2014,
+              "rawText": null,
+              "source": "https://doi.org/10.2903/j.efsa.2014.3558"
+            },
+            {
+              "authority": "EFSA",
+              "year": 2014,
+              "assessmentIdentifier": "EFSA-Q-2011-00237",
+              "source": "https://doi.org/10.2903/j.efsa.2014.3558"
+            }
+          ],
+          "conflictingOrLimitingData": [
+            "Aucune exposition alimentaire individuelle liée dans les données locales.",
+            "no_explicit_source_conclusion"
+          ],
+          "reasons": [
+            "La classe CLP est environnementale ou physique, pas un signal de danger alimentaire humain."
+          ],
+          "provenance": [
+            {
+              "sourceOrganisation": "European Union / EUR-Lex",
+              "regulation": "Regulation (EC) No 1272/2008",
+              "annex": "VI",
+              "part": "3",
+              "table": "3",
+              "consolidatedDate": "2026-07-01",
+              "sourceUrl": "https://eur-lex.europa.eu/eli/reg/2008/1272/2026-07-01",
+              "sourceLocation": "Annex VI / Part 3 / Table 3"
+            }
+          ]
+        },
+        {
+          "hazardClass": "Press. Gas",
+          "category": null,
+          "relevance": "not_relevant_to_food_score",
+          "exposureRoute": "not_applicable",
+          "concentrationContext": {
+            "value": "intrinsic",
+            "values": []
+          },
+          "supportingFoodSafetyData": [
+            {
+              "type": "ADI",
+              "authority": "EFSA",
+              "year": 2014,
+              "rawText": null,
+              "source": "https://doi.org/10.2903/j.efsa.2014.3558"
+            },
+            {
+              "authority": "EFSA",
+              "year": 2014,
+              "assessmentIdentifier": "EFSA-Q-2011-00237",
+              "source": "https://doi.org/10.2903/j.efsa.2014.3558"
+            }
+          ],
+          "conflictingOrLimitingData": [
+            "Aucune exposition alimentaire individuelle liée dans les données locales.",
+            "no_explicit_source_conclusion"
+          ],
+          "reasons": [
+            "La classe CLP est environnementale ou physique, pas un signal de danger alimentaire humain."
+          ],
+          "provenance": [
+            {
+              "sourceOrganisation": "European Union / EUR-Lex",
+              "regulation": "Regulation (EC) No 1272/2008",
+              "annex": "VI",
+              "part": "3",
+              "table": "3",
+              "consolidatedDate": "2026-07-01",
+              "sourceUrl": "https://eur-lex.europa.eu/eli/reg/2008/1272/2026-07-01",
+              "sourceLocation": "Annex VI / Part 3 / Table 3"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "code": "E1519",
+      "eNumber": "E1519",
+      "additiveName": "Benzyl alcohol",
+      "clpHazards": [
+        {
+          "hazardClass": "Acute Tox. 4",
+          "category": "",
+          "hazardStatement": "H302 H319 H317",
+          "specificConcentrationLimit": null,
+          "notes": null,
+          "sourceReference": null,
+          "domain": "humanHealthHazards",
+          "foodAdditiveRelevance": "potentially_relevant",
+          "reason": "Classe CLP de danger pour la santé humaine ; le contexte d’exposition alimentaire reste à examiner séparément."
+        },
+        {
+          "hazardClass": "Eye Irrit. 2",
+          "category": "",
+          "hazardStatement": "H302 H319 H317",
+          "specificConcentrationLimit": null,
+          "notes": null,
+          "sourceReference": null,
+          "domain": "humanHealthHazards",
+          "foodAdditiveRelevance": "potentially_relevant",
+          "reason": "Classe CLP de danger pour la santé humaine ; le contexte d’exposition alimentaire reste à examiner séparément."
+        },
+        {
+          "hazardClass": "Skin Sens. 1B",
+          "category": "",
+          "hazardStatement": "H302 H319 H317",
+          "specificConcentrationLimit": null,
+          "notes": null,
+          "sourceReference": null,
+          "domain": "humanHealthHazards",
+          "foodAdditiveRelevance": "potentially_relevant",
+          "reason": "Classe CLP de danger pour la santé humaine ; le contexte d’exposition alimentaire reste à examiner séparément."
+        }
+      ],
+      "foodAdditiveRelevance": [
+        {
+          "hazardClass": "Acute Tox. 4",
+          "category": null,
+          "relevance": "conditionally_relevant",
+          "exposureRoute": "ingestion",
+          "concentrationContext": {
+            "value": "intrinsic",
+            "values": []
+          },
+          "supportingFoodSafetyData": [
+            {
+              "type": "ADI",
+              "authority": "EFSA",
+              "year": 2019,
+              "rawText": null,
+              "source": "https://doi.org/10.2903/j.efsa.2019.5876"
+            },
+            {
+              "authority": "EFSA",
+              "year": 2019,
+              "assessmentIdentifier": "EFSA-Q-2011-00590",
+              "source": "https://doi.org/10.2903/j.efsa.2019.5876"
+            }
+          ],
+          "conflictingOrLimitingData": [
+            "Aucune exposition alimentaire individuelle liée dans les données locales.",
+            "no_explicit_source_conclusion"
+          ],
+          "reasons": [
+            "La voie orale est explicitement présente, mais la pertinence alimentaire dépend de l’exposition et de la dose."
+          ],
+          "provenance": [
+            {
+              "sourceOrganisation": "European Union / EUR-Lex",
+              "regulation": "Regulation (EC) No 1272/2008",
+              "annex": "VI",
+              "part": "3",
+              "table": "3",
+              "consolidatedDate": "2026-07-01",
+              "sourceUrl": "https://eur-lex.europa.eu/eli/reg/2008/1272/2026-07-01",
+              "sourceLocation": "Annex VI / Part 3 / Table 3"
+            }
+          ]
+        },
+        {
+          "hazardClass": "Eye Irrit. 2",
+          "category": null,
+          "relevance": "occupational_or_handling_only",
+          "exposureRoute": "contact_cutaneous_or_ocular",
+          "concentrationContext": {
+            "value": "intrinsic",
+            "values": []
+          },
+          "supportingFoodSafetyData": [
+            {
+              "type": "ADI",
+              "authority": "EFSA",
+              "year": 2019,
+              "rawText": null,
+              "source": "https://doi.org/10.2903/j.efsa.2019.5876"
+            },
+            {
+              "authority": "EFSA",
+              "year": 2019,
+              "assessmentIdentifier": "EFSA-Q-2011-00590",
+              "source": "https://doi.org/10.2903/j.efsa.2019.5876"
+            }
+          ],
+          "conflictingOrLimitingData": [
+            "Aucune exposition alimentaire individuelle liée dans les données locales.",
+            "no_explicit_source_conclusion"
+          ],
+          "reasons": [
+            "Le signal décrit principalement un danger de contact avec la substance concentrée.",
+            "Aucune extrapolation automatique vers le risque alimentaire."
+          ],
+          "provenance": [
+            {
+              "sourceOrganisation": "European Union / EUR-Lex",
+              "regulation": "Regulation (EC) No 1272/2008",
+              "annex": "VI",
+              "part": "3",
+              "table": "3",
+              "consolidatedDate": "2026-07-01",
+              "sourceUrl": "https://eur-lex.europa.eu/eli/reg/2008/1272/2026-07-01",
+              "sourceLocation": "Annex VI / Part 3 / Table 3"
+            }
+          ]
+        },
+        {
+          "hazardClass": "Skin Sens. 1B",
+          "category": null,
+          "relevance": "occupational_or_handling_only",
+          "exposureRoute": "contact_cutaneous_or_ocular",
+          "concentrationContext": {
+            "value": "intrinsic",
+            "values": []
+          },
+          "supportingFoodSafetyData": [
+            {
+              "type": "ADI",
+              "authority": "EFSA",
+              "year": 2019,
+              "rawText": null,
+              "source": "https://doi.org/10.2903/j.efsa.2019.5876"
+            },
+            {
+              "authority": "EFSA",
+              "year": 2019,
+              "assessmentIdentifier": "EFSA-Q-2011-00590",
+              "source": "https://doi.org/10.2903/j.efsa.2019.5876"
+            }
+          ],
+          "conflictingOrLimitingData": [
+            "Aucune exposition alimentaire individuelle liée dans les données locales.",
+            "no_explicit_source_conclusion"
+          ],
+          "reasons": [
+            "Le signal décrit principalement un danger de contact avec la substance concentrée.",
+            "Aucune extrapolation automatique vers le risque alimentaire."
+          ],
+          "provenance": [
+            {
+              "sourceOrganisation": "European Union / EUR-Lex",
+              "regulation": "Regulation (EC) No 1272/2008",
+              "annex": "VI",
+              "part": "3",
+              "table": "3",
+              "consolidatedDate": "2026-07-01",
+              "sourceUrl": "https://eur-lex.europa.eu/eli/reg/2008/1272/2026-07-01",
+              "sourceLocation": "Annex VI / Part 3 / Table 3"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "safeguards": {
+    "noENumberRules": true,
+    "noSeverityCreated": true,
+    "noScientificConcernLevelsCreated": true,
+    "noScoreCreated": true,
+    "noColourCreated": true,
+    "noRuntimeChanges": true
+  },
+  "provenance": {
+    "required": true,
+    "allResultsHaveProvenance": true
+  }
+}

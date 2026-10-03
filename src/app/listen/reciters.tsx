@@ -209,40 +209,6 @@ export default function RecitersCatalogScreen() {
     [handleOpenReciter, handleQuickPlay, handleToggleFavorite, model],
   );
 
-  const renderSectionReciters = useCallback(
-    (reciters: readonly CatalogReciter[]) => {
-      if (reciters.length === 0) return null;
-
-      return (
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.horizontalList}
-        >
-          {reciters.map((reciter, index) => (
-            <Reanimated.View
-              key={reciter.id}
-              entering={FadeInDown.duration(300)
-                .delay(index * 35)
-                .easing(Easing.out(Easing.quad))}
-              style={styles.horizontalCard}
-            >
-              <FavoriteReciterCard
-                reciter={reciter}
-                onPress={() => {
-                  void handleOpenReciter(reciter);
-                }}
-                onPlay={() => {
-                  void handleQuickPlay(reciter);
-                }}
-              />
-            </Reanimated.View>
-          ))}
-        </ScrollView>
-      );
-    },
-    [handleOpenReciter, handleQuickPlay],
-  );
 
   return (
     <SafeAreaView edges={["top"]} style={listeningStyles.safeArea}>
@@ -266,14 +232,10 @@ export default function RecitersCatalogScreen() {
           <View style={styles.headerContent}>
             <ListeningHeader
               title={t("recitations.audio")}
-              subtitle={t("recitations.recitersSubtitle")}
+              subtitle={language === "en" ? "The Quran, at your own pace" : "Le Coran, à votre rythme"}
               onBack={goBack}
             />
 
-            <AudioStats
-              reciterCount={model.totalReciters}
-              favoriteCount={model.favoriteReciters.length}
-            />
 
             {audio.listeningResume && continueReciterName ? (
               <Reanimated.View
@@ -307,14 +269,8 @@ export default function RecitersCatalogScreen() {
               />
             </View>
 
-            {model.favoriteReciters.length > 0 && filter !== "favorites" ? (
-              <View style={styles.sectionBlock}>
-                <SectionHeader title={t("recitations.myFavorites")} />
-                {renderSectionReciters(model.favoriteReciters)}
-              </View>
-            ) : null}
 
-            <View style={styles.sectionBlock}>
+            <View style={[styles.sectionBlock, { marginTop: 12 }]}>
               <SectionHeader
                 title={
                   filter === "all"
@@ -346,46 +302,7 @@ export default function RecitersCatalogScreen() {
   );
 }
 
-function AudioStats({
-  reciterCount,
-  favoriteCount,
-}: {
-  reciterCount: number;
-  favoriteCount: number;
-}) {
-  const { t } = useI18n();
-  return (
-    <View style={styles.stats}>
-      <StatChip
-        icon="mic-outline"
-        label={t("recitations.voiceCount", { count: reciterCount })}
-      />
-      <StatChip
-        icon="book-outline"
-        label={t("recitations.surahCount", { count: 114 })}
-      />
-      <StatChip
-        icon="star-outline"
-        label={t("recitations.favoriteCount", { count: favoriteCount })}
-      />
-    </View>
-  );
-}
 
-function StatChip({
-  icon,
-  label,
-}: {
-  icon: keyof typeof Ionicons.glyphMap;
-  label: string;
-}) {
-  return (
-    <View style={styles.statChip}>
-      <Ionicons name={icon} size={12} color={colors.goldMuted} />
-      <Text style={styles.statText}>{label}</Text>
-    </View>
-  );
-}
 
 function FilterChips({
   value,
@@ -433,47 +350,6 @@ function FilterChips({
   );
 }
 
-function FavoriteReciterCard({
-  reciter,
-  onPress,
-  onPlay,
-}: {
-  reciter: CatalogReciter;
-  onPress: () => void;
-  onPlay: () => void;
-}) {
-  return (
-    <Pressable
-      onPress={onPress}
-      style={({ pressed }) => [styles.favoriteCard, pressed && styles.pressed]}
-    >
-      {reciter.image ? (
-        <Image
-          source={reciter.image}
-          contentFit="cover"
-          cachePolicy="memory-disk"
-          style={StyleSheet.absoluteFill}
-        />
-      ) : null}
-      <LinearGradient
-        colors={["transparent", "rgba(7,5,16,0.96)"]}
-        style={StyleSheet.absoluteFill}
-      />
-      <Text numberOfLines={2} style={styles.favoriteName}>
-        {reciter.name}
-      </Text>
-      <Pressable
-        onPress={(event) => {
-          event.stopPropagation();
-          onPlay();
-        }}
-        style={styles.favoritePlay}
-      >
-        <Ionicons name="play" size={13} color={colors.background} />
-      </Pressable>
-    </Pressable>
-  );
-}
 
 function PremiumContinueCard({
   image,
@@ -620,8 +496,8 @@ const styles = StyleSheet.create({
   },
 
   continueGradient: {
-    minHeight: 132,
-    padding: 13,
+    minHeight: 106,
+    padding: 10,
     flexDirection: "row",
     alignItems: "center",
     borderRadius: 22,
@@ -630,8 +506,8 @@ const styles = StyleSheet.create({
   },
 
   continueArtwork: {
-    width: 84,
-    height: 102,
+    width: 68,
+    height: 84,
     overflow: "hidden",
     alignItems: "center",
     justifyContent: "center",
@@ -649,7 +525,7 @@ const styles = StyleSheet.create({
   continueCopy: {
     flex: 1,
     minWidth: 0,
-    marginHorizontal: 14,
+    marginHorizontal: 10,
   },
 
   continueEyebrow: {
@@ -664,7 +540,7 @@ const styles = StyleSheet.create({
     marginTop: 7,
     color: colors.text,
     fontFamily: typography.serifMedium,
-    fontSize: 22,
+    fontSize: 18,
   },
 
   continueReciter: {

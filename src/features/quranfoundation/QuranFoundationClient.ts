@@ -13,7 +13,7 @@ const SUPABASE_URL = process.env.EXPO_PUBLIC_SUPABASE_URL!;
 
 const ANON_KEY = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY!;
 
-const CACHE_PREFIX = "quran-foundation:v2";
+const CACHE_PREFIX = "quran-foundation:v3";
 const RETRY_DELAY_MS = 15_000;
 
 function cacheKey(kind: "verses" | "recitation", identity: string) {
@@ -330,7 +330,9 @@ export class QuranFoundationClient {
     const edgeVerses = collectVerses(payload);
     const completeVerses = await getCompleteChapterVerses(chapter, language);
     const collected =
-      completeVerses.length > edgeVerses.length ? completeVerses : edgeVerses;
+      completeVerses.length >= edgeVerses.length && completeVerses.length > 0
+        ? completeVerses
+        : edgeVerses;
     console.info(
       `[verses] after API chapter=${chapter} raw=${collected.length}`,
     );
@@ -366,20 +368,26 @@ export class QuranFoundationClient {
     const identity = `${reciter}:${chapter}`;
     const storageKey = cacheKey("recitation", identity);
     const memoryCached = this.recitationsCache.get(identity);
-    if (memoryCached) return memoryCached;
+    // An audio response without timings must be refreshed: keeping it forever
+    // prevents synchronization even after the upstream data is repaired.
+    if (memoryCached?.timestamps?.length) return memoryCached;
     const fetchRecitation = async () => {
       const recitation = await this.request<QuranFoundationRecitation>(
         `/quran-audio?chapter=${chapter}&reciter=${reciter}`,
       );
-      this.recitationsCache.set(identity, recitation);
-      writeCache(storageKey, recitation);
+      if (recitation.timestamps?.length) {
+        this.recitationsCache.set(identity, recitation);
+        writeCache(storageKey, recitation);
+      } else if (__DEV__) {
+        console.warn(`[quran-sync] no verse timings for chapter=${chapter} reciter=${reciter}`);
+      }
       return recitation;
     };
     try {
       return await fetchRecitation();
     } catch (error) {
       const persisted = await readCache<QuranFoundationRecitation>(storageKey);
-      if (persisted) {
+      if (persisted?.timestamps?.length) {
         this.recitationsCache.set(identity, persisted);
         this.retryLater(storageKey, async () => {
           await fetchRecitation();

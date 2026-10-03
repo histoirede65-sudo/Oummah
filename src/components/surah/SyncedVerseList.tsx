@@ -174,7 +174,10 @@ function verseWordPositions(
   for (const word of verse.words ?? []) {
     const position = Number(word.position ?? word.wordPosition ?? word.word_position);
     const text = word.textUthmani ?? word.text_uthmani ?? word.text ?? "";
-    if (isSynchronizableWord(word, text) && Number.isFinite(position) && position > 0) {
+    // QCF glyph words have a valid position but no Arabic Unicode characters.
+    // Their positions still match the recitation's timing segments.
+    const kind = word.charTypeName ?? word.char_type_name;
+    if ((kind === "word" || isSynchronizableWord(word, text)) && Number.isFinite(position) && position > 0) {
       positions.add(position);
     }
   }
@@ -551,8 +554,7 @@ export default function SyncedVerseList({
   useEffect(() => {
     if (
       !reciterId ||
-      !rawTimestamps ||
-      wordTimestamps.length === 0 ||
+      timestamps.length === 0 ||
       syncedVerses.length === 0 ||
       !visibleFontsLoaded
     )
@@ -567,6 +569,7 @@ export default function SyncedVerseList({
     reciterId,
     surahId,
     syncedVerses.length,
+    timestamps.length,
     visibleFontsLoaded,
     wordTimestamps.length,
   ]);

@@ -1,10 +1,11 @@
 import { Ionicons } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import { LinearGradient } from "expo-linear-gradient";
-import { router, useLocalSearchParams } from "expo-router";
+import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   ActivityIndicator,
+  Alert,
   Linking,
   Modal,
   Pressable,
@@ -14,6 +15,7 @@ import {
   Text,
   View,
 } from "react-native";
+import Slider from "@react-native-community/slider";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { useGlobalAudioPlayer } from "../../context/AudioPlayerProvider";
@@ -31,6 +33,7 @@ import {
 import { ensureDuaCategoryFrench } from "../../features/dua/DuaTranslationService";
 import { useDuaSpeech } from "../../features/dua/useDuaSpeech";
 import { goalProgressBridge } from "../../features/daily-goals/services/goalProgressBridge";
+import { loadReadConfirmations, onLocalMidnight, setReadConfirmation } from "../../features/reading-progress/ReadingValidationStore";
 import { useLearningAudioPlayer } from "../../features/learning-audio/useLearningAudioPlayer";
 import { ARABIC_READING_FONT_FAMILY } from "../../features/quran/ArabicReadingPresentation";
 import { colors } from "../../theme/colors";
@@ -38,9 +41,62 @@ import { typography } from "../../theme/typography";
 
 function formatTime(seconds: number) {
   if (!Number.isFinite(seconds) || seconds < 0) return "0:00";
-  const minutes = Math.floor(seconds / 60);
-  const remaining = Math.floor(seconds % 60);
+  const totalSeconds = Math.floor(seconds);
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const remaining = totalSeconds % 60;
+  if (hours > 0) {
+    return `${hours}:${String(minutes).padStart(2, "0")}:${String(remaining).padStart(2, "0")}`;
+  }
   return `${minutes}:${String(remaining).padStart(2, "0")}`;
+}
+
+function AudioSeekBar({
+  progress,
+  disabled,
+  onSeek,
+  onPreviewChange,
+}: {
+  progress: number;
+  disabled: boolean;
+  onSeek: (progress: number) => void;
+  onPreviewChange?: (progress: number | null) => void;
+}) {
+  const [scrubProgress, setScrubProgress] = useState<number | null>(null);
+  const safeProgress = Math.min(1, Math.max(0, Number.isFinite(progress) ? progress : 0));
+  const displayedProgress = scrubProgress ?? safeProgress;
+  const clampProgress = (value: number) => Math.min(1, Math.max(0, value));
+
+  return (
+    <Slider
+      accessibilityLabel="Barre de progression audio"
+      accessibilityHint="Touchez ou faites glisser pour avancer ou reculer"
+      accessibilityRole="adjustable"
+      disabled={disabled}
+      maximumTrackTintColor={colors.surfaceLight}
+      maximumValue={1}
+      minimumTrackTintColor={colors.goldLight}
+      minimumValue={0}
+      onSlidingComplete={(value) => {
+        const finalProgress = clampProgress(value);
+        if (!disabled && Number.isFinite(finalProgress)) onSeek(finalProgress);
+        setScrubProgress(null);
+        onPreviewChange?.(null);
+      }}
+      onSlidingStart={() => {
+        setScrubProgress(safeProgress);
+        onPreviewChange?.(safeProgress);
+      }}
+      onValueChange={(value) => {
+        const nextProgress = clampProgress(value);
+        setScrubProgress(nextProgress);
+        onPreviewChange?.(nextProgress);
+      }}
+      style={styles.audioSlider}
+      thumbTintColor={colors.goldLight}
+      value={displayedProgress}
+    />
+  );
 }
 
 export default function DuaReaderScreen() {
@@ -55,10 +111,18 @@ export default function DuaReaderScreen() {
   const [index, setIndex] = useState(Math.max(0, Number(requestedItem) || 0));
   const [counters, setCounters] = useState<Record<string, number>>({});
   const [favoriteIds, setFavoriteIds] = useState<readonly string[]>([]);
-  const [audioTrackWidth, setAudioTrackWidth] = useState(0);
+  const [readDuaIds, setReadDuaIds] = useState<Set<string>>(new Set());
+  const [savingReadIds, setSavingReadIds] = useState<Set<string>>(new Set());
+  useFocusEffect(useCallback(() => {
+    let active = true;
+    void loadReadConfirmations('dua').then(ids => { if (active) setReadDuaIds(ids); });
+    return () => { active = false; };
+  }, []));
+  useEffect(() => onLocalMidnight(() => setReadDuaIds(new Set())), []);
   const [listVisible, setListVisible] = useState(false);
   const [showPhonetic, setShowPhonetic] = useState(false);
   const [showArabic, setShowArabic] = useState(false);
+  const [audioScrubProgress, setAudioScrubProgress] = useState<number | null>(null);
   const [learningRepeatCount, setLearningRepeatCount] = useState<1 | 3 | 5>(3);
   const [learningRepeatIndex, setLearningRepeatIndex] = useState(0);
   const repeatTimerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
@@ -245,6 +309,13 @@ export default function DuaReaderScreen() {
   const audioDuration = hasRecordedAudio
     ? learningAudio.focusedDuration
     : duaSpeech.estimatedDuration;
+  const canSeekRecordedAudio =
+    hasRecordedAudio && Number.isFinite(audioDuration) && audioDuration > 0;
+  const displayedAudioProgress = audioScrubProgress ?? audioProgress;
+  const displayedAudioCurrentTime =
+    hasRecordedAudio && audioDuration > 0 && audioScrubProgress !== null
+      ? audioScrubProgress * audioDuration
+      : audioCurrentTime;
   const audioSpeed = hasRecordedAudio ? learningAudio.speed : duaSpeech.speed;
   const isWaitingForRecitation =
     hasRecordedAudio &&
@@ -269,14 +340,6 @@ export default function DuaReaderScreen() {
     if (category.section === "prayer") return "Prière et mosquée";
     return category.frenchTitle;
   }, [adhkarPeriod, category]);
-
-  useEffect(() => {
-    if (!current) return;
-    goalProgressBridge.record({
-      metric: "dua_read",
-      evidenceId: current.id,
-    });
-  }, [current]);
 
   useEffect(() => {
     const tracker = goalAudioRef.current;
@@ -334,6 +397,7 @@ export default function DuaReaderScreen() {
       repeatTimerRef.current = undefined;
     }
     setLearningRepeatIndex(0);
+    setAudioScrubProgress(null);
     setShowPhonetic(false);
     setShowArabic(false);
     setShowDetails(false);
@@ -435,6 +499,40 @@ export default function DuaReaderScreen() {
     else duaSpeech.cycleSpeed();
   }, [duaSpeech, hasRecordedAudio, learningAudio]);
 
+  const seekRecordedAudio = useCallback(
+    (progress: number) => {
+      if (!hasRecordedAudio || audioDuration <= 0) return;
+      learningAudio.seekToProgress(
+        progress,
+        audioStartRatio,
+        audioEndRatio,
+        audioStartOffsetSeconds,
+        audioEndOffsetSeconds,
+      );
+    },
+    [
+      audioDuration,
+      audioEndOffsetSeconds,
+      audioEndRatio,
+      audioStartOffsetSeconds,
+      audioStartRatio,
+      hasRecordedAudio,
+      learningAudio,
+    ],
+  );
+
+  const seekRecordedAudioBy = useCallback(
+    (delta: number) => {
+      if (!hasRecordedAudio || audioDuration <= 0) return;
+      const nextTime = Math.min(
+        audioDuration,
+        Math.max(0, audioCurrentTime + delta),
+      );
+      seekRecordedAudio(nextTime / audioDuration);
+    },
+    [audioCurrentTime, audioDuration, hasRecordedAudio, seekRecordedAudio],
+  );
+
   const incrementCounter = useCallback(() => {
     if (!current) return;
     const previous = counters[current.id] ?? 0;
@@ -450,6 +548,25 @@ export default function DuaReaderScreen() {
       );
     }
   }, [counters, current, target]);
+
+  const toggleReadDua = useCallback(() => {
+    if (!current || savingReadIds.has(current.id)) return;
+    const id = current.id;
+    const selected = !readDuaIds.has(id);
+    setSavingReadIds(previous => new Set(previous).add(id));
+    void (async () => {
+      try {
+        const ids = await setReadConfirmation('dua', id, selected);
+        await goalProgressBridge.setEvidence('dua_read', `read:${id}`, selected);
+        setReadDuaIds(ids);
+      } catch {
+        await setReadConfirmation('dua', id, !selected).catch(() => undefined);
+        Alert.alert('Enregistrement impossible', 'Réessayez dans un instant.');
+      } finally {
+        setSavingReadIds(previous => { const next = new Set(previous); next.delete(id); return next; });
+      }
+    })();
+  }, [current, readDuaIds, savingReadIds]);
 
   const resetCounter = useCallback(() => {
     if (!current) return;
@@ -583,31 +700,45 @@ export default function DuaReaderScreen() {
                   ? "Écouter pour apprendre"
                   : "Écouter avec la voix arabe du téléphone"}
             </Text>
-            <Pressable
-              onLayout={(event) =>
-                setAudioTrackWidth(event.nativeEvent.layout.width)
-              }
-              onPress={(event) => {
-                if (!hasRecordedAudio || audioTrackWidth <= 0) return;
-                learningAudio.seekToProgress(
-                  event.nativeEvent.locationX / audioTrackWidth,
-                  audioStartRatio,
-                  audioEndRatio,
-                  audioStartOffsetSeconds,
-                  audioEndOffsetSeconds,
-                );
-              }}
-              style={styles.audioTrack}
-            >
-              <View
-                style={[styles.audioFill, { width: `${audioProgress * 100}%` }]}
-              />
-            </Pressable>
+            {hasRecordedAudio ? (
+              <View style={styles.audioSeekRow}>
+                <Pressable
+                  accessibilityLabel="Reculer de 10 secondes"
+                  accessibilityRole="button"
+                  disabled={!canSeekRecordedAudio || isAudioLoading}
+                  onPress={() => seekRecordedAudioBy(-10)}
+                  style={[styles.audioSkipButton, (!canSeekRecordedAudio || isAudioLoading) && styles.disabled]}
+                >
+                  <Text style={styles.audioSkipText}>−10</Text>
+                </Pressable>
+                <AudioSeekBar
+                  disabled={!canSeekRecordedAudio || isAudioLoading}
+                  onSeek={seekRecordedAudio}
+                  onPreviewChange={setAudioScrubProgress}
+                  progress={displayedAudioProgress}
+                />
+                <Pressable
+                  accessibilityLabel="Avancer de 10 secondes"
+                  accessibilityRole="button"
+                  disabled={!canSeekRecordedAudio || isAudioLoading}
+                  onPress={() => seekRecordedAudioBy(10)}
+                  style={[styles.audioSkipButton, (!canSeekRecordedAudio || isAudioLoading) && styles.disabled]}
+                >
+                  <Text style={styles.audioSkipText}>+10</Text>
+                </Pressable>
+              </View>
+            ) : (
+              <View style={styles.audioTrack}>
+                <View style={[styles.audioFill, { width: `${audioProgress * 100}%` }]} />
+              </View>
+            )}
             <View style={styles.audioTimes}>
               <Text style={styles.audioTime}>
-                {formatTime(audioCurrentTime)}
+                {formatTime(displayedAudioCurrentTime)}
               </Text>
-              <Text style={styles.audioTime}>{formatTime(audioDuration)}</Text>
+              <Text style={styles.audioTime}>
+                -{formatTime(Math.max(0, audioDuration - audioCurrentTime))}
+              </Text>
             </View>
             {hasRecordedAudio ? (
               <View style={styles.learningRepeatRow}>
@@ -663,6 +794,15 @@ export default function DuaReaderScreen() {
           </View>
 
           <Text selectable style={styles.frenchMain}>{current.french}</Text>
+          <Pressable
+            accessibilityRole="button"
+            disabled={savingReadIds.has(current.id)}
+            onPress={toggleReadDua}
+            style={[styles.readDuaButton, readDuaIds.has(current.id) && styles.readDuaButtonDone]}
+          >
+            <Ionicons name={readDuaIds.has(current.id) ? "checkmark-circle" : "ellipse-outline"} size={21} color={readDuaIds.has(current.id) ? colors.success : colors.goldLight} />
+            <Text style={styles.readDuaButtonText}>{readDuaIds.has(current.id) ? "Dou’a lue · décocher" : "J’ai lu cette dou’a"}</Text>
+          </Pressable>
 
           <View style={styles.languageDivider} />
           <Pressable onPress={() => setShowPhonetic((value) => !value)} style={styles.accordionHeader}>
@@ -997,6 +1137,9 @@ const styles = StyleSheet.create({
     textAlign: "left",
     writingDirection: "ltr",
   },
+  readDuaButton: { alignSelf: "flex-end", flexDirection: "row", alignItems: "center", gap: 8, paddingHorizontal: 15, paddingVertical: 11, marginBottom: 18, borderRadius: 15, borderWidth: 1, borderColor: colors.goldLight, backgroundColor: "rgba(227,181,90,0.2)", shadowColor: colors.goldLight, shadowOpacity: 0.35, shadowRadius: 9, elevation: 4 },
+  readDuaButtonDone: { borderColor: colors.success, backgroundColor: "rgba(98,197,139,0.17)", shadowColor: colors.success, shadowOpacity: 0.8, shadowRadius: 17, elevation: 9 },
+  readDuaButtonText: { color: colors.text, fontFamily: typography.sans, fontSize: 14, fontWeight: "800" },
   arabicWord: { color: "#FFF9F0" },
   arabicWordActive: {
     color: colors.goldLight,
@@ -1137,11 +1280,38 @@ const styles = StyleSheet.create({
     fontSize: 15,
   },
   audioTrack: {
+    flex: 1,
     height: 4,
-    marginTop: 9,
     overflow: "hidden",
     borderRadius: 2,
     backgroundColor: colors.surfaceLight,
+  },
+  audioSlider: {
+    flex: 1,
+    height: 40,
+  },
+  audioSeekRow: {
+    marginTop: 9,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+  },
+  audioSkipButton: {
+    minWidth: 29,
+    height: 26,
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 9,
+    borderWidth: 1,
+    borderColor: "rgba(227,181,90,0.3)",
+    backgroundColor: "rgba(227,181,90,0.08)",
+  },
+  audioSkipText: {
+    color: colors.goldLight,
+    fontFamily: typography.sans,
+    fontSize: 8.5,
+    fontWeight: "800",
+    fontVariant: ["tabular-nums"],
   },
   audioFill: {
     height: "100%",

@@ -1,0 +1,2278 @@
+{
+  "generatedAt": "2026-09-30T19:13:47.451Z",
+  "sourceCatalog": {
+    "authority": "European Commission",
+    "url": "https://food.ec.europa.eu/food-safety/food-improvement-agents/additives/database_en",
+    "apiUrl": "https://ec.europa.eu/food/food-feed-portal/backend/api/policy-items?foodDomain=fin&authorisationType=fad_auth",
+    "retrievedAt": "2026-09-30",
+    "referenceVersion": "Union list / Annex II, Regulation (EC) No 1333/2008",
+    "auditedApiFields": [
+      "displayName",
+      "identifyingName",
+      "synonyms",
+      "eNumber",
+      "policyItemStatus",
+      "policyItemCode",
+      "legislationTitle",
+      "eurlexLink",
+      "group",
+      "memberOfFADGroup",
+      "groupMemberRefs",
+      "policyItemMessageText",
+      "foodCategory",
+      "conditionsOfUse"
+    ],
+    "functionCategoryFieldFound": false
+  },
+  "totalEuCodes": 341,
+  "totalPriorityCodes": 321,
+  "entries": [
+    {
+      "code": "E102",
+      "names": {
+        "en": "Tartrazine"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E104",
+      "names": {
+        "en": "Quinoline Yellow"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E110",
+      "names": {
+        "en": "Sunset Yellow FCF/Orange Yellow S"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E122",
+      "names": {
+        "en": "Azorubine, Carmoisine"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E123",
+      "names": {
+        "en": "Amaranth"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E124",
+      "names": {
+        "en": "Ponceau 4R, Cochineal Red A"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E127",
+      "names": {
+        "en": "Erythrosine"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E129",
+      "names": {
+        "en": "Allura Red AC"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E131",
+      "names": {
+        "en": "Patent Blue V"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E132",
+      "names": {
+        "en": "Indigotine, Indigo carmine"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E133",
+      "names": {
+        "en": "Brilliant Blue FCF"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E140",
+      "names": {
+        "en": "Chlorophylls and Chlorophyllins"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E141",
+      "names": {
+        "en": "Copper complexes of chlorophylls and chlorophyllins"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E142",
+      "names": {
+        "en": "Green S"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E150A",
+      "names": {
+        "en": "Plain caramel"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E150B",
+      "names": {
+        "en": "Caustic sulphite caramel"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E150C",
+      "names": {
+        "en": "Ammonia caramel"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E150D",
+      "names": {
+        "en": "Sulphite ammonia caramel"
+      },
+      "reason": "incomplete_scientific_profile"
+    },
+    {
+      "code": "E151",
+      "names": {
+        "en": "Brilliant Black PN"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E153",
+      "names": {
+        "en": "Vegetable carbon"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E155",
+      "names": {
+        "en": "Brown HT"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E160B",
+      "names": {
+        "en": "Annatto, Bixin, Norbixin/Deleted from the Union List of authorised additives"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E160C",
+      "names": {
+        "en": "Paprika extract, capsanthin, capsorubin"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E160D",
+      "names": {
+        "en": "Lycopene"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E160E",
+      "names": {
+        "en": "Beta-apo-8'-carotenal (C 30)"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E161B",
+      "names": {
+        "en": "Lutein"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E161G",
+      "names": {
+        "en": "Canthaxanthin"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E163",
+      "names": {
+        "en": "Anthocyanins"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E171",
+      "names": {
+        "en": "Titanium dioxide"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E172",
+      "names": {
+        "en": "Iron oxides and hydroxides"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E173",
+      "names": {
+        "en": "Aluminium"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E174",
+      "names": {
+        "en": "Silver"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E175",
+      "names": {
+        "en": "Gold"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E180",
+      "names": {
+        "en": "Litholrubine BK"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E203",
+      "names": {
+        "en": "Calcium sorbate/Deleted from the Union list"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E210",
+      "names": {
+        "en": "Benzoic acid"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E212",
+      "names": {
+        "en": "Potassium benzoate"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E213",
+      "names": {
+        "en": "Calcium benzoate"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E214",
+      "names": {
+        "en": "Ethyl-p-hydroxybenzoate"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E215",
+      "names": {
+        "en": "Sodium ethyl p-hydroxybenzoate"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E218",
+      "names": {
+        "en": "Methyl p-hydroxybenzoate"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E219",
+      "names": {
+        "en": "Sodium methyl p-hydroxybenzoate"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E220",
+      "names": {
+        "en": "Sulphur dioxide"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E221",
+      "names": {
+        "en": "Sodium sulphite"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E222",
+      "names": {
+        "en": "Sodium hydrogen sulphite"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E223",
+      "names": {
+        "en": "Sodium metabisulphite"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E224",
+      "names": {
+        "en": "Potassium metabisulphite"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E226",
+      "names": {
+        "en": "Calcium sulphite"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E227",
+      "names": {
+        "en": "Calcium hydrogen sulphite"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E228",
+      "names": {
+        "en": "Potassium hydrogen sulphite"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E234",
+      "names": {
+        "en": "Nisin"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E235",
+      "names": {
+        "en": "Natamycin"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E239",
+      "names": {
+        "en": "Hexamethylene tetramine"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E242",
+      "names": {
+        "en": "Dimethyl dicarbonate"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E243",
+      "names": {
+        "en": "Ethyl lauroyl arginate"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E246",
+      "names": {
+        "en": "Glycolipids"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E249",
+      "names": {
+        "en": "Potassium nitrite"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E251",
+      "names": {
+        "en": "Sodium nitrate"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E252",
+      "names": {
+        "en": "Potassium nitrate"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E260",
+      "names": {
+        "en": "Acetic acid"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E261",
+      "names": {
+        "en": "Potassium acetates"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E262",
+      "names": {
+        "en": "Sodium acetates"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E263",
+      "names": {
+        "en": "Calcium acetate"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E267",
+      "names": {
+        "en": "Buffered vinegar"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E280",
+      "names": {
+        "en": "Propionic acid"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E281",
+      "names": {
+        "en": "Sodium propionate"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E282",
+      "names": {
+        "en": "Calcium propionate"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E283",
+      "names": {
+        "en": "Potassium propionate"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E284",
+      "names": {
+        "en": "Boric acid"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E285",
+      "names": {
+        "en": "Sodium tetraborate (borax)"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E290",
+      "names": {
+        "en": "Carbon dioxide"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E296",
+      "names": {
+        "en": "Malic acid"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E297",
+      "names": {
+        "en": "Fumaric acid"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E301",
+      "names": {
+        "en": "Sodium ascorbate"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E302",
+      "names": {
+        "en": "Calcium ascorbate"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E304",
+      "names": {
+        "en": "Fatty acid esters of ascorbic acid"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E306",
+      "names": {
+        "en": "Tocopherol-rich extract"
+      },
+      "reason": "incomplete_scientific_profile"
+    },
+    {
+      "code": "E307",
+      "names": {
+        "en": "Alpha-tocopherol"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E308",
+      "names": {
+        "en": "Gamma-tocopherol"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E309",
+      "names": {
+        "en": "Delta-tocopherol"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E310",
+      "names": {
+        "en": "Propyl gallate"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E315",
+      "names": {
+        "en": "Erythorbic acid"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E316",
+      "names": {
+        "en": "Sodium erythorbate"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E319",
+      "names": {
+        "en": "Tertiary-butyl hydroquinone (TBHQ)"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E320",
+      "names": {
+        "en": "Butylated hydroxyanisole (BHA)"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E321",
+      "names": {
+        "en": "Butylated hydroxytoluene (BHT)"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E322A",
+      "names": {
+        "en": "Oat lecithin"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E325",
+      "names": {
+        "en": "Sodium lactate"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E326",
+      "names": {
+        "en": "Potassium lactate"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E327",
+      "names": {
+        "en": "Calcium lactate"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E331",
+      "names": {
+        "en": "Sodium citrates"
+      },
+      "reason": "incomplete_scientific_profile"
+    },
+    {
+      "code": "E332",
+      "names": {
+        "en": "Potassium citrates"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E333",
+      "names": {
+        "en": "Calcium citrates"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E334",
+      "names": {
+        "en": "Tartaric acid (L(+)-)"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E335",
+      "names": {
+        "en": "Sodium tartrates"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E336",
+      "names": {
+        "en": "Potassium tartrates"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E337",
+      "names": {
+        "en": "Sodium potassium tartrate"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E339",
+      "names": {
+        "en": "Sodium phosphates"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E340",
+      "names": {
+        "en": "Potassium phosphates"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E341",
+      "names": {
+        "en": "Calcium phosphates"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E343",
+      "names": {
+        "en": "Magnesium phosphates"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E350",
+      "names": {
+        "en": "Sodium malates"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E351",
+      "names": {
+        "en": "Potassium malate"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E352",
+      "names": {
+        "en": "Calcium malates"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E353",
+      "names": {
+        "en": "Metatartaric acid"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E354",
+      "names": {
+        "en": "Calcium tartrate"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E355",
+      "names": {
+        "en": "Adipic acid"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E356",
+      "names": {
+        "en": "Sodium adipate"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E357",
+      "names": {
+        "en": "Potassium adipate"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E363",
+      "names": {
+        "en": "Succinic acid"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E380",
+      "names": {
+        "en": "Triammonium citrate"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E385",
+      "names": {
+        "en": "Calcium disodium ethylene diamine tetra-acetate (Calcium disodium EDTA)"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E392",
+      "names": {
+        "en": "Extracts of rosemary"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E400",
+      "names": {
+        "en": "Alginic acid"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E401",
+      "names": {
+        "en": "Sodium alginate"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E402",
+      "names": {
+        "en": "Potassium alginate"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E403",
+      "names": {
+        "en": "Ammonium alginate"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E404",
+      "names": {
+        "en": "Calcium alginate"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E405",
+      "names": {
+        "en": "Propane-1, 2-diol alginate"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E406",
+      "names": {
+        "en": "Agar"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E407A",
+      "names": {
+        "en": "Processed euchema seaweed"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E410",
+      "names": {
+        "en": "Locust bean gum"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E412",
+      "names": {
+        "en": "Guar gum"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E413",
+      "names": {
+        "en": "Tragacanth"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E414",
+      "names": {
+        "en": "Gum arabic (acacia gum)"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E415",
+      "names": {
+        "en": "Xanthan gum"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E416",
+      "names": {
+        "en": "Karaya gum"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E417",
+      "names": {
+        "en": "Tara gum"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E418",
+      "names": {
+        "en": "Gellan gum"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E420",
+      "names": {
+        "en": "Sorbitols"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E421",
+      "names": {
+        "en": "Mannitol"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E422",
+      "names": {
+        "en": "Glycerol"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E423",
+      "names": {
+        "en": "Octenyl succinic acid modified gum arabic"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E425",
+      "names": {
+        "en": "Konjac"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E426",
+      "names": {
+        "en": "Soybean hemicellulose"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E427",
+      "names": {
+        "en": "Cassia gum"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E431",
+      "names": {
+        "en": "Polyoxyethylene (40) stearate"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E432",
+      "names": {
+        "en": "Polyoxyethylene sorbitan monolaurate (polysorbate 20)"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E433",
+      "names": {
+        "en": "Polyoxyethylene sorbitan monooleate (polysorbate 80)"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E434",
+      "names": {
+        "en": "Polyoxyethylene sorbitan monopalmitate (polysorbate 40)"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E435",
+      "names": {
+        "en": "Polyoxyethylene sorbitan monostearate (polysorbate 60)"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E436",
+      "names": {
+        "en": "Polyoxyethylene sorbitan tristearate (polysorbate 65)"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E440",
+      "names": {
+        "en": "Pectins"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E442",
+      "names": {
+        "en": "Ammonium phosphatides"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E444",
+      "names": {
+        "en": "Sucrose acetate isobutyrate"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E445",
+      "names": {
+        "en": "Glycerol esters of wood rosins"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E450",
+      "names": {
+        "en": "Diphosphates"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E451",
+      "names": {
+        "en": "Triphosphates"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E452",
+      "names": {
+        "en": "Polyphosphates"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E456",
+      "names": {
+        "en": "Potassium Polyaspartate"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E459",
+      "names": {
+        "en": "Beta-cyclodextrin"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E460",
+      "names": {
+        "en": "Cellulose"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E461",
+      "names": {
+        "en": "Methyl cellulose"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E462",
+      "names": {
+        "en": "Ethyl cellulose"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E463",
+      "names": {
+        "en": "Hydroxypropyl cellulose"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E463A",
+      "names": {
+        "en": "Low-substituted hydroxypropyl cellulose (L-HPC)"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E464",
+      "names": {
+        "en": "Hydroxypropyl methyl cellulose"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E465",
+      "names": {
+        "en": "Ethyl methyl cellulose"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E466",
+      "names": {
+        "en": "Sodium carboxy methyl cellulose, cellulose gum"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E468",
+      "names": {
+        "en": "Cross-linked sodium carboxy methyl cellulose"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E469",
+      "names": {
+        "en": "Enzymatically hydrolysed carboxy methyl cellulose"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E470A",
+      "names": {
+        "en": "Sodium, potassium and calcium salts of fatty acids"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E470B",
+      "names": {
+        "en": "Magnesium salts of fatty acids"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E471",
+      "names": {
+        "en": "Mono-and diglycerides of fatty acids"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E472A",
+      "names": {
+        "en": "Acetic acid esters of mono- and diglycerides of fatty acids"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E472B",
+      "names": {
+        "en": "Lactic acid esters of mono- and diglycerides of fatty acids"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E472C",
+      "names": {
+        "en": "Citric acid esters of mono- and diglycerides of fatty acids"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E472D",
+      "names": {
+        "en": "Tartaric acid esters of mono- and diglycerides of fatty acids"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E472E",
+      "names": {
+        "en": "Mono and diacetyl tartaric acid esters of mono- and diglycerides of fatty acids"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E472F",
+      "names": {
+        "en": "Mixed acetic and tartaric acid esters of mono- and diglycerides of fatty acids"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E473",
+      "names": {
+        "en": "Sucrose esters of fatty acids"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E474",
+      "names": {
+        "en": "Sucroglycerides"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E475",
+      "names": {
+        "en": "Polyglycerol esters of fatty acids"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E476",
+      "names": {
+        "en": "Polyglycerol polyricinoleate"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E477",
+      "names": {
+        "en": "Propane-1,2-diol esters of fatty acids"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E479B",
+      "names": {
+        "en": "Thermally oxidized soya bean oil interacted with mono and diglycerides of fatty acids"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E481",
+      "names": {
+        "en": "Sodium stearoyl-2-lactylate"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E482",
+      "names": {
+        "en": "Calcium stearoyl-2-lactylate"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E483",
+      "names": {
+        "en": "Stearyl tartrate"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E491",
+      "names": {
+        "en": "Sorbitan monostearate"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E492",
+      "names": {
+        "en": "Sorbitan tristearate"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E493",
+      "names": {
+        "en": "Sorbitan monolaurate"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E494",
+      "names": {
+        "en": "Sorbitan monooleate"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E495",
+      "names": {
+        "en": "Sorbitan monopalmitate"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E499",
+      "names": {
+        "en": "Stigmasterol-rich plant sterols"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E500",
+      "names": {
+        "en": "Sodium carbonates"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E501",
+      "names": {
+        "en": "Potassium carbonate"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E503",
+      "names": {
+        "en": "Ammonium carbonates"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E504",
+      "names": {
+        "en": "Magnesium carbonates"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E507",
+      "names": {
+        "en": "Hydrochloric acid"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E508",
+      "names": {
+        "en": "Potassium chloride"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E509",
+      "names": {
+        "en": "Calcium chloride"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E511",
+      "names": {
+        "en": "Magnesium chloride"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E512",
+      "names": {
+        "en": "Stannous chloride"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E513",
+      "names": {
+        "en": "Sulphuric acid"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E514",
+      "names": {
+        "en": "Sodium sulphates"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E515",
+      "names": {
+        "en": "Potassium sulphates"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E516",
+      "names": {
+        "en": "Calcium sulphate"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E517",
+      "names": {
+        "en": "Ammonium sulphate"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E520",
+      "names": {
+        "en": "Aluminium sulphate"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E521",
+      "names": {
+        "en": "Aluminium sodium sulphate"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E522",
+      "names": {
+        "en": "Aluminium potassium sulphate"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E523",
+      "names": {
+        "en": "Aluminium ammonium sulphate"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E524",
+      "names": {
+        "en": "Sodium hydroxide"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E525",
+      "names": {
+        "en": "Potassium hydroxide"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E526",
+      "names": {
+        "en": "Calcium hydroxide"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E527",
+      "names": {
+        "en": "Ammonium hydroxide"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E528",
+      "names": {
+        "en": "Magnesium hydroxide"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E529",
+      "names": {
+        "en": "Calcium oxide"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E530",
+      "names": {
+        "en": "Magnesium oxide"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E534",
+      "names": {
+        "en": "Iron (III) meso-Tartrate"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E535",
+      "names": {
+        "en": "Sodium ferrocyanide"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E536",
+      "names": {
+        "en": "Potassium ferrocyanide"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E538",
+      "names": {
+        "en": "Calcium ferrocyanide"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E541",
+      "names": {
+        "en": "Sodium aluminium phosphate acidic"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E551",
+      "names": {
+        "en": "Silicon dioxide"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E552",
+      "names": {
+        "en": "Calcium silicate"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E553A",
+      "names": {
+        "en": "Magnesium silicate"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E553B",
+      "names": {
+        "en": "Talc"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E554",
+      "names": {
+        "en": "Sodium aluminium silicate"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E555",
+      "names": {
+        "en": "Potassium aluminium silicate"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E556",
+      "names": {
+        "en": "Calcium aluminium silicate"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E558",
+      "names": {
+        "en": "Bentonite"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E559",
+      "names": {
+        "en": "Aluminium silicate (Kaolin)"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E570",
+      "names": {
+        "en": "Fatty acids"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E574",
+      "names": {
+        "en": "Gluconic acid"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E575",
+      "names": {
+        "en": "Glucono-delta-lactone"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E576",
+      "names": {
+        "en": "Sodium gluconate"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E577",
+      "names": {
+        "en": "Potassium gluconate"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E578",
+      "names": {
+        "en": "Calcium gluconate"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E579",
+      "names": {
+        "en": "Ferrous gluconate"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E585",
+      "names": {
+        "en": "Ferrous lactate"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E586",
+      "names": {
+        "en": "4-Hexylresorcinol"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E620",
+      "names": {
+        "en": "Glutamic acid"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E621",
+      "names": {
+        "en": "Monosodium glutamate"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E622",
+      "names": {
+        "en": "Monopotassium glutamate"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E623",
+      "names": {
+        "en": "Calcium diglutamate"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E624",
+      "names": {
+        "en": "Monoammonium glutamate"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E625",
+      "names": {
+        "en": "Magnesium diglutamate"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E626",
+      "names": {
+        "en": "Guanylic acid"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E627",
+      "names": {
+        "en": "Disodium guanylate"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E628",
+      "names": {
+        "en": "Dipotassium guanylate"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E629",
+      "names": {
+        "en": "Calcium guanylate"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E630",
+      "names": {
+        "en": "Inosinic acid"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E631",
+      "names": {
+        "en": "Disodium inosinate"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E632",
+      "names": {
+        "en": "Dipotassium inosinate"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E633",
+      "names": {
+        "en": "Calcium inosinate"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E634",
+      "names": {
+        "en": "Calcium 5'-ribonucleotides"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E635",
+      "names": {
+        "en": "Disodium 5'-ribonucleotides"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E640",
+      "names": {
+        "en": "Glycine and its sodium salt"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E641",
+      "names": {
+        "en": "L-leucine"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E650",
+      "names": {
+        "en": "Zinc acetate"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E900",
+      "names": {
+        "en": "Dimethyl polysiloxane"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E901",
+      "names": {
+        "en": "Beeswax, white and yellow"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E902",
+      "names": {
+        "en": "Candelilla wax"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E903",
+      "names": {
+        "en": "Carnauba wax"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E904",
+      "names": {
+        "en": "Shellac"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E905",
+      "names": {
+        "en": "Microcrystalline wax"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E905A",
+      "names": {
+        "en": "High viscosity mineral oils"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E907",
+      "names": {
+        "en": "Hydrogenated poly-1-decene"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E912",
+      "names": {
+        "en": "Montan acid esters"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E914",
+      "names": {
+        "en": "Oxidised polyethylene wax"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E920",
+      "names": {
+        "en": "L-cysteine"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E926",
+      "names": {
+        "en": "Chlorine dioxide"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E927B",
+      "names": {
+        "en": "Carbamide"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E938",
+      "names": {
+        "en": "Argon"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E939",
+      "names": {
+        "en": "Helium"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E941",
+      "names": {
+        "en": "Nitrogen"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E942",
+      "names": {
+        "en": "Nitrous oxide"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E943A",
+      "names": {
+        "en": "Butane"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E943B",
+      "names": {
+        "en": "Isobutane"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E944",
+      "names": {
+        "en": "Propane"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E948",
+      "names": {
+        "en": "Oxygen"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E949",
+      "names": {
+        "en": "Hydrogen"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E952",
+      "names": {
+        "en": "Cyclamic acid and its Na and Ca salts"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E953",
+      "names": {
+        "en": "Isomalt"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E954",
+      "names": {
+        "en": "Saccharin and its Na, K and Ca salts"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E957",
+      "names": {
+        "en": "Thaumatin"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E959",
+      "names": {
+        "en": "Neohesperidine DC"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E960A",
+      "names": {
+        "en": "Steviol glycosides from Stevia"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E960B",
+      "names": {
+        "en": "Steviol glycosides from fermentation’"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E960D",
+      "names": {
+        "en": "Glucosylated steviol glycosides"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E961",
+      "names": {
+        "en": "Neotame"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E962",
+      "names": {
+        "en": "Salt of aspartame-acesulfame"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E964",
+      "names": {
+        "en": "Polyglycitol syrup"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E965",
+      "names": {
+        "en": "Maltitols"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E966",
+      "names": {
+        "en": "Lactitol"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E967",
+      "names": {
+        "en": "Xylitol"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E968",
+      "names": {
+        "en": "Erythritol"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E969",
+      "names": {
+        "en": "Advantame"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E999",
+      "names": {
+        "en": "Quillaia extract"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E1103",
+      "names": {
+        "en": "Invertase"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E1105",
+      "names": {
+        "en": "Lysozyme"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E1200",
+      "names": {
+        "en": "Polydextrose"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E1201",
+      "names": {
+        "en": "Polyvinylpyrrolidone"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E1202",
+      "names": {
+        "en": "Polyvinylpolypyrrolidone"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E1203",
+      "names": {
+        "en": "Polyvinyl alcohol (PVA)"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E1204",
+      "names": {
+        "en": "Pullulan"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E1205",
+      "names": {
+        "en": "Basic methacrylate copolymer"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E1206",
+      "names": {
+        "en": "Neutral Methacrylate Copolymer"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E1207",
+      "names": {
+        "en": "Anionic methacrylate copolymer"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E1208",
+      "names": {
+        "en": "Polyvinylpyrrolidone-vinyl acetate copolymer"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E1209",
+      "names": {
+        "en": "Polyvinyl alcohol-polyethylene glycol-graft co-polymer"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E1404",
+      "names": {
+        "en": "Oxidised starch"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E1410",
+      "names": {
+        "en": "Monostarch phosphate"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E1412",
+      "names": {
+        "en": "Distarch phosphate"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E1413",
+      "names": {
+        "en": "Phosphated distarch phosphate"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E1414",
+      "names": {
+        "en": "Acetylated distarch phosphate"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E1420",
+      "names": {
+        "en": "Acetylated starch"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E1422",
+      "names": {
+        "en": "Acetylated distarch adipate"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E1440",
+      "names": {
+        "en": "Hydroxy propyl starch"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E1442",
+      "names": {
+        "en": "Hydroxy propyl distarch phosphate"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E1450",
+      "names": {
+        "en": "Starch sodium octenyl succinate"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E1451",
+      "names": {
+        "en": "Acetylated oxidised starch"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E1452",
+      "names": {
+        "en": "Starch Aluminium Octenyl Succinate"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E1505",
+      "names": {
+        "en": "Triethyl citrate"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E1517",
+      "names": {
+        "en": "Glyceryl diacetate (diacetin)"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E1518",
+      "names": {
+        "en": "Glyceryl triacetate (triacetin)"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E1519",
+      "names": {
+        "en": "Benzyl alcohol"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E1520",
+      "names": {
+        "en": "Propane-1, 2-diol (propylene glycol)"
+      },
+      "reason": "missing_scientific_profile"
+    },
+    {
+      "code": "E1521",
+      "names": {
+        "en": "Polyethylene glycol"
+      },
+      "reason": "missing_scientific_profile"
+    }
+  ]
+}

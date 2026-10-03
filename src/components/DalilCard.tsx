@@ -495,7 +495,7 @@ export default function DalilCard({ onPromptFocus }: DalilCardProps) {
               pressed && question.trim() && styles.sendPressed,
             ]}
           >
-            <Ionicons name="navigate" size={22} color="#14131A" />
+            <Ionicons name="navigate" size={19} color="#14131A" />
           </Pressable>
         </View>
         )}
@@ -513,7 +513,7 @@ export default function DalilCard({ onPromptFocus }: DalilCardProps) {
           >
             <Ionicons
               name={suggestion.icon}
-              size={20}
+              size={17}
               color={colors.goldLight}
             />
             <Text
@@ -532,7 +532,7 @@ export default function DalilCard({ onPromptFocus }: DalilCardProps) {
 
 const styles = StyleSheet.create({
   card: {
-    height: 166,
+    height: 130,
     marginBottom: 10,
     overflow: 'visible',
     borderRadius: 25,
@@ -545,8 +545,8 @@ const styles = StyleSheet.create({
     shadowRadius: 18,
     elevation: 8,
   },
-  cardCompact: { height: 160 },
-  cardVeryCompact: { height: 156 },
+  cardCompact: { height: 126 },
+  cardVeryCompact: { height: 122 },
   cardGradient: { borderRadius: 25 },
   glow: {
     position: 'absolute',
@@ -562,7 +562,7 @@ const styles = StyleSheet.create({
   guestAskRow: { paddingRight: 14 },
   guestPrompt: {
     flex: 1,
-    minHeight: 78,
+    minHeight: 60,
     justifyContent: 'center',
     paddingHorizontal: 13,
     borderRadius: 17,
@@ -597,26 +597,26 @@ const styles = StyleSheet.create({
     fontWeight: '800',
   },
   askRow: {
-    height: 99,
-    paddingTop: 19,
+    height: 81,
+    paddingTop: 10,
     paddingRight: 18,
-    paddingLeft: 112,
+    paddingLeft: 89,
     justifyContent: 'center',
   },
-  askRowCompact: { paddingLeft: 100, paddingRight: 12 },
-  askRowVeryCompact: { paddingLeft: 92, paddingRight: 10 },
+  askRowCompact: { paddingLeft: 79, paddingRight: 12 },
+  askRowVeryCompact: { height: 78, paddingLeft: 73, paddingRight: 10 },
   mascot: {
     position: 'absolute',
     zIndex: 3,
     left: 7,
     bottom: -2,
-    width: 114,
-    height: 132,
+    width: 87,
+    height: 101,
   },
-  mascotCompact: { left: 4, width: 102, height: 118 },
-  mascotVeryCompact: { left: 2, width: 94, height: 109 },
+  mascotCompact: { left: 4, width: 78, height: 90 },
+  mascotVeryCompact: { left: 2, width: 72, height: 84 },
   prompt: {
-    height: 58,
+    height: 46,
     paddingLeft: 12,
     paddingRight: 7,
     flexDirection: 'row',
@@ -646,8 +646,8 @@ const styles = StyleSheet.create({
     fontSize: 13,
   },
   send: {
-    width: 45,
-    height: 45,
+    width: 36,
+    height: 36,
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 23,
@@ -659,19 +659,19 @@ const styles = StyleSheet.create({
   sendDisabled: { opacity: 0.42 },
   sendPressed: { opacity: 0.72, transform: [{ scale: 0.94 }] },
   suggestions: {
-    height: 55,
-    paddingHorizontal: 10,
+    height: 43,
+    paddingHorizontal: 8,
     flexDirection: 'row',
-    gap: 7,
+    gap: 5,
   },
   suggestion: {
     flex: 1,
     minWidth: 0,
-    paddingHorizontal: 8,
+    paddingHorizontal: 6,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 7,
+    gap: 5,
     borderRadius: 14,
     borderWidth: 1,
     borderColor: 'rgba(255,255,255,0.10)',
@@ -682,7 +682,7 @@ const styles = StyleSheet.create({
     color: colors.text,
     fontFamily: typography.sans,
     fontSize: 10.5,
-    lineHeight: 14,
+    lineHeight: 13,
   },
   pressed: { opacity: 0.68, transform: [{ scale: 0.985 }] },
 });

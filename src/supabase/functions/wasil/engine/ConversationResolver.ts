@@ -14,6 +14,10 @@ const islamicEntityAliases: Array<{
   canonical: string;
   aliases: RegExp;
 }> = [
+  {
+    canonical: "Salat al-istikhara (prière de consultation)",
+    aliases: /(?:pri(?:e|è)re\s+(?:de\s+)?(?:consultation|l['’]?istikhara)|salat\s+al[- ]?istikhara|istikh(?:ara|âra)|صلاة\s+الاستخارة|الاستخارة)/iu,
+  },
   { canonical: "Dâwûd (David), prophète mentionné dans le Coran", aliases: /\b(david|dawud|daoud|dâwûd)\b/i },
   { canonical: "Sulaymân (Souleymane/Salomon), prophète mentionné dans le Coran", aliases: /\b(souleymane|sulayman|soulayman|salomon)\b/i },
   { canonical: "Mûsâ (Moïse), prophète mentionné dans le Coran", aliases: /\b(moise|moïse|moussa|musa|mûsâ)\b/i },
@@ -133,3 +137,4 @@ export function resolveConversationQuestion(
     usedConversationContext: false,
   };
 }
+

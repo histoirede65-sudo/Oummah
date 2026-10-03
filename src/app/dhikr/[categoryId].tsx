@@ -25,6 +25,8 @@ import {
   saveDhikrProgress,
   toggleDhikrFavorite,
 } from "../../features/dhikr/DhikrStore";
+import { incrementTasbihTotalToday } from "../../features/dhikr/TasbihStore";
+import { goalProgressBridge } from "../../features/daily-goals/services/goalProgressBridge";
 import { useLearningAudioPlayer } from "../../features/learning-audio/useLearningAudioPlayer";
 import { colors } from "../../theme/colors";
 import { typography } from "../../theme/typography";
@@ -152,8 +154,16 @@ export default function DhikrReaderScreen() {
   const incrementCounter = useCallback(() => {
     if (!current) return;
     const previous = counters[current.id] ?? 0;
-    const next = Math.min(target, previous + 1);
+    const next = previous + 1;
     setCounters((values) => ({ ...values, [current.id]: next }));
+    void incrementTasbihTotalToday()
+      .then((nextTotal) => {
+        goalProgressBridge.record({
+          metric: "dhikr_count",
+          absolute: nextTotal,
+        });
+      })
+      .catch(() => undefined);
     if (next >= target && previous < target) {
       void Haptics.notificationAsync(
         Haptics.NotificationFeedbackType.Success,

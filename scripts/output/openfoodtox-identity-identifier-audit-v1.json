@@ -1,0 +1,52 @@
+{
+  "schemaVersion": "openfoodtox-identity-identifier-audit-v1",
+  "sourceWorkbook": "scripts\\data\\OpenFoodTox-3.0.xlsx",
+  "refSubRows": 7890,
+  "rowsWithEC": 1,
+  "rowsWithCAS": 5513,
+  "oummahMatchedRowsWithEC": 0,
+  "oummahMatchedRowsWithCAS": 186,
+  "ecParsingIssues": [
+    {
+      "rawEC": "67888-98-6 (from PARAM catalogue)",
+      "uuid": "25b1a3a9-b92b-4c2f-8485-356b7621daac"
+    }
+  ],
+  "joinLosses": [
+    "E150A",
+    "E150B",
+    "E150D",
+    "E172",
+    "E267",
+    "E306",
+    "E322A",
+    "E339",
+    "E340",
+    "E407A",
+    "E452",
+    "E469",
+    "E470B",
+    "E471",
+    "E472A",
+    "E472B",
+    "E472C",
+    "E472D",
+    "E472E",
+    "E472F",
+    "E473",
+    "E474",
+    "E477",
+    "E483",
+    "E514",
+    "E515",
+    "E570",
+    "E635",
+    "E907",
+    "E912",
+    "E960D",
+    "E964",
+    "E965",
+    "E1413",
+    "E1521"
+  ]
+}

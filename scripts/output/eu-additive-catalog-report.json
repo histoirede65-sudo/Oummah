@@ -1,0 +1,441 @@
+{
+  "schemaVersion": "1.0",
+  "source": {
+    "authority": "European Commission",
+    "url": "https://food.ec.europa.eu/food-safety/food-improvement-agents/additives/database_en",
+    "apiUrl": "https://ec.europa.eu/food/food-feed-portal/backend/api/policy-items?foodDomain=fin&authorisationType=fad_auth",
+    "retrievedAt": "2026-09-30",
+    "referenceVersion": "Union list / Annex II, Regulation (EC) No 1333/2008",
+    "auditedApiFields": [
+      "displayName",
+      "identifyingName",
+      "synonyms",
+      "eNumber",
+      "policyItemStatus",
+      "policyItemCode",
+      "legislationTitle",
+      "eurlexLink",
+      "group",
+      "memberOfFADGroup",
+      "groupMemberRefs",
+      "policyItemMessageText",
+      "foodCategory",
+      "conditionsOfUse"
+    ],
+    "functionCategoryFieldFound": false
+  },
+  "totalRegulatoryEntries": 412,
+  "totalUniqueECodes": 341,
+  "entriesWithoutECode": 71,
+  "entriesWithoutFrenchName": 341,
+  "entriesWithoutFunctionCategories": 341,
+  "nomenclatureCoverage": {
+    "totalEuCodes": 341,
+    "codesWithAnyName": 341,
+    "codesWithFrenchName": 0,
+    "codesWithEnglishName": 341,
+    "codesWithFunction": 0,
+    "codesWithAliases": 1,
+    "codesWithoutName": 0,
+    "codesWithoutFunction": 341,
+    "percentages": {
+      "anyName": 100,
+      "frenchName": 0,
+      "englishName": 100,
+      "function": 0,
+      "aliases": 0.3
+    }
+  },
+  "subcodes": [
+    "E150A",
+    "E150B",
+    "E150C",
+    "E150D",
+    "E160A",
+    "E160B",
+    "E160C",
+    "E160D",
+    "E160E",
+    "E161B",
+    "E161G",
+    "E322A",
+    "E407A",
+    "E463A",
+    "E470A",
+    "E470B",
+    "E472A",
+    "E472B",
+    "E472C",
+    "E472D",
+    "E472E",
+    "E472F",
+    "E479B",
+    "E553A",
+    "E553B",
+    "E905A",
+    "E927B",
+    "E943A",
+    "E943B",
+    "E960A",
+    "E960B",
+    "E960C",
+    "E960D"
+  ],
+  "anomalies": [
+    {
+      "kind": "entry_without_e_code",
+      "policyItemCode": "POL-FAD-IMPORT-2981",
+      "displayName": "Group I, Additives"
+    },
+    {
+      "kind": "entry_without_e_code",
+      "policyItemCode": "POL-FAD-IMPORT-2984",
+      "displayName": "Group IV, Polyols"
+    },
+    {
+      "kind": "entry_without_e_code",
+      "policyItemCode": "POL-FAD-IMPORT-2982",
+      "displayName": "Group II, Colours at quantum satis"
+    },
+    {
+      "kind": "entry_without_e_code",
+      "policyItemCode": "POL-FAD-IMPORT-3068",
+      "displayName": "Propionic acid - propionates"
+    },
+    {
+      "kind": "entry_without_e_code",
+      "policyItemCode": "POL-FAD-IMPORT-3086",
+      "displayName": "Propyl gallate, TBHQ and BHA"
+    },
+    {
+      "kind": "entry_without_e_code",
+      "policyItemCode": "POL-FAD-IMPORT-3087",
+      "displayName": "Propyl gallate, TBHQ, BHA and BHT"
+    },
+    {
+      "kind": "entry_without_e_code",
+      "policyItemCode": "POL-FAD-IMPORT-3088",
+      "displayName": "Octyl gallate"
+    },
+    {
+      "kind": "entry_without_e_code",
+      "policyItemCode": "POL-FAD-IMPORT-3089",
+      "displayName": "Dodecyl gallate"
+    },
+    {
+      "kind": "entry_without_e_code",
+      "policyItemCode": "POL-FAD-IMPORT-3057",
+      "displayName": "Nitrites"
+    },
+    {
+      "kind": "entry_without_e_code",
+      "policyItemCode": "POL-FAD-IMPORT-3039",
+      "displayName": "p-hydroxybenzoates (PHB)"
+    },
+    {
+      "kind": "entry_without_e_code",
+      "policyItemCode": "POL-FAD-IMPORT-3044",
+      "displayName": "Sulphur dioxide - sulphites"
+    },
+    {
+      "kind": "entry_without_e_code",
+      "policyItemCode": "POL-FAD-IMPORT-3028",
+      "displayName": "Sorbic acid - potassium sorbate; p-hydroxybenzoates"
+    },
+    {
+      "kind": "entry_without_e_code",
+      "policyItemCode": "POL-FAD-IMPORT-3029",
+      "displayName": "Sorbic acid – potassium sorbate; Benzoic acid – benzoates"
+    },
+    {
+      "kind": "entry_without_e_code",
+      "policyItemCode": "POL-FAD-IMPORT-3003",
+      "displayName": "Caramels"
+    },
+    {
+      "kind": "entry_without_e_code",
+      "policyItemCode": "POL-FAD-IMPORT-3030",
+      "displayName": "Sorbic acid - potassium sorbate; Benzoic acid - benzoates; p-hydroxybenzoates"
+    },
+    {
+      "kind": "entry_without_e_code",
+      "policyItemCode": "POL-FAD-IMPORT-3034",
+      "displayName": "Benzoic acid - benzoates (BA)"
+    },
+    {
+      "kind": "entry_without_e_code",
+      "policyItemCode": "POL-FAD-IMPORT-3027",
+      "displayName": "Sorbic acid - potassium sorbate (SA)"
+    },
+    {
+      "kind": "entry_without_e_code",
+      "policyItemCode": "POL-FAD-IMPORT-3339",
+      "displayName": "Medium viscosity mineral oil"
+    },
+    {
+      "kind": "entry_without_e_code",
+      "policyItemCode": "POL-FAD-IMPORT-3341",
+      "displayName": "Calcium lignosulfonate (40-65)"
+    },
+    {
+      "kind": "entry_without_e_code",
+      "policyItemCode": "POL-FAD-IMPORT-3336",
+      "displayName": "Tricalcium phosphate"
+    },
+    {
+      "kind": "entry_without_e_code",
+      "policyItemCode": "POL-FAD-IMPORT-3191",
+      "displayName": "Sodium and Calcium stearoyl-2-lactylates"
+    },
+    {
+      "kind": "entry_without_e_code",
+      "policyItemCode": "POL-FAD-IMPORT-3216",
+      "displayName": "Aluminium sulphates"
+    },
+    {
+      "kind": "entry_without_e_code",
+      "policyItemCode": "POL-FAD-IMPORT-3253",
+      "displayName": "Glutamic acid - glutamates"
+    },
+    {
+      "kind": "entry_without_e_code",
+      "policyItemCode": "POL-FAD-IMPORT-3195",
+      "displayName": "Sorbitan esters"
+    },
+    {
+      "kind": "entry_without_e_code",
+      "policyItemCode": "POL-FAD-IMPORT-3221",
+      "displayName": "Hydroxides"
+    },
+    {
+      "kind": "entry_without_e_code",
+      "policyItemCode": "POL-FAD-IMPORT-3260",
+      "displayName": "Ribonucleotides"
+    },
+    {
+      "kind": "entry_without_e_code",
+      "policyItemCode": "POL-FAD-IMPORT-3229",
+      "displayName": "Ferrocyanides"
+    },
+    {
+      "kind": "entry_without_e_code",
+      "policyItemCode": "POL-FAD-IMPORT-3201",
+      "displayName": "Carbonates"
+    },
+    {
+      "kind": "entry_without_e_code",
+      "policyItemCode": "POL-FAD-IMPORT-3234",
+      "displayName": ""
+    },
+    {
+      "kind": "entry_without_e_code",
+      "policyItemCode": "POL-FAD-IMPORT-3343",
+      "displayName": "Magnesium diphosphate"
+    },
+    {
+      "kind": "entry_without_e_code",
+      "policyItemCode": "POL-FAD-IMPORT-3369",
+      "displayName": "Monk fruit extract"
+    },
+    {
+      "kind": "entry_without_e_code",
+      "policyItemCode": "POL-FAD-IMPORT-3371",
+      "displayName": "Safe Tracers"
+    },
+    {
+      "kind": "entry_without_e_code",
+      "policyItemCode": "POL-FAD-IMPORT-3373",
+      "displayName": "D-a-tocopheryln polyethylene glycol-1000 succinate"
+    },
+    {
+      "kind": "entry_without_e_code",
+      "policyItemCode": "POL-FAD-IMPORT-3375",
+      "displayName": "Polyphenol-rich extract (PRE)"
+    },
+    {
+      "kind": "entry_without_e_code",
+      "policyItemCode": "POL-FAD-IMPORT-3377",
+      "displayName": "Antimicrobial inclusion complex"
+    },
+    {
+      "kind": "entry_without_e_code",
+      "policyItemCode": "POL-FAD-IMPORT-3379",
+      "displayName": "Annatto bixin"
+    },
+    {
+      "kind": "entry_without_e_code",
+      "policyItemCode": "POL-FAD-IMPORT-3347",
+      "displayName": "Hydrogen peroxide"
+    },
+    {
+      "kind": "entry_without_e_code",
+      "policyItemCode": "POL-FAD-IMPORT-3348",
+      "displayName": "Cystine"
+    },
+    {
+      "kind": "entry_without_e_code",
+      "policyItemCode": "POL-FAD-IMPORT-3352",
+      "displayName": "Potassium Cinnamate"
+    },
+    {
+      "kind": "entry_without_e_code",
+      "policyItemCode": "POL-FAD-IMPORT-3380",
+      "displayName": "Annatto norbixin"
+    },
+    {
+      "kind": "entry_without_e_code",
+      "policyItemCode": "POL-FAD-IMPORT-3353",
+      "displayName": "Dihydroquercetin"
+    },
+    {
+      "kind": "entry_without_e_code",
+      "policyItemCode": "POL-FAD-IMPORT-3356",
+      "displayName": "Anthrapen"
+    },
+    {
+      "kind": "entry_without_e_code",
+      "policyItemCode": "POL-FAD-IMPORT-3357",
+      "displayName": "Silicon dioxide - silicates"
+    },
+    {
+      "kind": "entry_without_e_code",
+      "policyItemCode": "POL-FAD-IMPORT-3381",
+      "displayName": "Jagua (Genipin-Glycine) Blue"
+    },
+    {
+      "kind": "entry_without_e_code",
+      "policyItemCode": "POL-FAD-IMPORT-3382",
+      "displayName": "Sodium diacetate"
+    },
+    {
+      "kind": "entry_without_e_code",
+      "policyItemCode": "POL-FAD-IMPORT-3383",
+      "displayName": "Sulfasin, hudrogen peroxide solution"
+    },
+    {
+      "kind": "entry_without_e_code",
+      "policyItemCode": "POL-FAD-IMPORT-3384",
+      "displayName": "Blue Galdieria extract/ Phycocyanin"
+    },
+    {
+      "kind": "entry_without_e_code",
+      "policyItemCode": "POL-FAD-IMPORT-3358",
+      "displayName": "Kopal"
+    },
+    {
+      "kind": "entry_without_e_code",
+      "policyItemCode": "POL-FAD-IMPORT-3359",
+      "displayName": "Galactomannan"
+    },
+    {
+      "kind": "entry_without_e_code",
+      "policyItemCode": "POL-FAD-IMPORT-3360",
+      "displayName": "Magnesium dihydrogen diphosphate"
+    },
+    {
+      "kind": "entry_without_e_code",
+      "policyItemCode": "POL-FAD-IMPORT-3386",
+      "displayName": "Soy leghemoglobin"
+    },
+    {
+      "kind": "entry_without_e_code",
+      "policyItemCode": "POL-FAD-IMPORT-3361",
+      "displayName": "Sodium hydrogenate carbonate"
+    },
+    {
+      "kind": "entry_without_e_code",
+      "policyItemCode": "POL-FAD-IMPORT-3362",
+      "displayName": "Potassium hydrogen carbonate"
+    },
+    {
+      "kind": "entry_without_e_code",
+      "policyItemCode": "POL-FAD-IMPORT-3363",
+      "displayName": "Plain caramel, Caustic sulphite caramel and Sulphite ammonia caramel"
+    },
+    {
+      "kind": "entry_without_e_code",
+      "policyItemCode": "POL-FAD-IMPORT-3365",
+      "displayName": "Powdered cellulose"
+    },
+    {
+      "kind": "entry_without_e_code",
+      "policyItemCode": "POL-FAD-IMPORT-3152",
+      "displayName": "Polysorbates"
+    },
+    {
+      "kind": "entry_without_e_code",
+      "policyItemCode": "POL-FAD-IMPORT-3119",
+      "displayName": "Adipic acid - adipates"
+    },
+    {
+      "kind": "entry_without_e_code",
+      "policyItemCode": "POL-FAD-IMPORT-3184",
+      "displayName": "Sucrose esters of fatty acids-sucroglycerides"
+    },
+    {
+      "kind": "entry_without_e_code",
+      "policyItemCode": "POL-FAD-IMPORT-3127",
+      "displayName": "Alginic acid - alginates"
+    },
+    {
+      "kind": "entry_without_e_code",
+      "policyItemCode": "POL-FAD-IMPORT-3378",
+      "displayName": "Carbomer"
+    },
+    {
+      "kind": "entry_without_e_code",
+      "policyItemCode": "POL-FAD-IMPORT-3367",
+      "displayName": "Trimagnesium dicitrate anhydrous (TMDC)"
+    },
+    {
+      "kind": "entry_without_e_code",
+      "policyItemCode": "POL-FAD-10321",
+      "displayName": "Trimagnesium dicitrate"
+    },
+    {
+      "kind": "entry_without_e_code",
+      "policyItemCode": "POL-FAD-IMPORT-3364",
+      "displayName": "Cellulose&nbsp;"
+    },
+    {
+      "kind": "entry_without_e_code",
+      "policyItemCode": "POL-FAD-IMPORT-3165",
+      "displayName": "Microcrystalline cellulose, Cellulose gel"
+    },
+    {
+      "kind": "entry_without_e_code",
+      "policyItemCode": "POL-FAD-IMPORT-3372",
+      "displayName": "Silicon dioxide - silicates"
+    },
+    {
+      "kind": "entry_without_e_code",
+      "policyItemCode": "POL-FAD-12021",
+      "displayName": "Tartaric acid – tartrates&nbsp;"
+    },
+    {
+      "kind": "entry_without_e_code",
+      "policyItemCode": "POL-FAD-IMPORT-3060",
+      "displayName": "Nitrates"
+    },
+    {
+      "kind": "entry_without_e_code",
+      "policyItemCode": "POL-FAD-IMPORT-2983",
+      "displayName": "Group III, Colours with combined maximum limit"
+    },
+    {
+      "kind": "entry_without_e_code",
+      "policyItemCode": "POL-FAD-06101",
+      "displayName": "Steviol glycosides"
+    },
+    {
+      "kind": "entry_without_e_code",
+      "policyItemCode": "POL-FAD-IMPORT-3108",
+      "displayName": "Phosphoric acid - phosphates - di - tri- and polyphosphates"
+    },
+    {
+      "kind": "entry_without_e_code",
+      "policyItemCode": "POL-FAD-16782",
+      "displayName": "L-Ascorbyl Palmitate"
+    }
+  ]
+}

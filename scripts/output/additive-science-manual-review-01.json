@@ -1,0 +1,112 @@
+{
+  "schemaVersion": "1.0",
+  "generatedAt": "2026-09-30T19:53:39.562Z",
+  "sourceAudit": "scripts\\output\\additive-science-source-audit-01-v3.json",
+  "items": [
+    {
+      "code": "E110",
+      "name": "Sunset Yellow FCF/Orange Yellow S",
+      "reason": "MATCH_AMBIGUOUS",
+      "candidateSources": [
+        "EFSA/OpenFoodTox",
+        "WHO/JECFA"
+      ],
+      "candidateMatches": {
+        "efsa": {
+          "confidence": "rejected",
+          "assessmentCount": 0
+        },
+        "jecfa": {
+          "confidence": "possible",
+          "evaluationCount": 8,
+          "ins": [
+            "110"
+          ]
+        }
+      },
+      "recommendedReviewAction": "Vérification manuelle de l’identité et du périmètre avant génération d’un profil."
+    },
+    {
+      "code": "E140",
+      "name": "Chlorophylls and Chlorophyllins",
+      "reason": "MATCH_AMBIGUOUS",
+      "candidateSources": [
+        "EFSA/OpenFoodTox",
+        "WHO/JECFA"
+      ],
+      "candidateMatches": {
+        "efsa": {
+          "confidence": "rejected",
+          "assessmentCount": 0
+        },
+        "jecfa": {
+          "confidence": "possible",
+          "evaluationCount": 3,
+          "ins": [
+            "140"
+          ]
+        }
+      },
+      "recommendedReviewAction": "Vérification manuelle de l’identité et du périmètre avant génération d’un profil."
+    },
+    {
+      "code": "E141",
+      "name": "Copper complexes of chlorophylls and chlorophyllins",
+      "reason": "MATCH_AMBIGUOUS",
+      "candidateSources": [
+        "EFSA/OpenFoodTox",
+        "WHO/JECFA"
+      ],
+      "candidateMatches": {
+        "efsa": {
+          "confidence": "rejected",
+          "assessmentCount": 0
+        },
+        "jecfa": {
+          "confidence": "possible",
+          "evaluationCount": 6,
+          "ins": [
+            "141"
+          ]
+        }
+      },
+      "recommendedReviewAction": "Vérification manuelle de l’identité et du périmètre avant génération d’un profil."
+    },
+    {
+      "code": "E160B",
+      "name": "Annatto, Bixin, Norbixin/Deleted from the Union List of authorised additives",
+      "reason": "NO_MATCH",
+      "candidateSources": [],
+      "candidateMatches": {
+        "efsa": {
+          "confidence": "rejected",
+          "assessmentCount": 0
+        },
+        "jecfa": {
+          "confidence": "rejected",
+          "evaluationCount": 0,
+          "ins": []
+        }
+      },
+      "recommendedReviewAction": "Vérification manuelle de l’identité et du périmètre avant génération d’un profil."
+    },
+    {
+      "code": "E160C",
+      "name": "Paprika extract, capsanthin, capsorubin",
+      "reason": "NO_MATCH",
+      "candidateSources": [],
+      "candidateMatches": {
+        "efsa": {
+          "confidence": "rejected",
+          "assessmentCount": 0
+        },
+        "jecfa": {
+          "confidence": "rejected",
+          "evaluationCount": 0,
+          "ins": []
+        }
+      },
+      "recommendedReviewAction": "Vérification manuelle de l’identité et du périmètre avant génération d’un profil."
+    }
+  ]
+}

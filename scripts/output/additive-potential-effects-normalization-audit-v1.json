@@ -1,0 +1,384 @@
+{
+  "schemaVersion": "1.0",
+  "auditVersion": "17C-v1",
+  "generatedAt": "2026-09-30T23:45:29.089Z",
+  "mode": "offline-normalization-audit",
+  "before": {
+    "effectsTotal": 668,
+    "severityDistribution": {
+      "none": 668,
+      "low": 0,
+      "moderate": 0,
+      "serious": 0,
+      "unknown": 0,
+      "insufficient": 0,
+      "limited": 0,
+      "strong": 0
+    },
+    "evidenceDistribution": {
+      "limited": 668,
+      "none": 0,
+      "low": 0,
+      "moderate": 0,
+      "serious": 0,
+      "unknown": 0,
+      "insufficient": 0,
+      "strong": 0
+    },
+    "studyContextDistribution": {
+      "human": 0,
+      "animal": 0,
+      "in_vitro": 0,
+      "mixed": 0,
+      "unknown": 668
+    }
+  },
+  "after": {
+    "effectsTotal": 668,
+    "severityDistribution": {
+      "unknown": 668,
+      "none": 0,
+      "low": 0,
+      "moderate": 0,
+      "serious": 0,
+      "insufficient": 0,
+      "limited": 0,
+      "strong": 0
+    },
+    "evidenceDistribution": {
+      "insufficient": 668,
+      "none": 0,
+      "low": 0,
+      "moderate": 0,
+      "serious": 0,
+      "unknown": 0,
+      "limited": 0,
+      "strong": 0
+    },
+    "studyContextDistribution": {
+      "human": 0,
+      "animal": 0,
+      "in_vitro": 0,
+      "mixed": 0,
+      "unknown": 668
+    },
+    "profilesWithCriticalEndpoint": 7,
+    "profilesWithTargetOrgan": 0,
+    "profilesWithReferencePoint": 0,
+    "profilesWithStructuredStudyContext": 0
+  },
+  "criticalEndpointCandidates": [
+    {
+      "code": "E102",
+      "criticalEndpointRaw": [
+        "76f11345-6a6c-4f8f-98c4-fdad75e3494c",
+        "76f11345-6a6c-4f8f-98c4-fdad75e3494c",
+        "76f11345-6a6c-4f8f-98c4-fdad75e3494c",
+        "76f11345-6a6c-4f8f-98c4-fdad75e3494c",
+        "76f11345-6a6c-4f8f-98c4-fdad75e3494c"
+      ],
+      "studyContext": {
+        "type": "unknown"
+      },
+      "species": null,
+      "referencePoint": null,
+      "sourceAssessment": {
+        "title": "Statement on Allura Red AC and other sulphonated mono azo dyes authorised as food and feed additives.",
+        "year": "2013",
+        "doi": "10.2903/j.efsa.2013.3234",
+        "url": "https://doi.org/10.2903/j.efsa.2013.3234",
+        "efsaOutputId": "EFSA-Q-2012-00743"
+      },
+      "normalizedSeverity": "unknown",
+      "normalizedEvidence": "insufficient"
+    },
+    {
+      "code": "E122",
+      "criticalEndpointRaw": [
+        "bb784727-442b-4f46-8aae-7415b8907ac9",
+        "bb784727-442b-4f46-8aae-7415b8907ac9"
+      ],
+      "studyContext": {
+        "type": "unknown"
+      },
+      "species": null,
+      "referencePoint": null,
+      "sourceAssessment": {
+        "title": "Statement on Allura Red AC and other sulphonated mono azo dyes authorised as food and feed additives.",
+        "year": "2013",
+        "doi": "10.2903/j.efsa.2013.3234",
+        "url": "https://doi.org/10.2903/j.efsa.2013.3234",
+        "efsaOutputId": "EFSA-Q-2012-00743"
+      },
+      "normalizedSeverity": "unknown",
+      "normalizedEvidence": "insufficient"
+    },
+    {
+      "code": "E124",
+      "criticalEndpointRaw": [
+        "e51043e1-f900-4b23-883a-65533dad31e8",
+        "e51043e1-f900-4b23-883a-65533dad31e8",
+        "e51043e1-f900-4b23-883a-65533dad31e8"
+      ],
+      "studyContext": {
+        "type": "unknown"
+      },
+      "species": null,
+      "referencePoint": null,
+      "sourceAssessment": {
+        "title": "Statement on Allura Red AC and other sulphonated mono azo dyes authorised as food and feed additives.",
+        "year": "2013",
+        "doi": "10.2903/j.efsa.2013.3234",
+        "url": "https://doi.org/10.2903/j.efsa.2013.3234",
+        "efsaOutputId": "EFSA-Q-2012-00743"
+      },
+      "normalizedSeverity": "unknown",
+      "normalizedEvidence": "insufficient"
+    },
+    {
+      "code": "E129",
+      "criticalEndpointRaw": [
+        "3e2c9051-8f0a-467f-8cc1-77304809b27a",
+        "3e2c9051-8f0a-467f-8cc1-77304809b27a",
+        "3e2c9051-8f0a-467f-8cc1-77304809b27a",
+        "3e2c9051-8f0a-467f-8cc1-77304809b27a",
+        "9ba3507d-7247-48ca-96e0-8a37a63b08e3",
+        "3e2c9051-8f0a-467f-8cc1-77304809b27a",
+        "3e2c9051-8f0a-467f-8cc1-77304809b27a",
+        "3e2c9051-8f0a-467f-8cc1-77304809b27a",
+        "3e2c9051-8f0a-467f-8cc1-77304809b27a",
+        "3e2c9051-8f0a-467f-8cc1-77304809b27a",
+        "3e2c9051-8f0a-467f-8cc1-77304809b27a",
+        "3e2c9051-8f0a-467f-8cc1-77304809b27a",
+        "3e2c9051-8f0a-467f-8cc1-77304809b27a",
+        "9ba3507d-7247-48ca-96e0-8a37a63b08e3",
+        "3e2c9051-8f0a-467f-8cc1-77304809b27a",
+        "3e2c9051-8f0a-467f-8cc1-77304809b27a",
+        "3e2c9051-8f0a-467f-8cc1-77304809b27a"
+      ],
+      "studyContext": {
+        "type": "unknown"
+      },
+      "species": null,
+      "referencePoint": null,
+      "sourceAssessment": {
+        "title": "Statement on Allura Red AC and other sulphonated mono azo dyes authorised as food and feed additives.",
+        "year": "2013",
+        "doi": "10.2903/j.efsa.2013.3234",
+        "url": "https://doi.org/10.2903/j.efsa.2013.3234",
+        "efsaOutputId": "EFSA-Q-2012-00743"
+      },
+      "normalizedSeverity": "unknown",
+      "normalizedEvidence": "insufficient"
+    },
+    {
+      "code": "E132",
+      "criticalEndpointRaw": [
+        "1ebb9753-9a0e-47ad-99f8-e071cfad8f3e",
+        "1ebb9753-9a0e-47ad-99f8-e071cfad8f3e"
+      ],
+      "studyContext": {
+        "type": "unknown"
+      },
+      "species": null,
+      "referencePoint": null,
+      "sourceAssessment": {
+        "title": "Scientific Opinion on the re-evaluation of Indigo Carmine (E 132) as a food additive",
+        "year": "2014",
+        "doi": "10.2903/j.efsa.2014.3768",
+        "url": "https://doi.org/10.2903/j.efsa.2014.3768",
+        "efsaOutputId": "EFSA-Q-2011-00358"
+      },
+      "normalizedSeverity": "unknown",
+      "normalizedEvidence": "insufficient"
+    },
+    {
+      "code": "E133",
+      "criticalEndpointRaw": [
+        "18c92e48-1f08-431d-8058-eca28c5af730",
+        "18c92e48-1f08-431d-8058-eca28c5af730"
+      ],
+      "studyContext": {
+        "type": "unknown"
+      },
+      "species": null,
+      "referencePoint": null,
+      "sourceAssessment": {
+        "title": "Scientific Opinion on the re-evaluation of Brilliant Blue FCF (E 133) as a food additive",
+        "year": "2010",
+        "doi": "10.2903/j.efsa.2010.1853",
+        "url": "https://doi.org/10.2903/j.efsa.2010.1853",
+        "efsaOutputId": "EFSA-Q-2008-233"
+      },
+      "normalizedSeverity": "unknown",
+      "normalizedEvidence": "insufficient"
+    },
+    {
+      "code": "E171",
+      "criticalEndpointRaw": [
+        "f20dc4ec-be85-4df6-96a0-77b8cd88ddc8",
+        "f20dc4ec-be85-4df6-96a0-77b8cd88ddc8",
+        "f20dc4ec-be85-4df6-96a0-77b8cd88ddc8",
+        "f20dc4ec-be85-4df6-96a0-77b8cd88ddc8",
+        "f20dc4ec-be85-4df6-96a0-77b8cd88ddc8",
+        "f20dc4ec-be85-4df6-96a0-77b8cd88ddc8",
+        "f20dc4ec-be85-4df6-96a0-77b8cd88ddc8",
+        "f20dc4ec-be85-4df6-96a0-77b8cd88ddc8",
+        "f20dc4ec-be85-4df6-96a0-77b8cd88ddc8",
+        "f20dc4ec-be85-4df6-96a0-77b8cd88ddc8",
+        "f20dc4ec-be85-4df6-96a0-77b8cd88ddc8",
+        "f20dc4ec-be85-4df6-96a0-77b8cd88ddc8"
+      ],
+      "studyContext": {
+        "type": "unknown"
+      },
+      "species": null,
+      "referencePoint": null,
+      "sourceAssessment": {
+        "title": "Safety assessment of titanium dioxide (E171) as a food additive",
+        "year": "2021",
+        "doi": "10.2903/j.efsa.2021.6585",
+        "url": "https://doi.org/10.2903/j.efsa.2021.6585",
+        "efsaOutputId": "EFSA-Q-2020-00262"
+      },
+      "normalizedSeverity": "unknown",
+      "normalizedEvidence": "insufficient"
+    }
+  ],
+  "noEffectDataAvailable": [
+    "E1103",
+    "E1105",
+    "E1207",
+    "E127",
+    "E131",
+    "E1413",
+    "E1505",
+    "E151",
+    "E153",
+    "E161G",
+    "E174",
+    "E203",
+    "E215",
+    "E219",
+    "E220",
+    "E221",
+    "E222",
+    "E226",
+    "E227",
+    "E228",
+    "E246",
+    "E260",
+    "E261",
+    "E263",
+    "E290",
+    "E297",
+    "E307",
+    "E325",
+    "E326",
+    "E327",
+    "E333",
+    "E339",
+    "E340",
+    "E350",
+    "E351",
+    "E355",
+    "E356",
+    "E357",
+    "E363",
+    "E385",
+    "E392",
+    "E406",
+    "E421",
+    "E423",
+    "E427",
+    "E431",
+    "E432",
+    "E434",
+    "E435",
+    "E436",
+    "E440",
+    "E475",
+    "E479B",
+    "E500",
+    "E501",
+    "E523",
+    "E524",
+    "E525",
+    "E526",
+    "E527",
+    "E528",
+    "E529",
+    "E530",
+    "E556",
+    "E559",
+    "E570",
+    "E574",
+    "E576",
+    "E585",
+    "E621",
+    "E623",
+    "E626",
+    "E627",
+    "E629",
+    "E631",
+    "E633",
+    "E634",
+    "E635",
+    "E641",
+    "E904",
+    "E927B",
+    "E938",
+    "E939",
+    "E941",
+    "E942",
+    "E943A",
+    "E944",
+    "E948",
+    "E953",
+    "E959",
+    "E962",
+    "E965",
+    "E966",
+    "E967"
+  ],
+  "scientificConcernBefore": {
+    "no_identified_concern": 47,
+    "limited": 168,
+    "moderate": 0,
+    "high": 0,
+    "insufficient_data": 126
+  },
+  "scientificConcernAfter": {
+    "no_identified_concern": 47,
+    "limited": 0,
+    "moderate": 0,
+    "high": 0,
+    "insufficient_data": 294
+  },
+  "openFoodToxFieldsInspected": [
+    "END_SUM",
+    "FLEX_SUM.ToxRefValues",
+    "DOSSIER",
+    "DOSSIER_DOCS",
+    "humanHealthEffects",
+    "assessmentDomain",
+    "assessmentReferences",
+    "referenceValues",
+    "criticalEndpoint",
+    "justification",
+    "population",
+    "unit",
+    "lowerValue",
+    "upperValue"
+  ],
+  "normalizationPolicy": {
+    "severity": "explicit structured severity only; otherwise unknown",
+    "evidenceLevel": "explicit effect evidence only; otherwise insufficient",
+    "studyContext": "structured study fields only; assessmentDomain is not used as population",
+    "criticalEndpoint": "preserved when present, never converted automatically to serious",
+    "appliesTo": "structured appliesTo when present; legacy textual contaminant/metabolite/degradation distinction retained; animal is studyContext only",
+    "provenance": "authority, dataset, assessmentId, sourceUrl, sourceTable, sourceRecordId preserved"
+  },
+  "noRuntimeEngineChanges": true,
+  "noSupabaseWrites": true
+}

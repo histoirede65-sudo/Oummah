@@ -1,0 +1,793 @@
+{
+  "schemaVersion": "1.0",
+  "auditVersion": "17B-v1",
+  "generatedAt": "2026-09-30T23:39:58.047Z",
+  "mode": "offline-diagnostic-only",
+  "severityDistribution": {
+    "none": 668,
+    "low": 0,
+    "moderate": 0,
+    "serious": 0,
+    "unknown": 0
+  },
+  "evidenceDistribution": {
+    "insufficient": 0,
+    "limited": 668,
+    "moderate": 0,
+    "strong": 0
+  },
+  "profilesWithSeverity": {
+    "low": [],
+    "moderate": [],
+    "serious": []
+  },
+  "severityEvidenceMatrix": {
+    "none|insufficient": 0,
+    "none|limited": 668,
+    "none|moderate": 0,
+    "none|strong": 0,
+    "low|insufficient": 0,
+    "low|limited": 0,
+    "low|moderate": 0,
+    "low|strong": 0,
+    "moderate|insufficient": 0,
+    "moderate|limited": 0,
+    "moderate|moderate": 0,
+    "moderate|strong": 0,
+    "serious|insufficient": 0,
+    "serious|limited": 0,
+    "serious|moderate": 0,
+    "serious|strong": 0,
+    "unknown|insufficient": 0,
+    "unknown|limited": 0,
+    "unknown|moderate": 0,
+    "unknown|strong": 0
+  },
+  "studyContextDistribution": {
+    "structuredStudyContext": {
+      "human": 0,
+      "animal": 0,
+      "in_vitro": 0,
+      "mixed": 0,
+      "unknown": 668,
+      "structured": 0
+    },
+    "normalizedAssessmentContext": {
+      "food_additive_human": 668,
+      "unknown": 0
+    },
+    "textualAnimalMentions": 206,
+    "humanAnimalInVitroCounts": {
+      "human": 0,
+      "animal": 0,
+      "in_vitro": 0,
+      "mixed": 0,
+      "unknown": 668
+    }
+  },
+  "effectSourceDistribution": {
+    "OpenFoodTox_humanHealthEffects": 668,
+    "JECFA": 0,
+    "other_or_legacy": 0
+  },
+  "criticalEffectCoverage": {
+    "profilesWithCriticalEffect": 7,
+    "effectRecordsWithCriticalEffect": 43,
+    "preservedOnPotentialEffects": 0,
+    "criticalProfiles": [
+      "E102",
+      "E122",
+      "E124",
+      "E129",
+      "E132",
+      "E133",
+      "E171"
+    ]
+  },
+  "generatorAudit": {
+    "builder": "scripts/additives/build-additive-scientific-profiles.mjs",
+    "potentialEffectsSource": "item.efsa.humanHealthEffects",
+    "effect": "all truthy raw fields concatenated into text",
+    "severity": "hardcoded none",
+    "evidenceLevel": "hardcoded limited",
+    "appliesTo": "regex text mapping: contaminant/metabolite/degradation_product, otherwise additive",
+    "evidenceContext": "item.efsa.assessmentDomain",
+    "authority": "EFSA",
+    "source": "item.efsa.latestAssessment.url"
+  },
+  "jecfaAudit": {
+    "evaluationCount": 729,
+    "withComments": 0,
+    "withToxicologyMonograph": 0,
+    "withCriticalEffect": 0,
+    "withStructuredScope": 729,
+    "sourceSentencesPreservedInExposureAssessments": 13
+  },
+  "limitedBreakdown": {
+    "low_limited": 0,
+    "low_moderate": 0,
+    "low_strong": 0,
+    "none_limited": 168,
+    "other": 0
+  },
+  "noConcernAudit": {
+    "total": 47,
+    "withoutPotentialEffects": 47,
+    "withOnlyNoneEffects": 0,
+    "withSecondaryEffects": 0,
+    "codesWithoutEffects": [
+      "E127",
+      "E131",
+      "E151",
+      "E153",
+      "E161G",
+      "E174",
+      "E246",
+      "E263",
+      "E290",
+      "E297",
+      "E307",
+      "E325",
+      "E326",
+      "E327",
+      "E355",
+      "E356",
+      "E357",
+      "E363",
+      "E392",
+      "E421",
+      "E427",
+      "E431",
+      "E440",
+      "E475",
+      "E479B",
+      "E501",
+      "E528",
+      "E530",
+      "E556",
+      "E576",
+      "E585",
+      "E626",
+      "E629",
+      "E633",
+      "E634",
+      "E635",
+      "E641",
+      "E939",
+      "E941",
+      "E942",
+      "E943A",
+      "E944",
+      "E953",
+      "E966",
+      "E967",
+      "E1105",
+      "E1207"
+    ]
+  },
+  "potentialConcernEscalationCandidates": [
+    {
+      "code": "E102",
+      "name": "Tartrazine",
+      "severity": [
+        "none"
+      ],
+      "evidence": [
+        "limited"
+      ],
+      "criticalEffectRecords": 5,
+      "reason": "critical_endpoint_structured_but_not_normalized_into_potentialEffects"
+    },
+    {
+      "code": "E122",
+      "name": "Azorubine, Carmoisine",
+      "severity": [
+        "none"
+      ],
+      "evidence": [
+        "limited"
+      ],
+      "criticalEffectRecords": 2,
+      "reason": "critical_endpoint_structured_but_not_normalized_into_potentialEffects"
+    },
+    {
+      "code": "E124",
+      "name": "Ponceau 4R, Cochineal Red A",
+      "severity": [
+        "none"
+      ],
+      "evidence": [
+        "limited"
+      ],
+      "criticalEffectRecords": 3,
+      "reason": "critical_endpoint_structured_but_not_normalized_into_potentialEffects"
+    },
+    {
+      "code": "E129",
+      "name": "Allura Red AC",
+      "severity": [
+        "none"
+      ],
+      "evidence": [
+        "limited"
+      ],
+      "criticalEffectRecords": 17,
+      "reason": "critical_endpoint_structured_but_not_normalized_into_potentialEffects"
+    },
+    {
+      "code": "E132",
+      "name": "Indigotine, Indigo carmine",
+      "severity": [
+        "none"
+      ],
+      "evidence": [
+        "limited"
+      ],
+      "criticalEffectRecords": 2,
+      "reason": "critical_endpoint_structured_but_not_normalized_into_potentialEffects"
+    },
+    {
+      "code": "E133",
+      "name": "Brilliant Blue FCF",
+      "severity": [
+        "none"
+      ],
+      "evidence": [
+        "limited"
+      ],
+      "criticalEffectRecords": 2,
+      "reason": "critical_endpoint_structured_but_not_normalized_into_potentialEffects"
+    },
+    {
+      "code": "E171",
+      "name": "Titanium dioxide",
+      "severity": [
+        "none"
+      ],
+      "evidence": [
+        "limited"
+      ],
+      "criticalEffectRecords": 12,
+      "reason": "critical_endpoint_structured_but_not_normalized_into_potentialEffects"
+    }
+  ],
+  "informationLosses": {
+    "SEVERITY_DEFAULTED": 668,
+    "EVIDENCE_DEFAULTED": 668,
+    "CRITICAL_EFFECT_NOT_PRESERVED": 43,
+    "STUDY_CONTEXT_NOT_PRESERVED": 668,
+    "HUMAN_ANIMAL_CONTEXT_LOST": 206,
+    "AUTHORITY_SIGNAL_NOT_STRUCTURED": 253,
+    "NO_INFORMATION_TREATED_AS_NO_CONCERN": 47,
+    "SCIENTIFIC_DATA_TRULY_LIMITED": 126
+  },
+  "spotChecks": [
+    {
+      "code": "E150D",
+      "rawPotentialEffects": [
+        {
+          "effect": "Discussion.Discussion: The ANS Panel provides a scientific opinion re-evaluating the safety of the caramel colours (E150a (Class I), E150b (Class II), E150c (Class III), E150d (Class IV)) used as food additives. KeyInformation.KeyInformation: Mutagenic: No data; Carcinogenic: No data",
+          "severity": "none",
+          "evidenceLevel": "limited",
+          "appliesTo": "additive",
+          "evidenceContext": "food_additive_human",
+          "authority": "EFSA",
+          "source": "https://doi.org/10.2903/j.efsa.2011.2004"
+        },
+        {
+          "effect": "Discussion.Discussion: The ANS Panel provides a scientific opinion re-evaluating the safety of the caramel colours (E150a (Class I), E150b (Class II), E150c (Class III), E150d (Class IV)) used as food additives. KeyInformation.KeyInformation: Genotoxic: No data",
+          "severity": "none",
+          "evidenceLevel": "limited",
+          "appliesTo": "additive",
+          "evidenceContext": "food_additive_human",
+          "authority": "EFSA",
+          "source": "https://doi.org/10.2903/j.efsa.2011.2004"
+        }
+      ],
+      "severity": [
+        "none"
+      ],
+      "evidence": [
+        "limited"
+      ],
+      "effectSourceType": [
+        "OpenFoodTox_humanHealthEffects"
+      ],
+      "studyContext": [
+        "unknown"
+      ],
+      "criticalEffects": [],
+      "scientificConcern": {
+        "concernLevel": "limited",
+        "confidence": "medium",
+        "hazard": "none_identified",
+        "evidence": "limited",
+        "effectsUsed": [
+          {
+            "effect": "Discussion.Discussion: The ANS Panel provides a scientific opinion re-evaluating the safety of the caramel colours (E150a (Class I), E150b (Class II), E150c (Class III), E150d (Class IV)) used as food additives. KeyInformation.KeyInformation: Mutagenic: No data; Carcinogenic: No data",
+            "severity": "none",
+            "evidenceLevel": "limited",
+            "appliesTo": "additive"
+          },
+          {
+            "effect": "Discussion.Discussion: The ANS Panel provides a scientific opinion re-evaluating the safety of the caramel colours (E150a (Class I), E150b (Class II), E150c (Class III), E150d (Class IV)) used as food additives. KeyInformation.KeyInformation: Genotoxic: No data",
+            "severity": "none",
+            "evidenceLevel": "limited",
+            "appliesTo": "additive"
+          }
+        ],
+        "authoritySignals": [],
+        "authorityEvaluations": [
+          {
+            "authority": "EFSA",
+            "assessmentScope": "family",
+            "coveredCodes": [
+              "E150A",
+              "E150B",
+              "E150C",
+              "E150D"
+            ]
+          }
+        ],
+        "sources": [
+          {
+            "organisation": "EFSA",
+            "title": "EFSA OpenFoodTox 3.0 structured record",
+            "url": "https://doi.org/10.2903/j.efsa.2011.2004",
+            "sourceType": "official_information"
+          }
+        ],
+        "provenance": true,
+        "reasons": [
+          "Danger additif maximal observé : none.",
+          "Niveau de preuve normalisé : limited.",
+          "La portée familiale est conservée et réduit la précision individuelle.",
+          "EFSA/JECFA seuls ne créent pas un niveau de préoccupation sans signal structuré supplémentaire."
+        ]
+      },
+      "exposureRisk": {
+        "riskLevel": "insufficient_data",
+        "confidence": "medium",
+        "reasons": [
+          "Danger additif maximal observé : none.",
+          "Niveau de preuve normalisé : limited.",
+          "La portée familiale est conservée et réduit la précision individuelle.",
+          "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+        ],
+        "evidenceSummary": "Preuves limitées disponibles.",
+        "exposureSummary": "Exposition individuelle inconnue."
+      },
+      "reason": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "La portée familiale est conservée et réduit la précision individuelle.",
+        "EFSA/JECFA seuls ne créent pas un niveau de préoccupation sans signal structuré supplémentaire."
+      ]
+    },
+    {
+      "code": "E338",
+      "rawPotentialEffects": [],
+      "severity": [],
+      "evidence": [],
+      "effectSourceType": [],
+      "studyContext": [],
+      "criticalEffects": [],
+      "scientificConcern": {
+        "concernLevel": "insufficient_data",
+        "confidence": "low",
+        "reasons": [
+          "Profil scientifique absent."
+        ],
+        "hazard": "unknown",
+        "evidence": "insufficient",
+        "effectsUsed": [],
+        "authoritySignals": [],
+        "sources": []
+      },
+      "exposureRisk": {
+        "riskLevel": "insufficient_data",
+        "confidence": "low",
+        "reasons": [
+          "Profil scientifique absent."
+        ]
+      },
+      "reason": [
+        "Profil scientifique absent."
+      ]
+    },
+    {
+      "code": "E621",
+      "rawPotentialEffects": [],
+      "severity": [],
+      "evidence": [],
+      "effectSourceType": [],
+      "studyContext": [],
+      "criticalEffects": [],
+      "scientificConcern": {
+        "concernLevel": "insufficient_data",
+        "confidence": "medium",
+        "hazard": "none_identified",
+        "evidence": "limited",
+        "effectsUsed": [],
+        "authoritySignals": [],
+        "authorityEvaluations": [
+          {
+            "authority": "JECFA",
+            "assessmentScope": "group",
+            "coveredCodes": [
+              "E621"
+            ]
+          },
+          {
+            "authority": "JECFA",
+            "assessmentScope": "group",
+            "coveredCodes": [
+              "E621"
+            ]
+          },
+          {
+            "authority": "JECFA",
+            "assessmentScope": "group",
+            "coveredCodes": [
+              "E621"
+            ]
+          }
+        ],
+        "sources": [
+          {
+            "organisation": "EFSA",
+            "title": "EFSA OpenFoodTox 3.0 structured record",
+            "url": "https://www.efsa.europa.eu/en/data-report/chemical-hazards-database-openfoodtox",
+            "sourceType": "official_information"
+          }
+        ],
+        "provenance": true,
+        "reasons": [
+          "Aucun danger pertinent identifié dans les signaux additifs disponibles.",
+          "Niveau de preuve normalisé : limited.",
+          "EFSA/JECFA seuls ne créent pas un niveau de préoccupation sans signal structuré supplémentaire."
+        ]
+      },
+      "exposureRisk": {
+        "riskLevel": "insufficient_data",
+        "confidence": "high",
+        "reasons": [
+          "Aucun danger pertinent identifié dans les signaux additifs disponibles.",
+          "Niveau de preuve normalisé : limited.",
+          "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+        ],
+        "evidenceSummary": "Preuves limitées disponibles.",
+        "exposureSummary": "NOT SPECIFIED Comments: Group ADI for L-glutamic acid and its ammonium, calcium, monosodium, magnesium and potassium salts; NOT SPECIFIED Comments: Group ADI for L-glutamic acid and its ammonium, calcium, monosodium, magnesium and potassium salts; NOT SPECIFIED Comments: Group ADI for L-glutamic acid and its ammonium, calcium, monosodium, magnesium and potassium salts"
+      },
+      "reason": [
+        "Aucun danger pertinent identifié dans les signaux additifs disponibles.",
+        "Niveau de preuve normalisé : limited.",
+        "EFSA/JECFA seuls ne créent pas un niveau de préoccupation sans signal structuré supplémentaire."
+      ]
+    },
+    {
+      "code": "E951",
+      "rawPotentialEffects": [],
+      "severity": [],
+      "evidence": [],
+      "effectSourceType": [],
+      "studyContext": [],
+      "criticalEffects": [],
+      "scientificConcern": {
+        "concernLevel": "insufficient_data",
+        "confidence": "low",
+        "reasons": [
+          "Profil scientifique absent."
+        ],
+        "hazard": "unknown",
+        "evidence": "insufficient",
+        "effectsUsed": [],
+        "authoritySignals": [],
+        "sources": []
+      },
+      "exposureRisk": {
+        "riskLevel": "insufficient_data",
+        "confidence": "low",
+        "reasons": [
+          "Profil scientifique absent."
+        ]
+      },
+      "reason": [
+        "Profil scientifique absent."
+      ]
+    },
+    {
+      "code": "E955",
+      "rawPotentialEffects": [],
+      "severity": [],
+      "evidence": [],
+      "effectSourceType": [],
+      "studyContext": [],
+      "criticalEffects": [],
+      "scientificConcern": {
+        "concernLevel": "insufficient_data",
+        "confidence": "low",
+        "reasons": [
+          "Profil scientifique absent."
+        ],
+        "hazard": "unknown",
+        "evidence": "insufficient",
+        "effectsUsed": [],
+        "authoritySignals": [],
+        "sources": []
+      },
+      "exposureRisk": {
+        "riskLevel": "insufficient_data",
+        "confidence": "low",
+        "reasons": [
+          "Profil scientifique absent."
+        ]
+      },
+      "reason": [
+        "Profil scientifique absent."
+      ]
+    },
+    {
+      "code": "E202",
+      "rawPotentialEffects": [],
+      "severity": [],
+      "evidence": [],
+      "effectSourceType": [],
+      "studyContext": [],
+      "criticalEffects": [],
+      "scientificConcern": {
+        "concernLevel": "insufficient_data",
+        "confidence": "low",
+        "reasons": [
+          "Profil scientifique absent."
+        ],
+        "hazard": "unknown",
+        "evidence": "insufficient",
+        "effectsUsed": [],
+        "authoritySignals": [],
+        "sources": []
+      },
+      "exposureRisk": {
+        "riskLevel": "insufficient_data",
+        "confidence": "low",
+        "reasons": [
+          "Profil scientifique absent."
+        ]
+      },
+      "reason": [
+        "Profil scientifique absent."
+      ]
+    },
+    {
+      "code": "E330",
+      "rawPotentialEffects": [],
+      "severity": [],
+      "evidence": [],
+      "effectSourceType": [],
+      "studyContext": [],
+      "criticalEffects": [],
+      "scientificConcern": {
+        "concernLevel": "insufficient_data",
+        "confidence": "low",
+        "reasons": [
+          "Profil scientifique absent."
+        ],
+        "hazard": "unknown",
+        "evidence": "insufficient",
+        "effectsUsed": [],
+        "authoritySignals": [],
+        "sources": []
+      },
+      "exposureRisk": {
+        "riskLevel": "insufficient_data",
+        "confidence": "low",
+        "reasons": [
+          "Profil scientifique absent."
+        ]
+      },
+      "reason": [
+        "Profil scientifique absent."
+      ]
+    },
+    {
+      "code": "E407",
+      "rawPotentialEffects": [],
+      "severity": [],
+      "evidence": [],
+      "effectSourceType": [],
+      "studyContext": [],
+      "criticalEffects": [],
+      "scientificConcern": {
+        "concernLevel": "insufficient_data",
+        "confidence": "low",
+        "reasons": [
+          "Profil scientifique absent."
+        ],
+        "hazard": "unknown",
+        "evidence": "insufficient",
+        "effectsUsed": [],
+        "authoritySignals": [],
+        "sources": []
+      },
+      "exposureRisk": {
+        "riskLevel": "insufficient_data",
+        "confidence": "low",
+        "reasons": [
+          "Profil scientifique absent."
+        ]
+      },
+      "reason": [
+        "Profil scientifique absent."
+      ]
+    },
+    {
+      "code": "E471",
+      "rawPotentialEffects": [
+        {
+          "effect": "Discussion.Discussion: The EFSA Panel on Food Additives and Nutrient Sources added to Food (ANS) provides a scientific opinion re-evaluating the safety of mono- and di-glycerides of fatty acids (E 471) when used as a food additive. KeyInformation.KeyInformation: Mutagenic: Negative; Carcinogenic: Negative",
+          "severity": "none",
+          "evidenceLevel": "limited",
+          "appliesTo": "additive",
+          "evidenceContext": "food_additive_human",
+          "authority": "EFSA",
+          "source": "https://doi.org/10.2903/j.efsa.2017.5045"
+        },
+        {
+          "effect": "Discussion.Discussion: The EFSA Panel on Food Additives and Nutrient Sources added to Food (ANS) provides a scientific opinion re-evaluating the safety of mono- and di-glycerides of fatty acids (E 471) when used as a food additive. KeyInformation.KeyInformation: Genotoxic: Negative",
+          "severity": "none",
+          "evidenceLevel": "limited",
+          "appliesTo": "additive",
+          "evidenceContext": "food_additive_human",
+          "authority": "EFSA",
+          "source": "https://doi.org/10.2903/j.efsa.2017.5045"
+        }
+      ],
+      "severity": [
+        "none"
+      ],
+      "evidence": [
+        "limited"
+      ],
+      "effectSourceType": [
+        "OpenFoodTox_humanHealthEffects"
+      ],
+      "studyContext": [
+        "unknown"
+      ],
+      "criticalEffects": [],
+      "scientificConcern": {
+        "concernLevel": "limited",
+        "confidence": "high",
+        "hazard": "none_identified",
+        "evidence": "limited",
+        "effectsUsed": [
+          {
+            "effect": "Discussion.Discussion: The EFSA Panel on Food Additives and Nutrient Sources added to Food (ANS) provides a scientific opinion re-evaluating the safety of mono- and di-glycerides of fatty acids (E 471) when used as a food additive. KeyInformation.KeyInformation: Mutagenic: Negative; Carcinogenic: Negative",
+            "severity": "none",
+            "evidenceLevel": "limited",
+            "appliesTo": "additive"
+          },
+          {
+            "effect": "Discussion.Discussion: The EFSA Panel on Food Additives and Nutrient Sources added to Food (ANS) provides a scientific opinion re-evaluating the safety of mono- and di-glycerides of fatty acids (E 471) when used as a food additive. KeyInformation.KeyInformation: Genotoxic: Negative",
+            "severity": "none",
+            "evidenceLevel": "limited",
+            "appliesTo": "additive"
+          }
+        ],
+        "authoritySignals": [],
+        "authorityEvaluations": [
+          {
+            "authority": "EFSA",
+            "assessmentScope": "individual",
+            "coveredCodes": [
+              "E471"
+            ]
+          },
+          {
+            "authority": "JECFA",
+            "assessmentScope": "individual",
+            "coveredCodes": [
+              "E471"
+            ]
+          },
+          {
+            "authority": "JECFA",
+            "assessmentScope": "individual",
+            "coveredCodes": [
+              "E471"
+            ]
+          },
+          {
+            "authority": "JECFA",
+            "assessmentScope": "individual",
+            "coveredCodes": [
+              "E471"
+            ]
+          },
+          {
+            "authority": "JECFA",
+            "assessmentScope": "individual",
+            "coveredCodes": [
+              "E471"
+            ]
+          },
+          {
+            "authority": "JECFA",
+            "assessmentScope": "individual",
+            "coveredCodes": [
+              "E471"
+            ]
+          },
+          {
+            "authority": "JECFA",
+            "assessmentScope": "individual",
+            "coveredCodes": [
+              "E471"
+            ]
+          }
+        ],
+        "sources": [
+          {
+            "organisation": "EFSA",
+            "title": "EFSA OpenFoodTox 3.0 structured record",
+            "url": "https://doi.org/10.2903/j.efsa.2017.5045",
+            "sourceType": "official_information"
+          }
+        ],
+        "provenance": true,
+        "reasons": [
+          "Danger additif maximal observé : none.",
+          "Niveau de preuve normalisé : limited.",
+          "EFSA/JECFA seuls ne créent pas un niveau de préoccupation sans signal structuré supplémentaire."
+        ]
+      },
+      "exposureRisk": {
+        "riskLevel": "insufficient_data",
+        "confidence": "high",
+        "reasons": [
+          "Danger additif maximal observé : none.",
+          "Niveau de preuve normalisé : limited.",
+          "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+        ],
+        "evidenceSummary": "Preuves limitées disponibles.",
+        "exposureSummary": "Assessment: low concern; Remarks: According to the conceptual framework for the risk assessment of certain food additives re-evaluated under Commission Regulation (EU) No 257/2010 (EFSA ANS Panel, 2014) and given that: a) mono- and di-glycerides of fatty acids are subjected to hydrolysis by lipases ; consumers; 64c221a4-aecc-4c8b-ab11-c54458b288c7; other:; margin of safety; NOT LIMITED; NOT LIMITED; NOT LIMITED; NOT LIMITED; NOT LIMITED; NOT LIMITED"
+      },
+      "reason": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "EFSA/JECFA seuls ne créent pas un niveau de préoccupation sans signal structuré supplémentaire."
+      ]
+    },
+    {
+      "code": "E250",
+      "rawPotentialEffects": [],
+      "severity": [],
+      "evidence": [],
+      "effectSourceType": [],
+      "studyContext": [],
+      "criticalEffects": [],
+      "scientificConcern": {
+        "concernLevel": "insufficient_data",
+        "confidence": "low",
+        "reasons": [
+          "Profil scientifique absent."
+        ],
+        "hazard": "unknown",
+        "evidence": "insufficient",
+        "effectsUsed": [],
+        "authoritySignals": [],
+        "sources": []
+      },
+      "exposureRisk": {
+        "riskLevel": "insufficient_data",
+        "confidence": "low",
+        "reasons": [
+          "Profil scientifique absent."
+        ]
+      },
+      "reason": [
+        "Profil scientifique absent."
+      ]
+    }
+  ]
+}

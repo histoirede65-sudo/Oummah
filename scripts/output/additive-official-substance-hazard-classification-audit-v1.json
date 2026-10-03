@@ -1,0 +1,3186 @@
+{
+  "schemaVersion": "additive-official-substance-hazard-classification-audit-v1",
+  "mode": "offline-audit-only",
+  "generatedAt": "2026-10-01T00:53:57.156Z",
+  "source": {
+    "clp": {
+      "authority": "ECHA / EU CLP Annex VI",
+      "url": "https://echa.europa.eu/information-on-chemicals/annex-vi-to-clp",
+      "legalSource": "https://eur-lex.europa.eu/eli/reg/2008/1272/oj/eng",
+      "localSnapshot": "scripts\\data\\clp-annex-vi-table3-2026-07-01.json",
+      "status": "loaded"
+    },
+    "iarc": {
+      "authority": "IARC Monographs",
+      "url": "https://monographs.iarc.who.int/iarc-monographs-preamble-preamble-to-the-iarc-monographs/",
+      "localSnapshot": "scripts\\data\\official-iarc-classifications.json",
+      "status": "not_loaded"
+    }
+  },
+  "matchingPolicy": {
+    "priority": [
+      "EC_EXACT",
+      "CAS_EXACT",
+      "OFFICIAL_IDENTIFIER_EXACT"
+    ],
+    "nameOnly": "rejected",
+    "fuzzy": false,
+    "noENumberRule": true,
+    "familiesAndMixtures": "ambiguous_or_excluded"
+  },
+  "identityCoverage": {
+    "totalCodes": 341,
+    "codesWithExactSubstanceIdentity": 221,
+    "codesWithCAS": 186,
+    "codesWithEC": 0,
+    "codesWithOfficialIdentifier": 221,
+    "codesWithoutSafeIdentity": 120,
+    "identitySource": "OpenFoodTox priorityBatch + EU additive catalog"
+  },
+  "clpCoverage": {
+    "codesWithHarmonisedCLP": 21,
+    "codesWithHumanHealthHarmonisedCLP": 20,
+    "codesWithOnlyEnvironmentalCLP": 0,
+    "codesWithOnlyPhysicalCLP": 1,
+    "codesWithoutHarmonisedClassification": 320,
+    "codesWithOnlyNotifiedClassification": 0,
+    "codesWithNoCLPClassification": 319,
+    "sourceAvailable": true
+  },
+  "harmonisedClassifications": [
+    {
+      "code": "E171",
+      "substanceName": "Titanium dioxide",
+      "CAS": [
+        "13463-67-7"
+      ],
+      "EC": [],
+      "clpIdentity": {
+        "indexNumber": "022-006-00-2",
+        "substanceName": "titanium dioxide; [in powder form containing 1 % or more of particles with aerodynamic diameter ≤ 10 μm]",
+        "CAS": [
+          "13463-67-7"
+        ],
+        "EC": [
+          "236-675-5"
+        ]
+      },
+      "matchType": "CAS_EXACT",
+      "classificationSource": "HARMONISED_CLASSIFICATION",
+      "harmonised": true,
+      "hazardClasses": [
+        {
+          "hazardClass": "Carc. 2",
+          "category": "",
+          "hazardStatement": "H351 (inhalation)",
+          "specificConcentrationLimit": null,
+          "notes": null,
+          "sourceReference": null,
+          "domain": "humanHealthHazards",
+          "foodAdditiveRelevance": "potentially_relevant",
+          "reason": "Classe CLP de danger pour la santé humaine ; le contexte d’exposition alimentaire reste à examiner séparément."
+        }
+      ],
+      "provenance": {
+        "sourceOrganisation": "European Union / EUR-Lex",
+        "regulation": "Regulation (EC) No 1272/2008",
+        "annex": "VI",
+        "part": "3",
+        "table": "3",
+        "consolidatedDate": "2026-07-01",
+        "sourceUrl": "https://eur-lex.europa.eu/eli/reg/2008/1272/2026-07-01",
+        "sourceLocation": "Annex VI / Part 3 / Table 3"
+      },
+      "scopeMatch": "exact_substance"
+    },
+    {
+      "code": "E210",
+      "substanceName": "Benzoic acid",
+      "CAS": [
+        "65-85-0"
+      ],
+      "EC": [],
+      "clpIdentity": {
+        "indexNumber": "607-705-00-8",
+        "substanceName": "benzoic acid",
+        "CAS": [
+          "65-85-0"
+        ],
+        "EC": [
+          "200-618-2"
+        ]
+      },
+      "matchType": "CAS_EXACT",
+      "classificationSource": "HARMONISED_CLASSIFICATION",
+      "harmonised": true,
+      "hazardClasses": [
+        {
+          "hazardClass": "STOT RE 1",
+          "category": "",
+          "hazardStatement": "H372 (lungs) (inhalation) H315 H318",
+          "specificConcentrationLimit": null,
+          "notes": null,
+          "sourceReference": null,
+          "domain": "humanHealthHazards",
+          "foodAdditiveRelevance": "potentially_relevant",
+          "reason": "Classe CLP de danger pour la santé humaine ; le contexte d’exposition alimentaire reste à examiner séparément."
+        },
+        {
+          "hazardClass": "Skin Irrit. 2",
+          "category": "",
+          "hazardStatement": "H372 (lungs) (inhalation) H315 H318",
+          "specificConcentrationLimit": null,
+          "notes": null,
+          "sourceReference": null,
+          "domain": "other",
+          "foodAdditiveRelevance": "context_required",
+          "reason": "Classe conservée ; sa pertinence alimentaire et humaine doit être vérifiée au cas par cas."
+        },
+        {
+          "hazardClass": "Eye Dam. 1",
+          "category": "",
+          "hazardStatement": "H372 (lungs) (inhalation) H315 H318",
+          "specificConcentrationLimit": null,
+          "notes": null,
+          "sourceReference": null,
+          "domain": "humanHealthHazards",
+          "foodAdditiveRelevance": "potentially_relevant",
+          "reason": "Classe CLP de danger pour la santé humaine ; le contexte d’exposition alimentaire reste à examiner séparément."
+        }
+      ],
+      "provenance": {
+        "sourceOrganisation": "European Union / EUR-Lex",
+        "regulation": "Regulation (EC) No 1272/2008",
+        "annex": "VI",
+        "part": "3",
+        "table": "3",
+        "consolidatedDate": "2026-07-01",
+        "sourceUrl": "https://eur-lex.europa.eu/eli/reg/2008/1272/2026-07-01",
+        "sourceLocation": "Annex VI / Part 3 / Table 3"
+      },
+      "scopeMatch": "exact_substance"
+    },
+    {
+      "code": "E220",
+      "substanceName": "Sulphur dioxide",
+      "CAS": [
+        "7446-09-5"
+      ],
+      "EC": [],
+      "clpIdentity": {
+        "indexNumber": "016-011-00-9",
+        "substanceName": "sulphur dioxide; sulfur dioxide",
+        "CAS": [
+          "7446-09-5"
+        ],
+        "EC": [
+          "231-195-2"
+        ]
+      },
+      "matchType": "CAS_EXACT",
+      "classificationSource": "HARMONISED_CLASSIFICATION",
+      "harmonised": true,
+      "hazardClasses": [
+        {
+          "hazardClass": "Press. Gas",
+          "category": "",
+          "hazardStatement": "H331 H370 (respiratory system) (inhalation) H314",
+          "specificConcentrationLimit": null,
+          "notes": null,
+          "sourceReference": null,
+          "domain": "physicalHazards",
+          "foodAdditiveRelevance": "context_required",
+          "reason": "Classe de danger physique conservée, sans influence sur le futur score Santé alimentaire."
+        },
+        {
+          "hazardClass": "Acute Tox. 3",
+          "category": "",
+          "hazardStatement": "H331 H370 (respiratory system) (inhalation) H314",
+          "specificConcentrationLimit": null,
+          "notes": null,
+          "sourceReference": null,
+          "domain": "humanHealthHazards",
+          "foodAdditiveRelevance": "potentially_relevant",
+          "reason": "Classe CLP de danger pour la santé humaine ; le contexte d’exposition alimentaire reste à examiner séparément."
+        },
+        {
+          "hazardClass": "STOT SE 1",
+          "category": "",
+          "hazardStatement": "H331 H370 (respiratory system) (inhalation) H314",
+          "specificConcentrationLimit": null,
+          "notes": null,
+          "sourceReference": null,
+          "domain": "humanHealthHazards",
+          "foodAdditiveRelevance": "potentially_relevant",
+          "reason": "Classe CLP de danger pour la santé humaine ; le contexte d’exposition alimentaire reste à examiner séparément."
+        },
+        {
+          "hazardClass": "Skin. Corr. 1B",
+          "category": "",
+          "hazardStatement": "H331 H370 (respiratory system) (inhalation) H314",
+          "specificConcentrationLimit": null,
+          "notes": null,
+          "sourceReference": null,
+          "domain": "humanHealthHazards",
+          "foodAdditiveRelevance": "potentially_relevant",
+          "reason": "Classe CLP de danger pour la santé humaine ; le contexte d’exposition alimentaire reste à examiner séparément."
+        }
+      ],
+      "provenance": {
+        "sourceOrganisation": "European Union / EUR-Lex",
+        "regulation": "Regulation (EC) No 1272/2008",
+        "annex": "VI",
+        "part": "3",
+        "table": "3",
+        "consolidatedDate": "2026-07-01",
+        "sourceUrl": "https://eur-lex.europa.eu/eli/reg/2008/1272/2026-07-01",
+        "sourceLocation": "Annex VI / Part 3 / Table 3"
+      },
+      "scopeMatch": "exact_substance"
+    },
+    {
+      "code": "E222",
+      "substanceName": "Sodium hydrogen sulphite",
+      "CAS": [
+        "7631-90-5"
+      ],
+      "EC": [],
+      "clpIdentity": {
+        "indexNumber": "016-064-00-8",
+        "substanceName": "sodium hydrogensulphite … %; sodium bisulphite . . . %",
+        "CAS": [
+          "7631-90-5"
+        ],
+        "EC": [
+          "231-548-0"
+        ]
+      },
+      "matchType": "CAS_EXACT",
+      "classificationSource": "HARMONISED_CLASSIFICATION",
+      "harmonised": true,
+      "hazardClasses": [
+        {
+          "hazardClass": "Acute Tox. 4 *",
+          "category": "",
+          "hazardStatement": "H302",
+          "specificConcentrationLimit": null,
+          "notes": null,
+          "sourceReference": null,
+          "domain": "humanHealthHazards",
+          "foodAdditiveRelevance": "potentially_relevant",
+          "reason": "Classe CLP de danger pour la santé humaine ; le contexte d’exposition alimentaire reste à examiner séparément."
+        }
+      ],
+      "provenance": {
+        "sourceOrganisation": "European Union / EUR-Lex",
+        "regulation": "Regulation (EC) No 1272/2008",
+        "annex": "VI",
+        "part": "3",
+        "table": "3",
+        "consolidatedDate": "2026-07-01",
+        "sourceUrl": "https://eur-lex.europa.eu/eli/reg/2008/1272/2026-07-01",
+        "sourceLocation": "Annex VI / Part 3 / Table 3"
+      },
+      "scopeMatch": "exact_substance"
+    },
+    {
+      "code": "E223",
+      "substanceName": "Sodium metabisulphite",
+      "CAS": [
+        "7681-57-4"
+      ],
+      "EC": [],
+      "clpIdentity": {
+        "indexNumber": "016-063-00-2",
+        "substanceName": "sodium metabisulphite",
+        "CAS": [
+          "7681-57-4"
+        ],
+        "EC": [
+          "231-673-0"
+        ]
+      },
+      "matchType": "CAS_EXACT",
+      "classificationSource": "HARMONISED_CLASSIFICATION",
+      "harmonised": true,
+      "hazardClasses": [
+        {
+          "hazardClass": "Acute Tox. 4 *",
+          "category": "",
+          "hazardStatement": "H302 H318",
+          "specificConcentrationLimit": null,
+          "notes": null,
+          "sourceReference": null,
+          "domain": "humanHealthHazards",
+          "foodAdditiveRelevance": "potentially_relevant",
+          "reason": "Classe CLP de danger pour la santé humaine ; le contexte d’exposition alimentaire reste à examiner séparément."
+        },
+        {
+          "hazardClass": "Eye Dam. 1",
+          "category": "",
+          "hazardStatement": "H302 H318",
+          "specificConcentrationLimit": null,
+          "notes": null,
+          "sourceReference": null,
+          "domain": "humanHealthHazards",
+          "foodAdditiveRelevance": "potentially_relevant",
+          "reason": "Classe CLP de danger pour la santé humaine ; le contexte d’exposition alimentaire reste à examiner séparément."
+        }
+      ],
+      "provenance": {
+        "sourceOrganisation": "European Union / EUR-Lex",
+        "regulation": "Regulation (EC) No 1272/2008",
+        "annex": "VI",
+        "part": "3",
+        "table": "3",
+        "consolidatedDate": "2026-07-01",
+        "sourceUrl": "https://eur-lex.europa.eu/eli/reg/2008/1272/2026-07-01",
+        "sourceLocation": "Annex VI / Part 3 / Table 3"
+      },
+      "scopeMatch": "exact_substance"
+    },
+    {
+      "code": "E239",
+      "substanceName": "Hexamethylene tetramine",
+      "CAS": [
+        "100-97-0"
+      ],
+      "EC": [],
+      "clpIdentity": {
+        "indexNumber": "612-101-00-2",
+        "substanceName": "methenamine; hexamethylenetetramine",
+        "CAS": [
+          "100-97-0"
+        ],
+        "EC": [
+          "202-905-8"
+        ]
+      },
+      "matchType": "CAS_EXACT",
+      "classificationSource": "HARMONISED_CLASSIFICATION",
+      "harmonised": true,
+      "hazardClasses": [
+        {
+          "hazardClass": "Flam. Sol. 2",
+          "category": "",
+          "hazardStatement": "H228 H317",
+          "specificConcentrationLimit": null,
+          "notes": null,
+          "sourceReference": null,
+          "domain": "physicalHazards",
+          "foodAdditiveRelevance": "context_required",
+          "reason": "Classe de danger physique conservée, sans influence sur le futur score Santé alimentaire."
+        },
+        {
+          "hazardClass": "Skin Sens. 1",
+          "category": "",
+          "hazardStatement": "H228 H317",
+          "specificConcentrationLimit": null,
+          "notes": null,
+          "sourceReference": null,
+          "domain": "humanHealthHazards",
+          "foodAdditiveRelevance": "potentially_relevant",
+          "reason": "Classe CLP de danger pour la santé humaine ; le contexte d’exposition alimentaire reste à examiner séparément."
+        }
+      ],
+      "provenance": {
+        "sourceOrganisation": "European Union / EUR-Lex",
+        "regulation": "Regulation (EC) No 1272/2008",
+        "annex": "VI",
+        "part": "3",
+        "table": "3",
+        "consolidatedDate": "2026-07-01",
+        "sourceUrl": "https://eur-lex.europa.eu/eli/reg/2008/1272/2026-07-01",
+        "sourceLocation": "Annex VI / Part 3 / Table 3"
+      },
+      "scopeMatch": "exact_substance"
+    },
+    {
+      "code": "E249",
+      "substanceName": "Potassium nitrite",
+      "CAS": [
+        "7758-09-0"
+      ],
+      "EC": [],
+      "clpIdentity": {
+        "indexNumber": "007-011-00-X",
+        "substanceName": "potassium nitrite",
+        "CAS": [
+          "7758-09-0"
+        ],
+        "EC": [
+          "231-832-4"
+        ]
+      },
+      "matchType": "CAS_EXACT",
+      "classificationSource": "HARMONISED_CLASSIFICATION",
+      "harmonised": true,
+      "hazardClasses": [
+        {
+          "hazardClass": "Ox. Sol. 2",
+          "category": "",
+          "hazardStatement": "H272 H301 H400",
+          "specificConcentrationLimit": null,
+          "notes": null,
+          "sourceReference": null,
+          "domain": "physicalHazards",
+          "foodAdditiveRelevance": "context_required",
+          "reason": "Classe de danger physique conservée, sans influence sur le futur score Santé alimentaire."
+        },
+        {
+          "hazardClass": "Acute Tox. 3 *",
+          "category": "",
+          "hazardStatement": "H272 H301 H400",
+          "specificConcentrationLimit": null,
+          "notes": null,
+          "sourceReference": null,
+          "domain": "humanHealthHazards",
+          "foodAdditiveRelevance": "potentially_relevant",
+          "reason": "Classe CLP de danger pour la santé humaine ; le contexte d’exposition alimentaire reste à examiner séparément."
+        },
+        {
+          "hazardClass": "Aquatic Acute 1",
+          "category": "",
+          "hazardStatement": "H272 H301 H400",
+          "specificConcentrationLimit": null,
+          "notes": null,
+          "sourceReference": null,
+          "domain": "environmentalHazards",
+          "foodAdditiveRelevance": "not_relevant_to_health_score",
+          "reason": "Classe environnementale conservée mais exclue du futur score Santé alimentaire."
+        }
+      ],
+      "provenance": {
+        "sourceOrganisation": "European Union / EUR-Lex",
+        "regulation": "Regulation (EC) No 1272/2008",
+        "annex": "VI",
+        "part": "3",
+        "table": "3",
+        "consolidatedDate": "2026-07-01",
+        "sourceUrl": "https://eur-lex.europa.eu/eli/reg/2008/1272/2026-07-01",
+        "sourceLocation": "Annex VI / Part 3 / Table 3"
+      },
+      "scopeMatch": "exact_substance"
+    },
+    {
+      "code": "E260",
+      "substanceName": "Acetic acid",
+      "CAS": [
+        "64-19-7"
+      ],
+      "EC": [],
+      "clpIdentity": {
+        "indexNumber": "607-002-00-6",
+        "substanceName": "acetic acid … %",
+        "CAS": [
+          "64-19-7"
+        ],
+        "EC": [
+          "200-580-7"
+        ]
+      },
+      "matchType": "CAS_EXACT",
+      "classificationSource": "HARMONISED_CLASSIFICATION",
+      "harmonised": true,
+      "hazardClasses": [
+        {
+          "hazardClass": "Flam. Liq. 3",
+          "category": "",
+          "hazardStatement": "H226 H314",
+          "specificConcentrationLimit": null,
+          "notes": null,
+          "sourceReference": null,
+          "domain": "physicalHazards",
+          "foodAdditiveRelevance": "context_required",
+          "reason": "Classe de danger physique conservée, sans influence sur le futur score Santé alimentaire."
+        },
+        {
+          "hazardClass": "Skin Corr. 1A",
+          "category": "",
+          "hazardStatement": "H226 H314",
+          "specificConcentrationLimit": null,
+          "notes": null,
+          "sourceReference": null,
+          "domain": "humanHealthHazards",
+          "foodAdditiveRelevance": "potentially_relevant",
+          "reason": "Classe CLP de danger pour la santé humaine ; le contexte d’exposition alimentaire reste à examiner séparément."
+        }
+      ],
+      "provenance": {
+        "sourceOrganisation": "European Union / EUR-Lex",
+        "regulation": "Regulation (EC) No 1272/2008",
+        "annex": "VI",
+        "part": "3",
+        "table": "3",
+        "consolidatedDate": "2026-07-01",
+        "sourceUrl": "https://eur-lex.europa.eu/eli/reg/2008/1272/2026-07-01",
+        "sourceLocation": "Annex VI / Part 3 / Table 3"
+      },
+      "scopeMatch": "exact_substance"
+    },
+    {
+      "code": "E280",
+      "substanceName": "Propionic acid",
+      "CAS": [
+        "79-09-4"
+      ],
+      "EC": [],
+      "clpIdentity": {
+        "indexNumber": "607-089-00-0",
+        "substanceName": "propionic acid … %",
+        "CAS": [
+          "79-09-4"
+        ],
+        "EC": [
+          "201-176-3"
+        ]
+      },
+      "matchType": "CAS_EXACT",
+      "classificationSource": "HARMONISED_CLASSIFICATION",
+      "harmonised": true,
+      "hazardClasses": [
+        {
+          "hazardClass": "Skin Corr. 1B",
+          "category": "",
+          "hazardStatement": "H314",
+          "specificConcentrationLimit": null,
+          "notes": null,
+          "sourceReference": null,
+          "domain": "humanHealthHazards",
+          "foodAdditiveRelevance": "potentially_relevant",
+          "reason": "Classe CLP de danger pour la santé humaine ; le contexte d’exposition alimentaire reste à examiner séparément."
+        }
+      ],
+      "provenance": {
+        "sourceOrganisation": "European Union / EUR-Lex",
+        "regulation": "Regulation (EC) No 1272/2008",
+        "annex": "VI",
+        "part": "3",
+        "table": "3",
+        "consolidatedDate": "2026-07-01",
+        "sourceUrl": "https://eur-lex.europa.eu/eli/reg/2008/1272/2026-07-01",
+        "sourceLocation": "Annex VI / Part 3 / Table 3"
+      },
+      "scopeMatch": "exact_substance"
+    },
+    {
+      "code": "E297",
+      "substanceName": "Fumaric acid",
+      "CAS": [
+        "110-17-8"
+      ],
+      "EC": [],
+      "clpIdentity": {
+        "indexNumber": "607-146-00-X",
+        "substanceName": "fumaric acid",
+        "CAS": [
+          "110-17-8"
+        ],
+        "EC": [
+          "203-743-0"
+        ]
+      },
+      "matchType": "CAS_EXACT",
+      "classificationSource": "HARMONISED_CLASSIFICATION",
+      "harmonised": true,
+      "hazardClasses": [
+        {
+          "hazardClass": "Eye Irrit. 2",
+          "category": "",
+          "hazardStatement": "H319",
+          "specificConcentrationLimit": null,
+          "notes": null,
+          "sourceReference": null,
+          "domain": "humanHealthHazards",
+          "foodAdditiveRelevance": "potentially_relevant",
+          "reason": "Classe CLP de danger pour la santé humaine ; le contexte d’exposition alimentaire reste à examiner séparément."
+        }
+      ],
+      "provenance": {
+        "sourceOrganisation": "European Union / EUR-Lex",
+        "regulation": "Regulation (EC) No 1272/2008",
+        "annex": "VI",
+        "part": "3",
+        "table": "3",
+        "consolidatedDate": "2026-07-01",
+        "sourceUrl": "https://eur-lex.europa.eu/eli/reg/2008/1272/2026-07-01",
+        "sourceLocation": "Annex VI / Part 3 / Table 3"
+      },
+      "scopeMatch": "exact_substance"
+    },
+    {
+      "code": "E310",
+      "substanceName": "Propyl gallate",
+      "CAS": [
+        "121-79-9"
+      ],
+      "EC": [],
+      "clpIdentity": {
+        "indexNumber": "607-198-00-3",
+        "substanceName": "propyl 3,4,5-trihydroxybenzoate",
+        "CAS": [
+          "121-79-9"
+        ],
+        "EC": [
+          "204-498-2"
+        ]
+      },
+      "matchType": "CAS_EXACT",
+      "classificationSource": "HARMONISED_CLASSIFICATION",
+      "harmonised": true,
+      "hazardClasses": [
+        {
+          "hazardClass": "Acute Tox. 4",
+          "category": "",
+          "hazardStatement": "H302 H317 H400 H410",
+          "specificConcentrationLimit": null,
+          "notes": null,
+          "sourceReference": null,
+          "domain": "humanHealthHazards",
+          "foodAdditiveRelevance": "potentially_relevant",
+          "reason": "Classe CLP de danger pour la santé humaine ; le contexte d’exposition alimentaire reste à examiner séparément."
+        },
+        {
+          "hazardClass": "Skin Sens. 1",
+          "category": "",
+          "hazardStatement": "H302 H317 H400 H410",
+          "specificConcentrationLimit": null,
+          "notes": null,
+          "sourceReference": null,
+          "domain": "humanHealthHazards",
+          "foodAdditiveRelevance": "potentially_relevant",
+          "reason": "Classe CLP de danger pour la santé humaine ; le contexte d’exposition alimentaire reste à examiner séparément."
+        },
+        {
+          "hazardClass": "Aquatic Acute 1",
+          "category": "",
+          "hazardStatement": "H302 H317 H400 H410",
+          "specificConcentrationLimit": null,
+          "notes": null,
+          "sourceReference": null,
+          "domain": "environmentalHazards",
+          "foodAdditiveRelevance": "not_relevant_to_health_score",
+          "reason": "Classe environnementale conservée mais exclue du futur score Santé alimentaire."
+        },
+        {
+          "hazardClass": "Aquatic Chronic 1",
+          "category": "",
+          "hazardStatement": "H302 H317 H400 H410",
+          "specificConcentrationLimit": null,
+          "notes": null,
+          "sourceReference": null,
+          "domain": "environmentalHazards",
+          "foodAdditiveRelevance": "not_relevant_to_health_score",
+          "reason": "Classe environnementale conservée mais exclue du futur score Santé alimentaire."
+        }
+      ],
+      "provenance": {
+        "sourceOrganisation": "European Union / EUR-Lex",
+        "regulation": "Regulation (EC) No 1272/2008",
+        "annex": "VI",
+        "part": "3",
+        "table": "3",
+        "consolidatedDate": "2026-07-01",
+        "sourceUrl": "https://eur-lex.europa.eu/eli/reg/2008/1272/2026-07-01",
+        "sourceLocation": "Annex VI / Part 3 / Table 3"
+      },
+      "scopeMatch": "exact_substance"
+    },
+    {
+      "code": "E355",
+      "substanceName": "Adipic acid",
+      "CAS": [
+        "124-04-9"
+      ],
+      "EC": [],
+      "clpIdentity": {
+        "indexNumber": "607-144-00-9",
+        "substanceName": "adipic acid",
+        "CAS": [
+          "124-04-9"
+        ],
+        "EC": [
+          "204-673-3"
+        ]
+      },
+      "matchType": "CAS_EXACT",
+      "classificationSource": "HARMONISED_CLASSIFICATION",
+      "harmonised": true,
+      "hazardClasses": [
+        {
+          "hazardClass": "Eye Irrit. 2",
+          "category": "",
+          "hazardStatement": "H319",
+          "specificConcentrationLimit": null,
+          "notes": null,
+          "sourceReference": null,
+          "domain": "humanHealthHazards",
+          "foodAdditiveRelevance": "potentially_relevant",
+          "reason": "Classe CLP de danger pour la santé humaine ; le contexte d’exposition alimentaire reste à examiner séparément."
+        }
+      ],
+      "provenance": {
+        "sourceOrganisation": "European Union / EUR-Lex",
+        "regulation": "Regulation (EC) No 1272/2008",
+        "annex": "VI",
+        "part": "3",
+        "table": "3",
+        "consolidatedDate": "2026-07-01",
+        "sourceUrl": "https://eur-lex.europa.eu/eli/reg/2008/1272/2026-07-01",
+        "sourceLocation": "Annex VI / Part 3 / Table 3"
+      },
+      "scopeMatch": "exact_substance"
+    },
+    {
+      "code": "E500",
+      "substanceName": "Sodium carbonates",
+      "CAS": [
+        "497-19-8"
+      ],
+      "EC": [],
+      "clpIdentity": {
+        "indexNumber": "011-005-00-2",
+        "substanceName": "sodium carbonate",
+        "CAS": [
+          "497-19-8"
+        ],
+        "EC": [
+          "207-838-8"
+        ]
+      },
+      "matchType": "CAS_EXACT",
+      "classificationSource": "HARMONISED_CLASSIFICATION",
+      "harmonised": true,
+      "hazardClasses": [
+        {
+          "hazardClass": "Eye Irrit. 2",
+          "category": "",
+          "hazardStatement": "H319",
+          "specificConcentrationLimit": null,
+          "notes": null,
+          "sourceReference": null,
+          "domain": "humanHealthHazards",
+          "foodAdditiveRelevance": "potentially_relevant",
+          "reason": "Classe CLP de danger pour la santé humaine ; le contexte d’exposition alimentaire reste à examiner séparément."
+        }
+      ],
+      "provenance": {
+        "sourceOrganisation": "European Union / EUR-Lex",
+        "regulation": "Regulation (EC) No 1272/2008",
+        "annex": "VI",
+        "part": "3",
+        "table": "3",
+        "consolidatedDate": "2026-07-01",
+        "sourceUrl": "https://eur-lex.europa.eu/eli/reg/2008/1272/2026-07-01",
+        "sourceLocation": "Annex VI / Part 3 / Table 3"
+      },
+      "scopeMatch": "exact_substance"
+    },
+    {
+      "code": "E507",
+      "substanceName": "Hydrochloric acid",
+      "CAS": [
+        "7647-01-0"
+      ],
+      "EC": [],
+      "clpIdentity": {
+        "indexNumber": "017-002-00-2",
+        "substanceName": "hydrogen chloride",
+        "CAS": [
+          "7647-01-0"
+        ],
+        "EC": [
+          "231-595-7"
+        ]
+      },
+      "matchType": "CAS_EXACT",
+      "classificationSource": "HARMONISED_CLASSIFICATION",
+      "harmonised": true,
+      "hazardClasses": [
+        {
+          "hazardClass": "Press. Gas",
+          "category": "",
+          "hazardStatement": "H331 H314",
+          "specificConcentrationLimit": null,
+          "notes": null,
+          "sourceReference": null,
+          "domain": "physicalHazards",
+          "foodAdditiveRelevance": "context_required",
+          "reason": "Classe de danger physique conservée, sans influence sur le futur score Santé alimentaire."
+        },
+        {
+          "hazardClass": "Acute Tox. 3 *",
+          "category": "",
+          "hazardStatement": "H331 H314",
+          "specificConcentrationLimit": null,
+          "notes": null,
+          "sourceReference": null,
+          "domain": "humanHealthHazards",
+          "foodAdditiveRelevance": "potentially_relevant",
+          "reason": "Classe CLP de danger pour la santé humaine ; le contexte d’exposition alimentaire reste à examiner séparément."
+        },
+        {
+          "hazardClass": "Skin Corr. 1A",
+          "category": "",
+          "hazardStatement": "H331 H314",
+          "specificConcentrationLimit": null,
+          "notes": null,
+          "sourceReference": null,
+          "domain": "humanHealthHazards",
+          "foodAdditiveRelevance": "potentially_relevant",
+          "reason": "Classe CLP de danger pour la santé humaine ; le contexte d’exposition alimentaire reste à examiner séparément."
+        }
+      ],
+      "provenance": {
+        "sourceOrganisation": "European Union / EUR-Lex",
+        "regulation": "Regulation (EC) No 1272/2008",
+        "annex": "VI",
+        "part": "3",
+        "table": "3",
+        "consolidatedDate": "2026-07-01",
+        "sourceUrl": "https://eur-lex.europa.eu/eli/reg/2008/1272/2026-07-01",
+        "sourceLocation": "Annex VI / Part 3 / Table 3"
+      },
+      "scopeMatch": "exact_substance"
+    },
+    {
+      "code": "E509",
+      "substanceName": "Calcium chloride",
+      "CAS": [
+        "10043-52-4"
+      ],
+      "EC": [],
+      "clpIdentity": {
+        "indexNumber": "017-013-00-2",
+        "substanceName": "calcium chloride",
+        "CAS": [
+          "10043-52-4"
+        ],
+        "EC": [
+          "233-140-8"
+        ]
+      },
+      "matchType": "CAS_EXACT",
+      "classificationSource": "HARMONISED_CLASSIFICATION",
+      "harmonised": true,
+      "hazardClasses": [
+        {
+          "hazardClass": "Eye Irrit. 2",
+          "category": "",
+          "hazardStatement": "H319",
+          "specificConcentrationLimit": null,
+          "notes": null,
+          "sourceReference": null,
+          "domain": "humanHealthHazards",
+          "foodAdditiveRelevance": "potentially_relevant",
+          "reason": "Classe CLP de danger pour la santé humaine ; le contexte d’exposition alimentaire reste à examiner séparément."
+        }
+      ],
+      "provenance": {
+        "sourceOrganisation": "European Union / EUR-Lex",
+        "regulation": "Regulation (EC) No 1272/2008",
+        "annex": "VI",
+        "part": "3",
+        "table": "3",
+        "consolidatedDate": "2026-07-01",
+        "sourceUrl": "https://eur-lex.europa.eu/eli/reg/2008/1272/2026-07-01",
+        "sourceLocation": "Annex VI / Part 3 / Table 3"
+      },
+      "scopeMatch": "exact_substance"
+    },
+    {
+      "code": "E513",
+      "substanceName": "Sulphuric acid",
+      "CAS": [
+        "7664-93-9"
+      ],
+      "EC": [],
+      "clpIdentity": {
+        "indexNumber": "016-020-00-8",
+        "substanceName": "sulphuric acid … %",
+        "CAS": [
+          "7664-93-9"
+        ],
+        "EC": [
+          "231-639-5"
+        ]
+      },
+      "matchType": "CAS_EXACT",
+      "classificationSource": "HARMONISED_CLASSIFICATION",
+      "harmonised": true,
+      "hazardClasses": [
+        {
+          "hazardClass": "Skin Corr. 1A",
+          "category": "",
+          "hazardStatement": "H314",
+          "specificConcentrationLimit": null,
+          "notes": null,
+          "sourceReference": null,
+          "domain": "humanHealthHazards",
+          "foodAdditiveRelevance": "potentially_relevant",
+          "reason": "Classe CLP de danger pour la santé humaine ; le contexte d’exposition alimentaire reste à examiner séparément."
+        }
+      ],
+      "provenance": {
+        "sourceOrganisation": "European Union / EUR-Lex",
+        "regulation": "Regulation (EC) No 1272/2008",
+        "annex": "VI",
+        "part": "3",
+        "table": "3",
+        "consolidatedDate": "2026-07-01",
+        "sourceUrl": "https://eur-lex.europa.eu/eli/reg/2008/1272/2026-07-01",
+        "sourceLocation": "Annex VI / Part 3 / Table 3"
+      },
+      "scopeMatch": "exact_substance"
+    },
+    {
+      "code": "E524",
+      "substanceName": "Sodium hydroxide",
+      "CAS": [
+        "1310-73-2"
+      ],
+      "EC": [],
+      "clpIdentity": {
+        "indexNumber": "011-002-00-6",
+        "substanceName": "sodium hydroxide; caustic soda",
+        "CAS": [
+          "1310-73-2"
+        ],
+        "EC": [
+          "215-185-5"
+        ]
+      },
+      "matchType": "CAS_EXACT",
+      "classificationSource": "HARMONISED_CLASSIFICATION",
+      "harmonised": true,
+      "hazardClasses": [
+        {
+          "hazardClass": "Skin Corr. 1A",
+          "category": "",
+          "hazardStatement": "H314",
+          "specificConcentrationLimit": null,
+          "notes": null,
+          "sourceReference": null,
+          "domain": "humanHealthHazards",
+          "foodAdditiveRelevance": "potentially_relevant",
+          "reason": "Classe CLP de danger pour la santé humaine ; le contexte d’exposition alimentaire reste à examiner séparément."
+        }
+      ],
+      "provenance": {
+        "sourceOrganisation": "European Union / EUR-Lex",
+        "regulation": "Regulation (EC) No 1272/2008",
+        "annex": "VI",
+        "part": "3",
+        "table": "3",
+        "consolidatedDate": "2026-07-01",
+        "sourceUrl": "https://eur-lex.europa.eu/eli/reg/2008/1272/2026-07-01",
+        "sourceLocation": "Annex VI / Part 3 / Table 3"
+      },
+      "scopeMatch": "exact_substance"
+    },
+    {
+      "code": "E525",
+      "substanceName": "Potassium hydroxide",
+      "CAS": [
+        "1310-58-3"
+      ],
+      "EC": [],
+      "clpIdentity": {
+        "indexNumber": "019-002-00-8",
+        "substanceName": "potassium hydroxide; caustic potash",
+        "CAS": [
+          "1310-58-3"
+        ],
+        "EC": [
+          "215-181-3"
+        ]
+      },
+      "matchType": "CAS_EXACT",
+      "classificationSource": "HARMONISED_CLASSIFICATION",
+      "harmonised": true,
+      "hazardClasses": [
+        {
+          "hazardClass": "Acute Tox. 4 *",
+          "category": "",
+          "hazardStatement": "H302 H314",
+          "specificConcentrationLimit": null,
+          "notes": null,
+          "sourceReference": null,
+          "domain": "humanHealthHazards",
+          "foodAdditiveRelevance": "potentially_relevant",
+          "reason": "Classe CLP de danger pour la santé humaine ; le contexte d’exposition alimentaire reste à examiner séparément."
+        },
+        {
+          "hazardClass": "Skin Corr. 1A",
+          "category": "",
+          "hazardStatement": "H302 H314",
+          "specificConcentrationLimit": null,
+          "notes": null,
+          "sourceReference": null,
+          "domain": "humanHealthHazards",
+          "foodAdditiveRelevance": "potentially_relevant",
+          "reason": "Classe CLP de danger pour la santé humaine ; le contexte d’exposition alimentaire reste à examiner séparément."
+        }
+      ],
+      "provenance": {
+        "sourceOrganisation": "European Union / EUR-Lex",
+        "regulation": "Regulation (EC) No 1272/2008",
+        "annex": "VI",
+        "part": "3",
+        "table": "3",
+        "consolidatedDate": "2026-07-01",
+        "sourceUrl": "https://eur-lex.europa.eu/eli/reg/2008/1272/2026-07-01",
+        "sourceLocation": "Annex VI / Part 3 / Table 3"
+      },
+      "scopeMatch": "exact_substance"
+    },
+    {
+      "code": "E527",
+      "substanceName": "Ammonium hydroxide",
+      "CAS": [
+        "1336-21-6"
+      ],
+      "EC": [],
+      "clpIdentity": {
+        "indexNumber": "007-001-01-2",
+        "substanceName": "ammonia ….%",
+        "CAS": [
+          "1336-21-6"
+        ],
+        "EC": [
+          "215-647-6"
+        ]
+      },
+      "matchType": "CAS_EXACT",
+      "classificationSource": "HARMONISED_CLASSIFICATION",
+      "harmonised": true,
+      "hazardClasses": [
+        {
+          "hazardClass": "Skin Corr. 1B",
+          "category": "",
+          "hazardStatement": "H314 H400",
+          "specificConcentrationLimit": null,
+          "notes": null,
+          "sourceReference": null,
+          "domain": "humanHealthHazards",
+          "foodAdditiveRelevance": "potentially_relevant",
+          "reason": "Classe CLP de danger pour la santé humaine ; le contexte d’exposition alimentaire reste à examiner séparément."
+        },
+        {
+          "hazardClass": "Aquatic Acute 1",
+          "category": "",
+          "hazardStatement": "H314 H400",
+          "specificConcentrationLimit": null,
+          "notes": null,
+          "sourceReference": null,
+          "domain": "environmentalHazards",
+          "foodAdditiveRelevance": "not_relevant_to_health_score",
+          "reason": "Classe environnementale conservée mais exclue du futur score Santé alimentaire."
+        }
+      ],
+      "provenance": {
+        "sourceOrganisation": "European Union / EUR-Lex",
+        "regulation": "Regulation (EC) No 1272/2008",
+        "annex": "VI",
+        "part": "3",
+        "table": "3",
+        "consolidatedDate": "2026-07-01",
+        "sourceUrl": "https://eur-lex.europa.eu/eli/reg/2008/1272/2026-07-01",
+        "sourceLocation": "Annex VI / Part 3 / Table 3"
+      },
+      "scopeMatch": "exact_substance"
+    },
+    {
+      "code": "E949",
+      "substanceName": "Hydrogen",
+      "CAS": [
+        "1333-74-0"
+      ],
+      "EC": [],
+      "clpIdentity": {
+        "indexNumber": "001-001-00-9",
+        "substanceName": "hydrogen",
+        "CAS": [
+          "1333-74-0"
+        ],
+        "EC": [
+          "215-605-7"
+        ]
+      },
+      "matchType": "CAS_EXACT",
+      "classificationSource": "HARMONISED_CLASSIFICATION",
+      "harmonised": true,
+      "hazardClasses": [
+        {
+          "hazardClass": "Flam. Gas 1",
+          "category": "",
+          "hazardStatement": "H220",
+          "specificConcentrationLimit": null,
+          "notes": null,
+          "sourceReference": null,
+          "domain": "physicalHazards",
+          "foodAdditiveRelevance": "context_required",
+          "reason": "Classe de danger physique conservée, sans influence sur le futur score Santé alimentaire."
+        },
+        {
+          "hazardClass": "Press. Gas",
+          "category": "",
+          "hazardStatement": "H220",
+          "specificConcentrationLimit": null,
+          "notes": null,
+          "sourceReference": null,
+          "domain": "physicalHazards",
+          "foodAdditiveRelevance": "context_required",
+          "reason": "Classe de danger physique conservée, sans influence sur le futur score Santé alimentaire."
+        }
+      ],
+      "provenance": {
+        "sourceOrganisation": "European Union / EUR-Lex",
+        "regulation": "Regulation (EC) No 1272/2008",
+        "annex": "VI",
+        "part": "3",
+        "table": "3",
+        "consolidatedDate": "2026-07-01",
+        "sourceUrl": "https://eur-lex.europa.eu/eli/reg/2008/1272/2026-07-01",
+        "sourceLocation": "Annex VI / Part 3 / Table 3"
+      },
+      "scopeMatch": "exact_substance"
+    },
+    {
+      "code": "E1519",
+      "substanceName": "Benzyl alcohol",
+      "CAS": [
+        "100-51-6"
+      ],
+      "EC": [],
+      "clpIdentity": {
+        "indexNumber": "603-057-00-5",
+        "substanceName": "benzyl alcohol",
+        "CAS": [
+          "100-51-6"
+        ],
+        "EC": [
+          "202-859-9"
+        ]
+      },
+      "matchType": "CAS_EXACT",
+      "classificationSource": "HARMONISED_CLASSIFICATION",
+      "harmonised": true,
+      "hazardClasses": [
+        {
+          "hazardClass": "Acute Tox. 4",
+          "category": "",
+          "hazardStatement": "H302 H319 H317",
+          "specificConcentrationLimit": null,
+          "notes": null,
+          "sourceReference": null,
+          "domain": "humanHealthHazards",
+          "foodAdditiveRelevance": "potentially_relevant",
+          "reason": "Classe CLP de danger pour la santé humaine ; le contexte d’exposition alimentaire reste à examiner séparément."
+        },
+        {
+          "hazardClass": "Eye Irrit. 2",
+          "category": "",
+          "hazardStatement": "H302 H319 H317",
+          "specificConcentrationLimit": null,
+          "notes": null,
+          "sourceReference": null,
+          "domain": "humanHealthHazards",
+          "foodAdditiveRelevance": "potentially_relevant",
+          "reason": "Classe CLP de danger pour la santé humaine ; le contexte d’exposition alimentaire reste à examiner séparément."
+        },
+        {
+          "hazardClass": "Skin Sens. 1B",
+          "category": "",
+          "hazardStatement": "H302 H319 H317",
+          "specificConcentrationLimit": null,
+          "notes": null,
+          "sourceReference": null,
+          "domain": "humanHealthHazards",
+          "foodAdditiveRelevance": "potentially_relevant",
+          "reason": "Classe CLP de danger pour la santé humaine ; le contexte d’exposition alimentaire reste à examiner séparément."
+        }
+      ],
+      "provenance": {
+        "sourceOrganisation": "European Union / EUR-Lex",
+        "regulation": "Regulation (EC) No 1272/2008",
+        "annex": "VI",
+        "part": "3",
+        "table": "3",
+        "consolidatedDate": "2026-07-01",
+        "sourceUrl": "https://eur-lex.europa.eu/eli/reg/2008/1272/2026-07-01",
+        "sourceLocation": "Annex VI / Part 3 / Table 3"
+      },
+      "scopeMatch": "exact_substance"
+    }
+  ],
+  "notifiedOnly": [],
+  "ambiguousMatches": [
+    {
+      "code": "E926",
+      "substanceName": "Chlorine dioxide",
+      "reason": "Multiple exact CLP records; no automatic transfer.",
+      "matches": [
+        "chlorine dioxide",
+        "chlorine dioxide . . . %",
+        "chlorine dioxide",
+        "chlorine dioxide … %"
+      ]
+    }
+  ],
+  "noMatches": [
+    {
+      "code": "E100",
+      "substanceName": "Curcumin",
+      "reason": "No safe exact identity for transfer."
+    },
+    {
+      "code": "E101",
+      "substanceName": "Riboflavins",
+      "reason": "No safe exact identity for transfer."
+    },
+    {
+      "code": "E102",
+      "substanceName": "Tartrazine",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E104",
+      "substanceName": "Quinoline Yellow",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E110",
+      "substanceName": "Sunset Yellow FCF/Orange Yellow S",
+      "reason": "No safe exact identity for transfer."
+    },
+    {
+      "code": "E120",
+      "substanceName": "Carminic acid, Carmine",
+      "reason": "No safe exact identity for transfer."
+    },
+    {
+      "code": "E122",
+      "substanceName": "Azorubine, Carmoisine",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E123",
+      "substanceName": "Amaranth",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E124",
+      "substanceName": "Ponceau 4R, Cochineal Red A",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E127",
+      "substanceName": "Erythrosine",
+      "reason": "No safe exact identity for transfer."
+    },
+    {
+      "code": "E129",
+      "substanceName": "Allura Red AC",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E131",
+      "substanceName": "Patent Blue V",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E132",
+      "substanceName": "Indigotine, Indigo carmine",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E133",
+      "substanceName": "Brilliant Blue FCF",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E140",
+      "substanceName": "Chlorophylls and Chlorophyllins",
+      "reason": "No safe exact identity for transfer."
+    },
+    {
+      "code": "E141",
+      "substanceName": "Copper complexes of chlorophylls and chlorophyllins",
+      "reason": "No safe exact identity for transfer."
+    },
+    {
+      "code": "E142",
+      "substanceName": "Green S",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E150A",
+      "substanceName": "Plain caramel",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E150B",
+      "substanceName": "Caustic sulphite caramel",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E150C",
+      "substanceName": "Ammonia caramel",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E150D",
+      "substanceName": "Sulphite ammonia caramel",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E151",
+      "substanceName": "Brilliant Black PN",
+      "reason": "No safe exact identity for transfer."
+    },
+    {
+      "code": "E153",
+      "substanceName": "Vegetable carbon",
+      "reason": "No safe exact identity for transfer."
+    },
+    {
+      "code": "E155",
+      "substanceName": "Brown HT",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E160A",
+      "substanceName": "Carotenes",
+      "reason": "No safe exact identity for transfer."
+    },
+    {
+      "code": "E160B",
+      "substanceName": "Annatto, Bixin, Norbixin/Deleted from the Union List of authorised additives",
+      "reason": "No safe exact identity for transfer."
+    },
+    {
+      "code": "E160C",
+      "substanceName": "Paprika extract, capsanthin, capsorubin",
+      "reason": "No safe exact identity for transfer."
+    },
+    {
+      "code": "E160D",
+      "substanceName": "Lycopene",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E160E",
+      "substanceName": "Beta-apo-8'-carotenal (C 30)",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E161B",
+      "substanceName": "Lutein",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E161G",
+      "substanceName": "Canthaxanthin",
+      "reason": "No safe exact identity for transfer."
+    },
+    {
+      "code": "E162",
+      "substanceName": "Beetroot Red, betanin",
+      "reason": "No safe exact identity for transfer."
+    },
+    {
+      "code": "E163",
+      "substanceName": "Anthocyanins",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E170",
+      "substanceName": "Calcium carbonate",
+      "reason": "No safe exact identity for transfer."
+    },
+    {
+      "code": "E172",
+      "substanceName": "Iron oxides and hydroxides",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E173",
+      "substanceName": "Aluminium",
+      "reason": "No safe exact identity for transfer."
+    },
+    {
+      "code": "E174",
+      "substanceName": "Silver",
+      "reason": "No safe exact identity for transfer."
+    },
+    {
+      "code": "E175",
+      "substanceName": "Gold",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E180",
+      "substanceName": "Litholrubine BK",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E200",
+      "substanceName": "Sorbic acid",
+      "reason": "No safe exact identity for transfer."
+    },
+    {
+      "code": "E202",
+      "substanceName": "Potassium sorbate",
+      "reason": "No safe exact identity for transfer."
+    },
+    {
+      "code": "E203",
+      "substanceName": "Calcium sorbate/Deleted from the Union list",
+      "reason": "No safe exact identity for transfer."
+    },
+    {
+      "code": "E211",
+      "substanceName": "Sodium benzoate",
+      "reason": "No safe exact identity for transfer."
+    },
+    {
+      "code": "E212",
+      "substanceName": "Potassium benzoate",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E213",
+      "substanceName": "Calcium benzoate",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E214",
+      "substanceName": "Ethyl-p-hydroxybenzoate",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E215",
+      "substanceName": "Sodium ethyl p-hydroxybenzoate",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E218",
+      "substanceName": "Methyl p-hydroxybenzoate",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E219",
+      "substanceName": "Sodium methyl p-hydroxybenzoate",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E221",
+      "substanceName": "Sodium sulphite",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E224",
+      "substanceName": "Potassium metabisulphite",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E226",
+      "substanceName": "Calcium sulphite",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E227",
+      "substanceName": "Calcium hydrogen sulphite",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E228",
+      "substanceName": "Potassium hydrogen sulphite",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E234",
+      "substanceName": "Nisin",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E235",
+      "substanceName": "Natamycin",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E242",
+      "substanceName": "Dimethyl dicarbonate",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E243",
+      "substanceName": "Ethyl lauroyl arginate",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E246",
+      "substanceName": "Glycolipids",
+      "reason": "No safe exact identity for transfer."
+    },
+    {
+      "code": "E250",
+      "substanceName": "Sodium nitrite",
+      "reason": "No safe exact identity for transfer."
+    },
+    {
+      "code": "E251",
+      "substanceName": "Sodium nitrate",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E252",
+      "substanceName": "Potassium nitrate",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E261",
+      "substanceName": "Potassium acetates",
+      "reason": "No safe exact identity for transfer."
+    },
+    {
+      "code": "E262",
+      "substanceName": "Sodium acetates",
+      "reason": "No safe exact identity for transfer."
+    },
+    {
+      "code": "E263",
+      "substanceName": "Calcium acetate",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E267",
+      "substanceName": "Buffered vinegar",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E270",
+      "substanceName": "Lactic acid",
+      "reason": "No safe exact identity for transfer."
+    },
+    {
+      "code": "E281",
+      "substanceName": "Sodium propionate",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E282",
+      "substanceName": "Calcium propionate",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E283",
+      "substanceName": "Potassium propionate",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E284",
+      "substanceName": "Boric acid",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E285",
+      "substanceName": "Sodium tetraborate (borax)",
+      "reason": "No safe exact identity for transfer."
+    },
+    {
+      "code": "E290",
+      "substanceName": "Carbon dioxide",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E296",
+      "substanceName": "Malic acid",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E300",
+      "substanceName": "Ascorbic acid",
+      "reason": "No safe exact identity for transfer."
+    },
+    {
+      "code": "E301",
+      "substanceName": "Sodium ascorbate",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E302",
+      "substanceName": "Calcium ascorbate",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E304",
+      "substanceName": "Fatty acid esters of ascorbic acid",
+      "reason": "No safe exact identity for transfer."
+    },
+    {
+      "code": "E306",
+      "substanceName": "Tocopherol-rich extract",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E307",
+      "substanceName": "Alpha-tocopherol",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E308",
+      "substanceName": "Gamma-tocopherol",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E309",
+      "substanceName": "Delta-tocopherol",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E315",
+      "substanceName": "Erythorbic acid",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E316",
+      "substanceName": "Sodium erythorbate",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E319",
+      "substanceName": "Tertiary-butyl hydroquinone (TBHQ)",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E320",
+      "substanceName": "Butylated hydroxyanisole (BHA)",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E321",
+      "substanceName": "Butylated hydroxytoluene (BHT)",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E322",
+      "substanceName": "Lecithins",
+      "reason": "No safe exact identity for transfer."
+    },
+    {
+      "code": "E322A",
+      "substanceName": "Oat lecithin",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E325",
+      "substanceName": "Sodium lactate",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E326",
+      "substanceName": "Potassium lactate",
+      "reason": "No safe exact identity for transfer."
+    },
+    {
+      "code": "E327",
+      "substanceName": "Calcium lactate",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E330",
+      "substanceName": "Citric acid",
+      "reason": "No safe exact identity for transfer."
+    },
+    {
+      "code": "E331",
+      "substanceName": "Sodium citrates",
+      "reason": "No safe exact identity for transfer."
+    },
+    {
+      "code": "E332",
+      "substanceName": "Potassium citrates",
+      "reason": "No safe exact identity for transfer."
+    },
+    {
+      "code": "E333",
+      "substanceName": "Calcium citrates",
+      "reason": "No safe exact identity for transfer."
+    },
+    {
+      "code": "E334",
+      "substanceName": "Tartaric acid (L(+)-)",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E335",
+      "substanceName": "Sodium tartrates",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E336",
+      "substanceName": "Potassium tartrates",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E337",
+      "substanceName": "Sodium potassium tartrate",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E338",
+      "substanceName": "Phosphoric acid",
+      "reason": "No safe exact identity for transfer."
+    },
+    {
+      "code": "E339",
+      "substanceName": "Sodium phosphates",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E340",
+      "substanceName": "Potassium phosphates",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E341",
+      "substanceName": "Calcium phosphates",
+      "reason": "No safe exact identity for transfer."
+    },
+    {
+      "code": "E343",
+      "substanceName": "Magnesium phosphates",
+      "reason": "No safe exact identity for transfer."
+    },
+    {
+      "code": "E350",
+      "substanceName": "Sodium malates",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E351",
+      "substanceName": "Potassium malate",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E352",
+      "substanceName": "Calcium malates",
+      "reason": "No safe exact identity for transfer."
+    },
+    {
+      "code": "E353",
+      "substanceName": "Metatartaric acid",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E354",
+      "substanceName": "Calcium tartrate",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E356",
+      "substanceName": "Sodium adipate",
+      "reason": "No safe exact identity for transfer."
+    },
+    {
+      "code": "E357",
+      "substanceName": "Potassium adipate",
+      "reason": "No safe exact identity for transfer."
+    },
+    {
+      "code": "E363",
+      "substanceName": "Succinic acid",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E380",
+      "substanceName": "Triammonium citrate",
+      "reason": "No safe exact identity for transfer."
+    },
+    {
+      "code": "E385",
+      "substanceName": "Calcium disodium ethylene diamine tetra-acetate (Calcium disodium EDTA)",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E392",
+      "substanceName": "Extracts of rosemary",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E400",
+      "substanceName": "Alginic acid",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E401",
+      "substanceName": "Sodium alginate",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E402",
+      "substanceName": "Potassium alginate",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E403",
+      "substanceName": "Ammonium alginate",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E404",
+      "substanceName": "Calcium alginate",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E405",
+      "substanceName": "Propane-1, 2-diol alginate",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E406",
+      "substanceName": "Agar",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E407",
+      "substanceName": "Carrageenan",
+      "reason": "No safe exact identity for transfer."
+    },
+    {
+      "code": "E407A",
+      "substanceName": "Processed euchema seaweed",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E410",
+      "substanceName": "Locust bean gum",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E412",
+      "substanceName": "Guar gum",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E413",
+      "substanceName": "Tragacanth",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E414",
+      "substanceName": "Gum arabic (acacia gum)",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E415",
+      "substanceName": "Xanthan gum",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E416",
+      "substanceName": "Karaya gum",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E417",
+      "substanceName": "Tara gum",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E418",
+      "substanceName": "Gellan gum",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E420",
+      "substanceName": "Sorbitols",
+      "reason": "No safe exact identity for transfer."
+    },
+    {
+      "code": "E421",
+      "substanceName": "Mannitol",
+      "reason": "No safe exact identity for transfer."
+    },
+    {
+      "code": "E422",
+      "substanceName": "Glycerol",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E423",
+      "substanceName": "Octenyl succinic acid modified gum arabic",
+      "reason": "No safe exact identity for transfer."
+    },
+    {
+      "code": "E425",
+      "substanceName": "Konjac",
+      "reason": "No safe exact identity for transfer."
+    },
+    {
+      "code": "E426",
+      "substanceName": "Soybean hemicellulose",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E427",
+      "substanceName": "Cassia gum",
+      "reason": "No safe exact identity for transfer."
+    },
+    {
+      "code": "E431",
+      "substanceName": "Polyoxyethylene (40) stearate",
+      "reason": "No safe exact identity for transfer."
+    },
+    {
+      "code": "E432",
+      "substanceName": "Polyoxyethylene sorbitan monolaurate (polysorbate 20)",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E433",
+      "substanceName": "Polyoxyethylene sorbitan monooleate (polysorbate 80)",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E434",
+      "substanceName": "Polyoxyethylene sorbitan monopalmitate (polysorbate 40)",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E435",
+      "substanceName": "Polyoxyethylene sorbitan monostearate (polysorbate 60)",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E436",
+      "substanceName": "Polyoxyethylene sorbitan tristearate (polysorbate 65)",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E440",
+      "substanceName": "Pectins",
+      "reason": "No safe exact identity for transfer."
+    },
+    {
+      "code": "E442",
+      "substanceName": "Ammonium phosphatides",
+      "reason": "No safe exact identity for transfer."
+    },
+    {
+      "code": "E444",
+      "substanceName": "Sucrose acetate isobutyrate",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E445",
+      "substanceName": "Glycerol esters of wood rosins",
+      "reason": "No safe exact identity for transfer."
+    },
+    {
+      "code": "E450",
+      "substanceName": "Diphosphates",
+      "reason": "No safe exact identity for transfer."
+    },
+    {
+      "code": "E451",
+      "substanceName": "Triphosphates",
+      "reason": "No safe exact identity for transfer."
+    },
+    {
+      "code": "E452",
+      "substanceName": "Polyphosphates",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E456",
+      "substanceName": "Potassium Polyaspartate",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E459",
+      "substanceName": "Beta-cyclodextrin",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E460",
+      "substanceName": "Cellulose",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E461",
+      "substanceName": "Methyl cellulose",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E462",
+      "substanceName": "Ethyl cellulose",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E463",
+      "substanceName": "Hydroxypropyl cellulose",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E463A",
+      "substanceName": "Low-substituted hydroxypropyl cellulose (L-HPC)",
+      "reason": "No safe exact identity for transfer."
+    },
+    {
+      "code": "E464",
+      "substanceName": "Hydroxypropyl methyl cellulose",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E465",
+      "substanceName": "Ethyl methyl cellulose",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E466",
+      "substanceName": "Sodium carboxy methyl cellulose, cellulose gum",
+      "reason": "No safe exact identity for transfer."
+    },
+    {
+      "code": "E468",
+      "substanceName": "Cross-linked sodium carboxy methyl cellulose",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E469",
+      "substanceName": "Enzymatically hydrolysed carboxy methyl cellulose",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E470A",
+      "substanceName": "Sodium, potassium and calcium salts of fatty acids",
+      "reason": "No safe exact identity for transfer."
+    },
+    {
+      "code": "E470B",
+      "substanceName": "Magnesium salts of fatty acids",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E471",
+      "substanceName": "Mono-and diglycerides of fatty acids",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E472A",
+      "substanceName": "Acetic acid esters of mono- and diglycerides of fatty acids",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E472B",
+      "substanceName": "Lactic acid esters of mono- and diglycerides of fatty acids",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E472C",
+      "substanceName": "Citric acid esters of mono- and diglycerides of fatty acids",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E472D",
+      "substanceName": "Tartaric acid esters of mono- and diglycerides of fatty acids",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E472E",
+      "substanceName": "Mono and diacetyl tartaric acid esters of mono- and diglycerides of fatty acids",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E472F",
+      "substanceName": "Mixed acetic and tartaric acid esters of mono- and diglycerides of fatty acids",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E473",
+      "substanceName": "Sucrose esters of fatty acids",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E474",
+      "substanceName": "Sucroglycerides",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E475",
+      "substanceName": "Polyglycerol esters of fatty acids",
+      "reason": "No safe exact identity for transfer."
+    },
+    {
+      "code": "E476",
+      "substanceName": "Polyglycerol polyricinoleate",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E477",
+      "substanceName": "Propane-1,2-diol esters of fatty acids",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E479B",
+      "substanceName": "Thermally oxidized soya bean oil interacted with mono and diglycerides of fatty acids",
+      "reason": "No safe exact identity for transfer."
+    },
+    {
+      "code": "E481",
+      "substanceName": "Sodium stearoyl-2-lactylate",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E482",
+      "substanceName": "Calcium stearoyl-2-lactylate",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E483",
+      "substanceName": "Stearyl tartrate",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E491",
+      "substanceName": "Sorbitan monostearate",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E492",
+      "substanceName": "Sorbitan tristearate",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E493",
+      "substanceName": "Sorbitan monolaurate",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E494",
+      "substanceName": "Sorbitan monooleate",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E495",
+      "substanceName": "Sorbitan monopalmitate",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E499",
+      "substanceName": "Stigmasterol-rich plant sterols",
+      "reason": "No safe exact identity for transfer."
+    },
+    {
+      "code": "E501",
+      "substanceName": "Potassium carbonate",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E503",
+      "substanceName": "Ammonium carbonates",
+      "reason": "No safe exact identity for transfer."
+    },
+    {
+      "code": "E504",
+      "substanceName": "Magnesium carbonates",
+      "reason": "No safe exact identity for transfer."
+    },
+    {
+      "code": "E508",
+      "substanceName": "Potassium chloride",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E511",
+      "substanceName": "Magnesium chloride",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E512",
+      "substanceName": "Stannous chloride",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E514",
+      "substanceName": "Sodium sulphates",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E515",
+      "substanceName": "Potassium sulphates",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E516",
+      "substanceName": "Calcium sulphate",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E517",
+      "substanceName": "Ammonium sulphate",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E520",
+      "substanceName": "Aluminium sulphate",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E521",
+      "substanceName": "Aluminium sodium sulphate",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E522",
+      "substanceName": "Aluminium potassium sulphate",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E523",
+      "substanceName": "Aluminium ammonium sulphate",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E526",
+      "substanceName": "Calcium hydroxide",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E528",
+      "substanceName": "Magnesium hydroxide",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E529",
+      "substanceName": "Calcium oxide",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E530",
+      "substanceName": "Magnesium oxide",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E534",
+      "substanceName": "Iron (III) meso-Tartrate",
+      "reason": "No safe exact identity for transfer."
+    },
+    {
+      "code": "E535",
+      "substanceName": "Sodium ferrocyanide",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E536",
+      "substanceName": "Potassium ferrocyanide",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E538",
+      "substanceName": "Calcium ferrocyanide",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E541",
+      "substanceName": "Sodium aluminium phosphate acidic",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E551",
+      "substanceName": "Silicon dioxide",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E552",
+      "substanceName": "Calcium silicate",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E553A",
+      "substanceName": "Magnesium silicate",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E553B",
+      "substanceName": "Talc",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E554",
+      "substanceName": "Sodium aluminium silicate",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E555",
+      "substanceName": "Potassium aluminium silicate",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E556",
+      "substanceName": "Calcium aluminium silicate",
+      "reason": "No safe exact identity for transfer."
+    },
+    {
+      "code": "E558",
+      "substanceName": "Bentonite",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E559",
+      "substanceName": "Aluminium silicate (Kaolin)",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E570",
+      "substanceName": "Fatty acids",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E574",
+      "substanceName": "Gluconic acid",
+      "reason": "No safe exact identity for transfer."
+    },
+    {
+      "code": "E575",
+      "substanceName": "Glucono-delta-lactone",
+      "reason": "No safe exact identity for transfer."
+    },
+    {
+      "code": "E576",
+      "substanceName": "Sodium gluconate",
+      "reason": "No safe exact identity for transfer."
+    },
+    {
+      "code": "E577",
+      "substanceName": "Potassium gluconate",
+      "reason": "No safe exact identity for transfer."
+    },
+    {
+      "code": "E578",
+      "substanceName": "Calcium gluconate",
+      "reason": "No safe exact identity for transfer."
+    },
+    {
+      "code": "E579",
+      "substanceName": "Ferrous gluconate",
+      "reason": "No safe exact identity for transfer."
+    },
+    {
+      "code": "E585",
+      "substanceName": "Ferrous lactate",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E586",
+      "substanceName": "4-Hexylresorcinol",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E620",
+      "substanceName": "Glutamic acid",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E621",
+      "substanceName": "Monosodium glutamate",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E622",
+      "substanceName": "Monopotassium glutamate",
+      "reason": "No safe exact identity for transfer."
+    },
+    {
+      "code": "E623",
+      "substanceName": "Calcium diglutamate",
+      "reason": "No safe exact identity for transfer."
+    },
+    {
+      "code": "E624",
+      "substanceName": "Monoammonium glutamate",
+      "reason": "No safe exact identity for transfer."
+    },
+    {
+      "code": "E625",
+      "substanceName": "Magnesium diglutamate",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E626",
+      "substanceName": "Guanylic acid",
+      "reason": "No safe exact identity for transfer."
+    },
+    {
+      "code": "E627",
+      "substanceName": "Disodium guanylate",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E628",
+      "substanceName": "Dipotassium guanylate",
+      "reason": "No safe exact identity for transfer."
+    },
+    {
+      "code": "E629",
+      "substanceName": "Calcium guanylate",
+      "reason": "No safe exact identity for transfer."
+    },
+    {
+      "code": "E630",
+      "substanceName": "Inosinic acid",
+      "reason": "No safe exact identity for transfer."
+    },
+    {
+      "code": "E631",
+      "substanceName": "Disodium inosinate",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E632",
+      "substanceName": "Dipotassium inosinate",
+      "reason": "No safe exact identity for transfer."
+    },
+    {
+      "code": "E633",
+      "substanceName": "Calcium inosinate",
+      "reason": "No safe exact identity for transfer."
+    },
+    {
+      "code": "E634",
+      "substanceName": "Calcium 5'-ribonucleotides",
+      "reason": "No safe exact identity for transfer."
+    },
+    {
+      "code": "E635",
+      "substanceName": "Disodium 5'-ribonucleotides",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E640",
+      "substanceName": "Glycine and its sodium salt",
+      "reason": "No safe exact identity for transfer."
+    },
+    {
+      "code": "E641",
+      "substanceName": "L-leucine",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E650",
+      "substanceName": "Zinc acetate",
+      "reason": "No safe exact identity for transfer."
+    },
+    {
+      "code": "E900",
+      "substanceName": "Dimethyl polysiloxane",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E901",
+      "substanceName": "Beeswax, white and yellow",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E902",
+      "substanceName": "Candelilla wax",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E903",
+      "substanceName": "Carnauba wax",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E904",
+      "substanceName": "Shellac",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E905",
+      "substanceName": "Microcrystalline wax",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E905A",
+      "substanceName": "High viscosity mineral oils",
+      "reason": "No safe exact identity for transfer."
+    },
+    {
+      "code": "E907",
+      "substanceName": "Hydrogenated poly-1-decene",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E912",
+      "substanceName": "Montan acid esters",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E914",
+      "substanceName": "Oxidised polyethylene wax",
+      "reason": "No safe exact identity for transfer."
+    },
+    {
+      "code": "E920",
+      "substanceName": "L-cysteine",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E927B",
+      "substanceName": "Carbamide",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E938",
+      "substanceName": "Argon",
+      "reason": "No safe exact identity for transfer."
+    },
+    {
+      "code": "E939",
+      "substanceName": "Helium",
+      "reason": "No safe exact identity for transfer."
+    },
+    {
+      "code": "E941",
+      "substanceName": "Nitrogen",
+      "reason": "No safe exact identity for transfer."
+    },
+    {
+      "code": "E942",
+      "substanceName": "Nitrous oxide",
+      "reason": "No safe exact identity for transfer."
+    },
+    {
+      "code": "E943A",
+      "substanceName": "Butane",
+      "reason": "No safe exact identity for transfer."
+    },
+    {
+      "code": "E943B",
+      "substanceName": "Isobutane",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E944",
+      "substanceName": "Propane",
+      "reason": "No safe exact identity for transfer."
+    },
+    {
+      "code": "E948",
+      "substanceName": "Oxygen",
+      "reason": "No safe exact identity for transfer."
+    },
+    {
+      "code": "E950",
+      "substanceName": "Acesulfame K",
+      "reason": "No safe exact identity for transfer."
+    },
+    {
+      "code": "E951",
+      "substanceName": "Aspartame",
+      "reason": "No safe exact identity for transfer."
+    },
+    {
+      "code": "E952",
+      "substanceName": "Cyclamic acid and its Na and Ca salts",
+      "reason": "No safe exact identity for transfer."
+    },
+    {
+      "code": "E953",
+      "substanceName": "Isomalt",
+      "reason": "No safe exact identity for transfer."
+    },
+    {
+      "code": "E954",
+      "substanceName": "Saccharin and its Na, K and Ca salts",
+      "reason": "No safe exact identity for transfer."
+    },
+    {
+      "code": "E955",
+      "substanceName": "Sucralose",
+      "reason": "No safe exact identity for transfer."
+    },
+    {
+      "code": "E957",
+      "substanceName": "Thaumatin",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E959",
+      "substanceName": "Neohesperidine DC",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E960A",
+      "substanceName": "Steviol glycosides from Stevia",
+      "reason": "No safe exact identity for transfer."
+    },
+    {
+      "code": "E960B",
+      "substanceName": "Steviol glycosides from fermentation’",
+      "reason": "No safe exact identity for transfer."
+    },
+    {
+      "code": "E960C",
+      "substanceName": "Enzymatically produced steviol glycosides",
+      "reason": "No safe exact identity for transfer."
+    },
+    {
+      "code": "E960D",
+      "substanceName": "Glucosylated steviol glycosides",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E961",
+      "substanceName": "Neotame",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E962",
+      "substanceName": "Salt of aspartame-acesulfame",
+      "reason": "No safe exact identity for transfer."
+    },
+    {
+      "code": "E964",
+      "substanceName": "Polyglycitol syrup",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E965",
+      "substanceName": "Maltitols",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E966",
+      "substanceName": "Lactitol",
+      "reason": "No safe exact identity for transfer."
+    },
+    {
+      "code": "E967",
+      "substanceName": "Xylitol",
+      "reason": "No safe exact identity for transfer."
+    },
+    {
+      "code": "E968",
+      "substanceName": "Erythritol",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E969",
+      "substanceName": "Advantame",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E999",
+      "substanceName": "Quillaia extract",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E1103",
+      "substanceName": "Invertase",
+      "reason": "No safe exact identity for transfer."
+    },
+    {
+      "code": "E1105",
+      "substanceName": "Lysozyme",
+      "reason": "No safe exact identity for transfer."
+    },
+    {
+      "code": "E1200",
+      "substanceName": "Polydextrose",
+      "reason": "No safe exact identity for transfer."
+    },
+    {
+      "code": "E1201",
+      "substanceName": "Polyvinylpyrrolidone",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E1202",
+      "substanceName": "Polyvinylpolypyrrolidone",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E1203",
+      "substanceName": "Polyvinyl alcohol (PVA)",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E1204",
+      "substanceName": "Pullulan",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E1205",
+      "substanceName": "Basic methacrylate copolymer",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E1206",
+      "substanceName": "Neutral Methacrylate Copolymer",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E1207",
+      "substanceName": "Anionic methacrylate copolymer",
+      "reason": "No safe exact identity for transfer."
+    },
+    {
+      "code": "E1208",
+      "substanceName": "Polyvinylpyrrolidone-vinyl acetate copolymer",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E1209",
+      "substanceName": "Polyvinyl alcohol-polyethylene glycol-graft co-polymer",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E1404",
+      "substanceName": "Oxidised starch",
+      "reason": "No safe exact identity for transfer."
+    },
+    {
+      "code": "E1410",
+      "substanceName": "Monostarch phosphate",
+      "reason": "No safe exact identity for transfer."
+    },
+    {
+      "code": "E1412",
+      "substanceName": "Distarch phosphate",
+      "reason": "No safe exact identity for transfer."
+    },
+    {
+      "code": "E1413",
+      "substanceName": "Phosphated distarch phosphate",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E1414",
+      "substanceName": "Acetylated distarch phosphate",
+      "reason": "No safe exact identity for transfer."
+    },
+    {
+      "code": "E1420",
+      "substanceName": "Acetylated starch",
+      "reason": "No safe exact identity for transfer."
+    },
+    {
+      "code": "E1422",
+      "substanceName": "Acetylated distarch adipate",
+      "reason": "No safe exact identity for transfer."
+    },
+    {
+      "code": "E1440",
+      "substanceName": "Hydroxy propyl starch",
+      "reason": "No safe exact identity for transfer."
+    },
+    {
+      "code": "E1442",
+      "substanceName": "Hydroxy propyl distarch phosphate",
+      "reason": "No safe exact identity for transfer."
+    },
+    {
+      "code": "E1450",
+      "substanceName": "Starch sodium octenyl succinate",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E1451",
+      "substanceName": "Acetylated oxidised starch",
+      "reason": "No safe exact identity for transfer."
+    },
+    {
+      "code": "E1452",
+      "substanceName": "Starch Aluminium Octenyl Succinate",
+      "reason": "No safe exact identity for transfer."
+    },
+    {
+      "code": "E1505",
+      "substanceName": "Triethyl citrate",
+      "reason": "No exact CLP/notified record loaded or matched."
+    },
+    {
+      "code": "E1517",
+      "substanceName": "Glyceryl diacetate (diacetin)",
+      "reason": "No safe exact identity for transfer."
+    },
+    {
+      "code": "E1518",
+      "substanceName": "Glyceryl triacetate (triacetin)",
+      "reason": "No safe exact identity for transfer."
+    },
+    {
+      "code": "E1520",
+      "substanceName": "Propane-1, 2-diol (propylene glycol)",
+      "reason": "No safe exact identity for transfer."
+    },
+    {
+      "code": "E1521",
+      "substanceName": "Polyethylene glycol",
+      "reason": "No exact CLP/notified record loaded or matched."
+    }
+  ],
+  "iarcMatches": [],
+  "coverage": {
+    "codesWithIARCClassification": 0
+  },
+  "hazardClassDistribution": {
+    "Carc. 2": 1,
+    "STOT RE 1": 1,
+    "Skin Irrit. 2": 1,
+    "Eye Dam. 1": 2,
+    "Press. Gas": 3,
+    "Acute Tox. 3": 1,
+    "STOT SE 1": 1,
+    "Skin. Corr. 1B": 1,
+    "Acute Tox. 4 *": 3,
+    "Flam. Sol. 2": 1,
+    "Skin Sens. 1": 2,
+    "Ox. Sol. 2": 1,
+    "Acute Tox. 3 *": 2,
+    "Aquatic Acute 1": 3,
+    "Flam. Liq. 3": 1,
+    "Skin Corr. 1A": 5,
+    "Skin Corr. 1B": 2,
+    "Eye Irrit. 2": 5,
+    "Acute Tox. 4": 2,
+    "Aquatic Chronic 1": 1,
+    "Flam. Gas 1": 1,
+    "Skin Sens. 1B": 1
+  },
+  "foodAdditiveRelevanceAudit": {
+    "potentiallyRelevantHumanHealthRows": [
+      {
+        "code": "E171",
+        "substanceName": "Titanium dioxide",
+        "hazardClass": "Carc. 2",
+        "category": "",
+        "hazardStatement": "H351 (inhalation)",
+        "reason": "Classe CLP de danger pour la santé humaine ; le contexte d’exposition alimentaire reste à examiner séparément."
+      },
+      {
+        "code": "E210",
+        "substanceName": "Benzoic acid",
+        "hazardClass": "STOT RE 1",
+        "category": "",
+        "hazardStatement": "H372 (lungs) (inhalation) H315 H318",
+        "reason": "Classe CLP de danger pour la santé humaine ; le contexte d’exposition alimentaire reste à examiner séparément."
+      },
+      {
+        "code": "E210",
+        "substanceName": "Benzoic acid",
+        "hazardClass": "Eye Dam. 1",
+        "category": "",
+        "hazardStatement": "H372 (lungs) (inhalation) H315 H318",
+        "reason": "Classe CLP de danger pour la santé humaine ; le contexte d’exposition alimentaire reste à examiner séparément."
+      },
+      {
+        "code": "E220",
+        "substanceName": "Sulphur dioxide",
+        "hazardClass": "Acute Tox. 3",
+        "category": "",
+        "hazardStatement": "H331 H370 (respiratory system) (inhalation) H314",
+        "reason": "Classe CLP de danger pour la santé humaine ; le contexte d’exposition alimentaire reste à examiner séparément."
+      },
+      {
+        "code": "E220",
+        "substanceName": "Sulphur dioxide",
+        "hazardClass": "STOT SE 1",
+        "category": "",
+        "hazardStatement": "H331 H370 (respiratory system) (inhalation) H314",
+        "reason": "Classe CLP de danger pour la santé humaine ; le contexte d’exposition alimentaire reste à examiner séparément."
+      },
+      {
+        "code": "E220",
+        "substanceName": "Sulphur dioxide",
+        "hazardClass": "Skin. Corr. 1B",
+        "category": "",
+        "hazardStatement": "H331 H370 (respiratory system) (inhalation) H314",
+        "reason": "Classe CLP de danger pour la santé humaine ; le contexte d’exposition alimentaire reste à examiner séparément."
+      },
+      {
+        "code": "E222",
+        "substanceName": "Sodium hydrogen sulphite",
+        "hazardClass": "Acute Tox. 4 *",
+        "category": "",
+        "hazardStatement": "H302",
+        "reason": "Classe CLP de danger pour la santé humaine ; le contexte d’exposition alimentaire reste à examiner séparément."
+      },
+      {
+        "code": "E223",
+        "substanceName": "Sodium metabisulphite",
+        "hazardClass": "Acute Tox. 4 *",
+        "category": "",
+        "hazardStatement": "H302 H318",
+        "reason": "Classe CLP de danger pour la santé humaine ; le contexte d’exposition alimentaire reste à examiner séparément."
+      },
+      {
+        "code": "E223",
+        "substanceName": "Sodium metabisulphite",
+        "hazardClass": "Eye Dam. 1",
+        "category": "",
+        "hazardStatement": "H302 H318",
+        "reason": "Classe CLP de danger pour la santé humaine ; le contexte d’exposition alimentaire reste à examiner séparément."
+      },
+      {
+        "code": "E239",
+        "substanceName": "Hexamethylene tetramine",
+        "hazardClass": "Skin Sens. 1",
+        "category": "",
+        "hazardStatement": "H228 H317",
+        "reason": "Classe CLP de danger pour la santé humaine ; le contexte d’exposition alimentaire reste à examiner séparément."
+      },
+      {
+        "code": "E249",
+        "substanceName": "Potassium nitrite",
+        "hazardClass": "Acute Tox. 3 *",
+        "category": "",
+        "hazardStatement": "H272 H301 H400",
+        "reason": "Classe CLP de danger pour la santé humaine ; le contexte d’exposition alimentaire reste à examiner séparément."
+      },
+      {
+        "code": "E260",
+        "substanceName": "Acetic acid",
+        "hazardClass": "Skin Corr. 1A",
+        "category": "",
+        "hazardStatement": "H226 H314",
+        "reason": "Classe CLP de danger pour la santé humaine ; le contexte d’exposition alimentaire reste à examiner séparément."
+      },
+      {
+        "code": "E280",
+        "substanceName": "Propionic acid",
+        "hazardClass": "Skin Corr. 1B",
+        "category": "",
+        "hazardStatement": "H314",
+        "reason": "Classe CLP de danger pour la santé humaine ; le contexte d’exposition alimentaire reste à examiner séparément."
+      },
+      {
+        "code": "E297",
+        "substanceName": "Fumaric acid",
+        "hazardClass": "Eye Irrit. 2",
+        "category": "",
+        "hazardStatement": "H319",
+        "reason": "Classe CLP de danger pour la santé humaine ; le contexte d’exposition alimentaire reste à examiner séparément."
+      },
+      {
+        "code": "E310",
+        "substanceName": "Propyl gallate",
+        "hazardClass": "Acute Tox. 4",
+        "category": "",
+        "hazardStatement": "H302 H317 H400 H410",
+        "reason": "Classe CLP de danger pour la santé humaine ; le contexte d’exposition alimentaire reste à examiner séparément."
+      },
+      {
+        "code": "E310",
+        "substanceName": "Propyl gallate",
+        "hazardClass": "Skin Sens. 1",
+        "category": "",
+        "hazardStatement": "H302 H317 H400 H410",
+        "reason": "Classe CLP de danger pour la santé humaine ; le contexte d’exposition alimentaire reste à examiner séparément."
+      },
+      {
+        "code": "E355",
+        "substanceName": "Adipic acid",
+        "hazardClass": "Eye Irrit. 2",
+        "category": "",
+        "hazardStatement": "H319",
+        "reason": "Classe CLP de danger pour la santé humaine ; le contexte d’exposition alimentaire reste à examiner séparément."
+      },
+      {
+        "code": "E500",
+        "substanceName": "Sodium carbonates",
+        "hazardClass": "Eye Irrit. 2",
+        "category": "",
+        "hazardStatement": "H319",
+        "reason": "Classe CLP de danger pour la santé humaine ; le contexte d’exposition alimentaire reste à examiner séparément."
+      },
+      {
+        "code": "E507",
+        "substanceName": "Hydrochloric acid",
+        "hazardClass": "Acute Tox. 3 *",
+        "category": "",
+        "hazardStatement": "H331 H314",
+        "reason": "Classe CLP de danger pour la santé humaine ; le contexte d’exposition alimentaire reste à examiner séparément."
+      },
+      {
+        "code": "E507",
+        "substanceName": "Hydrochloric acid",
+        "hazardClass": "Skin Corr. 1A",
+        "category": "",
+        "hazardStatement": "H331 H314",
+        "reason": "Classe CLP de danger pour la santé humaine ; le contexte d’exposition alimentaire reste à examiner séparément."
+      },
+      {
+        "code": "E509",
+        "substanceName": "Calcium chloride",
+        "hazardClass": "Eye Irrit. 2",
+        "category": "",
+        "hazardStatement": "H319",
+        "reason": "Classe CLP de danger pour la santé humaine ; le contexte d’exposition alimentaire reste à examiner séparément."
+      },
+      {
+        "code": "E513",
+        "substanceName": "Sulphuric acid",
+        "hazardClass": "Skin Corr. 1A",
+        "category": "",
+        "hazardStatement": "H314",
+        "reason": "Classe CLP de danger pour la santé humaine ; le contexte d’exposition alimentaire reste à examiner séparément."
+      },
+      {
+        "code": "E524",
+        "substanceName": "Sodium hydroxide",
+        "hazardClass": "Skin Corr. 1A",
+        "category": "",
+        "hazardStatement": "H314",
+        "reason": "Classe CLP de danger pour la santé humaine ; le contexte d’exposition alimentaire reste à examiner séparément."
+      },
+      {
+        "code": "E525",
+        "substanceName": "Potassium hydroxide",
+        "hazardClass": "Acute Tox. 4 *",
+        "category": "",
+        "hazardStatement": "H302 H314",
+        "reason": "Classe CLP de danger pour la santé humaine ; le contexte d’exposition alimentaire reste à examiner séparément."
+      },
+      {
+        "code": "E525",
+        "substanceName": "Potassium hydroxide",
+        "hazardClass": "Skin Corr. 1A",
+        "category": "",
+        "hazardStatement": "H302 H314",
+        "reason": "Classe CLP de danger pour la santé humaine ; le contexte d’exposition alimentaire reste à examiner séparément."
+      },
+      {
+        "code": "E527",
+        "substanceName": "Ammonium hydroxide",
+        "hazardClass": "Skin Corr. 1B",
+        "category": "",
+        "hazardStatement": "H314 H400",
+        "reason": "Classe CLP de danger pour la santé humaine ; le contexte d’exposition alimentaire reste à examiner séparément."
+      },
+      {
+        "code": "E1519",
+        "substanceName": "Benzyl alcohol",
+        "hazardClass": "Acute Tox. 4",
+        "category": "",
+        "hazardStatement": "H302 H319 H317",
+        "reason": "Classe CLP de danger pour la santé humaine ; le contexte d’exposition alimentaire reste à examiner séparément."
+      },
+      {
+        "code": "E1519",
+        "substanceName": "Benzyl alcohol",
+        "hazardClass": "Eye Irrit. 2",
+        "category": "",
+        "hazardStatement": "H302 H319 H317",
+        "reason": "Classe CLP de danger pour la santé humaine ; le contexte d’exposition alimentaire reste à examiner séparément."
+      },
+      {
+        "code": "E1519",
+        "substanceName": "Benzyl alcohol",
+        "hazardClass": "Skin Sens. 1B",
+        "category": "",
+        "hazardStatement": "H302 H319 H317",
+        "reason": "Classe CLP de danger pour la santé humaine ; le contexte d’exposition alimentaire reste à examiner séparément."
+      }
+    ],
+    "humanHealthHazards": 29,
+    "environmentalHazards": 4,
+    "physicalHazards": 7,
+    "environmentalExcludedFromHealthScore": 4
+  },
+  "scopeAudit": {
+    "familyOrMixtureHints": [
+      {
+        "code": "E160C",
+        "substanceName": "Paprika extract, capsanthin, capsorubin",
+        "scopeMatch": "ambiguous"
+      },
+      {
+        "code": "E301",
+        "substanceName": "Sodium ascorbate",
+        "scopeMatch": "ambiguous"
+      },
+      {
+        "code": "E306",
+        "substanceName": "Tocopherol-rich extract",
+        "scopeMatch": "ambiguous"
+      },
+      {
+        "code": "E320",
+        "substanceName": "Butylated hydroxyanisole (BHA)",
+        "scopeMatch": "ambiguous"
+      },
+      {
+        "code": "E327",
+        "substanceName": "Calcium lactate",
+        "scopeMatch": "ambiguous"
+      },
+      {
+        "code": "E337",
+        "substanceName": "Sodium potassium tartrate",
+        "scopeMatch": "ambiguous"
+      },
+      {
+        "code": "E351",
+        "substanceName": "Potassium malate",
+        "scopeMatch": "ambiguous"
+      },
+      {
+        "code": "E392",
+        "substanceName": "Extracts of rosemary",
+        "scopeMatch": "ambiguous"
+      },
+      {
+        "code": "E470A",
+        "substanceName": "Sodium, potassium and calcium salts of fatty acids",
+        "scopeMatch": "ambiguous"
+      },
+      {
+        "code": "E470B",
+        "substanceName": "Magnesium salts of fatty acids",
+        "scopeMatch": "ambiguous"
+      },
+      {
+        "code": "E640",
+        "substanceName": "Glycine and its sodium salt",
+        "scopeMatch": "ambiguous"
+      },
+      {
+        "code": "E952",
+        "substanceName": "Cyclamic acid and its Na and Ca salts",
+        "scopeMatch": "ambiguous"
+      },
+      {
+        "code": "E954",
+        "substanceName": "Saccharin and its Na, K and Ca salts",
+        "scopeMatch": "ambiguous"
+      },
+      {
+        "code": "E962",
+        "substanceName": "Salt of aspartame-acesulfame",
+        "scopeMatch": "ambiguous"
+      },
+      {
+        "code": "E999",
+        "substanceName": "Quillaia extract",
+        "scopeMatch": "ambiguous"
+      }
+    ],
+    "excludedFromTransfer": 15
+  },
+  "provenance": {
+    "required": true,
+    "allTransferredRecordsHaveProvenance": true,
+    "officialClassificationIsNotSeverity": true,
+    "noOummahColour": true
+  },
+  "conclusion": {
+    "usableAsHazardSignal": "PARTIALLY",
+    "limitation": "Only exact, provenance-backed official classifications are retained."
+  }
+}

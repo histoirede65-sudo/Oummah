@@ -1,0 +1,70 @@
+{
+  "schemaVersion": "1.0",
+  "generatedAt": "2026-09-30T20:01:33.299Z",
+  "batch": 2,
+  "sourceAudit": "scripts\\output\\additive-science-source-audit-priority-321-v3.json",
+  "items": [
+    {
+      "code": "E262",
+      "name": "Sodium acetates",
+      "status": "possible_match",
+      "candidateSources": [
+        "WHO/JECFA"
+      ],
+      "candidateMatches": {
+        "efsa": {
+          "confidence": "rejected",
+          "assessmentCount": 0
+        },
+        "jecfa": {
+          "confidence": "possible",
+          "evaluationCount": 2,
+          "ins": [
+            "262"
+          ]
+        }
+      },
+      "recommendedReviewAction": "Vérification manuelle de l’identité, de la source officielle et du périmètre avant génération."
+    },
+    {
+      "code": "E285",
+      "name": "Sodium tetraborate (borax)",
+      "status": "no_match",
+      "candidateSources": [],
+      "candidateMatches": {
+        "efsa": {
+          "confidence": "rejected",
+          "assessmentCount": 0
+        },
+        "jecfa": {
+          "confidence": "rejected",
+          "evaluationCount": 0,
+          "ins": []
+        }
+      },
+      "recommendedReviewAction": "Vérification manuelle de l’identité, de la source officielle et du périmètre avant génération."
+    },
+    {
+      "code": "E304",
+      "name": "Fatty acid esters of ascorbic acid",
+      "status": "possible_match",
+      "candidateSources": [
+        "WHO/JECFA"
+      ],
+      "candidateMatches": {
+        "efsa": {
+          "confidence": "rejected",
+          "assessmentCount": 0
+        },
+        "jecfa": {
+          "confidence": "possible",
+          "evaluationCount": 4,
+          "ins": [
+            "304"
+          ]
+        }
+      },
+      "recommendedReviewAction": "Vérification manuelle de l’identité, de la source officielle et du périmètre avant génération."
+    }
+  ]
+}

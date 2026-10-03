@@ -99,3 +99,4 @@ export async function searchCompanionRepository(
   writeCache(key, value);
   return { ...value, cacheStatus: "miss" };
 }
+

@@ -5,11 +5,20 @@ export type ProphetAudioEpisode = {
   title: string;
   subtitle: string;
   estimatedMinutes: number;
-  audioSource: number;
+  audioFileName: string;
+  audioUrl: string;
   scriptVersion: string;
   verifiedAt: string;
   sourceLabels: string[];
 };
+
+const PROPHET_AUDIO_BASE_URL =
+  "https://imcqphigckqbwbbzstdf.supabase.co/storage/v1/object/public/prophet-media/audio";
+
+const audio = (audioFileName: string) => ({
+  audioFileName,
+  audioUrl: `${PROPHET_AUDIO_BASE_URL}/${audioFileName}`,
+});
 
 export const PROPHET_AUDIO_EPISODES: Record<string, ProphetAudioEpisode> = {
   adam: {
@@ -19,7 +28,7 @@ export const PROPHET_AUDIO_EPISODES: Record<string, ProphetAudioEpisode> = {
     title: "L’histoire complète d’Âdam",
     subtitle: "Création, Iblîs, le Jardin, le repentir et les premiers enfants d’Âdam",
     estimatedMinutes: 9,
-    audioSource: require("../../../assets/audio/prophets/adam-fr.m4a"),
+    ...audio("adam-fr.m4a"),
     scriptVersion: "2026-09-06-elevenlabs-v2",
     verifiedAt: "2026-09-06",
     sourceLabels: [
@@ -40,7 +49,7 @@ export const PROPHET_AUDIO_EPISODES: Record<string, ProphetAudioEpisode> = {
     title: "L’histoire complète d’Idris",
     subtitle: "L’histoire complète d’Idris",
     estimatedMinutes: 3,
-    audioSource: require("../../../assets/audio/prophets/idris-fr.m4a"),
+    ...audio("idris-fr.m4a"),
     scriptVersion: "2026-09-06-elevenlabs-v2",
     verifiedAt: "2026-09-06",
     sourceLabels: [
@@ -56,7 +65,7 @@ export const PROPHET_AUDIO_EPISODES: Record<string, ProphetAudioEpisode> = {
     title: "L’histoire complète de Nouh",
     subtitle: "L’histoire complète de Nouh",
     estimatedMinutes: 10,
-    audioSource: require("../../../assets/audio/prophets/nouh-fr.m4a"),
+    ...audio("nouh-fr.m4a"),
     scriptVersion: "2026-09-06-elevenlabs-v2",
     verifiedAt: "2026-09-06",
     sourceLabels: [
@@ -77,7 +86,7 @@ export const PROPHET_AUDIO_EPISODES: Record<string, ProphetAudioEpisode> = {
     title: "L’histoire complète de Hud",
     subtitle: "L’histoire complète de Hud",
     estimatedMinutes: 7,
-    audioSource: require("../../../assets/audio/prophets/hud-fr.m4a"),
+    ...audio("hud-fr.m4a"),
     scriptVersion: "2026-09-06-elevenlabs-v2",
     verifiedAt: "2026-09-06",
     sourceLabels: [
@@ -97,7 +106,7 @@ export const PROPHET_AUDIO_EPISODES: Record<string, ProphetAudioEpisode> = {
     title: "L’histoire complète de Salih",
     subtitle: "L’histoire complète de Salih",
     estimatedMinutes: 7,
-    audioSource: require("../../../assets/audio/prophets/salih-fr.m4a"),
+    ...audio("salih-fr.m4a"),
     scriptVersion: "2026-09-06-elevenlabs-v2",
     verifiedAt: "2026-09-06",
     sourceLabels: [
@@ -118,7 +127,7 @@ export const PROPHET_AUDIO_EPISODES: Record<string, ProphetAudioEpisode> = {
     title: "L’histoire complète d’Ibrâhîm",
     subtitle: "Le monothéisme, les idoles, le feu, l’émigration, la famille, l’épreuve du sacrifice et la Ka‘ba",
     estimatedMinutes: 13,
-    audioSource: require("../../../assets/audio/prophets/ibrahim-fr.m4a"),
+    ...audio("ibrahim-fr.m4a"),
     scriptVersion: "2026-09-06-elevenlabs-v2",
     verifiedAt: "2026-09-06",
     sourceLabels: [
@@ -141,7 +150,7 @@ export const PROPHET_AUDIO_EPISODES: Record<string, ProphetAudioEpisode> = {
     title: "L’histoire complète de Moussa",
     subtitle: "De sa naissance à Pharaon, la mer, le veau d’or et la rencontre avec Al-Khidr",
     estimatedMinutes: 16,
-    audioSource: require("../../../assets/audio/prophets/moussa-fr.m4a"),
+    ...audio("moussa-fr.m4a"),
     scriptVersion: "2026-09-06-elevenlabs-v1",
     verifiedAt: "2026-09-06",
     sourceLabels: [
@@ -162,7 +171,7 @@ export const PROPHET_AUDIO_EPISODES: Record<string, ProphetAudioEpisode> = {
     title: "L’histoire complète de Muhammad",
     subtitle: "De la première révélation à la Hijra, Médine, les grandes épreuves et la fin de la mission",
     estimatedMinutes: 24,
-    audioSource: require("../../../assets/audio/prophets/muhammad-fr.m4a"),
+    ...audio("muhammad-fr.m4a"),
     scriptVersion: "2026-09-06-elevenlabs-v1",
     verifiedAt: "2026-09-06",
     sourceLabels: [
@@ -190,7 +199,7 @@ export const PROPHET_AUDIO_EPISODES: Record<string, ProphetAudioEpisode> = {
     title: "L’histoire complète de Issa",
     subtitle: "Maryam, la naissance miraculeuse, les signes, le message, l’élévation et le retour de Issa",
     estimatedMinutes: 10,
-    audioSource: require("../../../assets/audio/prophets/isa-fr.m4a"),
+    ...audio("isa-fr.m4a"),
     scriptVersion: "2026-09-06-elevenlabs-v1",
     verifiedAt: "2026-09-06",
     sourceLabels: [
@@ -211,7 +220,7 @@ export const PROPHET_AUDIO_EPISODES: Record<string, ProphetAudioEpisode> = {
     title: "L’histoire complète de Youssouf",
     subtitle: "Le rêve, le puits, l’Égypte, la prison, le pouvoir, le pardon et les retrouvailles",
     estimatedMinutes: 19,
-    audioSource: require("../../../assets/audio/prophets/yusuf-fr.m4a"),
+    ...audio("yusuf-fr.m4a"),
     scriptVersion: "2026-09-06-elevenlabs-v1",
     verifiedAt: "2026-09-06",
     sourceLabels: [
@@ -227,7 +236,7 @@ export const PROPHET_AUDIO_EPISODES: Record<string, ProphetAudioEpisode> = {
     title: "L’histoire complète de Ayyoub",
     subtitle: "L’épreuve, la patience, l’invocation, la guérison et la confiance en Allah",
     estimatedMinutes: 8,
-    audioSource: require("../../../assets/audio/prophets/ayyub-fr.m4a"),
+    ...audio("ayyub-fr.m4a"),
     scriptVersion: "2026-09-06-elevenlabs-v1",
     verifiedAt: "2026-09-06",
     sourceLabels: [
@@ -244,7 +253,7 @@ export const PROPHET_AUDIO_EPISODES: Record<string, ProphetAudioEpisode> = {
     title: "L’histoire complète de Yaacoub",
     subtitle: "La lignée d’Ibrahim, Youssouf, la patience, l’espérance et la transmission de la foi",
     estimatedMinutes: 7,
-    audioSource: require("../../../assets/audio/prophets/yaqub-fr.m4a"),
+    ...audio("yaqub-fr.m4a"),
     scriptVersion: "2026-09-06-elevenlabs-v1",
     verifiedAt: "2026-09-06",
     sourceLabels: [
@@ -264,7 +273,7 @@ export const PROPHET_AUDIO_EPISODES: Record<string, ProphetAudioEpisode> = {
     title: "L’histoire complète de Soulayman",
     subtitle: "Le royaume, les djinns, la fourmi, la huppe, la reine de Saba et la reconnaissance envers Allah",
     estimatedMinutes: 8,
-    audioSource: require("../../../assets/audio/prophets/sulayman-fr.m4a"),
+    ...audio("sulayman-fr.m4a"),
     scriptVersion: "2026-09-06-elevenlabs-v1",
     verifiedAt: "2026-09-06",
     sourceLabels: [
@@ -281,7 +290,7 @@ export const PROPHET_AUDIO_EPISODES: Record<string, ProphetAudioEpisode> = {
     title: "L’histoire complète de Younous",
     subtitle: "Le départ, le navire, le poisson, l’invocation, la délivrance et le repentir de son peuple",
     estimatedMinutes: 7,
-    audioSource: require("../../../assets/audio/prophets/yunus-fr.m4a"),
+    ...audio("yunus-fr.m4a"),
     scriptVersion: "2026-09-06-elevenlabs-v1",
     verifiedAt: "2026-09-06",
     sourceLabels: [
@@ -299,7 +308,7 @@ export const PROPHET_AUDIO_EPISODES: Record<string, ProphetAudioEpisode> = {
     title: "L’histoire complète de Dawoud",
     subtitle: "Jalout, la royauté, le Zabour, la justice, l’adoration et le retour vers Allah",
     estimatedMinutes: 7,
-    audioSource: require("../../../assets/audio/prophets/dawud-fr.m4a"),
+    ...audio("dawud-fr.m4a"),
     scriptVersion: "2026-09-06-elevenlabs-v1",
     verifiedAt: "2026-09-06",
     sourceLabels: [
@@ -320,7 +329,7 @@ export const PROPHET_AUDIO_EPISODES: Record<string, ProphetAudioEpisode> = {
     title: "L’histoire complète d’Ismaïl",
     subtitle: "Ibrahim, l’épreuve du sacrifice, La Mecque, Zamzam, la Kaaba et la transmission de la foi",
     estimatedMinutes: 7,
-    audioSource: require("../../../assets/audio/prophets/ismail-fr.m4a"),
+    ...audio("ismail-fr.m4a"),
     scriptVersion: "2026-09-06-elevenlabs-v1",
     verifiedAt: "2026-09-06",
     sourceLabels: [
@@ -339,7 +348,7 @@ export const PROPHET_AUDIO_EPISODES: Record<string, ProphetAudioEpisode> = {
     title: "L’histoire complète de Lout",
     subtitle: "L’appel, le rejet, les anges, le départ, le châtiment et les enseignements",
     estimatedMinutes: 10,
-    audioSource: require("../../../assets/audio/prophets/lut-fr.m4a"),
+    ...audio("lut-fr.m4a"),
     scriptVersion: "2026-09-06-elevenlabs-v1",
     verifiedAt: "2026-09-06",
     sourceLabels: [
@@ -361,7 +370,7 @@ export const PROPHET_AUDIO_EPISODES: Record<string, ProphetAudioEpisode> = {
     title: "L’histoire complète de Haroun",
     subtitle: "Le soutien de Moussa, la mission auprès de Pharaon et l’épreuve du veau d’or",
     estimatedMinutes: 7,
-    audioSource: require("../../../assets/audio/prophets/harun-fr.m4a"),
+    ...audio("harun-fr.m4a"),
     scriptVersion: "2026-09-06-elevenlabs-v1",
     verifiedAt: "2026-09-06",
     sourceLabels: [
@@ -379,7 +388,7 @@ export const PROPHET_AUDIO_EPISODES: Record<string, ProphetAudioEpisode> = {
     title: "L’histoire complète de Chouaïb",
     subtitle: "Madyan, la justice dans le commerce, le rejet du peuple et le châtiment",
     estimatedMinutes: 7,
-    audioSource: require("../../../assets/audio/prophets/shuayb-fr.m4a"),
+    ...audio("shuayb-fr.m4a"),
     scriptVersion: "2026-09-06-elevenlabs-v1",
     verifiedAt: "2026-09-06",
     sourceLabels: [
@@ -397,7 +406,7 @@ export const PROPHET_AUDIO_EPISODES: Record<string, ProphetAudioEpisode> = {
     title: "L’histoire complète de Zakariya",
     subtitle: "Maryam, l’invocation, l’annonce de Yahya et la confiance absolue en Allah",
     estimatedMinutes: 6,
-    audioSource: require("../../../assets/audio/prophets/zakariya-fr.m4a"),
+    ...audio("zakariya-fr.m4a"),
     scriptVersion: "2026-09-06-elevenlabs-v1",
     verifiedAt: "2026-09-06",
     sourceLabels: [
@@ -413,7 +422,7 @@ export const PROPHET_AUDIO_EPISODES: Record<string, ProphetAudioEpisode> = {
     title: "L’histoire complète de Yahya",
     subtitle: "Sa naissance miraculeuse, sa sagesse, sa pureté et son rang parmi les prophètes",
     estimatedMinutes: 4,
-    audioSource: require("../../../assets/audio/prophets/yahya-fr.m4a"),
+    ...audio("yahya-fr.m4a"),
     scriptVersion: "2026-09-06-elevenlabs-v1",
     verifiedAt: "2026-09-06",
     sourceLabels: [
@@ -430,7 +439,7 @@ export const PROPHET_AUDIO_EPISODES: Record<string, ProphetAudioEpisode> = {
     title: "L’histoire complète d’Ishaq",
     subtitle: "La bonne nouvelle à Ibrahim, la bénédiction, la prophétie et la continuité de la lignée",
     estimatedMinutes: 4,
-    audioSource: require("../../../assets/audio/prophets/ishaq-fr.m4a"),
+    ...audio("ishaq-fr.m4a"),
     scriptVersion: "2026-09-06-elevenlabs-v1",
     verifiedAt: "2026-09-06",
     sourceLabels: [
@@ -449,7 +458,7 @@ export const PROPHET_AUDIO_EPISODES: Record<string, ProphetAudioEpisode> = {
     title: "L’histoire complète d’Ilyas",
     subtitle: "L’appel au monothéisme, le rejet de Baal et la fidélité à Allah",
     estimatedMinutes: 3,
-    audioSource: require("../../../assets/audio/prophets/ilyas-fr.m4a"),
+    ...audio("ilyas-fr.m4a"),
     scriptVersion: "2026-09-06-elevenlabs-v1",
     verifiedAt: "2026-09-06",
     sourceLabels: [
@@ -465,7 +474,7 @@ export const PROPHET_AUDIO_EPISODES: Record<string, ProphetAudioEpisode> = {
     title: "L’histoire complète d’Al-Yasa",
     subtitle: "Un prophète choisi par Allah, cité parmi les meilleurs serviteurs",
     estimatedMinutes: 3,
-    audioSource: require("../../../assets/audio/prophets/al-yasa-fr.m4a"),
+    ...audio("al-yasa-fr.m4a"),
     scriptVersion: "2026-09-06-elevenlabs-v1",
     verifiedAt: "2026-09-06",
     sourceLabels: [
@@ -481,7 +490,7 @@ export const PROPHET_AUDIO_EPISODES: Record<string, ProphetAudioEpisode> = {
     title: "L’histoire complète de Dhoul-Kifl",
     subtitle: "La patience, la droiture et le rang d’un serviteur cité parmi les meilleurs",
     estimatedMinutes: 4,
-    audioSource: require("../../../assets/audio/prophets/dhul-kifl-fr.m4a"),
+    ...audio("dhul-kifl-fr.m4a"),
     scriptVersion: "2026-09-06-elevenlabs-v1",
     verifiedAt: "2026-09-06",
     sourceLabels: [

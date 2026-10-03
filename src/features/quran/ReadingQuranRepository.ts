@@ -33,9 +33,9 @@ function isWord(word: ReadingWord) {
 }
 
 function mapVerse(raw: ReadingApiVerse): QuranFoundationVerse {
-  const words = raw.words?.filter(isWord) ?? [];
+  const sourceWords = raw.words?.filter(isWord) ?? [];
   const verseNumber = Number(raw.verse_key.split(":")[1]);
-  const arabicFromWords = words
+  const arabicFromWords = sourceWords
     .map(
       (word) =>
         word.textUthmani ??
@@ -47,13 +47,11 @@ function mapVerse(raw: ReadingApiVerse): QuranFoundationVerse {
     )
     .filter(Boolean)
     .join(" ");
-  const translation =
-    raw.translations?.[0]?.text ??
-    words
-      .map((word) => word.translation?.text)
-      .filter(Boolean)
-      .join(" ");
-  const transliteration = words
+  // Never rebuild a verse translation from word glosses: the API can fall back
+  // to another language for those. Only the requested translation resource is
+  // safe to display as the complete verse translation.
+  const translation = raw.translations?.[0]?.text;
+  const transliteration = sourceWords
     .map((word) => word.transliteration?.text)
     .filter(Boolean)
     .join(" ");
@@ -64,13 +62,13 @@ function mapVerse(raw: ReadingApiVerse): QuranFoundationVerse {
     textUthmani: raw.text_uthmani || arabicFromWords,
     codeV1:
       raw.code_v1 ||
-      words.map((word) => word.codeV1 ?? word.code_v1 ?? "").join("") ||
+      sourceWords.map((word) => word.codeV1 ?? word.code_v1 ?? "").join("") ||
       undefined,
     codeV2:
       raw.code_v2 ||
-      words.map((word) => word.codeV2 ?? word.code_v2 ?? "").join("") ||
+      sourceWords.map((word) => word.codeV2 ?? word.code_v2 ?? "").join("") ||
       undefined,
-    words,
+    words: sourceWords,
     translation: translation ? sanitizeTranslationText(translation) : undefined,
     transliteration: transliteration
       ? sanitizeTranslationText(transliteration)

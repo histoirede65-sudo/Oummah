@@ -5,6 +5,7 @@ import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
 import * as Sharing from "expo-sharing";
+import { useVideoPlayer, VideoView } from "expo-video";
 import { useMemo, useState } from "react";
 import {
   ActivityIndicator,
@@ -27,10 +28,25 @@ type Wallpaper = {
   title: string;
   category: string;
   source: number;
+  videoSource?: number;
   isNew?: boolean;
 };
 
 const WALLPAPERS: readonly Wallpaper[] = [
+  { id: "animated-light", title: "La lumière du Coran", category: "Animé", source: require("../assets/images/wallpapers/animated-47055A47-8EF3-4E8A-9BD4-D3DC97BC7BF0.jpg"), videoSource: require("../assets/videos/wallpapers/47055A47-8EF3-4E8A-9BD4-D3DC97BC7BF0.mp4"), isNew: true },
+  { id: "animated-birds", title: "L’envol", category: "Animé", source: require("../assets/images/wallpapers/animated-62803431-1E4E-430D-88BE-E35F7F3B451D.jpg"), videoSource: require("../assets/videos/wallpapers/62803431-1E4E-430D-88BE-E35F7F3B451D.mp4"), isNew: true },
+  { id: "animated-peace", title: "La sérénité", category: "Animé", source: require("../assets/images/wallpapers/animated-70D343B1-9E04-4E91-93DB-807B2CE19744.jpg"), videoSource: require("../assets/videos/wallpapers/70D343B1-9E04-4E91-93DB-807B2CE19744.mp4"), isNew: true },
+  { id: "animated-hope", title: "L’espérance", category: "Animé", source: require("../assets/images/wallpapers/animated-31667228-51E5-436D-91DF-907B80387F5C.jpg"), videoSource: require("../assets/videos/wallpapers/31667228-51E5-436D-91DF-907B80387F5C.mp4"), isNew: true },
+  { id: "animated-reminder", title: "Le rappel vivant", category: "Animé", source: require("../assets/images/wallpapers/animated-F1A4B638-9C5F-446A-96BC-10042394F0E8.jpg"), videoSource: require("../assets/videos/wallpapers/F1A4B638-9C5F-446A-96BC-10042394F0E8.mp4"), isNew: true },
+  { id: "knowledge-oasis", title: "Le savoir", category: "Coran", source: require("../assets/images/wallpapers/wallpaper-13.jpg"), isNew: true },
+  { id: "palestine-capacity", title: "La force de supporter", category: "Coran", source: require("../assets/images/wallpapers/wallpaper-14.jpg"), isNew: true },
+  { id: "learn-quran", title: "Apprendre et transmettre", category: "Hadith", source: require("../assets/images/wallpapers/wallpaper-15.jpg"), isNew: true },
+  { id: "palestine-ease", title: "L’espoir en Palestine", category: "Coran", source: require("../assets/images/wallpapers/wallpaper-16.jpg"), isNew: true },
+  { id: "call-upon-me", title: "L’appel dans la nuit", category: "Coran", source: require("../assets/images/wallpapers/wallpaper-17.jpg"), isNew: true },
+  { id: "palestine-mercy", title: "L’espoir en Sa miséricorde", category: "Coran", source: require("../assets/images/wallpapers/wallpaper-18.jpg"), isNew: true },
+  { id: "mercy-mountains", title: "La miséricorde et le bien", category: "Coran", source: require("../assets/images/wallpapers/wallpaper-19.jpg"), isNew: true },
+  { id: "remember-sand", title: "Le souvenir d’Allah", category: "Coran", source: require("../assets/images/wallpapers/wallpaper-20.jpg"), isNew: true },
+  { id: "with-you", title: "Où que vous soyez", category: "Coran", source: require("../assets/images/wallpapers/wallpaper-21.jpg"), isNew: true },
   { id: "patience", title: "Les endurants", category: "Coran", source: require("../assets/images/wallpapers/wallpaper-03.jpg"), isNew: true },
   { id: "trust", title: "La confiance", category: "Coran", source: require("../assets/images/wallpapers/wallpaper-07.jpg"), isNew: true },
   { id: "emerald", title: "Le rappel", category: "Coran", source: require("../assets/images/wallpapers/wallpaper-08.jpg"), isNew: true },
@@ -45,6 +61,22 @@ const WALLPAPERS: readonly Wallpaper[] = [
   { id: "invocation", title: "L’évocation", category: "Coran", source: require("../assets/images/wallpapers/wallpaper-06.jpg") },
 ];
 
+function WallpaperVideo({ source, contain = false }: { source: number; contain?: boolean }) {
+  const player = useVideoPlayer(source, (instance) => {
+    instance.loop = true;
+    instance.muted = true;
+    instance.play();
+  });
+  return (
+    <VideoView
+      contentFit={contain ? "contain" : "cover"}
+      nativeControls={false}
+      player={player}
+      style={StyleSheet.absoluteFill}
+    />
+  );
+}
+
 export default function WallpapersScreen() {
   const { width } = useWindowDimensions();
   const cardWidth = useMemo(() => Math.floor((width - 46) / 2), [width]);
@@ -56,7 +88,7 @@ export default function WallpapersScreen() {
     setSharingId(wallpaper.id);
 
     try {
-      const asset = Asset.fromModule(wallpaper.source);
+      const asset = Asset.fromModule(wallpaper.videoSource ?? wallpaper.source);
       await asset.downloadAsync();
       const uri = asset.localUri ?? asset.uri;
 
@@ -74,15 +106,16 @@ export default function WallpapersScreen() {
         .replace(/[^a-zA-Z0-9]+/g, "-")
         .replace(/^-|-$/g, "");
       const shareDirectory = `${FileSystem.cacheDirectory}oummah-wallpapers/`;
-      const shareUri = `${shareDirectory}Fond-OUMMAH-${readableTitle}.jpg`;
+      const isVideo = Boolean(wallpaper.videoSource);
+      const shareUri = `${shareDirectory}Fond-OUMMAH-${readableTitle}.${isVideo ? "mp4" : "jpg"}`;
       await FileSystem.makeDirectoryAsync(shareDirectory, { intermediates: true });
       await FileSystem.deleteAsync(shareUri, { idempotent: true });
       await FileSystem.copyAsync({ from: uri, to: shareUri });
 
       await Sharing.shareAsync(shareUri, {
         dialogTitle: "Enregistrer le fond d’écran OUMMAH",
-        mimeType: "image/jpeg",
-        UTI: "public.jpeg",
+        mimeType: isVideo ? "video/mp4" : "image/jpeg",
+        UTI: isVideo ? "public.mpeg-4" : "public.jpeg",
       });
     } catch {
       Alert.alert(
@@ -134,7 +167,7 @@ export default function WallpapersScreen() {
 
         <View style={styles.sectionRow}>
           <Text style={styles.sectionTitle}>Toute la collection</Text>
-          <Text style={styles.sectionMeta}>12 fonds · faites défiler</Text>
+          <Text style={styles.sectionMeta}>{WALLPAPERS.length} fonds · faites défiler</Text>
         </View>
 
         <View style={styles.grid}>
@@ -149,12 +182,11 @@ export default function WallpapersScreen() {
                 pressed && styles.pressed,
               ]}
             >
-              <Image
-                contentFit="cover"
-                source={wallpaper.source}
-                style={StyleSheet.absoluteFill}
-                transition={180}
-              />
+              {wallpaper.videoSource ? (
+                <WallpaperVideo source={wallpaper.videoSource} />
+              ) : (
+                <Image contentFit="cover" source={wallpaper.source} style={StyleSheet.absoluteFill} transition={180} />
+              )}
               <LinearGradient
                 colors={["transparent", "rgba(4,3,9,0.08)", "rgba(4,3,9,0.9)"]}
                 locations={[0.48, 0.68, 1]}
@@ -181,7 +213,9 @@ export default function WallpapersScreen() {
         visible={Boolean(selected)}
       >
         <View style={styles.previewScreen}>
-          {selected ? (
+          {selected?.videoSource ? (
+            <WallpaperVideo contain source={selected.videoSource} />
+          ) : selected ? (
             <Image contentFit="contain" source={selected.source} style={StyleSheet.absoluteFill} />
           ) : null}
           <LinearGradient

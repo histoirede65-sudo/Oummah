@@ -10,7 +10,7 @@ import { typography } from "../../../theme/typography";
 export default function EssentialGoalCard({ goal, onPress }: { goal: DailyGoal; onPress(): void }) {
   const complete = isGoalComplete(goal);
   return (
-    <Pressable onPress={onPress} style={({ pressed }) => [styles.card, pressed && styles.pressed]}>
+    <Pressable onPress={onPress} style={({ pressed }) => [styles.card, complete && styles.cardComplete, pressed && styles.pressed]}>
       <LinearGradient colors={["rgba(225,160,50,0.17)", "rgba(54,30,66,0.54)"]} style={StyleSheet.absoluteFill} />
       <View style={styles.icon}><Ionicons name={complete ? "checkmark" : "star-outline"} size={19} color={complete ? colors.background : colors.goldLight} /></View>
       <View style={styles.copy}>
@@ -25,6 +25,7 @@ export default function EssentialGoalCard({ goal, onPress }: { goal: DailyGoal; 
 
 const styles = StyleSheet.create({
   card: { minHeight: 105, overflow: "hidden", padding: 15, flexDirection: "row", alignItems: "center", borderRadius: 22, borderWidth: 1, borderColor: "rgba(241,188,79,0.34)" },
+  cardComplete: { borderWidth: 2, borderColor: colors.success, backgroundColor: "rgba(98,197,139,0.23)", shadowColor: colors.success, shadowOpacity: 0.95, shadowRadius: 19, elevation: 12 },
   pressed: { opacity: 0.76, transform: [{ scale: 0.99 }] },
   icon: { width: 42, height: 42, alignItems: "center", justifyContent: "center", borderRadius: 15, backgroundColor: colors.goldLight },
   copy: { flex: 1, minWidth: 0, marginHorizontal: 11 },

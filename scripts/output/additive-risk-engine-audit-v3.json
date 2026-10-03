@@ -1,0 +1,4539 @@
+{
+  "schemaVersion": "3.0",
+  "auditVersion": "v3",
+  "generatedAt": "2026-09-30T23:08:15.194Z",
+  "mode": "offline-audit-only",
+  "engineSource": "src/features/boycott/additiveRiskEngine.ts",
+  "masterSource": "scripts/data/additives-scientific-master-v2-exposure.json",
+  "summary": {
+    "totalCodes": 341,
+    "safe": 0,
+    "limited": 0,
+    "moderate": 0,
+    "high": 0,
+    "insufficient_data": 341,
+    "totalAnomalies": 0,
+    "noSupabaseWrites": true,
+    "noRuntimeChanges": true,
+    "evaluateAdditiveRiskModified": false
+  },
+  "baselineV2Distribution": {
+    "safe": {
+      "count": 0,
+      "percent": 0
+    },
+    "limited": {
+      "count": 0,
+      "percent": 0
+    },
+    "moderate": {
+      "count": 0,
+      "percent": 0
+    },
+    "high": {
+      "count": 0,
+      "percent": 0
+    },
+    "insufficient_data": {
+      "count": 341,
+      "percent": 100
+    }
+  },
+  "distribution": {
+    "safe": 0,
+    "limited": 0,
+    "moderate": 0,
+    "high": 0,
+    "insufficient_data": 341
+  },
+  "confidenceDistribution": {
+    "high": 188,
+    "medium": 74,
+    "low": 79
+  },
+  "exitedInsufficientData": [],
+  "spotChecks": [
+    {
+      "code": "E951",
+      "name": "Aspartame",
+      "riskLevel": "insufficient_data",
+      "confidence": "low",
+      "exposureAssessments": 0,
+      "jecfaExposureConcern": null,
+      "result": {
+        "riskLevel": "insufficient_data",
+        "confidence": "low",
+        "reasons": [
+          "Aucun profil scientifique disponible."
+        ],
+        "evidenceSummary": "Données scientifiques insuffisantes.",
+        "exposureSummary": "Exposition non déterminée."
+      }
+    },
+    {
+      "code": "E338",
+      "name": "Phosphoric acid",
+      "riskLevel": "insufficient_data",
+      "confidence": "low",
+      "exposureAssessments": 0,
+      "jecfaExposureConcern": null,
+      "result": {
+        "riskLevel": "insufficient_data",
+        "confidence": "low",
+        "reasons": [
+          "Aucun profil scientifique disponible."
+        ],
+        "evidenceSummary": "Données scientifiques insuffisantes.",
+        "exposureSummary": "Exposition non déterminée."
+      }
+    },
+    {
+      "code": "E150D",
+      "name": "Sulphite ammonia caramel",
+      "riskLevel": "insufficient_data",
+      "confidence": "medium",
+      "exposureAssessments": 0,
+      "jecfaExposureConcern": null,
+      "result": {
+        "riskLevel": "insufficient_data",
+        "confidence": "medium",
+        "reasons": [
+          "Danger additif maximal observé : none.",
+          "Niveau de preuve normalisé : limited.",
+          "La portée familiale est conservée et réduit la précision individuelle.",
+          "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+        ],
+        "evidenceSummary": "Preuves limitées disponibles.",
+        "exposureSummary": "Exposition individuelle inconnue."
+      }
+    },
+    {
+      "code": "E250",
+      "name": "Sodium nitrite",
+      "riskLevel": "insufficient_data",
+      "confidence": "low",
+      "exposureAssessments": 0,
+      "jecfaExposureConcern": null,
+      "result": {
+        "riskLevel": "insufficient_data",
+        "confidence": "low",
+        "reasons": [
+          "Aucun profil scientifique disponible."
+        ],
+        "evidenceSummary": "Données scientifiques insuffisantes.",
+        "exposureSummary": "Exposition non déterminée."
+      }
+    },
+    {
+      "code": "E621",
+      "name": "Monosodium glutamate",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "exposureAssessments": 0,
+      "jecfaExposureConcern": null,
+      "result": {
+        "riskLevel": "insufficient_data",
+        "confidence": "high",
+        "reasons": [
+          "Aucun signal de danger additif suffisamment caractérisé.",
+          "Niveau de preuve normalisé : limited.",
+          "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+        ],
+        "evidenceSummary": "Preuves limitées disponibles.",
+        "exposureSummary": "NOT SPECIFIED Comments: Group ADI for L-glutamic acid and its ammonium, calcium, monosodium, magnesium and potassium salts; NOT SPECIFIED Comments: Group ADI for L-glutamic acid and its ammonium, calcium, monosodium, magnesium and potassium salts; NOT SPECIFIED Comments: Group ADI for L-glutamic acid and its ammonium, calcium, monosodium, magnesium and potassium salts"
+      }
+    },
+    {
+      "code": "E955",
+      "name": "Sucralose",
+      "riskLevel": "insufficient_data",
+      "confidence": "low",
+      "exposureAssessments": 0,
+      "jecfaExposureConcern": null,
+      "result": {
+        "riskLevel": "insufficient_data",
+        "confidence": "low",
+        "reasons": [
+          "Aucun profil scientifique disponible."
+        ],
+        "evidenceSummary": "Données scientifiques insuffisantes.",
+        "exposureSummary": "Exposition non déterminée."
+      }
+    },
+    {
+      "code": "E202",
+      "name": "Potassium sorbate",
+      "riskLevel": "insufficient_data",
+      "confidence": "low",
+      "exposureAssessments": 0,
+      "jecfaExposureConcern": null,
+      "result": {
+        "riskLevel": "insufficient_data",
+        "confidence": "low",
+        "reasons": [
+          "Aucun profil scientifique disponible."
+        ],
+        "evidenceSummary": "Données scientifiques insuffisantes.",
+        "exposureSummary": "Exposition non déterminée."
+      }
+    },
+    {
+      "code": "E330",
+      "name": "Citric acid",
+      "riskLevel": "insufficient_data",
+      "confidence": "low",
+      "exposureAssessments": 0,
+      "jecfaExposureConcern": null,
+      "result": {
+        "riskLevel": "insufficient_data",
+        "confidence": "low",
+        "reasons": [
+          "Aucun profil scientifique disponible."
+        ],
+        "evidenceSummary": "Données scientifiques insuffisantes.",
+        "exposureSummary": "Exposition non déterminée."
+      }
+    },
+    {
+      "code": "E407",
+      "name": "Carrageenan",
+      "riskLevel": "insufficient_data",
+      "confidence": "low",
+      "exposureAssessments": 0,
+      "jecfaExposureConcern": null,
+      "result": {
+        "riskLevel": "insufficient_data",
+        "confidence": "low",
+        "reasons": [
+          "Aucun profil scientifique disponible."
+        ],
+        "evidenceSummary": "Données scientifiques insuffisantes.",
+        "exposureSummary": "Exposition non déterminée."
+      }
+    },
+    {
+      "code": "E471",
+      "name": "Mono-and diglycerides of fatty acids",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "exposureAssessments": 0,
+      "jecfaExposureConcern": null,
+      "result": {
+        "riskLevel": "insufficient_data",
+        "confidence": "high",
+        "reasons": [
+          "Danger additif maximal observé : none.",
+          "Niveau de preuve normalisé : limited.",
+          "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+        ],
+        "evidenceSummary": "Preuves limitées disponibles.",
+        "exposureSummary": "Assessment: low concern; Remarks: According to the conceptual framework for the risk assessment of certain food additives re-evaluated under Commission Regulation (EU) No 257/2010 (EFSA ANS Panel, 2014) and given that: a) mono- and di-glycerides of fatty acids are subjected to hydrolysis by lipases ; consumers; 64c221a4-aecc-4c8b-ab11-c54458b288c7; other:; margin of safety; NOT LIMITED; NOT LIMITED; NOT LIMITED; NOT LIMITED; NOT LIMITED; NOT LIMITED"
+      }
+    }
+  ],
+  "anomalies": {
+    "suspectedFalseSafe": [],
+    "referenceOnlyClassified": [],
+    "insufficientEvidenceForClassification": [],
+    "e338MustRemainInsufficient": []
+  },
+  "rows": [
+    {
+      "code": "E100",
+      "name": "Curcumin",
+      "riskLevel": "insufficient_data",
+      "confidence": "low",
+      "reasons": [
+        "Aucun profil scientifique disponible."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E101",
+      "name": "Riboflavins",
+      "riskLevel": "insufficient_data",
+      "confidence": "low",
+      "reasons": [
+        "Aucun profil scientifique disponible."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E102",
+      "name": "Tartrazine",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E104",
+      "name": "Quinoline Yellow",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E110",
+      "name": "Sunset Yellow FCF/Orange Yellow S",
+      "riskLevel": "insufficient_data",
+      "confidence": "low",
+      "reasons": [
+        "Aucun profil scientifique disponible."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E120",
+      "name": "Carminic acid, Carmine",
+      "riskLevel": "insufficient_data",
+      "confidence": "low",
+      "reasons": [
+        "Aucun profil scientifique disponible."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E122",
+      "name": "Azorubine, Carmoisine",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E123",
+      "name": "Amaranth",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E124",
+      "name": "Ponceau 4R, Cochineal Red A",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E127",
+      "name": "Erythrosine",
+      "riskLevel": "insufficient_data",
+      "confidence": "medium",
+      "reasons": [
+        "Aucun signal de danger additif suffisamment caractérisé.",
+        "Niveau de preuve normalisé : strong.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": "unknown",
+      "exposureAssessments": 9
+    },
+    {
+      "code": "E129",
+      "name": "Allura Red AC",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E131",
+      "name": "Patent Blue V",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Aucun signal de danger additif suffisamment caractérisé.",
+        "Niveau de preuve normalisé : strong.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E132",
+      "name": "Indigotine, Indigo carmine",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E133",
+      "name": "Brilliant Blue FCF",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": "unknown",
+      "exposureAssessments": 3
+    },
+    {
+      "code": "E140",
+      "name": "Chlorophylls and Chlorophyllins",
+      "riskLevel": "insufficient_data",
+      "confidence": "low",
+      "reasons": [
+        "Aucun profil scientifique disponible."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E141",
+      "name": "Copper complexes of chlorophylls and chlorophyllins",
+      "riskLevel": "insufficient_data",
+      "confidence": "low",
+      "reasons": [
+        "Aucun profil scientifique disponible."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E142",
+      "name": "Green S",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E150A",
+      "name": "Plain caramel",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "La portée familiale est conservée et réduit la précision individuelle.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E150B",
+      "name": "Caustic sulphite caramel",
+      "riskLevel": "insufficient_data",
+      "confidence": "medium",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "La portée familiale est conservée et réduit la précision individuelle.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E150C",
+      "name": "Ammonia caramel",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "La portée familiale est conservée et réduit la précision individuelle.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E150D",
+      "name": "Sulphite ammonia caramel",
+      "riskLevel": "insufficient_data",
+      "confidence": "medium",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "La portée familiale est conservée et réduit la précision individuelle.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E151",
+      "name": "Brilliant Black PN",
+      "riskLevel": "insufficient_data",
+      "confidence": "medium",
+      "reasons": [
+        "Aucun signal de danger additif suffisamment caractérisé.",
+        "Niveau de preuve normalisé : strong.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E153",
+      "name": "Vegetable carbon",
+      "riskLevel": "insufficient_data",
+      "confidence": "medium",
+      "reasons": [
+        "Aucun signal de danger additif suffisamment caractérisé.",
+        "Niveau de preuve normalisé : strong.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E155",
+      "name": "Brown HT",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E160A",
+      "name": "Carotenes",
+      "riskLevel": "insufficient_data",
+      "confidence": "low",
+      "reasons": [
+        "Aucun profil scientifique disponible."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E160B",
+      "name": "Annatto, Bixin, Norbixin/Deleted from the Union List of authorised additives",
+      "riskLevel": "insufficient_data",
+      "confidence": "low",
+      "reasons": [
+        "Aucun profil scientifique disponible."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E160C",
+      "name": "Paprika extract, capsanthin, capsorubin",
+      "riskLevel": "insufficient_data",
+      "confidence": "low",
+      "reasons": [
+        "Aucun profil scientifique disponible."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E160D",
+      "name": "Lycopene",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E160E",
+      "name": "Beta-apo-8'-carotenal (C 30)",
+      "riskLevel": "insufficient_data",
+      "confidence": "medium",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E161B",
+      "name": "Lutein",
+      "riskLevel": "insufficient_data",
+      "confidence": "medium",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E161G",
+      "name": "Canthaxanthin",
+      "riskLevel": "insufficient_data",
+      "confidence": "medium",
+      "reasons": [
+        "Aucun signal de danger additif suffisamment caractérisé.",
+        "Niveau de preuve normalisé : strong.",
+        "Niveau d’exposition normalisé : concerning."
+      ],
+      "jecfaExposureConcern": "concerning",
+      "exposureAssessments": 3
+    },
+    {
+      "code": "E162",
+      "name": "Beetroot Red, betanin",
+      "riskLevel": "insufficient_data",
+      "confidence": "low",
+      "reasons": [
+        "Aucun profil scientifique disponible."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E163",
+      "name": "Anthocyanins",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E170",
+      "name": "Calcium carbonate",
+      "riskLevel": "insufficient_data",
+      "confidence": "low",
+      "reasons": [
+        "Aucun profil scientifique disponible."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E171",
+      "name": "Titanium dioxide",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E172",
+      "name": "Iron oxides and hydroxides",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E173",
+      "name": "Aluminium",
+      "riskLevel": "insufficient_data",
+      "confidence": "low",
+      "reasons": [
+        "Aucun profil scientifique disponible."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E174",
+      "name": "Silver",
+      "riskLevel": "insufficient_data",
+      "confidence": "medium",
+      "reasons": [
+        "Aucun signal de danger additif suffisamment caractérisé.",
+        "Niveau de preuve normalisé : strong.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E175",
+      "name": "Gold",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E180",
+      "name": "Litholrubine BK",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E200",
+      "name": "Sorbic acid",
+      "riskLevel": "insufficient_data",
+      "confidence": "low",
+      "reasons": [
+        "Aucun profil scientifique disponible."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E202",
+      "name": "Potassium sorbate",
+      "riskLevel": "insufficient_data",
+      "confidence": "low",
+      "reasons": [
+        "Aucun profil scientifique disponible."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E203",
+      "name": "Calcium sorbate/Deleted from the Union list",
+      "riskLevel": "insufficient_data",
+      "confidence": "medium",
+      "reasons": [
+        "Aucun signal de danger additif suffisamment caractérisé.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E210",
+      "name": "Benzoic acid",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E211",
+      "name": "Sodium benzoate",
+      "riskLevel": "insufficient_data",
+      "confidence": "low",
+      "reasons": [
+        "Aucun profil scientifique disponible."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E212",
+      "name": "Potassium benzoate",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E213",
+      "name": "Calcium benzoate",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E214",
+      "name": "Ethyl-p-hydroxybenzoate",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E215",
+      "name": "Sodium ethyl p-hydroxybenzoate",
+      "riskLevel": "insufficient_data",
+      "confidence": "medium",
+      "reasons": [
+        "Aucun signal de danger additif suffisamment caractérisé.",
+        "Le niveau de preuve normalisé est insuffisant.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E218",
+      "name": "Methyl p-hydroxybenzoate",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E219",
+      "name": "Sodium methyl p-hydroxybenzoate",
+      "riskLevel": "insufficient_data",
+      "confidence": "medium",
+      "reasons": [
+        "Aucun signal de danger additif suffisamment caractérisé.",
+        "Le niveau de preuve normalisé est insuffisant.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E220",
+      "name": "Sulphur dioxide",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Aucun signal de danger additif suffisamment caractérisé.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E221",
+      "name": "Sodium sulphite",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Aucun signal de danger additif suffisamment caractérisé.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E222",
+      "name": "Sodium hydrogen sulphite",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Aucun signal de danger additif suffisamment caractérisé.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E223",
+      "name": "Sodium metabisulphite",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E224",
+      "name": "Potassium metabisulphite",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E226",
+      "name": "Calcium sulphite",
+      "riskLevel": "insufficient_data",
+      "confidence": "medium",
+      "reasons": [
+        "Aucun signal de danger additif suffisamment caractérisé.",
+        "Le niveau de preuve normalisé est insuffisant.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E227",
+      "name": "Calcium hydrogen sulphite",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Aucun signal de danger additif suffisamment caractérisé.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E228",
+      "name": "Potassium hydrogen sulphite",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Aucun signal de danger additif suffisamment caractérisé.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E234",
+      "name": "Nisin",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E235",
+      "name": "Natamycin",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E239",
+      "name": "Hexamethylene tetramine",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E242",
+      "name": "Dimethyl dicarbonate",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E243",
+      "name": "Ethyl lauroyl arginate",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E246",
+      "name": "Glycolipids",
+      "riskLevel": "insufficient_data",
+      "confidence": "medium",
+      "reasons": [
+        "Aucun signal de danger additif suffisamment caractérisé.",
+        "Niveau de preuve normalisé : strong.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": "unknown",
+      "exposureAssessments": 2
+    },
+    {
+      "code": "E249",
+      "name": "Potassium nitrite",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E250",
+      "name": "Sodium nitrite",
+      "riskLevel": "insufficient_data",
+      "confidence": "low",
+      "reasons": [
+        "Aucun profil scientifique disponible."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E251",
+      "name": "Sodium nitrate",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E252",
+      "name": "Potassium nitrate",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E260",
+      "name": "Acetic acid",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Aucun signal de danger additif suffisamment caractérisé.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E261",
+      "name": "Potassium acetates",
+      "riskLevel": "insufficient_data",
+      "confidence": "medium",
+      "reasons": [
+        "Aucun signal de danger additif suffisamment caractérisé.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E262",
+      "name": "Sodium acetates",
+      "riskLevel": "insufficient_data",
+      "confidence": "low",
+      "reasons": [
+        "Aucun profil scientifique disponible."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E263",
+      "name": "Calcium acetate",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Aucun signal de danger additif suffisamment caractérisé.",
+        "Niveau de preuve normalisé : strong.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E267",
+      "name": "Buffered vinegar",
+      "riskLevel": "insufficient_data",
+      "confidence": "medium",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E270",
+      "name": "Lactic acid",
+      "riskLevel": "insufficient_data",
+      "confidence": "low",
+      "reasons": [
+        "Aucun profil scientifique disponible."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E280",
+      "name": "Propionic acid",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E281",
+      "name": "Sodium propionate",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E282",
+      "name": "Calcium propionate",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E283",
+      "name": "Potassium propionate",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E284",
+      "name": "Boric acid",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E285",
+      "name": "Sodium tetraborate (borax)",
+      "riskLevel": "insufficient_data",
+      "confidence": "low",
+      "reasons": [
+        "Aucun profil scientifique disponible."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E290",
+      "name": "Carbon dioxide",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Aucun signal de danger additif suffisamment caractérisé.",
+        "Niveau de preuve normalisé : strong.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E296",
+      "name": "Malic acid",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E297",
+      "name": "Fumaric acid",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Aucun signal de danger additif suffisamment caractérisé.",
+        "Niveau de preuve normalisé : strong.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E300",
+      "name": "Ascorbic acid",
+      "riskLevel": "insufficient_data",
+      "confidence": "low",
+      "reasons": [
+        "Aucun profil scientifique disponible."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E301",
+      "name": "Sodium ascorbate",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E302",
+      "name": "Calcium ascorbate",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E304",
+      "name": "Fatty acid esters of ascorbic acid",
+      "riskLevel": "insufficient_data",
+      "confidence": "low",
+      "reasons": [
+        "Aucun profil scientifique disponible."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E306",
+      "name": "Tocopherol-rich extract",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E307",
+      "name": "Alpha-tocopherol",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Aucun signal de danger additif suffisamment caractérisé.",
+        "Niveau de preuve normalisé : strong.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E308",
+      "name": "Gamma-tocopherol",
+      "riskLevel": "insufficient_data",
+      "confidence": "medium",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E309",
+      "name": "Delta-tocopherol",
+      "riskLevel": "insufficient_data",
+      "confidence": "medium",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E310",
+      "name": "Propyl gallate",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E315",
+      "name": "Erythorbic acid",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E316",
+      "name": "Sodium erythorbate",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E319",
+      "name": "Tertiary-butyl hydroquinone (TBHQ)",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E320",
+      "name": "Butylated hydroxyanisole (BHA)",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E321",
+      "name": "Butylated hydroxytoluene (BHT)",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E322",
+      "name": "Lecithins",
+      "riskLevel": "insufficient_data",
+      "confidence": "low",
+      "reasons": [
+        "Aucun profil scientifique disponible."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E322A",
+      "name": "Oat lecithin",
+      "riskLevel": "insufficient_data",
+      "confidence": "medium",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E325",
+      "name": "Sodium lactate",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Aucun signal de danger additif suffisamment caractérisé.",
+        "Niveau de preuve normalisé : strong.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E326",
+      "name": "Potassium lactate",
+      "riskLevel": "insufficient_data",
+      "confidence": "medium",
+      "reasons": [
+        "Aucun signal de danger additif suffisamment caractérisé.",
+        "Niveau de preuve normalisé : strong.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E327",
+      "name": "Calcium lactate",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Aucun signal de danger additif suffisamment caractérisé.",
+        "Niveau de preuve normalisé : strong.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E330",
+      "name": "Citric acid",
+      "riskLevel": "insufficient_data",
+      "confidence": "low",
+      "reasons": [
+        "Aucun profil scientifique disponible."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E331",
+      "name": "Sodium citrates",
+      "riskLevel": "insufficient_data",
+      "confidence": "low",
+      "reasons": [
+        "Aucun profil scientifique disponible."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E332",
+      "name": "Potassium citrates",
+      "riskLevel": "insufficient_data",
+      "confidence": "low",
+      "reasons": [
+        "Aucun profil scientifique disponible."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E333",
+      "name": "Calcium citrates",
+      "riskLevel": "insufficient_data",
+      "confidence": "medium",
+      "reasons": [
+        "Aucun signal de danger additif suffisamment caractérisé.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E334",
+      "name": "Tartaric acid (L(+)-)",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E335",
+      "name": "Sodium tartrates",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E336",
+      "name": "Potassium tartrates",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E337",
+      "name": "Sodium potassium tartrate",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E338",
+      "name": "Phosphoric acid",
+      "riskLevel": "insufficient_data",
+      "confidence": "low",
+      "reasons": [
+        "Aucun profil scientifique disponible."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E339",
+      "name": "Sodium phosphates",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Aucun signal de danger additif suffisamment caractérisé.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E340",
+      "name": "Potassium phosphates",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Aucun signal de danger additif suffisamment caractérisé.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E341",
+      "name": "Calcium phosphates",
+      "riskLevel": "insufficient_data",
+      "confidence": "low",
+      "reasons": [
+        "Aucun profil scientifique disponible."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E343",
+      "name": "Magnesium phosphates",
+      "riskLevel": "insufficient_data",
+      "confidence": "low",
+      "reasons": [
+        "Aucun profil scientifique disponible."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E350",
+      "name": "Sodium malates",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Aucun signal de danger additif suffisamment caractérisé.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E351",
+      "name": "Potassium malate",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Aucun signal de danger additif suffisamment caractérisé.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E352",
+      "name": "Calcium malates",
+      "riskLevel": "insufficient_data",
+      "confidence": "low",
+      "reasons": [
+        "Aucun profil scientifique disponible."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E353",
+      "name": "Metatartaric acid",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E354",
+      "name": "Calcium tartrate",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E355",
+      "name": "Adipic acid",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Aucun signal de danger additif suffisamment caractérisé.",
+        "Niveau de preuve normalisé : strong.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": "unknown",
+      "exposureAssessments": 2
+    },
+    {
+      "code": "E356",
+      "name": "Sodium adipate",
+      "riskLevel": "insufficient_data",
+      "confidence": "medium",
+      "reasons": [
+        "Aucun signal de danger additif suffisamment caractérisé.",
+        "Niveau de preuve normalisé : strong.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E357",
+      "name": "Potassium adipate",
+      "riskLevel": "insufficient_data",
+      "confidence": "medium",
+      "reasons": [
+        "Aucun signal de danger additif suffisamment caractérisé.",
+        "Niveau de preuve normalisé : strong.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E363",
+      "name": "Succinic acid",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Aucun signal de danger additif suffisamment caractérisé.",
+        "Niveau de preuve normalisé : strong.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E380",
+      "name": "Triammonium citrate",
+      "riskLevel": "insufficient_data",
+      "confidence": "low",
+      "reasons": [
+        "Aucun profil scientifique disponible."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E385",
+      "name": "Calcium disodium ethylene diamine tetra-acetate (Calcium disodium EDTA)",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Aucun signal de danger additif suffisamment caractérisé.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E392",
+      "name": "Extracts of rosemary",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Aucun signal de danger additif suffisamment caractérisé.",
+        "Niveau de preuve normalisé : strong.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": "unknown",
+      "exposureAssessments": 3
+    },
+    {
+      "code": "E400",
+      "name": "Alginic acid",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E401",
+      "name": "Sodium alginate",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E402",
+      "name": "Potassium alginate",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E403",
+      "name": "Ammonium alginate",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E404",
+      "name": "Calcium alginate",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E405",
+      "name": "Propane-1, 2-diol alginate",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E406",
+      "name": "Agar",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Aucun signal de danger additif suffisamment caractérisé.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E407",
+      "name": "Carrageenan",
+      "riskLevel": "insufficient_data",
+      "confidence": "low",
+      "reasons": [
+        "Aucun profil scientifique disponible."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E407A",
+      "name": "Processed euchema seaweed",
+      "riskLevel": "insufficient_data",
+      "confidence": "medium",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E410",
+      "name": "Locust bean gum",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E412",
+      "name": "Guar gum",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E413",
+      "name": "Tragacanth",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E414",
+      "name": "Gum arabic (acacia gum)",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E415",
+      "name": "Xanthan gum",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E416",
+      "name": "Karaya gum",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E417",
+      "name": "Tara gum",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E418",
+      "name": "Gellan gum",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E420",
+      "name": "Sorbitols",
+      "riskLevel": "insufficient_data",
+      "confidence": "low",
+      "reasons": [
+        "Aucun profil scientifique disponible."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E421",
+      "name": "Mannitol",
+      "riskLevel": "insufficient_data",
+      "confidence": "medium",
+      "reasons": [
+        "Aucun signal de danger additif suffisamment caractérisé.",
+        "Niveau de preuve normalisé : strong.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E422",
+      "name": "Glycerol",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Signal hors additif individuel (contaminant) : Discussion.Discussion: The European Commission asks the European Food Safety Authority for a scientific opinion on the evaluation of the substances currently on the list in the Annex to Commission Directive 1996/3/EC as acceptable previous cargoes for edible fats and oils. The evaluation should be based on the SCF criteria and the criteria proposed by the CCFO as reviewed by the Panel on Contaminants in Food Chain in 2009 for acceptable previous cargoes for edible fats and oils. KeyInformation.KeyInformation: Mutagenic: Negative; Carcinogenic: Negative",
+        "Signal hors additif individuel (contaminant) : Discussion.Discussion: The European Commission asks the European Food Safety Authority for a scientific opinion on the evaluation of the substances currently on the list in the Annex to Commission Directive 1996/3/EC as acceptable previous cargoes for edible fats and oils. The evaluation should be based on the SCF criteria and the criteria proposed by the CCFO as reviewed by the Panel on Contaminants in Food Chain in 2009 for acceptable previous cargoes for edible fats and oils. KeyInformation.KeyInformation: Genotoxic: Negative",
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E423",
+      "name": "Octenyl succinic acid modified gum arabic",
+      "riskLevel": "insufficient_data",
+      "confidence": "medium",
+      "reasons": [
+        "Aucun signal de danger additif suffisamment caractérisé.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E425",
+      "name": "Konjac",
+      "riskLevel": "insufficient_data",
+      "confidence": "low",
+      "reasons": [
+        "Aucun profil scientifique disponible."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E426",
+      "name": "Soybean hemicellulose",
+      "riskLevel": "insufficient_data",
+      "confidence": "medium",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E427",
+      "name": "Cassia gum",
+      "riskLevel": "insufficient_data",
+      "confidence": "medium",
+      "reasons": [
+        "Aucun signal de danger additif suffisamment caractérisé.",
+        "Niveau de preuve normalisé : strong.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E431",
+      "name": "Polyoxyethylene (40) stearate",
+      "riskLevel": "insufficient_data",
+      "confidence": "medium",
+      "reasons": [
+        "Aucun signal de danger additif suffisamment caractérisé.",
+        "Niveau de preuve normalisé : strong.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E432",
+      "name": "Polyoxyethylene sorbitan monolaurate (polysorbate 20)",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Aucun signal de danger additif suffisamment caractérisé.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E433",
+      "name": "Polyoxyethylene sorbitan monooleate (polysorbate 80)",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E434",
+      "name": "Polyoxyethylene sorbitan monopalmitate (polysorbate 40)",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Aucun signal de danger additif suffisamment caractérisé.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E435",
+      "name": "Polyoxyethylene sorbitan monostearate (polysorbate 60)",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Aucun signal de danger additif suffisamment caractérisé.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E436",
+      "name": "Polyoxyethylene sorbitan tristearate (polysorbate 65)",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Aucun signal de danger additif suffisamment caractérisé.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E440",
+      "name": "Pectins",
+      "riskLevel": "insufficient_data",
+      "confidence": "medium",
+      "reasons": [
+        "Aucun signal de danger additif suffisamment caractérisé.",
+        "Niveau de preuve normalisé : strong.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E442",
+      "name": "Ammonium phosphatides",
+      "riskLevel": "insufficient_data",
+      "confidence": "low",
+      "reasons": [
+        "Aucun profil scientifique disponible."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E444",
+      "name": "Sucrose acetate isobutyrate",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E445",
+      "name": "Glycerol esters of wood rosins",
+      "riskLevel": "insufficient_data",
+      "confidence": "low",
+      "reasons": [
+        "Aucun profil scientifique disponible."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E450",
+      "name": "Diphosphates",
+      "riskLevel": "insufficient_data",
+      "confidence": "low",
+      "reasons": [
+        "Aucun profil scientifique disponible."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E451",
+      "name": "Triphosphates",
+      "riskLevel": "insufficient_data",
+      "confidence": "low",
+      "reasons": [
+        "Aucun profil scientifique disponible."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E452",
+      "name": "Polyphosphates",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E456",
+      "name": "Potassium Polyaspartate",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E459",
+      "name": "Beta-cyclodextrin",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E460",
+      "name": "Cellulose",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E461",
+      "name": "Methyl cellulose",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E462",
+      "name": "Ethyl cellulose",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E463",
+      "name": "Hydroxypropyl cellulose",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E463A",
+      "name": "Low-substituted hydroxypropyl cellulose (L-HPC)",
+      "riskLevel": "insufficient_data",
+      "confidence": "low",
+      "reasons": [
+        "Aucun profil scientifique disponible."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E464",
+      "name": "Hydroxypropyl methyl cellulose",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E465",
+      "name": "Ethyl methyl cellulose",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E466",
+      "name": "Sodium carboxy methyl cellulose, cellulose gum",
+      "riskLevel": "insufficient_data",
+      "confidence": "low",
+      "reasons": [
+        "Aucun profil scientifique disponible."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E468",
+      "name": "Cross-linked sodium carboxy methyl cellulose",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E469",
+      "name": "Enzymatically hydrolysed carboxy methyl cellulose",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E470A",
+      "name": "Sodium, potassium and calcium salts of fatty acids",
+      "riskLevel": "insufficient_data",
+      "confidence": "low",
+      "reasons": [
+        "Aucun profil scientifique disponible."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E470B",
+      "name": "Magnesium salts of fatty acids",
+      "riskLevel": "insufficient_data",
+      "confidence": "medium",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E471",
+      "name": "Mono-and diglycerides of fatty acids",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E472A",
+      "name": "Acetic acid esters of mono- and diglycerides of fatty acids",
+      "riskLevel": "insufficient_data",
+      "confidence": "medium",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E472B",
+      "name": "Lactic acid esters of mono- and diglycerides of fatty acids",
+      "riskLevel": "insufficient_data",
+      "confidence": "medium",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E472C",
+      "name": "Citric acid esters of mono- and diglycerides of fatty acids",
+      "riskLevel": "insufficient_data",
+      "confidence": "medium",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E472D",
+      "name": "Tartaric acid esters of mono- and diglycerides of fatty acids",
+      "riskLevel": "insufficient_data",
+      "confidence": "medium",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E472E",
+      "name": "Mono and diacetyl tartaric acid esters of mono- and diglycerides of fatty acids",
+      "riskLevel": "insufficient_data",
+      "confidence": "medium",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E472F",
+      "name": "Mixed acetic and tartaric acid esters of mono- and diglycerides of fatty acids",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E473",
+      "name": "Sucrose esters of fatty acids",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E474",
+      "name": "Sucroglycerides",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E475",
+      "name": "Polyglycerol esters of fatty acids",
+      "riskLevel": "insufficient_data",
+      "confidence": "medium",
+      "reasons": [
+        "Aucun signal de danger additif suffisamment caractérisé.",
+        "Niveau de preuve normalisé : strong.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E476",
+      "name": "Polyglycerol polyricinoleate",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E477",
+      "name": "Propane-1,2-diol esters of fatty acids",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E479B",
+      "name": "Thermally oxidized soya bean oil interacted with mono and diglycerides of fatty acids",
+      "riskLevel": "insufficient_data",
+      "confidence": "medium",
+      "reasons": [
+        "Aucun signal de danger additif suffisamment caractérisé.",
+        "Niveau de preuve normalisé : strong.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E481",
+      "name": "Sodium stearoyl-2-lactylate",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E482",
+      "name": "Calcium stearoyl-2-lactylate",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E483",
+      "name": "Stearyl tartrate",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E491",
+      "name": "Sorbitan monostearate",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Niveau d’exposition normalisé : below_concern."
+      ],
+      "jecfaExposureConcern": "below_concern",
+      "exposureAssessments": 2
+    },
+    {
+      "code": "E492",
+      "name": "Sorbitan tristearate",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E493",
+      "name": "Sorbitan monolaurate",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Niveau d’exposition normalisé : below_concern."
+      ],
+      "jecfaExposureConcern": "below_concern",
+      "exposureAssessments": 4
+    },
+    {
+      "code": "E494",
+      "name": "Sorbitan monooleate",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Niveau d’exposition normalisé : below_concern."
+      ],
+      "jecfaExposureConcern": "below_concern",
+      "exposureAssessments": 2
+    },
+    {
+      "code": "E495",
+      "name": "Sorbitan monopalmitate",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Niveau d’exposition normalisé : below_concern."
+      ],
+      "jecfaExposureConcern": "below_concern",
+      "exposureAssessments": 2
+    },
+    {
+      "code": "E499",
+      "name": "Stigmasterol-rich plant sterols",
+      "riskLevel": "insufficient_data",
+      "confidence": "low",
+      "reasons": [
+        "Aucun profil scientifique disponible."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E500",
+      "name": "Sodium carbonates",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Aucun signal de danger additif suffisamment caractérisé.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E501",
+      "name": "Potassium carbonate",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Aucun signal de danger additif suffisamment caractérisé.",
+        "Niveau de preuve normalisé : strong.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E503",
+      "name": "Ammonium carbonates",
+      "riskLevel": "insufficient_data",
+      "confidence": "low",
+      "reasons": [
+        "Aucun profil scientifique disponible."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E504",
+      "name": "Magnesium carbonates",
+      "riskLevel": "insufficient_data",
+      "confidence": "low",
+      "reasons": [
+        "Aucun profil scientifique disponible."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E507",
+      "name": "Hydrochloric acid",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E508",
+      "name": "Potassium chloride",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E509",
+      "name": "Calcium chloride",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E511",
+      "name": "Magnesium chloride",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Signal hors additif individuel (contaminant) : Discussion.Discussion: In accordance with Art 29 (1) of Regulation (EC) No 178/2002, the European Commission asks the European Food Safety Authority for a scientific opinion on the evaluation of the substances currently on the list in the annex to Commission Directive 1996/3/EC as acceptable previous cargoes for edible fats and oils. The evaluation should be based on the SCF criteria and the criteria proposed by the CCFO as reviewed by the Panel on Contaminants in Food Chain in 2009 for acceptable previous cargoes for KeyInformation.KeyInformation: Mutagenic: Negative; Carcinogenic: Negative",
+        "Signal hors additif individuel (contaminant) : Discussion.Discussion: In accordance with Art 29 (1) of Regulation (EC) No 178/2002, the European Commission asks the European Food Safety Authority for a scientific opinion on the evaluation of the substances currently on the list in the annex to Commission Directive 1996/3/EC as acceptable previous cargoes for edible fats and oils. The evaluation should be based on the SCF criteria and the criteria proposed by the CCFO as reviewed by the Panel on Contaminants in Food Chain in 2009 for acceptable previous cargoes for KeyInformation.KeyInformation: Genotoxic: Negative",
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E512",
+      "name": "Stannous chloride",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E513",
+      "name": "Sulphuric acid",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Signal hors additif individuel (contaminant) : Discussion.Discussion: In accordance with Art 29 (1) of Regulation (EC) No 178/2002, the European Commission asks the European Food Safety Authority for a scientific opinion on the evaluation of the substances currently on the list in the annex to Commission Directive 1996/3/EC as acceptable previous cargoes for edible fats and oils. The evaluation should be based on the SCF criteria and the criteria proposed by the CCFO as reviewed by the Panel on Contaminants in Food Chain in 2009 for acceptable previous cargoes for KeyInformation.KeyInformation: Mutagenic: Negative; Carcinogenic: No data",
+        "Signal hors additif individuel (contaminant) : Discussion.Discussion: In accordance with Art 29 (1) of Regulation (EC) No 178/2002, the European Commission asks the European Food Safety Authority for a scientific opinion on the evaluation of the substances currently on the list in the annex to Commission Directive 1996/3/EC as acceptable previous cargoes for edible fats and oils. The evaluation should be based on the SCF criteria and the criteria proposed by the CCFO as reviewed by the Panel on Contaminants in Food Chain in 2009 for acceptable previous cargoes for KeyInformation.KeyInformation: Genotoxic: Negative",
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E514",
+      "name": "Sodium sulphates",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E515",
+      "name": "Potassium sulphates",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E516",
+      "name": "Calcium sulphate",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E517",
+      "name": "Ammonium sulphate",
+      "riskLevel": "insufficient_data",
+      "confidence": "medium",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E520",
+      "name": "Aluminium sulphate",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E521",
+      "name": "Aluminium sodium sulphate",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E522",
+      "name": "Aluminium potassium sulphate",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E523",
+      "name": "Aluminium ammonium sulphate",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Aucun signal de danger additif suffisamment caractérisé.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E524",
+      "name": "Sodium hydroxide",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Aucun signal de danger additif suffisamment caractérisé.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E525",
+      "name": "Potassium hydroxide",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Aucun signal de danger additif suffisamment caractérisé.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E526",
+      "name": "Calcium hydroxide",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Aucun signal de danger additif suffisamment caractérisé.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E527",
+      "name": "Ammonium hydroxide",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Aucun signal de danger additif suffisamment caractérisé.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E528",
+      "name": "Magnesium hydroxide",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Aucun signal de danger additif suffisamment caractérisé.",
+        "Niveau de preuve normalisé : strong.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E529",
+      "name": "Calcium oxide",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Aucun signal de danger additif suffisamment caractérisé.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E530",
+      "name": "Magnesium oxide",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Aucun signal de danger additif suffisamment caractérisé.",
+        "Niveau de preuve normalisé : strong.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E534",
+      "name": "Iron (III) meso-Tartrate",
+      "riskLevel": "insufficient_data",
+      "confidence": "low",
+      "reasons": [
+        "Aucun profil scientifique disponible."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E535",
+      "name": "Sodium ferrocyanide",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E536",
+      "name": "Potassium ferrocyanide",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E538",
+      "name": "Calcium ferrocyanide",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E541",
+      "name": "Sodium aluminium phosphate acidic",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E551",
+      "name": "Silicon dioxide",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Signal hors additif individuel (contaminant) : Discussion.Discussion: In accordance with Art 29 (1) of Regulation (EC) No 178/2002, the European Commission asks the European Food Safety Authority for a scientific opinion on the evaluation of the substances currently on the list in the annex to Commission Directive 1996/3/EC as acceptable previous cargoes for edible fats and oils. The evaluation should be based on the SCF criteria and the criteria proposed by the CCFO as reviewed by the Panel on Contaminants in Food Chain in 2009 for acceptable previous cargoes for KeyInformation.KeyInformation: Mutagenic: Negative; Carcinogenic: Negative",
+        "Signal hors additif individuel (contaminant) : Discussion.Discussion: In accordance with Art 29 (1) of Regulation (EC) No 178/2002, the European Commission asks the European Food Safety Authority for a scientific opinion on the evaluation of the substances currently on the list in the annex to Commission Directive 1996/3/EC as acceptable previous cargoes for edible fats and oils. The evaluation should be based on the SCF criteria and the criteria proposed by the CCFO as reviewed by the Panel on Contaminants in Food Chain in 2009 for acceptable previous cargoes for KeyInformation.KeyInformation: Genotoxic: Negative",
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E552",
+      "name": "Calcium silicate",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E553A",
+      "name": "Magnesium silicate",
+      "riskLevel": "insufficient_data",
+      "confidence": "medium",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E553B",
+      "name": "Talc",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E554",
+      "name": "Sodium aluminium silicate",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E555",
+      "name": "Potassium aluminium silicate",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E556",
+      "name": "Calcium aluminium silicate",
+      "riskLevel": "insufficient_data",
+      "confidence": "medium",
+      "reasons": [
+        "Aucun signal de danger additif suffisamment caractérisé.",
+        "Niveau de preuve normalisé : strong.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E558",
+      "name": "Bentonite",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E559",
+      "name": "Aluminium silicate (Kaolin)",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Aucun signal de danger additif suffisamment caractérisé.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E570",
+      "name": "Fatty acids",
+      "riskLevel": "insufficient_data",
+      "confidence": "medium",
+      "reasons": [
+        "Aucun signal de danger additif suffisamment caractérisé.",
+        "Le niveau de preuve normalisé est insuffisant.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E574",
+      "name": "Gluconic acid",
+      "riskLevel": "insufficient_data",
+      "confidence": "medium",
+      "reasons": [
+        "Aucun signal de danger additif suffisamment caractérisé.",
+        "Le niveau de preuve normalisé est insuffisant.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E575",
+      "name": "Glucono-delta-lactone",
+      "riskLevel": "insufficient_data",
+      "confidence": "low",
+      "reasons": [
+        "Aucun profil scientifique disponible."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E576",
+      "name": "Sodium gluconate",
+      "riskLevel": "insufficient_data",
+      "confidence": "medium",
+      "reasons": [
+        "Aucun signal de danger additif suffisamment caractérisé.",
+        "Niveau de preuve normalisé : strong.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E577",
+      "name": "Potassium gluconate",
+      "riskLevel": "insufficient_data",
+      "confidence": "low",
+      "reasons": [
+        "Aucun profil scientifique disponible."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E578",
+      "name": "Calcium gluconate",
+      "riskLevel": "insufficient_data",
+      "confidence": "low",
+      "reasons": [
+        "Aucun profil scientifique disponible."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E579",
+      "name": "Ferrous gluconate",
+      "riskLevel": "insufficient_data",
+      "confidence": "low",
+      "reasons": [
+        "Aucun profil scientifique disponible."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E585",
+      "name": "Ferrous lactate",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Aucun signal de danger additif suffisamment caractérisé.",
+        "Niveau de preuve normalisé : strong.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E586",
+      "name": "4-Hexylresorcinol",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E620",
+      "name": "Glutamic acid",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E621",
+      "name": "Monosodium glutamate",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Aucun signal de danger additif suffisamment caractérisé.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E622",
+      "name": "Monopotassium glutamate",
+      "riskLevel": "insufficient_data",
+      "confidence": "low",
+      "reasons": [
+        "Aucun profil scientifique disponible."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E623",
+      "name": "Calcium diglutamate",
+      "riskLevel": "insufficient_data",
+      "confidence": "medium",
+      "reasons": [
+        "Aucun signal de danger additif suffisamment caractérisé.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E624",
+      "name": "Monoammonium glutamate",
+      "riskLevel": "insufficient_data",
+      "confidence": "low",
+      "reasons": [
+        "Aucun profil scientifique disponible."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E625",
+      "name": "Magnesium diglutamate",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E626",
+      "name": "Guanylic acid",
+      "riskLevel": "insufficient_data",
+      "confidence": "medium",
+      "reasons": [
+        "Aucun signal de danger additif suffisamment caractérisé.",
+        "Niveau de preuve normalisé : strong.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E627",
+      "name": "Disodium guanylate",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Aucun signal de danger additif suffisamment caractérisé.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E628",
+      "name": "Dipotassium guanylate",
+      "riskLevel": "insufficient_data",
+      "confidence": "low",
+      "reasons": [
+        "Aucun profil scientifique disponible."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E629",
+      "name": "Calcium guanylate",
+      "riskLevel": "insufficient_data",
+      "confidence": "medium",
+      "reasons": [
+        "Aucun signal de danger additif suffisamment caractérisé.",
+        "Niveau de preuve normalisé : strong.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E630",
+      "name": "Inosinic acid",
+      "riskLevel": "insufficient_data",
+      "confidence": "low",
+      "reasons": [
+        "Aucun profil scientifique disponible."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E631",
+      "name": "Disodium inosinate",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Aucun signal de danger additif suffisamment caractérisé.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E632",
+      "name": "Dipotassium inosinate",
+      "riskLevel": "insufficient_data",
+      "confidence": "low",
+      "reasons": [
+        "Aucun profil scientifique disponible."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E633",
+      "name": "Calcium inosinate",
+      "riskLevel": "insufficient_data",
+      "confidence": "medium",
+      "reasons": [
+        "Aucun signal de danger additif suffisamment caractérisé.",
+        "Niveau de preuve normalisé : strong.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E634",
+      "name": "Calcium 5'-ribonucleotides",
+      "riskLevel": "insufficient_data",
+      "confidence": "medium",
+      "reasons": [
+        "Aucun signal de danger additif suffisamment caractérisé.",
+        "Niveau de preuve normalisé : strong.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E635",
+      "name": "Disodium 5'-ribonucleotides",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Aucun signal de danger additif suffisamment caractérisé.",
+        "Niveau de preuve normalisé : strong.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E640",
+      "name": "Glycine and its sodium salt",
+      "riskLevel": "insufficient_data",
+      "confidence": "low",
+      "reasons": [
+        "Aucun profil scientifique disponible."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E641",
+      "name": "L-leucine",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Aucun signal de danger additif suffisamment caractérisé.",
+        "Niveau de preuve normalisé : strong.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E650",
+      "name": "Zinc acetate",
+      "riskLevel": "insufficient_data",
+      "confidence": "low",
+      "reasons": [
+        "Aucun profil scientifique disponible."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E900",
+      "name": "Dimethyl polysiloxane",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E901",
+      "name": "Beeswax, white and yellow",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Signal hors additif individuel (contaminant) : Discussion.Discussion: In accordance with Art 29 (1) of Regulation (EC) No 178/2002, the European Commission asks the European Food Safety Authority for a scientific opinion on the evaluation of the substances currently on the list in the annex to Commission Directive 1996/3/EC as acceptable previous cargoes for edible fats and oils. The evaluation should be based on the SCF criteria and the criteria proposed by the CCFO as reviewed by the Panel on Contaminants in Food Chain in 2009 for acceptable previous cargoes for KeyInformation.KeyInformation: Mutagenic: Negative; Carcinogenic: Negative",
+        "Signal hors additif individuel (contaminant) : Discussion.Discussion: In accordance with Art 29 (1) of Regulation (EC) No 178/2002, the European Commission asks the European Food Safety Authority for a scientific opinion on the evaluation of the substances currently on the list in the annex to Commission Directive 1996/3/EC as acceptable previous cargoes for edible fats and oils. The evaluation should be based on the SCF criteria and the criteria proposed by the CCFO as reviewed by the Panel on Contaminants in Food Chain in 2009 for acceptable previous cargoes for KeyInformation.KeyInformation: Genotoxic: Negative",
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E902",
+      "name": "Candelilla wax",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Signal hors additif individuel (contaminant) : Discussion.Discussion: The European Commission asks the European Food Safety Authority for a scientific opinion on the evaluation of the substances currently on the list in the Annex to Commission Directive 1996/3/EC as acceptable previous cargoes for edible fats and oils. The evaluation should be based on the SCF criteria and the criteria proposed by the CCFO as reviewed by the Panel on Contaminants in Food Chain in 2009 for acceptable previous cargoes for edible fats and oils. KeyInformation.KeyInformation: Mutagenic: Negative; Carcinogenic: Negative",
+        "Signal hors additif individuel (contaminant) : Discussion.Discussion: The European Commission asks the European Food Safety Authority for a scientific opinion on the evaluation of the substances currently on the list in the Annex to Commission Directive 1996/3/EC as acceptable previous cargoes for edible fats and oils. The evaluation should be based on the SCF criteria and the criteria proposed by the CCFO as reviewed by the Panel on Contaminants in Food Chain in 2009 for acceptable previous cargoes for edible fats and oils. KeyInformation.KeyInformation: Genotoxic: Negative",
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E903",
+      "name": "Carnauba wax",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Signal hors additif individuel (contaminant) : Discussion.Discussion: The European Commission asks the European Food Safety Authority for a scientific opinion on the evaluation of the substances currently on the list in the Annex to Commission Directive 1996/3/EC as acceptable previous cargoes for edible fats and oils. The evaluation should be based on the SCF criteria and the criteria proposed by the CCFO as reviewed by the Panel on Contaminants in Food Chain in 2009 for acceptable previous cargoes for edible fats and oils. KeyInformation.KeyInformation: Mutagenic: Negative; Carcinogenic: No data",
+        "Signal hors additif individuel (contaminant) : Discussion.Discussion: The European Commission asks the European Food Safety Authority for a scientific opinion on the evaluation of the substances currently on the list in the Annex to Commission Directive 1996/3/EC as acceptable previous cargoes for edible fats and oils. The evaluation should be based on the SCF criteria and the criteria proposed by the CCFO as reviewed by the Panel on Contaminants in Food Chain in 2009 for acceptable previous cargoes for edible fats and oils. KeyInformation.KeyInformation: Genotoxic: Negative",
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E904",
+      "name": "Shellac",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Aucun signal de danger additif suffisamment caractérisé.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E905",
+      "name": "Microcrystalline wax",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Signal hors additif individuel (contaminant) : Discussion.Discussion: The European Commission asks the European Food Safety Authority for a scientific opinion on the evaluation of the substances currently on the list in the Annex to Commission Directive 1996/3/EC as acceptable previous cargoes for edible fats and oils. The evaluation should be based on the SCF criteria and the criteria proposed by the CCFO as reviewed by the Panel on Contaminants in Food Chain in 2009 for acceptable previous cargoes for edible fats and oils. KeyInformation.KeyInformation: Mutagenic: Negative; Carcinogenic: Negative",
+        "Signal hors additif individuel (contaminant) : Discussion.Discussion: The European Commission asks the European Food Safety Authority for a scientific opinion on the evaluation of the substances currently on the list in the Annex to Commission Directive 1996/3/EC as acceptable previous cargoes for edible fats and oils. The evaluation should be based on the SCF criteria and the criteria proposed by the CCFO as reviewed by the Panel on Contaminants in Food Chain in 2009 for acceptable previous cargoes for edible fats and oils. KeyInformation.KeyInformation: Genotoxic: Negative",
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E905A",
+      "name": "High viscosity mineral oils",
+      "riskLevel": "insufficient_data",
+      "confidence": "low",
+      "reasons": [
+        "Aucun profil scientifique disponible."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E907",
+      "name": "Hydrogenated poly-1-decene",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E912",
+      "name": "Montan acid esters",
+      "riskLevel": "insufficient_data",
+      "confidence": "medium",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E914",
+      "name": "Oxidised polyethylene wax",
+      "riskLevel": "insufficient_data",
+      "confidence": "low",
+      "reasons": [
+        "Aucun profil scientifique disponible."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E920",
+      "name": "L-cysteine",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E926",
+      "name": "Chlorine dioxide",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E927B",
+      "name": "Carbamide",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Aucun signal de danger additif suffisamment caractérisé.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E938",
+      "name": "Argon",
+      "riskLevel": "insufficient_data",
+      "confidence": "medium",
+      "reasons": [
+        "Aucun signal de danger additif suffisamment caractérisé.",
+        "Le niveau de preuve normalisé est insuffisant.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E939",
+      "name": "Helium",
+      "riskLevel": "insufficient_data",
+      "confidence": "medium",
+      "reasons": [
+        "Aucun signal de danger additif suffisamment caractérisé.",
+        "Niveau de preuve normalisé : strong.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E941",
+      "name": "Nitrogen",
+      "riskLevel": "insufficient_data",
+      "confidence": "medium",
+      "reasons": [
+        "Aucun signal de danger additif suffisamment caractérisé.",
+        "Niveau de preuve normalisé : strong.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E942",
+      "name": "Nitrous oxide",
+      "riskLevel": "insufficient_data",
+      "confidence": "medium",
+      "reasons": [
+        "Aucun signal de danger additif suffisamment caractérisé.",
+        "Niveau de preuve normalisé : strong.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E943A",
+      "name": "Butane",
+      "riskLevel": "insufficient_data",
+      "confidence": "medium",
+      "reasons": [
+        "Aucun signal de danger additif suffisamment caractérisé.",
+        "Niveau de preuve normalisé : strong.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E943B",
+      "name": "Isobutane",
+      "riskLevel": "insufficient_data",
+      "confidence": "medium",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E944",
+      "name": "Propane",
+      "riskLevel": "insufficient_data",
+      "confidence": "medium",
+      "reasons": [
+        "Aucun signal de danger additif suffisamment caractérisé.",
+        "Niveau de preuve normalisé : strong.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E948",
+      "name": "Oxygen",
+      "riskLevel": "insufficient_data",
+      "confidence": "medium",
+      "reasons": [
+        "Aucun signal de danger additif suffisamment caractérisé.",
+        "Le niveau de preuve normalisé est insuffisant.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E949",
+      "name": "Hydrogen",
+      "riskLevel": "insufficient_data",
+      "confidence": "medium",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E950",
+      "name": "Acesulfame K",
+      "riskLevel": "insufficient_data",
+      "confidence": "low",
+      "reasons": [
+        "Aucun profil scientifique disponible."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E951",
+      "name": "Aspartame",
+      "riskLevel": "insufficient_data",
+      "confidence": "low",
+      "reasons": [
+        "Aucun profil scientifique disponible."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E952",
+      "name": "Cyclamic acid and its Na and Ca salts",
+      "riskLevel": "insufficient_data",
+      "confidence": "low",
+      "reasons": [
+        "Aucun profil scientifique disponible."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E953",
+      "name": "Isomalt",
+      "riskLevel": "insufficient_data",
+      "confidence": "medium",
+      "reasons": [
+        "Aucun signal de danger additif suffisamment caractérisé.",
+        "Niveau de preuve normalisé : strong.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E954",
+      "name": "Saccharin and its Na, K and Ca salts",
+      "riskLevel": "insufficient_data",
+      "confidence": "low",
+      "reasons": [
+        "Aucun profil scientifique disponible."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E955",
+      "name": "Sucralose",
+      "riskLevel": "insufficient_data",
+      "confidence": "low",
+      "reasons": [
+        "Aucun profil scientifique disponible."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E957",
+      "name": "Thaumatin",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": "unknown",
+      "exposureAssessments": 2
+    },
+    {
+      "code": "E959",
+      "name": "Neohesperidine DC",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Aucun signal de danger additif suffisamment caractérisé.",
+        "Niveau de preuve normalisé : limited.",
+        "Niveau d’exposition normalisé : below_concern."
+      ],
+      "jecfaExposureConcern": "below_concern",
+      "exposureAssessments": 2
+    },
+    {
+      "code": "E960A",
+      "name": "Steviol glycosides from Stevia",
+      "riskLevel": "insufficient_data",
+      "confidence": "low",
+      "reasons": [
+        "Aucun profil scientifique disponible."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E960B",
+      "name": "Steviol glycosides from fermentation’",
+      "riskLevel": "insufficient_data",
+      "confidence": "low",
+      "reasons": [
+        "Aucun profil scientifique disponible."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E960C",
+      "name": "Enzymatically produced steviol glycosides",
+      "riskLevel": "insufficient_data",
+      "confidence": "low",
+      "reasons": [
+        "Aucun profil scientifique disponible."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E960D",
+      "name": "Glucosylated steviol glycosides",
+      "riskLevel": "insufficient_data",
+      "confidence": "medium",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E961",
+      "name": "Neotame",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E962",
+      "name": "Salt of aspartame-acesulfame",
+      "riskLevel": "insufficient_data",
+      "confidence": "medium",
+      "reasons": [
+        "Aucun signal de danger additif suffisamment caractérisé.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E964",
+      "name": "Polyglycitol syrup",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E965",
+      "name": "Maltitols",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Aucun signal de danger additif suffisamment caractérisé.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E966",
+      "name": "Lactitol",
+      "riskLevel": "insufficient_data",
+      "confidence": "medium",
+      "reasons": [
+        "Aucun signal de danger additif suffisamment caractérisé.",
+        "Niveau de preuve normalisé : strong.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E967",
+      "name": "Xylitol",
+      "riskLevel": "insufficient_data",
+      "confidence": "medium",
+      "reasons": [
+        "Aucun signal de danger additif suffisamment caractérisé.",
+        "Niveau de preuve normalisé : strong.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E968",
+      "name": "Erythritol",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E969",
+      "name": "Advantame",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": "unknown",
+      "exposureAssessments": 1
+    },
+    {
+      "code": "E999",
+      "name": "Quillaia extract",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E1103",
+      "name": "Invertase",
+      "riskLevel": "insufficient_data",
+      "confidence": "medium",
+      "reasons": [
+        "Aucun signal de danger additif suffisamment caractérisé.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E1105",
+      "name": "Lysozyme",
+      "riskLevel": "insufficient_data",
+      "confidence": "medium",
+      "reasons": [
+        "Aucun signal de danger additif suffisamment caractérisé.",
+        "Niveau de preuve normalisé : strong.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E1200",
+      "name": "Polydextrose",
+      "riskLevel": "insufficient_data",
+      "confidence": "low",
+      "reasons": [
+        "Aucun profil scientifique disponible."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E1201",
+      "name": "Polyvinylpyrrolidone",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E1202",
+      "name": "Polyvinylpolypyrrolidone",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E1203",
+      "name": "Polyvinyl alcohol (PVA)",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E1204",
+      "name": "Pullulan",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E1205",
+      "name": "Basic methacrylate copolymer",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E1206",
+      "name": "Neutral Methacrylate Copolymer",
+      "riskLevel": "insufficient_data",
+      "confidence": "high",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E1207",
+      "name": "Anionic methacrylate copolymer",
+      "riskLevel": "insufficient_data",
+      "confidence": "medium",
+      "reasons": [
+        "Aucun signal de danger additif suffisamment caractérisé.",
+        "Niveau de preuve normalisé : strong.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E1208",
+      "name": "Polyvinylpyrrolidone-vinyl acetate copolymer",
+      "riskLevel": "insufficient_data",
+      "confidence": "medium",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E1209",
+      "name": "Polyvinyl alcohol-polyethylene glycol-graft co-polymer",
+      "riskLevel": "insufficient_data",
+      "confidence": "medium",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E1404",
+      "name": "Oxidised starch",
+      "riskLevel": "insufficient_data",
+      "confidence": "low",
+      "reasons": [
+        "Aucun profil scientifique disponible."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E1410",
+      "name": "Monostarch phosphate",
+      "riskLevel": "insufficient_data",
+      "confidence": "low",
+      "reasons": [
+        "Aucun profil scientifique disponible."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E1412",
+      "name": "Distarch phosphate",
+      "riskLevel": "insufficient_data",
+      "confidence": "low",
+      "reasons": [
+        "Aucun profil scientifique disponible."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E1413",
+      "name": "Phosphated distarch phosphate",
+      "riskLevel": "insufficient_data",
+      "confidence": "medium",
+      "reasons": [
+        "Aucun signal de danger additif suffisamment caractérisé.",
+        "Le niveau de preuve normalisé est insuffisant.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E1414",
+      "name": "Acetylated distarch phosphate",
+      "riskLevel": "insufficient_data",
+      "confidence": "low",
+      "reasons": [
+        "Aucun profil scientifique disponible."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E1420",
+      "name": "Acetylated starch",
+      "riskLevel": "insufficient_data",
+      "confidence": "low",
+      "reasons": [
+        "Aucun profil scientifique disponible."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E1422",
+      "name": "Acetylated distarch adipate",
+      "riskLevel": "insufficient_data",
+      "confidence": "low",
+      "reasons": [
+        "Aucun profil scientifique disponible."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E1440",
+      "name": "Hydroxy propyl starch",
+      "riskLevel": "insufficient_data",
+      "confidence": "low",
+      "reasons": [
+        "Aucun profil scientifique disponible."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E1442",
+      "name": "Hydroxy propyl distarch phosphate",
+      "riskLevel": "insufficient_data",
+      "confidence": "low",
+      "reasons": [
+        "Aucun profil scientifique disponible."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E1450",
+      "name": "Starch sodium octenyl succinate",
+      "riskLevel": "insufficient_data",
+      "confidence": "medium",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E1451",
+      "name": "Acetylated oxidised starch",
+      "riskLevel": "insufficient_data",
+      "confidence": "low",
+      "reasons": [
+        "Aucun profil scientifique disponible."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E1452",
+      "name": "Starch Aluminium Octenyl Succinate",
+      "riskLevel": "insufficient_data",
+      "confidence": "low",
+      "reasons": [
+        "Aucun profil scientifique disponible."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E1505",
+      "name": "Triethyl citrate",
+      "riskLevel": "insufficient_data",
+      "confidence": "medium",
+      "reasons": [
+        "Aucun signal de danger additif suffisamment caractérisé.",
+        "Le niveau de preuve normalisé est insuffisant.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E1517",
+      "name": "Glyceryl diacetate (diacetin)",
+      "riskLevel": "insufficient_data",
+      "confidence": "low",
+      "reasons": [
+        "Aucun profil scientifique disponible."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E1518",
+      "name": "Glyceryl triacetate (triacetin)",
+      "riskLevel": "insufficient_data",
+      "confidence": "low",
+      "reasons": [
+        "Aucun profil scientifique disponible."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E1519",
+      "name": "Benzyl alcohol",
+      "riskLevel": "insufficient_data",
+      "confidence": "medium",
+      "reasons": [
+        "Signal hors additif individuel (contaminant) : Discussion.Discussion: The European Commission asks the European Food Safety Authority for a scientific opinion on the evaluation of the substances currently on the list in the Annex to Commission Directive 96/3/EC5 as acceptable previous cargoes for edible fats and oils. The evaluation should be based on the SCF criteria and the criteria proposed by the CCFO as reviewed by the Panel on Contaminants in Food Chain in 200910 for acceptable previous cargoes for edible fats and oils. KeyInformation.KeyInformation: Mutagenic: Negative; Carcinogenic: Negative",
+        "Signal hors additif individuel (contaminant) : Discussion.Discussion: The European Commission asks the European Food Safety Authority for a scientific opinion on the evaluation of the substances currently on the list in the Annex to Commission Directive 96/3/EC5 as acceptable previous cargoes for edible fats and oils. The evaluation should be based on the SCF criteria and the criteria proposed by the CCFO as reviewed by the Panel on Contaminants in Food Chain in 200910 for acceptable previous cargoes for edible fats and oils. KeyInformation.KeyInformation: Genotoxic: Negative",
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E1520",
+      "name": "Propane-1, 2-diol (propylene glycol)",
+      "riskLevel": "insufficient_data",
+      "confidence": "low",
+      "reasons": [
+        "Aucun profil scientifique disponible."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    },
+    {
+      "code": "E1521",
+      "name": "Polyethylene glycol",
+      "riskLevel": "insufficient_data",
+      "confidence": "medium",
+      "reasons": [
+        "Danger additif maximal observé : none.",
+        "Niveau de preuve normalisé : limited.",
+        "Aucune exposition individuelle normalisée suffisante ; une ADI/TDI seule ne caractérise pas l’exposition."
+      ],
+      "jecfaExposureConcern": null,
+      "exposureAssessments": 0
+    }
+  ]
+}

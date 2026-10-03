@@ -198,9 +198,9 @@ function ReciterGalleryCard({
             </Text>
           </View>
         </View>
-        <Text numberOfLines={1} ellipsizeMode="tail" style={styles.meta}>
+        <Text numberOfLines={2} ellipsizeMode="tail" style={styles.meta}>
           {t(`recitations.style.${reciter.style}`)} ·{" "}
-          {t("recitations.surahAvailableCount", {
+          {t("recitations.surahCount", {
             count: reciter.availableSurahs,
           })}
         </Text>
@@ -245,7 +245,7 @@ export default memo(ReciterGalleryCard);
 const styles = StyleSheet.create({
   card: {
     width: "100%",
-    height: 168,
+    minHeight: 206,
     borderRadius: 20,
     borderWidth: 1,
     borderColor: colors.borderSoft,
@@ -268,7 +268,7 @@ const styles = StyleSheet.create({
   preferredCard: { borderColor: colors.goldDark },
   main: { flex: 1, padding: 8 },
   portrait: {
-    height: 121,
+    height: 154,
     overflow: "hidden",
     borderRadius: 15,
     backgroundColor: colors.purpleDeep,
@@ -284,11 +284,11 @@ const styles = StyleSheet.create({
   },
   portraitCopy: { position: "absolute", right: 10, bottom: 9, left: 10 },
   name: {
-    height: 34,
+    minHeight: 38,
     color: colors.text,
     fontFamily: typography.serifMedium,
     fontSize: 15,
-    lineHeight: 17,
+    lineHeight: 19,
     textAlignVertical: "bottom",
   },
   country: {
@@ -300,14 +300,15 @@ const styles = StyleSheet.create({
     lineHeight: 10,
   },
   meta: {
-    height: 10,
-    marginTop: 8,
-    paddingRight: 26,
+    minHeight: 36,
+    marginTop: 4,
+    paddingTop: 4,
+    paddingRight: 38,
     color: colors.textMuted,
     fontFamily: typography.sans,
-    fontSize: 7.5,
-    lineHeight: 10,
-    textAlign: "center",
+    fontSize: 9,
+    lineHeight: 13,
+    textAlign: "left",
   },
   favorite: {
     position: "absolute",
@@ -338,11 +339,11 @@ const styles = StyleSheet.create({
     right: 8,
     bottom: 6,
     zIndex: 3,
-    width: 26,
-    height: 26,
+    width: 36,
+    height: 36,
     alignItems: "center",
     justifyContent: "center",
-    borderRadius: 13,
+    borderRadius: 18,
     backgroundColor: colors.goldLight,
     shadowColor: colors.gold,
     shadowOpacity: 0.35,

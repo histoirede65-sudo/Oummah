@@ -1,0 +1,275 @@
+{
+  "mode": "dry-run",
+  "input": "C:\\Users\\bahri\\oummah\\scripts\\data\\additives-scientific-batch-02.json",
+  "dryRun": true,
+  "validation": {
+    "valid": 30,
+    "rejected": [],
+    "incomplete": [
+      "E1400",
+      "E1412",
+      "E150A",
+      "E160B",
+      "E220",
+      "E252",
+      "E412",
+      "E415",
+      "E450",
+      "E471"
+    ]
+  },
+  "coverageBefore": {
+    "totalProfiles": 23,
+    "completeProfiles": 20,
+    "incompleteProfiles": 3,
+    "withSources": 23,
+    "withoutSources": 0,
+    "withExposure": 23,
+    "withAuthorityEvaluations": 21,
+    "withPotentialEffects": 17,
+    "needsReview": 3,
+    "duplicateCodes": [],
+    "missingKnownCodes": [
+      "E1400",
+      "E1404",
+      "E1410",
+      "E1412",
+      "E1414",
+      "E1420",
+      "E1422",
+      "E1440",
+      "E1442",
+      "E1450",
+      "E1451",
+      "E150A",
+      "E150B",
+      "E150C",
+      "E160B",
+      "E160C",
+      "E160D",
+      "E220",
+      "E221",
+      "E223",
+      "E242",
+      "E249",
+      "E252",
+      "E407A",
+      "E410",
+      "E412",
+      "E415",
+      "E440",
+      "E450",
+      "E471",
+      "E472E",
+      "E500",
+      "E501",
+      "E503",
+      "E551",
+      "E552",
+      "E553B",
+      "E575",
+      "E621",
+      "E627",
+      "E631",
+      "E952",
+      "E960A",
+      "E968"
+    ],
+    "incompleteCodes": [
+      "E331",
+      "E306",
+      "E150D"
+    ],
+    "incompatibleRows": []
+  },
+  "decisions": [
+    {
+      "code": "E338",
+      "incomplete": false,
+      "action": "skip",
+      "reason": "existing record is newer"
+    },
+    {
+      "code": "E950",
+      "incomplete": false,
+      "action": "skip",
+      "reason": "existing record is newer"
+    },
+    {
+      "code": "E951",
+      "incomplete": false,
+      "action": "skip",
+      "reason": "existing record is newer"
+    },
+    {
+      "code": "E955",
+      "incomplete": false,
+      "action": "skip",
+      "reason": "existing record is newer"
+    },
+    {
+      "code": "E330",
+      "incomplete": false,
+      "action": "skip",
+      "reason": "existing record is newer"
+    },
+    {
+      "code": "E160A",
+      "incomplete": false,
+      "action": "skip",
+      "reason": "existing record is newer"
+    },
+    {
+      "code": "E170",
+      "incomplete": false,
+      "action": "skip",
+      "reason": "existing record is newer"
+    },
+    {
+      "code": "E407",
+      "incomplete": false,
+      "action": "skip",
+      "reason": "existing record is newer"
+    },
+    {
+      "code": "E300",
+      "incomplete": false,
+      "action": "skip",
+      "reason": "existing record is newer"
+    },
+    {
+      "code": "E202",
+      "incomplete": false,
+      "action": "skip",
+      "reason": "existing record is newer"
+    },
+    {
+      "code": "E211",
+      "incomplete": false,
+      "action": "skip",
+      "reason": "existing record is newer"
+    },
+    {
+      "code": "E250",
+      "incomplete": false,
+      "action": "skip",
+      "reason": "existing record is newer"
+    },
+    {
+      "code": "E100",
+      "incomplete": false,
+      "action": "skip",
+      "reason": "existing record is newer"
+    },
+    {
+      "code": "E101",
+      "incomplete": false,
+      "action": "skip",
+      "reason": "existing record is newer"
+    },
+    {
+      "code": "E120",
+      "incomplete": false,
+      "action": "skip",
+      "reason": "existing record is newer"
+    },
+    {
+      "code": "E162",
+      "incomplete": false,
+      "action": "skip",
+      "reason": "existing record is newer"
+    },
+    {
+      "code": "E200",
+      "incomplete": false,
+      "action": "skip",
+      "reason": "existing record is newer"
+    },
+    {
+      "code": "E270",
+      "incomplete": false,
+      "action": "skip",
+      "reason": "existing record is newer"
+    },
+    {
+      "code": "E322",
+      "incomplete": false,
+      "action": "skip",
+      "reason": "existing record is newer"
+    },
+    {
+      "code": "E960C",
+      "incomplete": false,
+      "action": "skip",
+      "reason": "existing record is newer"
+    },
+    {
+      "code": "E1400",
+      "incomplete": true,
+      "action": "insert",
+      "reason": "code absent"
+    },
+    {
+      "code": "E1412",
+      "incomplete": true,
+      "action": "insert",
+      "reason": "code absent"
+    },
+    {
+      "code": "E150A",
+      "incomplete": true,
+      "action": "insert",
+      "reason": "code absent"
+    },
+    {
+      "code": "E160B",
+      "incomplete": true,
+      "action": "insert",
+      "reason": "code absent"
+    },
+    {
+      "code": "E220",
+      "incomplete": true,
+      "action": "insert",
+      "reason": "code absent"
+    },
+    {
+      "code": "E252",
+      "incomplete": true,
+      "action": "insert",
+      "reason": "code absent"
+    },
+    {
+      "code": "E412",
+      "incomplete": true,
+      "action": "insert",
+      "reason": "code absent"
+    },
+    {
+      "code": "E415",
+      "incomplete": true,
+      "action": "insert",
+      "reason": "code absent"
+    },
+    {
+      "code": "E450",
+      "incomplete": true,
+      "action": "insert",
+      "reason": "code absent"
+    },
+    {
+      "code": "E471",
+      "incomplete": true,
+      "action": "insert",
+      "reason": "code absent"
+    }
+  ],
+  "summary": {
+    "new": 10,
+    "updates": 0,
+    "conflicts": 0,
+    "skipped": 20,
+    "rejected": 0,
+    "incomplete": 10
+  }
+}

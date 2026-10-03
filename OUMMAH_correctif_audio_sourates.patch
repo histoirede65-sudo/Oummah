@@ -1,0 +1,62 @@
+--- a/src/app/listen/[surahId].tsx
++++ b/src/app/listen/[surahId].tsx
+@@ -286,34 +286,10 @@
+   const currentReciterId = transitionReciters?.current.id;
+   const requestedReciterId =
+     reciterId ?? currentReciter?.id ?? activeReciter?.id;
+-  const requestedTimelineKey = `${requestedReciterId ?? "no-reciter"}:${surah.id}`;
+   audioReadyRef.current = isLoaded;
+   const handleTimelineReady = useCallback((key: string) => {
+     timelineReadyKeyRef.current = key;
+   }, []);
+-  const waitForTimeline = useCallback(
+-    (key: string, timeoutMs = 5000) =>
+-      new Promise<boolean>((resolve) => {
+-        if (timelineReadyKeyRef.current === key) {
+-          resolve(true);
+-          return;
+-        }
+-        const startedAt = Date.now();
+-        const check = () => {
+-          if (timelineReadyKeyRef.current === key) {
+-            resolve(true);
+-            return;
+-          }
+-          if (!mountedRef.current || Date.now() - startedAt >= timeoutMs) {
+-            resolve(false);
+-            return;
+-          }
+-          setTimeout(check, 25);
+-        };
+-        setTimeout(check, 25);
+-      }),
+-    [],
+-  );
+   const waitForAudioReady = useCallback(
+     (timeoutMs = 10_000) =>
+       new Promise<boolean>((resolve) => {
+@@ -346,22 +322,17 @@
+       await loadSurah(surah.id, false, requestedReciterId);
+       if (surah.id === 1) await seekTo(0);
+     }
+-    const [timelineReady, audioReady] = await Promise.all([
+-      waitForTimeline(requestedTimelineKey),
+-      waitForAudioReady(),
+-    ]);
+-    return timelineReady && audioReady;
++    // Verse timestamps enrich highlighting, but playback only needs audio.
++    return waitForAudioReady();
+   }, [
+     activeReciter?.id,
+     activeSurahId,
+     isLoaded,
+     loadSurah,
+     requestedReciterId,
+-    requestedTimelineKey,
+     seekTo,
+     surah.id,
+     waitForAudioReady,
+-    waitForTimeline,
+   ]);
+   const handleTogglePlay = useCallback(() => {
+     const requestId = ++playRequestRef.current;

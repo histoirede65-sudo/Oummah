@@ -1,0 +1,29 @@
+#!/usr/bin/env node
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
+const BEFORE = path.join(ROOT, 'scripts/data/additives-scientific-master-v2-exposure.json');
+const AFTER = path.join(ROOT, 'scripts/data/additives-scientific-master-v3-effects.json');
+const SOURCE = path.join(ROOT, 'scripts/output/additive-science-source-audit-01-v3.json');
+const OUTPUT = path.join(ROOT, 'scripts/output/additive-potential-effects-normalization-audit-v1.json');
+const read = (file) => JSON.parse(fs.readFileSync(file, 'utf8'));
+const save = (file, value) => fs.writeFileSync(file, `${JSON.stringify(value, null, 2)}\n`, 'utf8');
+const count = (items, predicate) => items.filter(predicate).length;
+const unique = (values) => [...new Set(values.filter(Boolean))];
+const profilesBefore = read(BEFORE).profiles;
+const profilesAfter = read(AFTER).profiles;
+const sourceByCode = new Map((read(SOURCE).items ?? []).map((item) => [item.code, item]));
+const effectsBefore = profilesBefore.flatMap((profile) => (profile.potentialEffects ?? []).map((effect) => ({ ...effect, code: profile.code })));
+const effectsAfter = profilesAfter.flatMap((profile) => (profile.potentialEffects ?? []).map((effect) => ({ ...effect, code: profile.code })));
+const distribution = (effects, field, fallback) => { const values = effects.map((effect) => effect[field] ?? fallback); return Object.fromEntries(unique([...values, ...(['none', 'low', 'moderate', 'serious', 'unknown', 'insufficient', 'limited', 'strong'].filter((value) => !values.includes(value)))]).map((value) => [value, count(values, (item) => item === value)])); };
+const contextDistribution = (effects) => Object.fromEntries(['human', 'animal', 'in_vitro', 'mixed', 'unknown'].map((type) => [type, count(effects, (effect) => (effect.studyContext?.type ?? 'unknown') === type)]));
+const criticalFor = (code) => (sourceByCode.get(code)?.efsa?.referenceValues ?? []).filter((value) => /criticalendpoint/i.test(String(value.field ?? '')) && value.value).map((value) => String(value.value));
+const criticalCodes = unique(profilesAfter.filter((profile) => criticalFor(profile.code).length).map((profile) => profile.code));
+const criticalCandidates = criticalCodes.map((code) => { const profile = profilesAfter.find((item) => item.code === code); const effect = profile?.potentialEffects?.find((item) => item.criticalEndpoint); return { code, criticalEndpointRaw: criticalFor(code), studyContext: effect?.studyContext ?? { type: 'unknown' }, species: effect?.studyContext?.species ?? null, referencePoint: effect?.referencePoint ?? null, sourceAssessment: sourceByCode.get(code)?.efsa?.latestAssessment ?? null, normalizedSeverity: effect?.severity ?? 'unknown', normalizedEvidence: effect?.evidenceLevel ?? 'insufficient' }; });
+const beforeConcern = read(path.join(ROOT, 'scripts/output/additive-scientific-concern-audit-v1.json')).distribution;
+const afterConcern = read(path.join(ROOT, 'scripts/output/additive-scientific-concern-audit-v2.json')).distribution;
+const report = { schemaVersion: '1.0', auditVersion: '17C-v1', generatedAt: new Date().toISOString(), mode: 'offline-normalization-audit', before: { effectsTotal: effectsBefore.length, severityDistribution: distribution(effectsBefore, 'severity', 'unknown'), evidenceDistribution: distribution(effectsBefore, 'evidenceLevel', 'insufficient'), studyContextDistribution: contextDistribution(effectsBefore.map((effect) => ({ ...effect, studyContext: { type: 'unknown' } }))) }, after: { effectsTotal: effectsAfter.length, severityDistribution: distribution(effectsAfter, 'severity', 'unknown'), evidenceDistribution: distribution(effectsAfter, 'evidenceLevel', 'insufficient'), studyContextDistribution: contextDistribution(effectsAfter), profilesWithCriticalEndpoint: criticalCodes.length, profilesWithTargetOrgan: count(profilesAfter, (profile) => (profile.potentialEffects ?? []).some((effect) => effect.targetOrgan)), profilesWithReferencePoint: count(profilesAfter, (profile) => (profile.potentialEffects ?? []).some((effect) => effect.referencePoint)), profilesWithStructuredStudyContext: count(profilesAfter, (profile) => (profile.potentialEffects ?? []).some((effect) => effect.studyContext?.type && effect.studyContext.type !== 'unknown')) }, criticalEndpointCandidates: criticalCandidates, noEffectDataAvailable: profilesAfter.filter((profile) => !(profile.potentialEffects ?? []).length).map((profile) => profile.code), scientificConcernBefore: beforeConcern, scientificConcernAfter: afterConcern, openFoodToxFieldsInspected: ['END_SUM', 'FLEX_SUM.ToxRefValues', 'DOSSIER', 'DOSSIER_DOCS', 'humanHealthEffects', 'assessmentDomain', 'assessmentReferences', 'referenceValues', 'criticalEndpoint', 'justification', 'population', 'unit', 'lowerValue', 'upperValue'], normalizationPolicy: { severity: 'explicit structured severity only; otherwise unknown', evidenceLevel: 'explicit effect evidence only; otherwise insufficient', studyContext: 'structured study fields only; assessmentDomain is not used as population', criticalEndpoint: 'preserved when present, never converted automatically to serious', appliesTo: 'structured appliesTo when present; legacy textual contaminant/metabolite/degradation distinction retained; animal is studyContext only', provenance: 'authority, dataset, assessmentId, sourceUrl, sourceTable, sourceRecordId preserved' }, noRuntimeEngineChanges: true, noSupabaseWrites: true };
+save(OUTPUT, report);
+console.log(JSON.stringify({ output: path.relative(ROOT, OUTPUT), before: report.before, after: report.after, criticalCandidates: criticalCandidates.length, noEffectDataAvailable: report.noEffectDataAvailable.length, scientificConcernBefore: beforeConcern, scientificConcernAfter: afterConcern }, null, 2));

@@ -1,0 +1,106 @@
+{
+  "schemaVersion": "additive-scientific-concern-runtime-dataset-audit-v1",
+  "generatedAt": "2026-10-01T11:14:14.307Z",
+  "datasetVersion": "oummah-additive-scientific-concern-v1-2026-10-01",
+  "methodologyVersion": "oummah-additive-scientific-concern-v1",
+  "catalogCodes": 341,
+  "datasetCodes": 341,
+  "missingCodes": [],
+  "extraCodes": [],
+  "duplicates": [],
+  "concernDistribution": {
+    "no_identified_concern": 0,
+    "limited": 6,
+    "moderate": 0,
+    "high": 0,
+    "insufficient_data": 335
+  },
+  "confidenceDistribution": {
+    "low": 335,
+    "medium": 6
+  },
+  "exposureRiskDistribution": {
+    "insufficient_data": 328,
+    "not_quantified": 7,
+    "exceedance_signal": 1,
+    "below_reference": 5
+  },
+  "numberWithSources": 262,
+  "numberWithCLP": 21,
+  "numberWithEFSA": 221,
+  "numberWithJECFA": 149,
+  "limitedControl": [
+    {
+      "code": "E222",
+      "level": "limited",
+      "confidence": "medium",
+      "hasCLP": true,
+      "usableSignalCount": 1,
+      "hasProvenance": true,
+      "genericRule": "SCV1_LIMITED_USABLE_CONDITIONAL"
+    },
+    {
+      "code": "E223",
+      "level": "limited",
+      "confidence": "medium",
+      "hasCLP": true,
+      "usableSignalCount": 1,
+      "hasProvenance": true,
+      "genericRule": "SCV1_LIMITED_USABLE_CONDITIONAL"
+    },
+    {
+      "code": "E249",
+      "level": "limited",
+      "confidence": "medium",
+      "hasCLP": true,
+      "usableSignalCount": 1,
+      "hasProvenance": true,
+      "genericRule": "SCV1_LIMITED_USABLE_CONDITIONAL"
+    },
+    {
+      "code": "E310",
+      "level": "limited",
+      "confidence": "medium",
+      "hasCLP": true,
+      "usableSignalCount": 1,
+      "hasProvenance": true,
+      "genericRule": "SCV1_LIMITED_USABLE_CONDITIONAL"
+    },
+    {
+      "code": "E525",
+      "level": "limited",
+      "confidence": "medium",
+      "hasCLP": true,
+      "usableSignalCount": 1,
+      "hasProvenance": true,
+      "genericRule": "SCV1_LIMITED_USABLE_CONDITIONAL"
+    },
+    {
+      "code": "E1519",
+      "level": "limited",
+      "confidence": "medium",
+      "hasCLP": true,
+      "usableSignalCount": 1,
+      "hasProvenance": true,
+      "genericRule": "SCV1_LIMITED_USABLE_CONDITIONAL"
+    }
+  ],
+  "anomalies": {
+    "E_NUMBER_SPECIFIC_RULE": 0,
+    "MISSING_PROVENANCE": 0,
+    "MISSING_CATALOG_CODE": 0,
+    "EXTRA_CODE": 0,
+    "DUPLICATE_CODE": 0,
+    "CONCERN_EXPOSURE_MERGED": 0,
+    "UNHARMONISED_CLP_USED": 0,
+    "HANDLING_HAZARD_USED_FOR_CONCERN": 0,
+    "RUNTIME_SCORE_CHANGED": 0,
+    "UI_CHANGED": 0
+  },
+  "validation": {
+    "runtimeScoreChanged": false,
+    "uiChanged": false,
+    "supabaseUpsertPerformed": false,
+    "methodologyRulesChanged": false
+  }
+}

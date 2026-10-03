@@ -9,9 +9,87 @@ export type QuranTopic = {
   canonicalName: string;
   aliases: string[];
   sourceIds: string[];
+  quickAnswer?: {
+    title: string;
+    body: string;
+    sourceIds: string[];
+  };
 };
 
 export const quranTopicSources: Record<string, QuranTopicSource> = {
+
+  "quran-topic:mercy:hope": {
+    title: "Ne pas désespérer de la miséricorde d’Allah",
+    body:
+      "Allah appelle Ses serviteurs qui ont commis des excès à ne pas désespérer de Sa miséricorde et rappelle qu’Il est le Pardonneur, le Très Miséricordieux.",
+    reference: "Coran 39:53",
+  },
+  "quran-topic:mercy:embraces": {
+    title: "La miséricorde d’Allah embrasse toute chose",
+    body:
+      "Allah déclare que Sa miséricorde embrasse toute chose. Ce passage est une référence centrale lorsqu’on cherche un verset général sur l’étendue de la miséricorde divine.",
+    reference: "Coran 7:156",
+  },
+  "quran-topic:patience:help": {
+    title: "Chercher secours dans la patience et la prière",
+    body:
+      "Allah appelle les croyants à chercher secours dans la patience et la prière et affirme qu’Il est avec les patients.",
+    reference: "Coran 2:153",
+  },
+  "quran-topic:patience:trials": {
+    title: "La patience dans les épreuves",
+    body:
+      "Le Coran annonce des épreuves et donne une bonne nouvelle aux patients, ceux qui se tournent vers Allah lorsqu’un malheur les atteint.",
+    reference: "Coran 2:155-157",
+  },
+  "quran-topic:repentance:hope": {
+    title: "L’espérance dans le pardon d’Allah",
+    body:
+      "Le Coran interdit de désespérer de la miséricorde d’Allah, même après avoir commis des excès contre soi-même.",
+    reference: "Coran 39:53",
+  },
+  "quran-topic:repentance:sincere": {
+    title: "Le repentir sincère",
+    body:
+      "Allah appelle les croyants à revenir à Lui par un repentir sincère.",
+    reference: "Coran 66:8",
+  },
+  "quran-topic:gratitude:increase": {
+    title: "La reconnaissance et l’augmentation des bienfaits",
+    body:
+      "Allah annonce qu’Il augmente Ses bienfaits à ceux qui font preuve de reconnaissance.",
+    reference: "Coran 14:7",
+  },
+  "quran-topic:parents:kindness": {
+    title: "La bonté envers les parents",
+    body:
+      "Allah ordonne de L’adorer seul puis de faire preuve de bonté envers les parents, avec douceur et humilité, particulièrement lorsqu’ils atteignent la vieillesse.",
+    reference: "Coran 17:23-24",
+  },
+  "quran-topic:tranquility:remembrance": {
+    title: "L’apaisement des cœurs par l’évocation d’Allah",
+    body:
+      "Le Coran rappelle que les cœurs trouvent leur tranquillité dans l’évocation d’Allah.",
+    reference: "Coran 13:28",
+  },
+  "quran-topic:trust:sufficiency": {
+    title: "Placer sa confiance en Allah",
+    body:
+      "Le Coran enseigne que celui qui place sa confiance en Allah trouve en Lui ce qui lui suffit.",
+    reference: "Coran 65:2-3",
+  },
+  "quran-topic:marriage:affection": {
+    title: "Affection et miséricorde dans le mariage",
+    body:
+      "Le Coran présente parmi les signes d’Allah la création des époux afin qu’ils trouvent la tranquillité l’un auprès de l’autre, avec affection et miséricorde entre eux.",
+    reference: "Coran 30:21",
+  },
+  "quran-topic:charity:reward": {
+    title: "La récompense de ceux qui dépensent dans le bien",
+    body:
+      "Le Coran donne l’image d’un grain produisant de nombreux épis pour illustrer la multiplication de la récompense de ceux qui dépensent leurs biens dans le sentier d’Allah.",
+    reference: "Coran 2:261",
+  },
   "quran-topic:musa:call": {
     title: "L’appel de Mûsâ",
     body:
@@ -164,6 +242,103 @@ export const quranTopicSources: Record<string, QuranTopicSource> = {
 };
 
 export const quranTopics: QuranTopic[] = [
+
+  {
+    id: "mercy",
+    canonicalName: "La miséricorde d’Allah",
+    aliases: ["miséricorde", "misericorde", "rahma", "rahmah", "compassion"],
+    sourceIds: ["quran-topic:mercy:hope", "quran-topic:mercy:embraces"],
+    quickAnswer: {
+      title: "La miséricorde d’Allah",
+      body:
+        "Un des versets les plus connus sur la miséricorde d’Allah est celui où Il appelle Ses serviteurs à ne pas désespérer de Sa miséricorde. Un autre passage très clair affirme que Sa miséricorde embrasse toute chose.",
+      sourceIds: ["quran-topic:mercy:hope", "quran-topic:mercy:embraces"],
+    },
+  },
+  {
+    id: "patience",
+    canonicalName: "La patience",
+    aliases: ["patience", "sabr", "patienter"],
+    sourceIds: ["quran-topic:patience:help", "quran-topic:patience:trials"],
+    quickAnswer: {
+      title: "La patience dans le Coran",
+      body:
+        "Un verset central appelle les croyants à chercher secours dans la patience et la prière et rappelle qu’Allah est avec les patients. Le Coran donne aussi une bonne nouvelle à ceux qui patientent lorsqu’ils sont éprouvés.",
+      sourceIds: ["quran-topic:patience:help", "quran-topic:patience:trials"],
+    },
+  },
+  {
+    id: "repentance",
+    canonicalName: "Le repentir et le pardon",
+    aliases: ["repentir", "repentance", "tawba", "tawbah", "pardon", "istighfar"],
+    sourceIds: ["quran-topic:repentance:hope", "quran-topic:repentance:sincere"],
+    quickAnswer: {
+      title: "Le repentir et le pardon",
+      body:
+        "Parmi les passages les plus forts sur le repentir, le Coran appelle à ne jamais désespérer de la miséricorde d’Allah et invite les croyants à revenir à Lui par un repentir sincère.",
+      sourceIds: ["quran-topic:repentance:hope", "quran-topic:repentance:sincere"],
+    },
+  },
+  {
+    id: "gratitude",
+    canonicalName: "La gratitude envers Allah",
+    aliases: ["gratitude", "reconnaissance", "shukr", "choukr"],
+    sourceIds: ["quran-topic:gratitude:increase"],
+    quickAnswer: {
+      title: "La gratitude envers Allah",
+      body:
+        "Un verset très connu sur la gratitude annonce qu’Allah augmente Ses bienfaits à ceux qui sont reconnaissants.",
+      sourceIds: ["quran-topic:gratitude:increase"],
+    },
+  },
+  {
+    id: "parents",
+    canonicalName: "La bonté envers les parents",
+    aliases: ["parents", "père et mère", "pere et mere", "mère", "mere", "père", "pere"],
+    sourceIds: ["quran-topic:parents:kindness"],
+    quickAnswer: {
+      title: "La bonté envers les parents",
+      body:
+        "Le Coran ordonne de faire preuve de bonté envers les parents, de leur parler avec respect et de se montrer humble et miséricordieux envers eux, notamment lorsqu’ils vieillissent.",
+      sourceIds: ["quran-topic:parents:kindness"],
+    },
+  },
+  {
+    id: "tranquility",
+    canonicalName: "L’apaisement et la confiance en Allah",
+    aliases: ["angoisse", "anxiété", "anxiete", "stress", "tristesse", "tawakkul", "confiance en allah", "apaisement"],
+    sourceIds: ["quran-topic:tranquility:remembrance", "quran-topic:trust:sufficiency"],
+    quickAnswer: {
+      title: "L’apaisement et la confiance en Allah",
+      body:
+        "Le Coran rappelle que les cœurs trouvent leur tranquillité dans l’évocation d’Allah et enseigne que celui qui place sa confiance en Lui trouve en Lui ce qui lui suffit.",
+      sourceIds: ["quran-topic:tranquility:remembrance", "quran-topic:trust:sufficiency"],
+    },
+  },
+  {
+    id: "marriage",
+    canonicalName: "Le mariage",
+    aliases: ["mariage", "époux", "epoux", "épouse", "epouse", "couple"],
+    sourceIds: ["quran-topic:marriage:affection"],
+    quickAnswer: {
+      title: "Le mariage dans le Coran",
+      body:
+        "Un des versets les plus connus sur le mariage présente la tranquillité entre les époux ainsi que l’affection et la miséricorde qu’Allah place entre eux.",
+      sourceIds: ["quran-topic:marriage:affection"],
+    },
+  },
+  {
+    id: "charity",
+    canonicalName: "L’aumône et la générosité",
+    aliases: ["aumône", "aumone", "sadaqa", "sadaqah", "charité", "charite", "générosité", "generosite"],
+    sourceIds: ["quran-topic:charity:reward"],
+    quickAnswer: {
+      title: "L’aumône et la générosité",
+      body:
+        "Le Coran illustre la récompense de celui qui dépense dans le bien par l’image d’un grain dont la récolte est multipliée de façon abondante.",
+      sourceIds: ["quran-topic:charity:reward"],
+    },
+  },
   {
     id: "musa",
     canonicalName: "Mûsâ",
@@ -225,3 +400,4 @@ export const quranTopics: QuranTopic[] = [
     sourceIds: ["quran-topic:adam:creation", "quran-topic:adam:temptation"],
   },
 ];
+

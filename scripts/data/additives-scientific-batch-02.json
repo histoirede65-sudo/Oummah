@@ -1,0 +1,2020 @@
+[
+  {
+    "code": "E338",
+    "names": {
+      "fr": "Acide phosphorique",
+      "en": "Acide phosphorique"
+    },
+    "aliases": [],
+    "function": "acidity_regulator",
+    "regulatoryStatus": {
+      "eu": "Autorisé dans l’Union européenne sous les conditions applicables de la liste de l’Union",
+      "notes": []
+    },
+    "authorityEvaluations": [
+      {
+        "authority": "EFSA",
+        "conclusion": "DJA groupée de 40 mg de phosphore/kg de poids corporel/jour pour les phosphates.",
+        "reviewedAt": "2019-06-04"
+      }
+    ],
+    "exposure": {
+      "adi": 40,
+      "unit": "mg de phosphore/kg de poids corporel/jour",
+      "estimatedExposure": "La DJA concerne l’exposition totale aux phosphates ; la dose de ce produit est inconnue.",
+      "populationsAtRisk": [],
+      "notes": []
+    },
+    "potentialEffects": [],
+    "restrictions": [],
+    "evidenceLevel": "strong",
+    "sources": [
+      {
+        "sourceId": "e338-eu-database",
+        "organisation": "European Commission",
+        "sourceType": "regulation",
+        "title": "Food additives database",
+        "url": "https://food.ec.europa.eu/food-safety/food-improvement-agents/additives/database_en",
+        "retrievedAt": "2026-09-16",
+        "fieldsSupported": [
+          "scientific_summary",
+          "exposure_assessment"
+        ]
+      },
+      {
+        "sourceId": "e338-efsa-2019",
+        "organisation": "EFSA",
+        "sourceType": "scientific_opinion",
+        "title": "Re-evaluation of phosphoric acid–phosphates",
+        "url": "https://doi.org/10.2903/j.efsa.2019.5674",
+        "publishedAt": "2019-06-04",
+        "retrievedAt": "2026-09-16",
+        "fieldsSupported": [
+          "scientific_summary",
+          "exposure_assessment"
+        ]
+      },
+      {
+        "sourceId": "e338-efsa-press-2019",
+        "organisation": "EFSA",
+        "sourceType": "scientific_opinion",
+        "title": "Nouvel avis scientifique de l’EFSA sur les phosphates",
+        "url": "https://www.efsa.europa.eu/fr/press/news/190612",
+        "publishedAt": "2019-06-12",
+        "retrievedAt": "2026-09-16",
+        "fieldsSupported": [
+          "scientific_summary",
+          "exposure_assessment"
+        ]
+      }
+    ],
+    "lastReviewedAt": "2019-06-04",
+    "dataVersion": "1.0",
+    "needsScientificReview": false
+  },
+  {
+    "code": "E950",
+    "names": {
+      "fr": "Acésulfame-K",
+      "en": "Acésulfame-K"
+    },
+    "aliases": [],
+    "function": "sweetener",
+    "regulatoryStatus": {
+      "eu": "Autorisé dans l’Union européenne sous les conditions applicables de la liste de l’Union",
+      "notes": []
+    },
+    "authorityEvaluations": [
+      {
+        "authority": "EFSA",
+        "conclusion": "Réévaluation officielle de l’acésulfame-K et DJA de 15 mg/kg de poids corporel/jour.",
+        "reviewedAt": "2025-04-30"
+      }
+    ],
+    "exposure": {
+      "adi": 15,
+      "unit": "mg/kg de poids corporel/jour",
+      "estimatedExposure": "DJA officielle disponible ; l’exposition individuelle du produit n’est pas mesurée.",
+      "populationsAtRisk": [],
+      "notes": []
+    },
+    "potentialEffects": [],
+    "restrictions": [],
+    "evidenceLevel": "strong",
+    "sources": [
+      {
+        "sourceId": "e950-eu-database",
+        "organisation": "European Commission",
+        "sourceType": "regulation",
+        "title": "Food additives database",
+        "url": "https://food.ec.europa.eu/food-safety/food-improvement-agents/additives/database_en",
+        "retrievedAt": "2026-09-16",
+        "fieldsSupported": [
+          "scientific_summary",
+          "exposure_assessment"
+        ]
+      },
+      {
+        "sourceId": "e950-efsa-2025",
+        "organisation": "EFSA",
+        "sourceType": "scientific_opinion",
+        "title": "Réévaluation de l’acésulfame K (E950)",
+        "url": "https://www.efsa.europa.eu/fr/plain-language-summary/re-evaluation-acesulfame-k-e-950-food-additive",
+        "publishedAt": "2025-04-30",
+        "retrievedAt": "2026-09-16",
+        "fieldsSupported": [
+          "scientific_summary",
+          "exposure_assessment"
+        ]
+      },
+      {
+        "sourceId": "e950-efsa-sweeteners",
+        "organisation": "EFSA",
+        "sourceType": "official_information",
+        "title": "Sweeteners",
+        "url": "https://www.efsa.europa.eu/en/topics/topic/sweeteners",
+        "retrievedAt": "2026-09-16",
+        "fieldsSupported": [
+          "scientific_summary",
+          "exposure_assessment"
+        ]
+      }
+    ],
+    "lastReviewedAt": "2025-04-30",
+    "dataVersion": "1.0",
+    "needsScientificReview": false
+  },
+  {
+    "code": "E951",
+    "names": {
+      "fr": "Aspartame",
+      "en": "Aspartame"
+    },
+    "aliases": [],
+    "function": "sweetener",
+    "regulatoryStatus": {
+      "eu": "Autorisé dans l’Union européenne sous les conditions applicables de la liste de l’Union",
+      "notes": []
+    },
+    "authorityEvaluations": [
+      {
+        "authority": "JECFA",
+        "conclusion": "DJA de 0 à 40 mg/kg de poids corporel/jour maintenue.",
+        "reviewedAt": "2023-07-14"
+      },
+      {
+        "authority": "CIRC",
+        "conclusion": "Classification groupe 2B, indices limités.",
+        "reviewedAt": "2023-07-14"
+      }
+    ],
+    "exposure": {
+      "unit": "mg/kg de poids corporel/jour",
+      "estimatedExposure": "DJA JECFA disponible ; l’exposition individuelle du produit n’est pas mesurée.",
+      "populationsAtRisk": [
+        "Personnes atteintes de phénylcétonurie"
+      ],
+      "notes": []
+    },
+    "potentialEffects": [
+      {
+        "effect": "Peut-être cancérogène, groupe 2B, sur la base d’indices limités.",
+        "severity": "serious",
+        "evidenceLevel": "limited",
+        "appliesTo": "additive"
+      }
+    ],
+    "restrictions": [],
+    "evidenceLevel": "limited",
+    "sources": [
+      {
+        "sourceId": "e951-eu-database",
+        "organisation": "European Commission",
+        "sourceType": "regulation",
+        "title": "Food additives database",
+        "url": "https://food.ec.europa.eu/food-safety/food-improvement-agents/additives/database_en",
+        "retrievedAt": "2026-09-16",
+        "fieldsSupported": [
+          "scientific_summary",
+          "exposure_assessment"
+        ]
+      },
+      {
+        "sourceId": "e951-who-2023",
+        "organisation": "OMS / CIRC / JECFA",
+        "sourceType": "international_agency",
+        "title": "Aspartame hazard and risk assessment results released",
+        "url": "https://www.who.int/news/item/14-07-2023-aspartame-hazard-and-risk-assessment-results-released",
+        "publishedAt": "2023-07-14",
+        "retrievedAt": "2026-09-16",
+        "fieldsSupported": [
+          "scientific_summary",
+          "exposure_assessment"
+        ]
+      },
+      {
+        "sourceId": "e951-jecfa-2023",
+        "organisation": "OMS / JECFA",
+        "sourceType": "international_agency",
+        "title": "JECFA — Aspartame",
+        "url": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/62",
+        "publishedAt": "2023",
+        "retrievedAt": "2026-09-16",
+        "fieldsSupported": [
+          "scientific_summary",
+          "exposure_assessment"
+        ]
+      },
+      {
+        "sourceId": "e951-efsa-topic",
+        "organisation": "EFSA",
+        "sourceType": "official_information",
+        "title": "Aspartame",
+        "url": "https://www.efsa.europa.eu/en/topics/topic/aspartame",
+        "retrievedAt": "2026-09-16",
+        "fieldsSupported": [
+          "scientific_summary",
+          "exposure_assessment"
+        ]
+      }
+    ],
+    "lastReviewedAt": "2023-07-14",
+    "dataVersion": "1.0",
+    "needsScientificReview": false
+  },
+  {
+    "code": "E955",
+    "names": {
+      "fr": "Sucralose",
+      "en": "Sucralose"
+    },
+    "aliases": [],
+    "regulatoryStatus": {
+      "eu": "Autorisé dans l’Union européenne sous les conditions d’usage applicables",
+      "notes": []
+    },
+    "authorityEvaluations": [
+      {
+        "authority": "EFSA",
+        "conclusion": "EFSA completed the sucralose re-evaluation in 2026, confirmed the ADI of 15 mg/kg body weight/day and reported exposure below the ADI for authorised uses. The conclusion does not extend automatically to unapproved high-temperature uses.",
+        "reviewedAt": "2026-09-16"
+      },
+      {
+        "authority": "Authority not specified",
+        "conclusion": "EFSA completed the sucralose re-evaluation in 2026, confirmed the ADI of 15 mg/kg body weight/day and reported exposure below the ADI for authorised uses. The conclusion does not extend automatically to unapproved high-temperature uses.",
+        "reviewedAt": "2026-09-16"
+      }
+    ],
+    "exposure": {
+      "adi": 15,
+      "unit": "mg/kg bw/day",
+      "populationsAtRisk": [],
+      "notes": []
+    },
+    "potentialEffects": [
+      {
+        "effect": "Scientific signal documented in the source",
+        "severity": "moderate",
+        "evidenceLevel": "insufficient",
+        "appliesTo": "additive",
+        "notes": "general population for authorised uses; high-temperature preparation is a specific uncertainty"
+      }
+    ],
+    "restrictions": [],
+    "evidenceLevel": "strong",
+    "sources": [
+      {
+        "sourceId": "e955-efsa-2026",
+        "organisation": "EFSA",
+        "sourceType": "official_information",
+        "title": "Re-evaluation of sucralose (E 955) as a food additive and evaluation of a new application on extension of use in fine bakery wares",
+        "url": "https://doi.org/10.2903/j.efsa.2026.9854",
+        "publishedAt": "2026-02-16",
+        "retrievedAt": "2026-09-16",
+        "fieldsSupported": [
+          "scientific_summary",
+          "exposure_assessment"
+        ]
+      },
+      {
+        "sourceId": "e955-efsa-news",
+        "organisation": "EFSA",
+        "sourceType": "official_information",
+        "title": "EFSA finds sucralose safe when used as currently authorised; cannot confirm safety of extending its use",
+        "url": "https://www.efsa.europa.eu/en/news/efsa-finds-sucralose-safe-when-used-currently-authorised-cannot-confirm-safety-extending-its",
+        "publishedAt": "2026-02-17",
+        "retrievedAt": "2026-09-16",
+        "fieldsSupported": [
+          "scientific_summary",
+          "exposure_assessment"
+        ]
+      },
+      {
+        "sourceId": "e955-eu-rules",
+        "organisation": "European Commission",
+        "sourceType": "official_information",
+        "title": "EU rules on food additives",
+        "url": "https://food.ec.europa.eu/food-safety/food-improvement-agents/additives/eu-rules_en",
+        "retrievedAt": "2026-09-16",
+        "fieldsSupported": [
+          "scientific_summary",
+          "exposure_assessment"
+        ]
+      }
+    ],
+    "lastReviewedAt": "2026-09-16",
+    "dataVersion": "reviewed-1.0",
+    "needsScientificReview": false
+  },
+  {
+    "code": "E330",
+    "names": {
+      "fr": "Citric acid",
+      "en": "Citric acid"
+    },
+    "aliases": [],
+    "regulatoryStatus": {
+      "eu": "Autorisé dans l’Union européenne sous les conditions d’usage applicables",
+      "notes": []
+    },
+    "authorityEvaluations": [
+      {
+        "authority": "EFSA",
+        "conclusion": "JECFA indique que l ADI de l acide citrique et de certains sels n est pas limitee et l a reevalue pour specifications. Cela ne constitue pas une garantie individuelle; la distinction est conservee entre acidite locale liee a la matrice et toxicite systemique.",
+        "reviewedAt": "2026-09-16"
+      },
+      {
+        "authority": "Authority not specified",
+        "conclusion": "JECFA indique que l ADI de l acide citrique et de certains sels n est pas limitee et l a reevalue pour specifications. Cela ne constitue pas une garantie individuelle; la distinction est conservee entre acidite locale liee a la matrice et toxicite systemique.",
+        "reviewedAt": "2026-09-16"
+      }
+    ],
+    "exposure": {
+      "populationsAtRisk": [],
+      "notes": []
+    },
+    "potentialEffects": [
+      {
+        "effect": "Scientific signal documented in the source",
+        "severity": "moderate",
+        "evidenceLevel": "insufficient",
+        "appliesTo": "additive",
+        "notes": "population generale; effets locaux dependants de la matrice et de la consommation"
+      }
+    ],
+    "restrictions": [],
+    "evidenceLevel": "strong",
+    "sources": [
+      {
+        "sourceId": "e330-jecfa-2014",
+        "organisation": "JECFA / WHO",
+        "sourceType": "official_information",
+        "title": "Citric acid evaluation",
+        "url": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/3594",
+        "publishedAt": "2014",
+        "retrievedAt": "2026-09-16",
+        "fieldsSupported": [
+          "scientific_summary",
+          "exposure_assessment"
+        ]
+      },
+      {
+        "sourceId": "e330-efsa-framework",
+        "organisation": "EFSA",
+        "sourceType": "official_information",
+        "title": "Food additives",
+        "url": "https://www.efsa.europa.eu/en/topics/topic/food-additives",
+        "retrievedAt": "2026-09-16",
+        "fieldsSupported": [
+          "scientific_summary",
+          "exposure_assessment"
+        ]
+      }
+    ],
+    "lastReviewedAt": "2026-09-16",
+    "dataVersion": "reviewed-1.0",
+    "needsScientificReview": false
+  },
+  {
+    "code": "E160A",
+    "names": {
+      "fr": "Carotenes",
+      "en": "Carotenes"
+    },
+    "aliases": [],
+    "regulatoryStatus": {
+      "eu": "Autorisé dans l’Union européenne sous les conditions d’usage applicables",
+      "notes": []
+    },
+    "authorityEvaluations": [
+      {
+        "authority": "EFSA",
+        "conclusion": "E160a couvre plusieurs formes de carotenes. Pour l usage comme colorant alimentaire, l EFSA ne releve pas de preoccupation de securite lorsque l exposition reste dans l ordre de l apport naturel. Le signal observe chez certains gros fumeurs concerne des complements a forte dose et n est pas attribue automatiquement au colorant alimentaire. La conclusion reste conditionnelle et ne mesure pas l exposition individuelle du produit scanne.",
+        "reviewedAt": "2026-09-16"
+      },
+      {
+        "authority": "Authority not specified",
+        "conclusion": "E160a couvre plusieurs formes de carotenes. Pour l usage comme colorant alimentaire, l EFSA ne releve pas de preoccupation de securite lorsque l exposition reste dans l ordre de l apport naturel. Le signal observe chez certains gros fumeurs concerne des complements a forte dose et n est pas attribue automatiquement au colorant alimentaire. La conclusion reste conditionnelle et ne mesure pas l exposition individuelle du produit scanne.",
+        "reviewedAt": "2026-09-16"
+      }
+    ],
+    "exposure": {
+      "populationsAtRisk": [
+        "Gros fumeurs pour les complements a forte dose; cette population ne permet pas d inferer le risque du E160a alimentaire dans un produit donne."
+      ],
+      "notes": []
+    },
+    "potentialEffects": [
+      {
+        "effect": "Scientific signal documented in the source",
+        "severity": "moderate",
+        "evidenceLevel": "insufficient",
+        "appliesTo": "additive",
+        "notes": "gros fumeurs et travailleurs exposes a l amiante dans des contextes de supplementation elevee"
+      }
+    ],
+    "restrictions": [],
+    "evidenceLevel": "strong",
+    "sources": [
+      {
+        "sourceId": "e160a-efsa-2012",
+        "organisation": "EFSA",
+        "sourceType": "official_information",
+        "title": "Re-evaluation of mixed carotenes (E 160a(i)) and beta-carotene (E 160a(ii))",
+        "url": "https://www.efsa.europa.eu/sites/default/files/event/120214-m.pdf",
+        "publishedAt": "2012",
+        "retrievedAt": "2026-09-16",
+        "fieldsSupported": [
+          "scientific_summary",
+          "exposure_assessment"
+        ]
+      },
+      {
+        "sourceId": "e160a-jecfa-2019",
+        "organisation": "JECFA / WHO",
+        "sourceType": "official_information",
+        "title": "Summary and conclusions of the 87th JECFA meeting",
+        "url": "https://cdn.who.int/media/docs/default-source/food-safety/jecfa/summary-and-conclusions/jecfa87_4-13-june-2019_summary-and-conclusion.pdf",
+        "publishedAt": "2019",
+        "retrievedAt": "2026-09-16",
+        "fieldsSupported": [
+          "scientific_summary",
+          "exposure_assessment"
+        ]
+      },
+      {
+        "sourceId": "e160a-efsa-status",
+        "organisation": "EFSA",
+        "sourceType": "official_information",
+        "title": "Food colours: E160a safety assessment status",
+        "url": "https://www.efsa.europa.eu/en/topics/topic/food-colours",
+        "retrievedAt": "2026-09-16",
+        "fieldsSupported": [
+          "scientific_summary",
+          "exposure_assessment"
+        ]
+      }
+    ],
+    "lastReviewedAt": "2026-09-16",
+    "dataVersion": "reviewed-1.0",
+    "needsScientificReview": false
+  },
+  {
+    "code": "E170",
+    "names": {
+      "fr": "Calcium carbonate",
+      "en": "Calcium carbonate"
+    },
+    "aliases": [],
+    "regulatoryStatus": {
+      "eu": "Autorisé dans l’Union européenne sous les conditions d’usage applicables",
+      "notes": []
+    },
+    "authorityEvaluations": [
+      {
+        "authority": "EFSA",
+        "conclusion": "Official assessments do not identify a particular signal for calcium carbonate at authorised food-additive uses. The calcium contribution, purity specifications and contaminant data remain relevant limitations; high-dose calcium supplementation must not be attributed automatically to E170 in food.",
+        "reviewedAt": "2026-09-16"
+      },
+      {
+        "authority": "Authority not specified",
+        "conclusion": "Official assessments do not identify a particular signal for calcium carbonate at authorised food-additive uses. The calcium contribution, purity specifications and contaminant data remain relevant limitations; high-dose calcium supplementation must not be attributed automatically to E170 in food.",
+        "reviewedAt": "2026-09-16"
+      },
+      {
+        "authority": "Authority not specified",
+        "conclusion": "Official assessments do not identify a particular signal for calcium carbonate at authorised food-additive uses. The calcium contribution, purity specifications and contaminant data remain relevant limitations; high-dose calcium supplementation must not be attributed automatically to E170 in food.",
+        "reviewedAt": "2026-09-16"
+      }
+    ],
+    "exposure": {
+      "populationsAtRisk": [
+        "People with high total calcium intake or relevant medical conditions; this cannot be inferred from the presence of E170 alone."
+      ],
+      "notes": []
+    },
+    "potentialEffects": [
+      {
+        "effect": "Scientific signal documented in the source",
+        "severity": "moderate",
+        "evidenceLevel": "insufficient",
+        "appliesTo": "additive",
+        "notes": "general population and infants in the assessed food categories"
+      },
+      {
+        "effect": "Scientific signal documented in the source",
+        "severity": "moderate",
+        "evidenceLevel": "insufficient",
+        "appliesTo": "additive",
+        "notes": "all consumers; dependent on additive purity"
+      }
+    ],
+    "restrictions": [],
+    "evidenceLevel": "strong",
+    "sources": [
+      {
+        "sourceId": "e170-jecfa-1965",
+        "organisation": "JECFA / WHO",
+        "sourceType": "official_information",
+        "title": "Calcium carbonate evaluation",
+        "url": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/457",
+        "publishedAt": "1965",
+        "retrievedAt": "2026-09-16",
+        "fieldsSupported": [
+          "scientific_summary",
+          "exposure_assessment"
+        ]
+      },
+      {
+        "sourceId": "e170-efsa-2011",
+        "organisation": "EFSA",
+        "sourceType": "official_information",
+        "title": "Re-evaluation of calcium carbonate (E 170) as a food additive",
+        "url": "https://doi.org/10.2903/j.efsa.2011.2318",
+        "publishedAt": "2011",
+        "retrievedAt": "2026-09-16",
+        "fieldsSupported": [
+          "scientific_summary",
+          "exposure_assessment"
+        ]
+      },
+      {
+        "sourceId": "e170-efsa-followup",
+        "organisation": "EFSA",
+        "sourceType": "official_information",
+        "title": "Call for technical and toxicological data on calcium carbonate (E 170)",
+        "url": "https://www.efsa.europa.eu/en/consultations/call/call-technical-and-toxicological-data-calcium-carbonate-e-170-uses",
+        "publishedAt": "2018-10-10",
+        "retrievedAt": "2026-09-16",
+        "fieldsSupported": [
+          "scientific_summary",
+          "exposure_assessment"
+        ]
+      },
+      {
+        "sourceId": "e170-jecfa-1965",
+        "organisation": "JECFA / WHO",
+        "sourceType": "official_information",
+        "title": "Calcium carbonate evaluation",
+        "url": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/457",
+        "publishedAt": "1965",
+        "retrievedAt": "2026-09-16",
+        "fieldsSupported": [
+          "scientific_summary",
+          "exposure_assessment"
+        ]
+      },
+      {
+        "sourceId": "e170-efsa-2011",
+        "organisation": "EFSA",
+        "sourceType": "official_information",
+        "title": "Re-evaluation of calcium carbonate (E 170) as a food additive",
+        "url": "https://doi.org/10.2903/j.efsa.2011.2318",
+        "publishedAt": "2011",
+        "retrievedAt": "2026-09-16",
+        "fieldsSupported": [
+          "scientific_summary",
+          "exposure_assessment"
+        ]
+      },
+      {
+        "sourceId": "e170-efsa-followup",
+        "organisation": "EFSA",
+        "sourceType": "official_information",
+        "title": "Call for technical and toxicological data on calcium carbonate (E 170)",
+        "url": "https://www.efsa.europa.eu/en/consultations/call/call-technical-and-toxicological-data-calcium-carbonate-e-170-uses",
+        "publishedAt": "2018-10-10",
+        "retrievedAt": "2026-09-16",
+        "fieldsSupported": [
+          "scientific_summary",
+          "exposure_assessment"
+        ]
+      }
+    ],
+    "lastReviewedAt": "2026-09-16",
+    "dataVersion": "reviewed-1.0",
+    "needsScientificReview": false
+  },
+  {
+    "code": "E407",
+    "names": {
+      "fr": "Carrageenan",
+      "en": "Carrageenan"
+    },
+    "aliases": [],
+    "regulatoryStatus": {
+      "eu": "Autorisé dans l’Union européenne sous les conditions d’usage applicables",
+      "notes": []
+    },
+    "authorityEvaluations": [
+      {
+        "authority": "EFSA",
+        "conclusion": "EFSA distinguished authorised food-grade carrageenan from unresolved questions about preparation characterisation and low-molecular-weight fractions. Poligeenan/degraded carrageenan findings must not be attributed automatically to E407 food additive.",
+        "reviewedAt": "2026-09-16"
+      },
+      {
+        "authority": "Authority not specified",
+        "conclusion": "EFSA distinguished authorised food-grade carrageenan from unresolved questions about preparation characterisation and low-molecular-weight fractions. Poligeenan/degraded carrageenan findings must not be attributed automatically to E407 food additive.",
+        "reviewedAt": "2026-09-16"
+      }
+    ],
+    "exposure": {
+      "unit": "mg/kg bw/day",
+      "populationsAtRisk": [
+        "Infants below 16 weeks were the subject of a specific EFSA data call; this is not a basis to generalise a risk to all foods or all age groups."
+      ],
+      "notes": []
+    },
+    "potentialEffects": [
+      {
+        "effect": "Scientific signal documented in the source",
+        "severity": "moderate",
+        "evidenceLevel": "insufficient",
+        "appliesTo": "additive",
+        "notes": "general population; experimental evidence"
+      },
+      {
+        "effect": "Scientific signal documented in the source",
+        "severity": "moderate",
+        "evidenceLevel": "insufficient",
+        "appliesTo": "additive",
+        "notes": "general population; experimental evidence"
+      }
+    ],
+    "restrictions": [],
+    "evidenceLevel": "moderate",
+    "sources": [
+      {
+        "sourceId": "e407-efsa-2018",
+        "organisation": "EFSA",
+        "sourceType": "official_information",
+        "title": "Re-evaluation of carrageenan (E 407) and processed Eucheuma seaweed (E 407a) as food additives",
+        "url": "https://doi.org/10.2903/j.efsa.2018.5238",
+        "publishedAt": "2018-07-19",
+        "retrievedAt": "2026-09-16",
+        "fieldsSupported": [
+          "scientific_summary",
+          "exposure_assessment"
+        ]
+      },
+      {
+        "sourceId": "e407-efsa-data-call",
+        "organisation": "EFSA",
+        "sourceType": "official_information",
+        "title": "Call for technical and toxicological data on carrageenan (E 407)",
+        "url": "https://www.efsa.europa.eu/en/consultations/call/call-technical-and-toxicological-data-carrageenan-e-407-uses-foods",
+        "publishedAt": "2018-10-10",
+        "retrievedAt": "2026-09-16",
+        "fieldsSupported": [
+          "scientific_summary",
+          "exposure_assessment"
+        ]
+      },
+      {
+        "sourceId": "e407-eu-rules",
+        "organisation": "European Commission",
+        "sourceType": "official_information",
+        "title": "EU rules on food additives",
+        "url": "https://food.ec.europa.eu/food-safety/food-improvement-agents/additives/eu-rules_en",
+        "retrievedAt": "2026-09-16",
+        "fieldsSupported": [
+          "scientific_summary",
+          "exposure_assessment"
+        ]
+      }
+    ],
+    "lastReviewedAt": "2026-09-16",
+    "dataVersion": "reviewed-1.0",
+    "needsScientificReview": false
+  },
+  {
+    "code": "E300",
+    "names": {
+      "fr": "Ascorbic acid",
+      "en": "Ascorbic acid"
+    },
+    "aliases": [],
+    "regulatoryStatus": {
+      "eu": "Autorisé dans l’Union européenne sous les conditions d’usage applicables",
+      "notes": []
+    },
+    "authorityEvaluations": [
+      {
+        "authority": "EFSA",
+        "conclusion": "E300 is vitamin C used as an antioxidant. JECFA's group ADI is not specified, and the historical record includes conditional values before that conclusion. High-dose supplement effects are not transferred automatically to food-additive use.",
+        "reviewedAt": "2026-09-16"
+      },
+      {
+        "authority": "Authority not specified",
+        "conclusion": "E300 is vitamin C used as an antioxidant. JECFA's group ADI is not specified, and the historical record includes conditional values before that conclusion. High-dose supplement effects are not transferred automatically to food-additive use.",
+        "reviewedAt": "2026-09-16"
+      }
+    ],
+    "exposure": {
+      "populationsAtRisk": [],
+      "notes": []
+    },
+    "potentialEffects": [
+      {
+        "effect": "Scientific signal documented in the source",
+        "severity": "moderate",
+        "evidenceLevel": "insufficient",
+        "appliesTo": "additive",
+        "notes": "consumers of high-dose supplements; not product-specific"
+      }
+    ],
+    "restrictions": [],
+    "evidenceLevel": "strong",
+    "sources": [
+      {
+        "sourceId": "e300-jecfa-1981",
+        "organisation": "JECFA / WHO",
+        "sourceType": "official_information",
+        "title": "Ascorbic acid evaluation",
+        "url": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/59",
+        "publishedAt": "1981",
+        "retrievedAt": "2026-09-16",
+        "fieldsSupported": [
+          "scientific_summary",
+          "exposure_assessment"
+        ]
+      },
+      {
+        "sourceId": "e300-efsa-framework",
+        "organisation": "EFSA",
+        "sourceType": "official_information",
+        "title": "Food additives and naturally occurring substances",
+        "url": "https://www.efsa.europa.eu/en/topics/topic/food-additives",
+        "retrievedAt": "2026-09-16",
+        "fieldsSupported": [
+          "scientific_summary",
+          "exposure_assessment"
+        ]
+      }
+    ],
+    "lastReviewedAt": "2026-09-16",
+    "dataVersion": "reviewed-1.0",
+    "needsScientificReview": false
+  },
+  {
+    "code": "E202",
+    "names": {
+      "fr": "Potassium sorbate",
+      "en": "Potassium sorbate"
+    },
+    "aliases": [],
+    "regulatoryStatus": {
+      "eu": "Autorisé dans l’Union européenne sous les conditions d’usage applicables",
+      "notes": []
+    },
+    "authorityEvaluations": [
+      {
+        "authority": "EFSA",
+        "conclusion": "EFSA evaluates sorbic acid and potassium sorbate as a group. The current group ADI is 11 mg sorbic acid/kg body weight/day, with exposure estimates below that value in the cited assessment. This does not establish the exposure from the scanned product.",
+        "reviewedAt": "2026-09-16"
+      },
+      {
+        "authority": "Authority not specified",
+        "conclusion": "EFSA evaluates sorbic acid and potassium sorbate as a group. The current group ADI is 11 mg sorbic acid/kg body weight/day, with exposure estimates below that value in the cited assessment. This does not establish the exposure from the scanned product.",
+        "reviewedAt": "2026-09-16"
+      }
+    ],
+    "exposure": {
+      "adi": 11,
+      "unit": "mg sorbic acid/kg bw/day",
+      "populationsAtRisk": [],
+      "notes": []
+    },
+    "potentialEffects": [
+      {
+        "effect": "Scientific signal documented in the source",
+        "severity": "moderate",
+        "evidenceLevel": "insufficient",
+        "appliesTo": "additive",
+        "notes": "general population; experimental toxicology evidence"
+      }
+    ],
+    "restrictions": [],
+    "evidenceLevel": "strong",
+    "sources": [
+      {
+        "sourceId": "e202-efsa-2015",
+        "organisation": "EFSA",
+        "sourceType": "official_information",
+        "title": "Scientific Opinion on the re-evaluation of sorbic acid (E 200), potassium sorbate (E 202) and calcium sorbate (E 203)",
+        "url": "https://doi.org/10.2903/j.efsa.2015.4144",
+        "publishedAt": "2015-06-30",
+        "retrievedAt": "2026-09-16",
+        "fieldsSupported": [
+          "scientific_summary",
+          "exposure_assessment"
+        ]
+      },
+      {
+        "sourceId": "e202-efsa-2019",
+        "organisation": "EFSA",
+        "sourceType": "official_information",
+        "title": "Opinion on the follow-up of the re-evaluation of sorbic acid and potassium sorbate",
+        "url": "https://doi.org/10.2903/j.efsa.2019.5625",
+        "publishedAt": "2019-03-01",
+        "retrievedAt": "2026-09-16",
+        "fieldsSupported": [
+          "scientific_summary",
+          "exposure_assessment"
+        ]
+      },
+      {
+        "sourceId": "e202-eu-rules",
+        "organisation": "European Commission",
+        "sourceType": "official_information",
+        "title": "EU rules on food additives",
+        "url": "https://food.ec.europa.eu/food-safety/food-improvement-agents/additives/eu-rules_en",
+        "retrievedAt": "2026-09-16",
+        "fieldsSupported": [
+          "scientific_summary",
+          "exposure_assessment"
+        ]
+      }
+    ],
+    "lastReviewedAt": "2026-09-16",
+    "dataVersion": "reviewed-1.0",
+    "needsScientificReview": false
+  },
+  {
+    "code": "E211",
+    "names": {
+      "fr": "Sodium benzoate",
+      "en": "Sodium benzoate"
+    },
+    "aliases": [],
+    "regulatoryStatus": {
+      "eu": "Autorisé dans l’Union européenne sous les conditions d’usage applicables",
+      "notes": []
+    },
+    "authorityEvaluations": [
+      {
+        "authority": "EFSA",
+        "conclusion": "Sodium benzoate is assessed within the benzoic acid/benzoates group. EFSA set a group ADI of 5 mg benzoic acid/kg body weight/day and identified possible population-level exceedance scenarios for some toddlers and children. Because the opinion describes low toxicity, no genotoxicity concern and no identified carcinogenic potential, and because product exposure is not measured, the OUMMAH proposal is limited_concern rather than moderate_concern.",
+        "reviewedAt": "2026-09-16"
+      },
+      {
+        "authority": "Authority not specified",
+        "conclusion": "Sodium benzoate is assessed within the benzoic acid/benzoates group. EFSA set a group ADI of 5 mg benzoic acid/kg body weight/day and identified possible population-level exceedance scenarios for some toddlers and children. Because the opinion describes low toxicity, no genotoxicity concern and no identified carcinogenic potential, and because product exposure is not measured, the OUMMAH proposal is limited_concern rather than moderate_concern.",
+        "reviewedAt": "2026-09-16"
+      }
+    ],
+    "exposure": {
+      "adi": 5,
+      "unit": "mg benzoic acid/kg bw/day",
+      "populationsAtRisk": [
+        "Toddlers and children in high-consumption exposure scenarios were specifically identified in the EFSA exposure assessment."
+      ],
+      "notes": []
+    },
+    "potentialEffects": [
+      {
+        "effect": "Scientific signal documented in the source",
+        "severity": "moderate",
+        "evidenceLevel": "insufficient",
+        "appliesTo": "additive",
+        "notes": "experimental animals; not a diagnosis or product-specific risk estimate"
+      }
+    ],
+    "restrictions": [],
+    "evidenceLevel": "strong",
+    "sources": [
+      {
+        "sourceId": "e211-efsa-2016",
+        "organisation": "EFSA",
+        "sourceType": "official_information",
+        "title": "Scientific Opinion on the re-evaluation of benzoic acid (E 210), sodium benzoate (E 211), potassium benzoate (E 212) and calcium benzoate (E 213)",
+        "url": "https://doi.org/10.2903/j.efsa.2016.4433",
+        "publishedAt": "2016-03",
+        "retrievedAt": "2026-09-16",
+        "fieldsSupported": [
+          "scientific_summary",
+          "exposure_assessment"
+        ]
+      },
+      {
+        "sourceId": "e211-eu-rules",
+        "organisation": "European Commission",
+        "sourceType": "official_information",
+        "title": "EU rules on food additives",
+        "url": "https://food.ec.europa.eu/food-safety/food-improvement-agents/additives/eu-rules_en",
+        "retrievedAt": "2026-09-16",
+        "fieldsSupported": [
+          "scientific_summary",
+          "exposure_assessment"
+        ]
+      }
+    ],
+    "lastReviewedAt": "2026-09-16",
+    "dataVersion": "reviewed-1.0",
+    "needsScientificReview": false
+  },
+  {
+    "code": "E250",
+    "names": {
+      "fr": "Sodium nitrite",
+      "en": "Sodium nitrite"
+    },
+    "aliases": [],
+    "regulatoryStatus": {
+      "eu": "Autorisé dans l’Union européenne sous les conditions d’usage applicables",
+      "notes": []
+    },
+    "authorityEvaluations": [
+      {
+        "authority": "EFSA",
+        "conclusion": "Nitrite has a documented hazard mechanism at sufficient exposure, including methemoglobinemia, and EFSA discussed nitrosamine uncertainties. The official exposure assessment is conditional and product exposure is unknown, so this proposal does not classify E250 as high concern.",
+        "reviewedAt": "2026-09-16"
+      },
+      {
+        "authority": "Authority not specified",
+        "conclusion": "Nitrite has a documented hazard mechanism at sufficient exposure, including methemoglobinemia, and EFSA discussed nitrosamine uncertainties. The official exposure assessment is conditional and product exposure is unknown, so this proposal does not classify E250 as high concern.",
+        "reviewedAt": "2026-09-16"
+      }
+    ],
+    "exposure": {
+      "unit": "mg nitrite ion/kg bw/day",
+      "populationsAtRisk": [
+        "Children with high dietary exposure were noted in EFSA's additive-only assessment; infants and the historical JECFA scope require particular attention to the applicable conditions."
+      ],
+      "notes": []
+    },
+    "potentialEffects": [
+      {
+        "effect": "Scientific signal documented in the source",
+        "severity": "moderate",
+        "evidenceLevel": "insufficient",
+        "appliesTo": "additive",
+        "notes": "general population; infants are specifically addressed in the historical JECFA scope"
+      },
+      {
+        "effect": "Scientific signal documented in the source",
+        "severity": "moderate",
+        "evidenceLevel": "insufficient",
+        "appliesTo": "additive",
+        "notes": "general population; exposure-dependent"
+      }
+    ],
+    "restrictions": [],
+    "evidenceLevel": "moderate",
+    "sources": [
+      {
+        "sourceId": "e250-efsa-2017",
+        "organisation": "EFSA",
+        "sourceType": "official_information",
+        "title": "EFSA confirms safe levels for nitrites and nitrates added to food",
+        "url": "https://www.efsa.europa.eu/en/press/news/170615",
+        "publishedAt": "2017-06-15",
+        "retrievedAt": "2026-09-16",
+        "fieldsSupported": [
+          "scientific_summary",
+          "exposure_assessment"
+        ]
+      },
+      {
+        "sourceId": "e250-jecfa-2002",
+        "organisation": "JECFA / WHO",
+        "sourceType": "official_information",
+        "title": "Sodium nitrite evaluation",
+        "url": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/4792",
+        "publishedAt": "2002",
+        "retrievedAt": "2026-09-16",
+        "fieldsSupported": [
+          "scientific_summary",
+          "exposure_assessment"
+        ]
+      },
+      {
+        "sourceId": "e250-eu-rules",
+        "organisation": "European Commission",
+        "sourceType": "official_information",
+        "title": "EU rules on food additives",
+        "url": "https://food.ec.europa.eu/food-safety/food-improvement-agents/additives/eu-rules_en",
+        "retrievedAt": "2026-09-16",
+        "fieldsSupported": [
+          "scientific_summary",
+          "exposure_assessment"
+        ]
+      }
+    ],
+    "lastReviewedAt": "2026-09-16",
+    "dataVersion": "reviewed-1.0",
+    "needsScientificReview": false
+  },
+  {
+    "code": "E100",
+    "names": {
+      "fr": "Curcumin",
+      "en": "Curcumin"
+    },
+    "aliases": [],
+    "regulatoryStatus": {
+      "eu": "Autorisé dans l’Union européenne sous les conditions d’usage applicables",
+      "notes": []
+    },
+    "authorityEvaluations": [
+      {
+        "authority": "EFSA",
+        "conclusion": "La curcumine dispose d une ADI de 3 mg/kg/j. Les evaluations officielles decrivent une base toxicologique suffisante mais une incertitude d exposition, avec des depassements possibles dans certains scenarios eleves. Cela justifie une attention limitee, sans extrapoler les usages de complements fortement doses au colorant alimentaire.",
+        "reviewedAt": "2026-09-16"
+      },
+      {
+        "authority": "Authority not specified",
+        "conclusion": "La curcumine dispose d une ADI de 3 mg/kg/j. Les evaluations officielles decrivent une base toxicologique suffisante mais une incertitude d exposition, avec des depassements possibles dans certains scenarios eleves. Cela justifie une attention limitee, sans extrapoler les usages de complements fortement doses au colorant alimentaire.",
+        "reviewedAt": "2026-09-16"
+      }
+    ],
+    "exposure": {
+      "adi": 3,
+      "unit": "mg/kg bw/day",
+      "populationsAtRisk": [
+        "Enfants exposes a des niveaux eleves dans certains scenarios d exposition aux colorants et consommateurs de curcuma comme epice."
+      ],
+      "notes": []
+    },
+    "potentialEffects": [
+      {
+        "effect": "Scientific signal documented in the source",
+        "severity": "moderate",
+        "evidenceLevel": "insufficient",
+        "appliesTo": "additive",
+        "notes": "population generale; exposition alimentaire"
+      }
+    ],
+    "restrictions": [],
+    "evidenceLevel": "strong",
+    "sources": [
+      {
+        "sourceId": "e100-efsa-2010",
+        "organisation": "EFSA",
+        "sourceType": "official_information",
+        "title": "Scientific Opinion on the re-evaluation of curcumin (E 100) as a food additive",
+        "url": "https://doi.org/10.2903/j.efsa.2010.1679",
+        "publishedAt": "2010",
+        "retrievedAt": "2026-09-16",
+        "fieldsSupported": [
+          "scientific_summary",
+          "exposure_assessment"
+        ]
+      },
+      {
+        "sourceId": "e100-jecfa-2003",
+        "organisation": "JECFA / WHO",
+        "sourceType": "official_information",
+        "title": "Curcumin evaluation",
+        "url": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/638",
+        "publishedAt": "2003",
+        "retrievedAt": "2026-09-16",
+        "fieldsSupported": [
+          "scientific_summary",
+          "exposure_assessment"
+        ]
+      },
+      {
+        "sourceId": "e100-eu-rules",
+        "organisation": "European Commission",
+        "sourceType": "official_information",
+        "title": "EU rules on food additives",
+        "url": "https://food.ec.europa.eu/food-safety/food-improvement-agents/additives/eu-rules_en",
+        "retrievedAt": "2026-09-16",
+        "fieldsSupported": [
+          "scientific_summary",
+          "exposure_assessment"
+        ]
+      }
+    ],
+    "lastReviewedAt": "2026-09-16",
+    "dataVersion": "reviewed-1.0",
+    "needsScientificReview": false
+  },
+  {
+    "code": "E101",
+    "names": {
+      "fr": "Riboflavins",
+      "en": "Riboflavins"
+    },
+    "aliases": [],
+    "regulatoryStatus": {
+      "eu": "Autorisé dans l’Union européenne sous les conditions d’usage applicables",
+      "notes": []
+    },
+    "authorityEvaluations": [
+      {
+        "authority": "EFSA",
+        "conclusion": "E101 regroupe deux formes reglementaires de riboflavine. L EFSA conclut a l absence de preoccupation de securite aux usages autorises evalues, sans que cela constitue une garantie pour une exposition individuelle ou pour des formes non couvertes.",
+        "reviewedAt": "2026-09-16"
+      },
+      {
+        "authority": "Authority not specified",
+        "conclusion": "E101 regroupe deux formes reglementaires de riboflavine. L EFSA conclut a l absence de preoccupation de securite aux usages autorises evalues, sans que cela constitue une garantie pour une exposition individuelle ou pour des formes non couvertes.",
+        "reviewedAt": "2026-09-16"
+      }
+    ],
+    "exposure": {
+      "unit": "mg/kg bw/day",
+      "populationsAtRisk": [],
+      "notes": []
+    },
+    "potentialEffects": [
+      {
+        "effect": "Scientific signal documented in the source",
+        "severity": "moderate",
+        "evidenceLevel": "insufficient",
+        "appliesTo": "additive",
+        "notes": "population generale aux usages alimentaires autorises"
+      }
+    ],
+    "restrictions": [],
+    "evidenceLevel": "strong",
+    "sources": [
+      {
+        "sourceId": "e101-efsa-2013",
+        "organisation": "EFSA",
+        "sourceType": "official_information",
+        "title": "Re-evaluation of riboflavin (E 101i) and riboflavin-5-phosphate sodium (E 101ii) as food additives",
+        "url": "https://doi.org/10.2903/j.efsa.2013.3358",
+        "publishedAt": "2013",
+        "retrievedAt": "2026-09-16",
+        "fieldsSupported": [
+          "scientific_summary",
+          "exposure_assessment"
+        ]
+      },
+      {
+        "sourceId": "e101-efsa-colours",
+        "organisation": "EFSA",
+        "sourceType": "official_information",
+        "title": "Food colours: status of EFSA safety assessments",
+        "url": "https://www.efsa.europa.eu/en/topics/topic/food-colours",
+        "retrievedAt": "2026-09-16",
+        "fieldsSupported": [
+          "scientific_summary",
+          "exposure_assessment"
+        ]
+      }
+    ],
+    "lastReviewedAt": "2026-09-16",
+    "dataVersion": "reviewed-1.0",
+    "needsScientificReview": false
+  },
+  {
+    "code": "E120",
+    "names": {
+      "fr": "Cochineal carminic acid carmins",
+      "en": "Cochineal carminic acid carmins"
+    },
+    "aliases": [],
+    "regulatoryStatus": {
+      "eu": "Autorisé dans l’Union européenne sous les conditions d’usage applicables",
+      "notes": []
+    },
+    "authorityEvaluations": [
+      {
+        "authority": "EFSA",
+        "conclusion": "Le signal principal de E120 est une hypersensibilite possible chez certaines personnes, a distinguer d une toxicite generale. Une ADI JECFA existe pour les carmins, mais elle ne couvre pas le risque allergique sans seuil; la classification est donc limitee et ciblee, pas un verdict de danger general.",
+        "reviewedAt": "2026-09-16"
+      },
+      {
+        "authority": "Authority not specified",
+        "conclusion": "Le signal principal de E120 est une hypersensibilite possible chez certaines personnes, a distinguer d une toxicite generale. Une ADI JECFA existe pour les carmins, mais elle ne couvre pas le risque allergique sans seuil; la classification est donc limitee et ciblee, pas un verdict de danger general.",
+        "reviewedAt": "2026-09-16"
+      }
+    ],
+    "exposure": {
+      "unit": "mg/kg bw",
+      "populationsAtRisk": [
+        "Personnes ayant une hypersensibilite connue a la cochenille/carmine ou a des residus proteiques associes."
+      ],
+      "notes": []
+    },
+    "potentialEffects": [
+      {
+        "effect": "Scientific signal documented in the source",
+        "severity": "moderate",
+        "evidenceLevel": "insufficient",
+        "appliesTo": "additive",
+        "notes": "personnes sensibilisees; ce signal ne constitue pas une toxicite generale pour toute la population"
+      }
+    ],
+    "restrictions": [],
+    "evidenceLevel": "moderate",
+    "sources": [
+      {
+        "sourceId": "e120-jecfa-2000",
+        "organisation": "JECFA / WHO",
+        "sourceType": "official_information",
+        "title": "Carmines evaluation",
+        "url": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/1079",
+        "publishedAt": "2000",
+        "retrievedAt": "2026-09-16",
+        "fieldsSupported": [
+          "scientific_summary",
+          "exposure_assessment"
+        ]
+      },
+      {
+        "sourceId": "e120-efsa-allergenicity",
+        "organisation": "EFSA",
+        "sourceType": "official_information",
+        "title": "Re-evaluation of E120 cochineal, carminic acid and carmines - panel discussion",
+        "url": "https://www.efsa.europa.eu/sites/default/files/event/110920-m.pdf",
+        "publishedAt": "2011",
+        "retrievedAt": "2026-09-16",
+        "fieldsSupported": [
+          "scientific_summary",
+          "exposure_assessment"
+        ]
+      },
+      {
+        "sourceId": "e120-efsa-status",
+        "organisation": "EFSA",
+        "sourceType": "official_information",
+        "title": "Food colours: E120 safety assessment status",
+        "url": "https://www.efsa.europa.eu/en/topics/topic/food-colours",
+        "retrievedAt": "2026-09-16",
+        "fieldsSupported": [
+          "scientific_summary",
+          "exposure_assessment"
+        ]
+      }
+    ],
+    "lastReviewedAt": "2026-09-16",
+    "dataVersion": "reviewed-1.0",
+    "needsScientificReview": false
+  },
+  {
+    "code": "E162",
+    "names": {
+      "fr": "Beetroot red",
+      "en": "Beetroot red"
+    },
+    "aliases": [],
+    "regulatoryStatus": {
+      "eu": "Autorisé dans l’Union européenne sous les conditions d’usage applicables",
+      "notes": []
+    },
+    "authorityEvaluations": [
+      {
+        "authority": "EFSA",
+        "conclusion": "E162 is a preparation whose principal pigment is betanin, not an isolated single molecule in every commercial preparation. JECFA assigned an ADI not specified under good manufacturing practice, with a specific nitrate-content condition. This supports no particular signal for the authorised food use, without treating natural origin as an absolute safety guarantee.",
+        "reviewedAt": "2026-09-16"
+      },
+      {
+        "authority": "Authority not specified",
+        "conclusion": "E162 is a preparation whose principal pigment is betanin, not an isolated single molecule in every commercial preparation. JECFA assigned an ADI not specified under good manufacturing practice, with a specific nitrate-content condition. This supports no particular signal for the authorised food use, without treating natural origin as an absolute safety guarantee.",
+        "reviewedAt": "2026-09-16"
+      },
+      {
+        "authority": "Authority not specified",
+        "conclusion": "E162 is a preparation whose principal pigment is betanin, not an isolated single molecule in every commercial preparation. JECFA assigned an ADI not specified under good manufacturing practice, with a specific nitrate-content condition. This supports no particular signal for the authorised food use, without treating natural origin as an absolute safety guarantee.",
+        "reviewedAt": "2026-09-16"
+      }
+    ],
+    "exposure": {
+      "populationsAtRisk": [
+        "Infants and young children, for whom nitrate content in foods requires particular control."
+      ],
+      "notes": []
+    },
+    "potentialEffects": [
+      {
+        "effect": "Scientific signal documented in the source",
+        "severity": "moderate",
+        "evidenceLevel": "insufficient",
+        "appliesTo": "additive",
+        "notes": "general population; particular attention to foods for infants and young children"
+      }
+    ],
+    "restrictions": [],
+    "evidenceLevel": "strong",
+    "sources": [
+      {
+        "sourceId": "e162-jecfa-1987",
+        "organisation": "JECFA / WHO",
+        "sourceType": "official_information",
+        "title": "Beetroot red evaluation",
+        "url": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/878",
+        "publishedAt": "1987",
+        "retrievedAt": "2026-09-16",
+        "fieldsSupported": [
+          "scientific_summary",
+          "exposure_assessment"
+        ]
+      },
+      {
+        "sourceId": "e162-efsa-status",
+        "organisation": "EFSA",
+        "sourceType": "official_information",
+        "title": "Food colours: E162 safety assessment status",
+        "url": "https://www.efsa.europa.eu/en/topics/topic/food-colours",
+        "retrievedAt": "2026-09-16",
+        "fieldsSupported": [
+          "scientific_summary",
+          "exposure_assessment"
+        ]
+      },
+      {
+        "sourceId": "e162-jecfa-1987",
+        "organisation": "JECFA / WHO",
+        "sourceType": "official_information",
+        "title": "Beetroot red evaluation",
+        "url": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/878",
+        "publishedAt": "1987",
+        "retrievedAt": "2026-09-16",
+        "fieldsSupported": [
+          "scientific_summary",
+          "exposure_assessment"
+        ]
+      },
+      {
+        "sourceId": "e162-efsa-status",
+        "organisation": "EFSA",
+        "sourceType": "official_information",
+        "title": "Food colours: E162 safety assessment status",
+        "url": "https://www.efsa.europa.eu/en/topics/topic/food-colours",
+        "retrievedAt": "2026-09-16",
+        "fieldsSupported": [
+          "scientific_summary",
+          "exposure_assessment"
+        ]
+      }
+    ],
+    "lastReviewedAt": "2026-09-16",
+    "dataVersion": "reviewed-1.0",
+    "needsScientificReview": false
+  },
+  {
+    "code": "E200",
+    "names": {
+      "fr": "Sorbic acid",
+      "en": "Sorbic acid"
+    },
+    "aliases": [],
+    "regulatoryStatus": {
+      "eu": "Autorisé dans l’Union européenne sous les conditions d’usage applicables",
+      "notes": []
+    },
+    "authorityEvaluations": [
+      {
+        "authority": "EFSA",
+        "conclusion": "E200 and E202 belong to the same sorbate group evaluation. The classification is intentionally aligned with the validated E202 record: current group ADI 11 mg sorbic acid/kg bw/day, no genotoxicity signal identified in the cited EFSA assessment, and population exposure estimates below the ADI.",
+        "reviewedAt": "2026-09-16"
+      },
+      {
+        "authority": "Authority not specified",
+        "conclusion": "E200 and E202 belong to the same sorbate group evaluation. The classification is intentionally aligned with the validated E202 record: current group ADI 11 mg sorbic acid/kg bw/day, no genotoxicity signal identified in the cited EFSA assessment, and population exposure estimates below the ADI.",
+        "reviewedAt": "2026-09-16"
+      },
+      {
+        "authority": "Authority not specified",
+        "conclusion": "E200 and E202 belong to the same sorbate group evaluation. The classification is intentionally aligned with the validated E202 record: current group ADI 11 mg sorbic acid/kg bw/day, no genotoxicity signal identified in the cited EFSA assessment, and population exposure estimates below the ADI.",
+        "reviewedAt": "2026-09-16"
+      }
+    ],
+    "exposure": {
+      "adi": 11,
+      "unit": "mg sorbic acid/kg bw/day",
+      "populationsAtRisk": [],
+      "notes": []
+    },
+    "potentialEffects": [
+      {
+        "effect": "Scientific signal documented in the source",
+        "severity": "moderate",
+        "evidenceLevel": "insufficient",
+        "appliesTo": "additive",
+        "notes": "general population; experimental toxicology evidence"
+      }
+    ],
+    "restrictions": [],
+    "evidenceLevel": "strong",
+    "sources": [
+      {
+        "sourceId": "e200-efsa-2015",
+        "organisation": "EFSA",
+        "sourceType": "official_information",
+        "title": "Re-evaluation of sorbic acid (E 200), potassium sorbate (E 202) and calcium sorbate (E 203)",
+        "url": "https://doi.org/10.2903/j.efsa.2015.4144",
+        "publishedAt": "2015",
+        "retrievedAt": "2026-09-16",
+        "fieldsSupported": [
+          "scientific_summary",
+          "exposure_assessment"
+        ]
+      },
+      {
+        "sourceId": "e200-efsa-2019",
+        "organisation": "EFSA",
+        "sourceType": "official_information",
+        "title": "Follow-up of the re-evaluation of sorbic acid and potassium sorbate",
+        "url": "https://doi.org/10.2903/j.efsa.2019.5625",
+        "publishedAt": "2019",
+        "retrievedAt": "2026-09-16",
+        "fieldsSupported": [
+          "scientific_summary",
+          "exposure_assessment"
+        ]
+      },
+      {
+        "sourceId": "e200-efsa-2015",
+        "organisation": "EFSA",
+        "sourceType": "official_information",
+        "title": "Re-evaluation of sorbic acid (E 200), potassium sorbate (E 202) and calcium sorbate (E 203)",
+        "url": "https://doi.org/10.2903/j.efsa.2015.4144",
+        "publishedAt": "2015",
+        "retrievedAt": "2026-09-16",
+        "fieldsSupported": [
+          "scientific_summary",
+          "exposure_assessment"
+        ]
+      },
+      {
+        "sourceId": "e200-efsa-2019",
+        "organisation": "EFSA",
+        "sourceType": "official_information",
+        "title": "Follow-up of the re-evaluation of sorbic acid and potassium sorbate",
+        "url": "https://doi.org/10.2903/j.efsa.2019.5625",
+        "publishedAt": "2019",
+        "retrievedAt": "2026-09-16",
+        "fieldsSupported": [
+          "scientific_summary",
+          "exposure_assessment"
+        ]
+      }
+    ],
+    "lastReviewedAt": "2026-09-16",
+    "dataVersion": "reviewed-1.0",
+    "needsScientificReview": false
+  },
+  {
+    "code": "E270",
+    "names": {
+      "fr": "Lactic acid",
+      "en": "Lactic acid"
+    },
+    "aliases": [],
+    "regulatoryStatus": {
+      "eu": "Autorisé dans l’Union européenne sous les conditions d’usage applicables",
+      "notes": []
+    },
+    "authorityEvaluations": [
+      {
+        "authority": "EFSA",
+        "conclusion": "The available official material supports no particular signal for E270 in its intended food-additive use. This does not mean zero risk in every context: local acidity and excessive intake depend on the product matrix and exposure, and are not evidence of general systemic toxicity.",
+        "reviewedAt": "2026-09-16"
+      },
+      {
+        "authority": "Authority not specified",
+        "conclusion": "The available official material supports no particular signal for E270 in its intended food-additive use. This does not mean zero risk in every context: local acidity and excessive intake depend on the product matrix and exposure, and are not evidence of general systemic toxicity.",
+        "reviewedAt": "2026-09-16"
+      }
+    ],
+    "exposure": {
+      "populationsAtRisk": [],
+      "notes": []
+    },
+    "potentialEffects": [
+      {
+        "effect": "Scientific signal documented in the source",
+        "severity": "moderate",
+        "evidenceLevel": "insufficient",
+        "appliesTo": "additive",
+        "notes": "general population; matrix and exposure dependent"
+      }
+    ],
+    "restrictions": [],
+    "evidenceLevel": "strong",
+    "sources": [
+      {
+        "sourceId": "e270-jecfa-1974",
+        "organisation": "JECFA / WHO",
+        "sourceType": "official_information",
+        "title": "Food additive evaluation table including lactic acid",
+        "url": "https://iris.who.int/bitstream/handle/10665/44085/WHO_TRS_954_eng.pdf?sequence=1",
+        "publishedAt": "1974",
+        "retrievedAt": "2026-09-16",
+        "fieldsSupported": [
+          "scientific_summary",
+          "exposure_assessment"
+        ]
+      },
+      {
+        "sourceId": "e270-efsa-data-call",
+        "organisation": "EFSA",
+        "sourceType": "official_information",
+        "title": "Open call for analytical data and use levels: lactic acid (E270)",
+        "url": "https://www.efsa.europa.eu/en/call/open-call-food-additives-analytical-data-and-use-levels-food-and-beverages-intended-human",
+        "publishedAt": "2026",
+        "retrievedAt": "2026-09-16",
+        "fieldsSupported": [
+          "scientific_summary",
+          "exposure_assessment"
+        ]
+      }
+    ],
+    "lastReviewedAt": "2026-09-16",
+    "dataVersion": "reviewed-1.0",
+    "needsScientificReview": false
+  },
+  {
+    "code": "E322",
+    "names": {
+      "fr": "Lecithins",
+      "en": "Lecithins"
+    },
+    "aliases": [],
+    "regulatoryStatus": {
+      "eu": "Autorisé dans l’Union européenne sous les conditions d’usage applicables",
+      "notes": []
+    },
+    "authorityEvaluations": [
+      {
+        "authority": "EFSA",
+        "conclusion": "E322 is not classified as a general danger because it may originate from soy or egg. The relevant signal is targeted hypersensitivity related to residual proteins and source, while JECFA's toxicological assessment supports an ADI not limited for lecithin meeting specifications.",
+        "reviewedAt": "2026-09-16"
+      },
+      {
+        "authority": "Authority not specified",
+        "conclusion": "E322 is not classified as a general danger because it may originate from soy or egg. The relevant signal is targeted hypersensitivity related to residual proteins and source, while JECFA's toxicological assessment supports an ADI not limited for lecithin meeting specifications.",
+        "reviewedAt": "2026-09-16"
+      }
+    ],
+    "exposure": {
+      "populationsAtRisk": [
+        "People with soy or egg allergy, depending on the lecithin source and residual protein content."
+      ],
+      "notes": []
+    },
+    "potentialEffects": [
+      {
+        "effect": "Scientific signal documented in the source",
+        "severity": "moderate",
+        "evidenceLevel": "insufficient",
+        "appliesTo": "additive",
+        "notes": "people sensitised to relevant soy or egg proteins"
+      }
+    ],
+    "restrictions": [],
+    "evidenceLevel": "moderate",
+    "sources": [
+      {
+        "sourceId": "e322-jecfa-1973",
+        "organisation": "JECFA / WHO",
+        "sourceType": "official_information",
+        "title": "Lecithin evaluation",
+        "url": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/1477",
+        "publishedAt": "1973",
+        "retrievedAt": "2026-09-16",
+        "fieldsSupported": [
+          "scientific_summary",
+          "exposure_assessment"
+        ]
+      },
+      {
+        "sourceId": "e322-efsa-2017",
+        "organisation": "EFSA",
+        "sourceType": "official_information",
+        "title": "Re-evaluation of lecithins (E 322) as a food additive",
+        "url": "https://doi.org/10.2903/j.efsa.2017.4742",
+        "publishedAt": "2017",
+        "retrievedAt": "2026-09-16",
+        "fieldsSupported": [
+          "scientific_summary",
+          "exposure_assessment"
+        ]
+      },
+      {
+        "sourceId": "e322-efsa-data-call",
+        "organisation": "EFSA",
+        "sourceType": "official_information",
+        "title": "Call for technical and toxicological data on lecithins (E 322)",
+        "url": "https://www.efsa.europa.eu/en/consultations/call/call-technical-and-toxicological-data-lecithins-e-322-uses-foods",
+        "publishedAt": "2018-07-18",
+        "retrievedAt": "2026-09-16",
+        "fieldsSupported": [
+          "scientific_summary",
+          "exposure_assessment"
+        ]
+      }
+    ],
+    "lastReviewedAt": "2026-09-16",
+    "dataVersion": "reviewed-1.0",
+    "needsScientificReview": false
+  },
+  {
+    "code": "E960C",
+    "names": {
+      "fr": "Glycosides de stéviol produits enzymatiquement",
+      "en": "Glycosides de stéviol produits enzymatiquement"
+    },
+    "aliases": [],
+    "regulatoryStatus": {
+      "eu": "Autorisé dans l’Union européenne sous conditions d’usage applicables",
+      "notes": []
+    },
+    "authorityEvaluations": [],
+    "exposure": {
+      "unit": "mg/kg bw/day expressed as steviol equivalents",
+      "populationsAtRisk": [
+        "Forts consommateurs, notamment enfants, pertinents pour l’évaluation d’exposition; quantité du produit scanné inconnue."
+      ],
+      "notes": []
+    },
+    "potentialEffects": [],
+    "restrictions": [],
+    "evidenceLevel": "strong",
+    "sources": [
+      {
+        "sourceId": "e960-jecfa-2019",
+        "organisation": "JECFA / WHO",
+        "sourceType": "official_information",
+        "title": "Steviol glycosides",
+        "url": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/267",
+        "retrievedAt": "2026-09-16",
+        "fieldsSupported": [
+          "scientific_summary",
+          "exposure_assessment"
+        ]
+      },
+      {
+        "sourceId": "e960-eu-2022",
+        "organisation": "European Commission",
+        "sourceType": "official_information",
+        "title": "Commission Regulation (EU) 2022/1922",
+        "url": "https://eur-lex.europa.eu/eli/reg/2022/1922/oj/eng",
+        "retrievedAt": "2026-09-16",
+        "fieldsSupported": [
+          "scientific_summary",
+          "exposure_assessment"
+        ]
+      }
+    ],
+    "lastReviewedAt": "2026-09-16",
+    "dataVersion": "reviewed-1.0",
+    "needsScientificReview": false
+  },
+  {
+    "code": "E1400",
+    "names": {
+      "fr": "Amidons modifiés",
+      "en": "Modified starches"
+    },
+    "aliases": [],
+    "function": "thickener",
+    "regulatoryStatus": {
+      "eu": "Référence réglementaire à vérifier dans la base UE.",
+      "notes": []
+    },
+    "authorityEvaluations": [],
+    "potentialEffects": [],
+    "restrictions": [],
+    "evidenceLevel": "insufficient",
+    "sources": [
+      {
+        "sourceId": "ec-eu-additives-database-e1400",
+        "organisation": "European Commission",
+        "sourceType": "regulatory_database",
+        "title": "EU Food Additives Database / Union list reference",
+        "url": "https://food.ec.europa.eu/food-safety/food-improvement-agents/additives/database_en",
+        "retrievedAt": "2026-09-30",
+        "fieldsSupported": [
+          "identity",
+          "regulatory_status"
+        ]
+      }
+    ],
+    "lastReviewedAt": "2026-09-30",
+    "dataVersion": "reviewed-1.0",
+    "needsScientificReview": true
+  },
+  {
+    "code": "E1412",
+    "names": {
+      "fr": "Phosphate de diamidon",
+      "en": "Distarch phosphate"
+    },
+    "aliases": [],
+    "function": "thickener",
+    "regulatoryStatus": {
+      "eu": "Référence réglementaire à vérifier dans la base UE.",
+      "notes": []
+    },
+    "authorityEvaluations": [],
+    "potentialEffects": [],
+    "restrictions": [],
+    "evidenceLevel": "insufficient",
+    "sources": [
+      {
+        "sourceId": "ec-eu-additives-database-e1412",
+        "organisation": "European Commission",
+        "sourceType": "regulatory_database",
+        "title": "EU Food Additives Database / Union list reference",
+        "url": "https://food.ec.europa.eu/food-safety/food-improvement-agents/additives/database_en",
+        "retrievedAt": "2026-09-30",
+        "fieldsSupported": [
+          "identity",
+          "regulatory_status"
+        ]
+      }
+    ],
+    "lastReviewedAt": "2026-09-30",
+    "dataVersion": "reviewed-1.0",
+    "needsScientificReview": true
+  },
+  {
+    "code": "E150A",
+    "names": {
+      "fr": "Caramel ordinaire",
+      "en": "Plain caramel"
+    },
+    "aliases": [],
+    "function": "colour",
+    "regulatoryStatus": {
+      "eu": "Référence réglementaire à vérifier dans la base UE.",
+      "notes": []
+    },
+    "authorityEvaluations": [],
+    "potentialEffects": [],
+    "restrictions": [],
+    "evidenceLevel": "insufficient",
+    "sources": [
+      {
+        "sourceId": "ec-eu-additives-database-e150a",
+        "organisation": "European Commission",
+        "sourceType": "regulatory_database",
+        "title": "EU Food Additives Database / Union list reference",
+        "url": "https://food.ec.europa.eu/food-safety/food-improvement-agents/additives/database_en",
+        "retrievedAt": "2026-09-30",
+        "fieldsSupported": [
+          "identity",
+          "regulatory_status"
+        ]
+      }
+    ],
+    "lastReviewedAt": "2026-09-30",
+    "dataVersion": "reviewed-1.0",
+    "needsScientificReview": true
+  },
+  {
+    "code": "E160B",
+    "names": {
+      "fr": "Extrait de rocou",
+      "en": "Annatto extracts"
+    },
+    "aliases": [],
+    "function": "colour",
+    "regulatoryStatus": {
+      "eu": "Référence réglementaire à vérifier dans la base UE.",
+      "notes": []
+    },
+    "authorityEvaluations": [],
+    "potentialEffects": [],
+    "restrictions": [],
+    "evidenceLevel": "insufficient",
+    "sources": [
+      {
+        "sourceId": "ec-eu-additives-database-e160b",
+        "organisation": "European Commission",
+        "sourceType": "regulatory_database",
+        "title": "EU Food Additives Database / Union list reference",
+        "url": "https://food.ec.europa.eu/food-safety/food-improvement-agents/additives/database_en",
+        "retrievedAt": "2026-09-30",
+        "fieldsSupported": [
+          "identity",
+          "regulatory_status"
+        ]
+      }
+    ],
+    "lastReviewedAt": "2026-09-30",
+    "dataVersion": "reviewed-1.0",
+    "needsScientificReview": true
+  },
+  {
+    "code": "E220",
+    "names": {
+      "fr": "Dioxyde de soufre",
+      "en": "Sulphur dioxide"
+    },
+    "aliases": [],
+    "function": "preservative",
+    "regulatoryStatus": {
+      "eu": "Référence réglementaire à vérifier dans la base UE.",
+      "notes": []
+    },
+    "authorityEvaluations": [],
+    "potentialEffects": [],
+    "restrictions": [],
+    "evidenceLevel": "insufficient",
+    "sources": [
+      {
+        "sourceId": "ec-eu-additives-database-e220",
+        "organisation": "European Commission",
+        "sourceType": "regulatory_database",
+        "title": "EU Food Additives Database / Union list reference",
+        "url": "https://food.ec.europa.eu/food-safety/food-improvement-agents/additives/database_en",
+        "retrievedAt": "2026-09-30",
+        "fieldsSupported": [
+          "identity",
+          "regulatory_status"
+        ]
+      }
+    ],
+    "lastReviewedAt": "2026-09-30",
+    "dataVersion": "reviewed-1.0",
+    "needsScientificReview": true
+  },
+  {
+    "code": "E252",
+    "names": {
+      "fr": "Nitrate de potassium",
+      "en": "Potassium nitrate"
+    },
+    "aliases": [],
+    "function": "preservative",
+    "regulatoryStatus": {
+      "eu": "Référence réglementaire à vérifier dans la base UE.",
+      "notes": []
+    },
+    "authorityEvaluations": [],
+    "potentialEffects": [],
+    "restrictions": [],
+    "evidenceLevel": "insufficient",
+    "sources": [
+      {
+        "sourceId": "ec-eu-additives-database-e252",
+        "organisation": "European Commission",
+        "sourceType": "regulatory_database",
+        "title": "EU Food Additives Database / Union list reference",
+        "url": "https://food.ec.europa.eu/food-safety/food-improvement-agents/additives/database_en",
+        "retrievedAt": "2026-09-30",
+        "fieldsSupported": [
+          "identity",
+          "regulatory_status"
+        ]
+      }
+    ],
+    "lastReviewedAt": "2026-09-30",
+    "dataVersion": "reviewed-1.0",
+    "needsScientificReview": true
+  },
+  {
+    "code": "E412",
+    "names": {
+      "fr": "Gomme guar",
+      "en": "Guar gum"
+    },
+    "aliases": [],
+    "function": "thickener",
+    "regulatoryStatus": {
+      "eu": "Référence réglementaire à vérifier dans la base UE.",
+      "notes": []
+    },
+    "authorityEvaluations": [],
+    "potentialEffects": [],
+    "restrictions": [],
+    "evidenceLevel": "insufficient",
+    "sources": [
+      {
+        "sourceId": "ec-eu-additives-database-e412",
+        "organisation": "European Commission",
+        "sourceType": "regulatory_database",
+        "title": "EU Food Additives Database / Union list reference",
+        "url": "https://food.ec.europa.eu/food-safety/food-improvement-agents/additives/database_en",
+        "retrievedAt": "2026-09-30",
+        "fieldsSupported": [
+          "identity",
+          "regulatory_status"
+        ]
+      }
+    ],
+    "lastReviewedAt": "2026-09-30",
+    "dataVersion": "reviewed-1.0",
+    "needsScientificReview": true
+  },
+  {
+    "code": "E415",
+    "names": {
+      "fr": "Gomme xanthane",
+      "en": "Xanthan gum"
+    },
+    "aliases": [],
+    "function": "thickener",
+    "regulatoryStatus": {
+      "eu": "Référence réglementaire à vérifier dans la base UE.",
+      "notes": []
+    },
+    "authorityEvaluations": [],
+    "potentialEffects": [],
+    "restrictions": [],
+    "evidenceLevel": "insufficient",
+    "sources": [
+      {
+        "sourceId": "ec-eu-additives-database-e415",
+        "organisation": "European Commission",
+        "sourceType": "regulatory_database",
+        "title": "EU Food Additives Database / Union list reference",
+        "url": "https://food.ec.europa.eu/food-safety/food-improvement-agents/additives/database_en",
+        "retrievedAt": "2026-09-30",
+        "fieldsSupported": [
+          "identity",
+          "regulatory_status"
+        ]
+      }
+    ],
+    "lastReviewedAt": "2026-09-30",
+    "dataVersion": "reviewed-1.0",
+    "needsScientificReview": true
+  },
+  {
+    "code": "E450",
+    "names": {
+      "fr": "Diphosphates",
+      "en": "Diphosphates"
+    },
+    "aliases": [],
+    "function": "raising_agent",
+    "regulatoryStatus": {
+      "eu": "Référence réglementaire à vérifier dans la base UE.",
+      "notes": []
+    },
+    "authorityEvaluations": [],
+    "potentialEffects": [],
+    "restrictions": [],
+    "evidenceLevel": "insufficient",
+    "sources": [
+      {
+        "sourceId": "ec-eu-additives-database-e450",
+        "organisation": "European Commission",
+        "sourceType": "regulatory_database",
+        "title": "EU Food Additives Database / Union list reference",
+        "url": "https://food.ec.europa.eu/food-safety/food-improvement-agents/additives/database_en",
+        "retrievedAt": "2026-09-30",
+        "fieldsSupported": [
+          "identity",
+          "regulatory_status"
+        ]
+      }
+    ],
+    "lastReviewedAt": "2026-09-30",
+    "dataVersion": "reviewed-1.0",
+    "needsScientificReview": true
+  },
+  {
+    "code": "E471",
+    "names": {
+      "fr": "Mono- et diglycérides d’acides gras",
+      "en": "Mono- and diglycerides of fatty acids"
+    },
+    "aliases": [],
+    "function": "emulsifier",
+    "regulatoryStatus": {
+      "eu": "Référence réglementaire à vérifier dans la base UE.",
+      "notes": []
+    },
+    "authorityEvaluations": [],
+    "potentialEffects": [],
+    "restrictions": [],
+    "evidenceLevel": "insufficient",
+    "sources": [
+      {
+        "sourceId": "ec-eu-additives-database-e471",
+        "organisation": "European Commission",
+        "sourceType": "regulatory_database",
+        "title": "EU Food Additives Database / Union list reference",
+        "url": "https://food.ec.europa.eu/food-safety/food-improvement-agents/additives/database_en",
+        "retrievedAt": "2026-09-30",
+        "fieldsSupported": [
+          "identity",
+          "regulatory_status"
+        ]
+      }
+    ],
+    "lastReviewedAt": "2026-09-30",
+    "dataVersion": "reviewed-1.0",
+    "needsScientificReview": true
+  }
+]

@@ -1,0 +1,3135 @@
+{
+  "schemaVersion": "1.0",
+  "generatedAt": "2026-09-30T20:45:54.312Z",
+  "source": "EFSA official public pages only; Wiley redirects rejected; no DietEx calculation and no NLP interpretation.",
+  "totalEfsaAssessmentsKnown": 151,
+  "publicEfsaPagesResolved": 1,
+  "pagesWithAbstract": 0,
+  "pagesWithPlainLanguageSummary": 1,
+  "pageResolutionFailures": {
+    "redirect_not_accepted": 112,
+    "http_429": 37,
+    "no_public_efsa_url": 1
+  },
+  "assessmentsWithExplicitExposureStatement": 1,
+  "assessmentsWithNoConcernConclusion": 1,
+  "assessmentsWithExceedance": 0,
+  "assessmentsWithPopulationSpecificConcern": 0,
+  "assessmentsUnableToConclude": 0,
+  "uniqueAdditiveCodesEnriched": 1,
+  "familyAssessmentsEnriched": 0,
+  "unmatchedExplicitStatements": [
+    {
+      "sourceUrl": "https://www.efsa.europa.eu/fr/plain-language-summary/re-evaluation-acesulfame-k-e-950-food-additive",
+      "sentence": "Ces protocoles comprennent l'identification des effets nocifs potentiels (identification du danger), la détermination de la quantité minimale dans le régime alimentaire qui pourrait nuire à une personne en bonne santé (caractérisation du danger) et l'évaluation du niveau d'exposition dans la population de l'UE."
+    },
+    {
+      "sourceUrl": "https://www.efsa.europa.eu/fr/plain-language-summary/re-evaluation-acesulfame-k-e-950-food-additive",
+      "sentence": "La dose journalière admissible (DJA) considérée comme sûre pour tous les groupes de population a été fixée à 15 mg/kg de poids corporel (pc) par jour."
+    },
+    {
+      "sourceUrl": "https://www.efsa.europa.eu/fr/plain-language-summary/re-evaluation-acesulfame-k-e-950-food-additive",
+      "sentence": "Cette DJA remplace celle fixée par le CSAH en 2000 à 9 mg/kg de poids corporel par jour."
+    },
+    {
+      "sourceUrl": "https://www.efsa.europa.eu/fr/plain-language-summary/re-evaluation-acesulfame-k-e-950-food-additive",
+      "sentence": "La DJA révisée est basée sur la dose sans effet nocif observé (NOAEL) chez les rats de 1500 mg/kg pc par jour (3% d'acésulfame K dans l'alimentation), la dose la plus élevée testée."
+    },
+    {
+      "sourceUrl": "https://www.efsa.europa.eu/fr/plain-language-summary/re-evaluation-acesulfame-k-e-950-food-additive",
+      "sentence": "Les incertitudes suivantes ont été identifiées et évaluées mais, dans l'ensemble, elles n'ont pas été considérées comme affectant les conclusions en matière de sécurité : Surestimation potentielle de l'exposition alimentaire à l’E950 dans la population de l'UE ; Présence potentielle de 5-chloro-acésulfame dans l’E950 et manque de données expérimentales concernant la génotoxicité de cette impureté."
+    },
+    {
+      "sourceUrl": "https://www.efsa.europa.eu/fr/plain-language-summary/re-evaluation-acesulfame-k-e-950-food-additive",
+      "sentence": "Glossaire Dose journalière admissible (DJA) : Estimation de la quantité d'une substance contenue dans les aliments ou l'eau de boisson qui peut être consommée quotidiennement pendant toute la durée d’une vie sans présenter de risque appréciable pour la santé."
+    },
+    {
+      "sourceUrl": "https://www.efsa.europa.eu/fr/plain-language-summary/re-evaluation-acesulfame-k-e-950-food-additive",
+      "sentence": "Outcome of the public consultation on a draft protocol for assessing exposure to sweeteners as part of their safety assessment under the food additives re-evaluation programme."
+    },
+    {
+      "sourceUrl": "https://www.efsa.europa.eu/fr/plain-language-summary/re-evaluation-acesulfame-k-e-950-food-additive",
+      "sentence": "Revised protocol for assessing exposure to sweeteners as part of their safety assessment under the food additives re-evaluation programme."
+    }
+  ],
+  "ambiguousStatements": [],
+  "sourceSentenceRule": "Every accepted normalized conclusion has sourceUrl and sourceSentence; otherwise it is rejected.",
+  "spotChecks": [
+    {
+      "code": "E150D",
+      "pageFound": false,
+      "abstractFound": false,
+      "explicitExposureFound": false,
+      "conclusions": [],
+      "scenariosOrPopulations": []
+    },
+    {
+      "code": "E338",
+      "pageFound": false,
+      "abstractFound": false,
+      "explicitExposureFound": false,
+      "conclusions": [],
+      "scenariosOrPopulations": []
+    },
+    {
+      "code": "E621",
+      "pageFound": false,
+      "abstractFound": false,
+      "explicitExposureFound": false,
+      "conclusions": [],
+      "scenariosOrPopulations": []
+    },
+    {
+      "code": "E951",
+      "pageFound": false,
+      "abstractFound": false,
+      "explicitExposureFound": false,
+      "conclusions": [],
+      "scenariosOrPopulations": []
+    },
+    {
+      "code": "E955",
+      "pageFound": false,
+      "abstractFound": false,
+      "explicitExposureFound": false,
+      "conclusions": [],
+      "scenariosOrPopulations": []
+    },
+    {
+      "code": "E202",
+      "pageFound": false,
+      "abstractFound": false,
+      "explicitExposureFound": false,
+      "conclusions": [],
+      "scenariosOrPopulations": []
+    },
+    {
+      "code": "E330",
+      "pageFound": false,
+      "abstractFound": false,
+      "explicitExposureFound": false,
+      "conclusions": [],
+      "scenariosOrPopulations": []
+    },
+    {
+      "code": "E407",
+      "pageFound": false,
+      "abstractFound": false,
+      "explicitExposureFound": false,
+      "conclusions": [],
+      "scenariosOrPopulations": []
+    },
+    {
+      "code": "E471",
+      "pageFound": false,
+      "abstractFound": false,
+      "explicitExposureFound": false,
+      "conclusions": [],
+      "scenariosOrPopulations": []
+    },
+    {
+      "code": "E250",
+      "pageFound": false,
+      "abstractFound": false,
+      "explicitExposureFound": false,
+      "conclusions": [],
+      "scenariosOrPopulations": []
+    }
+  ],
+  "records": [
+    {
+      "efsaOutputId": "EFSA-Q-2008-222",
+      "doi": "10.2903/j.efsa.2009.1331",
+      "title": "Scientific Opinion on the re-evaluation Tartrazine (E 102)",
+      "publicationYear": 2009,
+      "additiveCodes": [
+        "E102"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/1331",
+      "pageAvailable": false,
+      "failure": "redirect_not_accepted",
+      "redirectLocation": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2009.1331",
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "individual",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2012-00743",
+      "doi": "10.2903/j.efsa.2013.3234",
+      "title": "Statement on Allura Red AC and other sulphonated mono azo dyes authorised as food and feed additives.",
+      "publicationYear": 2013,
+      "additiveCodes": [
+        "E102",
+        "E122",
+        "E123",
+        "E124",
+        "E129"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/3234",
+      "pageAvailable": false,
+      "failure": "redirect_not_accepted",
+      "redirectLocation": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2013.3234",
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "family",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2012-00888",
+      "doi": "10.2903/j.efsa.2015.4070",
+      "title": "Refined exposure assessment for Quinoline Yellow (E 104)",
+      "publicationYear": 2015,
+      "additiveCodes": [
+        "E104"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/4070",
+      "pageAvailable": false,
+      "failure": "redirect_not_accepted",
+      "redirectLocation": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2015.4070",
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "individual",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2008-223",
+      "doi": "10.2903/j.efsa.2009.1329",
+      "title": "Scientific Opinion on the re-evaluation of Quinoline Yellow (E 104) as a food additive",
+      "publicationYear": 2009,
+      "additiveCodes": [
+        "E104"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/1329",
+      "pageAvailable": false,
+      "failure": "redirect_not_accepted",
+      "redirectLocation": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2009.1329",
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "individual",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2008-226",
+      "doi": "10.2903/j.efsa.2009.1332",
+      "title": "Scientific Opinion on the re-evaluationof Azorubine/Carmoisine (E 122) as a food additive",
+      "publicationYear": 2009,
+      "additiveCodes": [
+        "E122"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/1332",
+      "pageAvailable": false,
+      "failure": "redirect_not_accepted",
+      "redirectLocation": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2009.1332",
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "individual",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2008-227",
+      "doi": "10.2903/j.efsa.2010.1649",
+      "title": "Scientific Opinion on the re-evaluation of Amaranth (E 123) as a food additive",
+      "publicationYear": 2010,
+      "additiveCodes": [
+        "E123"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/1649",
+      "pageAvailable": false,
+      "failure": "redirect_not_accepted",
+      "redirectLocation": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2010.1649",
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "individual",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2008-228",
+      "doi": "10.2903/j.efsa.2009.1328",
+      "title": "Scientific Opinion on the re-evaluation of Ponceau 4R (E 124) as a food additive",
+      "publicationYear": 2009,
+      "additiveCodes": [
+        "E124"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/1328",
+      "pageAvailable": false,
+      "failure": "http_429",
+      "redirectLocation": null,
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "individual",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2008-230",
+      "doi": "10.2903/j.efsa.2009.1327",
+      "title": "Scientific Opinion on the re-evaluation of Allura Red AC (E 129) as a food additive",
+      "publicationYear": 2009,
+      "additiveCodes": [
+        "E129"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/1327",
+      "pageAvailable": false,
+      "failure": "http_429",
+      "redirectLocation": null,
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "individual",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2011-00358",
+      "doi": "10.2903/j.efsa.2014.3768",
+      "title": "Scientific Opinion on the re-evaluation of Indigo Carmine (E 132) as a food additive",
+      "publicationYear": 2014,
+      "additiveCodes": [
+        "E132"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/3768",
+      "pageAvailable": false,
+      "failure": "redirect_not_accepted",
+      "redirectLocation": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2014.3768",
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "individual",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2008-233",
+      "doi": "10.2903/j.efsa.2010.1853",
+      "title": "Scientific Opinion on the re-evaluation of Brilliant Blue FCF (E 133) as a food additive",
+      "publicationYear": 2010,
+      "additiveCodes": [
+        "E133"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/1853",
+      "pageAvailable": false,
+      "failure": "redirect_not_accepted",
+      "redirectLocation": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2010.1853",
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "individual",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2008-236",
+      "doi": "10.2903/j.efsa.2010.1851",
+      "title": "Scientific Opinion on the re-evaluation of Green S (E 142) as a food additive",
+      "publicationYear": 2010,
+      "additiveCodes": [
+        "E142"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/1851",
+      "pageAvailable": false,
+      "failure": "redirect_not_accepted",
+      "redirectLocation": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2010.1851",
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "individual",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2008-237, EFSA-Q-2008-239, EFSA-Q-2008-240, EFSA-Q-2008-238",
+      "doi": "10.2903/j.efsa.2011.2004",
+      "title": "Scientific opinion on the re-evaluation of caramel colours (E 150 a,b,c,d) as food additives",
+      "publicationYear": 2011,
+      "additiveCodes": [
+        "E150A",
+        "E150B",
+        "E150C",
+        "E150D"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/2004",
+      "pageAvailable": false,
+      "failure": "http_429",
+      "redirectLocation": null,
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "family",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2012-00884",
+      "doi": "10.2903/j.efsa.2014.3719",
+      "title": "Refined exposure assessment of Brown HT (E 155)",
+      "publicationYear": 2014,
+      "additiveCodes": [
+        "E155"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/3719",
+      "pageAvailable": false,
+      "failure": "redirect_not_accepted",
+      "redirectLocation": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2014.3719",
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "individual",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2008-244",
+      "doi": "10.2903/j.efsa.2010.1536",
+      "title": "Scientific Opinion on the re-evaluation of Brown HT (E 155) as a food additive",
+      "publicationYear": 2010,
+      "additiveCodes": [
+        "E155"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/1536",
+      "pageAvailable": false,
+      "failure": "http_429",
+      "redirectLocation": null,
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "individual",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2009-00895",
+      "doi": "10.2903/j.efsa.2010.1676",
+      "title": "Statement on the divergence between the risk assessment of lycopene by EFSA and the Joint FAO/WHO Expert Committee on Food Additives(JECFA)",
+      "publicationYear": 2010,
+      "additiveCodes": [
+        "E160D"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/1676",
+      "pageAvailable": false,
+      "failure": "redirect_not_accepted",
+      "redirectLocation": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2010.1676",
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "individual",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2007-001, EFSA-Q-2007-081, EFSA-Q-2008-076",
+      "doi": "10.2903/j.efsa.2008.674",
+      "title": "Use of lycopene as a food colour",
+      "publicationYear": 2008,
+      "additiveCodes": [
+        "E160D"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/674",
+      "pageAvailable": false,
+      "failure": "redirect_not_accepted",
+      "redirectLocation": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2008.674",
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "individual",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2009-00820",
+      "doi": "10.2903/j.efsa.2010.1444",
+      "title": "Revised exposure assessment for lycopene as a food colour",
+      "publicationYear": 2010,
+      "additiveCodes": [
+        "E160D"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/1444",
+      "pageAvailable": false,
+      "failure": "redirect_not_accepted",
+      "redirectLocation": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2010.1444",
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "individual",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2012-01001",
+      "doi": "10.2903/j.efsa.2014.3492",
+      "title": "Scientific Opinion on the reconsideration of the ADI and a refined exposure assessment of beta-apo-8'-carotenal (E 160e)",
+      "publicationYear": 2013,
+      "additiveCodes": [
+        "E160E"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/3492",
+      "pageAvailable": false,
+      "failure": "redirect_not_accepted",
+      "redirectLocation": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2014.3492",
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "individual",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2011-00352",
+      "doi": "10.2903/j.efsa.2012.2499",
+      "title": "Scientific Opinion on the re-evaluation of beta-apo-8'-carotenal (E 160e) as a food additive",
+      "publicationYear": 2011,
+      "additiveCodes": [
+        "E160E"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/2499",
+      "pageAvailable": false,
+      "failure": "redirect_not_accepted",
+      "redirectLocation": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2012.2499",
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "individual",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2010-01491",
+      "doi": "10.2903/j.efsa.2011.2144",
+      "title": "Scientific Opinion on the re-evaluation of lutein preparations other than lutein with high concentrations of total saponified carotenoids at levels of at least 80%",
+      "publicationYear": 2011,
+      "additiveCodes": [
+        "E161B"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/2144",
+      "pageAvailable": false,
+      "failure": "redirect_not_accepted",
+      "redirectLocation": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2011.2144",
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "individual",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2011-00807",
+      "doi": "10.2903/j.efsa.2012.2589",
+      "title": "Statement on the safety assessment of the exposure to lutein preparations based on new data on the use levels of lutein",
+      "publicationYear": 2012,
+      "additiveCodes": [
+        "E161B"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/2589",
+      "pageAvailable": false,
+      "failure": "redirect_not_accepted",
+      "redirectLocation": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2012.2589",
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "individual",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2008-787",
+      "doi": "10.2903/j.efsa.2010.1678",
+      "title": "Scientific Opinion on the re-evaluation of lutein (E 161b) as a food additive",
+      "publicationYear": 2010,
+      "additiveCodes": [
+        "E161B"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/1678",
+      "pageAvailable": false,
+      "failure": "redirect_not_accepted",
+      "redirectLocation": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2010.1678",
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "individual",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2011-00349",
+      "doi": "10.2903/j.efsa.2013.3145",
+      "title": "Scientific Opinion on the re-evaluation of anthocyanins (E 163) as a food additive",
+      "publicationYear": 2013,
+      "additiveCodes": [
+        "E163"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/3145",
+      "pageAvailable": false,
+      "failure": "redirect_not_accepted",
+      "redirectLocation": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2013.3145",
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "individual",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2018-00625",
+      "doi": "10.2903/j.efsa.2019.5760",
+      "title": "Scientific opinion on the proposed amendment of the EU specifications for titanium dioxide (E 171) with respect to the inclusion of additional parameters related to its particle size distribution",
+      "publicationYear": 2019,
+      "additiveCodes": [
+        "E171"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/5760",
+      "pageAvailable": false,
+      "failure": "http_429",
+      "redirectLocation": null,
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "individual",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2020-00262",
+      "doi": "10.2903/j.efsa.2021.6585",
+      "title": "Safety assessment of titanium dioxide (E171) as a food additive",
+      "publicationYear": 2021,
+      "additiveCodes": [
+        "E171"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/6585",
+      "pageAvailable": false,
+      "failure": "redirect_not_accepted",
+      "redirectLocation": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2021.6585",
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "individual",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2004-103",
+      "doi": "10.2903/j.efsa.2005.163",
+      "title": "Opinion of the Scientific Panel on Food Additives, Flavourings, Processing Aids and materials in Contact with Food on a request from the Commission related to the safety in use of rutile titanium dioxide as an alternative to the presently permitted anatase form",
+      "publicationYear": 2004,
+      "additiveCodes": [
+        "E171"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/163",
+      "pageAvailable": false,
+      "failure": "http_429",
+      "redirectLocation": null,
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "individual",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2011-00348",
+      "doi": "10.2903/j.efsa.2016.4545",
+      "title": "Re-evaluation of titanium dioxide (E 171) as a food additive",
+      "publicationYear": 2016,
+      "additiveCodes": [
+        "E171"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/4545",
+      "pageAvailable": false,
+      "failure": "redirect_not_accepted",
+      "redirectLocation": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2016.4545",
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "individual",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2018-00271",
+      "doi": "10.2903/j.efsa.2018.5366",
+      "title": "Evaluation of four new studies on the potential toxicity of titanium dioxide used as a food additive (E 171)",
+      "publicationYear": 2018,
+      "additiveCodes": [
+        "E171"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/5366",
+      "pageAvailable": false,
+      "failure": "redirect_not_accepted",
+      "redirectLocation": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2018.5366",
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "individual",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2011-00347",
+      "doi": "10.2903/j.efsa.2015.4317",
+      "title": "Scientific Opinion on the re-evaluation of iron oxides and hydroxides (E 172) as food additives",
+      "publicationYear": 2015,
+      "additiveCodes": [
+        "E172"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/4317",
+      "pageAvailable": false,
+      "failure": "http_429",
+      "redirectLocation": null,
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "individual",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": null,
+      "doi": "10.2903/j.efsa.2016.4362",
+      "title": "Scientific Opinion on the re-evaluation of gold (E 175) as a food additive",
+      "publicationYear": 2015,
+      "additiveCodes": [
+        "E175"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/4362",
+      "pageAvailable": false,
+      "failure": "redirect_not_accepted",
+      "redirectLocation": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2016.4362",
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "individual",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2008-257",
+      "doi": "10.2903/j.efsa.2010.1586",
+      "title": "Scientific Opinion on the re-evaluation of Litholrubine BK (E 180) as a food additive",
+      "publicationYear": 2010,
+      "additiveCodes": [
+        "E180"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/1586",
+      "pageAvailable": false,
+      "failure": "redirect_not_accepted",
+      "redirectLocation": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2010.1586",
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "individual",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2008-298, EFSA-Q-2007-182, EFSA-Q-2007-199, EFSA-Q-2008-295, EFSA-Q-2008-001, EFSA-Q-2007-006, EFSA-Q-2006-315, EFSA-Q-2007-007",
+      "doi": "10.2903/j.efsa.2009.961",
+      "title": "22nd list of substances for food contact materials - Scientific Opinion of the Panel on food contact materials, enzymes, flavourings and processing aids (CEF)",
+      "publicationYear": 2009,
+      "additiveCodes": [
+        "E210",
+        "E296"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/961",
+      "pageAvailable": false,
+      "failure": "redirect_not_accepted",
+      "redirectLocation": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2009.961",
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "family",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2011-00004, EFSA-Q-2011-00003, EFSA-Q-2011-00002, EFSA-Q-2011-00001",
+      "doi": "10.2903/j.efsa.2016.4433",
+      "title": "Scientific Opinion on the re-evaluation of benzoic acid (E 210), sodium benzoate (E 211), potassium benzoate (E 212) and calcium benzoate (E 213) as food additives",
+      "publicationYear": 2016,
+      "additiveCodes": [
+        "E210",
+        "E212",
+        "E213"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/4433",
+      "pageAvailable": false,
+      "failure": "http_429",
+      "redirectLocation": null,
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "family",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2004-063",
+      "doi": "10.2903/j.efsa.2004.83",
+      "title": "Opinion of the Scientific Panel on Food Additives, Flavourings, Processing Aids and Materials in Contact with Food on a Request from the Commission related to para hydroxybenzoates (E 214-219)",
+      "publicationYear": 2004,
+      "additiveCodes": [
+        "E214",
+        "E218"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/83",
+      "pageAvailable": false,
+      "failure": "redirect_not_accepted",
+      "redirectLocation": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2004.83",
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "family",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2015-00465, EFSA-Q-2011-00452, EFSA-Q-2011-00451, EFSA-Q-2011-00450, EFSA-Q-2011-00449, EFSA-Q-2011-00448, EFSA-Q-2011-00447, EFSA-Q-2011-00446, EFSA-Q-2011-00445",
+      "doi": "10.2903/j.efsa.2016.4438",
+      "title": "Scientific Opinion on the re-evaluation of sulfur dioxide (E 220), sodium sulfite (E 221), sodium bisulfite (E 222), sodium metabisulfite (E 223), potassium metabisulfite (E 224), calcium sulfite (E 226), calcium bisulfite (E 227) and potassium bisulfite (E 228) as food additives",
+      "publicationYear": 2016,
+      "additiveCodes": [
+        "E223"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/4438",
+      "pageAvailable": false,
+      "failure": "redirect_not_accepted",
+      "redirectLocation": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2016.4438",
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "individual",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2015-00104",
+      "doi": "10.2903/j.efsa.2016.4465",
+      "title": "Safety assessment of the active substance potassium metabisulfite, for use in active food contact materials",
+      "publicationYear": 2016,
+      "additiveCodes": [
+        "E224"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/4465",
+      "pageAvailable": false,
+      "failure": "redirect_not_accepted",
+      "redirectLocation": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2016.4465",
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "individual",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2005-031",
+      "doi": "10.2903/j.efsa.2006.314",
+      "title": "Opinion of the Scientific Panel on Food Additives, Flavourings, Processing Aids and Materials in Contact with Food on a request from the Commission related to The use of nisin (E 234) as a food additive",
+      "publicationYear": 2006,
+      "additiveCodes": [
+        "E234"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/314",
+      "pageAvailable": false,
+      "failure": "redirect_not_accepted",
+      "redirectLocation": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2006.314",
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "individual",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2005-031b",
+      "doi": "10.2903/j.efsa.2006.314b",
+      "title": "Opinion of the Scientific Panel on Food Additives, Flavourings, Processing Aids and Materials in Contact with Food on the safety in use of nisin as a food additive in an additional category of liquid eggs and on the safety of nisin produced using a modified production process as a food additive",
+      "publicationYear": 2006,
+      "additiveCodes": [
+        "E234"
+      ],
+      "publicEfsaUrl": null,
+      "pageAvailable": false,
+      "failure": "no_public_efsa_url",
+      "redirectLocation": null,
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "individual",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2006-009",
+      "doi": "10.2903/j.efsa.2009.1412",
+      "title": "Scientific Opinion on the use of natamycin (E 235) as a food additive",
+      "publicationYear": 2009,
+      "additiveCodes": [
+        "E235"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/1412",
+      "pageAvailable": false,
+      "failure": "http_429",
+      "redirectLocation": null,
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "individual",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2011-00458",
+      "doi": "10.2903/j.efsa.2014.3696",
+      "title": "Scientific Opinion on the re-evaluation of hexamethylene tetramine (E 239) as a food additive",
+      "publicationYear": 2014,
+      "additiveCodes": [
+        "E239"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/3696",
+      "pageAvailable": false,
+      "failure": "redirect_not_accepted",
+      "redirectLocation": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2014.3696",
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "individual",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2011-00459",
+      "doi": "10.2903/j.efsa.2015.4319",
+      "title": "Scientific opinion on the re-evaluation of dimethyl dicarbonate (DMDC, E 242) as a food additive",
+      "publicationYear": 2015,
+      "additiveCodes": [
+        "E242"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/4319",
+      "pageAvailable": false,
+      "failure": "redirect_not_accepted",
+      "redirectLocation": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2015.4319",
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "individual",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2013-00338",
+      "doi": "10.2903/j.efsa.2013.3294",
+      "title": "Refined exposure assessment of ethyl lauroyl arginate based on revised proposed uses as a food additive.",
+      "publicationYear": 2013,
+      "additiveCodes": [
+        "E243"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/3294",
+      "pageAvailable": false,
+      "failure": "redirect_not_accepted",
+      "redirectLocation": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2013.3294",
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "individual",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2018-00119",
+      "doi": "10.2903/j.efsa.2019.5621",
+      "title": "Safety of ethyl lauroyl arginate (E 243) as a food additive in the light of the new information provided and the proposed extension of use",
+      "publicationYear": 2019,
+      "additiveCodes": [
+        "E243"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/5621",
+      "pageAvailable": false,
+      "failure": "redirect_not_accepted",
+      "redirectLocation": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2019.5621",
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "individual",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2011-00461, EFSA-Q-2011-00460",
+      "doi": "10.2903/j.efsa.2017.4786",
+      "title": "Re-evaluation of potassium nitrite (E 249) and sodium nitrite (E 250) as food additives",
+      "publicationYear": 2017,
+      "additiveCodes": [
+        "E249"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/4786",
+      "pageAvailable": false,
+      "failure": "http_429",
+      "redirectLocation": null,
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "individual",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2016-00784, EFSA-Q-2011-00463, EFSA-Q-2011-00462",
+      "doi": "10.2903/j.efsa.2017.4787",
+      "title": "Re-evaluation of sodium nitrate (E 251) and potassium nitrate (E 252) as food additives",
+      "publicationYear": 2017,
+      "additiveCodes": [
+        "E251",
+        "E252"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/4787",
+      "pageAvailable": false,
+      "failure": "http_429",
+      "redirectLocation": null,
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "family",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2021-00349",
+      "doi": "10.2903/j.efsa.2022.7351",
+      "title": "Safety evaluation of buffered vinegar as a food additive",
+      "publicationYear": 2022,
+      "additiveCodes": [
+        "E267"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/7351",
+      "pageAvailable": false,
+      "failure": "redirect_not_accepted",
+      "redirectLocation": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2022.7351",
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "individual",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2011-00464, EFSA-Q-2011-00465, EFSA-Q-2011-00466, EFSA-Q-2011-00467",
+      "doi": "10.2903/j.efsa.2014.3779",
+      "title": "Scientific Opinion on the re-evaluation of propionic acid (E 280), sodium propionate (E 281), calcium propionate (E 282) and potassium propionate (E 283) as food additives",
+      "publicationYear": 2014,
+      "additiveCodes": [
+        "E280",
+        "E281",
+        "E282",
+        "E283"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/3779",
+      "pageAvailable": false,
+      "failure": "redirect_not_accepted",
+      "redirectLocation": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2014.3779",
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "family",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2015-00600",
+      "doi": "10.2903/j.efsa.2016.4546",
+      "title": "Safety of the extension of use of sodium propionate (E 281) as a food additive. EFSA Panel on Food Additives and Nutrient Sources added to Food (ANS)",
+      "publicationYear": 2016,
+      "additiveCodes": [
+        "E281"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/4546",
+      "pageAvailable": false,
+      "failure": "redirect_not_accepted",
+      "redirectLocation": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2016.4546",
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "individual",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2011-00067",
+      "doi": "10.2903/j.efsa.2012.2642",
+      "title": "Scientific Opinion on the safety evaluation of the active substances, sodium borohydride and palladium acetate for use in active food contact materials - EFSA Panel on food contact materials, enzymes, flavourings and processing aids (CEF)",
+      "publicationYear": 2012,
+      "additiveCodes": [
+        "E284"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/2642",
+      "pageAvailable": false,
+      "failure": "redirect_not_accepted",
+      "redirectLocation": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2012.2642",
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "individual",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2011-00468, EFSA-Q-2011-00469",
+      "doi": "10.2903/j.efsa.2013.3407",
+      "title": "Scientific Opinion on the re-evaluation of boric acid (E 284) and sodium tetraborate (borax) (E 285) as food additives.",
+      "publicationYear": 2013,
+      "additiveCodes": [
+        "E284"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/3407",
+      "pageAvailable": false,
+      "failure": "redirect_not_accepted",
+      "redirectLocation": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2013.3407",
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "individual",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2011-00472, EFSA-Q-2011-00471, EFSA-Q-2011-00470",
+      "doi": "10.2903/j.efsa.2015.4087",
+      "title": "Scientific Opinion on the re-evaluation of ascorbic acid (E 300), sodium ascorbate (E 301) and calcium ascorbate (E 302) as food additives",
+      "publicationYear": 2015,
+      "additiveCodes": [
+        "E301",
+        "E302"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/4087",
+      "pageAvailable": false,
+      "failure": "redirect_not_accepted",
+      "redirectLocation": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2015.4087",
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "family",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2010-01011",
+      "doi": "10.2903/j.efsa.2010.1942",
+      "title": "Scientific Opinion on the use of sodium ascorbate as a food additive in vitamin D preparations intended to be used in formulae and weaning food for infants and young children",
+      "publicationYear": 2010,
+      "additiveCodes": [
+        "E301"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/1942",
+      "pageAvailable": false,
+      "failure": "redirect_not_accepted",
+      "redirectLocation": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2010.1942.",
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "individual",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2011-00478, EFSA-Q-2011-00477, EFSA-Q-2011-00476, EFSA-Q-2011-00475",
+      "doi": "10.2903/j.efsa.2015.4247",
+      "title": "Scientific Opinion on the re-evaluation of tocopherol-rich extract (E 306), alpha-tocopherol (E 307), gamma-tocopherol (E 308) and delta-tocopherol (E 309) as food additives",
+      "publicationYear": 2015,
+      "additiveCodes": [
+        "E306",
+        "E308",
+        "E309"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/4247",
+      "pageAvailable": false,
+      "failure": "redirect_not_accepted",
+      "redirectLocation": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2015.4247",
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "family",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2011-00479",
+      "doi": "10.2903/j.efsa.2014.3642",
+      "title": "Scientific Opinion on the re-evaluation of propyl gallate (E 310) as a food additive",
+      "publicationYear": 2014,
+      "additiveCodes": [
+        "E310"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/3642",
+      "pageAvailable": false,
+      "failure": "http_429",
+      "redirectLocation": null,
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "individual",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2011-00482, EFSA-Q-2011-00483",
+      "doi": "10.2903/j.efsa.2016.4360",
+      "title": "Scientific Opinion on the re-evaluation of erythorbic acid (E 315) and sodium erythorbate (E 316) as food additives",
+      "publicationYear": 2015,
+      "additiveCodes": [
+        "E315",
+        "E316"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/4360",
+      "pageAvailable": false,
+      "failure": "redirect_not_accepted",
+      "redirectLocation": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2016.4360",
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "family",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2013-00690",
+      "doi": "10.2903/j.efsa.2016.4363",
+      "title": "Statement on the refined exposure assessment of tertiary-butyl hydroquinone (E 319)",
+      "publicationYear": 2015,
+      "additiveCodes": [
+        "E319"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/4363",
+      "pageAvailable": false,
+      "failure": "redirect_not_accepted",
+      "redirectLocation": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2016.4363",
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "individual",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2003-141",
+      "doi": "10.2903/j.efsa.2004.84",
+      "title": "Opinion of the Scientific Panel on Food Additives, Flavourings, Processing Aids and Materials in Contact with Food on a request from the Commission related to tertiary-Butylhydroquinone (TBHQ)",
+      "publicationYear": 2004,
+      "additiveCodes": [
+        "E319"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/84",
+      "pageAvailable": false,
+      "failure": "redirect_not_accepted",
+      "redirectLocation": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2004.84",
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "individual",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2012-00434",
+      "doi": "10.2903/j.efsa.2012.2759",
+      "title": "Statement on the safety assessment of the exposure to butylated ydroxyanisole E 320 (BHA) by applying a new exposure assessment methodology",
+      "publicationYear": 2012,
+      "additiveCodes": [
+        "E320"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/2759",
+      "pageAvailable": false,
+      "failure": "redirect_not_accepted",
+      "redirectLocation": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2012.2759",
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "individual",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2011-00343",
+      "doi": "10.2903/j.efsa.2011.2392",
+      "title": "Scientific Opinion on the re-evaluation of butylated hydroxyanisole BHA (E 320) as a food additive",
+      "publicationYear": 2011,
+      "additiveCodes": [
+        "E320"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/2392",
+      "pageAvailable": false,
+      "failure": "redirect_not_accepted",
+      "redirectLocation": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2011.2392",
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "individual",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2011-00344",
+      "doi": "10.2903/j.efsa.2012.2588",
+      "title": "Scientific Opinion on the re-evaluation of butylated hydroxytoluene BHT (E 321) as a food additive",
+      "publicationYear": 2012,
+      "additiveCodes": [
+        "E321"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/2588",
+      "pageAvailable": false,
+      "failure": "redirect_not_accepted",
+      "redirectLocation": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2012.2588",
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "individual",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2018-00415",
+      "doi": "10.2903/j.efsa.2020.5969",
+      "title": "Safety of use of oat lecithin as a food additive",
+      "publicationYear": 2019,
+      "additiveCodes": [
+        "E322A"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/5969",
+      "pageAvailable": false,
+      "failure": "redirect_not_accepted",
+      "redirectLocation": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2020.5969",
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "individual",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2011-00612, EFSA-Q-2011-00613, EFSA-Q-2011-00614, EFSA-Q-2011-00615, EFSA-Q-2011-00616, EFSA-Q-2011-00617, EFSA-Q-2011-00637",
+      "doi": "10.2903/j.efsa.2020.6030",
+      "title": "Re-evaluation of L(+)-tartaric acid (E 334), sodium tartrates (E 335), potassium tartrates (E 336), potassium sodium tartrate (E 337) and calcium tartrate (E 354) as food additives",
+      "publicationYear": 2020,
+      "additiveCodes": [
+        "E334",
+        "E335",
+        "E336",
+        "E337",
+        "E354"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/6030",
+      "pageAvailable": false,
+      "failure": "redirect_not_accepted",
+      "redirectLocation": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2020.6030",
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "family",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2011-00636",
+      "doi": "10.2903/j.efsa.2020.6031",
+      "title": "Re-evaluation of metatartaric acid (E 353) as a food additive",
+      "publicationYear": 2020,
+      "additiveCodes": [
+        "E353"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/6031",
+      "pageAvailable": false,
+      "failure": "redirect_not_accepted",
+      "redirectLocation": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2020.6031",
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "individual",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2013-00691",
+      "doi": "10.2903/j.efsa.2018.5373",
+      "title": "Refined exposure assessment of extracts of rosemary (E 392) from its use as food additive",
+      "publicationYear": 2018,
+      "additiveCodes": [
+        "E392"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/5373",
+      "pageAvailable": false,
+      "failure": "http_429",
+      "redirectLocation": null,
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "individual",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2011-00506",
+      "doi": "10.2903/j.efsa.2018.5371",
+      "title": "Re-evaluation of propane-1,2-diol alginate (E 405) as a food additive",
+      "publicationYear": 2018,
+      "additiveCodes": [
+        "E400",
+        "E405"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/5371",
+      "pageAvailable": false,
+      "failure": "redirect_not_accepted",
+      "redirectLocation": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2018.5371",
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "family",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2011-00505, EFSA-Q-2011-00504, EFSA-Q-2011-00503, EFSA-Q-2011-00502, EFSA-Q-2011-00501",
+      "doi": "10.2903/j.efsa.2017.5049",
+      "title": "Re-evaluation of alginic acid and its sodium, potassium, ammonium and calcium salts (E 400-E 404) as food additives",
+      "publicationYear": 2017,
+      "additiveCodes": [
+        "E400",
+        "E401",
+        "E402",
+        "E403",
+        "E404"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/5049",
+      "pageAvailable": false,
+      "failure": "redirect_not_accepted",
+      "redirectLocation": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2017.5049",
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "family",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2011-00508, EFSA-Q-2011-00509",
+      "doi": "10.2903/j.efsa.2018.5238",
+      "title": "Re-evaluation of carrageenan (E 407) and processed Eucheuma seaweed (E 407a) as food additives",
+      "publicationYear": 2018,
+      "additiveCodes": [
+        "E407A"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/5238",
+      "pageAvailable": false,
+      "failure": "redirect_not_accepted",
+      "redirectLocation": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2018.5238",
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "individual",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2011-00510",
+      "doi": "10.2903/j.efsa.2017.4646",
+      "title": "Re-evaluation of locust bean gum (E 410) as a food additive",
+      "publicationYear": 2016,
+      "additiveCodes": [
+        "E410"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/4646",
+      "pageAvailable": false,
+      "failure": "http_429",
+      "redirectLocation": null,
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "individual",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2011-00511",
+      "doi": "10.2903/j.efsa.2017.4669",
+      "title": "Re-evaluation of guar gum (E 412) as a food additive",
+      "publicationYear": 2016,
+      "additiveCodes": [
+        "E412"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/4669",
+      "pageAvailable": false,
+      "failure": "redirect_not_accepted",
+      "redirectLocation": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2017.4669",
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "individual",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2011-00512",
+      "doi": "10.2903/j.efsa.2017.4789",
+      "title": "Re-evaluation of tragacanth (E 413) as a food additive",
+      "publicationYear": 2017,
+      "additiveCodes": [
+        "E413"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/4789",
+      "pageAvailable": false,
+      "failure": "redirect_not_accepted",
+      "redirectLocation": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2017.4789",
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "individual",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2011-00513",
+      "doi": "10.2903/j.efsa.2017.4741",
+      "title": "Re-evaluation of acacia gum (E 414) as a food additive",
+      "publicationYear": 2017,
+      "additiveCodes": [
+        "E414"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/4741",
+      "pageAvailable": false,
+      "failure": "http_429",
+      "redirectLocation": null,
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "individual",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2018-00525",
+      "doi": "10.2903/j.efsa.2019.5922",
+      "title": "Opinion on the re-evaluation of acacia gum (E 414) as a food additive in foods for infants below 16 weeks of age and the follow-up of its re-evaluation as a food additive for uses in foods for all population groups",
+      "publicationYear": 2019,
+      "additiveCodes": [
+        "E414"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/5922",
+      "pageAvailable": false,
+      "failure": "redirect_not_accepted",
+      "redirectLocation": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2019.5922",
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "individual",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2011-00514",
+      "doi": "10.2903/j.efsa.2017.4909",
+      "title": "Re-evaluation of xanthan gum (E 415) as a food additive",
+      "publicationYear": 2017,
+      "additiveCodes": [
+        "E415"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/4909",
+      "pageAvailable": false,
+      "failure": "redirect_not_accepted",
+      "redirectLocation": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2017.4909",
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "individual",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2011-00515",
+      "doi": "10.2903/j.efsa.2016.4598",
+      "title": "Re-evaluation of karaya gum (E 416) as a food additive",
+      "publicationYear": 2016,
+      "additiveCodes": [
+        "E416"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/4598",
+      "pageAvailable": false,
+      "failure": "redirect_not_accepted",
+      "redirectLocation": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2016.4598",
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "individual",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2011-00516",
+      "doi": "10.2903/j.efsa.2017.4863",
+      "title": "Re-evaluation of tara gum (E 417) as a food additive",
+      "publicationYear": 2017,
+      "additiveCodes": [
+        "E417"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/4863",
+      "pageAvailable": false,
+      "failure": "redirect_not_accepted",
+      "redirectLocation": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2017.4863",
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "individual",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2011-00517",
+      "doi": "10.2903/j.efsa.2018.5296",
+      "title": "Re-evaluation of gellan gum (E 418) as food additive",
+      "publicationYear": 2018,
+      "additiveCodes": [
+        "E418"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/5296",
+      "pageAvailable": false,
+      "failure": "redirect_not_accepted",
+      "redirectLocation": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2018.5296",
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "individual",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2019-00815",
+      "doi": "10.2903/j.efsa.2022.7353",
+      "title": "Follow-up of the re-evaluation of glycerol (E 422) as a food additive",
+      "publicationYear": 2022,
+      "additiveCodes": [
+        "E422"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/7353",
+      "pageAvailable": false,
+      "failure": "redirect_not_accepted",
+      "redirectLocation": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2022.7353",
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "individual",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2011-00519",
+      "doi": "10.2903/j.efsa.2017.4720",
+      "title": "Re-evaluation of glycerol (E 422) as a food additive",
+      "publicationYear": 2017,
+      "additiveCodes": [
+        "E422"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/4720",
+      "pageAvailable": false,
+      "failure": "redirect_not_accepted",
+      "redirectLocation": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2017.4720",
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "individual",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2011-00521",
+      "doi": "10.2903/j.efsa.2017.4721",
+      "title": "Re-evaluation of soybean hemicellulose (E 426) as a food additive",
+      "publicationYear": 2017,
+      "additiveCodes": [
+        "E426"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/4721",
+      "pageAvailable": false,
+      "failure": "redirect_not_accepted",
+      "redirectLocation": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2017.4721",
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "individual",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2011-00523, EFSA-Q-2011-00524, EFSA-Q-2011-00525, EFSA-Q-2011-00526, EFSA-Q-2011-00527, EFSA-Q-2012-00740",
+      "doi": "10.2903/j.efsa.2015.4152",
+      "title": "Scientific Opinion on the re-evaluation of polyoxyethylene sorbitan monolaurate (E 432), polyoxyethylene sorbitan monooleate (E 433), polyoxyethylene sorbitan monopalmitate (E 434), polyoxyethylene sorbitan monostearate (E 435) and polyoxyethylene sorbitan tristearate (E 436) as food additives",
+      "publicationYear": 2015,
+      "additiveCodes": [
+        "E433"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/4152",
+      "pageAvailable": false,
+      "failure": "http_429",
+      "redirectLocation": null,
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "individual",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2011-00530",
+      "doi": "10.2903/j.efsa.2016.4489",
+      "title": "Re-evaluation of sucrose acetate isobutyrate (E 444) as a food additive",
+      "publicationYear": 2016,
+      "additiveCodes": [
+        "E444"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/4489",
+      "pageAvailable": false,
+      "failure": "redirect_not_accepted",
+      "redirectLocation": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2016.4489",
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "individual",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2013-00311",
+      "doi": "10.2903/j.efsa.2013.3444",
+      "title": "Assessment of one published review on health risks associated with phosphate additives in food.",
+      "publicationYear": 2013,
+      "additiveCodes": [
+        "E452"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/3444",
+      "pageAvailable": false,
+      "failure": "redirect_not_accepted",
+      "redirectLocation": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2013.3444",
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "individual",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2015-00222",
+      "doi": "10.2903/j.efsa.2016.4435",
+      "title": "Safety of potassium polyaspartate (A-5D K/SD) for use as a stabiliser in wine",
+      "publicationYear": 2016,
+      "additiveCodes": [
+        "E456"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/4435",
+      "pageAvailable": false,
+      "failure": "http_429",
+      "redirectLocation": null,
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "individual",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2011-00544",
+      "doi": "10.2903/j.efsa.2016.4628",
+      "title": "Re-evaluation of Beta-cyclodextrin (E 459) as a food additive",
+      "publicationYear": 2016,
+      "additiveCodes": [
+        "E459"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/4628",
+      "pageAvailable": false,
+      "failure": "http_429",
+      "redirectLocation": null,
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "individual",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2016-00199",
+      "doi": "10.2903/j.efsa.2016.4699",
+      "title": "Safety of the proposed amendment of the specifications for microcrystalline cellulose (E 460(i)) as a food additive",
+      "publicationYear": 2017,
+      "additiveCodes": [
+        "E460"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/4699",
+      "pageAvailable": false,
+      "failure": "http_429",
+      "redirectLocation": null,
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "individual",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2011-00554, EFSA-Q-2011-00553, EFSA-Q-2011-00552, EFSA-Q-2011-00551, EFSA-Q-2011-00550, EFSA-Q-2011-00549, EFSA-Q-2011-00548, EFSA-Q-2011-00547, EFSA-Q-2011-00546, EFSA-Q-2011-00545",
+      "doi": "10.2903/j.efsa.2018.5047",
+      "title": "Re-evaluation of celluloses E 460(i), E 460(ii), E 461, E 462, E 463, E 464, E 465, E 466, E 468 and E 469 as food additives",
+      "publicationYear": 2017,
+      "additiveCodes": [
+        "E460",
+        "E461",
+        "E462",
+        "E463",
+        "E464",
+        "E465",
+        "E468",
+        "E469"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/5047",
+      "pageAvailable": false,
+      "failure": "http_429",
+      "redirectLocation": null,
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "family",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2003-116",
+      "doi": "10.2903/j.efsa.2004.35",
+      "title": "Opinion of the Scientific Panel on Food Additives, Flavourings, Processing Aids and Materials in Contact with Food (AFC) on a request from the Commission related to Ethyl Cellulose as a food additive",
+      "publicationYear": 2004,
+      "additiveCodes": [
+        "E462"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/35",
+      "pageAvailable": false,
+      "failure": "redirect_not_accepted",
+      "redirectLocation": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2004.35",
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "individual",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2013-00283",
+      "doi": "10.2903/j.efsa.2015.4088",
+      "title": "Safety of a change in specifications for the food additive hydroxypropyl methyl cellulose (E 464)",
+      "publicationYear": 2015,
+      "additiveCodes": [
+        "E464"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/4088",
+      "pageAvailable": false,
+      "failure": "redirect_not_accepted",
+      "redirectLocation": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2015.4088",
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "individual",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2011-00556, EFSA-Q-2011-00555",
+      "doi": "10.2903/j.efsa.2018.5180",
+      "title": "Re-evaluation of sodium, potassium and calcium salts of fatty acids (E 470a) and magnesium salts of fatty acids (E 470b) as food additives",
+      "publicationYear": 2018,
+      "additiveCodes": [
+        "E470B"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/5180",
+      "pageAvailable": false,
+      "failure": "http_429",
+      "redirectLocation": null,
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "individual",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2011-00557",
+      "doi": "10.2903/j.efsa.2017.5045",
+      "title": "Re-evaluation of mono- and di-glycerides of fatty acids (E 471) as food additives",
+      "publicationYear": 2017,
+      "additiveCodes": [
+        "E471"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/5045",
+      "pageAvailable": false,
+      "failure": "redirect_not_accepted",
+      "redirectLocation": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2017.5045",
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "individual",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2011-00558, EFSA-Q-2011-00559, EFSA-Q-2011-00560, EFSA-Q-2011-00561, EFSA-Q-2011-00562, EFSA-Q-2011-00563",
+      "doi": "10.2903/j.efsa.2020.6032",
+      "title": "Re-evaluation of acetic acid, lactic acid, citric acid, tartaric acid, mono- and diacetyltartaric acid, mixed acetic and tartaric acid esters of mono- and diglycerides of fatty acids (E 472a-f) as food additives",
+      "publicationYear": 2020,
+      "additiveCodes": [
+        "E472A",
+        "E472B",
+        "E472C",
+        "E472D",
+        "E472E",
+        "E472F"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/6032",
+      "pageAvailable": false,
+      "failure": "http_429",
+      "redirectLocation": null,
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "family",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2003-139",
+      "doi": "10.2903/j.efsa.2004.106",
+      "title": "Opinion of the Scientific Panel on Food Additives, Flavourings, Processing Aids and Materials in Contact with Food on Sucrose esters of fatty acids, E 473 and sucroglycerides, E 474 based on a request from the Commission related to Sucrose Esters of Fatty Acids (E 473)",
+      "publicationYear": 2004,
+      "additiveCodes": [
+        "E473",
+        "E474"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/106",
+      "pageAvailable": false,
+      "failure": "redirect_not_accepted",
+      "redirectLocation": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2004.106",
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "family",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2009-00451",
+      "doi": "10.2903/j.efsa.2010.1512",
+      "title": "Scientific Opinion on the safety of sucrose esters of fatty acids prepared from vinyl esters of fatty acids and on the extension of use of sucrose esters of fatty acids in flavourings",
+      "publicationYear": 2010,
+      "additiveCodes": [
+        "E473"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/1512",
+      "pageAvailable": false,
+      "failure": "redirect_not_accepted",
+      "redirectLocation": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2010.1512",
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "individual",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2013-00692",
+      "doi": "10.2903/j.efsa.2018.5087",
+      "title": "Refined exposure assessment of sucrose esters of fatty acids (E 473) from its use as a food additive",
+      "publicationYear": 2017,
+      "additiveCodes": [
+        "E473"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/5087",
+      "pageAvailable": false,
+      "failure": "redirect_not_accepted",
+      "redirectLocation": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2018.5087",
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "individual",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2011-00935",
+      "doi": "10.2903/j.efsa.2012.2658",
+      "title": "Scientific Opinion on the exposure assessment of sucrose esters of fatty acids (E 473) from its use as food additive",
+      "publicationYear": 2012,
+      "additiveCodes": [
+        "E473",
+        "E474"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/2658",
+      "pageAvailable": false,
+      "failure": "redirect_not_accepted",
+      "redirectLocation": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2012.2658",
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "family",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2021-00400, EFSA-Q-2021-00559",
+      "doi": "10.2903/j.efsa.2022.7294",
+      "title": "Follow-up of the re-evaluation of polyglycerol polyricinoleate (E 476) as a food additive",
+      "publicationYear": 2022,
+      "additiveCodes": [
+        "E476"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/7294",
+      "pageAvailable": false,
+      "failure": "redirect_not_accepted",
+      "redirectLocation": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2022.7294",
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "individual",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2011-00565, EFSA-Q-2016-00373",
+      "doi": "10.2903/j.efsa.2017.4743",
+      "title": "Re-evaluation of polyglycerol polyricinoleate (E 476) as a food additive",
+      "publicationYear": 2017,
+      "additiveCodes": [
+        "E476"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/4743",
+      "pageAvailable": false,
+      "failure": "redirect_not_accepted",
+      "redirectLocation": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2017.4743",
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "individual",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2011-00566",
+      "doi": "10.2903/j.efsa.2018.5497",
+      "title": "Re-evaluation of propane-1,2-diol esters of fatty acids (E 477) as a food additive",
+      "publicationYear": 2018,
+      "additiveCodes": [
+        "E477"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/5497",
+      "pageAvailable": false,
+      "failure": "redirect_not_accepted",
+      "redirectLocation": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2018.5497",
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "individual",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2012-00698",
+      "doi": "10.2903/j.efsa.2013.3125",
+      "title": "Statement on the exposure assessment of sodium stearoyl-2-lactylate and calcium stearoyl-2-lactylate including exposure resulting from extension of the authorisation of sodium stearoyl-2-lactylates.",
+      "publicationYear": 2013,
+      "additiveCodes": [
+        "E481",
+        "E482"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/3125",
+      "pageAvailable": false,
+      "failure": "redirect_not_accepted",
+      "redirectLocation": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2013.3125",
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "family",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2011-00568, EFSA-Q-2011-00569",
+      "doi": "10.2903/j.efsa.2013.3144",
+      "title": "Scientific Opinion on the re-evaluation of sodium stearoyl-2-lactylate (E 481) and calcium stearoyl-2-lactylate (E 482) as food additives.",
+      "publicationYear": 2013,
+      "additiveCodes": [
+        "E481",
+        "E482"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/3144",
+      "pageAvailable": false,
+      "failure": "redirect_not_accepted",
+      "redirectLocation": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2013.3144",
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "family",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2011-00570",
+      "doi": "10.2903/j.efsa.2020.6033",
+      "title": "Re-evaluation of stearyl tartrate (E 483) as a food additive",
+      "publicationYear": 2020,
+      "additiveCodes": [
+        "E483"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/6033",
+      "pageAvailable": false,
+      "failure": "redirect_not_accepted",
+      "redirectLocation": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2020.6033",
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "individual",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2014-00875, EFSA-Q-2011-00575, EFSA-Q-2011-00574, EFSA-Q-2011-00573, EFSA-Q-2011-00572, EFSA-Q-2011-00571",
+      "doi": "10.2903/j.efsa.2017.4788",
+      "title": "Re-evaluation of sorbitan monostearate (E 491), sorbitan tristearate (E 492), sorbitan monolaurate (E 493), sorbitan monooleate (E 494) and sorbitan monopalmitate (E 495) when used as food additives",
+      "publicationYear": 2017,
+      "additiveCodes": [
+        "E491",
+        "E492",
+        "E493",
+        "E494",
+        "E495"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/4788",
+      "pageAvailable": false,
+      "failure": "redirect_not_accepted",
+      "redirectLocation": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2017.4788",
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "family",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2011-00657, EFSA-Q-2011-00658, EFSA-Q-2011-00659, EFSA-Q-2011-00660",
+      "doi": "10.2903/j.efsa.2019.5751",
+      "title": "Re-evaluation of hydrochloric acid (E 507), potassium chloride (E 508), calcium chloride (E 509) and magnesium chloride (E 511) as food additives",
+      "publicationYear": 2019,
+      "additiveCodes": [
+        "E507",
+        "E508",
+        "E509",
+        "E511"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/5751",
+      "pageAvailable": false,
+      "failure": "redirect_not_accepted",
+      "redirectLocation": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2019.5751",
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "family",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2011-00661",
+      "doi": "10.2903/j.efsa.2018.5295",
+      "title": "Re-evaluation of stannous chloride (E 512) as food additive",
+      "publicationYear": 2018,
+      "additiveCodes": [
+        "E512"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/5295",
+      "pageAvailable": false,
+      "failure": "http_429",
+      "redirectLocation": null,
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "individual",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2011-00662, EFSA-Q-2011-00663, EFSA-Q-2011-00664, EFSA-Q-2011-00665, EFSA-Q-2011-00666, EFSA-Q-2011-00667, EFSA-Q-2011-00668",
+      "doi": "10.2903/j.efsa.2019.5868",
+      "title": "Re-evaluation of sulphuric acid and its sodium, potassium, calcium and ammonium salts (E 513, 514 (i), 514 (ii), 515 (i), 515 (ii), 516 and 517) as food additive",
+      "publicationYear": 2019,
+      "additiveCodes": [
+        "E513",
+        "E514",
+        "E515",
+        "E516",
+        "E517"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/5868",
+      "pageAvailable": false,
+      "failure": "redirect_not_accepted",
+      "redirectLocation": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2019.5868",
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "family",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2013-00697",
+      "doi": "10.2903/j.efsa.2018.5372",
+      "title": "Re-evaluation of aluminium sulphates (E 520-523) and sodium aluminium phosphate (E 541) as food additives",
+      "publicationYear": 2018,
+      "additiveCodes": [
+        "E520",
+        "E521",
+        "E522",
+        "E523",
+        "E541"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/5372",
+      "pageAvailable": false,
+      "failure": "http_429",
+      "redirectLocation": null,
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "family",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2011-00302",
+      "doi": "10.2903/j.efsa.2012.2904",
+      "title": "Scientific Opinion on the safety evaluation of the active substances Sodium carboxy methyl cellulose, bentonite, aluminium potassium sulphate for use in active food contact materials",
+      "publicationYear": 2012,
+      "additiveCodes": [
+        "E522",
+        "E558"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/2904",
+      "pageAvailable": false,
+      "failure": "redirect_not_accepted",
+      "redirectLocation": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2012.2904",
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "family",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2011-00676, EFSA-Q-2011-00677, EFSA-Q-2011-00678",
+      "doi": "10.2903/j.efsa.2018.5374",
+      "title": "Re-evaluation of sodium ferrocyanide (E 535), potassium ferrocyanide (E 536) and calcium ferrocyanide (E 538) as food additives",
+      "publicationYear": 2018,
+      "additiveCodes": [
+        "E535",
+        "E536",
+        "E538"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/5374",
+      "pageAvailable": false,
+      "failure": "http_429",
+      "redirectLocation": null,
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "family",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2011-00576",
+      "doi": "10.2903/j.efsa.2018.5088",
+      "title": "Re-evaluation of silicon dioxide (E 551) as a food additive",
+      "publicationYear": 2017,
+      "additiveCodes": [
+        "E551"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/5088",
+      "pageAvailable": false,
+      "failure": "redirect_not_accepted",
+      "redirectLocation": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2018.5088",
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "individual",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2011-00679, EFSA-Q-2011-00680, EFSA-Q-2011-00681, EFSA-Q-2011-00682",
+      "doi": "10.2903/j.efsa.2018.5375",
+      "title": "Re-evaluation of calcium silicate (E 552), magnesium silicate (E 553a(i)), magnesium trisilicate (E 553a(ii)) and talc (E 553b) as food additives",
+      "publicationYear": 2018,
+      "additiveCodes": [
+        "E552",
+        "E553A",
+        "E553B"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/5375",
+      "pageAvailable": false,
+      "failure": "redirect_not_accepted",
+      "redirectLocation": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2018.5375",
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "family",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2016-00409, EFSA-Q-2016-00410",
+      "doi": "10.2903/j.efsa.2020.6152",
+      "title": "Re-evaluation of sodium aluminium silicate (E 554) and potassium aluminium silicate (E 555) as food additives",
+      "publicationYear": 2020,
+      "additiveCodes": [
+        "E554",
+        "E555"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/6152",
+      "pageAvailable": false,
+      "failure": "redirect_not_accepted",
+      "redirectLocation": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2020.6152",
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "family",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2011-00485",
+      "doi": "10.2903/j.efsa.2014.3643",
+      "title": "Scientific Opinion on the re-evaluation of 4-hexylresorcinol (E 586) as a food additive",
+      "publicationYear": 2014,
+      "additiveCodes": [
+        "E586"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/3643",
+      "pageAvailable": false,
+      "failure": "redirect_not_accepted",
+      "redirectLocation": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2014.3643",
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "individual",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2011-00582, EFSA-Q-2011-00581, EFSA-Q-2011-00580, EFSA-Q-2011-00579, EFSA-Q-2011-00578, EFSA-Q-2011-00577",
+      "doi": "10.2903/j.efsa.2017.4910",
+      "title": "Re-evaluation of glutamic acid (E 620), sodium glutamate (E 621), potassium glutamate (E 622), calcium glutamate (E 623), ammonium glutamate (E 624) and magnesium glutamate (E 625) as food additives",
+      "publicationYear": 2017,
+      "additiveCodes": [
+        "E620",
+        "E625"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/4910",
+      "pageAvailable": false,
+      "failure": "http_429",
+      "redirectLocation": null,
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "family",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2014-00061",
+      "doi": "10.2903/j.efsa.2015.3981",
+      "title": "Scientific Opinion on the safety of the change in the production method of L-glutamic acid (E620), monosodium L-glutamate (E621), monopotassium L-glutamate (E622), calcium di-L-glutamate (E623), monoammonium Lglutamate (E624) and magnesium di-L-glutamate (E625)",
+      "publicationYear": 2014,
+      "additiveCodes": [
+        "E620",
+        "E625"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/3981",
+      "pageAvailable": false,
+      "failure": "redirect_not_accepted",
+      "redirectLocation": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2015.3981",
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "family",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2011-00703",
+      "doi": "10.2903/j.efsa.2020.6107",
+      "title": "Re-evaluation of dimethyl polysiloxane (E 900) as a food additive",
+      "publicationYear": 2020,
+      "additiveCodes": [
+        "E900"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/6107",
+      "pageAvailable": false,
+      "failure": "redirect_not_accepted",
+      "redirectLocation": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2020.6107",
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "individual",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2006-021",
+      "doi": "10.2903/j.efsa.2007.615",
+      "title": "Beeswax (E 901) as a glazing agent and as carrier for flavours",
+      "publicationYear": 2007,
+      "additiveCodes": [
+        "E901"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/615",
+      "pageAvailable": false,
+      "failure": "redirect_not_accepted",
+      "redirectLocation": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2007.615",
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "individual",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2011-00704",
+      "doi": "10.2903/j.efsa.2012.2946",
+      "title": "Scientific Opinion on the re-evaluation of candelilla wax (E 902) as a food additive.",
+      "publicationYear": 2012,
+      "additiveCodes": [
+        "E902"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/2946",
+      "pageAvailable": false,
+      "failure": "http_429",
+      "redirectLocation": null,
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "individual",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2011-00008",
+      "doi": "10.2903/j.efsa.2012.2880",
+      "title": "Scientific Opinion on the re-evaluation of carnauba wax (E 903) as a food additive",
+      "publicationYear": 2012,
+      "additiveCodes": [
+        "E903"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/2880",
+      "pageAvailable": false,
+      "failure": "redirect_not_accepted",
+      "redirectLocation": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2012.2880",
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "individual",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2011-00706",
+      "doi": "10.2903/j.efsa.2013.3146",
+      "title": "Scientific Opinion on the re-evaluation of microcrystalline wax (E 905) as a food additive.",
+      "publicationYear": 2013,
+      "additiveCodes": [
+        "E905"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/3146",
+      "pageAvailable": false,
+      "failure": "redirect_not_accepted",
+      "redirectLocation": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2013.3146",
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "individual",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2011-00707",
+      "doi": "10.2903/j.efsa.2020.6034",
+      "title": "Re-evaluation of name of hydrogenated poly-1-decene (E 907) as food additive",
+      "publicationYear": 2020,
+      "additiveCodes": [
+        "E907"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/6034",
+      "pageAvailable": false,
+      "failure": "http_429",
+      "redirectLocation": null,
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "individual",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2011-00708",
+      "doi": "10.2903/j.efsa.2013.3236",
+      "title": "Scientific Opinion on the re-evaluation of montan acid esters (E 912) as a food additive.",
+      "publicationYear": 2013,
+      "additiveCodes": [
+        "E912"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/3236",
+      "pageAvailable": false,
+      "failure": "redirect_not_accepted",
+      "redirectLocation": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2013.3236",
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "individual",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2005-083",
+      "doi": "10.2903/j.efsa.2006.390",
+      "title": "Opinion of the Scientific Panel on Food Additives, Flavourings, Processing Aids and Materials in Contact with Food on a request from the Commission related to the use of L-cysteine in foods intended for infants and young children",
+      "publicationYear": 2006,
+      "additiveCodes": [
+        "E920"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/390",
+      "pageAvailable": false,
+      "failure": "redirect_not_accepted",
+      "redirectLocation": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2006.390",
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "individual",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2012-00748",
+      "doi": "10.2903/j.efsa.2016.4388",
+      "title": "Safety of gaseous chlorine dioxide as a preservative slowly released in cold food storage areas",
+      "publicationYear": 2016,
+      "additiveCodes": [
+        "E926"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/4388",
+      "pageAvailable": false,
+      "failure": "redirect_not_accepted",
+      "redirectLocation": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2016.4388",
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "individual",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2016-00509",
+      "doi": "10.2903/j.efsa.2018.5116",
+      "title": "Safety assessment of the substance isobutane, for use in food contact materials",
+      "publicationYear": 2017,
+      "additiveCodes": [
+        "E943B"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/5116",
+      "pageAvailable": false,
+      "failure": "redirect_not_accepted",
+      "redirectLocation": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2018.5116",
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "individual",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2011-00237",
+      "doi": "10.2903/j.efsa.2014.3558",
+      "title": "Scientific Opinion on the safety assessment of the active substances, palladium metal and hydrogen gas, for use in active food contact materials.",
+      "publicationYear": 2014,
+      "additiveCodes": [
+        "E949"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/3558",
+      "pageAvailable": false,
+      "failure": "redirect_not_accepted",
+      "redirectLocation": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2014.3558",
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "individual",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2015-00117",
+      "doi": "10.2903/j.efsa.2015.4290",
+      "title": "Scientific Opinion on the safety of the extension of use of thaumatin (E 957)",
+      "publicationYear": 2015,
+      "additiveCodes": [
+        "E957"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/4290",
+      "pageAvailable": false,
+      "failure": "redirect_not_accepted",
+      "redirectLocation": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2015.4290",
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "individual",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2017-00247",
+      "doi": "10.2903/j.efsa.2018.5181",
+      "title": "Safety in use of glucosylated steviol glycosides as a food additive in different food categories",
+      "publicationYear": 2018,
+      "additiveCodes": [
+        "E960D"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/5181",
+      "pageAvailable": false,
+      "failure": "http_429",
+      "redirectLocation": null,
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "individual",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2003-137",
+      "doi": "10.2903/j.efsa.2007.581",
+      "title": "Neotame as a sweetener and flavour enhancer",
+      "publicationYear": 2007,
+      "additiveCodes": [
+        "E961"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/581",
+      "pageAvailable": false,
+      "failure": "redirect_not_accepted",
+      "redirectLocation": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2007.581",
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "individual",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2007-072",
+      "doi": "10.2903/j.efsa.2009.1413",
+      "title": "Scientific Opinion on the use of Polyglycitol Syrup as a food additive",
+      "publicationYear": 2009,
+      "additiveCodes": [
+        "E964"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/1413",
+      "pageAvailable": false,
+      "failure": "http_429",
+      "redirectLocation": null,
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "individual",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2014-00493",
+      "doi": "10.2903/j.efsa.2015.4033",
+      "title": "Scientific Opinion on the safety of the proposed extension of use of erythritol (E 968) as a food additive",
+      "publicationYear": 2015,
+      "additiveCodes": [
+        "E968"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/4033",
+      "pageAvailable": false,
+      "failure": "redirect_not_accepted",
+      "redirectLocation": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2015.4033",
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "individual",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2012-00910",
+      "doi": "10.2903/j.efsa.2013.3121",
+      "title": "Statement on a refined dietary exposure assessment of erythritol (E 968) taking into account additional data provided.",
+      "publicationYear": 2013,
+      "additiveCodes": [
+        "E968"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/3121",
+      "pageAvailable": false,
+      "failure": "http_429",
+      "redirectLocation": null,
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "individual",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2009-00819",
+      "doi": "10.2903/j.efsa.2010.1650",
+      "title": "Statement in relation to the safety of erythritol (E 968) in light of new data, including a new paediatric study on the gastrointestinal tolerability of erythritol",
+      "publicationYear": 2010,
+      "additiveCodes": [
+        "E968"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/1650",
+      "pageAvailable": false,
+      "failure": "redirect_not_accepted",
+      "redirectLocation": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2010.1650",
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "individual",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2010-00943",
+      "doi": "10.2903/j.efsa.2013.3301",
+      "title": "Scientific Opinion on the safety of advantame for the proposed uses as a food additive.",
+      "publicationYear": 2013,
+      "additiveCodes": [
+        "E969"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/3301",
+      "pageAvailable": false,
+      "failure": "http_429",
+      "redirectLocation": null,
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "individual",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2011-00731, EFSA-Q-2014-00095",
+      "doi": "10.2903/j.efsa.2019.5622",
+      "title": "Re-evaluation of Quillaia extract (E 999) as a food additive and safety of the proposed extension of use",
+      "publicationYear": 2019,
+      "additiveCodes": [
+        "E999"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/5622",
+      "pageAvailable": false,
+      "failure": "redirect_not_accepted",
+      "redirectLocation": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2019.5622",
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "individual",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2011-00584, EFSA-Q-2011-00585, EFSA-Q-2020-00232",
+      "doi": "10.2903/j.efsa.2020.6215",
+      "title": "Re-evaluation of polyvinylpyrrolidone (E 1201) and polyvinylpolypyrrolidone (E 1202) as food additives and extension of use of polyvinylpyrrolidone (E 1201)",
+      "publicationYear": 2020,
+      "additiveCodes": [
+        "E1201",
+        "E1202"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/6215",
+      "pageAvailable": false,
+      "failure": "http_429",
+      "redirectLocation": null,
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "family",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2004-073, EFSA-Q-2005-238a, EFSA-Q-2005-238b, EFSA-Q-2005-238c, EFSA-Q-2006-012, EFSA-Q-2006-024, EFSA-Q-2006-027",
+      "doi": "10.2903/j.efsa.2006.395",
+      "title": "Opinion of the Scientific Panel on food additives, flavourings, processing aids and materials in contact with food (AFC) on a request related to a 12th list of substances for food contact materials",
+      "publicationYear": 2006,
+      "additiveCodes": [
+        "E1201"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/395",
+      "pageAvailable": false,
+      "failure": "redirect_not_accepted",
+      "redirectLocation": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2006.395",
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "individual",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2006-068, EFSA-Q-2006-069, EFSA-Q-2006-073, EFSA-Q-2006-180, EFSA-Q-2006-321, EFSA-Q-2007-008, EFSA-Q-2007-035, EFSA-Q-2007-057, EFSA-Q-2007-076",
+      "doi": "10.2903/j.efsa.2008.601",
+      "title": "Opinion of the Scientific Panel on food additives, flavourings, processing aids and materials in contact with food (AFC) on a request related to a 17th list of substances for food contact materials",
+      "publicationYear": 2007,
+      "additiveCodes": [
+        "E1203"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/601",
+      "pageAvailable": false,
+      "failure": "http_429",
+      "redirectLocation": null,
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "individual",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2005-017",
+      "doi": "10.2903/j.efsa.2006.294",
+      "title": "Opinion of the Scientific Panel on Food Additives, Flavourings, Processing Aids and Materials in Contact with Food on a request from the Commission related to the use of polyvinyl alcohol as a coating agent for food supplements",
+      "publicationYear": 2005,
+      "additiveCodes": [
+        "E1203"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/294",
+      "pageAvailable": false,
+      "failure": "redirect_not_accepted",
+      "redirectLocation": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2006.294",
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "individual",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2003-138",
+      "doi": "10.2903/j.efsa.2004.85",
+      "title": "Opinion of the Scientific Panel on Food Additives, Flavourings, Processing Aids and Materials in Contact with Food on a request from the Commission related to Pullulan PI-20 for use as a new food additive",
+      "publicationYear": 2004,
+      "additiveCodes": [
+        "E1204"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/85",
+      "pageAvailable": false,
+      "failure": "redirect_not_accepted",
+      "redirectLocation": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2004.85",
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "individual",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2009-00452",
+      "doi": "10.2903/j.efsa.2010.1513",
+      "title": "Scientific Opinion on the use of Basic Methacrylate Copolymer as a food additive",
+      "publicationYear": 2010,
+      "additiveCodes": [
+        "E1205"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/1513",
+      "pageAvailable": false,
+      "failure": "redirect_not_accepted",
+      "redirectLocation": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2010.1513",
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "individual",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2015-00223",
+      "doi": "10.2903/j.efsa.2016.4490",
+      "title": "Safety of the proposed amendment of the specifications for basic methacrylate copolymer (E 1205) as a food additive",
+      "publicationYear": 2016,
+      "additiveCodes": [
+        "E1205"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/4490",
+      "pageAvailable": false,
+      "failure": "http_429",
+      "redirectLocation": null,
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "individual",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2011-00938",
+      "doi": "10.2903/j.efsa.2011.2464",
+      "title": "Scientific Opinion on the safety evaluation of the substance, (ethyl acrylate, methyl methacrylate) copolymer, CAS No. 9010-88-2, for use in food contact materials - EFSA Panel on food contact materials, enzymes, flavourings and processing aids (CEF)",
+      "publicationYear": 2011,
+      "additiveCodes": [
+        "E1206"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/2464",
+      "pageAvailable": false,
+      "failure": "http_429",
+      "redirectLocation": null,
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "individual",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2009-00711",
+      "doi": "10.2903/j.efsa.2010.1655",
+      "title": "Scientific Opinion on the safety of neutral methacrylate copolymer for the proposed uses as a food additive",
+      "publicationYear": 2010,
+      "additiveCodes": [
+        "E1206"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/1655",
+      "pageAvailable": false,
+      "failure": "redirect_not_accepted",
+      "redirectLocation": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2010.1655",
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "individual",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2008-202, EFSA-Q-2006-144, EFSA-Q-2007-031, EFSA-Q-2007-025, EFSA-Q-2007-030, EFSA-Q-2007-029, EFSA-Q-2007-028",
+      "doi": "10.2903/j.efsa.2009.1196",
+      "title": "25th list of substances for food contact materials - Scientific Opinion of the Panel on food contact materials, enzymes, flavourings and processing aids (CEF)",
+      "publicationYear": 2009,
+      "additiveCodes": [
+        "E1206"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/1196",
+      "pageAvailable": false,
+      "failure": "redirect_not_accepted",
+      "redirectLocation": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2009.1196",
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "individual",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2010-00037",
+      "doi": "10.2903/j.efsa.2010.1948",
+      "title": "Scientific Opinion on the safety of polyvinylpyrrolidone-vinyl acetate copolymer for the proposed uses as a food additive",
+      "publicationYear": 2010,
+      "additiveCodes": [
+        "E1208"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/1948",
+      "pageAvailable": false,
+      "failure": "redirect_not_accepted",
+      "redirectLocation": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2010.1948",
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "individual",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2016-00192",
+      "doi": "10.2903/j.efsa.2017.4865",
+      "title": "Safety of the proposed amendment of the specifications for the food additive polyvinyl alcohol-polyethylene glycol-graft-co-polymer (E 1209)",
+      "publicationYear": 2017,
+      "additiveCodes": [
+        "E1209"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/4865",
+      "pageAvailable": false,
+      "failure": "redirect_not_accepted",
+      "redirectLocation": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2017.4865",
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "individual",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2012-00911",
+      "doi": "10.2903/j.efsa.2013.3303",
+      "title": "Scientific Opinion on the safety of polyvinyl alcohol-polyethylene glycol-graft-co-polymer as a food additive.",
+      "publicationYear": 2013,
+      "additiveCodes": [
+        "E1209"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/3303",
+      "pageAvailable": false,
+      "failure": "http_429",
+      "redirectLocation": null,
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "individual",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2018-00102",
+      "doi": "10.2903/j.efsa.2020.5874",
+      "title": "Opinion on the re-evaluation of starch sodium octenyl succinate (E 1450) as a food additive in foods for infants below 16 weeks of age and the follow-up of its re-evaluation as a food additive for uses in foods for all population groups",
+      "publicationYear": 2020,
+      "additiveCodes": [
+        "E1450"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/5874",
+      "pageAvailable": false,
+      "failure": "redirect_not_accepted",
+      "redirectLocation": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2020.5874",
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "individual",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2011-00590",
+      "doi": "10.2903/j.efsa.2019.5876",
+      "title": "Re-evaluation of benzyl alcohol (E 1519) as food additive",
+      "publicationYear": 2019,
+      "additiveCodes": [
+        "E1519"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/5876",
+      "pageAvailable": false,
+      "failure": "redirect_not_accepted",
+      "redirectLocation": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2019.5876",
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "individual",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": "EFSA-Q-2011-00191",
+      "doi": "10.2903/j.efsa.2013.3245",
+      "title": "Scientific Opinion on the safety evaluation of the active substances, iron, polyethyleneglycol, disodium pyrophosphate, monosodium phosphate and sodium chloride for use in food contact materials.",
+      "publicationYear": 2013,
+      "additiveCodes": [
+        "E1521"
+      ],
+      "publicEfsaUrl": "https://www.efsa.europa.eu/en/efsajournal/pub/3245",
+      "pageAvailable": false,
+      "failure": "redirect_not_accepted",
+      "redirectLocation": "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2013.3245",
+      "abstractText": null,
+      "plainLanguageSummaryText": null,
+      "assessmentScope": "individual",
+      "explicitExposureStatements": [],
+      "unmatchedExplicitStatements": [],
+      "authorityExposureAssessments": []
+    },
+    {
+      "efsaOutputId": null,
+      "doi": null,
+      "title": "Réévaluation de l'acésulfame K (E950) en tant qu'additif alimentaire",
+      "publicationYear": null,
+      "additiveCodes": [
+        "E950"
+      ],
+      "plainLanguageSummaryUrls": [
+        "https://www.efsa.europa.eu/fr/plain-language-summary/re-evaluation-acesulfame-k-e-950-food-additive"
+      ],
+      "sourceType": "plain_language_summary",
+      "publicEfsaUrl": "https://www.efsa.europa.eu/fr/plain-language-summary/re-evaluation-acesulfame-k-e-950-food-additive",
+      "pageAvailable": true,
+      "abstractText": null,
+      "plainLanguageSummaryText": "Réévaluation de l'acésulfame K (E950) en tant qu'additif alimentaire Publié le : 30 avril 2025 Clause de non-responsabilité Le présent résumé est une communication simplifiée du rapport de l'EFSA sur la réévaluation de l'acésulfame K (E950) en tant qu'additif alimentaire . La version intégrale du rapport scientifique est disponible sur ce lien . L’objectif de ce résumé est de renforcer la transparence et d'informer les parties intéressées par les travaux de l'EFSA dans ce domaine en utilisant un langage accessible pour présenter une synthèse des principales conclusions. Vue d'ensemble L'acésulfame K (E950) est un additif alimentaire utilisé comme édulcorant non nutritif. Il confère un goût sucré sans ajouter de calories ni de valeur nutritionnelle. Le Comité scientifique de l'alimentation humaine (CSAH) de l'UE, prédécesseur de l'EFSA, a évalué pour la dernière fois le E950 en 2000 ; le Comité mixte d'experts sur les additifs alimentaires de l'Organisation des Nations unies pour l'alimentation et l'agriculture (FAO) et de l'Organisation mondiale de la santé (OMS) (JECFA) a procédé à son évaluation la plus récente en 1991. Dans le présent avis, le groupe scientifique de l'EFSA sur les additifs alimentaires et les arômes (groupe FAF) a réévalué la sécurité du E950. L'EFSA a déjà publié les réévaluations d'autres édulcorants : l'aspartame (E951) en 2013, la thaumatine (E957) en 2021, la néohespéridine DC (E959) en 2022, l'érythritol (E968) en 2023 et les saccharines (E954) en 2024. Quelle tâche a été confiée à l'EFSA ? La Commission européenne (CE) [1] a mis en place un programme de réévaluation de la sécurité des additifs alimentaires autorisés dans l'UE avant le 20 janvier 2009. L'évaluation actuelle du E950 par le panel FAF relève de ce programme. Comment l’EFSA a-t-elle mené ces travaux ? Le groupe FAF a appliqué des protocoles structurés basés sur des méthodologies et des critères précédemment établis pour les édulcorants (EFSA, 2020a ; EFSA, 2020b ; EFSA FAF Panel, 2023 ; EFSA FAF Panel 2024). Ces protocoles comprennent l'identification des effets nocifs potentiels (identification du danger), la détermination de la quantité minimale dans le régime alimentaire qui pourrait nuire à une personne en bonne santé (caractérisation du danger) et l'évaluation du niveau d'exposition dans la population de l'UE. Quelles ont été les données utilisées ? Des données recueillies auprès des parties intéressées en réponse aux appels d'information lancés par l'EFSA, ainsi que des études sur l'E950 publiées entre janvier 1999 et novembre 2024 et identifiées grâce à une revue de la littérature dans ce domaine ; Des données issues de tests in vitro , d'études toxicologiques sur des animaux de laboratoire et d'études interventionnelles et épidémiologiques sur l'homme ; toutes les données ont été intégrées à l'aide d'une approche fondée sur le poids de la preuve. Quels sont les résultats et leurs implications ? La dose journalière admissible (DJA) considérée comme sûre pour tous les groupes de population a été fixée à 15 mg/kg de poids corporel (pc) par jour. Cette DJA remplace celle fixée par le CSAH en 2000 à 9 mg/kg de poids corporel par jour. La DJA révisée est basée sur la dose sans effet nocif observé (NOAEL) chez les rats de 1500 mg/kg pc par jour (3% d'acésulfame K dans l'alimentation), la dose la plus élevée testée. Dans l'UE, l'estimation la plus élevée de l'exposition au E950 était généralement inférieure à la DJA dans tous les groupes de population, ce qui indique une absence de préoccupation pour la santé. Les limites des spécifications de l'UE pour les impuretés inorganiques que sont le plomb et le mercure dans le E950 se sont avérées supérieures aux valeurs limites rapportées dans les analyses d'échantillons commerciaux de l'additif alimentaire. Une valeur limite a été signalée pour l'acétylacétamide (une impureté organique et un produit de dégradation de l'additif alimentaire) dans les analyses d'échantillons commerciaux du E950 ; dans les spécifications de l'UE pour cet additif alimentaire, il n'existe pas de limite spécifique pour l'acétylacétamide. Quelles ont été les incertitudes rencontrées ? Les incertitudes suivantes ont été identifiées et évaluées mais, dans l'ensemble, elles n'ont pas été considérées comme affectant les conclusions en matière de sécurité : Surestimation potentielle de l'exposition alimentaire à l’E950 dans la population de l'UE ; Présence potentielle de 5-chloro-acésulfame dans l’E950 et manque de données expérimentales concernant la génotoxicité de cette impureté. Quelles sont les principales recommandations ? La Commission européenne devrait envisager les amendements suivants aux spécifications de l'UE : Établir une limite maximale de 0,1 mg/kg pour le 5-chloro-acésulfame dans l'E950 ou, alternativement, solliciter des données appropriées sur la génotoxicité du 5-chloro-acésulfame ; Établir une limite maximale de 1 mg/kg pour l'acétylacétamide dans l'E950 ; Abaissement des limites maximales pour le plomb et le mercure dans l’E950 ; Inclure le numéro CAS (Chemical Abstract Service) 55589-62-3 pour l’E950 afin de faciliter son identification. Glossaire Dose journalière admissible (DJA) : Estimation de la quantité d'une substance contenue dans les aliments ou l'eau de boisson qui peut être consommée quotidiennement pendant toute la durée d’une vie sans présenter de risque appréciable pour la santé. Elle est généralement exprimée en milligrammes de substance par kilogramme de poids corporel et s'applique aux substances chimiques telles que les additifs alimentaires, les résidus de pesticides et les médicaments vétérinaires. Génotoxicité : Capacité d'une substance à endommager l'ADN des cellules. Niveau sans effet nocif observé (NOAEL) : La plus grande concentration ou quantité d'une substance pour laquelle aucun effet indésirable n'est détectable dans une population exposée. Approche fondée sur le poids de la preuve : Un processus dans lequel toutes les preuves relatives à une décision sont évaluées en fonction de leur force et de leur qualité. [1] Règlement UE 257/2010 de la Commission du 25 mars 2010 établissant un programme de réévaluation des additifs alimentaires autorisés conformément au règlement CE 1333/2008 du Parlement européen et du Conseil sur les additifs alimentaires. Références EFSA (European Food Safety Authority) 2020a. Outcome of the public consultation on a draft protocol for the assessment of hazard identification and characterisation of sweeteners. EFSA Supporting Publications 2020;17(2):EN-1803. https://doi.org/10.2903/sp.efsa.2020.EN-1803 EFSA (European Food Safety Authority), 2020b. Outcome of the public consultation on a draft protocol for assessing exposure to sweeteners as part of their safety assessment under the food additives re-evaluation programme. EFSA Supporting Publications , 17(8), EN-1913. https://doi.org/10.2903/sp.efsa.2020.EN-1913 EFSA FAF Panel (EFSA Panel on Food Additives and Flavourings), 2023. Revised protocol on hazard identification and characterisation of sweeteners. Zenodo. https://doi.org/10.5281/zenodo.7788968 EFSA FAF Panel (EFSA Panel on Food Additives and Flavourings), 2024. Revised protocol for assessing exposure to sweeteners as part of their safety assessment under the food additives re-evaluation programme. Zenodo. https://doi.org/10.5281/zenodo.13912093 Re-evaluation of acesulfame K (E 950) as food additive DOI: https://doi.org/10.2903/j.efsa.2025.9317 Résultat scientifique associé Re-evaluation of acesulfame K (E 950) as food additive Dossiers connexes Additifs alimentaires Ingrédients alimentaires Édulcorants Index Index Page contents",
+      "assessmentScope": "individual",
+      "explicitExposureStatements": [
+        {
+          "ruleId": "exposure-below-reference",
+          "normalizedMeaning": "below_reference",
+          "sourceSentence": "Dans l'UE, l'estimation la plus élevée de l'exposition au E950 était généralement inférieure à la DJA dans tous les groupes de population, ce qui indique une absence de préoccupation pour la santé."
+        },
+        {
+          "ruleId": "no-safety-concern-at-exposure",
+          "normalizedMeaning": "no_safety_concern_at_assessed_exposure",
+          "sourceSentence": "Dans l'UE, l'estimation la plus élevée de l'exposition au E950 était généralement inférieure à la DJA dans tous les groupes de population, ce qui indique une absence de préoccupation pour la santé."
+        }
+      ],
+      "unmatchedExplicitStatements": [
+        "Ces protocoles comprennent l'identification des effets nocifs potentiels (identification du danger), la détermination de la quantité minimale dans le régime alimentaire qui pourrait nuire à une personne en bonne santé (caractérisation du danger) et l'évaluation du niveau d'exposition dans la population de l'UE.",
+        "La dose journalière admissible (DJA) considérée comme sûre pour tous les groupes de population a été fixée à 15 mg/kg de poids corporel (pc) par jour.",
+        "Cette DJA remplace celle fixée par le CSAH en 2000 à 9 mg/kg de poids corporel par jour.",
+        "La DJA révisée est basée sur la dose sans effet nocif observé (NOAEL) chez les rats de 1500 mg/kg pc par jour (3% d'acésulfame K dans l'alimentation), la dose la plus élevée testée.",
+        "Les incertitudes suivantes ont été identifiées et évaluées mais, dans l'ensemble, elles n'ont pas été considérées comme affectant les conclusions en matière de sécurité : Surestimation potentielle de l'exposition alimentaire à l’E950 dans la population de l'UE ; Présence potentielle de 5-chloro-acésulfame dans l’E950 et manque de données expérimentales concernant la génotoxicité de cette impureté.",
+        "Glossaire Dose journalière admissible (DJA) : Estimation de la quantité d'une substance contenue dans les aliments ou l'eau de boisson qui peut être consommée quotidiennement pendant toute la durée d’une vie sans présenter de risque appréciable pour la santé.",
+        "Outcome of the public consultation on a draft protocol for assessing exposure to sweeteners as part of their safety assessment under the food additives re-evaluation programme.",
+        "Revised protocol for assessing exposure to sweeteners as part of their safety assessment under the food additives re-evaluation programme."
+      ],
+      "authorityExposureAssessments": [
+        {
+          "authority": "EFSA",
+          "assessmentId": "https://www.efsa.europa.eu/fr/plain-language-summary/re-evaluation-acesulfame-k-e-950-food-additive",
+          "year": null,
+          "sourceUrl": "https://www.efsa.europa.eu/fr/plain-language-summary/re-evaluation-acesulfame-k-e-950-food-additive",
+          "scope": "individual",
+          "coveredCodes": [
+            "E950"
+          ],
+          "comparisonStatus": "below_reference",
+          "authorityConclusion": "no_explicit_conclusion",
+          "sourceSentence": "Dans l'UE, l'estimation la plus élevée de l'exposition au E950 était généralement inférieure à la DJA dans tous les groupes de population, ce qui indique une absence de préoccupation pour la santé.",
+          "sourceSection": "plain_language_summary"
+        },
+        {
+          "authority": "EFSA",
+          "assessmentId": "https://www.efsa.europa.eu/fr/plain-language-summary/re-evaluation-acesulfame-k-e-950-food-additive",
+          "year": null,
+          "sourceUrl": "https://www.efsa.europa.eu/fr/plain-language-summary/re-evaluation-acesulfame-k-e-950-food-additive",
+          "scope": "individual",
+          "coveredCodes": [
+            "E950"
+          ],
+          "comparisonStatus": "not_quantified",
+          "authorityConclusion": "no_safety_concern_at_assessed_exposure",
+          "sourceSentence": "Dans l'UE, l'estimation la plus élevée de l'exposition au E950 était généralement inférieure à la DJA dans tous les groupes de population, ce qui indique une absence de préoccupation pour la santé.",
+          "sourceSection": "plain_language_summary"
+        }
+      ]
+    }
+  ],
+  "validation": {
+    "evaluateAdditiveRiskModified": false,
+    "profilesModified": false,
+    "supabaseUpsertPerformed": false,
+    "uiModified": false
+  }
+}

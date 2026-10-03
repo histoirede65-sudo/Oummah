@@ -2,6 +2,7 @@ import { getQuranFoundationSdk } from "../../_shared/quranFoundation.ts";
 import type { IslamicQueryExpansion } from "./IslamicQueryExpansion.ts";
 import { rankDocuments } from "./RelevanceScorer.ts";
 import { buildQuranSearchTerms, extractIntentConcepts } from "./UniversalIntent.ts";
+import { getQuranDirectLookupAnswer } from "./QuranDirectLookup.ts";
 import {
   quranTopics,
   quranTopicSources,
@@ -124,55 +125,83 @@ async function searchQuranTerms(
     { source: QuranTopicSource; matchedQueries: Set<string> }
   >();
 
-  await Promise.all(
-    terms.slice(0, 10).map(async (term) => {
-      try {
-        const response = await sdk.search.search(term, {
-          mode: "quick" as never,
-          language: "fr" as never,
-          getText: "1",
-          highlight: "0",
-          navigationalResultsNumber: 0,
-          versesResultsNumber: 20,
-          size: 20,
-        });
-        const results = response.result?.verses ?? [];
-        for (const result of results) {
-          const parsed = parseVerseKey(result.key);
-          if (!parsed) continue;
-          const id = `quran-search:${parsed.chapter}:${parsed.verse}`;
-          const existing = collected.get(id);
-          if (existing) {
-            existing.matchedQueries.add(term);
-            continue;
-          }
-          collected.set(id, {
-            source: {
-              title: `Passage coranique ${parsed.chapter}:${parsed.verse}`,
-              body: String(result.name ?? "Passage identifié dans le Coran par le moteur OUMMAH.")
-                .replace(/<[^>]+>/g, " ")
-                .replace(/\s+/g, " ")
-                .trim()
-                .slice(0, 1200),
-              reference: `Coran ${parsed.chapter}:${parsed.verse}`,
-            },
-            matchedQueries: new Set([term]),
-          });
+  const limitedTerms = terms.slice(0, 10);
+
+  const searchOneTerm = async (term: string): Promise<"ok" | "auth_failed" | "failed"> => {
+    try {
+      const response = await sdk.search.search(term, {
+        mode: "quick" as never,
+        language: "fr" as never,
+        getText: "1",
+        highlight: "0",
+        navigationalResultsNumber: 0,
+        versesResultsNumber: 20,
+        size: 20,
+      });
+      const results = response.result?.verses ?? [];
+      for (const result of results) {
+        const parsed = parseVerseKey(result.key);
+        if (!parsed) continue;
+        const id = `quran-search:${parsed.chapter}:${parsed.verse}`;
+        const existing = collected.get(id);
+        if (existing) {
+          existing.matchedQueries.add(term);
+          continue;
         }
-      } catch (error) {
-        const message = error instanceof Error ? error.message : String(error);
-        const statusMatch = message.match(/\b(4\d\d|5\d\d)\b/u);
-        const providerCode = message.match(/(?:code|error)[=: ]+([A-Z0-9_-]{2,40})/iu)?.[1] ?? null;
-        console.warn("QURAN_KNOWLEDGE_SEARCH_TERM_FAILED", {
-          stage: "quran_foundation_search",
-          httpStatus: statusMatch ? Number(statusMatch[1]) : null,
-          providerErrorCode: providerCode,
-          hasSearchTerm: Boolean(term),
-          hasQuranFoundationClient: true,
+        collected.set(id, {
+          source: {
+            title: `Passage coranique ${parsed.chapter}:${parsed.verse}`,
+            body: String(result.name ?? "Passage identifié dans le Coran par le moteur OUMMAH.")
+              .replace(/<[^>]+>/g, " ")
+              .replace(/\s+/g, " ")
+              .trim()
+              .slice(0, 1200),
+            reference: `Coran ${parsed.chapter}:${parsed.verse}`,
+          },
+          matchedQueries: new Set([term]),
         });
       }
-    }),
-  );
+      return "ok";
+    } catch (error) {
+      const errorRecord =
+        typeof error === "object" && error !== null
+          ? error as Record<string, unknown>
+          : null;
+      const message = error instanceof Error ? error.message : String(error);
+
+      console.warn("QURAN_KNOWLEDGE_SEARCH_TERM_FAILED", {
+        term,
+        name: error instanceof Error ? error.name : null,
+        message,
+        stack: error instanceof Error ? error.stack : null,
+        cause: error instanceof Error ? error.cause : errorRecord?.cause ?? null,
+        status: errorRecord?.status ?? errorRecord?.statusCode ?? null,
+        code: errorRecord?.code ?? null,
+        response: errorRecord?.response ?? null,
+        details: errorRecord?.details ?? null,
+        rawKeys: errorRecord ? Object.keys(errorRecord) : [],
+      });
+
+      return /token request failed:\s*400\b/i.test(message)
+        ? "auth_failed"
+        : "failed";
+    }
+  };
+
+  // Validate authentication with one term first. When Quran.Foundation rejects
+  // the application token, avoid launching nine identical failing requests.
+  // Once access works, all remaining semantic terms are still searched in
+  // parallel, so source coverage is preserved.
+  if (limitedTerms.length > 0) {
+    const firstResult = await searchOneTerm(limitedTerms[0]);
+    if (firstResult !== "auth_failed") {
+      await Promise.all(limitedTerms.slice(1).map((term) => searchOneTerm(term)));
+    } else {
+      console.warn("QURAN_KNOWLEDGE_AUTH_FAILURE_FAST_FAIL", {
+        skippedTermCount: Math.max(0, limitedTerms.length - 1),
+      });
+    }
+  }
 
   const ranked = rankDocuments(
     [...collected.entries()],
@@ -212,6 +241,22 @@ export async function retrieveQuranKnowledge(
   question: string,
   expansion?: IslamicQueryExpansion | null,
 ): Promise<QuranKnowledgeResult> {
+  const directLookup = getQuranDirectLookupAnswer(question);
+  if (directLookup) {
+    console.log("WASIL_QURAN_DIRECT_LOOKUP", {
+      topicId: directLookup.topicId,
+      sourceIds: directLookup.sourceIds,
+      sourceCount: directLookup.sourceIds.length,
+    });
+    return {
+      topicId: directLookup.topicId,
+      canonicalName: directLookup.canonicalName,
+      queryTerms: [directLookup.canonicalName],
+      sources: directLookup.sources,
+      retrievalMode: "curated",
+    };
+  }
+
   const curated = curatedRetrieval(question);
   const entity = identifyEntity(question);
   const genericTerm = extractGenericSearchTerm(question);
@@ -296,3 +341,4 @@ export async function retrieveQuranKnowledge(
       : "quran-foundation",
   };
 }
+

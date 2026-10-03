@@ -302,6 +302,7 @@ export default function HifzSessionScreen() {
   const [textVisibility, setTextVisibility] = useState<TextVisibility>("full");
   const [maskSeed, setMaskSeed] = useState(0);
   const validationInProgress = useRef(false);
+  const reviewFinished = useRef(false);
   const [wordTimings, setWordTimings] = useState<readonly WordTimestamp[]>([]);
   const [activeAudioTiming, setActiveAudioTiming] = useState<{
     startMs: number;
@@ -694,7 +695,7 @@ export default function HifzSessionScreen() {
       date: dateKey(now),
       minutes: 3,
       learned: difficulty === "easy" ? 1 : 0,
-      reviewed: review === "1" ? 1 : 0,
+      reviewed: 1,
       surahIds: [surahId],
     };
     next.sessions = existing
@@ -739,8 +740,35 @@ export default function HifzSessionScreen() {
     validationInProgress.current = false;
   };
 
-  const closeCelebration = () => {
+  const finishReview = async () => {
+    if (reviewFinished.current) return;
+    reviewFinished.current = true;
+    try {
+      const now = new Date();
+      const today = dateKey(now);
+      const state = await loadHifzState();
+      const next = {
+        ...state,
+        sessions: state.sessions.map((item) =>
+          item.date === today
+            ? { ...item, completed: true, completedAt: now.toISOString() }
+            : item,
+        ),
+      };
+      await saveHifzState(next);
+      goalProgressBridge.record({
+        metric: "hifz_review_completed",
+        evidenceId: `hifz-review:${today}:${surahId}:${Number(verse?.verseKey.split(":")[1] ?? index + 1)}`,
+      });
+      void goalProgressBridge.flush().catch(() => undefined);
+    } catch {
+      reviewFinished.current = false;
+    }
+  };
+
+  const closeCelebration = async () => {
     if (celebration === "surah") {
+      await finishReview();
       setCelebration(null);
       exitSession();
       return;
@@ -754,7 +782,9 @@ export default function HifzSessionScreen() {
       setIndex((value) => value + 1);
       changeTeacherLevel(0);
       setSaved(false);
+      return;
     }
+    await finishReview();
   };
 
   return (
@@ -1060,6 +1090,32 @@ export default function HifzSessionScreen() {
             <Ionicons name="play-skip-forward" size={20} color={colors.goldLight} />
           </Pressable>
         </View>
+        <View style={styles.evaluate}>
+          <Text style={styles.evaluateTitle}>
+            Comment s’est passée la récitation ?
+          </Text>
+          <Text style={styles.evaluateText}>
+            Cela aide OUMMAH à choisir les prochaines révisions.
+          </Text>
+          <View style={styles.evaluateButtons}>
+            <Pressable
+              onPress={() => void complete("hard")}
+              style={styles.hard}
+            >
+              <Ionicons name="refresh" size={16} color={colors.goldLight} />
+              <Text style={styles.hardText}>À revoir</Text>
+            </Pressable>
+            <Pressable
+              onPress={() => void complete("easy")}
+              style={styles.easy}
+            >
+              <Ionicons name="checkmark" size={17} color={colors.background} />
+              <Text style={styles.easyText}>
+                {saved ? "Enregistré" : "Maîtrisé"}
+              </Text>
+            </Pressable>
+          </View>
+        </View>
         <View style={styles.reciterHeader}>
           <Text style={styles.controlTitle}>Récitateur</Text>
           <Pressable onPress={() => setReciterModalVisible(true)}>
@@ -1104,32 +1160,6 @@ export default function HifzSessionScreen() {
               </Text>
             </Pressable>
           ))}
-        </View>
-        <View style={styles.evaluate}>
-          <Text style={styles.evaluateTitle}>
-            Comment s’est passée la récitation ?
-          </Text>
-          <Text style={styles.evaluateText}>
-            Cela aide OUMMAH à choisir les prochaines révisions.
-          </Text>
-          <View style={styles.evaluateButtons}>
-            <Pressable
-              onPress={() => void complete("hard")}
-              style={styles.hard}
-            >
-              <Ionicons name="refresh" size={16} color={colors.goldLight} />
-              <Text style={styles.hardText}>À revoir</Text>
-            </Pressable>
-            <Pressable
-              onPress={() => void complete("easy")}
-              style={styles.easy}
-            >
-              <Ionicons name="checkmark" size={17} color={colors.background} />
-              <Text style={styles.easyText}>
-                {saved ? "Enregistré" : "Maîtrisé"}
-              </Text>
-            </Pressable>
-          </View>
         </View>
         <View style={styles.nav}>
           <Pressable
@@ -1223,7 +1253,7 @@ export default function HifzSessionScreen() {
         visible={celebration !== null}
         transparent
         animationType="fade"
-        onRequestClose={closeCelebration}
+        onRequestClose={() => void closeCelebration()}
       >
         <View style={styles.modalBackdrop}>
           <View style={styles.celebrationCard}>
@@ -1265,7 +1295,7 @@ export default function HifzSessionScreen() {
                 : `Le verset ${currentVerseNumber} est maintenant marqué d’un check vert dans votre progression.`}
             </Text>
             <Pressable
-              onPress={closeCelebration}
+              onPress={() => void closeCelebration()}
               style={styles.celebrationButton}
             >
               <Text style={styles.celebrationButtonText}>

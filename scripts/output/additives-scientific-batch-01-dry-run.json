@@ -1,0 +1,86 @@
+{
+  "mode": "dry-run",
+  "input": "C:\\Users\\bahri\\oummah\\scripts\\data\\additives-scientific-batch-01.json",
+  "dryRun": true,
+  "validation": {
+    "valid": 6,
+    "rejected": [],
+    "incomplete": [
+      "E621",
+      "E150D",
+      "E331",
+      "E306",
+      "E160C",
+      "E220"
+    ]
+  },
+  "coverageBefore": {
+    "totalProfiles": 23,
+    "completeProfiles": 20,
+    "incompleteProfiles": 3,
+    "withSources": 23,
+    "withoutSources": 0,
+    "withExposure": 23,
+    "withAuthorityEvaluations": 21,
+    "withPotentialEffects": 17,
+    "needsReview": 3,
+    "duplicateCodes": [],
+    "missingKnownCodes": [
+      "E160C",
+      "E220",
+      "E621"
+    ],
+    "incompleteCodes": [
+      "E331",
+      "E306",
+      "E150D"
+    ],
+    "incompatibleRows": []
+  },
+  "decisions": [
+    {
+      "code": "E621",
+      "incomplete": true,
+      "action": "insert",
+      "reason": "code absent"
+    },
+    {
+      "code": "E150D",
+      "incomplete": true,
+      "action": "skip",
+      "reason": "incoming record is less complete"
+    },
+    {
+      "code": "E331",
+      "incomplete": true,
+      "action": "skip",
+      "reason": "incoming record is less complete"
+    },
+    {
+      "code": "E306",
+      "incomplete": true,
+      "action": "skip",
+      "reason": "incoming record is less complete"
+    },
+    {
+      "code": "E160C",
+      "incomplete": true,
+      "action": "insert",
+      "reason": "code absent"
+    },
+    {
+      "code": "E220",
+      "incomplete": true,
+      "action": "insert",
+      "reason": "code absent"
+    }
+  ],
+  "summary": {
+    "new": 3,
+    "updates": 0,
+    "conflicts": 0,
+    "skipped": 3,
+    "rejected": 0,
+    "incomplete": 6
+  }
+}

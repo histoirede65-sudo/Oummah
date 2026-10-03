@@ -1,0 +1,11 @@
+{
+  "schemaVersion": "5.0",
+  "auditVersion": "v5",
+  "generatedAt": "2026-09-30T23:33:00.599Z",
+  "anomalies": {
+    "suspectedFalseSafe": [],
+    "referenceOnlyClassified": [],
+    "insufficientEvidenceForClassification": [],
+    "e338MustRemainInsufficient": []
+  }
+}

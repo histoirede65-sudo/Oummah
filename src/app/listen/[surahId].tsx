@@ -18,6 +18,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import AudioPlayer from "../../components/surah/AudioPlayer";
+import AudioProgress from "../../components/surah/AudioProgress";
 import { usePlayerSwipeGestures } from "../../components/surah/PlayerGestures";
 import PlayerQuickMenu from "../../components/surah/PlayerQuickMenu";
 import ReciterHero from "../../components/surah/ReciterHero";
@@ -133,7 +134,7 @@ export default function SurahListeningScreen() {
       rangeStopSecondsRef.current = null;
     }
   }, [surah.id]);
-  const heroHeight = Math.max(430, Math.min(560, Math.round(height * 0.52)));
+  const heroHeight = Math.max(450, Math.min(510, Math.round(height * 0.56)));
   const {
     track,
     isLoaded,
@@ -285,34 +286,10 @@ export default function SurahListeningScreen() {
   const currentReciterId = transitionReciters?.current.id;
   const requestedReciterId =
     reciterId ?? currentReciter?.id ?? activeReciter?.id;
-  const requestedTimelineKey = `${requestedReciterId ?? "no-reciter"}:${surah.id}`;
   audioReadyRef.current = isLoaded;
   const handleTimelineReady = useCallback((key: string) => {
     timelineReadyKeyRef.current = key;
   }, []);
-  const waitForTimeline = useCallback(
-    (key: string, timeoutMs = 5000) =>
-      new Promise<boolean>((resolve) => {
-        if (timelineReadyKeyRef.current === key) {
-          resolve(true);
-          return;
-        }
-        const startedAt = Date.now();
-        const check = () => {
-          if (timelineReadyKeyRef.current === key) {
-            resolve(true);
-            return;
-          }
-          if (!mountedRef.current || Date.now() - startedAt >= timeoutMs) {
-            resolve(false);
-            return;
-          }
-          setTimeout(check, 25);
-        };
-        setTimeout(check, 25);
-      }),
-    [],
-  );
   const waitForAudioReady = useCallback(
     (timeoutMs = 10_000) =>
       new Promise<boolean>((resolve) => {
@@ -345,22 +322,17 @@ export default function SurahListeningScreen() {
       await loadSurah(surah.id, false, requestedReciterId);
       if (surah.id === 1) await seekTo(0);
     }
-    const [timelineReady, audioReady] = await Promise.all([
-      waitForTimeline(requestedTimelineKey),
-      waitForAudioReady(),
-    ]);
-    return timelineReady && audioReady;
+    // Verse timestamps enrich highlighting, but playback only needs audio.
+    return waitForAudioReady();
   }, [
     activeReciter?.id,
     activeSurahId,
     isLoaded,
     loadSurah,
     requestedReciterId,
-    requestedTimelineKey,
     seekTo,
     surah.id,
     waitForAudioReady,
-    waitForTimeline,
   ]);
   const handleTogglePlay = useCallback(() => {
     const requestId = ++playRequestRef.current;
@@ -568,7 +540,7 @@ export default function SurahListeningScreen() {
               <ReciterHero
                 previousReciter={transitionReciters.previous}
                 nextReciter={transitionReciters.next}
-                surahName={track?.title ?? surah.transliteration}
+                surahName={surah.transliteration}
                 surahNumber={surah.id}
                 surahArabicName={surah.arabicName}
                 surahFrenchName={
@@ -579,6 +551,14 @@ export default function SurahListeningScreen() {
                 verses={surah.verses}
                 revelation={surah.revelationType}
                 height={heroHeight}
+                progressContent={<AudioProgress
+                  progress={duration > 0 ? currentTime / duration : 0}
+                  elapsed={formatPlaybackTime(currentTime)}
+                  duration={formatPlaybackTime(duration)}
+                  onSeek={(position) => {
+                    if (duration > 0) void seekTo(position * duration).catch(() => undefined);
+                  }}
+                />}
                 isPlaying={isPlaying}
                 isFavorite={isFavorite}
                 onFavorite={() => void toggleFavorite()}
@@ -629,7 +609,6 @@ export default function SurahListeningScreen() {
               onPrevious={handlePrevious}
               onNext={handleNext}
               onPlayLongPress={() => setQuickMenuVisible(true)}
-              onOpenMenu={() => setQuickMenuVisible(true)}
             />
           </ScrollView>
         </Animated.View>
@@ -648,6 +627,11 @@ export default function SurahListeningScreen() {
       />
     </SafeAreaView>
   );
+}
+
+function formatPlaybackTime(seconds: number) {
+  const value = Number.isFinite(seconds) ? Math.max(0, Math.floor(seconds)) : 0;
+  return `${String(Math.floor(value / 60)).padStart(2, "0")}:${String(value % 60).padStart(2, "0")}`;
 }
 
 const styles = StyleSheet.create({

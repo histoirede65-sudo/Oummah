@@ -2,7 +2,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { type Href, router, usePathname } from "expo-router";
-import { useCallback, useEffect, useMemo, useRef } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import { Animated, Pressable, StyleSheet, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -18,7 +18,6 @@ export default function MiniPlayer() {
   const { t } = useI18n();
   const pathname = usePathname();
   const insets = useSafeAreaInsets();
-  const entrance = useRef(new Animated.Value(0)).current;
   const {
     track,
     isPlaying,
@@ -34,6 +33,7 @@ export default function MiniPlayer() {
   const isDhikrPlayer =
     pathname.startsWith("/dhikr") || pathname.startsWith("/dua");
   const reciter = track ? getTrackReciter(track) : null;
+  const isVisible = Boolean(track && reciter) && !isFullPlayer && !isDhikrPlayer && miniPlayerState.mode === "mini";
   const reciterImage = reciter
     ? getReciterImage(Number(reciter.id), reciter.name)
     : undefined;
@@ -54,27 +54,17 @@ export default function MiniPlayer() {
   const gestureOptions = useMemo(
     () => ({
       surface: "mini" as const,
-      active: miniPlayerState.mode === "mini",
+      active: isVisible,
       onExpand: openFullPlayer,
       onDismiss: closePlayer,
     }),
-    [closePlayer, miniPlayerState.mode, openFullPlayer],
+    [closePlayer, isVisible, openFullPlayer],
   );
   const swipeGesture = usePlayerSwipeGestures(gestureOptions);
 
   useEffect(() => {
     setFullPlayerActive(isFullPlayer);
   }, [isFullPlayer, setFullPlayerActive]);
-
-  useEffect(() => {
-    Animated.timing(entrance, {
-      toValue:
-        track && miniPlayerState.mode === "mini" && !isFullPlayer ? 1 : 0,
-      duration: track && miniPlayerState.mode === "mini" ? 220 : 180,
-      useNativeDriver: true,
-      isInteraction: false,
-    }).start();
-  }, [entrance, isFullPlayer, miniPlayerState.mode, track]);
 
   if (
     !track ||
@@ -93,15 +83,6 @@ export default function MiniPlayer() {
         styles.container,
         {
           bottom: 67 + insets.bottom,
-          opacity: entrance,
-          transform: [
-            {
-              translateY: entrance.interpolate({
-                inputRange: [0, 1],
-                outputRange: [18, 0],
-              }),
-            },
-          ],
         },
         swipeGesture.animatedStyle,
       ]}

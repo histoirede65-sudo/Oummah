@@ -1,0 +1,1714 @@
+{
+  "schemaVersion": "1.0",
+  "generatedAt": "2026-09-30T20:54:56.189Z",
+  "source": "WHO/JECFA official public chemical pages, rebuilt from the existing cache; no profile or risk-engine integration.",
+  "totalJecfaChemicals": 6564,
+  "totalEvaluations": 7453,
+  "evaluationsWithIntake": 640,
+  "chemicalsWithAtLeastOneIntake": 565,
+  "foodAdditivesWithIntake": 56,
+  "uniqueInsCodesWithIntake": [
+    "341",
+    "381",
+    "951",
+    "160A",
+    "227",
+    "132",
+    "210",
+    "542",
+    "355",
+    "160B",
+    "319",
+    "493",
+    "450V",
+    "960",
+    "519",
+    "523",
+    "343",
+    "100I",
+    "339II",
+    "450I",
+    "124",
+    "434",
+    "435",
+    "340II",
+    "213",
+    "342",
+    "143",
+    "127",
+    "340",
+    "339III",
+    "541II",
+    "480",
+    "410",
+    "160E",
+    "172",
+    "452III",
+    "220",
+    "211",
+    "339I",
+    "432",
+    "450VII",
+    "161G",
+    "452I",
+    "579",
+    "585",
+    "338",
+    "539",
+    "223",
+    "320",
+    "321",
+    "450",
+    "452IV",
+    "450VI",
+    "451I",
+    "222",
+    "491",
+    "224",
+    "212",
+    "451II",
+    "452II",
+    "228",
+    "225",
+    "433",
+    "436",
+    "541I",
+    "452V",
+    "133",
+    "512",
+    "221",
+    "494",
+    "495",
+    "450III",
+    "957",
+    "470",
+    "999I",
+    "160C",
+    "1209",
+    "392",
+    "970",
+    "959"
+  ],
+  "totalEuCodes": 341,
+  "jecfaMatchedCodes": 298,
+  "codesWithJecfaIntake": [
+    "E100",
+    "E124",
+    "E127",
+    "E132",
+    "E133",
+    "E160A",
+    "E161G",
+    "E172",
+    "E173",
+    "E246",
+    "E319",
+    "E320",
+    "E321",
+    "E338",
+    "E339",
+    "E340",
+    "E341",
+    "E343",
+    "E355",
+    "E392",
+    "E410",
+    "E432",
+    "E433",
+    "E434",
+    "E435",
+    "E436",
+    "E450",
+    "E451",
+    "E452",
+    "E491",
+    "E493",
+    "E494",
+    "E495",
+    "E512",
+    "E523",
+    "E541",
+    "E579",
+    "E585",
+    "E951",
+    "E957",
+    "E959",
+    "E969",
+    "E999",
+    "E1209"
+  ],
+  "codesWithNumericExposure": [
+    "E127",
+    "E132",
+    "E133",
+    "E161G",
+    "E172",
+    "E173",
+    "E246",
+    "E319",
+    "E320",
+    "E321",
+    "E339",
+    "E340",
+    "E355",
+    "E392",
+    "E410",
+    "E432",
+    "E433",
+    "E434",
+    "E435",
+    "E436",
+    "E491",
+    "E493",
+    "E494",
+    "E495",
+    "E512",
+    "E523",
+    "E541",
+    "E951",
+    "E957",
+    "E959",
+    "E969",
+    "E999",
+    "E1209"
+  ],
+  "codesWithPopulationExposure": [
+    "E124",
+    "E132",
+    "E133",
+    "E173",
+    "E246",
+    "E339",
+    "E340",
+    "E392",
+    "E410",
+    "E432",
+    "E433",
+    "E434",
+    "E435",
+    "E436",
+    "E951",
+    "E957",
+    "E959",
+    "E1209"
+  ],
+  "codesBelowReference": [
+    "E319",
+    "E320",
+    "E951"
+  ],
+  "codesWithinReference": [
+    "E432",
+    "E433",
+    "E434",
+    "E435",
+    "E436"
+  ],
+  "codesWithPossibleExceedance": [],
+  "codesWithConfirmedExceedance": [],
+  "codesWithNoConcernConclusion": [
+    "E951",
+    "E959"
+  ],
+  "codesWithConcernConclusion": [],
+  "codesWithUnderestimationWarning": [
+    "E491",
+    "E493",
+    "E494",
+    "E495"
+  ],
+  "codesWithMultipleScenarios": [
+    "E100",
+    "E124",
+    "E127",
+    "E132",
+    "E133",
+    "E160A",
+    "E161G",
+    "E173",
+    "E246",
+    "E319",
+    "E320",
+    "E321",
+    "E338",
+    "E339",
+    "E340",
+    "E341",
+    "E343",
+    "E355",
+    "E392",
+    "E410",
+    "E432",
+    "E433",
+    "E434",
+    "E435",
+    "E436",
+    "E450",
+    "E451",
+    "E452",
+    "E491",
+    "E493",
+    "E494",
+    "E495",
+    "E512",
+    "E523",
+    "E541",
+    "E579",
+    "E951",
+    "E957",
+    "E959",
+    "E999"
+  ],
+  "statusCounts": {
+    "NO_INTAKE_FIELD": 6813,
+    "INTAKE_PRESENT_NO_EXPLICIT_COMPARISON": 204,
+    "PARSED_EXPOSURE": 344,
+    "PARSE_FAILED": 92
+  },
+  "latestJecfaExposureAssessment": [
+    {
+      "ins": "100I",
+      "year": 2003,
+      "chemicalId": "354",
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/354",
+      "intakeStatus": "INTAKE_PRESENT_NO_EXPLICIT_COMPARISON"
+    },
+    {
+      "ins": "124",
+      "year": 2011,
+      "chemicalId": "393",
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/393",
+      "intakeStatus": "INTAKE_PRESENT_NO_EXPLICIT_COMPARISON"
+    },
+    {
+      "ins": "127",
+      "year": 1990,
+      "chemicalId": "503",
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/503",
+      "intakeStatus": "PARSED_EXPOSURE"
+    },
+    {
+      "ins": "132",
+      "year": 2018,
+      "chemicalId": "113",
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/113",
+      "intakeStatus": "PARSED_EXPOSURE"
+    },
+    {
+      "ins": "133",
+      "year": 2017,
+      "chemicalId": "2716",
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2716",
+      "intakeStatus": "PARSED_EXPOSURE"
+    },
+    {
+      "ins": "143",
+      "year": 2017,
+      "chemicalId": "502",
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/502",
+      "intakeStatus": "PARSED_EXPOSURE"
+    },
+    {
+      "ins": "160A",
+      "year": 2026,
+      "chemicalId": "65",
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/65",
+      "intakeStatus": "INTAKE_PRESENT_NO_EXPLICIT_COMPARISON"
+    },
+    {
+      "ins": "160B",
+      "year": 2006,
+      "chemicalId": "235",
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/235",
+      "intakeStatus": "PARSED_EXPOSURE"
+    },
+    {
+      "ins": "160C",
+      "year": 2014,
+      "chemicalId": "5866",
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/5866",
+      "intakeStatus": "PARSED_EXPOSURE"
+    },
+    {
+      "ins": "160E",
+      "year": 2026,
+      "chemicalId": "941",
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/941",
+      "intakeStatus": "PARSED_EXPOSURE"
+    },
+    {
+      "ins": "161G",
+      "year": 1995,
+      "chemicalId": "1268",
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/1268",
+      "intakeStatus": "PARSED_EXPOSURE"
+    },
+    {
+      "ins": "172",
+      "year": 1999,
+      "chemicalId": "949",
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/949",
+      "intakeStatus": "PARSED_EXPOSURE"
+    },
+    {
+      "ins": "210",
+      "year": 2002,
+      "chemicalId": "126",
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/126",
+      "intakeStatus": "PARSE_FAILED"
+    },
+    {
+      "ins": "211",
+      "year": 1996,
+      "chemicalId": "1098",
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/1098",
+      "intakeStatus": "PARSE_FAILED"
+    },
+    {
+      "ins": "212",
+      "year": 1996,
+      "chemicalId": "2283",
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2283",
+      "intakeStatus": "PARSE_FAILED"
+    },
+    {
+      "ins": "213",
+      "year": 1996,
+      "chemicalId": "452",
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/452",
+      "intakeStatus": "PARSE_FAILED"
+    },
+    {
+      "ins": "220",
+      "year": 1998,
+      "chemicalId": "985",
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/985",
+      "intakeStatus": "PARSE_FAILED"
+    },
+    {
+      "ins": "221",
+      "year": 1998,
+      "chemicalId": "2821",
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2821",
+      "intakeStatus": "PARSE_FAILED"
+    },
+    {
+      "ins": "222",
+      "year": 1998,
+      "chemicalId": "2269",
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2269",
+      "intakeStatus": "PARSE_FAILED"
+    },
+    {
+      "ins": "223",
+      "year": 1998,
+      "chemicalId": "1824",
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/1824",
+      "intakeStatus": "PARSE_FAILED"
+    },
+    {
+      "ins": "224",
+      "year": 1998,
+      "chemicalId": "2272",
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2272",
+      "intakeStatus": "PARSE_FAILED"
+    },
+    {
+      "ins": "225",
+      "year": 1998,
+      "chemicalId": "2483",
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2483",
+      "intakeStatus": "PARSE_FAILED"
+    },
+    {
+      "ins": "227",
+      "year": 1998,
+      "chemicalId": "81",
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/81",
+      "intakeStatus": "PARSE_FAILED"
+    },
+    {
+      "ins": "228",
+      "year": 1998,
+      "chemicalId": "2445",
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2445",
+      "intakeStatus": "PARSE_FAILED"
+    },
+    {
+      "ins": "319",
+      "year": 1997,
+      "chemicalId": "236",
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/236",
+      "intakeStatus": "PARSED_EXPOSURE"
+    },
+    {
+      "ins": "320",
+      "year": 1988,
+      "chemicalId": "1910",
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/1910",
+      "intakeStatus": "PARSED_EXPOSURE"
+    },
+    {
+      "ins": "321",
+      "year": 1995,
+      "chemicalId": "1911",
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/1911",
+      "intakeStatus": "PARSED_EXPOSURE"
+    },
+    {
+      "ins": "338",
+      "year": 1982,
+      "chemicalId": "1777",
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/1777",
+      "intakeStatus": "INTAKE_PRESENT_NO_EXPLICIT_COMPARISON"
+    },
+    {
+      "ins": "339I",
+      "year": 2026,
+      "chemicalId": "1100",
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/1100",
+      "intakeStatus": "PARSED_EXPOSURE"
+    },
+    {
+      "ins": "339II",
+      "year": 2026,
+      "chemicalId": "382",
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/382",
+      "intakeStatus": "PARSED_EXPOSURE"
+    },
+    {
+      "ins": "339III",
+      "year": 2026,
+      "chemicalId": "506",
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/506",
+      "intakeStatus": "PARSED_EXPOSURE"
+    },
+    {
+      "ins": "340",
+      "year": 2026,
+      "chemicalId": "505",
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/505",
+      "intakeStatus": "PARSED_EXPOSURE"
+    },
+    {
+      "ins": "340II",
+      "year": 2026,
+      "chemicalId": "410",
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/410",
+      "intakeStatus": "PARSED_EXPOSURE"
+    },
+    {
+      "ins": "341",
+      "year": 2026,
+      "chemicalId": "607",
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/607",
+      "intakeStatus": "INTAKE_PRESENT_NO_EXPLICIT_COMPARISON"
+    },
+    {
+      "ins": "342",
+      "year": 1983,
+      "chemicalId": "469",
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/469",
+      "intakeStatus": "INTAKE_PRESENT_NO_EXPLICIT_COMPARISON"
+    },
+    {
+      "ins": "343",
+      "year": 1982,
+      "chemicalId": "333",
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/333",
+      "intakeStatus": "INTAKE_PRESENT_NO_EXPLICIT_COMPARISON"
+    },
+    {
+      "ins": "355",
+      "year": 2025,
+      "chemicalId": "194",
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/194",
+      "intakeStatus": "PARSED_EXPOSURE"
+    },
+    {
+      "ins": "381",
+      "year": 1985,
+      "chemicalId": "40",
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/40",
+      "intakeStatus": "INTAKE_PRESENT_NO_EXPLICIT_COMPARISON"
+    },
+    {
+      "ins": "392",
+      "year": 2025,
+      "chemicalId": "6311",
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/6311",
+      "intakeStatus": "PARSED_EXPOSURE"
+    },
+    {
+      "ins": "410",
+      "year": 2025,
+      "chemicalId": "940",
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/940",
+      "intakeStatus": "PARSED_EXPOSURE"
+    },
+    {
+      "ins": "432",
+      "year": 2026,
+      "chemicalId": "1139",
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/1139",
+      "intakeStatus": "PARSED_EXPOSURE"
+    },
+    {
+      "ins": "433",
+      "year": 2026,
+      "chemicalId": "2507",
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2507",
+      "intakeStatus": "PARSED_EXPOSURE"
+    },
+    {
+      "ins": "434",
+      "year": 2026,
+      "chemicalId": "396",
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/396",
+      "intakeStatus": "PARSED_EXPOSURE"
+    },
+    {
+      "ins": "435",
+      "year": 2026,
+      "chemicalId": "397",
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/397",
+      "intakeStatus": "PARSED_EXPOSURE"
+    },
+    {
+      "ins": "436",
+      "year": 2026,
+      "chemicalId": "2528",
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2528",
+      "intakeStatus": "PARSED_EXPOSURE"
+    },
+    {
+      "ins": "450",
+      "year": 2001,
+      "chemicalId": "2037",
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2037",
+      "intakeStatus": "INTAKE_PRESENT_NO_EXPLICIT_COMPARISON"
+    },
+    {
+      "ins": "450I",
+      "year": 1982,
+      "chemicalId": "383",
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/383",
+      "intakeStatus": "INTAKE_PRESENT_NO_EXPLICIT_COMPARISON"
+    },
+    {
+      "ins": "450III",
+      "year": 1982,
+      "chemicalId": "4000",
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/4000",
+      "intakeStatus": "INTAKE_PRESENT_NO_EXPLICIT_COMPARISON"
+    },
+    {
+      "ins": "450V",
+      "year": 1982,
+      "chemicalId": "247",
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/247",
+      "intakeStatus": "INTAKE_PRESENT_NO_EXPLICIT_COMPARISON"
+    },
+    {
+      "ins": "450VI",
+      "year": 1982,
+      "chemicalId": "2164",
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2164",
+      "intakeStatus": "INTAKE_PRESENT_NO_EXPLICIT_COMPARISON"
+    },
+    {
+      "ins": "450VII",
+      "year": 2001,
+      "chemicalId": "1230",
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/1230",
+      "intakeStatus": "INTAKE_PRESENT_NO_EXPLICIT_COMPARISON"
+    },
+    {
+      "ins": "451I",
+      "year": 2023,
+      "chemicalId": "2181",
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2181",
+      "intakeStatus": "INTAKE_PRESENT_NO_EXPLICIT_COMPARISON"
+    },
+    {
+      "ins": "451II",
+      "year": 1982,
+      "chemicalId": "2382",
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2382",
+      "intakeStatus": "INTAKE_PRESENT_NO_EXPLICIT_COMPARISON"
+    },
+    {
+      "ins": "452I",
+      "year": 1982,
+      "chemicalId": "1288",
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/1288",
+      "intakeStatus": "INTAKE_PRESENT_NO_EXPLICIT_COMPARISON"
+    },
+    {
+      "ins": "452II",
+      "year": 1982,
+      "chemicalId": "2400",
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2400",
+      "intakeStatus": "INTAKE_PRESENT_NO_EXPLICIT_COMPARISON"
+    },
+    {
+      "ins": "452III",
+      "year": 2001,
+      "chemicalId": "984",
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/984",
+      "intakeStatus": "INTAKE_PRESENT_NO_EXPLICIT_COMPARISON"
+    },
+    {
+      "ins": "452IV",
+      "year": 1982,
+      "chemicalId": "2162",
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2162",
+      "intakeStatus": "INTAKE_PRESENT_NO_EXPLICIT_COMPARISON"
+    },
+    {
+      "ins": "452V",
+      "year": 1982,
+      "chemicalId": "2670",
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2670",
+      "intakeStatus": "INTAKE_PRESENT_NO_EXPLICIT_COMPARISON"
+    },
+    {
+      "ins": "470",
+      "year": 2015,
+      "chemicalId": "4275",
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/4275",
+      "intakeStatus": "PARSED_EXPOSURE"
+    },
+    {
+      "ins": "480",
+      "year": 2025,
+      "chemicalId": "830",
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/830",
+      "intakeStatus": "PARSED_EXPOSURE"
+    },
+    {
+      "ins": "491",
+      "year": 2026,
+      "chemicalId": "2271",
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2271",
+      "intakeStatus": "PARSED_EXPOSURE"
+    },
+    {
+      "ins": "493",
+      "year": 2026,
+      "chemicalId": "246",
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/246",
+      "intakeStatus": "PARSED_EXPOSURE"
+    },
+    {
+      "ins": "494",
+      "year": 2026,
+      "chemicalId": "3008",
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/3008",
+      "intakeStatus": "PARSED_EXPOSURE"
+    },
+    {
+      "ins": "495",
+      "year": 2026,
+      "chemicalId": "3009",
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/3009",
+      "intakeStatus": "PARSED_EXPOSURE"
+    },
+    {
+      "ins": "512",
+      "year": 2000,
+      "chemicalId": "2722",
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2722",
+      "intakeStatus": "PARSED_EXPOSURE"
+    },
+    {
+      "ins": "519",
+      "year": 1973,
+      "chemicalId": "274",
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/274",
+      "intakeStatus": "PARSED_EXPOSURE"
+    },
+    {
+      "ins": "523",
+      "year": 1988,
+      "chemicalId": "299",
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/299",
+      "intakeStatus": "PARSED_EXPOSURE"
+    },
+    {
+      "ins": "539",
+      "year": 1998,
+      "chemicalId": "1812",
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/1812",
+      "intakeStatus": "PARSE_FAILED"
+    },
+    {
+      "ins": "541I",
+      "year": 1988,
+      "chemicalId": "2634",
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2634",
+      "intakeStatus": "PARSED_EXPOSURE"
+    },
+    {
+      "ins": "541II",
+      "year": 1988,
+      "chemicalId": "643",
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/643",
+      "intakeStatus": "PARSED_EXPOSURE"
+    },
+    {
+      "ins": "542",
+      "year": 1985,
+      "chemicalId": "185",
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/185",
+      "intakeStatus": "INTAKE_PRESENT_NO_EXPLICIT_COMPARISON"
+    },
+    {
+      "ins": "579",
+      "year": 1987,
+      "chemicalId": "1395",
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/1395",
+      "intakeStatus": "INTAKE_PRESENT_NO_EXPLICIT_COMPARISON"
+    },
+    {
+      "ins": "585",
+      "year": 1989,
+      "chemicalId": "1497",
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/1497",
+      "intakeStatus": "INTAKE_PRESENT_NO_EXPLICIT_COMPARISON"
+    },
+    {
+      "ins": "951",
+      "year": 2023,
+      "chemicalId": "62",
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/62",
+      "intakeStatus": "PARSED_EXPOSURE"
+    },
+    {
+      "ins": "957",
+      "year": 2025,
+      "chemicalId": "4169",
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/4169",
+      "intakeStatus": "PARSED_EXPOSURE"
+    },
+    {
+      "ins": "959",
+      "year": 2026,
+      "chemicalId": "6609",
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/6609",
+      "intakeStatus": "PARSED_EXPOSURE"
+    },
+    {
+      "ins": "960",
+      "year": 2026,
+      "chemicalId": "267",
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/267",
+      "intakeStatus": "PARSED_EXPOSURE"
+    },
+    {
+      "ins": "970",
+      "year": 2026,
+      "chemicalId": "6608",
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/6608",
+      "intakeStatus": "PARSED_EXPOSURE"
+    },
+    {
+      "ins": "999I",
+      "year": 2005,
+      "chemicalId": "4831",
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/4831",
+      "intakeStatus": "PARSED_EXPOSURE"
+    },
+    {
+      "ins": "1209",
+      "year": 2015,
+      "chemicalId": "6192",
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/6192",
+      "intakeStatus": "PARSED_EXPOSURE"
+    }
+  ],
+  "parseFailed": [
+    {
+      "chemicalId": "81",
+      "year": 1998,
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/81",
+      "sourceText": "See SULFITES"
+    },
+    {
+      "chemicalId": "91",
+      "year": 1998,
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/91",
+      "sourceText": "See SULFITES"
+    },
+    {
+      "chemicalId": "126",
+      "year": 2002,
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/126",
+      "sourceText": "See BENZOATES"
+    },
+    {
+      "chemicalId": "275",
+      "year": 1998,
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/275",
+      "sourceText": "Not calculated"
+    },
+    {
+      "chemicalId": "297",
+      "year": 2001,
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/297",
+      "sourceText": "See BENZOATES"
+    },
+    {
+      "chemicalId": "432",
+      "year": 2001,
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/432",
+      "sourceText": "See BENZOATES"
+    },
+    {
+      "chemicalId": "452",
+      "year": 1996,
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/452",
+      "sourceText": "See BENZOATES"
+    },
+    {
+      "chemicalId": "454",
+      "year": 1998,
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/454",
+      "sourceText": "See SULFITES"
+    },
+    {
+      "chemicalId": "473",
+      "year": 2003,
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/473",
+      "sourceText": "Not calculated"
+    },
+    {
+      "chemicalId": "474",
+      "year": 1968,
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/474",
+      "sourceText": "trace amount only present in food, since nystatin only used externally"
+    },
+    {
+      "chemicalId": "516",
+      "year": 2001,
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/516",
+      "sourceText": "See BENZOATES"
+    },
+    {
+      "chemicalId": "548",
+      "year": 1992,
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/548",
+      "sourceText": "NONE ESTABLISHED"
+    },
+    {
+      "chemicalId": "555",
+      "year": 2001,
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/555",
+      "sourceText": "See BENZOATES"
+    },
+    {
+      "chemicalId": "597",
+      "year": 1998,
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/597",
+      "sourceText": "Not calculated"
+    },
+    {
+      "chemicalId": "608",
+      "year": 2002,
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/608",
+      "sourceText": "See BENZOATES"
+    },
+    {
+      "chemicalId": "712",
+      "year": 1993,
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/712",
+      "sourceText": "none calculated"
+    },
+    {
+      "chemicalId": "713",
+      "year": 1993,
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/713",
+      "sourceText": "none calculated"
+    },
+    {
+      "chemicalId": "753",
+      "year": 2001,
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/753",
+      "sourceText": "See BENZOATES"
+    },
+    {
+      "chemicalId": "794",
+      "year": 1989,
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/794",
+      "sourceText": "NONE ESTABLISHED"
+    },
+    {
+      "chemicalId": "860",
+      "year": 2003,
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/860",
+      "sourceText": "Not calculated"
+    },
+    {
+      "chemicalId": "947",
+      "year": 1979,
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/947",
+      "sourceText": "See IRON OXIDES"
+    },
+    {
+      "chemicalId": "948",
+      "year": 1979,
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/948",
+      "sourceText": "See IRON OXIDES"
+    },
+    {
+      "chemicalId": "985",
+      "year": 1998,
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/985",
+      "sourceText": "See SULFITES"
+    },
+    {
+      "chemicalId": "1045",
+      "year": 2003,
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/1045",
+      "sourceText": "Not calculated"
+    },
+    {
+      "chemicalId": "1086",
+      "year": 1992,
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/1086",
+      "sourceText": "Not established"
+    },
+    {
+      "chemicalId": "1098",
+      "year": 1996,
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/1098",
+      "sourceText": "See BENZOATES"
+    },
+    {
+      "chemicalId": "1155",
+      "year": 1991,
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/1155",
+      "sourceText": "NOT ESTABLISHED, genotoxic carcinogen"
+    },
+    {
+      "chemicalId": "1165",
+      "year": 2001,
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/1165",
+      "sourceText": "See BENZOATES"
+    },
+    {
+      "chemicalId": "1213",
+      "year": 2003,
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/1213",
+      "sourceText": "Not calculated"
+    },
+    {
+      "chemicalId": "1223",
+      "year": 1998,
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/1223",
+      "sourceText": "Not calculated"
+    },
+    {
+      "chemicalId": "1361",
+      "year": 1998,
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/1361",
+      "sourceText": "See SULFITES"
+    },
+    {
+      "chemicalId": "1378",
+      "year": 1979,
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/1378",
+      "sourceText": "See IRON OXIDES"
+    },
+    {
+      "chemicalId": "1406",
+      "year": 2002,
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/1406",
+      "sourceText": "See BENZOATES"
+    },
+    {
+      "chemicalId": "1472",
+      "year": 1960,
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/1472",
+      "sourceText": "NONE ESTABLISHED"
+    },
+    {
+      "chemicalId": "1564",
+      "year": 2001,
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/1564",
+      "sourceText": "l"
+    },
+    {
+      "chemicalId": "1699",
+      "year": 1979,
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/1699",
+      "sourceText": "See IRON OXIDES"
+    },
+    {
+      "chemicalId": "1703",
+      "year": 1984,
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/1703",
+      "sourceText": "NONE ESTABLISHED"
+    },
+    {
+      "chemicalId": "1753",
+      "year": 2001,
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/1753",
+      "sourceText": "See BENZOATES"
+    },
+    {
+      "chemicalId": "1754",
+      "year": 2002,
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/1754",
+      "sourceText": "See BENZOATES"
+    },
+    {
+      "chemicalId": "1782",
+      "year": 1993,
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/1782",
+      "sourceText": "not calculated"
+    },
+    {
+      "chemicalId": "1812",
+      "year": 1998,
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/1812",
+      "sourceText": "See SULFITES"
+    },
+    {
+      "chemicalId": "1824",
+      "year": 1998,
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/1824",
+      "sourceText": "See SULFITES"
+    },
+    {
+      "chemicalId": "1835",
+      "year": 2000,
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/1835",
+      "sourceText": "Range of excess intakes total estrogens: 30-50 ng/p/d ("
+    },
+    {
+      "chemicalId": "1860",
+      "year": 1960,
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/1860",
+      "sourceText": "NONE ESTABLISHED"
+    },
+    {
+      "chemicalId": "1862",
+      "year": 1960,
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/1862",
+      "sourceText": "NONE ESTABLISHED, carcinogenic"
+    },
+    {
+      "chemicalId": "1863",
+      "year": 2011,
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/1863",
+      "sourceText": "PTWI withdrawn"
+    },
+    {
+      "chemicalId": "1882",
+      "year": 2008,
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/1882",
+      "sourceText": "TMDI: 1 µg/day per person"
+    },
+    {
+      "chemicalId": "1887",
+      "year": 1992,
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/1887",
+      "sourceText": "NONE ESTABLISHED"
+    },
+    {
+      "chemicalId": "1916",
+      "year": 1960,
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/1916",
+      "sourceText": "NONE ESTABLISHED"
+    },
+    {
+      "chemicalId": "2049",
+      "year": 1960,
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2049",
+      "sourceText": "NONE ESTABLISHED"
+    },
+    {
+      "chemicalId": "2099",
+      "year": 1996,
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2099",
+      "sourceText": "See BENZOATES"
+    },
+    {
+      "chemicalId": "2146",
+      "year": 1998,
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2146",
+      "sourceText": "Not calculated"
+    },
+    {
+      "chemicalId": "2155",
+      "year": 1968,
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2155",
+      "sourceText": "None established"
+    },
+    {
+      "chemicalId": "2176",
+      "year": 2003,
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2176",
+      "sourceText": "Not calculated"
+    },
+    {
+      "chemicalId": "2182",
+      "year": 1988,
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2182",
+      "sourceText": "TMDI 70 µg/d for 70-kg person"
+    },
+    {
+      "chemicalId": "2269",
+      "year": 1998,
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2269",
+      "sourceText": "See SULFITES"
+    },
+    {
+      "chemicalId": "2272",
+      "year": 1998,
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2272",
+      "sourceText": "See SULFITES"
+    },
+    {
+      "chemicalId": "2283",
+      "year": 1996,
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2283",
+      "sourceText": "See BENZOATES"
+    },
+    {
+      "chemicalId": "2325",
+      "year": 2001,
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2325",
+      "sourceText": "l"
+    },
+    {
+      "chemicalId": "2348",
+      "year": 1998,
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2348",
+      "sourceText": "Not calculated"
+    },
+    {
+      "chemicalId": "2349",
+      "year": 1998,
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2349",
+      "sourceText": "Not calculated"
+    },
+    {
+      "chemicalId": "2368",
+      "year": 1998,
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2368",
+      "sourceText": "See SULFITES"
+    },
+    {
+      "chemicalId": "2445",
+      "year": 1998,
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2445",
+      "sourceText": "See SULFITES"
+    },
+    {
+      "chemicalId": "2483",
+      "year": 1998,
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2483",
+      "sourceText": "See SULFITES"
+    },
+    {
+      "chemicalId": "2593",
+      "year": 1979,
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2593",
+      "sourceText": "See IRON OXIDES"
+    },
+    {
+      "chemicalId": "2612",
+      "year": 1989,
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2612",
+      "sourceText": "NONE ESTABLISHED"
+    },
+    {
+      "chemicalId": "2640",
+      "year": 1998,
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2640",
+      "sourceText": "See SULFITES"
+    },
+    {
+      "chemicalId": "2679",
+      "year": 1998,
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2679",
+      "sourceText": "Not calculated"
+    },
+    {
+      "chemicalId": "2729",
+      "year": 1988,
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2729",
+      "sourceText": "TMDI 70 µg/d for 70-kg person"
+    },
+    {
+      "chemicalId": "2796",
+      "year": 2001,
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2796",
+      "sourceText": "See BENZOATES"
+    },
+    {
+      "chemicalId": "2821",
+      "year": 1998,
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2821",
+      "sourceText": "See SULFITES"
+    },
+    {
+      "chemicalId": "2993",
+      "year": 1998,
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2993",
+      "sourceText": "See SULFITES"
+    },
+    {
+      "chemicalId": "3005",
+      "year": 1986,
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/3005",
+      "sourceText": "NONE ESTABLISHED, genotoxic carcinogen"
+    },
+    {
+      "chemicalId": "3264",
+      "year": 2004,
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/3264",
+      "sourceText": "Not calculated"
+    },
+    {
+      "chemicalId": "3503",
+      "year": 1998,
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/3503",
+      "sourceText": "See SULFITES"
+    },
+    {
+      "chemicalId": "3860",
+      "year": 1988,
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/3860",
+      "sourceText": "TMDI 70 µg/d for 70-kg person"
+    },
+    {
+      "chemicalId": "3986",
+      "year": 2001,
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/3986",
+      "sourceText": "l"
+    },
+    {
+      "chemicalId": "4076",
+      "year": 1998,
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/4076",
+      "sourceText": "Not calculated"
+    },
+    {
+      "chemicalId": "4080",
+      "year": 1979,
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/4080",
+      "sourceText": "See IRON OXIDES"
+    },
+    {
+      "chemicalId": "4131",
+      "year": 2001,
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/4131",
+      "sourceText": "l"
+    },
+    {
+      "chemicalId": "4530",
+      "year": 2002,
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/4530",
+      "sourceText": "See BENZOATES"
+    },
+    {
+      "chemicalId": "4724",
+      "year": 2001,
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/4724",
+      "sourceText": "See BENZOATES"
+    },
+    {
+      "chemicalId": "4726",
+      "year": 2001,
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/4726",
+      "sourceText": "See BENZOATES"
+    },
+    {
+      "chemicalId": "4762",
+      "year": 2001,
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/4762",
+      "sourceText": "See BENZOATES"
+    },
+    {
+      "chemicalId": "5124",
+      "year": 2003,
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/5124",
+      "sourceText": "Not calculated"
+    },
+    {
+      "chemicalId": "5245",
+      "year": 2001,
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/5245",
+      "sourceText": "See BENZOATES"
+    },
+    {
+      "chemicalId": "5579",
+      "year": 2001,
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/5579",
+      "sourceText": "See BENZOATES"
+    },
+    {
+      "chemicalId": "5580",
+      "year": 2001,
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/5580",
+      "sourceText": "See BENZOATES"
+    },
+    {
+      "chemicalId": "6066",
+      "year": 2011,
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/6066",
+      "sourceText": "TMDI: 31 μ g/person/day"
+    },
+    {
+      "chemicalId": "6067",
+      "year": 2011,
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/6067",
+      "sourceText": "TMDI: 1400 μg/day"
+    },
+    {
+      "chemicalId": "6457",
+      "year": 2016,
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/6457",
+      "sourceText": "NOT ESTABLISHED, genotoxic carcinogen"
+    },
+    {
+      "chemicalId": "6458",
+      "year": 2016,
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/6458",
+      "sourceText": "NOT ESTABLISHED, genotoxic carcinogen"
+    }
+  ],
+  "spotChecks": [
+    {
+      "code": "E951",
+      "jecfaMatch": true,
+      "intakePresent": true,
+      "evaluations": [
+        {
+          "year": 2023,
+          "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/62",
+          "intakeStatus": "PARSED_EXPOSURE",
+          "intakeText": "JECFA determined that dietary exposure estimates to aspartame at the mean of up to 10 mg/kg bw per day for children and 5 mg/kg bw per day for adults, and for high dietary exposures up to 20 mg/kg bw per day for children and 12 mg/kg bw per day for adults, were appropriate for the present assessment. JECFA noted that these dietary exposure estimates do not exceed the ADI. JECFA therefore concluded that dietary exposure to aspartame does not pose a health concern.",
+          "parsed": [
+            {
+              "authority": "JECFA",
+              "year": 2023,
+              "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/62",
+              "scope": "unknown",
+              "population": "children, adults",
+              "scenario": "mean",
+              "exposureValues": [
+                {
+                  "value": 10,
+                  "unit": "mg/kg bw per day",
+                  "percentile": null,
+                  "population": "children, adults",
+                  "rawText": "10 mg/kg bw per day"
+                },
+                {
+                  "value": 5,
+                  "unit": "mg/kg bw per day",
+                  "percentile": null,
+                  "population": "children, adults",
+                  "rawText": "5 mg/kg bw per day"
+                },
+                {
+                  "value": 20,
+                  "unit": "mg/kg bw per day",
+                  "percentile": null,
+                  "population": "children, adults",
+                  "rawText": "20 mg/kg bw per day"
+                },
+                {
+                  "value": 12,
+                  "unit": "mg/kg bw per day",
+                  "percentile": null,
+                  "population": "children, adults",
+                  "rawText": "12 mg/kg bw per day"
+                }
+              ],
+              "referenceValue": {
+                "type": "ADI",
+                "rawText": "0–40 mg/kg bw Comments: Overall, JECFA concluded that there was no convincing evidence from experimental animal or human data that aspartame has adverse effects after ingestion. This conclusion is underpinned by the information that aspartame is fully hydrolysed in the gastrointestinal tract into metabolites that are identical to those absorbed after consumption of common foods, and that no aspartame enters the systemic circulation. JECFA concluded that the data evaluated at the present meeting indicated no reason to change the previously established ADI of 0–40 mg/kg bw for aspartame. JECFA therefore reaffirmed the ADI of 0–40 mg/kg bw for aspartame at the present meeting."
+              },
+              "comparisonStatus": "not_quantified",
+              "authorityConclusion": "no_explicit_conclusion",
+              "exposureUncertainty": [],
+              "sourceText": "JECFA determined that dietary exposure estimates to aspartame at the mean of up to 10 mg/kg bw per day for children and 5 mg/kg bw per day for adults, and for high dietary exposures up to 20 mg/kg bw per day for children and 12 mg/kg bw per day for adults, were appropriate for the present assessment. JECFA noted that these dietary exposure estimates do not exceed the ADI. JECFA therefore concluded that dietary exposure to aspartame does not pose a health concern.",
+              "sourceSentence": "JECFA determined that dietary exposure estimates to aspartame at the mean of up to 10 mg/kg bw per day for children and 5 mg/kg bw per day for adults, and for high dietary exposures up to 20 mg/kg bw per day for children and 12 mg/kg bw per day for adults, were appropriate for the present assessment."
+            },
+            {
+              "authority": "JECFA",
+              "year": 2023,
+              "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/62",
+              "scope": "unknown",
+              "population": null,
+              "scenario": null,
+              "exposureValues": [],
+              "referenceValue": {
+                "type": "ADI",
+                "rawText": "0–40 mg/kg bw Comments: Overall, JECFA concluded that there was no convincing evidence from experimental animal or human data that aspartame has adverse effects after ingestion. This conclusion is underpinned by the information that aspartame is fully hydrolysed in the gastrointestinal tract into metabolites that are identical to those absorbed after consumption of common foods, and that no aspartame enters the systemic circulation. JECFA concluded that the data evaluated at the present meeting indicated no reason to change the previously established ADI of 0–40 mg/kg bw for aspartame. JECFA therefore reaffirmed the ADI of 0–40 mg/kg bw for aspartame at the present meeting."
+              },
+              "comparisonStatus": "below_reference",
+              "authorityConclusion": "no_explicit_conclusion",
+              "exposureUncertainty": [],
+              "sourceText": "JECFA determined that dietary exposure estimates to aspartame at the mean of up to 10 mg/kg bw per day for children and 5 mg/kg bw per day for adults, and for high dietary exposures up to 20 mg/kg bw per day for children and 12 mg/kg bw per day for adults, were appropriate for the present assessment. JECFA noted that these dietary exposure estimates do not exceed the ADI. JECFA therefore concluded that dietary exposure to aspartame does not pose a health concern.",
+              "sourceSentence": "JECFA noted that these dietary exposure estimates do not exceed the ADI."
+            },
+            {
+              "authority": "JECFA",
+              "year": 2023,
+              "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/62",
+              "scope": "unknown",
+              "population": null,
+              "scenario": null,
+              "exposureValues": [],
+              "referenceValue": {
+                "type": "ADI",
+                "rawText": "0–40 mg/kg bw Comments: Overall, JECFA concluded that there was no convincing evidence from experimental animal or human data that aspartame has adverse effects after ingestion. This conclusion is underpinned by the information that aspartame is fully hydrolysed in the gastrointestinal tract into metabolites that are identical to those absorbed after consumption of common foods, and that no aspartame enters the systemic circulation. JECFA concluded that the data evaluated at the present meeting indicated no reason to change the previously established ADI of 0–40 mg/kg bw for aspartame. JECFA therefore reaffirmed the ADI of 0–40 mg/kg bw for aspartame at the present meeting."
+              },
+              "comparisonStatus": "not_quantified",
+              "authorityConclusion": "no_safety_concern_at_assessed_exposure",
+              "exposureUncertainty": [],
+              "sourceText": "JECFA determined that dietary exposure estimates to aspartame at the mean of up to 10 mg/kg bw per day for children and 5 mg/kg bw per day for adults, and for high dietary exposures up to 20 mg/kg bw per day for children and 12 mg/kg bw per day for adults, were appropriate for the present assessment. JECFA noted that these dietary exposure estimates do not exceed the ADI. JECFA therefore concluded that dietary exposure to aspartame does not pose a health concern.",
+              "sourceSentence": "JECFA therefore concluded that dietary exposure to aspartame does not pose a health concern."
+            }
+          ]
+        },
+        {
+          "year": 2023,
+          "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/1850",
+          "intakeStatus": "PARSED_EXPOSURE",
+          "intakeText": "JECFA determined that dietary exposure estimates to aspartame at the mean of up to 10 mg/kg bw per day for children and 5 mg/kg bw per day for adults, and for high dietary exposures up to 20 mg/kg bw per day for children and 12 mg/kg bw per day for adults, were appropriate for the present assessment. JECFA noted that these dietary exposure estimates do not exceed the ADI. JECFA therefore concluded that dietary exposure to aspartame does not pose a health concern.",
+          "parsed": [
+            {
+              "authority": "JECFA",
+              "year": 2023,
+              "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/1850",
+              "scope": "unknown",
+              "population": "children, adults",
+              "scenario": "mean",
+              "exposureValues": [
+                {
+                  "value": 10,
+                  "unit": "mg/kg bw per day",
+                  "percentile": null,
+                  "population": "children, adults",
+                  "rawText": "10 mg/kg bw per day"
+                },
+                {
+                  "value": 5,
+                  "unit": "mg/kg bw per day",
+                  "percentile": null,
+                  "population": "children, adults",
+                  "rawText": "5 mg/kg bw per day"
+                },
+                {
+                  "value": 20,
+                  "unit": "mg/kg bw per day",
+                  "percentile": null,
+                  "population": "children, adults",
+                  "rawText": "20 mg/kg bw per day"
+                },
+                {
+                  "value": 12,
+                  "unit": "mg/kg bw per day",
+                  "percentile": null,
+                  "population": "children, adults",
+                  "rawText": "12 mg/kg bw per day"
+                }
+              ],
+              "referenceValue": {
+                "type": "ADI",
+                "rawText": "0–40 mg/kg bw Comments: Overall, JECFA concluded that there was no convincing evidence from experimental animal or human data that aspartame has adverse effects after ingestion. This conclusion is underpinned by the information that aspartame is fully hydrolysed in the gastrointestinal tract into metabolites that are identical to those absorbed after consumption of common foods, and that no aspartame enters the systemic circulation. JECFA concluded that the data evaluated at the present meeting indicated no reason to change the previously established ADI of 0–40 mg/kg bw for aspartame. JECFA therefore reaffirmed the ADI of 0–40 mg/kg bw for aspartame at the present meeting."
+              },
+              "comparisonStatus": "not_quantified",
+              "authorityConclusion": "no_explicit_conclusion",
+              "exposureUncertainty": [],
+              "sourceText": "JECFA determined that dietary exposure estimates to aspartame at the mean of up to 10 mg/kg bw per day for children and 5 mg/kg bw per day for adults, and for high dietary exposures up to 20 mg/kg bw per day for children and 12 mg/kg bw per day for adults, were appropriate for the present assessment. JECFA noted that these dietary exposure estimates do not exceed the ADI. JECFA therefore concluded that dietary exposure to aspartame does not pose a health concern.",
+              "sourceSentence": "JECFA determined that dietary exposure estimates to aspartame at the mean of up to 10 mg/kg bw per day for children and 5 mg/kg bw per day for adults, and for high dietary exposures up to 20 mg/kg bw per day for children and 12 mg/kg bw per day for adults, were appropriate for the present assessment."
+            },
+            {
+              "authority": "JECFA",
+              "year": 2023,
+              "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/1850",
+              "scope": "unknown",
+              "population": null,
+              "scenario": null,
+              "exposureValues": [],
+              "referenceValue": {
+                "type": "ADI",
+                "rawText": "0–40 mg/kg bw Comments: Overall, JECFA concluded that there was no convincing evidence from experimental animal or human data that aspartame has adverse effects after ingestion. This conclusion is underpinned by the information that aspartame is fully hydrolysed in the gastrointestinal tract into metabolites that are identical to those absorbed after consumption of common foods, and that no aspartame enters the systemic circulation. JECFA concluded that the data evaluated at the present meeting indicated no reason to change the previously established ADI of 0–40 mg/kg bw for aspartame. JECFA therefore reaffirmed the ADI of 0–40 mg/kg bw for aspartame at the present meeting."
+              },
+              "comparisonStatus": "below_reference",
+              "authorityConclusion": "no_explicit_conclusion",
+              "exposureUncertainty": [],
+              "sourceText": "JECFA determined that dietary exposure estimates to aspartame at the mean of up to 10 mg/kg bw per day for children and 5 mg/kg bw per day for adults, and for high dietary exposures up to 20 mg/kg bw per day for children and 12 mg/kg bw per day for adults, were appropriate for the present assessment. JECFA noted that these dietary exposure estimates do not exceed the ADI. JECFA therefore concluded that dietary exposure to aspartame does not pose a health concern.",
+              "sourceSentence": "JECFA noted that these dietary exposure estimates do not exceed the ADI."
+            },
+            {
+              "authority": "JECFA",
+              "year": 2023,
+              "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/1850",
+              "scope": "unknown",
+              "population": null,
+              "scenario": null,
+              "exposureValues": [],
+              "referenceValue": {
+                "type": "ADI",
+                "rawText": "0–40 mg/kg bw Comments: Overall, JECFA concluded that there was no convincing evidence from experimental animal or human data that aspartame has adverse effects after ingestion. This conclusion is underpinned by the information that aspartame is fully hydrolysed in the gastrointestinal tract into metabolites that are identical to those absorbed after consumption of common foods, and that no aspartame enters the systemic circulation. JECFA concluded that the data evaluated at the present meeting indicated no reason to change the previously established ADI of 0–40 mg/kg bw for aspartame. JECFA therefore reaffirmed the ADI of 0–40 mg/kg bw for aspartame at the present meeting."
+              },
+              "comparisonStatus": "not_quantified",
+              "authorityConclusion": "no_safety_concern_at_assessed_exposure",
+              "exposureUncertainty": [],
+              "sourceText": "JECFA determined that dietary exposure estimates to aspartame at the mean of up to 10 mg/kg bw per day for children and 5 mg/kg bw per day for adults, and for high dietary exposures up to 20 mg/kg bw per day for children and 12 mg/kg bw per day for adults, were appropriate for the present assessment. JECFA noted that these dietary exposure estimates do not exceed the ADI. JECFA therefore concluded that dietary exposure to aspartame does not pose a health concern.",
+              "sourceSentence": "JECFA therefore concluded that dietary exposure to aspartame does not pose a health concern."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "code": "E250",
+      "jecfaMatch": true,
+      "intakePresent": false,
+      "evaluations": []
+    },
+    {
+      "code": "E150D",
+      "jecfaMatch": false,
+      "intakePresent": false,
+      "evaluations": []
+    },
+    {
+      "code": "E338",
+      "jecfaMatch": true,
+      "intakePresent": true,
+      "evaluations": [
+        {
+          "year": 1982,
+          "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/1777",
+          "intakeStatus": "INTAKE_PRESENT_NO_EXPLICIT_COMPARISON",
+          "intakeText": "MTDI 70 mg/kg bw (as P)",
+          "parsed": [
+            {
+              "authority": "JECFA",
+              "year": 1982,
+              "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/1777",
+              "scope": "unknown",
+              "population": null,
+              "scenario": null,
+              "exposureValues": [],
+              "referenceValue": {
+                "type": "ADI",
+                "rawText": null
+              },
+              "comparisonStatus": "not_quantified",
+              "authorityConclusion": "no_explicit_conclusion",
+              "exposureUncertainty": [],
+              "sourceText": "MTDI 70 mg/kg bw (as P)",
+              "sourceSentence": "MTDI 70 mg/kg bw (as P)"
+            }
+          ]
+        },
+        {
+          "year": 1982,
+          "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2530",
+          "intakeStatus": "INTAKE_PRESENT_NO_EXPLICIT_COMPARISON",
+          "intakeText": "MTDI 70 mg/kg bw (as P)",
+          "parsed": [
+            {
+              "authority": "JECFA",
+              "year": 1982,
+              "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2530",
+              "scope": "unknown",
+              "population": null,
+              "scenario": null,
+              "exposureValues": [],
+              "referenceValue": {
+                "type": "ADI",
+                "rawText": null
+              },
+              "comparisonStatus": "not_quantified",
+              "authorityConclusion": "no_explicit_conclusion",
+              "exposureUncertainty": [],
+              "sourceText": "MTDI 70 mg/kg bw (as P)",
+              "sourceSentence": "MTDI 70 mg/kg bw (as P)"
+            }
+          ]
+        },
+        {
+          "year": 2009,
+          "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/5877",
+          "intakeStatus": "INTAKE_PRESENT_NO_EXPLICIT_COMPARISON",
+          "intakeText": "PMTDI 0.8 mg/kg bw",
+          "parsed": [
+            {
+              "authority": "JECFA",
+              "year": 2009,
+              "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/5877",
+              "scope": "unknown",
+              "population": null,
+              "scenario": null,
+              "exposureValues": [],
+              "referenceValue": {
+                "type": "ADI",
+                "rawText": null
+              },
+              "comparisonStatus": "not_quantified",
+              "authorityConclusion": "no_explicit_conclusion",
+              "exposureUncertainty": [],
+              "sourceText": "PMTDI 0.8 mg/kg bw",
+              "sourceSentence": "PMTDI 0.8 mg/kg bw"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "code": "E621",
+      "jecfaMatch": true,
+      "intakePresent": false,
+      "evaluations": []
+    },
+    {
+      "code": "E955",
+      "jecfaMatch": true,
+      "intakePresent": false,
+      "evaluations": []
+    },
+    {
+      "code": "E202",
+      "jecfaMatch": true,
+      "intakePresent": false,
+      "evaluations": []
+    },
+    {
+      "code": "E330",
+      "jecfaMatch": true,
+      "intakePresent": false,
+      "evaluations": []
+    },
+    {
+      "code": "E407",
+      "jecfaMatch": true,
+      "intakePresent": false,
+      "evaluations": []
+    },
+    {
+      "code": "E471",
+      "jecfaMatch": true,
+      "intakePresent": false,
+      "evaluations": []
+    }
+  ],
+  "validation": {
+    "evaluateAdditiveRiskModified": false,
+    "profilesModified": false,
+    "supabaseUpsertPerformed": false,
+    "mobileOrUiModified": false
+  }
+}

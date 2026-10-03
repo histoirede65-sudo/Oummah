@@ -1,0 +1,778 @@
+{
+  "schemaVersion": "1.0",
+  "generatedAt": "2026-09-30T19:19:27.055Z",
+  "input": {
+    "totalRequested": 30,
+    "codes": [
+      "E102",
+      "E104",
+      "E110",
+      "E122",
+      "E123",
+      "E124",
+      "E127",
+      "E129",
+      "E131",
+      "E132",
+      "E133",
+      "E140",
+      "E141",
+      "E142",
+      "E150A",
+      "E150B",
+      "E150C",
+      "E150D",
+      "E151",
+      "E153",
+      "E155",
+      "E160B",
+      "E160C",
+      "E160D",
+      "E160E",
+      "E161B",
+      "E161G",
+      "E163",
+      "E171",
+      "E172"
+    ]
+  },
+  "sources": [
+    "EFSA",
+    "JECFA",
+    "ANSES",
+    "ECHA",
+    "CIRC/IARC"
+  ],
+  "totals": {
+    "totalCodes": 30,
+    "codesWithEfsaSource": 0,
+    "codesWithJecfaSource": 0,
+    "codesWithOtherOfficialSource": 1,
+    "codesWithExactMatch": 0,
+    "codesWithStrongMatch": 0,
+    "codesWithPossibleOnly": 1,
+    "codesWithNoOfficialMatch": 29,
+    "codesWithADI": 0,
+    "codesWithExposureAssessment": 0,
+    "codesWithEffects": 0,
+    "codesWithAuthorityConclusion": 0,
+    "documentsFoundTotal": 2,
+    "profilesAutomatable": 0
+  },
+  "quality": [
+    {
+      "code": "E102",
+      "name": "Tartrazine",
+      "sourcesFound": [],
+      "match": null,
+      "latestAssessmentYear": null,
+      "adiAvailable": false,
+      "authorityConclusionAvailable": false,
+      "automatable": false,
+      "reasonIfNotAutomatable": "EFSA: HTTP 401; ECHA: HTTP 403"
+    },
+    {
+      "code": "E104",
+      "name": "Quinoline Yellow",
+      "sourcesFound": [],
+      "match": null,
+      "latestAssessmentYear": null,
+      "adiAvailable": false,
+      "authorityConclusionAvailable": false,
+      "automatable": false,
+      "reasonIfNotAutomatable": "EFSA: HTTP 401; ECHA: HTTP 403"
+    },
+    {
+      "code": "E110",
+      "name": "Sunset Yellow FCF/Orange Yellow S",
+      "sourcesFound": [],
+      "match": null,
+      "latestAssessmentYear": null,
+      "adiAvailable": false,
+      "authorityConclusionAvailable": false,
+      "automatable": false,
+      "reasonIfNotAutomatable": "EFSA: HTTP 401; ECHA: HTTP 403"
+    },
+    {
+      "code": "E122",
+      "name": "Azorubine, Carmoisine",
+      "sourcesFound": [],
+      "match": null,
+      "latestAssessmentYear": null,
+      "adiAvailable": false,
+      "authorityConclusionAvailable": false,
+      "automatable": false,
+      "reasonIfNotAutomatable": "EFSA: HTTP 401; ECHA: HTTP 403"
+    },
+    {
+      "code": "E123",
+      "name": "Amaranth",
+      "sourcesFound": [],
+      "match": null,
+      "latestAssessmentYear": null,
+      "adiAvailable": false,
+      "authorityConclusionAvailable": false,
+      "automatable": false,
+      "reasonIfNotAutomatable": "EFSA: HTTP 401; ECHA: HTTP 403"
+    },
+    {
+      "code": "E124",
+      "name": "Ponceau 4R, Cochineal Red A",
+      "sourcesFound": [],
+      "match": null,
+      "latestAssessmentYear": null,
+      "adiAvailable": false,
+      "authorityConclusionAvailable": false,
+      "automatable": false,
+      "reasonIfNotAutomatable": "EFSA: HTTP 401; ECHA: HTTP 403"
+    },
+    {
+      "code": "E127",
+      "name": "Erythrosine",
+      "sourcesFound": [],
+      "match": null,
+      "latestAssessmentYear": null,
+      "adiAvailable": false,
+      "authorityConclusionAvailable": false,
+      "automatable": false,
+      "reasonIfNotAutomatable": "EFSA: HTTP 401; ECHA: HTTP 403"
+    },
+    {
+      "code": "E129",
+      "name": "Allura Red AC",
+      "sourcesFound": [],
+      "match": null,
+      "latestAssessmentYear": null,
+      "adiAvailable": false,
+      "authorityConclusionAvailable": false,
+      "automatable": false,
+      "reasonIfNotAutomatable": "EFSA: HTTP 401; ECHA: HTTP 403"
+    },
+    {
+      "code": "E131",
+      "name": "Patent Blue V",
+      "sourcesFound": [],
+      "match": null,
+      "latestAssessmentYear": null,
+      "adiAvailable": false,
+      "authorityConclusionAvailable": false,
+      "automatable": false,
+      "reasonIfNotAutomatable": "EFSA: HTTP 401; ECHA: HTTP 403"
+    },
+    {
+      "code": "E132",
+      "name": "Indigotine, Indigo carmine",
+      "sourcesFound": [],
+      "match": null,
+      "latestAssessmentYear": null,
+      "adiAvailable": false,
+      "authorityConclusionAvailable": false,
+      "automatable": false,
+      "reasonIfNotAutomatable": "EFSA: HTTP 401; ECHA: HTTP 403"
+    },
+    {
+      "code": "E133",
+      "name": "Brilliant Blue FCF",
+      "sourcesFound": [],
+      "match": null,
+      "latestAssessmentYear": null,
+      "adiAvailable": false,
+      "authorityConclusionAvailable": false,
+      "automatable": false,
+      "reasonIfNotAutomatable": "EFSA: HTTP 401; ECHA: HTTP 403"
+    },
+    {
+      "code": "E140",
+      "name": "Chlorophylls and Chlorophyllins",
+      "sourcesFound": [],
+      "match": null,
+      "latestAssessmentYear": null,
+      "adiAvailable": false,
+      "authorityConclusionAvailable": false,
+      "automatable": false,
+      "reasonIfNotAutomatable": "EFSA: HTTP 401; ECHA: HTTP 403"
+    },
+    {
+      "code": "E141",
+      "name": "Copper complexes of chlorophylls and chlorophyllins",
+      "sourcesFound": [],
+      "match": null,
+      "latestAssessmentYear": null,
+      "adiAvailable": false,
+      "authorityConclusionAvailable": false,
+      "automatable": false,
+      "reasonIfNotAutomatable": "EFSA: HTTP 401; ECHA: HTTP 403"
+    },
+    {
+      "code": "E142",
+      "name": "Green S",
+      "sourcesFound": [],
+      "match": null,
+      "latestAssessmentYear": null,
+      "adiAvailable": false,
+      "authorityConclusionAvailable": false,
+      "automatable": false,
+      "reasonIfNotAutomatable": "EFSA: HTTP 401; ECHA: HTTP 403"
+    },
+    {
+      "code": "E150A",
+      "name": "Plain caramel",
+      "sourcesFound": [],
+      "match": null,
+      "latestAssessmentYear": null,
+      "adiAvailable": false,
+      "authorityConclusionAvailable": false,
+      "automatable": false,
+      "reasonIfNotAutomatable": "EFSA: HTTP 401; ECHA: HTTP 403"
+    },
+    {
+      "code": "E150B",
+      "name": "Caustic sulphite caramel",
+      "sourcesFound": [],
+      "match": null,
+      "latestAssessmentYear": null,
+      "adiAvailable": false,
+      "authorityConclusionAvailable": false,
+      "automatable": false,
+      "reasonIfNotAutomatable": "EFSA: HTTP 401; ECHA: HTTP 403"
+    },
+    {
+      "code": "E150C",
+      "name": "Ammonia caramel",
+      "sourcesFound": [],
+      "match": null,
+      "latestAssessmentYear": null,
+      "adiAvailable": false,
+      "authorityConclusionAvailable": false,
+      "automatable": false,
+      "reasonIfNotAutomatable": "EFSA: HTTP 401; ECHA: HTTP 403"
+    },
+    {
+      "code": "E150D",
+      "name": "Sulphite ammonia caramel",
+      "sourcesFound": [],
+      "match": null,
+      "latestAssessmentYear": null,
+      "adiAvailable": false,
+      "authorityConclusionAvailable": false,
+      "automatable": false,
+      "reasonIfNotAutomatable": "EFSA: HTTP 401; ECHA: HTTP 403"
+    },
+    {
+      "code": "E151",
+      "name": "Brilliant Black PN",
+      "sourcesFound": [],
+      "match": null,
+      "latestAssessmentYear": null,
+      "adiAvailable": false,
+      "authorityConclusionAvailable": false,
+      "automatable": false,
+      "reasonIfNotAutomatable": "EFSA: HTTP 401; ECHA: HTTP 403"
+    },
+    {
+      "code": "E153",
+      "name": "Vegetable carbon",
+      "sourcesFound": [],
+      "match": null,
+      "latestAssessmentYear": null,
+      "adiAvailable": false,
+      "authorityConclusionAvailable": false,
+      "automatable": false,
+      "reasonIfNotAutomatable": "EFSA: HTTP 401; ECHA: HTTP 403"
+    },
+    {
+      "code": "E155",
+      "name": "Brown HT",
+      "sourcesFound": [],
+      "match": null,
+      "latestAssessmentYear": null,
+      "adiAvailable": false,
+      "authorityConclusionAvailable": false,
+      "automatable": false,
+      "reasonIfNotAutomatable": "EFSA: HTTP 401; ECHA: HTTP 403"
+    },
+    {
+      "code": "E160B",
+      "name": "Annatto, Bixin, Norbixin/Deleted from the Union List of authorised additives",
+      "sourcesFound": [
+        "ANSES"
+      ],
+      "match": "possible",
+      "latestAssessmentYear": null,
+      "adiAvailable": false,
+      "authorityConclusionAvailable": false,
+      "automatable": false,
+      "reasonIfNotAutomatable": "Possible match requires manual review."
+    },
+    {
+      "code": "E160C",
+      "name": "Paprika extract, capsanthin, capsorubin",
+      "sourcesFound": [],
+      "match": null,
+      "latestAssessmentYear": null,
+      "adiAvailable": false,
+      "authorityConclusionAvailable": false,
+      "automatable": false,
+      "reasonIfNotAutomatable": "EFSA: HTTP 401; ECHA: HTTP 403"
+    },
+    {
+      "code": "E160D",
+      "name": "Lycopene",
+      "sourcesFound": [],
+      "match": null,
+      "latestAssessmentYear": null,
+      "adiAvailable": false,
+      "authorityConclusionAvailable": false,
+      "automatable": false,
+      "reasonIfNotAutomatable": "EFSA: HTTP 401; ECHA: HTTP 403"
+    },
+    {
+      "code": "E160E",
+      "name": "Beta-apo-8'-carotenal (C 30)",
+      "sourcesFound": [],
+      "match": null,
+      "latestAssessmentYear": null,
+      "adiAvailable": false,
+      "authorityConclusionAvailable": false,
+      "automatable": false,
+      "reasonIfNotAutomatable": "EFSA: HTTP 401; ECHA: HTTP 403"
+    },
+    {
+      "code": "E161B",
+      "name": "Lutein",
+      "sourcesFound": [],
+      "match": null,
+      "latestAssessmentYear": null,
+      "adiAvailable": false,
+      "authorityConclusionAvailable": false,
+      "automatable": false,
+      "reasonIfNotAutomatable": "EFSA: HTTP 401; ECHA: HTTP 403"
+    },
+    {
+      "code": "E161G",
+      "name": "Canthaxanthin",
+      "sourcesFound": [],
+      "match": null,
+      "latestAssessmentYear": null,
+      "adiAvailable": false,
+      "authorityConclusionAvailable": false,
+      "automatable": false,
+      "reasonIfNotAutomatable": "EFSA: HTTP 401; ECHA: HTTP 403"
+    },
+    {
+      "code": "E163",
+      "name": "Anthocyanins",
+      "sourcesFound": [],
+      "match": null,
+      "latestAssessmentYear": null,
+      "adiAvailable": false,
+      "authorityConclusionAvailable": false,
+      "automatable": false,
+      "reasonIfNotAutomatable": "EFSA: HTTP 401; ECHA: HTTP 403"
+    },
+    {
+      "code": "E171",
+      "name": "Titanium dioxide",
+      "sourcesFound": [],
+      "match": null,
+      "latestAssessmentYear": null,
+      "adiAvailable": false,
+      "authorityConclusionAvailable": false,
+      "automatable": false,
+      "reasonIfNotAutomatable": "EFSA: HTTP 401; ECHA: HTTP 403"
+    },
+    {
+      "code": "E172",
+      "name": "Iron oxides and hydroxides",
+      "sourcesFound": [],
+      "match": null,
+      "latestAssessmentYear": null,
+      "adiAvailable": false,
+      "authorityConclusionAvailable": false,
+      "automatable": false,
+      "reasonIfNotAutomatable": "EFSA: HTTP 401; ECHA: HTTP 403"
+    }
+  ],
+  "items": [
+    {
+      "code": "E102",
+      "name": "Tartrazine",
+      "sourcesFound": [],
+      "bestMatch": null,
+      "latestAuthoritativeAssessment": null,
+      "problems": [
+        "EFSA: HTTP 401",
+        "ECHA: HTTP 403"
+      ]
+    },
+    {
+      "code": "E104",
+      "name": "Quinoline Yellow",
+      "sourcesFound": [],
+      "bestMatch": null,
+      "latestAuthoritativeAssessment": null,
+      "problems": [
+        "EFSA: HTTP 401",
+        "ECHA: HTTP 403"
+      ]
+    },
+    {
+      "code": "E110",
+      "name": "Sunset Yellow FCF/Orange Yellow S",
+      "sourcesFound": [],
+      "bestMatch": null,
+      "latestAuthoritativeAssessment": null,
+      "problems": [
+        "EFSA: HTTP 401",
+        "ECHA: HTTP 403"
+      ]
+    },
+    {
+      "code": "E122",
+      "name": "Azorubine, Carmoisine",
+      "sourcesFound": [],
+      "bestMatch": null,
+      "latestAuthoritativeAssessment": null,
+      "problems": [
+        "EFSA: HTTP 401",
+        "ECHA: HTTP 403"
+      ]
+    },
+    {
+      "code": "E123",
+      "name": "Amaranth",
+      "sourcesFound": [],
+      "bestMatch": null,
+      "latestAuthoritativeAssessment": null,
+      "problems": [
+        "EFSA: HTTP 401",
+        "ECHA: HTTP 403"
+      ]
+    },
+    {
+      "code": "E124",
+      "name": "Ponceau 4R, Cochineal Red A",
+      "sourcesFound": [],
+      "bestMatch": null,
+      "latestAuthoritativeAssessment": null,
+      "problems": [
+        "EFSA: HTTP 401",
+        "ECHA: HTTP 403"
+      ]
+    },
+    {
+      "code": "E127",
+      "name": "Erythrosine",
+      "sourcesFound": [],
+      "bestMatch": null,
+      "latestAuthoritativeAssessment": null,
+      "problems": [
+        "EFSA: HTTP 401",
+        "ECHA: HTTP 403"
+      ]
+    },
+    {
+      "code": "E129",
+      "name": "Allura Red AC",
+      "sourcesFound": [],
+      "bestMatch": null,
+      "latestAuthoritativeAssessment": null,
+      "problems": [
+        "EFSA: HTTP 401",
+        "ECHA: HTTP 403"
+      ]
+    },
+    {
+      "code": "E131",
+      "name": "Patent Blue V",
+      "sourcesFound": [],
+      "bestMatch": null,
+      "latestAuthoritativeAssessment": null,
+      "problems": [
+        "EFSA: HTTP 401",
+        "ECHA: HTTP 403"
+      ]
+    },
+    {
+      "code": "E132",
+      "name": "Indigotine, Indigo carmine",
+      "sourcesFound": [],
+      "bestMatch": null,
+      "latestAuthoritativeAssessment": null,
+      "problems": [
+        "EFSA: HTTP 401",
+        "ECHA: HTTP 403"
+      ]
+    },
+    {
+      "code": "E133",
+      "name": "Brilliant Blue FCF",
+      "sourcesFound": [],
+      "bestMatch": null,
+      "latestAuthoritativeAssessment": null,
+      "problems": [
+        "EFSA: HTTP 401",
+        "ECHA: HTTP 403"
+      ]
+    },
+    {
+      "code": "E140",
+      "name": "Chlorophylls and Chlorophyllins",
+      "sourcesFound": [],
+      "bestMatch": null,
+      "latestAuthoritativeAssessment": null,
+      "problems": [
+        "EFSA: HTTP 401",
+        "ECHA: HTTP 403"
+      ]
+    },
+    {
+      "code": "E141",
+      "name": "Copper complexes of chlorophylls and chlorophyllins",
+      "sourcesFound": [],
+      "bestMatch": null,
+      "latestAuthoritativeAssessment": null,
+      "problems": [
+        "EFSA: HTTP 401",
+        "ECHA: HTTP 403"
+      ]
+    },
+    {
+      "code": "E142",
+      "name": "Green S",
+      "sourcesFound": [],
+      "bestMatch": null,
+      "latestAuthoritativeAssessment": null,
+      "problems": [
+        "EFSA: HTTP 401",
+        "ECHA: HTTP 403"
+      ]
+    },
+    {
+      "code": "E150A",
+      "name": "Plain caramel",
+      "sourcesFound": [],
+      "bestMatch": null,
+      "latestAuthoritativeAssessment": null,
+      "problems": [
+        "EFSA: HTTP 401",
+        "ECHA: HTTP 403"
+      ]
+    },
+    {
+      "code": "E150B",
+      "name": "Caustic sulphite caramel",
+      "sourcesFound": [],
+      "bestMatch": null,
+      "latestAuthoritativeAssessment": null,
+      "problems": [
+        "EFSA: HTTP 401",
+        "ECHA: HTTP 403"
+      ]
+    },
+    {
+      "code": "E150C",
+      "name": "Ammonia caramel",
+      "sourcesFound": [],
+      "bestMatch": null,
+      "latestAuthoritativeAssessment": null,
+      "problems": [
+        "EFSA: HTTP 401",
+        "ECHA: HTTP 403"
+      ]
+    },
+    {
+      "code": "E150D",
+      "name": "Sulphite ammonia caramel",
+      "sourcesFound": [],
+      "bestMatch": null,
+      "latestAuthoritativeAssessment": null,
+      "problems": [
+        "EFSA: HTTP 401",
+        "ECHA: HTTP 403"
+      ]
+    },
+    {
+      "code": "E151",
+      "name": "Brilliant Black PN",
+      "sourcesFound": [],
+      "bestMatch": null,
+      "latestAuthoritativeAssessment": null,
+      "problems": [
+        "EFSA: HTTP 401",
+        "ECHA: HTTP 403"
+      ]
+    },
+    {
+      "code": "E153",
+      "name": "Vegetable carbon",
+      "sourcesFound": [],
+      "bestMatch": null,
+      "latestAuthoritativeAssessment": null,
+      "problems": [
+        "EFSA: HTTP 401",
+        "ECHA: HTTP 403"
+      ]
+    },
+    {
+      "code": "E155",
+      "name": "Brown HT",
+      "sourcesFound": [],
+      "bestMatch": null,
+      "latestAuthoritativeAssessment": null,
+      "problems": [
+        "EFSA: HTTP 401",
+        "ECHA: HTTP 403"
+      ]
+    },
+    {
+      "code": "E160B",
+      "name": "Annatto, Bixin, Norbixin/Deleted from the Union List of authorised additives",
+      "sourcesFound": [
+        {
+          "authority": "ANSES",
+          "documentTitle": "Maintaining close links with European Union agencies",
+          "publicationYear": null,
+          "url": "https://www.anses.fr/en/content/maintaining-close-links-european-union-agencies",
+          "additiveCode": "E160B",
+          "matchedName": null,
+          "matchConfidence": "possible",
+          "assessmentType": null,
+          "authorityConclusion": null,
+          "adi": null,
+          "tdi": null,
+          "otherReferenceValues": [],
+          "identifiedEffects": [],
+          "exposureFindings": null,
+          "populationsOfConcern": [],
+          "restrictionsOrRecommendations": [],
+          "uncertaintyNotes": [
+            "Metadata discovery only; scientific fields were not inferred from search-result pages."
+          ],
+          "sourceQuery": "https://www.anses.fr/en/search?search_api_fulltext=E160B%20Annatto%2C%20Bixin%2C%20Norbixin%2FDeleted%20from%20the%20Union%20List%20of%20authorised%20additives"
+        },
+        {
+          "authority": "ANSES",
+          "documentTitle": "Authorisation to use feed additives not authorised in the EU, for research purposes",
+          "publicationYear": null,
+          "url": "https://www.anses.fr/en/regulatory-decisions/authorisation-use-feed-additives-not-authorised-eu-research-purposes",
+          "additiveCode": "E160B",
+          "matchedName": null,
+          "matchConfidence": "possible",
+          "assessmentType": null,
+          "authorityConclusion": null,
+          "adi": null,
+          "tdi": null,
+          "otherReferenceValues": [],
+          "identifiedEffects": [],
+          "exposureFindings": null,
+          "populationsOfConcern": [],
+          "restrictionsOrRecommendations": [],
+          "uncertaintyNotes": [
+            "Metadata discovery only; scientific fields were not inferred from search-result pages."
+          ],
+          "sourceQuery": "https://www.anses.fr/en/search?search_api_fulltext=E160B%20Annatto%2C%20Bixin%2C%20Norbixin%2FDeleted%20from%20the%20Union%20List%20of%20authorised%20additives"
+        }
+      ],
+      "bestMatch": "possible",
+      "latestAuthoritativeAssessment": null,
+      "problems": [
+        "EFSA: HTTP 401",
+        "ECHA: HTTP 403"
+      ]
+    },
+    {
+      "code": "E160C",
+      "name": "Paprika extract, capsanthin, capsorubin",
+      "sourcesFound": [],
+      "bestMatch": null,
+      "latestAuthoritativeAssessment": null,
+      "problems": [
+        "EFSA: HTTP 401",
+        "ECHA: HTTP 403"
+      ]
+    },
+    {
+      "code": "E160D",
+      "name": "Lycopene",
+      "sourcesFound": [],
+      "bestMatch": null,
+      "latestAuthoritativeAssessment": null,
+      "problems": [
+        "EFSA: HTTP 401",
+        "ECHA: HTTP 403"
+      ]
+    },
+    {
+      "code": "E160E",
+      "name": "Beta-apo-8'-carotenal (C 30)",
+      "sourcesFound": [],
+      "bestMatch": null,
+      "latestAuthoritativeAssessment": null,
+      "problems": [
+        "EFSA: HTTP 401",
+        "ECHA: HTTP 403"
+      ]
+    },
+    {
+      "code": "E161B",
+      "name": "Lutein",
+      "sourcesFound": [],
+      "bestMatch": null,
+      "latestAuthoritativeAssessment": null,
+      "problems": [
+        "EFSA: HTTP 401",
+        "ECHA: HTTP 403"
+      ]
+    },
+    {
+      "code": "E161G",
+      "name": "Canthaxanthin",
+      "sourcesFound": [],
+      "bestMatch": null,
+      "latestAuthoritativeAssessment": null,
+      "problems": [
+        "EFSA: HTTP 401",
+        "ECHA: HTTP 403"
+      ]
+    },
+    {
+      "code": "E163",
+      "name": "Anthocyanins",
+      "sourcesFound": [],
+      "bestMatch": null,
+      "latestAuthoritativeAssessment": null,
+      "problems": [
+        "EFSA: HTTP 401",
+        "ECHA: HTTP 403"
+      ]
+    },
+    {
+      "code": "E171",
+      "name": "Titanium dioxide",
+      "sourcesFound": [],
+      "bestMatch": null,
+      "latestAuthoritativeAssessment": null,
+      "problems": [
+        "EFSA: HTTP 401",
+        "ECHA: HTTP 403"
+      ]
+    },
+    {
+      "code": "E172",
+      "name": "Iron oxides and hydroxides",
+      "sourcesFound": [],
+      "bestMatch": null,
+      "latestAuthoritativeAssessment": null,
+      "problems": [
+        "EFSA: HTTP 401",
+        "ECHA: HTTP 403"
+      ]
+    }
+  ],
+  "cache": {
+    "path": "scripts\\output\\additive-science-source-cache.json",
+    "entries": 150
+  },
+  "interpretation": "Collection and metadata discovery only. No OUMMAH risk, health or safety classification was calculated."
+}

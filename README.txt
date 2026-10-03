@@ -1,21 +1,9 @@
-OUMMAH — Streaming Wasil
+PATCH OUMMAH - FRANCAIS UNIQUEMENT
 
-Périmètre strictement modifié :
-- src/features/wasil/WasilApiClient.ts
-- src/app/(tabs)/dalil.tsx
-- src/supabase/functions/wasil.zip (backend Wasil uniquement)
+Modifications ciblées :
+- supprime le sélecteur Français / English du Profil ;
+- force la langue globale sur le français ;
+- écrase un ancien choix "en" stocké sur les appareils existants ;
+- conserve les fichiers anglais dans le code pour pouvoir les réactiver plus tard sans casser les modules.
 
-Fonctionnement :
-- Le backend Wasil accepte désormais text/event-stream.
-- La sortie structurée OpenAI reste identique et continue d'être validée intégralement.
-- Seul le champ body est envoyé progressivement pendant la génération.
-- La réponse finale complète remplace ensuite la réponse provisoire et conserve les références Coran/Hadith, les sources, le solde et la classification.
-- Les opérations balance, mémoire et conversations restent en JSON normal.
-
-Aucun autre module OUMMAH n'a été modifié.
-
-Déploiement :
-1. Remplacer les trois éléments aux chemins indiqués.
-2. Depuis la racine du projet :
-   npx.cmd supabase functions deploy wasil
-   npx.cmd expo start --go
+Aucune autre logique métier n'est modifiée.

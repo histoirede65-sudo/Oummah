@@ -1,0 +1,1740 @@
+{
+  "schemaVersion": "1.0",
+  "generatedAt": "2026-09-30T22:55:24.225Z",
+  "source": "WHO/JECFA official public chemical pages, same 640 Intake evaluations as V2.",
+  "totalJecfaChemicals": 6564,
+  "totalEvaluations": 7453,
+  "evaluationsWithIntake": 640,
+  "evaluationsWithExposureScenario": 372,
+  "evaluationsWithReferenceValue": 354,
+  "evaluationsWithBoth": 204,
+  "statusCounts": {
+    "NO_INTAKE_FIELD": 6813,
+    "PARSED_EXPOSURE": 372,
+    "INTAKE_PRESENT_REFERENCE_ONLY": 150,
+    "INTAKE_PRESENT_NO_EXPLICIT_COMPARISON": 114,
+    "PARSE_FAILED": 4
+  },
+  "totalEuCodes": 341,
+  "codesWithActualExposure": [
+    "E100",
+    "E124",
+    "E127",
+    "E132",
+    "E133",
+    "E160A",
+    "E161G",
+    "E172",
+    "E173",
+    "E246",
+    "E319",
+    "E320",
+    "E321",
+    "E339",
+    "E340",
+    "E355",
+    "E392",
+    "E410",
+    "E432",
+    "E433",
+    "E434",
+    "E435",
+    "E436",
+    "E491",
+    "E493",
+    "E494",
+    "E495",
+    "E951",
+    "E957",
+    "E959",
+    "E969",
+    "E999",
+    "E1209"
+  ],
+  "codesWithReferenceOnly": [
+    "E173",
+    "E338",
+    "E339",
+    "E340",
+    "E341",
+    "E343",
+    "E450",
+    "E451",
+    "E452",
+    "E512",
+    "E523",
+    "E541",
+    "E579",
+    "E585"
+  ],
+  "codesWithExplicitComparison": [
+    "E161G",
+    "E319",
+    "E320",
+    "E321",
+    "E432",
+    "E433",
+    "E434",
+    "E435",
+    "E436",
+    "E491",
+    "E493",
+    "E494",
+    "E495",
+    "E959",
+    "E999"
+  ],
+  "codesWithNumericExposure": [
+    "E127",
+    "E132",
+    "E133",
+    "E161G",
+    "E172",
+    "E173",
+    "E246",
+    "E319",
+    "E320",
+    "E321",
+    "E339",
+    "E340",
+    "E355",
+    "E392",
+    "E432",
+    "E433",
+    "E434",
+    "E435",
+    "E436",
+    "E491",
+    "E493",
+    "E494",
+    "E495",
+    "E951",
+    "E957",
+    "E959",
+    "E969",
+    "E999",
+    "E1209"
+  ],
+  "v2Comparison": {
+    "parsedExposureBefore": 501,
+    "referenceOnlyFalsePositivesCount": 143,
+    "referenceOnlyFalsePositives": [
+      {
+        "chemicalId": "7",
+        "name": "SODIUM FEREDETATE",
+        "year": 2007,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/7",
+        "sourceText": "PMTDI 0.8 mg/kg bw (as iron)",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "37",
+        "name": "MONOBASIC CALCIUM PHOSPHATE",
+        "year": 1982,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/37",
+        "sourceText": "MTDI 70 mg/kg bw (as P)",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "40",
+        "name": "AMMONIUM FERRIC CITRATE",
+        "year": 1985,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/40",
+        "sourceText": "PMTDI 0.8 mg/kg bw",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "80",
+        "name": "CALCIUM HYDROGEN PHOSPHATE",
+        "year": 1982,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/80",
+        "sourceText": "MTDI 70 mg/kg bw (as P)",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "135",
+        "name": "AMMONIUM IRON CITRATE",
+        "year": 1985,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/135",
+        "sourceText": "PMTDI 0.8 mg/kg bw",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "185",
+        "name": "EDIBLE BONE PHOSPHATE",
+        "year": 1985,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/185",
+        "sourceText": "MTDI 70 mg/kg bw (as P)",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "247",
+        "name": "TETRAPOTASSIUM DIPHOSPHATE",
+        "year": 1982,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/247",
+        "sourceText": "MTDI 70 mg/kg bw (as P)",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "250",
+        "name": "SODIUM IRON EDTA",
+        "year": 2007,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/250",
+        "sourceText": "PMTDI 0.8 mg/kg bw (as iron)",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "298",
+        "name": "ALUMINIUM",
+        "year": 2006,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/298",
+        "sourceText": "PTWI 1 mg/kg bw (expressed as Al)",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "299",
+        "name": "ALUMINIUM AMMONIUM SULFATE",
+        "year": 1988,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/299",
+        "sourceText": "PTWI 7 mg/kg bw",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "333",
+        "name": "TRIMAGNESIUM PHOSPHATE",
+        "year": 1982,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/333",
+        "sourceText": "MTDI 70 mg/kg bw (as P)",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "382",
+        "name": "DISODIUM ACID PHOSPHATE",
+        "year": 1982,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/382",
+        "sourceText": "MTDI 70 mg/kg bw (as P)",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "383",
+        "name": "DISODIUM DIHYDROGEN DIPHOSPHATE",
+        "year": 1982,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/383",
+        "sourceText": "MTDI 70 mg/kg bw (as P)",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "384",
+        "name": "DISODIUM DIHYDROGEN PYROPHOSPHATE",
+        "year": 1982,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/384",
+        "sourceText": "MTDI 70 mg/kg bw (as P)",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "410",
+        "name": "DIPOTASSIUM PHOSPHATE",
+        "year": 1982,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/410",
+        "sourceText": "MTDI 70 mg/kg bw (as P)",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "453",
+        "name": "CALCIUM BIPHOSPHATE",
+        "year": 1982,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/453",
+        "sourceText": "MTDI 70 mg/kg bw (as P)",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "469",
+        "name": "MONOAMMONIUM PHOSPHATE",
+        "year": 1983,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/469",
+        "sourceText": "MTDI 70 mg/kg bw (as P)",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "505",
+        "name": "TRIBASIC POTASSIUM PHOSPHATE",
+        "year": 1982,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/505",
+        "sourceText": "MTDI 70 mg/kg bw (as P)",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "506",
+        "name": "TRIBASIC SODIUM PHOSPHATE",
+        "year": 1982,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/506",
+        "sourceText": "MTDI 70 mg/kg bw (as P)",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "556",
+        "name": "FERROUS SULFATE, dried",
+        "year": 1999,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/556",
+        "sourceText": "PMTDI 0.8 mg/kg bw for iron",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "569",
+        "name": "DIAMMONIUM HYDROGEN PHOSPHATE",
+        "year": 1982,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/569",
+        "sourceText": "MTDI 70 mg/kg bw (as P)",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "570",
+        "name": "DIAMMONIUM PHOSPHATE",
+        "year": 1982,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/570",
+        "sourceText": "MTDI 70 mg/kg bw (as P)",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "607",
+        "name": "TRICALCIUM PHOSPHATE",
+        "year": 2026,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/607",
+        "sourceText": "MTDI 70 mg/kg bw (as P)",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "607",
+        "name": "TRICALCIUM PHOSPHATE",
+        "year": 1982,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/607",
+        "sourceText": "MTDI 70 mg/kg bw (as P)",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "643",
+        "name": "KASAL",
+        "year": 1988,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/643",
+        "sourceText": "PTWI 7 mg/kg bw",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "656",
+        "name": "CALCIUM PHOSPHATE, TRIBASIC",
+        "year": 2026,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/656",
+        "sourceText": "MTDI 70 mg/kg bw (as P)",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "656",
+        "name": "CALCIUM PHOSPHATE, TRIBASIC",
+        "year": 1982,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/656",
+        "sourceText": "MTDI 70 mg/kg bw (as P)",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "680",
+        "name": "AMMONIUM DIHYDROGEN PHOSPHATE",
+        "year": 1983,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/680",
+        "sourceText": "MTDI 70 mg/kg bw (as P)",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "815",
+        "name": "ACID AMMONIUM PHOSPHATE",
+        "year": 1983,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/815",
+        "sourceText": "MTDI 70 mg/kg bw (as P)",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "823",
+        "name": "DISODIUM HYDROGEN PHOSPHATE",
+        "year": 1982,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/823",
+        "sourceText": "MTDI 70 mg/kg bw (as P)",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "839",
+        "name": "FERROUS SULFATE",
+        "year": 1999,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/839",
+        "sourceText": "PMTDI 0.8 mg/kg bw for iron",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "984",
+        "name": "SODIUM CALCIUM POLYPHOSPHATE",
+        "year": 2001,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/984",
+        "sourceText": "MTDI 70 mg/kg bw (as P)",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "1044",
+        "name": "BONE PHOSPHATE",
+        "year": 1985,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/1044",
+        "sourceText": "MTDI 70 mg/kg bw (as P)",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "1100",
+        "name": "SODIUM BIPHOSPHATE",
+        "year": 1982,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/1100",
+        "sourceText": "MTDI 70 mg/kg bw (as P)",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "1230",
+        "name": "ACID CALCIUM PYROPHOSPHATE",
+        "year": 2001,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/1230",
+        "sourceText": "MTDI 70 mg/kg bw (as P)",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "1245",
+        "name": "MONOCALCIUM PHOSPHATE",
+        "year": 1982,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/1245",
+        "sourceText": "MTDI 70 mg/kg bw (as P)",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "1288",
+        "name": "GRAHAM'S SALT",
+        "year": 1982,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/1288",
+        "sourceText": "MTDI 70 mg/kg bw (as P)",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "1363",
+        "name": "MONOBASIC POTASSIUM PHOSPHATE",
+        "year": 1982,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/1363",
+        "sourceText": "MTDI 70 mg/kg bw (as P)",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "1364",
+        "name": "MONOBASIC SODIUM PHOSPHATE",
+        "year": 1982,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/1364",
+        "sourceText": "MTDI 70 mg/kg bw (as P)",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "1376",
+        "name": "CADMIUM",
+        "year": 2005,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/1376",
+        "sourceText": "PTWI 0.007 mg/kg bw",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "1392",
+        "name": "DIBASIC AMMONIUM PHOSPHATE",
+        "year": 1982,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/1392",
+        "sourceText": "MTDI 70 mg/kg bw (as P)",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "1393",
+        "name": "DIBASIC CALCIUM PHOSPHATE",
+        "year": 1982,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/1393",
+        "sourceText": "MTDI 70 mg/kg bw (as P)",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "1395",
+        "name": "FERROUS GLUCONATE",
+        "year": 1987,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/1395",
+        "sourceText": "PMTDI 0.8 mg/kg bw",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "1497",
+        "name": "FERROUS LACTATE",
+        "year": 1989,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/1497",
+        "sourceText": "PMTDI 0.8 mg/kg bw",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "1501",
+        "name": "DIPOTASSIUM MONOPHOSPHATE",
+        "year": 1982,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/1501",
+        "sourceText": "MTDI 70 mg/kg bw (as P)",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "1529",
+        "name": "MONOMAGNESIUM ORTHOPHOSPHATE",
+        "year": 2001,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/1529",
+        "sourceText": "MTDI 70 mg/kg bw (as P)",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "1530",
+        "name": "MONOMAGNESIUM PHOSPHATE",
+        "year": 2001,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/1530",
+        "sourceText": "MTDI 70 mg/kg bw (as P)",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "1532",
+        "name": "POTASSIUM DIHYDROGEN PHOSPHATE",
+        "year": 1982,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/1532",
+        "sourceText": "MTDI 70 mg/kg bw (as P)",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "1541",
+        "name": "MAGNESIUM HYDROGEN PHOSPHATE",
+        "year": 1982,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/1541",
+        "sourceText": "MTDI 70 mg/kg bw (as P)",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "1549",
+        "name": "SODIUM IRON (III) ETHYLENEDIAMINETETRAACETATE, TRIHYDRATE",
+        "year": 2007,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/1549",
+        "sourceText": "PMTDI 0.8 mg/kg bw (as iron)",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "1677",
+        "name": "MONOPOTASSIUM MONOPHOSPHATE",
+        "year": 1982,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/1677",
+        "sourceText": "MTDI 70 mg/kg bw (as P)",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "1775",
+        "name": "FERRIC AMMONIUM CITRATE",
+        "year": 1985,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/1775",
+        "sourceText": "PMTDI 0.8 mg/kg bw",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "1776",
+        "name": "FERRIC SODIUM EDETATE",
+        "year": 2007,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/1776",
+        "sourceText": "PMTDI 0.8 mg/kg bw (as iron)",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "1777",
+        "name": "ORTHOPHOSPHORIC ACID",
+        "year": 1982,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/1777",
+        "sourceText": "MTDI 70 mg/kg bw (as P)",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "1800",
+        "name": "DIPOTASSIUM ACID PHOSPHATE",
+        "year": 1982,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/1800",
+        "sourceText": "MTDI 70 mg/kg bw (as P)",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "1802",
+        "name": "DIPOTASSIUM HYDROGEN PHOSPHATE",
+        "year": 1982,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/1802",
+        "sourceText": "MTDI 70 mg/kg bw (as P)",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "1806",
+        "name": "MERCURY",
+        "year": 1978,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/1806",
+        "sourceText": "PTWI 0.005 mg/kg bw",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "1863",
+        "name": "ARSENIC",
+        "year": 1988,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/1863",
+        "sourceText": "PTWI 0.015 mg/kg bw",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "1891",
+        "name": "SODIUM HEXAMETAPHOSPHATE",
+        "year": 1982,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/1891",
+        "sourceText": "MTDI 70 mg/kg bw (as P)",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "2032",
+        "name": "ACID MAGNESIUM PHOSPHATE",
+        "year": 2001,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2032",
+        "sourceText": "MTDI 70 mg/kg bw (as P)",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "2035",
+        "name": "ACID SODIUM PYROPHOSPHATE",
+        "year": 1982,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2035",
+        "sourceText": "MTDI 70 mg/kg bw (as P)",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "2037",
+        "name": "ACID TRISODIUM PYROPHOSPHATE",
+        "year": 2001,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2037",
+        "sourceText": "MTDI 70 mg/kg bw (as P)",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "2100",
+        "name": "MONOCALCIUM DIHYDROGEN PYROPHOSPHATE",
+        "year": 2001,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2100",
+        "sourceText": "MTDI 70 mg/kg bw (as P)",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "2144",
+        "name": "DIBASIC POTASSIUM PHOSPHATE",
+        "year": 1982,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2144",
+        "sourceText": "MTDI 70 mg/kg bw (as P)",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "2145",
+        "name": "DIBASIC SODIUM PHOSPHATE",
+        "year": 1982,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2145",
+        "sourceText": "MTDI 70 mg/kg bw (as P)",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "2162",
+        "name": "CALCIUM POLYPHOSPHATE",
+        "year": 1982,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2162",
+        "sourceText": "MTDI 70 mg/kg bw (as P)",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "2164",
+        "name": "CALCIUM PYROPHOSPHATE",
+        "year": 1982,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2164",
+        "sourceText": "MTDI 70 mg/kg bw (as P)",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "2170",
+        "name": "DICALCIUM PHOSPHATE",
+        "year": 1982,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2170",
+        "sourceText": "MTDI 70 mg/kg bw (as P)",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "2171",
+        "name": "DICALCIUM PYROPHOSPHATE",
+        "year": 1982,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2171",
+        "sourceText": "MTDI 70 mg/kg bw (as P)",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "2181",
+        "name": "PENTASODIUM TRIPHOSPHATE",
+        "year": 2023,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2181",
+        "sourceText": "MTDI 70 mg/kg bw (as P)",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "2181",
+        "name": "PENTASODIUM TRIPHOSPHATE",
+        "year": 1982,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2181",
+        "sourceText": "MTDI 70 mg/kg bw (as P)",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "2246",
+        "name": "MAGNESIUM PHOSPHATE, DIBASIC",
+        "year": 1982,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2246",
+        "sourceText": "MTDI 70 mg/kg bw (as P)",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "2247",
+        "name": "MAGNESIUM PHOSPHATE, MONOBASIC",
+        "year": 2001,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2247",
+        "sourceText": "MTDI 70 mg/kg bw (as P)",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "2258",
+        "name": "MONOSODIUM MONOPHOSPHATE",
+        "year": 1982,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2258",
+        "sourceText": "MTDI 70 mg/kg bw (as P)",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "2288",
+        "name": "SODIUM ALUMINIUM PHOSPHATE, basic",
+        "year": 1988,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2288",
+        "sourceText": "PTWI 7 mg/kg bw",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "2312",
+        "name": "POTASSIUM BIPHOSPHATE",
+        "year": 1982,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2312",
+        "sourceText": "MTDI 70 mg/kg bw (as P)",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "2382",
+        "name": "POTASSIUM TRIPHOSPHATE",
+        "year": 1982,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2382",
+        "sourceText": "MTDI 70 mg/kg bw (as P)",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "2383",
+        "name": "POTASSIUM TRIPOLYPHOSPHATE",
+        "year": 1982,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2383",
+        "sourceText": "MTDI 70 mg/kg bw (as P)",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "2400",
+        "name": "POTASSIUM POLYPHOSPHATES",
+        "year": 1982,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2400",
+        "sourceText": "MTDI 70 mg/kg bw (as P)",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "2402",
+        "name": "POTASSIUM PYROPHOSPHATE",
+        "year": 1982,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2402",
+        "sourceText": "MTDI 70 mg/kg bw (as P)",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "2491",
+        "name": "TERTIARY MAGNESIUM PHOSPHATE",
+        "year": 1982,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2491",
+        "sourceText": "MTDI 70 mg/kg bw (as P)",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "2530",
+        "name": "PHOSPHORIC ACID",
+        "year": 1982,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2530",
+        "sourceText": "MTDI 70 mg/kg bw (as P)",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "2634",
+        "name": "SALP",
+        "year": 1988,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2634",
+        "sourceText": "PTWI 7 mg/kg bw",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "2639",
+        "name": "SODIUM DIHYDROGEN PHOSPHATE",
+        "year": 1982,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2639",
+        "sourceText": "MTDI 70 mg/kg bw (as P)",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "2670",
+        "name": "AMMONIUM POLYPHOSPHATE",
+        "year": 1982,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2670",
+        "sourceText": "MTDI 70 mg/kg bw (as P)",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "2722",
+        "name": "TIN DICHLORIDE",
+        "year": 2000,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2722",
+        "sourceText": "PTWI 14 mg/kg bw (1988)",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "2751",
+        "name": "CALCIUM PHOSPHATE",
+        "year": 1982,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2751",
+        "sourceText": "MTDI 70 mg/kg bw (as P)",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "2770",
+        "name": "T-2, HT-2 and DAS TOXINS",
+        "year": 2016,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2770",
+        "sourceText": "PMTDI 60 ng/kg bw per day for T-2, HT-2 and 4,15-diacetoxyscirpenol toxins, alone or in combination",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "2824",
+        "name": "COPPER",
+        "year": 1982,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2824",
+        "sourceText": "PMTDI 0.5 mg/kg bw per day",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "2834",
+        "name": "PENTAPOTASSIUM TRIPHOSPHATE",
+        "year": 1982,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2834",
+        "sourceText": "MTDI 70 mg/kg bw (as P)",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "2835",
+        "name": "PENTAPOTASSIUM TRIPOLYPHOSPHATE",
+        "year": 1982,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2835",
+        "sourceText": "MTDI 70 mg/kg bw (as P)",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "2860",
+        "name": "IRON AMMONIUM CITRATE",
+        "year": 1985,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2860",
+        "sourceText": "PMTDI 0.8 mg/kg bw",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "2900",
+        "name": "MONOBASIC AMMONIUM PHOSPHATE",
+        "year": 1983,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2900",
+        "sourceText": "MTDI 70 mg/kg bw (as P)",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "2936",
+        "name": "TAMMANN'S SALT",
+        "year": 1982,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2936",
+        "sourceText": "MTDI 70 mg/kg bw (as P)",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "2971",
+        "name": "SODIUM ACID PHOSPHATE",
+        "year": 1982,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2971",
+        "sourceText": "MTDI 70 mg/kg bw (as P)",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "2985",
+        "name": "TRIPOTASSIUM PHOSPHATE",
+        "year": 1982,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2985",
+        "sourceText": "MTDI 70 mg/kg bw (as P)",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "2989",
+        "name": "TRISODIUM PHOSPHATE",
+        "year": 1982,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2989",
+        "sourceText": "MTDI 70 mg/kg bw (as P)",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "3168",
+        "name": "POTASSIUM ACID PHOSPHATE",
+        "year": 1982,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/3168",
+        "sourceText": "MTDI 70 mg/kg bw (as P)",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "3248",
+        "name": "SODIUM CALCIUM POLYPHOSPHATE, GLASSY",
+        "year": 2001,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/3248",
+        "sourceText": "MTDI 70 mg/kg bw (as P)",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "3275",
+        "name": "HT-2 TOXINS",
+        "year": 2016,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/3275",
+        "sourceText": "PMTDI 60 ng/kg bw per day for T-2, HT-2 and 4,15-diacetoxyscirpenol toxins, alone or in combination",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "3511",
+        "name": "LEAD",
+        "year": 1999,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/3511",
+        "sourceText": "PTWI 0.025 mg/kg bw",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "3616",
+        "name": "TRISODIUM DIPHOSPHATE",
+        "year": 2001,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/3616",
+        "sourceText": "MTDI 70 mg/kg bw (as P)",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "3617",
+        "name": "TRISODIUM MONOHYDROGEN DIPHOSPHATE",
+        "year": 2001,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/3617",
+        "sourceText": "MTDI 70 mg/kg bw (as P)",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "3663",
+        "name": "PRECIPITATED CALCIUM PHOSPHATE",
+        "year": 2026,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/3663",
+        "sourceText": "MTDI 70 mg/kg bw (as P)",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "3663",
+        "name": "PRECIPITATED CALCIUM PHOSPHATE",
+        "year": 1982,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/3663",
+        "sourceText": "MTDI 70 mg/kg bw (as P)",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "3684",
+        "name": "POTASSIUM PHOSPHATE",
+        "year": 1982,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/3684",
+        "sourceText": "MTDI 70 mg/kg bw (as P)",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "3764",
+        "name": "MAGNESIUM PHOSPHATE, TRIBASIC",
+        "year": 1982,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/3764",
+        "sourceText": "MTDI 70 mg/kg bw (as P)",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "3791",
+        "name": "CALCIUM DIHYDROGEN DIPHOSPHATE",
+        "year": 2001,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/3791",
+        "sourceText": "MTDI 70 mg/kg bw (as P)",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "3792",
+        "name": "CALCIUM DIHYDROGEN PHOSPHATE",
+        "year": 1982,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/3792",
+        "sourceText": "MTDI 70 mg/kg bw (as P)",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "3794",
+        "name": "POTASSIUM METAPHOSPHATE",
+        "year": 1982,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/3794",
+        "sourceText": "MTDI 70 mg/kg bw (as P)",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "3854",
+        "name": "SODIUM TRIPHOSPHATE",
+        "year": 2023,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/3854",
+        "sourceText": "MTDI 70 mg/kg bw (as P)",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "3854",
+        "name": "SODIUM TRIPHOSPHATE",
+        "year": 1982,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/3854",
+        "sourceText": "MTDI 70 mg/kg bw (as P)",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "3855",
+        "name": "SODIUM TRIPOLYPHOSPHATE",
+        "year": 2023,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/3855",
+        "sourceText": "MTDI 70 mg/kg bw (as P)",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "3855",
+        "name": "SODIUM TRIPOLYPHOSPHATE",
+        "year": 1982,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/3855",
+        "sourceText": "MTDI 70 mg/kg bw (as P)",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "3863",
+        "name": "MONOCALCIUM ORTHOPHOSHATE",
+        "year": 1982,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/3863",
+        "sourceText": "MTDI 70 mg/kg bw (as P)",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "3998",
+        "name": "SODIUM POTASSIUM POLYPHOSPHATE",
+        "year": 1982,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/3998",
+        "sourceText": "MTDI 70 mg/kg bw (as P)",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "4000",
+        "name": "SODIUM PYROPHOSPHATE",
+        "year": 1982,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/4000",
+        "sourceText": "MTDI 70 mg/kg bw (as P)",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "4005",
+        "name": "SODIUM TETRAPHOSPHATE",
+        "year": 1982,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/4005",
+        "sourceText": "MTDI 70 mg/kg bw (as P)",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "4021",
+        "name": "SECONDARY MAGNESIUM PHOSPHATE",
+        "year": 1982,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/4021",
+        "sourceText": "MTDI 70 mg/kg bw (as P)",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "4022",
+        "name": "SECONDARY POTASSIUM PHOSPHATE",
+        "year": 1982,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/4022",
+        "sourceText": "MTDI 70 mg/kg bw (as P)",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "4023",
+        "name": "SECONDARY SODIUM PHOSPHATE",
+        "year": 1982,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/4023",
+        "sourceText": "MTDI 70 mg/kg bw (as P)",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "4079",
+        "name": "IRON GLUCONATE",
+        "year": 1987,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/4079",
+        "sourceText": "PMTDI 0.8 mg/kg bw",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "4122",
+        "name": "PRIMARY AMMONIUM PHOSPHATE",
+        "year": 1983,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/4122",
+        "sourceText": "MTDI 70 mg/kg bw (as P)",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "4123",
+        "name": "PRIMARY MAGNESIUM PHOSPHATE",
+        "year": 2001,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/4123",
+        "sourceText": "MTDI 70 mg/kg bw (as P)",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "4138",
+        "name": "DISODIUM PHOSPHATE",
+        "year": 1982,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/4138",
+        "sourceText": "MTDI 70 mg/kg bw (as P)",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "4139",
+        "name": "DISODIUM PYROPHOSPHATE",
+        "year": 1982,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/4139",
+        "sourceText": "MTDI 70 mg/kg bw (as P)",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "4273",
+        "name": "MAGNESIUM DIHYDROGEN PHOSPHATE",
+        "year": 2001,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/4273",
+        "sourceText": "MTDI 70 mg/kg bw (as P)",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "4286",
+        "name": "SODIUM TETRAPOLYPHOSPHATE",
+        "year": 1982,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/4286",
+        "sourceText": "MTDI 70 mg/kg bw (as P)",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "4291",
+        "name": "STANNOUS CHLORIDE",
+        "year": 2000,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/4291",
+        "sourceText": "PTWI 14 mg/kg bw (1988)",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "4480",
+        "name": "TETRAPOTASSIUM PYROPHOSPHATE",
+        "year": 1982,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/4480",
+        "sourceText": "MTDI 70 mg/kg bw (as P)",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "4481",
+        "name": "TETRASODIUM DIPHOSPHATE",
+        "year": 1982,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/4481",
+        "sourceText": "MTDI 70 mg/kg bw (as P)",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "4482",
+        "name": "TETRASODIUM PYROPHOSPHATE",
+        "year": 1982,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/4482",
+        "sourceText": "MTDI 70 mg/kg bw (as P)",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "4642",
+        "name": "PENTASODIUM TRIPOLYPHOSPHATE",
+        "year": 2023,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/4642",
+        "sourceText": "MTDI 70 mg/kg bw (as P)",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "4642",
+        "name": "PENTASODIUM TRIPOLYPHOSPHATE",
+        "year": 1982,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/4642",
+        "sourceText": "MTDI 70 mg/kg bw (as P)",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "4655",
+        "name": "SODIUM ALUMINIUM PHOSPHATE, ACIDIC",
+        "year": 1988,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/4655",
+        "sourceText": "PTWI 7 mg/kg bw",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "4668",
+        "name": "SODIUM PHOSPHATE",
+        "year": 1982,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/4668",
+        "sourceText": "MTDI 70 mg/kg bw (as P)",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "4669",
+        "name": "SODIUM POLYPHOSPHATES, glassy",
+        "year": 1982,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/4669",
+        "sourceText": "MTDI 70 mg/kg bw (as P)",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "4694",
+        "name": "MAGNESIUM BIPHOSPHATE",
+        "year": 2001,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/4694",
+        "sourceText": "MTDI 70 mg/kg bw (as P)",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "4999",
+        "name": "FERROUS GLYCINATE (processed with CITRIC ACID)",
+        "year": 2003,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/4999",
+        "sourceText": "PMTDI 0.8 mg/kg bw (iron)",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "5000",
+        "name": "FERROUS BISGLYCINATE",
+        "year": 2003,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/5000",
+        "sourceText": "PMTDI 0.8 mg/kg bw (iron)",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "5578",
+        "name": "AMMONIUM ALUM",
+        "year": 1988,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/5578",
+        "sourceText": "PTWI 7 mg/kg bw",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "5877",
+        "name": "FERROUS AMMONIUM PHOSPHATE",
+        "year": 2009,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/5877",
+        "sourceText": "PMTDI 0.8 mg/kg bw",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      },
+      {
+        "chemicalId": "6455",
+        "name": "4,15-DIACETOXYSCIRPENOL",
+        "year": 2016,
+        "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/6455",
+        "sourceText": "PMTDI 60 ng/kg bw per day for 4,15-DAS, T-2 and HT-2 toxins, alone or in combination",
+        "statusV2": "PARSED_EXPOSURE",
+        "statusV3": "INTAKE_PRESENT_REFERENCE_ONLY"
+      }
+    ]
+  },
+  "spotChecks": [
+    {
+      "code": "E951",
+      "jecfaMatch": true,
+      "evaluations": [
+        {
+          "year": 2023,
+          "intakeStatus": "PARSED_EXPOSURE",
+          "intakeText": "JECFA determined that dietary exposure estimates to aspartame at the mean of up to 10 mg/kg bw per day for children and 5 mg/kg bw per day for adults, and for high dietary exposures up to 20 mg/kg bw per day for children and 12 mg/kg bw per day for adults, were appropriate for the present assessment. JECFA noted that these dietary exposure estimates do not exceed the ADI. JECFA therefore concluded that dietary exposure to aspartame does not pose a health concern.",
+          "exposureScenarios": [
+            {
+              "type": "population_exposure",
+              "values": [
+                {
+                  "type": "population_exposure",
+                  "value": 10,
+                  "rawValue": "10",
+                  "rawUnit": "mg/kg bw per day",
+                  "unit": "mg/kg bw per day",
+                  "rawText": "10 mg/kg bw per day",
+                  "sourceSentence": "JECFA determined that dietary exposure estimates to aspartame at the mean of up to 10 mg/kg bw per day for children and 5 mg/kg bw per day for adults, and for high dietary exposures up to 20 mg/kg bw per day for children and 12 mg/kg bw per day for adults, were appropriate for the present assessment.",
+                  "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/62",
+                  "evaluationYear": 2023
+                },
+                {
+                  "type": "population_exposure",
+                  "value": 5,
+                  "rawValue": "5",
+                  "rawUnit": "mg/kg bw per day",
+                  "unit": "mg/kg bw per day",
+                  "rawText": "5 mg/kg bw per day",
+                  "sourceSentence": "JECFA determined that dietary exposure estimates to aspartame at the mean of up to 10 mg/kg bw per day for children and 5 mg/kg bw per day for adults, and for high dietary exposures up to 20 mg/kg bw per day for children and 12 mg/kg bw per day for adults, were appropriate for the present assessment.",
+                  "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/62",
+                  "evaluationYear": 2023
+                },
+                {
+                  "type": "population_exposure",
+                  "value": 20,
+                  "rawValue": "20",
+                  "rawUnit": "mg/kg bw per day",
+                  "unit": "mg/kg bw per day",
+                  "rawText": "20 mg/kg bw per day",
+                  "sourceSentence": "JECFA determined that dietary exposure estimates to aspartame at the mean of up to 10 mg/kg bw per day for children and 5 mg/kg bw per day for adults, and for high dietary exposures up to 20 mg/kg bw per day for children and 12 mg/kg bw per day for adults, were appropriate for the present assessment.",
+                  "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/62",
+                  "evaluationYear": 2023
+                },
+                {
+                  "type": "population_exposure",
+                  "value": 12,
+                  "rawValue": "12",
+                  "rawUnit": "mg/kg bw per day",
+                  "unit": "mg/kg bw per day",
+                  "rawText": "12 mg/kg bw per day",
+                  "sourceSentence": "JECFA determined that dietary exposure estimates to aspartame at the mean of up to 10 mg/kg bw per day for children and 5 mg/kg bw per day for adults, and for high dietary exposures up to 20 mg/kg bw per day for children and 12 mg/kg bw per day for adults, were appropriate for the present assessment.",
+                  "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/62",
+                  "evaluationYear": 2023
+                }
+              ],
+              "rawText": "JECFA determined that dietary exposure estimates to aspartame at the mean of up to 10 mg/kg bw per day for children and 5 mg/kg bw per day for adults, and for high dietary exposures up to 20 mg/kg bw per day for children and 12 mg/kg bw per day for adults, were appropriate for the present assessment.",
+              "sourceSentence": "JECFA determined that dietary exposure estimates to aspartame at the mean of up to 10 mg/kg bw per day for children and 5 mg/kg bw per day for adults, and for high dietary exposures up to 20 mg/kg bw per day for children and 12 mg/kg bw per day for adults, were appropriate for the present assessment.",
+              "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/62",
+              "evaluationYear": 2023
+            },
+            {
+              "type": "other_exposure",
+              "values": [],
+              "rawText": "JECFA noted that these dietary exposure estimates do not exceed the ADI.",
+              "sourceSentence": "JECFA noted that these dietary exposure estimates do not exceed the ADI.",
+              "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/62",
+              "evaluationYear": 2023
+            },
+            {
+              "type": "other_exposure",
+              "values": [],
+              "rawText": "JECFA therefore concluded that dietary exposure to aspartame does not pose a health concern.",
+              "sourceSentence": "JECFA therefore concluded that dietary exposure to aspartame does not pose a health concern.",
+              "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/62",
+              "evaluationYear": 2023
+            }
+          ],
+          "referenceValues": [
+            {
+              "type": "ADI",
+              "rawText": "ADI",
+              "sourceSentence": "JECFA noted that these dietary exposure estimates do not exceed the ADI.",
+              "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/62",
+              "evaluationYear": 2023
+            }
+          ],
+          "comparisonStatus": [
+            "not_quantified"
+          ]
+        },
+        {
+          "year": 2023,
+          "intakeStatus": "PARSED_EXPOSURE",
+          "intakeText": "JECFA determined that dietary exposure estimates to aspartame at the mean of up to 10 mg/kg bw per day for children and 5 mg/kg bw per day for adults, and for high dietary exposures up to 20 mg/kg bw per day for children and 12 mg/kg bw per day for adults, were appropriate for the present assessment. JECFA noted that these dietary exposure estimates do not exceed the ADI. JECFA therefore concluded that dietary exposure to aspartame does not pose a health concern.",
+          "exposureScenarios": [
+            {
+              "type": "population_exposure",
+              "values": [
+                {
+                  "type": "population_exposure",
+                  "value": 10,
+                  "rawValue": "10",
+                  "rawUnit": "mg/kg bw per day",
+                  "unit": "mg/kg bw per day",
+                  "rawText": "10 mg/kg bw per day",
+                  "sourceSentence": "JECFA determined that dietary exposure estimates to aspartame at the mean of up to 10 mg/kg bw per day for children and 5 mg/kg bw per day for adults, and for high dietary exposures up to 20 mg/kg bw per day for children and 12 mg/kg bw per day for adults, were appropriate for the present assessment.",
+                  "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/1850",
+                  "evaluationYear": 2023
+                },
+                {
+                  "type": "population_exposure",
+                  "value": 5,
+                  "rawValue": "5",
+                  "rawUnit": "mg/kg bw per day",
+                  "unit": "mg/kg bw per day",
+                  "rawText": "5 mg/kg bw per day",
+                  "sourceSentence": "JECFA determined that dietary exposure estimates to aspartame at the mean of up to 10 mg/kg bw per day for children and 5 mg/kg bw per day for adults, and for high dietary exposures up to 20 mg/kg bw per day for children and 12 mg/kg bw per day for adults, were appropriate for the present assessment.",
+                  "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/1850",
+                  "evaluationYear": 2023
+                },
+                {
+                  "type": "population_exposure",
+                  "value": 20,
+                  "rawValue": "20",
+                  "rawUnit": "mg/kg bw per day",
+                  "unit": "mg/kg bw per day",
+                  "rawText": "20 mg/kg bw per day",
+                  "sourceSentence": "JECFA determined that dietary exposure estimates to aspartame at the mean of up to 10 mg/kg bw per day for children and 5 mg/kg bw per day for adults, and for high dietary exposures up to 20 mg/kg bw per day for children and 12 mg/kg bw per day for adults, were appropriate for the present assessment.",
+                  "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/1850",
+                  "evaluationYear": 2023
+                },
+                {
+                  "type": "population_exposure",
+                  "value": 12,
+                  "rawValue": "12",
+                  "rawUnit": "mg/kg bw per day",
+                  "unit": "mg/kg bw per day",
+                  "rawText": "12 mg/kg bw per day",
+                  "sourceSentence": "JECFA determined that dietary exposure estimates to aspartame at the mean of up to 10 mg/kg bw per day for children and 5 mg/kg bw per day for adults, and for high dietary exposures up to 20 mg/kg bw per day for children and 12 mg/kg bw per day for adults, were appropriate for the present assessment.",
+                  "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/1850",
+                  "evaluationYear": 2023
+                }
+              ],
+              "rawText": "JECFA determined that dietary exposure estimates to aspartame at the mean of up to 10 mg/kg bw per day for children and 5 mg/kg bw per day for adults, and for high dietary exposures up to 20 mg/kg bw per day for children and 12 mg/kg bw per day for adults, were appropriate for the present assessment.",
+              "sourceSentence": "JECFA determined that dietary exposure estimates to aspartame at the mean of up to 10 mg/kg bw per day for children and 5 mg/kg bw per day for adults, and for high dietary exposures up to 20 mg/kg bw per day for children and 12 mg/kg bw per day for adults, were appropriate for the present assessment.",
+              "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/1850",
+              "evaluationYear": 2023
+            },
+            {
+              "type": "other_exposure",
+              "values": [],
+              "rawText": "JECFA noted that these dietary exposure estimates do not exceed the ADI.",
+              "sourceSentence": "JECFA noted that these dietary exposure estimates do not exceed the ADI.",
+              "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/1850",
+              "evaluationYear": 2023
+            },
+            {
+              "type": "other_exposure",
+              "values": [],
+              "rawText": "JECFA therefore concluded that dietary exposure to aspartame does not pose a health concern.",
+              "sourceSentence": "JECFA therefore concluded that dietary exposure to aspartame does not pose a health concern.",
+              "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/1850",
+              "evaluationYear": 2023
+            }
+          ],
+          "referenceValues": [
+            {
+              "type": "ADI",
+              "rawText": "ADI",
+              "sourceSentence": "JECFA noted that these dietary exposure estimates do not exceed the ADI.",
+              "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/1850",
+              "evaluationYear": 2023
+            }
+          ],
+          "comparisonStatus": [
+            "not_quantified"
+          ]
+        }
+      ]
+    },
+    {
+      "code": "E250",
+      "jecfaMatch": true,
+      "evaluations": []
+    },
+    {
+      "code": "E150D",
+      "jecfaMatch": false,
+      "evaluations": []
+    },
+    {
+      "code": "E338",
+      "jecfaMatch": true,
+      "evaluations": [
+        {
+          "year": 1982,
+          "intakeStatus": "INTAKE_PRESENT_REFERENCE_ONLY",
+          "intakeText": "MTDI 70 mg/kg bw (as P)",
+          "exposureScenarios": [],
+          "referenceValues": [
+            {
+              "type": "MTDI",
+              "value": 70,
+              "rawValue": "70",
+              "rawUnit": "mg/kg bw",
+              "unit": "mg/kg bw",
+              "rawText": "70 mg/kg bw",
+              "sourceSentence": "MTDI 70 mg/kg bw (as P)",
+              "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/1777",
+              "evaluationYear": 1982
+            }
+          ],
+          "comparisonStatus": [
+            "not_quantified"
+          ]
+        },
+        {
+          "year": 1982,
+          "intakeStatus": "INTAKE_PRESENT_REFERENCE_ONLY",
+          "intakeText": "MTDI 70 mg/kg bw (as P)",
+          "exposureScenarios": [],
+          "referenceValues": [
+            {
+              "type": "MTDI",
+              "value": 70,
+              "rawValue": "70",
+              "rawUnit": "mg/kg bw",
+              "unit": "mg/kg bw",
+              "rawText": "70 mg/kg bw",
+              "sourceSentence": "MTDI 70 mg/kg bw (as P)",
+              "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2530",
+              "evaluationYear": 1982
+            }
+          ],
+          "comparisonStatus": [
+            "not_quantified"
+          ]
+        },
+        {
+          "year": 2009,
+          "intakeStatus": "INTAKE_PRESENT_REFERENCE_ONLY",
+          "intakeText": "PMTDI 0.8 mg/kg bw",
+          "exposureScenarios": [],
+          "referenceValues": [
+            {
+              "type": "PMTDI",
+              "value": 0.8,
+              "rawValue": "0.8",
+              "rawUnit": "mg/kg bw",
+              "unit": "mg/kg bw",
+              "rawText": "0.8 mg/kg bw",
+              "sourceSentence": "PMTDI 0.8 mg/kg bw",
+              "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/5877",
+              "evaluationYear": 2009
+            }
+          ],
+          "comparisonStatus": [
+            "not_quantified"
+          ]
+        }
+      ]
+    },
+    {
+      "code": "E621",
+      "jecfaMatch": true,
+      "evaluations": []
+    },
+    {
+      "code": "E955",
+      "jecfaMatch": true,
+      "evaluations": []
+    },
+    {
+      "code": "E202",
+      "jecfaMatch": true,
+      "evaluations": []
+    },
+    {
+      "code": "E330",
+      "jecfaMatch": true,
+      "evaluations": []
+    },
+    {
+      "code": "E407",
+      "jecfaMatch": true,
+      "evaluations": []
+    },
+    {
+      "code": "E471",
+      "jecfaMatch": true,
+      "evaluations": []
+    }
+  ],
+  "parseFailed": [
+    {
+      "chemicalId": "1564",
+      "year": 2001,
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/1564",
+      "sourceText": "l"
+    },
+    {
+      "chemicalId": "2325",
+      "year": 2001,
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/2325",
+      "sourceText": "l"
+    },
+    {
+      "chemicalId": "3986",
+      "year": 2001,
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/3986",
+      "sourceText": "l"
+    },
+    {
+      "chemicalId": "4131",
+      "year": 2001,
+      "sourceUrl": "https://apps.who.int/food-additives-contaminants-jecfa-database/Home/Chemical/4131",
+      "sourceText": "l"
+    }
+  ],
+  "validation": {
+    "evaluateAdditiveRiskModified": false,
+    "profilesModified": false,
+    "supabaseUpsertPerformed": false,
+    "mobileOrUiModified": false,
+    "eNumberSpecificRulesAdded": false
+  }
+}

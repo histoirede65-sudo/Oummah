@@ -40,12 +40,26 @@ class GoalProgressBridge {
       this.timer = null;
     }
     const events = this.pending.splice(0);
-    if (events.length) await this.apply(events);
-    await this.writeChain;
+    if (!events.length) {
+      await this.writeChain;
+      return;
+    }
+    const operation = this.writeChain.then(() => this.apply(events));
+    this.writeChain = operation.catch(() => undefined);
+    await operation;
   }
 
   notify(plan: DailyPlan) {
     this.listeners.forEach((listener) => listener(plan));
+  }
+
+  async setEvidence(metric: GoalProgressEvent["metric"], evidenceId: string, selected: boolean) {
+    const operation = this.writeChain.then(async () => {
+      const plan = await goalRepository.setEvidence(metric, evidenceId, selected);
+      this.notify(plan);
+    });
+    this.writeChain = operation.catch(() => undefined);
+    await operation;
   }
 
   private async apply(events: GoalProgressEvent[]) {

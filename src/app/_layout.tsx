@@ -23,6 +23,8 @@ import { loadNotificationCenterPreferences, notificationResponseReadId, requestN
 import { syncJumuahNotification } from '../features/jumuah/JumuahService';
 import AnalyticsRouteTracker from '../features/analytics/AnalyticsRouteTracker';
 import FirstVisitGuideHost from '../components/FirstVisitGuideHost';
+import GoalCelebrationHost from '../features/daily-goals/presentation/GoalCelebrationHost';
+import PrayerValidationCelebrationHost from '../features/prayers/presentation/PrayerValidationCelebrationHost';
 import { trackAnalyticsEvent } from '../features/analytics/AnalyticsService';
 import { STOP_ADHAN_ACTION } from '../features/adhan/AdhanNotifications';
 import { loadHifzState } from '../features/hifz/HifzStore';
@@ -777,6 +779,8 @@ export default function RootLayout() {
                 <MiniPlayer />
                 <ProphetAudioMiniPlayer />
                 <FirstVisitGuideHost enabled={!launchVisible} />
+                <GoalCelebrationHost />
+                <PrayerValidationCelebrationHost />
                 </ProphetAudioProvider>
               </AudioPlayerProvider>
             </ReciterProvider>

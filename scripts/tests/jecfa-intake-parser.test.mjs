@@ -1,0 +1,22 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { parseJecfaIntakeAssessment } from '../additives/jecfa-intake-parser.mjs';
+
+const parse = (text) => parseJecfaIntakeAssessment(text, { year: 2023, sourceUrl: 'https://example.test' });
+test('TMDI is an exposure scenario', () => { const item = parse('TMDI 25 mg/person/day'); assert.equal(item.status, 'PARSED_EXPOSURE'); assert.equal(item.exposureScenarios[0].type, 'TMDI'); assert.equal(item.referenceValues.length, 0); });
+test('MTDI is reference-only', () => { const item = parse('MTDI 70 mg/kg bw/day'); assert.equal(item.status, 'INTAKE_PRESENT_REFERENCE_ONLY'); assert.equal(item.referenceValues[0].type, 'MTDI'); assert.equal(item.exposureScenarios.length, 0); });
+test('PMTDI is reference-only', () => { const item = parse('PMTDI 70 mg/kg bw/day'); assert.equal(item.status, 'INTAKE_PRESENT_REFERENCE_ONLY'); assert.equal(item.referenceValues[0].type, 'PMTDI'); assert.equal(item.exposureScenarios.length, 0); });
+test('ADI is reference-only', () => { const item = parse('ADI 0-40 mg/kg bw/day'); assert.equal(item.status, 'INTAKE_PRESENT_REFERENCE_ONLY'); assert.equal(item.referenceValues[0].type, 'ADI'); assert.equal(item.referenceValues[0].lower, 0); assert.equal(item.referenceValues[0].upper, 40); });
+test('PTWI is reference-only', () => { const item = parse('PTWI 7.5 mg/kg bw'); assert.equal(item.status, 'INTAKE_PRESENT_REFERENCE_ONLY'); assert.equal(item.referenceValues[0].type, 'PTWI'); });
+test('TMDI below PMTDI separates exposure and reference', () => { const item = parse('TMDI was below the PMTDI.'); assert.equal(item.status, 'PARSED_EXPOSURE'); assert.equal(item.exposureScenarios[0].type, 'TMDI'); assert.equal(item.referenceValues[0].type, 'PMTDI'); assert.equal(item.assessments[0].comparisonStatus, 'below_reference'); });
+test('PMTDI numeric value never becomes exposure', () => { const item = parse('PMTDI 70 mg/kg bw/day'); assert.equal(item.exposureScenarios.length, 0); });
+test('estimated intake is exposure', () => { const item = parse('Estimated intake 5 mg/kg bw/day.'); assert.equal(item.status, 'PARSED_EXPOSURE'); assert.equal(item.exposureScenarios[0].type, 'estimated_intake'); });
+test('ambiguous numeric text stays unclassified', () => { const item = parse('5 mg/kg bw/day.'); assert.equal(item.status, 'INTAKE_PRESENT_NO_EXPLICIT_COMPARISON'); assert.equal(item.exposureScenarios.length, 0); assert.equal(item.referenceValues.length, 0); });
+test('below upper bound comparison is preserved', () => assert.equal(parse('Exposure was below the upper bound of the ADI.').assessments[0].comparisonStatus, 'below_reference'));
+test('within group ADI preserves group scope', () => assert.equal(parse('Exposure was within the upper bound of the group ADI.').assessments[0].scope, 'group'));
+test('exceeded comparison is preserved', () => assert.equal(parse('Exposure exceeded the upper bound of the ADI.').assessments[0].comparisonStatus, 'confirmed_exceedance'));
+test('multiple populations remain separate', () => { const item = parse('Adults did not exceed the ADI. Children may exceed the ADI.'); assert.equal(item.assessments.length, 2); });
+test('ranges preserve bounds and raw unit', () => { const value = parse('Estimated intake range: 30-50 ng/p/d.').exposureScenarios[0].values[0]; assert.equal(value.lower, 30); assert.equal(value.upper, 50); });
+test('percent of ADI is retained without conversion', () => { const value = parse('High consumers reached 25% of the ADI.').exposureScenarios[0].values[0]; assert.equal(value.unit, '% ADI'); assert.equal(value.percentOfReference, true); });
+test('percentile is retained', () => assert.equal(parse('At the 95th percentile, exposure was 0.5 mg/kg bw/day.').exposureScenarios[0].values[0].percentile, 95));
+test('missing field is distinct', () => assert.equal(parseJecfaIntakeAssessment(null).status, 'NO_INTAKE_FIELD'));

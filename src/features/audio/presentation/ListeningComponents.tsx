@@ -275,7 +275,7 @@ export const SurahAudioRow = memo(function SurahAudioRow({
       </View>
 
       <View style={styles.surahCopy}>
-        <Text style={styles.surahName}>{item.surah.arabicName}</Text>
+        <Text style={styles.surahName}>{item.surah.transliteration}</Text>
 
         <Text style={styles.surahMeta}>
           {surahDisplayName}
@@ -293,8 +293,8 @@ export const SurahAudioRow = memo(function SurahAudioRow({
         <Ionicons name="download" size={14} color={colors.success} />
       ) : null}
 
-      <Text numberOfLines={1} style={styles.surahArabic}>
-        {item.surah.transliteration}
+      <Text style={styles.surahArabic}>
+        {item.surah.arabicName}
       </Text>
 
       <DownloadButton
