@@ -20,6 +20,7 @@ import {
   type MosqueProposalKind,
   type MosqueSpecialTimes,
 } from '../../features/mosques/data/mosquePrayerUpdates';
+import { formatDateInput, formatTimeInput, isoToDateInput as isoToInput, parseDate, parseTime } from '../../features/mosques/timeInput';
 import { colors } from '../../theme/colors';
 import { typography } from '../../theme/typography';
 
@@ -41,58 +42,6 @@ const KINDS: readonly { kind: MosqueProposalKind; label: string }[] = [
 
 const MAX_JUMUAH = 3;
 const MAX_EID_TIMES = 3;
-
-// ----- Input helpers -------------------------------------------------------------------------
-
-/** "1330" → "13H30" while typing. */
-function formatTimeInput(value: string): string {
-  if (/[Hh:]/.test(value)) {
-    const [rawHours, rawMinutes = ''] = value.split(/[Hh:]/, 2);
-    const hours = rawHours.replace(/\D/g, '').slice(0, 2);
-    const minutes = rawMinutes.replace(/\D/g, '').slice(0, 2);
-    return `${hours}H${minutes}`;
-  }
-  const digits = value.replace(/\D/g, '').slice(0, 4);
-  if (digits.length <= 3) return digits;
-  return `${digits.slice(0, 2)}H${digits.slice(2)}`;
-}
-
-/** "13H30" / "1330" / "930" → "13:30", "" → "", invalid → null. */
-function parseTime(value: string): string | null {
-  const trimmed = value.trim();
-  if (!trimmed) return '';
-  let normalized = trimmed;
-  if (/^\d{3,4}$/.test(normalized)) normalized = normalized.padStart(4, '0').replace(/^(\d{2})(\d{2})$/, '$1H$2');
-  const match = /^(\d{1,2})[Hh:](\d{2})$/.exec(normalized);
-  if (!match) return null;
-  const hours = Number(match[1]);
-  const minutes = Number(match[2]);
-  if (hours > 23 || minutes > 59) return null;
-  return `${String(hours).padStart(2, '0')}:${match[2]}`;
-}
-
-/** "08032027" → "08/03/2027" while typing. */
-function formatDateInput(value: string): string {
-  const digits = value.replace(/\D/g, '').slice(0, 8);
-  if (digits.length <= 2) return digits;
-  if (digits.length <= 4) return `${digits.slice(0, 2)}/${digits.slice(2)}`;
-  return `${digits.slice(0, 2)}/${digits.slice(2, 4)}/${digits.slice(4)}`;
-}
-
-/** "08/03/2027" → "2027-03-08", invalid → null. */
-function parseDate(value: string): string | null {
-  const match = /^(\d{2})\/(\d{2})\/(\d{4})$/.exec(value.trim());
-  if (!match) return null;
-  const [, day, month, year] = match;
-  const date = new Date(Number(year), Number(month) - 1, Number(day));
-  if (date.getFullYear() !== Number(year) || date.getMonth() !== Number(month) - 1 || date.getDate() !== Number(day)) return null;
-  return `${year}-${month}-${day}`;
-}
-
-function isoToInput(value?: string) {
-  const match = value ? /^(\d{4})-(\d{2})-(\d{2})$/.exec(value) : null;
-  return match ? `${match[3]}/${match[2]}/${match[1]}` : '';
-}
 
 function timeToInput(value?: string | null) {
   return value ? formatTimeInput(value) : '';

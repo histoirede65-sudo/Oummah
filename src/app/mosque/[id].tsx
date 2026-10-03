@@ -19,6 +19,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import MosquePrayerCountdown from '../../components/MosquePrayerCountdown';
 import MosqueTimesProposalSheet from '../../components/mosques/MosqueTimesProposalSheet';
 import MosqueTimesSection from '../../components/mosques/MosqueTimesSection';
+import MosquePostsSection from '../../components/mosques/MosquePostsSection';
+import MosqueRemindersSection from '../../components/mosques/MosqueRemindersSection';
 
 import {
     formatGeoapifyOpeningHours,
@@ -831,6 +833,19 @@ export default function MosqueDetailScreen() {
           approved={prayerTimes}
           special={specialTimes}
           onPropose={() => setPrayerModalVisible(true)}
+        />
+
+        <MosquePostsSection mosque={{ id: displayedMosque.id, name: displayedMosque.name }} />
+
+        <MosqueRemindersSection
+          mosque={{
+            id: displayedMosque.id,
+            name: displayedMosque.name,
+            address: displayedMosque.address,
+            latitude: displayedMosque.latitude,
+            longitude: displayedMosque.longitude,
+          }}
+          hasJumuahTime={Boolean(prayerTimes?.jumuahTimes?.length)}
         />
 
         <View style={styles.actionsGrid}>

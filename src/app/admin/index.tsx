@@ -161,7 +161,8 @@ export default function AdminHomeScreen() {
             <MenuRow title="Mosquées" subtitle="Propositions, horaires et signalements" icon="business-outline" badge={mosqueCount} expanded={openGroup === "mosques"} onPress={() => toggle("mosques")} />
             {openGroup === "mosques" ? <Submenu entries={[
               { title: "Valider les mosquées", subtitle: "Accepter ou refuser les propositions", route: "/admin/mosques", badge: dashboard?.mosquePending },
-              { title: "Valider les horaires", subtitle: "Prières et heure de Joumou’a", route: "/admin/mosque-prayer-times", badge: prayerTimes ?? undefined },
+              { title: "Valider les horaires", subtitle: "Prières, iqama, Joumou’a, Ramadan et Aïd", route: "/admin/mosque-prayer-times", badge: prayerTimes ?? undefined },
+              { title: "Valider les annonces", subtitle: "Annonces et événements des mosquées", route: "/admin/mosque-posts" },
               { title: "Traiter les signalements", subtitle: "Corriger les erreurs remontées", route: "/admin/mosque-reports", badge: dashboard?.mosqueReportsPending },
             ]} /> : null}
             <MenuRow title="Abonnements & revenus" subtitle="Premium, crédits Wasil et finances" icon="diamond-outline" expanded={openGroup === "finance"} onPress={() => toggle("finance")} />

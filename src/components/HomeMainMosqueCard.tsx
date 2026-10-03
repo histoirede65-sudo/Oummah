@@ -28,6 +28,7 @@ import {
     syncMosqueFavorites,
     type StoredMosque,
 } from '../features/mosques/data/mosquePreferences';
+import { refreshMosqueReminders } from '../features/mosques/mosqueReminders';
 import { colors } from '../theme/colors';
 import { typography } from '../theme/typography';
 
@@ -130,6 +131,8 @@ export default function HomeMainMosqueCard() {
     } finally {
       setLoading(false);
     }
+    // Mosque reminders are scheduled 3 days ahead: keep them up to date (at most every 3 h).
+    void refreshMosqueReminders();
     // On a new phone, the account brings back the main mosque.
     if (await syncMosqueFavorites()) setMainMosque(await getMainMosque());
   }, []);
