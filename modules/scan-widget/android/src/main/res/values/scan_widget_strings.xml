@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="scan_widget_label">Scanner OUMMAH</string>
+  <string name="scan_widget_title">Scanner</string>
+  <string name="scan_widget_subtitle">Halal · boycott</string>
+  <string name="scan_widget_description">Ouvre directement le scanner de produits OUMMAH.</string>
+</resources>

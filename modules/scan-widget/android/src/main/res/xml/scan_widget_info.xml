@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
+  android:description="@string/scan_widget_description"
+  android:initialKeyguardLayout="@layout/scan_widget"
+  android:initialLayout="@layout/scan_widget"
+  android:minWidth="70dp"
+  android:minHeight="70dp"
+  android:resizeMode="horizontal|vertical"
+  android:targetCellWidth="1"
+  android:targetCellHeight="1"
+  android:updatePeriodMillis="0"
+  android:previewLayout="@layout/scan_widget"
+  android:widgetCategory="home_screen|keyguard" />

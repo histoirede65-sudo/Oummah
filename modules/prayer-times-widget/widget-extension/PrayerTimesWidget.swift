@@ -1483,6 +1483,105 @@ struct TahajjudWidget: Widget {
   }
 }
 
+// MARK: - Scan : ouvre directement le scanner de produits
+
+private let scanWidgetKind = "ScanWidget"
+private let scanURL = URL(string: "oummah:///boycott/scanner")
+
+private struct ScanEntry: TimelineEntry {
+  let date: Date
+}
+
+private struct ScanProvider: TimelineProvider {
+  func placeholder(in context: Context) -> ScanEntry { ScanEntry(date: Date()) }
+  func getSnapshot(in context: Context, completion: @escaping (ScanEntry) -> Void) { completion(ScanEntry(date: Date())) }
+  func getTimeline(in context: Context, completion: @escaping (Timeline<ScanEntry>) -> Void) {
+    // Static content: no refresh needed.
+    completion(Timeline(entries: [ScanEntry(date: Date())], policy: .never))
+  }
+}
+
+private let scanGold = Color(red: 0.95, green: 0.71, blue: 0.24)
+private let scanCream = Color(red: 0.97, green: 0.95, blue: 0.87)
+
+private struct ScanBackground: ViewModifier {
+  private var gradient: LinearGradient {
+    LinearGradient(
+      colors: [Color(red: 0.12, green: 0.16, blue: 0.12), Color(red: 0.04, green: 0.05, blue: 0.04)],
+      startPoint: .topLeading,
+      endPoint: .bottomTrailing
+    )
+  }
+
+  @ViewBuilder
+  func body(content: Content) -> some View {
+    if #available(iOS 17.0, *) {
+      content.containerBackground(for: .widget) { gradient }
+    } else {
+      content.background(gradient)
+    }
+  }
+}
+
+@available(iOS 16.0, *)
+private struct ScanWidgetView: View {
+  @Environment(\.widgetFamily) private var family
+  let entry: ScanEntry
+
+  var body: some View {
+    switch family {
+    case .accessoryCircular:
+      ZStack {
+        AccessoryWidgetBackground()
+        Image(systemName: "barcode.viewfinder")
+          .font(.system(size: 24, weight: .semibold))
+      }
+      .widgetAccentable()
+    case .accessoryRectangular:
+      HStack(spacing: 8) {
+        Image(systemName: "barcode.viewfinder")
+          .font(.system(size: 26, weight: .semibold))
+          .widgetAccentable()
+        VStack(alignment: .leading, spacing: 1) {
+          Text("Scanner").font(.headline)
+          Text("Halal · boycott").font(.caption).foregroundStyle(.secondary)
+        }
+        Spacer(minLength: 0)
+      }
+    default:
+      VStack(spacing: 8) {
+        ZStack {
+          Circle().fill(scanGold.opacity(0.16)).frame(width: 74, height: 74)
+          Image(systemName: "barcode.viewfinder")
+            .font(.system(size: 40, weight: .semibold))
+            .foregroundStyle(scanGold)
+        }
+        Text("Scanner")
+          .font(.system(size: 17, weight: .bold))
+          .foregroundStyle(scanCream)
+        Text("Halal · boycott")
+          .font(.system(size: 12, weight: .medium))
+          .foregroundStyle(scanGold.opacity(0.75))
+      }
+      .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+  }
+}
+
+@available(iOS 16.0, *)
+struct ScanWidget: Widget {
+  var body: some WidgetConfiguration {
+    StaticConfiguration(kind: scanWidgetKind, provider: ScanProvider()) { entry in
+      ScanWidgetView(entry: entry)
+        .widgetURL(scanURL)
+        .modifier(ScanBackground())
+    }
+    .configurationDisplayName("Scanner OUMMAH")
+    .description("Ouvre directement le scanner de produits.")
+    .supportedFamilies([.systemSmall, .accessoryCircular, .accessoryRectangular])
+  }
+}
+
 @available(iOS 16.0, *)
 @main
 struct OummahWidgetBundle: WidgetBundle {
@@ -1490,5 +1589,6 @@ struct OummahWidgetBundle: WidgetBundle {
     PrayerTimesWidget()
     OummahVerseLockScreenWidget()
     TahajjudWidget()
+    ScanWidget()
   }
 }
