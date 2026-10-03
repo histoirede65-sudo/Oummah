@@ -32,7 +32,12 @@ import {
   syncMosqueFavorites,
   type StoredMosque,
 } from '../features/mosques/data/mosquePreferences';
-import { getMosqueScheduleWithApprovedTimes } from '../features/mosques/data/mosquePrayerUpdates';
+import {
+  getApprovedMosquePrayerTimes,
+  getIqamaTime,
+  getMosqueScheduleWithApprovedTimes,
+} from '../features/mosques/data/mosquePrayerUpdates';
+import { getMosquePosts, type MosquePost } from '../features/mosques/data/mosquePosts';
 import {
   getNextPrayer,
   type MosquePrayerTime,
@@ -334,6 +339,38 @@ function openMosqueDetails(mosque: DisplayMosque) {
   } as Href);
 }
 
+function openStoredMosque(mosque: StoredMosque) {
+  router.push({
+    pathname: '/mosque/[id]',
+    params: {
+      id: mosque.id,
+      name: mosque.name,
+      address: mosque.address,
+      latitude: String(mosque.latitude),
+      longitude: String(mosque.longitude),
+      distance: mosque.distanceLabel ?? '',
+      phone: mosque.phone ?? '',
+      website: mosque.website ?? '',
+      openingHours: mosque.openingHours ?? '',
+      source: mosque.source ?? '',
+      imageKey: mosque.imageKey ?? '',
+    },
+  } as Href);
+}
+
+function formatEventMoment(post: MosquePost) {
+  if (!post.startsAt) return '';
+  const start = new Date(post.startsAt);
+  const today = new Date();
+  const tomorrow = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1);
+  const day = start.toDateString() === today.toDateString()
+    ? 'aujourd’hui'
+    : start.toDateString() === tomorrow.toDateString()
+      ? 'demain'
+      : start.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' });
+  return `${day} à ${start.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}`;
+}
+
 export default function MosquesScreen() {
   const [mode, setMode] = useState<ExploreMode>('list');
   const [query, setQuery] = useState('');
@@ -353,6 +390,9 @@ export default function MosquesScreen() {
   const [mainMosque, setMainMosqueState] = useState<StoredMosque | null>(null);
   const [mainMosqueNextPrayer, setMainMosqueNextPrayer] =
     useState<MosquePrayerTime | null>(null);
+  const [mainMosqueIqama, setMainMosqueIqama] = useState<string | null>(null);
+  const [mainMosqueNextEvent, setMainMosqueNextEvent] = useState<MosquePost | null>(null);
+  const [favoriteMosques, setFavoriteMosques] = useState<StoredMosque[]>([]);
   const [favoriteMosqueIds, setFavoriteMosqueIds] = useState<Set<string>>(
     () => new Set(),
   );
@@ -881,7 +921,7 @@ export default function MosquesScreen() {
       const prayerController = new AbortController();
 
       const loadMosquePreferences = async (afterSync = false): Promise<void> => {
-        const [storedMainMosque, favoriteMosques, storedUserMosques] = await Promise.all([
+        const [storedMainMosque, storedFavorites, storedUserMosques] = await Promise.all([
           getMainMosque().catch(() => null),
           getFavoriteMosques().catch(() => []),
           getUserMosques().catch(() => []),
@@ -890,10 +930,15 @@ export default function MosquesScreen() {
         if (active) {
           setMainMosqueState(storedMainMosque);
           setFavoriteMosqueIds(
-            new Set(favoriteMosques.flatMap((mosque) => mosque.mosqueId ? [mosque.id, mosque.mosqueId] : [mosque.id])),
+            new Set(storedFavorites.flatMap((mosque) => mosque.mosqueId ? [mosque.id, mosque.mosqueId] : [mosque.id])),
           );
+          setFavoriteMosques(storedFavorites);
           setUserMosques(storedUserMosques);
-          setMainMosqueNextPrayer(null);
+          if (!storedMainMosque) {
+            setMainMosqueNextPrayer(null);
+            setMainMosqueIqama(null);
+            setMainMosqueNextEvent(null);
+          }
         }
 
         if (!afterSync) {
@@ -905,14 +950,23 @@ export default function MosquesScreen() {
 
         if (!storedMainMosque) return;
 
-        const schedule = await getMosqueScheduleWithApprovedTimes(
-          storedMainMosque,
-          prayerController.signal,
-        ).catch(() => null);
+        const [schedule, approved, posts] = await Promise.all([
+          getMosqueScheduleWithApprovedTimes(storedMainMosque, prayerController.signal).catch(() => null),
+          getApprovedMosquePrayerTimes(storedMainMosque.id).catch(() => null),
+          getMosquePosts(storedMainMosque.id),
+        ]);
 
-        if (active && schedule) {
-          setMainMosqueNextPrayer(getNextPrayer(schedule));
-        }
+        if (!active) return;
+        const nextPrayer = schedule ? getNextPrayer(schedule) : null;
+        setMainMosqueNextPrayer(nextPrayer);
+        setMainMosqueIqama(nextPrayer && schedule
+          ? getIqamaTime(
+              approved?.iqama?.[nextPrayer.key.toLowerCase() as 'fajr' | 'dhuhr' | 'asr' | 'maghrib' | 'isha'],
+              nextPrayer,
+              schedule.timezone,
+            )
+          : null);
+        setMainMosqueNextEvent(posts.find((post) => post.kind === 'event') ?? null);
       };
 
       void loadMosquePreferences();
@@ -962,6 +1016,140 @@ export default function MosquesScreen() {
         ? 'Actualiser ma position'
         : 'Appuyer pour rechercher';
 
+  // « Ma mosquée » (next prayer, iqama, next event, favorites): at the top once a main mosque is chosen,
+  // under the search otherwise.
+  const myMosqueSection = (
+    <>
+          <Pressable
+            onPress={() => {
+              if (mainMosque) {
+                openStoredMosque(mainMosque);
+                return;
+              }
+
+              Alert.alert(
+                'Ma mosquée',
+                'Ouvrez une fiche puis choisissez « Définir comme ma mosquée ».',
+              );
+            }}
+            style={({ pressed }) => [
+              styles.myMosqueCard,
+              mainMosque && styles.myMosqueCardFirst,
+              mainMosque && styles.myMosqueCardActive,
+              pressed && styles.pressed,
+            ]}
+          >
+            <View style={styles.myMosqueImageWrap}>
+              <Image
+                source={getMosqueImageSource(mainMosque?.id ?? 'main')}
+                resizeMode="cover"
+                style={styles.myMosqueImage}
+              />
+              <LinearGradient
+                colors={['transparent', 'rgba(8,7,19,0.50)']}
+                style={StyleSheet.absoluteFill}
+              />
+              <View style={styles.myMosqueImageBadge}>
+                <Ionicons
+                  name={mainMosque ? 'home' : 'home-outline'}
+                  size={14}
+                  color={colors.background}
+                />
+              </View>
+            </View>
+
+            <View style={styles.myMosqueCopy}>
+              <Text style={styles.sectionEyebrow}>MA MOSQUÉE</Text>
+              <Text numberOfLines={2} style={styles.myMosqueTitle}>
+                {mainMosque
+                  ? mainMosque.name
+                  : 'Choisissez votre mosquée principale'}
+              </Text>
+              <Text numberOfLines={2} style={styles.myMosqueText}>
+                {mainMosque
+                  ? mainMosque.address
+                  : 'Retrouvez ses horaires et ses événements en un geste.'}
+              </Text>
+
+              {mainMosque && mainMosqueNextPrayer ? (
+                <View style={styles.nextPrayerRow}>
+                  <Ionicons
+                    name="time-outline"
+                    size={14}
+                    color={colors.textMuted}
+                  />
+                  <Text style={styles.nextPrayerLabel}>Prochaine prière</Text>
+                  <View style={styles.nextPrayerDot} />
+                  <Text style={styles.nextPrayerValue}>
+                    {mainMosqueNextPrayer.label} {mainMosqueNextPrayer.time}
+                    {mainMosqueIqama ? ` · iqama ${mainMosqueIqama}` : ''}
+                  </Text>
+                </View>
+              ) : null}
+            </View>
+
+            <Ionicons name="chevron-forward" size={21} color={colors.goldLight} />
+          </Pressable>
+
+          {mainMosque && mainMosqueNextEvent ? (
+            <Pressable
+              onPress={() => openStoredMosque(mainMosque)}
+              style={({ pressed }) => [styles.nextEventCard, pressed && styles.pressed]}
+            >
+              <View style={styles.nextEventIcon}>
+                <Ionicons name="calendar-outline" size={17} color={colors.background} />
+              </View>
+              <View style={styles.nextEventCopy}>
+                <Text style={styles.sectionEyebrow}>PROCHAIN ÉVÉNEMENT</Text>
+                <Text numberOfLines={1} style={styles.nextEventTitle}>{mainMosqueNextEvent.title}</Text>
+                <Text numberOfLines={1} style={styles.nextEventDate}>{formatEventMoment(mainMosqueNextEvent)}</Text>
+              </View>
+              <Ionicons name="chevron-forward" size={19} color={colors.goldLight} />
+            </Pressable>
+          ) : null}
+
+          {favoriteMosques.some((mosque) => !mainMosque || (mosque.id !== mainMosque.id && (!mosque.mosqueId || mosque.mosqueId !== mainMosque.mosqueId))) ? (
+            <View style={styles.favoritesBlock}>
+              <View style={styles.favoritesHeader}>
+                <Text style={styles.sectionEyebrow}>MES FAVORIS</Text>
+                <Pressable onPress={() => router.push('/mosque/favorites' as Href)} hitSlop={8}>
+                  <Text style={styles.favoritesSeeAll}>Tout voir</Text>
+                </Pressable>
+              </View>
+              <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.favoritesRow}>
+                {favoriteMosques
+                  .filter((mosque) => !mainMosque || (mosque.id !== mainMosque.id && (!mosque.mosqueId || mosque.mosqueId !== mainMosque.mosqueId)))
+                  .map((mosque) => (
+                    <Pressable
+                      key={mosque.id}
+                      onPress={() => openStoredMosque(mosque)}
+                      style={({ pressed }) => [styles.favoriteChip, pressed && styles.pressed]}
+                    >
+                      <Image source={getMosqueImageSource(mosque.id)} resizeMode="cover" style={styles.favoriteChipImage} />
+                      <Text numberOfLines={2} style={styles.favoriteChipName}>{mosque.name}</Text>
+                    </Pressable>
+                  ))}
+              </ScrollView>
+            </View>
+          ) : null}
+
+          {mainMosque ? (
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="Retirer ma mosquée principale"
+              onPress={removeMainMosque}
+              style={({ pressed }) => [
+                styles.removeMainMosqueButton,
+                pressed && styles.pressed,
+              ]}
+            >
+              <Ionicons name="trash-outline" size={18} color={colors.goldLight} />
+              <Text style={styles.removeMainMosqueText}>Retirer ma mosquée</Text>
+            </Pressable>
+          ) : null}
+    </>
+  );
+
   return (
     <SafeAreaView edges={['top']} style={styles.safeArea}>
       <View style={styles.header}>
@@ -995,6 +1183,8 @@ export default function MosquesScreen() {
         onScroll={handleContentScroll}
         scrollEventThrottle={100}
       >
+        {mainMosque ? myMosqueSection : null}
+
         <View style={styles.heroCard}>
           <Image
             source={MOSQUE_HERO_IMAGE}
@@ -1153,104 +1343,7 @@ export default function MosquesScreen() {
           </View>
         ) : null}
 
-        <Pressable
-          onPress={() => {
-            if (mainMosque) {
-              router.push({
-                pathname: '/mosque/[id]',
-                params: {
-                  id: mainMosque.id,
-                  name: mainMosque.name,
-                  address: mainMosque.address,
-                  latitude: String(mainMosque.latitude),
-                  longitude: String(mainMosque.longitude),
-                  distance: mainMosque.distanceLabel ?? '',
-                  phone: mainMosque.phone ?? '',
-                  website: mainMosque.website ?? '',
-                  openingHours: mainMosque.openingHours ?? '',
-                  source: mainMosque.source ?? '',
-                  imageKey: mainMosque.imageKey ?? '',
-                },
-              } as Href);
-              return;
-            }
-
-            Alert.alert(
-              'Ma mosquée',
-              'Ouvrez une fiche puis choisissez « Définir comme ma mosquée ».',
-            );
-          }}
-          style={({ pressed }) => [
-            styles.myMosqueCard,
-            mainMosque && styles.myMosqueCardActive,
-            pressed && styles.pressed,
-          ]}
-        >
-          <View style={styles.myMosqueImageWrap}>
-            <Image
-              source={getMosqueImageSource(mainMosque?.id ?? 'main')}
-              resizeMode="cover"
-              style={styles.myMosqueImage}
-            />
-            <LinearGradient
-              colors={['transparent', 'rgba(8,7,19,0.50)']}
-              style={StyleSheet.absoluteFill}
-            />
-            <View style={styles.myMosqueImageBadge}>
-              <Ionicons
-                name={mainMosque ? 'home' : 'home-outline'}
-                size={14}
-                color={colors.background}
-              />
-            </View>
-          </View>
-
-          <View style={styles.myMosqueCopy}>
-            <Text style={styles.sectionEyebrow}>MA MOSQUÉE</Text>
-            <Text numberOfLines={2} style={styles.myMosqueTitle}>
-              {mainMosque
-                ? mainMosque.name
-                : 'Choisissez votre mosquée principale'}
-            </Text>
-            <Text numberOfLines={2} style={styles.myMosqueText}>
-              {mainMosque
-                ? mainMosque.address
-                : 'Retrouvez ses horaires et ses événements en un geste.'}
-            </Text>
-
-            {mainMosque && mainMosqueNextPrayer ? (
-              <View style={styles.nextPrayerRow}>
-                <Ionicons
-                  name="time-outline"
-                  size={14}
-                  color={colors.textMuted}
-                />
-                <Text style={styles.nextPrayerLabel}>Prochaine prière</Text>
-                <View style={styles.nextPrayerDot} />
-                <Text style={styles.nextPrayerValue}>
-                  {mainMosqueNextPrayer.label} {mainMosqueNextPrayer.time}
-                </Text>
-              </View>
-            ) : null}
-          </View>
-
-          <Ionicons name="chevron-forward" size={21} color={colors.goldLight} />
-        </Pressable>
-
-        {mainMosque ? (
-          <Pressable
-            accessibilityRole="button"
-            accessibilityLabel="Retirer ma mosquée principale"
-            onPress={removeMainMosque}
-            style={({ pressed }) => [
-              styles.removeMainMosqueButton,
-              pressed && styles.pressed,
-            ]}
-          >
-            <Ionicons name="trash-outline" size={18} color={colors.goldLight} />
-            <Text style={styles.removeMainMosqueText}>Retirer ma mosquée</Text>
-          </Pressable>
-        ) : null}
+        {!mainMosque ? myMosqueSection : null}
 
         <Pressable
           accessibilityRole="button"
@@ -1990,6 +2083,84 @@ const styles = StyleSheet.create({
     shadowRadius: 15,
     shadowOffset: { width: 0, height: 8 },
     elevation: 7,
+  },
+  myMosqueCardFirst: {
+    marginTop: 4,
+  },
+  nextEventCard: {
+    marginTop: 10,
+    padding: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    borderRadius: 18,
+    borderWidth: 1,
+    borderColor: 'rgba(224,188,112,0.3)',
+    backgroundColor: '#140F21',
+  },
+  nextEventIcon: {
+    width: 36,
+    height: 36,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 18,
+    backgroundColor: colors.goldLight,
+  },
+  nextEventCopy: {
+    flex: 1,
+    minWidth: 0,
+  },
+  nextEventTitle: {
+    marginTop: 3,
+    color: colors.text,
+    fontFamily: typography.sans,
+    fontSize: 14.5,
+    fontWeight: '700',
+  },
+  nextEventDate: {
+    marginTop: 2,
+    color: colors.goldLight,
+    fontFamily: typography.sans,
+    fontSize: 12,
+  },
+  favoritesBlock: {
+    marginTop: 16,
+  },
+  favoritesHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 9,
+  },
+  favoritesSeeAll: {
+    color: colors.goldLight,
+    fontFamily: typography.sans,
+    fontSize: 12,
+    fontWeight: '700',
+  },
+  favoritesRow: {
+    gap: 10,
+  },
+  favoriteChip: {
+    width: 128,
+    borderRadius: 16,
+    overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: 'rgba(126,72,148,0.36)',
+    backgroundColor: '#120D1F',
+  },
+  favoriteChipImage: {
+    width: '100%',
+    height: 70,
+  },
+  favoriteChipName: {
+    minHeight: 40,
+    paddingHorizontal: 9,
+    paddingVertical: 7,
+    color: colors.text,
+    fontFamily: typography.sans,
+    fontSize: 12,
+    fontWeight: '600',
   },
   myMosqueCardActive: {
     borderColor: 'rgba(232,190,91,0.62)',
