@@ -29,10 +29,11 @@ import {
   getFavoriteMosques,
   getMainMosque,
   setMosqueFavorite,
+  syncMosqueFavorites,
   type StoredMosque,
 } from '../features/mosques/data/mosquePreferences';
+import { getMosqueScheduleWithApprovedTimes } from '../features/mosques/data/mosquePrayerUpdates';
 import {
-  getMosquePrayerSchedule,
   getNextPrayer,
   type MosquePrayerTime,
 } from '../features/mosques/data/mosquePrayerTimes';
@@ -869,7 +870,7 @@ export default function MosquesScreen() {
       let active = true;
       const prayerController = new AbortController();
 
-      const loadMosquePreferences = async () => {
+      const loadMosquePreferences = async (afterSync = false): Promise<void> => {
         const [storedMainMosque, favoriteMosques, storedUserMosques] = await Promise.all([
           getMainMosque().catch(() => null),
           getFavoriteMosques().catch(() => []),
@@ -879,17 +880,23 @@ export default function MosquesScreen() {
         if (active) {
           setMainMosqueState(storedMainMosque);
           setFavoriteMosqueIds(
-            new Set(favoriteMosques.map((mosque) => mosque.id)),
+            new Set(favoriteMosques.flatMap((mosque) => mosque.mosqueId ? [mosque.id, mosque.mosqueId] : [mosque.id])),
           );
           setUserMosques(storedUserMosques);
           setMainMosqueNextPrayer(null);
         }
 
+        if (!afterSync) {
+          // Favorites and main mosque saved on the account (another phone) are merged in, then reloaded.
+          void syncMosqueFavorites().then((changed) => {
+            if (changed && active) void loadMosquePreferences(true);
+          });
+        }
+
         if (!storedMainMosque) return;
 
-        const schedule = await getMosquePrayerSchedule(
-          storedMainMosque.latitude,
-          storedMainMosque.longitude,
+        const schedule = await getMosqueScheduleWithApprovedTimes(
+          storedMainMosque,
           prayerController.signal,
         ).catch(() => null);
 
@@ -1740,7 +1747,7 @@ const styles = StyleSheet.create({
     elevation: 11,
   },
   heroImage: {
-    ...StyleSheet.absoluteFillObject,
+    position: 'absolute', top: 0, right: 0, bottom: 0, left: 0,
     width: '100%',
     height: '100%',
   },
@@ -1800,7 +1807,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(117,70,139,0.16)',
   },
   heroGlassSheen: {
-    ...StyleSheet.absoluteFillObject,
+    position: 'absolute', top: 0, right: 0, bottom: 0, left: 0,
     borderRadius: 24,
   },
   heroGlassTopLine: {
@@ -2211,7 +2218,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   mapOverlay: {
-    ...StyleSheet.absoluteFillObject,
+    position: 'absolute', top: 0, right: 0, bottom: 0, left: 0,
     paddingHorizontal: 28,
     alignItems: 'center',
     justifyContent: 'center',

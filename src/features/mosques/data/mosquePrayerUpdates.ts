@@ -1,5 +1,5 @@
 import { getValidSession } from '../../auth/SupabaseAuthService';
-import type { MosquePrayerSchedule } from './mosquePrayerTimes';
+import { getMosquePrayerSchedule, loadPrayerCalculationSettings, type MosquePrayerSchedule } from './mosquePrayerTimes';
 
 export type MosquePrayerTimes = {
   mosqueId: string;
@@ -95,7 +95,24 @@ export function applyApprovedMosquePrayerTimes(
     prayers: schedule.prayers.map((prayer) => adjust(prayer)),
     tomorrowPrayers: schedule.tomorrowPrayers.map((prayer) => adjust(prayer, true)),
     tomorrowFajr: adjust(schedule.tomorrowFajr, true),
+    futurePrayers: schedule.futurePrayers?.map((prayer) => adjust(prayer, true)),
   };
+}
+
+/**
+ * Prayer schedule of a mosque as shown everywhere in the app: the user's calculation settings, then
+ * the mosque's approved times when the user follows mosque times.
+ */
+export async function getMosqueScheduleWithApprovedTimes(
+  mosque: { id: string; latitude: number; longitude: number },
+  signal?: AbortSignal,
+): Promise<MosquePrayerSchedule> {
+  const calculation = await loadPrayerCalculationSettings();
+  const calculated = await getMosquePrayerSchedule(mosque.latitude, mosque.longitude, signal, calculation);
+  const approved = calculation.scheduleSource === 'mosque'
+    ? await getApprovedMosquePrayerTimes(mosque.id).catch(() => null)
+    : null;
+  return applyApprovedMosquePrayerTimes(calculated, approved);
 }
 
 export async function proposeMosquePrayerTimes(input: MosquePrayerTimes & {mosqueName:string;mosqueAddress?:string;note?:string}) {

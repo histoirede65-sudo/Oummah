@@ -17,6 +17,7 @@ import {
     getFavoriteMosques,
     getMainMosque,
     setMosqueFavorite,
+    syncMosqueFavorites,
     type StoredMosque,
 } from '../../features/mosques/data/mosquePreferences';
 import { colors } from '../../theme/colors';
@@ -49,8 +50,8 @@ export default function FavoriteMosquesScreen() {
     null,
   );
 
-  const loadData = useCallback(async () => {
-    setLoading(true);
+  const loadData = useCallback(async (afterSync = false): Promise<void> => {
+    if (!afterSync) setLoading(true);
 
     const [favoriteMosques, mainMosque] = await Promise.all([
       getFavoriteMosques(),
@@ -58,8 +59,11 @@ export default function FavoriteMosquesScreen() {
     ]);
 
     setFavorites(favoriteMosques);
-    setMainMosqueId(mainMosque?.id ?? null);
+    setMainMosqueId(mainMosque?.mosqueId ?? mainMosque?.id ?? null);
     setLoading(false);
+
+    // Favorites saved on the account (another phone) are merged in, then shown.
+    if (!afterSync && await syncMosqueFavorites()) await loadData(true);
   }, []);
 
   useFocusEffect(
@@ -165,7 +169,7 @@ export default function FavoriteMosquesScreen() {
         ) : (
           <View style={styles.list}>
             {favorites.map((mosque) => {
-              const isMain = mosque.id === mainMosqueId;
+              const isMain = mosque.id === mainMosqueId || mosque.mosqueId === mainMosqueId;
 
               return (
                 <View

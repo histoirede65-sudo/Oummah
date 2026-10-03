@@ -18,13 +18,14 @@ import {
 } from 'react-native';
 
 import {
-    getMosquePrayerSchedule,
     getNextPrayer,
     type MosquePrayerKey,
     type MosquePrayerSchedule,
 } from '../features/mosques/data/mosquePrayerTimes';
+import { getMosqueScheduleWithApprovedTimes } from '../features/mosques/data/mosquePrayerUpdates';
 import {
     getMainMosque,
+    syncMosqueFavorites,
     type StoredMosque,
 } from '../features/mosques/data/mosquePreferences';
 import { colors } from '../theme/colors';
@@ -129,6 +130,8 @@ export default function HomeMainMosqueCard() {
     } finally {
       setLoading(false);
     }
+    // On a new phone, the account brings back the main mosque.
+    if (await syncMosqueFavorites()) setMainMosque(await getMainMosque());
   }, []);
 
   useFocusEffect(
@@ -162,11 +165,8 @@ export default function HomeMainMosqueCard() {
       setPrayerError('');
 
       try {
-        const result = await getMosquePrayerSchedule(
-          mainMosque.latitude,
-          mainMosque.longitude,
-          controller.signal,
-        );
+        // Same settings and same approved mosque times as the main prayer card, so both show the same hours.
+        const result = await getMosqueScheduleWithApprovedTimes(mainMosque, controller.signal);
 
         if (!controller.signal.aborted) {
           setSchedule(result);

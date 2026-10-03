@@ -36,6 +36,7 @@ import {
     setMainMosque,
     type StoredMosque,
 } from '../../features/mosques/data/mosquePreferences';
+import { resolveMosqueId } from '../../features/mosques/data/mosqueIdentity';
 import {
   getApprovedMosquePrayerTimes,
   applyApprovedMosquePrayerTimes,
@@ -481,6 +482,12 @@ export default function MosqueDetailScreen() {
     mosqueLastCheckedAt,
     mosqueImageKey,
   ]);
+
+  // Registers this source id under the mosque's single OUMMAH identity, so times proposed or
+  // approved from any source (OSM, Google, user) apply to the same mosque.
+  useEffect(() => {
+    if (mosque) void resolveMosqueId(mosque);
+  }, [mosque]);
 
   useEffect(() => {
     let active = true;
@@ -1557,7 +1564,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surfaceAlt,
   },
   heroImage: {
-    ...StyleSheet.absoluteFillObject,
+    position: 'absolute', top: 0, right: 0, bottom: 0, left: 0,
     width: undefined,
     height: undefined,
   },
