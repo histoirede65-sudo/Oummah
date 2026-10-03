@@ -728,9 +728,13 @@ export default function MosqueDetailScreen() {
   };
 
   const openPrayerTimesProposal = () => {
+    // Validated times as they stand today (they follow the sun), not as noted on another day.
+    const todayTime = (key: 'fajr' | 'dhuhr' | 'asr' | 'maghrib' | 'isha') => (prayerTimes?.[key]
+      ? prayerSchedule?.prayers.find((prayer) => prayer.key.toLowerCase() === key)?.time ?? prayerTimes[key]
+      : '') ?? '';
     setPrayerForm({
-      fajr: formatPrayerTimeInput(prayerTimes?.fajr ?? ''), dhuhr: formatPrayerTimeInput(prayerTimes?.dhuhr ?? ''), asr: formatPrayerTimeInput(prayerTimes?.asr ?? ''),
-      maghrib: formatPrayerTimeInput(prayerTimes?.maghrib ?? ''), isha: formatPrayerTimeInput(prayerTimes?.isha ?? ''), jumuah: formatPrayerTimeInput(prayerTimes?.jumuah ?? ''), note: '',
+      fajr: formatPrayerTimeInput(todayTime('fajr')), dhuhr: formatPrayerTimeInput(todayTime('dhuhr')), asr: formatPrayerTimeInput(todayTime('asr')),
+      maghrib: formatPrayerTimeInput(todayTime('maghrib')), isha: formatPrayerTimeInput(todayTime('isha')), jumuah: formatPrayerTimeInput(prayerTimes?.jumuah ?? ''), note: '',
     });
     setPrayerModalVisible(true);
   };
