@@ -738,7 +738,8 @@ export default function MosquesScreen() {
   const locateMosques = async (silent = false) => {
     if (locationState === 'loading') return;
 
-    scrollToResults();
+    // The automatic search on arrival leaves the screen where it is.
+    if (!silent) scrollToResults();
 
     requestController.current?.abort();
 
@@ -836,6 +837,15 @@ export default function MosquesScreen() {
         return;
       }
 
+      // Automatic search on arrival: keep the last results rather than an empty list.
+      if (silent && cache && cache.mosques.length > 0) {
+        setMosques(cache.mosques);
+        setUserCoordinates({ latitude: cache.latitude, longitude: cache.longitude });
+        setUsingCachedResults(true);
+        setLocationState('ready');
+        return;
+      }
+
       setMosques([]);
       setErrorMessage(getLocationErrorMessage(error));
       setLocationState('error');
@@ -915,9 +925,31 @@ export default function MosquesScreen() {
   );
 
   useEffect(() => {
-    setInitializing(false);
+    let active = true;
+
+    // On arrival: last results shown at once, then a fresh search when the location is already allowed
+    // (no permission prompt here: the button asks).
+    const initializeMosques = async () => {
+      const cache = await readMosqueSearchCache().catch(() => null);
+      if (!active) return;
+
+      if (cache && cache.mosques.length > 0) {
+        setMosques(cache.mosques);
+        setUserCoordinates({ latitude: cache.latitude, longitude: cache.longitude });
+        setUsingCachedResults(true);
+        setLocationState('ready');
+      }
+
+      const permission = await Location.getForegroundPermissionsAsync().catch(() => null);
+      if (!active) return;
+      setInitializing(false);
+      if (permission?.granted) void locateMosques(true);
+    };
+
+    void initializeMosques();
 
     return () => {
+      active = false;
       requestController.current?.abort();
       routeController.current?.abort();
     };
