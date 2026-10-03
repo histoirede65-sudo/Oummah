@@ -20,6 +20,8 @@ export type CommunityProfile = {
   /** Friends see « réveillé / a prié » tonight and the nights of the week. */
   shareWithFriends: boolean;
   acceptFriendRequests: boolean;
+  /** Private messages from friends. */
+  acceptMessages: boolean;
 };
 
 export type LiveZone = { lat: number; lng: number; count: number };
@@ -67,8 +69,8 @@ export async function isSignedIn() {
 
 // ----- Profile -------------------------------------------------------------------------------
 
-type ProfileRow = { pseudo: string; avatar: string; share_tahajjud: boolean; share_zone: boolean; share_with_friends?: boolean; accept_friend_requests?: boolean };
-const PROFILE_COLUMNS = 'pseudo,avatar,share_tahajjud,share_zone,share_with_friends,accept_friend_requests';
+type ProfileRow = { pseudo: string; avatar: string; share_tahajjud: boolean; share_zone: boolean; share_with_friends?: boolean; accept_friend_requests?: boolean; accept_messages?: boolean };
+const PROFILE_COLUMNS = 'pseudo,avatar,share_tahajjud,share_zone,share_with_friends,accept_friend_requests,accept_messages';
 
 function toProfile(row: ProfileRow): CommunityProfile {
   return {
@@ -78,6 +80,7 @@ function toProfile(row: ProfileRow): CommunityProfile {
     shareZone: row.share_zone,
     shareWithFriends: row.share_with_friends ?? true,
     acceptFriendRequests: row.accept_friend_requests ?? true,
+    acceptMessages: row.accept_messages ?? true,
   };
 }
 
@@ -109,6 +112,7 @@ export async function saveCommunityProfile(profile: CommunityProfile): Promise<C
     share_zone: profile.shareZone,
     share_with_friends: profile.shareWithFriends,
     accept_friend_requests: profile.acceptFriendRequests,
+    accept_messages: profile.acceptMessages,
     updated_at: new Date().toISOString(),
   };
   // The pseudo is definitive: an existing profile only updates its settings.

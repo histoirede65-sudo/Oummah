@@ -11,6 +11,7 @@ import { night, nightType } from '../../components/tahajjud/theme';
 import { ValidateSheet } from '../../components/tahajjud/ValidateSheet';
 import { WeekMoons } from '../../components/tahajjud/WeekMoons';
 import { getTahajjudLive } from '../../features/tahajjud/tahajjudCommunity';
+import { getChatUnreadCount } from '../../features/tahajjud/tahajjudFriends';
 import { verseOfTheNight } from '../../features/tahajjud/tahajjudContent';
 import { alarmTime, clock, formatDuration } from '../../features/tahajjud/tahajjudNight';
 import { loadTahajjudSettings, type TahajjudSettings } from '../../features/tahajjud/TahajjudStore';
@@ -32,10 +33,12 @@ export default function TahajjudScreen() {
   const [settings, setSettings] = useState<TahajjudSettings | null>(null);
   const [sheet, setSheet] = useState(false);
   const [awakeCount, setAwakeCount] = useState<number | null>(null);
+  const [unreadMessages, setUnreadMessages] = useState(0);
 
   useFocusEffect(useCallback(() => {
     void loadTahajjudSettings().then(setSettings);
     void getTahajjudLive().then((live) => setAwakeCount(live.awake)).catch(() => undefined);
+    void getChatUnreadCount().then(setUnreadMessages);
   }, []));
 
   const { state, now } = view;
@@ -51,7 +54,7 @@ export default function TahajjudScreen() {
     { icon: 'checkmark-circle-outline', label: 'J’ai prié', hint: view.validated ? 'Nuit enregistrée' : 'Valider ma nuit', onPress: () => view.canValidate && setSheet(true) },
     { icon: 'stats-chart-outline', label: 'Statistiques', hint: 'Calendrier · défis', route: '/tahajjud/stats' },
     { icon: 'people-outline', label: 'Mur des duas', hint: 'Dire Amine', route: '/tahajjud/wall' },
-    { icon: 'chatbubbles-outline', label: 'Amis', hint: 'S’encourager', route: '/tahajjud/friends' },
+    { icon: 'chatbubbles-outline', label: 'Amis', hint: unreadMessages ? `${unreadMessages} message${unreadMessages > 1 ? 's' : ''} non lu${unreadMessages > 1 ? 's' : ''}` : 'Messages · encourager', route: '/tahajjud/friends' },
   ];
 
   // Center of the arc: what matters now, in one glance.

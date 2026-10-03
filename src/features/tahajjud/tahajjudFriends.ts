@@ -35,7 +35,7 @@ export type EncouragementKind = typeof ENCOURAGEMENTS[number]['kind'];
 
 export const encouragementText = (kind: string) => ENCOURAGEMENTS.find((item) => item.kind === kind)?.text ?? '';
 
-const KNOWN_ERRORS = ['AUTH_REQUIRED', 'PROFILE_REQUIRED', 'NOT_FOUND', 'REQUESTS_CLOSED', 'RATE_LIMIT', 'NOT_FRIENDS', 'ALREADY_SENT', 'INVALID'];
+const KNOWN_ERRORS = ['AUTH_REQUIRED', 'PROFILE_REQUIRED', 'NOT_FOUND', 'REQUESTS_CLOSED', 'RATE_LIMIT', 'NOT_FRIENDS', 'ALREADY_SENT', 'MESSAGES_CLOSED', 'TEXT_REFUSED', 'INVALID'];
 
 async function rpc<T>(name: string, body: object = {}): Promise<T> {
   const url = process.env.EXPO_PUBLIC_SUPABASE_URL?.trim().replace(/\/+$/, '');
@@ -105,7 +105,31 @@ export function friendsErrorMessage(error: unknown) {
     case 'REQUESTS_CLOSED': return 'Ce membre n’accepte pas de demandes d’ami pour le moment.';
     case 'RATE_LIMIT': return 'Vous avez atteint la limite pour aujourd’hui. Réessayez demain.';
     case 'NOT_FRIENDS': return 'Vous n’êtes plus amis avec ce membre.';
+    case 'MESSAGES_CLOSED': return 'Ce membre ne reçoit pas de messages pour le moment.';
+    case 'TEXT_REFUSED': return 'Ce message contient des mots qui ne sont pas acceptés.';
     case 'ALREADY_SENT': return 'Vous l’avez déjà encouragé il y a peu. Réessayez dans quelques heures.';
     default: return 'Action impossible pour le moment.';
   }
 }
+
+// ----- Private messages (friends only) -------------------------------------------------------
+
+export type ChatMessage = { id: string; body: string; mine: boolean; createdAt: string; read: boolean; pending?: boolean };
+export type Conversation = { userId: string; lastBody: string; lastMine: boolean; lastAt: string; unread: number };
+
+export async function getChatThread(userId: string, before?: string): Promise<ChatMessage[]> {
+  const rows = await rpc<Array<{ id: string; body: string; mine: boolean; created_at: string; read: boolean }>>(
+    'chat_thread', { p_user: userId, p_before: before ?? null, p_limit: 40 },
+  );
+  return rows.map((row) => ({ id: row.id, body: row.body, mine: row.mine, createdAt: row.created_at, read: row.read }));
+}
+
+export async function getConversations(): Promise<Conversation[]> {
+  const rows = await rpc<Array<{ user_id: string; last_body: string; last_mine: boolean; last_at: string; unread: number }>>('chat_conversations');
+  return rows.map((row) => ({ userId: row.user_id, lastBody: row.last_body, lastMine: row.last_mine, lastAt: row.last_at, unread: Number(row.unread) || 0 }));
+}
+
+export const sendChatMessage = (userId: string, body: string) => rpc<string>('chat_send', { p_user: userId, p_body: body });
+export const deleteChatMessage = (id: string) => rpc<void>('chat_delete', { p_id: id });
+export const reportChatMessage = (id: string) => rpc<void>('chat_report', { p_id: id });
+export const getChatUnreadCount = () => rpc<number>('chat_unread_count').then(Number).catch(() => 0);

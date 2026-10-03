@@ -16,6 +16,7 @@ import {
   ENCOURAGEMENTS,
   encouragementText,
   friendsErrorMessage,
+  getConversations,
   getFriendsOverview,
   markEncouragementsRead,
   removeFriend,
@@ -25,6 +26,7 @@ import {
   searchMembers,
   sendEncouragement,
   unblockMember,
+  type Conversation,
   type Friend,
   type FriendRelation,
   type FriendsOverview,
@@ -86,12 +88,14 @@ export default function TahajjudFriendsScreen() {
   const [results, setResults] = useState<SearchResult[] | null>(null);
   const [encourage, setEncourage] = useState<Friend | null>(null);
   const [showBlocked, setShowBlocked] = useState(false);
+  const [conversations, setConversations] = useState<Record<string, Conversation>>({});
   const searchSeq = useRef(0);
 
   const load = useCallback(async () => {
     try {
-      const overview = await getFriendsOverview();
+      const [overview, threads] = await Promise.all([getFriendsOverview(), getConversations().catch(() => [])]);
       setData(overview);
+      setConversations(Object.fromEntries(threads.map((thread) => [thread.userId, thread])));
       if (overview.encouragements.some((item) => item.unread)) void markEncouragementsRead().catch(() => undefined);
     } catch {
       setData((current) => current ?? { friends: [], received: [], sent: [], blocked: [], encouragements: [] });
@@ -181,7 +185,14 @@ export default function TahajjudFriendsScreen() {
     );
   }
 
-  const friends = data?.friends ?? [];
+  // Unread conversations first, then the most recent ones.
+  const friends = [...(data?.friends ?? [])].sort((a, b) => {
+    const ca = conversations[a.id];
+    const cb = conversations[b.id];
+    if ((cb?.unread ?? 0) > 0 !== (ca?.unread ?? 0) > 0) return (cb?.unread ?? 0) > 0 ? 1 : -1;
+    return (cb?.lastAt ?? '').localeCompare(ca?.lastAt ?? '');
+  });
+  const openChat = (friend: Friend) => router.push({ pathname: '/tahajjud/chat', params: { id: friend.id, pseudo: friend.pseudo, avatar: friend.avatar } } as unknown as Href);
   const prayedTonight = friends.filter((friend) => friend.shared && friend.tonight === 'prayed').length;
   const awakeTonight = friends.filter((friend) => friend.shared && friend.tonight).length;
 
@@ -275,6 +286,7 @@ export default function TahajjudFriendsScreen() {
         </GlassCard>
       ) : friends.map((friend, index) => {
         const status = friendStatus(friend);
+        const thread = conversations[friend.id];
         return (
           <Animated.View key={friend.id} entering={FadeInDown.delay(60 * index).duration(400)}>
             <GlassCard style={styles.friendCard}>
@@ -291,6 +303,14 @@ export default function TahajjudFriendsScreen() {
                   <Ionicons name="ellipsis-horizontal" size={20} color={night.muted} />
                 </Pressable>
               </View>
+              {thread ? (
+                <Pressable onPress={() => openChat(friend)} style={styles.lastMessage}>
+                  <Text style={[styles.lastMessageText, thread.unread > 0 && styles.lastMessageUnread]} numberOfLines={1}>
+                    {thread.lastMine ? 'Vous : ' : ''}{thread.lastBody}
+                  </Text>
+                  <Text style={styles.time}>{timeAgo(thread.lastAt)}</Text>
+                </Pressable>
+              ) : null}
               <View style={styles.friendFooter}>
                 {friend.shared ? (
                   <View style={styles.weekRow}>
@@ -300,6 +320,12 @@ export default function TahajjudFriendsScreen() {
                     <Text style={styles.weekText}>{friend.week} nuit{friend.week > 1 ? 's' : ''} / 7 jours</Text>
                   </View>
                 ) : <View style={styles.flex} />}
+                <Pressable onPress={() => openChat(friend)} style={styles.messageButton}>
+                  <Ionicons name="chatbubble-ellipses" size={16} color={night.goldSoft} />
+                  {thread?.unread ? (
+                    <View style={styles.badge}><Text style={styles.badgeText}>{thread.unread > 9 ? '9+' : thread.unread}</Text></View>
+                  ) : null}
+                </Pressable>
                 <Pressable onPress={() => setEncourage(friend)} style={styles.encourageButton}>
                   <Ionicons name="heart" size={15} color={night.sky0} />
                   <Text style={styles.encourageButtonText}>Encourager</Text>
@@ -395,6 +421,15 @@ const styles = StyleSheet.create({
   weekDot: { width: 9, height: 9, borderRadius: 5, backgroundColor: 'rgba(255,255,255,0.1)' },
   weekDotOn: { backgroundColor: night.goldSoft },
   weekText: { marginLeft: 6, color: night.muted, fontSize: 13, ...nightType.medium },
+  messageButton: { width: 40, height: 36, borderRadius: 18, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: night.goldLine },
+  badge: {
+    position: 'absolute', top: -6, right: -6, minWidth: 20, height: 20, borderRadius: 10, paddingHorizontal: 5,
+    alignItems: 'center', justifyContent: 'center', backgroundColor: night.success,
+  },
+  badgeText: { color: night.sky0, fontSize: 11, ...nightType.bold },
+  lastMessage: { marginTop: 10, flexDirection: 'row', alignItems: 'center', gap: 8, paddingHorizontal: 12, paddingVertical: 9, borderRadius: 14, backgroundColor: 'rgba(0,0,0,0.22)' },
+  lastMessageText: { flex: 1, color: night.muted, fontSize: 14, ...nightType.medium },
+  lastMessageUnread: { color: night.text, ...nightType.bold },
   encourageButton: { flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: 15, paddingVertical: 9, borderRadius: 18, backgroundColor: night.goldSoft },
   encourageButtonText: { color: night.sky0, fontSize: 14, ...nightType.bold },
   blockedToggle: { marginTop: 22, flexDirection: 'row', alignItems: 'center', gap: 6, alignSelf: 'center' },

@@ -25,6 +25,7 @@ export default function TahajjudProfileScreen() {
   const [shareZone, setShareZone] = useState(true);
   const [shareWithFriends, setShareWithFriends] = useState(true);
   const [acceptFriendRequests, setAcceptFriendRequests] = useState(true);
+  const [acceptMessages, setAcceptMessages] = useState(true);
   const [saving, setSaving] = useState(false);
 
   useFocusEffect(useCallback(() => {
@@ -42,6 +43,7 @@ export default function TahajjudProfileScreen() {
         setShareZone(profile.shareZone);
         setShareWithFriends(profile.shareWithFriends);
         setAcceptFriendRequests(profile.acceptFriendRequests);
+        setAcceptMessages(profile.acceptMessages);
       }
       setLoading(false);
     })();
@@ -52,7 +54,7 @@ export default function TahajjudProfileScreen() {
     if (saving) return;
     setSaving(true);
     try {
-      await saveCommunityProfile({ pseudo, avatar, shareTahajjud, shareZone, shareWithFriends, acceptFriendRequests });
+      await saveCommunityProfile({ pseudo, avatar, shareTahajjud, shareZone, shareWithFriends, acceptFriendRequests, acceptMessages });
       router.back();
     } catch (error) {
       const code = error instanceof Error ? error.message : '';
@@ -156,6 +158,13 @@ export default function TahajjudProfileScreen() {
             <Text style={styles.rowText}>Désactivez pour ne plus recevoir de nouvelles demandes.</Text>
           </View>
           <Switch value={acceptFriendRequests} onValueChange={setAcceptFriendRequests} trackColor={{ false: 'rgba(255,255,255,0.15)', true: night.gold }} thumbColor={night.text} />
+        </View>
+        <View style={[styles.row, styles.rowBorder]}>
+          <View style={styles.rowCopy}>
+            <Text style={styles.rowTitle}>Recevoir des messages</Text>
+            <Text style={styles.rowText}>Uniquement de vos amis. Désactivez pour ne plus en recevoir.</Text>
+          </View>
+          <Switch value={acceptMessages} onValueChange={setAcceptMessages} trackColor={{ false: 'rgba(255,255,255,0.15)', true: night.gold }} thumbColor={night.text} />
         </View>
       </GlassCard>
 
