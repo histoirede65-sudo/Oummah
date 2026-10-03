@@ -138,7 +138,7 @@ function PostCard({ post, canWrite, onChanged }: { post: WallPost; canWrite: boo
       ]);
     } else {
       Alert.alert('Doua', undefined, [
-        { text: 'Signaler', onPress: () => void reportWall('post', post.id).then(() => Alert.alert('Merci', 'La doua a été signalée à la modération.')).catch((error) => Alert.alert('Signalement', wallErrorMessage(error))) },
+        { text: 'Signaler', onPress: () => void reportWall('post', post.id).then(() => Alert.alert('Merci', 'La doua a été signalée. Elle sera masquée si plusieurs membres la signalent.')).catch((error) => Alert.alert('Signalement', wallErrorMessage(error))) },
         { text: 'Annuler', style: 'cancel' },
       ]);
     }
@@ -177,7 +177,10 @@ function PostCard({ post, canWrite, onChanged }: { post: WallPost; canWrite: boo
         <View style={styles.actions}>
           <Pressable onPress={() => void toggleAmeen()} style={[styles.ameen, ameen.on && styles.ameenOn]}>
             <Ionicons name={ameen.on ? 'hand-left' : 'hand-left-outline'} size={18} color={ameen.on ? night.sky0 : night.goldSoft} />
-            <Text style={[styles.ameenText, ameen.on && styles.ameenTextOn]}>Amine{ameen.count ? ` · ${ameen.count}` : ''}</Text>
+            <Text style={[styles.ameenText, ameen.on && styles.ameenTextOn]}>Amine</Text>
+            <View style={[styles.ameenCount, ameen.on && styles.ameenCountOn]}>
+              <Text style={[styles.ameenCountText, ameen.on && styles.ameenCountTextOn]}>{ameen.count}</Text>
+            </View>
           </Pressable>
           <Pressable onPress={() => setOpen((value) => !value)} style={styles.replyToggle}>
             <Ionicons name="chatbubble-outline" size={17} color={night.textSoft} />
@@ -273,7 +276,7 @@ export default function DuaWallScreen() {
       await publishDua(draft, anonymous);
       setCompose(false);
       setDraft('');
-      Alert.alert('Doua envoyée', 'Elle apparaîtra sur le Mur après validation. Qu’Allah l’exauce.');
+      Alert.alert('Doua publiée', 'Votre doua est sur le Mur. Qu’Allah l’exauce.');
       void load(filter);
     } catch (error) {
       Alert.alert('Mur des duas', wallErrorMessage(error));
@@ -284,7 +287,7 @@ export default function DuaWallScreen() {
 
   return (
     <TahajjudShell title="Mur des duas" eyebrow="Communauté">
-      <Text style={styles.intro}>Faites doua les uns pour les autres, et dites Amine. Ici, pas de likes ni de classement.</Text>
+      <Text style={styles.intro}>Faites doua les uns pour les autres et dites Amine. Votre doua est publiée tout de suite.</Text>
 
       <Pressable onPress={openCompose} style={({ pressed }) => [pressed && styles.pressed]}>
         <LinearGradient colors={[night.goldSoft, night.gold]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.composeButton}>
@@ -387,6 +390,10 @@ const styles = StyleSheet.create({
   ameenOn: { backgroundColor: night.gold, borderColor: night.gold },
   ameenText: { color: night.goldSoft, fontSize: 15, ...nightType.bold },
   ameenTextOn: { color: night.sky0 },
+  ameenCount: { minWidth: 26, height: 24, paddingHorizontal: 7, borderRadius: 12, backgroundColor: 'rgba(244,217,149,0.16)', alignItems: 'center', justifyContent: 'center' },
+  ameenCountOn: { backgroundColor: 'rgba(14,10,38,0.22)' },
+  ameenCountText: { color: night.goldSoft, fontSize: 14, ...nightType.bold },
+  ameenCountTextOn: { color: night.sky0 },
   replyToggle: { flexDirection: 'row', alignItems: 'center', gap: 7, paddingHorizontal: 14, height: 42 },
   replyToggleText: { color: night.textSoft, fontSize: 15, ...nightType.semibold },
   replies: { marginTop: 12, paddingTop: 12, borderTopWidth: 1, borderTopColor: night.line, gap: 10 },
