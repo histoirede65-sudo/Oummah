@@ -3,13 +3,12 @@ import * as Haptics from 'expo-haptics';
 import { LinearGradient } from 'expo-linear-gradient';
 import type { Href } from 'expo-router';
 import { router, useFocusEffect } from 'expo-router';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
   KeyboardAvoidingView,
   Modal,
-  Platform,
   Pressable,
   StyleSheet,
   Switch,
@@ -17,23 +16,20 @@ import {
   TextInput,
   View,
 } from 'react-native';
-import Animated, { FadeIn, FadeInDown } from 'react-native-reanimated';
+import Animated, { FadeInDown } from 'react-native-reanimated';
 import { TahajjudShell } from '../../components/tahajjud/TahajjudShell';
 import { night, nightType } from '../../components/tahajjud/theme';
 import {
   deleteWall,
   getWallFeed,
-  getWallReplies,
   markAnswered,
   publishDua,
-  replyToDua,
   reportWall,
   setAmeen,
   timeAgo,
   wallErrorMessage,
   type WallFilter,
   type WallPost,
-  type WallReply,
 } from '../../features/tahajjud/duaWall';
 import { getCommunityProfile, isSignedIn, type CommunityProfile } from '../../features/tahajjud/tahajjudCommunity';
 
@@ -43,73 +39,10 @@ const FILTERS: readonly { id: WallFilter; label: string }[] = [
   { id: 'mine', label: 'Les miennes' },
 ];
 
-function Replies({ post, canWrite, onCount }: { post: WallPost; canWrite: boolean; onCount: (count: number) => void }) {
-  const [replies, setReplies] = useState<WallReply[] | null>(null);
-  const [draft, setDraft] = useState('');
-  const [sending, setSending] = useState(false);
-
-  const load = useCallback(async () => {
-    const list = await getWallReplies(post.id).catch(() => []);
-    setReplies(list);
-    onCount(list.length);
-  }, [post.id, onCount]);
-
-  useEffect(() => { void load(); }, [load]);
-
-  const send = async () => {
-    const text = draft.trim();
-    if (!text || sending) return;
-    setSending(true);
-    try {
-      await replyToDua(post.id, text);
-      setDraft('');
-      await load();
-    } catch (error) {
-      Alert.alert('Réponse', wallErrorMessage(error));
-    } finally {
-      setSending(false);
-    }
-  };
-
-  const options = (reply: WallReply) => {
-    Alert.alert('Réponse', undefined, reply.mine
-      ? [{ text: 'Supprimer', style: 'destructive', onPress: () => void deleteWall('reply', reply.id).then(load) }, { text: 'Annuler', style: 'cancel' }]
-      : [{ text: 'Signaler', onPress: () => void reportWall('reply', reply.id).then(() => Alert.alert('Merci', 'La réponse a été signalée.')) }, { text: 'Annuler', style: 'cancel' }]);
-  };
-
-  return (
-    <Animated.View entering={FadeIn} style={styles.replies}>
-      {replies === null ? <ActivityIndicator color={night.gold} /> : replies.map((reply) => (
-        <Pressable key={reply.id} onLongPress={() => options(reply)} style={styles.reply}>
-          <Text style={styles.replyAuthor}>{reply.author ?? 'Membre'} · <Text style={styles.replyTime}>{timeAgo(reply.createdAt)}</Text></Text>
-          <Text style={styles.replyBody}>{reply.body}</Text>
-        </Pressable>
-      ))}
-      {replies?.length ? <Text style={styles.replyHint}>Appui long sur une réponse pour la signaler.</Text> : null}
-      {canWrite ? (
-        <View style={styles.replyInputRow}>
-          <TextInput
-            value={draft}
-            onChangeText={setDraft}
-            placeholder="Un mot bienveillant, une doua…"
-            placeholderTextColor={night.muted}
-            maxLength={300}
-            multiline
-            style={styles.replyInput}
-          />
-          <Pressable onPress={() => void send()} disabled={!draft.trim() || sending} style={[styles.sendButton, (!draft.trim() || sending) && styles.disabled]}>
-            <Ionicons name="send" size={17} color={night.sky0} />
-          </Pressable>
-        </View>
-      ) : null}
-    </Animated.View>
-  );
-}
-
 function PostCard({ post, canWrite, onChanged }: { post: WallPost; canWrite: boolean; onChanged: () => void }) {
   const [ameen, setAmeenState] = useState({ on: post.myAmeen, count: post.ameenCount });
-  const [open, setOpen] = useState(false);
-  const [replyCount, setReplyCount] = useState(post.replyCount);
+  const replyCount = post.replyCount;
+  const openDetail = () => router.push({ pathname: '/tahajjud/dua', params: { id: post.id } } as unknown as Href);
   const [answerSheet, setAnswerSheet] = useState(false);
 
   const toggleAmeen = async () => {
@@ -158,7 +91,7 @@ function PostCard({ post, canWrite, onChanged }: { post: WallPost; canWrite: boo
         </View>
       ) : null}
 
-      <Text style={styles.body}>{post.body}</Text>
+      <Text onPress={post.pending ? undefined : openDetail} style={styles.body}>{post.body}</Text>
       {post.gratitude ? (
         <View style={styles.gratitude}>
           <Text style={styles.gratitudeLabel}>Gratitude</Text>
@@ -182,14 +115,13 @@ function PostCard({ post, canWrite, onChanged }: { post: WallPost; canWrite: boo
               <Text style={[styles.ameenCountText, ameen.on && styles.ameenCountTextOn]}>{ameen.count}</Text>
             </View>
           </Pressable>
-          <Pressable onPress={() => setOpen((value) => !value)} style={styles.replyToggle}>
+          <Pressable onPress={openDetail} style={styles.replyToggle}>
             <Ionicons name="chatbubble-outline" size={17} color={night.textSoft} />
             <Text style={styles.replyToggleText}>{replyCount ? `${replyCount} réponse${replyCount > 1 ? 's' : ''}` : 'Répondre'}</Text>
           </Pressable>
         </View>
       ) : null}
 
-      {open ? <Replies post={post} canWrite={canWrite} onCount={setReplyCount} /> : null}
 
       <AnswerSheet visible={answerSheet} onClose={() => setAnswerSheet(false)} onConfirm={async (gratitude) => {
         await markAnswered(post.id, gratitude);
@@ -204,7 +136,7 @@ function AnswerSheet({ visible, onClose, onConfirm }: { visible: boolean; onClos
   const [gratitude, setGratitude] = useState('');
   return (
     <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
-      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.backdrop}>
+      <KeyboardAvoidingView behavior="padding" style={styles.backdrop}>
         <View style={styles.sheet}>
           <LinearGradient colors={['#1C1546', '#0E0A26']} style={StyleSheet.absoluteFill} />
           <Ionicons name="sparkles" size={34} color={night.goldSoft} />
@@ -325,7 +257,7 @@ export default function DuaWallScreen() {
       ) : null}
 
       <Modal visible={compose} transparent animationType="slide" onRequestClose={() => setCompose(false)}>
-        <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.backdrop}>
+        <KeyboardAvoidingView behavior="padding" style={styles.backdrop}>
           <View style={styles.sheet}>
             <LinearGradient colors={['#1C1546', '#0E0A26']} style={StyleSheet.absoluteFill} />
             <Text style={styles.sheetTitle}>Partager une doua</Text>
@@ -396,15 +328,6 @@ const styles = StyleSheet.create({
   ameenCountTextOn: { color: night.sky0 },
   replyToggle: { flexDirection: 'row', alignItems: 'center', gap: 7, paddingHorizontal: 14, height: 42 },
   replyToggleText: { color: night.textSoft, fontSize: 15, ...nightType.semibold },
-  replies: { marginTop: 12, paddingTop: 12, borderTopWidth: 1, borderTopColor: night.line, gap: 10 },
-  reply: { padding: 12, borderRadius: 16, backgroundColor: 'rgba(0,0,0,0.2)' },
-  replyAuthor: { color: night.goldSoft, fontSize: 14, ...nightType.semibold },
-  replyTime: { color: night.muted, ...nightType.body },
-  replyBody: { marginTop: 4, color: night.text, fontSize: 16, lineHeight: 23, ...nightType.body },
-  replyHint: { color: night.muted, fontSize: 12, ...nightType.body },
-  replyInputRow: { flexDirection: 'row', alignItems: 'flex-end', gap: 8 },
-  replyInput: { flex: 1, minHeight: 46, maxHeight: 110, borderRadius: 18, paddingHorizontal: 14, paddingTop: 12, paddingBottom: 12, borderWidth: 1, borderColor: night.line, backgroundColor: 'rgba(0,0,0,0.25)', color: night.text, fontSize: 16, ...nightType.body },
-  sendButton: { width: 46, height: 46, borderRadius: 23, alignItems: 'center', justifyContent: 'center', backgroundColor: night.gold },
   more: { alignSelf: 'center', marginTop: 6, padding: 12 },
   moreText: { color: night.goldSoft, fontSize: 16, ...nightType.semibold },
   backdrop: { flex: 1, justifyContent: 'flex-end', backgroundColor: 'rgba(2,1,8,0.72)' },

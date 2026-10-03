@@ -141,7 +141,7 @@ export default function TahajjudProfileScreen() {
         <View style={[styles.row, styles.rowBorder]}>
           <View style={styles.rowCopy}>
             <Text style={styles.rowTitle}>Ma zone sur la carte</Text>
-            <Text style={styles.rowText}>Une zone d’environ 30 km, visible seulement si au moins 3 membres s’y trouvent. Jamais votre adresse.</Text>
+            <Text style={styles.rowText}>Une zone d’environ 30 km : vos nuits (visibles à partir de 3 membres) et l’icône de vos duas. Jamais votre adresse.</Text>
           </View>
           <Switch value={shareZone} disabled={!shareTahajjud} onValueChange={setShareZone} trackColor={{ false: 'rgba(255,255,255,0.15)', true: night.gold }} thumbColor={night.text} />
         </View>

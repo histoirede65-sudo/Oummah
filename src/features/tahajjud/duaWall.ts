@@ -1,4 +1,5 @@
 import { getValidSession } from '../auth/SupabaseAuthService';
+import { approximateZone } from './tahajjudCommunity';
 
 /** Mur des duas : fil, Amine, réponses, signalements, « Allah m'a exaucé ». */
 
@@ -63,9 +64,8 @@ type PostRow = {
   ameen_count: number; reply_count: number; my_ameen: boolean; mine: boolean; status: string; created_at: string;
 };
 
-export async function getWallFeed(filter: WallFilter = 'recent', before?: string): Promise<WallPost[]> {
-  const rows = await rpc<PostRow[]>('dua_wall_feed', { p_filter: filter, p_before: before ?? null, p_limit: 20 }, false);
-  return rows.map((row) => ({
+function toPost(row: PostRow): WallPost {
+  return {
     id: row.id,
     body: row.body,
     author: row.author,
@@ -78,7 +78,27 @@ export async function getWallFeed(filter: WallFilter = 'recent', before?: string
     mine: row.mine,
     pending: row.status === 'pending',
     createdAt: row.created_at,
-  }));
+  };
+}
+
+/** One dua (opened from the map). null when removed or hidden. */
+export async function getWallPost(id: string): Promise<WallPost | null> {
+  const rows = await rpc<PostRow[]>('dua_wall_post', { p_post: id }, false);
+  return rows[0] ? toPost(rows[0]) : null;
+}
+
+export type DuaMapPost = { id: string; excerpt: string; answered: boolean; ameenCount: number; replyCount: number; createdAt: string };
+export type DuaMapZone = { lat: number; lng: number; count: number; posts: DuaMapPost[] };
+
+/** Zones (~28 km) where duas were shared recently, with their latest duas. */
+export async function getDuaMap(days = 14): Promise<DuaMapZone[]> {
+  const zones = await rpc<Array<{ lat: number; lng: number; count: number; posts: DuaMapPost[] | null }>>('dua_wall_map', { p_days: days }, false);
+  return zones.map((zone) => ({ lat: Number(zone.lat), lng: Number(zone.lng), count: Number(zone.count) || 0, posts: zone.posts ?? [] }));
+}
+
+export async function getWallFeed(filter: WallFilter = 'recent', before?: string): Promise<WallPost[]> {
+  const rows = await rpc<PostRow[]>('dua_wall_feed', { p_filter: filter, p_before: before ?? null, p_limit: 20 }, false);
+  return rows.map(toPost);
 }
 
 export async function getWallReplies(postId: string): Promise<WallReply[]> {
@@ -88,7 +108,11 @@ export async function getWallReplies(postId: string): Promise<WallReply[]> {
   return rows.map((row) => ({ id: row.id, body: row.body, author: row.author, authorAvatar: row.author_avatar, mine: row.mine, createdAt: row.created_at }));
 }
 
-export const publishDua = (body: string, anonymous: boolean) => rpc<string>('dua_wall_publish', { p_body: body, p_anonymous: anonymous });
+/** Publishes with an approximate zone (~28 km) for the map, when the member shares their zone. */
+export async function publishDua(body: string, anonymous: boolean) {
+  const zone = await approximateZone().catch(() => null);
+  return rpc<string>('dua_wall_publish', { p_body: body, p_anonymous: anonymous, p_lat: zone?.lat ?? null, p_lng: zone?.lng ?? null });
+}
 export const setAmeen = (postId: string, on: boolean) => rpc<number>('dua_wall_ameen', { p_post: postId, p_on: on });
 export const replyToDua = (postId: string, body: string) => rpc<string>('dua_wall_reply', { p_post: postId, p_body: body });
 export const reportWall = (type: 'post' | 'reply', id: string, reason?: string) => rpc<void>('dua_wall_report', { p_type: type, p_id: id, p_reason: reason ?? null });

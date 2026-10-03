@@ -4,7 +4,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import type { Href } from 'expo-router';
 import { router, useFocusEffect } from 'expo-router';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, Modal, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import { CommunityMap } from '../../components/tahajjud/CommunityMap';
 import { GlassCard, shellStyles, TahajjudShell } from '../../components/tahajjud/TahajjudShell';
@@ -21,6 +21,53 @@ import {
   type TahajjudLive,
 } from '../../features/tahajjud/tahajjudCommunity';
 import { useTahajjudNight } from '../../features/tahajjud/useTahajjudNight';
+import { getDuaMap, timeAgo, type DuaMapZone } from '../../features/tahajjud/duaWall';
+
+/** Duas of one zone of the map: tap one to read it and reply. */
+function DuaZoneSheet({ zone, onClose }: { zone: DuaMapZone | null; onClose: () => void }) {
+  const open = (id: string) => {
+    onClose();
+    router.push({ pathname: '/tahajjud/dua', params: { id } } as unknown as Href);
+  };
+  return (
+    <Modal visible={Boolean(zone)} transparent animationType="fade" onRequestClose={onClose}>
+      <Pressable style={styles.backdrop} onPress={onClose}>
+        <Pressable style={styles.sheet} onPress={() => undefined}>
+          <LinearGradient colors={['#1C1546', '#0E0A26']} style={StyleSheet.absoluteFill} />
+          <View style={styles.sheetHead}>
+            <View style={styles.sheetIcon}><Ionicons name="hand-left" size={18} color={night.sky0} /></View>
+            <View style={styles.sheetCopy}>
+              <Text style={styles.sheetTitle}>{zone?.count === 1 ? 'Une doua partagée ici' : `${zone?.count ?? 0} duas partagées ici`}</Text>
+              <Text style={styles.sheetSub}>Zone d’environ 30 km · 14 derniers jours</Text>
+            </View>
+          </View>
+          <ScrollView style={styles.sheetList} showsVerticalScrollIndicator={false}>
+            {zone?.posts.map((post) => (
+              <Pressable key={post.id} onPress={() => open(post.id)} style={({ pressed }) => [styles.duaRow, pressed && styles.pressed]}>
+                {post.answered ? (
+                  <View style={styles.duaAnswered}>
+                    <Ionicons name="sparkles" size={12} color={night.sky0} />
+                    <Text style={styles.duaAnsweredText}>Exaucée</Text>
+                  </View>
+                ) : null}
+                <Text style={styles.duaExcerpt} numberOfLines={3}>{post.excerpt}</Text>
+                <View style={styles.duaMeta}>
+                  <Text style={styles.duaMetaText}>{timeAgo(post.createdAt)}</Text>
+                  <Text style={styles.duaMetaText}>🤲 {post.ameenCount} · {post.replyCount} réponse{post.replyCount > 1 ? 's' : ''}</Text>
+                </View>
+                <View style={styles.duaCta}>
+                  <Text style={styles.duaCtaText}>Lire et répondre</Text>
+                  <Ionicons name="chevron-forward" size={15} color={night.goldSoft} />
+                </View>
+              </Pressable>
+            ))}
+          </ScrollView>
+          <Pressable onPress={onClose} style={styles.sheetClose}><Text style={styles.sheetCloseText}>Fermer</Text></Pressable>
+        </Pressable>
+      </Pressable>
+    </Modal>
+  );
+}
 
 /** Number that counts up smoothly to its value. */
 function useCountUp(target: number) {
@@ -54,7 +101,11 @@ export default function TahajjudCommunityScreen() {
   const night_ = view.state?.night;
   const nightKey = view.state && view.state.phase !== 'day' ? view.state.night.key : null;
 
+  const [duaZones, setDuaZones] = useState<DuaMapZone[]>([]);
+  const [duaZone, setDuaZone] = useState<DuaMapZone | null>(null);
+
   const refresh = useCallback(async () => {
+    void getDuaMap().then(setDuaZones).catch(() => undefined);
     setLive(await getTahajjudLive().catch(() => null));
   }, []);
 
@@ -130,8 +181,17 @@ export default function TahajjudCommunityScreen() {
       </Animated.View>
 
       <Animated.View entering={FadeInDown.delay(120).duration(500)}>
-        <CommunityMap zones={live?.zones ?? []} />
-        <Text style={styles.mapNote}>Chaque halo réunit au moins 3 membres dans une zone d’environ 30 km.</Text>
+        <CommunityMap zones={live?.zones ?? []} duaZones={duaZones} onPressDuaZone={setDuaZone} />
+        <View style={styles.legend}>
+          <View style={styles.legendItem}>
+            <View style={styles.legendHalo} />
+            <Text style={styles.legendText}>Membres réveillés (3 min. par zone)</Text>
+          </View>
+          <View style={styles.legendItem}>
+            <View style={styles.legendPin}><Ionicons name="hand-left" size={10} color={night.sky0} /></View>
+            <Text style={styles.legendText}>Duas partagées · touchez pour lire</Text>
+          </View>
+        </View>
       </Animated.View>
 
       <Animated.View entering={FadeInDown.delay(220).duration(500)}>
@@ -204,6 +264,7 @@ export default function TahajjudCommunityScreen() {
           Uniquement de vraies déclarations OUMMAH. Aucune position précise n’est envoyée ni affichée.
         </Text>
       </Animated.View>
+      <DuaZoneSheet zone={duaZone} onClose={() => setDuaZone(null)} />
     </TahajjudShell>
   );
 }
@@ -221,6 +282,29 @@ const styles = StyleSheet.create({
   loader: { marginVertical: 40 },
   mapNote: { marginTop: 8, color: night.muted, fontSize: 13, lineHeight: 18, textAlign: 'center', ...nightType.body },
   section: { marginTop: 26 },
+  legend: { marginTop: 10, gap: 6 },
+  legendItem: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  legendHalo: { width: 14, height: 14, borderRadius: 7, backgroundColor: 'rgba(244,217,149,0.55)', borderWidth: 1, borderColor: night.goldSoft },
+  legendPin: { width: 16, height: 16, borderRadius: 8, alignItems: 'center', justifyContent: 'center', backgroundColor: night.lavender, borderWidth: 1, borderColor: '#FFFFFF' },
+  legendText: { color: night.muted, fontSize: 13, ...nightType.medium },
+  backdrop: { flex: 1, backgroundColor: 'rgba(5,3,18,0.7)', justifyContent: 'flex-end' },
+  sheet: { maxHeight: '78%', borderTopLeftRadius: 28, borderTopRightRadius: 28, overflow: 'hidden', padding: 20, paddingBottom: 30 },
+  sheetHead: { flexDirection: 'row', alignItems: 'center', gap: 12, marginBottom: 14 },
+  sheetIcon: { width: 40, height: 40, borderRadius: 20, alignItems: 'center', justifyContent: 'center', backgroundColor: night.lavender },
+  sheetCopy: { flex: 1 },
+  sheetTitle: { color: night.text, fontSize: 21, ...nightType.display },
+  sheetSub: { marginTop: 2, color: night.muted, fontSize: 13, ...nightType.body },
+  sheetList: { flexGrow: 0 },
+  duaRow: { marginBottom: 10, padding: 15, borderRadius: 18, backgroundColor: night.glassStrong, borderWidth: 1, borderColor: night.line },
+  duaAnswered: { alignSelf: 'flex-start', flexDirection: 'row', alignItems: 'center', gap: 4, paddingHorizontal: 8, paddingVertical: 3, borderRadius: 10, backgroundColor: night.goldSoft, marginBottom: 8 },
+  duaAnsweredText: { color: night.sky0, fontSize: 11, ...nightType.bold },
+  duaExcerpt: { color: night.text, fontSize: 17, lineHeight: 24, ...nightType.medium },
+  duaMeta: { marginTop: 8, flexDirection: 'row', justifyContent: 'space-between' },
+  duaMetaText: { color: night.muted, fontSize: 13, ...nightType.medium },
+  duaCta: { marginTop: 8, flexDirection: 'row', alignItems: 'center', gap: 4 },
+  duaCtaText: { color: night.goldSoft, fontSize: 14, ...nightType.bold },
+  sheetClose: { alignSelf: 'center', paddingTop: 12 },
+  sheetCloseText: { color: night.muted, fontSize: 15, ...nightType.semibold },
   actionCard: { gap: 14 },
   actionText: { color: night.text, fontSize: 17, lineHeight: 24, ...nightType.medium },
   secondary: { alignSelf: 'flex-start', paddingHorizontal: 20, paddingVertical: 12, borderRadius: 22, backgroundColor: night.gold },

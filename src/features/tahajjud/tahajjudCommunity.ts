@@ -135,7 +135,7 @@ export async function saveCommunityProfile(profile: CommunityProfile): Promise<C
 // ----- Presence ------------------------------------------------------------------------------
 
 /** Approximate zone, rounded on the phone (~28 km): never the precise position. */
-async function approximateZone(): Promise<{ lat: number; lng: number } | null> {
+export async function approximateZone(): Promise<{ lat: number; lng: number } | null> {
   const round = (value: number) => Math.round(value * 4) / 4;
   try {
     const permission = await Location.getForegroundPermissionsAsync();
