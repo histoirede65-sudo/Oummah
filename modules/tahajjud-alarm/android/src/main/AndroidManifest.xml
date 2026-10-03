@@ -6,4 +6,21 @@
       <action android:name="android.intent.action.SET_ALARM" />
     </intent>
   </queries>
+  <application>
+    <receiver
+      android:name="com.oummah.tahajjudalarm.TahajjudWidgetProvider"
+      android:exported="true"
+      android:label="@string/tahajjud_widget_label">
+      <intent-filter>
+        <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+        <action android:name="android.intent.action.BOOT_COMPLETED" />
+        <action android:name="android.intent.action.TIME_SET" />
+        <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+        <action android:name="com.oummah.app.tahajjud.REFRESH" />
+      </intent-filter>
+      <meta-data
+        android:name="android.appwidget.provider"
+        android:resource="@xml/tahajjud_widget_info" />
+    </receiver>
+  </application>
 </manifest>

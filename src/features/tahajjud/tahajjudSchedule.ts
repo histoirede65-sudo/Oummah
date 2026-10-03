@@ -11,12 +11,15 @@ import {
  * Same prayer times as the rest of OUMMAH (main mosque, or the phone's position; user's calculation
  * settings; validated mosque times). No second prayer-time engine.
  */
-export async function loadTahajjudSchedule(days = 2): Promise<MosquePrayerSchedule> {
+export async function loadTahajjudSchedule(days = 2, askLocation = true): Promise<MosquePrayerSchedule> {
   const [mosque, settings] = await Promise.all([getMainMosque(), loadPrayerCalculationSettings()]);
   let latitude = mosque?.latitude;
   let longitude = mosque?.longitude;
   if (latitude == null || longitude == null) {
-    const permission = await Location.requestForegroundPermissionsAsync();
+    // Background refreshes never show a permission prompt.
+    const permission = askLocation
+      ? await Location.requestForegroundPermissionsAsync()
+      : await Location.getForegroundPermissionsAsync();
     if (!permission.granted) throw new Error('LOCATION_REQUIRED');
     const position = (await Location.getLastKnownPositionAsync())
       ?? await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.Balanced });

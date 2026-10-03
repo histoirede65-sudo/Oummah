@@ -1190,11 +1190,305 @@ struct OummahVerseLockScreenWidget: Widget {
   }
 }
 
+// MARK: - Tahajjud · accueil et écran verrouillé
+
+private let tahajjudWidgetKind = "TahajjudWidget"
+private let tahajjudPayloadKey = "oummah.tahajjud-widget.payload.v1"
+
+private struct TahajjudNight: Codable {
+  let key: String
+  let isha: Double
+  let lastThirdStart: Double
+  let fajr: Double
+}
+
+private struct TahajjudPayload: Codable {
+  let nights: [TahajjudNight]
+  let validated: [String]
+}
+
+private enum TahajjudPhase {
+  /** Before the last third: countdown to its start. */
+  case evening(TahajjudNight)
+  /** Last third in progress: time left until Fajr. */
+  case lastThird(TahajjudNight)
+  case done(TahajjudNight)
+  /** Daytime: tonight's last third. */
+  case day(TahajjudNight)
+  case empty
+}
+
+private struct TahajjudEntry: TimelineEntry {
+  let date: Date
+  let phase: TahajjudPhase
+}
+
+private func loadTahajjudPayload() -> TahajjudPayload? {
+  guard
+    let raw = UserDefaults(suiteName: widgetGroupIdentifier)?.string(forKey: tahajjudPayloadKey),
+    let data = raw.data(using: .utf8)
+  else { return nil }
+  return try? JSONDecoder().decode(TahajjudPayload.self, from: data)
+}
+
+/** Same rule as the app: the widget only picks the state of the nights the app computed. */
+private func tahajjudPhase(at date: Date, payload: TahajjudPayload?) -> TahajjudPhase {
+  guard let payload = payload else { return .empty }
+  let now = date.timeIntervalSince1970 * 1_000
+  let nights = payload.nights.sorted { $0.isha < $1.isha }
+  if let current = nights.first(where: { now >= $0.isha && now < $0.fajr }) {
+    if payload.validated.contains(current.key) { return .done(current) }
+    return now < current.lastThirdStart ? .evening(current) : .lastThird(current)
+  }
+  if let next = nights.first(where: { $0.isha > now }) { return .day(next) }
+  return .empty
+}
+
+private func tahajjudClock(_ timestamp: Double) -> String {
+  let formatter = DateFormatter()
+  formatter.locale = Locale(identifier: "fr_FR")
+  formatter.dateFormat = "HH:mm"
+  return formatter.string(from: Date(timeIntervalSince1970: timestamp / 1_000))
+}
+
+private struct TahajjudProvider: TimelineProvider {
+  func placeholder(in context: Context) -> TahajjudEntry {
+    TahajjudEntry(date: Date(), phase: .empty)
+  }
+
+  func getSnapshot(in context: Context, completion: @escaping (TahajjudEntry) -> Void) {
+    let now = Date()
+    completion(TahajjudEntry(date: now, phase: tahajjudPhase(at: now, payload: loadTahajjudPayload())))
+  }
+
+  func getTimeline(in context: Context, completion: @escaping (Timeline<TahajjudEntry>) -> Void) {
+    let payload = loadTahajjudPayload()
+    let now = Date()
+    // One entry now, then one at each ‘Isha / last third / Fajr of the published nights.
+    var dates: [Date] = [now]
+    for night in payload?.nights ?? [] {
+      for timestamp in [night.isha, night.lastThirdStart, night.fajr] {
+        let date = Date(timeIntervalSince1970: timestamp / 1_000 + 1)
+        if date > now { dates.append(date) }
+      }
+    }
+    let entries = dates.sorted().prefix(40).map { TahajjudEntry(date: $0, phase: tahajjudPhase(at: $0, payload: payload)) }
+    completion(Timeline(entries: Array(entries), policy: .atEnd))
+  }
+}
+
+@available(iOS 16.0, *)
+private struct TahajjudSmallView: View {
+  let entry: TahajjudEntry
+
+  private var eyebrow: String {
+    switch entry.phase {
+    case .evening: return "TAHAJJUD DANS"
+    case .lastThird: return "DERNIER TIERS"
+    case .done: return "TAHAJJUD"
+    case .day: return "CE SOIR"
+    case .empty: return "TAHAJJUD"
+    }
+  }
+
+  var body: some View {
+    ZStack(alignment: .leading) {
+      LinearGradient(
+        colors: [Color(red: 0.082, green: 0.063, blue: 0.212), Color(red: 0.016, green: 0.012, blue: 0.047)],
+        startPoint: .topTrailing,
+        endPoint: .bottomLeading
+      )
+      .ignoresSafeArea()
+
+      VStack(alignment: .leading, spacing: 4) {
+        HStack(spacing: 5) {
+          Image(systemName: "moon.stars.fill")
+            .font(.system(size: 11, weight: .semibold))
+          Text(eyebrow)
+            .font(.system(size: 10, weight: .bold, design: .rounded))
+            .tracking(0.8)
+        }
+        .foregroundStyle(Color.oummahGold)
+
+        Spacer(minLength: 0)
+
+        switch entry.phase {
+        case .evening(let night):
+          Text(timerInterval: safeCountdownInterval(to: night.lastThirdStart), countsDown: true)
+            .font(.system(size: 30, weight: .medium, design: .serif))
+            .foregroundStyle(.white)
+            .minimumScaleFactor(0.6)
+          Text("Dernier tiers \(tahajjudClock(night.lastThirdStart)) → \(tahajjudClock(night.fajr))")
+            .font(.system(size: 12, weight: .semibold, design: .rounded))
+            .foregroundStyle(Color.oummahTextSecondary)
+        case .lastThird(let night):
+          Text("En cours")
+            .font(.system(size: 26, weight: .medium, design: .serif))
+            .foregroundStyle(.white)
+          Text(timerInterval: safeCountdownInterval(to: night.fajr), countsDown: true)
+            .font(.system(size: 16, weight: .bold, design: .rounded))
+            .foregroundStyle(Color.oummahGold)
+          Text("jusqu’à Fajr, \(tahajjudClock(night.fajr))")
+            .font(.system(size: 12, weight: .semibold, design: .rounded))
+            .foregroundStyle(Color.oummahTextSecondary)
+        case .done(let night):
+          Text("Nuit accomplie")
+            .font(.system(size: 24, weight: .medium, design: .serif))
+            .foregroundStyle(.white)
+          Text("Fajr à \(tahajjudClock(night.fajr))")
+            .font(.system(size: 12, weight: .semibold, design: .rounded))
+            .foregroundStyle(Color.oummahTextSecondary)
+        case .day(let night):
+          Text(tahajjudClock(night.lastThirdStart))
+            .font(.system(size: 34, weight: .medium, design: .serif))
+            .foregroundStyle(.white)
+          Text("début du dernier tiers")
+            .font(.system(size: 12, weight: .semibold, design: .rounded))
+            .foregroundStyle(Color.oummahTextSecondary)
+        case .empty:
+          Text("Ouvrez OUMMAH")
+            .font(.system(size: 18, weight: .medium, design: .serif))
+            .foregroundStyle(.white)
+        }
+      }
+      .lineLimit(1)
+      .padding(14)
+    }
+  }
+}
+
+@available(iOS 16.0, *)
+private struct TahajjudLockScreenView: View {
+  let entry: TahajjudEntry
+
+  @Environment(\.widgetFamily) private var widgetFamily
+
+  @ViewBuilder
+  var body: some View {
+    switch widgetFamily {
+    case .accessoryRectangular:
+      VStack(alignment: .leading, spacing: 1) {
+        HStack(spacing: 4) {
+          Image(systemName: "moon.stars.fill")
+            .font(.system(size: 10, weight: .semibold))
+            .widgetAccentable()
+          Text(rectangularTitle)
+            .font(.system(size: 10, weight: .semibold, design: .rounded))
+        }
+        rectangularMain
+        Text(rectangularDetail)
+          .font(.system(size: 12, weight: .medium, design: .rounded))
+      }
+      .lineLimit(1)
+      .minimumScaleFactor(0.75)
+      .frame(maxWidth: .infinity, alignment: .leading)
+
+    case .accessoryInline:
+      inline
+
+    case .accessoryCircular:
+      VStack(spacing: 0) {
+        Image(systemName: "moon.stars.fill")
+          .font(.system(size: 13, weight: .semibold))
+          .widgetAccentable()
+        Text(circularText)
+          .font(.system(size: 12, weight: .bold, design: .rounded))
+          .lineLimit(1)
+          .minimumScaleFactor(0.6)
+      }
+
+    default:
+      TahajjudSmallView(entry: entry)
+    }
+  }
+
+  private var rectangularTitle: String {
+    switch entry.phase {
+    case .evening: return "TAHAJJUD DANS"
+    case .lastThird: return "DERNIER TIERS EN COURS"
+    case .done, .empty: return "TAHAJJUD"
+    case .day: return "TAHAJJUD CE SOIR"
+    }
+  }
+
+  @ViewBuilder
+  private var rectangularMain: some View {
+    switch entry.phase {
+    case .evening(let night):
+      Text(timerInterval: safeCountdownInterval(to: night.lastThirdStart), countsDown: true)
+        .font(.system(size: 19, weight: .bold, design: .rounded))
+    case .lastThird(let night):
+      Text(timerInterval: safeCountdownInterval(to: night.fajr), countsDown: true)
+        .font(.system(size: 19, weight: .bold, design: .rounded))
+    case .done:
+      Text("Nuit accomplie")
+        .font(.system(size: 17, weight: .bold, design: .rounded))
+    case .day(let night):
+      Text("Dernier tiers \(tahajjudClock(night.lastThirdStart))")
+        .font(.system(size: 17, weight: .bold, design: .rounded))
+    case .empty:
+      Text("Ouvrez OUMMAH")
+        .font(.system(size: 17, weight: .bold, design: .rounded))
+    }
+  }
+
+  private var rectangularDetail: String {
+    switch entry.phase {
+    case .evening(let night): return "Dernier tiers \(tahajjudClock(night.lastThirdStart)) → \(tahajjudClock(night.fajr))"
+    case .lastThird(let night): return "jusqu’à Fajr, \(tahajjudClock(night.fajr))"
+    case .done(let night): return "Fajr à \(tahajjudClock(night.fajr))"
+    case .day(let night): return "jusqu’à Fajr, \(tahajjudClock(night.fajr))"
+    case .empty: return "pour calculer la nuit"
+    }
+  }
+
+  private var circularText: String {
+    switch entry.phase {
+    case .evening(let night), .day(let night): return tahajjudClock(night.lastThirdStart)
+    case .lastThird(let night): return tahajjudClock(night.fajr)
+    case .done: return "✓"
+    case .empty: return "—"
+    }
+  }
+
+  @ViewBuilder
+  private var inline: some View {
+    switch entry.phase {
+    case .evening(let night):
+      Text(Image(systemName: "moon.stars.fill")) + Text(" Tahajjud dans ") + Text(timerInterval: safeCountdownInterval(to: night.lastThirdStart), countsDown: true)
+    case .lastThird(let night):
+      Label("Dernier tiers · jusqu’à \(tahajjudClock(night.fajr))", systemImage: "moon.stars.fill")
+    case .done:
+      Label("Tahajjud · nuit accomplie", systemImage: "moon.stars.fill")
+    case .day(let night):
+      Label("Tahajjud · \(tahajjudClock(night.lastThirdStart))", systemImage: "moon.stars.fill")
+    case .empty:
+      Label("Tahajjud · ouvrez OUMMAH", systemImage: "moon.stars.fill")
+    }
+  }
+}
+
+@available(iOS 16.0, *)
+struct TahajjudWidget: Widget {
+  var body: some WidgetConfiguration {
+    StaticConfiguration(kind: tahajjudWidgetKind, provider: TahajjudProvider()) { entry in
+      TahajjudLockScreenView(entry: entry)
+        .widgetURL(URL(string: "oummah:///tahajjud"))
+        .modifier(WidgetBackground())
+    }
+    .configurationDisplayName("Tahajjud")
+    .description("Le dernier tiers de la nuit : compte à rebours, puis temps restant avant Fajr.")
+    .supportedFamilies([.systemSmall, .accessoryRectangular, .accessoryInline, .accessoryCircular])
+    .contentMarginsDisabled()
+  }
+}
+
 @available(iOS 16.0, *)
 @main
 struct OummahWidgetBundle: WidgetBundle {
   var body: some Widget {
     PrayerTimesWidget()
     OummahVerseLockScreenWidget()
+    TahajjudWidget()
   }
 }

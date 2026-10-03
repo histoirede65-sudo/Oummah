@@ -13,6 +13,7 @@ import {
 } from './TahajjudStore';
 import { alarmTime, clock, formatDuration, upcomingNights, type TahajjudNight } from './tahajjudNight';
 import { loadTahajjudSchedule } from './tahajjudSchedule';
+import { publishTahajjudWidget, refreshTahajjudWidgetValidation } from './tahajjudWidget';
 
 // ----- Validation ----------------------------------------------------------------------------
 
@@ -27,6 +28,7 @@ export async function validateTahajjudNight(night: string, witr: boolean): Promi
   const updated = await saveTahajjudNight(night, nights);
   await saveNightDetails(night, { witr });
   goalProgressBridge.record({ metric: 'tahajjud_night', amount: 1, evidenceId: `tahajjud:${night}` });
+  void refreshTahajjudWidgetValidation();
   void refreshTahajjudNotifications(true);
   return updated;
 }
@@ -34,6 +36,7 @@ export async function validateTahajjudNight(night: string, witr: boolean): Promi
 /** Undo a validation made by mistake. */
 export async function cancelTahajjudNight(night: string): Promise<TahajjudNights> {
   const nights = await removeTahajjudNight(night);
+  void refreshTahajjudWidgetValidation();
   void refreshTahajjudNotifications(true);
   return nights;
 }
@@ -135,6 +138,10 @@ export function refreshTahajjudNotifications(force = false): Promise<void> {
         .filter((item) => (item.content.data as Record<string, unknown> | undefined)?.notificationOwner === OWNER)
         .map((item) => Notifications.cancelScheduledNotificationAsync(item.identifier).catch(() => undefined)));
 
+      // 8 days of prayer times: also feeds the widget / lock screen.
+      const schedule = await loadTahajjudSchedule(NIGHTS_AHEAD + 1, false);
+      void publishTahajjudWidget(schedule);
+
       const settings = await loadTahajjudSettings();
       const anyEnabled = settings.alarm.enabled || Object.values(settings.notifications).some(Boolean);
       if (!anyEnabled || !granted(await Notifications.getPermissionsAsync())) return;
@@ -149,7 +156,7 @@ export function refreshTahajjudNotifications(force = false): Promise<void> {
         });
       }
 
-      const [schedule, nights] = await Promise.all([loadTahajjudSchedule(NIGHTS_AHEAD + 1), loadTahajjudNights()]);
+      const nights = await loadTahajjudNights();
       const now = Date.now();
       const planned = upcomingNights(schedule)
         .slice(0, NIGHTS_AHEAD)

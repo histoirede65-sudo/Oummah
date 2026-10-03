@@ -1,5 +1,5 @@
 import { useFocusEffect } from 'expo-router';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import type { MosquePrayerSchedule } from '../mosques/data/mosquePrayerTimes';
 import {
   currentStreak,
@@ -13,6 +13,7 @@ import {
 import { getNightState, type NightState } from './tahajjudNight';
 import { loadTahajjudSchedule } from './tahajjudSchedule';
 import { cancelTahajjudNight, refreshTahajjudNotifications, validateTahajjudNight } from './tahajjudService';
+import { publishTahajjudWidget } from './tahajjudWidget';
 
 export type TahajjudView = {
   loading: boolean;
@@ -71,6 +72,11 @@ export function useTahajjudNight(schedule?: MosquePrayerSchedule | null): Tahajj
   }, [schedule, version]));
 
   const source = schedule === undefined ? loaded : schedule;
+
+  // Widget / lock screen follow the same nights as the app.
+  useEffect(() => {
+    if (source) void publishTahajjudWidget(source);
+  }, [source]);
   const state = source ? getNightState(source, now) : null;
   const key = state?.validatableKey ?? null;
   const validated = Boolean(state && nights[key ?? state.night.key]);

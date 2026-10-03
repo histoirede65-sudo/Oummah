@@ -27,5 +27,15 @@ class TahajjudAlarmModule : Module() {
       context.startActivity(intent)
       true
     }
+
+    /** Stores the nights computed by the app and refreshes the Tahajjud widget. */
+    AsyncFunction("publishWidget") { payload: String ->
+      val context = appContext.reactContext?.applicationContext ?: return@AsyncFunction
+      context.getSharedPreferences(TAHAJJUD_PREFS, android.content.Context.MODE_PRIVATE)
+        .edit()
+        .putString(TAHAJJUD_PAYLOAD, payload)
+        .apply()
+      TahajjudWidgetProvider.refresh(context)
+    }
   }
 }

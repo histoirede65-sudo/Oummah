@@ -59,3 +59,6 @@ __pycache__/
 
 # Claude Code personal permissions
 .claude/settings.local.json
+
+# local native module builds
+modules/*/android/build/
