@@ -63,8 +63,8 @@ export default function TahajjudGuideScreen() {
     <TahajjudShell title="Apprendre Tahajjud" eyebrow="Guide">
       <View style={styles.tabs}>
         {GUIDE.map((item) => (
-          <Pressable key={item.id} onPress={() => setTabId(item.id)} style={[styles.tab, tabId === item.id && styles.tabOn]}>
-            <Text style={[styles.tabText, tabId === item.id && styles.tabTextOn]}>{item.label}</Text>
+          <Pressable key={item.id} onPress={() => setTabId(item.id)} style={[styles.tab, { flex: item.label.length + 4 }, tabId === item.id && styles.tabOn]}>
+            <Text numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.8} style={[styles.tabText, tabId === item.id && styles.tabTextOn]}>{item.label}</Text>
           </Pressable>
         ))}
       </View>
@@ -79,10 +79,10 @@ export default function TahajjudGuideScreen() {
 }
 
 const styles = StyleSheet.create({
-  tabs: { flexDirection: 'row', padding: 4, borderRadius: 18, backgroundColor: night.glass, borderWidth: 1, borderColor: night.line },
-  tab: { flex: 1, height: 38, borderRadius: 14, alignItems: 'center', justifyContent: 'center' },
+  tabs: { flexDirection: 'row', padding: 5, borderRadius: 22, backgroundColor: night.glass, borderWidth: 1, borderColor: night.line },
+  tab: { height: 52, borderRadius: 17, paddingHorizontal: 6, alignItems: 'center', justifyContent: 'center' },
   tabOn: { backgroundColor: night.gold },
-  tabText: { color: night.textSoft, fontSize: 16, ...nightType.semibold },
+  tabText: { color: night.textSoft, fontSize: 18, ...nightType.semibold },
   tabTextOn: { color: night.sky0, ...nightType.bold },
   intro: { marginTop: 18, marginBottom: 18, color: night.textSoft, fontSize: 18, lineHeight: 26, ...nightType.body },
   stepRow: { flexDirection: 'row', gap: 12 },
