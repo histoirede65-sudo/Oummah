@@ -55,7 +55,7 @@ export default function TahajjudAlarmScreen() {
     void refreshTahajjudNotifications(true);
   };
 
-  if (!settings) return <TahajjudShell title="Mon réveil" eyebrow="Tahajjud"><View /></TahajjudShell>;
+  if (!settings) return <TahajjudShell title="Mon réveil" eyebrow="Qiyam al-Layl"><View /></TahajjudShell>;
 
   const tonight = state?.night ?? null;
   const wakeUp = tonight ? alarmTime(tonight, settings.alarm.mode, settings.alarm.customTime) : null;
@@ -79,11 +79,11 @@ export default function TahajjudAlarmScreen() {
   };
 
   return (
-    <TahajjudShell title="Mon réveil" eyebrow="Tahajjud">
+    <TahajjudShell title="Mon réveil" eyebrow="Qiyam al-Layl">
       <GlassCard gold>
         <View style={styles.row}>
           <View style={styles.rowCopy}>
-            <Text style={styles.cardTitle}>Me réveiller pour Tahajjud</Text>
+            <Text style={styles.cardTitle}>Me réveiller pour prier la nuit</Text>
             <Text style={styles.cardText}>Chaque nuit, recalculé selon vos horaires.</Text>
           </View>
           <Switch
@@ -136,7 +136,7 @@ export default function TahajjudAlarmScreen() {
             <View style={styles.metric}>
               <Ionicons name="hourglass-outline" size={18} color={night.goldSoft} />
               <Text style={styles.metricText}>
-                <Text style={styles.metricStrong}>{formatDuration(available ?? 0)}</Text> pour Tahajjud, du réveil à Fajr ({clock(tonight.fajr)})
+                <Text style={styles.metricStrong}>{formatDuration(available ?? 0)}</Text> pour prier, du réveil à Fajr ({clock(tonight.fajr)})
               </Text>
             </View>
             {rest !== null && rest >= 45 * 60_000 ? (

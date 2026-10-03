@@ -45,7 +45,7 @@ export default function HomeTahajjudCard({ schedule }: Props) {
   return (
     <Animated.View entering={FadeIn.duration(500)} style={styles.outer}>
       <View style={styles.card}>
-        <Pressable accessibilityRole="button" accessibilityLabel="Ouvrir Tahajjud" onPress={() => router.push('/tahajjud' as Href)} style={styles.photo}>
+        <Pressable accessibilityRole="button" accessibilityLabel="Ouvrir Qiyam al-Layl" onPress={() => router.push('/tahajjud' as Href)} style={styles.photo}>
           {/* The band has the photo's proportions (2172 × 724): the whole photo is shown. */}
           <Image source={require('../assets/images/home/tahajjud-night-card-wide.png')} resizeMode="cover" style={styles.backgroundImage} />
           <LinearGradient
@@ -58,7 +58,7 @@ export default function HomeTahajjudCard({ schedule }: Props) {
           <View style={styles.copy}>
             <View style={styles.eyebrowRow}>
               {inLastThird && !view.validated ? <View style={styles.liveDot} /> : null}
-              <Text style={styles.eyebrow}>{view.validated ? 'TAHAJJUD' : inLastThird ? 'C’EST LE MOMENT' : 'CETTE NUIT'}</Text>
+              <Text style={styles.eyebrow}>{view.validated ? 'QIYAM AL-LAYL' : inLastThird ? 'C’EST LE MOMENT' : 'CETTE NUIT'}</Text>
             </View>
             <Text style={styles.title} numberOfLines={1} adjustsFontSizeToFit>{title}</Text>
             <Text style={styles.detail} numberOfLines={1}>{detail}</Text>
@@ -77,7 +77,7 @@ export default function HomeTahajjudCard({ schedule }: Props) {
             <Pressable onPress={() => setSheet(true)} style={({ pressed }) => [styles.flex, pressed && styles.pressed]}>
               <LinearGradient colors={[night.goldSoft, night.gold]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.primary}>
                 <Ionicons name="moon" size={17} color={night.sky0} />
-                <Text style={styles.primaryText}>J’ai prié Tahajjud</Text>
+                <Text style={styles.primaryText}>J’ai prié cette nuit</Text>
               </LinearGradient>
             </Pressable>
           ) : (

@@ -25,7 +25,7 @@ export type FriendsOverview = {
 };
 
 export const ENCOURAGEMENTS = [
-  { kind: 'wake', text: 'On se réveille pour Tahajjud cette nuit ?', icon: 'alarm-outline' },
+  { kind: 'wake', text: 'On se réveille pour prier cette nuit ?', icon: 'alarm-outline' },
   { kind: 'ease', text: 'Qu’Allah te facilite ta nuit.', icon: 'moon-outline' },
   { kind: 'dua', text: 'J’ai fait doua pour toi cette nuit.', icon: 'hand-left-outline' },
   { kind: 'keep', text: 'Barak Allahou fik, continue comme ça !', icon: 'heart-outline' },

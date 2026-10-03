@@ -23,7 +23,7 @@ export async function ensureCommunityChannels() {
   const existing = await Notifications.getNotificationChannelAsync(TAHAJJUD_CHANNEL).catch(() => null);
   if (!existing) {
     await Notifications.setNotificationChannelAsync(TAHAJJUD_CHANNEL, {
-      name: 'Tahajjud',
+      name: 'Qiyam al-Layl',
       importance: Notifications.AndroidImportance.MAX,
       vibrationPattern: [0, 400, 200, 400, 200, 600],
       sound: 'default',

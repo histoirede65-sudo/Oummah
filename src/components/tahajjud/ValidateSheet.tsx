@@ -15,7 +15,7 @@ type Props = {
   onConfirm: (witr: boolean) => Promise<void>;
 };
 
-/** « J'ai prié Tahajjud » : optional Witr, then a quiet celebration. */
+/** « J'ai prié cette nuit » : optional Witr, then a quiet celebration. */
 export function ValidateSheet({ visible, late, streak, onClose, onConfirm }: Props) {
   const [witr, setWitr] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -66,7 +66,7 @@ export function ValidateSheet({ visible, late, streak, onClose, onConfirm }: Pro
           ) : (
             <>
               <View style={styles.handle} />
-              <Text style={styles.title}>{late ? 'J’ai prié cette nuit' : 'J’ai prié Tahajjud'}</Text>
+              <Text style={styles.title}>J’ai prié cette nuit</Text>
               <Text style={styles.text}>
                 Une seule validation par nuit. Elle reste sur ce téléphone et nourrit votre suivi.
               </Text>

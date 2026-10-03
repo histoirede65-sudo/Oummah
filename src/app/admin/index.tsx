@@ -165,7 +165,7 @@ export default function AdminHomeScreen() {
               { title: "Valider les annonces", subtitle: "Annonces et événements des mosquées", route: "/admin/mosque-posts" },
               { title: "Traiter les signalements", subtitle: "Corriger les erreurs remontées", route: "/admin/mosque-reports", badge: dashboard?.mosqueReportsPending },
             ]} /> : null}
-            <MenuRow title="Mur des duas" subtitle="Duas à valider et signalements" icon="hand-left-outline" onPress={() => router.push("/admin/dua-wall")} />
+            <MenuRow title="Mur des duas" subtitle="Duas et réponses signalées" icon="hand-left-outline" onPress={() => router.push("/admin/dua-wall")} />
             <MenuRow title="Abonnements & revenus" subtitle="Premium, crédits Wasil et finances" icon="diamond-outline" expanded={openGroup === "finance"} onPress={() => toggle("finance")} />
             {openGroup === "finance" ? <Submenu entries={[
               { title: "Gérer Premium & Wasil", subtitle: "Accès Premium et crédits des utilisateurs", route: "/admin/premium-wasil" },

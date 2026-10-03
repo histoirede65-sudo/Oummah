@@ -49,7 +49,7 @@ export default function TahajjudScreen() {
   const verse = tonight ? verseOfTheNight(tonight.key) : null;
 
   const tiles: Tile[] = [
-    { icon: 'book-outline', label: 'Conseils', hint: 'Apprendre Tahajjud', route: '/tahajjud/guide' },
+    { icon: 'book-outline', label: 'Conseils', hint: 'Apprendre le Qiyam', route: '/tahajjud/guide' },
     { icon: 'heart-outline', label: 'Mes duas', hint: 'Préparer ma nuit', route: '/tahajjud/duas' },
     { icon: 'checkmark-circle-outline', label: 'J’ai prié', hint: view.validated ? 'Nuit enregistrée' : 'Valider ma nuit', onPress: () => view.canValidate && setSheet(true) },
     { icon: 'stats-chart-outline', label: 'Statistiques', hint: 'Calendrier · défis', route: '/tahajjud/stats' },
@@ -87,7 +87,7 @@ export default function TahajjudScreen() {
     <TahajjudShell>
       <Animated.View entering={FadeInDown.duration(500)}>
         <Text style={styles.eyebrow}>{tonight ? nightTitle(tonight.key) : 'Cette nuit'}</Text>
-        <Text style={styles.title}>Tahajjud</Text>
+        <Text style={styles.title}>Qiyam al-Layl</Text>
         <Text style={styles.subtitle}>Un rendez-vous privilégié avec ton Seigneur</Text>
       </Animated.View>
 
@@ -116,7 +116,7 @@ export default function TahajjudScreen() {
               <Pressable onPress={() => setSheet(true)} style={({ pressed }) => [pressed && styles.pressed]}>
                 <LinearGradient colors={[night.goldSoft, night.gold]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.cta}>
                   <Ionicons name="moon" size={20} color={night.sky0} />
-                  <Text style={styles.ctaText}>J’ai prié Tahajjud</Text>
+                  <Text style={styles.ctaText}>J’ai prié cette nuit</Text>
                 </LinearGradient>
               </Pressable>
             ) : view.validated ? (

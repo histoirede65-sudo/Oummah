@@ -59,12 +59,12 @@ class TahajjudWidgetProvider : AppWidgetProvider() {
         var countdownTo: Long? = null
         when {
           current != null && validated.contains(current.key) -> {
-            views.setTextViewText(R.id.tahajjud_widget_eyebrow, "TAHAJJUD")
+            views.setTextViewText(R.id.tahajjud_widget_eyebrow, "QIYAM AL-LAYL")
             views.setTextViewText(R.id.tahajjud_widget_title, "Nuit accomplie")
             views.setTextViewText(R.id.tahajjud_widget_detail, "Qu’Allah l’accepte · Fajr à ${time(current.fajr)}")
           }
           current != null && now < current.lastThird -> {
-            views.setTextViewText(R.id.tahajjud_widget_eyebrow, "TAHAJJUD DANS")
+            views.setTextViewText(R.id.tahajjud_widget_eyebrow, "DERNIER TIERS DANS")
             views.setTextViewText(R.id.tahajjud_widget_title, "")
             views.setTextViewText(R.id.tahajjud_widget_detail, "Dernier tiers ${time(current.lastThird)} → ${time(current.fajr)}")
             countdownTo = current.lastThird
@@ -81,7 +81,7 @@ class TahajjudWidgetProvider : AppWidgetProvider() {
             views.setTextViewText(R.id.tahajjud_widget_detail, "jusqu’à Fajr, ${time(upcoming.fajr)}")
           }
           else -> {
-            views.setTextViewText(R.id.tahajjud_widget_eyebrow, "TAHAJJUD")
+            views.setTextViewText(R.id.tahajjud_widget_eyebrow, "QIYAM AL-LAYL")
             views.setTextViewText(R.id.tahajjud_widget_title, "Ouvrez OUMMAH")
             views.setTextViewText(R.id.tahajjud_widget_detail, "pour calculer le dernier tiers de la nuit")
           }

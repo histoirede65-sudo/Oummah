@@ -119,7 +119,7 @@ export default function TahajjudStatsScreen() {
   };
 
   return (
-    <TahajjudShell title="Mes statistiques" eyebrow="Tahajjud">
+    <TahajjudShell title="Mes statistiques" eyebrow="Qiyam al-Layl">
       <View style={styles.segment}>
         {PERIODS.map((item) => (
           <Pressable key={item.id} onPress={() => setPeriod(item.id)} style={[styles.segmentItem, period === item.id && styles.segmentOn]}>

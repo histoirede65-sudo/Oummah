@@ -69,6 +69,7 @@ const MENU_GROUPS: ReadonlyArray<{
       { label: "Accueil", description: "Votre journée", href: "/", icon: "home-outline" },
       { label: "Fonds d’écran", description: "12 créations OUMMAH", href: "/wallpapers", icon: "images-outline" },
       { label: "Djoumou’a", description: "Votre parcours du vendredi", href: "/jumuah", icon: "moon-outline" },
+      { label: "Qiyam al-Layl", description: "La prière de la nuit", href: "/tahajjud", icon: "moon-outline" },
       { label: "Lire le Coran", description: "Sourates et lecture", href: "/quran", icon: "book-outline" },
       { label: "Hadiths", description: "Lire et méditer", href: "/hadith", icon: "library-outline" },
       { label: "Écouter", description: "Récitateurs et audio", href: "/listen/reciters", icon: "headset-outline" },

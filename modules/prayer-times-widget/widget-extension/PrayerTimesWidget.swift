@@ -1283,11 +1283,11 @@ private struct TahajjudSmallView: View {
 
   private var eyebrow: String {
     switch entry.phase {
-    case .evening: return "TAHAJJUD DANS"
+    case .evening: return "DERNIER TIERS DANS"
     case .lastThird: return "DERNIER TIERS"
-    case .done: return "TAHAJJUD"
+    case .done: return "QIYAM AL-LAYL"
     case .day: return "CE SOIR"
-    case .empty: return "TAHAJJUD"
+    case .empty: return "QIYAM AL-LAYL"
     }
   }
 
@@ -1404,10 +1404,10 @@ private struct TahajjudLockScreenView: View {
 
   private var rectangularTitle: String {
     switch entry.phase {
-    case .evening: return "TAHAJJUD DANS"
+    case .evening: return "DERNIER TIERS DANS"
     case .lastThird: return "DERNIER TIERS EN COURS"
-    case .done, .empty: return "TAHAJJUD"
-    case .day: return "TAHAJJUD CE SOIR"
+    case .done, .empty: return "QIYAM AL-LAYL"
+    case .day: return "QIYAM CE SOIR"
     }
   }
 
@@ -1455,15 +1455,15 @@ private struct TahajjudLockScreenView: View {
   private var inline: some View {
     switch entry.phase {
     case .evening(let night):
-      Text(Image(systemName: "moon.stars.fill")) + Text(" Tahajjud dans ") + Text(timerInterval: safeCountdownInterval(to: night.lastThirdStart), countsDown: true)
+      Text(Image(systemName: "moon.stars.fill")) + Text(" Dernier tiers dans ") + Text(timerInterval: safeCountdownInterval(to: night.lastThirdStart), countsDown: true)
     case .lastThird(let night):
       Label("Dernier tiers · jusqu’à \(tahajjudClock(night.fajr))", systemImage: "moon.stars.fill")
     case .done:
-      Label("Tahajjud · nuit accomplie", systemImage: "moon.stars.fill")
+      Label("Qiyam · nuit accomplie", systemImage: "moon.stars.fill")
     case .day(let night):
-      Label("Tahajjud · \(tahajjudClock(night.lastThirdStart))", systemImage: "moon.stars.fill")
+      Label("Dernier tiers · \(tahajjudClock(night.lastThirdStart))", systemImage: "moon.stars.fill")
     case .empty:
-      Label("Tahajjud · ouvrez OUMMAH", systemImage: "moon.stars.fill")
+      Label("Qiyam al-Layl · ouvrez OUMMAH", systemImage: "moon.stars.fill")
     }
   }
 }
@@ -1476,7 +1476,7 @@ struct TahajjudWidget: Widget {
         .widgetURL(URL(string: "oummah:///tahajjud"))
         .modifier(WidgetBackground())
     }
-    .configurationDisplayName("Tahajjud")
+    .configurationDisplayName("Qiyam al-Layl")
     .description("Le dernier tiers de la nuit : compte à rebours, puis temps restant avant Fajr.")
     .supportedFamilies([.systemSmall, .accessoryRectangular, .accessoryInline, .accessoryCircular])
     .contentMarginsDisabled()

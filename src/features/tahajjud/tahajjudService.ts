@@ -55,7 +55,7 @@ export const canSetSystemAlarm = Boolean(alarmModule);
 export async function setSystemAlarm(timestamp: number): Promise<boolean> {
   if (!alarmModule) return false;
   const date = new Date(timestamp);
-  return alarmModule.setSystemAlarm(date.getHours(), date.getMinutes(), 'Tahajjud · OUMMAH').catch(() => false);
+  return alarmModule.setSystemAlarm(date.getHours(), date.getMinutes(), 'Qiyam al-Layl · OUMMAH').catch(() => false);
 }
 
 // ----- Notifications -------------------------------------------------------------------------
@@ -87,7 +87,7 @@ function planNight(night: TahajjudNight, settings: Awaited<ReturnType<typeof loa
   if (notifications.evening) {
     planned.push({
       at: night.isha + 45 * 60_000, kind: 'evening', night: night.key,
-      title: 'Ce soir, Tahajjud 🌙',
+      title: 'Ce soir, Qiyam al-Layl 🌙',
       body: `Dernier tiers de ${range}. Une intention, un réveil, et Allah fait le reste.`,
     });
   }
@@ -102,7 +102,7 @@ function planNight(night: TahajjudNight, settings: Awaited<ReturnType<typeof loa
   if (wakeUp !== null) {
     planned.push({
       at: wakeUp, kind: 'alarm', night: night.key,
-      title: 'C’est l’heure de Tahajjud',
+      title: 'C’est l’heure de prier la nuit',
       body: `Le Seigneur descend au ciel de ce bas monde. Fajr à ${clock(night.fajr)} · ${formatDuration(night.fajr - wakeUp)} devant soi.`,
     });
   }
@@ -151,7 +151,7 @@ export function refreshTahajjudNotifications(force = false): Promise<void> {
 
       if (Platform.OS === 'android') {
         await Notifications.setNotificationChannelAsync(CHANNEL, {
-          name: 'Tahajjud',
+          name: 'Qiyam al-Layl',
           importance: Notifications.AndroidImportance.MAX,
           vibrationPattern: [0, 400, 200, 400, 200, 600],
           sound: 'default',

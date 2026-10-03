@@ -79,7 +79,7 @@ export default function TahajjudProfileScreen() {
       <TahajjudShell title="Mon profil OUMMAH" eyebrow="Communauté">
         <GlassCard gold style={styles.center}>
           <Ionicons name="person-circle-outline" size={48} color={night.goldSoft} />
-          <Text style={styles.lead}>Connectez-vous pour rejoindre la communauté Tahajjud.</Text>
+          <Text style={styles.lead}>Connectez-vous pour rejoindre la communauté Qiyam al-Layl.</Text>
           <Pressable onPress={() => router.push('/profile' as Href)} style={styles.button}>
             <Text style={styles.buttonText}>Se connecter</Text>
           </Pressable>

@@ -60,7 +60,7 @@ export default function TahajjudGuideScreen() {
   const tab = GUIDE.find((item) => item.id === tabId) ?? GUIDE[0];
 
   return (
-    <TahajjudShell title="Apprendre Tahajjud" eyebrow="Guide">
+    <TahajjudShell title="Apprendre le Qiyam" eyebrow="Guide">
       <View style={styles.tabs}>
         {GUIDE.map((item) => (
           <Pressable key={item.id} onPress={() => setTabId(item.id)} style={[styles.tab, { flex: item.label.length + 4 }, tabId === item.id && styles.tabOn]}>

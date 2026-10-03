@@ -39,7 +39,7 @@ type SearchResult = Member & { relation: FriendRelation };
 function friendStatus(friend: Friend) {
   if (!friend.shared) return { icon: 'lock-closed-outline' as const, text: 'Activité privée', color: night.muted };
   if (friend.tonight === 'prayed') return { icon: 'checkmark-circle' as const, text: 'A prié cette nuit', color: night.success };
-  if (friend.tonight === 'awake') return { icon: 'sunny' as const, text: 'Réveillé pour Tahajjud', color: night.goldSoft };
+  if (friend.tonight === 'awake') return { icon: 'sunny' as const, text: 'Réveillé pour prier', color: night.goldSoft };
   return { icon: 'moon-outline' as const, text: 'Pas encore cette nuit', color: night.muted };
 }
 
@@ -261,7 +261,7 @@ export default function TahajjudFriendsScreen() {
         <Pressable onPress={() => router.push('/tahajjud/group-new' as Href)}>
           <GlassCard style={styles.groupEmpty}>
             <Ionicons name="people-circle-outline" size={30} color={night.lavender} />
-            <Text style={styles.groupEmptyText}>Créez un groupe avec vos amis pour vous parler et vous programmer des rappels (Tahajjud, lecture, Witr…).</Text>
+            <Text style={styles.groupEmptyText}>Créez un groupe avec vos amis pour vous parler et vous programmer des rappels (prière de la nuit, lecture, Witr…).</Text>
           </GlassCard>
         </Pressable>
       ) : (

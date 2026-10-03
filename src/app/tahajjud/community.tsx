@@ -168,7 +168,7 @@ export default function TahajjudCommunityScreen() {
           {live ? (
             <>
               <Text style={styles.counter}>{awake}</Text>
-              <Text style={styles.counterLabel}>membre{awake > 1 ? 's' : ''} réveillé{awake > 1 ? 's' : ''} pour Tahajjud</Text>
+              <Text style={styles.counterLabel}>membre{awake > 1 ? 's' : ''} réveillé{awake > 1 ? 's' : ''} pour prier la nuit</Text>
               <View style={styles.prayedPill}>
                 <Ionicons name="moon" size={15} color={night.sky0} />
                 <Text style={styles.prayedText}>dont {prayed} {prayed > 1 ? 'ont' : 'a'} prié</Text>
@@ -230,7 +230,7 @@ export default function TahajjudCommunityScreen() {
           <Pressable disabled={busy || (!profile.shareTahajjud && !profile.shareWithFriends)} onPress={() => void declare()} style={({ pressed }) => [pressed && styles.pressed]}>
             <LinearGradient colors={[night.goldSoft, night.gold]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={[styles.cta, !profile.shareTahajjud && !profile.shareWithFriends && styles.disabled]}>
               <Ionicons name="sunny" size={20} color={night.sky0} />
-              <Text style={styles.ctaText}>{busy ? '…' : 'Je suis réveillé pour Tahajjud'}</Text>
+              <Text style={styles.ctaText}>{busy ? '…' : 'Je suis réveillé pour prier'}</Text>
             </LinearGradient>
           </Pressable>
         )}

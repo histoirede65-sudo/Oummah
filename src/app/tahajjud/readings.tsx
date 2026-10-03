@@ -10,7 +10,7 @@ import { NIGHT_READINGS } from '../../features/tahajjud/tahajjudContent';
 /** « Lire quelques versets » : passages of the night, or any surah of OUMMAH's Quran. */
 export default function TahajjudReadingsScreen() {
   return (
-    <TahajjudShell title="Lire quelques versets" eyebrow="Tahajjud">
+    <TahajjudShell title="Lire quelques versets" eyebrow="Qiyam al-Layl">
       <Text style={styles.intro}>Des passages liés à la nuit, ou la sourate de votre choix.</Text>
       {NIGHT_READINGS.map((reading, index) => (
         <Animated.View key={reading.id} entering={FadeInDown.delay(index * 60).duration(400)}>
