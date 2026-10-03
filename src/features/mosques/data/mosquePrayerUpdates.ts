@@ -27,16 +27,92 @@ export type MosquePrayerTimes = {
   offsets?: Partial<Record<ApprovedPrayerKey, number>>;
   /** The noted times are from another day and their offsets are unknown: they are not applied. */
   stale?: boolean;
+  /** Iqama: minutes after the adhan, or a fixed time. */
+  iqama?: Partial<Record<ApprovedPrayerKey, IqamaRule>>;
+  /** Every Joumou'a of the mosque (first, second…), with the language of the khutba when known. */
+  jumuahTimes?: JumuahSlot[];
+};
+
+export type IqamaRule = { after: number } | { at: string };
+export type JumuahSlot = { time: string; language?: string };
+export type MosqueSpecialKind = 'ramadan' | 'eid_fitr' | 'eid_adha';
+export type MosqueProposalKind = 'regular' | MosqueSpecialKind;
+
+/** Ramadan (tarawih) or Aïd times, validated for a given period. Dates are YYYY-MM-DD. */
+export type MosqueSpecialTimes = {
+  kind: MosqueSpecialKind;
+  tarawih?: string;
+  eidTimes?: string[];
+  validFrom: string;
+  validTo?: string;
+  note?: string;
 };
 
 export type MosquePrayerTimeProposal = MosquePrayerTimes & {
   id: string;
+  kind: MosqueProposalKind;
   mosqueName: string;
   mosqueAddress?: string;
   note?: string;
+  tarawih?: string;
+  eidTimes?: string[];
+  validFrom?: string;
+  validTo?: string;
   status: 'pending' | 'approved' | 'rejected';
   createdAt: string;
 };
+
+function parseIqama(value: unknown): MosquePrayerTimes['iqama'] {
+  if (!value || typeof value !== 'object') return undefined;
+  const result: Partial<Record<ApprovedPrayerKey, IqamaRule>> = {};
+  for (const key of ['fajr', 'dhuhr', 'asr', 'maghrib', 'isha'] as const) {
+    const rule = (value as Record<string, unknown>)[key] as { after?: unknown; at?: unknown } | undefined;
+    if (typeof rule?.after === 'number' && rule.after >= 0 && rule.after <= 90) result[key] = { after: Math.round(rule.after) };
+    else if (typeof rule?.at === 'string' && /^([01]\d|2[0-3]):[0-5]\d$/.test(rule.at)) result[key] = { at: rule.at };
+  }
+  return Object.keys(result).length ? result : undefined;
+}
+
+function parseJumuahTimes(value: unknown, legacy?: string | null): JumuahSlot[] | undefined {
+  const slots = Array.isArray(value)
+    ? value.flatMap((slot) => {
+        const item = slot as { time?: unknown; language?: unknown };
+        return typeof item?.time === 'string' && /^([01]\d|2[0-3]):[0-5]\d$/.test(item.time)
+          ? [{ time: item.time, language: typeof item.language === 'string' && item.language.trim() ? item.language.trim() : undefined }]
+          : [];
+      })
+    : [];
+  if (slots.length) return slots.sort((a, b) => a.time.localeCompare(b.time));
+  return legacy ? [{ time: legacy }] : undefined;
+}
+
+function parseTimeList(value: unknown): string[] | undefined {
+  if (!Array.isArray(value)) return undefined;
+  const times = value.filter((time): time is string => typeof time === 'string' && /^([01]\d|2[0-3]):[0-5]\d$/.test(time)).sort();
+  return times.length ? times : undefined;
+}
+
+/**
+ * Iqama time of a prayer for the day shown, or null when unknown. A fixed time is only kept while it
+ * still makes sense against the day's adhan (not before it, not more than 2 h after it).
+ */
+export function getIqamaTime(
+  rule: IqamaRule | undefined,
+  adhan: { time: string; timestamp: number },
+  timezone: string,
+): string | null {
+  if (!rule) return null;
+  if ('after' in rule) {
+    try {
+      return new Intl.DateTimeFormat('fr-FR', { timeZone: timezone, hour: '2-digit', minute: '2-digit', hourCycle: 'h23' })
+        .format(new Date(adhan.timestamp + rule.after * 60_000));
+    } catch {
+      return null;
+    }
+  }
+  const delta = toMinutes(rule.at) - toMinutes(adhan.time);
+  return delta >= 0 && delta <= 120 ? rule.at : null;
+}
 
 const url = process.env.EXPO_PUBLIC_SUPABASE_URL?.replace(/\/+$/, '');
 const anon = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY;
@@ -145,12 +221,17 @@ async function approvedOffsets(
 }
 
 export async function getApprovedMosquePrayerTimes(mosqueId: string): Promise<MosquePrayerTimes | null> {
-  const rows = await rpc<Array<{mosque_id:string;fajr:string|null;dhuhr:string|null;asr:string|null;maghrib:string|null;isha:string|null;jumuah:string|null;updated_at:string;reference_at?:string|null;latitude?:number|null;longitude?:number|null}>>(
+  const rows = await rpc<Array<{mosque_id:string;fajr:string|null;dhuhr:string|null;asr:string|null;maghrib:string|null;isha:string|null;jumuah:string|null;updated_at:string;reference_at?:string|null;latitude?:number|null;longitude?:number|null;iqama?:unknown;jumuah_times?:unknown}>>(
     'get_approved_mosque_prayer_times', { p_mosque_id: mosqueId },
   );
   const row = rows[0];
   if (!row) return null;
-  const approved: MosquePrayerTimes = { mosqueId: row.mosque_id, fajr: row.fajr ?? undefined, dhuhr: row.dhuhr ?? undefined, asr: row.asr ?? undefined, maghrib: row.maghrib ?? undefined, isha: row.isha ?? undefined, jumuah: row.jumuah ?? undefined, updatedAt: row.updated_at };
+  const jumuahTimes = parseJumuahTimes(row.jumuah_times, row.jumuah);
+  const approved: MosquePrayerTimes = {
+    mosqueId: row.mosque_id, fajr: row.fajr ?? undefined, dhuhr: row.dhuhr ?? undefined, asr: row.asr ?? undefined,
+    maghrib: row.maghrib ?? undefined, isha: row.isha ?? undefined, jumuah: jumuahTimes?.[0]?.time ?? row.jumuah ?? undefined,
+    updatedAt: row.updated_at, iqama: parseIqama(row.iqama), jumuahTimes,
+  };
   const referenceAt = row.reference_at ?? row.updated_at;
   const offsets = typeof row.latitude === 'number' && typeof row.longitude === 'number'
     ? await approvedOffsets(approved, referenceAt, row.latitude, row.longitude)
@@ -231,14 +312,62 @@ export async function getMosqueScheduleWithApprovedTimes(
   return applyApprovedMosquePrayerTimes(calculated, approved);
 }
 
-export async function proposeMosquePrayerTimes(input: MosquePrayerTimes & {mosqueName:string;mosqueAddress?:string;note?:string}) {
+/** Validated Ramadan / Aïd times that are current or upcoming. Empty offline. */
+export async function getMosqueSpecialTimes(mosqueId: string): Promise<MosqueSpecialTimes[]> {
+  const rows = await rpc<Array<{kind:string;tarawih:string|null;eid_times:unknown;valid_from:string|null;valid_to:string|null;note:string|null}>>(
+    'get_mosque_special_times', { p_mosque_id: mosqueId },
+  ).catch(() => []);
+  return rows.flatMap((row) => row.valid_from && (row.kind === 'ramadan' || row.kind === 'eid_fitr' || row.kind === 'eid_adha')
+    ? [{ kind: row.kind, tarawih: row.tarawih ?? undefined, eidTimes: parseTimeList(row.eid_times), validFrom: row.valid_from, validTo: row.valid_to ?? undefined, note: row.note ?? undefined }]
+    : []);
+}
+
+export type MosqueTimesProposalInput = {
+  kind: MosqueProposalKind;
+  mosqueId: string;
+  mosqueName: string;
+  mosqueAddress?: string;
+  note?: string;
+  fajr?: string; dhuhr?: string; asr?: string; maghrib?: string; isha?: string;
+  iqama?: Partial<Record<ApprovedPrayerKey, IqamaRule>>;
+  jumuahTimes?: JumuahSlot[];
+  tarawih?: string;
+  eidTimes?: string[];
+  /** YYYY-MM-DD */
+  validFrom?: string;
+  validTo?: string;
+};
+
+export async function proposeMosquePrayerTimes(input: MosqueTimesProposalInput) {
   config();
   const session = await getValidSession(true);
   if (!session?.accessToken || !session.user?.id) throw new Error('AUTH_REQUIRED');
+  const regular = input.kind === 'regular';
+  const iqama = regular && input.iqama
+    ? Object.fromEntries(Object.entries(input.iqama).flatMap(([key, rule]): [string, IqamaRule][] => {
+        if ('at' in rule) { const at = cleanTime(rule.at); return at ? [[key, { at }]] : []; }
+        return Number.isFinite(rule.after) && rule.after >= 0 && rule.after <= 90 ? [[key, { after: Math.round(rule.after) }]] : [];
+      }))
+    : null;
+  const jumuahTimes = regular
+    ? (input.jumuahTimes ?? []).flatMap((slot) => { const time = cleanTime(slot.time); return time ? [{ time, ...(slot.language?.trim() ? { language: slot.language.trim().slice(0, 40) } : {}) }] : []; })
+    : [];
+  const eidTimes = input.kind === 'eid_fitr' || input.kind === 'eid_adha'
+    ? (input.eidTimes ?? []).flatMap((time) => cleanTime(time) ?? [])
+    : [];
   const payload = {
+    kind: input.kind,
     mosque_id: input.mosqueId, mosque_name: input.mosqueName, mosque_address: input.mosqueAddress?.trim() || null,
-    fajr: cleanTime(input.fajr) ?? null, dhuhr: cleanTime(input.dhuhr) ?? null, asr: cleanTime(input.asr) ?? null,
-    maghrib: cleanTime(input.maghrib) ?? null, isha: cleanTime(input.isha) ?? null, jumuah: cleanTime(input.jumuah) ?? null,
+    fajr: regular ? cleanTime(input.fajr) ?? null : null, dhuhr: regular ? cleanTime(input.dhuhr) ?? null : null,
+    asr: regular ? cleanTime(input.asr) ?? null : null, maghrib: regular ? cleanTime(input.maghrib) ?? null : null,
+    isha: regular ? cleanTime(input.isha) ?? null : null,
+    jumuah: jumuahTimes[0]?.time ?? null,
+    iqama: iqama && Object.keys(iqama).length ? iqama : null,
+    jumuah_times: jumuahTimes.length ? jumuahTimes : null,
+    tarawih: input.kind === 'ramadan' ? cleanTime(input.tarawih) ?? null : null,
+    eid_times: eidTimes.length ? eidTimes : null,
+    valid_from: regular ? null : input.validFrom ?? null,
+    valid_to: input.kind === 'ramadan' ? input.validTo ?? null : null,
     note: input.note?.trim() || null, submitted_by: session.user.id, status: 'pending',
   };
   const response = await fetch(`${url}/rest/v1/mosque_prayer_time_updates`, {
@@ -250,8 +379,10 @@ export async function proposeMosquePrayerTimes(input: MosquePrayerTimes & {mosqu
 export async function adminListMosquePrayerTimeUpdates(): Promise<MosquePrayerTimeProposal[]> {
   const session = await getValidSession(true); if (!session?.accessToken) throw new Error('AUTH_REQUIRED');
   const rows = await rpc<any[]>('admin_list_mosque_prayer_time_updates', {p_status:'pending'}, session.accessToken);
-  return rows.map((r) => ({ id:r.id, mosqueId:r.mosque_id, mosqueName:r.mosque_name, mosqueAddress:r.mosque_address ?? undefined,
+  return rows.map((r) => ({ id:r.id, kind:r.kind ?? 'regular', mosqueId:r.mosque_id, mosqueName:r.mosque_name, mosqueAddress:r.mosque_address ?? undefined,
     fajr:r.fajr ?? undefined,dhuhr:r.dhuhr ?? undefined,asr:r.asr ?? undefined,maghrib:r.maghrib ?? undefined,isha:r.isha ?? undefined,jumuah:r.jumuah ?? undefined,
+    iqama:parseIqama(r.iqama), jumuahTimes:parseJumuahTimes(r.jumuah_times, r.jumuah), tarawih:r.tarawih ?? undefined, eidTimes:parseTimeList(r.eid_times),
+    validFrom:r.valid_from ?? undefined, validTo:r.valid_to ?? undefined,
     note:r.note ?? undefined,status:r.status,createdAt:r.created_at }));
 }
 export async function adminReviewMosquePrayerTimeUpdate(id:string, approve:boolean) {
