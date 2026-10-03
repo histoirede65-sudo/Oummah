@@ -43,7 +43,7 @@ export default function TahajjudReadingsScreen() {
 const styles = StyleSheet.create({
   intro: { marginBottom: 16, color: night.textSoft, fontSize: 17, lineHeight: 24, ...nightType.body },
   card: { flexDirection: 'row', alignItems: 'center', gap: 14, padding: 16, marginBottom: 10, borderRadius: 22, backgroundColor: night.glass, borderWidth: 1, borderColor: night.line },
-  number: { width: 46, height: 46, borderRadius: 23, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: night.goldLine, backgroundColor: 'rgba(227,181,90,0.1)' },
+  number: { width: 46, height: 46, borderRadius: 23, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: night.goldLine, backgroundColor: '#201826' },
   numberText: { color: night.goldSoft, fontSize: 16, ...nightType.bold },
   copy: { flex: 1 },
   titleRow: { flexDirection: 'row', alignItems: 'baseline', flexWrap: 'wrap', gap: 8 },

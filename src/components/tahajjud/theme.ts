@@ -5,8 +5,9 @@ export const night = {
   sky0: '#04030C',
   sky1: '#0A0720',
   sky2: '#151036',
-  glass: 'rgba(255,255,255,0.045)',
-  glassStrong: 'rgba(255,255,255,0.08)',
+  /** Opaque night surfaces (cards, panels): never see-through, easier on the eyes. */
+  glass: '#16122E',
+  glassStrong: '#1F1A3A',
   line: 'rgba(196,184,255,0.14)',
   goldLine: 'rgba(227,181,90,0.35)',
   gold: '#E3B55A',

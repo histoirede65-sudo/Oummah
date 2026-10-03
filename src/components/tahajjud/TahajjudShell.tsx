@@ -66,5 +66,5 @@ const styles = StyleSheet.create({
   eyebrow: { color: night.gold, fontSize: 12, letterSpacing: 2.4, textTransform: 'uppercase', ...nightType.bold },
   title: { color: night.text, fontSize: 32, lineHeight: 36, ...nightType.display },
   card: { borderRadius: 24, padding: 18, backgroundColor: night.glass, borderWidth: 1, borderColor: night.line },
-  cardGold: { borderColor: night.goldLine, backgroundColor: 'rgba(227,181,90,0.06)' },
+  cardGold: { borderColor: night.goldLine, backgroundColor: '#1F1932' },
 });

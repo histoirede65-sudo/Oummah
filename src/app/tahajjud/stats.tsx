@@ -301,7 +301,7 @@ const styles = StyleSheet.create({
   challengeOptionHint: { marginTop: 2, color: night.muted, fontSize: 16, ...nightType.body },
   challengeArrow: { position: 'absolute', right: 18, top: 24 },
   customRow: { marginTop: 10, flexDirection: 'row', gap: 10 },
-  customInput: { flex: 1, height: 44, borderRadius: 14, paddingHorizontal: 14, borderWidth: 1, borderColor: night.line, backgroundColor: 'rgba(0,0,0,0.25)', color: night.text, fontSize: 18, ...nightType.medium },
+  customInput: { flex: 1, height: 44, borderRadius: 14, paddingHorizontal: 14, borderWidth: 1, borderColor: night.line, backgroundColor: '#080518', color: night.text, fontSize: 18, ...nightType.medium },
   customStart: { height: 44, paddingHorizontal: 18, borderRadius: 14, backgroundColor: night.gold, justifyContent: 'center' },
   customStartText: { color: night.sky0, fontSize: 17, ...nightType.bold },
   disabled: { opacity: 0.4 },

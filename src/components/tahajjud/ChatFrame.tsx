@@ -155,7 +155,7 @@ export function ChatFrame<T extends Base>({
 export const chatStyles = StyleSheet.create({
   author: { marginLeft: 4, marginBottom: 3, fontSize: 13, ...nightType.bold },
   composerAction: { width: 46, height: 46, borderRadius: 23, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: night.goldLine },
-  system: { alignSelf: 'center', marginVertical: 6, paddingHorizontal: 14, paddingVertical: 6, borderRadius: 14, backgroundColor: 'rgba(255,255,255,0.06)', color: night.muted, fontSize: 13, textAlign: 'center', ...nightType.medium },
+  system: { alignSelf: 'center', marginVertical: 6, paddingHorizontal: 14, paddingVertical: 6, borderRadius: 14, backgroundColor: '#19162D', color: night.muted, fontSize: 13, textAlign: 'center', ...nightType.medium },
 });
 
 const styles = StyleSheet.create({
@@ -192,7 +192,7 @@ const styles = StyleSheet.create({
   composer: { flexDirection: 'row', alignItems: 'flex-end', gap: 10, paddingHorizontal: 14, paddingVertical: 10, borderTopWidth: 1, borderTopColor: night.line },
   input: {
     flex: 1, minHeight: 46, maxHeight: 130, borderRadius: 23, paddingHorizontal: 18, paddingTop: 12, paddingBottom: 12,
-    backgroundColor: 'rgba(0,0,0,0.3)', borderWidth: 1, borderColor: night.goldLine, color: night.text, fontSize: 17, ...nightType.medium,
+    backgroundColor: '#070516', borderWidth: 1, borderColor: night.goldLine, color: night.text, fontSize: 17, ...nightType.medium,
   },
   send: { width: 46, height: 46, borderRadius: 23, alignItems: 'center', justifyContent: 'center', backgroundColor: night.gold },
   disabled: { opacity: 0.45 },

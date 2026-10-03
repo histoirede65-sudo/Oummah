@@ -119,7 +119,7 @@ const styles = StyleSheet.create({
   detail: { color: night.text, fontSize: 13, marginTop: 2, ...nightType.medium },
   actions: { flexDirection: 'row', gap: 8, padding: 10, borderTopWidth: 1, borderTopColor: 'rgba(227,181,90,0.18)' },
   flex: { flex: 1 },
-  chip: { flex: 1, height: 44, borderRadius: 22, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 7, backgroundColor: 'rgba(227,181,90,0.1)', borderWidth: 1, borderColor: 'rgba(227,181,90,0.28)' },
+  chip: { flex: 1, height: 44, borderRadius: 22, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 7, backgroundColor: '#201826', borderWidth: 1, borderColor: 'rgba(227,181,90,0.28)' },
   chipText: { color: night.text, fontSize: 15, ...nightType.semibold },
   primary: { height: 46, borderRadius: 23, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8 },
   primaryText: { color: night.sky0, fontSize: 16, ...nightType.bold },

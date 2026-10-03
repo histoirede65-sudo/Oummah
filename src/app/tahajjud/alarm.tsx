@@ -227,10 +227,10 @@ const styles = StyleSheet.create({
   bedTitle: { marginTop: 6, color: night.text, fontSize: 18, ...nightType.semibold },
   bedHint: { marginTop: 2, color: night.muted, fontSize: 15, ...nightType.body },
   bedRow: { marginTop: 12, flexDirection: 'row', gap: 8 },
-  bedChip: { flex: 1, borderRadius: 16, paddingVertical: 12, alignItems: 'center', backgroundColor: 'rgba(183,171,242,0.08)', borderWidth: 1, borderColor: night.line },
+  bedChip: { flex: 1, borderRadius: 16, paddingVertical: 12, alignItems: 'center', backgroundColor: '#181431', borderWidth: 1, borderColor: night.line },
   bedTime: { color: night.text, fontSize: 22, ...nightType.bold },
   bedSleep: { marginTop: 2, color: night.muted, fontSize: 14, ...nightType.body },
-  systemButton: { marginTop: 14, flexDirection: 'row', alignItems: 'center', gap: 12, padding: 16, borderRadius: 22, borderWidth: 1, borderColor: night.goldLine, backgroundColor: 'rgba(227,181,90,0.07)' },
+  systemButton: { marginTop: 14, flexDirection: 'row', alignItems: 'center', gap: 12, padding: 16, borderRadius: 22, borderWidth: 1, borderColor: night.goldLine, backgroundColor: '#191324' },
   note: { marginTop: 12, color: night.muted, fontSize: 15, lineHeight: 21, ...nightType.body },
   pressed: { opacity: 0.85 },
 });

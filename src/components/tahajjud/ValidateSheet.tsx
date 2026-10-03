@@ -101,7 +101,7 @@ export function ValidateSheet({ visible, late, streak, onClose, onConfirm }: Pro
 const styles = StyleSheet.create({
   backdrop: { flex: 1, backgroundColor: 'rgba(2,1,8,0.72)', justifyContent: 'flex-end' },
   sheet: { overflow: 'hidden', borderTopLeftRadius: 30, borderTopRightRadius: 30, borderWidth: 1, borderColor: night.goldLine, padding: 24, paddingBottom: 36 },
-  handle: { alignSelf: 'center', width: 42, height: 4, borderRadius: 2, backgroundColor: 'rgba(255,255,255,0.18)', marginBottom: 18 },
+  handle: { alignSelf: 'center', width: 42, height: 4, borderRadius: 2, backgroundColor: '#363448', marginBottom: 18 },
   title: { color: night.text, fontSize: 32, ...nightType.display },
   text: { marginTop: 6, color: night.textSoft, fontSize: 17, lineHeight: 24, ...nightType.body },
   option: { marginTop: 22, flexDirection: 'row', alignItems: 'center', gap: 14, padding: 14, borderRadius: 18, backgroundColor: night.glass, borderWidth: 1, borderColor: night.line },
@@ -122,7 +122,7 @@ const styles = StyleSheet.create({
   },
   doneTitle: { marginTop: 20, color: night.text, fontSize: 34, ...nightType.display },
   doneText: { marginTop: 6, color: night.textSoft, fontSize: 17, textAlign: 'center', lineHeight: 24, ...nightType.body },
-  streak: { marginTop: 16, flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: 14, paddingVertical: 7, borderRadius: 16, backgroundColor: 'rgba(227,181,90,0.12)' },
+  streak: { marginTop: 16, flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: 14, paddingVertical: 7, borderRadius: 16, backgroundColor: '#241C27' },
   streakText: { color: night.goldSoft, fontSize: 16, ...nightType.bold },
   closeButton: { marginTop: 22, paddingHorizontal: 30, paddingVertical: 12, borderRadius: 22, borderWidth: 1, borderColor: night.goldLine },
   closeText: { color: night.text, fontSize: 17, ...nightType.semibold },

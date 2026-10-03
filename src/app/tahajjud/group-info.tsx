@@ -190,7 +190,7 @@ const styles = StyleSheet.create({
   renameRow: { flexDirection: 'row', alignItems: 'center', gap: 10 },
   input: {
     flex: 1, height: 52, borderRadius: 16, paddingHorizontal: 16, borderWidth: 1, borderColor: night.goldLine,
-    backgroundColor: 'rgba(0,0,0,0.25)', color: night.text, fontSize: 18, ...nightType.medium,
+    backgroundColor: '#080518', color: night.text, fontSize: 18, ...nightType.medium,
   },
   section: { marginTop: 18 },
   sectionLabel: { marginTop: 26 },

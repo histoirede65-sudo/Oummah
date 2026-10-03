@@ -307,7 +307,7 @@ const styles = StyleSheet.create({
   presetTextOn: { color: night.sky0 },
   field: {
     minHeight: 50, borderRadius: 16, paddingHorizontal: 16, borderWidth: 1, borderColor: night.goldLine,
-    backgroundColor: 'rgba(0,0,0,0.25)', color: night.text, fontSize: 17, ...nightType.medium,
+    backgroundColor: '#080518', color: night.text, fontSize: 17, ...nightType.medium,
   },
   timeRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 12 },
   label: { color: night.text, fontSize: 17, ...nightType.semibold },
