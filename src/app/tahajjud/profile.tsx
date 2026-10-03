@@ -1,0 +1,165 @@
+import { Ionicons } from '@expo/vector-icons';
+import type { Href } from 'expo-router';
+import { router, useFocusEffect } from 'expo-router';
+import { useCallback, useState } from 'react';
+import { ActivityIndicator, Alert, Pressable, StyleSheet, Switch, Text, TextInput, View } from 'react-native';
+import { GlassCard, shellStyles, TahajjudShell } from '../../components/tahajjud/TahajjudShell';
+import { night, nightType } from '../../components/tahajjud/theme';
+import {
+  COMMUNITY_AVATARS,
+  getCommunityProfile,
+  isSignedIn,
+  saveCommunityProfile,
+  type CommunityAvatar,
+} from '../../features/tahajjud/tahajjudCommunity';
+
+const AVATAR_ICONS: Record<CommunityAvatar, keyof typeof Ionicons.glyphMap> = {
+  moon: 'moon', star: 'star', sparkles: 'sparkles', leaf: 'leaf', water: 'water', flame: 'flame', sunny: 'sunny', heart: 'heart',
+};
+
+/** Profil OUMMAH : pseudo + avatar + confidentialité. Needed for the community features. */
+export default function TahajjudProfileScreen() {
+  const [loading, setLoading] = useState(true);
+  const [signedIn, setSignedIn] = useState(false);
+  const [exists, setExists] = useState(false);
+  const [pseudo, setPseudo] = useState('');
+  const [avatar, setAvatar] = useState<CommunityAvatar>('moon');
+  const [shareTahajjud, setShareTahajjud] = useState(true);
+  const [shareZone, setShareZone] = useState(true);
+  const [saving, setSaving] = useState(false);
+
+  useFocusEffect(useCallback(() => {
+    let active = true;
+    void (async () => {
+      const connected = await isSignedIn();
+      const profile = connected ? await getCommunityProfile() : null;
+      if (!active) return;
+      setSignedIn(connected);
+      setExists(Boolean(profile));
+      if (profile) {
+        setPseudo(profile.pseudo);
+        setAvatar(profile.avatar);
+        setShareTahajjud(profile.shareTahajjud);
+        setShareZone(profile.shareZone);
+      }
+      setLoading(false);
+    })();
+    return () => { active = false; };
+  }, []));
+
+  const save = async () => {
+    if (saving) return;
+    setSaving(true);
+    try {
+      await saveCommunityProfile({ pseudo, avatar, shareTahajjud, shareZone });
+      router.back();
+    } catch (error) {
+      const code = error instanceof Error ? error.message : '';
+      Alert.alert('Profil', code === 'PSEUDO_TAKEN'
+        ? 'Ce pseudo est déjà pris. Choisissez-en un autre.'
+        : code === 'PSEUDO_INVALID'
+          ? 'Le pseudo doit faire de 3 à 24 caractères (lettres, chiffres, espace, point, tiret).'
+          : 'Impossible d’enregistrer le profil pour le moment.');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  if (loading) {
+    return <TahajjudShell title="Mon profil OUMMAH" eyebrow="Communauté"><ActivityIndicator color={night.gold} /></TahajjudShell>;
+  }
+
+  if (!signedIn) {
+    return (
+      <TahajjudShell title="Mon profil OUMMAH" eyebrow="Communauté">
+        <GlassCard gold style={styles.center}>
+          <Ionicons name="person-circle-outline" size={48} color={night.goldSoft} />
+          <Text style={styles.lead}>Connectez-vous pour rejoindre la communauté Tahajjud.</Text>
+          <Pressable onPress={() => router.push('/profile' as Href)} style={styles.button}>
+            <Text style={styles.buttonText}>Se connecter</Text>
+          </Pressable>
+        </GlassCard>
+      </TahajjudShell>
+    );
+  }
+
+  return (
+    <TahajjudShell title={exists ? 'Mon profil OUMMAH' : 'Créer mon profil'} eyebrow="Communauté">
+      <View style={styles.preview}>
+        <View style={styles.avatarBig}>
+          <Ionicons name={AVATAR_ICONS[avatar]} size={38} color={night.sky0} />
+        </View>
+        <Text style={styles.previewName}>{pseudo.trim() || 'Votre pseudo'}</Text>
+      </View>
+
+      <Text style={shellStyles.sectionLabel}>Pseudo</Text>
+      <TextInput
+        value={pseudo}
+        onChangeText={setPseudo}
+        placeholder="Ex. : Abdallah, Oum Yasmine…"
+        placeholderTextColor={night.muted}
+        maxLength={24}
+        autoCapitalize="words"
+        style={styles.input}
+      />
+      <Text style={styles.hint}>Visible des autres membres. Évitez votre nom complet.</Text>
+
+      <Text style={[shellStyles.sectionLabel, styles.section]}>Avatar</Text>
+      <View style={styles.avatars}>
+        {COMMUNITY_AVATARS.map((item) => (
+          <Pressable key={item} onPress={() => setAvatar(item)} style={[styles.avatar, avatar === item && styles.avatarOn]}>
+            <Ionicons name={AVATAR_ICONS[item]} size={24} color={avatar === item ? night.sky0 : night.goldSoft} />
+          </Pressable>
+        ))}
+      </View>
+
+      <Text style={[shellStyles.sectionLabel, styles.section]}>Confidentialité</Text>
+      <GlassCard>
+        <View style={styles.row}>
+          <View style={styles.rowCopy}>
+            <Text style={styles.rowTitle}>Apparaître dans « La Oummah cette nuit »</Text>
+            <Text style={styles.rowText}>Compté quand vous déclarez être réveillé ou validez votre nuit. Toujours anonyme.</Text>
+          </View>
+          <Switch value={shareTahajjud} onValueChange={setShareTahajjud} trackColor={{ false: 'rgba(255,255,255,0.15)', true: night.gold }} thumbColor={night.text} />
+        </View>
+        <View style={[styles.row, styles.rowBorder]}>
+          <View style={styles.rowCopy}>
+            <Text style={styles.rowTitle}>Ma zone sur la carte</Text>
+            <Text style={styles.rowText}>Une zone d’environ 30 km, visible seulement si au moins 3 membres s’y trouvent. Jamais votre adresse.</Text>
+          </View>
+          <Switch value={shareZone} disabled={!shareTahajjud} onValueChange={setShareZone} trackColor={{ false: 'rgba(255,255,255,0.15)', true: night.gold }} thumbColor={night.text} />
+        </View>
+      </GlassCard>
+
+      <Pressable disabled={saving} onPress={() => void save()} style={[styles.button, styles.saveButton, saving && styles.disabled]}>
+        <Text style={styles.buttonText}>{saving ? 'Enregistrement…' : exists ? 'Enregistrer' : 'Créer mon profil'}</Text>
+      </Pressable>
+    </TahajjudShell>
+  );
+}
+
+const styles = StyleSheet.create({
+  center: { alignItems: 'center', gap: 14, paddingVertical: 28 },
+  lead: { color: night.text, fontSize: 18, textAlign: 'center', lineHeight: 25, ...nightType.medium },
+  preview: { alignItems: 'center', marginBottom: 22 },
+  avatarBig: {
+    width: 84, height: 84, borderRadius: 42, backgroundColor: night.goldSoft, alignItems: 'center', justifyContent: 'center',
+    shadowColor: night.goldSoft, shadowOpacity: 0.7, shadowRadius: 20, shadowOffset: { width: 0, height: 0 }, elevation: 8,
+  },
+  previewName: { marginTop: 12, color: night.text, fontSize: 26, ...nightType.display },
+  input: { height: 54, borderRadius: 18, paddingHorizontal: 16, borderWidth: 1, borderColor: night.goldLine, backgroundColor: 'rgba(0,0,0,0.25)', color: night.text, fontSize: 18, ...nightType.medium },
+  hint: { marginTop: 6, color: night.muted, fontSize: 14, ...nightType.body },
+  section: { marginTop: 24 },
+  avatars: { flexDirection: 'row', flexWrap: 'wrap', gap: 10 },
+  avatar: { width: 52, height: 52, borderRadius: 26, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: night.goldLine, backgroundColor: night.glass },
+  avatarOn: { backgroundColor: night.gold, borderColor: night.gold },
+  row: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 6 },
+  rowBorder: { marginTop: 8, paddingTop: 14, borderTopWidth: 1, borderTopColor: night.line },
+  rowCopy: { flex: 1 },
+  rowTitle: { color: night.text, fontSize: 17, ...nightType.semibold },
+  rowText: { marginTop: 3, color: night.muted, fontSize: 14, lineHeight: 19, ...nightType.body },
+  button: { minHeight: 56, borderRadius: 28, paddingHorizontal: 28, alignItems: 'center', justifyContent: 'center', backgroundColor: night.gold },
+  saveButton: { marginTop: 26 },
+  buttonText: { color: night.sky0, fontSize: 17, ...nightType.bold },
+  disabled: { opacity: 0.5 },
+});

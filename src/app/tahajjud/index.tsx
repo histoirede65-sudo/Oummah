@@ -10,6 +10,7 @@ import { GlassCard, shellStyles, TahajjudShell } from '../../components/tahajjud
 import { night, nightType } from '../../components/tahajjud/theme';
 import { ValidateSheet } from '../../components/tahajjud/ValidateSheet';
 import { WeekMoons } from '../../components/tahajjud/WeekMoons';
+import { getTahajjudLive } from '../../features/tahajjud/tahajjudCommunity';
 import { verseOfTheNight } from '../../features/tahajjud/tahajjudContent';
 import { alarmTime, clock, formatDuration } from '../../features/tahajjud/tahajjudNight';
 import { loadTahajjudSettings, type TahajjudSettings } from '../../features/tahajjud/TahajjudStore';
@@ -30,9 +31,11 @@ export default function TahajjudScreen() {
   const view = useTahajjudNight();
   const [settings, setSettings] = useState<TahajjudSettings | null>(null);
   const [sheet, setSheet] = useState(false);
+  const [awakeCount, setAwakeCount] = useState<number | null>(null);
 
   useFocusEffect(useCallback(() => {
     void loadTahajjudSettings().then(setSettings);
+    void getTahajjudLive().then((live) => setAwakeCount(live.awake)).catch(() => undefined);
   }, []));
 
   const { state, now } = view;
@@ -154,6 +157,23 @@ export default function TahajjudScreen() {
             ))}
           </Animated.View>
 
+          <Animated.View entering={FadeInDown.delay(360).duration(500)}>
+            <Pressable onPress={() => router.push('/tahajjud/community' as Href)} style={({ pressed }) => [pressed && styles.pressed]}>
+              <LinearGradient colors={['rgba(183,171,242,0.16)', 'rgba(227,181,90,0.12)']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.community}>
+                <View style={styles.communityIcon}>
+                  <Ionicons name="earth" size={24} color={night.goldSoft} />
+                </View>
+                <View style={styles.communityCopy}>
+                  <Text style={styles.communityTitle}>La Oummah cette nuit</Text>
+                  <Text style={styles.communityText}>
+                    {awakeCount === null ? 'Vous ne priez pas seul' : `${awakeCount} membre${awakeCount > 1 ? 's' : ''} réveillé${awakeCount > 1 ? 's' : ''} · voir la carte`}
+                  </Text>
+                </View>
+                <Ionicons name="chevron-forward" size={20} color={night.goldSoft} />
+              </LinearGradient>
+            </Pressable>
+          </Animated.View>
+
           <Animated.View entering={FadeInDown.delay(400).duration(500)}>
             <Pressable onPress={() => router.push('/tahajjud/stats' as Href)}>
               <GlassCard style={styles.weekCard}>
@@ -233,6 +253,11 @@ const styles = StyleSheet.create({
   tileLabelSoon: { color: night.textSoft },
   tileHint: { marginTop: 2, color: night.muted, fontSize: 14, ...nightType.body },
   weekCard: { marginTop: 16 },
+  community: { marginTop: 16, flexDirection: 'row', alignItems: 'center', gap: 14, padding: 16, borderRadius: 24, borderWidth: 1, borderColor: night.goldLine },
+  communityIcon: { width: 48, height: 48, borderRadius: 24, alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(0,0,0,0.25)' },
+  communityCopy: { flex: 1 },
+  communityTitle: { color: night.text, fontSize: 19, ...nightType.semibold },
+  communityText: { marginTop: 2, color: night.textSoft, fontSize: 15, ...nightType.body },
   weekHeader: { flexDirection: 'row', justifyContent: 'space-between' },
   streakPill: { flexDirection: 'row', alignItems: 'center', gap: 4, height: 22, paddingHorizontal: 9, borderRadius: 11, backgroundColor: 'rgba(227,181,90,0.12)' },
   streakText: { color: night.goldSoft, fontSize: 15, ...nightType.bold },

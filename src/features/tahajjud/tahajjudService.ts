@@ -14,6 +14,7 @@ import {
 import { alarmTime, clock, formatDuration, upcomingNights, type TahajjudNight } from './tahajjudNight';
 import { loadTahajjudSchedule } from './tahajjudSchedule';
 import { publishTahajjudWidget, refreshTahajjudWidgetValidation } from './tahajjudWidget';
+import { shareValidationWithCommunity } from './tahajjudCommunity';
 
 // ----- Validation ----------------------------------------------------------------------------
 
@@ -30,6 +31,8 @@ export async function validateTahajjudNight(night: string, witr: boolean): Promi
   goalProgressBridge.record({ metric: 'tahajjud_night', amount: 1, evidenceId: `tahajjud:${night}` });
   void refreshTahajjudWidgetValidation();
   void refreshTahajjudNotifications(true);
+  // « La Oummah cette nuit » : only for members who chose to appear.
+  void shareValidationWithCommunity(night);
   return updated;
 }
 
