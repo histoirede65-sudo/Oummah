@@ -183,26 +183,33 @@ export default function TahajjudCommunityScreen() {
             </Pressable>
           </GlassCard>
         ) : (
-          <Pressable disabled={busy || !profile.shareTahajjud} onPress={() => void declare()} style={({ pressed }) => [pressed && styles.pressed]}>
-            <LinearGradient colors={[night.goldSoft, night.gold]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={[styles.cta, !profile.shareTahajjud && styles.disabled]}>
+          <Pressable disabled={busy || (!profile.shareTahajjud && !profile.shareWithFriends)} onPress={() => void declare()} style={({ pressed }) => [pressed && styles.pressed]}>
+            <LinearGradient colors={[night.goldSoft, night.gold]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={[styles.cta, !profile.shareTahajjud && !profile.shareWithFriends && styles.disabled]}>
               <Ionicons name="sunny" size={20} color={night.sky0} />
               <Text style={styles.ctaText}>{busy ? '…' : 'Je suis réveillé pour Tahajjud'}</Text>
             </LinearGradient>
           </Pressable>
         )}
-        {profile && !profile.shareTahajjud ? (
+        {profile && !profile.shareTahajjud && !profile.shareWithFriends ? (
           <Text style={styles.mapNote}>Vous avez choisi de ne pas apparaître. Modifiable dans votre profil.</Text>
         ) : null}
       </Animated.View>
 
       <Animated.View entering={FadeInDown.delay(300).duration(500)}>
-        <GlassCard style={styles.friends}>
-          <Ionicons name="people-outline" size={22} color={night.muted} />
-          <View style={styles.friendsCopy}>
-            <Text style={styles.friendsTitle}>Mes amis cette nuit</Text>
-            <Text style={styles.friendsText}>Bientôt : voir et encourager vos amis, selon leurs réglages.</Text>
-          </View>
-        </GlassCard>
+        <Pressable onPress={() => router.push('/tahajjud/friends' as Href)} style={({ pressed }) => [pressed && styles.pressed]}>
+          <GlassCard style={styles.friends}>
+            <Ionicons name="people" size={22} color={night.goldSoft} />
+            <View style={styles.friendsCopy}>
+              <Text style={styles.friendsTitle}>Mes amis cette nuit</Text>
+              <Text style={styles.friendsText}>
+                {live?.friends
+                  ? `${live.friends} ami${live.friends > 1 ? 's' : ''} éveillé${live.friends > 1 ? 's' : ''}${live.friendsPrayed ? `, dont ${live.friendsPrayed} ${live.friendsPrayed > 1 ? 'ont' : 'a'} prié` : ''}`
+                  : 'Voir et encourager vos amis, selon leurs réglages.'}
+              </Text>
+            </View>
+            <Ionicons name="chevron-forward" size={18} color={night.muted} />
+          </GlassCard>
+        </Pressable>
         {profile ? (
           <Pressable onPress={() => router.push('/tahajjud/profile' as Href)} style={styles.profileLink}>
             <Ionicons name="person-circle-outline" size={18} color={night.goldSoft} />
@@ -246,7 +253,7 @@ const styles = StyleSheet.create({
   ctaText: { color: night.sky0, fontSize: 18, ...nightType.bold },
   disabled: { opacity: 0.45 },
   pressed: { opacity: 0.85 },
-  friends: { marginTop: 16, flexDirection: 'row', alignItems: 'center', gap: 12, opacity: 0.75 },
+  friends: { marginTop: 16, flexDirection: 'row', alignItems: 'center', gap: 12 },
   friendsCopy: { flex: 1 },
   friendsTitle: { color: night.text, fontSize: 16, ...nightType.semibold },
   friendsText: { marginTop: 2, color: night.muted, fontSize: 14, lineHeight: 19, ...nightType.body },

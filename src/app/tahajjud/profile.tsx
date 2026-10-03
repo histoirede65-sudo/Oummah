@@ -3,6 +3,7 @@ import type { Href } from 'expo-router';
 import { router, useFocusEffect } from 'expo-router';
 import { useCallback, useState } from 'react';
 import { ActivityIndicator, Alert, Pressable, StyleSheet, Switch, Text, TextInput, View } from 'react-native';
+import { AVATAR_ICONS } from '../../components/tahajjud/MemberAvatar';
 import { GlassCard, shellStyles, TahajjudShell } from '../../components/tahajjud/TahajjudShell';
 import { night, nightType } from '../../components/tahajjud/theme';
 import {
@@ -13,10 +14,6 @@ import {
   type CommunityAvatar,
 } from '../../features/tahajjud/tahajjudCommunity';
 
-const AVATAR_ICONS: Record<CommunityAvatar, keyof typeof Ionicons.glyphMap> = {
-  moon: 'moon', star: 'star', sparkles: 'sparkles', leaf: 'leaf', water: 'water', flame: 'flame', sunny: 'sunny', heart: 'heart',
-};
-
 /** Profil OUMMAH : pseudo + avatar + confidentialité. Needed for the community features. */
 export default function TahajjudProfileScreen() {
   const [loading, setLoading] = useState(true);
@@ -26,6 +23,8 @@ export default function TahajjudProfileScreen() {
   const [avatar, setAvatar] = useState<CommunityAvatar>('moon');
   const [shareTahajjud, setShareTahajjud] = useState(true);
   const [shareZone, setShareZone] = useState(true);
+  const [shareWithFriends, setShareWithFriends] = useState(true);
+  const [acceptFriendRequests, setAcceptFriendRequests] = useState(true);
   const [saving, setSaving] = useState(false);
 
   useFocusEffect(useCallback(() => {
@@ -41,6 +40,8 @@ export default function TahajjudProfileScreen() {
         setAvatar(profile.avatar);
         setShareTahajjud(profile.shareTahajjud);
         setShareZone(profile.shareZone);
+        setShareWithFriends(profile.shareWithFriends);
+        setAcceptFriendRequests(profile.acceptFriendRequests);
       }
       setLoading(false);
     })();
@@ -51,13 +52,15 @@ export default function TahajjudProfileScreen() {
     if (saving) return;
     setSaving(true);
     try {
-      await saveCommunityProfile({ pseudo, avatar, shareTahajjud, shareZone });
+      await saveCommunityProfile({ pseudo, avatar, shareTahajjud, shareZone, shareWithFriends, acceptFriendRequests });
       router.back();
     } catch (error) {
       const code = error instanceof Error ? error.message : '';
       Alert.alert('Profil', code === 'PSEUDO_TAKEN'
         ? 'Ce pseudo est déjà pris. Choisissez-en un autre.'
-        : code === 'PSEUDO_INVALID'
+        : code === 'PSEUDO_LOCKED'
+          ? 'Le pseudo est définitif et ne peut pas être modifié.'
+          : code === 'PSEUDO_INVALID'
           ? 'Le pseudo doit faire de 3 à 24 caractères (lettres, chiffres, espace, point, tiret).'
           : 'Impossible d’enregistrer le profil pour le moment.');
     } finally {
@@ -93,16 +96,27 @@ export default function TahajjudProfileScreen() {
       </View>
 
       <Text style={shellStyles.sectionLabel}>Pseudo</Text>
-      <TextInput
-        value={pseudo}
-        onChangeText={setPseudo}
-        placeholder="Ex. : Abdallah, Oum Yasmine…"
-        placeholderTextColor={night.muted}
-        maxLength={24}
-        autoCapitalize="words"
-        style={styles.input}
-      />
-      <Text style={styles.hint}>Visible des autres membres. Évitez votre nom complet.</Text>
+      {exists ? (
+        <View style={[styles.input, styles.locked]}>
+          <Text style={styles.lockedText}>{pseudo}</Text>
+          <Ionicons name="lock-closed" size={17} color={night.muted} />
+        </View>
+      ) : (
+        <TextInput
+          value={pseudo}
+          onChangeText={setPseudo}
+          placeholder="Ex. : Abdallah, Oum Yasmine…"
+          placeholderTextColor={night.muted}
+          maxLength={24}
+          autoCapitalize="words"
+          style={styles.input}
+        />
+      )}
+      <Text style={styles.hint}>
+        {exists
+          ? 'Votre pseudo est unique et lié à votre compte : il ne peut plus être modifié.'
+          : 'Unique et définitif : il ne pourra plus être modifié. Visible des autres membres, évitez votre nom complet.'}
+      </Text>
 
       <Text style={[shellStyles.sectionLabel, styles.section]}>Avatar</Text>
       <View style={styles.avatars}>
@@ -129,6 +143,20 @@ export default function TahajjudProfileScreen() {
           </View>
           <Switch value={shareZone} disabled={!shareTahajjud} onValueChange={setShareZone} trackColor={{ false: 'rgba(255,255,255,0.15)', true: night.gold }} thumbColor={night.text} />
         </View>
+        <View style={[styles.row, styles.rowBorder]}>
+          <View style={styles.rowCopy}>
+            <Text style={styles.rowTitle}>Mes amis voient mes nuits</Text>
+            <Text style={styles.rowText}>Réveillé ou a prié cette nuit, et le nombre de nuits sur 7 jours. Rien d’autre.</Text>
+          </View>
+          <Switch value={shareWithFriends} onValueChange={setShareWithFriends} trackColor={{ false: 'rgba(255,255,255,0.15)', true: night.gold }} thumbColor={night.text} />
+        </View>
+        <View style={[styles.row, styles.rowBorder]}>
+          <View style={styles.rowCopy}>
+            <Text style={styles.rowTitle}>Recevoir des demandes d’ami</Text>
+            <Text style={styles.rowText}>Désactivez pour ne plus recevoir de nouvelles demandes.</Text>
+          </View>
+          <Switch value={acceptFriendRequests} onValueChange={setAcceptFriendRequests} trackColor={{ false: 'rgba(255,255,255,0.15)', true: night.gold }} thumbColor={night.text} />
+        </View>
       </GlassCard>
 
       <Pressable disabled={saving} onPress={() => void save()} style={[styles.button, styles.saveButton, saving && styles.disabled]}>
@@ -148,6 +176,8 @@ const styles = StyleSheet.create({
   },
   previewName: { marginTop: 12, color: night.text, fontSize: 26, ...nightType.display },
   input: { height: 54, borderRadius: 18, paddingHorizontal: 16, borderWidth: 1, borderColor: night.goldLine, backgroundColor: 'rgba(0,0,0,0.25)', color: night.text, fontSize: 18, ...nightType.medium },
+  locked: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', opacity: 0.85 },
+  lockedText: { color: night.text, fontSize: 18, ...nightType.medium },
   hint: { marginTop: 6, color: night.muted, fontSize: 14, ...nightType.body },
   section: { marginTop: 24 },
   avatars: { flexDirection: 'row', flexWrap: 'wrap', gap: 10 },

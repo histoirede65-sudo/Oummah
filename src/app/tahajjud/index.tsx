@@ -51,7 +51,7 @@ export default function TahajjudScreen() {
     { icon: 'checkmark-circle-outline', label: 'J’ai prié', hint: view.validated ? 'Nuit enregistrée' : 'Valider ma nuit', onPress: () => view.canValidate && setSheet(true) },
     { icon: 'stats-chart-outline', label: 'Statistiques', hint: 'Calendrier · défis', route: '/tahajjud/stats' },
     { icon: 'people-outline', label: 'Mur des duas', hint: 'Dire Amine', route: '/tahajjud/wall' },
-    { icon: 'chatbubbles-outline', label: 'Amis', hint: 'Bientôt', soon: true },
+    { icon: 'chatbubbles-outline', label: 'Amis', hint: 'S’encourager', route: '/tahajjud/friends' },
   ];
 
   // Center of the arc: what matters now, in one glance.

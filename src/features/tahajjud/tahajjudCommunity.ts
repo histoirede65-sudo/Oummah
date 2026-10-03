@@ -17,10 +17,13 @@ export type CommunityProfile = {
   avatar: CommunityAvatar;
   shareTahajjud: boolean;
   shareZone: boolean;
+  /** Friends see « réveillé / a prié » tonight and the nights of the week. */
+  shareWithFriends: boolean;
+  acceptFriendRequests: boolean;
 };
 
 export type LiveZone = { lat: number; lng: number; count: number };
-export type TahajjudLive = { awake: number; prayed: number; zones: LiveZone[]; generatedAt: string };
+export type TahajjudLive = { awake: number; prayed: number; friends: number; friendsPrayed: number; zones: LiveZone[]; generatedAt: string };
 export type PresenceStatus = 'awake' | 'prayed';
 
 /** Below this many members awake, the map stays off (a near-empty map says the opposite). */
@@ -51,6 +54,7 @@ async function request<T>(path: string, init: RequestInit & { auth?: boolean } =
   if (!response.ok) {
     if (text.includes('23505') || text.includes('community_profiles_pseudo_idx')) throw new Error('PSEUDO_TAKEN');
     if (text.includes('PROFILE_REQUIRED')) throw new Error('PROFILE_REQUIRED');
+    if (text.includes('PSEUDO_LOCKED')) throw new Error('PSEUDO_LOCKED');
     if (text.includes('AUTH_REQUIRED')) throw new Error('AUTH_REQUIRED');
     throw new Error('REQUEST_FAILED');
   }
@@ -63,7 +67,8 @@ export async function isSignedIn() {
 
 // ----- Profile -------------------------------------------------------------------------------
 
-type ProfileRow = { pseudo: string; avatar: string; share_tahajjud: boolean; share_zone: boolean };
+type ProfileRow = { pseudo: string; avatar: string; share_tahajjud: boolean; share_zone: boolean; share_with_friends?: boolean; accept_friend_requests?: boolean };
+const PROFILE_COLUMNS = 'pseudo,avatar,share_tahajjud,share_zone,share_with_friends,accept_friend_requests';
 
 function toProfile(row: ProfileRow): CommunityProfile {
   return {
@@ -71,6 +76,8 @@ function toProfile(row: ProfileRow): CommunityProfile {
     avatar: (COMMUNITY_AVATARS as readonly string[]).includes(row.avatar) ? row.avatar as CommunityAvatar : 'moon',
     shareTahajjud: row.share_tahajjud,
     shareZone: row.share_zone,
+    shareWithFriends: row.share_with_friends ?? true,
+    acceptFriendRequests: row.accept_friend_requests ?? true,
   };
 }
 
@@ -79,7 +86,7 @@ export async function getCommunityProfile(): Promise<CommunityProfile | null> {
   const session = await getValidSession().catch(() => null);
   if (!session?.accessToken) return null;
   try {
-    const rows = await request<ProfileRow[]>(`community_profiles?user_id=eq.${session.user.id}&select=pseudo,avatar,share_tahajjud,share_zone`);
+    const rows = await request<ProfileRow[]>(`community_profiles?user_id=eq.${session.user.id}&select=${PROFILE_COLUMNS}`);
     const profile = rows[0] ? toProfile(rows[0]) : null;
     await AsyncStorage.setItem(PROFILE_CACHE_KEY, JSON.stringify(profile)).catch(() => undefined);
     return profile;
@@ -96,21 +103,30 @@ export async function getCommunityProfile(): Promise<CommunityProfile | null> {
 export async function saveCommunityProfile(profile: CommunityProfile): Promise<CommunityProfile> {
   const session = await getValidSession().catch(() => null);
   if (!session?.accessToken) throw new Error('AUTH_REQUIRED');
-  const pseudo = profile.pseudo.trim().replace(/\s+/g, ' ');
-  if (!/^[\p{L}\p{N} _.'’-]{3,24}$/u.test(pseudo)) throw new Error('PSEUDO_INVALID');
-  const rows = await request<ProfileRow[]>('community_profiles?on_conflict=user_id', {
-    method: 'POST',
-    headers: { Prefer: 'resolution=merge-duplicates,return=representation' },
-    body: JSON.stringify({
-      user_id: session.user.id,
-      pseudo,
-      avatar: profile.avatar,
-      share_tahajjud: profile.shareTahajjud,
-      share_zone: profile.shareZone,
-      updated_at: new Date().toISOString(),
-    }),
+  const settings = {
+    avatar: profile.avatar,
+    share_tahajjud: profile.shareTahajjud,
+    share_zone: profile.shareZone,
+    share_with_friends: profile.shareWithFriends,
+    accept_friend_requests: profile.acceptFriendRequests,
+    updated_at: new Date().toISOString(),
+  };
+  // The pseudo is definitive: an existing profile only updates its settings.
+  let rows = await request<ProfileRow[]>(`community_profiles?user_id=eq.${session.user.id}&select=${PROFILE_COLUMNS}`, {
+    method: 'PATCH',
+    headers: { Prefer: 'return=representation' },
+    body: JSON.stringify(settings),
   });
-  const saved = rows[0] ? toProfile(rows[0]) : { ...profile, pseudo };
+  if (!rows.length) {
+    const pseudo = profile.pseudo.trim().replace(/\s+/g, ' ');
+    if (!/^[\p{L}\p{N} _.'’-]{3,24}$/u.test(pseudo)) throw new Error('PSEUDO_INVALID');
+    rows = await request<ProfileRow[]>(`community_profiles?select=${PROFILE_COLUMNS}`, {
+      method: 'POST',
+      headers: { Prefer: 'return=representation' },
+      body: JSON.stringify({ user_id: session.user.id, pseudo, ...settings }),
+    });
+  }
+  const saved = rows[0] ? toProfile(rows[0]) : profile;
   await AsyncStorage.setItem(PROFILE_CACHE_KEY, JSON.stringify(saved)).catch(() => undefined);
   return saved;
 }
@@ -154,7 +170,7 @@ export async function getMyPresence(night: string): Promise<PresenceStatus | nul
 /** After « J'ai prié » : counted in the community when the member chose to appear. Silent otherwise. */
 export async function shareValidationWithCommunity(night: string) {
   const profile = await getCommunityProfile();
-  if (!profile?.shareTahajjud) return;
+  if (!profile || (!profile.shareTahajjud && !profile.shareWithFriends)) return;
   await declareTahajjud(night, 'prayed').catch(() => undefined);
 }
 
@@ -165,6 +181,8 @@ export async function getTahajjudLive(): Promise<TahajjudLive> {
   return {
     awake: Number(live.awake) || 0,
     prayed: Number(live.prayed) || 0,
+    friends: Number(live.friends) || 0,
+    friendsPrayed: Number(live.friendsPrayed) || 0,
     zones: (live.zones ?? []).map((zone) => ({ lat: Number(zone.lat), lng: Number(zone.lng), count: Number(zone.count) })),
     generatedAt: live.generatedAt,
   };
