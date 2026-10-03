@@ -23,14 +23,14 @@ export default function BoycottEntityCard({ item, onPress }: { item: BoycottEnti
 }
 
 const styles = StyleSheet.create({
-  card: { minHeight: 92, flexDirection: 'row', alignItems: 'center', gap: 13, paddingHorizontal: 15, paddingVertical: 13, borderRadius: 24, backgroundColor: 'rgba(22,16,31,0.94)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.07)' },
+  card: { minHeight: 86, flexDirection: 'row', alignItems: 'center', gap: 12, paddingHorizontal: 14, paddingVertical: 12, borderRadius: 22, backgroundColor: 'rgba(22,16,31,0.94)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.07)' },
   pressed: { opacity: 0.78 },
-  logo: { width: 54, height: 54, borderRadius: 18, alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(255,255,255,0.055)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)' },
-  logoText: { color: colors.text, fontFamily: typography.serifSemibold, fontSize: 25 },
+  logo: { width: 50, height: 50, borderRadius: 17, alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(255,255,255,0.055)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)' },
+  logoText: { color: colors.text, fontFamily: typography.serifSemibold, fontSize: 23 },
   copy: { flex: 1, minWidth: 0 },
-  name: { color: colors.text, fontFamily: typography.serifSemibold, fontSize: 19 },
+  name: { color: colors.text, fontFamily: typography.serifSemibold, fontSize: 18 },
   meta: { marginTop: 2, color: colors.textMuted, fontFamily: typography.sans, fontSize: 11.5 },
-  badge: { alignSelf: 'flex-start', marginTop: 8, flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: 9, height: 24, borderRadius: 12, backgroundColor: 'rgba(175,35,44,0.16)', borderWidth: 1, borderColor: 'rgba(236,79,87,0.32)' },
+  badge: { alignSelf: 'flex-start', marginTop: 7, flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: 9, height: 23, borderRadius: 12, backgroundColor: 'rgba(175,35,44,0.16)', borderWidth: 1, borderColor: 'rgba(236,79,87,0.32)' },
   dot: { width: 6, height: 6, borderRadius: 3, backgroundColor: '#EF5960' },
   badgeText: { color: '#FF8A90', fontFamily: typography.sans, fontSize: 9.5, fontWeight: '800', letterSpacing: 0.7 },
 });

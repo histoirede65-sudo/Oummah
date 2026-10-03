@@ -1,6 +1,6 @@
 import type { ProductHealthData } from './data/BoycottRepository';
 import { getAdditivePresentationLevelForScientificClassification, getAdditiveScientificAssessment, normalizeAdditiveCode, type AdditivePresentationLevel, type AdditiveScientificClassification } from './additiveInfoRepository';
-import { detectIngredientAdditives, type IngredientAdditiveDetectionSource } from './ingredientAdditiveDetector';
+import { detectIngredientAdditives, getAdditivesDataStatus, type IngredientAdditiveDetectionSource } from './ingredientAdditiveDetector';
 
 export type HealthFinding = {
   label: string;
@@ -56,7 +56,7 @@ function additiveCode(tag: string) {
 }
 
 function hasMeaningfulData(data: ProductHealthData) {
-  return Boolean(data.ingredientsText?.trim() || data.ingredientsTextVariants?.some((value) => value.trim()) || data.ingredientNames?.some((value) => value.trim()) || data.allergensTags !== undefined || data.additivesTags !== undefined || data.nutrientLevels || data.nutritionGrade || data.novaGroup !== undefined);
+  return Boolean(data.ingredientsText?.trim() || data.ingredientsTextVariants?.some((value) => value.trim()) || data.ingredientNames?.some((value) => value.trim()) || data.ingredientsStructured?.length || data.allergensTags !== undefined || data.additivesTags !== undefined || data.additivesOriginalTags !== undefined || data.additivesNumber !== undefined || data.nutrientLevels || data.nutritionGrade || data.novaGroup !== undefined);
 }
 
 export function analyzeHealthIngredients(data?: ProductHealthData): HealthIngredientAnalysis {
@@ -66,6 +66,8 @@ export function analyzeHealthIngredients(data?: ProductHealthData): HealthIngred
   const allergens: HealthFinding[] = [];
   const additives: HealthFinding[] = [];
   const positives: HealthFinding[] = [];
+  const detectedAdditives = detectIngredientAdditives(data);
+  const additivesDataStatus = getAdditivesDataStatus(data, detectedAdditives);
   const levels = data.nutrientLevels;
   const levelLabels: Array<[keyof NonNullable<ProductHealthData['nutrientLevels']>, string]> = [
     ['sugars', 'Sucre élevé'], ['salt', 'Sel élevé'], ['saturated-fat', 'Graisses saturées élevées'],
@@ -86,7 +88,7 @@ export function analyzeHealthIngredients(data?: ProductHealthData): HealthIngred
     if (label) allergens.push({ label, detail: 'Allergène déclaré dans la fiche produit', kind: 'allergen' });
   }
 
-  for (const detection of detectIngredientAdditives(data)) {
+  for (const detection of detectedAdditives) {
     const code = detection.code;
     const key = code.toLowerCase();
     const scientificAssessment = data.scientificAssessments?.[code] ?? getAdditiveScientificAssessment(code);
@@ -101,11 +103,11 @@ export function analyzeHealthIngredients(data?: ProductHealthData): HealthIngred
     const count = data.ingredientsText.split(',').map((item) => item.trim()).filter(Boolean).length;
     if (count > 0 && count <= 5) positives.push({ label: 'Liste d’ingrédients courte', detail: 'D’après le texte disponible', kind: 'positive' });
   }
-  if (data.ingredientsText?.trim() && Array.isArray(data.additivesTags) && data.additivesTags.length === 0) positives.push({ label: 'Aucun additif déclaré', detail: 'Selon les données disponibles', kind: 'positive' });
+  if (additivesDataStatus === 'known_none') positives.push({ label: 'Aucun additif déclaré', detail: 'Selon les données disponibles', kind: 'positive' });
 
   const additiveLevelCounts = emptyAdditiveLevelCounts();
   for (const item of additives) if (item.attentionLevel) additiveLevelCounts[item.attentionLevel] += 1;
-  return { hasReliableData: hasMeaningfulData(data), hasIngredientText: Boolean(data.ingredientsText?.trim() || data.ingredientsTextVariants?.some((value) => value.trim()) || data.ingredientNames?.some((value) => value.trim())), hasAllergenData: data.allergensTags !== undefined, hasAdditiveData: data.additivesTags !== undefined || additives.length > 0, watchItems, allergens, additives, positives, additiveLevelCounts };
+  return { hasReliableData: hasMeaningfulData(data), hasIngredientText: Boolean(data.ingredientsText?.trim() || data.ingredientsTextVariants?.some((value) => value.trim()) || data.ingredientNames?.some((value) => value.trim())), hasAllergenData: data.allergensTags !== undefined, hasAdditiveData: additivesDataStatus !== 'insufficient_data', watchItems, allergens, additives, positives, additiveLevelCounts };
 }
 
 function emptyAdditiveLevelCounts(): Record<AdditivePresentationLevel, number> {

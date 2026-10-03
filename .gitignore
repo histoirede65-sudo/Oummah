@@ -43,3 +43,12 @@ example
 /android
 
 .expo/
+
+# product image batch (scripts/product-images)
+scripts/product-images/.venv/
+scripts/output/product-images/
+# product alternatives batch (scripts/product-alternatives): OFF extract, taxonomy, logs
+scripts/output/product-alternatives/
+scripts/output/product-alternatives*.log
+scripts/output/preview-batch.png
+__pycache__/

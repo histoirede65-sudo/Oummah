@@ -1,6 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import { CameraView, useCameraPermissions } from 'expo-camera';
-import { router } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import { useEffect, useRef, useState } from 'react';
 import { BackHandler, Pressable, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -11,6 +11,10 @@ import { colors } from '../../theme/colors';
 import { typography } from '../../theme/typography';
 
 export default function BoycottScannerScreen() {
+  const params = useLocalSearchParams<{ barcode?: string | string[]; from?: string | string[] }>();
+  const historyBarcode = (Array.isArray(params.barcode) ? params.barcode[0] : params.barcode)?.replace(/\D/g, '') ?? '';
+  const openedFromHistory = (Array.isArray(params.from) ? params.from[0] : params.from) === 'history';
+  const openedFromProductLink = Boolean(historyBarcode);
   const [permission, requestPermission] = useCameraPermissions();
   const [catalog, setCatalog] = useState<BoycottEntity[]>([]);
   const [torch, setTorch] = useState(false);
@@ -18,15 +22,25 @@ export default function BoycottScannerScreen() {
   const [cameraReady, setCameraReady] = useState(false);
   const [result, setResult] = useState<BarcodeLookupResult | null>(null);
   const lockRef = useRef(false);
-  const candidateRef = useRef<{ code: string; count: number; at: number } | null>(null);
 
   useEffect(() => {
-    void getBoycottCatalog().then(setCatalog);
-  }, []);
+    let active = true;
+    void getBoycottCatalog().then(async (items) => {
+      if (!active) return;
+      setCatalog(items);
+      if (!historyBarcode) return;
+      if (__DEV__) console.log('[ScanProductFlowDiagnostic]', { step: 'route barcode received', source: 'route params', barcode: historyBarcode, repository: 'pending' });
+      lockRef.current = true;
+      setLocked(true);
+      const lookup = await lookupBoycottBarcode(items, historyBarcode);
+      if (__DEV__) console.log('[ScanProductFlowDiagnostic]', { step: 'repository result', source: 'BoycottRepository.lookupBoycottBarcode', barcode: lookup.barcode, resultSource: lookup.source, hasIngredientsText: Boolean(lookup.healthData?.ingredientsText), hasAdditivesTags: Boolean(lookup.healthData?.additivesTags?.length), nutritionBasis: lookup.healthData?.nutritionBasis, healthDataProvenance: lookup.healthData?.healthDataProvenance });
+      if (active) setResult(lookup);
+    });
+    return () => { active = false; };
+  }, [historyBarcode]);
 
   function resetScanner() {
     lockRef.current = false;
-    candidateRef.current = null;
     setLocked(false);
     setResult(null);
   }
@@ -34,11 +48,12 @@ export default function BoycottScannerScreen() {
   useEffect(() => {
     if (!result) return undefined;
     const subscription = BackHandler.addEventListener('hardwareBackPress', () => {
-      resetScanner();
+      if (openedFromProductLink) router.back();
+      else resetScanner();
       return true;
     });
     return () => subscription.remove();
-  }, [result]);
+  }, [openedFromProductLink, result]);
 
   function hasValidCheckDigit(code: string) {
     if (![8, 12, 13].includes(code.length)) return true;
@@ -55,34 +70,43 @@ export default function BoycottScannerScreen() {
     return (10 - (sum % 10)) % 10 === check;
   }
 
-  async function onBarcode(raw: string) {
-    if (lockRef.current) return;
-    const data = raw.replace(/\D/g, '');
-    if (![8, 12, 13].includes(data.length) || !hasValidCheckDigit(data)) return;
-
-    // Deux lectures identiques très rapprochées : quasi instantané pour l'utilisateur,
-    // mais évite qu'un reflet ou une lecture partielle transforme un produit en autre marque.
-    const now = Date.now();
-    const previous = candidateRef.current;
-    if (!previous || previous.code !== data || now - previous.at > 900) {
-      candidateRef.current = { code: data, count: 1, at: now };
-      return;
+  function extractProductBarcode(raw: string, type?: string) {
+    if (type === 'qr') {
+      return raw.match(/(?:^|\D)(\d{8}|\d{12}|\d{13})(?:\D|$)/)?.[1] ?? '';
     }
-    candidateRef.current = { code: data, count: previous.count + 1, at: now };
-    if (candidateRef.current.count < 2) return;
+    if (type && /data_?matrix/i.test(type)) {
+      // GS1 DataMatrix (French medicine boxes): "]d2" / FNC1 prefix, then AI "01" + GTIN-14.
+      // A GTIN-14 starting with 0 is the EAN-13 / CIP13 printed on the box.
+      const gtin = raw.replace(/^\]d2/, '').replace(/^\u001d/, '').match(/^01(\d{14})/)?.[1];
+      return gtin?.startsWith('0') ? gtin.slice(1) : '';
+    }
+    return raw.replace(/\D/g, '');
+  }
+
+  async function onBarcode(raw: string, type?: string) {
+    if (lockRef.current) return;
+    const data = extractProductBarcode(raw, type);
+    if (![8, 12, 13].includes(data.length) || !hasValidCheckDigit(data)) return;
 
     lockRef.current = true;
     setLocked(true);
+    if (__DEV__) console.log('[ScanProductFlowDiagnostic]', { step: 'scanner detected barcode', source: 'CameraView.onBarcodeScanned', barcode: data, rawType: type, repository: 'pending' });
     const lookup = await lookupBoycottBarcode(catalog, data);
+    if (__DEV__) console.log('[ScanProductFlowDiagnostic]', { step: 'repository result', source: 'BoycottRepository.lookupBoycottBarcode', barcode: lookup.barcode, resultSource: lookup.source, hasIngredientsText: Boolean(lookup.healthData?.ingredientsText), hasAdditivesTags: Boolean(lookup.healthData?.additivesTags?.length), nutritionBasis: lookup.healthData?.nutritionBasis, healthDataProvenance: lookup.healthData?.healthDataProvenance });
     setResult(lookup);
   }
 
+  useEffect(() => {
+    if (!result || !__DEV__) return;
+    console.log('[ScanProductFlowDiagnostic]', { step: 'BoycottScanResultCard receives product', source: 'component state', barcode: result.barcode, hasIngredientsText: Boolean(result.healthData?.ingredientsText), hasAdditivesTags: Boolean(result.healthData?.additivesTags?.length), nutritionBasis: result.healthData?.nutritionBasis, healthDataProvenance: result.healthData?.healthDataProvenance });
+  }, [result]);
 
-  if (!permission) {
+
+  if (!historyBarcode && !permission) {
     return <View style={styles.permission}><Text style={styles.permissionText}>Initialisation de la caméra…</Text></View>;
   }
 
-  if (!permission.granted) {
+  if (!historyBarcode && !permission?.granted) {
     return (
       <View style={styles.permission}>
         <Ionicons name="camera-outline" size={40} color={colors.goldLight} />
@@ -98,18 +122,18 @@ export default function BoycottScannerScreen() {
 
   return (
     <View style={styles.screen}>
-      <CameraView
+      {!openedFromProductLink ? <CameraView
         style={StyleSheet.absoluteFill}
         facing="back"
         mode="picture"
         enableTorch={torch}
         onCameraReady={() => setCameraReady(true)}
         onMountError={() => setCameraReady(false)}
-        barcodeScannerSettings={{ barcodeTypes: ['ean13', 'ean8', 'upc_a', 'upc_e'] }}
-        onBarcodeScanned={locked ? undefined : ({ data }) => void onBarcode(data)}
-      />
+        barcodeScannerSettings={{ barcodeTypes: ['ean13', 'ean8', 'upc_a', 'upc_e', 'qr', 'code128', 'datamatrix'] }}
+        onBarcodeScanned={locked ? undefined : ({ data, type }) => void onBarcode(data, type)}
+      /> : null}
 
-      <View pointerEvents="box-none" style={styles.overlay}>
+      {!openedFromProductLink ? <View pointerEvents="box-none" style={styles.overlay}>
         <SafeAreaView edges={['top', 'bottom']} style={styles.safe}>
           <View style={styles.top}>
             <Pressable onPress={() => router.back()} style={styles.circle}><Ionicons name="close" size={24} color="#FFF" /></Pressable>
@@ -130,58 +154,26 @@ export default function BoycottScannerScreen() {
               <View style={[styles.corner, styles.br]} />
               <View style={styles.scanLine} />
             </View>
-            <Text style={styles.hint}>{locked ? 'Vérification instantanée…' : 'Cadrez le code-barres, OUMMAH le détecte automatiquement'}</Text>
+            <Text style={styles.hint}>{locked ? 'Vérification instantanée…' : 'Cadrez le code ou le QR, dans n’importe quel sens'}</Text>
           </View>
 
           <View style={styles.bottom}>
-            <Text style={styles.bottomText}>EAN · UPC · double validation instantanée</Text>
+            <Text style={styles.bottomText}>EAN · UPC · QR · détection instantanée</Text>
           </View>
         </SafeAreaView>
-      </View>
+      </View> : null}
 
-      {result ? <BoycottScanResultCard result={result} onClose={resetScanner} onOpenEntity={() => router.push(`/boycott/${result.boycottEntity!.id}`)} onPropose={() => router.replace({ pathname: '/boycott/add', params: { barcode: result.barcode, name: result.productName || '', brand: result.brandLabel || '' } } as never)} /> : null}
-      {result && false ? (
-        <View style={styles.resultBackdrop}>
-          <View style={styles.resultCard}>
-            <View style={[styles.statusIcon, result.assessment === 'boycott' ? styles.boycottIcon : result.assessment === 'ok' ? styles.okIcon : styles.unknownIcon]}>
-              <Ionicons name={result.assessment === 'boycott' ? 'close' : result.assessment === 'ok' ? 'checkmark' : 'help'} size={30} color="#FFF" />
-            </View>
-            <Text style={[styles.resultStatus, result.assessment === 'boycott' ? styles.boycottText : result.assessment === 'ok' ? styles.okText : styles.unknownText]}>
-              {result.assessment === 'boycott' ? 'À BOYCOTTER' : result.assessment === 'ok' ? 'OK' : 'NON RÉFÉRENCÉ'}
-            </Text>
-            <Text numberOfLines={2} style={styles.resultName}>{result.productName || result.brandLabel || `Code ${result.barcode}`}</Text>
-            {result.brandLabel ? <Text style={styles.resultBrand}>{result.brandLabel}</Text> : null}
-            <Text style={styles.resultExplanation}>
-              {result.assessment === 'boycott'
-                ? `Marque reconnue : ${result.boycottEntity?.name ?? result.brandLabel ?? 'marque référencée'}. Le produit est classé selon la règle OUMMAH. Consultez la fiche pour voir le lien documenté et les sources.`
-                : result.assessment === 'ok'
-                  ? 'Aucun lien documenté correspondant à la base OUMMAH actuelle n’a été identifié pour ce produit. Il est mémorisé pour accélérer les prochains scans.'
-                  : 'Ce code-barres n’a pas pu être identifié. Vous pouvez proposer le produit pour vérification.'}
-            </Text>
-            {result.assessment === 'boycott' && result.boycottEntity ? (
-              <Pressable onPress={() => router.push(`/boycott/${result.boycottEntity!.id}`)} style={styles.boycottAction}>
-                <Text style={styles.boycottActionText}>Voir pourquoi {result.boycottEntity.name} est à boycotter</Text>
-              </Pressable>
-            ) : null}
-            <Pressable onPress={resetScanner} style={styles.primaryAction}><Text style={styles.primaryActionText}>Scanner un autre produit</Text></Pressable>
-            {result.assessment === 'unknown' ? (
-              <Pressable
-                onPress={() => router.replace({ pathname: '/boycott/add', params: { barcode: result.barcode, name: result.productName || '', brand: result.brandLabel || '' } } as never)}
-                style={styles.secondaryAction}
-              >
-                <Text style={styles.secondaryActionText}>Proposer ce produit</Text>
-              </Pressable>
-            ) : null}
-          </View>
-        </View>
-      ) : null}
+      {openedFromProductLink && !result ? <View style={styles.historyLoading}><Text style={styles.permissionText}>Chargement de la fiche…</Text></View> : null}
+
+      {result ? <BoycottScanResultCard result={result} primaryLabel={openedFromProductLink ? (openedFromHistory ? "Retour à l'historique" : 'Retour au produit précédent') : undefined} onClose={openedFromProductLink ? () => router.back() : resetScanner} onOpenEntity={() => router.push(`/boycott/${result.boycottEntity!.id}`)} onOpenAlternative={(barcode) => router.push({ pathname: '/boycott/scanner', params: { barcode, from: 'alternative' } } as never)} onPropose={() => router.replace({ pathname: '/boycott/add', params: { barcode: result.barcode, name: result.productName || '', brand: result.brandLabel || '' } } as never)} /> : null}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: '#000' },
-  overlay: { ...StyleSheet.absoluteFillObject, backgroundColor: 'rgba(0,0,0,0.18)' },
+  historyLoading: { position: 'absolute', top: 0, right: 0, bottom: 0, left: 0, alignItems: 'center', justifyContent: 'center', backgroundColor: '#090713' },
+  overlay: { position: 'absolute', top: 0, right: 0, bottom: 0, left: 0, backgroundColor: 'rgba(0,0,0,0.18)' },
   safe: { flex: 1, justifyContent: 'space-between' },
   top: { height: 70, paddingHorizontal: 18, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   circle: { width: 45, height: 45, borderRadius: 18, alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(0,0,0,0.42)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.18)' },
@@ -205,23 +197,4 @@ const styles = StyleSheet.create({
   permissionButton: { marginTop: 20, minHeight: 52, paddingHorizontal: 20, borderRadius: 18, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.goldLight },
   permissionButtonText: { color: '#17111C', fontFamily: typography.sans, fontSize: 13, fontWeight: '800' },
   cancel: { marginTop: 18, color: colors.textMuted, fontFamily: typography.sans, fontSize: 12 },
-  resultBackdrop: { ...StyleSheet.absoluteFillObject, padding: 20, alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(4,3,9,0.72)' },
-  resultCard: { width: '100%', maxWidth: 390, paddingHorizontal: 24, paddingVertical: 28, alignItems: 'center', borderRadius: 30, backgroundColor: '#11101A', borderWidth: 1, borderColor: 'rgba(255,255,255,0.09)' },
-  statusIcon: { width: 58, height: 58, borderRadius: 22, alignItems: 'center', justifyContent: 'center' },
-  boycottIcon: { backgroundColor: '#B93642' },
-  okIcon: { backgroundColor: '#23885C' },
-  unknownIcon: { backgroundColor: '#70687C' },
-  resultStatus: { marginTop: 13, fontFamily: typography.sans, fontSize: 14, fontWeight: '900', letterSpacing: 0.8 },
-  boycottText: { color: '#FF6875' },
-  okText: { color: '#61D49B' },
-  unknownText: { color: '#C7BECD' },
-  resultName: { marginTop: 7, color: '#FFF', fontFamily: typography.serifSemibold, fontSize: 23, lineHeight: 28, textAlign: 'center' },
-  resultBrand: { marginTop: 4, color: '#C8C1CF', fontFamily: typography.sans, fontSize: 12.5, fontWeight: '700', textAlign: 'center' },
-  resultExplanation: { marginTop: 15, color: '#AAA2B1', fontFamily: typography.sans, fontSize: 12.5, lineHeight: 19, textAlign: 'center' },
-  boycottAction: { marginTop: 20, width: '100%', minHeight: 52, borderRadius: 18, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 14, backgroundColor: '#B93642' },
-  boycottActionText: { color: '#FFF', fontFamily: typography.sans, fontSize: 12.5, fontWeight: '900', textAlign: 'center' },
-  primaryAction: { marginTop: 12, width: '100%', minHeight: 52, borderRadius: 18, alignItems: 'center', justifyContent: 'center', backgroundColor: '#F0CA70' },
-  primaryActionText: { color: '#17111C', fontFamily: typography.sans, fontSize: 13, fontWeight: '900' },
-  secondaryAction: { marginTop: 10, width: '100%', minHeight: 48, borderRadius: 17, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: 'rgba(255,255,255,0.14)' },
-  secondaryActionText: { color: '#FFF', fontFamily: typography.sans, fontSize: 12.5, fontWeight: '800' },
 });

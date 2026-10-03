@@ -1,15 +1,19 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { analyzeHealthIngredients } from '../healthIngredientAnalyzer.ts';
-import { aggregateAdditiveScores, analyzeHealthScore, getHealthGradeForScore, getHealthGradePresentation, HEALTH_SCORE_VERSION } from '../healthScoreAnalyzer.ts';
+import { ADDITIVE_PENALTIES, aggregateAdditiveScores, analyzeHealthScore, getHealthGradeForScore, getHealthGradePresentation, HEALTH_SCORE_VERSION, NOVA_PENALTIES } from '../healthScoreAnalyzer.ts';
 import { classifyScientificAxes, getAdditiveInfo, getAdditiveScientificAssessment, normalizeAdditiveCode, resolveAdditiveScience } from '../additiveInfoRepository.ts';
 import { analyzeHalalCertification } from '../halalCertificationAnalyzer.ts';
-import { getActiveHalalCertifierNotices, getHalalCertifier } from '../halalCertifierRepository.ts';
+import { getActiveHalalCertifierNotices, getHalalCertifier, setHalalCertificationBodies } from '../halalCertifierRepository.ts';
 import { getBrandControversyDossier } from '../brandControversyRepository.ts';
-import { findProductAlternative } from '../productAlternativeFinder.ts';
+import { acceptedGrades, isBoycottCandidate, selectAlternatives } from '../productAlternatives.ts';
+import { isRecallActive, recallLots, toProductRecall } from '../productRecalls.ts';
 import { assessScanKnowledge } from '../scanKnowledge.ts';
 import { getAdditiveReviewCandidates, getLocalAdditiveScientificProfile, resolveAdditiveScientificProfile } from '../foodAdditiveScienceRepository.ts';
-import { detectIngredientAdditives } from '../ingredientAdditiveDetector.ts';
+import { detectIngredientAdditives, detectOtherFoodComponents, getAdditivesDataStatus } from '../ingredientAdditiveDetector.ts';
+import { mergeProductData, mergeVerifiedHealthData, resolveNutritionBasis } from '../data/BoycottRepository.ts';
+
+const lookup = (overrides = {}) => ({ barcode: '5000112680171', assessment: 'ok', source: 'openfoodfacts', ...overrides });
 
 test('sante: donnees totalement absentes = informations insuffisantes', () => {
   const result = analyzeHealthIngredients();
@@ -21,9 +25,130 @@ test('sante: donnees totalement absentes = informations insuffisantes', () => {
 
 test('sante: tableau additifs vide sans ingredients reste partiel', () => {
   const result = analyzeHealthIngredients({ additivesTags: [] });
-  assert.equal(result.hasAdditiveData, true);
+  assert.equal(result.hasAdditiveData, false);
   assert.equal(result.additives.length, 0);
   assert.equal(result.hasIngredientText, false);
+});
+
+test('additifs: donnees absentes = insufficient_data et jamais score additif favorable', () => {
+  assert.equal(getAdditivesDataStatus({}), 'insufficient_data');
+  const result = analyzeHealthScore({ nutritionGrade: 'E' });
+  assert.equal(result.available, true);
+  assert.equal(result.pillars.find((pillar) => pillar.pillar === 'additives')?.available, false);
+  assert.equal(result.score, 0);
+});
+
+test('additifs: tableau vide sans preuve complete reste insufficient_data', () => {
+  assert.equal(getAdditivesDataStatus({ additivesTags: [], ingredientsText: 'eau, sucre' }), 'insufficient_data');
+});
+
+test('additifs: additives_n zero et ingredients renseignes permettent known_none', () => {
+  assert.equal(getAdditivesDataStatus({ additivesTags: [], additivesNumber: 0, ingredientsText: 'eau, sucre' }), 'known_none');
+});
+
+test('additifs: aliases E150d et E338 detectes depuis le texte', () => {
+  const result = detectIngredientAdditives({ ingredientsText: 'colorant : caramel au sulfite d’ammonium, acidifiant : acide phosphorique' });
+  assert.deepEqual(result.map((item) => item.code), ['E150D', 'E338']);
+});
+
+test('additifs: un code E dans le texte devient known_with_additives', () => {
+  const data = { additivesTags: [], ingredientsText: 'colorant E150d' };
+  assert.equal(getAdditivesDataStatus(data), 'known_with_additives');
+});
+
+test('additifs: code structure et alias textuel sont dedoublonnes', () => {
+  const result = detectIngredientAdditives({ additivesTags: ['en:e150d'], ingredientsText: 'caramel au sulfite d’ammonium' });
+  assert.equal(result.filter((item) => item.code === 'E150D').length, 1);
+  assert.equal(result[0].detectionSource, 'both');
+});
+
+test('additifs: le catalogue UE permet la detection generique des codes et suffixes', () => {
+  const result = detectIngredientAdditives({ ingredientsText: 'E407, E471, E250, E252, E450, E412, E407a' });
+  assert.deepEqual(result.map((item) => item.code), ['E407', 'E471', 'E250', 'E252', 'E450', 'E412', 'E407A']);
+});
+
+test('additifs: un code E syntaxiquement plausible mais absent du catalogue est ignore', () => {
+  assert.equal(detectIngredientAdditives({ ingredientsText: 'E9999' }).length, 0);
+});
+
+test('additifs: un code connu sans profil scientifique reste insufficient_data', () => {
+  const result = analyzeHealthScore({ nutritionGrade: 'A', additivesTags: ['en:e471'] });
+  assert.equal(result.additiveCounts.insufficient_data, 1);
+  assert.equal(result.score, 100);
+});
+
+test('additifs: arome artificiel ne fabrique aucun code E', () => {
+  const data = { ingredientsText: 'arôme artificiel, arômes naturels' };
+  assert.equal(detectIngredientAdditives(data).length, 0);
+  assert.equal(detectOtherFoodComponents(data).length, 1);
+});
+
+test('nutrition: boisson avec valeurs 100ml utilise la base 100 ml', () => {
+  assert.equal(resolveNutritionBasis({ productType: 'beverage', nutrimentDataPer: '100 ml', nutriments: { 'energy-kcal_100ml': 42 } }), '100 ml');
+});
+
+test('source sante: les donnees OFF completes sont fusionnees sans perdre le classement boycott', () => {
+  const result = mergeProductData(
+    lookup({ healthData: { nutritionGrade: 'E', nutriments: { sugars_100ml: 10 } } }),
+    lookup({ source: 'cache', assessment: 'boycott', boycottEntity: { id: 'brand', name: 'Marque', boycott: true }, healthData: { ingredientsText: 'eau, sucre' } }),
+  );
+  assert.equal(result.assessment, 'boycott');
+  assert.equal(result.healthData?.nutritionGrade, 'E');
+  assert.equal(result.healthData?.ingredientsText, 'eau, sucre');
+});
+
+test('source sante: un cache partiel ne remplace pas les champs OFF disponibles', () => {
+  const result = mergeProductData(
+    lookup({ healthData: { ingredientsText: 'eau, sucre', nutriments: { sugars_100ml: 10 }, nutritionGrade: 'E' } }),
+    lookup({ source: 'cache', healthData: { nutritionGrade: 'E' } }),
+  );
+  assert.equal(result.healthData?.ingredientsText, 'eau, sucre');
+  assert.equal(result.healthData?.nutriments?.sugars_100ml, 10);
+});
+
+test('source sante: les additifs OFF fusionnes sont detectes', () => {
+  const result = mergeProductData(
+    lookup({ healthData: { additivesTags: ['en:e150d', 'en:e338'], ingredientsText: 'colorant, acidifiant' } }),
+    lookup({ source: 'cache', healthData: { nutritionGrade: 'E' } }),
+  );
+  assert.deepEqual(detectIngredientAdditives(result.healthData).map((item) => item.code), ['E150D', 'E338']);
+});
+
+test('source sante: l absence de OFF conserve les donnees disponibles sans en inventer', () => {
+  const result = mergeProductData(lookup({ healthData: { nutritionGrade: 'E' } }), lookup({ source: 'cache', healthData: { nutritionGrade: 'E' } }));
+  assert.equal(result.healthData?.ingredientsText, undefined);
+  assert.equal(result.healthData?.nutriments, undefined);
+});
+
+test('sante verifiee: complete uniquement le barcode exact Coca-Cola', () => {
+  const result = mergeVerifiedHealthData('5000112680171', { nutritionGrade: 'E', nutriments: { sugars_100g: 10.6 } });
+  assert.equal(result.verifiedRecordFound, true);
+  assert.equal(result.healthData?.ingredientsText, 'Eau, sucre, dioxyde de carbone, colorant : E150d, acide : acide phosphorique, arômes naturels, arôme caféine.');
+  assert.deepEqual(detectIngredientAdditives(result.healthData).map((item) => item.code), ['E150D', 'E338']);
+  assert.equal(result.healthData?.nutritionBasis, '100 ml');
+  assert.equal(result.healthData?.novaGroup, undefined);
+});
+
+test('sante verifiee: un barcode different ne peut jamais etre enrichi', () => {
+  const result = mergeVerifiedHealthData('5449000000996', { nutritionGrade: 'E' });
+  assert.equal(result.verifiedRecordFound, false);
+  assert.equal(result.healthData?.ingredientsText, undefined);
+});
+
+test('sante verifiee: une donnee OFF existante reste prioritaire et le conflit est trace', () => {
+  const result = mergeVerifiedHealthData('5000112680171', { nutritionGrade: 'E', ingredientsText: 'eau, sucre, formule OFF differente', additivesTags: ['en:e950'] });
+  assert.equal(result.healthData?.ingredientsText, 'eau, sucre, formule OFF differente');
+  assert.deepEqual(result.healthData?.additivesTags, ['en:e950']);
+  assert.equal(result.fieldsConflicted.includes('ingredients'), true);
+  assert.equal(result.fieldsConflicted.includes('additives'), true);
+  assert.equal(result.healthData?.healthDataConflicts?.length, 2);
+});
+
+test('sante verifiee: les additifs verifies passent par le detecteur standard', () => {
+  const result = mergeVerifiedHealthData('5000112680171', {});
+  const detections = detectIngredientAdditives(result.healthData);
+  assert.equal(detections.some((item) => item.code === 'E150D'), true);
+  assert.equal(detections.some((item) => item.code === 'E338'), true);
 });
 
 test('sante: additifs presents sont comptes', () => {
@@ -34,7 +159,9 @@ test('sante: additifs presents sont comptes', () => {
 
 test('détection ingrédients: E960C est reconnu sur la formulation réglementaire exacte', () => {
   const result = detectIngredientAdditives({ ingredientsText: 'eau, glycosides de stéviol produits par voie enzymatique' });
-  assert.deepEqual(result, [{ code: 'E960C', detectionSource: 'ingredient_text_verified_mapping', matchedText: 'eau, glycosides de stéviol produits par voie enzymatique' }]);
+  assert.equal(result.length, 1);
+  assert.equal(result[0].code, 'E960C');
+  assert.equal(result[0].matchedText, 'eau, glycosides de stéviol produits par voie enzymatique');
 });
 
 test('détection ingrédients: E960C accepte la coquille contrôlée « vole enzymatique »', () => {
@@ -112,11 +239,11 @@ test('détection ingrédients: les formulations génériques ne sont pas surspé
   assert.equal(detectIngredientAdditives({ ingredientsText: 'steviol glycosides, arômes naturels, caféine' }).length, 0);
 });
 
-test('détection ingrédients: E960C inconnu reste partiel sans pénalité', () => {
+test('détection ingrédients: E960C sans conclusion scientifique reste partiel sans pénalité', () => {
   const result = analyzeHealthScore({ nutritionGrade: 'A', ingredientsText: 'glycosides de stéviol produits par voie enzymatique' });
   assert.equal(result.available, true);
   assert.equal(result.score, 100);
-  assert.deepEqual(result.additiveCoverage, { totalDetected: 1, scientificallyReviewed: 0, insufficientData: 0, unknown: 1 });
+  assert.deepEqual(result.additiveCoverage, { totalDetected: 1, scientificallyReviewed: 1, insufficientData: 1, unknown: 0 });
   assert.equal(result.scoreCompleteness, 'partial');
 });
 
@@ -176,11 +303,13 @@ test('indice santé: version et résultat sont reproductibles', () => {
 });
 
 test('indice santé: composant sépare source scientifique et pénalité OUMMAH', () => {
-  const result = analyzeHealthScore({ nutritionGrade: 'B', additivesTags: ['en:e338'] });
+  const result = analyzeHealthScore({ nutritionGrade: 'B', additivesTags: ['en:e222'] });
   assert.equal(result.available, true);
   const additive = result.components.find((item) => item.type === 'additive');
-  assert.equal(additive?.evidenceSource.includes('EFSA'), true);
-  assert.equal(additive?.oummahPenalty, 35);
+  assert.equal(additive?.evidenceSource, 'Référentiel scientifique OUMMAH V1');
+  assert.equal(additive?.scientificClassification, 'limited');
+  assert.equal(additive?.oummahPenalty, ADDITIVE_PENALTIES.limited.perAdditive);
+  assert.equal(result.score, 75 - ADDITIVE_PENALTIES.limited.perAdditive);
   assert.equal(result.scoreVersion, HEALTH_SCORE_VERSION);
 });
 
@@ -206,8 +335,10 @@ test('indice santé v2: Nutri-Score E reste défavorable', () => {
 test('indice santé v2: NOVA 4 est distinct de la nutrition', () => {
   const result = analyzeHealthScore({ nutritionGrade: 'A', novaGroup: 4 });
   assert.equal(result.available, true);
-  assert.equal(result.pillars.find((pillar) => pillar.pillar === 'transformation')?.score, 20);
-  assert.equal(result.finalGrade, 'B');
+  assert.equal(result.pillars.find((pillar) => pillar.pillar === 'nutrition')?.score, 100);
+  assert.equal(result.components.find((item) => item.type === 'transformation')?.oummahPenalty, NOVA_PENALTIES[4]);
+  assert.equal(result.score, 90);
+  assert.equal(result.finalGrade, 'A');
 });
 
 test('indice santé v2: données insuffisantes ne pénalisent pas arbitrairement', () => {
@@ -215,7 +346,7 @@ test('indice santé v2: données insuffisantes ne pénalisent pas arbitrairement
   assert.equal(result.available, true);
   assert.equal(result.score, 100);
   assert.equal(result.additiveCounts.insufficient_data, 1);
-  assert.deepEqual(result.additiveCoverage, { totalDetected: 1, scientificallyReviewed: 0, insufficientData: 0, unknown: 1 });
+  assert.deepEqual(result.additiveCoverage, { totalDetected: 1, scientificallyReviewed: 1, insufficientData: 1, unknown: 0 });
   assert.equal(result.scoreCompleteness, 'partial');
 });
 
@@ -224,35 +355,32 @@ test('indice santé v2: absence de Nutri-Score rend la note indisponible', () =>
 });
 
 test('indice santé v2: classifications scientifiques contribuent séparément', () => {
-  const result = analyzeHealthScore({ nutritionGrade: 'B', additivesTags: ['en:e338', 'en:e951', 'en:e150d'] });
+  const result = analyzeHealthScore({ nutritionGrade: 'B', additivesTags: ['en:e222', 'en:e249', 'en:e330'] });
   assert.equal(result.available, true);
-  assert.equal(result.additiveCounts.limited_concern, 2);
-  assert.equal(result.additiveCounts.no_particular_signal, 1);
-  assert.equal(result.components.filter((item) => item.type === 'additive').length, 3);
+  assert.equal(result.additiveCounts.limited, 2);
+  assert.equal(result.additiveCounts.insufficient_data, 1);
+  assert.equal(result.components.filter((item) => item.type === 'additive').length, 2);
+  assert.equal(result.score, 75 - 2 * ADDITIVE_PENALTIES.limited.perAdditive);
 });
 
-test('indice santé v2: calcul pondéré et déterministe', () => {
-  const first = analyzeHealthScore({ nutritionGrade: 'B', additivesTags: ['en:e338'], novaGroup: 4 });
-  const second = analyzeHealthScore({ nutritionGrade: 'B', additivesTags: ['en:e338'], novaGroup: 4 });
+test('indice santé v2: calcul déterministe', () => {
+  const first = analyzeHealthScore({ nutritionGrade: 'B', additivesTags: ['en:e222'], novaGroup: 4 });
+  const second = analyzeHealthScore({ nutritionGrade: 'B', additivesTags: ['en:e222'], novaGroup: 4 });
   assert.equal(first.available && second.available, true);
   assert.equal(first.score, second.score);
-  assert.equal(first.scoreVersion, '2.2');
-  assert.equal(first.score, 63.5);
+  assert.equal(first.scoreVersion, 'oummah-health-score-v2');
+  assert.equal(first.score, 75 - ADDITIVE_PENALTIES.limited.perAdditive - NOVA_PENALTIES[4]);
   assert.equal(first.scoreCompleteness, 'complete');
 });
 
-test('indice santé v2.2: Coca-Cola sans sucres 5449000214799', () => {
-  const result = analyzeHealthScore({ nutritionGrade: 'C', novaGroup: 4, additivesTags: ['en:e150d', 'en:e331', 'en:e338', 'en:e950', 'en:e951', 'en:e960c'], scientificAssessments: {
-    E331: { severity: 'none', evidenceStrength: 'strong', exposureConcern: 'unlikely', classification: 'no_particular_signal', conclusion: 'Distant', sources: [] },
-    E960C: { severity: 'low', evidenceStrength: 'strong', exposureConcern: 'unlikely', classification: 'no_particular_signal', conclusion: 'Distant', sources: [{ sourceId: 'efsa-e960c', organisation: 'EFSA', title: 'E960C', url: 'https://example.test/e960c' }] },
-  } });
+test('indice santé v2: Coca-Cola sans sucres 5449000214799', () => {
+  // Nutri-Score C (50), NOVA 4 (-10); the six additives have no penalising classification in the V1 referential.
+  const result = analyzeHealthScore({ nutritionGrade: 'C', novaGroup: 4, additivesTags: ['en:e150d', 'en:e331', 'en:e338', 'en:e950', 'en:e951', 'en:e960c'] });
   assert.equal(result.available, true);
-  assert.equal(result.finalGrade, 'D');
   assert.equal(result.score, 40);
-  assert.deepEqual(result.pillars.map((pillar) => pillar.score), [60, 20, 20]);
-  assert.equal(result.scoreCompleteness, 'complete');
-  assert.deepEqual(result.additiveCounts, { no_particular_signal: 4, limited_concern: 2, moderate_concern: 0, high_concern: 0, insufficient_data: 0 });
-  assert.deepEqual(result.additiveCoverage, { totalDetected: 6, scientificallyReviewed: 6, insufficientData: 0, unknown: 0 });
+  assert.equal(result.finalGrade, 'C');
+  assert.deepEqual(result.additiveCoverage, { totalDetected: 6, scientificallyReviewed: 6, insufficientData: 6, unknown: 0 });
+  assert.equal(result.scoreCompleteness, 'partial');
 });
 
 test('indice santé v2.1: score, libellé et couleur sont cohérents', () => {
@@ -264,13 +392,13 @@ test('indice santé v2.1: score, libellé et couleur sont cohérents', () => {
   assert.equal(getHealthGradeForScore(55), 'C');
 });
 
-test('indice santé v2.2: recalibrage réduit réellement NOVA 4 et deux signaux limités', () => {
+test('indice santé v2: NOVA et additifs limités ne font que réduire la base', () => {
   const favorable = analyzeHealthScore({ nutritionGrade: 'A', additivesTags: ['en:e150d'], novaGroup: 1 });
   const nova4 = analyzeHealthScore({ nutritionGrade: 'A', additivesTags: ['en:e150d'], novaGroup: 4 });
-  const twoLimited = analyzeHealthScore({ nutritionGrade: 'C', additivesTags: ['en:e338', 'en:e951'], novaGroup: 3 });
+  const twoLimited = analyzeHealthScore({ nutritionGrade: 'C', additivesTags: ['en:e222', 'en:e249'], novaGroup: 3 });
   assert.equal(favorable.available && favorable.score, 100);
-  assert.equal(nova4.available && nova4.score, 84);
-  assert.equal(twoLimited.available && twoLimited.score, 48);
+  assert.equal(nova4.available && nova4.score, 90);
+  assert.equal(twoLimited.available && twoLimited.score, 50 - 2 * ADDITIVE_PENALTIES.limited.perAdditive - NOVA_PENALTIES[3]);
 });
 
 test('indice santé v2.1: les nutriments détaillés n’ajoutent pas de double pénalité', () => {
@@ -280,26 +408,26 @@ test('indice santé v2.1: les nutriments détaillés n’ajoutent pas de double 
   assert.equal(withDetails.score, without.score);
 });
 
-test('indice santé v2.2: agrégation additive cumulative et non diluable', () => {
-  assert.equal(aggregateAdditiveScores(['no_particular_signal', 'no_particular_signal', 'no_particular_signal', 'no_particular_signal', 'no_particular_signal']).score, 100);
-  assert.equal(aggregateAdditiveScores(['limited_concern']).score, 65);
-  assert.equal(aggregateAdditiveScores(['limited_concern', 'limited_concern']).score, 20);
-  assert.equal(aggregateAdditiveScores(['limited_concern', 'limited_concern', 'limited_concern']).score, 0);
-  assert.equal(aggregateAdditiveScores(['moderate_concern']).score, 40);
-  assert.equal(aggregateAdditiveScores(['moderate_concern', 'limited_concern']).score, 5);
-  assert.equal(aggregateAdditiveScores(['high_concern']).score, 10);
-  assert.equal(aggregateAdditiveScores(['high_concern', ...Array(10).fill('no_particular_signal')]).score, 10);
+test('indice santé v2: agrégation additive cumulative et plafonnée par niveau', () => {
+  assert.equal(aggregateAdditiveScores(Array(5).fill('no_identified_concern')).score, 100);
+  assert.equal(aggregateAdditiveScores(['limited']).score, 95);
+  assert.equal(aggregateAdditiveScores(['limited', 'limited']).score, 90);
+  assert.equal(aggregateAdditiveScores(Array(5).fill('limited')).score, 100 - ADDITIVE_PENALTIES.limited.cap);
+  assert.equal(aggregateAdditiveScores(['moderate']).score, 88);
+  assert.equal(aggregateAdditiveScores(['moderate', 'limited']).score, 83);
+  assert.equal(aggregateAdditiveScores(['high']).score, 75);
+  assert.equal(aggregateAdditiveScores(Array(4).fill('high')).score, 100 - ADDITIVE_PENALTIES.high.cap);
   assert.equal(aggregateAdditiveScores(['insufficient_data', 'insufficient_data', 'insufficient_data']).score, 100);
 });
 
 test('indice santé v2: complétude et garde-fou nutritionnel', () => {
   const nutritionOnly = analyzeHealthScore({ nutritionGrade: 'B' });
   assert.equal(nutritionOnly.available, true);
-  assert.equal(nutritionOnly.score, 80);
+  assert.equal(nutritionOnly.score, 75);
   assert.equal(nutritionOnly.finalGrade, 'B');
-  assert.equal(nutritionOnly.scoreCompleteness, 'nutrition_only');
-  assert.equal(analyzeHealthScore({ nutritionGrade: 'B', novaGroup: 4 }).scoreCompleteness, 'partial');
+  assert.equal(nutritionOnly.scoreCompleteness, 'partial');
   assert.equal(analyzeHealthScore({ nutritionGrade: 'B', novaGroup: 4, additivesTags: [] }).scoreCompleteness, 'complete');
+  assert.equal(analyzeHealthScore({ nutritionGrade: 'B', novaGroup: 4, additivesTags: ['en:e999'] }).scoreCompleteness, 'partial');
 });
 
 for (const [code, expectedName, expectedLevel] of [
@@ -414,8 +542,15 @@ for (const ingredient of ['E471', 'E472', 'gelatine', 'presure']) {
 }
 
 test('halal: organisme identifie ne signifie pas documentation independante', () => {
-  assert.equal(getHalalCertifier('AVS')?.notices.length, 0);
-  assert.equal(getHalalCertifier('ARGML')?.notices.length, 1);
+  assert.equal(getHalalCertifier('AVS')?.warnings.length, 0);
+  assert.equal(getHalalCertifier('ARGML')?.criticisms.length, 0);
+});
+
+test('halal: organisme detecte depuis les labels Open Food Facts', () => {
+  assert.equal(analyzeHalalCertification({ labels: ['fr:A Votre Service', 'en:halal', 'fr:a-votre-service'] }).certifierId, 'avs');
+  assert.equal(analyzeHalalCertification({ labels: ['en:halal', 'fr:association-rituelle-de-la-grande-mosquee-de-lyon'] }).certifierId, 'argml');
+  assert.equal(analyzeHalalCertification({ labels: ['en:halal', 'fr:controle-de-la-mosquee-d-evry-courcouronnes'] }).certifierId, 'mosquee-evry');
+  assert.equal(analyzeHalalCertification({ labels: ['fr:cavas-surgeles'] }).certifierId, undefined);
 });
 
 const entity = { id: 'brand-1', name: 'Brand One', category: 'beverage', summary: 'Lien documente.', evidenceKind: 'parent_group', sources: [{ label: 'Source officielle', url: 'https://example.test/source' }, { label: 'Source officielle', url: 'https://example.test/source' }, { label: 'Sans URL', url: '' }], lastVerifiedAt: '2026-09-15', boycott: true };
@@ -436,40 +571,88 @@ test('controverse: campagne BDS reste une campagne', () => {
   assert.equal(result?.category, 'boycott_campaign');
 });
 
-const original = { barcode: '111', productName: 'Soda cola', assessment: 'ok', healthData: { nutritionGrade: 'd' }, comparisonData: { categoriesTags: ['en:sodas'], quantity: '330 ml' } };
-function mockProducts(products) { globalThis.fetch = async () => ({ ok: true, json: async () => ({ products }) }); }
+const original = { barcode: '111', productName: 'Soda cola', brandLabel: 'Marque A', assessment: 'ok', healthData: { nutritionGrade: 'd' }, comparisonData: { comparedToCategory: 'en:sodas' } };
+const row = (overrides = {}) => ({ barcode: '222', category: 'en:sodas', product_name: 'Soda cola light', brands: 'Marque neutre', brands_tags: ['marque-neutre'], nutriscore_grade: 'b', popularity: 10, halal_labels: [], image_url: 'https://images.openfoodfacts.org/x.jpg', ...overrides });
+const boycottCatalog = [{ id: 'coca-cola', name: 'Coca-Cola', aliases: ['Fanta'], category: 'beverage', summary: 's', evidenceKind: 'parent_group', sources: [], lastVerifiedAt: '2026-10-03', boycott: true, barcodePrefixes: ['544900'] }];
 
-test('alternative: categorie precise commune accepte un candidat', async () => {
-  mockProducts([{ code: '222', product_name: 'Soda cola light', categories_tags: ['en:beverages', 'en:sodas'], quantity: '330 ml', nutrition_grades: 'b' }]);
-  const result = await findProductAlternative(original);
-  assert.equal(result?.barcode, '222');
+test('alternative: meilleur Nutri-Score et meme categorie acceptes, avec raison explicite', () => {
+  const [first] = selectAlternatives(original, [row()], []);
+  assert.equal(first?.barcode, '222');
+  assert.equal(first.reasons[1], 'Nutri-Score B au lieu de D');
 });
 
-test('alternative: categorie trop generale seule refusee', async () => {
-  const previous = globalThis.fetch;
-  globalThis.fetch = async () => { throw new Error('fetch should not be called'); };
-  try { assert.equal(await findProductAlternative({ ...original, comparisonData: { categoriesTags: ['en:beverages'] } }), null); } finally { globalThis.fetch = previous; }
+test('alternative: Nutri-Score egal ou pire refuse pour un produit non boycotte', () => {
+  assert.deepEqual(selectAlternatives(original, [row({ nutriscore_grade: 'd' }), row({ barcode: '333', nutriscore_grade: 'e' })], []), []);
 });
 
-test('alternative: produit identique exclu', async () => {
-  mockProducts([{ code: '111', product_name: 'Soda cola', categories_tags: ['en:sodas'] }]);
-  assert.equal(await findProductAlternative(original), null);
+test('alternative: produit boycotte accepte une note egale, jamais pire', () => {
+  const boycotted = { ...original, assessment: 'boycott', healthData: { nutritionGrade: 'b' } };
+  const result = selectAlternatives(boycotted, [row({ nutriscore_grade: 'b' }), row({ barcode: '333', product_name: 'Autre', brands: 'M9', nutriscore_grade: 'c' })], []);
+  assert.deepEqual(result.map((item) => item.barcode), ['222']);
 });
 
-test('alternative: meilleure nutrition conserve une raison explicite', async () => {
-  mockProducts([{ code: '222', product_name: 'Soda cola light', categories_tags: ['en:sodas'], nutrition_grades: 'b', quantity: '330 ml' }]);
-  const result = await findProductAlternative({ ...original, healthData: { nutritionGrade: 'd' } });
-  assert.equal(result?.reasons.some((reason) => reason.includes('Nutri-Score')), true);
+test('alternative: Score Sante OUMMAH minimum 50/100, avec note et couleur', () => {
+  const result = selectAlternatives(original, [row({ barcode: '1', product_name: 'C NOVA 4', brands: 'M1', nutriscore_grade: 'c', nova_group: 4 }), row({ barcode: '2', product_name: 'C NOVA 1', brands: 'M2', nutriscore_grade: 'c', nova_group: 1 })], []);
+  assert.deepEqual(result.map((item) => item.barcode), ['2']);
+  assert.equal(result[0].healthScore, 50);
+  assert.equal(result[0].healthGrade, 'C');
+  assert.equal(result[0].reasons[0], 'Score Santé 50/100 au lieu de 25/100');
 });
 
-test('alternative: quantite tres differente refusee', async () => {
-  mockProducts([{ code: '222', product_name: 'Soda cola', categories_tags: ['en:sodas'], quantity: '2 l' }]);
-  assert.equal(await findProductAlternative(original), null);
+test('alternative: additifs preoccupants pris en compte dans le seuil', () => {
+  const result = selectAlternatives(original, [row({ nutriscore_grade: 'c', nova_group: 1, additives_tags: ['en:e222'] })], []);
+  assert.deepEqual(result, []);
 });
 
-test('alternative: aucun candidat comparable = null', async () => {
-  mockProducts([{ code: '222', product_name: 'Jus orange', categories_tags: ['en:juices'], quantity: '1 l' }]);
-  assert.equal(await findProductAlternative(original), null);
+test('alternative: Nutri-Score A deja optimal = aucune alternative sauf boycott', () => {
+  assert.deepEqual(acceptedGrades('a', false), []);
+  assert.deepEqual(acceptedGrades('a', true), ['a']);
+});
+
+test('alternative: marque, alias et prefixe GS1 boycottes exclus', () => {
+  assert.equal(isBoycottCandidate(boycottCatalog, row({ brands: 'Coca-Cola' })), true);
+  assert.equal(isBoycottCandidate(boycottCatalog, row({ brands: 'Fanta' })), true);
+  assert.equal(isBoycottCandidate(boycottCatalog, row({ barcode: '5449000000996', brands: '' })), true);
+  assert.equal(isBoycottCandidate(boycottCatalog, row()), false);
+});
+
+test('alternative: produit identique et doublons de format exclus', () => {
+  const result = selectAlternatives(original, [row({ barcode: '111' }), row(), row({ barcode: '444', popularity: 1 })], []);
+  assert.deepEqual(result.map((item) => item.barcode), ['222']);
+});
+
+test('alternative: produit certifie halal = alternatives certifiees uniquement', () => {
+  const certified = { ...original, halalData: { labels: ['fr:a-votre-service'] } };
+  const result = selectAlternatives(certified, [row(), row({ barcode: '555', product_name: 'Cola certifie', halal_labels: ['fr:a-votre-service'] })], []);
+  assert.deepEqual(result.map((item) => item.barcode), ['555']);
+});
+
+test('alternative: la categorie la plus precise passe avant la categorie large', () => {
+  const result = selectAlternatives(original, [row({ barcode: '7', product_name: 'Soupe', category: 'en:sweetened-beverages', category_size: 900, nutriscore_grade: 'a', popularity: 999 }), row({ barcode: '8', product_name: 'Cola bio', category: 'en:colas', category_size: 40 })], []);
+  assert.deepEqual(result.map((item) => item.barcode), ['8']);
+});
+
+test('alternative: categorie precise sans resultat = aucune alternative, pas de repli large', () => {
+  const result = selectAlternatives(original, [row({ barcode: '7', product_name: 'Soda citron', category: 'en:sodas', category_size: 300 }), row({ barcode: '8', product_name: 'Cola E', category: 'en:colas', category_size: 40, nutriscore_grade: 'e' })], []);
+  assert.deepEqual(result, []);
+});
+
+test('alternative: meme marque sous une autre ecriture exclue, produit sans marque exclu', () => {
+  const heinz = { ...original, productName: 'Tomato Ketchup', brandLabel: 'H.J. Heinz B.V.' };
+  assert.deepEqual(selectAlternatives(heinz, [row({ product_name: 'Ketchup Zero', brands: 'Heinz' })], []), []);
+  const danone = { ...original, productName: 'Activia Cereales', brandLabel: 'Danone' };
+  assert.deepEqual(selectAlternatives(danone, [row({ product_name: 'Activia nature', brands: 'Activia' }), row({ barcode: '9', product_name: 'Bifidus', brands: 'DANONE S.A.' })], []), []);
+  assert.deepEqual(selectAlternatives(original, [row({ brands: '' })], []), []);
+});
+
+test('alternative: meme marque exclue et deux produits maximum par marque', () => {
+  const result = selectAlternatives(original, [row({ barcode: '1', product_name: 'Cola A light', brands: 'Marque A' }), row({ barcode: '2', product_name: 'Cola 1' }), row({ barcode: '3', product_name: 'Cola 2' }), row({ barcode: '4', product_name: 'Cola 3' })], []);
+  assert.deepEqual(result.map((item) => item.barcode), ['2', '3']);
+});
+
+test('alternative: tri par Nutri-Score puis popularite', () => {
+  const result = selectAlternatives(original, [row({ barcode: '1', product_name: 'B peu connu', brands: 'M1', nutriscore_grade: 'b', popularity: 1 }), row({ barcode: '2', product_name: 'A', brands: 'M2', nutriscore_grade: 'a', popularity: 1 }), row({ barcode: '3', product_name: 'B connu', brands: 'M3', nutriscore_grade: 'b', popularity: 99 })], []);
+  assert.deepEqual(result.map((item) => item.barcode), ['2', '3', '1']);
 });
 
 test('connaissance: produit incomplet = needsReview', () => {
@@ -490,6 +673,10 @@ test('connaissance: produit suffisamment documenté = complet', () => {
   assert.equal(result.needsReview, false);
 });
 
+const notice = (id, level) => ({ id, type: 'test', level, title: id, summary: id, issuedBy: 'test', sources: [] });
+const sheet = (id, name, warnings) => ({ id, name, aliases: [], offLabelTags: [], documentationLevel: 'insufficient', summary: '', facts: {}, warnings, criticisms: [], scholarlyNotes: [], sources: [], lastVerifiedAt: '2026-10-02' });
+setHalalCertificationBodies([sheet('sfcvh', 'SFCVH', [notice('sfcvh-gmp', 'historical')]), sheet('hqc-france', 'HQC France', [notice('hqc-scope', 'vigilance')])]);
+
 test('certificateur: notice historique non active', () => {
   assert.equal(getActiveHalalCertifierNotices(getHalalCertifier('SFCVH')).length, 0);
 });
@@ -505,14 +692,29 @@ test('classification scientifique: une fiche Supabase reviewed-1.0 est exploitab
   assert.equal(resolveAdditiveScientificProfile(local, remote).scientificSummary, 'Revue distante');
 });
 
-test('indice santé: classification distante et couverture sont partagees par le score', () => {
-  const result = analyzeHealthScore({ nutritionGrade: 'B', additivesTags: ['en:e950', 'en:e331'], scientificAssessments: {
-    E950: { severity: 'low', evidenceStrength: 'strong', exposureConcern: 'unlikely', classification: 'no_particular_signal', conclusion: 'Distant', sources: [] },
-    E331: { severity: 'none', evidenceStrength: 'insufficient', exposureConcern: 'unknown', classification: 'insufficient_data', conclusion: 'Distant', sources: [] },
-  } });
+test('indice santé: une donnée manquante n’améliore jamais le score', () => {
+  const result = analyzeHealthScore({ nutritionGrade: 'B', additivesTags: ['en:e950', 'en:e331'] });
   assert.equal(result.available, true);
-  assert.equal(result.additiveCounts.no_particular_signal, 1);
-  assert.equal(result.additiveCounts.insufficient_data, 1);
+  assert.equal(result.additiveCounts.insufficient_data, 2);
   assert.equal(result.scoreCompleteness, 'partial');
-  assert.equal(result.score, 87.5);
+  assert.equal(result.score, 75);
+});
+
+test('rappel: lots lisibles par groupe, sans le code-barres', () => {
+  const lots = recallLots(['3245414264410', 'n° lot : 73728848', 'date limite de consommation', '2026-10-07', '|3245414264410', 'n° lot : 73728848', 'date limite de consommation', '2026-10-08'], '3245414264410');
+  assert.deepEqual(lots, ['Lot 73728848 · DLC 07/10/2026', 'Lot 73728848 · DLC 08/10/2026']);
+});
+
+test('rappel: en cours seulement si la procedure n est pas terminee', () => {
+  const now = new Date('2026-10-03T12:00:00Z');
+  assert.equal(isRecallActive({ date_publication: '2026-10-02T17:50:11+00:00', date_de_fin_de_la_procedure_de_rappel: null }, now), true);
+  assert.equal(isRecallActive({ date_publication: '2021-04-09T17:24:32+00:00', date_de_fin_de_la_procedure_de_rappel: '2021-04-19' }, now), false);
+  assert.equal(isRecallActive({ date_publication: '2026-09-20T10:00:00+00:00', date_de_fin_de_la_procedure_de_rappel: '2026-10-03' }, now), true);
+  assert.equal(isRecallActive({ date_publication: '2024-01-01T10:00:00+00:00', date_de_fin_de_la_procedure_de_rappel: null }, now), false);
+});
+
+test('rappel: conduites a tenir decoupees et capitalisees', () => {
+  const recall = toProductRecall({ libelle: 'haché de veau', conduites_a_tenir_par_le_consommateur: 'ne plus consommer|détruire le produit' }, '3245414264410');
+  assert.equal(recall.title, 'Haché de veau');
+  assert.deepEqual(recall.actions, ['Ne plus consommer', 'Détruire le produit']);
 });

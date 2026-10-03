@@ -5,7 +5,9 @@ import { assessScanKnowledge } from '../scanKnowledge';
 import { analyzeHealthScore } from '../healthScoreAnalyzer';
 import { fetchSupabaseAdditiveScienceProfiles, getAdditiveReviewCandidates } from '../foodAdditiveScienceRepository';
 import type { AdditiveScientificAssessment } from '../additiveInfoRepository';
-import { detectIngredientAdditives } from '../ingredientAdditiveDetector';
+import { detectIngredientAdditives, detectOtherFoodComponents, getAdditivesDataStatus } from '../ingredientAdditiveDetector';
+import { getVerifiedProductHealthData } from './verifiedProductHealthData';
+import { resolveCanonicalCommercialEntity, type BoycottResolutionEvidence, type CommercialClassificationEvidence, type CommercialIdentityInput, type CommercialOwnershipEvidence, type CommercialResolutionStatus } from '../commercialEntityResolver';
 
 export type BoycottSubmissionInput = {
   name: string;
@@ -17,13 +19,31 @@ export type BoycottSubmissionInput = {
 };
 
 export type BarcodeAssessment = 'boycott' | 'ok' | 'unknown';
+export type AdditivesDataStatus = 'known_with_additives' | 'known_none' | 'insufficient_data';
+export type ProductIngredientData = { id?: string; text?: string };
+export type OtherFoodComponent = { kind: 'flavoring'; label: string; matchedText: string; source: 'ingredient_text' | 'ingredient_structured' };
+export type HealthDataProvenance = {
+  ingredients?: 'oummah_verified_exact_barcode' | 'openfoodfacts';
+  additives?: 'oummah_verified_exact_barcode' | 'openfoodfacts';
+  nutrition?: 'oummah_verified_exact_barcode' | 'openfoodfacts';
+  nutritionBasis?: 'oummah_verified_exact_barcode' | 'openfoodfacts';
+};
+export type HealthDataConflict = { field: string; openFoodFactsValue: unknown; verifiedValue: unknown };
 
 export type ProductHealthData = {
   ingredientsText?: string;
   ingredientsTextVariants?: string[];
   ingredientNames?: string[];
+  ingredientsStructured?: ProductIngredientData[];
+  otherFoodComponents?: OtherFoodComponent[];
   allergensTags?: string[];
   additivesTags?: string[];
+  additivesOriginalTags?: string[];
+  additivesNumber?: number;
+  additivesDataSource?: 'openfoodfacts' | 'oummah_verified_exact_barcode';
+  additivesDataStatus?: AdditivesDataStatus;
+  nutriments?: Record<string, number | string | undefined>;
+  productType?: 'beverage' | 'solid' | 'unknown';
   nutrientLevels?: {
     sugars?: 'low' | 'moderate' | 'high';
     salt?: 'low' | 'moderate' | 'high';
@@ -42,6 +62,8 @@ export type ProductHealthData = {
   nutritionGrade?: string;
   novaGroup?: number;
   scientificAssessments?: Record<string, AdditiveScientificAssessment>;
+  healthDataProvenance?: HealthDataProvenance;
+  healthDataConflicts?: HealthDataConflict[];
 };
 
 export type ProductHalalData = {
@@ -54,9 +76,15 @@ export type ProductHalalData = {
 export type ProductComparisonData = {
   categories?: string;
   categoriesTags?: string[];
+  /** Open Food Facts category used to compare Nutri-Scores: defines "same type" for alternatives. */
+  comparedToCategory?: string;
   quantity?: string;
   genericName?: string;
   updatedAt?: string;
+  /** Declared origin (Open Food Facts origins / manufacturing places), shown as information only. */
+  originsTags?: string[];
+  origins?: string;
+  manufacturingPlaces?: string;
 };
 
 export type BarcodeLookupResult = {
@@ -64,19 +92,51 @@ export type BarcodeLookupResult = {
   productName?: string;
   brandLabel?: string;
   imageUrl?: string;
+  imageSource?: 'oummah_admin' | 'user_submission' | 'openfoodfacts' | 'openfoodfacts_similar_product' | 'placeholder';
+  imageResolvedAt?: string;
   healthData?: ProductHealthData;
   halalData?: ProductHalalData;
   comparisonData?: ProductComparisonData;
   boycottEntity?: BoycottEntity;
   assessment: BarcodeAssessment;
-  source: 'catalog' | 'cache' | 'openfoodfacts' | 'none';
+  source: 'catalog' | 'cache' | 'openfoodfacts' | 'registry' | 'none';
+  /** Set for barcodes resolved from boycott_known_products (e.g. medicines from the ANSM public database). */
+  productKind?: 'medicine' | 'food' | 'cosmetic' | 'other';
+  /** GS1 company prefix that linked this barcode to a catalog group when no brand matched. */
+  barcodePrefixMatch?: string;
+  canonicalEntity?: string;
+  boycottStatus?: CommercialResolutionStatus;
+  resolverReason?: string;
+  identityResolutionConfidence?: 'high' | 'medium' | 'low' | 'unresolved';
+  boycottResolutionEvidence?: BoycottResolutionEvidence;
+  classificationEvidence?: CommercialClassificationEvidence;
+  ownershipConfidence?: 'high' | 'medium' | 'low' | 'unresolved';
+  ownershipEvidence?: CommercialOwnershipEvidence[];
+  commercialIdentity?: CommercialIdentityInput;
 };
 
 const CACHE_KEY = 'oummah.boycott.catalog.v4';
 const PENDING_KEY = 'oummah.boycott.pending-submissions.v1';
-const SCAN_CACHE_KEY = 'oummah.boycott.scanned-products.v6';
+const SCAN_CACHE_KEY = 'oummah.boycott.scanned-products.v9-image-quality';
 const PRODUCT_CACHE_TTL_MS = 30 * 24 * 60 * 60 * 1000;
+const OFF_PRODUCT_FIELDS = 'compared_to_category,product_name,product_name_fr,brands,brands_tags,image_front_url,image_url,selected_images,images,ingredients,ingredients_text,ingredients_text_fr,allergens_tags,additives_tags,additives_original_tags,additives_n,nutrient_levels,nutriments,nutriment_data_per,nutrition_data_per,nutrition_grades,nova_group,labels,labels_tags,certifications,certifications_tags,brand_owner,manufacturer,manufacturing_places,origins,origins_tags,company,owner,parent_company,group,countries_tags,categories,categories_tags,quantity,product_quantity,serving_size';
 const memoryScanCache = new Map<string, BarcodeLookupResult>();
+const inflightLookup = new Map<string, Promise<BarcodeLookupResult>>();
+
+export type ProductImageResolution = { url?: string; source: 'oummah_admin' | 'user_submission' | 'openfoodfacts' | 'openfoodfacts_similar_product' | 'placeholder'; sourceBarcode?: string; matchReasons?: string[]; similarityConfidence?: 'HIGH' | 'MEDIUM' | 'LOW'; similarCandidatesCount?: number };
+
+function validProductImageUrl(value: unknown) {
+  return typeof value === 'string' && /^https?:\/\//i.test(value.trim()) ? value.trim() : undefined;
+}
+
+function resolveBestProductImage(product: Record<string, unknown>): ProductImageResolution {
+  const selected = product.selected_images;
+  const front = selected && typeof selected === 'object' && !Array.isArray(selected) ? (selected as Record<string, unknown>).front : undefined;
+  const display = front && typeof front === 'object' && !Array.isArray(front) ? (front as Record<string, unknown>).display : undefined;
+  const displayRecord = display && typeof display === 'object' && !Array.isArray(display) ? display as Record<string, unknown> : undefined;
+  const imageUrl = [displayRecord?.fr, displayRecord?.en, product.image_front_url, product.image_url].map(validProductImageUrl).find(Boolean);
+  return imageUrl ? { url: imageUrl, source: 'openfoodfacts' } : { source: 'placeholder' };
+}
 
 function normalize(value: string) {
   return value
@@ -104,6 +164,169 @@ function headers(key: string, write = false) {
 
 function cleanBarcode(value: string) {
   return value.replace(/\D/g, '');
+}
+
+function hasFoodData(healthData?: ProductHealthData) {
+  if (!healthData) return false;
+  return Boolean(
+    healthData.ingredientsText?.trim()
+      || healthData.ingredientsStructured?.length
+      || healthData.nutriments && Object.keys(healthData.nutriments).length
+      || healthData.additivesTags?.length
+      || healthData.additivesOriginalTags?.length
+      || healthData.additivesNumber !== undefined
+      || healthData.novaGroup !== undefined,
+  );
+}
+
+function fieldPresence(product?: Record<string, unknown>) {
+  const has = (key: string) => {
+    const value = product?.[key];
+    return value !== undefined && value !== null && value !== '' && (!Array.isArray(value) || value.length > 0);
+  };
+  return {
+    ingredients_text: has('ingredients_text'),
+    ingredients_text_fr: has('ingredients_text_fr'),
+    ingredients: has('ingredients'),
+    additives_tags: has('additives_tags'),
+    additives_original_tags: has('additives_original_tags'),
+    additives_n: has('additives_n'),
+    nutriments: has('nutriments'),
+    nutriment_data_per: has('nutriment_data_per') || has('nutrition_data_per'),
+    nutrition_grades: has('nutrition_grades'),
+    nova_group: has('nova_group'),
+    categories_tags: has('categories_tags'),
+  };
+}
+
+function normalizedFieldPresence(result: BarcodeLookupResult) {
+  const health = result.healthData;
+  return {
+    ingredientsText: Boolean(health?.ingredientsText || health?.ingredientsStructured?.length),
+    additivesTags: Boolean(health?.additivesTags?.length || health?.additivesOriginalTags?.length),
+    additivesNumber: health?.additivesNumber !== undefined,
+    nutriments: Boolean(health?.nutriments && Object.keys(health.nutriments).length),
+    nutritionBasis: Boolean(health?.nutritionBasis),
+    nutritionGrade: Boolean(health?.nutritionGrade),
+    novaGroup: health?.novaGroup !== undefined,
+    categories: Boolean(result.comparisonData?.categories || result.comparisonData?.categoriesTags?.length),
+  };
+}
+
+function logProductLookupDiagnostic(payload: Record<string, unknown>) {
+  if (__DEV__) console.log('[ProductLookupDiagnostic]', payload);
+}
+
+function mergeDefined<T extends Record<string, unknown>>(primary: T | undefined, fallback: T | undefined): T | undefined {
+  if (!primary && !fallback) return undefined;
+  const output: Record<string, unknown> = { ...(fallback ?? {}) };
+  for (const [key, value] of Object.entries(primary ?? {})) {
+    if (value !== undefined && value !== null) output[key] = value;
+  }
+  return output as T;
+}
+
+export function mergeProductData(primary: BarcodeLookupResult, fallback: BarcodeLookupResult): BarcodeLookupResult {
+  const boycottEntity = primary.boycottEntity ?? fallback.boycottEntity;
+  return {
+    ...fallback,
+    ...primary,
+    productName: primary.productName ?? fallback.productName,
+    brandLabel: primary.brandLabel ?? fallback.brandLabel,
+    imageUrl: primary.imageUrl ?? fallback.imageUrl,
+    imageSource: primary.imageSource ?? fallback.imageSource,
+    imageResolvedAt: primary.imageResolvedAt ?? fallback.imageResolvedAt,
+    healthData: mergeDefined(primary.healthData as Record<string, unknown> | undefined, fallback.healthData as Record<string, unknown> | undefined) as ProductHealthData | undefined,
+    halalData: mergeDefined(primary.halalData as Record<string, unknown> | undefined, fallback.halalData as Record<string, unknown> | undefined) as ProductHalalData | undefined,
+    comparisonData: mergeDefined(primary.comparisonData as Record<string, unknown> | undefined, fallback.comparisonData as Record<string, unknown> | undefined) as ProductComparisonData | undefined,
+    boycottEntity,
+    assessment: boycottEntity ? 'boycott' : primary.assessment,
+    source: primary.source,
+  };
+}
+
+export function mergeVerifiedHealthData(barcode: string, healthData?: ProductHealthData) {
+  const verified = getVerifiedProductHealthData(barcode);
+  if (!verified) return { healthData, verifiedRecordFound: false, fieldsCompleted: [] as string[], fieldsConflicted: [] as string[], provenance: undefined };
+
+  const output: ProductHealthData = { ...(healthData ?? {}) };
+  const fieldsCompleted: string[] = [];
+  const fieldsConflicted: string[] = [];
+  const conflicts: HealthDataConflict[] = [...(output.healthDataConflicts ?? [])];
+  const hasIngredients = Boolean(output.ingredientsText?.trim() || output.ingredientsStructured?.length);
+  if (!hasIngredients && (verified.ingredientsTextFr || verified.ingredientsText)) {
+    output.ingredientsText = verified.ingredientsTextFr ?? verified.ingredientsText;
+    output.ingredientsTextVariants = [verified.ingredientsText, verified.ingredientsTextFr].filter((value, index, values): value is string => Boolean(value?.trim()) && values.indexOf(value) === index);
+    output.healthDataProvenance = { ...output.healthDataProvenance, ingredients: 'oummah_verified_exact_barcode' };
+    fieldsCompleted.push('ingredients');
+  } else if (hasIngredients && (verified.ingredientsTextFr || verified.ingredientsText) && output.ingredientsText !== (verified.ingredientsTextFr ?? verified.ingredientsText)) {
+    fieldsConflicted.push('ingredients');
+    conflicts.push({ field: 'ingredients', openFoodFactsValue: output.ingredientsText, verifiedValue: verified.ingredientsTextFr ?? verified.ingredientsText });
+  }
+
+  const verifiedTags = verified.additives.map((additive) => `en:${additive.code.toLowerCase()}`);
+  const hasAdditives = Boolean(output.additivesTags?.length || output.additivesOriginalTags?.length || output.additivesNumber !== undefined);
+  if (!hasAdditives && verifiedTags.length) {
+    output.additivesTags = verifiedTags;
+    output.additivesOriginalTags = verifiedTags;
+    output.additivesNumber = verified.additives.length;
+    output.additivesDataSource = 'oummah_verified_exact_barcode';
+    output.healthDataProvenance = { ...output.healthDataProvenance, additives: 'oummah_verified_exact_barcode' };
+    fieldsCompleted.push('additives');
+  } else if (hasAdditives && verifiedTags.length) {
+    const existing = [...(output.additivesTags ?? []), ...(output.additivesOriginalTags ?? [])].map((value) => value.toLowerCase()).sort().join('|');
+    const expected = verifiedTags.slice().sort().join('|');
+    if (existing !== expected) {
+      fieldsConflicted.push('additives');
+      conflicts.push({ field: 'additives', openFoodFactsValue: existing, verifiedValue: expected });
+    }
+  }
+
+  if (!output.otherFoodComponents?.length && verified.otherFoodComponents?.length) {
+    output.otherFoodComponents = verified.otherFoodComponents.map((item) => ({ kind: item.type, label: item.name, matchedText: item.name, source: 'ingredient_text' as const }));
+    fieldsCompleted.push('otherFoodComponents');
+  }
+
+  if (verified.nutritionBasis) {
+    if (output.nutritionBasis && output.nutritionBasis !== verified.nutritionBasis) {
+      fieldsConflicted.push('nutritionBasis');
+      conflicts.push({ field: 'nutritionBasis', openFoodFactsValue: output.nutritionBasis, verifiedValue: verified.nutritionBasis });
+    } else if (!output.nutritionBasis) {
+      fieldsCompleted.push('nutritionBasis');
+    }
+    output.nutritionBasis = verified.nutritionBasis;
+    output.nutritionDataPer = verified.nutritionBasis;
+    output.healthDataProvenance = { ...output.healthDataProvenance, nutritionBasis: 'oummah_verified_exact_barcode' };
+  }
+
+  if (verified.nutritionValuesVerified) {
+    const currentNutrition = output.nutritionValues;
+    const hasNutritionConflict = currentNutrition && JSON.stringify(currentNutrition) !== JSON.stringify(verified.nutritionValuesVerified);
+    if (hasNutritionConflict) {
+      fieldsConflicted.push('nutrition');
+      conflicts.push({ field: 'nutrition', openFoodFactsValue: currentNutrition, verifiedValue: verified.nutritionValuesVerified });
+    } else if (!currentNutrition) {
+      fieldsCompleted.push('nutrition');
+    }
+    output.nutritionValues = verified.nutritionValuesVerified;
+    output.healthDataProvenance = { ...output.healthDataProvenance, nutrition: 'oummah_verified_exact_barcode' };
+  }
+
+  output.healthDataConflicts = conflicts.length ? conflicts : undefined;
+  return { healthData: output, verifiedRecordFound: true, fieldsCompleted, fieldsConflicted, provenance: output.healthDataProvenance };
+}
+
+export function resolveNutritionBasis(input: {
+  nutriments?: Record<string, number | string | undefined>;
+  nutrimentDataPer?: string;
+  productType?: ProductHealthData['productType'];
+}): '100 g' | '100 ml' {
+  const nutriments = input.nutriments ?? {};
+  const hasPer100Ml = nutriments['energy-kcal_100ml'] !== undefined || nutriments.sugars_100ml !== undefined || nutriments.salt_100ml !== undefined || nutriments['saturated-fat_100ml'] !== undefined || nutriments.proteins_100ml !== undefined || nutriments.fiber_100ml !== undefined;
+  const normalizedPer = input.nutrimentDataPer?.toLowerCase().replace(/\s+/g, '') ?? '';
+  if (normalizedPer.includes('100g')) return '100 g';
+  if (hasPer100Ml && (normalizedPer.includes('100ml') || input.productType === 'beverage')) return '100 ml';
+  return '100 g';
 }
 
 function catalogTerms(item: BoycottEntity) {
@@ -218,6 +441,17 @@ export function searchBoycottCatalog(catalog: BoycottEntity[], query: string, ca
   });
 }
 
+// Validated GS1 company prefixes (scripts/product-images/build_barcode_prefixes.py): the company
+// that registered the barcode owns the product, even when Open Food Facts has no brand for it.
+function applyBarcodePrefix(catalog: BoycottEntity[], result: BarcodeLookupResult): BarcodeLookupResult {
+  if (result.assessment !== 'unknown') return result;
+  for (const entity of catalog) {
+    const prefix = entity.barcodePrefixes?.find((value) => value && result.barcode.startsWith(value));
+    if (prefix) return { ...result, boycottEntity: entity, assessment: 'boycott', barcodePrefixMatch: prefix, brandLabel: result.brandLabel ?? entity.name };
+  }
+  return result;
+}
+
 export function findByBarcode(catalog: BoycottEntity[], barcode: string) {
   const clean = cleanBarcode(barcode);
   return catalog.find((item) => item.productBarcodes?.includes(clean));
@@ -253,19 +487,56 @@ type CachedScan = {
   productName?: string;
   brandLabel?: string;
   imageUrl?: string;
+  imageSource?: BarcodeLookupResult['imageSource'];
+  imageResolvedAt?: string;
   cachedAt: number;
   healthData?: ProductHealthData;
   halalData?: ProductHalalData;
   comparisonData?: ProductComparisonData;
+  commercialIdentity?: CommercialIdentityInput;
   knowledge?: ReturnType<typeof assessScanKnowledge>;
 };
 
-async function readLocalScan(barcode: string): Promise<CachedScan | undefined> {
+export type BoycottScanHistoryItem = Pick<CachedScan, 'barcode' | 'productName' | 'brandLabel' | 'imageUrl' | 'cachedAt' | 'halalData'>;
+
+export async function getBoycottScanHistory(limit = 50): Promise<BoycottScanHistoryItem[]> {
   try {
     const values = JSON.parse((await AsyncStorage.getItem(SCAN_CACHE_KEY)) ?? '{}') as Record<string, CachedScan>;
-    const item = values[barcode];
-    if (!item || Date.now() - item.cachedAt > PRODUCT_CACHE_TTL_MS) return undefined;
-    return item;
+    return Object.values(values)
+      .filter((item) => Boolean(item?.barcode && (item.productName || item.brandLabel)))
+      .sort((a, b) => b.cachedAt - a.cachedAt)
+      .slice(0, Math.max(0, limit))
+      .map(({ barcode, productName, brandLabel, imageUrl, cachedAt, halalData }) => ({ barcode, productName, brandLabel, imageUrl, cachedAt, halalData }));
+  } catch {
+    return [];
+  }
+}
+
+export async function getBoycottScanHistoryResult(
+  catalog: BoycottEntity[],
+  barcode: string,
+): Promise<BarcodeLookupResult | null> {
+  const clean = cleanBarcode(barcode);
+  if (!clean) return null;
+  try {
+    const values = JSON.parse((await AsyncStorage.getItem(SCAN_CACHE_KEY)) ?? '{}') as Record<string, CachedScan>;
+    const item = values[clean];
+    return item ? finalizeStoredLookupResult(assessCachedProduct(catalog, item, 'cache')) : null;
+  } catch {
+    return null;
+  }
+}
+
+async function readLocalScan(barcode: string): Promise<CachedScan | undefined> {
+  const item = await readStoredScan(barcode);
+  if (!item || Date.now() - item.cachedAt > PRODUCT_CACHE_TTL_MS) return undefined;
+  return item;
+}
+
+async function readStoredScan(barcode: string): Promise<CachedScan | undefined> {
+  try {
+    const values = JSON.parse((await AsyncStorage.getItem(SCAN_CACHE_KEY)) ?? '{}') as Record<string, CachedScan>;
+    return values[barcode];
   } catch {
     return undefined;
   }
@@ -324,9 +595,12 @@ async function rememberScannedProduct(result: BarcodeLookupResult) {
     productName: result.productName,
     brandLabel: result.brandLabel,
     imageUrl: result.imageUrl,
+    imageSource: result.imageSource,
+    imageResolvedAt: result.imageResolvedAt,
     healthData: result.healthData,
     halalData: result.halalData,
     comparisonData: result.comparisonData,
+    commercialIdentity: result.commercialIdentity,
     knowledge: assessScanKnowledge(result),
     cachedAt: Date.now(),
   };
@@ -365,18 +639,30 @@ async function rememberScannedProduct(result: BarcodeLookupResult) {
 }
 
 function assessCachedProduct(catalog: BoycottEntity[], item: CachedScan, source: BarcodeLookupResult['source']): BarcodeLookupResult {
-  const entity = findBoycottEntityByBrand(catalog, item.brandLabel, item.productName);
+  const resolution = resolveCanonicalCommercialEntity(catalog, item.commercialIdentity ?? { productName: item.productName, brands: item.brandLabel });
+  const entity = resolution.entity;
   return {
     barcode: item.barcode,
     productName: item.productName,
     brandLabel: item.brandLabel,
     imageUrl: item.imageUrl,
+    imageSource: item.imageSource,
+    imageResolvedAt: item.imageResolvedAt,
     healthData: item.healthData,
     halalData: item.halalData,
     comparisonData: item.comparisonData,
     boycottEntity: entity,
-    assessment: entity ? 'boycott' : (item.productName && item.brandLabel ? 'ok' : 'unknown'),
+    assessment: resolution.status === 'BOYCOTT' ? 'boycott' : resolution.status === 'NOT_CLASSIFIED_BY_OUMMAH' ? 'ok' : 'unknown',
     source,
+    canonicalEntity: resolution.canonicalEntity,
+    boycottStatus: resolution.status,
+    resolverReason: resolution.resolverReason,
+    identityResolutionConfidence: resolution.identityResolutionConfidence,
+    boycottResolutionEvidence: resolution.boycottResolutionEvidence,
+    classificationEvidence: resolution.classificationEvidence,
+    ownershipConfidence: resolution.ownershipConfidence,
+    ownershipEvidence: resolution.ownershipEvidence,
+    commercialIdentity: item.commercialIdentity,
   };
 }
 
@@ -389,94 +675,234 @@ async function enrichScientificAssessments(result: BarcodeLookupResult): Promise
   return enriched;
 }
 
-export async function lookupBoycottBarcode(catalog: BoycottEntity[], barcode: string): Promise<BarcodeLookupResult> {
-  const clean = cleanBarcode(barcode);
+async function finalizeStoredLookupResult(result: BarcodeLookupResult): Promise<BarcodeLookupResult> {
+  const verifiedMerge = mergeVerifiedHealthData(result.barcode, result.healthData);
+  let finalized = result;
+  if (verifiedMerge.healthData) {
+    const detectedOtherFoodComponents = detectOtherFoodComponents(verifiedMerge.healthData);
+    const knownOtherFoodComponents = [...(verifiedMerge.healthData.otherFoodComponents ?? []), ...detectedOtherFoodComponents];
+    const uniqueOtherFoodComponents = knownOtherFoodComponents.filter((item, index, values) => values.findIndex((value) => value.kind === item.kind && value.matchedText === item.matchedText) === index);
+    finalized = { ...result, healthData: { ...verifiedMerge.healthData, additivesDataStatus: getAdditivesDataStatus(verifiedMerge.healthData), otherFoodComponents: uniqueOtherFoodComponents } };
+  }
+  if (__DEV__) {
+    console.log('[VerifiedHealthMergeDiagnostic]', {
+      barcode: finalized.barcode,
+      verifiedRecordFound: verifiedMerge.verifiedRecordFound,
+      fieldsCompleted: verifiedMerge.fieldsCompleted,
+      fieldsConflicted: verifiedMerge.fieldsConflicted,
+      provenance: verifiedMerge.provenance,
+      finalAdditives: finalized.healthData?.additivesTags,
+      finalNutritionBasis: finalized.healthData?.nutritionBasis,
+    });
+    const diagnosticAdditives = detectIngredientAdditives(finalized.healthData);
+    console.log('[HealthDataDiagnostic]', {
+      barcode: finalized.barcode,
+      source: finalized.source,
+      nutritionBasis: finalized.healthData?.nutritionBasis,
+      nutritionDataPer: finalized.healthData?.nutritionDataPer,
+      additivesTags: finalized.healthData?.additivesTags,
+      detectedAdditives: diagnosticAdditives.map((item) => ({ code: item.code, matchedBy: item.matchedBy, matchedValue: item.matchedValue })),
+      otherFoodComponents: finalized.healthData?.otherFoodComponents,
+      novaGroup: finalized.healthData?.novaGroup,
+      healthDataProvenance: finalized.healthData?.healthDataProvenance,
+    });
+  }
+  return enrichScientificAssessments(finalized);
+}
 
-  const remembered = memoryScanCache.get(clean);
-  if (remembered) return enrichScientificAssessments(remembered);
+type OpenFactsProductPayload = {
+    status?: number;
+    product?: {
+      product_name?: string;
+      product_name_fr?: string;
+      brands?: string;
+      brands_tags?: string[];
+      image_front_url?: string;
+      image_url?: string;
+      selected_images?: Record<string, unknown>;
+      images?: Record<string, unknown>;
+      ingredients_text?: string;
+      ingredients_text_fr?: string;
+      ingredients?: Array<{ id?: string; text?: string }>;
+      allergens_tags?: string[];
+      additives_tags?: string[];
+      additives_original_tags?: string[];
+      additives_n?: number;
+      nutrient_levels?: ProductHealthData['nutrientLevels'];
+      nutriments?: {
+        'energy-kcal_100g'?: number;
+        'energy-kcal_100ml'?: number;
+        sugars_100g?: number;
+        sugars_100ml?: number;
+        salt_100g?: number;
+        salt_100ml?: number;
+        'saturated-fat_100g'?: number;
+        'saturated-fat_100ml'?: number;
+        proteins_100g?: number;
+        proteins_100ml?: number;
+        fiber_100g?: number;
+        fiber_100ml?: number;
+      };
+      nutriment_data_per?: string;
+      nutrition_data_per?: string;
+      nutrition_grades?: string;
+      nova_group?: number;
+      labels?: string;
+      labels_tags?: string[];
+      certifications?: string;
+      certifications_tags?: string[];
+      brand_owner?: string;
+      manufacturer?: string;
+      manufacturing_places?: string;
+      origins?: string;
+      origins_tags?: string[];
+      compared_to_category?: string;
+      company?: string;
+      owner?: string;
+      parent_company?: string;
+      group?: string;
+      countries_tags?: string[];
+      categories?: string;
+      categories_tags?: string[];
+      quantity?: string;
+      product_quantity?: string;
+      serving_size?: string;
+      generic_name?: string;
+      last_updated_t?: number;
+    };
+  };
+
+async function fetchProductPayload(url: string, timeoutMs: number) {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    return await fetch(url, { headers: { Accept: 'application/json' }, signal: controller.signal });
+  } catch {
+    return undefined;
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
+type KnownProductRow = { barcode: string; product_name: string; brand?: string | null; entity_slug?: string | null; product_kind?: BarcodeLookupResult['productKind'] };
+
+// Barcodes Open Food Facts / Open Beauty Facts do not cover (French medicine boxes, CIP13 "34009…").
+async function lookupKnownProduct(catalog: BoycottEntity[], barcode: string): Promise<BarcodeLookupResult | undefined> {
+  const config = supabaseConfig();
+  if (!config) return undefined;
+  const response = await fetchProductPayload(`${config.url}/rest/v1/boycott_known_products?barcode=eq.${barcode}&select=barcode,product_name,brand,entity_slug,product_kind`, 4000);
+  if (!response?.ok) return undefined;
+  const [row] = await response.json() as KnownProductRow[];
+  if (!row) return undefined;
+  const entity = row.entity_slug ? catalog.find((item) => item.id === row.entity_slug) : undefined;
+  return {
+    barcode,
+    productName: row.product_name,
+    brandLabel: row.brand ?? undefined,
+    productKind: row.product_kind ?? 'other',
+    boycottEntity: entity,
+    assessment: entity ? 'boycott' : 'unknown',
+    source: 'registry',
+  };
+}
+
+const isFrenchMedicineCode = (barcode: string) => /^34009\d{8}$/.test(barcode);
+
+async function refreshBoycottBarcode(catalog: BoycottEntity[], barcode: string, fallbackCached?: CachedScan): Promise<BarcodeLookupResult> {
+  const clean = cleanBarcode(barcode);
+  if (isFrenchMedicineCode(clean)) {
+    const medicine = await lookupKnownProduct(catalog, clean);
+    if (medicine) return medicine;
+  }
+  const offUrl = `https://world.openfoodfacts.org/api/v2/product/${encodeURIComponent(clean)}.json?fields=${OFF_PRODUCT_FIELDS}`;
+  logProductLookupDiagnostic({
+    barcode: clean,
+    sourceInitial: fallbackCached ? 'cache_incomplete' : 'openfoodfacts',
+    cacheKey: SCAN_CACHE_KEY,
+    offCalled: true,
+    endpoint: offUrl,
+    fieldsRequested: OFF_PRODUCT_FIELDS.split(','),
+  });
 
   try {
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 5000);
-    const response = await fetch(
-      `https://world.openfoodfacts.org/api/v2/product/${encodeURIComponent(clean)}.json?fields=product_name,product_name_fr,brands,brands_tags,image_front_small_url,ingredients,ingredients_text,ingredients_text_fr,allergens_tags,additives_tags,additives_original_tags,additives_n,nutrient_levels,nutriments,nutriment_data_per,nutrition_grades,nova_group,labels,labels_tags,certifications,certifications_tags,brand_owner,countries_tags,categories,categories_tags,quantity,product_quantity,serving_size`,
-      { headers: { Accept: 'application/json' }, signal: controller.signal }
-    );
-    clearTimeout(timeout);
+    const response = await fetchProductPayload(offUrl, 5000);
+    let payload = response?.ok ? await response.json() as OpenFactsProductPayload : undefined;
+    // Not a food product: the sister databases share the same API — cosmetics (L'Oréal, Garnier, Ahava…),
+    // pet food (Purina, Whiskas…), then every other product (hygiene, household, electronics…).
+    for (const host of ['world.openbeautyfacts.org', 'world.openpetfoodfacts.org', 'world.openproductsfacts.org']) {
+      if (payload?.product && payload.status !== 0) break;
+      const siblingResponse = await fetchProductPayload(`https://${host}/api/v2/product/${encodeURIComponent(clean)}.json?fields=${OFF_PRODUCT_FIELDS}`, 4000);
+      const siblingPayload = siblingResponse?.ok ? await siblingResponse.json() as OpenFactsProductPayload : undefined;
+      if (siblingPayload?.product && siblingPayload.status !== 0) payload = siblingPayload;
+    }
 
-    if (response.ok) {
-      const payload = await response.json() as {
-        status?: number;
-        product?: {
-          product_name?: string;
-          product_name_fr?: string;
-          brands?: string;
-          brands_tags?: string[];
-          image_front_small_url?: string;
-          ingredients_text?: string;
-          ingredients_text_fr?: string;
-          ingredients?: Array<{ id?: string; text?: string }>;
-          allergens_tags?: string[];
-          additives_tags?: string[];
-          additives_original_tags?: string[];
-          additives_n?: number;
-          nutrient_levels?: ProductHealthData['nutrientLevels'];
-          nutriments?: {
-            'energy-kcal_100g'?: number;
-            'energy-kcal_100ml'?: number;
-            sugars_100g?: number;
-            sugars_100ml?: number;
-            salt_100g?: number;
-            salt_100ml?: number;
-            'saturated-fat_100g'?: number;
-            'saturated-fat_100ml'?: number;
-            proteins_100g?: number;
-            proteins_100ml?: number;
-            fiber_100g?: number;
-            fiber_100ml?: number;
-          };
-          nutriment_data_per?: string;
-          nutrition_grades?: string;
-          nova_group?: number;
-          labels?: string;
-          labels_tags?: string[];
-          certifications?: string;
-          certifications_tags?: string[];
-          brand_owner?: string;
-          countries_tags?: string[];
-          categories?: string;
-          categories_tags?: string[];
-          quantity?: string;
-          product_quantity?: string;
-          serving_size?: string;
-          generic_name?: string;
-          last_updated_t?: number;
-        };
-      };
+    if (payload) {
       const product = payload.product;
       if (product && payload.status !== 0) {
+        const finalImageResolution = resolveBestProductImage(product as Record<string, unknown>);
+        logProductLookupDiagnostic({
+          barcode: clean,
+          sourceInitial: fallbackCached ? 'cache_incomplete' : 'openfoodfacts',
+          cacheKey: SCAN_CACHE_KEY,
+          offCalled: true,
+          endpoint: offUrl,
+          httpStatus: response?.status,
+          fieldsRequested: OFF_PRODUCT_FIELDS.split(','),
+          rawFieldPresence: fieldPresence(product as Record<string, unknown>),
+          imageSource: finalImageResolution.source,
+          imageUrl: finalImageResolution.url,
+        });
         const productName = product.product_name_fr || product.product_name;
         const brandText = product.brands?.trim() || undefined;
         const tagBrands = (product.brands_tags ?? [])
           .map((value) => String(value).replace(/^en:/, '').trim())
           .filter(Boolean);
         const rawBrands = [brandText, ...tagBrands].filter(Boolean).join(', ');
-        const entity = findBoycottEntityByBrand(catalog, rawBrands || undefined, productName);
+        const commercialIdentity: CommercialIdentityInput = {
+          barcode: clean,
+          productName,
+          brands: brandText,
+          brandsTags: tagBrands,
+          brandOwner: product.brand_owner,
+          manufacturer: product.manufacturer,
+          manufacturingPlaces: product.manufacturing_places,
+          company: product.company,
+          owner: product.owner,
+          parentCompany: product.parent_company,
+          group: product.group,
+        };
+        const resolution = resolveCanonicalCommercialEntity(catalog, commercialIdentity);
+        const entity = resolution.entity;
+        if (__DEV__) console.log('[BoycottEntityDiagnostic]', { barcode: clean, productName, brands: brandText, brands_tags: tagBrands, manufacturer: product.manufacturer, manufacturing_places: product.manufacturing_places, company: product.company, owner: product.owner, parentCompany: product.parent_company, rawIdentityStrings: commercialIdentity, normalizedIdentityStrings: resolution.normalizedEntities, matchedAliases: resolution.aliasesMatched, canonicalEntity: resolution.canonicalEntity, parentEntity: resolution.parentEntity, resolverStatus: resolution.status, boycottResolverSource: resolution.boycottResolverSource, resolverReason: resolution.resolverReason, classificationEvidence: resolution.classificationEvidence });
         const nutriments = product.nutriments;
-        const usePer100Ml = nutriments?.['energy-kcal_100ml'] !== undefined || nutriments?.sugars_100ml !== undefined || nutriments?.salt_100ml !== undefined || nutriments?.['saturated-fat_100ml'] !== undefined || nutriments?.proteins_100ml !== undefined || nutriments?.fiber_100ml !== undefined;
-        const additiveTags = [...(product.additives_tags ?? []), ...(product.additives_original_tags ?? [])].filter((value, index, values) => Boolean(value?.trim()) && values.indexOf(value) === index);
+        const categoryText = [product.categories, ...(product.categories_tags ?? []), product.generic_name].filter(Boolean).join(' ').toLowerCase();
+        const isBeverage = /beverage|beverages|drink|drinks|boisson|boissons|soda|soft-drink|water|juice|tea|coffee/.test(categoryText);
+        const productType: ProductHealthData['productType'] = isBeverage ? 'beverage' : categoryText ? 'solid' : 'unknown';
+        const nutritionDataPer = product.nutrition_data_per ?? product.nutriment_data_per;
+        const nutritionBasis = resolveNutritionBasis({ nutriments, nutrimentDataPer: nutritionDataPer, productType });
+        const usePer100Ml = nutritionBasis === '100 ml';
+        const additiveTags = Array.isArray(product.additives_tags) ? product.additives_tags.filter((value): value is string => Boolean(value?.trim())) : undefined;
+        const additivesOriginalTags = Array.isArray(product.additives_original_tags) ? product.additives_original_tags.filter((value): value is string => Boolean(value?.trim())) : undefined;
         const result: BarcodeLookupResult = {
           barcode: clean,
           productName,
           brandLabel: brandText || tagBrands[0] || undefined,
-          imageUrl: product.image_front_small_url,
+          imageUrl: finalImageResolution.url,
+          imageSource: finalImageResolution.source,
+          imageResolvedAt: new Date().toISOString(),
           healthData: {
             ingredientsText: product.ingredients_text_fr || product.ingredients_text,
             ingredientsTextVariants: [product.ingredients_text, product.ingredients_text_fr].filter((value, index, values): value is string => Boolean(value?.trim()) && values.indexOf(value) === index),
             ingredientNames: product.ingredients?.flatMap((ingredient) => [ingredient.id, ingredient.text].filter((value): value is string => Boolean(value?.trim()))) ?? [],
+            ingredientsStructured: product.ingredients,
+            productType,
             allergensTags: product.allergens_tags,
             additivesTags: additiveTags,
-            nutritionDataPer: product.nutriment_data_per,
+            additivesOriginalTags,
+            additivesNumber: product.additives_n,
+            additivesDataSource: 'openfoodfacts',
+            nutriments,
+            nutritionDataPer,
             nutrientLevels: product.nutrient_levels,
             nutritionBasis: usePer100Ml ? '100 ml' : '100 g',
             nutritionValues: {
@@ -499,23 +925,112 @@ export async function lookupBoycottBarcode(catalog: BoycottEntity[], barcode: st
           comparisonData: {
             categories: product.categories,
             categoriesTags: product.categories_tags,
+            comparedToCategory: product.compared_to_category,
             quantity: product.quantity,
             genericName: product.generic_name,
             updatedAt: product.last_updated_t ? new Date(product.last_updated_t * 1000).toISOString() : undefined,
+            originsTags: product.origins_tags,
+            origins: product.origins,
+            manufacturingPlaces: product.manufacturing_places,
           },
           boycottEntity: entity,
-          assessment: entity ? 'boycott' : (productName && (brandText || tagBrands.length) ? 'ok' : 'unknown'),
+          assessment: resolution.status === 'BOYCOTT' ? 'boycott' : resolution.status === 'NOT_CLASSIFIED_BY_OUMMAH' ? 'ok' : 'unknown',
           source: 'openfoodfacts',
+          canonicalEntity: resolution.canonicalEntity,
+          boycottStatus: resolution.status,
+          resolverReason: resolution.resolverReason,
+          identityResolutionConfidence: resolution.identityResolutionConfidence,
+          boycottResolutionEvidence: resolution.boycottResolutionEvidence,
+          classificationEvidence: resolution.classificationEvidence,
+          ownershipConfidence: resolution.ownershipConfidence,
+          ownershipEvidence: resolution.ownershipEvidence,
+          commercialIdentity,
         };
-        const enriched = await enrichScientificAssessments(result);
+        const verifiedMerge = mergeVerifiedHealthData(clean, result.healthData);
+        if (verifiedMerge.healthData) {
+          const detectedOtherFoodComponents = detectOtherFoodComponents(verifiedMerge.healthData);
+          const knownOtherFoodComponents = [...(verifiedMerge.healthData.otherFoodComponents ?? []), ...detectedOtherFoodComponents];
+          const uniqueOtherFoodComponents = knownOtherFoodComponents.filter((item, index, values) => values.findIndex((value) => value.kind === item.kind && value.matchedText === item.matchedText) === index);
+          result.healthData = { ...verifiedMerge.healthData, additivesDataStatus: getAdditivesDataStatus(verifiedMerge.healthData), otherFoodComponents: uniqueOtherFoodComponents };
+        }
+        if (__DEV__) {
+          console.log('[VerifiedHealthMergeDiagnostic]', {
+            barcode: clean,
+            verifiedRecordFound: verifiedMerge.verifiedRecordFound,
+            fieldsCompleted: verifiedMerge.fieldsCompleted,
+            fieldsConflicted: verifiedMerge.fieldsConflicted,
+            provenance: verifiedMerge.provenance,
+            finalAdditives: result.healthData?.additivesTags,
+            finalNutritionBasis: result.healthData?.nutritionBasis,
+          });
+        }
+        if (__DEV__) {
+          const diagnosticAdditives = detectIngredientAdditives(result.healthData);
+          console.log('[HealthDataDiagnostic]', {
+            barcode: clean,
+            nutritionBasis: result.healthData?.nutritionBasis,
+            nutrimentDataPer: result.healthData?.nutritionDataPer,
+            productType: result.healthData?.productType,
+            categories: result.comparisonData?.categoriesTags,
+            ingredientsText: result.healthData?.ingredientsText,
+            additivesTags: result.healthData?.additivesTags,
+            additivesOriginalTags: result.healthData?.additivesOriginalTags,
+            additivesN: result.healthData?.additivesNumber,
+            detectedAdditives: diagnosticAdditives.map((item) => ({ code: item.code, matchedBy: item.matchedBy, matchedValue: item.matchedValue })),
+            detectedFlavorings: result.healthData?.otherFoodComponents,
+            additivesDataStatus: result.healthData?.additivesDataStatus,
+            novaGroup: result.healthData?.novaGroup,
+            nutritionGrade: result.healthData?.nutritionGrade,
+          });
+        }
+        const merged = fallbackCached
+          ? mergeProductData(result, assessCachedProduct(catalog, fallbackCached, 'cache'))
+          : result;
+        const enriched = await enrichScientificAssessments(merged);
+        logProductLookupDiagnostic({
+          barcode: clean,
+          sourceInitial: fallbackCached ? 'cache_incomplete' : 'openfoodfacts',
+          cacheKey: SCAN_CACHE_KEY,
+          offCalled: true,
+          endpoint: offUrl,
+          httpStatus: response?.status,
+          fieldsRequested: OFF_PRODUCT_FIELDS.split(','),
+          normalizedFieldPresence: normalizedFieldPresence(enriched),
+          finalSource: enriched.source,
+        });
         void rememberScannedProduct(enriched).catch(() => undefined);
         memoryScanCache.set(clean, enriched);
         return enriched;
       }
     }
-  } catch {}
+    logProductLookupDiagnostic({
+      barcode: clean,
+      sourceInitial: fallbackCached ? 'cache_incomplete' : 'openfoodfacts',
+      cacheKey: SCAN_CACHE_KEY,
+      offCalled: true,
+      endpoint: offUrl,
+      httpStatus: response?.status,
+      fieldsRequested: OFF_PRODUCT_FIELDS.split(','),
+      rawFieldPresence: {},
+      normalizedFieldPresence: {},
+    });
+  } catch (error) {
+    logProductLookupDiagnostic({
+      barcode: clean,
+      sourceInitial: fallbackCached ? 'cache_incomplete' : 'openfoodfacts',
+      cacheKey: SCAN_CACHE_KEY,
+      offCalled: true,
+      endpoint: offUrl,
+      fieldsRequested: OFF_PRODUCT_FIELDS.split(','),
+      error: error instanceof Error ? error.message : String(error),
+    });
+  }
 
-  const local = await readLocalScan(clean);
+  const local = fallbackCached ?? await readLocalScan(clean);
+  if (!local) {
+    const known = await lookupKnownProduct(catalog, clean);
+    if (known) return known;
+  }
   if (local) return enrichScientificAssessments(assessCachedProduct(catalog, local, 'cache'));
 
   const direct = findByBarcode(catalog, clean);
@@ -530,4 +1045,68 @@ export async function lookupBoycottBarcode(catalog: BoycottEntity[], barcode: st
   }
 
   return { barcode: clean, assessment: 'unknown', source: 'none' };
+}
+
+function refreshWithDeduplication(catalog: BoycottEntity[], barcode: string, fallbackCached?: CachedScan) {
+  const existing = inflightLookup.get(barcode);
+  if (existing) return existing;
+
+  const request = refreshBoycottBarcode(catalog, barcode, fallbackCached);
+  inflightLookup.set(barcode, request);
+  request.then(
+    () => {
+      if (inflightLookup.get(barcode) === request) inflightLookup.delete(barcode);
+    },
+    () => {
+      if (inflightLookup.get(barcode) === request) inflightLookup.delete(barcode);
+    },
+  );
+  return request;
+}
+
+export async function lookupBoycottBarcode(catalog: BoycottEntity[], barcode: string): Promise<BarcodeLookupResult> {
+  return applyBarcodePrefix(catalog, await lookupBoycottBarcodeByIdentity(catalog, barcode));
+}
+
+async function lookupBoycottBarcodeByIdentity(catalog: BoycottEntity[], barcode: string): Promise<BarcodeLookupResult> {
+  const clean = cleanBarcode(barcode);
+  if (!clean) return { barcode: clean, assessment: 'unknown', source: 'none' };
+
+  const remembered = memoryScanCache.get(clean);
+  if (remembered && hasFoodData(remembered.healthData)) {
+    logProductLookupDiagnostic({
+      barcode: clean,
+      sourceInitial: 'memory',
+      cacheKey: SCAN_CACHE_KEY,
+      offCalled: false,
+      normalizedFieldPresence: normalizedFieldPresence(remembered),
+    });
+    return finalizeStoredLookupResult(remembered);
+  }
+
+  const stored = await readStoredScan(clean);
+  if (stored) {
+    const cachedResult = await finalizeStoredLookupResult(assessCachedProduct(catalog, stored, 'cache'));
+    if (hasFoodData(cachedResult.healthData)) {
+      memoryScanCache.set(clean, cachedResult);
+      logProductLookupDiagnostic({
+        barcode: clean,
+        sourceInitial: 'AsyncStorage',
+        cacheKey: SCAN_CACHE_KEY,
+        offCalled: false,
+        normalizedFieldPresence: normalizedFieldPresence(cachedResult),
+      });
+      return cachedResult;
+    }
+    logProductLookupDiagnostic({
+      barcode: clean,
+      sourceInitial: 'AsyncStorage_incomplete',
+      cacheKey: SCAN_CACHE_KEY,
+      offCalled: false,
+      normalizedFieldPresence: normalizedFieldPresence(cachedResult),
+    });
+    return refreshWithDeduplication(catalog, clean, stored);
+  }
+
+  return refreshWithDeduplication(catalog, clean);
 }

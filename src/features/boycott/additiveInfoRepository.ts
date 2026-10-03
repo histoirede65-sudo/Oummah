@@ -9,7 +9,7 @@ export type AdditiveScientificOverride = { classification: AdditiveScientificCla
 export type AdditiveScienceRecord = AdditiveScientificAssessment & { code: string; scientificReviewedAt?: string; regulatorySourceUpdatedAt?: string; dataVersion?: string };
 export type AdditiveConcern = { title: string; evidenceLevel: AdditiveEvidenceLevel; summary: string; populationConcerned?: string; conditions?: string };
 export type AdditiveSource = { title: string; organisation: string; publishedAt?: string; url: string; sourceType: 'scientific_opinion' | 'regulation' | 'international_agency' | 'official_information' };
-export type AdditiveInfo = { code: string; name?: string; function?: string; useSummary?: string; attentionLevel: AdditiveEvidenceLevel; justification?: string; effects?: string[]; acceptableDailyIntake?: string; specialPopulations?: string[]; euRegulatoryStatus?: string; lastReevaluation?: string; concerns: AdditiveConcern[]; regulatoryNotes?: string[]; sources: AdditiveSource[]; lastVerifiedAt: string };
+export type AdditiveInfo = { code: string; name?: string; aliases?: string[]; function?: string; useSummary?: string; attentionLevel: AdditiveEvidenceLevel; justification?: string; effects?: string[]; acceptableDailyIntake?: string; specialPopulations?: string[]; euRegulatoryStatus?: string; lastReevaluation?: string; concerns: AdditiveConcern[]; regulatoryNotes?: string[]; sources: AdditiveSource[]; lastVerifiedAt: string };
 
 export function normalizeAdditiveCode(value: string): string | undefined {
   const match = value.trim().toUpperCase().match(/E\d{3,4}[A-Z]?/);
@@ -17,6 +17,14 @@ export function normalizeAdditiveCode(value: string): string | undefined {
 }
 
 const VERIFIED_AT = '2026-09-15';
+const ADDITIVE_ALIASES: Record<string, string[]> = {
+  E150D: ["caramel au sulfite d'ammonium", 'sulphite ammonia caramel', 'ammonia sulphite caramel'],
+  E338: ['acide phosphorique', 'phosphoric acid'],
+};
+
+export function getAdditiveAliasEntries(): Array<{ code: string; aliases: string[] }> {
+  return Object.entries(ADDITIVE_ALIASES).map(([code, aliases]) => ({ code, aliases }));
+}
 const ADDITIVES: Record<string, AdditiveInfo> = {
   E150D: { code: 'E150D', name: 'Caramel au sulfite d’ammonium', function: 'Colorant', useSummary: 'Utilisé pour donner une couleur brune au produit.', attentionLevel: 'no_particular_signal', concerns: [], regulatoryNotes: ['Réévaluation EFSA terminée ; l’exposition estimée est généralement sous les DJA rapportées pour les caramels autorisés.'], sources: [{ title: 'Food colours', organisation: 'EFSA', publishedAt: '2026-09-15', url: 'https://www.efsa.europa.eu/en/topics/topic/food-colours', sourceType: 'official_information' }, { title: 'Caramel colours: consumer exposure lower than previously estimated', organisation: 'EFSA', publishedAt: '2012-12-19', url: 'https://www.efsa.europa.eu/en/press/news/121219', sourceType: 'scientific_opinion' }], lastVerifiedAt: VERIFIED_AT },
   E331: { code: 'E331', name: 'Citrates de sodium', function: 'Correcteur d’acidité / séquestrant', useSummary: 'Utilisés pour ajuster l’acidité et stabiliser certaines formulations.', attentionLevel: 'insufficient_data', concerns: [], regulatoryNotes: ['La forme exacte du citrate n’est pas distinguée par le code produit agrégé ; les informations intégrées ici ne permettent pas de conclure sur un risque spécifique au produit.'], sources: [{ title: 'Open call for food additives analytical data and use levels', organisation: 'EFSA', url: 'https://www.efsa.europa.eu/en/call/open-call-food-additives-analytical-data-and-use-levels-food-and-beverages-intended-human', sourceType: 'official_information' }], lastVerifiedAt: VERIFIED_AT },
@@ -34,7 +42,7 @@ export function getAdditiveInfo(code: string): AdditiveInfo {
   const normalizedCode = normalizeAdditiveCode(code) ?? code.trim().toUpperCase();
   const info = ADDITIVES[normalizedCode] ?? { code: normalizedCode, attentionLevel: 'insufficient_data' as const, concerns: [], sources: [], lastVerifiedAt: VERIFIED_AT };
   const scientific: Partial<AdditiveInfo> = normalizedCode === 'E338' ? { justification: 'La DJA concerne l’exposition totale aux phosphates, pas ce seul produit.', acceptableDailyIntake: '40 mg de phosphore/kg de poids corporel/jour', euRegulatoryStatus: 'Autorisé sous conditions dans l’Union européenne', lastReevaluation: 'EFSA, 2019' } : normalizedCode === 'E951' ? { justification: 'Le niveau reflète des éléments documentés mais ne mesure pas le risque aux niveaux d’exposition usuels.', specialPopulations: ['Personnes atteintes de phénylcétonurie'], acceptableDailyIntake: '0 à 40 mg/kg de poids corporel/jour', lastReevaluation: 'JECFA, 2023', euRegulatoryStatus: 'Autorisé sous conditions dans l’Union européenne' } : normalizedCode === 'E950' ? { acceptableDailyIntake: '15 mg/kg de poids corporel/jour', lastReevaluation: 'EFSA, 2025', euRegulatoryStatus: 'Autorisé sous conditions dans l’Union européenne' } : {};
-  return { ...info, ...scientific };
+  return { ...info, aliases: info.aliases ?? ADDITIVE_ALIASES[normalizedCode], ...scientific };
 }
 
 /** Presentation-only grouping. It never upgrades the evidence recorded above. */
@@ -55,9 +63,8 @@ export function getAdditivePresentationLevelForScientificClassification(classifi
 function getLegacyAdditiveScientificAssessment(code: string): AdditiveScientificAssessment {
   const info = getAdditiveInfo(code);
   const common = { sources: info.sources };
-  if (info.code === 'E150D') return { ...common, severity: 'none', evidenceStrength: 'insufficient', exposureConcern: 'unknown', classification: 'insufficient_data', conclusion: 'Données scientifiques suffisamment validées non disponibles pour conclure.' };
   switch (info.code) {
-    case 'E150D': return { ...common, severity: 'none', evidenceStrength: 'strong', exposureConcern: 'unlikely', classification: 'no_particular_signal', conclusion: 'Évaluations officielles rassurantes dans les conditions autorisées.' };
+    case 'E150D': return { ...common, severity: 'none', evidenceStrength: 'insufficient', exposureConcern: 'unknown', classification: 'insufficient_data', conclusion: 'Données scientifiques suffisamment validées non disponibles pour conclure.' };
     case 'E331': return { ...common, severity: 'none', evidenceStrength: 'insufficient', exposureConcern: 'unknown', classification: 'insufficient_data', conclusion: 'La forme exacte et l’exposition du produit ne permettent pas de conclure.' };
     case 'E338': return { ...common, severity: 'moderate', evidenceStrength: 'strong', exposureConcern: 'possible', classification: 'limited_concern', conclusion: 'L’exposition totale aux phosphates doit être prise en compte ; la quantité de ce produit est inconnue.' };
     case 'E950': return { ...common, severity: 'low', evidenceStrength: 'strong', exposureConcern: 'unknown', classification: 'no_particular_signal', conclusion: 'Réévaluation officielle et DJA disponibles ; l’exposition individuelle n’est pas mesurée.' };

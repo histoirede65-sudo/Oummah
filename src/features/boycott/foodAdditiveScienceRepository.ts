@@ -46,8 +46,43 @@ export type AdditiveAssessmentHistory = {
   sourceId: string;
 };
 
+export type AdditiveAuthorityEvaluation = {
+  authority: string;
+  year?: number;
+  conclusion: string;
+  url?: string;
+  evaluationType?: string;
+  reviewedAt?: string;
+};
+
+export type AdditivePotentialEffect = {
+  effect: string;
+  severity: AdditiveSeverity;
+  evidenceLevel: AdditiveEvidenceStrength;
+  appliesTo: 'additive' | 'metabolite' | 'contaminant' | 'degradation_product';
+  notes?: string;
+};
+
+export type AdditiveExposureProfile = {
+  adi?: number;
+  tdi?: number;
+  unit?: string;
+  estimatedExposure?: string;
+  populationsAtRisk?: string[];
+  notes?: string[];
+};
+
 export type AdditiveScientificProfile = {
   code: string;
+  names?: { fr?: string; en?: string };
+  aliases?: string[];
+  function?: string;
+  regulatoryStatusDetail?: { eu?: string; notes?: string[] };
+  authorityEvaluations?: AdditiveAuthorityEvaluation[];
+  exposure?: AdditiveExposureProfile;
+  potentialEffects?: AdditivePotentialEffect[];
+  restrictions?: string[];
+  evidenceLevel?: AdditiveEvidenceStrength;
   canonicalName?: string;
   functionClasses: string[];
   regulatoryStatus?: string;
@@ -85,8 +120,25 @@ function localSources(info: AdditiveInfo): ScientificSourceProvenance[] {
 function profileFor(code: string, info: AdditiveInfo, assessment: AdditiveScientificAssessment): AdditiveScientificProfile {
   const normalized = code.toUpperCase();
   const sources = localSources(info);
+  const authorityEvaluations = info.sources.map((item) => ({
+    authority: item.organisation,
+    year: item.publishedAt ? Number(item.publishedAt.slice(0, 4)) || undefined : undefined,
+    conclusion: assessment.conclusion,
+    url: item.url,
+    evaluationType: item.sourceType,
+    reviewedAt: info.lastVerifiedAt,
+  }));
   const base: AdditiveScientificProfile = {
     code: normalized,
+    names: { fr: info.name },
+    aliases: info.aliases ?? [],
+    function: info.function,
+    regulatoryStatusDetail: info.euRegulatoryStatus ? { eu: info.euRegulatoryStatus, notes: info.regulatoryNotes } : undefined,
+    authorityEvaluations,
+    exposure: { adi: undefined, unit: undefined, estimatedExposure: assessment.exposureConcern, populationsAtRisk: info.specialPopulations, notes: info.regulatoryNotes },
+    potentialEffects: [],
+    restrictions: [],
+    evidenceLevel: assessment.evidenceStrength,
     canonicalName: info.name,
     functionClasses: info.function ? [info.function] : [],
     regulatoryStatus: info.euRegulatoryStatus,
@@ -121,6 +173,19 @@ function profileFor(code: string, info: AdditiveInfo, assessment: AdditiveScient
     base.exposureAssessment = { adiDisplay: '0 à 40 mg/kg de poids corporel/jour', exposureConclusion: 'DJA réaffirmée par le JECFA ; l’exposition individuelle du produit n’est pas mesurée.', sourceIds: sources.map((item) => item.sourceId) };
     base.healthEffects = [{ category: 'carcinogenicity', effect: 'Danger potentiel classé groupe 2B par le CIRC, avec indices limités.', severity: 'serious', evidenceStrength: 'limited', sourceIds: sources.map((item) => item.sourceId).slice(0, 1) }];
   }
+  base.exposure = {
+    ...base.exposure,
+    adi: base.adiValue,
+    unit: base.adiUnit,
+    notes: [...(base.exposure?.notes ?? []), assessment.exposureConcern === 'unknown' ? 'Exposition individuelle non mesurée.' : 'Évaluation d’exposition conservée dans le profil scientifique.'],
+  };
+  base.potentialEffects = base.healthEffects.map((effect) => ({
+    effect: effect.effect,
+    severity: effect.severity,
+    evidenceLevel: effect.evidenceStrength,
+    appliesTo: 'additive' as const,
+    notes: effect.population,
+  }));
   return base;
 }
 
@@ -135,6 +200,15 @@ export function getAdditiveReviewCandidates(tags: string[], knownCodes: Readonly
 
 export type SupabaseAdditiveScienceRow = Partial<AdditiveScientificProfile> & {
   code: string;
+  names?: { fr?: string; en?: string };
+  aliases?: string[];
+  function_name?: string;
+  regulatory_status_detail?: { eu?: string; notes?: string[] };
+  authority_evaluations?: AdditiveAuthorityEvaluation[];
+  exposure?: AdditiveExposureProfile;
+  potential_effects?: AdditivePotentialEffect[];
+  restrictions?: string[];
+  evidence_level?: AdditiveEvidenceStrength;
   canonical_name?: string;
   function_classes?: string[];
   regulatory_status?: string;
@@ -166,6 +240,15 @@ function fromSupabase(row: SupabaseAdditiveScienceRow): AdditiveScientificProfil
   return {
     ...local,
     code: row.code.toUpperCase(),
+    names: row.names ?? local.names,
+    aliases: row.aliases ?? local.aliases,
+    function: row.function_name ?? local.function,
+    regulatoryStatusDetail: row.regulatory_status_detail ?? local.regulatoryStatusDetail,
+    authorityEvaluations: row.authority_evaluations ?? local.authorityEvaluations,
+    exposure: row.exposure ?? local.exposure,
+    potentialEffects: row.potential_effects ?? local.potentialEffects,
+    restrictions: row.restrictions ?? local.restrictions,
+    evidenceLevel: row.evidence_level ?? local.evidenceLevel,
     canonicalName: row.canonical_name ?? local.canonicalName,
     functionClasses: row.function_classes ?? local.functionClasses,
     regulatoryStatus: row.regulatory_status ?? local.regulatoryStatus,
