@@ -141,7 +141,6 @@ export default function TabLayout() {
                   : state.routes[state.index]?.name === tab.route;
 
               const center = index === 2;
-              const scan = tab.route === 'community';
 
               return (
                 <Pressable
@@ -170,7 +169,7 @@ export default function TabLayout() {
                     >
                       <View pointerEvents="none" style={styles.centerHalo} />
                       <LinearGradient
-                        colors={['#B35BC7', '#69277F', '#32123F']}
+                        colors={['#3A2D52', '#1F1733', '#110C1E']}
                         locations={[0, 0.46, 1]}
                         style={styles.centerButton}
                       >
@@ -178,7 +177,7 @@ export default function TabLayout() {
                         <Ionicons
                           name={active ? tab.activeIcon : tab.icon}
                           size={30}
-                          color="#FFF9F2"
+                          color={colors.goldLight}
                           style={styles.centerIcon}
                         />
                       </LinearGradient>
@@ -187,22 +186,13 @@ export default function TabLayout() {
                     <View
                       style={[
                         styles.iconWrap,
-                        scan && styles.scanGlow,
                         active && styles.iconActive,
                       ]}
                     >
                       <Ionicons
                         name={active ? tab.activeIcon : tab.icon}
                         size={20}
-                        color={
-                          scan
-                            ? active
-                              ? '#8FF0BC'
-                              : '#72DFA4'
-                            : active
-                              ? colors.primaryLight
-                              : colors.textMuted
-                        }
+                        color={active ? colors.primaryLight : colors.textMuted}
                       />
                     </View>
                   )}
@@ -283,19 +273,8 @@ const styles = StyleSheet.create({
     borderRadius: 12,
   },
 
-  scanGlow: {
-    backgroundColor: 'rgba(92,219,154,0.10)',
-    borderWidth: 1,
-    borderColor: 'rgba(114,223,164,0.22)',
-    shadowColor: '#63E6A7',
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.55,
-    shadowRadius: 10,
-    elevation: 5,
-  },
-
   iconActive: {
-    backgroundColor: 'rgba(90,43,115,0.28)',
+    backgroundColor: 'rgba(227,181,90,0.13)',
   },
 
   centerMotion: {
@@ -310,9 +289,9 @@ const styles = StyleSheet.create({
     width: 68,
     height: 68,
     borderRadius: 34,
-    backgroundColor: 'rgba(222,153,255,0.14)',
-    shadowColor: '#D9A0FF',
-    shadowOpacity: 0.9,
+    backgroundColor: 'rgba(227,181,90,0.08)',
+    shadowColor: '#E3B55A',
+    shadowOpacity: 0.45,
     shadowRadius: 20,
     elevation: 10,
   },
@@ -331,9 +310,9 @@ const styles = StyleSheet.create({
       width: 0,
       height: 4,
     },
-    shadowOpacity: 1,
-    shadowRadius: 18,
-    elevation: 18,
+    shadowOpacity: 0.45,
+    shadowRadius: 14,
+    elevation: 14,
   },
 
   centerHighlight: {
@@ -343,7 +322,7 @@ const styles = StyleSheet.create({
     left: 8,
     height: 16,
     borderRadius: 10,
-    backgroundColor: 'rgba(255,255,255,0.18)',
+    backgroundColor: 'rgba(255,255,255,0.07)',
   },
 
   centerIcon: {

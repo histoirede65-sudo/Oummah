@@ -9,6 +9,7 @@ import HomeGoalsSection from "../../components/HomeGoalsSection";
 import HomeAnnouncementBanner from "../../components/HomeAnnouncementBanner";
 import AllahNamesHomeSection from "../../components/AllahNamesHomeSection";
 import HomeShortcuts from "../../components/HomeShortcuts";
+import HomeDailyRow from "../../components/home/HomeDailyRow";
 import PrayerCard from "../../components/PrayerCard";
 import HomeTahajjudCard from "../../components/HomeTahajjudCard";
 import type { MosquePrayerSchedule } from "../../features/mosques/data/mosquePrayerTimes";
@@ -27,6 +28,7 @@ export default function HomeScreen() {
   const welcomeOpacity = useRef(new Animated.Value(0)).current;
   const welcomeScale = useRef(new Animated.Value(0.88)).current;
   const scrollRef = useRef<ScrollView>(null);
+  const dashboardOffset = useRef(0);
   const wasilOffset = useRef(0);
 
 
@@ -64,7 +66,7 @@ export default function HomeScreen() {
   const revealWasilInput = () => {
     setTimeout(() => {
       scrollRef.current?.scrollTo({
-        y: Math.max(0, wasilOffset.current - 260),
+        y: Math.max(0, dashboardOffset.current + wasilOffset.current - 260),
         animated: true,
       });
     }, 120);
@@ -90,11 +92,18 @@ export default function HomeScreen() {
           <HomeAnnouncementBanner />
           <View
             onLayout={(event) => {
-              wasilOffset.current = event.nativeEvent.layout.y;
+              dashboardOffset.current = event.nativeEvent.layout.y;
             }}
             style={[styles.dashboard, { paddingHorizontal: dashboardHorizontalPadding }]}
           >
-            <DalilCard onPromptFocus={revealWasilInput} />
+            <HomeDailyRow />
+            <View
+              onLayout={(event) => {
+                wasilOffset.current = event.nativeEvent.layout.y;
+              }}
+            >
+              <DalilCard onPromptFocus={revealWasilInput} />
+            </View>
             <HomeShortcuts />
             <AllahNamesHomeSection />
             <HomeGoalsSection />

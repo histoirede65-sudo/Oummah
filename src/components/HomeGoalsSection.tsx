@@ -8,8 +8,6 @@ import { colors } from '../theme/colors';
 import { typography } from '../theme/typography';
 import { isGoalComplete } from '../features/daily-goals/domain/DailyGoal';
 import { useDailyGoalsViewModel } from '../features/daily-goals/presentation/useDailyGoalsViewModel';
-import HadithCard from './home/HadithCard';
-import VerseOfDayCard from './home/VerseOfDayCard';
 import { getValidSession } from '../features/auth/SupabaseAuthService';
 import { useI18n } from '../i18n';
 
@@ -38,11 +36,6 @@ export default function HomeGoalsSection() {
   const dailyProgress = Math.max(0, Math.min(1, goalsModel.summary?.progress ?? 0));
   return (
     <View style={styles.section}>
-      <View style={styles.dailyRow}>
-        <HadithCard />
-        <VerseOfDayCard />
-      </View>
-
       <Pressable
         onPress={() => router.push(isAuthenticated ? '/daily-goals' : '/profile')}
         style={({ pressed }) => [
@@ -125,12 +118,6 @@ export default function HomeGoalsSection() {
 const styles = StyleSheet.create({
   section: {
     marginBottom: 16,
-  },
-  dailyRow: {
-    height: 134,
-    marginBottom: 7,
-    flexDirection: 'row',
-    gap: 7,
   },
   card: {
     flex: 1,

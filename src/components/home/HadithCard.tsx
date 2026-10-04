@@ -77,7 +77,7 @@ export default function HadithCard() {
       style={({ pressed }) => [styles.card, pressed && styles.pressed]}
     >
       <LinearGradient
-        colors={["#28183F", "#1A1231"]}
+        colors={["#1E1730", "#151022"]}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
         style={StyleSheet.absoluteFill}
@@ -108,7 +108,7 @@ const styles = StyleSheet.create({
     padding: 12,
     borderRadius: 22,
     borderWidth: 1,
-    borderColor: "rgba(229,193,255,0.12)",
+    borderColor: "rgba(227,181,90,0.18)",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.1,
