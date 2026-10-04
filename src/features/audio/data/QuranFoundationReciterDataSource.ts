@@ -1,3 +1,5 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
 import { quranFoundationRepository } from "../../quranfoundation/QuranFoundationRepository";
 import type { CatalogReciter } from "../domain/audio";
 import { getReciterImage } from "./QuranFoundationReciterMapper";
@@ -18,10 +20,26 @@ function canonicalReciterKey(value: string) {
   return normalized;
 }
 
-function displayReciterName(reciter: { id: number | string; name?: string }) {
-  if (String(reciter.id) === "12") return "Ali Al-Hudhaify";
-  if (String(reciter.id) === "176") return "Ahmed Abdelhamid Tahoun";
-  return reciter.name ?? String(reciter.id);
+const LANGUAGE_STORAGE_KEY = "@oummah/language/v1";
+
+// Several recordings share a reciter's name: the suffix tells them apart.
+// Ids and recordings checked against the audio files (download.quranicaudio.com/qdc/...).
+const RECORDING_SUFFIX: Record<string, { fr: string; en: string }> = {
+  "1": { fr: "Mujawwad", en: "Mujawwad" },
+  "2": { fr: "Murattal", en: "Murattal" },
+  "12": { fr: "Mu‘allim", en: "Mu‘allim" },
+  "168": { fr: "répétition enfants", en: "children repeat" },
+};
+
+function displayReciterName(reciter: { id: number | string; name?: string }, language: "fr" | "en" = "fr") {
+  const id = String(reciter.id);
+  const base =
+    id === "176" ? "Ahmed Abdelhamid Tahoun"
+    : id === "12" ? "Mahmoud Khalil Al-Husary"
+    : id === "168" ? "Muhammad Siddiq al-Minshawi"
+    : reciter.name ?? id;
+  const suffix = RECORDING_SUFFIX[id]?.[language];
+  return suffix ? `${base} (${suffix})` : base;
 }
 
 function displayReciterCountry(reciter: { id: number | string }) {
@@ -41,15 +59,18 @@ export class QuranFoundationReciterDataSource {
   async list(): Promise<CatalogReciter[]> {
     const reciters =
       await quranFoundationRepository.getReciters() as any[];
+    const storedLanguage = await AsyncStorage.getItem(LANGUAGE_STORAGE_KEY).catch(() => null);
+    const language = storedLanguage === "en" ? "en" : "fr";
 
+    // Only true duplicates are dropped (e.g. Mishary's "Streaming" copy of the same recording).
     const uniqueReciters = reciters.filter((reciter, index, list) => {
-      const key = canonicalReciterKey(reciter.name ?? String(reciter.id));
-      return list.findIndex((candidate) => canonicalReciterKey(candidate.name ?? String(candidate.id)) === key) === index;
+      const key = canonicalReciterKey(displayReciterName(reciter));
+      return list.findIndex((candidate) => canonicalReciterKey(displayReciterName(candidate)) === key) === index;
     });
 
     return orderReciters(uniqueReciters.map((reciter, index) => ({
       id: String(reciter.id),
-      name: displayReciterName(reciter),
+      name: displayReciterName(reciter, language),
 
       language: "ar",
       country: displayReciterCountry(reciter),

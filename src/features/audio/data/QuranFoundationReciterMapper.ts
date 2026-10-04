@@ -29,7 +29,7 @@ export const RECITER_IMAGES: Record<number, any> = {
   4: abuBakrAlShatri,
   5: haniArRifai,
   6: mahmoudAlHusary,
-  12: houdaifi,
+  12: mahmoudAlHusary,
   9: muhammadSiddiqAlMinshawi,
   1: abdulBasit,
   2: abdulBasit,

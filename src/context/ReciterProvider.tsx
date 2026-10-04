@@ -48,11 +48,12 @@ function canonicalReciterKey(value: string) {
   return normalized;
 }
 
+// Older caches still name recording 12 after the wrong reciter: it is Al-Husary's Mu‘allim.
 function normalizeDisplayedReciter(reciter: CatalogReciter) {
-  if (reciter.id === "12") {
+  if (reciter.id === "12" && /hudh?aif/i.test(reciter.name)) {
     return {
       ...reciter,
-      name: "Ali Al-Hudhaify",
+      name: "Mahmoud Khalil Al-Husary (Mu‘allim)",
     };
   }
 
