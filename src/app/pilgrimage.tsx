@@ -93,6 +93,7 @@ export default function PilgrimageHome() {
 
   const seasonCopy = season ? seasonText(season) : null;
   const checklistDone = state?.checklist.length ?? 0;
+  const pendingDuas = state?.duaRequests.filter((item) => !item.doneAt).length ?? 0;
 
   return (
     <View style={styles.screen}>
@@ -166,6 +167,23 @@ export default function PilgrimageHome() {
               );
             })}
           </View>
+
+          <Pressable
+            accessibilityRole="button"
+            onPress={() => router.push("/pilgrimage/duas")}
+            style={({ pressed }) => [styles.duaCard, pressed && styles.pressed]}
+          >
+            <View style={styles.duaIcon}><Ionicons name="heart" size={22} color={pil.ink} /></View>
+            <View style={styles.duaCopy}>
+              <Text style={styles.duaTitle}>Mes dou‘as à faire</Text>
+              <Text style={styles.duaText}>
+                {pendingDuas
+                  ? `${pendingDuas} dou‘a${pendingDuas > 1 ? "s" : ""} confiée${pendingDuas > 1 ? "s" : ""} par vos proches`
+                  : "Notez les dou‘as que vos proches vous confient"}
+              </Text>
+            </View>
+            <Ionicons name="chevron-forward" size={20} color={pil.gold} />
+          </Pressable>
 
           <Text style={styles.section}>Sur place</Text>
           <View style={styles.tools}>
@@ -248,6 +266,11 @@ const styles = StyleSheet.create({
   coverBarFill: { height: "100%", borderRadius: 2, backgroundColor: pil.gold },
   coverAction: { minHeight: 34, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 5, borderRadius: 17, backgroundColor: pil.gold },
   coverActionText: { color: pil.ink, fontSize: 13, fontWeight: "800", ...pilType.sans },
+  duaCard: { marginTop: 18, padding: 16, flexDirection: "row", alignItems: "center", gap: 14, borderRadius: 22, borderWidth: 1, borderColor: pil.goldLine, backgroundColor: pil.surfaceHigh },
+  duaIcon: { width: 46, height: 46, alignItems: "center", justifyContent: "center", borderRadius: 23, backgroundColor: pil.gold },
+  duaCopy: { flex: 1 },
+  duaTitle: { color: pil.text, fontSize: 17, fontWeight: "800", ...pilType.sans },
+  duaText: { marginTop: 3, color: pil.textSoft, fontSize: 14, lineHeight: 20, ...pilType.sans },
   tools: { flexDirection: "row", flexWrap: "wrap", gap: 10 },
   tool: { width: "48.4%", minHeight: 128, padding: 14, borderRadius: 22, borderWidth: 1, borderColor: pil.line, backgroundColor: pil.surface },
   toolDoubt: { borderColor: "rgba(242,165,155,0.35)" },

@@ -320,6 +320,18 @@ const BookPageView = memo(function BookPageView({ page, width, total, done, hajj
         </Pressable>
       ) : null}
 
+      {step.duas ? (
+        <Pressable
+          accessibilityRole="button"
+          onPress={() => router.push("/pilgrimage/duas")}
+          style={({ pressed }) => [styles.duasButton, pressed && styles.pressed]}
+        >
+          <Ionicons name="heart-outline" size={21} color={pil.gold} />
+          <Text style={styles.duasButtonText}>Mes dou‘as à faire</Text>
+          <Ionicons name="chevron-forward" size={18} color={pil.gold} />
+        </Pressable>
+      ) : null}
+
       {step.say?.length ? (
         <>
           <SectionTitle icon="chatbubble-ellipses-outline">Ce que je dis</SectionTitle>
@@ -547,6 +559,8 @@ const styles = StyleSheet.create({
   card: { padding: 14, borderRadius: 20, borderWidth: 1, borderColor: pil.line, backgroundColor: pil.surface },
   warningCard: { borderColor: "rgba(242,165,155,0.30)", backgroundColor: pil.redSoft },
   toolButton: { marginTop: 14, minHeight: 56, paddingHorizontal: 16, flexDirection: "row", alignItems: "center", gap: 12, borderRadius: 18, backgroundColor: pil.gold },
+  duasButton: { marginTop: 10, minHeight: 52, paddingHorizontal: 16, flexDirection: "row", alignItems: "center", gap: 12, borderRadius: 18, borderWidth: 1, borderColor: pil.goldLine, backgroundColor: pil.goldSoft },
+  duasButtonText: { flex: 1, color: pil.text, fontSize: 16, fontWeight: "800", ...pilType.sans },
   toolButtonText: { flex: 1, color: pil.ink, fontSize: 16, fontWeight: "800", ...pilType.sans },
   tabs: { marginBottom: 6, padding: 4, flexDirection: "row", gap: 4, borderRadius: 14, backgroundColor: "rgba(255,255,255,0.06)" },
   tab: { flex: 1, minHeight: 38, alignItems: "center", justifyContent: "center", borderRadius: 10 },

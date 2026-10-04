@@ -37,6 +37,8 @@ export type Step = {
   mistakes?: Point[];
   differences?: JuristicDifference[];
   tool?: Tool;
+  /** Shows the « Mes dou‘as à faire » shortcut (places where pilgrims make their requests). */
+  duas?: boolean;
   /** Hajj only: the types this page applies to (all when absent). */
   only?: HajjType[];
 };

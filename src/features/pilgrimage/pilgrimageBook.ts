@@ -141,6 +141,7 @@ const tawaf: Step = {
   mistakes: [p("Ne comptez pas les allers-retours comme des tours et ne poussez pas.", [H("Sahîh Muslim 1218")])],
   say: ["takbir", "rabbana", "free"],
   tool: "tawaf",
+  duas: true,
 };
 
 const blackStone: Step = {
@@ -211,6 +212,7 @@ const sai: Step = {
   women: [p("La femme marche normalement.", [Q("Coran 2:158")])],
   say: ["safa", "safa-dhikr", "forgiveness", "free"],
   tool: "sai",
+  duas: true,
 };
 
 const hair: Step = {
@@ -392,6 +394,7 @@ export const HAJJ_BOOK: Book = {
         ],
         avoid: [p("Vérifiez que vous êtes bien à l’intérieur des limites de ‘Arafât, signalées sur place.", [F("Fiqh : limites de ‘Arafât")])],
         say: ["arafa", "rabbana", "free"],
+        duas: true,
       }],
     },
     {
