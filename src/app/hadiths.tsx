@@ -195,6 +195,7 @@ export default function HadithHomeScreen() {
                         ? t(`hadith.themeQuery.${theme.id}` as never)
                         : theme.query,
                       theme: t(`hadith.theme.${theme.id}` as never),
+                      category: theme.categoryId ?? "",
                     },
                   })
                 }

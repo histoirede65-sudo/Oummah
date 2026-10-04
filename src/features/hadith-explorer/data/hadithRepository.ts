@@ -17,6 +17,8 @@ import { hadithCache } from "./hadithCache";
 import { getHadithCategoryCache, isHadithCategoryCacheFresh, putHadithCategoryCache } from "./hadithCategoryCache";
 import { createHadithPreview, type HadithPreview } from "../presentation/hadithPreview";
 
+const themeCategoryCache = new Map<string, Promise<HadithSummary[]>>();
+
 export function normalizeHadithQuery(value: string) {
   return value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLocaleLowerCase("fr").trim();
 }
@@ -177,6 +179,25 @@ export const hadithRepository = {
     })();
     detailRequests.set(key, request);
     request.finally(() => detailRequests.delete(key)).catch(() => undefined);
+    return request;
+  },
+
+  /** Every hadith HadeethEnc files under a category (subcategories included), in its own order. */
+  listCategory(categoryId: string, language: "fr" | "en" = "fr"): Promise<HadithSummary[]> {
+    const key = `${language}:${categoryId}`;
+    const cached = themeCategoryCache.get(key);
+    if (cached) return cached;
+    const request = (async () => {
+      const value: HadithSummary[] = [];
+      for (let page = 1; page <= 12; page += 1) {
+        const items = await fetchHadithPage(page, 100, categoryId, language);
+        value.push(...items);
+        if (items.length < 100) break;
+      }
+      return value;
+    })();
+    themeCategoryCache.set(key, request);
+    request.catch(() => themeCategoryCache.delete(key));
     return request;
   },
 
