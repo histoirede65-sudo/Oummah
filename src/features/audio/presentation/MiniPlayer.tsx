@@ -13,6 +13,7 @@ import { useI18n } from "../../../i18n";
 import { colors } from "../../../theme/colors";
 import { typography } from "../../../theme/typography";
 import { usePlayerSwipeGestures } from "../../../components/surah/PlayerGestures";
+import { SURAHS } from "../../../data/surahs";
 
 export default function MiniPlayer() {
   const { t } = useI18n();
@@ -34,6 +35,9 @@ export default function MiniPlayer() {
     pathname.startsWith("/dhikr") || pathname.startsWith("/dua");
   const reciter = track ? getTrackReciter(track) : null;
   const isVisible = Boolean(track && reciter) && !isFullPlayer && !isDhikrPlayer && miniPlayerState.mode === "mini";
+  const trackSurahId = track ? getTrackSurahId(track) : undefined;
+  // Same spelling as the rest of the app ("Al-Fatiha"), not the audio catalogue's ("Al-Fatihah").
+  const title = SURAHS.find((surah) => surah.id === trackSurahId)?.transliteration ?? track?.title ?? "";
   const reciterImage = reciter
     ? getReciterImage(Number(reciter.id), reciter.name)
     : undefined;
@@ -100,7 +104,7 @@ export default function MiniPlayer() {
       />
       <Pressable
         accessibilityRole="button"
-        accessibilityLabel={t("common.openPlayer", { title: track.title })}
+        accessibilityLabel={t("common.openPlayer", { title })}
         onPress={openFullPlayer}
         style={({ pressed }) => [styles.details, pressed && styles.pressed]}
       >
@@ -119,7 +123,7 @@ export default function MiniPlayer() {
         </View>
         <View style={styles.copy}>
           <Text numberOfLines={1} style={styles.title}>
-            {track.title}
+            {title}
           </Text>
           <Text numberOfLines={1} style={styles.subtitle}>
             {reciter.name}
@@ -230,8 +234,8 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     borderRadius: 17,
     borderWidth: 1,
-    borderColor: "rgba(255,242,222,0.22)",
-    backgroundColor: "rgba(77,40,77,0.82)",
+    borderColor: "rgba(255,242,222,0.18)",
+    backgroundColor: "rgba(17,12,26,0.78)",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.24,

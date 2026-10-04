@@ -515,7 +515,8 @@ export const listeningStyles = StyleSheet.create({
 
   content: {
     paddingHorizontal: 16,
-    paddingBottom: 130,
+    // Leaves room for the floating mini player above the last row.
+    paddingBottom: 190,
   },
 
   horizontal: {
