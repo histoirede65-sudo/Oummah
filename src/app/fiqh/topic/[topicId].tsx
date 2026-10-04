@@ -148,6 +148,14 @@ export default function FiqhLessonScreen() {
           </View>
         ) : null}
 
+        {topic.link || topic.categoryId === "hajj-umra" ? (
+          <Pressable onPress={() => router.push((topic.link?.route ?? "/pilgrimage") as never)} style={styles.guide}>
+            <Ionicons name="map-outline" size={19} color={fq.gold} />
+            <Text style={styles.guideText}>{topic.link?.label ?? "Ouvrir le guide pas à pas Hajj & ‘Umra"}</Text>
+            <Ionicons name="chevron-forward" size={17} color={fq.gold} />
+          </Pressable>
+        ) : null}
+
         {sources.length ? (
           <View style={styles.sources}>
             <Pressable accessibilityRole="button" accessibilityState={{ expanded: showSources }} onPress={() => setShowSources((value) => !value)} style={styles.sourcesHead}>
@@ -232,6 +240,8 @@ const styles = StyleSheet.create({
   noteText: { color: fq.inkMuted },
   personal: { flexDirection: "row", gap: 10, alignItems: "center", marginTop: 24, padding: 14, borderRadius: 16, backgroundColor: fq.goldSoft },
   personalText: { flex: 1, color: fq.ink, fontSize: 14.5, lineHeight: 21 },
+  guide: { flexDirection: "row", alignItems: "center", gap: 10, marginTop: 24, padding: 15, borderRadius: 16, borderWidth: 1, borderColor: fq.line },
+  guideText: { flex: 1, color: fq.ink, fontSize: 15, fontWeight: "700" },
   sources: { marginTop: 28, borderRadius: 16, backgroundColor: fq.paper, paddingHorizontal: 15 },
   sourcesHead: { flexDirection: "row", alignItems: "center", gap: 8, height: 52 },
   sourcesTitle: { flex: 1, color: fq.ink, fontSize: 15, fontWeight: "700" },

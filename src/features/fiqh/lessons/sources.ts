@@ -160,6 +160,38 @@ export const LESSON_SOURCES: FiqhSource[] = [
   B("2026", "le Prophète ﷺ faisait la retraite (i‘tikâf) les dix dernières nuits de Ramadan jusqu’à sa mort"),
   Q(97, 3, "« La Nuit du Destin vaut mieux que mille mois »"),
   T("3513", "invocation de la Nuit du Destin : « Allâhumma innaka ‘afuwwun tuḥibbu-l-‘afwa fa‘fu ‘annî »"),
+
+  // Zakât
+  B("1395", "Mu‘âdh envoyé au Yémen : une aumône prise de leurs riches et rendue à leurs pauvres"),
+  B("1403", "celui qui ne paie pas la zakât de ses biens les verra changés en serpent le Jour de la Résurrection"),
+  Q(9, 34, "menace contre ceux qui thésaurisent l’or et l’argent sans les dépenser dans le sentier d’Allah"),
+  M("2588", "« L’aumône ne diminue en rien les biens »"),
+  B("1463", "pas de zakât pour le musulman sur son esclave ni sur son cheval"),
+  M("1072", "l’aumône ne convient pas à la famille de Muhammad ﷺ"),
+  AD("1633", "pas de part dans la zakât pour le riche ni pour l’homme fort capable de gagner sa vie"),
+  B("1466", "Zaynab, épouse d’Ibn Mas‘ûd : donner à ses proches vaut deux récompenses"),
+  T("623", "Mu‘âdh : un veau d’un an pour trente bovins, une vache de deux ans pour quarante"),
+  Q(6, 141, "« Acquittez-en le droit le jour de la récolte »"),
+  B("1506", "Abû Sa‘îd : un sâ‘ de nourriture, d’orge, de dattes, de fromage séché ou de raisins secs"),
+  B("1511", "les Compagnons donnaient la zakât al-fitr un ou deux jours avant l’Aïd"),
+  AD("1609", "la zakât al-fitr purifie le jeûneur et nourrit les pauvres ; acceptée si donnée avant la prière", "Hasan selon al-Albânî"),
+
+  // Hajj & ‘Umra
+  B("1521", "celui qui fait le Hajj sans obscénité ni perversité revient comme au jour de sa naissance"),
+  B("1773", "d’une ‘Umra à l’autre, expiation ; le Hajj accepté n’a d’autre récompense que le Paradis"),
+  B("1862", "la femme ne voyage qu’avec un mahram ; un homme inscrit pour une expédition part faire le Hajj avec son épouse"),
+  Q(2, 196, "« Accomplissez pour Allah le Hajj et la ‘Umra » ; compensation du rasage par jeûne, aumône ou sacrifice"),
+  Q(2, 197, "le Hajj a lieu en des mois connus ; ni rapports, ni perversité, ni dispute"),
+  B("1542", "ce que le muhrim ne porte pas : chemise, turban, pantalon, burnous, khuff, vêtement parfumé"),
+  B("1838", "la femme en ihrâm ne porte ni niqâb ni gants"),
+  M("1409", "le muhrim ne se marie pas et ne marie personne"),
+  Q(5, 95, "interdiction de tuer le gibier en état d’ihrâm"),
+  B("1814", "Ka‘b ibn ‘Ujra : rasage pour une gêne, compensé par trois jours de jeûne, six pauvres nourris ou un mouton"),
+  M("1209", "Asmâ’ bint ‘Umays, en lochies, fit le ghusl et entra en ihrâm"),
+  B("1736", "le jour du sacrifice, à ceux qui avaient interverti les rites : « Fais, il n’y a pas de mal »"),
+  B("1681", "Sawda a demandé à quitter Muzdalifa avant les gens, ce qui lui fut permis"),
+  B("1755", "les gens reçurent l’ordre que leur dernier acte soit à la Maison, sauf la femme en règles"),
+  B("1782", "une ‘Umra en Ramadan équivaut à un Hajj"),
 ];
 
 export { B, M, AD, T, IM, Q };
