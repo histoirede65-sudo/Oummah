@@ -120,7 +120,8 @@ export default function HadithCollectionsScreen() {
                       {collection.arabicName}
                     </Text>
                     <Text numberOfLines={2} style={styles.title}>
-                      {t(`hadith.collection.${collection.id}.name` as never)}
+                      {/* Word joiner after hyphens: "Sahih / al-Bukhari", never "Sahih al- / Bukhari". */}
+                      {(t(`hadith.collection.${collection.id}.name` as never) as string).replace(/-/g, "-⁠")}
                     </Text>
                   </View>
                 </View>
