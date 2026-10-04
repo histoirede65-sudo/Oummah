@@ -70,7 +70,7 @@ export default function AddHalalPlaceScreen() {
   const [locating, setLocating] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
-  const useMyLocation = async () => {
+  const requestMyLocation = async () => {
     setLocating(true);
     try {
       const permission = await Location.requestForegroundPermissionsAsync();
@@ -168,7 +168,7 @@ export default function AddHalalPlaceScreen() {
             </View>
           </View>
           <Field label="Adresse complète *" value={address} onChangeText={setAddress} placeholder="Numéro, rue, ville et code postal" />
-          <Pressable disabled={locating} onPress={() => void useMyLocation()} style={styles.locationButton}>
+          <Pressable disabled={locating} onPress={() => void requestMyLocation()} style={styles.locationButton}>
             {locating ? <ActivityIndicator color={colors.goldLight} /> : <Ionicons name="locate-outline" size={18} color={colors.goldLight} />}
             <View style={styles.locationCopy}>
               <Text style={styles.locationTitle}>{coordinates ? 'Position enregistrée' : 'Utiliser ma position actuelle'}</Text>

@@ -2,7 +2,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import type { Href } from "expo-router";
 import { router, useLocalSearchParams } from "expo-router";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Animated, Image, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, View } from "react-native";
 
 import { PROPHET_STORIES } from "../../features/prophets/allProphetsData";
@@ -66,7 +66,7 @@ export default function ProphetStoryScreen() {
   const icon = ICONS[activeIndex % ICONS.length];
   const done = completed.includes(chapter.id);
 
-  const goTo = useCallback((index: number) => {
+  const goTo = (index: number) => {
     const next = Math.min(story.chapters.length - 1, Math.max(0, index));
     if (next === activeIndex || isTransitioning) return;
     setIsTransitioning(true);
@@ -101,7 +101,7 @@ export default function ProphetStoryScreen() {
         ]),
       ]).start(() => setIsTransitioning(false));
     }, 120);
-  }, [activeIndex, completed, heroScale, heroTextOpacity, heroTextTranslateY, isTransitioning, story, storyOpacity, storyTranslateY]);
+  };
 
   const toggleComplete = async () => {
     const next = done ? completed.filter((id) => id !== chapter.id) : [...completed, chapter.id];

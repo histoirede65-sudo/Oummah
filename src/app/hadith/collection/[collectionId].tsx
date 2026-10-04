@@ -112,6 +112,11 @@ export default function HadithCollectionDetailScreen() {
     return () => { active = false; };
   }, [items, visibleCount, language]);
 
+  const popularCategories = useMemo(
+    () => categories.slice().sort((left, right) => right.hadithCount - left.hadithCount).slice(0, 6),
+    [categories],
+  );
+
   if (!collection) {
     return (
       <LinearGradient colors={["#080713", "#120A1D", "#080713"]} style={styles.screen}>
@@ -127,10 +132,6 @@ export default function HadithCollectionDetailScreen() {
     router.push(`/hadith/${id}` as Href);
   };
 
-  const popularCategories = useMemo(
-    () => categories.slice().sort((left, right) => right.hadithCount - left.hadithCount).slice(0, 6),
-    [categories],
-  );
   const visible = items.slice(0, visibleCount);
   const isNawawi = collection.id === "nawawi";
   const collectionName = t(`hadith.collection.${collection.id}.name` as never);

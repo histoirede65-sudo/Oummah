@@ -248,7 +248,7 @@ export default function AddMosqueScreen() {
     return nextErrors;
   };
 
-  const useCurrentLocation = async () => {
+  const requestCurrentLocation = async () => {
     if (locating) return;
 
     setLocating(true);
@@ -531,7 +531,7 @@ export default function AddMosqueScreen() {
 
         <View style={styles.locationButtonWrap}>
           <Pressable
-            onPress={() => void useCurrentLocation()}
+            onPress={() => void requestCurrentLocation()}
             disabled={locating}
             style={({ pressed }) => [
               styles.locationButton,

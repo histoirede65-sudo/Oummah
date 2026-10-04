@@ -82,16 +82,6 @@ export default function ProphetAudioScreen() {
     });
   };
 
-  if (!audioEpisode) {
-    return (
-      <SafeAreaView style={styles.missing}>
-        <Text style={styles.missingText}>Ce récit audio n’est pas encore disponible.</Text>
-        <Pressable onPress={() => router.back()} style={styles.missingButton}>
-          <Text style={styles.missingButtonText}>Retour</Text>
-        </Pressable>
-      </SafeAreaView>
-    );
-  }
 
   const refreshTrackMetrics = () => {
     trackRef.current?.measureInWindow((x, _y, width) => {
@@ -143,6 +133,17 @@ export default function ProphetAudioScreen() {
       }),
     [displayDuration, trackWidth],
   );
+
+  if (!audioEpisode) {
+    return (
+      <SafeAreaView style={styles.missing}>
+        <Text style={styles.missingText}>Ce récit audio n’est pas encore disponible.</Text>
+        <Pressable onPress={() => router.back()} style={styles.missingButton}>
+          <Text style={styles.missingButtonText}>Retour</Text>
+        </Pressable>
+      </SafeAreaView>
+    );
+  }
 
   return (
     <>
