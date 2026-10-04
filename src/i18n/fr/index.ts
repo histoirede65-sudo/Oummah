@@ -873,7 +873,7 @@ export const fr = {
   'surahReader.surahVerseCount': 'Cette sourate contient {count} versets.',
   'surahReader.surahMeta': '{name} · Sourate {number} · {place} · {count} versets',
   'surahReader.goToVerse': 'Aller au verset',
-  'surahReader.settingsLabel': 'Réglages de lecture et récitateur',
+  'surahReader.settingsLabel': 'Réglages de lecture',
   'surahReader.verseNumberPlaceholder': 'Numéro du verset (1 à {count})',
   'surahReader.go': 'Aller',
   'surahReader.theme': 'Thème',

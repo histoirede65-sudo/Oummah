@@ -1195,8 +1195,9 @@ export default function SurahReadingScreen() {
           <Ionicons name="options-outline" size={21} color={colors.goldLight} />
         </Pressable>
       </View>
-      {showVerseJump ? (
-        <View style={styles.reciterSelectorSlot}>
+      <View style={styles.reciterSelectorSlot}>
+        <QuranReciterSelector compact />
+        {showVerseJump ? (
           <View style={styles.verseJumpRow}>
             <TextInput
               autoFocus
@@ -1215,8 +1216,8 @@ export default function SurahReadingScreen() {
               <Text style={styles.verseJumpGoText}>{t("surahReader.go")}</Text>
             </Pressable>
           </View>
-        </View>
-      ) : null}
+        ) : null}
+      </View>
       {showSettings ? (
         <View style={styles.settings}>
           <FlatList
@@ -1236,9 +1237,6 @@ export default function SurahReadingScreen() {
               </Pressable>
             )}
           />
-          <View style={styles.settingsReciter}>
-            <QuranReciterSelector compact />
-          </View>
         </View>
       ) : null}
       {loading ? (
@@ -1407,7 +1405,7 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(227,181,90,0.12)",
   },
   headerAction: { marginLeft: 8 },
-  settingsReciter: { marginTop: 10 },
+
   headerCopy: { flex: 1, marginLeft: 10 },
   title: {
     color: colors.text,
@@ -1430,6 +1428,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.backgroundSecondary,
   },
   verseJumpRow: {
+    marginTop: 7,
     flexDirection: "row",
     alignItems: "center",
     gap: 8,

@@ -864,7 +864,7 @@ export const en: Partial<Record<TranslationKey, string>> = {
   'surahReader.surahVerseCount': 'This surah contains {count} verses.',
   'surahReader.surahMeta': '{name} · Surah {number} · {place} · {count} verses',
   'surahReader.goToVerse': 'Go to verse',
-  'surahReader.settingsLabel': 'Reading settings and reciter',
+  'surahReader.settingsLabel': 'Reading settings',
   'surahReader.verseNumberPlaceholder': 'Verse number (1 to {count})',
   'surahReader.go': 'Go',
   'surahReader.theme': 'Theme',
