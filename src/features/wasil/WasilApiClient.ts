@@ -216,7 +216,7 @@ export async function deleteWasilConversation(conversationId: string) {
   if (!normalizedConversationId) {
     throw new WasilApiError(
       "INVALID_CONVERSATION_ID",
-      "La conversation Ã  supprimer nâ€™est pas valide.",
+      "La conversation à supprimer n’est pas valide.",
     );
   }
 
@@ -247,7 +247,7 @@ export async function deleteWasilConversation(conversationId: string) {
     if (!session) {
       throw new WasilApiError(
         "AUTH_REQUIRED",
-        "Votre session a expirÃ©. Reconnectez votre profil.",
+        "Votre session a expiré. Reconnectez votre profil.",
       );
     }
     response = await send(session.accessToken, session.user.id);
@@ -256,7 +256,7 @@ export async function deleteWasilConversation(conversationId: string) {
   if (!response.ok) {
     throw new WasilApiError(
       "CONVERSATION_DELETE_FAILED",
-      "La conversation nâ€™a pas pu Ãªtre supprimÃ©e.",
+      "La conversation n’a pas pu être supprimée.",
     );
   }
 }
