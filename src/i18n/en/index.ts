@@ -601,6 +601,7 @@ export const en: Partial<Record<TranslationKey, string>> = {
   'prayer.choicesSavedDevice': 'Each choice is saved automatically',
   'prayer.calculationMethodUpper': 'CALCULATION METHOD',
   'prayer.adjustCalculation': 'Prayer time settings',
+  'prayer.settingsShort': 'Settings',
   'prayer.chooseDegrees': 'Choose degrees',
   'prayer.degreesOptional': 'Advanced option · Fajr and Isha separately',
   'prayer.methodFrance': 'France (UOIF)',

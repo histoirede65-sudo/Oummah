@@ -1431,43 +1431,30 @@ export default function PrayerCard({ onScheduleChange }: { onScheduleChange?: (s
               />
             </Pressable>
 
-            <View style={styles.metaChipsRow}>
-              <Pressable
-                accessibilityRole="button"
-                accessibilityLabel={t("prayer.chooseCalculationMethod")}
-                onPress={() => void openCalculationSettings()}
-                style={({ pressed }) => [styles.metaChip, pressed && styles.metaRowPressed]}
-              >
-                <Ionicons name="calculator-outline" size={16} color={colors.goldLight} />
-                <View style={styles.metaChipCopy}>
-                  <Text allowFontScaling={false} numberOfLines={1} style={styles.metaChipTitle}>
-                    {t("prayer.adjustCalculation")}
-                  </Text>
-                  <Text allowFontScaling={false} numberOfLines={1} style={styles.metaChipSubtitle}>
-                    {calculationSettings.scheduleSource === "mosque" && source?.type === "mosque"
-                      ? t("prayer.mosqueTimes")
-                      : t("prayer.automaticAnglesDetail", { fajr: calculationSettings.fajrAngle, isha: calculationSettings.ishaAngle })}
-                  </Text>
-                </View>
-              </Pressable>
-
+            <View style={styles.settingsLine}>
               <Pressable
                 accessibilityRole="button"
                 accessibilityLabel={t("prayer.chooseLocation")}
+                hitSlop={8}
                 onPress={() => setLocationOptionsVisible(true)}
-                style={({ pressed }) => [styles.metaChip, pressed && styles.metaRowPressed]}
+                style={({ pressed }) => [styles.settingsPlace, pressed && styles.metaRowPressed]}
               >
-                <Ionicons name="location-outline" size={16} color={colors.goldLight} />
-                <View style={styles.metaChipCopy}>
-                  <Text allowFontScaling={false} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.78} style={styles.metaChipTitle}>
-                    {source?.type === "location" && source.label === "Votre position actuelle"
-                      ? t("prayer.currentLocation")
-                      : source?.label ?? t("prayer.yourLocation")}
-                  </Text>
-                  <Text allowFontScaling={false} numberOfLines={1} style={styles.metaChipSubtitle}>
-                    {t("prayer.timesLocation")}
-                  </Text>
-                </View>
+                <Ionicons name="location-outline" size={15} color={colors.goldLight} />
+                <Text allowFontScaling={false} numberOfLines={1} style={styles.settingsPlaceText}>
+                  {source?.type === "location" && source.label === "Votre position actuelle"
+                    ? t("prayer.currentLocation")
+                    : source?.label ?? t("prayer.yourLocation")}
+                </Text>
+              </Pressable>
+              <Pressable
+                accessibilityRole="button"
+                accessibilityLabel={t("prayer.chooseCalculationMethod")}
+                hitSlop={8}
+                onPress={() => void openCalculationSettings()}
+                style={({ pressed }) => [styles.settingsLink, pressed && styles.metaRowPressed]}
+              >
+                <Ionicons name="options-outline" size={15} color={colors.goldLight} />
+                <Text allowFontScaling={false} style={styles.settingsLinkText}>{t("prayer.settingsShort")}</Text>
               </Pressable>
             </View>
           </View>
@@ -2321,43 +2308,30 @@ const styles = StyleSheet.create({
     textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 3,
   },
-  metaChipsRow: {
-    marginTop: 16,
-    flexDirection: "row",
-    gap: 8,
-  },
-  metaChip: {
-    flex: 1,
-    minWidth: 0,
-    height: 47,
-    paddingHorizontal: 10,
+  settingsLine: {
+    marginTop: 14,
+    height: 32,
     flexDirection: "row",
     alignItems: "center",
-    borderRadius: 14,
-    borderWidth: 1,
-    borderColor: "rgba(255,236,209,0.22)",
-    backgroundColor: "rgba(20,17,28,0.62)",
-    shadowColor: "#000",
-    shadowOpacity: 0.18,
-    shadowRadius: 7,
-    shadowOffset: { width: 0, height: 3 },
+    gap: 12,
+    paddingHorizontal: 12,
+    borderRadius: 16,
+    backgroundColor: "rgba(8,7,19,0.42)",
   },
-  metaChipCopy: {
+  settingsPlace: { flex: 1, minWidth: 0, flexDirection: "row", alignItems: "center", gap: 6 },
+  settingsPlaceText: {
     flex: 1,
-    minWidth: 0,
-    marginLeft: 7,
-  },
-  metaChipTitle: {
     color: "#FFF9F2",
     fontFamily: typography.sans,
-    fontSize: 10.5,
-    fontWeight: "700",
+    fontSize: 12.5,
+    fontWeight: "600",
   },
-  metaChipSubtitle: {
-    marginTop: 2,
-    color: "rgba(242,224,202,0.76)",
+  settingsLink: { flexDirection: "row", alignItems: "center", gap: 4 },
+  settingsLinkText: {
+    color: colors.goldLight,
     fontFamily: typography.sans,
-    fontSize: 8.7,
+    fontSize: 12.5,
+    fontWeight: "600",
   },
   calculationHint: {
     marginTop: 8,

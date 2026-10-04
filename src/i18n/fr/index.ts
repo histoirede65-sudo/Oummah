@@ -610,6 +610,7 @@ export const fr = {
   'prayer.choicesSavedDevice': 'Chaque choix est enregistré automatiquement',
   'prayer.calculationMethodUpper': 'MÉTHODE DE CALCUL',
   'prayer.adjustCalculation': 'Réglages des horaires',
+  'prayer.settingsShort': 'Réglages',
   'prayer.chooseDegrees': 'Choisir les degrés',
   'prayer.degreesOptional': 'Option avancée · Fajr et Isha séparément',
   'prayer.methodFrance': 'France (UOIF)',
