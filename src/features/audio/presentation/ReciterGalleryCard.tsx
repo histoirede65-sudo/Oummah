@@ -190,7 +190,7 @@ function ReciterGalleryCard({
             style={StyleSheet.absoluteFill}
           />
           <View style={styles.portraitCopy}>
-            <Text numberOfLines={2} ellipsizeMode="tail" style={styles.name}>
+            <Text numberOfLines={3} adjustsFontSizeToFit minimumFontScale={0.85} style={styles.name}>
               {reciter.name}
             </Text>
             <Text numberOfLines={1} style={styles.country}>

@@ -183,7 +183,7 @@ export function ReciterCard({
     >
       <ReciterAvatar reciter={reciter} />
 
-      <Text numberOfLines={2} style={styles.reciterName}>
+      <Text numberOfLines={3} style={styles.reciterName}>
         {reciter.name}
       </Text>
 

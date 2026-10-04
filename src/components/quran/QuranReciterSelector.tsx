@@ -15,10 +15,11 @@ import { useReciter } from "../../context/ReciterProvider";
 import { getTrackSurahId } from "../../core/audio";
 import { colors } from "../../theme/colors";
 import { typography } from "../../theme/typography";
-import { useI18n } from "../../i18n";
+import { localizeReciterCountry } from "../../features/audio/presentation/reciterCountry";
+import { type TranslationKey, useI18n } from "../../i18n";
 
 export default function QuranReciterSelector({ compact = false }: { compact?: boolean }) {
-  const { t } = useI18n();
+  const { language, t } = useI18n();
   const [visible, setVisible] = useState(false);
   const { currentReciter, reciters, setCurrentReciter } = useReciter();
   const audio = useGlobalAudioPlayer();
@@ -67,7 +68,7 @@ export default function QuranReciterSelector({ compact = false }: { compact?: bo
         <View style={[styles.copy, compact && styles.copyCompact]}>
           {!compact ? <Text style={styles.eyebrow}>{t("quran.selectedReciter")}</Text> : null}
           {compact ? <Text style={styles.compactEyebrow}>{t("quran.reciter")}</Text> : null}
-          <Text numberOfLines={1} style={[styles.name, compact && styles.nameCompact]}>
+          <Text numberOfLines={compact ? 2 : 1} style={[styles.name, compact && styles.nameCompact]}>
             {currentReciter?.name ?? t("quran.chooseVoice")}
           </Text>
         </View>
@@ -137,7 +138,7 @@ export default function QuranReciterSelector({ compact = false }: { compact?: bo
                     </View>
                     <View style={styles.reciterCopy}>
                       <Text
-                        numberOfLines={1}
+                        numberOfLines={2}
                         style={[
                           styles.reciterName,
                           selected && styles.reciterNameSelected,
@@ -146,7 +147,9 @@ export default function QuranReciterSelector({ compact = false }: { compact?: bo
                         {reciter.name}
                       </Text>
                       <Text style={styles.reciterMeta}>
-                        {reciter.country} · {reciter.style}
+                        {[localizeReciterCountry(reciter.country, language), t(`recitations.style.${reciter.style}` as TranslationKey)]
+                          .filter(Boolean)
+                          .join(" · ")}
                       </Text>
                     </View>
                     <Ionicons
@@ -223,6 +226,7 @@ const styles = StyleSheet.create({
     fontFamily: typography.sans,
     fontSize: 13,
     fontWeight: "700",
+    lineHeight: 16,
   },
   changeAction: { marginLeft: 8, flexDirection: "row", alignItems: "center" },
   changeActionCompact: {
