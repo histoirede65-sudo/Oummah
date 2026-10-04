@@ -1931,24 +1931,25 @@ Deno.serve(async (request) => {
     v4ProductionBrainGuidance: featureFlags.v4ProductionBrainGuidance,
     v4ExecutionPlan: featureFlags.v4ExecutionPlan,
   });
-  let v4Analysis: WasilV4ShadowResult | null = null;
-  const v4AnalysisStartedAt = performance.now();
-  if (
-    featureFlags.v4ProductionBrainGuidance ||
-    featureFlags.v4ExecutionPlan
-  ) {
-    // Controlled activation: the Brain may advise prompt structure, but the
-    // stable engine retains credits, retrieval, web routing and validation.
-    v4Analysis = await runWasilV4ShadowPipeline(effectiveQuestion, requestId, webBudget);
-  } else {
-    // Pure shadow mode remains fire-and-forget and cannot affect production.
-    void runWasilV4ShadowPipeline(effectiveQuestion, requestId, webBudget);
-  }
-  markLatency("v4AnalysisMs", v4AnalysisStartedAt);
+  // The independent stages start together instead of one after the other:
+  // credit reservation, context loads and the semantic expansion first; the
+  // V4 analysis and the repositories as soon as the credits are reserved, so
+  // an account without credits never triggers a paid web search.
+  const semanticExpansionStartedAt = performance.now();
+  let semanticExpansionMs = 0;
+  const queryExpansionPromise = expandIslamicQuery(effectiveQuestion)
+    .then((value) => {
+      semanticExpansionMs = markLatency("semanticExpansionMs", semanticExpansionStartedAt);
+      return value;
+    });
+  // Awaited inside the try block below; this only avoids an unhandled
+  // rejection if the request ends before that.
+  queryExpansionPromise.catch(() => undefined);
 
   const sourceHint = submittedContext?.sourceId;
   const contextStartedAt = performance.now();
-  const [rememberedSourceIds, profileMemories, quranContext] = await Promise.all([
+  let contextLoadMs = 0;
+  const contextPromise = Promise.all([
     clarificationOf
       ? Promise.resolve([] as string[])
       : postgrestRpc("find_wasil_intent_memory", {
@@ -1960,15 +1961,14 @@ Deno.serve(async (request) => {
             return [] as string[];
           }),
     loadProfileMemories(user.id),
-    loadQuranContext(effectiveQuestion),
-  ]);
-  const contextLoadMs = markLatency("contextLoadMs", contextStartedAt);
-  const profileMemoryContext = profileMemories
-    .map(
-      (memory) =>
-        `${memory.display_label}: ${memory.memory_value.replace(/\s+/g, " ").trim()}`,
-    )
-    .join("\n");
+    loadQuranContext(effectiveQuestion).catch((error) => {
+      console.warn("WASIL_QURAN_CONTEXT_LOAD_FAILURE", error instanceof Error ? error.message : String(error));
+      return null;
+    }),
+  ]).then((value) => {
+    contextLoadMs = markLatency("contextLoadMs", contextStartedAt);
+    return value;
+  });
 
   // A clarification requested by Wasil grants exactly one free follow-up:
   // the immediately following user message. The client sends clarificationOf
@@ -2017,8 +2017,56 @@ Deno.serve(async (request) => {
     }
   }
 
+  const v4AnalysisStartedAt = performance.now();
+  let v4Promise: Promise<WasilV4ShadowResult | null>;
+  if (
+    featureFlags.v4ProductionBrainGuidance ||
+    featureFlags.v4ExecutionPlan
+  ) {
+    // Controlled activation: the Brain may advise prompt structure, but the
+    // stable engine retains credits, retrieval, web routing and validation.
+    v4Promise = runWasilV4ShadowPipeline(effectiveQuestion, requestId, webBudget)
+      .then((value) => {
+        markLatency("v4AnalysisMs", v4AnalysisStartedAt);
+        return value;
+      });
+  } else {
+    // Pure shadow mode remains fire-and-forget and cannot affect production.
+    void runWasilV4ShadowPipeline(effectiveQuestion, requestId, webBudget);
+    markLatency("v4AnalysisMs", v4AnalysisStartedAt);
+    v4Promise = Promise.resolve(null);
+  }
+
   try {
     const initialQueryProfile = analyzeWasilQuery(effectiveQuestion, mode);
+    const requestedCorpora = requestedDocumentaryCorpora(effectiveQuestion);
+    // Semantic intent expansion is a first-class stage for every request. It
+    // is shared by the Quran and Hadith repositories, which start as soon as
+    // it resolves, while the V4 analysis is still running.
+    const repositoryRetrievalStartedAt = performance.now();
+    const startHadithSearch = (expansion: IslamicQueryExpansion | null) => {
+      const hadithStartedAt = performance.now();
+      return searchHadithRepository(effectiveQuestion, {
+        force: true,
+        expansion,
+        budget: webBudget,
+      }).then((value) => ({ value, ms: elapsedMs(hadithStartedAt) }));
+    };
+    const hadithRequestedUpFront = requestedCorpora.hadith ||
+      initialQueryProfile.category === "hadith";
+    const quranPromise = queryExpansionPromise.then((expansion) => {
+      const quranStartedAt = performance.now();
+      return retrieveQuranKnowledgeSafely(effectiveQuestion, expansion)
+        .then((value) => ({ value, ms: elapsedMs(quranStartedAt) }));
+    });
+    const earlyHadithPromise = hadithRequestedUpFront
+      ? queryExpansionPromise.then(startHadithSearch)
+      : null;
+
+    const [queryExpansion, v4Analysis] = await Promise.all([
+      queryExpansionPromise,
+      v4Promise,
+    ]);
     const executionPlan: WasilProductionExecutionPlan | null =
       featureFlags.v4ExecutionPlan
         ? buildWasilProductionExecutionPlan({
@@ -2027,46 +2075,35 @@ Deno.serve(async (request) => {
             brainPlan: v4Analysis?.brainPlan ?? null,
           })
         : null;
-    // Semantic intent expansion is now a first-class stage for every request.
-    // It is shared by the Quran and Hadith repositories instead of being used
-    // only when the first Quran lookup fails.
-    const semanticExpansionStartedAt = performance.now();
-    const queryExpansion = await expandIslamicQuery(effectiveQuestion);
-    const semanticExpansionMs = markLatency(
-      "semanticExpansionMs",
-      semanticExpansionStartedAt,
-    );
-    const requestedCorpora = requestedDocumentaryCorpora(effectiveQuestion);
     const plannedSkills = new Set(
       v4Analysis?.brainPlan?.executionSteps.map((step) => step.skill) ?? [],
     );
-    const shouldRetrieveHadith = requestedCorpora.hadith ||
-      plannedSkills.has("hadith") || initialQueryProfile.category === "hadith";
-
-    // Once the intent is resolved, both repositories run in parallel. This
-    // preserves latency while ensuring they receive exactly the same semantic
-    // target and evidence vocabulary.
-    const repositoryRetrievalStartedAt = performance.now();
-    const quranStartedAt = performance.now();
-    const quranPromise = retrieveQuranKnowledgeSafely(effectiveQuestion, queryExpansion)
-      .then((value) => ({ value, ms: elapsedMs(quranStartedAt) }));
-    const hadithStartedAt = performance.now();
-    const hadithPromise = (shouldRetrieveHadith
-        ? searchHadithRepository(effectiveQuestion, {
-            force: true,
-            expansion: queryExpansion,
-            budget: webBudget,
-          })
-        : Promise.resolve(null)
-      ).then((value) => ({ value, ms: elapsedMs(hadithStartedAt) }));
-    const [{ value: quranTopic, ms: quranRetrievalMs }, { value: directHadithRecord, ms: hadithRetrievalMs }] = await Promise.all([
+    const shouldRetrieveHadith = hadithRequestedUpFront ||
+      plannedSkills.has("hadith");
+    // A hadith search requested only by the V4 plan starts once that plan is known.
+    const hadithPromise = earlyHadithPromise ??
+      (shouldRetrieveHadith
+        ? startHadithSearch(queryExpansion)
+        : Promise.resolve({ value: null, ms: 0 }));
+    const [
+      { value: quranTopic, ms: quranRetrievalMs },
+      { value: directHadithRecord, ms: hadithRetrievalMs },
+      [rememberedSourceIds, profileMemories, quranContext],
+    ] = await Promise.all([
       quranPromise,
       hadithPromise,
+      contextPromise,
     ]);
     const repositoryRetrievalMs = markLatency(
       "repositoryRetrievalMs",
       repositoryRetrievalStartedAt,
     );
+    const profileMemoryContext = profileMemories
+      .map(
+        (memory) =>
+          `${memory.display_label}: ${memory.memory_value.replace(/\s+/g, " ").trim()}`,
+      )
+      .join("\n");
     const expandedQueryProfile = applyExpandedEntityProfile(
       initialQueryProfile,
       queryExpansion,
