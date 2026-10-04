@@ -1,154 +1,249 @@
+import { Ionicons } from "@expo/vector-icons";
 import { router, useLocalSearchParams } from "expo-router";
-import { useEffect, useState } from "react";
-import { Pressable, SafeAreaView, ScrollView, StyleSheet, Text, View } from "react-native";
+import { useEffect, useMemo, useState } from "react";
+import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+
 import { FiqhDifferenceCard } from "../../../features/fiqh/components/FiqhDifferenceCard";
-import { FiqhPersonalCaseNotice } from "../../../features/fiqh/components/FiqhPersonalCaseNotice";
-import { FiqhSection } from "../../../features/fiqh/components/FiqhSection";
-import { FiqhSourceCard } from "../../../features/fiqh/components/FiqhSourceCard";
+import { FiqhTopBar, SourceChips, SourceSheet, TextSizeButton, fq, fqType, useSourceSheet } from "../../../features/fiqh/components/FiqhUI";
 import { FiqhWasilCTA } from "../../../features/fiqh/components/FiqhWasilCTA";
 import { categoryById, chapterById, topicById } from "../../../features/fiqh/fiqhData";
-import { saveFiqhProgress } from "../../../features/fiqh/fiqhStorage";
-import { colors } from "../../../theme/colors";
+import { lessonOf, lessonSourceIds, sourceShortLabel } from "../../../features/fiqh/fiqhLessons";
+import { markFiqhLessonRead, saveFiqhProgress, useFiqhReading } from "../../../features/fiqh/fiqhStorage";
 
-export default function FiqhTopic() {
+export default function FiqhLessonScreen() {
   const { topicId, chapter: chapterParam } = useLocalSearchParams<{ topicId: string; chapter?: string }>();
   const topic = topicById.get(topicId);
-  const [openQuestion, setOpenQuestion] = useState<string | null>(null);
+  const reading = useFiqhReading();
+  const { sourceId, openSource, closeSource } = useSourceSheet();
+  const [openCase, setOpenCase] = useState<number | null>(0);
+  const [showSources, setShowSources] = useState(false);
 
   useEffect(() => {
-    if (topic) void saveFiqhProgress({ lastTopicId: topic.id, lastCategoryId: topic.categoryId });
+    if (!topic) return;
+    void markFiqhLessonRead(topic.id);
+    void saveFiqhProgress({ lastTopicId: topic.id, lastCategoryId: topic.categoryId });
+    setOpenCase(0);
+    setShowSources(false);
   }, [topic]);
 
-  if (!topic) return <SafeAreaView style={s.screen}><Text style={s.text}>Sujet introuvable.</Text></SafeAreaView>;
-  if (topic.publicationStatus === "coming_soon" || topic.publicationStatus === "blocked") {
-    return <SafeAreaView style={s.screen}><View style={s.content}><Pressable onPress={() => router.back()}><Text style={s.back}>‹ Retour</Text></Pressable><Text style={s.title}>{topic.title}</Text><Text style={s.lead}>Bientôt disponible.</Text></View></SafeAreaView>;
+  const lesson = useMemo(() => (topic ? lessonOf(topic) : null), [topic]);
+
+  if (!topic || !lesson) {
+    return <SafeAreaView style={styles.screen}><FiqhTopBar /><Text style={styles.empty}>Leçon introuvable.</Text></SafeAreaView>;
   }
 
-  const content = topic.content;
+  const k = reading.textScale;
   const category = categoryById.get(topic.categoryId);
   const chapter = (chapterParam ? chapterById.get(chapterParam) : undefined) ?? Array.from(chapterById.values()).find((item) => item.topicIds.includes(topic.id));
-  const index = chapter?.topicIds.indexOf(topic.id) ?? -1;
-  const previousId = index > 0 ? chapter?.topicIds[index - 1] : undefined;
-  const nextId = chapter && index >= 0 && index < chapter.topicIds.length - 1 ? chapter.topicIds[index + 1] : undefined;
-  const previous = previousId ? topicById.get(previousId) : undefined;
-  const next = nextId ? topicById.get(nextId) : undefined;
+  const chapterIndex = chapter && category?.chapters ? category.chapters.findIndex((item) => item.id === chapter.id) : -1;
+  const lessonIndex = chapter ? chapter.topicIds.indexOf(topic.id) : -1;
+  const book = category?.topicIds ?? [];
+  const bookIndex = book.indexOf(topic.id);
+  const previousId = bookIndex > 0 ? book[bookIndex - 1] : undefined;
+  const nextId = bookIndex >= 0 && bookIndex < book.length - 1 ? book[bookIndex + 1] : undefined;
+  const sources = lessonSourceIds(topic, lesson);
+  const go = (id: string) => router.replace({ pathname: "/fiqh/topic/[topicId]", params: { topicId: id } });
 
-  const established = content?.ceQuiEstEtabli?.map((claim) => claim.text) ?? topic.established;
-  const practice = content?.pratique?.map((claim) => claim.text) ?? topic.howTo;
-  const teachings = content?.enseignements?.map((claim) => claim.text) ?? topic.takeaway;
-  const knowledge = [...(content?.limites ?? []), ...(content?.divergences?.map((claim) => claim.text) ?? []), ...(content?.casPersonnel ? [content.casPersonnel] : [])];
-  const lead = content?.introduction?.trim() || null;
-  const lessonNumber = chapter && index >= 0 ? `${String(index + 1).padStart(2, "0")} / ${String(chapter.topicIds.length).padStart(2, "0")}` : null;
+  const body = { fontSize: 16.5 * k, lineHeight: 26 * k };
 
   return (
-    <SafeAreaView style={s.screen}>
-      <ScrollView contentContainerStyle={s.content}>
-        <Pressable onPress={() => router.back()}><Text style={s.back}>‹ Retour</Text></Pressable>
+    <SafeAreaView style={styles.screen} edges={["top"]}>
+      <FiqhTopBar label={category?.title} right={<TextSizeButton scale={k} />} />
+      <View style={styles.progressTrack}><View style={[styles.progressFill, { width: `${book.length ? ((bookIndex + 1) / book.length) * 100 : 0}%` }]} /></View>
 
+      <ScrollView contentContainerStyle={styles.content}>
         {chapter ? (
-          <View style={s.metaRow}>
-            <Text style={s.chapterLabel} numberOfLines={1}>{chapter.title}</Text>
-            {lessonNumber ? <View style={s.progressWrap}><Text style={s.lessonNumber}>Leçon {lessonNumber.replace(" / ", " sur ")}</Text><View style={s.progressTrack}><View style={[s.progressFill, { width: `${((index + 1) / (chapter?.topicIds.length || 1)) * 100}%` }]} /></View></View> : null}
-          </View>
+          <Text style={styles.kicker}>
+            {chapterIndex >= 0 ? `CHAPITRE ${chapterIndex + 1} · ` : ""}{chapter.title.toUpperCase()}
+            {lessonIndex >= 0 && chapter.topicIds.length > 1 ? `  ·  ${lessonIndex + 1}/${chapter.topicIds.length}` : ""}
+          </Text>
         ) : null}
+        <Text style={[styles.title, { fontSize: 34 * Math.min(k, 1.12), lineHeight: 39 * Math.min(k, 1.12) }]}>{topic.title}</Text>
+        {topic.arabicTerm ? <Text style={styles.arabic}>{topic.arabicTerm}</Text> : null}
 
-        <Text style={s.title}>{topic.title}</Text>
-        {topic.arabicTerm ? <Text style={s.arabic}>{topic.arabicTerm}</Text> : null}
-        {lead ? <Text style={s.lead}>{lead}</Text> : null}
+        <View style={styles.short}>
+          <Text style={styles.shortLabel}>EN BREF</Text>
+          <Text style={[styles.shortText, { fontSize: 18 * k, lineHeight: 28 * k }]}>{lesson.short}</Text>
+        </View>
 
-        <FiqhSection title="L’ESSENTIEL" items={established} variant="card" />
-        <FiqhSection title="COMPRENDRE" items={(content?.definition ?? []).map((claim) => claim.text)} />
-        <FiqhSection title="EN PRATIQUE" items={practice} />
-        <FiqhSection title="À RETENIR" items={teachings} variant={teachings.length ? "soft" : "plain"} />
-        <FiqhSection title="CONDITIONS" items={topic.conditions} />
-        <FiqhSection title="CE QUI INVALIDE" items={topic.invalidators} />
-        <FiqhSection title="ERREURS À ÉVITER" items={topic.commonMistakes} />
-        <FiqhSection title="CAS PARTICULIERS" items={topic.specialCases} />
-
-        {topic.differences.map((difference) => <FiqhDifferenceCard key={difference.question} difference={difference} />)}
-
-        <FiqhSection title="À SAVOIR" items={knowledge} variant={knowledge.length ? "soft" : "plain"} />
-
-        {content?.questions?.length ? (
-          <View style={s.faq}>
-            <Text style={s.faqTitle}>QUESTIONS FRÉQUENTES</Text>
-            {content.questions.map((question) => (
-              <View key={question.id} style={s.faqItem}>
-                <Pressable
-                  onPress={() => setOpenQuestion(openQuestion === question.id ? null : question.id)}
-                  style={s.questionButton}
-                >
-                  <Text style={s.question} numberOfLines={2}>{question.question}</Text>
-                  <Text style={s.toggle}>{openQuestion === question.id ? "−" : "+"}</Text>
-                </Pressable>
-                {openQuestion === question.id ? (
-                  <View style={s.answerWrap}>
-                    {question.answer.map((claim, claimIndex) => (
-                      <Text key={`${question.id}-${claimIndex}`} style={s.answer}>{claim.text}</Text>
-                    ))}
-                  </View>
-                ) : null}
+        {lesson.rules.length ? (
+          <Section title="Les règles">
+            {lesson.rules.map((point, index) => (
+              <View key={index} style={styles.rule}>
+                <View style={styles.ruleDot} />
+                <View style={styles.flex}>
+                  <Text style={[styles.body, body]}>{point.text}</Text>
+                  <SourceChips ids={point.ids} onOpen={openSource} />
+                </View>
               </View>
             ))}
+          </Section>
+        ) : null}
+
+        {lesson.steps?.length ? (
+          <Section title="Comment faire">
+            {lesson.steps.map((point, index) => (
+              <View key={index} style={styles.step}>
+                <View style={styles.stepNumber}><Text style={styles.stepNumberText}>{index + 1}</Text></View>
+                <View style={styles.flex}>
+                  <Text style={[styles.body, body]}>{point.text}</Text>
+                  <SourceChips ids={point.ids} onOpen={openSource} />
+                </View>
+              </View>
+            ))}
+          </Section>
+        ) : null}
+
+        {lesson.cases?.length ? (
+          <Section title="Cas fréquents">
+            {lesson.cases.map((item, index) => {
+              const open = openCase === index;
+              return (
+                <View key={index} style={[styles.case, open && styles.caseOpen]}>
+                  <Pressable accessibilityRole="button" accessibilityState={{ expanded: open }} onPress={() => setOpenCase(open ? null : index)} style={styles.caseHead}>
+                    <Text style={[styles.caseQuestion, { fontSize: 16 * k, lineHeight: 23 * k }]}>{item.q}</Text>
+                    <Ionicons name={open ? "remove" : "add"} size={20} color={fq.gold} />
+                  </Pressable>
+                  {open ? (
+                    <View style={styles.caseAnswer}>
+                      <Text style={[styles.body, body]}>{item.a}</Text>
+                      <SourceChips ids={item.ids} onOpen={openSource} />
+                    </View>
+                  ) : null}
+                </View>
+              );
+            })}
+          </Section>
+        ) : null}
+
+        {lesson.avoid?.length ? (
+          <Section title="À éviter">
+            {lesson.avoid.map((text, index) => (
+              <View key={index} style={styles.rule}>
+                <Ionicons name="close" size={16} color={fq.red} style={styles.avoidIcon} />
+                <Text style={[styles.body, styles.flex, body]}>{text}</Text>
+              </View>
+            ))}
+          </Section>
+        ) : null}
+
+        {topic.differences.length ? (
+          <Section title="Les avis des écoles">
+            {topic.differences.map((difference) => <FiqhDifferenceCard key={difference.question} difference={difference} />)}
+          </Section>
+        ) : null}
+
+        {lesson.note?.length ? (
+          <View style={styles.note}>
+            <Text style={styles.noteLabel}>BON À SAVOIR</Text>
+            {lesson.note.map((text, index) => <Text key={index} style={[styles.noteText, { fontSize: 15 * k, lineHeight: 23 * k }]}>{text}</Text>)}
           </View>
         ) : null}
 
-        {topic.sensitive ? <FiqhPersonalCaseNotice /> : null}
-        <FiqhSourceCard ids={topic.sourceIds} />
+        {topic.sensitive ? (
+          <View style={styles.personal}>
+            <Ionicons name="person-circle-outline" size={20} color={fq.gold} />
+            <Text style={styles.personalText}>Pour une situation réelle, exposez votre cas complet à une personne de science qualifiée.</Text>
+          </View>
+        ) : null}
+
+        {sources.length ? (
+          <View style={styles.sources}>
+            <Pressable accessibilityRole="button" accessibilityState={{ expanded: showSources }} onPress={() => setShowSources((value) => !value)} style={styles.sourcesHead}>
+              <Text style={styles.sourcesTitle}>Sources de la leçon</Text>
+              <Text style={styles.sourcesCount}>{sources.length}</Text>
+              <Ionicons name={showSources ? "chevron-up" : "chevron-down"} size={18} color={fq.inkMuted} />
+            </Pressable>
+            {showSources ? sources.map((id) => (
+              <Pressable key={id} onPress={() => openSource(id)} style={styles.sourceRow}>
+                <Text style={styles.sourceLabel}>{sourceShortLabel(id)}</Text>
+                <Ionicons name="information-circle-outline" size={17} color={fq.inkMuted} />
+              </Pressable>
+            )) : null}
+          </View>
+        ) : null}
+
         <FiqhWasilCTA enabled prompt={`Contexte : Fiqh → ${category?.title ?? "Fiqh"} → ${chapter?.title ?? "Leçon"} → ${topic.title}.\n\nJe souhaite approfondir cette leçon et poser ma question :`} />
 
-        {chapter ? (
-          <View style={s.navigation}>
-            {previousId ? (
-              <Pressable onPress={() => router.replace({ pathname: "/fiqh/topic/[topicId]", params: { topicId: previousId, chapter: chapter.id } })} style={s.navButton}>
-                <Text style={s.navKicker}>PRÉCÉDENT</Text>
-                <Text style={s.nav} numberOfLines={2}>‹ {previous?.title}</Text>
-              </Pressable>
-            ) : <View style={s.navButton} />}
-            {nextId ? (
-              <Pressable onPress={() => router.replace({ pathname: "/fiqh/topic/[topicId]", params: { topicId: nextId, chapter: chapter.id } })} style={[s.navButton, s.navRight]}>
-                <Text style={s.navKicker}>SUIVANT</Text>
-                <Text style={[s.nav, s.navTextRight]} numberOfLines={2}>{next?.title} ›</Text>
-              </Pressable>
-            ) : (
-              <Pressable onPress={() => router.push({ pathname: "/fiqh/chapter/[chapterId]", params: { chapterId: chapter.id } })} style={[s.navButton, s.navRight]}>
-                <Text style={s.navKicker}>RETOUR</Text>
-                <Text style={[s.nav, s.navTextRight]}>Chapitre ›</Text>
-              </Pressable>
-            )}
-          </View>
-        ) : null}
+        <View style={styles.nav}>
+          {previousId ? (
+            <Pressable onPress={() => go(previousId)} style={styles.navButton}>
+              <Text style={styles.navKicker}>‹ Précédent</Text>
+              <Text style={styles.navTitle} numberOfLines={2}>{topicById.get(previousId)?.title}</Text>
+            </Pressable>
+          ) : <View style={styles.navSpacer} />}
+          {nextId ? (
+            <Pressable onPress={() => go(nextId)} style={[styles.navButton, styles.navNext]}>
+              <Text style={[styles.navKicker, styles.navKickerNext]}>Suivant ›</Text>
+              <Text style={[styles.navTitle, styles.navTitleNext]} numberOfLines={2}>{topicById.get(nextId)?.title}</Text>
+            </Pressable>
+          ) : (
+            <Pressable onPress={() => router.back()} style={[styles.navButton, styles.navNext]}>
+              <Text style={[styles.navKicker, styles.navKickerNext]}>Fin du livre</Text>
+              <Text style={[styles.navTitle, styles.navTitleNext]}>Retour au sommaire</Text>
+            </Pressable>
+          )}
+        </View>
       </ScrollView>
+      <SourceSheet id={sourceId} onClose={closeSource} />
     </SafeAreaView>
   );
 }
 
-const s = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: colors.background },
-  content: { paddingHorizontal: 22, paddingTop: 8, paddingBottom: 72 },
-  back: { color: colors.goldLight, fontSize: 18, marginBottom: 22 },
-  metaRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: 12, marginBottom: 12 },
-  progressWrap: { alignItems: "flex-end", gap: 6 },
-  progressTrack: { width: 92, height: 3, borderRadius: 2, backgroundColor: colors.surfaceLight, overflow: "hidden" },
-  progressFill: { height: 3, borderRadius: 2, backgroundColor: colors.goldLight },
-  chapterLabel: { color: colors.textMuted, fontSize: 13, flex: 1 },
-  lessonNumber: { color: colors.goldLight, fontSize: 12, fontWeight: "800", letterSpacing: 0.7 },
-  title: { color: colors.text, fontSize: 35, lineHeight: 41, fontWeight: "800", marginTop: 2 },
-  arabic: { color: colors.goldLight, fontSize: 25, marginTop: 5 },
-  lead: { color: colors.textSecondary, fontSize: 17, lineHeight: 26, marginTop: 14 },
-  faq: { marginTop: 28 },
-  faqTitle: { color: colors.goldLight, fontSize: 13, fontWeight: "800", letterSpacing: 1.1, marginBottom: 4 },
-  faqItem: { marginTop: 8, padding: 14, borderRadius: 17, backgroundColor: colors.surfaceAlt },
-  questionButton: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: 12 },
-  question: { color: colors.text, fontSize: 16, lineHeight: 22, fontWeight: "700", flex: 1 },
-  toggle: { color: colors.goldLight, fontSize: 23, lineHeight: 24 },
-  answerWrap: { marginTop: 12, paddingTop: 12, borderTopWidth: 1, borderTopColor: colors.borderSoft, gap: 8 },
-  answer: { color: colors.textSecondary, fontSize: 15, lineHeight: 23 },
-  navigation: { flexDirection: "row", justifyContent: "space-between", marginTop: 28, paddingTop: 18, borderTopWidth: 1, borderTopColor: colors.borderSoft },
-  navButton: { width: "47%", minHeight: 64, justifyContent: "center", paddingHorizontal: 8, borderRadius: 14, backgroundColor: colors.surfaceAlt },
-  navRight: { alignItems: "flex-end" },
-  navKicker: { color: colors.textMuted, fontSize: 10, fontWeight: "800", letterSpacing: 0.9, marginBottom: 5 },
-  nav: { color: colors.goldLight, fontSize: 14, lineHeight: 20, fontWeight: "700", textAlign: "left" },
-  navTextRight: { textAlign: "right" },
-  text: { color: colors.text },
+function Section({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <View style={styles.section}>
+      <Text style={styles.sectionTitle}>{title}</Text>
+      {children}
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  screen: { flex: 1, backgroundColor: fq.page },
+  empty: { color: fq.ink, padding: 22 },
+  progressTrack: { height: 2, backgroundColor: fq.lineSoft },
+  progressFill: { height: 2, backgroundColor: fq.gold },
+  content: { paddingHorizontal: 22, paddingTop: 22, paddingBottom: 80 },
+  flex: { flex: 1 },
+  kicker: { color: fq.gold, fontSize: 11.5, fontWeight: "800", letterSpacing: 1.1 },
+  title: { color: fq.ink, fontFamily: fqType.serif, marginTop: 10 },
+  arabic: { color: fq.gold, fontFamily: fqType.arabic, fontSize: 24, marginTop: 4 },
+  short: { marginTop: 22, padding: 18, borderRadius: 20, backgroundColor: fq.paper, borderWidth: 1, borderColor: fq.line },
+  shortLabel: { color: fq.gold, fontSize: 11, fontWeight: "800", letterSpacing: 1.3, marginBottom: 8 },
+  shortText: { color: fq.ink, fontWeight: "500" },
+  section: { marginTop: 32 },
+  sectionTitle: { color: fq.ink, fontFamily: fqType.serif, fontSize: 25, marginBottom: 12 },
+  body: { color: fq.inkSoft },
+  rule: { flexDirection: "row", gap: 12, paddingVertical: 10, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: fq.lineSoft },
+  ruleDot: { width: 6, height: 6, borderRadius: 3, backgroundColor: fq.gold, marginTop: 10 },
+  avoidIcon: { marginTop: 5 },
+  step: { flexDirection: "row", gap: 12, paddingVertical: 9 },
+  stepNumber: { width: 26, height: 26, borderRadius: 13, alignItems: "center", justifyContent: "center", backgroundColor: fq.goldSoft, marginTop: 1 },
+  stepNumberText: { color: fq.gold, fontSize: 13, fontWeight: "800" },
+  case: { marginBottom: 8, borderRadius: 16, backgroundColor: fq.paper, borderWidth: 1, borderColor: fq.lineSoft },
+  caseOpen: { borderColor: fq.line },
+  caseHead: { flexDirection: "row", alignItems: "center", gap: 12, paddingHorizontal: 15, paddingVertical: 14 },
+  caseQuestion: { flex: 1, color: fq.ink, fontWeight: "700" },
+  caseAnswer: { paddingHorizontal: 15, paddingBottom: 15 },
+  note: { marginTop: 32, paddingTop: 18, borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: fq.lineSoft, gap: 8 },
+  noteLabel: { color: fq.inkMuted, fontSize: 11, fontWeight: "800", letterSpacing: 1.2 },
+  noteText: { color: fq.inkMuted },
+  personal: { flexDirection: "row", gap: 10, alignItems: "center", marginTop: 24, padding: 14, borderRadius: 16, backgroundColor: fq.goldSoft },
+  personalText: { flex: 1, color: fq.ink, fontSize: 14.5, lineHeight: 21 },
+  sources: { marginTop: 28, borderRadius: 16, backgroundColor: fq.paper, paddingHorizontal: 15 },
+  sourcesHead: { flexDirection: "row", alignItems: "center", gap: 8, height: 52 },
+  sourcesTitle: { flex: 1, color: fq.ink, fontSize: 15, fontWeight: "700" },
+  sourcesCount: { color: fq.inkMuted, fontSize: 14, fontWeight: "700" },
+  sourceRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingVertical: 12, borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: fq.lineSoft },
+  sourceLabel: { color: fq.inkSoft, fontSize: 14.5 },
+  nav: { flexDirection: "row", gap: 10, marginTop: 30 },
+  navButton: { flex: 1, minHeight: 72, padding: 14, borderRadius: 16, backgroundColor: fq.paper, borderWidth: 1, borderColor: fq.lineSoft },
+  navNext: { alignItems: "flex-end", borderColor: fq.line },
+  navSpacer: { flex: 1 },
+  navKicker: { color: fq.inkMuted, fontSize: 12, fontWeight: "700" },
+  navKickerNext: { color: fq.gold },
+  navTitle: { color: fq.ink, fontSize: 14.5, lineHeight: 20, fontWeight: "700", marginTop: 5 },
+  navTitleNext: { textAlign: "right" },
 });

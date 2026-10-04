@@ -1,12 +1,55 @@
 import { Ionicons } from "@expo/vector-icons";
 import { useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
-import { colors } from "../../../theme/colors";
 import type { FiqhDifference } from "../fiqhTypes";
+import { fq } from "./FiqhUI";
 
+/** A question on which the schools differ: what is agreed, then each school's position on demand. */
 export function FiqhDifferenceCard({ difference }: { difference: FiqhDifference }) {
-  const [open, setOpen] = useState(false);
   const [openPosition, setOpenPosition] = useState<string | null>(null);
-  return <View style={styles.box}><View style={styles.headingRow}><View style={styles.mark}><Ionicons name="scale-outline" size={17} color={colors.goldLight} /></View><Text style={styles.badge}>DIVERGENCE JURIDIQUE</Text></View><Text style={styles.question}>{difference.question}</Text><Text style={styles.text}>{difference.established}</Text><Pressable accessibilityRole="button" accessibilityState={{ expanded: open }} onPress={() => setOpen((value) => !value)} style={styles.toggle}><Text style={styles.toggleLabel}>{open ? "Masquer les avis" : "Voir les avis des écoles"}</Text><Ionicons name={open ? "chevron-up" : "chevron-down"} size={17} color={colors.goldLight} /></Pressable>{open ? <View style={styles.positions}>{difference.positions.map((position) => { const positionOpen = openPosition === position.label; return <View key={position.label} style={styles.position}><Pressable onPress={() => setOpenPosition(positionOpen ? null : position.label)} style={styles.schoolRow} accessibilityRole="button" accessibilityState={{ expanded: positionOpen }}><Text style={styles.label}>{position.label}</Text><Ionicons name={positionOpen ? "remove" : "add"} size={17} color={colors.goldLight} /></Pressable>{positionOpen ? <View><Text style={styles.text}>{position.position}</Text>{position.consequence ? <Text style={styles.note}>{position.consequence}</Text> : null}</View> : null}</View>; })}<Text style={styles.note}>{difference.practicalNote}</Text></View> : null}</View>;
+  return (
+    <View style={styles.box}>
+      <Text style={styles.question}>{difference.question}</Text>
+      {difference.established ? <Text style={styles.text}>{difference.established}</Text> : null}
+      <View style={styles.positions}>
+        {difference.positions.map((position) => {
+          const open = openPosition === position.label;
+          return (
+            <View key={position.label} style={styles.position}>
+              <Pressable onPress={() => setOpenPosition(open ? null : position.label)} style={styles.schoolRow} accessibilityRole="button" accessibilityState={{ expanded: open }}>
+                <Text style={styles.label}>{position.label}</Text>
+                <Ionicons name={open ? "remove" : "add"} size={18} color={fq.gold} />
+              </Pressable>
+              {open ? (
+                <View style={styles.positionBody}>
+                  <Text style={styles.text}>{position.position}</Text>
+                  {position.consequence ? <Text style={styles.consequence}>{position.consequence}</Text> : null}
+                </View>
+              ) : null}
+            </View>
+          );
+        })}
+      </View>
+      {difference.practicalNote ? (
+        <View style={styles.practical}>
+          <Ionicons name="bulb-outline" size={16} color={fq.gold} />
+          <Text style={styles.practicalText}>{difference.practicalNote}</Text>
+        </View>
+      ) : null}
+    </View>
+  );
 }
-const styles = StyleSheet.create({ box: { marginTop: 24, padding: 18, borderRadius: 24, backgroundColor: colors.surfaceAlt, borderWidth: 1, borderColor: colors.goldDark }, headingRow: { flexDirection: "row", alignItems: "center", gap: 9 }, mark: { width: 30, height: 30, borderRadius: 15, alignItems: "center", justifyContent: "center", backgroundColor: colors.surface }, badge: { color: colors.goldLight, fontSize: 11, fontWeight: "800", letterSpacing: 1 }, question: { color: colors.text, fontSize: 20, fontWeight: "800", lineHeight: 27, marginTop: 13 }, text: { color: colors.textSecondary, fontSize: 15.5, lineHeight: 24, marginTop: 8 }, toggle: { marginTop: 17, paddingTop: 14, borderTopWidth: 1, borderTopColor: colors.borderSoft, flexDirection: "row", alignItems: "center", justifyContent: "space-between" }, toggleLabel: { color: colors.goldLight, fontSize: 15, fontWeight: "800" }, positions: { marginTop: 2 }, position: { borderTopWidth: 1, borderTopColor: colors.borderSoft, marginTop: 12, paddingTop: 12 }, schoolRow: { minHeight: 38, flexDirection: "row", alignItems: "center", justifyContent: "space-between" }, label: { color: colors.goldLight, fontSize: 14, fontWeight: "800" }, note: { color: "#E8C985", fontSize: 14, lineHeight: 22, marginTop: 10 } });
+
+const styles = StyleSheet.create({
+  box: { marginBottom: 12, padding: 16, borderRadius: 18, backgroundColor: fq.paper, borderWidth: 1, borderColor: fq.line },
+  question: { color: fq.ink, fontSize: 17, lineHeight: 24, fontWeight: "700" },
+  text: { color: fq.inkSoft, fontSize: 15, lineHeight: 23, marginTop: 8 },
+  positions: { marginTop: 10 },
+  position: { borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: fq.lineSoft },
+  schoolRow: { minHeight: 46, flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
+  label: { color: fq.gold, fontSize: 15, fontWeight: "700" },
+  positionBody: { paddingBottom: 12 },
+  consequence: { color: fq.inkMuted, fontSize: 14, lineHeight: 21, marginTop: 8 },
+  practical: { flexDirection: "row", gap: 8, marginTop: 10, paddingTop: 12, borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: fq.lineSoft },
+  practicalText: { flex: 1, color: fq.inkSoft, fontSize: 14, lineHeight: 21 },
+});

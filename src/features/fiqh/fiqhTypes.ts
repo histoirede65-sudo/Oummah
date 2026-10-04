@@ -69,8 +69,24 @@ export type FiqhDifference = {
   limits?: string[];
 };
 
+/** A point of a lesson, with the ids of the sources that support it. */
+export type FiqhPoint = { text: string; ids?: string[] };
+export type FiqhCase = { q: string; a: string; ids?: string[] };
+
+/** Clear reading version of a lesson: short answer, rules, steps, frequent cases, mistakes, nuances. */
+export type FiqhLesson = {
+  short: string;
+  rules: FiqhPoint[];
+  steps?: FiqhPoint[];
+  cases?: FiqhCase[];
+  avoid?: string[];
+  note?: string[];
+  sourceIds?: string[];
+};
+
 export type FiqhTopic = {
   id: string;
+  lesson?: FiqhLesson;
   categoryId: string;
   title: string;
   arabicTerm?: string;

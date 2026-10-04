@@ -1,4 +1,5 @@
 import type { FiqhCategory, FiqhChapter, FiqhDifference, FiqhQuestion, FiqhTopic } from "./fiqhTypes";
+import { FIQH_LESSONS } from "./lessons";
 
 export const PURIFICATION_CHAPTERS: FiqhChapter[] = [
   { id: "purification-water", categoryId: "purification", title: "Les eaux", topicIds: ["water-impurities"] },
@@ -168,6 +169,7 @@ const FIQH_CHAPTERS_BY_CATEGORY: Record<string, FiqhChapter[]> = {
   "hunting-animals": HUNTING_ANIMALS_CHAPTERS,
   "siyar-relations": SIYAR_RELATIONS_CHAPTERS,
 };
+const FIQH_CHAPTERS_BY_CATEGORY_LIST = Object.values(FIQH_CHAPTERS_BY_CATEGORY).flat();
 const FIQH_CATEGORIES_WITH_CHAPTERS = FIQH_CATEGORIES.map((category) => ({ ...category, chapters: FIQH_CHAPTERS_BY_CATEGORY[category.id] }));
 
 const e = (text: string, ...evidenceIds: string[]) => ({ text, evidenceIds });
@@ -1629,7 +1631,7 @@ const WAJIZ_SOURCE_BY_CATEGORY: Record<string, string | undefined> = {
   "siyar-relations": "wajiz-siyar",
 };
 
-const EDITORIAL_META: Record<string, {
+export const EDITORIAL_META: Record<string, {
   intro: string;
   practice: string[];
   lessons: string[];
@@ -1845,7 +1847,35 @@ const BASE_FIQH_TOPICS: FiqhTopic[] = [
   ...FIQH_NEW_DOCUMENTED_TOPICS,
 ];
 
-export const FIQH_TOPICS: FiqhTopic[] = BASE_FIQH_TOPICS.map(enrichFiqhTopic);
+// Hand-written lessons: attach them to their topic, or create the topic when it is new.
+const lessonTopics: FiqhTopic[] = [];
+for (const [id, entry] of Object.entries(FIQH_LESSONS)) {
+  if (BASE_FIQH_TOPICS.some((item) => item.id === id) || !entry.chapter || !entry.title) continue;
+  const chapter = FIQH_CHAPTERS_BY_CATEGORY_LIST.find((item) => item.id === entry.chapter);
+  if (!chapter) continue;
+  chapter.topicIds.push(id);
+  FIQH_CATEGORIES.find((category) => category.id === chapter.categoryId)?.topicIds.push(id);
+  lessonTopics.push({
+    id, categoryId: chapter.categoryId, title: entry.title, arabicTerm: entry.arabic, summary: entry.summary ?? entry.short,
+    aliases: entry.aliases ?? [], badge: "REPÈRES ESSENTIELS", publicationStatus: "published",
+    established: [], proofs: [], howTo: [], conditions: [], invalidators: [], commonMistakes: [], specialCases: [], differences: [], takeaway: [],
+    sourceIds: entry.sourceIds ?? [], ...(entry.sensitive ? { sensitive: true } : {}),
+  });
+}
+
+export const FIQH_TOPICS: FiqhTopic[] = [...BASE_FIQH_TOPICS, ...lessonTopics].map(enrichFiqhTopic).map((item) => {
+  const entry = FIQH_LESSONS[item.id];
+  if (!entry) return item;
+  const { title: _title, arabic, summary, chapter: _chapter, aliases, sensitive, ...lesson } = entry;
+  return {
+    ...item,
+    lesson,
+    ...(arabic ? { arabicTerm: arabic } : {}),
+    summary: summary ?? item.summary,
+    aliases: Array.from(new Set([...item.aliases, ...(aliases ?? [])])),
+    ...(sensitive !== undefined ? { sensitive } : {}),
+  };
+});
 export const topicById = new Map(FIQH_TOPICS.map((topic) => [topic.id, topic]));
 export const categoryById = new Map(FIQH_CATEGORIES_WITH_CHAPTERS.map((category) => [category.id, category]));
 export const chapterById = new Map(Object.values(FIQH_CHAPTERS_BY_CATEGORY).flat().map((chapter) => [chapter.id, chapter]));
