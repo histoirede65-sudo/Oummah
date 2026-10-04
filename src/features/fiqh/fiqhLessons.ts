@@ -90,6 +90,15 @@ export function sourceShortLabel(id: string) {
   return source?.author ?? source?.reference.split(/[,—]/)[0] ?? id;
 }
 
+const SUNNAH_COLLECTIONS: Record<string, string> = { bukhari: "bukhari", muslim: "muslim", abudawud: "abudawud", tirmidhi: "tirmidhi", nasai: "nasai", ibnmajah: "ibnmajah" };
+
+/** Page of the hadith on sunnah.com (same numbering), to read the full text with its Arabic. */
+export function sunnahUrl(id: string) {
+  const match = /^(bukhari|muslim|abudawud|tirmidhi|nasai|ibnmajah)-(\d+)([a-z]*)/.exec(id);
+  if (!match || sourceById.get(id)?.kind !== "hadith") return null;
+  return `https://sunnah.com/${SUNNAH_COLLECTIONS[match[1]]}:${match[2]}${match[3]}`;
+}
+
 /** In-app destination of a source when OUMMAH can open it (verse or linked hadith). */
 export function sourceRoute(id: string) {
   const source = sourceById.get(id);

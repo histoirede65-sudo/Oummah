@@ -274,7 +274,7 @@ export const PRAYER_LESSONS: Record<string, LessonEntry> = {
       p("Selon les quatre écoles, on commence à raccourcir après avoir quitté les habitations de sa ville, pas dès l’intention.", ...SCHOOLS_QASR),
     ],
     cases: [
-      c("Quelle distance faut-il parcourir ?", "Les malikites, shafi‘ites et hanbalites retiennent 48 milles, les hanafites trois jours de marche. De nombreux savants contemporains l’estiment à environ 80 km. Les avis détaillés sont plus bas.", ...SCHOOLS_QASR),
+      c("Quelle distance faut-il parcourir ?", "Les malikites, shafi‘ites et hanbalites retiennent 48 milles, les hanafites trois jours de marche. De nombreux savants contemporains l’estiment à environ 80 km. Les avis détaillés sont plus bas.", ...SCHOOLS_QASR, "contemporary-estimates"),
       c("Combien de temps puis-je rester sur place en raccourcissant ?", "Si vous décidez de rester plus de quatre jours, vous priez normalement selon les malikites, shafi‘ites et hanbalites ; plus de quinze jours selon les hanafites. Si vous ne savez pas quand vous partirez, vous continuez à raccourcir (jusqu’à dix-huit jours selon les shafi‘ites).", ...SCHOOLS_QASR, "fiqh-mawahib-qasr-maliki"),
       c("Je prie derrière un imam résident.", "Vous priez complet avec lui.", W),
       c("Est-ce obligatoire de raccourcir ?", "Pour les hanafites, oui. Pour les autres écoles, c’est la Sunnah et le meilleur choix, mais la prière complète reste valable.", "fiqh-badai-qasr-hanafi", "fiqh-istidhkar-qasr-maliki", "fiqh-majmu-qasr-shafii", "fiqh-mughni-qasr-hanbali"),

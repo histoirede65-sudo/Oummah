@@ -1,4 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
+import * as Linking from "expo-linking";
 import { router } from "expo-router";
 import { useState, type ReactNode } from "react";
 import { Modal, Pressable, StyleSheet, Text, View } from "react-native";
@@ -6,7 +7,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { colors } from "../../../theme/colors";
 import { typography } from "../../../theme/typography";
-import { sourceRoute, sourceShortLabel } from "../fiqhLessons";
+import { sourceRoute, sourceShortLabel, sunnahUrl } from "../fiqhLessons";
 import { sourceById } from "../fiqhSources";
 import { FIQH_TEXT_SCALES, updateFiqhReading } from "../fiqhStorage";
 
@@ -83,6 +84,7 @@ export function SourceSheet({ id, onClose }: { id: string | null; onClose: () =>
   const insets = useSafeAreaInsets();
   const source = id ? sourceById.get(id) : undefined;
   const route = id ? sourceRoute(id) : null;
+  const external = id ? sunnahUrl(id) : null;
   const kind = source?.kind === "quran" ? "Verset du Coran" : source?.kind === "hadith" ? "Hadith" : source?.kind === "scholar" ? "Avis de savant" : "Ouvrage de fiqh";
   return (
     <Modal visible={!!source} transparent animationType="slide" onRequestClose={onClose}>
@@ -104,6 +106,13 @@ export function SourceSheet({ id, onClose }: { id: string | null; onClose: () =>
               <Ionicons name="arrow-forward" size={16} color={fq.page} />
             </Pressable>
           ) : null}
+          {external ? (
+            <Pressable accessibilityRole="link" onPress={() => void Linking.openURL(external)} style={route ? styles.sheetLinkSecondary : styles.sheetLink}>
+              <Text style={route ? styles.sheetLinkSecondaryText : styles.sheetLinkText}>Lire le texte sur sunnah.com</Text>
+              <Ionicons name="open-outline" size={16} color={route ? fq.gold : fq.page} />
+            </Pressable>
+          ) : null}
+          {external ? <Text style={styles.sheetHint}>Texte arabe et traduction anglaise, même numérotation.</Text> : null}
         </View>
       ) : null}
     </Modal>
@@ -145,4 +154,7 @@ const styles = StyleSheet.create({
   sheetLimits: { color: fq.inkMuted, fontSize: 13.5, lineHeight: 21, marginTop: 10 },
   sheetLink: { flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 8, height: 50, marginTop: 20, borderRadius: 16, backgroundColor: fq.gold },
   sheetLinkText: { color: fq.page, fontSize: 15.5, fontWeight: "800" },
+  sheetLinkSecondary: { flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 8, height: 48, marginTop: 10, borderRadius: 16, borderWidth: 1, borderColor: fq.gold },
+  sheetLinkSecondaryText: { color: fq.gold, fontSize: 15, fontWeight: "700" },
+  sheetHint: { color: fq.inkMuted, fontSize: 12.5, textAlign: "center", marginTop: 8 },
 });

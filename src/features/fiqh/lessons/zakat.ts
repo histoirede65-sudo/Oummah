@@ -1,6 +1,7 @@
 import { c, p, type LessonEntry } from "./types";
 
 const W = "wajiz-zakat";
+const E = "contemporary-estimates";
 
 export const ZAKAT_LESSONS: Record<string, LessonEntry> = {
   "zakat-obligation": {
@@ -53,7 +54,7 @@ export const ZAKAT_LESSONS: Record<string, LessonEntry> = {
       p("Bovins : à partir de trente.", "tirmidhi-623"),
     ],
     cases: [
-      c("Combien cela fait-il en grammes ?", "Les savants contemporains estiment généralement 20 dinars à environ 85 g d’or, et 200 dirhams à environ 595 g d’argent. Vérifiez le cours du jour pour connaître le montant.", W),
+      c("Combien cela fait-il en grammes ?", "Les savants contemporains estiment généralement 20 dinars à environ 85 g d’or, et 200 dirhams à environ 595 g d’argent. Vérifiez le cours du jour pour connaître le montant.", E),
       c("Je dois me baser sur l’or ou sur l’argent ?", "Les savants divergent. Le seuil de l’argent est plus bas et profite davantage aux pauvres ; beaucoup le préfèrent pour l’argent liquide.", W),
     ],
   },
@@ -121,7 +122,7 @@ export const ZAKAT_LESSONS: Record<string, LessonEntry> = {
       p("Un dixième pour ce qu’arrosent la pluie et les sources, un vingtième pour ce qui est irrigué par un moyen coûteux.", "bukhari-1483", "muslim-981"),
       p("Elle se paie le jour de la récolte, sans attendre un an.", "quran-6-141"),
     ],
-    cases: [c("Combien font cinq awsuq ?", "Cinq awsuq font trois cents sâ‘, estimés par les savants contemporains à environ 600 kg selon la denrée.", W)],
+    cases: [c("Combien font cinq awsuq ?", "Cinq awsuq font trois cents sâ‘, estimés par les savants contemporains à environ 600 kg selon la denrée.", E)],
   },
 
   "zakat-rikaz": {
@@ -143,9 +144,22 @@ export const ZAKAT_LESSONS: Record<string, LessonEntry> = {
 
   "zakat-fitr-amount": {
     title: "La quantité",
-    short: "Un sâ‘ par personne : quatre fois ce que contiennent deux mains jointes, soit environ 2,5 à 3 kg de denrée.",
-    rules: [p("Un sâ‘ de nourriture par personne.", "bukhari-1503", "bukhari-1504")],
-    cases: [c("Combien en kilos ?", "Le sâ‘ est une mesure de volume ; les savants contemporains l’estiment à environ 2,5 à 3 kg selon la denrée.", W)],
+    short: "Un sâ‘ par personne. Le sâ‘ est une mesure de volume (quatre fois deux mains jointes, environ 2,7 litres) : son poids change selon la denrée. Dans le doute, 2,5 à 3 kg couvrent toutes les denrées courantes.",
+    rules: [
+      p("Un sâ‘ de nourriture par personne.", "bukhari-1503", "bukhari-1504"),
+      p("Blé : environ 2 kg (2,04 kg selon l’estimation d’Ibn ‘Uthaymîn).", E),
+      p("Riz : environ 2,5 kg ; le Comité permanent des savants d’Arabie saoudite a retenu 3 kg par précaution.", E),
+      p("Dattes : environ 2 à 2,5 kg, selon la variété.", E),
+      p("Couscous ou semoule : environ 2 kg.", E),
+      p("Lentilles, pois chiches, haricots secs : environ 2,2 kg.", E),
+      p("Raisins secs : environ 1,8 kg.", E),
+      p("Orge : environ 1,7 kg.", E),
+    ],
+    cases: [
+      c("Pour une famille de cinq personnes ?", "Cinq sâ‘ : par exemple environ 12,5 à 15 kg de riz, ou 10 kg de blé.", E),
+      c("Je n’ai pas de balance précise.", "Arrondissez vers le haut : donner un peu plus est une aumône en plus.", E),
+    ],
+    note: ["Ces poids sont des estimations : le sâ‘ se mesure en volume, et le poids exact dépend de la variété et de l’humidité de la denrée."],
   },
 
   "zakat-fitr-food": {

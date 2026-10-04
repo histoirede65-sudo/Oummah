@@ -12,6 +12,14 @@ const Q = (s: number, v: number, scope: string): FiqhSource => ({ id: `quran-${s
  * Each one is listed in the review file sent to the scholar.
  */
 export const LESSON_SOURCES: FiqhSource[] = [
+  {
+    id: "contemporary-estimates",
+    kind: "scholar",
+    author: "Savants contemporains, dont Ibn ‘Uthaymîn et le Comité permanent (al-Lajna ad-Dâ’ima)",
+    reference: "Estimations contemporaines des mesures anciennes",
+    scope: "conversion approximative des mesures des textes : sâ‘ (environ 2,7 litres), dinar et dirham (seuil d’environ 85 g d’or et 595 g d’argent), awsuq, distance du voyage (environ 80 km)",
+    limits: "Ce sont des estimations : les textes donnent des mesures anciennes, et les savants proposent des équivalences qui varient légèrement. Le poids d’un sâ‘ dépend de la denrée.",
+  },
   // Purification
   M("223", "« La purification est la moitié de la foi »"),
   M("224", "aucune prière n’est acceptée sans purification"),
