@@ -253,7 +253,7 @@ export default function ReciterDetailScreen() {
             {reciter ? (
               <Reanimated.View entering={FadeInDown.duration(420).easing(Easing.out(Easing.cubic))}>
                 <LinearGradient
-                  colors={[colors.surfaceAlt, colors.purpleMid, colors.backgroundSecondary]}
+                  colors={[colors.surface, colors.backgroundSecondary, colors.background]}
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 1 }}
                   style={styles.hero}

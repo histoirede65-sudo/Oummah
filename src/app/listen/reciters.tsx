@@ -374,9 +374,9 @@ function PremiumContinueCard({
     >
       <LinearGradient
         colors={[
-          colors.surfaceAlt,
-          colors.purpleMid,
+          colors.surface,
           colors.backgroundSecondary,
+          colors.background,
         ]}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
@@ -604,8 +604,8 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     borderRadius: 14,
     borderWidth: 1,
-    borderColor: "rgba(126,78,151,0.38)",
-    backgroundColor: "rgba(35,20,51,0.66)",
+    borderColor: "rgba(227,181,90,0.2)",
+    backgroundColor: "rgba(23,16,38,0.66)",
   },
   statText: {
     marginLeft: 5,
@@ -634,7 +634,7 @@ const styles = StyleSheet.create({
   },
   filterChipActive: {
     borderColor: "rgba(227,181,90,0.54)",
-    backgroundColor: "rgba(104,55,124,0.48)",
+    backgroundColor: "rgba(227,181,90,0.14)",
   },
   filterText: {
     color: colors.textSecondary,

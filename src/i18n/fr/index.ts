@@ -366,7 +366,7 @@ export const fr = {
   'recitations.myFavorites': 'Mes favoris',
   'recitations.myPlaylist': 'Ma playlist',
   'recitations.downloaded': 'Téléchargées',
-  'recitations.audio': 'Audio',
+  'recitations.audio': 'Écouter',
   'recitations.allReciters': 'Tous les récitateurs',
   'recitations.results': 'Résultats',
   'recitations.voiceCount': '{count} voix',

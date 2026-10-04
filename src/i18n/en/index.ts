@@ -361,7 +361,7 @@ export const en: Partial<Record<TranslationKey, string>> = {
   'recitations.myFavorites': 'My favorites',
   'recitations.myPlaylist': 'My playlist',
   'recitations.downloaded': 'Downloaded',
-  'recitations.audio': 'Audio',
+  'recitations.audio': 'Listen',
   'recitations.allReciters': 'All reciters',
   'recitations.results': 'Results',
   'recitations.voiceCount': '{count} voices',
