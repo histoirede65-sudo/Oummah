@@ -1,4 +1,5 @@
 import { buildHadithSearchTerms, buildQuranSearchTerms, extractSalientTerms, normalizeIntentText } from "./UniversalIntent.ts";
+import { postOpenAiResponses, reasoningEffortFromEnv } from "./OpenAiRequest.ts";
 
 export type IslamicQueryExpansion = {
   isIslamicEntity: boolean;
@@ -580,14 +581,7 @@ async function requestModelExpansion(
   const timeout = setTimeout(() => controller.abort(), 1_800);
 
   try {
-    const response = await fetch("https://api.openai.com/v1/responses", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        "Content-Type": "application/json",
-      },
-      signal: controller.signal,
-      body: JSON.stringify({
+    const response = await postOpenAiResponses({
         model,
         store: false,
         max_output_tokens: 420,
@@ -662,7 +656,10 @@ async function requestModelExpansion(
             },
           },
         },
-      }),
+      }, {
+      apiKey,
+      effort: reasoningEffortFromEnv("WASIL_REASONING_EFFORT_RETRIEVAL", "low"),
+      signal: controller.signal,
     });
 
     if (!response.ok) return null;

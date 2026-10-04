@@ -40,6 +40,7 @@ import {
   type WasilWebBudget,
 } from "./engine/DocumentaryRetriever.ts";
 import { religiousScholarCorpus, wasilVerifiedReligiousOpinionsPolicy } from "./engine/ReligiousSourcePolicy.ts";
+import { postOpenAiResponses, reasoningEffortFromEnv } from "./engine/OpenAiRequest.ts";
 
 async function retrieveQuranKnowledgeSafely(
   ...args: Parameters<typeof retrieveQuranKnowledge>
@@ -2483,13 +2484,13 @@ Deno.serve(async (request) => {
             max_output_tokens: Math.max(queryProfile.maxOutputTokens, 6000),
           }
         : openAiBody;
-      const openAiResponse = await fetch("https://api.openai.com/v1/responses", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${Deno.env.get("OPENAI_API_KEY")}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(requestBody),
+      // Standard answers run with low reasoning effort (the main latency
+      // lever); deep mode keeps the model default unless configured.
+      const openAiResponse = await postOpenAiResponses(requestBody, {
+        apiKey: Deno.env.get("OPENAI_API_KEY") ?? "",
+        effort: mode === "deep"
+          ? reasoningEffortFromEnv("WASIL_REASONING_EFFORT_DEEP", null)
+          : reasoningEffortFromEnv("WASIL_REASONING_EFFORT_STANDARD", "low"),
       });
       if (!openAiResponse.ok) {
         const providerError = (await openAiResponse.text()).slice(0, 1_500);

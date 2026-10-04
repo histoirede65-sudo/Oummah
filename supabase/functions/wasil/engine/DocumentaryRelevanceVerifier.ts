@@ -1,3 +1,5 @@
+import { postOpenAiResponses, reasoningEffortFromEnv } from "./OpenAiRequest.ts";
+
 export type DocumentaryCandidate = {
   id: string;
   kind: "quran" | "hadith";
@@ -236,14 +238,7 @@ export async function verifyDocumentaryRelevance(
   const timeout = setTimeout(() => controller.abort(), 5_500);
 
   try {
-    const response = await fetch("https://api.openai.com/v1/responses", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        "Content-Type": "application/json",
-      },
-      signal: controller.signal,
-      body: JSON.stringify({
+    const response = await postOpenAiResponses({
         model,
         store: false,
         max_output_tokens: 900,
@@ -300,7 +295,10 @@ export async function verifyDocumentaryRelevance(
             },
           },
         },
-      }),
+      }, {
+      apiKey,
+      effort: reasoningEffortFromEnv("WASIL_REASONING_EFFORT_RETRIEVAL", "low"),
+      signal: controller.signal,
     });
 
     if (!response.ok) {

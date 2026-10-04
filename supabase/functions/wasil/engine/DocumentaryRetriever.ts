@@ -1,3 +1,5 @@
+import { postOpenAiResponses, reasoningEffortFromEnv } from "./OpenAiRequest.ts";
+
 export type DocumentaryReference = {
   title: string;
   url: string;
@@ -132,14 +134,7 @@ export async function retrieveDocumentaryKnowledge(
   const timeout = setTimeout(() => controller.abort(), 12_000);
 
   try {
-    const response = await fetch("https://api.openai.com/v1/responses", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        "Content-Type": "application/json",
-      },
-      signal: controller.signal,
-      body: JSON.stringify({
+    const response = await postOpenAiResponses({
         model,
         store: false,
         max_output_tokens: 1800,
@@ -176,7 +171,10 @@ export async function retrieveDocumentaryKnowledge(
             },
           },
         },
-      }),
+      }, {
+      apiKey,
+      effort: reasoningEffortFromEnv("WASIL_REASONING_EFFORT_RETRIEVAL", "low"),
+      signal: controller.signal,
     });
 
     if (!response.ok) {

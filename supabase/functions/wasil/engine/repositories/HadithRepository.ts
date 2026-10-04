@@ -2,6 +2,7 @@ import { rankDocuments } from "../RelevanceScorer.ts";
 import type { IslamicQueryExpansion } from "../IslamicQueryExpansion.ts";
 import { buildHadithSearchTerms, extractIntentConcepts } from "../UniversalIntent.ts";
 import { consumeWasilWebBudget, type WasilWebBudget } from "../DocumentaryRetriever.ts";
+import { postOpenAiResponses, reasoningEffortFromEnv } from "../OpenAiRequest.ts";
 
 export type HadithRepositoryReference = {
   title: string;
@@ -622,14 +623,7 @@ export async function searchHadithRepository(
   const timeout = setTimeout(() => controller.abort(), supplementalTimeoutMs);
 
   try {
-    const response = await fetch("https://api.openai.com/v1/responses", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        "Content-Type": "application/json",
-      },
-      signal: controller.signal,
-      body: JSON.stringify({
+    const response = await postOpenAiResponses({
         model,
         store: false,
         max_output_tokens: 1200,
@@ -695,7 +689,10 @@ export async function searchHadithRepository(
             },
           },
         },
-      }),
+      }, {
+      apiKey,
+      effort: reasoningEffortFromEnv("WASIL_REASONING_EFFORT_RETRIEVAL", "low"),
+      signal: controller.signal,
     });
 
     if (!response.ok) {
