@@ -1,5 +1,3 @@
-import { Ionicons } from "@expo/vector-icons";
-import { LinearGradient } from "expo-linear-gradient";
 import { FlatList, Pressable, StyleSheet, Text, View } from "react-native";
 
 import type { Juz } from "../../data/juz";
@@ -35,13 +33,6 @@ export default function JuzList({ data, header, getSurahDisplayName, onJuzPress 
             onPress={() => onJuzPress(item)}
             style={({ pressed }) => [styles.cell, pressed && styles.pressed]}
           >
-            <LinearGradient
-              colors={["rgba(42,25,54,0.97)", "rgba(17,13,27,0.99)"]}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 1 }}
-              style={StyleSheet.absoluteFill}
-            />
-            <View pointerEvents="none" style={styles.glow} />
             <View style={styles.number}>
               <Text style={styles.numberLabel}>JUZ</Text>
               <Text style={styles.numberText}>{item.id}</Text>
@@ -58,12 +49,9 @@ export default function JuzList({ data, header, getSurahDisplayName, onJuzPress 
                 })}
               </Text>
             </View>
-            <View style={styles.arabicPill}>
-              <Text numberOfLines={1} style={styles.arabic}>
-                {surah.arabicName}
-              </Text>
-            </View>
-            <Ionicons name="arrow-forward" size={16} color={colors.goldLight} />
+            <Text numberOfLines={1} style={styles.arabic}>
+              {surah.arabicName}
+            </Text>
           </Pressable>
         );
       }}
@@ -81,24 +69,15 @@ export default function JuzList({ data, header, getSurahDisplayName, onJuzPress 
 const styles = StyleSheet.create({
   content: { paddingHorizontal: 14, paddingBottom: 108 },
   cell: {
-    height: 96,
-    overflow: "hidden",
+    minHeight: 72,
     paddingHorizontal: 12,
+    paddingVertical: 12,
     flexDirection: "row",
     alignItems: "center",
-    borderRadius: 21,
+    borderRadius: 16,
     borderWidth: 1,
-    borderColor: "rgba(190,139,56,0.38)",
+    borderColor: "rgba(227,181,90,0.13)",
     backgroundColor: colors.surface,
-  },
-  glow: {
-    position: "absolute",
-    top: -40,
-    right: 32,
-    width: 150,
-    height: 94,
-    borderRadius: 75,
-    backgroundColor: "rgba(229,182,81,0.055)",
   },
   number: {
     width: 50,
@@ -138,24 +117,15 @@ const styles = StyleSheet.create({
     fontFamily: typography.sans,
     fontSize: 9.5,
   },
-  arabicPill: {
-    maxWidth: "27%",
-    marginRight: 9,
-    paddingHorizontal: 10,
-    paddingVertical: 7,
-    borderRadius: 14,
-    borderWidth: 1,
-    borderColor: "rgba(229,182,81,0.25)",
-    backgroundColor: "rgba(229,182,81,0.07)",
-  },
   arabic: {
-    color: "#F0C66A",
+    maxWidth: "34%",
+    marginLeft: 10,
+    color: "#F2C86C",
     fontFamily: typography.arabic,
-    fontSize: 19,
+    fontSize: 23,
+    lineHeight: 34,
     textAlign: "right",
     writingDirection: "rtl",
-    textShadowColor: "rgba(229,182,81,0.45)",
-    textShadowRadius: 8,
   },
   separator: { height: 8 },
   pressed: { opacity: 0.7, transform: [{ scale: 0.992 }] },
