@@ -249,10 +249,6 @@ export default function HifzSessionScreen() {
     reciter: rawReciter,
     portion: rawPortion,
   } = params;
-  console.log("[HIFZ SESSION PARAMS]", { rawVerse, rawEnd, params });
-  if (rawEnd === undefined || rawEnd === null || rawEnd === "") {
-    console.warn("[HIFZ] end param missing", params);
-  }
   const surahId = Math.max(1, Math.min(114, Number(rawSurah) || 112));
   const surah = SURAHS.find((item) => item.id === surahId) ?? SURAHS[111];
   const [verses, setVerses] = useState<readonly QuranFoundationVerse[]>([]);
@@ -401,6 +397,7 @@ export default function HifzSessionScreen() {
     loadedVerseKey.current = null;
     resumePosition.current = null;
     setSelectedWordRange(null);
+    setSaved(false);
     setRevealedWordCount(0);
     setMaskSeed(0);
     setWordTimings([]);
@@ -484,8 +481,8 @@ export default function HifzSessionScreen() {
     "De mémoire",
   ][teacherLevel];
   const words = useMemo(
-    () => currentText.trim().split(/\s+/).filter(Boolean).length,
-    [currentText],
+    () => textWords.filter((word) => !isQuranicPauseMark(word)).length,
+    [textWords],
   );
   const currentVerseNumber = Number(verse?.verseKey.split(":")[1] ?? index + 1);
   const currentVerseMastered = masteredVerses.includes(currentVerseNumber);
