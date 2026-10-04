@@ -448,11 +448,8 @@ export default function SyncedVerseList({
       (verse) => verse.id === activeVerse?.id,
     );
     const activeIndex = foundIndex >= 0 ? foundIndex : 0;
-    const startIndex =
-      activeIndex === syncedVerses.length - 1
-        ? Math.max(0, activeIndex - 1)
-        : activeIndex;
-    return syncedVerses.slice(startIndex, startIndex + 2);
+    // The verse being recited always sits in the top card; on the last verse there is no "next" card.
+    return syncedVerses.slice(activeIndex, activeIndex + 2);
   }, [activeVerse?.id, syncedVerses]);
   verseKeyRef.current =
     listenerWordState.activeVerseId ?? syncedVerses[0]?.id ?? null;
