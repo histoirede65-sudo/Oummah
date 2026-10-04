@@ -23,6 +23,7 @@ import { loadTahajjudSettings, saveTahajjudSettings, type TahajjudSettings } fro
 import { useTahajjudNight } from '../../features/tahajjud/useTahajjudNight';
 
 const NOTIFICATIONS: readonly { key: keyof TahajjudSettings['notifications']; title: string; text: string }[] = [
+  { key: 'bedtime', title: 'Heure du coucher', text: 'Selon le nombre de cycles de sommeil choisi ci-dessus' },
   { key: 'evening', title: 'Rappel du soir', text: '45 min après ‘Isha, pour formuler l’intention' },
   { key: 'soon', title: 'Le dernier tiers commence bientôt', text: '15 minutes avant' },
   { key: 'start', title: 'Le dernier tiers commence maintenant', text: 'Au début exact du dernier tiers' },
@@ -150,14 +151,22 @@ export default function TahajjudAlarmScreen() {
             {bedtimes.length ? (
               <>
                 <Text style={styles.bedTitle}>Se coucher à</Text>
-                <Text style={styles.bedHint}>Cycles de sommeil complets (≈ 1 h 30) : on se réveille plus facilement.</Text>
+                <Text style={styles.bedHint}>Cycles de sommeil complets (≈ 1 h 30) : on se réveille plus facilement. Touchez un horaire pour être prévenu chaque soir.</Text>
                 <View style={styles.bedRow}>
-                  {bedtimes.slice(0, 3).map((item) => (
-                    <View key={item.cycles} style={styles.bedChip}>
-                      <Text style={styles.bedTime}>{clock(item.at)}</Text>
-                      <Text style={styles.bedSleep}>{formatDuration(item.sleep)} de sommeil</Text>
-                    </View>
-                  ))}
+                  {[...bedtimes].reverse().slice(0, 3).map((item) => {
+                    const chosen = settings.notifications.bedtime && settings.bedtimeCycles === item.cycles;
+                    return (
+                      <Pressable
+                        key={item.cycles}
+                        onPress={() => void update({ ...settings, bedtimeCycles: item.cycles, notifications: { ...settings.notifications, bedtime: !chosen } })}
+                        style={[styles.bedChip, chosen && styles.bedChipOn]}
+                      >
+                        {chosen ? <Ionicons name="notifications" size={13} color={night.sky0} /> : null}
+                        <Text style={[styles.bedTime, chosen && styles.bedTextOn]}>{clock(item.at)}</Text>
+                        <Text style={[styles.bedSleep, chosen && styles.bedTextOn]}>{formatDuration(item.sleep)} de sommeil</Text>
+                      </Pressable>
+                    );
+                  })}
                 </View>
               </>
             ) : null}
@@ -230,6 +239,8 @@ const styles = StyleSheet.create({
   bedChip: { flex: 1, borderRadius: 16, paddingVertical: 12, alignItems: 'center', backgroundColor: '#181431', borderWidth: 1, borderColor: night.line },
   bedTime: { color: night.text, fontSize: 22, ...nightType.bold },
   bedSleep: { marginTop: 2, color: night.muted, fontSize: 14, ...nightType.body },
+  bedChipOn: { backgroundColor: night.gold, borderColor: night.gold },
+  bedTextOn: { color: night.sky0 },
   systemButton: { marginTop: 14, flexDirection: 'row', alignItems: 'center', gap: 12, padding: 16, borderRadius: 22, borderWidth: 1, borderColor: night.goldLine, backgroundColor: '#191324' },
   note: { marginTop: 12, color: night.muted, fontSize: 15, lineHeight: 21, ...nightType.body },
   pressed: { opacity: 0.85 },

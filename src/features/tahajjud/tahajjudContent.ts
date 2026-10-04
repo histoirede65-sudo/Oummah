@@ -158,7 +158,7 @@ export const GUIDE: GuideTab[] = [
       {
         id: 'sujud', icon: 'heart-outline', title: '5. Prolonger la récitation et les prosternations',
         body: 'Récitez ce que vous connaissez, sans vous presser. Dans la prosternation, demandez à Allah tout ce dont vous avez besoin, dans votre langue en dehors de la prière obligatoire.',
-        action: { label: 'Lire quelques versets', route: '/tahajjud/readings' },
+        action: { label: 'Que réciter dans ma prière ?', route: '/tahajjud/recite' },
       },
       {
         id: 'witr', icon: 'star-outline', title: '6. Terminer par le Witr',

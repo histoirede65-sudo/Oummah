@@ -11,7 +11,7 @@ import {
   saveTahajjudNight,
   type TahajjudNights,
 } from './TahajjudStore';
-import { alarmTime, clock, formatDuration, upcomingNights, type TahajjudNight } from './tahajjudNight';
+import { alarmTime, bedtimeSuggestions, clock, formatDuration, upcomingNights, type TahajjudNight } from './tahajjudNight';
 import { loadTahajjudSchedule } from './tahajjudSchedule';
 import { publishTahajjudWidget, refreshTahajjudWidgetValidation } from './tahajjudWidget';
 import { shareValidationWithCommunity } from './tahajjudCommunity';
@@ -99,6 +99,21 @@ function planNight(night: TahajjudNight, settings: Awaited<ReturnType<typeof loa
     });
   }
   const wakeUp = alarm.enabled ? alarmTime(night, alarm.mode, alarm.customTime) : null;
+  if (notifications.bedtime) {
+    // The chosen number of sleep cycles, or the longest that still fits after ‘Isha.
+    const target = wakeUp ?? night.lastThirdStart;
+    const options = bedtimeSuggestions(night, target);
+    const choice = options.find((item) => item.cycles === settings.bedtimeCycles)
+      ?? [...options].reverse().find((item) => item.cycles <= settings.bedtimeCycles)
+      ?? options[0];
+    if (choice) {
+      planned.push({
+        at: choice.at, kind: 'bedtime', night: night.key,
+        title: 'Il est l’heure de dormir 🌙',
+        body: `Couché maintenant : ${formatDuration(choice.sleep)} de sommeil avant ${wakeUp ? 'votre réveil' : 'le dernier tiers'} à ${clock(target)}.`,
+      });
+    }
+  }
   if (wakeUp !== null) {
     planned.push({
       at: wakeUp, kind: 'alarm', night: night.key,
@@ -122,6 +137,9 @@ function planNight(night: TahajjudNight, settings: Awaited<ReturnType<typeof loa
   }
   return planned;
 }
+
+/** These notifications open the guided « Je suis debout » mode. */
+const WAKE_KINDS = new Set(['alarm', 'start', 'soon']);
 
 let queue: Promise<void> = Promise.resolve();
 
@@ -174,7 +192,7 @@ export function refreshTahajjudNotifications(force = false): Promise<void> {
             title: item.title,
             body: item.body,
             sound: 'default',
-            data: { notificationOwner: OWNER, route: '/tahajjud', kind: item.kind, night: item.night },
+            data: { notificationOwner: OWNER, route: WAKE_KINDS.has(item.kind) ? '/tahajjud/awake' : '/tahajjud', kind: item.kind, night: item.night },
             ...(Platform.OS === 'ios' && item.kind === 'alarm' ? { interruptionLevel: 'timeSensitive' as const } : {}),
           },
           trigger: {

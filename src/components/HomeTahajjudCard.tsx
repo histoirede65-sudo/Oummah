@@ -74,12 +74,18 @@ export default function HomeTahajjudCard({ schedule }: Props) {
               <Ionicons name="chevron-forward" size={16} color={night.muted} />
             </Pressable>
           ) : inLastThird ? (
-            <Pressable onPress={() => setSheet(true)} style={({ pressed }) => [styles.flex, pressed && styles.pressed]}>
-              <LinearGradient colors={[night.goldSoft, night.gold]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.primary}>
-                <Ionicons name="moon" size={17} color={night.sky0} />
-                <Text style={styles.primaryText}>J’ai prié cette nuit</Text>
-              </LinearGradient>
-            </Pressable>
+            <>
+              <Pressable onPress={() => router.push('/tahajjud/awake' as Href)} style={({ pressed }) => [styles.flex, pressed && styles.pressed]}>
+                <LinearGradient colors={[night.goldSoft, night.gold]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.primary}>
+                  <Ionicons name="sunny" size={17} color={night.sky0} />
+                  <Text style={styles.primaryText}>Je suis debout</Text>
+                </LinearGradient>
+              </Pressable>
+              <Pressable onPress={() => setSheet(true)} style={({ pressed }) => [styles.chip, pressed && styles.pressed]}>
+                <Ionicons name="checkmark-circle-outline" size={16} color={night.goldSoft} />
+                <Text style={styles.chipText}>J’ai prié</Text>
+              </Pressable>
+            </>
           ) : (
             <>
               <Pressable onPress={() => router.push('/tahajjud/alarm' as Href)} style={({ pressed }) => [styles.chip, pressed && styles.pressed]}>

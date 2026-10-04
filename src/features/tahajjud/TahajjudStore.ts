@@ -21,7 +21,9 @@ export type TahajjudPause = { from: string; to: string | null };
 
 export type TahajjudSettings = {
   alarm: { enabled: boolean; mode: AlarmMode; customTime?: string; systemAlarm?: boolean };
-  notifications: { soon: boolean; start: boolean; evening: boolean; fajr: boolean };
+  notifications: { soon: boolean; start: boolean; evening: boolean; fajr: boolean; bedtime: boolean };
+  /** Sleep cycles (1 h 30) wanted before waking up: drives the « heure du coucher » reminder. */
+  bedtimeCycles: number;
 };
 
 export type PrivateDua = {
@@ -41,7 +43,8 @@ export type TahajjudChallenge = { id: string; label: string; target: number; sta
 
 export const DEFAULT_TAHAJJUD_SETTINGS: TahajjudSettings = {
   alarm: { enabled: false, mode: 'start' },
-  notifications: { soon: false, start: false, evening: false, fajr: false },
+  notifications: { soon: false, start: false, evening: false, fajr: false, bedtime: false },
+  bedtimeCycles: 5,
 };
 
 async function read<T>(key: string, fallback: T, valid: (value: unknown) => boolean): Promise<T> {
@@ -120,6 +123,7 @@ export async function loadTahajjudSettings(): Promise<TahajjudSettings> {
   return {
     alarm: { ...DEFAULT_TAHAJJUD_SETTINGS.alarm, ...(value.alarm ?? {}) },
     notifications: { ...DEFAULT_TAHAJJUD_SETTINGS.notifications, ...(value.notifications ?? {}) },
+    bedtimeCycles: typeof value.bedtimeCycles === 'number' ? value.bedtimeCycles : DEFAULT_TAHAJJUD_SETTINGS.bedtimeCycles,
   };
 }
 

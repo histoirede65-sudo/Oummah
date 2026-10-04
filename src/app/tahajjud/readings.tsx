@@ -12,6 +12,14 @@ export default function TahajjudReadingsScreen() {
   return (
     <TahajjudShell title="Lire quelques versets" eyebrow="Qiyam al-Layl">
       <Text style={styles.intro}>Des passages liés à la nuit, ou la sourate de votre choix.</Text>
+      <Pressable onPress={() => router.push('/tahajjud/recite' as Href)} style={({ pressed }) => [styles.recite, pressed && styles.pressed]}>
+        <Ionicons name="moon" size={22} color={night.sky0} />
+        <View style={styles.copy}>
+          <Text style={styles.reciteTitle}>Que réciter dans ma prière ?</Text>
+          <Text style={styles.reciteText}>Sourates courtes classées par longueur, en grand, avec phonétique.</Text>
+        </View>
+        <Ionicons name="chevron-forward" size={20} color={night.sky0} />
+      </Pressable>
       {NIGHT_READINGS.map((reading, index) => (
         <Animated.View key={reading.id} entering={FadeInDown.delay(index * 60).duration(400)}>
           <Pressable
@@ -41,6 +49,9 @@ export default function TahajjudReadingsScreen() {
 }
 
 const styles = StyleSheet.create({
+  recite: { marginBottom: 16, flexDirection: 'row', alignItems: 'center', gap: 12, padding: 16, borderRadius: 22, backgroundColor: night.goldSoft },
+  reciteTitle: { color: night.sky0, fontSize: 18, ...nightType.bold },
+  reciteText: { marginTop: 2, color: night.sky1, fontSize: 14, lineHeight: 19, ...nightType.medium },
   intro: { marginBottom: 16, color: night.textSoft, fontSize: 17, lineHeight: 24, ...nightType.body },
   card: { flexDirection: 'row', alignItems: 'center', gap: 14, padding: 16, marginBottom: 10, borderRadius: 22, backgroundColor: night.glass, borderWidth: 1, borderColor: night.line },
   number: { width: 46, height: 46, borderRadius: 23, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: night.goldLine, backgroundColor: '#201826' },

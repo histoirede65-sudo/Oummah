@@ -113,12 +113,18 @@ export default function TahajjudScreen() {
 
           <Animated.View entering={FadeInDown.delay(220).duration(500)}>
             {phase === 'lastThird' && view.canValidate ? (
-              <Pressable onPress={() => setSheet(true)} style={({ pressed }) => [pressed && styles.pressed]}>
-                <LinearGradient colors={[night.goldSoft, night.gold]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.cta}>
-                  <Ionicons name="moon" size={20} color={night.sky0} />
-                  <Text style={styles.ctaText}>J’ai prié cette nuit</Text>
-                </LinearGradient>
-              </Pressable>
+              <>
+                <Pressable onPress={() => router.push('/tahajjud/awake' as Href)} style={({ pressed }) => [pressed && styles.pressed]}>
+                  <LinearGradient colors={[night.goldSoft, night.gold]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.cta}>
+                    <Ionicons name="sunny" size={20} color={night.sky0} />
+                    <Text style={styles.ctaText}>Je suis debout</Text>
+                  </LinearGradient>
+                </Pressable>
+                <Pressable onPress={() => setSheet(true)} style={styles.lateLink}>
+                  <Ionicons name="checkmark-circle-outline" size={15} color={night.goldSoft} />
+                  <Text style={styles.lateText}>J’ai déjà prié cette nuit</Text>
+                </Pressable>
+              </>
             ) : view.validated ? (
               <View style={[styles.cta, styles.ctaDone]}>
                 <Ionicons name="checkmark-circle" size={20} color={night.success} />
@@ -135,6 +141,12 @@ export default function TahajjudScreen() {
                 </LinearGradient>
               </Pressable>
             )}
+            {phase === 'evening' && !view.validated ? (
+              <Pressable onPress={() => router.push('/tahajjud/awake' as Href)} style={styles.lateLink}>
+                <Ionicons name="sunny-outline" size={15} color={night.goldSoft} />
+                <Text style={styles.lateText}>Prier maintenant · mode guidé</Text>
+              </Pressable>
+            ) : null}
             {late ? (
               <Pressable onPress={() => setSheet(true)} style={styles.lateLink}>
                 <Ionicons name="moon-outline" size={15} color={night.goldSoft} />
