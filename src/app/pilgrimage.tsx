@@ -39,6 +39,7 @@ const TOOLS: ReadonlyArray<{ id: string; title: string; text: string; icon: keyo
   { id: "duas", title: "Invocations", text: "À lire en grand sur place", icon: "chatbubble-ellipses-outline", route: "/pilgrimage/invocations" },
   { id: "doubt", title: "J’ai un doute", text: "Que faire maintenant ?", icon: "help-buoy-outline", route: "/pilgrimage/problems" },
   { id: "bag", title: "Ma valise", text: "Ne rien oublier avant le départ", icon: "briefcase-outline", route: "/pilgrimage/checklist" },
+  { id: "miqat", title: "Alerte mîqât", text: "Prévenu en avion avant la limite", icon: "airplane-outline", route: "/pilgrimage/miqat" },
 ];
 
 const STARS = Array.from({ length: 34 }, (_, index) => ({

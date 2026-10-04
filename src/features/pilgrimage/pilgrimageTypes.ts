@@ -17,7 +17,7 @@ export type Visual =
   | "muzdalifa" | "jamarat" | "sacrifice" | "ifada" | "farewell";
 
 /** A companion tool the page can open (Mode Pèlerin). */
-export type Tool = "tawaf" | "sai" | "jamarat";
+export type Tool = "tawaf" | "sai" | "jamarat" | "miqat";
 
 export type Step = {
   id: string;

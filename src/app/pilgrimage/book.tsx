@@ -28,6 +28,7 @@ const TOOL_LABELS: Record<Tool, string> = {
   tawaf: "Ouvrir le compteur de Tawâf",
   sai: "Ouvrir le compteur de Sa‘y",
   jamarat: "Ouvrir le compteur des Jamarât",
+  miqat: "Alerte mîqât en avion",
 };
 
 function onlyLabel(only: HajjType[]) {
@@ -311,7 +312,7 @@ const BookPageView = memo(function BookPageView({ page, width, total, done, hajj
       {step.tool ? (
         <Pressable
           accessibilityRole="button"
-          onPress={() => router.push(`/pilgrimage/pilgrim-mode?tool=${step.tool}`)}
+          onPress={() => router.push(step.tool === "miqat" ? "/pilgrimage/miqat" : `/pilgrimage/pilgrim-mode?tool=${step.tool}`)}
           style={({ pressed }) => [styles.toolButton, pressed && styles.pressed]}
         >
           <Ionicons name="finger-print-outline" size={22} color={pil.ink} />

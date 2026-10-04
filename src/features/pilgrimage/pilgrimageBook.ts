@@ -46,6 +46,7 @@ const miqat: Step = {
     p("Dhât ‘Irq a été fixé pour les gens de l’Irak.", [H("Sahîh al-Bukhârî 1531")]),
     p("En avion, préparez-vous avant le passage annoncé ; si le mîqât est dépassé, consultez rapidement.", [H("Sahîh al-Bukhârî 1526")]),
   ],
+  tool: "miqat",
 };
 
 const ihram: Step = {
