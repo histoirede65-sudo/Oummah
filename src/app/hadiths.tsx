@@ -109,21 +109,10 @@ export default function HadithHomeScreen() {
           </Pressable>
 
           <View style={styles.headerCenter}>
-            <Text style={styles.headerEyebrow}>OUMMAH</Text>
             <Text style={styles.headerTitle}>Hadith</Text>
           </View>
 
-          <View
-            accessibilityElementsHidden
-            importantForAccessibility="no"
-            style={styles.headerCircle}
-          >
-            <Ionicons
-              name="heart-outline"
-              size={21}
-              color={colors.goldLight}
-            />
-          </View>
+          <View style={styles.headerSpacer} />
         </View>
 
         <ScrollView
@@ -151,8 +140,8 @@ export default function HadithHomeScreen() {
               >
                 <LinearGradient
                   colors={action.route === "/hadith/collections"
-                    ? ["rgba(91,55,112,0.94)", "rgba(31,20,46,0.98)"]
-                    : ["rgba(73,42,91,0.88)", "rgba(27,18,40,0.96)"]}
+                    ? ["#221A36", "#151022"]
+                    : ["#1E1730", "#151022"]}
                   style={StyleSheet.absoluteFill}
                 />
                 <View style={styles.actionGlow} />
@@ -265,7 +254,7 @@ export default function HadithHomeScreen() {
                   >
                     <View style={styles.bookCover}>
                       <LinearGradient
-                        colors={["#5A3569", "#24172F"]}
+                        colors={["#2A2140", "#1A1428"]}
                         style={StyleSheet.absoluteFill}
                       />
                       <View style={styles.bookSpine} />
@@ -368,7 +357,7 @@ function LibraryCard({
       ]}
     >
       <LinearGradient
-        colors={["rgba(64,35,78,0.94)", "rgba(27,18,39,0.96)"]}
+        colors={["#1E1730", "#151022"]}
         style={StyleSheet.absoluteFill}
       />
       <View style={styles.libraryGlow} />
@@ -418,6 +407,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.24,
     shadowRadius: 9,
   },
+  headerSpacer: { width: 46, height: 46 },
   headerCenter: { alignItems: "center" },
   headerEyebrow: {
     color: colors.goldLight,

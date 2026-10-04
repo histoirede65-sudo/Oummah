@@ -27,7 +27,7 @@ export default function DailyHadithCard({
       style={({ pressed }) => [styles.card, pressed && styles.pressed]}
     >
       <LinearGradient
-        colors={["#442655", "#21142F", "#100C1C"]}
+        colors={["#251C3A", "#171127", "#100C1C"]}
         locations={[0, 0.52, 1]}
         style={StyleSheet.absoluteFill}
       />
@@ -132,7 +132,7 @@ const styles = StyleSheet.create({
     width: 220,
     height: 220,
     borderRadius: 110,
-    backgroundColor: "rgba(103,56,124,0.16)",
+    backgroundColor: "rgba(227,181,90,0.05)",
   },
   header: {
     flexDirection: "row",
