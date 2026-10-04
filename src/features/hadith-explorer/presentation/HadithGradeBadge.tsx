@@ -1,5 +1,6 @@
 import { StyleSheet, Text, View } from "react-native";
 import type { HadithGradeKind } from "../domain/HadithGrade";
+import { cleanHadithLabel } from "../domain/hadithDisplay";
 import { typography } from "../../../theme/typography";
 
 const PALETTE: Record<HadithGradeKind, { background: string; border: string; text: string }> = {
@@ -15,7 +16,7 @@ export default function HadithGradeBadge({ grade, kind }: { grade: string; kind:
   return (
     <View style={[styles.badge, { backgroundColor: palette.background, borderColor: palette.border }]}>
       <View style={[styles.dot, { backgroundColor: palette.text }]} />
-      <Text numberOfLines={1} style={[styles.text, { color: palette.text }]}>{grade}</Text>
+      <Text numberOfLines={1} style={[styles.text, { color: palette.text }]}>{cleanHadithLabel(grade)}</Text>
     </View>
   );
 }

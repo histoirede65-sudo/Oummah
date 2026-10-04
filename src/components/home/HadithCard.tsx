@@ -10,6 +10,7 @@ import type { Hadith } from "../../features/hadith-explorer/domain/Hadith";
 import { colors } from "../../theme/colors";
 import { typography } from "../../theme/typography";
 import { useI18n } from "../../i18n";
+import { cleanHadithLabel } from "../../features/hadith-explorer/domain/hadithDisplay";
 
 function getHadithPreview(text: string) {
   const frenchQuotedContent = text.match(/«\s*([^»]+?)\s*»/s)?.[1]?.trim();
@@ -94,7 +95,7 @@ export default function HadithCard() {
         {previewHadithText}
       </Text>
       <Text numberOfLines={1} style={styles.reference}>
-        {visibleDaily?.reference || ""}
+        {cleanHadithLabel(visibleDaily?.reference)}
       </Text>
     </Pressable>
   );
