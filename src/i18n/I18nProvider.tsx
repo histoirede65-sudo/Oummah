@@ -28,6 +28,20 @@ function interpolate(message: string, values?: TranslationValues): string {
   ));
 }
 
+// Language of the mounted provider, for code that runs outside components
+// (services building replies, notifications).
+let activeLanguage: LanguageCode = 'fr';
+
+export function getActiveLanguage(): LanguageCode {
+  return activeLanguage;
+}
+
+/** Same as useI18n().t, usable outside React components. */
+export function translate(key: TranslationKey, values?: TranslationValues): string {
+  const message = languages[activeLanguage].catalog[key] ?? fr[key];
+  return interpolate(typeof message === 'string' ? message : String(key), values);
+}
+
 I18nManager.allowRTL(true);
 I18nManager.swapLeftAndRightInRTL?.(true);
 
@@ -36,6 +50,10 @@ export function I18nProvider({ children }: { children: ReactNode; initialLanguag
   // mais ne peut plus être sélectionné ni restauré depuis un ancien réglage.
   const [language, setStoredLanguage] = useState<LanguageCode>('fr');
   const definition = languages[language];
+
+  useEffect(() => {
+    activeLanguage = language;
+  }, [language]);
 
   useEffect(() => {
     // Réinitialise aussi les utilisateurs qui avaient déjà enregistré "en".
