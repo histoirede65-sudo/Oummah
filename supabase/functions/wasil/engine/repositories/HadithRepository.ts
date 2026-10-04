@@ -19,6 +19,9 @@ export type HadithRepositoryItem = {
   frenchMeaning: string;
   relevance: string;
   sourceUrl?: string;
+  /** Ranking evidence, read by the strict hadith fallback in index.ts. */
+  repositoryScore?: number;
+  repositoryMatchedTerms?: string[];
 };
 
 export type HadithRepositoryRecord = {
@@ -425,8 +428,14 @@ async function searchHadeethEnc(
   );
 
   const conceptRankedItems = applyHadithConceptReranking(rankedItems, question);
+  // The ranking evidence travels with each item: without it the strict
+  // fallback saw a score of 0 and rejected every hadith.
   const items = deduplicateAndPrioritizeHadithItems(
-    conceptRankedItems.map(({ item }) => item),
+    conceptRankedItems.map(({ item, score, matchedTerms }) => ({
+      ...item,
+      repositoryScore: score,
+      repositoryMatchedTerms: matchedTerms,
+    })),
     6,
   );
 
