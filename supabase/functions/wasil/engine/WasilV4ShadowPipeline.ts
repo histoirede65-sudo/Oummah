@@ -66,7 +66,8 @@ export async function runWasilV4ShadowPipeline(
 
     const productionDocumentaryMode =
       flags.v4ExecutionPlan || flags.v4ProductionBrainGuidance;
-    const [quranRecord, hadithRecord] = await Promise.all([
+    // The companion lookup does not depend on the Quran or Hadith records.
+    const [quranRecord, hadithRecord, companionRecord] = await Promise.all([
       (flags.v4QuranRepository || productionDocumentaryMode) &&
           preliminarySkills.has("quran")
         ? searchQuranRepository(question)
@@ -76,12 +77,10 @@ export async function runWasilV4ShadowPipeline(
         ? sharedHadithRepository?.() ??
           searchHadithRepository(question, { force: true, budget })
         : Promise.resolve(null),
-    ]);
-
-    const companionRecord =
       flags.v4CompanionRepository && entityResolution?.candidate
-        ? await searchCompanionRepository(question, entityResolution.candidate, budget)
-        : null;
+        ? searchCompanionRepository(question, entityResolution.candidate, budget)
+        : Promise.resolve(null),
+    ]);
 
     const knowledgeDossier = flags.v4KnowledgeAggregator
       ? aggregateKnowledge({ entityResolution, companionRecord, quranRecord, hadithRecord })

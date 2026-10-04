@@ -40,6 +40,13 @@ import {
   type WasilWebBudget,
 } from "./engine/DocumentaryRetriever.ts";
 import { religiousScholarCorpus, wasilVerifiedReligiousOpinionsPolicy } from "./engine/ReligiousSourcePolicy.ts";
+import { postOpenAiResponses, reasoningEffortFromEnv } from "./engine/OpenAiRequest.ts";
+import {
+  readOpenAiResponseStream,
+  streamWasilResponse,
+  StructuredBodyExtractor,
+  type WasilStreamSink,
+} from "./engine/AnswerStream.ts";
 
 async function retrieveQuranKnowledgeSafely(
   ...args: Parameters<typeof retrieveQuranKnowledge>
@@ -757,17 +764,12 @@ function enforceExplicitHadithSourceIds(input: {
 }): boolean {
   if (!requestedDocumentaryCorpora(input.question).hadith) return true;
   const verified = new Set(input.verifiedHadithSourceIds);
-  const selectedHadith = input.parsedSourceIds.filter((id) => verified.has(id));
-  if (selectedHadith.length > 0) {
-    input.parsedSourceIds.splice(
-      0,
-      input.parsedSourceIds.length,
-      ...selectedHadith,
-    );
-    return true;
-  }
-  input.parsedSourceIds.splice(0, input.parsedSourceIds.length);
-  return false;
+  // Preserve Quran and other sources; remove only unverified internal hadith ids.
+  const retained = input.parsedSourceIds.filter((id) =>
+    (!id.startsWith("hadith:") && !id.startsWith("v4-hadith:")) || verified.has(id)
+  );
+  input.parsedSourceIds.splice(0, input.parsedSourceIds.length, ...retained);
+  return retained.some((id) => verified.has(id));
 }
 
 function selectRelevantSources(
@@ -1076,7 +1078,40 @@ const trustedSources: Record<string, TrustedSource> = {
   },
 };
 
+// Left out on purpose because they also appear in religious questions: bare
+// "droite"/"gauche" (« commencer les ablutions par la droite ») and
+// "gouvernement" (obéissance aux gouvernants). Letter lookarounds instead of
+// \b, which ignores accented letters (« élections », « député »).
+const POLITICAL_TOPIC_PATTERN = /(?<![\p{L}\p{N}])(?:politique|politics|political|élections?|elections?|électoral(?:e|es|aux)?|electoral|présidentielles?|président(?:e)?s?|presidential|presidents?|parlement|parliament|député(?:e)?s?|sénat|senate|ministres?|ministers?|parti\s+politique|extrême[- ](?:droite|gauche)|far[- ](?:right|left)|géopolitique|geopolitics?|diplomatie|diplomacy|sanctions?\s+internationales?|conflit\s+international|guerre\s+en\s+(?:ukraine|gaza)|war\s+in\s+(?:ukraine|gaza)|macron|trump|poutine|putin|zelensky|netanyahu|le\s+pen|mélenchon)(?![\p{L}\p{N}])/iu;
+
+const FIXED_REPLIES = {
+  fr: {
+    politicalTitle: "Wasil est dédié aux questions sur l’islam",
+    politicalBody: "Je ne réponds pas aux questions politiques, électorales, partisanes, géopolitiques ou liées à l’actualité politique. Je peux répondre aux questions sur l’islam, à partir du Coran, de la Sunna authentique et des avis vérifiés des savants.",
+    incompleteEntityTitle: "Réponse documentaire incomplète pour",
+    incompleteEntityBody: "La première recherche n’a pas produit une réponse exploitable. Relancez la demande : Wasil conservera l’identité déjà résolue et ne redemandera pas de précision.",
+    noVerifiedHadith: "Je n’ai pas trouvé de hadith suffisamment vérifié et directement pertinent pour répondre à cette demande.",
+    urgentTitle: "Vous n’avez pas à rester seul",
+    urgentBody: "Si vous risquez de vous faire du mal ou si vous n’êtes pas en sécurité, contactez immédiatement les secours de votre pays ou une personne de confiance présente près de vous. En France, vous pouvez appeler le 3114, gratuitement, 24 h/24. Vous pouvez aussi vous rapprocher d’un professionnel de santé. Chercher de l’aide n’est pas un manque de foi.",
+    outOfScopeTitle: "Wasil est dédié à l’islam",
+    outOfScopeBody: "Je peux vous accompagner sur les questions religieuses et les contenus d’OUMMAH.",
+  },
+  en: {
+    politicalTitle: "Wasil is dedicated to questions about Islam",
+    politicalBody: "I do not answer political, electoral, partisan or geopolitical questions, or questions about political news. I can answer questions about Islam, based on the Quran, the authentic Sunnah and verified scholarly opinions.",
+    incompleteEntityTitle: "Incomplete answer about",
+    incompleteEntityBody: "The first search did not produce a usable answer. Please ask again: Wasil will keep the identity it already resolved and will not ask you to clarify.",
+    noVerifiedHadith: "I could not find a sufficiently verified hadith that directly answers this request.",
+    urgentTitle: "You do not have to stay alone",
+    urgentBody: "If you are at risk of harming yourself or do not feel safe, contact your local emergency services or a trusted person near you right away. In France, you can call 3114, free of charge, 24/7. You can also reach out to a health professional. Seeking help is not a lack of faith.",
+    outOfScopeTitle: "Wasil is dedicated to Islam",
+    outOfScopeBody: "I can help you with religious questions and OUMMAH content.",
+  },
+} as const;
+
 type WasilBody = {
+  /** Language of the app ("fr" by default). */
+  language?: string;
   operation?:
     | "ask"
     | "balance"
@@ -1659,6 +1694,29 @@ function pickVerifiedConsultedReferences(
     .slice(0, limit);
 }
 
+// A consulted domain or search page alone cannot satisfy a hadith request.
+// Require a precise hadith page explicitly used by the final answer AND
+// present in the provider's consulted sources (never the display fallback).
+function hasExplicitConsultedWebHadith(
+  consulted: Map<string, WebReference>,
+  requested: WebReference[],
+): boolean {
+  return requested.some((reference) => {
+    const key = normalizedUrl(reference.url);
+    if (!key || !consulted.has(key)) return false;
+    const url = new URL(key);
+    if (url.protocol !== "https:") return false;
+    const host = url.hostname.replace(/^www\./, "");
+    let path: string;
+    try { path = decodeURIComponent(url.pathname); } catch { return false; }
+    if (host === "hadeethenc.com") {
+      return /^\/[a-z]{2,3}\/browse\/hadith\/\d+\/?$/.test(path);
+    }
+    if (host !== "sunnah.com") return false;
+    return /^\/(?:bukhari|muslim|nasai|abudawud|tirmidhi|ibnmajah|malik|ahmad|riyadussalihin|adab|shamail|bulugh|qudsi40|nawawi40)(?::\d+[a-z]?(?:,\d+[a-z]?)?|\/\d+\/\d+)\/?$/i.test(path);
+  });
+}
+
 async function refund(userId: string, requestId: string, reason: string) {
   try {
     return Number(
@@ -1674,6 +1732,23 @@ async function refund(userId: string, requestId: string, reason: string) {
 }
 
 Deno.serve(async (request) => {
+  // Clients that ask for it receive the answer as server-sent events while it
+  // is written; older app versions keep the single JSON response.
+  if (request.method === "POST") {
+    const peek = await request.clone().json().catch(() => null) as
+      | { stream?: unknown; operation?: unknown }
+      | null;
+    if (peek?.stream === true && (peek.operation === undefined || peek.operation === "ask")) {
+      return streamWasilResponse(corsHeaders, (sink) => handleWasilRequest(request, sink));
+    }
+  }
+  return await handleWasilRequest(request);
+});
+
+async function handleWasilRequest(
+  request: Request,
+  streamSink?: WasilStreamSink,
+): Promise<Response> {
   const requestStartedAt = performance.now();
   const latencyStages: Record<string, number> = {};
   const markLatency = (stage: string, startedAt: number) => {
@@ -1809,6 +1884,8 @@ Deno.serve(async (request) => {
   const question = body.question?.trim() ?? "";
   const requestId = body.requestId ?? "";
   const mode = body.mode === "deep" ? "deep" : "standard";
+  const answerLanguage: "fr" | "en" = body.language === "en" ? "en" : "fr";
+  const fixed = FIXED_REPLIES[answerLanguage];
   const webBudget: WasilWebBudget = {
     initial: mode === "deep" ? 2 : 1,
     remaining: mode === "deep" ? 2 : 1,
@@ -1888,6 +1965,21 @@ Deno.serve(async (request) => {
     );
   }
 
+  // Political questions are declined at once: no model call, no credit.
+  if (POLITICAL_TOPIC_PATTERN.test(question)) {
+    console.log("WASIL_POLITICAL_QUESTION_DECLINED", { requestId });
+    return json({
+      reply: {
+        kind: "out-of-scope",
+        title: fixed.politicalTitle,
+        body: fixed.politicalBody,
+      },
+      balance,
+      creditsCharged: 0,
+      classification: "out_of_scope",
+    });
+  }
+
   const featureFlags = getWasilFeatureFlags();
   const productionV4InjectionRequested =
     featureFlags.v4ProductionBrainGuidance ||
@@ -1912,24 +2004,25 @@ Deno.serve(async (request) => {
     v4ProductionBrainGuidance: featureFlags.v4ProductionBrainGuidance,
     v4ExecutionPlan: featureFlags.v4ExecutionPlan,
   });
-  let v4Analysis: WasilV4ShadowResult | null = null;
-  const v4AnalysisStartedAt = performance.now();
-  if (
-    featureFlags.v4ProductionBrainGuidance ||
-    featureFlags.v4ExecutionPlan
-  ) {
-    // Controlled activation: the Brain may advise prompt structure, but the
-    // stable engine retains credits, retrieval, web routing and validation.
-    v4Analysis = await runWasilV4ShadowPipeline(effectiveQuestion, requestId, webBudget);
-  } else {
-    // Pure shadow mode remains fire-and-forget and cannot affect production.
-    void runWasilV4ShadowPipeline(effectiveQuestion, requestId, webBudget);
-  }
-  markLatency("v4AnalysisMs", v4AnalysisStartedAt);
+  // The independent stages start together instead of one after the other:
+  // credit reservation, context loads and the semantic expansion first; the
+  // V4 analysis and the repositories as soon as the credits are reserved, so
+  // an account without credits never triggers a paid web search.
+  const semanticExpansionStartedAt = performance.now();
+  let semanticExpansionMs = 0;
+  const queryExpansionPromise = expandIslamicQuery(effectiveQuestion)
+    .then((value) => {
+      semanticExpansionMs = markLatency("semanticExpansionMs", semanticExpansionStartedAt);
+      return value;
+    });
+  // Awaited inside the try block below; this only avoids an unhandled
+  // rejection if the request ends before that.
+  queryExpansionPromise.catch(() => undefined);
 
   const sourceHint = submittedContext?.sourceId;
   const contextStartedAt = performance.now();
-  const [rememberedSourceIds, profileMemories, quranContext] = await Promise.all([
+  let contextLoadMs = 0;
+  const contextPromise = Promise.all([
     clarificationOf
       ? Promise.resolve([] as string[])
       : postgrestRpc("find_wasil_intent_memory", {
@@ -1941,15 +2034,14 @@ Deno.serve(async (request) => {
             return [] as string[];
           }),
     loadProfileMemories(user.id),
-    loadQuranContext(effectiveQuestion),
-  ]);
-  const contextLoadMs = markLatency("contextLoadMs", contextStartedAt);
-  const profileMemoryContext = profileMemories
-    .map(
-      (memory) =>
-        `${memory.display_label}: ${memory.memory_value.replace(/\s+/g, " ").trim()}`,
-    )
-    .join("\n");
+    loadQuranContext(effectiveQuestion).catch((error) => {
+      console.warn("WASIL_QURAN_CONTEXT_LOAD_FAILURE", error instanceof Error ? error.message : String(error));
+      return null;
+    }),
+  ]).then((value) => {
+    contextLoadMs = markLatency("contextLoadMs", contextStartedAt);
+    return value;
+  });
 
   // A clarification requested by Wasil grants exactly one free follow-up:
   // the immediately following user message. The client sends clarificationOf
@@ -1998,8 +2090,56 @@ Deno.serve(async (request) => {
     }
   }
 
+  const v4AnalysisStartedAt = performance.now();
+  let v4Promise: Promise<WasilV4ShadowResult | null>;
+  if (
+    featureFlags.v4ProductionBrainGuidance ||
+    featureFlags.v4ExecutionPlan
+  ) {
+    // Controlled activation: the Brain may advise prompt structure, but the
+    // stable engine retains credits, retrieval, web routing and validation.
+    v4Promise = runWasilV4ShadowPipeline(effectiveQuestion, requestId, webBudget)
+      .then((value) => {
+        markLatency("v4AnalysisMs", v4AnalysisStartedAt);
+        return value;
+      });
+  } else {
+    // Pure shadow mode remains fire-and-forget and cannot affect production.
+    void runWasilV4ShadowPipeline(effectiveQuestion, requestId, webBudget);
+    markLatency("v4AnalysisMs", v4AnalysisStartedAt);
+    v4Promise = Promise.resolve(null);
+  }
+
   try {
     const initialQueryProfile = analyzeWasilQuery(effectiveQuestion, mode);
+    const requestedCorpora = requestedDocumentaryCorpora(effectiveQuestion);
+    // Semantic intent expansion is a first-class stage for every request. It
+    // is shared by the Quran and Hadith repositories, which start as soon as
+    // it resolves, while the V4 analysis is still running.
+    const repositoryRetrievalStartedAt = performance.now();
+    const startHadithSearch = (expansion: IslamicQueryExpansion | null) => {
+      const hadithStartedAt = performance.now();
+      return searchHadithRepository(effectiveQuestion, {
+        force: true,
+        expansion,
+        budget: webBudget,
+      }).then((value) => ({ value, ms: elapsedMs(hadithStartedAt) }));
+    };
+    const hadithRequestedUpFront = requestedCorpora.hadith ||
+      initialQueryProfile.category === "hadith";
+    const quranPromise = queryExpansionPromise.then((expansion) => {
+      const quranStartedAt = performance.now();
+      return retrieveQuranKnowledgeSafely(effectiveQuestion, expansion)
+        .then((value) => ({ value, ms: elapsedMs(quranStartedAt) }));
+    });
+    const earlyHadithPromise = hadithRequestedUpFront
+      ? queryExpansionPromise.then(startHadithSearch)
+      : null;
+
+    const [queryExpansion, v4Analysis] = await Promise.all([
+      queryExpansionPromise,
+      v4Promise,
+    ]);
     const executionPlan: WasilProductionExecutionPlan | null =
       featureFlags.v4ExecutionPlan
         ? buildWasilProductionExecutionPlan({
@@ -2008,46 +2148,35 @@ Deno.serve(async (request) => {
             brainPlan: v4Analysis?.brainPlan ?? null,
           })
         : null;
-    // Semantic intent expansion is now a first-class stage for every request.
-    // It is shared by the Quran and Hadith repositories instead of being used
-    // only when the first Quran lookup fails.
-    const semanticExpansionStartedAt = performance.now();
-    const queryExpansion = await expandIslamicQuery(effectiveQuestion);
-    const semanticExpansionMs = markLatency(
-      "semanticExpansionMs",
-      semanticExpansionStartedAt,
-    );
-    const requestedCorpora = requestedDocumentaryCorpora(effectiveQuestion);
     const plannedSkills = new Set(
       v4Analysis?.brainPlan?.executionSteps.map((step) => step.skill) ?? [],
     );
-    const shouldRetrieveHadith = requestedCorpora.hadith ||
-      plannedSkills.has("hadith") || initialQueryProfile.category === "hadith";
-
-    // Once the intent is resolved, both repositories run in parallel. This
-    // preserves latency while ensuring they receive exactly the same semantic
-    // target and evidence vocabulary.
-    const repositoryRetrievalStartedAt = performance.now();
-    const quranStartedAt = performance.now();
-    const quranPromise = retrieveQuranKnowledgeSafely(effectiveQuestion, queryExpansion)
-      .then((value) => ({ value, ms: elapsedMs(quranStartedAt) }));
-    const hadithStartedAt = performance.now();
-    const hadithPromise = (shouldRetrieveHadith
-        ? searchHadithRepository(effectiveQuestion, {
-            force: true,
-            expansion: queryExpansion,
-            budget: webBudget,
-          })
-        : Promise.resolve(null)
-      ).then((value) => ({ value, ms: elapsedMs(hadithStartedAt) }));
-    const [{ value: quranTopic, ms: quranRetrievalMs }, { value: directHadithRecord, ms: hadithRetrievalMs }] = await Promise.all([
+    const shouldRetrieveHadith = hadithRequestedUpFront ||
+      plannedSkills.has("hadith");
+    // A hadith search requested only by the V4 plan starts once that plan is known.
+    const hadithPromise = earlyHadithPromise ??
+      (shouldRetrieveHadith
+        ? startHadithSearch(queryExpansion)
+        : Promise.resolve({ value: null, ms: 0 }));
+    const [
+      { value: quranTopic, ms: quranRetrievalMs },
+      { value: directHadithRecord, ms: hadithRetrievalMs },
+      [rememberedSourceIds, profileMemories, quranContext],
+    ] = await Promise.all([
       quranPromise,
       hadithPromise,
+      contextPromise,
     ]);
     const repositoryRetrievalMs = markLatency(
       "repositoryRetrievalMs",
       repositoryRetrievalStartedAt,
     );
+    const profileMemoryContext = profileMemories
+      .map(
+        (memory) =>
+          `${memory.display_label}: ${memory.memory_value.replace(/\s+/g, " ").trim()}`,
+      )
+      .join("\n");
     const expandedQueryProfile = applyExpandedEntityProfile(
       initialQueryProfile,
       queryExpansion,
@@ -2308,7 +2437,7 @@ Deno.serve(async (request) => {
       featureFlags.v4ProductionBrainGuidance || featureFlags.v4ExecutionPlan
         ? buildProductionBrainGuidance(v4Analysis?.brainPlan ?? null)
         : "";
-    const productionInstructions = `${stableInstructions}${brainGuidance}${wasilVerifiedReligiousOpinionsPolicy}\n\nRÈGLE DOCUMENTAIRE UNIVERSELLE: avant de rédiger une réponse religieuse substantielle, examine séparément tous les corpus demandés. Privilégie toujours les preuves normatives directement liées à l’intention de la question. Une preuve générale, une sourate complète ou un récit historique ne doit jamais remplacer un verset ou un hadith plus direct lorsqu’il est disponible. Utilise les deux corpus lorsqu’ils sont réellement complémentaires, sans ajouter de citation décorative. Les cartes Hadith sont générées depuis les SOURCE_ID documentaires Hadith fournis (v4-hadith: ou hadith:). N’invente jamais de collection, de numéro ni de requête de navigation. Sélectionne ces SOURCE_ID seulement si le hadith est réellement utilisé dans le corps.`;
+    const productionInstructions = `${stableInstructions}${brainGuidance}${wasilVerifiedReligiousOpinionsPolicy}\n\nRÈGLE DOCUMENTAIRE UNIVERSELLE: avant de rédiger une réponse religieuse substantielle, examine séparément tous les corpus demandés. Privilégie toujours les preuves normatives directement liées à l’intention de la question. Une preuve générale, une sourate complète ou un récit historique ne doit jamais remplacer un verset ou un hadith plus direct lorsqu’il est disponible. Utilise les deux corpus lorsqu’ils sont réellement complémentaires, sans ajouter de citation décorative. Les cartes Hadith sont générées depuis les SOURCE_ID documentaires Hadith fournis (v4-hadith: ou hadith:). N’invente jamais de collection, de numéro ni de requête de navigation. Sélectionne ces SOURCE_ID seulement si le hadith est réellement utilisé dans le corps.\n\nREGISTRE: vouvoie toujours l’utilisateur (« vous »), y compris dans les consignes pratiques (« lavez », jamais « lave »).\n\nSTYLE DE RÉPONSE: réponds comme dans une conversation naturelle. Pour une demande simple de verset, hadith ou référence, donne la réponse dès la première phrase, reste bref (généralement 2 à 5 phrases), utilise une ou deux preuves directement pertinentes et évite tout préambule générique. Pour une question plus complexe, garde une structure claire mais ne rallonge jamais artificiellement la réponse.${answerLanguage === "en" ? "\n\nLANGUE: l’application est en anglais. Rédige title et body en anglais, quelle que soit toute autre consigne sur la langue ; garde les termes arabes translittérés usuels." : ""}`;
 
     console.log("WASIL_PROMPT_SYSTEM_MEASUREMENT", {
       requestId,
@@ -2465,14 +2594,18 @@ Deno.serve(async (request) => {
             max_output_tokens: Math.max(queryProfile.maxOutputTokens, 6000),
           }
         : openAiBody;
-      const openAiResponse = await fetch("https://api.openai.com/v1/responses", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${Deno.env.get("OPENAI_API_KEY")}`,
-          "Content-Type": "application/json",
+      // Standard answers run with low reasoning effort (the main latency
+      // lever); deep mode keeps the model default unless configured.
+      if (streamSink && retrying) streamSink.reset();
+      const openAiResponse = await postOpenAiResponses(
+        streamSink ? { ...requestBody, stream: true } : requestBody,
+        {
+          apiKey: Deno.env.get("OPENAI_API_KEY") ?? "",
+          effort: mode === "deep"
+            ? reasoningEffortFromEnv("WASIL_REASONING_EFFORT_DEEP", null)
+            : reasoningEffortFromEnv("WASIL_REASONING_EFFORT_STANDARD", "low"),
         },
-        body: JSON.stringify(requestBody),
-      });
+      );
       if (!openAiResponse.ok) {
         const providerError = (await openAiResponse.text()).slice(0, 1_500);
         if (retrying) {
@@ -2483,7 +2616,20 @@ Deno.serve(async (request) => {
         }
         throw new Error(`OPENAI_${openAiResponse.status}: ${providerError}`);
       }
-      provider = (await openAiResponse.json()) as Record<string, unknown>;
+      if (streamSink) {
+        const extractor = new StructuredBodyExtractor();
+        provider = await readOpenAiResponseStream(openAiResponse, {
+          text: (delta) => {
+            const bodyText = extractor.push(delta);
+            if (bodyText) streamSink.delta(bodyText);
+          },
+          event: (type) => {
+            if (type === "response.web_search_call.searching") streamSink.stage("web_search");
+          },
+        });
+      } else {
+        provider = (await openAiResponse.json()) as Record<string, unknown>;
+      }
       const finalWebCalls = Array.isArray(provider.output)
         ? provider.output.filter((item) =>
             item && typeof item === "object" &&
@@ -2576,10 +2722,40 @@ Deno.serve(async (request) => {
         entityType: queryExpansion.entityType,
       });
       parsed.status = "insufficient_sources";
-      parsed.title = `Réponse documentaire incomplète pour ${queryExpansion.canonicalName}`;
-      parsed.body =
-        "La première recherche n’a pas produit une réponse exploitable. Relancez la demande : Wasil conservera l’identité déjà résolue et ne redemandera pas de précision.";
+      parsed.title = `${fixed.incompleteEntityTitle} ${queryExpansion.canonicalName}`;
+      parsed.body = fixed.incompleteEntityBody;
       parsed.is_clarification = false;
+    }
+
+    ensureRequestedCorpusCoverage({
+      question: effectiveQuestion,
+      parsedSourceIds: parsed.source_ids,
+      parsedQuranReferences: parsed.quran_references,
+      requestSources,
+      brainPlan: v4Analysis?.brainPlan ?? null,
+      verifiedQuranSourceIds: documentaryQuranSourceIds,
+      verifiedHadithSourceIds: documentaryHadithSourceIds,
+      hadithMetadata: productionHadith.metadata,
+    });
+    const hasVerifiedRequestedHadith = enforceExplicitHadithSourceIds({
+      question: effectiveQuestion,
+      parsedSourceIds: parsed.source_ids,
+      verifiedHadithSourceIds: documentaryHadithSourceIds,
+    });
+    const consulted = consultedWebSources(provider);
+    const verifiedWebReferences = pickVerifiedConsultedReferences(
+      consulted,
+      parsed.web_references,
+    );
+    const hasVerifiedWebHadith = hasExplicitConsultedWebHadith(
+      consulted,
+      parsed.web_references,
+    );
+    if (parsed.status === "answered" &&
+      requestedDocumentaryCorpora(effectiveQuestion).hadith &&
+      !hasVerifiedRequestedHadith && !hasVerifiedWebHadith) {
+      parsed.status = "insufficient_sources";
+      parsed.body = fixed.noVerifiedHadith;
     }
 
     const originalBillingStatus = parsed.status;
@@ -2621,15 +2797,15 @@ Deno.serve(async (request) => {
         parsed.status === "urgent_support"
           ? {
               kind: "answer",
-              title: "Vous n’avez pas à rester seul",
-              body: "Si vous risquez de vous faire du mal ou si vous n’êtes pas en sécurité, contactez immédiatement les secours de votre pays ou une personne de confiance présente près de vous. En France, vous pouvez appeler le 3114, gratuitement, 24 h/24. Vous pouvez aussi vous rapprocher d’un professionnel de santé. Chercher de l’aide n’est pas un manque de foi.",
+              title: fixed.urgentTitle,
+              body: fixed.urgentBody,
               reference: "Coran 12:84-86 · Coran 13:28 · Coran 94:5-6",
             }
           : parsed.status === "out_of_scope"
             ? {
                 kind: "out-of-scope",
-                title: "Wasil est dédié à l’islam",
-                body: "Je peux vous accompagner sur les questions religieuses et les contenus d’OUMMAH.",
+                title: fixed.outOfScopeTitle,
+                body: fixed.outOfScopeBody,
               }
             : {
                 kind: "unsupported-religious",
@@ -2644,26 +2820,6 @@ Deno.serve(async (request) => {
       });
     }
 
-    ensureRequestedCorpusCoverage({
-      question: effectiveQuestion,
-      parsedSourceIds: parsed.source_ids,
-      parsedQuranReferences: parsed.quran_references,
-      requestSources,
-      brainPlan: v4Analysis?.brainPlan ?? null,
-      verifiedQuranSourceIds: documentaryQuranSourceIds,
-      verifiedHadithSourceIds: documentaryHadithSourceIds,
-      hadithMetadata: productionHadith.metadata,
-    });
-    const hasVerifiedRequestedHadith = enforceExplicitHadithSourceIds({
-      question: effectiveQuestion,
-      parsedSourceIds: parsed.source_ids,
-      verifiedHadithSourceIds: documentaryHadithSourceIds,
-    });
-    if (requestedDocumentaryCorpora(effectiveQuestion).hadith &&
-      !hasVerifiedRequestedHadith) {
-      parsed.status = "insufficient_sources";
-      parsed.body = "Je n’ai pas trouvé de hadith suffisamment vérifié et directement pertinent pour répondre à cette demande.";
-    }
     parsed.quran_references = deduplicateQuranReferences(
       parsed.quran_references,
     );
@@ -2684,20 +2840,6 @@ Deno.serve(async (request) => {
       effectiveQuestion,
     );
     const cleanedAnswerBody = cleanAnswerBody(parsed.body);
-    const consulted = consultedWebSources(provider);
-    const verifiedWebReferences = pickVerifiedConsultedReferences(
-      consulted,
-      parsed.web_references,
-    );
-    const hasVerifiedWebHadith = verifiedWebReferences.some((reference) => {
-      try {
-        const host = new URL(reference.url).hostname.replace(/^www\./, "");
-        return host === "sunnah.com" || host === "hadeethenc.com" ||
-          host.endsWith(".sunnah.com") || host.endsWith(".hadeethenc.com");
-      } catch {
-        return false;
-      }
-    });
     const finalAnswerBody = requestedQuranAndSunnah &&
         hadithReferences.length === 0 && !hasVerifiedWebHadith
       ? `${cleanedAnswerBody}\n\nNote documentaire : aucune référence de hadith suffisamment précise n’a été retrouvée dans les sources vérifiées pour cette réponse. Les références affichées sont donc uniquement coraniques.`
@@ -2942,4 +3084,5 @@ Deno.serve(async (request) => {
       502,
     );
   }
-});
+}
+

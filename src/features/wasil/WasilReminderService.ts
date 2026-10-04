@@ -9,6 +9,7 @@ import {
 import { alertSound, ensureReminderChannel, reminderChannelId, VIBRATION_PATTERN } from "../notifications/notificationChannels";
 import { resolveWasilFreeAction } from "./WasilActionRouter";
 import type { WasilReply } from "./WasilLocalResponder";
+import { getActiveLanguage, translate } from "../../i18n";
 
 const STORAGE_KEY = "oummah.wasil.reminders.v1";
 
@@ -232,11 +233,11 @@ function clarification(
     pending: { prompt, missing },
     reply: {
       kind: "unsupported-religious",
-      title: missing === "time" ? "À quel moment ?" : "Que dois-je rappeler ?",
+      title: missing === "time" ? translate("wasil.rem.whenTitle") : translate("wasil.rem.whatTitle"),
       body:
         missing === "time"
-          ? "Indiquez une heure ou un moment, par exemple « à 20h30 », « demain matin » ou « tous les soirs ». Aucun crédit ne sera utilisé."
-          : "Indiquez simplement l’action à vous rappeler. Aucun crédit ne sera utilisé.",
+          ? translate("wasil.rem.whenBody")
+          : translate("wasil.rem.whatBody"),
     },
   };
 }
@@ -301,6 +302,17 @@ export function resolveWasilReminder(
   };
 }
 
+function dateLocale() {
+  return getActiveLanguage() === "en" ? "en-GB" : "fr-FR";
+}
+
+/** Weekday name in the app language (DAY_DEFINITIONS names are French input terms). */
+function weekdayLabel(jsDay: number | undefined) {
+  if (jsDay === undefined) return translate("wasil.rem.week");
+  // 4 January 2026 is a Sunday.
+  return new Date(2026, 0, 4 + jsDay).toLocaleDateString(dateLocale(), { weekday: "long" });
+}
+
 function formatTime(hour: number, minute: number) {
   return `${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}`;
 }
@@ -308,23 +320,24 @@ function formatTime(hour: number, minute: number) {
 function confirmationBody(request: WasilReminderRequest) {
   const time = formatTime(request.hour, request.minute);
   if (request.frequency === "daily") {
-    return `Je vous rappellerai « ${request.subject} » chaque jour à ${time}. Cette action n’a utilisé aucun crédit.`;
+    return translate("wasil.rem.confirmDaily", { subject: request.subject, time });
   }
   if (request.frequency === "weekly") {
     const day = DAY_DEFINITIONS.find(
       (candidate) => candidate.expoWeekday === request.weekday,
     );
-    return `Je vous rappellerai « ${request.subject} » chaque ${day?.names[0] ?? "semaine"} à ${time}. Cette action n’a utilisé aucun crédit.`;
+    return translate("wasil.rem.confirmWeekly", { subject: request.subject, day: weekdayLabel(day?.jsDay), time });
   }
   const date = request.scheduledAt ?? new Date();
-  return `Je vous rappellerai « ${request.subject} » le ${date.toLocaleDateString(
-    "fr-FR",
-    {
+  return translate("wasil.rem.confirmOnce", {
+    subject: request.subject,
+    date: date.toLocaleDateString(dateLocale(), {
       weekday: "long",
       day: "numeric",
       month: "long",
-    },
-  )} à ${time}. Cette action n’a utilisé aucun crédit.`;
+    }),
+    time,
+  });
 }
 
 function notificationContent(
@@ -332,7 +345,7 @@ function notificationContent(
   mode: CenterAlertMode,
 ) {
   return {
-    title: "Wasil · Votre rappel",
+    title: translate("wasil.rem.notificationTitle"),
     body: request.subject,
     data: { route: request.route, source: "wasil", notificationMode: mode, notificationChannel: reminderChannelId(mode) },
     sound: alertSound(mode),
@@ -441,9 +454,9 @@ export async function scheduleWasilReminder(
   if (!allowed) {
     return {
       kind: "unsupported-religious",
-      title: "Notifications désactivées",
-      body: "Autorisez les notifications pour que Wasil puisse créer ce rappel. Aucun crédit n’a été utilisé.",
-      action: { label: "Ouvrir mes notifications", route: "/notifications" },
+      title: translate("wasil.rem.notificationsOffTitle"),
+      body: translate("wasil.rem.notificationsOffCreate"),
+      action: { label: translate("wasil.rem.openNotifications"), route: "/notifications" },
     };
   }
 
@@ -468,12 +481,12 @@ export async function scheduleWasilReminder(
 
   return {
     kind: "answer",
-    title: "Rappel créé",
+    title: translate("wasil.rem.createdTitle"),
     body: confirmationBody(request),
     action:
       request.route === "/"
-        ? { label: "Ouvrir mes notifications", route: "/notifications" }
-        : { label: "Ouvrir le contenu", route: request.route },
+        ? { label: translate("wasil.rem.openNotifications"), route: "/notifications" }
+        : { label: translate("wasil.rem.openContent"), route: request.route },
   };
 }
 
@@ -574,41 +587,44 @@ function reminderPeriod(reminder: StoredWasilReminder) {
 
 function storedReminderDescription(reminder: StoredWasilReminder) {
   const time = formatTime(reminder.hour, reminder.minute);
-  if (reminder.frequency === "daily") return `chaque jour à ${time}`;
+  if (reminder.frequency === "daily") return translate("wasil.rem.descDaily", { time });
   if (reminder.frequency === "weekly") {
     const day = DAY_DEFINITIONS.find(
       (candidate) => candidate.expoWeekday === reminder.weekday,
     );
-    return `chaque ${day?.names[0] ?? "semaine"} à ${time}`;
+    return translate("wasil.rem.descWeekly", { day: weekdayLabel(day?.jsDay), time });
   }
   const scheduledAt = reminder.scheduledAt
     ? new Date(reminder.scheduledAt)
     : null;
-  if (!scheduledAt || Number.isNaN(scheduledAt.getTime())) return `à ${time}`;
-  return `${scheduledAt.toLocaleDateString("fr-FR", {
-    weekday: "long",
-    day: "numeric",
-    month: "long",
-  })} à ${time}`;
+  if (!scheduledAt || Number.isNaN(scheduledAt.getTime())) return translate("wasil.rem.descAt", { time });
+  return translate("wasil.rem.descOn", {
+    date: scheduledAt.toLocaleDateString(dateLocale(), {
+      weekday: "long",
+      day: "numeric",
+      month: "long",
+    }),
+    time,
+  });
 }
 
 function listReply(reminders: readonly StoredWasilReminder[]): WasilReply {
   if (!reminders.length) {
     return {
       kind: "answer",
-      title: "Aucun rappel Wasil",
-      body: "Vous n’avez aucun rappel actif créé par Wasil. Cette consultation n’a utilisé aucun crédit.",
+      title: translate("wasil.rem.noneTitle"),
+      body: translate("wasil.rem.noneBody"),
     };
   }
   return {
     kind: "answer",
-    title: reminders.length === 1 ? "Votre rappel" : "Vos rappels",
+    title: reminders.length === 1 ? translate("wasil.rem.listOne") : translate("wasil.rem.listMany"),
     body: `${reminders
       .map(
         (reminder) =>
           `• ${reminder.subject} — ${storedReminderDescription(reminder)}`,
       )
-      .join("\n")}\n\nCette consultation n’a utilisé aucun crédit.`,
+      .join("\n")}\n\n${translate("wasil.rem.listFooter")}`,
   };
 }
 
@@ -704,11 +720,11 @@ function managementClarification(
       kind: "unsupported-religious",
       title:
         missing === "time"
-          ? "À quelle nouvelle heure ?"
-          : "Quel rappel est concerné ?",
+          ? translate("wasil.rem.newTimeTitle")
+          : translate("wasil.rem.whichTitle"),
       body:
         missing === "time"
-          ? "Indiquez simplement la nouvelle heure, par exemple « à 21h ». Aucun crédit ne sera utilisé."
+          ? translate("wasil.rem.newTimeBody")
           : `${reminders
               .map(
                 (reminder) =>
@@ -716,7 +732,7 @@ function managementClarification(
               )
               .join(
                 "\n",
-              )}\n\nIndiquez le rappel concerné. Aucun crédit ne sera utilisé.`,
+              )}\n\n${translate("wasil.rem.whichFooter")}`,
     },
   };
 }
@@ -795,8 +811,8 @@ export async function manageWasilReminders(
     return {
       reply: {
         kind: "unsupported-religious",
-        title: "Commande de rappel non reconnue",
-        body: "Précisez si vous souhaitez afficher, modifier ou annuler un rappel. Aucun crédit n’a été utilisé.",
+        title: translate("wasil.rem.unknownTitle"),
+        body: translate("wasil.rem.unknownBody"),
       },
     };
   }
@@ -819,8 +835,10 @@ export async function manageWasilReminders(
     return {
       reply: {
         kind: "answer",
-        title: "Rappels annulés",
-        body: `${reminders.length} rappel${reminders.length > 1 ? "s ont" : " a"} été annulé${reminders.length > 1 ? "s" : ""}. Aucun crédit n’a été utilisé.`,
+        title: translate("wasil.rem.cancelledAllTitle"),
+        body: reminders.length > 1
+          ? translate("wasil.rem.cancelledAllMany", { count: reminders.length })
+          : translate("wasil.rem.cancelledAllOne"),
       },
     };
   }
@@ -855,8 +873,8 @@ export async function manageWasilReminders(
     return {
       reply: {
         kind: "answer",
-        title: "Rappel annulé",
-        body: `Le rappel « ${selected.subject} » a été annulé. Aucun crédit n’a été utilisé.`,
+        title: translate("wasil.rem.cancelledTitle"),
+        body: translate("wasil.rem.cancelledBody", { subject: selected.subject }),
       },
     };
   }
@@ -870,9 +888,9 @@ export async function manageWasilReminders(
     return {
       reply: {
         kind: "unsupported-religious",
-        title: "Notifications désactivées",
-        body: "Autorisez les notifications pour modifier ce rappel. Le rappel actuel est conservé et aucun crédit n’a été utilisé.",
-        action: { label: "Ouvrir mes notifications", route: "/notifications" },
+        title: translate("wasil.rem.notificationsOffTitle"),
+        body: translate("wasil.rem.notificationsOffUpdate"),
+        action: { label: translate("wasil.rem.openNotifications"), route: "/notifications" },
       },
     };
   }
@@ -903,12 +921,15 @@ export async function manageWasilReminders(
   return {
     reply: {
       kind: "answer",
-      title: "Rappel modifié",
-      body: `Le rappel « ${selected.subject} » est maintenant prévu ${storedReminderDescription(updated)}. Aucun crédit n’a été utilisé.`,
+      title: translate("wasil.rem.updatedTitle"),
+      body: translate("wasil.rem.updatedBody", {
+        subject: selected.subject,
+        description: storedReminderDescription(updated),
+      }),
       action:
         selected.route === "/"
           ? undefined
-          : { label: "Ouvrir le contenu", route: selected.route },
+          : { label: translate("wasil.rem.openContent"), route: selected.route },
     },
   };
 }

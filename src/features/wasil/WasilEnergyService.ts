@@ -3,6 +3,7 @@ import type { PurchasesOfferings, PurchasesPackage } from "react-native-purchase
 import { getValidSession } from "../auth/SupabaseAuthService";
 import { revenueCatPaymentProvider } from "../premium/RevenueCatPaymentProvider";
 import { getWasilBalance } from "./WasilApiClient";
+import { translate } from "../../i18n";
 
 export const WASIL_ENERGY_OFFERING_ID = "wasil_energy" as const;
 
@@ -68,7 +69,7 @@ function findEnergyOffering(offerings: PurchasesOfferings) {
 export async function loadWasilEnergyPacks(): Promise<WasilEnergyLoadResult> {
   const session = await getValidSession().catch(() => null);
   if (!session) {
-    return errorResult("not-connected", "Connectez-vous pour acheter de l’énergie Wasil.");
+    return errorResult("not-connected", translate("wasil.energyErr.signIn"));
   }
 
   const result = await revenueCatPaymentProvider.getOfferings();
@@ -76,14 +77,14 @@ export async function loadWasilEnergyPacks(): Promise<WasilEnergyLoadResult> {
     return errorResult(
       providerError(result.error.code),
       result.error.code === "expo-go-unavailable"
-        ? "Les achats d’énergie nécessitent un development build."
-        : "Les packs d’énergie Wasil sont momentanément indisponibles.",
+        ? translate("wasil.energyErr.devBuild")
+        : translate("wasil.energyErr.packsUnavailable"),
     );
   }
 
   const offering = findEnergyOffering(result.value);
   if (!offering) {
-    return errorResult("offering-unavailable", "L’offre Énergie Wasil est momentanément indisponible.");
+    return errorResult("offering-unavailable", translate("wasil.energyErr.offerUnavailable"));
   }
 
   const expectedProducts: Record<WasilEnergyPackageId, string> = {
@@ -121,7 +122,7 @@ export async function loadWasilEnergyPacks(): Promise<WasilEnergyLoadResult> {
   }
 
   if (packs.length === 0) {
-    return errorResult("package-unavailable", "Un ou plusieurs packs d’énergie sont indisponibles.");
+    return errorResult("package-unavailable", translate("wasil.energyErr.somePacksUnavailable"));
   }
 
   return { status: "success", packs };
@@ -137,7 +138,7 @@ export async function purchaseWasilEnergy(
     return {
       status: "error",
       code: providerError(result.error.code),
-      message: "L’achat n’a pas pu être finalisé.",
+      message: translate("wasil.energyErr.purchaseFailed"),
     };
   }
 
@@ -176,7 +177,7 @@ export async function refreshWasilEnergyBalance() {
     return {
       status: "error" as const,
       code: "balance-unavailable" as const,
-      message: "Le solde d’énergie n’a pas pu être actualisé.",
+      message: translate("wasil.energyErr.balanceFailed"),
     };
   }
 }

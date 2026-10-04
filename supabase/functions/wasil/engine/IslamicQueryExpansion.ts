@@ -1,4 +1,5 @@
 import { buildHadithSearchTerms, buildQuranSearchTerms, extractSalientTerms, normalizeIntentText } from "./UniversalIntent.ts";
+import { postOpenAiResponses, reasoningEffortFromEnv } from "./OpenAiRequest.ts";
 
 export type IslamicQueryExpansion = {
   isIslamicEntity: boolean;
@@ -580,14 +581,7 @@ async function requestModelExpansion(
   const timeout = setTimeout(() => controller.abort(), 1_800);
 
   try {
-    const response = await fetch("https://api.openai.com/v1/responses", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        "Content-Type": "application/json",
-      },
-      signal: controller.signal,
-      body: JSON.stringify({
+    const response = await postOpenAiResponses({
         model,
         store: false,
         max_output_tokens: 420,
@@ -662,7 +656,10 @@ async function requestModelExpansion(
             },
           },
         },
-      }),
+      }, {
+      apiKey,
+      effort: reasoningEffortFromEnv("WASIL_REASONING_EFFORT_RETRIEVAL", "low"),
+      signal: controller.signal,
     });
 
     if (!response.ok) return null;
@@ -771,7 +768,16 @@ async function expandIslamicQueryUncached(
 ): Promise<IslamicQueryExpansion | null> {
   const staticExpansion = findStaticTopicExpansion(question);
   const genericExpansion = buildGenericFallbackExpansion(question);
-  const modelExpansion = await requestModelExpansion(question);
+  // Measured in production: the model call never completed within its 1.8 s
+  // budget, so every request already used the curated/lexical fallback after
+  // waiting 1.8 s. Given more time it takes 3-5 s without better retrieval.
+  // Opt in with WASIL_MODEL_QUERY_EXPANSION=true.
+  const modelExpansionEnabled = /^(1|true|yes|on)$/i.test(
+    Deno.env.get("WASIL_MODEL_QUERY_EXPANSION")?.trim() ?? "",
+  );
+  const modelExpansion = modelExpansionEnabled
+    ? await requestModelExpansion(question)
+    : null;
   const expansion = chooseExpansion(
     modelExpansion,
     staticExpansion,

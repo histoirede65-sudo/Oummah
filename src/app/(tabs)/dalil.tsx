@@ -152,7 +152,10 @@ async function resolveWasilLocationContext(
 }
 
 
+type Translate = ReturnType<typeof useI18n>["t"];
+
 function buildNearbyMosqueLocalReply(
+  t: Translate,
   locationContext?: WasilLocationContext,
 ): WasilReply {
   const mosques = locationContext?.mosques ?? [];
@@ -160,20 +163,18 @@ function buildNearbyMosqueLocalReply(
   if (!locationContext) {
     return {
       kind: "answer",
-      title: "Localisation nécessaire",
-      body: 
-        "Pour trouver une mosquée proche, autorise OUMMAH à accéder à ta position. Cette recherche locale est gratuite et ne consomme aucun crédit Wasil.",
-      action: { label: "Ouvrir les mosquées", route: "/mosques" },
+      title: t("wasil.locationNeeded"),
+      body: t("wasil.nearbyMosqueNeedsLocation"),
+      action: { label: t("wasil.openMosques"), route: "/mosques" },
     };
   }
 
   if (mosques.length === 0) {
     return {
       kind: "answer",
-      title: "Aucune mosquée trouvée à proximité",
-      body:
-        "Ta position a bien été récupérée, mais la recherche locale n’a trouvé aucune mosquée autour de toi pour le moment. Tu peux ouvrir le module Mosquées pour élargir la recherche.",
-      action: { label: "Ouvrir les mosquées", route: "/mosques" },
+      title: t("wasil.noMosqueNearby"),
+      body: t("wasil.noMosqueNearbyBody"),
+      action: { label: t("wasil.openMosques"), route: "/mosques" },
     };
   }
 
@@ -186,9 +187,9 @@ function buildNearbyMosqueLocalReply(
 
   return {
     kind: "answer",
-    title: mosques.length === 1 ? "Mosquée proche de toi" : "Mosquées proches de toi",
-    body: `${body}\n\nCette recherche est effectuée localement par OUMMAH et ne consomme aucun crédit Wasil.`,
-    action: { label: "Voir dans Mosquées", route: "/mosques" },
+    title: mosques.length === 1 ? t("wasil.nearbyMosqueOne") : t("wasil.nearbyMosqueMany"),
+    body: `${body}\n\n${t("wasil.localSearchNoCredit")}`,
+    action: { label: t("wasil.seeInMosques"), route: "/mosques" },
   };
 }
 
@@ -276,12 +277,21 @@ type WasilVisualPose =
   | "success"
   | "error";
 
-const WASIL_QUESTION_EXAMPLES = [
-  "J’ai un doute pendant ma prière : je ne sais plus si j’ai prié trois ou quatre rakʿahs. Que dois-je faire ?",
-  "Que dit le Coran sur la patience face aux épreuves ?",
-  "Que dit le Coran sur le respect des parents ?",
-  "Raconte-moi l’histoire du prophète Yûnus selon le Coran.",
-  "Raconte-moi l’histoire du prophète Yûsuf selon le Coran et les enseignements que je peux en tirer.",
+const ENERGY_FACT_KEYS = [
+  "wasil.energyFact1",
+  "wasil.energyFact2",
+  "wasil.energyFact3",
+  "wasil.energyFact4",
+  "wasil.energyFact5",
+  "wasil.energyFact6",
+] as const;
+
+const WASIL_QUESTION_EXAMPLE_KEYS = [
+  "wasil.example1",
+  "wasil.example2",
+  "wasil.example3",
+  "wasil.example4",
+  "wasil.example5",
 ] as const;
 
 const wasilPoseSources = {
@@ -458,6 +468,16 @@ function cleanMarkdownText(body: string) {
     .trim();
 }
 
+/** Text shown while the answer streams: links are hidden until the final answer turns them into source cards. */
+function streamingDisplayText(body: string) {
+  return cleanMarkdownText(
+    extractMarkdownLinks(body).text
+      .replace(/https?:\/\/[^\s)]+/gi, "")
+      // A link still being written ("[sunnah.com](https://sun…").
+      .replace(/\[[^\]\n]*\]?\(?[^\s)]*$/, ""),
+  );
+}
+
 function removeDuplicateQuranCoordinates(body: string) {
   return body
     .replace(
@@ -488,7 +508,7 @@ function canonicalSourceUrl(value: string) {
   }
 }
 
-function deduplicateSources(sources: WasilDisplaySource[]) {
+function deduplicateSources(sources: WasilDisplaySource[], t: Translate) {
   const quranSources: WasilDisplaySource[] = [];
   const otherSources: WasilDisplaySource[] = [];
 
@@ -508,7 +528,7 @@ function deduplicateSources(sources: WasilDisplaySource[]) {
         isQuranSourceUrl(source.url)
           ? {
               ...source,
-              label: "Référence coranique",
+              label: t("wasil.quranReference"),
               detail: undefined,
             }
           : source,
@@ -647,22 +667,22 @@ function formatQuranPassage(target: QuranNativeTarget) {
   return `Sourate ${name} — verset ${verseStart}`;
 }
 
-function markdownSourceLabel(label: string, urlValue: string) {
+function markdownSourceLabel(label: string, urlValue: string, t: Translate) {
   try {
     const url = new URL(urlValue);
     const hostname = url.hostname.replace(/^www\./, "").toLowerCase();
     if (hostname === "quran.com" || hostname === "quranenc.com") {
       return label && !/^(?:quran\.com|quranenc)$/i.test(label.trim())
         ? decodeQuranReference(label)
-        : "Référence coranique";
+        : t("wasil.quranReference");
     }
     return label || url.hostname.replace(/^www\./, "");
   } catch {
-    return label || "Référence en ligne";
+    return label || t("wasil.onlineReference");
   }
 }
 
-function parseWasilAnswer(answer: WasilReply) {
+function parseWasilAnswer(answer: WasilReply, t: Translate) {
   const extracted = extractMarkdownLinks(answer.body);
   const rawSources: { label: string; url: string }[] = [];
   const withoutRawUrls = extracted.text.replace(/https?:\/\/[^\s)]+/gi, (url) => {
@@ -726,7 +746,7 @@ function parseWasilAnswer(answer: WasilReply) {
             ? reference.reference
             : null,
           reference.grade || null,
-        ].filter(Boolean).join(" · ") || "Hadith vérifié",
+        ].filter(Boolean).join(" · ") || t("wasil.verifiedHadith"),
         verified: true,
         hadithTarget: directId
           ? { pathname: "/hadith/[id]", params: { id: directId } }
@@ -736,7 +756,7 @@ function parseWasilAnswer(answer: WasilReply) {
   );
   const explicitWebSources = (answer.webReferences ?? []).map(
     (source): WasilDisplaySource => ({
-      label: markdownSourceLabel(source.title, source.url),
+      label: markdownSourceLabel(source.title, source.url, t),
       url: source.url,
       verified: true,
     }),
@@ -752,7 +772,7 @@ function parseWasilAnswer(answer: WasilReply) {
   );
   const extractedSources = [...extracted.sources, ...rawSources].map(
     (source): WasilDisplaySource => ({
-      label: markdownSourceLabel(source.label, source.url),
+      label: markdownSourceLabel(source.label, source.url, t),
       url: source.url,
       verified: structuredSources.some(
         (structured) =>
@@ -769,7 +789,7 @@ function parseWasilAnswer(answer: WasilReply) {
     ...explicitWebSources,
     ...extractedSources,
   ];
-  const sources = deduplicateSources(normalizedSources);
+  const sources = deduplicateSources(normalizedSources, t);
   const urlTargets = [
     ...structuredSources,
     ...extractedSources,
@@ -867,34 +887,34 @@ async function resolveWasilHalalContext(question: string): Promise<WasilHalalLoc
   return { places: result.places.slice(0, 5) };
 }
 
-function buildNearbyHalalLocalReply(context?: WasilHalalLocationContext): WasilReply {
+function buildNearbyHalalLocalReply(t: Translate, context?: WasilHalalLocationContext): WasilReply {
   if (!context) {
     return {
       kind: "answer",
-      title: "Localisation nécessaire",
-      body: "Pour chercher une adresse halal proche, autorise OUMMAH à accéder à ta position. Cette recherche locale est gratuite et ne consomme aucun crédit Wasil.",
-      action: { label: "Ouvrir Halal autour de moi", route: "/halal" },
+      title: t("wasil.locationNeeded"),
+      body: t("wasil.nearbyHalalNeedsLocation"),
+      action: { label: t("wasil.openHalalNearby"), route: "/halal" },
     };
   }
   if (context.places.length === 0) {
     return {
       kind: "answer",
-      title: "Aucune adresse trouvée à proximité",
-      body: "Je n’ai trouvé aucune adresse renseignée dans un rayon de 10 km. Ouvre le module pour élargir la zone ou ajouter une adresse communautaire.",
-      action: { label: "Explorer le module Halal", route: "/halal" },
+      title: t("wasil.noHalalNearby"),
+      body: t("wasil.noHalalNearbyBody"),
+      action: { label: t("wasil.exploreHalal"), route: "/halal" },
     };
   }
   const body = context.places.map((place, index) =>
     `${index + 1}. ${place.name}\n${place.distanceLabel} · ${place.verificationLabel}\n${place.address}`,
   ).join("\n\n");
   const googleAttribution = context.places.some((place) => place.source === "google")
-    ? "\n\nCertaines adresses sont fournies par Google Maps."
+    ? `\n\n${t("wasil.googleAttribution")}`
     : "";
   return {
     kind: "answer",
-    title: context.places.length === 1 ? "Une adresse halal proche" : "Adresses halal proches de toi",
-    body: `${body}${googleAttribution}\n\nLe niveau de preuve est indiqué pour chaque adresse. Cette recherche ne consomme aucun crédit Wasil.`,
-    action: { label: "Voir sur la carte", route: "/halal" },
+    title: context.places.length === 1 ? t("wasil.nearbyHalalOne") : t("wasil.nearbyHalalMany"),
+    body: `${body}${googleAttribution}\n\n${t("wasil.halalEvidenceNote")}`,
+    action: { label: t("wasil.seeOnMap"), route: "/halal" },
   };
 }
 
@@ -939,7 +959,7 @@ function WasilAnswerPresentation({
   animateReferences?: boolean;
 }) {
   const { t } = useI18n();
-  const parsed = parseWasilAnswer(answer);
+  const parsed = parseWasilAnswer(answer, t);
   const referenceOpacity = useRef(new Animated.Value(animateReferences ? 0 : 1)).current;
   const referenceTranslateY = useRef(new Animated.Value(animateReferences ? 7 : 0)).current;
   const visibleSources = parsed.sources.filter(
@@ -1131,6 +1151,11 @@ export default function DalilScreen() {
   const { language, t } = useI18n();
   const [prompt, setPrompt] = useState("");
   const [examplesExpanded, setExamplesExpanded] = useState(false);
+  const [noticeExpanded, setNoticeExpanded] = useState(false);
+  // Answer text received while Wasil is still writing it.
+  const [streamingText, setStreamingText] = useState("");
+  const streamBuffer = useRef("");
+  const streamFlushTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [submittedPrompt, setSubmittedPrompt] = useState("");
   const [reply, setReply] = useState<WasilReply | null>(null);
   const [balance, setBalance] = useState<number | null>(null);
@@ -1364,7 +1389,7 @@ export default function DalilScreen() {
     const result = await loadWasilEnergyPacks().catch(() => ({
       status: "error" as const,
       code: "offering-unavailable" as const,
-      message: "La boutique est temporairement indisponible. Réessayez dans quelques instants.",
+      message: t("wasil.shopUnavailable"),
     }));
     if (result.status === "success") {
       setEnergyPacks(result.packs);
@@ -1380,7 +1405,7 @@ export default function DalilScreen() {
     const result = await refreshWasilEnergyBalance();
     if (result.status === "success") {
       setBalance(result.balance);
-      setEnergyFeedback("Votre énergie a été actualisée.");
+      setEnergyFeedback(t("wasil.energyRefreshed"));
     } else if (result.status === "error") {
       setEnergyFeedback(result.message);
     }
@@ -1397,10 +1422,10 @@ export default function DalilScreen() {
     } else if (result.status === "pending") {
       setBalance(result.balance);
       setEnergyFeedback(
-        "Achat validé. Votre énergie est en cours d’actualisation.",
+        t("wasil.purchaseConfirmed"),
       );
     } else if (result.status === "cancelled") {
-      setEnergyFeedback("Achat annulé.");
+      setEnergyFeedback(t("wasil.purchaseCancelled"));
     } else if (result.status === "error") {
       setEnergyFeedback(result.message);
     }
@@ -2140,7 +2165,7 @@ export default function DalilScreen() {
         const errorReply: WasilReply = {
           kind: "unsupported-religious",
           title: "Rappels indisponibles",
-          body: "Wasil n’a pas pu gérer vos rappels. Aucun crédit n’a été utilisé.",
+          body: t("wasil.remindersFailed"),
         };
         setReply(errorReply);
         await commitTurn(managementPrompt, errorReply);
@@ -2183,8 +2208,8 @@ export default function DalilScreen() {
       } catch {
         const errorReply: WasilReply = {
           kind: "unsupported-religious",
-          title: "Rappel non créé",
-          body: "Wasil n’a pas pu programmer ce rappel. Aucun crédit n’a été utilisé.",
+          title: t("wasil.reminderNotCreated"),
+          body: t("wasil.reminderFailed"),
           action: {
             label: "Ouvrir mes notifications",
             route: "/notifications",
@@ -2220,7 +2245,7 @@ export default function DalilScreen() {
         const errorReply: WasilReply = {
           kind: "unsupported-religious",
           title: "Objectifs indisponibles",
-          body: "Wasil n’a pas pu adapter vos objectifs. Aucun crédit n’a été utilisé.",
+          body: t("wasil.goalsFailed"),
           action: {
             label: "Ouvrir mes objectifs",
             route: "/daily-goals",
@@ -2254,14 +2279,14 @@ export default function DalilScreen() {
           kind: "unsupported-religious",
           title:
             apiError?.code === "AUTH_REQUIRED"
-              ? "Profil requis"
-              : "Mémoire indisponible",
+              ? t("wasil.profileRequired")
+              : t("wasil.memoryUnavailable"),
           body:
             apiError?.message ??
-            "Wasil n’a pas pu accéder à sa mémoire. Aucun crédit n’a été utilisé.",
+            t("wasil.memoryFailed"),
           action:
             apiError?.code === "AUTH_REQUIRED"
-              ? { label: "Ouvrir mon profil", route: "/profile" }
+              ? { label: t("wasil.openProfile"), route: "/profile" }
               : undefined,
         };
         setReply(errorReply);
@@ -2280,7 +2305,7 @@ export default function DalilScreen() {
       setLoading(true);
       try {
         const halalContext = await resolveWasilHalalContext(trimmedPrompt).catch(() => undefined);
-        const halalReply = buildNearbyHalalLocalReply(halalContext);
+        const halalReply = buildNearbyHalalLocalReply(t, halalContext);
         setReply(halalReply);
         setFailedPrompt("");
         setLastMisunderstoodPrompt("");
@@ -2301,7 +2326,7 @@ export default function DalilScreen() {
         const locationContext = await resolveWasilLocationContext(trimmedPrompt).catch(
           () => undefined,
         );
-        const nearbyReply = buildNearbyMosqueLocalReply(locationContext);
+        const nearbyReply = buildNearbyMosqueLocalReply(t, locationContext);
         setReply(nearbyReply);
         setFailedPrompt("");
         setLastMisunderstoodPrompt("");
@@ -2333,6 +2358,13 @@ export default function DalilScreen() {
 
     setReply(null);
     setLoading(true);
+    const clearStream = () => {
+      if (streamFlushTimer.current) clearTimeout(streamFlushTimer.current);
+      streamFlushTimer.current = null;
+      streamBuffer.current = "";
+      setStreamingText("");
+    };
+    clearStream();
     try {
       const locationContext = await resolveWasilLocationContext(trimmedPrompt).catch(
         () => undefined,
@@ -2348,7 +2380,24 @@ export default function DalilScreen() {
           content: message.text,
         })),
         locationContext,
+        {
+          onDelta: (text) => {
+            streamBuffer.current += text;
+            // Batch small deltas into one render every 50 ms.
+            if (streamFlushTimer.current) return;
+            streamFlushTimer.current = setTimeout(() => {
+              streamFlushTimer.current = null;
+              setStreamingText(streamBuffer.current);
+            }, 50);
+          },
+          onReset: clearStream,
+          onStage: (name) => {
+            if (name === "web_search") setLoadingStatus(t("wasil.loadingSources"));
+          },
+        },
+        language,
       );
+      clearStream();
       setReply(response.reply);
       setFailedPrompt("");
       setBalance(response.balance);
@@ -2365,6 +2414,7 @@ export default function DalilScreen() {
       }
       await commitTurn(trimmedPrompt, response.reply);
     } catch (error) {
+      clearStream();
       const apiError = error instanceof WasilApiError ? error : null;
       if (typeof apiError?.balance === "number") setBalance(apiError.balance);
       const errorReply: WasilReply = {
@@ -2674,15 +2724,56 @@ export default function DalilScreen() {
             </Animated.View>
           </View>
 
-          <View style={styles.aiInfoCard}>
-            <View style={styles.aiInfoIcon}>
-              <Ionicons name="information-outline" size={16} color={colors.goldLight} />
+          <Pressable
+            accessibilityRole="button"
+            accessibilityState={{ expanded: noticeExpanded }}
+            accessibilityLabel={t("wasil.about")}
+            onPress={() => setNoticeExpanded((expanded) => !expanded)}
+            style={({ pressed }) => [styles.aiNotice, pressed && styles.pressed]}
+          >
+            <Ionicons
+              name="shield-checkmark-outline"
+              size={16}
+              color={colors.goldLight}
+              style={styles.aiNoticeIcon}
+            />
+            <View style={styles.aiNoticeCopy}>
+              <Text style={styles.aiNoticeText}>
+                {t("wasil.noticeShort")}{" "}
+                <Text style={styles.aiNoticeLink}>
+                  {noticeExpanded ? t("wasil.noticeLess") : t("wasil.noticeMore")}
+                </Text>
+              </Text>
+              {noticeExpanded ? (
+                <>
+                  <Text style={styles.aiNoticeDetail}>{t("wasil.aiNotice")}</Text>
+                  <Text style={styles.aiNoticeDetail}>{t("wasil.scopeNotice")}</Text>
+                </>
+              ) : null}
             </View>
-            <View style={styles.aiInfoCopy}>
-              <Text style={styles.aiInfoTitle}>{t("wasil.about")}</Text>
-              <Text style={styles.aiInfoText}>{t("wasil.aiNotice")}</Text>
+          </Pressable>
+
+          {isAuthenticated && !hasActiveConversation ? (
+            <View style={styles.starterList}>
+              <Text style={styles.starterTitle}>{t("wasil.tryAsking")}</Text>
+              {WASIL_QUESTION_EXAMPLE_KEYS.map((key) => (
+                <Pressable
+                  key={key}
+                  accessibilityRole="button"
+                  onPress={() => setPrompt(t(key))}
+                  style={({ pressed }) => [
+                    styles.starterItem,
+                    pressed && styles.pressed,
+                  ]}
+                >
+                  <Text numberOfLines={2} style={styles.starterText}>
+                    {t(key)}
+                  </Text>
+                  <Ionicons name="arrow-up" size={15} color={colors.goldLight} />
+                </Pressable>
+              ))}
             </View>
-          </View>
+          ) : null}
 
           {hasActiveConversation ? (
             <View style={styles.previewConversation}>
@@ -2755,7 +2846,26 @@ export default function DalilScreen() {
                 </View>
               ) : null}
 
-              {loading ? (
+              {loading && streamingDisplayText(streamingText) ? (
+                <View style={styles.wasilMessage}>
+                  <View style={styles.wasilMessageHeader}>
+                    <View style={styles.wasilMessageIcon}>
+                      <Ionicons
+                        name="sparkles"
+                        size={14}
+                        color={colors.goldLight}
+                      />
+                    </View>
+                    <Text style={styles.messageAuthor}>Wasil</Text>
+                    <ActivityIndicator
+                      size="small"
+                      color={colors.goldLight}
+                      style={styles.wasilStreamingIndicator}
+                    />
+                  </View>
+                  {renderWasilBody(streamingDisplayText(streamingText))}
+                </View>
+              ) : loading ? (
                 <View style={styles.wasilLoading}>
                   <ActivityIndicator size="small" color={colors.goldLight} />
                   <Text style={styles.wasilLoadingText}>
@@ -2833,15 +2943,6 @@ export default function DalilScreen() {
               ) : null}
             </View>
           ) : null}
-
-          <View style={styles.scopeNotice}>
-            <Ionicons
-              name="shield-checkmark-outline"
-              size={18}
-              color={colors.goldLight}
-            />
-            <Text style={styles.scopeNoticeText}>{t("wasil.scopeNotice")}</Text>
-          </View>
         </ScrollView>
 
         <View style={styles.composerWrap}>
@@ -2906,7 +3007,7 @@ export default function DalilScreen() {
             </Pressable>
           </View>
           )}
-          {isAuthenticated ? (
+          {isAuthenticated && hasActiveConversation ? (
             <View style={styles.questionExamples}>
               <Pressable
                 accessibilityRole="button"
@@ -2928,11 +3029,11 @@ export default function DalilScreen() {
               </Pressable>
               {examplesExpanded ? (
                 <View style={styles.questionExamplesList}>
-                  {WASIL_QUESTION_EXAMPLES.map((question) => (
+                  {WASIL_QUESTION_EXAMPLE_KEYS.map((key) => (
                     <Pressable
-                      key={question}
+                      key={key}
                       onPress={() => {
-                        setPrompt(question);
+                        setPrompt(t(key));
                         setExamplesExpanded(false);
                       }}
                       style={({ pressed }) => [
@@ -2940,7 +3041,7 @@ export default function DalilScreen() {
                         pressed && styles.pressed,
                       ]}
                     >
-                      <Text style={styles.questionExampleText}>{question}</Text>
+                      <Text style={styles.questionExampleText}>{t(key)}</Text>
                     </Pressable>
                   ))}
                 </View>
@@ -3083,7 +3184,7 @@ export default function DalilScreen() {
       >
         <View style={styles.energyBackdrop}>
           <Pressable
-            accessibilityLabel="Fermer Énergie Wasil"
+            accessibilityLabel={t("wasil.energyClose")}
             onPress={() => setEnergyVisible(false)}
             style={StyleSheet.absoluteFill}
           />
@@ -3114,13 +3215,13 @@ export default function DalilScreen() {
                     <Ionicons name="flash" size={13} color={colors.goldLight} />
                     <Text style={styles.energyEyebrowText}>WASIL PREMIUM</Text>
                   </View>
-                  <Text style={styles.energyTitle}>Énergie Wasil</Text>
+                  <Text style={styles.energyTitle}>{t("wasil.energyTitle")}</Text>
                   <Text style={styles.energySubtitle}>
-                    Continuez à apprendre, comprendre et progresser avec Wasil grâce à vos crédits d'énergie.
+                    {t("wasil.energySubtitle")}
                   </Text>
                   </View>
                   <Pressable
-                    accessibilityLabel="Fermer Énergie Wasil"
+                    accessibilityLabel={t("wasil.energyClose")}
                     hitSlop={8}
                     onPress={() => setEnergyVisible(false)}
                     style={styles.energyClose}
@@ -3134,19 +3235,19 @@ export default function DalilScreen() {
                   <Ionicons name="flash" size={26} color={colors.goldLight} />
                   <Text style={styles.energyBalanceValue}>{balance ?? "—"}</Text>
                 </View>
-                <Text style={styles.energyBalanceLabel}>Énergie disponible</Text>
+                <Text style={styles.energyBalanceLabel}>{t("wasil.energyAvailable")}</Text>
                 <Text style={styles.energyBalanceHint}>
-                  Chaque échange avec Wasil consomme de l'énergie.
+                  {t("wasil.energyPerExchange")}
                 </Text>
               </View>
               <Text style={styles.energyPackPrompt}>
-                Choisissez le pack qui vous convient.
+                {t("wasil.energyChoosePack")}
               </Text>
               {energyLoading ? (
                 <ActivityIndicator color={colors.goldLight} style={styles.energyLoader} />
               ) : energyPacks.length === 0 ? (
                 <Text style={styles.energyFeedback}>
-                  {energyFeedback ?? "Les packs sont momentanément indisponibles."}
+                  {energyFeedback ?? t("wasil.energyPacksUnavailable")}
                 </Text>
               ) : (
                 <View style={styles.energyPackList}>
@@ -3166,7 +3267,7 @@ export default function DalilScreen() {
                         {(isPopular || isBestValue) ? (
                           <View style={styles.energyBadge}>
                             <Text style={styles.energyBadgeText}>
-                              {isPopular ? "Le plus choisi" : "Meilleure valeur"}
+                              {isPopular ? t("wasil.energyPopular") : t("wasil.energyBestValue")}
                             </Text>
                           </View>
                         ) : null}
@@ -3174,7 +3275,7 @@ export default function DalilScreen() {
                           <Ionicons name="flash" size={19} color={colors.goldLight} />
                         </View>
                         <View style={styles.energyPackCopy}>
-                          <Text style={styles.energyPackTitle}>{energyCount} énergies</Text>
+                          <Text style={styles.energyPackTitle}>{t("wasil.energyPackTitle", { count: energyCount })}</Text>
                           <Text style={styles.energyPackPrice}>
                             {(
                               pack.revenueCatPackage.product as typeof pack.revenueCatPackage.product & {
@@ -3184,7 +3285,7 @@ export default function DalilScreen() {
                           </Text>
                         </View>
                         <Pressable
-                          accessibilityLabel={`Acheter ${energyCount} énergies`}
+                          accessibilityLabel={t("wasil.energyBuyPack", { count: energyCount })}
                           disabled={Boolean(energyPurchaseId)}
                           onPress={() => void purchaseEnergy(pack)}
                           style={({ pressed }) => [
@@ -3196,7 +3297,7 @@ export default function DalilScreen() {
                           {energyPurchaseId === pack.identifier ? (
                             <ActivityIndicator color="#16111B" size="small" />
                           ) : (
-                            <Text style={styles.energyBuyText}>Acheter</Text>
+                            <Text style={styles.energyBuyText}>{t("wasil.energyBuy")}</Text>
                           )}
                         </Pressable>
                       </View>
@@ -3211,19 +3312,12 @@ export default function DalilScreen() {
                 <View style={styles.energyInfoIcon}>
                   <Ionicons name="sparkles-outline" size={18} color={colors.goldLight} />
                 </View>
-                <Text style={styles.energyInfoTitle}>Pourquoi acheter de l’Énergie Wasil ?</Text>
+                <Text style={styles.energyInfoTitle}>{t("wasil.energyWhyTitle")}</Text>
                 <Text style={styles.energyInfoIntro}>
-                  L'Énergie Wasil vous permet de continuer vos échanges avec votre assistant intelligent lorsque vos crédits inclus sont épuisés.
+                  {t("wasil.energyWhyIntro")}
                 </Text>
                 <View style={styles.energyInfoList}>
-                  {[
-                    "Les packs d'énergie achetés ne périment jamais.",
-                    "Ils restent disponibles sur votre compte jusqu'à leur utilisation complète.",
-                    "Les crédits gratuits ou inclus avec Premium sont toujours utilisés en priorité.",
-                    "Vos packs achetés ne sont utilisés qu'une fois ces crédits épuisés.",
-                    "La navigation dans l'application (Coran, Audio, Hadith, Qibla, Objectifs, etc.) ne consomme aucune énergie.",
-                    "Seules les réponses générées par Wasil utilisent de l'énergie.",
-                  ].map((item) => (
+                  {ENERGY_FACT_KEYS.map((key) => t(key)).map((item) => (
                     <View key={item} style={styles.energyInfoRow}>
                       <Ionicons name="checkmark-circle" size={16} color={colors.goldLight} />
                       <Text style={styles.energyInfoText}>{item}</Text>
@@ -3233,11 +3327,11 @@ export default function DalilScreen() {
                 <View style={styles.energyReassurance}>
                   <Ionicons name="shield-checkmark-outline" size={16} color={colors.goldLight} />
                   <Text style={styles.energyReassuranceText}>
-                    Vos énergies achetées restent disponibles sans limite de durée.
+                    {t("wasil.energyNoExpiry")}
                   </Text>
                 </View>
                 <Text style={styles.energyTrustLine}>
-                  🔒 Paiement 100 % sécurisé via l'App Store ou Google Play.
+                  {t("wasil.energySecurePayment")}
                 </Text>
               </View>
               <Pressable
@@ -3250,7 +3344,7 @@ export default function DalilScreen() {
                 ]}
               >
                 <Ionicons name="refresh" size={15} color={colors.goldLight} />
-                <Text style={styles.energyRefreshText}>Actualiser mon énergie</Text>
+                <Text style={styles.energyRefreshText}>{t("wasil.energyRefresh")}</Text>
               </Pressable>
             </ScrollView>
           </View>
@@ -3497,41 +3591,68 @@ const styles = StyleSheet.create({
     marginTop: 18,
     gap: 9,
   },
-  aiInfoCard: {
-    marginTop: 8,
-    paddingHorizontal: 10,
-    paddingVertical: 7,
+  aiNotice: {
+    marginTop: 10,
+    paddingHorizontal: 4,
     flexDirection: "row",
     alignItems: "flex-start",
     gap: 8,
-    borderRadius: 13,
-    borderWidth: 1,
-    borderColor: "rgba(227,181,90,0.20)",
-    backgroundColor: "rgba(23,16,38,0.68)",
   },
-  aiInfoIcon: {
-    width: 23,
-    height: 23,
-    alignItems: "center",
-    justifyContent: "center",
-    borderRadius: 12,
-    backgroundColor: "rgba(227,181,90,0.11)",
+  aiNoticeIcon: {
+    marginTop: 1,
   },
-  aiInfoCopy: {
+  aiNoticeCopy: {
     flex: 1,
+    gap: 6,
   },
-  aiInfoTitle: {
+  aiNoticeText: {
+    color: colors.textMuted,
+    fontFamily: typography.sans,
+    fontSize: 11,
+    lineHeight: 16,
+  },
+  aiNoticeLink: {
+    color: colors.goldLight,
+    fontWeight: "700",
+  },
+  aiNoticeDetail: {
+    color: colors.textMuted,
+    fontFamily: typography.sans,
+    fontSize: 11,
+    lineHeight: 16,
+  },
+  starterList: {
+    marginTop: 18,
+    gap: 8,
+  },
+  starterTitle: {
+    marginBottom: 2,
+    paddingHorizontal: 4,
     color: colors.goldLight,
     fontFamily: typography.sans,
     fontSize: 11,
     fontWeight: "700",
+    letterSpacing: 0.6,
+    textTransform: "uppercase",
   },
-  aiInfoText: {
-    marginTop: 2,
-    color: colors.textMuted,
+  starterItem: {
+    minHeight: 50,
+    paddingHorizontal: 14,
+    paddingVertical: 11,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: "rgba(227,181,90,0.16)",
+    backgroundColor: "rgba(23,16,38,0.62)",
+  },
+  starterText: {
+    flex: 1,
+    color: colors.text,
     fontFamily: typography.sans,
-    fontSize: 10,
-    lineHeight: 14,
+    fontSize: 13,
+    lineHeight: 18,
   },
   userMessage: {
     maxWidth: "88%",
@@ -3579,6 +3700,10 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 7,
+  },
+  wasilStreamingIndicator: {
+    marginLeft: "auto",
+    transform: [{ scale: 0.8 }],
   },
   wasilMessageIcon: {
     width: 25,
@@ -3730,25 +3855,6 @@ const styles = StyleSheet.create({
     fontFamily: typography.sans,
     fontSize: 10.5,
     fontWeight: "700",
-  },
-  scopeNotice: {
-    marginTop: 10,
-    paddingHorizontal: 11,
-    paddingVertical: 8,
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-    borderRadius: 13,
-    borderWidth: 1,
-    borderColor: "rgba(227,181,90,0.14)",
-    backgroundColor: "rgba(200,148,58,0.055)",
-  },
-  scopeNoticeText: {
-    flex: 1,
-    color: colors.textMuted,
-    fontFamily: typography.sans,
-    fontSize: 9.4,
-    lineHeight: 13,
   },
   guestWasilCard: {
     flexDirection: 'row',

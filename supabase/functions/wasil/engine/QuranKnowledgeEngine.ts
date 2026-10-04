@@ -112,6 +112,8 @@ function identifyEntity(question: string) {
   ) ?? null;
 }
 
+let quranSearchAuthVerified = false;
+
 async function searchQuranTerms(
   terms: string[],
   canonicalName?: string | null,
@@ -190,9 +192,14 @@ async function searchQuranTerms(
   // Validate authentication with one term first. When Quran.Foundation rejects
   // the application token, avoid launching nine identical failing requests.
   // Once access works, all remaining semantic terms are still searched in
-  // parallel, so source coverage is preserved.
-  if (limitedTerms.length > 0) {
+  // parallel, so source coverage is preserved. After a first success in this
+  // worker, every term is searched at once.
+  if (limitedTerms.length > 0 && quranSearchAuthVerified) {
+    const results = await Promise.all(limitedTerms.map((term) => searchOneTerm(term)));
+    if (results.includes("auth_failed")) quranSearchAuthVerified = false;
+  } else if (limitedTerms.length > 0) {
     const firstResult = await searchOneTerm(limitedTerms[0]);
+    if (firstResult === "ok") quranSearchAuthVerified = true;
     if (firstResult !== "auth_failed") {
       await Promise.all(limitedTerms.slice(1).map((term) => searchOneTerm(term)));
     } else {

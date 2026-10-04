@@ -2,6 +2,7 @@ import { rankDocuments } from "../RelevanceScorer.ts";
 import type { IslamicQueryExpansion } from "../IslamicQueryExpansion.ts";
 import { buildHadithSearchTerms, extractIntentConcepts } from "../UniversalIntent.ts";
 import { consumeWasilWebBudget, type WasilWebBudget } from "../DocumentaryRetriever.ts";
+import { postOpenAiResponses, reasoningEffortFromEnv } from "../OpenAiRequest.ts";
 
 export type HadithRepositoryReference = {
   title: string;
@@ -18,6 +19,9 @@ export type HadithRepositoryItem = {
   frenchMeaning: string;
   relevance: string;
   sourceUrl?: string;
+  /** Ranking evidence, read by the strict hadith fallback in index.ts. */
+  repositoryScore?: number;
+  repositoryMatchedTerms?: string[];
 };
 
 export type HadithRepositoryRecord = {
@@ -424,8 +428,14 @@ async function searchHadeethEnc(
   );
 
   const conceptRankedItems = applyHadithConceptReranking(rankedItems, question);
+  // The ranking evidence travels with each item: without it the strict
+  // fallback saw a score of 0 and rejected every hadith.
   const items = deduplicateAndPrioritizeHadithItems(
-    conceptRankedItems.map(({ item }) => item),
+    conceptRankedItems.map(({ item, score, matchedTerms }) => ({
+      ...item,
+      repositoryScore: score,
+      repositoryMatchedTerms: matchedTerms,
+    })),
     6,
   );
 
@@ -622,14 +632,7 @@ export async function searchHadithRepository(
   const timeout = setTimeout(() => controller.abort(), supplementalTimeoutMs);
 
   try {
-    const response = await fetch("https://api.openai.com/v1/responses", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        "Content-Type": "application/json",
-      },
-      signal: controller.signal,
-      body: JSON.stringify({
+    const response = await postOpenAiResponses({
         model,
         store: false,
         max_output_tokens: 1200,
@@ -695,7 +698,10 @@ export async function searchHadithRepository(
             },
           },
         },
-      }),
+      }, {
+      apiKey,
+      effort: reasoningEffortFromEnv("WASIL_REASONING_EFFORT_RETRIEVAL", "low"),
+      signal: controller.signal,
     });
 
     if (!response.ok) {
