@@ -1,4 +1,5 @@
 import type { FiqhSource } from "./fiqhTypes";
+import { LESSON_SOURCES } from "./lessons/sources";
 
 export const FIQH_SOURCES: FiqhSource[] = [
   { id: "fiqh-badai-fatiha-imam", kind: "fiqh-book", author: "Al-Kasani", reference: "Bada'i as-Sana'i fi Tartib ash-Shara'i, chapitre de la récitation derrière l'imam", scope: "position hanafite étudiée : récitation du fidèle derrière l'imam non exigée dans la formulation principale, avec distinction entre prière à voix haute et silencieuse", limits: "Ne traite pas ici du cas où le fidèle n'entend pas l'imam, ni de toutes les nuances internes ou des règles de l'imam et de la personne seule." },
@@ -311,5 +312,8 @@ FIQH_SOURCES.push(
   { id: "abudawud-3215", kind: "hadith", reference: "Sunan Abû Dâwûd, 3215", canonicalReference: "3215", authenticity: "Sahîh selon al-Albânî", scope: "creuser et élargir convenablement la tombe dans le contexte d’Uhud", limits: "Contexte particulier ; aucune dimension moderne universelle n’en est déduite." },
   { id: "abudawud-3221", kind: "hadith", reference: "Sunan Abû Dâwûd, 3221", canonicalReference: "3221", authenticity: "Sahîh selon al-Albânî", scope: "demander pardon et fermeté pour le défunt après l’enterrement", limits: "Ne légitime pas des rites ajoutés auprès de la tombe." },
 );
+
+// Sources added with the hand-written lessons; an id already documented above keeps its original entry.
+FIQH_SOURCES.push(...LESSON_SOURCES.filter((source) => !FIQH_SOURCES.some((item) => item.id === source.id)));
 
 export const sourceById = new Map(FIQH_SOURCES.map((source) => [source.id, source]));
