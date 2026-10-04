@@ -1,7 +1,452 @@
-import { router } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
+import * as Haptics from "expo-haptics";
+import { useKeepAwake } from "expo-keep-awake";
+import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
-import { Alert, Pressable, StyleSheet, Text, View } from "react-native";
-import { HAJJ_STEPS, UMRAH_STEPS } from "../../features/pilgrimage/pilgrimageData"; import { enrichStep } from "../../features/pilgrimage/pilgrimageEnrichment"; import { StepDetails } from "../../features/pilgrimage/StepDetails"; import { hajjTypeGuidance } from "../../features/pilgrimage/pilgrimageData";
-import { clearPilgrimageProgress, DEFAULT_PROGRESS, loadPilgrimageProgress, savePilgrimageProgress } from "../../features/pilgrimage/pilgrimageStorage";
-import type { HajjType, Progress } from "../../features/pilgrimage/pilgrimageTypes";
-export default function PilgrimMode() { const [p,setP]=useState<Progress>(DEFAULT_PROGRESS); const [hydrated,setHydrated]=useState(false); const steps=(p.mode==="umrah"?UMRAH_STEPS:HAJJ_STEPS).map(enrichStep); const i=Math.max(0,steps.findIndex(x=>x.id===p.stepId)); useEffect(()=>{void loadPilgrimageProgress().then(value=>{setP(value);setHydrated(true)})},[]); useEffect(()=>{if(hydrated) void savePilgrimageProgress(p)},[p,hydrated]); const reset=()=>Alert.alert("Réinitialiser le parcours ?","La progression locale sera supprimée.",[ {text:"Annuler",style:"cancel"},{text:"Réinitialiser",style:"destructive",onPress:()=>{void clearPilgrimageProgress();setP(DEFAULT_PROGRESS)}}]); return <View style={s.screen}><Pressable onPress={()=>router.back()}><Text style={s.back}>‹ Retour</Text></Pressable><Text style={s.title}>Mode Pèlerin</Text><View style={s.switch}><Pressable onPress={()=>setP({...p,mode:"umrah",stepId:UMRAH_STEPS[0].id})} style={[s.mode,p.mode==="umrah"&&s.active]}><Text style={s.modeText}>‘UMRA</Text></Pressable><Pressable onPress={()=>setP({...p,mode:"hajj",stepId:"types"})} style={[s.mode,p.mode==="hajj"&&s.active]}><Text style={s.modeText}>HAJJ</Text></Pressable></View>{p.mode==="hajj"&&<View style={s.types}>{(["tamattu","qiran","ifrad"] as HajjType[]).map(x=><Pressable key={x} onPress={()=>setP({...p,hajjType:x})} style={[s.type,p.hajjType===x&&s.typeActive]}><Text style={s.typeText}>{x==="tamattu"?"Tamattu‘":x==="qiran"?"Qirân":"Ifrâd"}</Text></Pressable>)}</View>}<Text style={s.progress}>Étape {i+1} sur {steps.length}</Text><Text style={s.step}>{steps[i]?.title}</Text><Text style={s.summary}>{steps[i]?.summary}</Text>{steps[i]&&<StepDetails step={steps[i]} />}{p.mode==="hajj"&&p.hajjType&&<Text style={s.guidance}>{hajjTypeGuidance(p.hajjType)}</Text>}<Text style={s.counterLabel}>COMPTEURS — AIDE MÉMOIRE</Text><View style={s.counters}>{(["tawafCount","sayCount"] as const).map((key)=><View key={key}><Text style={s.counterName}>{key==="tawafCount"?"Tawâf":"Sa‘y"}</Text><View style={s.row}><Pressable onPress={()=>setP({...p,[key]:Math.max(0,p[key]-1)})} style={s.circle}><Text style={s.pm}>−</Text></Pressable><Text style={s.counter}>{p[key]}</Text><Pressable onPress={()=>setP({...p,[key]:Math.min(7,p[key]+1)})} style={s.circle}><Text style={s.pm}>+</Text></Pressable></View></View>)}</View><View style={s.nav}><Pressable disabled={i<=0} onPress={()=>setP({...p,stepId:steps[i-1].id})} style={s.navButton}><Text style={s.navText}>Précédente</Text></Pressable><Pressable disabled={i>=steps.length-1} onPress={()=>setP({...p,stepId:steps[i+1].id})} style={s.navButton}><Text style={s.navText}>Suivante</Text></Pressable></View><Pressable onPress={reset}><Text style={s.reset}>Réinitialiser mon parcours</Text></Pressable></View> } const s=StyleSheet.create({screen:{flex:1,backgroundColor:"#080611",padding:22,paddingTop:55},back:{color:"#E5B65D",fontSize:18},title:{color:"#FFF7E7",fontSize:32,fontWeight:"800",marginTop:20},switch:{flexDirection:"row",marginTop:22,borderWidth:1,borderColor:"#806233",borderRadius:18,padding:4},mode:{flex:1,padding:14,alignItems:"center",borderRadius:14},active:{backgroundColor:"#D9AE58"},modeText:{fontWeight:"900",color:"#FFF7E7"},types:{flexDirection:"row",gap:8,marginTop:14},type:{flex:1,padding:11,borderWidth:1,borderColor:"#5F4932",borderRadius:12,alignItems:"center"},typeActive:{borderColor:"#E5B65D",backgroundColor:"#25182B"},typeText:{color:"#FFF7E7",fontWeight:"700"},progress:{color:"#E5B65D",fontWeight:"800",marginTop:25},step:{color:"#FFF7E7",fontSize:27,fontWeight:"800",marginTop:8},summary:{color:"#F1E8D9",fontSize:17,lineHeight:26,marginTop:10},counterLabel:{color:"#E5B65D",fontWeight:"800",fontSize:12,letterSpacing:1.2,marginTop:30},counters:{flexDirection:"row",justifyContent:"space-around",marginTop:10},counterName:{color:"#FFF7E7",textAlign:"center",fontSize:17,fontWeight:"700"},row:{flexDirection:"row",alignItems:"center",gap:14,marginTop:8},circle:{width:48,height:48,borderRadius:24,borderWidth:1,borderColor:"#E5B65D",alignItems:"center",justifyContent:"center"},pm:{color:"#E5B65D",fontSize:28},counter:{color:"#FFF7E7",fontSize:34,fontWeight:"900"},nav:{flexDirection:"row",gap:10,marginTop:32},navButton:{flex:1,padding:16,borderRadius:14,backgroundColor:"#24172A",alignItems:"center"},navText:{color:"#FFF7E7",fontWeight:"800"},guidance:{color:"#E5B65D",fontSize:15,lineHeight:23,marginTop:10},reset:{color:"#D8A9A9",textAlign:"center",marginTop:30,fontSize:15}});
+import { Pressable, ScrollView, StyleSheet, Text, useWindowDimensions, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import Svg, { Circle, G, Path, Rect, Text as SvgText } from "react-native-svg";
+
+import { InvocationCard } from "../../components/pilgrimage/PilgrimBits";
+import { pil, pilType } from "../../components/pilgrimage/theme";
+import { INVOCATIONS_BY_ID } from "../../features/pilgrimage/pilgrimageInvocations";
+import { updatePilgrimageState, usePilgrimageState, type PilgrimageState } from "../../features/pilgrimage/pilgrimageStorage";
+import type { Tool } from "../../features/pilgrimage/pilgrimageTypes";
+
+const TABS: ReadonlyArray<{ id: Tool; label: string; icon: keyof typeof Ionicons.glyphMap }> = [
+  { id: "tawaf", label: "Tawâf", icon: "sync-outline" },
+  { id: "sai", label: "Sa‘y", icon: "swap-vertical-outline" },
+  { id: "jamarat", label: "Jamarât", icon: "ellipsis-horizontal-circle-outline" },
+];
+
+const tap = () => void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => undefined);
+const success = () => void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => undefined);
+
+function setCounters(update: (counters: PilgrimageState["counters"]) => PilgrimageState["counters"]) {
+  void updatePilgrimageState((state) => ({ ...state, counters: update(state.counters) }));
+}
+
+/** Arc of a ring between two angles (degrees, 0 = top, clockwise). */
+function arc(cx: number, cy: number, r: number, from: number, to: number) {
+  const point = (deg: number) => {
+    const rad = ((deg - 90) * Math.PI) / 180;
+    return `${cx + r * Math.cos(rad)} ${cy + r * Math.sin(rad)}`;
+  };
+  return `M ${point(from)} A ${r} ${r} 0 ${to - from > 180 ? 1 : 0} 1 ${point(to)}`;
+}
+
+export default function PilgrimModeScreen() {
+  useKeepAwake();
+  const params = useLocalSearchParams<{ tool?: string }>();
+  const [tool, setTool] = useState<Tool>(params.tool === "sai" || params.tool === "jamarat" ? params.tool : "tawaf");
+  const state = usePilgrimageState();
+  const insets = useSafeAreaInsets();
+
+  useEffect(() => {
+    if (params.tool === "tawaf" || params.tool === "sai" || params.tool === "jamarat") setTool(params.tool);
+  }, [params.tool]);
+
+  return (
+    <View style={[styles.screen, { paddingTop: insets.top + 6 }]}>
+      <View style={styles.header}>
+        <Pressable accessibilityRole="button" accessibilityLabel="Retour" onPress={() => router.back()} hitSlop={8} style={styles.iconButton}>
+          <Ionicons name="chevron-back" size={22} color="#FFFFFF" />
+        </Pressable>
+        <View style={styles.headerCopy}>
+          <Text style={styles.eyebrow}>MODE PÈLERIN</Text>
+          <Text style={styles.title}>Sur place</Text>
+        </View>
+        <View style={styles.awake}>
+          <Ionicons name="sunny-outline" size={14} color={pil.gold} />
+          <Text style={styles.awakeText}>Écran allumé</Text>
+        </View>
+      </View>
+
+      <View style={styles.tabs}>
+        {TABS.map((tab) => (
+          <Pressable
+            key={tab.id}
+            accessibilityRole="tab"
+            accessibilityState={{ selected: tool === tab.id }}
+            onPress={() => {
+              void Haptics.selectionAsync().catch(() => undefined);
+              setTool(tab.id);
+            }}
+            style={[styles.tab, tool === tab.id && styles.tabActive]}
+          >
+            <Ionicons name={tab.icon} size={17} color={tool === tab.id ? pil.ink : "#FFFFFF"} />
+            <Text style={[styles.tabText, tool === tab.id && styles.tabTextActive]}>{tab.label}</Text>
+          </Pressable>
+        ))}
+      </View>
+
+      <ScrollView contentContainerStyle={[styles.content, { paddingBottom: insets.bottom + 30 }]} showsVerticalScrollIndicator={false}>
+        {state ? (
+          tool === "tawaf" ? <TawafCounter count={state.counters.tawaf} onNext={() => setTool("sai")} />
+            : tool === "sai" ? <SaiCounter count={state.counters.sai} />
+              : <JamaratCounter day={state.counters.jamaratDay} counts={state.counters.jamarat} />
+        ) : null}
+        <Text style={styles.disclaimer}>Le compteur est une aide mémoire, pas une validation religieuse.</Text>
+      </ScrollView>
+    </View>
+  );
+}
+
+// ----- Tawâf ---------------------------------------------------------------------------------
+
+function TawafCounter({ count, onNext }: { count: number; onNext: () => void }) {
+  const { width } = useWindowDimensions();
+  const size = Math.min(width - 40, 330);
+  const c = size / 2;
+  const r = c - 18;
+  const complete = count >= 7;
+  const segment = 360 / 7;
+
+  const add = () => {
+    if (complete) return;
+    if (count + 1 >= 7) success();
+    else tap();
+    setCounters((counters) => ({ ...counters, tawaf: Math.min(7, counters.tawaf + 1) }));
+  };
+
+  return (
+    <View>
+      <View style={styles.ringWrap}>
+        <Svg width={size} height={size}>
+          {Array.from({ length: 7 }, (_, index) => {
+            // Counter-clockwise like the pilgrims: the arcs fill from the top, to the left.
+            const from = 360 - (index + 1) * segment + 2.5;
+            const to = 360 - index * segment - 2.5;
+            const filled = index < count;
+            const current = index === count && !complete;
+            return (
+              <Path
+                key={index}
+                d={arc(c, c, r, from, to)}
+                stroke={filled ? pil.gold : current ? "rgba(232,187,98,0.55)" : "rgba(255,255,255,0.12)"}
+                strokeWidth={current ? 20 : 16}
+                strokeLinecap="round"
+                fill="none"
+              />
+            );
+          })}
+          <G>
+            <Rect x={c - 34} y={c - 34} width={68} height={68} rx={4} fill="#0E0B10" stroke="#3A2E1E" strokeWidth={1} />
+            <Rect x={c - 34} y={c - 18} width={68} height={7} fill={pil.gold} />
+            <Circle cx={c - 34} cy={c + 34} r={5} fill={pil.gold} />
+          </G>
+          <SvgText x={c} y={c + 62} fill="#FFFFFF" fontSize={13} fontWeight="700" textAnchor="middle">Kaaba à votre gauche</SvgText>
+        </Svg>
+      </View>
+      <View style={styles.countRow}>
+        <Text style={styles.bigCount}>{count}</Text>
+        <Text style={styles.bigCountLabel}>/ 7 tours</Text>
+      </View>
+
+      {complete ? (
+        <View style={styles.doneCard}>
+          <Ionicons name="checkmark-circle" size={30} color={pil.green} />
+          <Text style={styles.doneTitle}>Tawâf terminé</Text>
+          <Text style={styles.doneText}>Priez deux rak‘ât, si possible derrière Maqâm Ibrâhîm sans gêner les flux, puis buvez de Zamzam.</Text>
+          <Pressable onPress={onNext} style={styles.primary}>
+            <Text style={styles.primaryText}>Passer au Sa‘y</Text>
+            <Ionicons name="arrow-forward" size={18} color={pil.ink} />
+          </Pressable>
+        </View>
+      ) : (
+        <>
+          <Pressable accessibilityRole="button" onPress={add} style={({ pressed }) => [styles.bigButton, pressed && styles.bigButtonPressed]}>
+            <Text style={styles.bigButtonText}>Tour {count + 1} terminé</Text>
+            <Text style={styles.bigButtonHint}>De retour à l’alignement de la Pierre noire</Text>
+          </Pressable>
+          <View style={styles.hint}>
+            <Ionicons name="information-circle-outline" size={18} color={pil.gold} />
+            <Text style={styles.hintText}>
+              {count < 3
+                ? "Tours 1 à 3 : les hommes pressent le pas (ramal) lorsque cela s’applique et sans gêner personne."
+                : "À chaque passage de la Pierre noire : un signe de la main et « Allâhu akbar »."}
+            </Text>
+          </View>
+        </>
+      )}
+      <Controls
+        canUndo={count > 0}
+        onUndo={() => setCounters((counters) => ({ ...counters, tawaf: Math.max(0, counters.tawaf - 1) }))}
+        onReset={() => setCounters((counters) => ({ ...counters, tawaf: 0 }))}
+      />
+      <Text style={styles.sayTitle}>À dire</Text>
+      {["takbir", "rabbana", "free"].map((id) => <InvocationCard key={id} invocation={INVOCATIONS_BY_ID[id]} />)}
+    </View>
+  );
+}
+
+// ----- Sa‘y ----------------------------------------------------------------------------------
+
+function SaiCounter({ count }: { count: number }) {
+  const complete = count >= 7;
+  const lap = Math.min(7, count + 1);
+  const fromSafa = lap % 2 === 1;
+
+  const add = () => {
+    if (complete) return;
+    if (count + 1 >= 7) success();
+    else tap();
+    setCounters((counters) => ({ ...counters, sai: Math.min(7, counters.sai + 1) }));
+  };
+
+  return (
+    <View>
+      <View style={styles.track}>
+        <View style={styles.hill}>
+          <Text style={styles.hillName}>Safâ</Text>
+          <Text style={styles.hillArabic}>الصفا</Text>
+        </View>
+        <View style={styles.laps}>
+          {Array.from({ length: 7 }, (_, index) => {
+            const filled = index < count;
+            const current = index === count && !complete;
+            const down = index % 2 === 0;
+            return (
+              <View key={index} style={[styles.lap, filled && styles.lapFilled, current && styles.lapCurrent]}>
+                <Ionicons name={down ? "arrow-down" : "arrow-up"} size={16} color={filled ? pil.ink : current ? pil.gold : "#FFFFFF"} />
+                <Text style={[styles.lapNumber, filled && styles.lapNumberFilled]}>{index + 1}</Text>
+              </View>
+            );
+          })}
+        </View>
+        <View style={styles.greenZone}><Text style={styles.greenZoneText}>Repères verts : les hommes pressent le pas</Text></View>
+        <View style={styles.hill}>
+          <Text style={styles.hillName}>Marwa</Text>
+          <Text style={styles.hillArabic}>المروة</Text>
+        </View>
+      </View>
+
+      {complete ? (
+        <View style={styles.doneCard}>
+          <Ionicons name="checkmark-circle" size={30} color={pil.green} />
+          <Text style={styles.doneTitle}>Sa‘y terminé, à Marwa</Text>
+          <Text style={styles.doneText}>Pour la ‘Umra : l’homme rase ou raccourcit, la femme raccourcit une partie des pointes. Qu’Allah accepte.</Text>
+        </View>
+      ) : (
+        <>
+          <Text style={styles.direction}>Trajet {lap} sur 7</Text>
+          <Text style={styles.directionWay}>{fromSafa ? "Safâ  →  Marwa" : "Marwa  →  Safâ"}</Text>
+          <Pressable accessibilityRole="button" onPress={add} style={({ pressed }) => [styles.bigButton, pressed && styles.bigButtonPressed]}>
+            <Text style={styles.bigButtonText}>Arrivé à {fromSafa ? "Marwa" : "Safâ"}</Text>
+            <Text style={styles.bigButtonHint}>Le trajet {lap} est terminé</Text>
+          </Pressable>
+          <View style={styles.hint}>
+            <Ionicons name="information-circle-outline" size={18} color={pil.gold} />
+            <Text style={styles.hintText}>Sur Safâ et sur Marwa, tournez-vous vers la Kaaba : proclamez la grandeur d’Allah et invoquez, trois fois.</Text>
+          </View>
+        </>
+      )}
+      <Controls
+        canUndo={count > 0}
+        onUndo={() => setCounters((counters) => ({ ...counters, sai: Math.max(0, counters.sai - 1) }))}
+        onReset={() => setCounters((counters) => ({ ...counters, sai: 0 }))}
+      />
+      <Text style={styles.sayTitle}>À dire</Text>
+      {(count === 0 ? ["safa", "safa-dhikr", "forgiveness"] : ["safa-dhikr", "forgiveness", "free"]).map((id) => <InvocationCard key={id} invocation={INVOCATIONS_BY_ID[id]} />)}
+    </View>
+  );
+}
+
+// ----- Jamarât -------------------------------------------------------------------------------
+
+const PILLARS = ["Petite", "Moyenne", "Grande"] as const;
+
+function JamaratCounter({ day, counts }: { day: 10 | 11 | 12 | 13; counts: [number, number, number] }) {
+  // On the 10th, only the big one (Jamrat al-‘Aqaba).
+  const order = day === 10 ? [2] : [0, 1, 2];
+  const active = order.find((pillar) => counts[pillar] < 7);
+  const showPause = active !== undefined && active !== order[0] && counts[active] === 0;
+
+  const throwOne = () => {
+    if (active === undefined) return;
+    const next = counts.map((value, pillar) => (pillar === active ? value + 1 : value)) as [number, number, number];
+    const finishedAll = order.every((pillar) => next[pillar] >= 7);
+    if (finishedAll || next[active] === 7) success();
+    else tap();
+    setCounters((counters) => ({ ...counters, jamarat: next }));
+  };
+
+  return (
+    <View>
+      <Text style={styles.dayLabel}>Jour de Dhul-Hijja</Text>
+      <View style={styles.days}>
+        {([10, 11, 12, 13] as const).map((value) => (
+          <Pressable
+            key={value}
+            onPress={() => {
+              void Haptics.selectionAsync().catch(() => undefined);
+              setCounters((counters) => ({ ...counters, jamaratDay: value, jamarat: [0, 0, 0] }));
+            }}
+            style={[styles.day, day === value && styles.dayActive]}
+          >
+            <Text style={[styles.dayText, day === value && styles.dayTextActive]}>{value}</Text>
+          </Pressable>
+        ))}
+      </View>
+
+      <View style={styles.pillars}>
+        {PILLARS.map((label, pillar) => {
+          const used = order.includes(pillar);
+          const isActive = pillar === active;
+          return (
+            <View key={label} style={[styles.pillar, !used && styles.pillarUnused, isActive && styles.pillarActive]}>
+              <Text style={styles.pillarOrder}>{used ? (day === 10 ? "‘Aqaba" : `${order.indexOf(pillar) + 1}`) : "—"}</Text>
+              <View style={[styles.pillarStone, { height: 46 + pillar * 16 }, counts[pillar] >= 7 && styles.pillarStoneDone]} />
+              <Text style={styles.pillarName}>{label}</Text>
+              <View style={styles.pebbles}>
+                {Array.from({ length: 7 }, (_, index) => (
+                  <View key={index} style={[styles.pebble, index < counts[pillar] && styles.pebbleThrown]} />
+                ))}
+              </View>
+              <Text style={styles.pillarCount}>{used ? `${counts[pillar]} / 7` : "pas ce jour"}</Text>
+            </View>
+          );
+        })}
+      </View>
+
+      {showPause ? (
+        <View style={styles.pause}>
+          <Ionicons name="hand-left-outline" size={20} color={pil.green} />
+          <Text style={styles.pauseText}>Arrêtez-vous un moment, face à la qibla, et invoquez longuement avant la stèle suivante.</Text>
+        </View>
+      ) : null}
+
+      {active === undefined ? (
+        <View style={styles.doneCard}>
+          <Ionicons name="checkmark-circle" size={30} color={pil.green} />
+          <Text style={styles.doneTitle}>Lapidation du {day} terminée</Text>
+          <Text style={styles.doneText}>
+            {day === 10
+              ? "Ensuite : le sacrifice s’il vous incombe, la coupe des cheveux et le Tawâf al-Ifâda."
+              : "Après la grande stèle, partez sans vous arrêter. Le séjour à Mina se poursuit selon votre programme."}
+          </Text>
+        </View>
+      ) : (
+        <Pressable accessibilityRole="button" onPress={throwOne} style={({ pressed }) => [styles.bigButton, pressed && styles.bigButtonPressed]}>
+          <Text style={styles.bigButtonText}>Caillou lancé · Allâhu akbar</Text>
+          <Text style={styles.bigButtonHint}>{PILLARS[active]} stèle — caillou {counts[active] + 1} sur 7</Text>
+        </Pressable>
+      )}
+      <Controls
+        canUndo={order.some((pillar) => counts[pillar] > 0)}
+        onUndo={() => setCounters((counters) => {
+          const last = [...order].reverse().find((pillar) => counters.jamarat[pillar] > 0);
+          if (last === undefined) return counters;
+          const next = [...counters.jamarat] as [number, number, number];
+          next[last] -= 1;
+          return { ...counters, jamarat: next };
+        })}
+        onReset={() => setCounters((counters) => ({ ...counters, jamarat: [0, 0, 0] }))}
+      />
+      <Text style={styles.sayTitle}>À dire</Text>
+      <InvocationCard invocation={INVOCATIONS_BY_ID.takbir} />
+    </View>
+  );
+}
+
+function Controls({ canUndo, onUndo, onReset }: { canUndo: boolean; onUndo: () => void; onReset: () => void }) {
+  const [confirm, setConfirm] = useState(false);
+  return (
+    <View style={styles.controls}>
+      <Pressable disabled={!canUndo} onPress={onUndo} style={[styles.control, !canUndo && styles.disabled]}>
+        <Ionicons name="arrow-undo-outline" size={18} color="#FFFFFF" />
+        <Text style={styles.controlText}>Annuler le dernier</Text>
+      </Pressable>
+      <Pressable
+        disabled={!canUndo}
+        onPress={() => {
+          if (!confirm) {
+            setConfirm(true);
+            setTimeout(() => setConfirm(false), 2500);
+            return;
+          }
+          setConfirm(false);
+          onReset();
+        }}
+        style={[styles.control, confirm && styles.controlConfirm, !canUndo && styles.disabled]}
+      >
+        <Ionicons name="refresh-outline" size={18} color={confirm ? pil.ink : "#FFFFFF"} />
+        <Text style={[styles.controlText, confirm && styles.controlTextConfirm]}>{confirm ? "Toucher pour confirmer" : "Recommencer"}</Text>
+      </Pressable>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  screen: { flex: 1, backgroundColor: pil.bg },
+  header: { paddingHorizontal: 16, flexDirection: "row", alignItems: "center", gap: 12 },
+  iconButton: { width: 42, height: 42, alignItems: "center", justifyContent: "center", borderRadius: 21, backgroundColor: pil.surfaceHigh },
+  headerCopy: { flex: 1 },
+  eyebrow: { color: pil.gold, fontSize: 12, fontWeight: "800", letterSpacing: 1.3, ...pilType.sans },
+  title: { color: pil.text, fontSize: 30, ...pilType.display },
+  awake: { flexDirection: "row", alignItems: "center", gap: 5, paddingHorizontal: 10, paddingVertical: 6, borderRadius: 12, backgroundColor: pil.goldSoft },
+  awakeText: { color: pil.gold, fontSize: 12, fontWeight: "800", ...pilType.sans },
+  tabs: { marginTop: 14, marginHorizontal: 16, padding: 4, flexDirection: "row", gap: 4, borderRadius: 18, backgroundColor: pil.surface },
+  tab: { flex: 1, minHeight: 46, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 6, borderRadius: 14 },
+  tabActive: { backgroundColor: pil.gold },
+  tabText: { color: pil.text, fontSize: 15, fontWeight: "700", ...pilType.sans },
+  tabTextActive: { color: pil.ink, fontWeight: "800" },
+  content: { paddingHorizontal: 20, paddingTop: 16 },
+  ringWrap: { alignItems: "center", justifyContent: "center" },
+  countRow: { marginTop: 4, flexDirection: "row", alignItems: "baseline", justifyContent: "center", gap: 8 },
+  bigCount: { color: pil.text, fontSize: 56, fontWeight: "900", ...pilType.sans },
+  bigCountLabel: { color: pil.textSoft, fontSize: 20, fontWeight: "700", ...pilType.sans },
+  bigButton: { marginTop: 18, minHeight: 92, alignItems: "center", justifyContent: "center", borderRadius: 28, backgroundColor: pil.gold },
+  bigButtonPressed: { transform: [{ scale: 0.97 }], backgroundColor: pil.goldDeep },
+  bigButtonText: { color: pil.ink, fontSize: 22, fontWeight: "900", ...pilType.sans },
+  bigButtonHint: { marginTop: 4, color: "rgba(27,18,8,0.75)", fontSize: 13.5, fontWeight: "700", ...pilType.sans },
+  hint: { marginTop: 14, padding: 13, flexDirection: "row", alignItems: "flex-start", gap: 9, borderRadius: 16, backgroundColor: pil.surface },
+  hintText: { flex: 1, color: pil.text, fontSize: 15, lineHeight: 22, ...pilType.sans },
+  doneCard: { marginTop: 16, padding: 18, alignItems: "center", borderRadius: 24, borderWidth: 1, borderColor: "rgba(123,212,168,0.4)", backgroundColor: pil.greenSoft },
+  doneTitle: { marginTop: 6, color: pil.text, fontSize: 22, fontWeight: "800", ...pilType.sans },
+  doneText: { marginTop: 6, color: pil.text, fontSize: 15.5, lineHeight: 23, textAlign: "center", ...pilType.sans },
+  primary: { marginTop: 14, minHeight: 48, paddingHorizontal: 20, flexDirection: "row", alignItems: "center", gap: 8, borderRadius: 24, backgroundColor: pil.gold },
+  primaryText: { color: pil.ink, fontSize: 16, fontWeight: "800", ...pilType.sans },
+  controls: { marginTop: 14, flexDirection: "row", gap: 10 },
+  control: { flex: 1, minHeight: 46, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 7, borderRadius: 16, backgroundColor: pil.surfaceHigh },
+  controlConfirm: { backgroundColor: pil.red },
+  controlText: { color: pil.text, fontSize: 14, fontWeight: "700", ...pilType.sans },
+  controlTextConfirm: { color: pil.ink, fontWeight: "800" },
+  disabled: { opacity: 0.4 },
+  sayTitle: { marginTop: 26, marginBottom: 10, color: pil.gold, fontSize: 15, fontWeight: "800", ...pilType.sans },
+  track: { padding: 14, gap: 10, borderRadius: 26, borderWidth: 1, borderColor: pil.line, backgroundColor: pil.surface },
+  hill: { minHeight: 54, flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingHorizontal: 16, borderRadius: 18, backgroundColor: pil.surfaceHigh },
+  hillName: { color: pil.text, fontSize: 20, fontWeight: "800", ...pilType.sans },
+  hillArabic: { color: pil.gold, fontSize: 22, ...pilType.arabic },
+  laps: { flexDirection: "row", gap: 6 },
+  lap: { flex: 1, minHeight: 64, alignItems: "center", justifyContent: "center", gap: 4, borderRadius: 14, borderWidth: 1, borderColor: pil.line, backgroundColor: "rgba(255,255,255,0.04)" },
+  lapFilled: { borderColor: pil.gold, backgroundColor: pil.gold },
+  lapCurrent: { borderColor: pil.gold, borderWidth: 2 },
+  lapNumber: { color: pil.text, fontSize: 15, fontWeight: "800", ...pilType.sans },
+  lapNumberFilled: { color: pil.ink },
+  greenZone: { paddingVertical: 7, alignItems: "center", borderRadius: 12, backgroundColor: pil.greenSoft },
+  greenZoneText: { color: pil.green, fontSize: 13, fontWeight: "800", ...pilType.sans },
+  direction: { marginTop: 18, color: pil.textSoft, fontSize: 15, fontWeight: "700", textAlign: "center", ...pilType.sans },
+  directionWay: { marginTop: 2, color: pil.text, fontSize: 28, fontWeight: "800", textAlign: "center", ...pilType.sans },
+  dayLabel: { color: pil.textSoft, fontSize: 14, fontWeight: "700", ...pilType.sans },
+  days: { marginTop: 8, flexDirection: "row", gap: 8 },
+  day: { flex: 1, minHeight: 48, alignItems: "center", justifyContent: "center", borderRadius: 16, backgroundColor: pil.surface },
+  dayActive: { backgroundColor: pil.gold },
+  dayText: { color: pil.text, fontSize: 20, fontWeight: "800", ...pilType.sans },
+  dayTextActive: { color: pil.ink },
+  pillars: { marginTop: 16, flexDirection: "row", gap: 8, alignItems: "flex-end" },
+  pillar: { flex: 1, paddingVertical: 12, alignItems: "center", gap: 6, borderRadius: 20, borderWidth: 1, borderColor: pil.line, backgroundColor: pil.surface },
+  pillarUnused: { opacity: 0.35 },
+  pillarActive: { borderColor: pil.gold, borderWidth: 2, backgroundColor: pil.surfaceHigh },
+  pillarOrder: { color: pil.gold, fontSize: 13, fontWeight: "800", ...pilType.sans },
+  pillarStone: { width: 26, borderRadius: 6, borderWidth: 1.5, borderColor: pil.gold, backgroundColor: "rgba(232,187,98,0.12)" },
+  pillarStoneDone: { backgroundColor: pil.gold },
+  pillarName: { color: pil.text, fontSize: 14, fontWeight: "800", ...pilType.sans },
+  pebbles: { flexDirection: "row", flexWrap: "wrap", justifyContent: "center", gap: 4, paddingHorizontal: 6 },
+  pebble: { width: 9, height: 9, borderRadius: 5, borderWidth: 1, borderColor: "rgba(255,255,255,0.45)" },
+  pebbleThrown: { borderColor: pil.gold, backgroundColor: pil.gold },
+  pillarCount: { color: pil.textSoft, fontSize: 12.5, fontWeight: "700", ...pilType.sans },
+  pause: { marginTop: 14, padding: 13, flexDirection: "row", alignItems: "flex-start", gap: 9, borderRadius: 16, backgroundColor: pil.greenSoft },
+  pauseText: { flex: 1, color: pil.text, fontSize: 15, lineHeight: 22, fontWeight: "600", ...pilType.sans },
+  disclaimer: { marginTop: 22, color: pil.muted, fontSize: 13, textAlign: "center", ...pilType.sans },
+});

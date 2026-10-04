@@ -271,9 +271,9 @@ const MODULE_GUIDES: Record<string, GuideDefinition> = {
     id: "pilgrimage",
     slides: [{
       eyebrow: "HAJJ & ‘UMRA",
-      title: "Un parcours pour mieux vous repérer",
+      title: "Votre pèlerinage, comme un livre",
       description:
-        "Parcourez les étapes et les rappels disponibles pour mieux comprendre le déroulement du pèlerinage.",
+        "Deux livres à suivre étape par étape, des compteurs pour le Tawâf, le Sa‘y et les Jamarât, et des réponses quand vous avez un doute.",
       icon: "walk-outline",
     }],
   },
