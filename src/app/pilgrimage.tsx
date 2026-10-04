@@ -2,7 +2,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
 import { useEffect, useMemo, useState } from "react";
-import { Image, InteractionManager, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { Image, InteractionManager, Pressable, ScrollView, StyleSheet, Text, useWindowDimensions, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Svg, { Circle } from "react-native-svg";
 
@@ -15,6 +15,8 @@ import type { Rite } from "../features/pilgrimage/pilgrimageTypes";
 
 /** Book covers, shown whole (portrait 1122 × 1402). */
 const COVER_RATIO = 1122 / 1402;
+const BODY_PADDING = 18;
+const SHELF_GAP = 12;
 const COVERS: Record<Rite, { image: number }> = {
   umrah: { image: require("../assets/images/pilgrimage/umrah-cover.jpg") },
   hajj: { image: require("../assets/images/pilgrimage/hajj-cover.jpg") },
@@ -55,6 +57,10 @@ function seasonText(season: HajjSeason) {
 
 export default function PilgrimageHome() {
   const insets = useSafeAreaInsets();
+  const { width: screenWidth } = useWindowDimensions();
+  // Explicit size: the picture is drawn exactly in its box (an absolute fill let it overflow).
+  const coverWidth = Math.floor((screenWidth - BODY_PADDING * 2 - SHELF_GAP) / 2);
+  const coverHeight = Math.round(coverWidth / COVER_RATIO);
   const state = usePilgrimageState();
   const [season, setSeason] = useState<HajjSeason | null>(null);
   const [virtue, setVirtue] = useState(() => Math.floor(Date.now() / 86_400_000) % VIRTUES.length);
@@ -127,11 +133,9 @@ export default function PilgrimageHome() {
                   accessibilityRole="button"
                   accessibilityLabel={`Ouvrir le livre ${book.title}`}
                   onPress={() => router.push(`/pilgrimage/book?rite=${rite}`)}
-                  style={({ pressed }) => [styles.cover, pressed && styles.pressed]}
+                  style={({ pressed }) => [styles.cover, { width: coverWidth }, pressed && styles.pressed]}
                 >
-                  <View style={styles.coverImage}>
-                    <Image source={COVERS[rite].image} resizeMode="contain" style={StyleSheet.absoluteFill} />
-                  </View>
+                  <Image source={COVERS[rite].image} resizeMode="cover" style={[styles.coverImage, { width: coverWidth, height: coverHeight }]} />
                   <View style={styles.coverPanel}>
                     <View style={styles.coverTitleRow}>
                       <Text style={styles.coverTitle}>{book.title}</Text>
@@ -208,11 +212,11 @@ const styles = StyleSheet.create({
   seasonTitle: { color: pil.text, fontSize: 17, fontWeight: "800", ...pilType.sans },
   seasonText: { marginTop: 2, color: pil.textSoft, fontSize: 14, lineHeight: 20, ...pilType.sans },
   back: { position: "absolute", left: 16, width: 44, height: 44, alignItems: "center", justifyContent: "center", borderRadius: 22, backgroundColor: "rgba(33,27,44,0.9)" },
-  body: { paddingHorizontal: 18 },
+  body: { paddingHorizontal: BODY_PADDING },
   section: { marginTop: 26, marginBottom: 12, color: pil.text, fontSize: 28, ...pilType.display },
-  shelf: { flexDirection: "row", gap: 12 },
-  cover: { flex: 1, overflow: "hidden", borderRadius: 20, borderWidth: 1, borderColor: pil.goldLine, backgroundColor: pil.surfaceHigh },
-  coverImage: { width: "100%", aspectRatio: COVER_RATIO, backgroundColor: pil.surface },
+  shelf: { flexDirection: "row", gap: SHELF_GAP },
+  cover: { overflow: "hidden", borderRadius: 20, borderWidth: 1, borderColor: pil.goldLine, backgroundColor: pil.surfaceHigh },
+  coverImage: { backgroundColor: pil.surface },
   coverPanel: { padding: 12, gap: 7 },
   coverTitleRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: 6 },
   coverTitle: { color: pil.text, fontSize: 24, lineHeight: 28, ...pilType.display },
