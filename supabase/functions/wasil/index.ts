@@ -41,6 +41,12 @@ import {
 } from "./engine/DocumentaryRetriever.ts";
 import { religiousScholarCorpus, wasilVerifiedReligiousOpinionsPolicy } from "./engine/ReligiousSourcePolicy.ts";
 import { postOpenAiResponses, reasoningEffortFromEnv } from "./engine/OpenAiRequest.ts";
+import {
+  readOpenAiResponseStream,
+  streamWasilResponse,
+  StructuredBodyExtractor,
+  type WasilStreamSink,
+} from "./engine/AnswerStream.ts";
 
 async function retrieveQuranKnowledgeSafely(
   ...args: Parameters<typeof retrieveQuranKnowledge>
@@ -1072,7 +1078,30 @@ const trustedSources: Record<string, TrustedSource> = {
   },
 };
 
+const FIXED_REPLIES = {
+  fr: {
+    incompleteEntityTitle: "Réponse documentaire incomplète pour",
+    incompleteEntityBody: "La première recherche n’a pas produit une réponse exploitable. Relancez la demande : Wasil conservera l’identité déjà résolue et ne redemandera pas de précision.",
+    noVerifiedHadith: "Je n’ai pas trouvé de hadith suffisamment vérifié et directement pertinent pour répondre à cette demande.",
+    urgentTitle: "Vous n’avez pas à rester seul",
+    urgentBody: "Si vous risquez de vous faire du mal ou si vous n’êtes pas en sécurité, contactez immédiatement les secours de votre pays ou une personne de confiance présente près de vous. En France, vous pouvez appeler le 3114, gratuitement, 24 h/24. Vous pouvez aussi vous rapprocher d’un professionnel de santé. Chercher de l’aide n’est pas un manque de foi.",
+    outOfScopeTitle: "Wasil est dédié à l’islam",
+    outOfScopeBody: "Je peux vous accompagner sur les questions religieuses et les contenus d’OUMMAH.",
+  },
+  en: {
+    incompleteEntityTitle: "Incomplete answer about",
+    incompleteEntityBody: "The first search did not produce a usable answer. Please ask again: Wasil will keep the identity it already resolved and will not ask you to clarify.",
+    noVerifiedHadith: "I could not find a sufficiently verified hadith that directly answers this request.",
+    urgentTitle: "You do not have to stay alone",
+    urgentBody: "If you are at risk of harming yourself or do not feel safe, contact your local emergency services or a trusted person near you right away. In France, you can call 3114, free of charge, 24/7. You can also reach out to a health professional. Seeking help is not a lack of faith.",
+    outOfScopeTitle: "Wasil is dedicated to Islam",
+    outOfScopeBody: "I can help you with religious questions and OUMMAH content.",
+  },
+} as const;
+
 type WasilBody = {
+  /** Language of the app ("fr" by default). */
+  language?: string;
   operation?:
     | "ask"
     | "balance"
@@ -1693,6 +1722,23 @@ async function refund(userId: string, requestId: string, reason: string) {
 }
 
 Deno.serve(async (request) => {
+  // Clients that ask for it receive the answer as server-sent events while it
+  // is written; older app versions keep the single JSON response.
+  if (request.method === "POST") {
+    const peek = await request.clone().json().catch(() => null) as
+      | { stream?: unknown; operation?: unknown }
+      | null;
+    if (peek?.stream === true && (peek.operation === undefined || peek.operation === "ask")) {
+      return streamWasilResponse(corsHeaders, (sink) => handleWasilRequest(request, sink));
+    }
+  }
+  return await handleWasilRequest(request);
+});
+
+async function handleWasilRequest(
+  request: Request,
+  streamSink?: WasilStreamSink,
+): Promise<Response> {
   const requestStartedAt = performance.now();
   const latencyStages: Record<string, number> = {};
   const markLatency = (stage: string, startedAt: number) => {
@@ -1828,6 +1874,8 @@ Deno.serve(async (request) => {
   const question = body.question?.trim() ?? "";
   const requestId = body.requestId ?? "";
   const mode = body.mode === "deep" ? "deep" : "standard";
+  const answerLanguage: "fr" | "en" = body.language === "en" ? "en" : "fr";
+  const fixed = FIXED_REPLIES[answerLanguage];
   const webBudget: WasilWebBudget = {
     initial: mode === "deep" ? 2 : 1,
     remaining: mode === "deep" ? 2 : 1,
@@ -2364,7 +2412,7 @@ Deno.serve(async (request) => {
       featureFlags.v4ProductionBrainGuidance || featureFlags.v4ExecutionPlan
         ? buildProductionBrainGuidance(v4Analysis?.brainPlan ?? null)
         : "";
-    const productionInstructions = `${stableInstructions}${brainGuidance}${wasilVerifiedReligiousOpinionsPolicy}\n\nRÈGLE DOCUMENTAIRE UNIVERSELLE: avant de rédiger une réponse religieuse substantielle, examine séparément tous les corpus demandés. Privilégie toujours les preuves normatives directement liées à l’intention de la question. Une preuve générale, une sourate complète ou un récit historique ne doit jamais remplacer un verset ou un hadith plus direct lorsqu’il est disponible. Utilise les deux corpus lorsqu’ils sont réellement complémentaires, sans ajouter de citation décorative. Les cartes Hadith sont générées depuis les SOURCE_ID documentaires Hadith fournis (v4-hadith: ou hadith:). N’invente jamais de collection, de numéro ni de requête de navigation. Sélectionne ces SOURCE_ID seulement si le hadith est réellement utilisé dans le corps.`;
+    const productionInstructions = `${stableInstructions}${brainGuidance}${wasilVerifiedReligiousOpinionsPolicy}\n\nRÈGLE DOCUMENTAIRE UNIVERSELLE: avant de rédiger une réponse religieuse substantielle, examine séparément tous les corpus demandés. Privilégie toujours les preuves normatives directement liées à l’intention de la question. Une preuve générale, une sourate complète ou un récit historique ne doit jamais remplacer un verset ou un hadith plus direct lorsqu’il est disponible. Utilise les deux corpus lorsqu’ils sont réellement complémentaires, sans ajouter de citation décorative. Les cartes Hadith sont générées depuis les SOURCE_ID documentaires Hadith fournis (v4-hadith: ou hadith:). N’invente jamais de collection, de numéro ni de requête de navigation. Sélectionne ces SOURCE_ID seulement si le hadith est réellement utilisé dans le corps.\n\nREGISTRE: vouvoie toujours l’utilisateur (« vous »), y compris dans les consignes pratiques (« lavez », jamais « lave »).${answerLanguage === "en" ? "\n\nLANGUE: l’application est en anglais. Rédige title et body en anglais, quelle que soit toute autre consigne sur la langue ; garde les termes arabes translittérés usuels." : ""}`;
 
     console.log("WASIL_PROMPT_SYSTEM_MEASUREMENT", {
       requestId,
@@ -2523,12 +2571,16 @@ Deno.serve(async (request) => {
         : openAiBody;
       // Standard answers run with low reasoning effort (the main latency
       // lever); deep mode keeps the model default unless configured.
-      const openAiResponse = await postOpenAiResponses(requestBody, {
-        apiKey: Deno.env.get("OPENAI_API_KEY") ?? "",
-        effort: mode === "deep"
-          ? reasoningEffortFromEnv("WASIL_REASONING_EFFORT_DEEP", null)
-          : reasoningEffortFromEnv("WASIL_REASONING_EFFORT_STANDARD", "low"),
-      });
+      if (streamSink && retrying) streamSink.reset();
+      const openAiResponse = await postOpenAiResponses(
+        streamSink ? { ...requestBody, stream: true } : requestBody,
+        {
+          apiKey: Deno.env.get("OPENAI_API_KEY") ?? "",
+          effort: mode === "deep"
+            ? reasoningEffortFromEnv("WASIL_REASONING_EFFORT_DEEP", null)
+            : reasoningEffortFromEnv("WASIL_REASONING_EFFORT_STANDARD", "low"),
+        },
+      );
       if (!openAiResponse.ok) {
         const providerError = (await openAiResponse.text()).slice(0, 1_500);
         if (retrying) {
@@ -2539,7 +2591,20 @@ Deno.serve(async (request) => {
         }
         throw new Error(`OPENAI_${openAiResponse.status}: ${providerError}`);
       }
-      provider = (await openAiResponse.json()) as Record<string, unknown>;
+      if (streamSink) {
+        const extractor = new StructuredBodyExtractor();
+        provider = await readOpenAiResponseStream(openAiResponse, {
+          text: (delta) => {
+            const bodyText = extractor.push(delta);
+            if (bodyText) streamSink.delta(bodyText);
+          },
+          event: (type) => {
+            if (type === "response.web_search_call.searching") streamSink.stage("web_search");
+          },
+        });
+      } else {
+        provider = (await openAiResponse.json()) as Record<string, unknown>;
+      }
       const finalWebCalls = Array.isArray(provider.output)
         ? provider.output.filter((item) =>
             item && typeof item === "object" &&
@@ -2632,9 +2697,8 @@ Deno.serve(async (request) => {
         entityType: queryExpansion.entityType,
       });
       parsed.status = "insufficient_sources";
-      parsed.title = `Réponse documentaire incomplète pour ${queryExpansion.canonicalName}`;
-      parsed.body =
-        "La première recherche n’a pas produit une réponse exploitable. Relancez la demande : Wasil conservera l’identité déjà résolue et ne redemandera pas de précision.";
+      parsed.title = `${fixed.incompleteEntityTitle} ${queryExpansion.canonicalName}`;
+      parsed.body = fixed.incompleteEntityBody;
       parsed.is_clarification = false;
     }
 
@@ -2666,7 +2730,7 @@ Deno.serve(async (request) => {
       requestedDocumentaryCorpora(effectiveQuestion).hadith &&
       !hasVerifiedRequestedHadith && !hasVerifiedWebHadith) {
       parsed.status = "insufficient_sources";
-      parsed.body = "Je n’ai pas trouvé de hadith suffisamment vérifié et directement pertinent pour répondre à cette demande.";
+      parsed.body = fixed.noVerifiedHadith;
     }
 
     const originalBillingStatus = parsed.status;
@@ -2708,15 +2772,15 @@ Deno.serve(async (request) => {
         parsed.status === "urgent_support"
           ? {
               kind: "answer",
-              title: "Vous n’avez pas à rester seul",
-              body: "Si vous risquez de vous faire du mal ou si vous n’êtes pas en sécurité, contactez immédiatement les secours de votre pays ou une personne de confiance présente près de vous. En France, vous pouvez appeler le 3114, gratuitement, 24 h/24. Vous pouvez aussi vous rapprocher d’un professionnel de santé. Chercher de l’aide n’est pas un manque de foi.",
+              title: fixed.urgentTitle,
+              body: fixed.urgentBody,
               reference: "Coran 12:84-86 · Coran 13:28 · Coran 94:5-6",
             }
           : parsed.status === "out_of_scope"
             ? {
                 kind: "out-of-scope",
-                title: "Wasil est dédié à l’islam",
-                body: "Je peux vous accompagner sur les questions religieuses et les contenus d’OUMMAH.",
+                title: fixed.outOfScopeTitle,
+                body: fixed.outOfScopeBody,
               }
             : {
                 kind: "unsupported-religious",
@@ -2995,5 +3059,5 @@ Deno.serve(async (request) => {
       502,
     );
   }
-});
+}
 
