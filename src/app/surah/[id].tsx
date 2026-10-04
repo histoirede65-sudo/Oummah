@@ -1179,26 +1179,24 @@ export default function SurahReadingScreen() {
         </View>
         <Text style={styles.headerArabic}>{surah.arabicName}</Text>
         <Pressable
+          accessibilityRole="button"
+          accessibilityLabel={t("surahReader.goToVerse")}
+          onPress={() => setShowVerseJump((value) => !value)}
+          style={[styles.iconButton, styles.headerAction, showVerseJump && styles.iconButtonActive]}
+        >
+          <Ionicons name="locate-outline" size={20} color={colors.goldLight} />
+        </Pressable>
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel={t("surahReader.settingsLabel")}
           onPress={() => setShowSettings((value) => !value)}
-          style={styles.iconButton}
+          style={[styles.iconButton, styles.headerAction, showSettings && styles.iconButtonActive]}
         >
           <Ionicons name="options-outline" size={21} color={colors.goldLight} />
         </Pressable>
       </View>
-      <View style={styles.reciterSelectorSlot}>
-        <View style={styles.reciterSelectorRow}>
-          <View style={styles.reciterSelectorControl}>
-            <QuranReciterSelector compact />
-          </View>
-          <Pressable
-            accessibilityLabel={t("surahReader.goToVerse")}
-            onPress={() => setShowVerseJump((value) => !value)}
-            style={styles.verseJumpTrigger}
-          >
-            <Text style={styles.verseJumpTriggerText}>{t("surahReader.goToVerse")}</Text>
-          </Pressable>
-        </View>
-        {showVerseJump ? (
+      {showVerseJump ? (
+        <View style={styles.reciterSelectorSlot}>
           <View style={styles.verseJumpRow}>
             <TextInput
               autoFocus
@@ -1217,8 +1215,8 @@ export default function SurahReadingScreen() {
               <Text style={styles.verseJumpGoText}>{t("surahReader.go")}</Text>
             </Pressable>
           </View>
-        ) : null}
-      </View>
+        </View>
+      ) : null}
       {showSettings ? (
         <View style={styles.settings}>
           <FlatList
@@ -1238,6 +1236,9 @@ export default function SurahReadingScreen() {
               </Pressable>
             )}
           />
+          <View style={styles.settingsReciter}>
+            <QuranReciterSelector compact />
+          </View>
         </View>
       ) : null}
       {loading ? (
@@ -1398,8 +1399,15 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: colors.purpleDeep,
+    borderWidth: 1,
+    borderColor: "rgba(227,181,90,0.22)",
   },
+  iconButtonActive: {
+    borderColor: "rgba(227,181,90,0.6)",
+    backgroundColor: "rgba(227,181,90,0.12)",
+  },
+  headerAction: { marginLeft: 8 },
+  settingsReciter: { marginTop: 10 },
   headerCopy: { flex: 1, marginLeft: 10 },
   title: {
     color: colors.text,
@@ -1421,32 +1429,7 @@ const styles = StyleSheet.create({
     borderColor: colors.borderSoft,
     backgroundColor: colors.backgroundSecondary,
   },
-  reciterSelectorRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-  },
-  reciterSelectorControl: {
-    flex: 1,
-    minWidth: 0,
-  },
-  verseJumpTrigger: {
-    height: 38,
-    paddingHorizontal: 11,
-    alignItems: "center",
-    justifyContent: "center",
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: colors.borderSoft,
-    backgroundColor: colors.purpleDeep,
-  },
-  verseJumpTriggerText: {
-    color: colors.goldLight,
-    fontSize: 11,
-    fontWeight: "700",
-  },
   verseJumpRow: {
-    marginTop: 7,
     flexDirection: "row",
     alignItems: "center",
     gap: 8,
