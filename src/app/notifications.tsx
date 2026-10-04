@@ -3,16 +3,16 @@ import { LinearGradient } from "expo-linear-gradient";
 import * as Location from "expo-location";
 import type { Href } from "expo-router";
 import { router, useFocusEffect } from "expo-router";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   Alert,
+  Animated,
   AppState,
   Linking,
   Modal,
   Pressable,
   ScrollView,
   StyleSheet,
-  Switch,
   Text,
   View,
 } from "react-native";
@@ -83,11 +83,67 @@ const FILTERS: ReadonlyArray<{ id: Filter; label: string }> = [
   { id: "inspiration", label: "Inspiration" },
 ];
 
-const MODES: ReadonlyArray<{ id: CenterAlertMode; label: string; icon: "volume-high-outline" | "phone-portrait-outline" | "notifications-outline" }> = [
+const MODES: ReadonlyArray<{ id: CenterAlertMode; label: string; icon: "volume-high-outline" | "phone-portrait-outline" | "notifications-off-outline" }> = [
   { id: "sound", label: "Son", icon: "volume-high-outline" },
   { id: "vibration", label: "Vibreur", icon: "phone-portrait-outline" },
-  { id: "silent", label: "Silencieux", icon: "notifications-outline" },
+  { id: "silent", label: "Silencieux", icon: "notifications-off-outline" },
 ];
+
+const REMINDER_SECTIONS = [
+  { id: "Objectifs", label: "Objectifs" },
+  { id: "Dou‘as", label: "Dou‘as du quotidien" },
+  { id: "Apprentissage", label: "Apprentissage" },
+  { id: "Inspiration", label: "Inspiration" },
+] as const;
+
+type IconName = keyof typeof Ionicons.glyphMap;
+
+const REMINDER_LOOKS: Record<CenterReminderId, { icon: IconName; accent: string }> = {
+  jummah: { icon: "business-outline", accent: "#E8B84E" },
+  "daily-goals": { icon: "flag-outline", accent: "#72C7A7" },
+  "wake-up-dua": { icon: "sunny-outline", accent: "#F4C95D" },
+  "morning-dua": { icon: "partly-sunny-outline", accent: "#F4C95D" },
+  "leave-home-dua": { icon: "exit-outline", accent: "#E3A85F" },
+  "before-meal-dua": { icon: "restaurant-outline", accent: "#CF9561" },
+  "enter-home-dua": { icon: "home-outline", accent: "#D8A767" },
+  "evening-dua": { icon: "moon-outline", accent: "#8D78CB" },
+  "sleep-dua": { icon: "bed-outline", accent: "#9C8FE0" },
+  hifz: { icon: "school-outline", accent: "#6BBCA8" },
+  "verse-of-day": { icon: "book-outline", accent: "#B98BE0" },
+  "hadith-of-day": { icon: "chatbubble-ellipses-outline", accent: "#D89BC8" },
+};
+
+/** Gold toggle drawn in JS: aligned on every iOS version (the native switch overflows its box). */
+function GoldToggle({ value, onValueChange, accessibilityLabel }: {
+  value: boolean;
+  onValueChange: (value: boolean) => void;
+  accessibilityLabel: string;
+}) {
+  const position = useRef(new Animated.Value(value ? 1 : 0)).current;
+  useEffect(() => {
+    Animated.timing(position, { toValue: value ? 1 : 0, duration: 160, useNativeDriver: false }).start();
+  }, [position, value]);
+  return (
+    <Pressable
+      accessibilityRole="switch"
+      accessibilityLabel={accessibilityLabel}
+      accessibilityState={{ checked: value }}
+      hitSlop={8}
+      onPress={() => onValueChange(!value)}
+      style={[styles.toggleTrack, value && styles.toggleTrackOn]}
+    >
+      <Animated.View
+        style={[
+          styles.toggleThumb,
+          {
+            backgroundColor: value ? "#F2B53D" : "#C9C1CB",
+            transform: [{ translateX: position.interpolate({ inputRange: [0, 1], outputRange: [0, 20] }) }],
+          },
+        ]}
+      />
+    </Pressable>
+  );
+}
 
 function notificationTimeValue(timeLabel: string) {
   const [hours, minutes] = timeLabel.split(":").map(Number);
@@ -469,96 +525,91 @@ export default function NotificationsScreen() {
           <View style={styles.sheet}>
             <View style={styles.handle} />
             <View style={styles.sheetHeader}>
-              <View>
-                <Text style={styles.eyebrow}>PERSONNALISATION</Text>
-                <Text style={styles.sheetTitle}>Choisir mes rappels</Text>
+              <View style={styles.sheetHeaderCopy}>
+                <Text style={styles.sheetTitle}>Mes rappels</Text>
+                <Text style={styles.sheetSubtitle}>Touchez une heure pour la changer</Text>
               </View>
-              <Pressable onPress={closeSettings} style={styles.closeButton}>
-                <Ionicons name="close" size={21} color="#FFF8EF" />
+              <Pressable onPress={closeSettings} hitSlop={8} style={styles.closeButton}>
+                <Ionicons name="close" size={21} color="#FFFFFF" />
               </Pressable>
             </View>
 
             <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.sheetContent}>
-              <View style={styles.customizationHint}>
-                <View style={styles.customizationHintIcon}>
-                  <Ionicons name="time-outline" size={20} color="#F4C75E" />
-                </View>
-                <View style={styles.customizationHintCopy}>
-                  <Text style={styles.customizationHintTitle}>Vos notifications, à vos horaires</Text>
-                  <Text style={styles.customizationHintText}>Activez les rappels que vous souhaitez recevoir, puis touchez « Choisir l’heure » pour définir l’heure de chaque notification.</Text>
-                </View>
-              </View>
-
               <View style={styles.masterRow}>
-                <View style={styles.masterCopy}>
-                  <Text style={styles.settingTitle}>Notifications sur le téléphone</Text>
-                  <Text style={styles.settingDescription}>Recevoir les rappels même lorsque l’application est fermée</Text>
+                <View style={styles.masterIcon}>
+                  <Ionicons name="notifications" size={18} color="#26181C" />
                 </View>
-                <Switch
+                <Text style={styles.masterTitle}>Rappels sur le téléphone</Text>
+                <GoldToggle
                   value={preferences.systemEnabled}
                   onValueChange={(value) => void toggleSystemNotifications(value)}
-                  trackColor={{ false: "#443D47", true: "rgba(236,177,61,0.55)" }}
-                  thumbColor={preferences.systemEnabled ? "#F2B53D" : "#908892"}
+                  accessibilityLabel="Rappels sur le téléphone"
                 />
               </View>
 
-              <Text style={styles.sectionLabel}>MODE D’ALERTE</Text>
-              <View style={styles.modeRow}>
-                {MODES.map((mode) => (
-                  <Pressable
-                    key={mode.id}
-                    onPress={() => updatePreferences((current) => ({ ...current, mode: mode.id }))}
-                    style={[styles.modeChoice, preferences.mode === mode.id && styles.choiceActive]}
-                  >
-                    <Ionicons name={mode.icon} size={18} color={preferences.mode === mode.id ? "#F4C75E" : "#9E96A1"} />
-                    <Text style={[styles.modeText, preferences.mode === mode.id && styles.choiceTextActive]}>{mode.label}</Text>
-                  </Pressable>
+              <View style={styles.segmented}>
+                {MODES.map((mode) => {
+                  const selected = preferences.mode === mode.id;
+                  return (
+                    <Pressable
+                      key={mode.id}
+                      accessibilityRole="button"
+                      accessibilityState={{ selected }}
+                      onPress={() => updatePreferences((current) => ({ ...current, mode: mode.id }))}
+                      style={[styles.segment, selected && styles.segmentActive]}
+                    >
+                      <Ionicons name={mode.icon} size={16} color={selected ? "#26181C" : "#FFFFFF"} />
+                      <Text style={[styles.segmentText, selected && styles.segmentTextActive]}>{mode.label}</Text>
+                    </Pressable>
+                  );
+                })}
+              </View>
+              <Text style={styles.adhanHintText}>L’adhan se règle depuis la carte des prières de l’accueil.</Text>
+
+              <View style={!preferences.systemEnabled && styles.disabledChoice}>
+                {REMINDER_SECTIONS.map((section) => (
+                  <View key={section.id}>
+                    <Text style={styles.sectionLabel}>{section.label}</Text>
+                    <View style={styles.settingsGroup}>
+                      {CENTER_REMINDERS.filter((reminder) => reminder.section === section.id).map((reminder, index) => {
+                        const enabled = preferences.reminders[reminder.id];
+                        const look = REMINDER_LOOKS[reminder.id];
+                        return (
+                          <View key={reminder.id} style={[styles.settingRow, index > 0 && styles.settingRowDivider]}>
+                            <View style={[styles.rowIcon, { backgroundColor: `${look.accent}26` }]}>
+                              <Ionicons name={look.icon} size={17} color={look.accent} />
+                            </View>
+                            <Text numberOfLines={1} style={[styles.settingTitle, !enabled && styles.settingTitleOff]}>
+                              {reminder.title}
+                            </Text>
+                            {reminder.time && enabled ? (
+                              <Pressable
+                                accessibilityRole="button"
+                                accessibilityLabel={`Changer l’heure : ${reminder.title}`}
+                                hitSlop={6}
+                                onPress={() => openReminderTimePicker(reminder)}
+                                style={({ pressed }) => [styles.timePill, pressed && styles.reminderTimeButtonPressed]}
+                              >
+                                <Text style={styles.timePillText}>{preferences.reminderTimes?.[reminder.id] ?? reminder.time}</Text>
+                              </Pressable>
+                            ) : null}
+                            <GoldToggle
+                              value={enabled}
+                              onValueChange={(value) =>
+                                updatePreferences((current) => ({
+                                  ...current,
+                                  reminders: { ...current.reminders, [reminder.id]: value },
+                                }))
+                              }
+                              accessibilityLabel={reminder.title}
+                            />
+                          </View>
+                        );
+                      })}
+                    </View>
+                  </View>
                 ))}
               </View>
-
-              <View style={styles.adhanHint}>
-                <Ionicons name="information-circle-outline" size={20} color="#F2BE55" />
-                <Text style={styles.adhanHintText}>L’adhan et les alertes de prière se règlent depuis la carte des prières de l’accueil.</Text>
-              </View>
-
-              {["Objectifs", "Dou‘as", "Apprentissage", "Inspiration"].map((section) => (
-                <View key={section}>
-                  <Text style={styles.sectionLabel}>{section.toUpperCase()}</Text>
-                  <View style={styles.settingsGroup}>
-                    {CENTER_REMINDERS.filter((reminder) => reminder.section === section).map((reminder) => (
-                      <View key={reminder.id} style={styles.settingRow}>
-                        <View style={styles.settingCopy}>
-                          <Text style={styles.settingTitle}>{reminder.title}</Text>
-                          <Text style={styles.settingDescription}>{reminder.description}</Text>
-                          {reminder.time ? (
-                            <Pressable
-                              onPress={() => openReminderTimePicker(reminder)}
-                              style={({ pressed }) => [styles.reminderTimeButton, pressed && styles.reminderTimeButtonPressed]}
-                            >
-                              <Ionicons name="time-outline" size={15} color="#F4C75E" />
-                              <Text style={styles.reminderTimeAction}>CHOISIR L’HEURE</Text>
-                              <View style={styles.reminderTimeDivider} />
-                              <Text style={styles.reminderTimeText}>{preferences.reminderTimes?.[reminder.id] ?? reminder.time}</Text>
-                              <Ionicons name="chevron-forward" size={13} color="#F4C75E" />
-                            </Pressable>
-                          ) : null}
-                        </View>
-                        <Switch
-                          value={preferences.reminders[reminder.id]}
-                          onValueChange={(value) =>
-                            updatePreferences((current) => ({
-                              ...current,
-                              reminders: { ...current.reminders, [reminder.id]: value },
-                            }))
-                          }
-                          trackColor={{ false: "#443D47", true: "rgba(236,177,61,0.50)" }}
-                          thumbColor={preferences.reminders[reminder.id] ? "#F2B53D" : "#908892"}
-                        />
-                      </View>
-                    ))}
-                  </View>
-                </View>
-              ))}
             </ScrollView>
             <Pressable
               disabled={saving || !hasPendingChanges}
@@ -569,9 +620,9 @@ export default function NotificationsScreen() {
                 saving && styles.disabledChoice,
               ]}
             >
-              <Ionicons name={hasPendingChanges ? "save-outline" : "checkmark-circle"} size={19} color="#172018" />
-              <Text style={styles.saveButtonText}>
-                {saving ? "Enregistrement…" : hasPendingChanges ? "Enregistrer mes notifications" : "Notifications enregistrées"}
+              <Ionicons name={hasPendingChanges ? "checkmark" : "checkmark-circle"} size={19} color={hasPendingChanges ? "#172018" : "#72C7A7"} />
+              <Text style={[styles.saveButtonText, !hasPendingChanges && styles.saveButtonTextSaved]}>
+                {saving ? "Enregistrement…" : hasPendingChanges ? "Enregistrer" : "Enregistré"}
               </Text>
             </Pressable>
           </View>
@@ -666,35 +717,18 @@ const styles = StyleSheet.create({
   emptyTitle: { marginTop: 10, color: "#FFFFFF", fontFamily: typography.sans, fontSize: 19, fontWeight: "600" },
   emptyText: { maxWidth: 250, marginTop: 4, color: "#FFFFFF", fontFamily: typography.sans, fontSize: 13.5, lineHeight: 19, textAlign: "center", fontWeight: "500" },
   modalBackdrop: { flex: 1, justifyContent: "flex-end", backgroundColor: "rgba(3,4,9,0.74)" },
-  sheet: { height: "88%", paddingTop: 9, paddingHorizontal: 17, borderTopLeftRadius: 30, borderTopRightRadius: 30, borderWidth: 1, borderBottomWidth: 0, borderColor: "rgba(255,227,172,0.18)", backgroundColor: "#17131C" },
+  sheet: { height: "88%", paddingTop: 10, paddingHorizontal: 18, borderTopLeftRadius: 30, borderTopRightRadius: 30, borderWidth: 1, borderBottomWidth: 0, borderColor: "rgba(255,227,172,0.16)", backgroundColor: "#15121B" },
   handle: { width: 42, height: 4, marginBottom: 13, alignSelf: "center", borderRadius: 2, backgroundColor: "rgba(255,255,255,0.20)" },
-  sheetHeader: { flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
-  sheetTitle: { marginTop: 1, color: "#FFFFFF", fontFamily: typography.sans, fontSize: 22, fontWeight: "600" },
+  sheetHeader: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingBottom: 6 },
+  sheetTitle: { color: "#FFFFFF", fontFamily: typography.sans, fontSize: 24, fontWeight: "700", letterSpacing: -0.3 },
   closeButton: { width: 36, height: 36, alignItems: "center", justifyContent: "center", borderRadius: 18, backgroundColor: "rgba(255,255,255,0.06)" },
-  sheetContent: { paddingTop: 17, paddingBottom: 30 },
-  customizationHint: { marginBottom: 12, padding: 12, flexDirection: "row", alignItems: "flex-start", borderRadius: 17, borderWidth: 1, borderColor: "rgba(242,190,85,0.30)", backgroundColor: "rgba(242,190,85,0.075)" },
-  customizationHintIcon: { width: 36, height: 36, marginRight: 10, alignItems: "center", justifyContent: "center", borderRadius: 12, backgroundColor: "rgba(242,190,85,0.12)" },
-  customizationHintCopy: { flex: 1 },
-  customizationHintTitle: { color: "#FFE6AA", fontFamily: typography.sans, fontSize: 15.5, fontWeight: "600" },
-  customizationHintText: { marginTop: 3, color: "#FFFFFF", fontFamily: typography.sans, fontSize: 13.3, lineHeight: 18, fontWeight: "500" },
-  masterRow: { minHeight: 66, paddingHorizontal: 13, flexDirection: "row", alignItems: "center", borderRadius: 18, borderWidth: 1, borderColor: "rgba(246,199,93,0.18)", backgroundColor: "rgba(255,255,255,0.045)" },
-  masterCopy: { flex: 1, paddingRight: 10 },
-  sectionLabel: { marginTop: 18, marginBottom: 8, color: "#F6C75D", fontFamily: typography.sans, fontSize: 12, fontWeight: "700", letterSpacing: 1.05 },
-  modeRow: { flexDirection: "row", gap: 7 },
-  modeChoice: { minHeight: 50, flex: 1, alignItems: "center", justifyContent: "center", borderRadius: 14, borderWidth: 1, borderColor: "rgba(255,255,255,0.08)", backgroundColor: "rgba(255,255,255,0.035)" },
-  choiceActive: { borderColor: "rgba(246,199,93,0.46)", backgroundColor: "rgba(231,168,50,0.11)" },
-  modeText: { marginTop: 3, color: "#FFFFFF", fontFamily: typography.sans, fontSize: 13, fontWeight: "600" },
-  choiceTextActive: { color: "#FFE4A0" },
-  settingsGroup: { overflow: "hidden", borderRadius: 18, borderWidth: 1, borderColor: "rgba(255,255,255,0.07)", backgroundColor: "rgba(255,255,255,0.03)" },
-  settingRow: { minHeight: 61, paddingHorizontal: 13, flexDirection: "row", alignItems: "center", borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: "rgba(255,255,255,0.07)" },
-  settingCopy: { flex: 1, paddingRight: 10 },
-  settingTitle: { color: "#FFFFFF", fontFamily: typography.sans, fontSize: 16, fontWeight: "600" },
-  settingDescription: { marginTop: 2, color: "#FFFFFF", fontFamily: typography.sans, fontSize: 13, lineHeight: 18, fontWeight: "500" },
-  reminderTimeButton: { minHeight: 34, marginTop: 7, alignSelf: "flex-start", paddingHorizontal: 9, flexDirection: "row", alignItems: "center", gap: 6, borderRadius: 11, borderWidth: 1, borderColor: "rgba(242,190,85,0.36)", backgroundColor: "rgba(242,190,85,0.12)" },
+  sheetContent: { paddingTop: 14, paddingBottom: 28 },
+  masterRow: { minHeight: 60, paddingHorizontal: 12, flexDirection: "row", alignItems: "center", gap: 12, borderRadius: 18, backgroundColor: "rgba(242,190,85,0.10)" },
+  sectionLabel: { marginTop: 24, marginBottom: 8, paddingHorizontal: 4, color: "#F6C75D", fontFamily: typography.sans, fontSize: 14, fontWeight: "700" },
+  settingsGroup: { overflow: "hidden", borderRadius: 18, backgroundColor: "rgba(255,255,255,0.045)" },
+  settingRow: { minHeight: 58, paddingHorizontal: 12, flexDirection: "row", alignItems: "center", gap: 11 },
+  settingTitle: { flex: 1, color: "#FFFFFF", fontFamily: typography.sans, fontSize: 15.5, fontWeight: "600" },
   reminderTimeButtonPressed: { opacity: 0.72 },
-  reminderTimeAction: { color: "#F6C75D", fontFamily: typography.sans, fontSize: 11.6, fontWeight: "900", letterSpacing: 0.55 },
-  reminderTimeDivider: { width: 1, height: 14, backgroundColor: "rgba(242,190,85,0.28)" },
-  reminderTimeText: { color: "#FFD978", fontFamily: typography.sans, fontSize: 14.5, fontWeight: "900", fontVariant: ["tabular-nums"] },
   timePickerOverlay: { ...StyleSheet.absoluteFill, zIndex: 100, elevation: 100, alignItems: "center", justifyContent: "center", padding: 24, backgroundColor: "rgba(3,4,9,0.88)" },
   timePickerCard: { width: "100%", maxWidth: 330, padding: 20, borderRadius: 24, borderWidth: 1, borderColor: "rgba(255,227,172,0.24)", backgroundColor: "#17131C" },
   timePickerEyebrow: { color: "#F6C75D", fontFamily: typography.sans, fontSize: 11.7, fontWeight: "900", letterSpacing: 0.95, textAlign: "center" },
@@ -708,10 +742,27 @@ const styles = StyleSheet.create({
   timePickerDone: { minHeight: 46, marginTop: 18, alignItems: "center", justifyContent: "center", borderRadius: 15, backgroundColor: "#F2C55B" },
   timePickerDoneText: { color: "#172018", fontFamily: typography.sans, fontSize: 15.5, fontWeight: "800" },
   disabledChoice: { opacity: 0.45 },
-  adhanHint: { marginTop: 12, padding: 12, flexDirection: "row", alignItems: "flex-start", gap: 8, borderRadius: 14, backgroundColor: "rgba(242,190,85,0.08)" },
-  adhanHintText: { flex: 1, color: "#FFFFFF", fontFamily: typography.sans, fontSize: 13, lineHeight: 18 },
-  saveButton: { minHeight: 54, marginBottom: 14, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 8, borderRadius: 17 },
+  adhanHintText: { marginTop: 8, paddingHorizontal: 4, color: "rgba(255,255,255,0.62)", fontFamily: typography.sans, fontSize: 12.5 },
+  sheetHeaderCopy: { flex: 1, paddingRight: 12 },
+  sheetSubtitle: { marginTop: 3, color: "rgba(255,255,255,0.72)", fontFamily: typography.sans, fontSize: 13.5 },
+  masterIcon: { width: 34, height: 34, alignItems: "center", justifyContent: "center", borderRadius: 12, backgroundColor: "#F0B94B" },
+  masterTitle: { flex: 1, color: "#FFFFFF", fontFamily: typography.sans, fontSize: 16, fontWeight: "700" },
+  segmented: { marginTop: 14, padding: 4, flexDirection: "row", gap: 4, borderRadius: 16, backgroundColor: "rgba(255,255,255,0.06)" },
+  segment: { minHeight: 42, flex: 1, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 6, borderRadius: 12 },
+  segmentActive: { backgroundColor: "#F2C55B" },
+  segmentText: { color: "#FFFFFF", fontFamily: typography.sans, fontSize: 14, fontWeight: "600" },
+  segmentTextActive: { color: "#26181C", fontWeight: "800" },
+  settingRowDivider: { borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: "rgba(255,255,255,0.09)" },
+  rowIcon: { width: 32, height: 32, alignItems: "center", justifyContent: "center", borderRadius: 10 },
+  settingTitleOff: { color: "rgba(255,255,255,0.55)" },
+  timePill: { minWidth: 60, paddingHorizontal: 10, paddingVertical: 6, alignItems: "center", borderRadius: 10, backgroundColor: "rgba(242,190,85,0.14)" },
+  timePillText: { color: "#FFD978", fontFamily: typography.sans, fontSize: 14.5, fontWeight: "800", fontVariant: ["tabular-nums"] },
+  toggleTrack: { width: 48, height: 28, padding: 2, justifyContent: "center", borderRadius: 14, backgroundColor: "#3E3743" },
+  toggleTrackOn: { backgroundColor: "rgba(236,177,61,0.42)" },
+  toggleThumb: { width: 24, height: 24, borderRadius: 12 },
+  saveButtonTextSaved: { color: "#72C7A7" },
+  saveButton: { minHeight: 52, marginBottom: 14, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 8, borderRadius: 16 },
   saveButtonPending: { backgroundColor: "#E0A83D" },
-  saveButtonSaved: { backgroundColor: "#71C99F" },
+  saveButtonSaved: { backgroundColor: "rgba(114,199,167,0.12)" },
   saveButtonText: { color: "#172018", fontFamily: typography.sans, fontSize: 14.5, fontWeight: "800" },
 });
