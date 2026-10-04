@@ -8,10 +8,12 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import Animated, { FadeIn, FadeInRight } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { night, nightType } from '../../components/tahajjud/theme';
+import { WakeOthers } from '../../components/tahajjud/WakeBuddy';
 import { GUIDE, NIGHT_DUAS, NIGHT_HADITHS, WAKING_DUA, type Source } from '../../features/tahajjud/tahajjudContent';
 import { clock, formatDuration } from '../../features/tahajjud/tahajjudNight';
 import { duasForNight, loadPrivateDuas, type PrivateDua } from '../../features/tahajjud/TahajjudStore';
 import { useTahajjudNight } from '../../features/tahajjud/useTahajjudNight';
+import { getWakeRequestsForMe, type WakeRequestForMe } from '../../features/tahajjud/tahajjudWakeBuddy';
 
 /**
  * « Je suis debout » : dark guided session from waking up to « J'ai prié ».
@@ -53,13 +55,18 @@ export default function AwakeScreen() {
   const [duas, setDuas] = useState<PrivateDua[]>([]);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [toWake, setToWake] = useState<WakeRequestForMe[]>([]);
+  const loadToWake = useCallback(() => {
+    void getWakeRequestsForMe().then(setToWake).catch(() => undefined);
+  }, []);
 
   const night_ = view.state?.night ?? null;
   const nightKey = view.state?.validatableKey ?? night_?.key ?? null;
 
   useFocusEffect(useCallback(() => {
     void loadPrivateDuas().then((list) => setDuas(nightKey ? duasForNight(list, nightKey) : []));
-  }, [nightKey]));
+    loadToWake();
+  }, [nightKey, loadToWake]));
 
   const step = STEPS[index];
   const goTo = (next: number) => {
@@ -104,6 +111,7 @@ export default function AwakeScreen() {
             <Text style={styles.lead}>Passez la main sur le visage pour chasser le sommeil, puis dites :</Text>
             <SourceBlock source={WAKING_DUA} />
             {proofOf('wake')?.tip ? <Text style={styles.tip}>{proofOf('wake')?.tip}</Text> : null}
+            <WakeOthers requests={toWake} onChanged={loadToWake} compact />
           </>
         );
       case 'wudu':

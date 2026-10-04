@@ -208,3 +208,29 @@ export function verseOfTheNight(nightKey: string): Source {
   const seed = [...nightKey].reduce((sum, char) => sum + char.charCodeAt(0), 0);
   return all[seed % all.length];
 }
+
+// ----- Ramadan · les dix dernières nuits ---------------------------------------------------------
+
+export const LAYLAT_AL_QADR_DUA: Source = {
+  arabic: 'اللَّهُمَّ إِنَّكَ عَفُوٌّ تُحِبُّ الْعَفْوَ فَاعْفُ عَنِّي',
+  phonetic: 'Allâhumma innaka ‘afuwwun tuhibbu-l-‘afwa fa‘fu ‘annî',
+  text: 'Ô Allah, Tu es Celui qui pardonne, Tu aimes le pardon, alors pardonne-moi. — enseignée par le Prophète ﷺ à ‘Aïcha pour la nuit d’al-Qadr.',
+  source: 'At-Tirmidhi 3513, Ibn Majah 3850',
+};
+
+export const LAST_TEN_HADITHS: Source[] = [
+  {
+    text: 'Recherchez la nuit d’al-Qadr dans les nuits impaires des dix dernières nuits de Ramadan.',
+    source: 'Al-Bukhari 2017',
+  },
+  {
+    text: 'Celui qui veille la nuit d’al-Qadr avec foi et en espérant la récompense, ses péchés passés lui sont pardonnés.',
+    source: 'Al-Bukhari 1901, Muslim 760',
+  },
+];
+
+/** The evening-intention proof, shared by the guide and the « intention » card. */
+export const INTENTION_PROOF: Source = {
+  text: 'Celui qui se couche avec l’intention de se lever pour prier la nuit, et que le sommeil l’emporte jusqu’au matin, il lui est inscrit ce qu’il avait l’intention de faire, et son sommeil est une aumône de la part de son Seigneur.',
+  source: 'An-Nasa’i 1787, Ibn Majah 1344',
+};

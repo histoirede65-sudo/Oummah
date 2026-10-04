@@ -229,3 +229,22 @@ export function periodStats(period: StatsPeriod, currentNight: string, nights: T
   const counted = keys.filter((night) => nights[night] || (!isPaused(pauses, night) && night !== currentNight)).length;
   return { done, regularity: counted ? Math.round((done / counted) * 100) : 0, total: keys.length };
 }
+
+// ----- Evening intention -----------------------------------------------------------------------
+
+const INTENTIONS_KEY = 'oummah.tahajjud.intentions.v1';
+
+/** « Ce soir, j'ai l'intention de me lever » : night key → when the intention was made. */
+export type TahajjudIntentions = Record<string, string>;
+
+export async function loadIntentions(): Promise<TahajjudIntentions> {
+  return read<TahajjudIntentions>(INTENTIONS_KEY, {}, isRecord);
+}
+
+export async function setIntention(night: string, on: boolean): Promise<TahajjudIntentions> {
+  const intentions = { ...(await loadIntentions()) };
+  if (on) intentions[night] = new Date().toISOString();
+  else delete intentions[night];
+  await AsyncStorage.setItem(INTENTIONS_KEY, JSON.stringify(intentions));
+  return intentions;
+}

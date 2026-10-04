@@ -8,7 +8,10 @@ import Animated, { FadeInDown } from 'react-native-reanimated';
 import { NightArc } from '../../components/tahajjud/NightArc';
 import { GlassCard, shellStyles, TahajjudShell } from '../../components/tahajjud/TahajjudShell';
 import { night, nightType } from '../../components/tahajjud/theme';
+import { IntentionCard } from '../../components/tahajjud/IntentionCard';
+import { RamadanCard } from '../../components/tahajjud/RamadanCard';
 import { ValidateSheet } from '../../components/tahajjud/ValidateSheet';
+import { WakeBuddyCard } from '../../components/tahajjud/WakeBuddy';
 import { WeekMoons } from '../../components/tahajjud/WeekMoons';
 import { getTahajjudLive } from '../../features/tahajjud/tahajjudCommunity';
 import { getChatUnreadCount } from '../../features/tahajjud/tahajjudFriends';
@@ -154,6 +157,10 @@ export default function TahajjudScreen() {
               </Pressable>
             ) : null}
           </Animated.View>
+
+          <RamadanCard tonight={tonight} nights={view.nights} />
+          <IntentionCard phase={phase} tonightKey={tonight.key} nights={view.nights} />
+          <WakeBuddyCard phase={phase} nightKey={tonight.key} wakeAt={wakeUp} validated={view.validated} />
 
           <Animated.View entering={FadeInDown.delay(320).duration(500)} style={styles.grid}>
             {tiles.map((tile) => (
