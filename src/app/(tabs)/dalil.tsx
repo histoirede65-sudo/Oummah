@@ -276,12 +276,12 @@ type WasilVisualPose =
   | "success"
   | "error";
 
-const WASIL_QUESTION_EXAMPLES = [
-  "J’ai un doute pendant ma prière : je ne sais plus si j’ai prié trois ou quatre rakʿahs. Que dois-je faire ?",
-  "Que dit le Coran sur la patience face aux épreuves ?",
-  "Que dit le Coran sur le respect des parents ?",
-  "Raconte-moi l’histoire du prophète Yûnus selon le Coran.",
-  "Raconte-moi l’histoire du prophète Yûsuf selon le Coran et les enseignements que je peux en tirer.",
+const WASIL_QUESTION_EXAMPLE_KEYS = [
+  "wasil.example1",
+  "wasil.example2",
+  "wasil.example3",
+  "wasil.example4",
+  "wasil.example5",
 ] as const;
 
 const wasilPoseSources = {
@@ -1131,6 +1131,7 @@ export default function DalilScreen() {
   const { language, t } = useI18n();
   const [prompt, setPrompt] = useState("");
   const [examplesExpanded, setExamplesExpanded] = useState(false);
+  const [noticeExpanded, setNoticeExpanded] = useState(false);
   const [submittedPrompt, setSubmittedPrompt] = useState("");
   const [reply, setReply] = useState<WasilReply | null>(null);
   const [balance, setBalance] = useState<number | null>(null);
@@ -2674,15 +2675,56 @@ export default function DalilScreen() {
             </Animated.View>
           </View>
 
-          <View style={styles.aiInfoCard}>
-            <View style={styles.aiInfoIcon}>
-              <Ionicons name="information-outline" size={16} color={colors.goldLight} />
+          <Pressable
+            accessibilityRole="button"
+            accessibilityState={{ expanded: noticeExpanded }}
+            accessibilityLabel={t("wasil.about")}
+            onPress={() => setNoticeExpanded((expanded) => !expanded)}
+            style={({ pressed }) => [styles.aiNotice, pressed && styles.pressed]}
+          >
+            <Ionicons
+              name="shield-checkmark-outline"
+              size={16}
+              color={colors.goldLight}
+              style={styles.aiNoticeIcon}
+            />
+            <View style={styles.aiNoticeCopy}>
+              <Text style={styles.aiNoticeText}>
+                {t("wasil.noticeShort")}{" "}
+                <Text style={styles.aiNoticeLink}>
+                  {noticeExpanded ? t("wasil.noticeLess") : t("wasil.noticeMore")}
+                </Text>
+              </Text>
+              {noticeExpanded ? (
+                <>
+                  <Text style={styles.aiNoticeDetail}>{t("wasil.aiNotice")}</Text>
+                  <Text style={styles.aiNoticeDetail}>{t("wasil.scopeNotice")}</Text>
+                </>
+              ) : null}
             </View>
-            <View style={styles.aiInfoCopy}>
-              <Text style={styles.aiInfoTitle}>{t("wasil.about")}</Text>
-              <Text style={styles.aiInfoText}>{t("wasil.aiNotice")}</Text>
+          </Pressable>
+
+          {isAuthenticated && !hasActiveConversation ? (
+            <View style={styles.starterList}>
+              <Text style={styles.starterTitle}>{t("wasil.tryAsking")}</Text>
+              {WASIL_QUESTION_EXAMPLE_KEYS.map((key) => (
+                <Pressable
+                  key={key}
+                  accessibilityRole="button"
+                  onPress={() => setPrompt(t(key))}
+                  style={({ pressed }) => [
+                    styles.starterItem,
+                    pressed && styles.pressed,
+                  ]}
+                >
+                  <Text numberOfLines={2} style={styles.starterText}>
+                    {t(key)}
+                  </Text>
+                  <Ionicons name="arrow-up" size={15} color={colors.goldLight} />
+                </Pressable>
+              ))}
             </View>
-          </View>
+          ) : null}
 
           {hasActiveConversation ? (
             <View style={styles.previewConversation}>
@@ -2833,15 +2875,6 @@ export default function DalilScreen() {
               ) : null}
             </View>
           ) : null}
-
-          <View style={styles.scopeNotice}>
-            <Ionicons
-              name="shield-checkmark-outline"
-              size={18}
-              color={colors.goldLight}
-            />
-            <Text style={styles.scopeNoticeText}>{t("wasil.scopeNotice")}</Text>
-          </View>
         </ScrollView>
 
         <View style={styles.composerWrap}>
@@ -2906,7 +2939,7 @@ export default function DalilScreen() {
             </Pressable>
           </View>
           )}
-          {isAuthenticated ? (
+          {isAuthenticated && hasActiveConversation ? (
             <View style={styles.questionExamples}>
               <Pressable
                 accessibilityRole="button"
@@ -2928,11 +2961,11 @@ export default function DalilScreen() {
               </Pressable>
               {examplesExpanded ? (
                 <View style={styles.questionExamplesList}>
-                  {WASIL_QUESTION_EXAMPLES.map((question) => (
+                  {WASIL_QUESTION_EXAMPLE_KEYS.map((key) => (
                     <Pressable
-                      key={question}
+                      key={key}
                       onPress={() => {
-                        setPrompt(question);
+                        setPrompt(t(key));
                         setExamplesExpanded(false);
                       }}
                       style={({ pressed }) => [
@@ -2940,7 +2973,7 @@ export default function DalilScreen() {
                         pressed && styles.pressed,
                       ]}
                     >
-                      <Text style={styles.questionExampleText}>{question}</Text>
+                      <Text style={styles.questionExampleText}>{t(key)}</Text>
                     </Pressable>
                   ))}
                 </View>
@@ -3497,41 +3530,68 @@ const styles = StyleSheet.create({
     marginTop: 18,
     gap: 9,
   },
-  aiInfoCard: {
-    marginTop: 8,
-    paddingHorizontal: 10,
-    paddingVertical: 7,
+  aiNotice: {
+    marginTop: 10,
+    paddingHorizontal: 4,
     flexDirection: "row",
     alignItems: "flex-start",
     gap: 8,
-    borderRadius: 13,
-    borderWidth: 1,
-    borderColor: "rgba(227,181,90,0.20)",
-    backgroundColor: "rgba(23,16,38,0.68)",
   },
-  aiInfoIcon: {
-    width: 23,
-    height: 23,
-    alignItems: "center",
-    justifyContent: "center",
-    borderRadius: 12,
-    backgroundColor: "rgba(227,181,90,0.11)",
+  aiNoticeIcon: {
+    marginTop: 1,
   },
-  aiInfoCopy: {
+  aiNoticeCopy: {
     flex: 1,
+    gap: 6,
   },
-  aiInfoTitle: {
+  aiNoticeText: {
+    color: colors.textMuted,
+    fontFamily: typography.sans,
+    fontSize: 11,
+    lineHeight: 16,
+  },
+  aiNoticeLink: {
+    color: colors.goldLight,
+    fontWeight: "700",
+  },
+  aiNoticeDetail: {
+    color: colors.textMuted,
+    fontFamily: typography.sans,
+    fontSize: 11,
+    lineHeight: 16,
+  },
+  starterList: {
+    marginTop: 18,
+    gap: 8,
+  },
+  starterTitle: {
+    marginBottom: 2,
+    paddingHorizontal: 4,
     color: colors.goldLight,
     fontFamily: typography.sans,
     fontSize: 11,
     fontWeight: "700",
+    letterSpacing: 0.6,
+    textTransform: "uppercase",
   },
-  aiInfoText: {
-    marginTop: 2,
-    color: colors.textMuted,
+  starterItem: {
+    minHeight: 50,
+    paddingHorizontal: 14,
+    paddingVertical: 11,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: "rgba(227,181,90,0.16)",
+    backgroundColor: "rgba(23,16,38,0.62)",
+  },
+  starterText: {
+    flex: 1,
+    color: colors.text,
     fontFamily: typography.sans,
-    fontSize: 10,
-    lineHeight: 14,
+    fontSize: 13,
+    lineHeight: 18,
   },
   userMessage: {
     maxWidth: "88%",
@@ -3730,25 +3790,6 @@ const styles = StyleSheet.create({
     fontFamily: typography.sans,
     fontSize: 10.5,
     fontWeight: "700",
-  },
-  scopeNotice: {
-    marginTop: 10,
-    paddingHorizontal: 11,
-    paddingVertical: 8,
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-    borderRadius: 13,
-    borderWidth: 1,
-    borderColor: "rgba(227,181,90,0.14)",
-    backgroundColor: "rgba(200,148,58,0.055)",
-  },
-  scopeNoticeText: {
-    flex: 1,
-    color: colors.textMuted,
-    fontFamily: typography.sans,
-    fontSize: 9.4,
-    lineHeight: 13,
   },
   guestWasilCard: {
     flexDirection: 'row',
