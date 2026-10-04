@@ -54,9 +54,9 @@ import {
 import { colors } from "../../theme/colors";
 import { goalProgressBridge } from "../../features/daily-goals/services/goalProgressBridge";
 import { getCurrentUserProfile } from "../../features/profile/UserProfileRepository";
+import { useI18n } from "../../i18n";
 import { typography } from "../../theme/typography";
 
-type TeacherLevel = 0 | 1 | 2 | 3;
 type TextVisibility = "full" | "masked" | "hidden";
 const repetitions = [3, 5, 10] as const;
 const REPEAT_GAP_MS = 450;
@@ -77,24 +77,6 @@ function isMaskedWord(index: number, seed: number) {
 
 function isQuranicPauseMark(value: string) {
   return /^[\u06D6-\u06ED]+$/u.test(value);
-}
-
-function concealed(text: string, level: TeacherLevel, revealedWordCount = 0, seed = 0) {
-  if (level === 0) return text;
-  const words = text.trim().split(/\s+/).filter(Boolean);
-  let revealed = 0;
-  return words
-    .map((word, index) => {
-      if (level === 1 && !isMaskedWord(index, seed)) return word;
-      if (revealed < revealedWordCount) {
-        revealed += 1;
-        return word;
-      }
-      if (level === 3) return "…";
-      const shouldHide = level === 1 ? isMaskedWord(index, seed) : index % 2 === 1;
-      return shouldHide ? "…" : word;
-    })
-    .join(" ");
 }
 
 function VerseSwipe({
@@ -231,6 +213,7 @@ function VerseSwipe({
 
 export default function HifzSessionScreen() {
   const { width: screenWidth } = useWindowDimensions();
+  const { language, t } = useI18n();
   const params = useLocalSearchParams<{
     surah?: string;
     review?: string;
@@ -249,10 +232,6 @@ export default function HifzSessionScreen() {
     reciter: rawReciter,
     portion: rawPortion,
   } = params;
-  console.log("[HIFZ SESSION PARAMS]", { rawVerse, rawEnd, params });
-  if (rawEnd === undefined || rawEnd === null || rawEnd === "") {
-    console.warn("[HIFZ] end param missing", params);
-  }
   const surahId = Math.max(1, Math.min(114, Number(rawSurah) || 112));
   const surah = SURAHS.find((item) => item.id === surahId) ?? SURAHS[111];
   const [verses, setVerses] = useState<readonly QuranFoundationVerse[]>([]);
@@ -271,7 +250,6 @@ export default function HifzSessionScreen() {
     ? Math.min(surah.verses, requestedEnd)
     : startVerse;
   const [index, setIndex] = useState(startVerse - 1);
-  const [teacherLevel, setTeacherLevel] = useState<TeacherLevel>(0);
   const [revealedWordCount, setRevealedWordCount] = useState(0);
   const [repeat, setRepeat] = useState<(typeof repetitions)[number]>(3);
   const [speed, setSpeed] = useState(0.75);
@@ -342,7 +320,7 @@ export default function HifzSessionScreen() {
   useEffect(() => {
     let active = true;
     void quranFoundationRepository
-      .getVerses(surahId)
+      .getVerses(surahId, language)
       .then((next) => active && setVerses(next))
       .catch(() => active && setVerses([]));
     void loadHifzState().then((state) => {
@@ -355,7 +333,7 @@ export default function HifzSessionScreen() {
     return () => {
       active = false;
     };
-  }, [surahId]);
+  }, [language, surahId]);
 
   useEffect(() => {
     if (verses.length) setIndex((value) => Math.min(value, verses.length - 1));
@@ -401,6 +379,7 @@ export default function HifzSessionScreen() {
     loadedVerseKey.current = null;
     resumePosition.current = null;
     setSelectedWordRange(null);
+    setSaved(false);
     setRevealedWordCount(0);
     setMaskSeed(0);
     setWordTimings([]);
@@ -458,7 +437,7 @@ export default function HifzSessionScreen() {
     if (rawPortion !== "full" || !verse?.text) return;
     setSelectedWordRange([1, verse.text.trim().split(/\s+/).length]);
   }, [rawPortion, verse]);
-  const currentText = verse?.textUthmani || "Chargement du verset…";
+  const currentText = verse?.textUthmani || t("hifz.session.loadingVerse");
   const textWords = useMemo(
     () => currentText.trim().split(/\s+/).filter(Boolean),
     [currentText],
@@ -475,38 +454,27 @@ export default function HifzSessionScreen() {
       .filter((value): value is string => Boolean(value))
       .join(" ")
       .trim();
-    return fromWords || "Phonétique indisponible pour ce verset.";
-  }, [verse]);
-  const teacherLabel = [
-    "Texte complet",
-    "Mots guidés",
-    "Presque sans aide",
-    "De mémoire",
-  ][teacherLevel];
-  const words = useMemo(
-    () => currentText.trim().split(/\s+/).filter(Boolean).length,
-    [currentText],
-  );
+    return fromWords || t("hifz.session.phoneticUnavailable");
+  }, [t, verse]);
   const currentVerseNumber = Number(verse?.verseKey.split(":")[1] ?? index + 1);
   const currentVerseMastered = masteredVerses.includes(currentVerseNumber);
-  const maskedWordCount = Math.ceil(words / 3);
-  const allWordsRevealed = revealedWordCount >= maskedWordCount;
-  const changeTeacherLevel = (level: TeacherLevel) => {
-    setTeacherLevel(level);
-    setRevealedWordCount(0);
-  };
+  let maskedSeen = 0;
+  const maskedText = textWords.map((word, wordIndex) => {
+    // Les signes de pause (ۚ, ۖ…) restent toujours visibles.
+    const masked = !isQuranicPauseMark(word) && isMaskedWord(wordIndex, maskSeed);
+    const revealed = masked && maskedSeen++ < revealedWordCount;
+    return { word, wordIndex, masked, revealed };
+  });
+  const maskedWordCount = maskedSeen;
   const revealNextWord = () => {
-    setRevealedWordCount((value) => Math.min(words, value + 1));
+    setRevealedWordCount((value) => Math.min(maskedWordCount, value + 1));
   };
-  const maskedText = useMemo(() => {
-    const verseWords = currentText.trim().split(/\s+/).filter(Boolean);
-    let maskedSeen = 0;
-    return verseWords.map((word, wordIndex) => {
-      const masked = isMaskedWord(wordIndex, maskSeed);
-      const revealed = masked && maskedSeen++ < revealedWordCount;
-      return { word, wordIndex, masked, revealed };
-    });
-  }, [currentText, maskSeed, revealedWordCount]);
+  const allWordsRevealed = revealedWordCount >= maskedWordCount;
+  const visibilityLabel = {
+    full: t("hifz.session.modeFull"),
+    masked: t("hifz.session.modeMasked"),
+    hidden: t("hifz.session.modeHidden"),
+  } as const;
   const syncPositionMs = activeAudioTiming
     ? getSyncPositionMs(
         audioPositionMilliseconds(verseAudioStatus.currentTime),
@@ -655,9 +623,7 @@ export default function HifzSessionScreen() {
       repeatsRemaining.current = 0;
       setAudioLoading(false);
       if (!screenFocused.current || requestId !== audioRequestId.current) return;
-      setAudioError(
-        "Audio du verset indisponible. Réessayez avec un autre récitateur.",
-      );
+      setAudioError(t("hifz.session.audioUnavailable"));
     }
   };
 
@@ -734,7 +700,6 @@ export default function HifzSessionScreen() {
     }
     if (index < verses.length - 1 && index + 1 < endVerse) {
       setIndex((value) => value + 1);
-      changeTeacherLevel(0);
       setSaved(false);
     }
     validationInProgress.current = false;
@@ -780,12 +745,38 @@ export default function HifzSessionScreen() {
     setCelebration(null);
     if (shouldAdvance) {
       setIndex((value) => value + 1);
-      changeTeacherLevel(0);
       setSaved(false);
       return;
     }
     await finishReview();
   };
+
+  const goToPreviousVerse = () => {
+    if (canGoPrevious) setIndex((value) => Math.max(startVerse - 1, value - 1));
+  };
+  const goToNextVerse = () => {
+    if (canGoNext && index < verses.length - 1) {
+      setIndex((value) => Math.min(endVerse - 1, verses.length - 1, value + 1));
+    }
+  };
+  const toggleSpeed = () => {
+    // La durée des extraits dépend de la vitesse : on coupe l'audio en cours.
+    stopVerseAudio();
+    setSpeed((value) => (value === 1 ? 0.75 : 1));
+  };
+  const rangeLength = endVerse - startVerse + 1;
+  const sessionSubtitle = [
+    review === "1" ? t("hifz.session.review") : t("hifz.session.newLearning"),
+    t("hifz.session.verseLabel", { verse: currentVerseNumber }),
+    rangeLength > 1
+      ? t("hifz.session.rangeProgress", {
+          current: currentSessionVerse - startVerse + 1,
+          total: rangeLength,
+        })
+      : null,
+  ]
+    .filter(Boolean)
+    .join(" · ");
 
   return (
     <SafeAreaView edges={["top"]} style={styles.safeArea}>
@@ -794,54 +785,32 @@ export default function HifzSessionScreen() {
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.top}>
-          <Pressable onPress={exitSession} style={styles.circle}>
+          <Pressable
+            accessibilityLabel={t("common.back")}
+            onPress={exitSession}
+            style={styles.circle}
+          >
             <Ionicons name="arrow-back" size={21} color={colors.goldLight} />
           </Pressable>
           <View style={styles.topCopy}>
-            <Text style={styles.title}>Session de mémorisation</Text>
-            <Text style={styles.subtitle}>
-              {review === "1"
-                ? "Révision intelligente"
-                : "Nouvel apprentissage"}
+            <Text numberOfLines={1} style={styles.title}>
+              {surah.transliteration} · {surah.arabicName}
+            </Text>
+            <Text numberOfLines={1} style={styles.subtitle}>
+              {sessionSubtitle}
             </Text>
           </View>
           <View style={styles.versePill}>
             <Text style={styles.versePillText}>
-              {index + 1}/{surah.verses}
+              {currentVerseNumber}/{surah.verses}
             </Text>
-          </View>
-        </View>
-        <View style={styles.surahBanner}>
-          <Text style={styles.bannerName}>{surah.transliteration}</Text>
-          <Text style={styles.bannerArabic}>{surah.arabicName}</Text>
-          <Text style={styles.bannerMeta}>
-            {surah.frenchName} · {words} mots à consolider
-          </Text>
-        </View>
-        <View style={styles.encouragement}>
-          <Ionicons name="sparkles" size={17} color={colors.goldLight} />
-          <View style={styles.encouragementCopy}>
-            <Text style={styles.encouragementText}>
-              « Nous avons rendu le Coran facile pour la méditation. »
-            </Text>
-            <Text style={styles.encouragementSource}>Coran · 54:17</Text>
           </View>
         </View>
         <VerseSwipe
           canPrevious={canGoPrevious}
           canNext={canGoNext}
-          onPrevious={() => {
-            if (canGoPrevious) {
-              setIndex((value) => value - 1);
-              changeTeacherLevel(0);
-            }
-          }}
-          onNext={() => {
-            if (canGoNext && index < verses.length - 1) {
-              setIndex((value) => value + 1);
-              changeTeacherLevel(0);
-            }
-          }}
+          onPrevious={goToPreviousVerse}
+          onNext={goToNextVerse}
         >
           <View
             style={[
@@ -850,34 +819,55 @@ export default function HifzSessionScreen() {
             ]}
           >
             <LinearGradient
-              colors={["rgba(75,36,93,0.93)", "rgba(19,12,31,0.99)"]}
+              colors={["#1E1730", "#100C19"]}
               style={StyleSheet.absoluteFill}
             />
+            <View style={styles.textVisibilityRow}>
+              {(["full", "masked", "hidden"] as const).map((mode) => (
+                <Pressable
+                  accessibilityState={{ selected: textVisibility === mode }}
+                  key={mode}
+                  onPress={() => {
+                    setTextVisibility(mode);
+                    setRevealedWordCount(0);
+                    if (mode === "masked") setMaskSeed((value) => (value + 1) % 3);
+                  }}
+                  style={[
+                    styles.textVisibilityOption,
+                    textVisibility === mode && styles.textVisibilityOptionActive,
+                  ]}
+                >
+                  <Text
+                    adjustsFontSizeToFit
+                    minimumFontScale={0.8}
+                    numberOfLines={1}
+                    style={[
+                      styles.textVisibilityText,
+                      textVisibility === mode && styles.textVisibilityTextActive,
+                    ]}
+                  >
+                    {visibilityLabel[mode]}
+                  </Text>
+                </Pressable>
+              ))}
+            </View>
             {currentVerseMastered ? (
               <View style={styles.masteredBadge}>
-                <Ionicons name="checkmark" size={15} color="#071B12" />
-                <Text style={styles.masteredBadgeText}>Verset maîtrisé</Text>
+                <Ionicons name="checkmark" size={14} color="#071B12" />
+                <Text style={styles.masteredBadgeText}>
+                  {t("hifz.session.verseMastered")}
+                </Text>
               </View>
             ) : null}
-            <View style={styles.verseNumberBadge}>
-              <View style={styles.verseNumberCircle}>
-                <Text style={styles.verseNumberText}>{index + 1}</Text>
-              </View>
-              <Text style={styles.verseNumberProgress}>
-                {currentSessionVerse - startVerse + 1} sur {endVerse - startVerse + 1}
-              </Text>
-            </View>
-            <Text style={styles.modeLabel}>
-              MODE PROFESSEUR · {teacherLabel.toUpperCase()}
-            </Text>
             {textVisibility === "hidden" ? (
               <View style={styles.memoryModeBlock}>
+                <Text style={styles.hiddenText}>{t("hifz.session.hiddenHint")}</Text>
                 <Pressable onPress={() => setTextVisibility("full")} style={styles.memoryAction}>
                   <Ionicons name="eye-outline" size={16} color={colors.goldLight} />
-                  <Text style={styles.memoryActionText}>Afficher le texte</Text>
+                  <Text style={styles.memoryActionText}>{t("hifz.session.showText")}</Text>
                 </Pressable>
               </View>
-            ) : textVisibility === "full" && teacherLevel === 0 ? (
+            ) : textVisibility === "full" ? (
               <View style={styles.wordSelection}>
                 <QuranArabicText
                   screenWidth={screenWidth}
@@ -929,20 +919,18 @@ export default function HifzSessionScreen() {
                 </QuranArabicText>
                 {selectedWordRange ? (
                   <Pressable onPress={() => setSelectedWordRange(null)} style={styles.fullVerseButton}>
-                    <Text style={styles.fullVerseButtonText}>Verset entier</Text>
+                    <Text style={styles.fullVerseButtonText}>{t("hifz.session.wholeVerse")}</Text>
                   </Pressable>
                 ) : null}
               </View>
             ) : (
               <View style={styles.memoryModeBlock}>
                 <Text selectable style={styles.arabic}>
-                  {textVisibility === "masked"
-                    ? maskedText.map(({ word, wordIndex, masked, revealed }) => (
-                        <Text key={`${verse?.verseKey}-${wordIndex}`} style={revealed ? styles.revealedWord : undefined}>
-                          {masked && !revealed ? "…" : word}{wordIndex < maskedText.length - 1 ? " " : ""}
-                        </Text>
-                      ))
-                    : concealed(currentText, teacherLevel, revealedWordCount, maskSeed)}
+                  {maskedText.map(({ word, wordIndex, masked, revealed }) => (
+                    <Text key={`${verse?.verseKey}-${wordIndex}`} style={revealed ? styles.revealedWord : undefined}>
+                      {masked && !revealed ? "…" : word}{wordIndex < maskedText.length - 1 ? " " : ""}
+                    </Text>
+                  ))}
                 </Text>
                 <View style={styles.memoryActions}>
                   <Pressable
@@ -955,115 +943,82 @@ export default function HifzSessionScreen() {
                   >
                     <Ionicons name="eye-outline" size={16} color={colors.goldLight} />
                     <Text style={styles.memoryActionText}>
-                      {allWordsRevealed ? "Verset révélé" : "Mot suivant"}
+                      {allWordsRevealed ? t("hifz.session.verseRevealed") : t("hifz.session.nextWord")}
                     </Text>
                   </Pressable>
                   <Pressable
-                    onPress={() => setRevealedWordCount(words)}
+                    onPress={() => setRevealedWordCount(maskedWordCount)}
                     style={styles.memoryAction}
                   >
                     <Ionicons name="book-outline" size={16} color={colors.goldLight} />
-                    <Text style={styles.memoryActionText}>Afficher le verset</Text>
+                    <Text style={styles.memoryActionText}>{t("hifz.session.showVerse")}</Text>
                   </Pressable>
-                  {textVisibility === "masked" ? (
-                    <Pressable
-                      onPress={() => {
-                        setMaskSeed((value) => (value + 1) % 3);
-                        setRevealedWordCount(0);
-                      }}
-                      style={styles.memoryReset}
-                    >
-                      <Ionicons name="refresh" size={15} color={colors.goldLight} />
-                    </Pressable>
-                  ) : null}
                   <Pressable
+                    accessibilityLabel={t("hifz.session.newMask")}
+                    onPress={() => {
+                      setMaskSeed((value) => (value + 1) % 3);
+                      setRevealedWordCount(0);
+                    }}
+                    style={styles.memoryReset}
+                  >
+                    <Ionicons name="shuffle" size={16} color={colors.goldLight} />
+                  </Pressable>
+                  <Pressable
+                    accessibilityLabel={t("hifz.session.hideAgain")}
                     onPress={() => setRevealedWordCount(0)}
                     style={styles.memoryReset}
                   >
-                    <Ionicons name="refresh" size={15} color={colors.textMuted} />
+                    <Ionicons name="eye-off-outline" size={16} color={colors.textSecondary} />
                   </Pressable>
                 </View>
-                <Text style={styles.memoryHint}>
-                  Récitez de mémoire, puis révélez uniquement l’aide dont vous avez besoin.
-                </Text>
               </View>
             )}
-            {textVisibility === "full" && teacherLevel === 0 ? (
-              <View style={styles.selectionHint}>
-                <Ionicons name="hand-left-outline" size={15} color={colors.goldLight} />
-                <View style={styles.selectionHintCopy}>
-                  <Text style={styles.selectionHintTitle}>SÉLECTION PRÉCISE</Text>
-                  <Text style={styles.selectionHintText}>
-                    Touchez un mot, puis un autre si besoin, pour n’écouter que ce mot ou cette partie du verset.
-                  </Text>
-                </View>
-              </View>
-            ) : null}
+            <Text style={styles.cardHint}>
+              {textVisibility === "full"
+                ? t("hifz.session.tapWordHint")
+                : textVisibility === "masked"
+                  ? t("hifz.session.memoryHint")
+                  : null}
+              {textVisibility !== "hidden" && endVerse > startVerse ? " · " : null}
+              {endVerse > startVerse ? t("hifz.session.swipeHint") : null}
+            </Text>
             {textVisibility === "full" ? (
               <View style={styles.phoneticBlock}>
-                <Text style={styles.contentEyebrow}>PHONÉTIQUE</Text>
+                <Text style={styles.contentEyebrow}>{t("hifz.session.phonetic")}</Text>
                 <Text selectable style={styles.phonetic}>
                   {currentPhonetic}
                 </Text>
               </View>
             ) : null}
             <View style={styles.translationBlock}>
-              <Text style={styles.contentEyebrow}>TRADUCTION</Text>
+              <Text style={styles.contentEyebrow}>{t("hifz.session.translation")}</Text>
               <Text style={styles.translation}>
-                {verse?.translation ||
-                  "Écoutez attentivement, répétez puis récitez le passage avec assurance."}
+                {verse?.translation || t("hifz.session.translationFallback")}
               </Text>
-            </View>
-            <Text style={endVerse > startVerse ? styles.swipeHint : styles.hidden}>
-              Glissez latéralement pour changer de verset
-            </Text>
-            {endVerse > startVerse ? (
-              <Text style={styles.hidden}>Glissez latéralement pour changer de verset</Text>
-            ) : null}
-            <View style={styles.textVisibilityRow}>
-              {([["full", "Texte complet"], ["masked", "Mots masqués"], ["hidden", "Texte caché"]] as const).map(([mode, label]) => (
-                <Pressable key={mode} onPress={() => { setTextVisibility(mode); if (mode === "masked") { setMaskSeed((value) => (value + 1) % 3); setRevealedWordCount(0); } }} style={[styles.textVisibilityOption, textVisibility === mode && styles.textVisibilityOptionActive]}>
-                  <Text style={[styles.textVisibilityText, textVisibility === mode && styles.textVisibilityTextActive]}>{label}</Text>
-                </Pressable>
-              ))}
-            </View>
-            <View style={styles.teacherButtons}>
-              {([0, 1, 2, 3] as TeacherLevel[]).map((level) => (
-                <Pressable
-                  key={level}
-                  onPress={() => changeTeacherLevel(level)}
-                  style={[
-                    styles.level,
-                    teacherLevel === level && styles.levelActive,
-                  ]}
-                >
-                  <Text
-                    style={[
-                      styles.levelText,
-                      teacherLevel === level && styles.levelTextActive,
-                    ]}
-                  >
-                    {level + 1}
-                  </Text>
-                </Pressable>
-              ))}
             </View>
           </View>
         </VerseSwipe>
         <View style={styles.controls}>
           <Pressable
-            onPress={() => setIndex((value) => Math.max(startVerse - 1, value - 1))}
-            style={styles.controlSmall}
+            accessibilityLabel={t("hifz.session.previousVerse")}
+            disabled={!canGoPrevious}
+            onPress={goToPreviousVerse}
+            style={[styles.controlSmall, !canGoPrevious && styles.dim]}
           >
             <Ionicons name="play-skip-back" size={20} color={colors.goldLight} />
           </Pressable>
           <Pressable
-            onPress={() => void versePlayer.seekTo(Math.max(0, verseAudioStatus.currentTime - 10))}
+            accessibilityLabel={t("hifz.session.stop")}
+            onPress={stopVerseAudio}
             style={styles.controlSmall}
           >
-            <Text style={styles.controlSmallText}>-10s</Text>
+            <Ionicons name="stop" size={20} color={colors.goldLight} />
           </Pressable>
-          <Pressable onPress={() => void listen()} style={styles.playRound}>
+          <Pressable
+            accessibilityLabel={verseAudioStatus.playing ? t("hifz.session.pause") : t("hifz.session.play")}
+            onPress={() => void listen()}
+            style={styles.playRound}
+          >
             {audioLoading ? (
               <ActivityIndicator color={colors.background} />
             ) : (
@@ -1074,78 +1029,32 @@ export default function HifzSessionScreen() {
               />
             )}
           </Pressable>
-          <Pressable onPress={stopVerseAudio} style={styles.controlSmall}>
-            <Ionicons name="stop" size={20} color={colors.goldLight} />
-          </Pressable>
           <Pressable
-            onPress={() => void versePlayer.seekTo(Math.max(0, verseAudioStatus.currentTime + 10))}
+            accessibilityLabel={t("hifz.session.speedAccessibility")}
+            onPress={toggleSpeed}
             style={styles.controlSmall}
           >
-            <Text style={styles.controlSmallText}>+10s</Text>
+            <Text style={styles.controlSmallText}>
+              {speed === 1 ? "1×" : t("hifz.session.speedSlow")}
+            </Text>
           </Pressable>
           <Pressable
-            onPress={() => setIndex((value) => Math.min(endVerse - 1, verses.length - 1, value + 1))}
-            style={styles.controlSmall}
+            accessibilityLabel={t("hifz.session.nextVerse")}
+            disabled={!canGoNext || index >= verses.length - 1}
+            onPress={goToNextVerse}
+            style={[
+              styles.controlSmall,
+              (!canGoNext || index >= verses.length - 1) && styles.dim,
+            ]}
           >
             <Ionicons name="play-skip-forward" size={20} color={colors.goldLight} />
           </Pressable>
         </View>
-        <View style={styles.evaluate}>
-          <Text style={styles.evaluateTitle}>
-            Comment s’est passée la récitation ?
-          </Text>
-          <Text style={styles.evaluateText}>
-            Cela aide OUMMAH à choisir les prochaines révisions.
-          </Text>
-          <View style={styles.evaluateButtons}>
-            <Pressable
-              onPress={() => void complete("hard")}
-              style={styles.hard}
-            >
-              <Ionicons name="refresh" size={16} color={colors.goldLight} />
-              <Text style={styles.hardText}>À revoir</Text>
-            </Pressable>
-            <Pressable
-              onPress={() => void complete("easy")}
-              style={styles.easy}
-            >
-              <Ionicons name="checkmark" size={17} color={colors.background} />
-              <Text style={styles.easyText}>
-                {saved ? "Enregistré" : "Maîtrisé"}
-              </Text>
-            </Pressable>
-          </View>
-        </View>
-        <View style={styles.reciterHeader}>
-          <Text style={styles.controlTitle}>Récitateur</Text>
-          <Pressable onPress={() => setReciterModalVisible(true)}>
-            <Text style={styles.seeAllReciters}>Voir tous</Text>
-          </Pressable>
-        </View>
-        <Pressable
-          onPress={() => setReciterModalVisible(true)}
-          style={styles.selectedReciterCard}
-        >
-          {currentReciter?.image ? (
-            <Image source={currentReciter.image} style={styles.selectedReciterImage} />
-          ) : (
-            <View style={styles.selectedReciterFallback}>
-              <Ionicons name="person" size={22} color={colors.goldLight} />
-            </View>
-          )}
-          <View style={styles.selectedReciterCopy}>
-            <Text style={styles.selectedReciterLabel}>RÉCITATEUR ACTUEL</Text>
-            <Text style={styles.selectedReciterName}>{currentReciter?.name}</Text>
-          </View>
-          <Ionicons name="chevron-forward" size={20} color={colors.goldLight} />
-        </Pressable>
-        {audioError ? (
-          <Text style={styles.audioError}>{audioError}</Text>
-        ) : null}
-        <Text style={styles.controlTitle}>Répéter automatiquement</Text>
         <View style={styles.repeatRow}>
+          <Text style={styles.repeatLabel}>{t("hifz.session.repeat")}</Text>
           {repetitions.map((amount) => (
             <Pressable
+              accessibilityState={{ selected: repeat === amount }}
               key={amount}
               onPress={() => setRepeat(amount)}
               style={[styles.repeat, repeat === amount && styles.repeatActive]}
@@ -1161,35 +1070,63 @@ export default function HifzSessionScreen() {
             </Pressable>
           ))}
         </View>
-        <View style={styles.nav}>
-          <Pressable
-            disabled={!canGoPrevious}
-            onPress={() => {
-              if (canGoPrevious) setIndex((value) => Math.max(startVerse - 1, value - 1));
-              changeTeacherLevel(0);
-            }}
-              style={[styles.navButton, !canGoPrevious && styles.dim]}
-          >
-            <Ionicons name="arrow-back" size={17} color={colors.goldLight} />
-            <Text style={styles.navText}>Précédent</Text>
-          </Pressable>
-          <Pressable
-            disabled={!canGoNext || index >= verses.length - 1}
-            onPress={() => {
-              if (canGoNext) setIndex((value) => Math.min(endVerse - 1, verses.length - 1, value + 1));
-              changeTeacherLevel(0);
-            }}
-              style={[styles.navButton, (!canGoNext || index >= verses.length - 1) && styles.dim]}
-          >
-            <Text style={styles.navText}>Suivant</Text>
-            <Ionicons name="arrow-forward" size={17} color={colors.goldLight} />
+        {audioError ? (
+          <Text style={styles.audioError}>{audioError}</Text>
+        ) : null}
+        <View style={styles.evaluate}>
+          <Text style={styles.evaluateTitle}>
+            {t("hifz.session.evaluateTitle")}
+          </Text>
+          <Text style={styles.evaluateText}>
+            {t("hifz.session.evaluateText")}
+          </Text>
+          <View style={styles.evaluateButtons}>
+            <Pressable
+              onPress={() => void complete("hard")}
+              style={styles.hard}
+            >
+              <Ionicons name="refresh" size={16} color={colors.goldLight} />
+              <Text style={styles.hardText}>{t("hifz.session.hard")}</Text>
+            </Pressable>
+            <Pressable
+              onPress={() => void complete("easy")}
+              style={styles.easy}
+            >
+              <Ionicons name="checkmark" size={17} color={colors.background} />
+              <Text style={styles.easyText}>
+                {saved ? t("hifz.session.saved") : t("hifz.session.easy")}
+              </Text>
+            </Pressable>
+          </View>
+        </View>
+        <View style={styles.reciterHeader}>
+          <Text style={styles.controlTitle}>{t("hifz.session.reciter")}</Text>
+          <Pressable onPress={() => setReciterModalVisible(true)}>
+            <Text style={styles.seeAllReciters}>{t("hifz.session.seeAll")}</Text>
           </Pressable>
         </View>
+        <Pressable
+          onPress={() => setReciterModalVisible(true)}
+          style={styles.selectedReciterCard}
+        >
+          {currentReciter?.image ? (
+            <Image source={currentReciter.image} style={styles.selectedReciterImage} />
+          ) : (
+            <View style={styles.selectedReciterFallback}>
+              <Ionicons name="person" size={22} color={colors.goldLight} />
+            </View>
+          )}
+          <View style={styles.selectedReciterCopy}>
+            <Text style={styles.selectedReciterLabel}>{t("hifz.session.currentReciter")}</Text>
+            <Text style={styles.selectedReciterName}>{currentReciter?.name}</Text>
+          </View>
+          <Ionicons name="chevron-forward" size={20} color={colors.goldLight} />
+        </Pressable>
         {!verses.length ? (
           <View style={styles.loading}>
             <ActivityIndicator color={colors.goldLight} />
             <Text style={styles.loadingText}>
-              Préparation de votre passage…
+              {t("hifz.session.preparing")}
             </Text>
           </View>
         ) : null}
@@ -1204,10 +1141,10 @@ export default function HifzSessionScreen() {
           <View style={styles.reciterModalCard}>
             <View style={styles.reciterModalHeader}>
               <View>
-                <Text style={styles.reciterModalTitle}>Choisir un récitateur</Text>
-                <Text style={styles.reciterModalSubtitle}>Tous les récitateurs disponibles</Text>
+                <Text style={styles.reciterModalTitle}>{t("hifz.session.chooseReciter")}</Text>
+                <Text style={styles.reciterModalSubtitle}>{t("hifz.session.allReciters")}</Text>
               </View>
-              <Pressable onPress={() => setReciterModalVisible(false)} style={styles.reciterModalClose}>
+              <Pressable accessibilityLabel={t("hifz.session.close")} onPress={() => setReciterModalVisible(false)} style={styles.reciterModalClose}>
                 <Ionicons name="close" size={22} color={colors.text} />
               </Pressable>
             </View>
@@ -1260,7 +1197,7 @@ export default function HifzSessionScreen() {
             <LinearGradient
               colors={
                 celebration === "surah"
-                  ? ["#352044", "#171020"]
+                  ? ["#2A2140", "#151022"]
                   : ["#203C31", "#111C18"]
               }
               style={StyleSheet.absoluteFill}
@@ -1279,20 +1216,20 @@ export default function HifzSessionScreen() {
             </View>
             <Text style={styles.celebrationEyebrow}>
               {celebration === "surah"
-                ? "SOURATE MAÎTRISÉE"
-                : "VERSET MAÎTRISÉ"}
+                ? t("hifz.session.surahMasteredEyebrow")
+                : t("hifz.session.verseMasteredEyebrow")}
             </Text>
             <Text style={styles.celebrationTitle}>
               {celebration === "surah"
-                ? `Mâ shâ Allah, ${surah.transliteration} est maîtrisée !`
+                ? t("hifz.session.surahMasteredTitle", { surah: surah.transliteration })
                 : displayName
-                  ? `Mâ shâ Allah ${displayName}, continuez ainsi !`
-                  : "Mâ shâ Allah, continuez ainsi !"}
+                  ? t("hifz.session.verseMasteredTitleNamed", { name: displayName })
+                  : t("hifz.session.verseMasteredTitle")}
             </Text>
             <Text style={styles.celebrationBody}>
               {celebration === "surah"
-                ? "Chaque verset de cette sourate est maintenant enregistré dans votre parcours. Une belle étape de votre Hifz."
-                : `Le verset ${currentVerseNumber} est maintenant marqué d’un check vert dans votre progression.`}
+                ? t("hifz.session.surahMasteredBody")
+                : t("hifz.session.verseMasteredBody", { verse: currentVerseNumber })}
             </Text>
             <Pressable
               onPress={() => void closeCelebration()}
@@ -1300,10 +1237,10 @@ export default function HifzSessionScreen() {
             >
               <Text style={styles.celebrationButtonText}>
                 {celebration === "surah"
-                  ? "Voir ma progression"
-                  : index < verses.length - 1
-                    ? "Continuer"
-                    : "Terminer"}
+                  ? t("hifz.session.seeProgress")
+                  : index < verses.length - 1 && index + 1 < endVerse
+                    ? t("hifz.session.continue")
+                    : t("hifz.session.finish")}
               </Text>
               <Ionicons
                 name="arrow-forward"
@@ -1329,8 +1266,8 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     borderRadius: 21,
     borderWidth: 1,
-    borderColor: colors.borderSoft,
-    backgroundColor: colors.purpleDeep,
+    borderColor: "#2B2238",
+    backgroundColor: "#151022",
   },
   topCopy: { flex: 1, marginLeft: 12 },
   title: {
@@ -1339,87 +1276,37 @@ const styles = StyleSheet.create({
     fontSize: 22,
   },
   subtitle: {
+    marginTop: 1,
     color: colors.textMuted,
     fontFamily: typography.sans,
-    fontSize: 9,
+    fontSize: 11,
+    fontVariant: ["lining-nums", "tabular-nums"],
   },
   versePill: {
     height: 31,
+    marginLeft: 8,
     paddingHorizontal: 10,
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 16,
-    backgroundColor: "rgba(81,41,99,0.62)",
+    backgroundColor: "#1E1730",
   },
   versePillText: {
     color: colors.goldLight,
     fontFamily: typography.sans,
-    fontSize: 9,
+    fontSize: 11,
     fontWeight: "800",
-  },
-  surahBanner: {
-    padding: 16,
-    borderRadius: 22,
-    borderWidth: 1,
-    borderColor: "rgba(227,181,90,0.30)",
-    backgroundColor: "rgba(42,23,56,0.90)",
-  },
-  bannerName: {
-    color: colors.text,
-    fontFamily: typography.serifSemibold,
-    fontSize: 19,
-    lineHeight: 23,
-  },
-  bannerArabic: {
-    marginTop: 2,
-    color: colors.goldMuted,
-    fontFamily: typography.arabic,
-    fontSize: 24,
-    lineHeight: 34,
-    textAlign: "right",
-  },
-  bannerMeta: {
-    marginTop: 4,
-    color: colors.textMuted,
-    fontFamily: typography.sans,
-    fontSize: 9,
-  },
-  encouragement: {
-    marginTop: 14,
-    paddingHorizontal: 14,
-    paddingVertical: 11,
-    flexDirection: "row",
-    alignItems: "center",
-    borderRadius: 18,
-    borderWidth: 1,
-    borderColor: "rgba(227,181,90,0.18)",
-    backgroundColor: "rgba(255,255,255,0.035)",
-  },
-  encouragementCopy: { flex: 1, marginLeft: 10 },
-  encouragementText: {
-    color: colors.textSecondary,
-    fontFamily: typography.serifMedium,
-    fontSize: 12,
-    lineHeight: 17,
-  },
-  encouragementSource: {
-    marginTop: 2,
-    color: colors.goldMuted,
-    fontFamily: typography.sans,
-    fontSize: 8,
-    fontWeight: "700",
+    fontVariant: ["lining-nums", "tabular-nums"],
   },
   verseCard: {
-    minHeight: 440,
-    marginTop: 14,
-    paddingHorizontal: 20,
-    paddingTop: 26,
-    paddingBottom: 22,
+    marginTop: 6,
+    paddingHorizontal: 16,
+    paddingTop: 16,
+    paddingBottom: 18,
     overflow: "hidden",
-    justifyContent: "center",
-    borderRadius: 30,
-    borderWidth: 1.25,
-    borderColor: "rgba(244,211,137,0.52)",
+    borderRadius: 28,
+    borderWidth: 1,
+    borderColor: "rgba(227,181,90,0.30)",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 12 },
     shadowOpacity: 0.38,
@@ -1433,61 +1320,24 @@ const styles = StyleSheet.create({
     shadowRadius: 13,
   },
   masteredBadge: {
-    position: "absolute",
-    top: 12,
-    right: 12,
-    zIndex: 2,
-    height: 29,
+    marginTop: 12,
+    alignSelf: "center",
+    height: 26,
     paddingHorizontal: 10,
     flexDirection: "row",
     alignItems: "center",
-    borderRadius: 15,
+    borderRadius: 13,
     backgroundColor: "#62DEA0",
   },
   masteredBadgeText: {
     marginLeft: 4,
     color: "#071B12",
     fontFamily: typography.sans,
-    fontSize: 8,
+    fontSize: 10,
     fontWeight: "900",
   },
-  modeLabel: {
-    color: colors.goldLight,
-    fontFamily: typography.sans,
-    fontSize: 8,
-    fontWeight: "800",
-    letterSpacing: 1,
-    textAlign: "center",
-  },
-  verseNumberBadge: {
-    position: "absolute",
-    top: 13,
-    right: 14,
-    alignItems: "center",
-  },
-  verseNumberCircle: {
-    width: 30,
-    height: 30,
-    alignItems: "center",
-    justifyContent: "center",
-    borderRadius: 15,
-    borderWidth: 1,
-    borderColor: colors.goldLight,
-    backgroundColor: "rgba(227,181,90,0.12)",
-  },
-  verseNumberText: {
-    color: colors.goldLight,
-    fontFamily: typography.sansBold,
-    fontSize: 12,
-  },
-  verseNumberProgress: {
-    marginTop: 3,
-    color: colors.textMuted,
-    fontFamily: typography.sansBold,
-    fontSize: 8,
-  },
   arabic: {
-    marginTop: 22,
+    marginTop: 16,
     color: "#FFF9EF",
     fontFamily: ARABIC_READING_FONT_FAMILY,
     fontSize: 33,
@@ -1499,7 +1349,7 @@ const styles = StyleSheet.create({
     textShadowRadius: 7,
   },
   wordSelection: {
-    marginTop: 18,
+    marginTop: 14,
     alignItems: "stretch",
   },
   arabicWordsLine: {
@@ -1527,12 +1377,14 @@ const styles = StyleSheet.create({
   },
   memoryModeBlock: {
     width: "100%",
+    marginTop: 4,
     alignItems: "center",
   },
   memoryActions: {
-    marginTop: 18,
+    marginTop: 14,
     width: "100%",
     flexDirection: "row",
+    flexWrap: "wrap",
     alignItems: "center",
     justifyContent: "center",
     gap: 8,
@@ -1570,51 +1422,29 @@ const styles = StyleSheet.create({
   },
   memoryHint: {
     marginTop: 10,
-    maxWidth: 300,
     color: colors.textMuted,
     fontFamily: typography.sans,
-    fontSize: 9,
-    lineHeight: 14,
+    fontSize: 11,
     textAlign: "center",
   },
-  selectionHint: {
-    marginTop: 14,
-    paddingHorizontal: 13,
-    paddingVertical: 10,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 8,
-    borderRadius: 14,
-    borderWidth: 1,
-    borderColor: "rgba(227,181,90,0.24)",
-    backgroundColor: "rgba(227,181,90,0.07)",
-  },
-  selectionHintCopy: {
-    flex: 1,
-  },
-  selectionHintTitle: {
-    color: colors.goldLight,
-    fontFamily: typography.sansBold,
-    fontSize: 8.5,
-    fontWeight: "900",
-    letterSpacing: 0.8,
-  },
-  selectionHintText: {
-    marginTop: 2,
-    color: "#FFFFFF",
+  hiddenText: {
+    marginTop: 26,
+    marginBottom: 14,
+    maxWidth: 280,
+    color: colors.textSecondary,
     fontFamily: typography.sans,
-    fontSize: 10.5,
-    lineHeight: 16,
+    fontSize: 12,
+    lineHeight: 18,
+    textAlign: "center",
   },
   phoneticBlock: {
-    marginTop: 20,
+    marginTop: 14,
     paddingHorizontal: 15,
-    paddingVertical: 15,
+    paddingVertical: 13,
     borderRadius: 18,
     borderWidth: 1,
-    borderColor: "rgba(236,203,125,0.22)",
-    backgroundColor: "rgba(255,255,255,0.045)",
+    borderColor: "rgba(236,203,125,0.18)",
+    backgroundColor: "rgba(255,255,255,0.035)",
   },
   translationBlock: {
     marginTop: 10,
@@ -1646,43 +1476,41 @@ const styles = StyleSheet.create({
   },
   translation: {
     marginTop: 7,
-    color: "#F3EDF5",
+    color: colors.textSecondary,
     fontFamily: typography.sans,
     fontSize: 12.5,
     lineHeight: 19,
     textAlign: "center",
   },
-  swipeHint: {
+  cardHint: {
     marginTop: 12,
-    color: "rgba(235,200,111,0.72)",
+    color: colors.textMuted,
     fontFamily: typography.sans,
-    fontSize: 7.5,
+    fontSize: 10,
+    lineHeight: 15,
     textAlign: "center",
   },
-  hidden: { display: "none" },
   textVisibilityRow: {
+    padding: 4,
     flexDirection: "row",
-    justifyContent: "center",
-    gap: 8,
-    marginTop: 14,
+    gap: 4,
+    borderRadius: 16,
+    backgroundColor: "rgba(8,7,19,0.72)",
   },
   textVisibilityOption: {
     flex: 1,
+    minHeight: 36,
     alignItems: "center",
     justifyContent: "center",
-    paddingHorizontal: 10,
-    paddingVertical: 10,
-    borderRadius: 14,
-    borderWidth: 1,
-    borderColor: "rgba(236,203,125,0.35)",
-    backgroundColor: "rgba(255,255,255,0.055)",
+    paddingHorizontal: 6,
+    borderRadius: 12,
   },
   textVisibilityOptionActive: {
     borderColor: colors.goldLight,
     backgroundColor: colors.goldLight,
   },
   textVisibilityText: {
-    color: "#F5EFE3",
+    color: colors.textSecondary,
     fontFamily: typography.sans,
     fontSize: 11,
     fontWeight: "800",
@@ -1692,33 +1520,7 @@ const styles = StyleSheet.create({
     color: colors.background,
   },
   revealedWord: { color: colors.goldLight },
-  teacherButtons: {
-    marginTop: 20,
-    flexDirection: "row",
-    justifyContent: "center",
-    gap: 7,
-  },
-  level: {
-    width: 29,
-    height: 29,
-    alignItems: "center",
-    justifyContent: "center",
-    borderRadius: 15,
-    borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.18)",
-  },
-  levelActive: {
-    borderColor: colors.goldLight,
-    backgroundColor: colors.goldLight,
-  },
-  levelText: {
-    color: colors.textMuted,
-    fontFamily: typography.sans,
-    fontSize: 9,
-    fontWeight: "800",
-  },
-  levelTextActive: { color: colors.background },
-  controls: { marginTop: 12, flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: 7 },
+  controls: { marginTop: 14, flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: 7 },
   reciterRow: { gap: 8, paddingVertical: 8 },
   reciterChoice: {
     maxWidth: 150,
@@ -1779,19 +1581,18 @@ const styles = StyleSheet.create({
   },
   controlSmall: {
     flex: 1,
-    height: 58,
+    height: 52,
     alignItems: "center",
     justifyContent: "center",
-    borderRadius: 21,
+    borderRadius: 18,
     borderWidth: 1,
-    borderColor: colors.borderSoft,
-    backgroundColor: colors.surface,
+    borderColor: "#2B2238",
+    backgroundColor: "#151022",
   },
   controlSmallText: {
-    marginTop: 1,
     color: colors.goldLight,
     fontFamily: typography.sans,
-    fontSize: 8,
+    fontSize: 12,
     fontWeight: "800",
   },
   audioError: {
@@ -1808,24 +1609,31 @@ const styles = StyleSheet.create({
     fontSize: 19,
   },
   repeatRow: {
-    marginTop: 9,
+    marginTop: 10,
     flexDirection: "row",
     alignItems: "center",
+    justifyContent: "center",
     gap: 7,
+  },
+  repeatLabel: {
+    marginRight: 2,
+    color: colors.textMuted,
+    fontFamily: typography.sans,
+    fontSize: 11,
   },
   repeat: {
     width: 48,
-    height: 37,
+    height: 34,
     alignItems: "center",
     justifyContent: "center",
-    borderRadius: 15,
+    borderRadius: 14,
     borderWidth: 1,
-    borderColor: colors.borderSoft,
-    backgroundColor: colors.surface,
+    borderColor: "#2B2238",
+    backgroundColor: "#151022",
   },
   repeatActive: {
     borderColor: colors.goldLight,
-    backgroundColor: "rgba(109,54,130,0.72)",
+    backgroundColor: "rgba(227,181,90,0.14)",
   },
   repeatText: {
     color: colors.textMuted,
@@ -1835,12 +1643,12 @@ const styles = StyleSheet.create({
   },
   repeatTextActive: { color: colors.goldLight },
   evaluate: {
-    marginTop: 20,
+    marginTop: 16,
     padding: 15,
     borderRadius: 22,
     borderWidth: 1,
-    borderColor: "rgba(227,181,90,0.25)",
-    backgroundColor: "rgba(32,19,45,0.92)",
+    borderColor: "#2B2238",
+    backgroundColor: "#151022",
   },
   evaluateTitle: {
     color: colors.text,
@@ -1851,7 +1659,7 @@ const styles = StyleSheet.create({
     marginTop: 3,
     color: colors.textMuted,
     fontFamily: typography.sans,
-    fontSize: 8.8,
+    fontSize: 11,
   },
   evaluateButtons: { height: 42, marginTop: 12, flexDirection: "row", gap: 8 },
   hard: {
@@ -1883,25 +1691,6 @@ const styles = StyleSheet.create({
     color: colors.background,
     fontFamily: typography.sans,
     fontSize: 10,
-    fontWeight: "800",
-  },
-  nav: { marginTop: 13, flexDirection: "row", gap: 8 },
-  navButton: {
-    flex: 1,
-    height: 45,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    borderRadius: 18,
-    borderWidth: 1,
-    borderColor: colors.borderSoft,
-    backgroundColor: colors.surface,
-  },
-  navText: {
-    marginHorizontal: 6,
-    color: colors.goldLight,
-    fontFamily: typography.sans,
-    fontSize: 9,
     fontWeight: "800",
   },
   dim: { opacity: 0.35 },
@@ -1939,8 +1728,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderRadius: 20,
     borderWidth: 1,
-    borderColor: "rgba(227,181,90,0.38)",
-    backgroundColor: "rgba(37,22,49,0.92)",
+    borderColor: "#2B2238",
+    backgroundColor: "#151022",
   },
   selectedReciterImage: { width: 52, height: 52, borderRadius: 26 },
   selectedReciterFallback: {
@@ -1980,7 +1769,7 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 30,
     borderWidth: 1,
     borderColor: "rgba(227,181,90,0.30)",
-    backgroundColor: "#120B1B",
+    backgroundColor: "#100C19",
   },
   reciterModalHeader: {
     marginBottom: 14,
