@@ -23,6 +23,8 @@ function messageFor(goal: DailyGoal) {
       return "Félicitations ! Tu as révisé un verset aujourd’hui.";
     case "hadith_read":
       return "Félicitations ! Tu as lu ton hadith du jour.";
+    case "prophet_story":
+      return "Félicitations ! Tu as suivi une histoire de prophète aujourd’hui.";
     case "dua_read":
       return "Félicitations ! Tu as lu ta dou’a du jour.";
     default:

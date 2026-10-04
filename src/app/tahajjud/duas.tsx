@@ -5,6 +5,7 @@ import { router, useFocusEffect } from 'expo-router';
 import { useCallback, useEffect, useState } from 'react';
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import Animated, { FadeIn, FadeOut, LinearTransition } from 'react-native-reanimated';
+import { NightProgram } from '../../components/tahajjud/NightProgram';
 import { GlassCard, shellStyles, TahajjudShell } from '../../components/tahajjud/TahajjudShell';
 import { night, nightType } from '../../components/tahajjud/theme';
 import { NIGHT_DUAS } from '../../features/tahajjud/tahajjudContent';
@@ -86,7 +87,7 @@ export default function TahajjudDuasScreen() {
   const history = Object.entries(journal).filter(([key]) => key !== nightKey).sort(([a], [b]) => b.localeCompare(a));
 
   return (
-    <TahajjudShell title="Mes duas" eyebrow="Privé · sur ce téléphone">
+    <TahajjudShell title="Ma nuit" eyebrow="Qiyam al-Layl">
       <View style={styles.tabs}>
         {([['duas', 'Pour cette nuit'], ['journal', 'Journal']] as const).map(([id, label]) => (
           <Pressable key={id} onPress={() => setTab(id)} style={[styles.tab, tab === id && styles.tabOn]}>
@@ -97,6 +98,9 @@ export default function TahajjudDuasScreen() {
 
       {tab === 'duas' ? (
         <>
+          <NightProgram since={state && state.phase !== 'day' ? state.night.maghrib : null} />
+
+          <Text style={shellStyles.sectionLabel}>Mes duas de la nuit</Text>
           <GlassCard gold>
             <Text style={styles.prompt}>Cette nuit, je demande à Allah…</Text>
             <View style={styles.addRow}>

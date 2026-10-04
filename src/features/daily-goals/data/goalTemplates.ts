@@ -100,6 +100,19 @@ export function createDailyGoalTemplates(
       target: 1,
       unit: "hadith",
     }),
+    goal({
+      id: "program-prophets",
+      title: "Une histoire de prophète",
+      subtitle: "Un chapitre lu jusqu’au bout ou une histoire écoutée",
+      category: "prophets",
+      metric: "prophet_story",
+      validation: "automatic",
+      estimatedMinutes: 8,
+      essential: false,
+      sourceRoute: "/prophets",
+      target: 1,
+      unit: "histoire",
+    }),
   ];
 
   if (includeListening) {

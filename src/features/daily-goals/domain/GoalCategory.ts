@@ -6,6 +6,7 @@ export type GoalCategory =
   | "hadith"
   | "prayer"
   | "calendar"
+  | "prophets"
   | "character"
   | "personal";
 
@@ -22,4 +23,5 @@ export type GoalMetric =
   | "dua_listen_seconds"
   | "hadith_read"
   | "tahajjud_night"
+  | "prophet_story"
   | "manual";

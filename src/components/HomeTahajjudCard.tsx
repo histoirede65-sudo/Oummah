@@ -88,7 +88,7 @@ export default function HomeTahajjudCard({ schedule }: Props) {
               </Pressable>
               <Pressable onPress={() => router.push('/tahajjud/duas' as Href)} style={({ pressed }) => [styles.chip, pressed && styles.pressed]}>
                 <Ionicons name="heart-outline" size={16} color={night.goldSoft} />
-                <Text style={styles.chipText}>Mes duas</Text>
+                <Text style={styles.chipText}>Ma nuit</Text>
               </Pressable>
             </>
           )}

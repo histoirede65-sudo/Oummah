@@ -9,7 +9,7 @@ export type DailyPlan = {
 
 export type DailyGoalSettings = {
   dailyMinutes: 5 | 10 | 20 | 30;
-  focus: Array<"quran" | "prayer" | "dhikr" | "hifz" | "dua" | "hadith" | "character">;
+  focus: Array<"quran" | "prayer" | "dhikr" | "hifz" | "dua" | "hadith" | "character" | "prophets">;
   onboardingComplete: boolean;
 };
 

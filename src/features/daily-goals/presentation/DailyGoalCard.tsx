@@ -7,7 +7,7 @@ import { colors } from "../../../theme/colors";
 import { typography } from "../../../theme/typography";
 
 const ICONS: Record<DailyGoal["category"], keyof typeof Ionicons.glyphMap> = {
-  quran: "book-outline", hifz: "school-outline", dhikr: "ellipse-outline", dua: "heart-outline", hadith: "library-outline", prayer: "time-outline", calendar: "calendar-outline", character: "people-outline", personal: "sparkles-outline",
+  quran: "book-outline", hifz: "school-outline", dhikr: "ellipse-outline", dua: "heart-outline", hadith: "library-outline", prayer: "time-outline", calendar: "calendar-outline", character: "people-outline", prophets: "star-outline", personal: "sparkles-outline",
 };
 
 export default function DailyGoalCard({ goal, onPress, onDelete }: { goal: DailyGoal; onPress(): void; onDelete?: () => void }) {

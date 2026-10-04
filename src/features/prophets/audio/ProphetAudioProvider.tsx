@@ -17,6 +17,7 @@ import {
 import type { ProphetAudioEpisode } from "./prophetAudioData";
 import { getCachedProphetAudio } from "./prophetAudioCache";
 import { getOummahLockScreenArtworkUri } from "../../audio/lockScreenArtwork";
+import { goalProgressBridge } from "../../daily-goals/services/goalProgressBridge";
 
 type ProphetAudioContextValue = {
   episode: ProphetAudioEpisode | null;
@@ -212,6 +213,16 @@ export function ProphetAudioProvider({ children }: { children: ReactNode }) {
 
   const duration = Math.max(0, status.duration || player.duration || 0);
   const currentTime = Math.max(0, status.currentTime || player.currentTime || 0);
+
+  // Objectif « Une histoire de prophète » : une histoire écoutée au moins à moitié (une fois par jour).
+  const countedEpisode = useRef<string | null>(null);
+  useEffect(() => {
+    if (!episode || duration <= 0 || currentTime < duration * 0.5) return;
+    const key = `${episode.id}:${new Date().toDateString()}`;
+    if (countedEpisode.current === key) return;
+    countedEpisode.current = key;
+    goalProgressBridge.record({ metric: "prophet_story", amount: 1, evidenceId: `listen:${episode.id}` });
+  }, [currentTime, duration, episode]);
 
   const value = useMemo<ProphetAudioContextValue>(
     () => ({

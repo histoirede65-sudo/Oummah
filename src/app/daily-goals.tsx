@@ -44,6 +44,7 @@ const FOCUSES: Array<{
   { id: "hifz", label: "Mémorisation", icon: "school-outline" },
   { id: "dua", label: "Dou’a", icon: "heart-outline" },
   { id: "hadith", label: "Hadith", icon: "library-outline" },
+  { id: "prophets", label: "Prophètes", icon: "star-outline" },
 ];
 
 function returnFromDailyGoals() {

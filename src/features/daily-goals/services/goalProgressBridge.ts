@@ -1,6 +1,7 @@
 import type { GoalMetric } from "../domain/GoalCategory";
 import type { DailyPlan } from "../domain/DailyPlan";
 import { goalRepository } from "../data/goalRepository";
+import { markGoalActivity } from "./goalActivity";
 
 export type GoalProgressEvent = {
   metric: Exclude<GoalMetric, "manual">;
@@ -23,6 +24,7 @@ class GoalProgressBridge {
   }
 
   record(event: GoalProgressEvent) {
+    void markGoalActivity(event.metric);
     this.pending.push(event);
     if (this.timer) return;
     this.timer = setTimeout(() => {
@@ -54,6 +56,7 @@ class GoalProgressBridge {
   }
 
   async setEvidence(metric: GoalProgressEvent["metric"], evidenceId: string, selected: boolean) {
+    if (selected) void markGoalActivity(metric);
     const operation = this.writeChain.then(async () => {
       const plan = await goalRepository.setEvidence(metric, evidenceId, selected);
       this.notify(plan);

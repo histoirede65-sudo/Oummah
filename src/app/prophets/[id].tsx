@@ -9,6 +9,7 @@ import { PROPHET_STORIES } from "../../features/prophets/allProphetsData";
 import { PROPHET_AUDIO_EPISODES } from "../../features/prophets/audio/prophetAudioData";
 import { PROPHET_FRENCH_NAMES, PROPHETS_PREVIEW, type ProphetReference, type ProphetSourceKind } from "../../features/prophets/prophetsData";
 import { loadProphetProgress, saveProphetProgress } from "../../features/prophets/prophetProgress";
+import { goalProgressBridge } from "../../features/daily-goals/services/goalProgressBridge";
 import { colors } from "../../theme/colors";
 import { typography } from "../../theme/typography";
 
@@ -106,6 +107,8 @@ export default function ProphetStoryScreen() {
     const next = done ? completed.filter((id) => id !== chapter.id) : [...completed, chapter.id];
     setCompleted(next);
     await saveProphetProgress(story.id, { completed: next, lastChapterId: chapter.id });
+    // Objectif « Une histoire de prophète » : un chapitre lu jusqu'au bout.
+    void goalProgressBridge.setEvidence("prophet_story", `read:${story.id}:${chapter.id}`, !done).catch(() => undefined);
   };
 
   return <LinearGradient colors={[colors.background, "#090715", colors.background]} style={styles.screen}>
