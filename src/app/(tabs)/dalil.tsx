@@ -152,7 +152,10 @@ async function resolveWasilLocationContext(
 }
 
 
+type Translate = ReturnType<typeof useI18n>["t"];
+
 function buildNearbyMosqueLocalReply(
+  t: Translate,
   locationContext?: WasilLocationContext,
 ): WasilReply {
   const mosques = locationContext?.mosques ?? [];
@@ -160,20 +163,18 @@ function buildNearbyMosqueLocalReply(
   if (!locationContext) {
     return {
       kind: "answer",
-      title: "Localisation nécessaire",
-      body: 
-        "Pour trouver une mosquée proche, autorise OUMMAH à accéder à ta position. Cette recherche locale est gratuite et ne consomme aucun crédit Wasil.",
-      action: { label: "Ouvrir les mosquées", route: "/mosques" },
+      title: t("wasil.locationNeeded"),
+      body: t("wasil.nearbyMosqueNeedsLocation"),
+      action: { label: t("wasil.openMosques"), route: "/mosques" },
     };
   }
 
   if (mosques.length === 0) {
     return {
       kind: "answer",
-      title: "Aucune mosquée trouvée à proximité",
-      body:
-        "Ta position a bien été récupérée, mais la recherche locale n’a trouvé aucune mosquée autour de toi pour le moment. Tu peux ouvrir le module Mosquées pour élargir la recherche.",
-      action: { label: "Ouvrir les mosquées", route: "/mosques" },
+      title: t("wasil.noMosqueNearby"),
+      body: t("wasil.noMosqueNearbyBody"),
+      action: { label: t("wasil.openMosques"), route: "/mosques" },
     };
   }
 
@@ -186,9 +187,9 @@ function buildNearbyMosqueLocalReply(
 
   return {
     kind: "answer",
-    title: mosques.length === 1 ? "Mosquée proche de toi" : "Mosquées proches de toi",
-    body: `${body}\n\nCette recherche est effectuée localement par OUMMAH et ne consomme aucun crédit Wasil.`,
-    action: { label: "Voir dans Mosquées", route: "/mosques" },
+    title: mosques.length === 1 ? t("wasil.nearbyMosqueOne") : t("wasil.nearbyMosqueMany"),
+    body: `${body}\n\n${t("wasil.localSearchNoCredit")}`,
+    action: { label: t("wasil.seeInMosques"), route: "/mosques" },
   };
 }
 
@@ -275,6 +276,15 @@ type WasilVisualPose =
   | "reading-quran"
   | "success"
   | "error";
+
+const ENERGY_FACT_KEYS = [
+  "wasil.energyFact1",
+  "wasil.energyFact2",
+  "wasil.energyFact3",
+  "wasil.energyFact4",
+  "wasil.energyFact5",
+  "wasil.energyFact6",
+] as const;
 
 const WASIL_QUESTION_EXAMPLE_KEYS = [
   "wasil.example1",
@@ -488,7 +498,7 @@ function canonicalSourceUrl(value: string) {
   }
 }
 
-function deduplicateSources(sources: WasilDisplaySource[]) {
+function deduplicateSources(sources: WasilDisplaySource[], t: Translate) {
   const quranSources: WasilDisplaySource[] = [];
   const otherSources: WasilDisplaySource[] = [];
 
@@ -508,7 +518,7 @@ function deduplicateSources(sources: WasilDisplaySource[]) {
         isQuranSourceUrl(source.url)
           ? {
               ...source,
-              label: "Référence coranique",
+              label: t("wasil.quranReference"),
               detail: undefined,
             }
           : source,
@@ -647,22 +657,22 @@ function formatQuranPassage(target: QuranNativeTarget) {
   return `Sourate ${name} — verset ${verseStart}`;
 }
 
-function markdownSourceLabel(label: string, urlValue: string) {
+function markdownSourceLabel(label: string, urlValue: string, t: Translate) {
   try {
     const url = new URL(urlValue);
     const hostname = url.hostname.replace(/^www\./, "").toLowerCase();
     if (hostname === "quran.com" || hostname === "quranenc.com") {
       return label && !/^(?:quran\.com|quranenc)$/i.test(label.trim())
         ? decodeQuranReference(label)
-        : "Référence coranique";
+        : t("wasil.quranReference");
     }
     return label || url.hostname.replace(/^www\./, "");
   } catch {
-    return label || "Référence en ligne";
+    return label || t("wasil.onlineReference");
   }
 }
 
-function parseWasilAnswer(answer: WasilReply) {
+function parseWasilAnswer(answer: WasilReply, t: Translate) {
   const extracted = extractMarkdownLinks(answer.body);
   const rawSources: { label: string; url: string }[] = [];
   const withoutRawUrls = extracted.text.replace(/https?:\/\/[^\s)]+/gi, (url) => {
@@ -726,7 +736,7 @@ function parseWasilAnswer(answer: WasilReply) {
             ? reference.reference
             : null,
           reference.grade || null,
-        ].filter(Boolean).join(" · ") || "Hadith vérifié",
+        ].filter(Boolean).join(" · ") || t("wasil.verifiedHadith"),
         verified: true,
         hadithTarget: directId
           ? { pathname: "/hadith/[id]", params: { id: directId } }
@@ -736,7 +746,7 @@ function parseWasilAnswer(answer: WasilReply) {
   );
   const explicitWebSources = (answer.webReferences ?? []).map(
     (source): WasilDisplaySource => ({
-      label: markdownSourceLabel(source.title, source.url),
+      label: markdownSourceLabel(source.title, source.url, t),
       url: source.url,
       verified: true,
     }),
@@ -752,7 +762,7 @@ function parseWasilAnswer(answer: WasilReply) {
   );
   const extractedSources = [...extracted.sources, ...rawSources].map(
     (source): WasilDisplaySource => ({
-      label: markdownSourceLabel(source.label, source.url),
+      label: markdownSourceLabel(source.label, source.url, t),
       url: source.url,
       verified: structuredSources.some(
         (structured) =>
@@ -769,7 +779,7 @@ function parseWasilAnswer(answer: WasilReply) {
     ...explicitWebSources,
     ...extractedSources,
   ];
-  const sources = deduplicateSources(normalizedSources);
+  const sources = deduplicateSources(normalizedSources, t);
   const urlTargets = [
     ...structuredSources,
     ...extractedSources,
@@ -867,34 +877,34 @@ async function resolveWasilHalalContext(question: string): Promise<WasilHalalLoc
   return { places: result.places.slice(0, 5) };
 }
 
-function buildNearbyHalalLocalReply(context?: WasilHalalLocationContext): WasilReply {
+function buildNearbyHalalLocalReply(t: Translate, context?: WasilHalalLocationContext): WasilReply {
   if (!context) {
     return {
       kind: "answer",
-      title: "Localisation nécessaire",
-      body: "Pour chercher une adresse halal proche, autorise OUMMAH à accéder à ta position. Cette recherche locale est gratuite et ne consomme aucun crédit Wasil.",
-      action: { label: "Ouvrir Halal autour de moi", route: "/halal" },
+      title: t("wasil.locationNeeded"),
+      body: t("wasil.nearbyHalalNeedsLocation"),
+      action: { label: t("wasil.openHalalNearby"), route: "/halal" },
     };
   }
   if (context.places.length === 0) {
     return {
       kind: "answer",
-      title: "Aucune adresse trouvée à proximité",
-      body: "Je n’ai trouvé aucune adresse renseignée dans un rayon de 10 km. Ouvre le module pour élargir la zone ou ajouter une adresse communautaire.",
-      action: { label: "Explorer le module Halal", route: "/halal" },
+      title: t("wasil.noHalalNearby"),
+      body: t("wasil.noHalalNearbyBody"),
+      action: { label: t("wasil.exploreHalal"), route: "/halal" },
     };
   }
   const body = context.places.map((place, index) =>
     `${index + 1}. ${place.name}\n${place.distanceLabel} · ${place.verificationLabel}\n${place.address}`,
   ).join("\n\n");
   const googleAttribution = context.places.some((place) => place.source === "google")
-    ? "\n\nCertaines adresses sont fournies par Google Maps."
+    ? `\n\n${t("wasil.googleAttribution")}`
     : "";
   return {
     kind: "answer",
-    title: context.places.length === 1 ? "Une adresse halal proche" : "Adresses halal proches de toi",
-    body: `${body}${googleAttribution}\n\nLe niveau de preuve est indiqué pour chaque adresse. Cette recherche ne consomme aucun crédit Wasil.`,
-    action: { label: "Voir sur la carte", route: "/halal" },
+    title: context.places.length === 1 ? t("wasil.nearbyHalalOne") : t("wasil.nearbyHalalMany"),
+    body: `${body}${googleAttribution}\n\n${t("wasil.halalEvidenceNote")}`,
+    action: { label: t("wasil.seeOnMap"), route: "/halal" },
   };
 }
 
@@ -939,7 +949,7 @@ function WasilAnswerPresentation({
   animateReferences?: boolean;
 }) {
   const { t } = useI18n();
-  const parsed = parseWasilAnswer(answer);
+  const parsed = parseWasilAnswer(answer, t);
   const referenceOpacity = useRef(new Animated.Value(animateReferences ? 0 : 1)).current;
   const referenceTranslateY = useRef(new Animated.Value(animateReferences ? 7 : 0)).current;
   const visibleSources = parsed.sources.filter(
@@ -1365,7 +1375,7 @@ export default function DalilScreen() {
     const result = await loadWasilEnergyPacks().catch(() => ({
       status: "error" as const,
       code: "offering-unavailable" as const,
-      message: "La boutique est temporairement indisponible. Réessayez dans quelques instants.",
+      message: t("wasil.shopUnavailable"),
     }));
     if (result.status === "success") {
       setEnergyPacks(result.packs);
@@ -1381,7 +1391,7 @@ export default function DalilScreen() {
     const result = await refreshWasilEnergyBalance();
     if (result.status === "success") {
       setBalance(result.balance);
-      setEnergyFeedback("Votre énergie a été actualisée.");
+      setEnergyFeedback(t("wasil.energyRefreshed"));
     } else if (result.status === "error") {
       setEnergyFeedback(result.message);
     }
@@ -1398,10 +1408,10 @@ export default function DalilScreen() {
     } else if (result.status === "pending") {
       setBalance(result.balance);
       setEnergyFeedback(
-        "Achat validé. Votre énergie est en cours d’actualisation.",
+        t("wasil.purchaseConfirmed"),
       );
     } else if (result.status === "cancelled") {
-      setEnergyFeedback("Achat annulé.");
+      setEnergyFeedback(t("wasil.purchaseCancelled"));
     } else if (result.status === "error") {
       setEnergyFeedback(result.message);
     }
@@ -2141,7 +2151,7 @@ export default function DalilScreen() {
         const errorReply: WasilReply = {
           kind: "unsupported-religious",
           title: "Rappels indisponibles",
-          body: "Wasil n’a pas pu gérer vos rappels. Aucun crédit n’a été utilisé.",
+          body: t("wasil.remindersFailed"),
         };
         setReply(errorReply);
         await commitTurn(managementPrompt, errorReply);
@@ -2184,8 +2194,8 @@ export default function DalilScreen() {
       } catch {
         const errorReply: WasilReply = {
           kind: "unsupported-religious",
-          title: "Rappel non créé",
-          body: "Wasil n’a pas pu programmer ce rappel. Aucun crédit n’a été utilisé.",
+          title: t("wasil.reminderNotCreated"),
+          body: t("wasil.reminderFailed"),
           action: {
             label: "Ouvrir mes notifications",
             route: "/notifications",
@@ -2221,7 +2231,7 @@ export default function DalilScreen() {
         const errorReply: WasilReply = {
           kind: "unsupported-religious",
           title: "Objectifs indisponibles",
-          body: "Wasil n’a pas pu adapter vos objectifs. Aucun crédit n’a été utilisé.",
+          body: t("wasil.goalsFailed"),
           action: {
             label: "Ouvrir mes objectifs",
             route: "/daily-goals",
@@ -2255,14 +2265,14 @@ export default function DalilScreen() {
           kind: "unsupported-religious",
           title:
             apiError?.code === "AUTH_REQUIRED"
-              ? "Profil requis"
-              : "Mémoire indisponible",
+              ? t("wasil.profileRequired")
+              : t("wasil.memoryUnavailable"),
           body:
             apiError?.message ??
-            "Wasil n’a pas pu accéder à sa mémoire. Aucun crédit n’a été utilisé.",
+            t("wasil.memoryFailed"),
           action:
             apiError?.code === "AUTH_REQUIRED"
-              ? { label: "Ouvrir mon profil", route: "/profile" }
+              ? { label: t("wasil.openProfile"), route: "/profile" }
               : undefined,
         };
         setReply(errorReply);
@@ -2281,7 +2291,7 @@ export default function DalilScreen() {
       setLoading(true);
       try {
         const halalContext = await resolveWasilHalalContext(trimmedPrompt).catch(() => undefined);
-        const halalReply = buildNearbyHalalLocalReply(halalContext);
+        const halalReply = buildNearbyHalalLocalReply(t, halalContext);
         setReply(halalReply);
         setFailedPrompt("");
         setLastMisunderstoodPrompt("");
@@ -2302,7 +2312,7 @@ export default function DalilScreen() {
         const locationContext = await resolveWasilLocationContext(trimmedPrompt).catch(
           () => undefined,
         );
-        const nearbyReply = buildNearbyMosqueLocalReply(locationContext);
+        const nearbyReply = buildNearbyMosqueLocalReply(t, locationContext);
         setReply(nearbyReply);
         setFailedPrompt("");
         setLastMisunderstoodPrompt("");
@@ -3116,7 +3126,7 @@ export default function DalilScreen() {
       >
         <View style={styles.energyBackdrop}>
           <Pressable
-            accessibilityLabel="Fermer Énergie Wasil"
+            accessibilityLabel={t("wasil.energyClose")}
             onPress={() => setEnergyVisible(false)}
             style={StyleSheet.absoluteFill}
           />
@@ -3147,13 +3157,13 @@ export default function DalilScreen() {
                     <Ionicons name="flash" size={13} color={colors.goldLight} />
                     <Text style={styles.energyEyebrowText}>WASIL PREMIUM</Text>
                   </View>
-                  <Text style={styles.energyTitle}>Énergie Wasil</Text>
+                  <Text style={styles.energyTitle}>{t("wasil.energyTitle")}</Text>
                   <Text style={styles.energySubtitle}>
-                    Continuez à apprendre, comprendre et progresser avec Wasil grâce à vos crédits d'énergie.
+                    {t("wasil.energySubtitle")}
                   </Text>
                   </View>
                   <Pressable
-                    accessibilityLabel="Fermer Énergie Wasil"
+                    accessibilityLabel={t("wasil.energyClose")}
                     hitSlop={8}
                     onPress={() => setEnergyVisible(false)}
                     style={styles.energyClose}
@@ -3167,19 +3177,19 @@ export default function DalilScreen() {
                   <Ionicons name="flash" size={26} color={colors.goldLight} />
                   <Text style={styles.energyBalanceValue}>{balance ?? "—"}</Text>
                 </View>
-                <Text style={styles.energyBalanceLabel}>Énergie disponible</Text>
+                <Text style={styles.energyBalanceLabel}>{t("wasil.energyAvailable")}</Text>
                 <Text style={styles.energyBalanceHint}>
-                  Chaque échange avec Wasil consomme de l'énergie.
+                  {t("wasil.energyPerExchange")}
                 </Text>
               </View>
               <Text style={styles.energyPackPrompt}>
-                Choisissez le pack qui vous convient.
+                {t("wasil.energyChoosePack")}
               </Text>
               {energyLoading ? (
                 <ActivityIndicator color={colors.goldLight} style={styles.energyLoader} />
               ) : energyPacks.length === 0 ? (
                 <Text style={styles.energyFeedback}>
-                  {energyFeedback ?? "Les packs sont momentanément indisponibles."}
+                  {energyFeedback ?? t("wasil.energyPacksUnavailable")}
                 </Text>
               ) : (
                 <View style={styles.energyPackList}>
@@ -3199,7 +3209,7 @@ export default function DalilScreen() {
                         {(isPopular || isBestValue) ? (
                           <View style={styles.energyBadge}>
                             <Text style={styles.energyBadgeText}>
-                              {isPopular ? "Le plus choisi" : "Meilleure valeur"}
+                              {isPopular ? t("wasil.energyPopular") : t("wasil.energyBestValue")}
                             </Text>
                           </View>
                         ) : null}
@@ -3207,7 +3217,7 @@ export default function DalilScreen() {
                           <Ionicons name="flash" size={19} color={colors.goldLight} />
                         </View>
                         <View style={styles.energyPackCopy}>
-                          <Text style={styles.energyPackTitle}>{energyCount} énergies</Text>
+                          <Text style={styles.energyPackTitle}>{t("wasil.energyPackTitle", { count: energyCount })}</Text>
                           <Text style={styles.energyPackPrice}>
                             {(
                               pack.revenueCatPackage.product as typeof pack.revenueCatPackage.product & {
@@ -3217,7 +3227,7 @@ export default function DalilScreen() {
                           </Text>
                         </View>
                         <Pressable
-                          accessibilityLabel={`Acheter ${energyCount} énergies`}
+                          accessibilityLabel={t("wasil.energyBuyPack", { count: energyCount })}
                           disabled={Boolean(energyPurchaseId)}
                           onPress={() => void purchaseEnergy(pack)}
                           style={({ pressed }) => [
@@ -3229,7 +3239,7 @@ export default function DalilScreen() {
                           {energyPurchaseId === pack.identifier ? (
                             <ActivityIndicator color="#16111B" size="small" />
                           ) : (
-                            <Text style={styles.energyBuyText}>Acheter</Text>
+                            <Text style={styles.energyBuyText}>{t("wasil.energyBuy")}</Text>
                           )}
                         </Pressable>
                       </View>
@@ -3244,19 +3254,12 @@ export default function DalilScreen() {
                 <View style={styles.energyInfoIcon}>
                   <Ionicons name="sparkles-outline" size={18} color={colors.goldLight} />
                 </View>
-                <Text style={styles.energyInfoTitle}>Pourquoi acheter de l’Énergie Wasil ?</Text>
+                <Text style={styles.energyInfoTitle}>{t("wasil.energyWhyTitle")}</Text>
                 <Text style={styles.energyInfoIntro}>
-                  L'Énergie Wasil vous permet de continuer vos échanges avec votre assistant intelligent lorsque vos crédits inclus sont épuisés.
+                  {t("wasil.energyWhyIntro")}
                 </Text>
                 <View style={styles.energyInfoList}>
-                  {[
-                    "Les packs d'énergie achetés ne périment jamais.",
-                    "Ils restent disponibles sur votre compte jusqu'à leur utilisation complète.",
-                    "Les crédits gratuits ou inclus avec Premium sont toujours utilisés en priorité.",
-                    "Vos packs achetés ne sont utilisés qu'une fois ces crédits épuisés.",
-                    "La navigation dans l'application (Coran, Audio, Hadith, Qibla, Objectifs, etc.) ne consomme aucune énergie.",
-                    "Seules les réponses générées par Wasil utilisent de l'énergie.",
-                  ].map((item) => (
+                  {ENERGY_FACT_KEYS.map((key) => t(key)).map((item) => (
                     <View key={item} style={styles.energyInfoRow}>
                       <Ionicons name="checkmark-circle" size={16} color={colors.goldLight} />
                       <Text style={styles.energyInfoText}>{item}</Text>
@@ -3266,11 +3269,11 @@ export default function DalilScreen() {
                 <View style={styles.energyReassurance}>
                   <Ionicons name="shield-checkmark-outline" size={16} color={colors.goldLight} />
                   <Text style={styles.energyReassuranceText}>
-                    Vos énergies achetées restent disponibles sans limite de durée.
+                    {t("wasil.energyNoExpiry")}
                   </Text>
                 </View>
                 <Text style={styles.energyTrustLine}>
-                  🔒 Paiement 100 % sécurisé via l'App Store ou Google Play.
+                  {t("wasil.energySecurePayment")}
                 </Text>
               </View>
               <Pressable
@@ -3283,7 +3286,7 @@ export default function DalilScreen() {
                 ]}
               >
                 <Ionicons name="refresh" size={15} color={colors.goldLight} />
-                <Text style={styles.energyRefreshText}>Actualiser mon énergie</Text>
+                <Text style={styles.energyRefreshText}>{t("wasil.energyRefresh")}</Text>
               </Pressable>
             </ScrollView>
           </View>
