@@ -15,7 +15,6 @@ import QuranQuickActions, {
   type QuranTab,
 } from "../../components/quran/QuranQuickActions";
 import QuranSearchBar from "../../components/quran/QuranSearchBar";
-import QuranReciterSelector from "../../components/quran/QuranReciterSelector";
 import JuzList from "../../components/quran/JuzList";
 import SurahList from "../../components/quran/SurahList";
 import { SURAHS } from "../../data/surahs";
@@ -85,10 +84,6 @@ export default function QuranScreen() {
   const handleBackPress = () => {
     if (router.canGoBack()) router.back();
     else router.replace("/" as Href);
-  };
-
-  const toggleFavoritesFilter = () => {
-    changeTab(activeTab === "favorites" ? "surahs" : "favorites");
   };
 
   useFocusEffect(
@@ -251,16 +246,7 @@ export default function QuranScreen() {
       <View style={styles.searchGap}>
         <QuranSearchBar value={query} onChangeText={setQuery} />
       </View>
-      <QuranQuickActions
-        activeTab={activeTab}
-        onTabChange={changeTab}
-        onBookmarkPress={() =>
-          changeTab(activeTab === "bookmarks" ? "surahs" : "bookmarks")
-        }
-        onAudioPress={() => router.push("/listen/reciters" as Href)}
-        onHifzPress={() => router.push("/hifz" as Href)}
-      />
-      <QuranReciterSelector />
+      <QuranQuickActions activeTab={activeTab} onTabChange={changeTab} />
       <View style={styles.listHeading}>
         <Text style={styles.listTitle}>
           {activeTab === "surahs"
@@ -286,11 +272,7 @@ export default function QuranScreen() {
 
   return (
     <SafeAreaView edges={["top"]} style={styles.safeArea}>
-      <QuranHeader
-        onBackPress={handleBackPress}
-        favoritesActive={activeTab === "favorites"}
-        onFavoritePress={toggleFavoritesFilter}
-      />
+      <QuranHeader onBackPress={handleBackPress} />
       {activeTab === "juz" ? (
         <JuzList
           data={filteredJuz}
