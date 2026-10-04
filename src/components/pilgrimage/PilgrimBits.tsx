@@ -1,6 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
-import { createContext, useContext, useState } from "react";
-import { Modal, Pressable, ScrollView, StyleSheet, Text, View, type TextStyle } from "react-native";
+import { createContext, useContext, useEffect, useRef, useState } from "react";
+import { Animated, Modal, Pressable, ScrollView, StyleSheet, Text, View, type TextStyle } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import type { Invocation, Point, Source } from "../../features/pilgrimage/pilgrimageTypes";
@@ -24,6 +24,31 @@ export function useScaled() {
       ...(flat.lineHeight ? { lineHeight: flat.lineHeight * scale } : {}),
     };
   };
+}
+
+/** Gold toggle drawn in JS (the native iOS switch overflows its box). */
+export function PilgrimToggle({ value, onValueChange, accessibilityLabel }: { value: boolean; onValueChange: (value: boolean) => void; accessibilityLabel: string }) {
+  const position = useRef(new Animated.Value(value ? 1 : 0)).current;
+  useEffect(() => {
+    Animated.timing(position, { toValue: value ? 1 : 0, duration: 160, useNativeDriver: false }).start();
+  }, [position, value]);
+  return (
+    <Pressable
+      accessibilityRole="switch"
+      accessibilityLabel={accessibilityLabel}
+      accessibilityState={{ checked: value }}
+      hitSlop={8}
+      onPress={() => onValueChange(!value)}
+      style={[styles.toggleTrack, value && styles.toggleTrackOn]}
+    >
+      <Animated.View
+        style={[styles.toggleThumb, {
+          backgroundColor: value ? pil.gold : "#C9C1CB",
+          transform: [{ translateX: position.interpolate({ inputRange: [0, 1], outputRange: [0, 20] }) }],
+        }]}
+      />
+    </Pressable>
+  );
 }
 
 /** « Coran 2:196 · Hadith — Sahîh Muslim 1218 » on one discreet line. */
@@ -124,6 +149,9 @@ export function InvocationCard({ invocation }: { invocation: Invocation }) {
 }
 
 const styles = StyleSheet.create({
+  toggleTrack: { width: 48, height: 28, padding: 2, justifyContent: "center", borderRadius: 14, backgroundColor: "#3E3743" },
+  toggleTrackOn: { backgroundColor: "rgba(232,187,98,0.42)" },
+  toggleThumb: { width: 24, height: 24, borderRadius: 12 },
   sources: { marginTop: 8, flexDirection: "row", flexWrap: "wrap", gap: 6 },
   sourceChip: { flexDirection: "row", alignItems: "center", gap: 5, paddingHorizontal: 8, paddingVertical: 4, borderRadius: 8, backgroundColor: "rgba(255,255,255,0.06)" },
   sourceKind: { color: pil.gold, fontSize: 11, fontWeight: "800", ...pilType.sans },

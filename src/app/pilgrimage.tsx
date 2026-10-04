@@ -6,11 +6,13 @@ import { Image, InteractionManager, Pressable, ScrollView, StyleSheet, Text, use
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Svg, { Circle } from "react-native-svg";
 
+import { PilgrimToggle } from "../components/pilgrimage/PilgrimBits";
 import { pil, pilType } from "../components/pilgrimage/theme";
 import { BOOKS, bookPages, HAJJ_TYPE_LABELS } from "../features/pilgrimage/pilgrimageBook";
 import { getHajjSeason, type HajjSeason } from "../features/pilgrimage/pilgrimageCalendar";
 import { CHECKLIST_TOTAL } from "../features/pilgrimage/pilgrimageChecklist";
-import { usePilgrimageState } from "../features/pilgrimage/pilgrimageStorage";
+import { syncHajjReminders, type HajjReminderStatus } from "../features/pilgrimage/pilgrimageReminders";
+import { updatePilgrimageState, usePilgrimageState } from "../features/pilgrimage/pilgrimageStorage";
 import type { Rite } from "../features/pilgrimage/pilgrimageTypes";
 
 /** Book covers, shown whole (portrait 1122 × 1402). */
@@ -49,6 +51,15 @@ const STARS = Array.from({ length: 34 }, (_, index) => ({
 /** During the Hajj days, the page of the day in the Hajj book. */
 const DAY_STEPS: Record<number, string> = { 8: "mina-8", 9: "arafat-9", 10: "nahr-10", 11: "tashriq-11", 12: "tashriq-12", 13: "tashriq-13" };
 
+function reminderText(status: HajjReminderStatus | null, enabled: boolean) {
+  if (!enabled) return "Une notification à chaque étape, du 8 au 13 Dhul-Hijja, à l’heure de La Mecque.";
+  if (!status) return "Mise à jour…";
+  if (status.kind === "denied") return "Autorisez les notifications d’OUMMAH dans les réglages du téléphone.";
+  if (status.kind === "waiting") return status.days > 0 ? `Activé · programmés automatiquement dans ${status.days} jour${status.days > 1 ? "s" : ""}, à l’approche du Hajj.` : "Activé · programmés à l’approche du Hajj.";
+  if (status.kind === "scheduled") return status.count ? `${status.count} rappel${status.count > 1 ? "s" : ""} programmé${status.count > 1 ? "s" : ""}, à l’heure de La Mecque.${status.approximate ? " Horaires précisés à la prochaine connexion." : ""}` : "Les jours du Hajj sont passés pour cette année.";
+  return "";
+}
+
 function seasonText(season: HajjSeason) {
   if (season.kind === "days") return { title: `${season.dhulHijja} Dhul-Hijja ${season.hijriYear}`, text: season.label };
   const date = season.arafa.toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" });
@@ -67,6 +78,25 @@ export default function PilgrimageHome() {
   const state = usePilgrimageState();
   const [season, setSeason] = useState<HajjSeason | null>(null);
   const [virtue, setVirtue] = useState(() => Math.floor(Date.now() / 86_400_000) % VIRTUES.length);
+  const [reminderStatus, setReminderStatus] = useState<HajjReminderStatus | null>(null);
+  const remindersEnabled = state?.hajjReminders ?? false;
+
+  // Refresh at each visit: dates come closer, times get precise once online.
+  useEffect(() => {
+    if (!state) return;
+    const task = InteractionManager.runAfterInteractions(() => {
+      void syncHajjReminders(state.hajjReminders).then(setReminderStatus).catch(() => undefined);
+    });
+    return () => task.cancel();
+    // Only when the switch changes or the screen first gets its state.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [state?.hajjReminders, Boolean(state)]);
+
+  const toggleReminders = (value: boolean) => {
+    setReminderStatus(null);
+    void updatePilgrimageState((current) => ({ ...current, hajjReminders: value }));
+    void syncHajjReminders(value, true).then(setReminderStatus).catch(() => undefined);
+  };
 
   useEffect(() => {
     const task = InteractionManager.runAfterInteractions(() => {
@@ -133,6 +163,15 @@ export default function PilgrimageHome() {
         </Pressable>
 
         <View style={styles.body}>
+          <View style={styles.reminders}>
+            <View style={styles.remindersIcon}><Ionicons name="notifications" size={19} color={pil.ink} /></View>
+            <View style={styles.remindersCopy}>
+              <Text style={styles.remindersTitle}>Rappels des jours du Hajj</Text>
+              <Text style={styles.remindersText}>{reminderText(reminderStatus, remindersEnabled)}</Text>
+            </View>
+            <PilgrimToggle value={remindersEnabled} onValueChange={toggleReminders} accessibilityLabel="Rappels des jours du Hajj" />
+          </View>
+
           <Text style={styles.section}>Vos deux livres</Text>
           {/* Two covers side by side, like books on a shelf; each picture shown whole. */}
           <View style={styles.shelf}>
@@ -266,6 +305,11 @@ const styles = StyleSheet.create({
   coverBarFill: { height: "100%", borderRadius: 2, backgroundColor: pil.gold },
   coverAction: { minHeight: 34, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 5, borderRadius: 17, backgroundColor: pil.gold },
   coverActionText: { color: pil.ink, fontSize: 13, fontWeight: "800", ...pilType.sans },
+  reminders: { marginTop: 6, padding: 14, flexDirection: "row", alignItems: "center", gap: 12, borderRadius: 20, backgroundColor: pil.surface },
+  remindersIcon: { width: 38, height: 38, alignItems: "center", justifyContent: "center", borderRadius: 19, backgroundColor: pil.gold },
+  remindersCopy: { flex: 1 },
+  remindersTitle: { color: pil.text, fontSize: 16, fontWeight: "800", ...pilType.sans },
+  remindersText: { marginTop: 3, color: pil.textSoft, fontSize: 13.5, lineHeight: 19, ...pilType.sans },
   duaCard: { marginTop: 18, padding: 16, flexDirection: "row", alignItems: "center", gap: 14, borderRadius: 22, borderWidth: 1, borderColor: pil.goldLine, backgroundColor: pil.surfaceHigh },
   duaIcon: { width: 46, height: 46, alignItems: "center", justifyContent: "center", borderRadius: 23, backgroundColor: pil.gold },
   duaCopy: { flex: 1 },
