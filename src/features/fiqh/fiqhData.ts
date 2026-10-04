@@ -39,6 +39,7 @@ export const PRAYER_CHAPTERS: FiqhChapter[] = [
   { id: "prayer-special-situations", categoryId: "prayer", title: "Situations particulières", topicIds: ["prayer-sick", "prayer-travel", "prayer-combining"] },
   { id: "prayer-corrections", categoryId: "prayer", title: "Rejoindre, oublier et corriger", topicIds: ["prayer-latecomer", "prayer-sahw"] },
   { id: "prayer-collective-friday", categoryId: "prayer", title: "Prière collective et vendredi", topicIds: ["prayer-imam-following", "prayer-friday"] },
+  { id: "prayer-voluntary", categoryId: "prayer", title: "Prières recommandées", topicIds: [] },
   { id: "prayer-funeral", categoryId: "prayer", title: "Prière funéraire", topicIds: ["prayer-funeral"] },
 ];
 
@@ -1866,10 +1867,11 @@ for (const [id, entry] of Object.entries(FIQH_LESSONS)) {
 export const FIQH_TOPICS: FiqhTopic[] = [...BASE_FIQH_TOPICS, ...lessonTopics].map(enrichFiqhTopic).map((item) => {
   const entry = FIQH_LESSONS[item.id];
   if (!entry) return item;
-  const { title: _title, arabic, summary, chapter: _chapter, aliases, sensitive, ...lesson } = entry;
+  const { title, arabic, summary, chapter: _chapter, aliases, sensitive, ...lesson } = entry;
   return {
     ...item,
     lesson,
+    ...(title ? { title } : {}),
     ...(arabic ? { arabicTerm: arabic } : {}),
     summary: summary ?? item.summary,
     aliases: Array.from(new Set([...item.aliases, ...(aliases ?? [])])),
@@ -1878,4 +1880,12 @@ export const FIQH_TOPICS: FiqhTopic[] = [...BASE_FIQH_TOPICS, ...lessonTopics].m
 });
 export const topicById = new Map(FIQH_TOPICS.map((topic) => [topic.id, topic]));
 export const categoryById = new Map(FIQH_CATEGORIES_WITH_CHAPTERS.map((category) => [category.id, category]));
+/** Lessons of a book in reading order: chapter after chapter, as in the table of contents. */
+export function bookOrder(categoryId: string): string[] {
+  const category = categoryById.get(categoryId);
+  if (!category) return [];
+  const ordered = (category.chapters ?? []).flatMap((chapter) => chapter.topicIds);
+  const rest = category.topicIds.filter((id) => !ordered.includes(id));
+  return [...ordered, ...rest].filter((id, index, list) => list.indexOf(id) === index && topicById.has(id));
+}
 export const chapterById = new Map(Object.values(FIQH_CHAPTERS_BY_CATEGORY).flat().map((chapter) => [chapter.id, chapter]));

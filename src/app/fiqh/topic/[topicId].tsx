@@ -7,7 +7,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { FiqhDifferenceCard } from "../../../features/fiqh/components/FiqhDifferenceCard";
 import { FiqhTopBar, SourceChips, SourceSheet, TextSizeButton, fq, fqType, useSourceSheet } from "../../../features/fiqh/components/FiqhUI";
 import { FiqhWasilCTA } from "../../../features/fiqh/components/FiqhWasilCTA";
-import { categoryById, chapterById, topicById } from "../../../features/fiqh/fiqhData";
+import { bookOrder, categoryById, chapterById, topicById } from "../../../features/fiqh/fiqhData";
 import { lessonOf, lessonSourceIds, sourceShortLabel } from "../../../features/fiqh/fiqhLessons";
 import { markFiqhLessonRead, saveFiqhProgress, useFiqhReading } from "../../../features/fiqh/fiqhStorage";
 
@@ -38,7 +38,7 @@ export default function FiqhLessonScreen() {
   const chapter = (chapterParam ? chapterById.get(chapterParam) : undefined) ?? Array.from(chapterById.values()).find((item) => item.topicIds.includes(topic.id));
   const chapterIndex = chapter && category?.chapters ? category.chapters.findIndex((item) => item.id === chapter.id) : -1;
   const lessonIndex = chapter ? chapter.topicIds.indexOf(topic.id) : -1;
-  const book = category?.topicIds ?? [];
+  const book = bookOrder(topic.categoryId);
   const bookIndex = book.indexOf(topic.id);
   const previousId = bookIndex > 0 ? book[bookIndex - 1] : undefined;
   const nextId = bookIndex >= 0 && bookIndex < book.length - 1 ? book[bookIndex + 1] : undefined;

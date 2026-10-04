@@ -6,7 +6,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import { FiqhTopBar, fq, fqType } from "../../features/fiqh/components/FiqhUI";
 import { FIQH_BOOK_IMAGES, FIQH_BOOK_INTROS } from "../../features/fiqh/fiqhBooks";
-import { categoryById, topicById } from "../../features/fiqh/fiqhData";
+import { bookOrder, categoryById, topicById } from "../../features/fiqh/fiqhData";
 import { useFiqhReading } from "../../features/fiqh/fiqhStorage";
 
 /** A Fiqh book: cover, reading progress, then the table of contents with every lesson. */
@@ -17,7 +17,7 @@ export default function FiqhBookScreen() {
   if (!category) return <SafeAreaView style={styles.screen}><FiqhTopBar /><Text style={styles.empty}>Livre introuvable.</Text></SafeAreaView>;
 
   const chapters = category.chapters?.length ? category.chapters : [{ id: category.id, categoryId: category.id, title: category.title, topicIds: category.topicIds }];
-  const lessons = category.topicIds.filter((id) => topicById.has(id));
+  const lessons = bookOrder(category.id);
   const readCount = lessons.filter((id) => reading.read.includes(id)).length;
   const nextId = lessons.find((id) => !reading.read.includes(id)) ?? lessons[0];
   const open = (id: string) => router.push({ pathname: "/fiqh/topic/[topicId]", params: { topicId: id } });
