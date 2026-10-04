@@ -607,7 +607,7 @@ const styles = StyleSheet.create({
   todayCard: { marginTop: 14, minHeight: 88, paddingHorizontal: 19, paddingVertical: 12, borderRadius: 21, borderWidth: 1, borderColor: colors.goldLight, backgroundColor: "rgba(66,34,77,0.92)", flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
   todayCardEyebrow: { color: colors.goldLight, fontFamily: typography.sans, fontSize: 11, fontWeight: "800", letterSpacing: 1 },
   todayCardHint: { marginTop: 5, color: colors.textSecondary, fontFamily: typography.sans, fontSize: 10 },
-  todayCardValue: { minWidth: 75, marginLeft: 10, color: colors.text, fontFamily: typography.serifSemibold, fontSize: 39, textAlign: "right" },
+  todayCardValue: { minWidth: 75, marginLeft: 10, color: colors.text, fontFamily: typography.serifSemibold, fontSize: 39, textAlign: "right", fontVariant: ["lining-nums", "tabular-nums"] },
   hadithSection: { marginTop: 22, padding: 18, borderRadius: 22, borderWidth: 1, borderColor: colors.borderSoft, backgroundColor: colors.surface },
   hadithHeading: { color: colors.goldLight, fontFamily: typography.serifSemibold, fontSize: 19 },
   hadithBody: { marginTop: 15, color: colors.text, fontFamily: typography.sans, fontSize: 13, lineHeight: 20 },
@@ -894,6 +894,7 @@ const styles = StyleSheet.create({
   counterComplete: { borderColor: "#FFE3A0" },
   counterPressed: { transform: [{ scale: 0.965 }] },
   counterValue: {
+    fontVariant: ["lining-nums", "tabular-nums"],
     color: colors.text,
     fontFamily: typography.serifSemibold,
     fontSize: 58,
@@ -948,6 +949,7 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(64,35,78,0.54)",
   },
   cycleValue: {
+    fontVariant: ["lining-nums", "tabular-nums"],
     color: colors.goldLight,
     fontFamily: typography.serifSemibold,
     fontSize: 16,
