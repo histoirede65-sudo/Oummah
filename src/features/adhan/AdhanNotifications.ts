@@ -10,7 +10,7 @@ import type {
 } from "../mosques/data/mosquePrayerTimes";
 import { getNearbyMosques, type NearbyMosque } from "../mosques/data/nearbyMosques";
 import { getMainMosque } from "../mosques/data/mosquePreferences";
-import type { AdhanAlertMode, AdhanPreferences, AdhanVoice } from "./AdhanPreferences";
+import { loadAdhanPreferences, type AdhanAlertMode, type AdhanPreferences, type AdhanVoice } from "./AdhanPreferences";
 
 const SCHEDULED_IDS_KEY = "oumma:adhan-notification-ids:v1";
 const NOTIFICATION_OWNER = "oummah-adhan";

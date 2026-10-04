@@ -71,7 +71,7 @@ export default memo(TadabburVerseFocus);
 
 const styles = StyleSheet.create({
   container: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
     zIndex: 3,
     paddingHorizontal: 18,
     alignItems: "stretch",

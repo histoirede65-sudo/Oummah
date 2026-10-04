@@ -330,6 +330,7 @@ export default function DailyGoalsScreen() {
 }
 
 const styles = StyleSheet.create({
+  pressed: { opacity: 0.86 },
   safe: { flex: 1, backgroundColor: colors.background }, loader: { flex: 1 },
   header: { minHeight: 68, paddingHorizontal: 14, flexDirection: "row", alignItems: "center" },
   headerButton: { width: 39, height: 39, alignItems: "center", justifyContent: "center", borderRadius: 20, borderWidth: 1, borderColor: "rgba(255,255,255,0.09)", backgroundColor: "rgba(255,255,255,0.035)" },

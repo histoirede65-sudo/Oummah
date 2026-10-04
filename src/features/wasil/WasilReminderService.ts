@@ -707,7 +707,7 @@ function updatedReminderRequest(
     ? parseFrequency(prompt)
     : reminder.frequency;
   let scheduledAt: Date | undefined;
-  let weekday = frequency === "weekly" ? day?.expoWeekday : undefined;
+  let weekday: number | undefined = frequency === "weekly" ? day?.expoWeekday : undefined;
 
   if (frequency === "weekly" && !weekday) weekday = reminder.weekday;
   if (frequency === "once") {

@@ -156,7 +156,7 @@ export function mergeWasilConversations(
     const messages = [...current.messages, ...conversation.messages]
       .reduce<WasilConversationMessage[]>((all, message) =>
         all.some((item) => item.id === message.id) ? all : [...all, message],
-      )
+      [])
       .sort((left, right) => left.createdAt - right.createdAt)
       .slice(-MAX_MESSAGES_PER_CONVERSATION);
     const newest = conversation.updatedAt >= current.updatedAt ? conversation : current;

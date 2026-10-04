@@ -1,4 +1,4 @@
-import type { SupabaseSession } from "./SupabaseAuthService";
+import type { SupabaseAuthSession } from "./SupabaseAuthService";
 
 export type OummahAdminRole =
   | "owner"
@@ -13,7 +13,7 @@ export function normalizeAdminEmail(email: string | null | undefined) {
 }
 
 export function isOummahAdminSession(
-  session: SupabaseSession | null | undefined,
+  session: SupabaseAuthSession | null | undefined,
 ) {
   return normalizeAdminEmail(session?.user.email) === OUMMAH_OWNER_EMAIL;
 }
@@ -24,7 +24,7 @@ export function isOummahAdminSession(
  * Le compte propriétaire reste un fallback de démarrage.
  */
 export async function getOummahAdminRole(
-  session: SupabaseSession | null | undefined,
+  session: SupabaseAuthSession | null | undefined,
 ): Promise<OummahAdminRole | null> {
   if (!session?.accessToken) return null;
 

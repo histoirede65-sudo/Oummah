@@ -1110,7 +1110,7 @@ function splitMorningAndEvening(catalog: readonly DuaCategory[]) {
       itemPeriods(item).includes("evening"),
     );
 
-    return [
+    const split: DuaCategory[] = [
       {
         ...category,
         id: category.id * 100 + 1,
@@ -1127,7 +1127,8 @@ function splitMorningAndEvening(catalog: readonly DuaCategory[]) {
         section: "evening",
         items: eveningItems,
       },
-    ].filter((entry) => entry.items.length > 0);
+    ];
+    return split.filter((entry) => entry.items.length > 0);
   });
 }
 

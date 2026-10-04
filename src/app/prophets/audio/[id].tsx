@@ -286,7 +286,7 @@ const styles = StyleSheet.create({
   headerTitle: { marginTop: 2, color: colors.text, fontFamily: typography.serifSemibold, fontSize: 22 },
   content: { padding: 16, paddingBottom: 120 },
   hero: { height: 405, overflow: "hidden", borderRadius: 32, borderWidth: 1, borderColor: "rgba(232,91,95,0.36)", backgroundColor: "#1C101B" },
-  coverImage: { ...StyleSheet.absoluteFillObject, width: "100%", height: "100%" },
+  coverImage: { ...StyleSheet.absoluteFill, width: "100%", height: "100%" },
   heroRim: { position: "absolute", top: 8, right: 8, bottom: 8, left: 8, borderRadius: 25, borderWidth: 1, borderColor: "rgba(255,255,255,0.10)" },
   audioBadge: { position: "absolute", top: 20, left: 20, minHeight: 34, paddingHorizontal: 11, borderRadius: 17, flexDirection: "row", alignItems: "center", gap: 7, backgroundColor: "rgba(179,55,64,0.90)", borderWidth: 1, borderColor: "rgba(255,255,255,0.18)" },
   audioBadgeText: { color: "#FFF7EC", fontFamily: typography.sans, fontSize: 8.5, fontWeight: "900", letterSpacing: 0.8 },

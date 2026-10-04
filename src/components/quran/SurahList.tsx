@@ -70,7 +70,7 @@ export default function SurahList({
             pointerEvents="none"
             source={require("../../assets/images/home/shortcuts/quran-real.jpg")}
             contentFit="cover"
-            contentPosition={item.id % 2 === 0 ? "70% center" : "55% center"}
+            contentPosition={item.id % 2 === 0 ? { left: "70%", top: "50%" } : { left: "55%", top: "50%" }}
             style={[
               styles.quranTexture,
               item.id % 2 === 0 && styles.quranTextureAlternate,

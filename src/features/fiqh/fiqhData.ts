@@ -840,7 +840,7 @@ if (!PRAYER_CHAPTERS.some((chapter) => chapter.id === "prayer-invalidators")) {
 // Ajout uniquement à prayer-invalidators ; le contenu déjà présent reste intact.
 const prayerInvalidatorsForMovements = PUBLISHED_PRAYER_TOPICS.find((topic) => topic.id === "prayer-invalidators");
 if (prayerInvalidatorsForMovements) {
-  prayerInvalidatorsForMovements.evidence.push(
+  (prayerInvalidatorsForMovements.evidence ??= []).push(
     e("Un mouvement léger n'est pas assimilé automatiquement à un invalidant : les passages hanafite et hanbalite étudiés distinguent explicitement l'action légère de l'action importante.", "fiqh-badai-prayer-movements", "fiqh-mughni-prayer-movements"),
     e("La formule populaire « trois mouvements annulent la prière » ne peut pas être présentée comme une règle générale des écoles : Ibn Qudama refuse explicitement de fixer le mouvement permis à trois gestes, tandis qu'al-Kasani rapporte plusieurs critères avant de retenir une appréciation liée à l'apparence de l'acte.", "fiqh-badai-prayer-movements", "fiqh-mughni-prayer-movements"),
     e("Le passage malikite étudié distingue lui aussi le geste léger du geste devenu nombreux et renvoie, dans l'exemple étudié, à une appréciation par l'usage.", "fiqh-dusuqi-prayer-movements"),

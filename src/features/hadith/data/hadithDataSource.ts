@@ -1,4 +1,4 @@
-import type { Hadith, HadithSummary } from "../domain/Hadith";
+import type { Hadith, HadithSummary } from "../../hadith-explorer/domain/Hadith";
 import { classifyHadithGrade } from "../domain/HadithGrade";
 
 const API_ROOT = "https://hadeethenc.com/api/v1";

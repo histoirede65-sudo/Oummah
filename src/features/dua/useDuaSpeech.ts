@@ -43,7 +43,7 @@ export function useDuaSpeech({
   const [error, setError] = useState<string>();
 
   const mountedRef = useRef(true);
-  const requestRef = useRef<SpeechRequest>();
+  const requestRef = useRef<SpeechRequest | undefined>(undefined);
   const tokenRef = useRef(0);
 
   const stop = useCallback(() => {

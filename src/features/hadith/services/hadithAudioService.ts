@@ -1,5 +1,5 @@
 import * as Speech from "expo-speech";
-import type { Hadith } from "../domain/Hadith";
+import type { Hadith } from "../../hadith-explorer/domain/Hadith";
 
 export const hadithAudioService = {
   stop: () => Speech.stop(),

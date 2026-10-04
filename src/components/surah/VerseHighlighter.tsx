@@ -73,7 +73,7 @@ export default memo(VerseHighlighter);
 const styles = StyleSheet.create({
   container: { position: 'relative' },
   glow: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
     borderRadius: 25,
     backgroundColor: colors.gold,
     shadowColor: colors.gold,
@@ -85,5 +85,5 @@ const styles = StyleSheet.create({
   studySurface: {
     backgroundColor: colors.surfaceLight,
   },
-  studyBorder: { ...StyleSheet.absoluteFillObject, borderRadius: 25, borderWidth: 1, borderColor: colors.gold },
+  studyBorder: { ...StyleSheet.absoluteFill, borderRadius: 25, borderWidth: 1, borderColor: colors.gold },
 });

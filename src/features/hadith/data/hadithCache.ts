@@ -1,5 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import type { Hadith, HadithSummary } from "../domain/Hadith";
+import type { Hadith, HadithSummary } from "../../hadith-explorer/domain/Hadith";
 
 const DETAILS_KEY = "oumma:hadith:details:v1";
 const SEARCH_KEY = "oumma:hadith:search:v1";

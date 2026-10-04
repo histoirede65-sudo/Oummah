@@ -739,7 +739,7 @@ const styles = StyleSheet.create({
   delayBlock: { padding: 13, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: "rgba(255,255,255,0.07)" },
   delayTitle: { marginBottom: 9, color: "#FFF7EE", fontFamily: typography.serifMedium, fontSize: 13 },
   delayRow: { flexDirection: "row", flexWrap: "wrap", gap: 7 },
-  timePickerOverlay: { ...StyleSheet.absoluteFillObject, zIndex: 100, elevation: 100, alignItems: "center", justifyContent: "center", padding: 24, backgroundColor: "rgba(3,4,9,0.88)" },
+  timePickerOverlay: { ...StyleSheet.absoluteFill, zIndex: 100, elevation: 100, alignItems: "center", justifyContent: "center", padding: 24, backgroundColor: "rgba(3,4,9,0.88)" },
   timePickerCard: { width: "100%", maxWidth: 330, padding: 20, borderRadius: 24, borderWidth: 1, borderColor: "rgba(255,227,172,0.24)", backgroundColor: "#17131C" },
   timePickerEyebrow: { color: "rgba(242,190,85,0.72)", fontFamily: typography.sans, fontSize: 8.2, fontWeight: "900", letterSpacing: 0.95, textAlign: "center" },
   timePickerTitle: { marginTop: 4, color: "#FFF8EF", fontFamily: typography.serifSemibold, fontSize: 20, textAlign: "center" },

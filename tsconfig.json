@@ -25,6 +25,11 @@
     "OUMMAH_HadeethEnc_Import_Reel",
     "backups",
     "tmp",
-    "dist"
+    "dist",
+    "cleanup-backup",
+    "scripts",
+    "src/supabase/functions",
+    "app",
+    "features"
   ]
 }

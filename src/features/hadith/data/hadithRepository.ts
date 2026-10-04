@@ -1,4 +1,4 @@
-import type { Hadith, HadithSummary } from "../domain/Hadith";
+import type { Hadith, HadithSummary } from "../../hadith-explorer/domain/Hadith";
 import { fetchHadith, fetchHadithPage, searchHadiths } from "./hadithDataSource";
 import { hadithCache } from "./hadithCache";
 

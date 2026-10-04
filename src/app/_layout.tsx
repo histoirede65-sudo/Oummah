@@ -800,7 +800,7 @@ export default function RootLayout() {
 
 const launchStyles = StyleSheet.create({
   container: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: '#05030D',

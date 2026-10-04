@@ -7,7 +7,7 @@ import { ActivityIndicator, Alert, Pressable, ScrollView, StyleSheet, Text, View
 import { SafeAreaView } from "react-native-safe-area-context";
 import { captureRef } from "react-native-view-shot";
 import { hadithRepository } from "../../features/hadith/data/hadithRepository";
-import type { Hadith } from "../../features/hadith/domain/Hadith";
+import type { Hadith } from "../../features/hadith-explorer/domain/Hadith";
 import HadithScreenHeader from "../../features/hadith/presentation/HadithScreenHeader";
 import { shareHadithText, type HadithShareContent } from "../../features/hadith/services/hadithShareService";
 import { colors } from "../../theme/colors";

@@ -139,7 +139,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.background,
   },
   welcomeOverlay: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
     alignItems: "center",
     justifyContent: "center",
     paddingHorizontal: 28,

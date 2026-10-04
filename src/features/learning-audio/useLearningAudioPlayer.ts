@@ -75,12 +75,12 @@ export function useLearningAudioPlayer({
   const [completionCount, setCompletionCount] = useState(0);
 
   const speedIndexRef = useRef(1);
-  const loadedKeyRef = useRef<string>();
-  const loadedRequestRef = useRef<LearningAudioRequest>();
-  const pendingRef = useRef<PendingRequest>();
-  const rangeRef = useRef<AudioRange>();
+  const loadedKeyRef = useRef<string | undefined>(undefined);
+  const loadedRequestRef = useRef<LearningAudioRequest | undefined>(undefined);
+  const pendingRef = useRef<PendingRequest | undefined>(undefined);
+  const rangeRef = useRef<AudioRange | undefined>(undefined);
   const commandTokenRef = useRef(0);
-  const pollTimerRef = useRef<ReturnType<typeof setTimeout>>();
+  const pollTimerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const mountedRef = useRef(true);
   const rangeFinishedRef = useRef(false);
 

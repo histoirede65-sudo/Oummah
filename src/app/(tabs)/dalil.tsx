@@ -689,7 +689,7 @@ function parseWasilAnswer(answer: WasilReply) {
   const structuredSources: WasilDisplaySource[] =
     answer.reference && !hasExplicitNativeReferences
       ? [{
-          label: structuredReferenceLabel,
+          label: structuredReferenceLabel ?? answer.reference,
           url: answer.sourceUrl,
           verified: true,
         }]

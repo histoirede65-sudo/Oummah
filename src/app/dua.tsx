@@ -868,7 +868,8 @@ const styles = StyleSheet.create({
   periodCopy: { flex: 1 },
   periodEyebrow: {
     color: colors.goldMuted,
-    fontFamily: typography.sansSemiBold,
+    fontFamily: typography.sans,
+    fontWeight: typography.sansSemibold,
     fontSize: 9,
     letterSpacing: 1.1,
     marginBottom: 4,
@@ -892,7 +893,8 @@ const styles = StyleSheet.create({
   },
   periodCountText: {
     color: colors.goldLight,
-    fontFamily: typography.sansSemiBold,
+    fontFamily: typography.sans,
+    fontWeight: typography.sansSemibold,
     fontSize: 12,
   },
   safeArea: { flex: 1, backgroundColor: colors.background },

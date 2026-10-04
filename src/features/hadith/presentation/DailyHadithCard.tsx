@@ -3,7 +3,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { colors } from "../../../theme/colors";
 import { typography } from "../../../theme/typography";
-import type { Hadith } from "../domain/Hadith";
+import type { Hadith } from "../../hadith-explorer/domain/Hadith";
 import HadithGradeBadge from "./HadithGradeBadge";
 
 export default function DailyHadithCard({ hadith, loading, onPress }: { hadith: Hadith | null; loading: boolean; onPress: () => void }) {

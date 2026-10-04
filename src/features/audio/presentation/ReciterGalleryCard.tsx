@@ -254,12 +254,12 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 4 },
   },
   cardDepth: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
     borderRadius: 20,
     opacity: 0.28,
   },
   luminousBorder: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
     borderRadius: 20,
     borderWidth: 1,
     borderColor: colors.goldDark,

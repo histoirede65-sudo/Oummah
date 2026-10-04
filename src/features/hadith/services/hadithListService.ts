@@ -1,5 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import type { Hadith } from "../domain/Hadith";
+import type { Hadith } from "../../hadith-explorer/domain/Hadith";
 
 export type PersonalHadithList = { id: string; name: string; color: string; createdAt: number; hadiths: { id: string; title: string; grade: string; reference: string; addedAt: number }[] };
 const KEY = "oumma:hadith:personal-lists:v1";

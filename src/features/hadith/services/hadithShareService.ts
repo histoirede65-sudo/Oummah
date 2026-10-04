@@ -1,5 +1,5 @@
 import { Share } from "react-native";
-import type { Hadith } from "../domain/Hadith";
+import type { Hadith } from "../../hadith-explorer/domain/Hadith";
 
 export type HadithShareContent = "arabic" | "french" | "both";
 export function hadithShareText(hadith: Hadith, content: HadithShareContent, includeSource = true) {

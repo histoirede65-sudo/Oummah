@@ -32,7 +32,12 @@ export function useDailyGoalsViewModel() {
     }, [refresh]),
   );
 
-  useEffect(() => goalProgressBridge.subscribe(setPlan), []);
+  useEffect(() => {
+    const unsubscribe = goalProgressBridge.subscribe(setPlan);
+    return () => {
+      unsubscribe();
+    };
+  }, []);
 
   const summary = useMemo(
     () => (plan ? summarizeDailyPlan(plan) : null),

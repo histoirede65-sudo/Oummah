@@ -115,12 +115,12 @@ const styles = StyleSheet.create({
   },
 
   artworkSurface: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
     overflow: 'hidden',
   },
 
   loadingBase: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
     backgroundColor: '#150C24',
   },
 
@@ -146,6 +146,6 @@ const styles = StyleSheet.create({
   },
 
   ambient: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
   },
 });

@@ -70,8 +70,8 @@ const styles = StyleSheet.create({
     alignItems: "stretch",
   },
   illustration: { position: "absolute", left: 0, top: 0, bottom: 0, width: "35%", overflow: "hidden" },
-  image: { ...StyleSheet.absoluteFillObject, width: "100%", height: "100%" },
-  fallback: { ...StyleSheet.absoluteFillObject, alignItems: "center", justifyContent: "center" },
+  image: { ...StyleSheet.absoluteFill, width: "100%", height: "100%" },
+  fallback: { ...StyleSheet.absoluteFill, alignItems: "center", justifyContent: "center" },
   fallbackRing: {
     width: 68,
     height: 68,
