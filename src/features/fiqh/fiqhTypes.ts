@@ -1,6 +1,4 @@
 export type FiqhSourceKind = "quran" | "hadith" | "fiqh-book" | "scholar";
-export type FiqhPublicationStatus = "published" | "limited" | "coming_soon" | "blocked";
-export type FiqhLocalizedText = { fr: string; ar?: string };
 export type FiqhSourceTarget = { type: "hadith"; hadithId: string };
 export type FiqhBadge = "LARGEMENT ÉTABLI" | "REPÈRES ESSENTIELS" | "DIVERGENCE JURIDIQUE" | "CAS PERSONNEL";
 
@@ -14,33 +12,6 @@ export type FiqhSource = {
   scope?: string;
   limits?: string;
   target?: FiqhSourceTarget;
-};
-
-export type FiqhEvidence = { text: string; evidenceIds: string[] };
-export type FiqhClaim = { text: string; evidenceIds: string[] };
-export type FiqhTopicContent = {
-  introduction?: string;
-  definition?: FiqhClaim[];
-  ceQuiEstEtabli?: FiqhClaim[];
-  pratique?: FiqhClaim[];
-  enseignements?: FiqhClaim[];
-  limites?: string[];
-  divergences?: FiqhClaim[];
-  casPersonnel?: string;
-  questions?: FiqhQuestion[];
-};
-
-export type FiqhQuestion = {
-  id: string;
-  question: string;
-  answer: FiqhClaim[];
-};
-
-export type FiqhSectionData = {
-  id: string;
-  title: string;
-  claims?: FiqhClaim[];
-  questionIds?: string[];
 };
 
 export type FiqhChapter = {
@@ -59,6 +30,7 @@ export type FiqhPosition = {
   verificationStatus?: "verified_primary" | "externally_verified_primary" | "partial";
 };
 
+/** A question on which the schools differ, with each school's documented position. */
 export type FiqhDifference = {
   id?: string;
   question: string;
@@ -73,7 +45,7 @@ export type FiqhDifference = {
 export type FiqhPoint = { text: string; ids?: string[] };
 export type FiqhCase = { q: string; a: string; ids?: string[] };
 
-/** Clear reading version of a lesson: short answer, rules, steps, frequent cases, mistakes, nuances. */
+/** Reading text of a lesson: short answer, rules, steps, frequent cases, mistakes, nuances. */
 export type FiqhLesson = {
   short: string;
   rules: FiqhPoint[];
@@ -86,28 +58,17 @@ export type FiqhLesson = {
 
 export type FiqhTopic = {
   id: string;
-  lesson?: FiqhLesson;
   categoryId: string;
   title: string;
   arabicTerm?: string;
   summary: string;
   aliases: string[];
   badge: FiqhBadge;
-  publicationStatus?: FiqhPublicationStatus;
-  established: string[];
-  proofs: string[];
-  evidence?: FiqhEvidence[];
-  content?: FiqhTopicContent;
-  howTo: string[];
-  conditions: string[];
-  invalidators: string[];
-  commonMistakes: string[];
-  specialCases: string[];
-  differences: FiqhDifference[];
-  takeaway: string[];
-  sourceIds: string[];
   sensitive?: boolean;
+  sourceIds: string[];
+  differences: FiqhDifference[];
   link?: { label: string; route: string };
+  lesson?: FiqhLesson;
 };
 
 export type FiqhCategory = {
