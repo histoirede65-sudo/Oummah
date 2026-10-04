@@ -2,7 +2,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
 import { useEffect, useMemo, useState } from "react";
-import { ImageBackground, InteractionManager, Pressable, ScrollView, StyleSheet, Text, View, type ImageSourcePropType } from "react-native";
+import { Image, InteractionManager, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Svg, { Circle } from "react-native-svg";
 
@@ -13,10 +13,9 @@ import { CHECKLIST_TOTAL } from "../features/pilgrimage/pilgrimageChecklist";
 import { usePilgrimageState } from "../features/pilgrimage/pilgrimageStorage";
 import type { Rite } from "../features/pilgrimage/pilgrimageTypes";
 
-const COVERS: Record<Rite, ImageSourcePropType> = {
-  umrah: require("../assets/images/home/shortcuts/pilgrimage-premium.png"),
-  hajj: require("../assets/images/fiqh/hajj-umrah-final.png"),
-};
+const UMRAH_COVER = require("../assets/images/home/shortcuts/pilgrimage-premium.png");
+
+const HAJJ_COVER = require("../assets/images/pilgrimage/hajj-cover.jpg");
 
 /** Virtues of the pilgrimage, one shown at a time. */
 const VIRTUES = [
@@ -124,7 +123,8 @@ export default function PilgrimageHome() {
                 onPress={() => router.push(`/pilgrimage/book?rite=${rite}`)}
                 style={({ pressed }) => [styles.cover, pressed && styles.pressed]}
               >
-                <ImageBackground source={COVERS[rite]} resizeMode="cover" style={styles.coverImage}>
+                <View style={styles.coverImage}>
+                  <Image source={rite === "umrah" ? UMRAH_COVER : HAJJ_COVER} resizeMode="cover" style={StyleSheet.absoluteFill} />
                   <LinearGradient colors={["rgba(12,10,18,0.05)", "rgba(12,10,18,0.55)", "rgba(12,10,18,0.97)"]} locations={[0, 0.45, 1]} style={StyleSheet.absoluteFill} />
                   <View style={styles.coverSpine} />
                   <View style={styles.coverContent}>
@@ -142,7 +142,7 @@ export default function PilgrimageHome() {
                       </View>
                     </View>
                   </View>
-                </ImageBackground>
+                </View>
               </Pressable>
             );
           })}
