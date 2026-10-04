@@ -72,9 +72,9 @@ export default function QuranReciterSelector({ compact = false }: { compact?: bo
           </Text>
         </View>
         <View style={[styles.changeAction, compact && styles.changeActionCompact]}>
-          <Text style={[styles.changeText, compact && styles.changeTextCompact]}>
-            {t("quran.change")}
-          </Text>
+          {!compact ? (
+            <Text style={styles.changeText}>{t("quran.change")}</Text>
+          ) : null}
           <Ionicons name="chevron-forward" size={14} color={colors.goldMuted} />
         </View>
       </Pressable>
@@ -237,7 +237,6 @@ const styles = StyleSheet.create({
     fontSize: 10,
     fontWeight: "700",
   },
-  changeTextCompact: { color: colors.goldLight, fontSize: 10.5 },
   backdrop: {
     flex: 1,
     justifyContent: "flex-end",

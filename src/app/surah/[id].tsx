@@ -1180,14 +1180,6 @@ export default function SurahReadingScreen() {
         <Text style={styles.headerArabic}>{surah.arabicName}</Text>
         <Pressable
           accessibilityRole="button"
-          accessibilityLabel={t("surahReader.goToVerse")}
-          onPress={() => setShowVerseJump((value) => !value)}
-          style={[styles.iconButton, styles.headerAction, showVerseJump && styles.iconButtonActive]}
-        >
-          <Ionicons name="locate-outline" size={20} color={colors.goldLight} />
-        </Pressable>
-        <Pressable
-          accessibilityRole="button"
           accessibilityLabel={t("surahReader.settingsLabel")}
           onPress={() => setShowSettings((value) => !value)}
           style={[styles.iconButton, styles.headerAction, showSettings && styles.iconButtonActive]}
@@ -1196,7 +1188,19 @@ export default function SurahReadingScreen() {
         </Pressable>
       </View>
       <View style={styles.reciterSelectorSlot}>
-        <QuranReciterSelector compact />
+        <View style={styles.reciterSelectorRow}>
+          <View style={styles.reciterSelectorControl}>
+            <QuranReciterSelector compact />
+          </View>
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel={t("surahReader.goToVerse")}
+            onPress={() => setShowVerseJump((value) => !value)}
+            style={({ pressed }) => [styles.verseJumpTrigger, showVerseJump && styles.iconButtonActive, pressed && styles.tafsirButtonPressed]}
+          >
+            <Text style={styles.verseJumpTriggerText}>{t("surahReader.goToVerse")}</Text>
+          </Pressable>
+        </View>
         {showVerseJump ? (
           <View style={styles.verseJumpRow}>
             <TextInput
@@ -1405,6 +1409,18 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(227,181,90,0.12)",
   },
   headerAction: { marginLeft: 8 },
+  reciterSelectorRow: { flexDirection: "row", alignItems: "center", gap: 8 },
+  reciterSelectorControl: { flex: 1, minWidth: 0 },
+  verseJumpTrigger: {
+    height: 38,
+    paddingHorizontal: 12,
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 19,
+    borderWidth: 1,
+    borderColor: "rgba(227,181,90,0.35)",
+  },
+  verseJumpTriggerText: { color: colors.goldLight, fontSize: 13, fontWeight: "700" },
 
   headerCopy: { flex: 1, marginLeft: 10 },
   title: {
