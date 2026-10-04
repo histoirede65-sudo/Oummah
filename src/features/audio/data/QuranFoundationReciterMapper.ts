@@ -4,10 +4,8 @@ import abdulBasit from '../../../../assets/reciters/webp/abdul_basit.webp';
 import abuBakrAlShatri from '../../../../assets/reciters/webp/abu_bakr_alshatri.webp';
 import ahmedAlAjmi from '../../../../assets/reciters/webp/ahmed_alajmi.webp';
 import bandarBalila from '../../../../assets/reciters/webp/bandar_balila.webp';
-import faresAbbad from '../../../../assets/reciters/webp/fares_abbad.webp';
 import haniArRifai from '../../../../assets/reciters/webp/hani_arrifai.webp';
 import houdaifi from '../../../../assets/reciters/webp/houdaifi.webp';
-import khalidAlQahtani from '../../../../assets/reciters/webp/khalid_alqahtani.webp';
 import maherAlMuaiqly from '../../../../assets/reciters/webp/maher_almuaiqly.webp';
 import mahmoudAlHusary from '../../../../assets/reciters/webp/mahmoud_alhusary.webp';
 import misharyAlAfasy from '../../../../assets/reciters/webp/mishary_alafasy.webp';
@@ -51,8 +49,10 @@ export function getReciterImage(id: number, name = '') {
 
   if (RECITER_IMAGES[id]) return RECITER_IMAGES[id];
   if (normalized.includes('mishary') || normalized.includes('afasy') || normalized.includes('alafasi')) return misharyAlAfasy;
-  if (normalized.includes('khalifahaltunaiji') || normalized.includes('khalifaaltunaiji') || normalized.includes('tunaiji')) return khalidAlQahtani;
-  if (normalized.includes('abdullahhamadabusharida') || normalized.includes('abdullahhammadabusharida') || normalized.includes('abusharida') || normalized.includes('abushareeda') || normalized.includes('abushuraida')) return faresAbbad;
+  // No photo yet for Khalifah Al Tunaiji and Abdullah Hamad Abu Sharida: the neutral microphone is shown
+  // rather than another reciter's face.
+  if (normalized.includes('khalifahaltunaiji') || normalized.includes('khalifaaltunaiji') || normalized.includes('tunaiji')) return undefined;
+  if (normalized.includes('abdullahhamadabusharida') || normalized.includes('abdullahhammadabusharida') || normalized.includes('abusharida') || normalized.includes('abushareeda') || normalized.includes('abushuraida')) return undefined;
   if (normalized.includes('alijab') || normalized.includes('abdullahalijab')) return aliJaber;
   if (normalized.includes('minshawi') || normalized.includes('menshawi')) return muhammadSiddiqAlMinshawi;
   if (normalized.includes('hudaify') || normalized.includes('hudaifi') || normalized.includes('houdaifi') || normalized.includes('hudhaify')) return houdaifi;
