@@ -13,11 +13,11 @@ import { CHECKLIST_TOTAL } from "../features/pilgrimage/pilgrimageChecklist";
 import { usePilgrimageState } from "../features/pilgrimage/pilgrimageStorage";
 import type { Rite } from "../features/pilgrimage/pilgrimageTypes";
 
-// Covers: Wikimedia Commons photos in the public domain (CC0), cropped to the card format.
-// « Kaaba at night in 2024 » and « Mount Arafat (Jabal ar-Rahmah) ».
-const UMRAH_COVER = require("../assets/images/pilgrimage/umrah-cover.jpg");
-
-const HAJJ_COVER = require("../assets/images/pilgrimage/hajj-cover.jpg");
+/** Book covers, cropped to the card (1.18:1); a credit is shown when the image licence asks for one. */
+const COVERS: Record<Rite, { image: number; credit: string | null }> = {
+  umrah: { image: require("../assets/images/pilgrimage/umrah-cover.jpg"), credit: null },
+  hajj: { image: require("../assets/images/pilgrimage/hajj-cover.jpg"), credit: null },
+};
 
 /** Virtues of the pilgrimage, one shown at a time. */
 const VIRTUES = [
@@ -126,9 +126,10 @@ export default function PilgrimageHome() {
                 style={({ pressed }) => [styles.cover, pressed && styles.pressed]}
               >
                 <View style={styles.coverImage}>
-                  <Image source={rite === "umrah" ? UMRAH_COVER : HAJJ_COVER} resizeMode="cover" style={StyleSheet.absoluteFill} />
-                  <LinearGradient colors={["rgba(12,10,18,0)", "rgba(12,10,18,0.1)", "rgba(12,10,18,0.93)"]} locations={[0, 0.48, 1]} style={StyleSheet.absoluteFill} />
-                  <View style={styles.coverSpine} />
+                  <Image source={COVERS[rite].image} resizeMode="cover" style={StyleSheet.absoluteFill} />
+                  <LinearGradient colors={["rgba(12,10,18,0.35)", "rgba(12,10,18,0)", "rgba(12,10,18,0)", "rgba(12,10,18,0.96)"]} locations={[0, 0.2, 0.52, 1]} style={StyleSheet.absoluteFill} />
+                  <View pointerEvents="none" style={styles.coverFrame} />
+                  {COVERS[rite].credit ? <Text style={styles.coverCredit}>{COVERS[rite].credit}</Text> : null}
                   <View style={styles.coverContent}>
                     <Text style={styles.coverArabic}>{book.arabic}</Text>
                     <Text style={styles.coverTitle}>{book.title}</Text>
@@ -208,10 +209,11 @@ const styles = StyleSheet.create({
   back: { position: "absolute", left: 16, width: 44, height: 44, alignItems: "center", justifyContent: "center", borderRadius: 22, backgroundColor: "rgba(33,27,44,0.9)" },
   body: { paddingHorizontal: 18 },
   section: { marginTop: 26, marginBottom: 12, color: pil.text, fontSize: 28, ...pilType.display },
-  cover: { height: 250, marginBottom: 14, overflow: "hidden", borderRadius: 26, borderWidth: 1, borderColor: pil.goldLine },
+  cover: { aspectRatio: 1.18, marginBottom: 16, overflow: "hidden", borderRadius: 28, backgroundColor: pil.surface, shadowColor: "#000", shadowOpacity: 0.45, shadowRadius: 18, shadowOffset: { width: 0, height: 10 }, elevation: 8 },
   coverImage: { flex: 1 },
-  coverSpine: { position: "absolute", left: 0, top: 0, bottom: 0, width: 7, backgroundColor: pil.gold, opacity: 0.85 },
-  coverContent: { flex: 1, justifyContent: "flex-end", padding: 18, paddingLeft: 24 },
+  coverFrame: { position: "absolute", top: 9, right: 9, bottom: 9, left: 9, borderRadius: 21, borderWidth: 1, borderColor: "rgba(232,187,98,0.55)" },
+  coverCredit: { position: "absolute", top: 18, right: 20, color: "rgba(255,255,255,0.72)", fontSize: 10, fontWeight: "600", textShadowColor: "rgba(0,0,0,0.7)", textShadowRadius: 4, ...pilType.sans },
+  coverContent: { flex: 1, justifyContent: "flex-end", padding: 24 },
   coverArabic: { color: pil.gold, fontSize: 26, textShadowColor: "rgba(0,0,0,0.6)", textShadowRadius: 8, ...pilType.arabic },
   coverTitle: { color: pil.text, fontSize: 38, lineHeight: 42, textShadowColor: "rgba(0,0,0,0.6)", textShadowRadius: 8, ...pilType.display },
   coverMeta: { marginTop: 2, color: pil.text, fontSize: 14.5, fontWeight: "600", ...pilType.sans },
