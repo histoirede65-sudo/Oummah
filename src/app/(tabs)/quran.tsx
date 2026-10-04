@@ -236,7 +236,7 @@ export default function QuranScreen() {
         progress={
           lastReading
             ? Math.round(
-                (lastReading.verseNumber / (lastReadingSurah?.verses || 1)) *
+                (Math.max(0, lastReading.verseNumber - 1) / (lastReadingSurah?.verses || 1)) *
                   100,
               )
             : 0
