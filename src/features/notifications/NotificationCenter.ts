@@ -1,6 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Notifications from "expo-notifications";
-import { Platform } from "react-native";
 
 import type { HifzState } from "../hifz/HifzStore";
 import type {
@@ -10,6 +9,7 @@ import type {
 import { isGoalComplete } from "../daily-goals/domain/DailyGoal";
 import { goalRepository } from "../daily-goals/data/goalRepository";
 import { goalProgressBridge } from "../daily-goals/services/goalProgressBridge";
+import { alertSound, ensureReminderChannel, reminderChannelId, VIBRATION_PATTERN } from "./notificationChannels";
 import { isNotificationPermissionGranted } from "./NotificationPermissions";
 
 export type CenterReminderId =
@@ -513,18 +513,8 @@ export function buildNotificationCenterItems({
   return items;
 }
 
-async function configureChannel(mode: CenterAlertMode) {
-  if (Platform.OS !== "android") return;
-  await Notifications.setNotificationChannelAsync(`oummah-reminders-${mode}-v3`, {
-    name: "Rappels OUMMAH",
-    importance:
-      mode === "silent"
-        ? Notifications.AndroidImportance.DEFAULT
-        : Notifications.AndroidImportance.HIGH,
-    sound: mode === "sound" ? "default" : undefined,
-    vibrationPattern: mode === "vibration" ? [0, 300, 180, 300] : [],
-    lightColor: "#F2B53D",
-  });
+function configureChannel(mode: CenterAlertMode) {
+  return ensureReminderChannel(mode);
 }
 
 export async function requestNotificationCenterPermission(mode: CenterAlertMode) {
@@ -573,8 +563,8 @@ function notificationContent(
     title,
     body,
     data: { route, reminderId, notificationOwner: NOTIFICATION_OWNER, notificationMode: mode },
-    sound: mode === "sound" ? "default" : false,
-    vibrate: mode === "vibration" ? [0, 300, 180, 300] : [],
+    sound: alertSound(mode),
+    vibrate: mode === "silent" ? [] : VIBRATION_PATTERN,
     color: "#F2B53D",
   };
 }
@@ -653,14 +643,14 @@ async function syncDailyGoalsReminderInternal(preferences: NotificationCenterPre
         notificationMode: preferences.mode,
         dateKey: localDateKey(fireAt),
       },
-      sound: preferences.mode === "sound" ? "default" : false,
-      vibrate: preferences.mode === "vibration" ? [0, 300, 180, 300] : [],
+      sound: alertSound(preferences.mode),
+      vibrate: preferences.mode === "silent" ? [] : VIBRATION_PATTERN,
       color: "#F2B53D",
     },
     trigger: {
       type: Notifications.SchedulableTriggerInputTypes.DATE,
       date: fireAt,
-      channelId: `oummah-reminders-${preferences.mode}-v3`,
+      channelId: reminderChannelId(preferences.mode),
     },
   });
   await AsyncStorage.setItem(DAILY_GOALS_SCHEDULED_KEY, JSON.stringify([id]));
@@ -688,7 +678,7 @@ async function syncNotificationCenterScheduleInternal(
   const permission = await Notifications.getPermissionsAsync();
   if (!isNotificationPermissionGranted(permission)) return;
   await configureChannel(preferences.mode);
-  const channelId = `oummah-reminders-${preferences.mode}-v3`;
+  const channelId = reminderChannelId(preferences.mode);
   const ids: string[] = [];
 
   for (const reminder of CENTER_REMINDERS) {

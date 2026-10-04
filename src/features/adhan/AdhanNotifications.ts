@@ -10,6 +10,7 @@ import type {
 } from "../mosques/data/mosquePrayerTimes";
 import { getNearbyMosques, type NearbyMosque } from "../mosques/data/nearbyMosques";
 import { getMainMosque } from "../mosques/data/mosquePreferences";
+import { SILENT_VIBRATION_SOUND } from "../notifications/notificationChannels";
 import { loadAdhanPreferences, type AdhanAlertMode, type AdhanPreferences, type AdhanVoice } from "./AdhanPreferences";
 
 const SCHEDULED_IDS_KEY = "oumma:adhan-notification-ids:v1";
@@ -18,6 +19,13 @@ const PRAYER_NOTIFICATION_PREFIX = "prayer:";
 const IS_EXPO_GO = Constants.appOwnership === AppOwnership.Expo;
 export const ADHAN_NOTIFICATION_CATEGORY = "adhan_control";
 export const STOP_ADHAN_ACTION = "stop_adhan";
+const RENEWAL_NOTIFICATION_KEY = "adhan:renewal";
+/**
+ * iOS keeps at most 64 pending notifications for the whole app (adhan, Qiyam, mosque, reminders…).
+ * The adhan keeps the lion's share; the others are capped on iOS too (see tahajjudService,
+ * mosqueReminders).
+ */
+const IOS_MAX_ADHAN_NOTIFICATIONS = 30;
 
 function normalizedNotificationText(value: unknown) {
   return typeof value === "string" ? value.toLocaleLowerCase("fr-FR") : "";
@@ -157,6 +165,8 @@ Notifications.setNotificationHandler({
       mode === "adhan" ||
       mode === "notification" ||
       mode === "sound" ||
+      // Vibration mode plays a silent file on iOS: that is what makes the phone vibrate.
+      mode === "vibration" ||
       mode === undefined,
     shouldSetBadge: false,
     };
@@ -204,18 +214,20 @@ async function configureAndroidChannels() {
       vibrationPattern: [0, 280, 160, 280],
       lightColor: "#F2B53D",
     }),
-    Notifications.setNotificationChannelAsync("adhan-vibration-v3", {
-      name: "Adhan avec vibration",
+    // `sound: null` is required: without it Android gives the channel the default ringtone.
+    Notifications.setNotificationChannelAsync("adhan-vibration-v4", {
+      name: "Adhan · vibreur",
       importance: Notifications.AndroidImportance.HIGH,
-      sound: undefined,
+      sound: null,
       vibrationPattern: [0, 350, 180, 350],
+      enableVibrate: true,
       lightColor: "#F2B53D",
     }),
-    Notifications.setNotificationChannelAsync("adhan-silent-v3", {
-      name: "Adhan silencieux",
+    Notifications.setNotificationChannelAsync("adhan-silent-v4", {
+      name: "Adhan · silencieux",
       importance: Notifications.AndroidImportance.DEFAULT,
-      sound: undefined,
-      vibrationPattern: [],
+      sound: null,
+      enableVibrate: false,
       lightColor: "#F2B53D",
     }),
   ]);
@@ -282,12 +294,14 @@ async function cancelAdhanNotifications() {
 
 function channelIdFor(mode: AdhanAlertMode, voice: AdhanVoice) {
   if (IS_EXPO_GO && mode === "adhan") return "adhan-notification-v3";
-  return mode === "adhan" ? `adhan-sound-${voice}-v5` : mode === "notification" ? "adhan-notification-v3" : `adhan-${mode}-v3`;
+  return mode === "adhan" ? `adhan-sound-${voice}-v5` : mode === "notification" ? "adhan-notification-v3" : `adhan-${mode}-v4`;
 }
 
 function adhanSoundFor(mode: AdhanAlertMode, voice: AdhanVoice) {
   if (mode === "adhan") return `adhan_${voice}_notification.wav`;
   if (mode === "notification") return "default";
+  // iOS only vibrates when a sound plays: a silent file gives a vibration without sound.
+  if (mode === "vibration" && Platform.OS === "ios") return SILENT_VIBRATION_SOUND;
   return false;
 }
 
@@ -304,7 +318,7 @@ export async function getAdhanNotificationDiagnostics() {
     .filter(isAdhanScheduledNotification)
     .filter((notification) => {
       const data = notification.content.data as Record<string, unknown> | undefined;
-      return data?.notificationTest !== true;
+      return data?.notificationTest !== true && data?.notificationKey !== RENEWAL_NOTIFICATION_KEY;
     })
     .map((notification) => {
       const data = notification.content.data as Record<string, unknown> | undefined;
@@ -441,6 +455,7 @@ function contentFor(
       notificationVoice: preferences.voice,
       notificationSound: requestedSound,
       notificationRuntimeSound: runtimeSound,
+      notificationChannel: channelIdFor(preferences.mode, preferences.voice),
       ...(isTest ? { notificationTest: true } : {}),
       hadithText: hadith.text,
       hadithReference: hadith.reference,
@@ -457,6 +472,38 @@ function contentFor(
     sound: runtimeSound,
     vibrate: preferences.mode === "vibration" ? [0, 350, 180, 350] : [],
     color: "#F2B53D",
+    // Breaks through Focus / Do Not Disturb when the user allows OUMMAH's time-sensitive alerts.
+    interruptionLevel: preferences.mode === "silent" ? "passive" as const : "timeSensitive" as const,
+  };
+}
+
+/**
+ * Last line of defence: prayer alerts are scheduled a few days ahead and renewed each time the app
+ * opens. If it stays closed, this asks to open it a day before the last scheduled alert.
+ */
+function renewalRequest(lastAlertAt: number, preferences: AdhanPreferences): Notifications.NotificationRequestInput | null {
+  const fireAt = new Date(lastAlertAt - 24 * 60 * 60_000);
+  if (fireAt.getHours() < 9) fireAt.setHours(9, 0, 0, 0);
+  if (fireAt.getTime() <= Date.now() + 60 * 60_000 || fireAt.getTime() >= lastAlertAt) return null;
+  const mode = preferences.mode === "adhan" ? "notification" : preferences.mode;
+  return {
+    content: {
+      title: "Gardez vos alertes de prière",
+      body: "Ouvrez OUMMAH pour programmer les alertes des prochains jours.",
+      data: {
+        route: "/",
+        notificationOwner: NOTIFICATION_OWNER,
+        notificationKey: RENEWAL_NOTIFICATION_KEY,
+        notificationMode: preferences.mode,
+      },
+      sound: adhanSoundFor(mode, preferences.voice),
+      color: "#F2B53D",
+    },
+    trigger: {
+      type: Notifications.SchedulableTriggerInputTypes.DATE,
+      date: fireAt,
+      channelId: channelIdFor(mode, preferences.voice),
+    },
   };
 }
 
@@ -522,16 +569,26 @@ async function syncAdhanNotificationsInternal(
   ]);
 
   const leadMilliseconds = preferences.leadMinutes * 60 * 1_000;
+  const seenKeys = new Set<string>();
   const prayers = [
     ...schedule.prayers,
     ...schedule.tomorrowPrayers,
     ...(schedule.futurePrayers ?? []).filter(
       (prayer) => prayer.timestamp !== schedule.tomorrowFajr.timestamp
     ),
-  ].filter(
-    (prayer) =>
-      preferences.prayers[prayer.key] && prayer.timestamp - leadMilliseconds > Date.now(),
-  );
+  ]
+    .filter(
+      (prayer) =>
+        preferences.prayers[prayer.key] && prayer.timestamp - leadMilliseconds > Date.now(),
+    )
+    .sort((left, right) => left.timestamp - right.timestamp)
+    .filter((prayer) => {
+      const key = prayerNotificationKey(prayer);
+      if (seenKeys.has(key)) return false;
+      seenKeys.add(key);
+      return true;
+    })
+    .slice(0, Platform.OS === "ios" ? IOS_MAX_ADHAN_NOTIFICATIONS : undefined);
 
   const scheduled = await Notifications.getAllScheduledNotificationsAsync().catch(() => []);
   const existingPrayerNotifications = scheduled.filter(isAdhanScheduledNotification);
@@ -553,6 +610,7 @@ async function syncAdhanNotificationsInternal(
       data?.notificationMode === preferences.mode &&
       data?.notificationVoice === preferences.voice &&
       data?.notificationSound === adhanSoundFor(preferences.mode, preferences.voice) &&
+      data?.notificationChannel === channelIdFor(preferences.mode, preferences.voice) &&
       (typeof data?.mosqueId === "string" ? data.mosqueId : null) === (nearbyMosque?.id ?? null),
     );
 
@@ -584,9 +642,15 @@ async function syncAdhanNotificationsInternal(
       ),
   );
 
+  const lastAlertAt = prayers.length ? prayers[prayers.length - 1].timestamp - leadMilliseconds : null;
+  const renewal = lastAlertAt === null ? null : renewalRequest(lastAlertAt, preferences);
+  const renewalId = renewal
+    ? await Notifications.scheduleNotificationAsync(renewal).catch(() => null)
+    : null;
+
   await AsyncStorage.setItem(
     SCHEDULED_IDS_KEY,
-    JSON.stringify([...retainedNotificationIds, ...ids]),
+    JSON.stringify([...retainedNotificationIds, ...ids, ...(renewalId ? [renewalId] : [])]),
   );
 }
 

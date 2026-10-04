@@ -11,6 +11,9 @@
                  "ios":  {
                              "bundleIdentifier":  "com.oummah.app",
                              "supportsTablet":  true,
+                             "entitlements":  {
+                                                  "com.apple.developer.usernotifications.time-sensitive":  true
+                                              },
                              "infoPlist":  {
                                                "UIViewControllerBasedStatusBarAppearance":  true,
                                                "ITSAppUsesNonExemptEncryption":  false
@@ -27,11 +30,8 @@
                                                      "android.permission.MODIFY_AUDIO_SETTINGS",
                                                      "android.permission.FOREGROUND_SERVICE",
                                                      "android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK",
-                                                     "SCHEDULE_EXACT_ALARM",
-                                                     "android.permission.RECORD_AUDIO",
-                                                     "android.permission.MODIFY_AUDIO_SETTINGS",
-                                                     "android.permission.FOREGROUND_SERVICE",
-                                                     "android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK"
+                                                     "android.permission.RECEIVE_BOOT_COMPLETED",
+                                                     "android.permission.POST_NOTIFICATIONS"
                                                  ],
                                  "adaptiveIcon":  {
                                                       "foregroundImage":  "./assets/images/adaptive-icon.png",
@@ -62,7 +62,8 @@
                                                         "./assets/adhan/adhan_madinah_notification.wav",
                                                         "./assets/adhan/adhan_egypt_notification.wav",
                                                         "./assets/adhan/adhan_birds_notification.wav",
-                                                        "./assets/sounds/oummah_message.wav"
+                                                        "./assets/sounds/oummah_message.wav",
+                                                        "./assets/sounds/oummah_vibrate.wav"
                                                     ]
                                      }
                                  ],

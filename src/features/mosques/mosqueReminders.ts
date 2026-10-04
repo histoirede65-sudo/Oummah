@@ -38,6 +38,7 @@ const DAYS_AHEAD = 3;
 const EVENT_LEAD_MS = 2 * 60 * 60_000;
 const ARRIVAL_MARGIN_MIN = 5;
 const MAX_NOTIFICATIONS = 40;
+const IOS_MAX_NOTIFICATIONS = 6;
 
 const PRAYER_LABELS: Record<ReminderPrayer, string> = {
   fajr: 'Fajr', dhuhr: 'Dhuhr', asr: 'Asr', maghrib: 'Maghrib', isha: 'Isha', jumuah: 'Joumou’a',
@@ -279,7 +280,8 @@ export function refreshMosqueReminders(force = false): Promise<void> {
       const planned = (await Promise.all(all.map((settings) => plannedForMosque(settings, origin).catch(() => []))))
         .flat()
         .sort((a, b) => a.at - b.at)
-        .slice(0, MAX_NOTIFICATIONS);
+        // iOS keeps only 64 pending notifications for the whole app: the adhan comes first.
+        .slice(0, Platform.OS === 'ios' ? IOS_MAX_NOTIFICATIONS : MAX_NOTIFICATIONS);
 
       for (const item of planned) {
         await Notifications.scheduleNotificationAsync({

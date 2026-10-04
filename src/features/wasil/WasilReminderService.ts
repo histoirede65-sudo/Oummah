@@ -6,6 +6,7 @@ import {
   requestNotificationCenterPermission,
   type CenterAlertMode,
 } from "../notifications/NotificationCenter";
+import { alertSound, ensureReminderChannel, reminderChannelId, VIBRATION_PATTERN } from "../notifications/notificationChannels";
 import { resolveWasilFreeAction } from "./WasilActionRouter";
 import type { WasilReply } from "./WasilLocalResponder";
 
@@ -333,9 +334,9 @@ function notificationContent(
   return {
     title: "Wasil · Votre rappel",
     body: request.subject,
-    data: { route: request.route, source: "wasil" },
-    sound: mode === "sound" ? "default" : false,
-    vibrate: mode === "vibration" ? [0, 300, 180, 300] : [],
+    data: { route: request.route, source: "wasil", notificationMode: mode, notificationChannel: reminderChannelId(mode) },
+    sound: alertSound(mode),
+    vibrate: mode === "silent" ? [] : VIBRATION_PATTERN,
     color: "#F2B53D",
   };
 }
@@ -344,7 +345,7 @@ function notificationTrigger(
   request: WasilReminderRequest,
   mode: CenterAlertMode,
 ): Notifications.NotificationTriggerInput {
-  const channelId = `oummah-reminders-${mode}-v3`;
+  const channelId = reminderChannelId(mode);
   if (request.frequency === "daily") {
     return {
       type: Notifications.SchedulableTriggerInputTypes.DAILY,
@@ -379,6 +380,49 @@ async function scheduleNativeReminder(
     content: notificationContent(request, mode),
     trigger: notificationTrigger(request, mode),
   });
+}
+
+/**
+ * Re-creates the reminders scheduled with another alert mode or on an old channel (the -v3
+ * channels rang even in vibration / silent mode). Called at launch and when the mode changes.
+ */
+export async function resyncWasilReminders(mode?: CenterAlertMode) {
+  const stored = await loadActiveReminders();
+  if (!stored.length) return;
+  const nextMode = mode ?? (await loadNotificationCenterPreferences()).mode;
+  const expectedChannel = reminderChannelId(nextMode);
+  const scheduled = new Map(
+    (await Notifications.getAllScheduledNotificationsAsync().catch(() => []))
+      .map((item) => [item.identifier, item] as const),
+  );
+  let changed = false;
+  const updated: StoredWasilReminder[] = [];
+  for (const reminder of stored) {
+    const current = scheduled.get(reminder.notificationId);
+    const data = current?.content.data as Record<string, unknown> | undefined;
+    if (!current || (data?.notificationMode === nextMode && data?.notificationChannel === expectedChannel)) {
+      updated.push(reminder);
+      continue;
+    }
+    await ensureReminderChannel(nextMode);
+    const notificationId = await scheduleNativeReminder({
+      subject: reminder.subject,
+      route: reminder.route,
+      frequency: reminder.frequency,
+      hour: reminder.hour,
+      minute: reminder.minute,
+      weekday: reminder.weekday,
+      scheduledAt: reminder.scheduledAt ? new Date(reminder.scheduledAt) : undefined,
+    }, nextMode).catch(() => null);
+    if (!notificationId) {
+      updated.push(reminder);
+      continue;
+    }
+    await Notifications.cancelScheduledNotificationAsync(reminder.notificationId).catch(() => undefined);
+    updated.push({ ...reminder, notificationId });
+    changed = true;
+  }
+  if (changed) await storageService.set(STORAGE_KEY, updated);
 }
 
 async function loadStoredReminders() {

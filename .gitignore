@@ -66,3 +66,4 @@ modules/*/android/build/
 # Caches de données régénérables, trop lourds pour GitHub (> 100 Mo)
 /scripts/output/openfoodtox/
 /scripts/output/jecfa-source-cache*.json
+/modules/*/android/.gradle/

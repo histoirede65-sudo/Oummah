@@ -6,6 +6,8 @@ import { router, useFocusEffect } from "expo-router";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   Alert,
+  AppState,
+  Linking,
   Modal,
   Pressable,
   ScrollView,
@@ -51,6 +53,13 @@ import {
   type NotificationCenterItem,
   type NotificationCenterPreferences,
 } from "../features/notifications/NotificationCenter";
+import {
+  getNotificationReliability,
+  openBatteryOptimizationSettings,
+  openExactAlarmSettings,
+  type NotificationReliability,
+} from "../features/notifications/notificationReliability";
+import { resyncWasilReminders } from "../features/wasil/WasilReminderService";
 import { colors } from "../theme/colors";
 import { getActiveAnnouncements, type PublicAnnouncement } from "../features/announcements/AnnouncementService";
 import { typography } from "../theme/typography";
@@ -119,6 +128,22 @@ export default function NotificationsScreen() {
   const [timePickerReminder, setTimePickerReminder] = useState<CenterReminderId | null>(null);
   const [timePickerHour, setTimePickerHour] = useState(0);
   const [timePickerMinute, setTimePickerMinute] = useState(0);
+  const [reliability, setReliability] = useState<NotificationReliability | null>(null);
+
+  const refreshReliability = useCallback(() => {
+    void getNotificationReliability().then(setReliability).catch(() => undefined);
+  }, []);
+
+  useFocusEffect(refreshReliability);
+
+  useEffect(() => {
+    // Back from the phone settings: show the new state.
+    const subscription = AppState.addEventListener("change", (state) => {
+      if (state === "active") refreshReliability();
+    });
+    return () => subscription.remove();
+  }, [refreshReliability]);
+
   useEffect(() => {
     let active = true;
     const unsubscribe = subscribeNotificationReadStatus(() => {
@@ -260,6 +285,7 @@ export default function NotificationsScreen() {
       ]);
       await syncNotificationCenterSchedule(preferences, schedule, mosque?.name, hifzState);
       if (schedule) await syncAdhanNotifications(schedule, adhanPreferences);
+      await resyncWasilReminders(preferences.mode).catch(() => undefined);
       setSavedPreferences(preferences);
       setSavedAdhanPreferences(adhanPreferences);
     } finally {
@@ -353,6 +379,42 @@ export default function NotificationsScreen() {
             </Pressable>
           ) : null}
         </View>
+
+        {reliability && (!reliability.exactAlarms || !reliability.batteryUnrestricted || !reliability.soundAllowed) ? (
+          <View style={styles.reliabilityCard}>
+            <View style={styles.reliabilityHead}>
+              <Ionicons name="alarm-outline" size={19} color="#F4C75E" />
+              <Text style={styles.reliabilityTitle}>Recevoir chaque alerte à l’heure</Text>
+            </View>
+            {!reliability.exactAlarms ? (
+              <Pressable onPress={() => void openExactAlarmSettings()} style={({ pressed }) => [styles.reliabilityRow, pressed && styles.pressed]}>
+                <View style={styles.reliabilityCopy}>
+                  <Text style={styles.reliabilityLabel}>Autoriser « Alarmes et rappels »</Text>
+                  <Text style={styles.reliabilityText}>Sans cette autorisation, Android peut retarder l’adhan de plusieurs minutes quand le téléphone est en veille.</Text>
+                </View>
+                <Ionicons name="chevron-forward" size={16} color="#F4C75E" />
+              </Pressable>
+            ) : null}
+            {!reliability.batteryUnrestricted ? (
+              <Pressable onPress={() => void openBatteryOptimizationSettings()} style={({ pressed }) => [styles.reliabilityRow, pressed && styles.pressed]}>
+                <View style={styles.reliabilityCopy}>
+                  <Text style={styles.reliabilityLabel}>Retirer OUMMAH de l’optimisation de batterie</Text>
+                  <Text style={styles.reliabilityText}>Certains téléphones (Samsung, Xiaomi, Huawei…) bloquent les alertes des applications « optimisées ». Choisissez OUMMAH puis « Ne pas optimiser » ou « Aucune restriction ».</Text>
+                </View>
+                <Ionicons name="chevron-forward" size={16} color="#F4C75E" />
+              </Pressable>
+            ) : null}
+            {!reliability.soundAllowed ? (
+              <Pressable onPress={() => void Linking.openSettings().catch(() => undefined)} style={({ pressed }) => [styles.reliabilityRow, pressed && styles.pressed]}>
+                <View style={styles.reliabilityCopy}>
+                  <Text style={styles.reliabilityLabel}>Activer les sons d’OUMMAH</Text>
+                  <Text style={styles.reliabilityText}>Les sons des notifications sont coupés pour OUMMAH dans les réglages de l’iPhone : l’adhan et la vibration ne peuvent pas se déclencher.</Text>
+                </View>
+                <Ionicons name="chevron-forward" size={16} color="#F4C75E" />
+              </Pressable>
+            ) : null}
+          </View>
+        ) : null}
 
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.filters}>
           {FILTERS.map((item) => (
@@ -470,7 +532,8 @@ export default function NotificationsScreen() {
                       updatePreferences((current) => ({ ...current, mode: mode.id }));
                       setAdhanPreferences((current) => ({
                         ...current,
-                        mode: mode.id === "sound" ? "notification" : mode.id,
+                        // « Son » keeps the chosen adhan voice when the adhan was already selected.
+                        mode: mode.id === "sound" ? (current.mode === "adhan" ? "adhan" : "notification") : mode.id,
                       }));
                     }}
                     style={[styles.modeChoice, preferences.mode === mode.id && styles.choiceActive]}
@@ -669,6 +732,13 @@ const styles = StyleSheet.create({
   summaryCopy: { flex: 1, marginHorizontal: 11 },
   summaryTitle: { color: "#FFF8EF", fontFamily: typography.serifSemibold, fontSize: 16 },
   summaryText: { marginTop: 2, color: "rgba(235,225,232,0.58)", fontFamily: typography.sans, fontSize: 10.5, lineHeight: 14 },
+  reliabilityCard: { marginTop: 12, padding: 13, borderRadius: 20, borderWidth: 1, borderColor: "rgba(242,190,85,0.42)", backgroundColor: "rgba(65,43,31,0.93)" },
+  reliabilityHead: { flexDirection: "row", alignItems: "center", gap: 8 },
+  reliabilityTitle: { flex: 1, color: "#FFF8EF", fontFamily: typography.serifSemibold, fontSize: 15.5 },
+  reliabilityRow: { marginTop: 10, padding: 11, flexDirection: "row", alignItems: "center", gap: 8, borderRadius: 14, backgroundColor: "rgba(255,255,255,0.06)" },
+  reliabilityCopy: { flex: 1 },
+  reliabilityLabel: { color: "#FFE4A0", fontFamily: typography.sans, fontSize: 12.5, fontWeight: "800" },
+  reliabilityText: { marginTop: 3, color: "rgba(255,245,235,0.78)", fontFamily: typography.sans, fontSize: 10.5, lineHeight: 15 },
   readAllButton: { width: 36, height: 36, alignItems: "center", justifyContent: "center", borderRadius: 18, backgroundColor: "rgba(242,190,85,0.10)" },
   filters: { gap: 7, paddingVertical: 15 },
   filter: { height: 34, paddingHorizontal: 13, alignItems: "center", justifyContent: "center", borderRadius: 17, borderWidth: 1, borderColor: "rgba(255,255,255,0.08)", backgroundColor: "rgba(255,255,255,0.03)" },

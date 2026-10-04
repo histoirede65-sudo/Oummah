@@ -18,6 +18,7 @@ import { ProphetAudioProvider } from '../features/prophets/audio/ProphetAudioPro
 import ProphetAudioMiniPlayer from '../features/prophets/audio/ProphetAudioMiniPlayer';
 import { I18nProvider } from '../i18n/I18nProvider';
 import { syncPushRegistration } from '../features/notifications/PushRegistrationService';
+import { ensureAppNotificationChannels } from '../features/notifications/notificationChannels';
 import { isNotificationPermissionGranted } from '../features/notifications/NotificationPermissions';
 import { loadNotificationCenterPreferences, notificationResponseReadId, requestNotificationCenterPermission, saveNotificationCenterPreferences, saveReadNotificationIds, syncNotificationCenterSchedule, verseOfDayRoute } from '../features/notifications/NotificationCenter';
 import { syncJumuahNotification } from '../features/jumuah/JumuahService';
@@ -571,6 +572,10 @@ export default function RootLayout() {
     const interactionTask = InteractionManager.runAfterInteractions(() => {
       if (cancelled) return;
 
+      // Canaux Android visés par les push (support, mosquée, messages…) + suppression des anciens
+      // canaux « vibreur » / « silencieux » qui sonnaient quand même.
+      void ensureAppNotificationChannels();
+
       // Analytics : léger, mais non bloquant pour le premier rendu.
       timers.push(
         setTimeout(() => {
@@ -655,6 +660,16 @@ export default function RootLayout() {
             })
             .catch(() => undefined);
         }, 1600),
+      );
+
+      // Rappels Wasil créés avec un autre mode d'alerte ou sur un ancien canal.
+      timers.push(
+        setTimeout(() => {
+          if (cancelled) return;
+          void import('../features/wasil/WasilReminderService')
+            .then(({ resyncWasilReminders }) => resyncWasilReminders())
+            .catch(() => undefined);
+        }, 2400),
       );
     });
 

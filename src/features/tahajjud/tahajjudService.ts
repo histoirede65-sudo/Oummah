@@ -63,6 +63,8 @@ export async function setSystemAlarm(timestamp: number): Promise<boolean> {
 const OWNER = 'oummah-tahajjud';
 const CHANNEL = 'oummah-tahajjud-v1';
 const NIGHTS_AHEAD = 7;
+/** iOS keeps only 64 pending notifications for the whole app: the adhan comes first. */
+const IOS_NOTIFIED_NIGHTS = 2;
 const REFRESHED_AT_KEY = 'oummah.tahajjud.notifications.refreshed-at.v1';
 const REFRESH_INTERVAL_MS = 3 * 60 * 60_000;
 
@@ -180,7 +182,7 @@ export function refreshTahajjudNotifications(force = false): Promise<void> {
       const nights = await loadTahajjudNights();
       const now = Date.now();
       const planned = upcomingNights(schedule)
-        .slice(0, NIGHTS_AHEAD)
+        .slice(0, Platform.OS === 'ios' ? IOS_NOTIFIED_NIGHTS : NIGHTS_AHEAD)
         // A validated night needs no more reminders.
         .flatMap((night) => nights[night.key] ? [] : planNight(night, settings))
         .filter((item) => item.at > now + 30_000)

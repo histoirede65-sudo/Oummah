@@ -4,7 +4,7 @@ import { Platform } from "react-native";
 
 import { getValidSession } from "../auth/SupabaseAuthService";
 import { getPremiumAccess } from "../premium/PremiumAccessService";
-import { ensureCommunityChannels } from "../tahajjud/communityChannels";
+import { ensureAppNotificationChannels } from "./notificationChannels";
 import { isNotificationPermissionGranted } from "./NotificationPermissions";
 
 function configuration() {
@@ -30,16 +30,7 @@ function projectId() {
 }
 
 async function ensureAndroidChannel() {
-  if (Platform.OS !== "android") return;
-
-  await Notifications.setNotificationChannelAsync("oummah-admin-v2", {
-    name: "Communications OUMMAH",
-    importance: Notifications.AndroidImportance.HIGH,
-    sound: "default",
-    vibrationPattern: [0, 250, 140, 250],
-    lightColor: "#F1BC4F",
-  });
-  await ensureCommunityChannels();
+  await ensureAppNotificationChannels();
 }
 
 export async function syncPushRegistration() {
