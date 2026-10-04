@@ -804,7 +804,7 @@ export const fr = {
   'goalsOnboarding.no': 'Non',
   'goalsOnboarding.loadFailed': 'L’onboarding n’a pas pu être chargé. Réessaie.',
   'goalsOnboarding.creationFailed': 'La création de ton programme a échoué. Réessaie.',
-  'goalsOnboarding.chooseAnswer': 'Choisis une réponse pour continuer.',
+  'goalsOnboarding.chooseAnswer': 'Choisissez une réponse pour continuer.',
   'goalsOnboarding.welcome': 'BIENVENUE DANS OUMMAH',
   'goalsOnboarding.whichGoals': 'Quels objectifs souhaites-tu travailler ?',
   'goalsOnboarding.multipleChoices': 'Tu peux en choisir plusieurs.',

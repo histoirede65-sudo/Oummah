@@ -67,6 +67,7 @@
     "eslint-plugin-react-compiler": "^19.1.0-rc.2",
     "patch-package": "^8.0.1",
     "typescript": "~6.0.3",
-    "ws": "^8.21.3"
+    "ws": "^8.21.3",
+    "zod-validation-error": "^4.0.2"
   }
 }
