@@ -757,17 +757,12 @@ function enforceExplicitHadithSourceIds(input: {
 }): boolean {
   if (!requestedDocumentaryCorpora(input.question).hadith) return true;
   const verified = new Set(input.verifiedHadithSourceIds);
-  const selectedHadith = input.parsedSourceIds.filter((id) => verified.has(id));
-  if (selectedHadith.length > 0) {
-    input.parsedSourceIds.splice(
-      0,
-      input.parsedSourceIds.length,
-      ...selectedHadith,
-    );
-    return true;
-  }
-  input.parsedSourceIds.splice(0, input.parsedSourceIds.length);
-  return false;
+  // Preserve Quran and other sources; remove only unverified internal hadith ids.
+  const retained = input.parsedSourceIds.filter((id) =>
+    (!id.startsWith("hadith:") && !id.startsWith("v4-hadith:")) || verified.has(id)
+  );
+  input.parsedSourceIds.splice(0, input.parsedSourceIds.length, ...retained);
+  return retained.some((id) => verified.has(id));
 }
 
 function selectRelevantSources(
@@ -1657,6 +1652,29 @@ function pickVerifiedConsultedReferences(
     .filter(isAllowed)
     .filter((source, index, all) => all.findIndex((item) => item.url === source.url) === index)
     .slice(0, limit);
+}
+
+// A consulted domain or search page alone cannot satisfy a hadith request.
+// Require a precise hadith page explicitly used by the final answer AND
+// present in the provider's consulted sources (never the display fallback).
+function hasExplicitConsultedWebHadith(
+  consulted: Map<string, WebReference>,
+  requested: WebReference[],
+): boolean {
+  return requested.some((reference) => {
+    const key = normalizedUrl(reference.url);
+    if (!key || !consulted.has(key)) return false;
+    const url = new URL(key);
+    if (url.protocol !== "https:") return false;
+    const host = url.hostname.replace(/^www\./, "");
+    let path: string;
+    try { path = decodeURIComponent(url.pathname); } catch { return false; }
+    if (host === "hadeethenc.com") {
+      return /^\/[a-z]{2,3}\/browse\/hadith\/\d+\/?$/.test(path);
+    }
+    if (host !== "sunnah.com") return false;
+    return /^\/(?:bukhari|muslim|nasai|abudawud|tirmidhi|ibnmajah|malik|ahmad|riyadussalihin|adab|shamail|bulugh|qudsi40|nawawi40)(?::\d+[a-z]?(?:,\d+[a-z]?)?|\/\d+\/\d+)\/?$/i.test(path);
+  });
 }
 
 async function refund(userId: string, requestId: string, reason: string) {
@@ -2582,6 +2600,37 @@ Deno.serve(async (request) => {
       parsed.is_clarification = false;
     }
 
+    ensureRequestedCorpusCoverage({
+      question: effectiveQuestion,
+      parsedSourceIds: parsed.source_ids,
+      parsedQuranReferences: parsed.quran_references,
+      requestSources,
+      brainPlan: v4Analysis?.brainPlan ?? null,
+      verifiedQuranSourceIds: documentaryQuranSourceIds,
+      verifiedHadithSourceIds: documentaryHadithSourceIds,
+      hadithMetadata: productionHadith.metadata,
+    });
+    const hasVerifiedRequestedHadith = enforceExplicitHadithSourceIds({
+      question: effectiveQuestion,
+      parsedSourceIds: parsed.source_ids,
+      verifiedHadithSourceIds: documentaryHadithSourceIds,
+    });
+    const consulted = consultedWebSources(provider);
+    const verifiedWebReferences = pickVerifiedConsultedReferences(
+      consulted,
+      parsed.web_references,
+    );
+    const hasVerifiedWebHadith = hasExplicitConsultedWebHadith(
+      consulted,
+      parsed.web_references,
+    );
+    if (parsed.status === "answered" &&
+      requestedDocumentaryCorpora(effectiveQuestion).hadith &&
+      !hasVerifiedRequestedHadith && !hasVerifiedWebHadith) {
+      parsed.status = "insufficient_sources";
+      parsed.body = "Je n’ai pas trouvé de hadith suffisamment vérifié et directement pertinent pour répondre à cette demande.";
+    }
+
     const originalBillingStatus = parsed.status;
     const normalizedBilling = normalizeBillingStatus(parsed.status, parsed.body);
     parsed.status = normalizedBilling.status;
@@ -2644,26 +2693,6 @@ Deno.serve(async (request) => {
       });
     }
 
-    ensureRequestedCorpusCoverage({
-      question: effectiveQuestion,
-      parsedSourceIds: parsed.source_ids,
-      parsedQuranReferences: parsed.quran_references,
-      requestSources,
-      brainPlan: v4Analysis?.brainPlan ?? null,
-      verifiedQuranSourceIds: documentaryQuranSourceIds,
-      verifiedHadithSourceIds: documentaryHadithSourceIds,
-      hadithMetadata: productionHadith.metadata,
-    });
-    const hasVerifiedRequestedHadith = enforceExplicitHadithSourceIds({
-      question: effectiveQuestion,
-      parsedSourceIds: parsed.source_ids,
-      verifiedHadithSourceIds: documentaryHadithSourceIds,
-    });
-    if (requestedDocumentaryCorpora(effectiveQuestion).hadith &&
-      !hasVerifiedRequestedHadith) {
-      parsed.status = "insufficient_sources";
-      parsed.body = "Je n’ai pas trouvé de hadith suffisamment vérifié et directement pertinent pour répondre à cette demande.";
-    }
     parsed.quran_references = deduplicateQuranReferences(
       parsed.quran_references,
     );
@@ -2684,20 +2713,6 @@ Deno.serve(async (request) => {
       effectiveQuestion,
     );
     const cleanedAnswerBody = cleanAnswerBody(parsed.body);
-    const consulted = consultedWebSources(provider);
-    const verifiedWebReferences = pickVerifiedConsultedReferences(
-      consulted,
-      parsed.web_references,
-    );
-    const hasVerifiedWebHadith = verifiedWebReferences.some((reference) => {
-      try {
-        const host = new URL(reference.url).hostname.replace(/^www\./, "");
-        return host === "sunnah.com" || host === "hadeethenc.com" ||
-          host.endsWith(".sunnah.com") || host.endsWith(".hadeethenc.com");
-      } catch {
-        return false;
-      }
-    });
     const finalAnswerBody = requestedQuranAndSunnah &&
         hadithReferences.length === 0 && !hasVerifiedWebHadith
       ? `${cleanedAnswerBody}\n\nNote documentaire : aucune référence de hadith suffisamment précise n’a été retrouvée dans les sources vérifiées pour cette réponse. Les références affichées sont donc uniquement coraniques.`
@@ -2943,3 +2958,4 @@ Deno.serve(async (request) => {
     );
   }
 });
+
