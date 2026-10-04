@@ -55,6 +55,8 @@ export function sanitizeTranslationText(value: unknown) {
     text
       .replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, " ")
       .replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi, " ")
+      // Footnote markers (<sup foot_note=…>1</sup>) are not part of the translation.
+      .replace(/<sup\b[^>]*>[\s\S]*?<\/sup>/gi, "")
       .replace(/<br\s*\/?>/gi, " ")
       .replace(/<[^>]*>/g, " ")
       .replace(/```[a-z]*|```|`/gi, " "),
