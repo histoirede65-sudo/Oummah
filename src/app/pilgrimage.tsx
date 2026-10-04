@@ -13,7 +13,9 @@ import { CHECKLIST_TOTAL } from "../features/pilgrimage/pilgrimageChecklist";
 import { usePilgrimageState } from "../features/pilgrimage/pilgrimageStorage";
 import type { Rite } from "../features/pilgrimage/pilgrimageTypes";
 
-const UMRAH_COVER = require("../assets/images/home/shortcuts/pilgrimage-premium.png");
+// Covers: Wikimedia Commons photos in the public domain (CC0), cropped to the card format.
+// « Kaaba at night in 2024 » and « Mount Arafat (Jabal ar-Rahmah) ».
+const UMRAH_COVER = require("../assets/images/pilgrimage/umrah-cover.jpg");
 
 const HAJJ_COVER = require("../assets/images/pilgrimage/hajj-cover.jpg");
 
