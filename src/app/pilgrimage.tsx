@@ -13,7 +13,8 @@ import { CHECKLIST_TOTAL } from "../features/pilgrimage/pilgrimageChecklist";
 import { usePilgrimageState } from "../features/pilgrimage/pilgrimageStorage";
 import type { Rite } from "../features/pilgrimage/pilgrimageTypes";
 
-/** Book covers, cropped to the card (1.18:1); a credit is shown when the image licence asks for one. */
+/** Book covers, shown whole (portrait 1122 × 1402); a credit is shown when the image licence asks for one. */
+const COVER_RATIO = 1122 / 1402;
 const COVERS: Record<Rite, { image: number; credit: string | null }> = {
   umrah: { image: require("../assets/images/pilgrimage/umrah-cover.jpg"), credit: null },
   hajj: { image: require("../assets/images/pilgrimage/hajj-cover.jpg"), credit: null },
@@ -125,14 +126,18 @@ export default function PilgrimageHome() {
                 onPress={() => router.push(`/pilgrimage/book?rite=${rite}`)}
                 style={({ pressed }) => [styles.cover, pressed && styles.pressed]}
               >
+                {/* The whole picture, nothing on top of it. */}
                 <View style={styles.coverImage}>
                   <Image source={COVERS[rite].image} resizeMode="cover" style={StyleSheet.absoluteFill} />
-                  <LinearGradient colors={["rgba(12,10,18,0.35)", "rgba(12,10,18,0)", "rgba(12,10,18,0)", "rgba(12,10,18,0.96)"]} locations={[0, 0.2, 0.52, 1]} style={StyleSheet.absoluteFill} />
                   <View pointerEvents="none" style={styles.coverFrame} />
                   {COVERS[rite].credit ? <Text style={styles.coverCredit}>{COVERS[rite].credit}</Text> : null}
-                  <View style={styles.coverContent}>
-                    <Text style={styles.coverArabic}>{book.arabic}</Text>
-                    <Text style={styles.coverTitle}>{book.title}</Text>
+                </View>
+                <View style={styles.coverPanel}>
+                  <View>
+                    <View style={styles.coverTitleRow}>
+                      <Text style={styles.coverTitle}>{book.title}</Text>
+                      <Text style={styles.coverArabic}>{book.arabic}</Text>
+                    </View>
                     <Text style={styles.coverMeta}>
                       {book.chapters.length} chapitres · {item.total} étapes
                       {rite === "hajj" && state?.hajjType ? ` · ${HAJJ_TYPE_LABELS[state.hajjType].title}` : rite === "hajj" ? " · 3 types" : ""}
@@ -209,14 +214,15 @@ const styles = StyleSheet.create({
   back: { position: "absolute", left: 16, width: 44, height: 44, alignItems: "center", justifyContent: "center", borderRadius: 22, backgroundColor: "rgba(33,27,44,0.9)" },
   body: { paddingHorizontal: 18 },
   section: { marginTop: 26, marginBottom: 12, color: pil.text, fontSize: 28, ...pilType.display },
-  cover: { aspectRatio: 1.18, marginBottom: 16, overflow: "hidden", borderRadius: 28, backgroundColor: pil.surface, shadowColor: "#000", shadowOpacity: 0.45, shadowRadius: 18, shadowOffset: { width: 0, height: 10 }, elevation: 8 },
-  coverImage: { flex: 1 },
-  coverFrame: { position: "absolute", top: 9, right: 9, bottom: 9, left: 9, borderRadius: 21, borderWidth: 1, borderColor: "rgba(232,187,98,0.55)" },
+  cover: { marginBottom: 18, overflow: "hidden", borderRadius: 28, borderWidth: 1, borderColor: pil.goldLine, backgroundColor: pil.surfaceHigh, shadowColor: "#000", shadowOpacity: 0.45, shadowRadius: 18, shadowOffset: { width: 0, height: 10 }, elevation: 8 },
+  coverImage: { width: "100%", aspectRatio: COVER_RATIO, backgroundColor: pil.surface },
+  coverFrame: { position: "absolute", top: 10, right: 10, bottom: 10, left: 10, borderRadius: 20, borderWidth: 1, borderColor: "rgba(255,236,190,0.6)" },
   coverCredit: { position: "absolute", top: 18, right: 20, color: "rgba(255,255,255,0.72)", fontSize: 10, fontWeight: "600", textShadowColor: "rgba(0,0,0,0.7)", textShadowRadius: 4, ...pilType.sans },
-  coverContent: { flex: 1, justifyContent: "flex-end", padding: 24 },
-  coverArabic: { color: pil.gold, fontSize: 26, textShadowColor: "rgba(0,0,0,0.6)", textShadowRadius: 8, ...pilType.arabic },
-  coverTitle: { color: pil.text, fontSize: 38, lineHeight: 42, textShadowColor: "rgba(0,0,0,0.6)", textShadowRadius: 8, ...pilType.display },
+  coverArabic: { color: pil.gold, fontSize: 28, ...pilType.arabic },
+  coverTitle: { color: pil.text, fontSize: 36, lineHeight: 40, ...pilType.display },
   coverMeta: { marginTop: 2, color: pil.text, fontSize: 14.5, fontWeight: "600", ...pilType.sans },
+  coverPanel: { paddingHorizontal: 20, paddingTop: 16, paddingBottom: 18, borderTopWidth: 1, borderTopColor: pil.goldLine },
+  coverTitleRow: { flexDirection: "row", alignItems: "baseline", justifyContent: "space-between", gap: 12 },
   coverFooter: { marginTop: 12, flexDirection: "row", alignItems: "center", gap: 12 },
   coverBar: { flex: 1, height: 5, overflow: "hidden", borderRadius: 3, backgroundColor: "rgba(255,255,255,0.22)" },
   coverBarFill: { height: "100%", borderRadius: 3, backgroundColor: pil.gold },
