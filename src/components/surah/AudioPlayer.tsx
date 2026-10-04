@@ -14,6 +14,8 @@ import PlayerOptions from './PlayerOptions';
 
 type AudioPlayerProps = {
   compact?: boolean;
+  /** Only the options (speed, repeat, download, timer): the transport lives elsewhere on the screen. */
+  optionsOnly?: boolean;
   minimal?: boolean;
   onPlayLongPress?: () => void;
   onOpenMenu?: () => void;
@@ -30,7 +32,7 @@ function formatTime(seconds: number) {
   return `${String(minutes).padStart(2, '0')}:${String(remainingSeconds).padStart(2, '0')}`;
 }
 
-export default function AudioPlayer({ compact, minimal, onPlayLongPress, onOpenMenu, onTogglePlay, onPrevious, onNext }: AudioPlayerProps) {
+export default function AudioPlayer({ compact, optionsOnly, minimal, onPlayLongPress, onOpenMenu, onTogglePlay, onPrevious, onNext }: AudioPlayerProps) {
   const { t } = useI18n();
   const secondaryMotion = useRef(premiumAnimations.createValues('fadeOut')).current;
   const initialized = useRef(false);
@@ -83,13 +85,13 @@ export default function AudioPlayer({ compact, minimal, onPlayLongPress, onOpenM
 
   return (
     <LinearGradient
-      colors={['rgba(31,18,48,0.92)', 'rgba(17,10,31,0.96)', 'rgba(10,8,22,0.98)']}
+      colors={['rgba(23,16,38,0.94)', 'rgba(15,11,27,0.97)', 'rgba(10,8,22,0.98)']}
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 1 }}
-      style={[styles.wrapper, compact && styles.wrapperCompact]}
+      style={[styles.wrapper, compact && styles.wrapperCompact, optionsOnly && styles.wrapperOptions]}
     >
-      <AudioProgress progress={progress} elapsed={formatTime(currentTime)} duration={formatTime(duration)} onSeek={handleSeek} />
-      <PlayerControls
+      {optionsOnly ? null : <AudioProgress progress={progress} elapsed={formatTime(currentTime)} duration={formatTime(duration)} onSeek={handleSeek} />}
+      {optionsOnly ? null : <PlayerControls
         isPlaying={isPlaying}
         onTogglePlay={onTogglePlay ?? togglePlay}
         onPlayLongPress={onPlayLongPress}
@@ -100,7 +102,7 @@ export default function AudioPlayer({ compact, minimal, onPlayLongPress, onOpenM
         compact={compact}
         primaryOnly={minimal}
         secondaryOpacity={secondaryMotion.opacity}
-      />
+      />}
       <Animated.View pointerEvents={minimal ? 'none' : 'auto'} style={{ opacity: secondaryMotion.opacity }}>
         <PlayerOptions
           repeatMode={repeatMode}
@@ -137,7 +139,7 @@ const styles = StyleSheet.create({
     paddingBottom: 18,
     borderRadius: 32,
     borderWidth: 1.2,
-    borderColor: 'rgba(126,78,151,0.64)',
+    borderColor: 'rgba(227,181,90,0.2)',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 12 },
     shadowOpacity: 0.26,
@@ -145,11 +147,12 @@ const styles = StyleSheet.create({
     elevation: 7,
   },
   wrapperCompact: { marginTop: 5, padding: 10 },
+  wrapperOptions: { paddingHorizontal: 12, paddingTop: 12, paddingBottom: 10, borderRadius: 24 },
   modeRow: { marginTop: 4, flexDirection: 'row', alignItems: 'center', justifyContent: 'center' },
   modeDot: { width: 5, height: 5, marginRight: 6, borderRadius: 3, backgroundColor: colors.textMuted },
   modeDotActive: { backgroundColor: colors.goldMuted },
-  modeText: { color: colors.textMuted, fontFamily: typography.sans, fontSize: 8.5, fontWeight: '500' },
-  surahMenuButton: { marginLeft: 10, paddingHorizontal: 20, paddingVertical: 10, borderRadius: 999, borderWidth: 1, borderColor: 'rgba(126,78,151,0.65)', backgroundColor: 'rgba(21,12,36,0.88)' },
+  modeText: { color: colors.textMuted, fontFamily: typography.sans, fontSize: 10.5, fontWeight: '500' },
+  surahMenuButton: { marginLeft: 10, paddingHorizontal: 20, paddingVertical: 10, borderRadius: 999, borderWidth: 1, borderColor: 'rgba(227,181,90,0.35)', backgroundColor: 'rgba(21,12,36,0.88)' },
   surahMenuText: { color: colors.text, fontFamily: typography.sans, fontSize: 15, fontWeight: '800' },
   pressed: { opacity: 0.62 },
 });

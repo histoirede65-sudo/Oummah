@@ -605,6 +605,7 @@ export default function SurahListeningScreen() {
               onTadabburUpdate={handleTadabburUpdate}
             />
             <AudioPlayer
+              optionsOnly
               onTogglePlay={handleTogglePlay}
               onPrevious={handlePrevious}
               onNext={handleNext}

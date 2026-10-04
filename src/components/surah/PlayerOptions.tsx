@@ -64,10 +64,10 @@ const styles = StyleSheet.create({
   options: { marginTop: 4, flexDirection: 'row', gap: 8 },
   option: { flex: 1, minWidth: 0, height: 70, alignItems: 'center', justifyContent: 'center', borderRadius: 18, borderWidth: 1, borderColor: colors.borderSoft, backgroundColor: 'rgba(23,16,38,0.84)' },
   optionCompact: { height: 44 },
-  active: { borderColor: colors.goldDark, backgroundColor: colors.purpleDeep },
-  iconFrame: { width: 31, height: 31, alignItems: 'center', justifyContent: 'center', borderRadius: 16, backgroundColor: colors.purpleDeep },
+  active: { borderColor: colors.goldDark, backgroundColor: 'rgba(227,181,90,0.1)' },
+  iconFrame: { width: 31, height: 31, alignItems: 'center', justifyContent: 'center', borderRadius: 16, backgroundColor: 'rgba(227,181,90,0.07)' },
   iconFrameActive: { backgroundColor: 'rgba(196,154,66,0.14)' },
-  label: { width: '100%', marginTop: 7, color: colors.textSecondary, fontFamily: typography.sans, fontSize: 8.5, fontWeight: '700', textAlign: 'center' },
+  label: { width: '100%', marginTop: 7, color: colors.textSecondary, fontFamily: typography.sans, fontSize: 10.5, fontWeight: '700', textAlign: 'center' },
   labelActive: { color: colors.goldLight },
   pressed: { opacity: 0.58 },
 });
