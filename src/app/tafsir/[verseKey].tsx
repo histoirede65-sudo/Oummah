@@ -70,6 +70,8 @@ export default function TafsirScreen() {
   const tafsirParagraphs = useMemo(
     () =>
       (tafsir?.text ?? "")
+        // The QuranEnc source types a backtick where a typographic ‘ is meant.
+        .replace(/`/g, "‘")
         .split(/\n{2,}/)
         .map((paragraph) => paragraph.trim())
         .filter(Boolean),
