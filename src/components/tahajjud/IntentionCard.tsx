@@ -5,20 +5,24 @@ import { useCallback, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import Animated, { FadeIn } from 'react-native-reanimated';
 import { INTENTION_PROOF } from '../../features/tahajjud/tahajjudContent';
-import { shiftDateKey, type NightPhase } from '../../features/tahajjud/tahajjudNight';
+import { clock, shiftDateKey, type NightPhase, type TahajjudNight } from '../../features/tahajjud/tahajjudNight';
 import { loadIntentions, setIntention, type TahajjudIntentions } from '../../features/tahajjud/TahajjudStore';
 import { GlassCard } from './TahajjudShell';
 import { night, nightType } from './theme';
 
 /**
- * Evening: « Ce soir, j'ai l'intention de me lever ». Next day, if the night was missed, a kind word:
- * the intention is already rewarded.
+ * Between Maghrib and ‘Isha (today's times): « Ce soir, j'ai l'intention de me lever ». Once made, a
+ * confirmation stays for the night. Next day, if the night was missed, a kind word: the intention is
+ * already rewarded.
  */
-export function IntentionCard({ phase, tonightKey, nights }: {
+export function IntentionCard({ phase, tonight, now, nights }: {
   phase: NightPhase;
-  tonightKey: string;
+  tonight: TahajjudNight;
+  now: number;
   nights: Record<string, string>;
 }) {
+  const tonightKey = tonight.key;
+  const inWindow = phase === 'day' && now >= tonight.maghrib && now < tonight.isha;
   const [intentions, setIntentions] = useState<TahajjudIntentions>({});
 
   useFocusEffect(useCallback(() => {
@@ -30,8 +34,8 @@ export function IntentionCard({ phase, tonightKey, nights }: {
     setIntentions(await setIntention(tonightKey, on));
   };
 
-  // Daytime: was last night's intention kept by sleep? Then its reward is already written.
-  if (phase === 'day') {
+  // Daytime (before Maghrib): was last night's intention kept by sleep? Its reward is already written.
+  if (phase === 'day' && !inWindow) {
     const lastNight = shiftDateKey(tonightKey, -1);
     if (!intentions[lastNight] || nights[lastNight]) return null;
     return (
@@ -53,14 +57,18 @@ export function IntentionCard({ phase, tonightKey, nights }: {
 
   if (nights[tonightKey]) return null;
   const made = Boolean(intentions[tonightKey]);
+  // After ‘Isha the button is gone; only a made intention is still shown.
+  if (!made && !inWindow) return null;
 
   return made ? (
     <View style={styles.made}>
       <Ionicons name="checkmark-circle" size={18} color={night.success} />
       <Text style={styles.madeText}>Intention posée pour cette nuit. Qu’Allah vous facilite.</Text>
-      <Pressable onPress={() => void toggle(false)} hitSlop={8}>
-        <Text style={styles.undo}>Retirer</Text>
-      </Pressable>
+      {inWindow ? (
+        <Pressable onPress={() => void toggle(false)} hitSlop={8}>
+          <Text style={styles.undo}>Retirer</Text>
+        </Pressable>
+      ) : null}
     </View>
   ) : (
     <Pressable onPress={() => void toggle(true)} style={({ pressed }) => [pressed && styles.pressed]}>
@@ -68,7 +76,7 @@ export function IntentionCard({ phase, tonightKey, nights }: {
         <View style={styles.ctaIcon}><Ionicons name="moon-outline" size={20} color={night.sky0} /></View>
         <View style={styles.flex}>
           <Text style={styles.title}>Ce soir, j’ai l’intention de me lever</Text>
-          <Text style={styles.ctaText}>Même si le sommeil l’emporte, l’intention est déjà récompensée.</Text>
+          <Text style={styles.ctaText}>Jusqu’à ‘Isha ({clock(tonight.isha)}). Même si le sommeil l’emporte, l’intention est déjà récompensée.</Text>
         </View>
       </GlassCard>
     </Pressable>

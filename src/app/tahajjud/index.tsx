@@ -159,7 +159,7 @@ export default function TahajjudScreen() {
           </Animated.View>
 
           <RamadanCard tonight={tonight} nights={view.nights} />
-          <IntentionCard phase={phase} tonightKey={tonight.key} nights={view.nights} />
+          <IntentionCard phase={phase} tonight={tonight} now={now} nights={view.nights} />
           <WakeBuddyCard phase={phase} nightKey={tonight.key} wakeAt={wakeUp} validated={view.validated} />
 
           <Animated.View entering={FadeInDown.delay(320).duration(500)} style={styles.grid}>
