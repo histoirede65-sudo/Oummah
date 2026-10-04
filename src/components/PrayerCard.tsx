@@ -2832,10 +2832,8 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: 3,
     left: "75%",
-    width: 100,
-    flexDirection: "row",
-    alignItems: "baseline",
-    gap: 5,
+    width: 72,
+    alignItems: "flex-start",
   },
   orbitName: {
     width: "100%",
@@ -2880,8 +2878,7 @@ const styles = StyleSheet.create({
     lineHeight: 27,
   },
   orbitNameAsr: {
-    width: "auto",
-    fontSize: 20,
+    fontSize: 21,
     position: "relative",
     left: -18,
     top: -14,
@@ -2907,7 +2904,7 @@ const styles = StyleSheet.create({
   orbitTimeAsr: {
     fontSize: 12.65,
     position: "relative",
-    left: -18,
+    left: 5,
     top: -14,
   },
   orbitTimeFajr: {
