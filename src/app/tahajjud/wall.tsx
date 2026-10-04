@@ -146,7 +146,7 @@ function AnswerSheet({ visible, onClose, onConfirm }: { visible: boolean; onClos
             value={gratitude}
             onChangeText={setGratitude}
             placeholder="Ce qu’Allah m’a accordé…"
-            placeholderTextColor={night.muted}
+            placeholderTextColor={night.placeholder}
             maxLength={600}
             multiline
             style={styles.composeInput}
@@ -266,7 +266,7 @@ export default function DuaWallScreen() {
               value={draft}
               onChangeText={setDraft}
               placeholder="Faites doua pour… "
-              placeholderTextColor={night.muted}
+              placeholderTextColor={night.placeholder}
               maxLength={600}
               multiline
               autoFocus

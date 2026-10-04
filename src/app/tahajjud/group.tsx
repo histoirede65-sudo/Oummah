@@ -74,7 +74,7 @@ function ReminderSheet({ visible, onClose, onCreate }: {
               </Pressable>
             ))}
           </View>
-          <TextInput value={body} onChangeText={setBody} maxLength={200} placeholder="Texte du rappel" placeholderTextColor={night.muted} style={styles.field} />
+          <TextInput value={body} onChangeText={setBody} maxLength={200} placeholder="Texte du rappel" placeholderTextColor={night.placeholder} style={styles.field} />
 
           <View style={styles.timeRow}>
             <Text style={styles.label}>Heure</Text>
@@ -84,7 +84,7 @@ function ReminderSheet({ visible, onClose, onCreate }: {
               keyboardType="number-pad"
               maxLength={5}
               placeholder="04:00"
-              placeholderTextColor={night.muted}
+              placeholderTextColor={night.placeholder}
               style={[styles.field, styles.timeField]}
             />
           </View>

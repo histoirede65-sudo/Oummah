@@ -211,7 +211,7 @@ export default function TahajjudFriendsScreen() {
           value={query}
           onChangeText={setQuery}
           placeholder="Ajouter un ami par son pseudo"
-          placeholderTextColor={night.muted}
+          placeholderTextColor={night.placeholder}
           autoCapitalize="none"
           autoCorrect={false}
           style={styles.searchInput}

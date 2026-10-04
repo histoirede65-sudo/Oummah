@@ -230,7 +230,7 @@ export default function TahajjudStatsScreen() {
                 value={customTarget}
                 onChangeText={(value) => setCustomTarget(value.replace(/\D/g, '').slice(0, 3))}
                 placeholder="Nombre de nuits"
-                placeholderTextColor={night.muted}
+                placeholderTextColor={night.placeholder}
                 keyboardType="number-pad"
                 style={styles.customInput}
               />

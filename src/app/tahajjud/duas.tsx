@@ -109,7 +109,7 @@ export default function TahajjudDuasScreen() {
                 onChangeText={setDraft}
                 onSubmitEditing={add}
                 placeholder="La guérison de ma mère, un travail, le pardon…"
-                placeholderTextColor={night.muted}
+                placeholderTextColor={night.placeholder}
                 returnKeyType="done"
                 maxLength={300}
                 multiline
@@ -178,7 +178,7 @@ export default function TahajjudDuasScreen() {
               onChangeText={setIntention}
               onBlur={() => void saveEntry({ intention, note })}
               placeholder="Mon intention pour cette nuit"
-              placeholderTextColor={night.muted}
+              placeholderTextColor={night.placeholder}
               multiline
               maxLength={1000}
               style={[styles.input, styles.journalInput]}
@@ -189,7 +189,7 @@ export default function TahajjudDuasScreen() {
               onChangeText={setNote}
               onBlur={() => void saveEntry({ intention, note })}
               placeholder="Ce que j’ai ressenti, ce que je retiens…"
-              placeholderTextColor={night.muted}
+              placeholderTextColor={night.placeholder}
               multiline
               maxLength={2000}
               style={[styles.input, styles.journalInput]}

@@ -108,7 +108,7 @@ export default function TahajjudProfileScreen() {
           value={pseudo}
           onChangeText={setPseudo}
           placeholder="Ex. : Abdallah, Oum Yasmine…"
-          placeholderTextColor={night.muted}
+          placeholderTextColor={night.placeholder}
           maxLength={24}
           autoCapitalize="words"
           style={styles.input}

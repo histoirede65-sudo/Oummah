@@ -173,7 +173,7 @@ export default function TahajjudScreen() {
                 <View style={[styles.tileIcon, tile.soon && styles.tileIconSoon]}>
                   <Ionicons name={tile.icon} size={20} color={tile.soon ? night.muted : night.goldSoft} />
                 </View>
-                <Text style={[styles.tileLabel, tile.soon && styles.tileLabelSoon]}>{tile.label}</Text>
+                <Text numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.8} style={[styles.tileLabel, tile.soon && styles.tileLabelSoon]}>{tile.label}</Text>
                 <Text style={styles.tileHint}>{tile.hint}</Text>
               </Pressable>
             ))}
@@ -271,7 +271,7 @@ const styles = StyleSheet.create({
   tileSoon: { opacity: 0.55 },
   tileIcon: { width: 38, height: 38, borderRadius: 19, alignItems: 'center', justifyContent: 'center', backgroundColor: '#241C27' },
   tileIconSoon: { backgroundColor: '#16132B' },
-  tileLabel: { marginTop: 10, color: night.text, fontSize: 17, ...nightType.semibold },
+  tileLabel: { marginTop: 10, color: night.text, fontSize: 15, ...nightType.semibold },
   tileLabelSoon: { color: night.textSoft },
   tileHint: { marginTop: 2, color: night.muted, fontSize: 14, ...nightType.body },
   weekCard: { marginTop: 16 },

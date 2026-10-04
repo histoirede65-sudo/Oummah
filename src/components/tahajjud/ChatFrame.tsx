@@ -137,7 +137,7 @@ export function ChatFrame<T extends Base>({
               value={draft}
               onChangeText={onDraft}
               placeholder={placeholder}
-              placeholderTextColor={night.muted}
+              placeholderTextColor={night.placeholder}
               multiline
               maxLength={1000}
               style={styles.input}

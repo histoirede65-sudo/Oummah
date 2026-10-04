@@ -209,7 +209,7 @@ export default function DuaDetailScreen() {
                     }}
                     onBlur={() => setFocused(false)}
                     placeholder="Écrire une réponse bienveillante…"
-                    placeholderTextColor={night.muted}
+                    placeholderTextColor={night.placeholder}
                     maxLength={300}
                     multiline
                     style={styles.input}

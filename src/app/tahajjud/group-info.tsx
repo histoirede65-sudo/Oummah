@@ -75,7 +75,7 @@ export default function GroupInfoScreen() {
         <>
           <Text style={shellStyles.sectionLabel}>Nom du groupe</Text>
           <View style={styles.renameRow}>
-            <TextInput value={name} onChangeText={setName} maxLength={40} style={styles.input} placeholderTextColor={night.muted} />
+            <TextInput value={name} onChangeText={setName} maxLength={40} style={styles.input} placeholderTextColor={night.placeholder} />
             <Pressable
               disabled={!name.trim() || name.trim() === detail.name}
               onPress={() => void act(() => renameGroup(groupId, name))}

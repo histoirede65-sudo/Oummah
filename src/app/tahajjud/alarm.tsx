@@ -117,7 +117,7 @@ export default function TahajjudAlarmScreen() {
                   onChangeText={saveCustom}
                   onFocus={() => settings.alarm.mode !== 'custom' && chooseMode('custom')}
                   placeholder="04H00"
-                  placeholderTextColor={night.muted}
+                  placeholderTextColor={night.placeholder}
                   keyboardType="number-pad"
                   maxLength={5}
                   style={styles.customInput}

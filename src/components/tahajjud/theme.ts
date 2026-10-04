@@ -15,8 +15,11 @@ export const night = {
   moon: '#F7EDD2',
   lavender: '#B7ABF2',
   text: '#FFFFFF',
-  textSoft: '#F2EEFA',
-  muted: '#C5BDDA',
+  textSoft: '#FFFFFF',
+  /** Secondary text: white too (no grey in the Qiyam space). */
+  muted: '#FFFFFF',
+  /** Example text of empty fields, slightly dimmed so it is not mistaken for typed text. */
+  placeholder: 'rgba(255,255,255,0.6)',
   success: '#7FD8A6',
 } as const;
 

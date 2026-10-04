@@ -47,7 +47,7 @@ export default function NewGroupScreen() {
         value={name}
         onChangeText={setName}
         placeholder="Donnez un nom à votre groupe"
-        placeholderTextColor={night.muted}
+        placeholderTextColor={night.placeholder}
         maxLength={40}
         style={styles.input}
       />
