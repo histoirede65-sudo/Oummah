@@ -768,7 +768,16 @@ async function expandIslamicQueryUncached(
 ): Promise<IslamicQueryExpansion | null> {
   const staticExpansion = findStaticTopicExpansion(question);
   const genericExpansion = buildGenericFallbackExpansion(question);
-  const modelExpansion = await requestModelExpansion(question);
+  // Measured in production: the model call never completed within its 1.8 s
+  // budget, so every request already used the curated/lexical fallback after
+  // waiting 1.8 s. Given more time it takes 3-5 s without better retrieval.
+  // Opt in with WASIL_MODEL_QUERY_EXPANSION=true.
+  const modelExpansionEnabled = /^(1|true|yes|on)$/i.test(
+    Deno.env.get("WASIL_MODEL_QUERY_EXPANSION")?.trim() ?? "",
+  );
+  const modelExpansion = modelExpansionEnabled
+    ? await requestModelExpansion(question)
+    : null;
   const expansion = chooseExpansion(
     modelExpansion,
     staticExpansion,
