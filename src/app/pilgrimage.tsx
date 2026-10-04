@@ -127,7 +127,7 @@ export default function PilgrimageHome() {
               >
                 <View style={styles.coverImage}>
                   <Image source={rite === "umrah" ? UMRAH_COVER : HAJJ_COVER} resizeMode="cover" style={StyleSheet.absoluteFill} />
-                  <LinearGradient colors={["rgba(12,10,18,0.05)", "rgba(12,10,18,0.55)", "rgba(12,10,18,0.97)"]} locations={[0, 0.45, 1]} style={StyleSheet.absoluteFill} />
+                  <LinearGradient colors={["rgba(12,10,18,0)", "rgba(12,10,18,0.1)", "rgba(12,10,18,0.93)"]} locations={[0, 0.48, 1]} style={StyleSheet.absoluteFill} />
                   <View style={styles.coverSpine} />
                   <View style={styles.coverContent}>
                     <Text style={styles.coverArabic}>{book.arabic}</Text>
@@ -208,12 +208,12 @@ const styles = StyleSheet.create({
   back: { position: "absolute", left: 16, width: 44, height: 44, alignItems: "center", justifyContent: "center", borderRadius: 22, backgroundColor: "rgba(33,27,44,0.9)" },
   body: { paddingHorizontal: 18 },
   section: { marginTop: 26, marginBottom: 12, color: pil.text, fontSize: 28, ...pilType.display },
-  cover: { height: 236, marginBottom: 14, overflow: "hidden", borderRadius: 26, borderWidth: 1, borderColor: pil.goldLine },
+  cover: { height: 250, marginBottom: 14, overflow: "hidden", borderRadius: 26, borderWidth: 1, borderColor: pil.goldLine },
   coverImage: { flex: 1 },
   coverSpine: { position: "absolute", left: 0, top: 0, bottom: 0, width: 7, backgroundColor: pil.gold, opacity: 0.85 },
   coverContent: { flex: 1, justifyContent: "flex-end", padding: 18, paddingLeft: 24 },
-  coverArabic: { color: pil.gold, fontSize: 26, ...pilType.arabic },
-  coverTitle: { color: pil.text, fontSize: 38, lineHeight: 42, ...pilType.display },
+  coverArabic: { color: pil.gold, fontSize: 26, textShadowColor: "rgba(0,0,0,0.6)", textShadowRadius: 8, ...pilType.arabic },
+  coverTitle: { color: pil.text, fontSize: 38, lineHeight: 42, textShadowColor: "rgba(0,0,0,0.6)", textShadowRadius: 8, ...pilType.display },
   coverMeta: { marginTop: 2, color: pil.text, fontSize: 14.5, fontWeight: "600", ...pilType.sans },
   coverFooter: { marginTop: 12, flexDirection: "row", alignItems: "center", gap: 12 },
   coverBar: { flex: 1, height: 5, overflow: "hidden", borderRadius: 3, backgroundColor: "rgba(255,255,255,0.22)" },
