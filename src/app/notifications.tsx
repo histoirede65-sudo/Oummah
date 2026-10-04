@@ -19,13 +19,6 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { loadHifzState, type HifzState } from "../features/hifz/HifzStore";
-import { syncAdhanNotifications } from "../features/adhan/AdhanNotifications";
-import {
-  DEFAULT_ADHAN_PREFERENCES,
-  loadAdhanPreferences,
-  saveAdhanPreferences,
-  type AdhanPreferences,
-} from "../features/adhan/AdhanPreferences";
 import {
   getMosquePrayerSchedule,
   ADHAN_SCHEDULE_DAYS,
@@ -110,12 +103,6 @@ export default function NotificationsScreen() {
   const [savedPreferences, setSavedPreferences] = useState<NotificationCenterPreferences>(
     DEFAULT_NOTIFICATION_CENTER_PREFERENCES,
   );
-  const [adhanPreferences, setAdhanPreferences] = useState<AdhanPreferences>(
-    DEFAULT_ADHAN_PREFERENCES,
-  );
-  const [savedAdhanPreferences, setSavedAdhanPreferences] = useState<AdhanPreferences>(
-    DEFAULT_ADHAN_PREFERENCES,
-  );
   const [saving, setSaving] = useState(false);
   const [schedule, setSchedule] = useState<MosquePrayerSchedule | null>(null);
   const [mosque, setMosque] = useState<StoredMosque | null>(null);
@@ -162,16 +149,13 @@ export default function NotificationsScreen() {
       let active = true;
       void Promise.all([
         loadNotificationCenterPreferences(),
-        loadAdhanPreferences(),
         loadHifzState(),
         getMainMosque(),
         getActiveAnnouncements("notifications").catch(() => []),
-      ]).then(async ([nextPreferences, nextAdhanPreferences, nextHifz, nextMosque, nextAnnouncements]) => {
+      ]).then(async ([nextPreferences, nextHifz, nextMosque, nextAnnouncements]) => {
         if (!active) return;
         setPreferences(nextPreferences);
         setSavedPreferences(nextPreferences);
-        setAdhanPreferences(nextAdhanPreferences);
-        setSavedAdhanPreferences(nextAdhanPreferences);
         const latestReadIds = await loadReadNotificationIds();
         if (!active) return;
         setReadIds(latestReadIds);
@@ -270,28 +254,23 @@ export default function NotificationsScreen() {
 
   const hasPendingChanges = useMemo(
     () =>
-      JSON.stringify(preferences) !== JSON.stringify(savedPreferences) ||
-      JSON.stringify(adhanPreferences) !== JSON.stringify(savedAdhanPreferences),
-    [adhanPreferences, preferences, savedAdhanPreferences, savedPreferences],
+      JSON.stringify(preferences) !== JSON.stringify(savedPreferences),
+    [preferences, savedPreferences],
   );
 
   const saveSettings = async () => {
     if (saving || !hasPendingChanges) return;
     setSaving(true);
     try {
-      await Promise.all([
-        saveNotificationCenterPreferences(preferences),
-        saveAdhanPreferences(adhanPreferences),
-      ]);
+      await saveNotificationCenterPreferences(preferences);
       await syncNotificationCenterSchedule(preferences, schedule, mosque?.name, hifzState);
-      if (schedule) await syncAdhanNotifications(schedule, adhanPreferences);
       await resyncWasilReminders(preferences.mode).catch(() => undefined);
       setSavedPreferences(preferences);
-      setSavedAdhanPreferences(adhanPreferences);
     } finally {
       setSaving(false);
     }
   };
+
 
   const toggleSystemNotifications = async (enabled: boolean) => {
     if (!enabled) {
@@ -528,14 +507,7 @@ export default function NotificationsScreen() {
                 {MODES.map((mode) => (
                   <Pressable
                     key={mode.id}
-                    onPress={() => {
-                      updatePreferences((current) => ({ ...current, mode: mode.id }));
-                      setAdhanPreferences((current) => ({
-                        ...current,
-                        // « Son » keeps the chosen adhan voice when the adhan was already selected.
-                        mode: mode.id === "sound" ? (current.mode === "adhan" ? "adhan" : "notification") : mode.id,
-                      }));
-                    }}
+                    onPress={() => updatePreferences((current) => ({ ...current, mode: mode.id }))}
                     style={[styles.modeChoice, preferences.mode === mode.id && styles.choiceActive]}
                   >
                     <Ionicons name={mode.icon} size={18} color={preferences.mode === mode.id ? "#F4C75E" : "#9E96A1"} />
@@ -544,89 +516,9 @@ export default function NotificationsScreen() {
                 ))}
               </View>
 
-              <Text style={styles.sectionLabel}>PRIÈRES</Text>
-              <View style={styles.settingsGroup}>
-                <View style={styles.settingRow}>
-                  <View style={styles.settingCopy}>
-                    <Text style={styles.settingTitle}>Alertes de prière</Text>
-                    <Text style={styles.settingDescription}>Une seule notification, au délai choisi. Aucun message après la prière.</Text>
-                  </View>
-                  <Switch
-                    value={adhanPreferences.enabled}
-                    onValueChange={(value) =>
-                      setAdhanPreferences((current) => ({ ...current, enabled: value }))
-                    }
-                    trackColor={{ false: "#443D47", true: "rgba(236,177,61,0.50)" }}
-                    thumbColor={adhanPreferences.enabled ? "#F2B53D" : "#908892"}
-                  />
-                </View>
-                <View style={styles.prayerChoicesBlock}>
-                  <Text style={styles.delayTitle}>Prières concernées</Text>
-                  <View style={styles.prayerChoicesRow}>
-                    {([
-                      ["Fajr", "Fajr"],
-                      ["Dhuhr", "Dhuhr"],
-                      ["Asr", "‘Asr"],
-                      ["Maghrib", "Maghrib"],
-                      ["Isha", "‘Isha"],
-                    ] as const).map(([key, label]) => {
-                      const selected = adhanPreferences.prayers[key];
-                      return (
-                        <Pressable
-                          key={key}
-                          disabled={!adhanPreferences.enabled}
-                          onPress={() =>
-                            setAdhanPreferences((current) => ({
-                              ...current,
-                              prayers: { ...current.prayers, [key]: !current.prayers[key] },
-                            }))
-                          }
-                          style={[
-                            styles.prayerChoice,
-                            selected && styles.choiceActive,
-                            !adhanPreferences.enabled && styles.disabledChoice,
-                          ]}
-                        >
-                          <Ionicons
-                            name={selected ? "checkmark-circle" : "ellipse-outline"}
-                            size={15}
-                            color={selected ? "#F4C75E" : "#9E96A1"}
-                          />
-                          <Text style={[styles.delayText, selected && styles.choiceTextActive]}>
-                            {label}
-                          </Text>
-                        </Pressable>
-                      );
-                    })}
-                  </View>
-                </View>
-                <View style={styles.delayBlock}>
-                  <Text style={styles.delayTitle}>Moment du rappel</Text>
-                  <View style={styles.delayRow}>
-                    {[0, 5, 10, 15, 30].map((minutes) => (
-                      <Pressable
-                        key={minutes}
-                        disabled={!adhanPreferences.enabled}
-                        onPress={() =>
-                          setAdhanPreferences((current) => ({ ...current, leadMinutes: minutes }))
-                        }
-                        style={[
-                          styles.delayChoice,
-                          adhanPreferences.leadMinutes === minutes && styles.choiceActive,
-                          !adhanPreferences.enabled && styles.disabledChoice,
-                        ]}
-                      >
-                        <Text style={[styles.delayText, adhanPreferences.leadMinutes === minutes && styles.choiceTextActive]}>
-                          {minutes === 0 ? "À l’heure" : `${minutes} min`}
-                        </Text>
-                      </Pressable>
-                    ))}
-                  </View>
-                </View>
-                <View style={styles.adhanUnavailable}>
-                  <Ionicons name="information-circle-outline" size={17} color="#F2BE55" />
-                  <Text style={styles.adhanUnavailableText}>Chaque alerte de prière contient un hadith authentique adapté. En mode Son, l’Adhan sélectionné est utilisé pour la notification.</Text>
-                </View>
+              <View style={styles.adhanHint}>
+                <Ionicons name="information-circle-outline" size={20} color="#F2BE55" />
+                <Text style={styles.adhanHintText}>L’adhan et les alertes de prière se règlent depuis la carte des prières de l’accueil.</Text>
               </View>
 
               {["Objectifs", "Dou‘as", "Apprentissage", "Inspiration"].map((section) => (
@@ -722,37 +614,37 @@ const styles = StyleSheet.create({
   header: { minHeight: 108, paddingHorizontal: 16, paddingVertical: 10, flexDirection: "row", alignItems: "center" },
   headerButton: { width: 42, height: 42, alignItems: "center", justifyContent: "center", borderRadius: 21, borderWidth: 1, borderColor: "rgba(255,230,190,0.14)", backgroundColor: "rgba(255,255,255,0.045)" },
   editNotificationsButton: { minHeight: 44, marginTop: 7, paddingHorizontal: 14, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 7, borderRadius: 14, borderWidth: 1, borderColor: "rgba(242,190,85,0.34)", backgroundColor: "rgba(242,190,85,0.12)" },
-  editNotificationsText: { color: "#F2BE55", fontFamily: typography.sans, fontSize: 12.5, lineHeight: 16, fontWeight: "800" },
+  editNotificationsText: { color: "#F2BE55", fontFamily: typography.sans, fontSize: 15, lineHeight: 21, fontWeight: "800" },
   headerCopy: { flex: 1, alignItems: "center", minWidth: 0 },
-  eyebrow: { color: "rgba(242,190,85,0.70)", fontFamily: typography.sans, fontSize: 8.5, fontWeight: "700", letterSpacing: 1.2 },
-  title: { color: "#FFF8EF", fontFamily: typography.serifSemibold, fontSize: 25, flexShrink: 1, textAlign: "center" },
+  eyebrow: { color: "#F6C75D", fontFamily: typography.sans, fontSize: 12, fontWeight: "700", letterSpacing: 1.2 },
+  title: { color: "#FFFFFF", fontFamily: typography.sans, fontSize: 25, flexShrink: 1, textAlign: "center", fontWeight: "600" },
   content: { padding: 14, paddingBottom: 34 },
   summaryCard: { minHeight: 76, padding: 13, flexDirection: "row", alignItems: "center", borderRadius: 22, borderWidth: 1, borderColor: "rgba(245,198,96,0.20)", backgroundColor: "rgba(255,255,255,0.055)" },
   summaryIcon: { width: 44, height: 44, alignItems: "center", justifyContent: "center", borderRadius: 15, backgroundColor: "#F0B94B" },
   summaryCopy: { flex: 1, marginHorizontal: 11 },
-  summaryTitle: { color: "#FFF8EF", fontFamily: typography.serifSemibold, fontSize: 16 },
-  summaryText: { marginTop: 2, color: "rgba(235,225,232,0.58)", fontFamily: typography.sans, fontSize: 10.5, lineHeight: 14 },
+  summaryTitle: { color: "#FFFFFF", fontFamily: typography.sans, fontSize: 18, fontWeight: "600" },
+  summaryText: { marginTop: 2, color: "#FFFFFF", fontFamily: typography.sans, fontSize: 13, lineHeight: 18, fontWeight: "500" },
   reliabilityCard: { marginTop: 12, padding: 13, borderRadius: 20, borderWidth: 1, borderColor: "rgba(242,190,85,0.42)", backgroundColor: "rgba(65,43,31,0.93)" },
   reliabilityHead: { flexDirection: "row", alignItems: "center", gap: 8 },
-  reliabilityTitle: { flex: 1, color: "#FFF8EF", fontFamily: typography.serifSemibold, fontSize: 15.5 },
+  reliabilityTitle: { flex: 1, color: "#FFFFFF", fontFamily: typography.sans, fontSize: 17.5, fontWeight: "600" },
   reliabilityRow: { marginTop: 10, padding: 11, flexDirection: "row", alignItems: "center", gap: 8, borderRadius: 14, backgroundColor: "rgba(255,255,255,0.06)" },
   reliabilityCopy: { flex: 1 },
-  reliabilityLabel: { color: "#FFE4A0", fontFamily: typography.sans, fontSize: 12.5, fontWeight: "800" },
-  reliabilityText: { marginTop: 3, color: "rgba(255,245,235,0.78)", fontFamily: typography.sans, fontSize: 10.5, lineHeight: 15 },
+  reliabilityLabel: { color: "#FFE4A0", fontFamily: typography.sans, fontSize: 15, fontWeight: "800" },
+  reliabilityText: { marginTop: 3, color: "#FFFFFF", fontFamily: typography.sans, fontSize: 13, lineHeight: 18, fontWeight: "500" },
   readAllButton: { width: 36, height: 36, alignItems: "center", justifyContent: "center", borderRadius: 18, backgroundColor: "rgba(242,190,85,0.10)" },
   filters: { gap: 7, paddingVertical: 15 },
   filter: { height: 34, paddingHorizontal: 13, alignItems: "center", justifyContent: "center", borderRadius: 17, borderWidth: 1, borderColor: "rgba(255,255,255,0.08)", backgroundColor: "rgba(255,255,255,0.03)" },
   filterActive: { borderColor: "rgba(242,190,85,0.45)", backgroundColor: "rgba(231,168,50,0.12)" },
-  filterText: { color: "#9F97A3", fontFamily: typography.sans, fontSize: 10.5, fontWeight: "600" },
+  filterText: { color: "#FFFFFF", fontFamily: typography.sans, fontSize: 13, fontWeight: "600" },
   filterTextActive: { color: "#FFE3A0" },
   adminAnnouncements: { marginBottom: 18 },
-  adminAnnouncementsTitle: { marginBottom: 10, color: "#F2BE55", fontFamily: typography.serifMedium, fontSize: 17 },
+  adminAnnouncementsTitle: { marginBottom: 10, color: "#F2BE55", fontFamily: typography.sans, fontSize: 19, fontWeight: "600" },
   adminAnnouncementCard: { marginBottom: 9, padding: 13, flexDirection: "row", alignItems: "flex-start", borderRadius: 16, borderWidth: 1, borderColor: "rgba(242,190,85,0.25)", backgroundColor: "rgba(242,190,85,0.07)" },
   adminAnnouncementIcon: { width: 38, height: 38, borderRadius: 12, alignItems: "center", justifyContent: "center", backgroundColor: "#F2BE55" },
   adminAnnouncementCopy: { flex: 1, marginLeft: 11 },
-  adminAnnouncementTitle: { color: "#FFF8EF", fontSize: 12.5, fontWeight: "800" },
-  adminAnnouncementBody: { marginTop: 4, color: "#C9C0C8", fontSize: 10.5, lineHeight: 15 },
-  adminAnnouncementAction: { marginTop: 6, color: "#F2BE55", fontSize: 9.5, fontWeight: "800" },
+  adminAnnouncementTitle: { color: "#FFFFFF", fontSize: 15, fontWeight: "800" },
+  adminAnnouncementBody: { marginTop: 4, color: "#FFFFFF", fontSize: 13, lineHeight: 18, fontWeight: "500" },
+  adminAnnouncementAction: { marginTop: 6, color: "#F2BE55", fontSize: 13, fontWeight: "800" },
   feed: { gap: 8 },
   itemCard: { minHeight: 91, overflow: "hidden", padding: 12, flexDirection: "row", alignItems: "center", borderRadius: 20, borderWidth: 1, borderColor: "rgba(255,255,255,0.075)", backgroundColor: "rgba(22,20,29,0.84)" },
   itemCardUnread: { borderColor: "rgba(242,190,85,0.66)", borderWidth: 1.5, backgroundColor: "rgba(65,43,31,0.93)", shadowColor: "#F2B53D", shadowOffset: { width: 0, height: 3 }, shadowOpacity: 0.18, shadowRadius: 9, elevation: 4 },
@@ -762,72 +654,64 @@ const styles = StyleSheet.create({
   itemIconUnread: { borderWidth: 1, borderColor: "rgba(255,234,179,0.48)" },
   itemCopy: { flex: 1, paddingRight: 7 },
   itemTitleRow: { flexDirection: "row", alignItems: "center" },
-  itemTitle: { flexShrink: 1, color: "#FFF7EE", fontFamily: typography.serifSemibold, fontSize: 14.5 },
-  itemTitleUnread: { color: "#FFF9E9", fontSize: 15.5 },
-  unreadBadge: { marginLeft: 7, paddingHorizontal: 6, paddingVertical: 3, borderRadius: 6, overflow: "hidden", color: "#20160F", backgroundColor: "#F2B53D", fontFamily: typography.sans, fontSize: 7.5, fontWeight: "900", letterSpacing: 0.6 },
-  itemBody: { marginTop: 3, color: "rgba(229,218,226,0.63)", fontFamily: typography.sans, fontSize: 10.5, lineHeight: 14 },
+  itemTitle: { flexShrink: 1, color: "#FFFFFF", fontFamily: typography.sans, fontSize: 16.5, fontWeight: "600" },
+  itemTitleUnread: { color: "#FFFFFF", fontSize: 17.5, fontWeight: "600" },
+  unreadBadge: { marginLeft: 7, paddingHorizontal: 6, paddingVertical: 3, borderRadius: 6, overflow: "hidden", color: "#20160F", backgroundColor: "#F2B53D", fontFamily: typography.sans, fontSize: 11, fontWeight: "900", letterSpacing: 0.6 },
+  itemBody: { marginTop: 3, color: "#FFFFFF", fontFamily: typography.sans, fontSize: 13, lineHeight: 18, fontWeight: "500" },
   itemBodyUnread: { color: "rgba(255,245,235,0.82)" },
-  itemTime: { marginTop: 4, color: "rgba(242,190,85,0.66)", fontFamily: typography.sans, fontSize: 9, fontWeight: "700" },
-  itemTimeUnread: { color: "#FFDA7E", fontSize: 9.5 },
+  itemTime: { marginTop: 4, color: "#F6C75D", fontFamily: typography.sans, fontSize: 12.5, fontWeight: "700" },
+  itemTimeUnread: { color: "#FFDA7E", fontSize: 13, fontWeight: "600" },
   pressed: { opacity: 0.7, transform: [{ scale: 0.992 }] },
   emptyCard: { minHeight: 180, alignItems: "center", justifyContent: "center", borderRadius: 22, borderWidth: 1, borderColor: "rgba(255,255,255,0.07)", backgroundColor: "rgba(255,255,255,0.03)" },
-  emptyTitle: { marginTop: 10, color: "#FFF7EE", fontFamily: typography.serifSemibold, fontSize: 17 },
-  emptyText: { maxWidth: 250, marginTop: 4, color: "rgba(230,220,228,0.54)", fontFamily: typography.sans, fontSize: 11, lineHeight: 16, textAlign: "center" },
+  emptyTitle: { marginTop: 10, color: "#FFFFFF", fontFamily: typography.sans, fontSize: 19, fontWeight: "600" },
+  emptyText: { maxWidth: 250, marginTop: 4, color: "#FFFFFF", fontFamily: typography.sans, fontSize: 13.5, lineHeight: 19, textAlign: "center", fontWeight: "500" },
   modalBackdrop: { flex: 1, justifyContent: "flex-end", backgroundColor: "rgba(3,4,9,0.74)" },
   sheet: { height: "88%", paddingTop: 9, paddingHorizontal: 17, borderTopLeftRadius: 30, borderTopRightRadius: 30, borderWidth: 1, borderBottomWidth: 0, borderColor: "rgba(255,227,172,0.18)", backgroundColor: "#17131C" },
   handle: { width: 42, height: 4, marginBottom: 13, alignSelf: "center", borderRadius: 2, backgroundColor: "rgba(255,255,255,0.20)" },
   sheetHeader: { flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
-  sheetTitle: { marginTop: 1, color: "#FFF8EF", fontFamily: typography.serifSemibold, fontSize: 22 },
+  sheetTitle: { marginTop: 1, color: "#FFFFFF", fontFamily: typography.sans, fontSize: 22, fontWeight: "600" },
   closeButton: { width: 36, height: 36, alignItems: "center", justifyContent: "center", borderRadius: 18, backgroundColor: "rgba(255,255,255,0.06)" },
   sheetContent: { paddingTop: 17, paddingBottom: 30 },
   customizationHint: { marginBottom: 12, padding: 12, flexDirection: "row", alignItems: "flex-start", borderRadius: 17, borderWidth: 1, borderColor: "rgba(242,190,85,0.30)", backgroundColor: "rgba(242,190,85,0.075)" },
   customizationHintIcon: { width: 36, height: 36, marginRight: 10, alignItems: "center", justifyContent: "center", borderRadius: 12, backgroundColor: "rgba(242,190,85,0.12)" },
   customizationHintCopy: { flex: 1 },
-  customizationHintTitle: { color: "#FFE6AA", fontFamily: typography.serifMedium, fontSize: 13.5 },
-  customizationHintText: { marginTop: 3, color: "rgba(245,235,239,0.68)", fontFamily: typography.sans, fontSize: 9.8, lineHeight: 14 },
+  customizationHintTitle: { color: "#FFE6AA", fontFamily: typography.sans, fontSize: 15.5, fontWeight: "600" },
+  customizationHintText: { marginTop: 3, color: "#FFFFFF", fontFamily: typography.sans, fontSize: 13.3, lineHeight: 18, fontWeight: "500" },
   masterRow: { minHeight: 66, paddingHorizontal: 13, flexDirection: "row", alignItems: "center", borderRadius: 18, borderWidth: 1, borderColor: "rgba(246,199,93,0.18)", backgroundColor: "rgba(255,255,255,0.045)" },
   masterCopy: { flex: 1, paddingRight: 10 },
-  sectionLabel: { marginTop: 18, marginBottom: 8, color: "rgba(246,199,93,0.68)", fontFamily: typography.sans, fontSize: 8.5, fontWeight: "700", letterSpacing: 1.05 },
+  sectionLabel: { marginTop: 18, marginBottom: 8, color: "#F6C75D", fontFamily: typography.sans, fontSize: 12, fontWeight: "700", letterSpacing: 1.05 },
   modeRow: { flexDirection: "row", gap: 7 },
   modeChoice: { minHeight: 50, flex: 1, alignItems: "center", justifyContent: "center", borderRadius: 14, borderWidth: 1, borderColor: "rgba(255,255,255,0.08)", backgroundColor: "rgba(255,255,255,0.035)" },
   choiceActive: { borderColor: "rgba(246,199,93,0.46)", backgroundColor: "rgba(231,168,50,0.11)" },
-  modeText: { marginTop: 3, color: "#AAA1AD", fontFamily: typography.sans, fontSize: 10.5, fontWeight: "600" },
+  modeText: { marginTop: 3, color: "#FFFFFF", fontFamily: typography.sans, fontSize: 13, fontWeight: "600" },
   choiceTextActive: { color: "#FFE4A0" },
   settingsGroup: { overflow: "hidden", borderRadius: 18, borderWidth: 1, borderColor: "rgba(255,255,255,0.07)", backgroundColor: "rgba(255,255,255,0.03)" },
   settingRow: { minHeight: 61, paddingHorizontal: 13, flexDirection: "row", alignItems: "center", borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: "rgba(255,255,255,0.07)" },
   settingCopy: { flex: 1, paddingRight: 10 },
-  settingTitle: { color: "#FFF7EE", fontFamily: typography.serifMedium, fontSize: 14 },
-  settingDescription: { marginTop: 2, color: "rgba(230,220,228,0.52)", fontFamily: typography.sans, fontSize: 9.5, lineHeight: 13 },
+  settingTitle: { color: "#FFFFFF", fontFamily: typography.sans, fontSize: 16, fontWeight: "600" },
+  settingDescription: { marginTop: 2, color: "#FFFFFF", fontFamily: typography.sans, fontSize: 13, lineHeight: 18, fontWeight: "500" },
   reminderTimeButton: { minHeight: 34, marginTop: 7, alignSelf: "flex-start", paddingHorizontal: 9, flexDirection: "row", alignItems: "center", gap: 6, borderRadius: 11, borderWidth: 1, borderColor: "rgba(242,190,85,0.36)", backgroundColor: "rgba(242,190,85,0.12)" },
   reminderTimeButtonPressed: { opacity: 0.72 },
-  reminderTimeAction: { color: "rgba(255,224,151,0.78)", fontFamily: typography.sans, fontSize: 8.1, fontWeight: "900", letterSpacing: 0.55 },
+  reminderTimeAction: { color: "#F6C75D", fontFamily: typography.sans, fontSize: 11.6, fontWeight: "900", letterSpacing: 0.55 },
   reminderTimeDivider: { width: 1, height: 14, backgroundColor: "rgba(242,190,85,0.28)" },
-  reminderTimeText: { color: "#FFD978", fontFamily: typography.sans, fontSize: 12, fontWeight: "900", fontVariant: ["tabular-nums"] },
-  prayerChoicesBlock: { padding: 13, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: "rgba(255,255,255,0.07)" },
-  prayerChoicesRow: { flexDirection: "row", flexWrap: "wrap", gap: 7 },
-  prayerChoice: { minHeight: 36, paddingHorizontal: 10, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 5, borderRadius: 12, borderWidth: 1, borderColor: "rgba(255,255,255,0.08)", backgroundColor: "rgba(255,255,255,0.035)" },
-  delayBlock: { padding: 13, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: "rgba(255,255,255,0.07)" },
-  delayTitle: { marginBottom: 9, color: "#FFF7EE", fontFamily: typography.serifMedium, fontSize: 13 },
-  delayRow: { flexDirection: "row", flexWrap: "wrap", gap: 7 },
+  reminderTimeText: { color: "#FFD978", fontFamily: typography.sans, fontSize: 14.5, fontWeight: "900", fontVariant: ["tabular-nums"] },
   timePickerOverlay: { ...StyleSheet.absoluteFill, zIndex: 100, elevation: 100, alignItems: "center", justifyContent: "center", padding: 24, backgroundColor: "rgba(3,4,9,0.88)" },
   timePickerCard: { width: "100%", maxWidth: 330, padding: 20, borderRadius: 24, borderWidth: 1, borderColor: "rgba(255,227,172,0.24)", backgroundColor: "#17131C" },
-  timePickerEyebrow: { color: "rgba(242,190,85,0.72)", fontFamily: typography.sans, fontSize: 8.2, fontWeight: "900", letterSpacing: 0.95, textAlign: "center" },
-  timePickerTitle: { marginTop: 4, color: "#FFF8EF", fontFamily: typography.serifSemibold, fontSize: 20, textAlign: "center" },
-  timePickerSubtitle: { maxWidth: 250, marginTop: 6, alignSelf: "center", color: "rgba(235,225,232,0.60)", fontFamily: typography.sans, fontSize: 9.8, lineHeight: 14, textAlign: "center" },
+  timePickerEyebrow: { color: "#F6C75D", fontFamily: typography.sans, fontSize: 11.7, fontWeight: "900", letterSpacing: 0.95, textAlign: "center" },
+  timePickerTitle: { marginTop: 4, color: "#FFFFFF", fontFamily: typography.sans, fontSize: 20, textAlign: "center", fontWeight: "600" },
+  timePickerSubtitle: { maxWidth: 250, marginTop: 6, alignSelf: "center", color: "#FFFFFF", fontFamily: typography.sans, fontSize: 13.3, lineHeight: 18, textAlign: "center", fontWeight: "500" },
   timePickerValues: { marginTop: 17, flexDirection: "row", alignItems: "center", justifyContent: "center" },
   timePickerColumn: { alignItems: "center" },
   timePickerAdjust: { width: 52, height: 38, alignItems: "center", justifyContent: "center", borderRadius: 12, backgroundColor: "rgba(242,190,85,0.08)" },
-  timePickerValue: { minWidth: 68, marginVertical: 5, color: "#FFF8EF", fontFamily: typography.sans, fontSize: 30, fontWeight: "800", textAlign: "center", fontVariant: ["tabular-nums"] },
+  timePickerValue: { minWidth: 68, marginVertical: 5, color: "#FFFFFF", fontFamily: typography.sans, fontSize: 30, fontWeight: "800", textAlign: "center", fontVariant: ["tabular-nums"] },
   timePickerSeparator: { marginHorizontal: 8, color: "#F4C75E", fontFamily: typography.sans, fontSize: 28, fontWeight: "800" },
   timePickerDone: { minHeight: 46, marginTop: 18, alignItems: "center", justifyContent: "center", borderRadius: 15, backgroundColor: "#F2C55B" },
-  timePickerDoneText: { color: "#172018", fontFamily: typography.sans, fontSize: 13, fontWeight: "800" },
-  delayChoice: { minHeight: 36, paddingHorizontal: 11, alignItems: "center", justifyContent: "center", borderRadius: 12, borderWidth: 1, borderColor: "rgba(255,255,255,0.08)", backgroundColor: "rgba(255,255,255,0.035)" },
-  delayText: { color: "#AAA1AD", fontFamily: typography.sans, fontSize: 10, fontWeight: "700" },
+  timePickerDoneText: { color: "#172018", fontFamily: typography.sans, fontSize: 15.5, fontWeight: "800" },
   disabledChoice: { opacity: 0.45 },
-  adhanUnavailable: { padding: 13, flexDirection: "row", alignItems: "flex-start", gap: 8 },
-  adhanUnavailableText: { flex: 1, color: "rgba(230,220,228,0.56)", fontFamily: typography.sans, fontSize: 9.5, lineHeight: 14 },
+  adhanHint: { marginTop: 12, padding: 12, flexDirection: "row", alignItems: "flex-start", gap: 8, borderRadius: 14, backgroundColor: "rgba(242,190,85,0.08)" },
+  adhanHintText: { flex: 1, color: "#FFFFFF", fontFamily: typography.sans, fontSize: 13, lineHeight: 18 },
   saveButton: { minHeight: 54, marginBottom: 14, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 8, borderRadius: 17 },
   saveButtonPending: { backgroundColor: "#E0A83D" },
   saveButtonSaved: { backgroundColor: "#71C99F" },
-  saveButtonText: { color: "#172018", fontFamily: typography.sans, fontSize: 12, fontWeight: "800" },
+  saveButtonText: { color: "#172018", fontFamily: typography.sans, fontSize: 14.5, fontWeight: "800" },
 });
