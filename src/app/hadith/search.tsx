@@ -111,8 +111,8 @@ export default function HadithSearchScreen() {
   const unique = useMemo(() => {
     const all = Array.from(new Map(results.map((item) => [item.id, item])).values());
     const filter = normalizeSearchTitle(themeFilter);
-    return themeCategory && filter ? all.filter((item) => normalizeSearchTitle(item.title).includes(filter)) : all;
-  }, [results, themeCategory, themeFilter]);
+    return params.theme && filter ? all.filter((item) => normalizeSearchTitle(item.title).includes(filter)) : all;
+  }, [results, params.theme, themeFilter]);
   const title = params.view === "favorites" ? t("hadith.myFavorites") : params.theme ? params.theme : params.collection ? t("hadith.collection") : t("hadith.search");
   const subtitle = params.view === "favorites"
     ? t("hadith.personalLibrary")
@@ -124,9 +124,9 @@ export default function HadithSearchScreen() {
       <SafeAreaView edges={["top"]} style={styles.safe}>
         <View style={styles.header}><HadithScreenHeader title={title} subtitle={subtitle} /></View>
         <ScrollView keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false} contentContainerStyle={styles.content}>
-          {params.view !== "favorites" && !themeCategory ? <HadithSearchBar value={query} onChangeText={setQuery} /> : null}
-          {themeCategory ? <>
-            {subCategories.length ? <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.subRow} style={styles.subScroll}>
+          {params.view !== "favorites" && !params.theme ? <HadithSearchBar value={query} onChangeText={setQuery} /> : null}
+          {params.theme ? <>
+            {themeCategory && subCategories.length ? <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.subRow} style={styles.subScroll}>
               {[{ id: themeCategory, title: t("hadith.allOfTheme"), count: 0, parentId: null }, ...subCategories].map((category) => {
                 const active = (selectedCategory || themeCategory) === category.id;
                 return <Pressable key={category.id} accessibilityRole="button" accessibilityState={{ selected: active }} onPress={() => { setSelectedCategory(category.id); setThemeFilter(""); }} style={[styles.subChip, active && styles.subChipActive]}>
@@ -139,9 +139,9 @@ export default function HadithSearchScreen() {
           </> : null}
           {!query && params.view !== "favorites" ? <><Text style={styles.prompt}>{t("hadith.searchPrompt")}</Text><View style={styles.suggestions}>{SUGGESTION_IDS.map((id) => { const value = t(`hadith.suggestion.${id}` as never); return <Pressable key={id} onPress={() => setQuery(value)} style={styles.suggestion}><Text style={styles.suggestionText}>{value}</Text></Pressable>; })}</View><View style={styles.hint}><Ionicons name="sparkles-outline" size={19} color={colors.goldLight} /><Text style={styles.hintText}>{t("hadith.searchHint")}</Text></View></> : null}
           {loading ? <View style={styles.state}><ActivityIndicator color={colors.goldLight} /><Text style={styles.stateText}>{t("hadith.searchingReferences")}</Text></View> : null}
-          {!loading && searched && !themeCategory ? <Text style={styles.count}>{t("hadith.resultCount", { count: unique.length })}</Text> : null}
+          {!loading && searched && !params.theme ? <Text style={styles.count}>{t("hadith.resultCount", { count: unique.length })}</Text> : null}
           {!loading && searched && !unique.length ? <View style={styles.state}><Ionicons name="search-outline" size={31} color={colors.textMuted} /><Text style={styles.emptyTitle}>{t("hadith.noHadithFound")}</Text><Text style={styles.stateText}>{t("hadith.noResultsHelp")}</Text></View> : null}
-          <View style={styles.list}>{unique.map((item, index) => <HadithCard key={item.id} title={item.title} subtitle={themeCategory ? undefined : t("hadith.hadeethEncReference", { id: item.id })} index={index} onPress={() => router.push(`/hadith/${item.id}` as Href)} />)}</View>
+          <View style={styles.list}>{unique.map((item, index) => <HadithCard key={item.id} title={item.title} subtitle={params.theme ? undefined : t("hadith.hadeethEncReference", { id: item.id })} index={index} onPress={() => router.push(`/hadith/${item.id}` as Href)} />)}</View>
           <Text style={styles.credit}>{t("hadith.searchCredit")}</Text>
         </ScrollView>
       </SafeAreaView>

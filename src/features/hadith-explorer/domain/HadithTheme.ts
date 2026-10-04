@@ -4,7 +4,7 @@ export type HadithTheme = { id: string; label: string; query: string; icon: stri
 export const HADITH_THEMES: readonly HadithTheme[] = [
   { id: "foi", label: "Foi", query: "foi", icon: "heart-outline", color: "#B87992", categoryId: "3" },
   { id: "priere", label: "Prière", query: "prière", icon: "moon-outline", color: "#7F72B2", categoryId: "134" },
-  { id: "comportement", label: "Comportement", query: "bon comportement", icon: "sparkles-outline", color: "#D09B57", categoryId: "282" },
+  { id: "comportement", label: "Comportement", query: "bon comportement", icon: "sparkles-outline", color: "#D09B57", categoryId: "266" },
   { id: "famille", label: "Famille", query: "famille", icon: "people-outline", color: "#B66C61", categoryId: "124" },
   { id: "parents", label: "Parents", query: "parents", icon: "home-outline", color: "#5E9B87", categoryId: "273" },
   { id: "patience", label: "Patience", query: "patience", icon: "hourglass-outline", color: "#6D8FA8" },
