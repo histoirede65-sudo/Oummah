@@ -7,7 +7,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { FiqhTopBar, fq, fqType } from "../../features/fiqh/components/FiqhUI";
 import { FIQH_BOOK_IMAGES, FIQH_BOOK_INTROS } from "../../features/fiqh/fiqhBooks";
 import { bookOrder, categoryById, topicById } from "../../features/fiqh/fiqhData";
-import { useFiqhReading } from "../../features/fiqh/fiqhStorage";
+import { setFiqhLessonRead, useFiqhReading } from "../../features/fiqh/fiqhStorage";
 
 /** A Fiqh book: cover, reading progress, then the table of contents with every lesson. */
 export default function FiqhBookScreen() {
@@ -70,7 +70,15 @@ export default function FiqhBookScreen() {
               const done = reading.read.includes(id);
               return (
                 <Pressable key={id} onPress={() => open(id)} style={({ pressed }) => [styles.lesson, pressed && styles.lessonPressed]}>
-                  <Ionicons name={done ? "checkmark-circle" : "ellipse-outline"} size={18} color={done ? fq.gold : fq.inkMuted} />
+                  <Pressable
+                    accessibilityRole="checkbox"
+                    accessibilityState={{ checked: done }}
+                    accessibilityLabel={done ? `Décocher ${topic.title}` : `Cocher ${topic.title}`}
+                    hitSlop={12}
+                    onPress={() => void setFiqhLessonRead(id, !done)}
+                  >
+                    <Ionicons name={done ? "checkmark-circle" : "ellipse-outline"} size={22} color={done ? fq.gold : fq.inkMuted} />
+                  </Pressable>
                   <View style={styles.flex}>
                     <Text style={[styles.lessonTitle, done && styles.lessonDone]}>{topic.title}</Text>
                   </View>

@@ -9,7 +9,7 @@ import { FiqhTopBar, SourceChips, SourceSheet, TextSizeButton, fq, fqType, useSo
 import { FiqhWasilCTA } from "../../../features/fiqh/components/FiqhWasilCTA";
 import { bookOrder, categoryById, chapterById, topicById } from "../../../features/fiqh/fiqhData";
 import { lessonOf, lessonSourceIds, sourceShortLabel } from "../../../features/fiqh/fiqhLessons";
-import { markFiqhLessonRead, saveFiqhProgress, useFiqhReading } from "../../../features/fiqh/fiqhStorage";
+import { saveFiqhProgress, setFiqhLastLesson, setFiqhLessonRead, useFiqhReading } from "../../../features/fiqh/fiqhStorage";
 
 export default function FiqhLessonScreen() {
   const { topicId, chapter: chapterParam } = useLocalSearchParams<{ topicId: string; chapter?: string }>();
@@ -21,7 +21,7 @@ export default function FiqhLessonScreen() {
 
   useEffect(() => {
     if (!topic) return;
-    void markFiqhLessonRead(topic.id);
+    void setFiqhLastLesson(topic.id);
     void saveFiqhProgress({ lastTopicId: topic.id, lastCategoryId: topic.categoryId });
     setOpenCase(0);
     setShowSources(false);
@@ -44,6 +44,8 @@ export default function FiqhLessonScreen() {
   const nextId = bookIndex >= 0 && bookIndex < book.length - 1 ? book[bookIndex + 1] : undefined;
   const sources = lessonSourceIds(topic, lesson);
   const go = (id: string) => router.replace({ pathname: "/fiqh/topic/[topicId]", params: { topicId: id } });
+  const isRead = reading.read.includes(topic.id);
+  const goNext = (id: string) => { void setFiqhLessonRead(topic.id, true); go(id); };
 
   const body = { fontSize: 16.5 * k, lineHeight: 26 * k };
 
@@ -174,6 +176,17 @@ export default function FiqhLessonScreen() {
 
         <FiqhWasilCTA enabled prompt={`Contexte : Fiqh → ${category?.title ?? "Fiqh"} → ${chapter?.title ?? "Leçon"} → ${topic.title}.\n\nJe souhaite approfondir cette leçon et poser ma question :`} />
 
+        <Pressable
+          accessibilityRole="checkbox"
+          accessibilityState={{ checked: isRead }}
+          onPress={() => void setFiqhLessonRead(topic.id, !isRead)}
+          style={[styles.readToggle, isRead && styles.readToggleOn]}
+        >
+          <Ionicons name={isRead ? "checkmark-circle" : "ellipse-outline"} size={22} color={isRead ? fq.page : fq.gold} />
+          <Text style={[styles.readText, isRead && styles.readTextOn]}>{isRead ? "Leçon lue" : "J’ai lu cette leçon"}</Text>
+          {isRead ? <Text style={styles.readUndo}>Annuler</Text> : null}
+        </Pressable>
+
         <View style={styles.nav}>
           {previousId ? (
             <Pressable onPress={() => go(previousId)} style={styles.navButton}>
@@ -182,12 +195,12 @@ export default function FiqhLessonScreen() {
             </Pressable>
           ) : <View style={styles.navSpacer} />}
           {nextId ? (
-            <Pressable onPress={() => go(nextId)} style={[styles.navButton, styles.navNext]}>
+            <Pressable onPress={() => goNext(nextId)} style={[styles.navButton, styles.navNext]}>
               <Text style={[styles.navKicker, styles.navKickerNext]}>Suivant ›</Text>
               <Text style={[styles.navTitle, styles.navTitleNext]} numberOfLines={2}>{topicById.get(nextId)?.title}</Text>
             </Pressable>
           ) : (
-            <Pressable onPress={() => router.back()} style={[styles.navButton, styles.navNext]}>
+            <Pressable onPress={() => { void setFiqhLessonRead(topic.id, true); router.back(); }} style={[styles.navButton, styles.navNext]}>
               <Text style={[styles.navKicker, styles.navKickerNext]}>Fin du livre</Text>
               <Text style={[styles.navTitle, styles.navTitleNext]}>Retour au sommaire</Text>
             </Pressable>
@@ -248,7 +261,12 @@ const styles = StyleSheet.create({
   sourcesCount: { color: fq.inkMuted, fontSize: 14, fontWeight: "700" },
   sourceRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingVertical: 12, borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: fq.lineSoft },
   sourceLabel: { color: fq.inkSoft, fontSize: 14.5 },
-  nav: { flexDirection: "row", gap: 10, marginTop: 30 },
+  readToggle: { flexDirection: "row", alignItems: "center", gap: 10, height: 54, marginTop: 30, paddingHorizontal: 16, borderRadius: 16, borderWidth: 1, borderColor: fq.gold },
+  readToggleOn: { backgroundColor: fq.gold },
+  readText: { flex: 1, color: fq.gold, fontSize: 15.5, fontWeight: "800" },
+  readTextOn: { color: fq.page },
+  readUndo: { color: fq.page, fontSize: 13.5, fontWeight: "700", textDecorationLine: "underline" },
+  nav: { flexDirection: "row", gap: 10, marginTop: 14 },
   navButton: { flex: 1, minHeight: 72, padding: 14, borderRadius: 16, backgroundColor: fq.paper, borderWidth: 1, borderColor: fq.lineSoft },
   navNext: { alignItems: "flex-end", borderColor: fq.line },
   navSpacer: { flex: 1 },

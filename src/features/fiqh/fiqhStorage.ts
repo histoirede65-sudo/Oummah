@@ -45,11 +45,16 @@ export async function updateFiqhReading(change: (value: FiqhReading) => FiqhRead
   try { await AsyncStorage.setItem(PREFS_KEY, JSON.stringify(next)); } catch { /* reading state is a convenience */ }
 }
 
-export function markFiqhLessonRead(topicId: string) {
+/** Remembers the lesson being read, for « Reprendre ». */
+export function setFiqhLastLesson(topicId: string) {
+  return updateFiqhReading((value) => ({ ...value, lastTopicId: topicId }));
+}
+
+/** Checks or unchecks a lesson as read. */
+export function setFiqhLessonRead(topicId: string, read: boolean) {
   return updateFiqhReading((value) => ({
     ...value,
-    lastTopicId: topicId,
-    read: value.read.includes(topicId) ? value.read : [...value.read, topicId],
+    read: read ? (value.read.includes(topicId) ? value.read : [...value.read, topicId]) : value.read.filter((id) => id !== topicId),
   }));
 }
 
