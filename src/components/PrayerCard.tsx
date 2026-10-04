@@ -17,6 +17,7 @@ import {
   InteractionManager,
   Linking,
   Modal,
+  Platform,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -127,15 +128,16 @@ const ADHAN_PRAYERS: MosquePrayerKey[] = [
 const ADHAN_MODES: ReadonlyArray<{
   key: AdhanAlertMode;
   labelKey: TranslationKey;
-  icon: "volume-high-outline" | "phone-portrait-outline" | "notifications-outline";
+  icon: "volume-high-outline" | "phone-portrait-outline" | "notifications-outline" | "notifications-off-outline";
 }> = [
   { key: "adhan", labelKey: "prayer.alertAdhan", icon: "volume-high-outline" },
   { key: "notification", labelKey: "prayer.alertNotification", icon: "notifications-outline" },
   { key: "vibration", labelKey: "prayer.alertVibration", icon: "phone-portrait-outline" },
-  { key: "silent", labelKey: "prayer.alertSilent", icon: "notifications-outline" },
+  { key: "silent", labelKey: "prayer.alertSilent", icon: "notifications-off-outline" },
 ];
 
-const ADHAN_LEAD_TIMES = [0, 5, 10, 15] as const;
+const ADHAN_LEAD_TIMES = [0, 5, 10, 15, 30] as const;
+const PRAYER_ANGLES = [12, 15, 16, 17, 17.5, 18, 18.5, 19.5, 20] as const;
 const CALCULATION_GUIDE_STORAGE_KEY =
   "oummah:first-visit-guide:v1:prayer-calculation-method";
 const ADHAN_VOICES: ReadonlyArray<{ key: AdhanVoice; labelKey: TranslationKey; file: number }> = [
@@ -433,7 +435,6 @@ export default function PrayerCard({ onScheduleChange }: { onScheduleChange?: (s
   );
   const [adhanSettingsVisible, setAdhanSettingsVisible] = useState(false);
   const [calculationOptionsVisible, setCalculationOptionsVisible] = useState(false);
-  const [degreesOptionsVisible, setDegreesOptionsVisible] = useState(false);
   const [calculationGuideVisible, setCalculationGuideVisible] = useState(false);
   const [locationOptionsVisible, setLocationOptionsVisible] = useState(false);
   const [orbitLayoutReady, setOrbitLayoutReady] = useState(false);
@@ -444,8 +445,39 @@ export default function PrayerCard({ onScheduleChange }: { onScheduleChange?: (s
   const [adhanCoverageLoading, setAdhanCoverageLoading] = useState(false);
   const [adhanCoverage, setAdhanCoverage] = useState<Awaited<ReturnType<typeof getAdhanNotificationDiagnostics>> | null>(null);
   const [adhanCoverageError, setAdhanCoverageError] = useState(false);
-  const adhanPlayer = useAudioPlayer(ADHAN_VOICES.find((voice) => voice.key === adhanPreferences.voice)?.file ?? ADHAN_VOICES[0].file);
+  // One player for every voice preview: the ▶ of a voice loads that voice.
+  const adhanPlayer = useAudioPlayer(ADHAN_VOICES[0].file);
   const adhanPlayerStatus = useAudioPlayerStatus(adhanPlayer);
+  const [previewVoice, setPreviewVoice] = useState<AdhanVoice | null>(null);
+  const adhanScrollRef = useRef<ScrollView>(null);
+  const calculationSectionY = useRef(0);
+  const scrollToCalculation = useRef(false);
+
+  // The preview stops when the sheet closes.
+  useEffect(() => {
+    if (!adhanSettingsVisible && adhanPlayerStatus.playing) adhanPlayer.pause();
+  }, [adhanPlayer, adhanPlayerStatus.playing, adhanSettingsVisible]);
+
+  /** « Prochaine alerte : Asr à 15:42 · Oiseaux apaisants » — reassures that the settings work. */
+  const nextAdhanAlert = useMemo(() => {
+    if (!schedule || !adhanPreferences.enabled) return null;
+    const lead = adhanPreferences.leadMinutes * 60_000;
+    const next = [...schedule.prayers, ...schedule.tomorrowPrayers, ...(schedule.futurePrayers ?? [])]
+      .filter((prayer) => adhanPreferences.prayers[prayer.key] && prayer.timestamp - lead > now)
+      .sort((left, right) => left.timestamp - right.timestamp)[0];
+    if (!next) return null;
+    const at = new Date(next.timestamp - lead);
+    const today = new Date(now);
+    const time = at.toLocaleTimeString(language === "en" ? "en-GB" : "fr-FR", { hour: "2-digit", minute: "2-digit" });
+    const prayer = t(PRAYER_LABEL_KEYS[next.key]);
+    const label = at.toDateString() === today.toDateString()
+      ? t("prayer.nextAlert", { prayer, time })
+      : t("prayer.nextAlertTomorrow", { prayer, time });
+    const kind = adhanPreferences.mode === "adhan"
+      ? t(ADHAN_VOICES.find((voice) => voice.key === adhanPreferences.voice)?.labelKey ?? "prayer.alertAdhan")
+      : t(ADHAN_MODES.find((mode) => mode.key === adhanPreferences.mode)?.labelKey ?? "prayer.alertNotification");
+    return `${label} · ${kind}`;
+  }, [adhanPreferences, language, now, schedule, t]);
   const orbitGlow = useRef(new Animated.Value(0.32)).current;
   const waitingForLocationSettingsRef = useRef(false);
   const adhanTitleTapCountRef = useRef(0);
@@ -885,7 +917,7 @@ export default function PrayerCard({ onScheduleChange }: { onScheduleChange?: (s
 
     if (seen === true) {
       setCalculationOptionsVisible(true);
-      setDegreesOptionsVisible(false);
+      scrollToCalculation.current = true;
       setAdhanSettingsVisible(true);
       return;
     }
@@ -899,9 +931,31 @@ export default function PrayerCard({ onScheduleChange }: { onScheduleChange?: (s
       .set(CALCULATION_GUIDE_STORAGE_KEY, true)
       .catch(() => undefined);
     setCalculationOptionsVisible(true);
-    setDegreesOptionsVisible(false);
+    scrollToCalculation.current = true;
     setAdhanSettingsVisible(true);
   };
+
+  const updateCalculationSettings = (patch: Partial<PrayerCalculationSettings>) => {
+    const next: PrayerCalculationSettings = { ...calculationSettings, mode: "custom", ...patch };
+    setCalculationSettings(next);
+    void savePrayerCalculationSettings(next);
+  };
+
+  const togglePreview = (voice: AdhanVoice) => {
+    if (previewVoice === voice && adhanPlayerStatus.playing) {
+      adhanPlayer.pause();
+      return;
+    }
+    if (previewVoice !== voice) {
+      adhanPlayer.replace(ADHAN_VOICES.find((item) => item.key === voice)?.file ?? ADHAN_VOICES[0].file);
+      setPreviewVoice(voice);
+    } else {
+      void adhanPlayer.seekTo(0);
+    }
+    adhanPlayer.play();
+  };
+
+  const usesMosqueTimes = calculationSettings.scheduleSource === "mosque" && source?.type === "mosque";
 
   const chooseCity = async () => {
     const query = cityQuery.trim();
@@ -1381,7 +1435,6 @@ export default function PrayerCard({ onScheduleChange }: { onScheduleChange?: (s
             accessibilityLabel={t("prayer.configureAdhanAlerts")}
             onPress={() => {
               setCalculationOptionsVisible(false);
-              setDegreesOptionsVisible(false);
               setAdhanSettingsVisible(true);
             }}
             style={({ pressed }) => [styles.adhan, pressed && styles.adhanPressed]}
@@ -1727,6 +1780,7 @@ export default function PrayerCard({ onScheduleChange }: { onScheduleChange?: (s
             style={[styles.adhanSheet, { maxHeight: Math.max(320, height - insets.top - insets.bottom - 12) }]}
           >
             <ScrollView
+              ref={adhanScrollRef}
               style={styles.adhanScroll}
               scrollEnabled
               nestedScrollEnabled
@@ -1820,211 +1874,237 @@ export default function PrayerCard({ onScheduleChange }: { onScheduleChange?: (s
               />
             </View>
 
-            <Pressable
-              accessibilityRole="button"
-              accessibilityState={{ expanded: calculationOptionsVisible }}
-              onPress={() => {
-                setCalculationOptionsVisible(!calculationOptionsVisible);
-                setDegreesOptionsVisible(false);
-              }}
-              style={styles.calculationDisclosure}
-            >
-              <View style={styles.calculationDisclosureCopy}>
-                <Text style={styles.adhanSettingTitle}>{t("prayer.adjustCalculation")}</Text>
-                <Text style={styles.adhanSettingSubtitle}>
-                  {calculationSettings.scheduleSource === "mosque" && source?.type === "mosque"
-                    ? t("prayer.mosqueTimes")
-                    : t("prayer.automaticAnglesDetail", { fajr: calculationSettings.fajrAngle, isha: calculationSettings.ishaAngle })}
-                </Text>
+            {nextAdhanAlert ? (
+              <View style={styles.adhanNextAlert}>
+                <Ionicons name="time-outline" size={16} color="#F6C75D" />
+                <Text style={styles.adhanNextAlertText}>{nextAdhanAlert}</Text>
               </View>
-              <Ionicons name={calculationOptionsVisible ? "chevron-up" : "chevron-down"} size={18} color={colors.goldLight} />
-            </Pressable>
-            {calculationOptionsVisible ? (
-              <>
-                <Pressable
-                  accessibilityRole="button"
-                  accessibilityState={{ expanded: degreesOptionsVisible }}
-                  onPress={() => setDegreesOptionsVisible(!degreesOptionsVisible)}
-                  style={styles.calculationDisclosure}
-                >
-                  <View style={styles.calculationDisclosureCopy}>
-                    <Text style={styles.adhanSettingTitle}>{t("prayer.chooseDegrees")}</Text>
-                    <Text style={styles.adhanSettingSubtitle}>{t("prayer.degreesOptional")}</Text>
-                  </View>
-                  <Ionicons name={degreesOptionsVisible ? "chevron-up" : "chevron-down"} size={18} color={colors.goldLight} />
-                </Pressable>
-                {degreesOptionsVisible ? (
-                  <>
-                    <Text style={styles.calculationHint}>{t("prayer.degreesExplanation")}</Text>
-                    <View style={styles.customAngles}>
-                      {(["fajrAngle", "ishaAngle"] as const).map((key) => (
-                        <View key={key} style={styles.customAngleGroup}>
-                          <Text style={styles.adhanModeText}>{key === "fajrAngle" ? "Fajr" : "Isha"}</Text>
-                          <View style={styles.angleChoices}>
-                            {[12, 15, 16, 17, 17.5, 18, 18.5, 19.5, 20].map((angle) => {
-                              const selected = calculationSettings.scheduleSource === "calculation"
-                                && calculationSettings.mode === "custom"
-                                && calculationSettings[key] === angle;
-                              return (
-                                <Pressable
-                                  key={angle}
-                                  accessibilityRole="button"
-                                  accessibilityLabel={`${key === "fajrAngle" ? "Fajr" : "Isha"} ${angle}°`}
-                                  accessibilityState={{ selected }}
-                                  hitSlop={6}
-                                  onPress={() => {
-                                    const next = { ...calculationSettings, scheduleSource: "calculation" as const, mode: "custom" as const, [key]: angle };
-                                    setCalculationSettings(next);
-                                    void savePrayerCalculationSettings(next);
-                                  }}
-                                  style={[styles.angleChoice, selected && styles.adhanChoiceSelected]}
-                                >
-                                  <Text style={[styles.adhanModeText, selected && styles.adhanChoiceTextSelected]}>{angle}°</Text>
-                                </Pressable>
-                              );
-                            })}
-                          </View>
-                        </View>
-                      ))}
-                    </View>
-                  </>
-                ) : null}
-              </>
             ) : null}
-            <Text style={styles.adhanSectionLabel}>{t("prayer.selectedPrayersUpper")}</Text>
-            <View style={styles.adhanPrayerGrid}>
-              {ADHAN_PRAYERS.map((prayer) => {
-                const selected = adhanPreferences.prayers[prayer];
-                return (
-                  <Pressable
-                    key={prayer}
-                    disabled={!adhanPreferences.enabled}
-                    onPress={() =>
-                      updateAdhanPreferences((current) => ({
-                        ...current,
-                        prayers: {
-                          ...current.prayers,
-                          [prayer]: !current.prayers[prayer],
-                        },
-                      }))
-                    }
-                    style={[
-                      styles.adhanPrayerChoice,
-                      selected && styles.adhanChoiceSelected,
-                      !adhanPreferences.enabled && styles.adhanChoiceDisabled,
-                    ]}
-                  >
-                    <Ionicons
-                      name={selected ? "checkmark-circle" : "ellipse-outline"}
-                      size={16}
-                      color={selected ? "#F6C75D" : "#817985"}
-                    />
-                    <Text
-                      style={[
-                        styles.adhanChoiceText,
-                        selected && styles.adhanChoiceTextSelected,
-                      ]}
+
+            <View style={!adhanPreferences.enabled && styles.adhanChoiceDisabled} pointerEvents={adhanPreferences.enabled ? "auto" : "none"}>
+              <Text style={styles.adhanSectionLabel}>{t("prayer.alertTypeUpper")}</Text>
+              <View style={styles.adhanOptionRow}>
+                {ADHAN_MODES.map((mode) => {
+                  const selected = adhanPreferences.mode === mode.key;
+                  return (
+                    <Pressable
+                      key={mode.key}
+                      accessibilityRole="button"
+                      accessibilityState={{ selected }}
+                      onPress={() => updateAdhanPreferences((current) => ({ ...current, mode: mode.key }))}
+                      style={[styles.adhanModeChoice, selected && styles.adhanChoiceSelected]}
                     >
-                      {t(PRAYER_LABEL_KEYS[prayer])}
-                    </Text>
-                  </Pressable>
-                );
-              })}
+                      <Ionicons name={mode.icon} size={18} color={selected ? "#F6C75D" : "#A49BA8"} />
+                      <Text style={[styles.adhanModeText, selected && styles.adhanChoiceTextSelected]}>
+                        {t(mode.labelKey)}
+                      </Text>
+                    </Pressable>
+                  );
+                })}
+              </View>
+              {Platform.OS === "ios" && (adhanPreferences.mode === "adhan" || adhanPreferences.mode === "notification") ? (
+                <Text style={styles.adhanNote}>{t("prayer.iosSilentNote")}</Text>
+              ) : null}
+
+              {adhanPreferences.mode === "adhan" ? (
+                <>
+                  <Text style={styles.adhanSectionLabel}>{t("prayer.adhanVoiceUpper")}</Text>
+                  <View style={styles.adhanVoiceGrid}>
+                    {ADHAN_VOICES.map((voice) => {
+                      const selected = adhanPreferences.voice === voice.key;
+                      const playing = previewVoice === voice.key && adhanPlayerStatus.playing;
+                      return (
+                        <Pressable
+                          key={voice.key}
+                          accessibilityRole="button"
+                          accessibilityState={{ selected }}
+                          onPress={() => updateAdhanPreferences((current) => ({ ...current, voice: voice.key }))}
+                          style={[styles.adhanVoiceChoice, selected && styles.adhanChoiceSelected]}
+                        >
+                          <Ionicons
+                            name={selected ? "checkmark-circle" : "ellipse-outline"}
+                            size={16}
+                            color={selected ? "#F6C75D" : "#817985"}
+                          />
+                          <Text numberOfLines={2} style={[styles.adhanVoiceText, selected && styles.adhanChoiceTextSelected]}>
+                            {t(voice.labelKey)}
+                          </Text>
+                          <Pressable
+                            accessibilityRole="button"
+                            accessibilityLabel={playing ? t("prayer.pauseAdhanPreview") : t("prayer.listenAdhanPreview")}
+                            hitSlop={8}
+                            onPress={() => togglePreview(voice.key)}
+                            style={[styles.adhanVoicePlay, playing && styles.adhanVoicePlayActive]}
+                          >
+                            <Ionicons name={playing ? "pause" : "play"} size={14} color={playing ? "#281816" : "#F6C75D"} />
+                          </Pressable>
+                        </Pressable>
+                      );
+                    })}
+                  </View>
+                </>
+              ) : null}
+
+              <Text style={styles.adhanSectionLabel}>{t("prayer.selectedPrayersUpper")}</Text>
+              <View style={styles.adhanPrayerGrid}>
+                {ADHAN_PRAYERS.map((prayer) => {
+                  const selected = adhanPreferences.prayers[prayer];
+                  return (
+                    <Pressable
+                      key={prayer}
+                      accessibilityRole="button"
+                      accessibilityState={{ selected }}
+                      onPress={() =>
+                        updateAdhanPreferences((current) => ({
+                          ...current,
+                          prayers: { ...current.prayers, [prayer]: !current.prayers[prayer] },
+                        }))
+                      }
+                      style={[styles.adhanPrayerChoice, selected && styles.adhanChoiceSelected]}
+                    >
+                      <Ionicons
+                        name={selected ? "checkmark-circle" : "ellipse-outline"}
+                        size={16}
+                        color={selected ? "#F6C75D" : "#817985"}
+                      />
+                      <Text style={[styles.adhanChoiceText, selected && styles.adhanChoiceTextSelected]}>
+                        {t(PRAYER_LABEL_KEYS[prayer])}
+                      </Text>
+                    </Pressable>
+                  );
+                })}
+              </View>
+
+              <Text style={styles.adhanSectionLabel}>{t("prayer.reminderTimeUpper")}</Text>
+              <View style={styles.adhanOptionRow}>
+                {ADHAN_LEAD_TIMES.map((minutes) => {
+                  const selected = adhanPreferences.leadMinutes === minutes;
+                  return (
+                    <Pressable
+                      key={minutes}
+                      accessibilityRole="button"
+                      accessibilityState={{ selected }}
+                      onPress={() => updateAdhanPreferences((current) => ({ ...current, leadMinutes: minutes }))}
+                      style={[styles.adhanLeadChoice, selected && styles.adhanChoiceSelected]}
+                    >
+                      <Text
+                        adjustsFontSizeToFit
+                        numberOfLines={1}
+                        style={[styles.adhanModeText, selected && styles.adhanChoiceTextSelected]}
+                      >
+                        {minutes === 0 ? t("prayer.onTime") : `-${minutes} min`}
+                      </Text>
+                    </Pressable>
+                  );
+                })}
+              </View>
             </View>
 
-            <Text style={styles.adhanSectionLabel}>{t("prayer.alertTypeUpper")}</Text>
-            <View style={styles.adhanOptionRow}>
-              {ADHAN_MODES.map((mode) => {
-                const selected = adhanPreferences.mode === mode.key;
-                return (
-                  <Pressable
-                    key={mode.key}
-                    disabled={!adhanPreferences.enabled}
-                    onPress={() =>
-                      updateAdhanPreferences((current) => ({
-                        ...current,
-                        mode: mode.key,
-                      }))
-                    }
-                    style={[
-                      styles.adhanModeChoice,
-                      selected && styles.adhanChoiceSelected,
-                      !adhanPreferences.enabled && styles.adhanChoiceDisabled,
-                    ]}
-                  >
-                    <Ionicons
-                      name={mode.icon}
-                      size={18}
-                      color={selected ? "#F6C75D" : "#A49BA8"}
-                    />
-                    <Text
-                      style={[
-                        styles.adhanModeText,
-                        selected && styles.adhanChoiceTextSelected,
-                      ]}
-                    >
-                      {t(mode.labelKey)}
-                    </Text>
-                  </Pressable>
-                );
-              })}
-            </View>
-
-            {adhanPreferences.mode === "adhan" && (
-              <>
-                <Text style={styles.adhanSectionLabel}>{t("prayer.adhanVoiceUpper")}</Text>
-                <View style={styles.adhanOptionRow}>
-                  {ADHAN_VOICES.map((voice) => {
-                    const selected = adhanPreferences.voice === voice.key;
-                    return <Pressable key={voice.key} onPress={() => updateAdhanPreferences((current) => ({ ...current, voice: voice.key }))} style={[styles.adhanLeadChoice, selected && styles.adhanChoiceSelected]}>
-                      <Text style={[styles.adhanModeText, voice.key === "birds" && styles.adhanBirdText, selected && styles.adhanChoiceTextSelected]}>{t(voice.labelKey)}</Text>
-                    </Pressable>;
-                  })}
-                </View>
-                <Pressable
-                  accessibilityLabel={adhanPlayerStatus.playing ? t("prayer.pauseAdhanPreview") : t("prayer.listenAdhanPreview")}
-                  style={styles.adhanPreviewButton}
-                  onPress={() => adhanPlayerStatus.playing ? adhanPlayer.pause() : adhanPlayer.play()}
-                >
-                  <Ionicons name={adhanPlayerStatus.playing ? "pause" : "play"} size={19} color="#281816" />
-                  <Text style={styles.adhanPreviewText}>
-                    {adhanPlayerStatus.playing ? t("prayer.pausePreview") : t("prayer.listenPreview")}
+            <View
+              onLayout={(event) => {
+                calculationSectionY.current = event.nativeEvent.layout.y;
+                if (scrollToCalculation.current) {
+                  scrollToCalculation.current = false;
+                  adhanScrollRef.current?.scrollTo({ y: Math.max(0, event.nativeEvent.layout.y - 12), animated: true });
+                }
+              }}
+            >
+              <Pressable
+                accessibilityRole="button"
+                accessibilityState={{ expanded: calculationOptionsVisible }}
+                onPress={() => setCalculationOptionsVisible(!calculationOptionsVisible)}
+                style={styles.calculationDisclosure}
+              >
+                <Ionicons name="calculator-outline" size={18} color={colors.goldLight} style={styles.calculationIcon} />
+                <View style={styles.calculationDisclosureCopy}>
+                  <Text style={styles.adhanSettingTitle}>{t("prayer.calculationTitle")}</Text>
+                  <Text style={styles.adhanSettingSubtitle}>
+                    {usesMosqueTimes
+                      ? t("prayer.mosqueTimes")
+                      : t("prayer.anglesDetail", { fajr: calculationSettings.fajrAngle, isha: calculationSettings.ishaAngle })}
                   </Text>
-                </Pressable>
-              </>
-            )}
-
-            <Text style={styles.adhanSectionLabel}>{t("prayer.reminderTimeUpper")}</Text>
-            <View style={styles.adhanOptionRow}>
-              {ADHAN_LEAD_TIMES.map((minutes) => {
-                const selected = adhanPreferences.leadMinutes === minutes;
-                return (
-                  <Pressable
-                    key={minutes}
-                    disabled={!adhanPreferences.enabled}
-                    onPress={() =>
-                      updateAdhanPreferences((current) => ({
-                        ...current,
-                        leadMinutes: minutes,
-                      }))
-                    }
-                    style={[
-                      styles.adhanLeadChoice,
-                      selected && styles.adhanChoiceSelected,
-                      !adhanPreferences.enabled && styles.adhanChoiceDisabled,
-                    ]}
-                  >
-                    <Text
-                      style={[
-                        styles.adhanModeText,
-                        selected && styles.adhanChoiceTextSelected,
-                      ]}
-                    >
-                      {minutes === 0 ? t("prayer.onTime") : `-${minutes} min`}
-                    </Text>
-                  </Pressable>
-                );
-              })}
+                </View>
+                <Ionicons name={calculationOptionsVisible ? "chevron-up" : "chevron-down"} size={18} color={colors.goldLight} />
+              </Pressable>
+              {calculationOptionsVisible ? (
+                <View style={styles.calculationPanel}>
+                  {source?.type === "mosque" ? (
+                    <View style={styles.adhanOptionRow}>
+                      {(["mosque", "calculation"] as const).map((scheduleSource) => {
+                        const selected = calculationSettings.scheduleSource === scheduleSource;
+                        return (
+                          <Pressable
+                            key={scheduleSource}
+                            accessibilityRole="button"
+                            accessibilityState={{ selected }}
+                            onPress={() => updateCalculationSettings({ scheduleSource })}
+                            style={[styles.adhanLeadChoice, selected && styles.adhanChoiceSelected]}
+                          >
+                            <Text style={[styles.adhanModeText, selected && styles.adhanChoiceTextSelected]}>
+                              {scheduleSource === "mosque" ? t("prayer.mosqueTimes") : t("prayer.calculationByDegrees")}
+                            </Text>
+                          </Pressable>
+                        );
+                      })}
+                    </View>
+                  ) : null}
+                  {usesMosqueTimes ? (
+                    <Text style={styles.calculationHint}>{t("prayer.mosqueTimesExplanation")}</Text>
+                  ) : (
+                    <>
+                      {(["fajrAngle", "ishaAngle"] as const).map((key) => {
+                        const index = PRAYER_ANGLES.indexOf(calculationSettings[key] as (typeof PRAYER_ANGLES)[number]);
+                        const step = (delta: number) => {
+                          const next = PRAYER_ANGLES[Math.min(PRAYER_ANGLES.length - 1, Math.max(0, (index < 0 ? 1 : index) + delta))];
+                          updateCalculationSettings({ scheduleSource: "calculation", [key]: next });
+                        };
+                        const label = key === "fajrAngle" ? "Fajr" : "Isha";
+                        return (
+                          <View key={key} style={styles.angleStepper}>
+                            <Text style={styles.angleStepperLabel}>{label}</Text>
+                            <Pressable
+                              accessibilityRole="button"
+                              accessibilityLabel={`${label} −`}
+                              disabled={index === 0}
+                              onPress={() => step(-1)}
+                              style={[styles.angleStepButton, index === 0 && styles.adhanChoiceDisabled]}
+                            >
+                              <Ionicons name="remove" size={18} color="#F6C75D" />
+                            </Pressable>
+                            <Text style={styles.angleStepperValue}>{calculationSettings[key]}°</Text>
+                            <Pressable
+                              accessibilityRole="button"
+                              accessibilityLabel={`${label} +`}
+                              disabled={index === PRAYER_ANGLES.length - 1}
+                              onPress={() => step(1)}
+                              style={[styles.angleStepButton, index === PRAYER_ANGLES.length - 1 && styles.adhanChoiceDisabled]}
+                            >
+                              <Ionicons name="add" size={18} color="#F6C75D" />
+                            </Pressable>
+                          </View>
+                        );
+                      })}
+                      <Text style={styles.calculationHint}>{t("prayer.degreesExplanation")}</Text>
+                      {calculationSettings.fajrAngle !== DEFAULT_PRAYER_CALCULATION_SETTINGS.fajrAngle
+                        || calculationSettings.ishaAngle !== DEFAULT_PRAYER_CALCULATION_SETTINGS.ishaAngle ? (
+                        <Pressable
+                          accessibilityRole="button"
+                          onPress={() => updateCalculationSettings({
+                            fajrAngle: DEFAULT_PRAYER_CALCULATION_SETTINGS.fajrAngle,
+                            ishaAngle: DEFAULT_PRAYER_CALCULATION_SETTINGS.ishaAngle,
+                          })}
+                          hitSlop={6}
+                        >
+                          <Text style={styles.calculationReset}>{t("prayer.resetDegrees", {
+                            fajr: DEFAULT_PRAYER_CALCULATION_SETTINGS.fajrAngle,
+                            isha: DEFAULT_PRAYER_CALCULATION_SETTINGS.ishaAngle,
+                          })}</Text>
+                        </Pressable>
+                      ) : null}
+                    </>
+                  )}
+                </View>
+              ) : null}
             </View>
 
               <Pressable
@@ -2040,7 +2120,7 @@ export default function PrayerCard({ onScheduleChange }: { onScheduleChange?: (s
                 colors={["#F5D276", "#D59A35"]}
                 style={StyleSheet.absoluteFill}
               />
-              <Text style={styles.adhanDoneText}>{t("prayer.save")}</Text>
+              <Text style={styles.adhanDoneText}>{t("prayer.done")}</Text>
               </Pressable>
 
             </ScrollView>
@@ -2530,14 +2610,23 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     gap: 7,
   },
-  calculationDisclosure: { minHeight: 54, marginTop: 13, paddingHorizontal: 13, flexDirection: "row", alignItems: "center", justifyContent: "space-between", borderRadius: 13, borderWidth: 1, borderColor: "rgba(255,255,255,0.10)", backgroundColor: "rgba(255,255,255,0.035)" },
+  adhanNextAlert: { marginTop: 10, paddingHorizontal: 13, paddingVertical: 10, flexDirection: "row", alignItems: "center", gap: 8, borderRadius: 13, backgroundColor: "rgba(231,168,50,0.11)" },
+  adhanNextAlertText: { flex: 1, color: "#FFE4A0", fontFamily: typography.sans, fontSize: 11.5, fontWeight: "700" },
+  adhanNote: { marginTop: 8, color: "rgba(242,224,202,0.72)", fontFamily: typography.sans, fontSize: 10, lineHeight: 14 },
+  adhanVoiceGrid: { flexDirection: "row", flexWrap: "wrap", gap: 7 },
+  adhanVoiceChoice: { width: "48.5%", minHeight: 48, paddingLeft: 11, paddingRight: 7, flexDirection: "row", alignItems: "center", gap: 7, borderRadius: 14, borderWidth: 1, borderColor: "rgba(255,255,255,0.08)", backgroundColor: "rgba(255,255,255,0.035)" },
+  adhanVoiceText: { flex: 1, color: "#AAA1AD", fontFamily: typography.sans, fontSize: 11, fontWeight: "600" },
+  adhanVoicePlay: { width: 30, height: 30, alignItems: "center", justifyContent: "center", borderRadius: 15, borderWidth: 1, borderColor: "rgba(246,199,93,0.55)" },
+  adhanVoicePlayActive: { backgroundColor: "#F2C55B", borderColor: "#F2C55B" },
+  calculationIcon: { marginRight: 10 },
+  calculationPanel: { marginTop: 8, padding: 12, gap: 8, borderRadius: 13, borderWidth: 1, borderColor: "rgba(255,255,255,0.08)", backgroundColor: "rgba(255,255,255,0.025)" },
+  angleStepper: { flexDirection: "row", alignItems: "center", gap: 10 },
+  angleStepperLabel: { flex: 1, color: "#FFF7EE", fontFamily: typography.serifMedium, fontSize: 15 },
+  angleStepButton: { width: 38, height: 38, alignItems: "center", justifyContent: "center", borderRadius: 19, borderWidth: 1, borderColor: "rgba(246,199,93,0.46)", backgroundColor: "rgba(231,168,50,0.11)" },
+  angleStepperValue: { minWidth: 52, color: "#FFE4A0", fontFamily: typography.sans, fontSize: 16, fontWeight: "800", textAlign: "center", fontVariant: ["tabular-nums"] },
+  calculationReset: { marginTop: 2, color: "#F6C75D", fontFamily: typography.sans, fontSize: 10.5, fontWeight: "700", textDecorationLine: "underline" },
+  calculationDisclosure: { minHeight: 54, marginTop: 17, paddingHorizontal: 13, flexDirection: "row", alignItems: "center", justifyContent: "space-between", borderRadius: 13, borderWidth: 1, borderColor: "rgba(255,255,255,0.10)", backgroundColor: "rgba(255,255,255,0.035)" },
   calculationDisclosureCopy: { flex: 1, paddingVertical: 8, paddingRight: 10 },
-  calculationMethodChoices: { flexDirection: "row", flexWrap: "wrap", gap: 7 },
-  calculationMethodChoice: { flex: 0, width: "48%", minHeight: 50, paddingHorizontal: 7 },
-  customAngles: { gap: 10, marginBottom: 10 },
-  customAngleGroup: { gap: 6 },
-  angleChoices: { flexDirection: "row", flexWrap: "wrap", gap: 7 },
-  angleChoice: { minWidth: 58, minHeight: 38, paddingHorizontal: 10, alignItems: "center", justifyContent: "center", borderRadius: 12, borderWidth: 1, borderColor: "rgba(255,255,255,0.08)", backgroundColor: "rgba(255,255,255,0.035)" },
   adhanModeChoice: {
     minHeight: 48,
     flex: 1,
@@ -2568,25 +2657,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "rgba(255,255,255,0.08)",
     backgroundColor: "rgba(255,255,255,0.035)",
-  },
-  adhanPreviewButton: {
-    minHeight: 46,
-    marginTop: 11,
-    paddingHorizontal: 17,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 9,
-    borderRadius: 15,
-    borderWidth: 1,
-    borderColor: "rgba(246,199,93,0.82)",
-    backgroundColor: "#F2C55B",
-  },
-  adhanPreviewText: {
-    color: "#281816",
-    fontFamily: typography.sans,
-    fontSize: 13,
-    fontWeight: "800",
   },
   adhanDoneButton: {
     minHeight: 48,
