@@ -141,6 +141,7 @@ const VerseRow = memo(function VerseRow({
   activeWordPosition,
   lastReadWordPosition,
   isWordSyncUnavailable,
+  showLocation,
 }: {
   verse: QuranFoundationVerse;
   settings: ReadingPreferences;
@@ -155,6 +156,7 @@ const VerseRow = memo(function VerseRow({
   activeWordPosition: number | null;
   lastReadWordPosition: number | null;
   isWordSyncUnavailable: boolean;
+  showLocation: boolean;
 }) {
   const { t } = useI18n();
   const showArabic = settings.mode !== "translation";
@@ -185,12 +187,14 @@ const VerseRow = memo(function VerseRow({
         <View style={styles.number}>
           <Text style={styles.numberText}>{verse.id}</Text>
         </View>
-        <Text style={styles.location}>
-          {t("surahReader.verseLocation", {
-            juz: verse.juzNumber || "—",
-            page: verse.pageNumber || "—",
-          })}
-        </Text>
+        {showLocation ? (
+          <Text style={styles.location}>
+            {t("surahReader.verseLocation", {
+              juz: verse.juzNumber || "—",
+              page: verse.pageNumber || "—",
+            })}
+          </Text>
+        ) : null}
         <Pressable
           accessibilityLabel={t("surahReader.listenVerse", { verse: verse.id })}
           onPress={() => onListen(verse)}
@@ -274,42 +278,34 @@ const VerseRow = memo(function VerseRow({
         </View>
       ) : null}
 
-      <Pressable
-        accessibilityRole="button"
-        accessibilityLabel={isRead ? t("surahReader.unmarkVerseReadLabel", { verse: verse.id }) : t("surahReader.markVerseReadLabel", { verse: verse.id })}
-        disabled={isSavingRead}
-        onPress={() => onConfirmRead(verse)}
-        style={[styles.readVerseButton, isRead && styles.readVerseButtonDone]}
-      >
-        <Ionicons name={isRead ? "checkmark-circle" : "ellipse-outline"} size={21} color={isRead ? colors.success : colors.goldLight} />
-        <Text style={styles.readVerseText}>{t(isRead ? "surahReader.verseRead" : "surahReader.markVerseRead")}</Text>
-      </Pressable>
-
-      <Pressable
-        accessibilityRole="button"
-        accessibilityLabel={t("surahReader.understandVerseLabel", { verse: verse.verseKey })}
-        onPress={(event) => {
-          event.stopPropagation();
-          onOpenTafsir(verse);
-        }}
-        style={({ pressed }) => [
-          styles.tafsirButton,
-          pressed && styles.tafsirButtonPressed,
-        ]}
-      >
-        <View style={styles.tafsirButtonIcon}>
-          <Ionicons name="book-outline" size={19} color={colors.goldLight} />
-        </View>
-
-        <View style={styles.tafsirButtonCopy}>
-          <Text style={styles.tafsirButtonTitle}>{t("surahReader.understandVerse")}</Text>
-          <Text style={styles.tafsirButtonSubtitle}>
-            {t("surahReader.readTafsir")}
+      <View style={styles.verseActions}>
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel={isRead ? t("surahReader.unmarkVerseReadLabel", { verse: verse.id }) : t("surahReader.markVerseReadLabel", { verse: verse.id })}
+          accessibilityState={{ checked: isRead }}
+          disabled={isSavingRead}
+          onPress={() => onConfirmRead(verse)}
+          style={({ pressed }) => [styles.verseAction, isRead && styles.verseActionDone, pressed && styles.tafsirButtonPressed]}
+        >
+          <Ionicons name={isRead ? "checkmark-circle" : "ellipse-outline"} size={18} color={isRead ? colors.success : colors.goldLight} />
+          <Text style={[styles.verseActionText, isRead && styles.verseActionTextDone]}>
+            {t(isRead ? "surahReader.verseReadShort" : "surahReader.markVerseReadShort")}
           </Text>
-        </View>
-
-        <Ionicons name="chevron-forward" size={18} color={colors.goldLight} />
-      </Pressable>
+        </Pressable>
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel={t("surahReader.understandVerseLabel", { verse: verse.verseKey })}
+          onPress={(event) => {
+            event.stopPropagation();
+            onOpenTafsir(verse);
+          }}
+          style={({ pressed }) => [styles.verseAction, pressed && styles.tafsirButtonPressed]}
+        >
+          <Ionicons name="book-outline" size={17} color={colors.goldLight} />
+          <Text style={styles.verseActionText}>{t("surahReader.understandShort")}</Text>
+          <Ionicons name="chevron-forward" size={14} color={colors.goldLight} />
+        </Pressable>
+      </View>
     </View>
   );
 });
@@ -1058,7 +1054,7 @@ export default function SurahReadingScreen() {
   }, [activeVerse, currentReciter, preloadPlayer, surahId, verses]);
 
   const renderVerse = useCallback<ListRenderItem<QuranFoundationVerse>>(
-    ({ item }) => (
+    ({ item, index }) => (
       <VerseRow
         verse={item}
         settings={settings}
@@ -1081,6 +1077,11 @@ export default function SurahReadingScreen() {
         isWordSyncUnavailable={
           activeVerse?.verseKey === item.verseKey && isWordSyncUnavailable
         }
+        showLocation={
+          index === 0 ||
+          verses[index - 1]?.juzNumber !== item.juzNumber ||
+          verses[index - 1]?.pageNumber !== item.pageNumber
+        }
       />
     ),
     [
@@ -1096,6 +1097,7 @@ export default function SurahReadingScreen() {
       savingReadKeys,
       screenWidth,
       settings,
+      verses,
     ],
   );
   const viewability = useRef(
@@ -1675,63 +1677,31 @@ const styles = StyleSheet.create({
     textAlign: "center",
     lineHeight: 22,
   },
-  tafsirButton: {
-    minHeight: 66,
-    marginTop: 26,
-    paddingHorizontal: 14,
-    paddingVertical: 11,
+  verseActions: {
+    marginTop: 20,
     flexDirection: "row",
-    alignItems: "center",
-    borderRadius: 18,
-    borderWidth: 1,
-    borderColor: "rgba(224,188,112,0.42)",
-    backgroundColor: "rgba(126,72,148,0.13)",
-  },
-  readVerseButton: {
-    marginTop: 22,
-    alignSelf: "flex-end",
-    flexDirection: "row",
-    alignItems: "center",
+    justifyContent: "flex-end",
     gap: 8,
-    paddingHorizontal: 15,
-    paddingVertical: 11,
-    borderRadius: 15,
-    borderWidth: 1,
-    borderColor: colors.goldLight,
-    backgroundColor: "rgba(227,181,90,0.2)",
-    shadowColor: colors.goldLight,
-    shadowOpacity: 0.35,
-    shadowRadius: 9,
-    elevation: 4,
   },
-  readVerseButtonDone: { borderColor: colors.success, backgroundColor: "rgba(98,197,139,0.17)", shadowColor: colors.success, shadowOpacity: 0.8, shadowRadius: 17, elevation: 9 },
-  readVerseText: { color: colors.text, fontSize: 14, fontWeight: "800" },
+  verseAction: {
+    height: 38,
+    paddingHorizontal: 13,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+    borderRadius: 19,
+    borderWidth: 1,
+    borderColor: "rgba(227,181,90,0.35)",
+    backgroundColor: "rgba(227,181,90,0.06)",
+  },
+  verseActionDone: {
+    borderColor: "rgba(98,197,139,0.55)",
+    backgroundColor: "rgba(98,197,139,0.10)",
+  },
+  verseActionText: { color: colors.text, fontSize: 13, fontWeight: "700" },
+  verseActionTextDone: { color: colors.success },
   tafsirButtonPressed: {
     opacity: 0.72,
     transform: [{ scale: 0.99 }],
-  },
-  tafsirButtonIcon: {
-    width: 40,
-    height: 40,
-    alignItems: "center",
-    justifyContent: "center",
-    borderRadius: 20,
-    backgroundColor: "rgba(224,188,112,0.10)",
-  },
-  tafsirButtonCopy: {
-    flex: 1,
-    minWidth: 0,
-    marginLeft: 12,
-  },
-  tafsirButtonTitle: {
-    color: colors.goldLight,
-    fontFamily: typography.serifMedium,
-    fontSize: 16,
-  },
-  tafsirButtonSubtitle: {
-    marginTop: 2,
-    color: colors.textMuted,
-    fontFamily: typography.sans,
-    fontSize: 9.5,
   },
 });
