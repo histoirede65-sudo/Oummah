@@ -141,6 +141,8 @@ export const en: Partial<Record<TranslationKey, string>> = {
   'hadith.searchingReferences': 'Searching the references…',
   'hadith.resultCount': 'Results: {count}',
   'hadith.allOfTheme': 'All',
+  'hadith.chip.visitSick': 'Visiting the sick',
+  'hadith.chip.medicine': 'Medicine and ruqya',
   'hadith.noHadithFound': 'No hadith found',
   'hadith.noResultsHelp': 'Try a shorter word or check your connection. Previously viewed searches remain available offline.',
   'hadith.hadeethEncReference': 'HadeethEnc reference · {id}',

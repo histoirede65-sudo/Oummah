@@ -139,6 +139,8 @@ export const fr = {
   'hadith.searchingReferences': 'Recherche dans les références…',
   'hadith.resultCount': 'Résultats : {count}',
   'hadith.allOfTheme': 'Tout',
+  'hadith.chip.visitSick': 'Visiter le malade',
+  'hadith.chip.medicine': 'Médecine et roqya',
   'hadith.noHadithFound': 'Aucun hadith trouvé',
   'hadith.noResultsHelp': 'Essayez un mot plus court ou vérifiez votre connexion. Les recherches déjà consultées restent disponibles hors ligne.',
   'hadith.hadeethEncReference': 'Référence HadeethEnc · {id}',

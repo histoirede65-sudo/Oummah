@@ -19,6 +19,9 @@ import { useI18n } from "../../i18n";
 
 const SUGGESTION_IDS = ["intention", "parents", "anger", "smile", "lying", "fasting", "prayer", "patience"] as const;
 
+/** Short names for HadeethEnc categories whose own title is too long for a chip. */
+const CHIP_LABEL_KEYS: Record<string, string> = { "297": "hadith.chip.visitSick", "125": "hadith.chip.medicine" };
+
 /** "La foi en Allah (Exalté et Magnifié soit-Il)" → "La foi en Allah": the chip keeps the subject. */
 function shortCategoryTitle(value: string) {
   return value.replace(/\s*\([^)]*\)/g, "").replace(/[\s.:]+$/, "").trim();
@@ -134,7 +137,7 @@ export default function HadithSearchScreen() {
               {[{ id: themeCategory, title: t("hadith.allOfTheme"), count: 0, parentId: null }, ...subCategories].map((category) => {
                 const active = selectedCategory === category.id;
                 return <Pressable key={category.id} accessibilityRole="button" accessibilityState={{ selected: active }} onPress={() => { setSelectedCategory(category.id); setThemeFilter(""); }} style={[styles.subChip, active && styles.subChipActive]}>
-                  <Text numberOfLines={1} style={[styles.subChipText, active && styles.subChipTextActive]}>{shortCategoryTitle(category.title)}</Text>
+                  <Text numberOfLines={1} style={[styles.subChipText, active && styles.subChipTextActive]}>{CHIP_LABEL_KEYS[category.id] ? t(CHIP_LABEL_KEYS[category.id] as never) : shortCategoryTitle(category.title)}</Text>
                   {category.count ? <Text style={[styles.subChipCount, active && styles.subChipTextActive]}>{category.count}</Text> : null}
                 </Pressable>;
               })}
