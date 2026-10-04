@@ -5,6 +5,7 @@ import { progressivePathRepository } from "../progressive-paths/data/progressive
 import { progressivePathProgress } from "../progressive-paths/domain/ProgressivePath";
 import { getPremiumAccess } from "../premium/PremiumAccessService";
 import type { WasilReply } from "./WasilLocalResponder";
+import { translate, type TranslationKey } from "../../i18n";
 
 type SupportedFocus = DailyGoalSettings["focus"][number];
 
@@ -29,38 +30,38 @@ const AUTOMATIC_FOCUSES: SupportedFocus[] = [
 
 const FOCUS_DEFINITIONS: ReadonlyArray<{
   id: SupportedFocus;
-  label: string;
+  labelKey: TranslationKey;
   terms: string[];
 }> = [
   {
     id: "quran",
-    label: "Coran",
+    labelKey: "wasil.focus.quran",
     terms: ["coran", "quran", "lecture coranique"],
   },
   {
     id: "dhikr",
-    label: "Dhikr",
+    labelKey: "wasil.focus.dhikr",
     terms: ["dhikr", "istighfar", "salawat", "tasbih"],
   },
   {
     id: "hifz",
-    label: "Mémorisation",
+    labelKey: "wasil.focus.hifz",
     terms: ["memorisation", "memoriser", "hifz", "apprendre une sourate"],
   },
   {
     id: "dua",
-    label: "Dou‘as",
+    labelKey: "wasil.focus.dua",
     terms: ["doua", "dou a", "dua", "invocation"],
   },
-  { id: "hadith", label: "Hadith", terms: ["hadith", "hadiths"] },
+  { id: "hadith", labelKey: "wasil.focus.hadith", terms: ["hadith", "hadiths"] },
   {
     id: "prayer",
-    label: "Prière",
+    labelKey: "wasil.focus.prayer",
     terms: ["priere", "salat", "salah"],
   },
   {
     id: "character",
-    label: "Bon comportement",
+    labelKey: "wasil.focus.character",
     terms: ["bon comportement", "bonne action", "comportement"],
   },
 ];
@@ -203,7 +204,8 @@ function cleanPersonalGoal(value: string) {
 }
 
 function focusLabel(focus: SupportedFocus) {
-  return FOCUS_DEFINITIONS.find((definition) => definition.id === focus)?.label;
+  const definition = FOCUS_DEFINITIONS.find((item) => item.id === focus);
+  return definition ? translate(definition.labelKey) : undefined;
 }
 
 async function ensurePersonalGoal(title: string, estimatedMinutes = 3) {
@@ -226,8 +228,8 @@ async function addPersonalGoal(prompt: string): Promise<WasilGoalActionResult> {
       pending: { prompt, missing: "subject" },
       reply: {
         kind: "unsupported-religious",
-        title: "Quel objectif souhaitez-vous ajouter ?",
-        body: "Indiquez simplement l’action, par exemple « appeler mes parents ». Aucun crédit ne sera utilisé.",
+        title: translate("wasil.goal.askTitle"),
+        body: translate("wasil.goal.askBody"),
       },
     };
   }
@@ -240,9 +242,9 @@ async function addPersonalGoal(prompt: string): Promise<WasilGoalActionResult> {
   return {
     reply: {
       kind: "answer",
-      title: "Objectif ajouté",
-      body: `« ${title} » a été ajouté à vos objectifs d’aujourd’hui. Cette action n’a utilisé aucun crédit.`,
-      action: { label: "Ouvrir mes objectifs", route: "/daily-goals" },
+      title: translate("wasil.goal.addedTitle"),
+      body: translate("wasil.goal.addedBody", { title }),
+      action: { label: translate("wasil.goal.openGoals"), route: "/daily-goals" },
     },
   };
 }
@@ -285,10 +287,10 @@ async function updateProgram(prompt: string): Promise<WasilGoalActionResult> {
     (item) => item === "prayer" || item === "character",
   );
   if (specialFocuses.includes("prayer")) {
-    plan = await ensurePersonalGoal("Préparer ma prochaine prière", 3);
+    plan = await ensurePersonalGoal(translate("wasil.goal.prepareNextPrayer"), 3);
   }
   if (specialFocuses.includes("character")) {
-    plan = await ensurePersonalGoal("Accomplir une bonne action discrète", 3);
+    plan = await ensurePersonalGoal(translate("wasil.goal.discreetGoodDeed"), 3);
   }
   goalProgressBridge.notify(plan);
 
@@ -299,18 +301,18 @@ async function updateProgram(prompt: string): Promise<WasilGoalActionResult> {
     .join(" · ");
   const nearestPaceNotice =
     requestedMinuteValue !== null && requestedMinuteValue !== minutes
-      ? ` Le rythme disponible le plus proche est ${minutes} minutes.`
+      ? translate("wasil.goal.nearestPace", { minutes })
       : "";
   return {
     reply: {
       kind: "answer",
-      title: "Programme adapté",
-      body: `Votre programme est réglé sur ${minutes} minutes : ${labels}.${
+      title: translate("wasil.goal.programTitle"),
+      body: `${translate("wasil.goal.programBody", { minutes, labels })}${
         addedSpecials
-          ? ` Un objectif sobre a aussi été ajouté pour : ${addedSpecials}.`
+          ? translate("wasil.goal.programSpecials", { specials: addedSpecials })
           : ""
-      }${nearestPaceNotice} Cette action n’a utilisé aucun crédit.`,
-      action: { label: "Voir mon programme", route: "/daily-goals" },
+      }${nearestPaceNotice}${translate("wasil.goal.noCredit")}`,
+      action: { label: translate("wasil.goal.seeProgram"), route: "/daily-goals" },
     },
   };
 }
@@ -324,9 +326,9 @@ async function createProgressivePath(): Promise<WasilGoalActionResult> {
       return {
         reply: {
           kind: "answer",
-          title: "Connexion requise",
-          body: "Les parcours progressifs sont réservés aux membres Premium. Connectez votre profil pour que Wasil puisse vérifier votre abonnement. Aucun crédit n’a été utilisé.",
-          action: { label: "Ouvrir mon profil", route: "/profile" },
+          title: translate("wasil.goal.signInTitle"),
+          body: translate("wasil.goal.signInBody"),
+          action: { label: translate("wasil.openProfileAction"), route: "/profile" },
         },
       };
     }
@@ -335,9 +337,9 @@ async function createProgressivePath(): Promise<WasilGoalActionResult> {
       return {
         reply: {
           kind: "answer",
-          title: "Vérification Premium indisponible",
-          body: "Wasil ne peut pas vérifier votre abonnement pour le moment. Le parcours n’a pas été créé et aucun crédit n’a été utilisé. Réessayez lorsque la connexion est disponible.",
-          action: { label: "Ouvrir mon profil", route: "/profile" },
+          title: translate("wasil.goal.premiumCheckTitle"),
+          body: translate("wasil.goal.premiumCheckBody"),
+          action: { label: translate("wasil.openProfileAction"), route: "/profile" },
         },
       };
     }
@@ -345,9 +347,9 @@ async function createProgressivePath(): Promise<WasilGoalActionResult> {
     return {
       reply: {
         kind: "answer",
-        title: "Parcours Premium",
-        body: "La version gratuite conserve les objectifs simples et les programmes du jour. Premium débloque les parcours sur plusieurs semaines, les séances de révision et l’adaptation selon votre avancement. Aucun crédit n’a été utilisé.",
-        action: { label: "Voir mes objectifs", route: "/daily-goals" },
+        title: translate("wasil.goal.premiumTitle"),
+        body: translate("wasil.goal.premiumBody"),
+        action: { label: translate("wasil.goal.seeGoals"), route: "/daily-goals" },
       },
     };
   }
@@ -361,11 +363,15 @@ async function createProgressivePath(): Promise<WasilGoalActionResult> {
   return {
     reply: {
       kind: "answer",
-      title: "Parcours Premium préparé",
-      body: `Votre parcours « ${path.title} » est prêt : ${progress.total} séances avec apprentissage, révisions régulières et consolidation finale. Le rythme est réglé sur ${path.dailyMinutes} minutes par jour.${
-        next ? ` Première séance : ${next.title}.` : ""
-      } Aucun crédit n’a été utilisé.`,
-      action: { label: "Voir mon parcours", route: "/daily-goals" },
+      title: translate("wasil.goal.pathReadyTitle"),
+      body: `${translate("wasil.goal.pathReadyBody", {
+        title: path.title,
+        total: progress.total,
+        minutes: path.dailyMinutes,
+      })}${
+        next ? translate("wasil.goal.pathFirstSession", { title: next.title }) : ""
+      }${translate("wasil.goal.pathNoCredit")}`,
+      action: { label: translate("wasil.goal.seePath"), route: "/daily-goals" },
     },
   };
 }

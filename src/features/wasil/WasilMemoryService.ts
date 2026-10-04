@@ -7,6 +7,7 @@ import {
 } from "./WasilApiClient";
 import type { WasilReply } from "./WasilLocalResponder";
 import { preRouteWasilIntent } from "./WasilIntentPreRouter";
+import { translate } from "../../i18n";
 
 type ParsedMemory = {
   key: WasilProfileMemoryKey;
@@ -115,7 +116,7 @@ function parseMemory(value: string): ParsedMemory | null {
       /je\s+préfère\s+(.+?)\s+comme\s+(?:récitateur|recitateur)/iu,
     ]);
     return reciter
-      ? { key, label: "Récitateur préféré", value: reciter }
+      ? { key, label: translate("wasil.memory.label.reciter"), value: reciter }
       : null;
   }
 
@@ -125,7 +126,7 @@ function parseMemory(value: string): ParsedMemory | null {
       /je\s+préfère\s+(.+?)\s+comme\s+traduction/iu,
     ]);
     return translation
-      ? { key, label: "Traduction préférée", value: translation }
+      ? { key, label: translate("wasil.memory.label.translation"), value: translation }
       : null;
   }
 
@@ -134,7 +135,7 @@ function parseMemory(value: string): ParsedMemory | null {
       /(?:tafsir)(?:\s+préféré)?\s+(?:est\s+)?(.+)$/iu,
       /je\s+préfère\s+(.+?)\s+comme\s+tafsir/iu,
     ]);
-    return tafsir ? { key, label: "Tafsir préféré", value: tafsir } : null;
+    return tafsir ? { key, label: translate("wasil.memory.label.tafsir"), value: tafsir } : null;
   }
 
   if (key === "daily_time_minutes") {
@@ -142,8 +143,8 @@ function parseMemory(value: string): ParsedMemory | null {
     return minutes >= 1 && minutes <= 180
       ? {
           key,
-          label: "Temps quotidien disponible",
-          value: `${minutes} minutes par jour`,
+          label: translate("wasil.memory.label.dailyTime"),
+          value: translate("wasil.memory.minutesPerDay", { minutes }),
         }
       : null;
   }
@@ -154,7 +155,7 @@ function parseMemory(value: string): ParsedMemory | null {
       /(?:objectif\s+(?:d'apprentissage|d apprentissage|de\s+mémorisation|de\s+memorisation))\s+(?:est\s+)?(.+)$/iu,
     ]);
     return goal
-      ? { key, label: "Objectif d’apprentissage", value: goal }
+      ? { key, label: translate("wasil.memory.label.learningGoal"), value: goal }
       : null;
   }
 
@@ -163,7 +164,7 @@ function parseMemory(value: string): ParsedMemory | null {
       (candidate) => normalized.includes(normalize(candidate)),
     );
     return period
-      ? { key, label: "Moment d’étude préféré", value: period }
+      ? { key, label: translate("wasil.memory.label.studyTime"), value: period }
       : null;
   }
 
@@ -175,13 +176,13 @@ function parseMemory(value: string): ParsedMemory | null {
         : normalized.includes("court")
           ? "courtes"
           : "simples";
-    return { key, label: "Style de réponse", value: depth };
+    return { key, label: translate("wasil.memory.label.answerStyle"), value: depth };
   }
 
   const language = ["français", "arabe", "anglais"].find((candidate) =>
     normalized.includes(normalize(candidate)),
   );
-  return language ? { key, label: "Langue préférée", value: language } : null;
+  return language ? { key, label: translate("wasil.memory.label.language"), value: language } : null;
 }
 
 function isListIntent(value: string) {
@@ -230,8 +231,8 @@ export function isWasilMemoryIntent(value: string) {
 function supportedMemoryReply(): WasilReply {
   return {
     kind: "unsupported-religious",
-    title: "Préférence non mémorisée",
-    body: "Pour protéger votre vie privée, Wasil mémorise seulement sur demande : votre récitateur, traduction ou tafsir préféré, votre temps quotidien, votre moment d’étude, votre objectif d’apprentissage et le style de réponse souhaité. Aucun crédit n’a été utilisé.",
+    title: translate("wasil.memory.unsupportedTitle"),
+    body: translate("wasil.memory.unsupportedBody"),
   };
 }
 
@@ -241,18 +242,18 @@ export async function manageWasilMemory(value: string): Promise<WasilReply> {
     if (!memories.length) {
       return {
         kind: "answer",
-        title: "Mémoire vide",
-        body: "Je n’ai encore mémorisé aucune préférence personnelle. Je ne retiens rien sans votre demande explicite. Aucun crédit n’a été utilisé.",
+        title: translate("wasil.memory.emptyTitle"),
+        body: translate("wasil.memory.emptyBody"),
       };
     }
     return {
       kind: "answer",
-      title: "Ce que je retiens pour vous",
+      title: translate("wasil.memory.listTitle"),
       body: `${memories
         .map((memory) => `• ${memory.display_label} : ${memory.memory_value}`)
         .join(
           "\n",
-        )}\n\nVous pouvez me demander d’oublier une préférence à tout moment. Aucun crédit n’a été utilisé.`,
+        )}\n\n${translate("wasil.memory.listFooter")}`,
     };
   }
 
@@ -260,10 +261,12 @@ export async function manageWasilMemory(value: string): Promise<WasilReply> {
     const deletedCount = await clearWasilProfileMemories();
     return {
       kind: "answer",
-      title: "Mémoire effacée",
+      title: translate("wasil.memory.clearedTitle"),
       body: deletedCount
-        ? `${deletedCount} préférence${deletedCount > 1 ? "s ont" : " a"} été oubliée${deletedCount > 1 ? "s" : ""}. Aucun crédit n’a été utilisé.`
-        : "Je n’avais aucune préférence personnelle à oublier. Aucun crédit n’a été utilisé.",
+        ? deletedCount > 1
+          ? translate("wasil.memory.clearedMany", { count: deletedCount })
+          : translate("wasil.memory.clearedOne")
+        : translate("wasil.memory.clearedNone"),
     };
   }
 
@@ -273,10 +276,10 @@ export async function manageWasilMemory(value: string): Promise<WasilReply> {
     const deleted = await deleteWasilProfileMemory(key);
     return {
       kind: "answer",
-      title: deleted ? "Préférence oubliée" : "Rien à oublier",
+      title: deleted ? translate("wasil.memory.forgottenTitle") : translate("wasil.memory.nothingTitle"),
       body: deleted
-        ? "Cette préférence a été supprimée de la mémoire de Wasil. Aucun crédit n’a été utilisé."
-        : "Cette préférence n’était pas enregistrée. Aucun crédit n’a été utilisé.",
+        ? translate("wasil.memory.forgottenBody")
+        : translate("wasil.memory.nothingBody"),
     };
   }
 
@@ -285,7 +288,10 @@ export async function manageWasilMemory(value: string): Promise<WasilReply> {
   await setWasilProfileMemory(memory.key, memory.value, memory.label);
   return {
     kind: "answer",
-    title: "Préférence mémorisée",
-    body: `Je retiens désormais : ${memory.label.toLowerCase()} — ${memory.value}. Vous pouvez me demander de l’oublier à tout moment. Aucun crédit n’a été utilisé.`,
+    title: translate("wasil.memory.savedTitle"),
+    body: translate("wasil.memory.savedBody", {
+      label: memory.label.toLowerCase(),
+      value: memory.value,
+    }),
   };
 }

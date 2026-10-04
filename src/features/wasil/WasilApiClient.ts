@@ -6,6 +6,7 @@ import { storageService } from "../../core/storage/StorageService";
 import type { WasilReply } from "./WasilLocalResponder";
 import type { WasilConversationThread } from "./WasilConversationStore";
 import { trackAnalyticsEvent } from "../analytics/AnalyticsService";
+import { translate } from "../../i18n";
 
 const WELCOME_CREDIT_CLAIM_KEY = "oummah:wasil:welcome-credit-claimed:v1";
 
@@ -89,7 +90,7 @@ function configuration() {
   if (!url || !key)
     throw new WasilApiError(
       "NOT_CONFIGURED",
-      "Wasil n’est pas encore configuré.",
+      translate("wasil.err.notConfigured"),
     );
   return { url, key };
 }
@@ -107,7 +108,7 @@ async function invoke(body: Record<string, unknown>) {
   if (!session)
     throw new WasilApiError(
       "AUTH_REQUIRED",
-      "Connectez votre profil pour interroger Wasil.",
+      translate("wasil.err.connectToAsk"),
     );
   const { url, key } = configuration();
   const deviceId = await installationDeviceId();
@@ -139,7 +140,7 @@ async function invoke(body: Record<string, unknown>) {
     if (!session) {
       throw new WasilApiError(
         "AUTH_REQUIRED",
-        "Votre session a expiré. Reconnectez votre profil.",
+        translate("wasil.err.sessionExpired"),
       );
     }
     response = await send(session.accessToken);
@@ -153,7 +154,7 @@ async function invoke(body: Record<string, unknown>) {
   if (!response.ok) {
     throw new WasilApiError(
       payload.code ?? "NETWORK_ERROR",
-      payload.message ?? "Wasil est momentanément indisponible.",
+      payload.message ?? translate("wasil.err.unavailable"),
       payload.balance,
     );
   }
@@ -181,7 +182,7 @@ async function invokeStream(
   if (!session)
     throw new WasilApiError(
       "AUTH_REQUIRED",
-      "Connectez votre profil pour interroger Wasil.",
+      translate("wasil.err.connectToAsk"),
     );
   const { url, key } = configuration();
   const deviceId = await installationDeviceId();
@@ -214,7 +215,7 @@ async function invokeStream(
       const payload = (await response.json().catch(() => ({}))) as Record<string, unknown>;
       return { status: response.status, payload };
     }
-    if (!response.body) throw new WasilApiError("NETWORK_ERROR", "Wasil est momentanément indisponible.");
+    if (!response.body) throw new WasilApiError("NETWORK_ERROR", translate("wasil.err.unavailable"));
 
     const reader = response.body.getReader();
     const decoder = new TextDecoder();
@@ -247,7 +248,7 @@ async function invokeStream(
       }
     }
     if (buffer.trim()) handleBlock(buffer);
-    if (!final) throw new WasilApiError("NETWORK_ERROR", "Wasil est momentanément indisponible.");
+    if (!final) throw new WasilApiError("NETWORK_ERROR", translate("wasil.err.unavailable"));
     return final as { status: number; payload: Record<string, unknown> };
   };
 
@@ -257,7 +258,7 @@ async function invokeStream(
     if (!session) {
       throw new WasilApiError(
         "AUTH_REQUIRED",
-        "Votre session a expiré. Reconnectez votre profil.",
+        translate("wasil.err.sessionExpired"),
       );
     }
     handlers.onReset?.();
@@ -272,7 +273,7 @@ async function invokeStream(
   if (result.status < 200 || result.status >= 300) {
     throw new WasilApiError(
       payload.code ?? "NETWORK_ERROR",
-      payload.message ?? "Wasil est momentanément indisponible.",
+      payload.message ?? translate("wasil.err.unavailable"),
       payload.balance,
     );
   }
@@ -336,7 +337,7 @@ export async function deleteWasilConversation(conversationId: string) {
   if (!normalizedConversationId) {
     throw new WasilApiError(
       "INVALID_CONVERSATION_ID",
-      "La conversation à supprimer n’est pas valide.",
+      translate("wasil.err.invalidConversation"),
     );
   }
 
@@ -344,7 +345,7 @@ export async function deleteWasilConversation(conversationId: string) {
   if (!session) {
     throw new WasilApiError(
       "AUTH_REQUIRED",
-      "Connectez votre profil pour supprimer cette conversation.",
+      translate("wasil.err.connectToDelete"),
     );
   }
   const { url, key } = configuration();
@@ -367,7 +368,7 @@ export async function deleteWasilConversation(conversationId: string) {
     if (!session) {
       throw new WasilApiError(
         "AUTH_REQUIRED",
-        "Votre session a expiré. Reconnectez votre profil.",
+        translate("wasil.err.sessionExpired"),
       );
     }
     response = await send(session.accessToken, session.user.id);
@@ -376,7 +377,7 @@ export async function deleteWasilConversation(conversationId: string) {
   if (!response.ok) {
     throw new WasilApiError(
       "CONVERSATION_DELETE_FAILED",
-      "La conversation n’a pas pu être supprimée.",
+      translate("wasil.err.deleteFailed"),
     );
   }
 }
@@ -429,7 +430,7 @@ export async function askWasil(
       })
     : await invoke(body);
   if (!payload.reply)
-    throw new WasilApiError("INVALID_RESPONSE", "Réponse Wasil invalide.");
+    throw new WasilApiError("INVALID_RESPONSE", translate("wasil.err.invalidResponse"));
 
   void trackAnalyticsEvent({
     eventName: "wasil_question",
