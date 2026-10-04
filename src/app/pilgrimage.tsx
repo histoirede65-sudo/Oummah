@@ -46,6 +46,9 @@ const STARS = Array.from({ length: 34 }, (_, index) => ({
   o: 0.35 + ((index * 37) % 50) / 100,
 }));
 
+/** During the Hajj days, the page of the day in the Hajj book. */
+const DAY_STEPS: Record<number, string> = { 8: "mina-8", 9: "arafat-9", 10: "nahr-10", 11: "tashriq-11", 12: "tashriq-12", 13: "tashriq-13" };
+
 function seasonText(season: HajjSeason) {
   if (season.kind === "days") return { title: `${season.dhulHijja} Dhul-Hijja ${season.hijriYear}`, text: season.label };
   const date = season.arafa.toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" });
@@ -104,14 +107,23 @@ export default function PilgrimageHome() {
           <Text style={styles.heroEyebrow}>GUIDE DU PÈLERIN</Text>
           <Text style={styles.heroTitle}>Hajj & ‘Umra</Text>
           <Text style={styles.heroText}>Deux livres à suivre pas à pas, des compteurs pour le jour J et des réponses quand on doute.</Text>
-          {seasonCopy ? (
-            <View style={styles.season}>
-              <Ionicons name="moon" size={18} color={pil.gold} />
+          {seasonCopy && season ? (
+            <Pressable
+              accessibilityRole="button"
+              onPress={() => {
+                const step = season.kind === "days" ? DAY_STEPS[season.dhulHijja] ?? "types" : null;
+                router.push(step ? `/pilgrimage/book?rite=hajj&step=${step}` : "/pilgrimage/book?rite=hajj");
+              }}
+              style={({ pressed }) => [styles.season, season.kind === "days" && styles.seasonLive, pressed && styles.pressed]}
+            >
+              <Ionicons name={season.kind === "days" ? "radio-button-on" : "moon"} size={18} color={pil.gold} />
               <View style={styles.seasonCopy}>
                 <Text style={styles.seasonTitle}>{seasonCopy.title}</Text>
                 <Text style={styles.seasonText}>{seasonCopy.text}</Text>
+                {season.kind === "days" ? <Text style={styles.seasonAction}>Ouvrir le chapitre du jour</Text> : null}
               </View>
-            </View>
+              <Ionicons name="chevron-forward" size={18} color={pil.gold} />
+            </Pressable>
           ) : null}
         </View>
 
@@ -196,6 +208,13 @@ export default function PilgrimageHome() {
           </Text>
         </View>
       </ScrollView>
+      {/* Keeps the clock and battery readable over the scrolling page. */}
+      <LinearGradient
+        pointerEvents="none"
+        colors={["rgba(12,10,18,0.98)", "rgba(12,10,18,0.85)", "rgba(12,10,18,0)"]}
+        locations={[0, 0.6, 1]}
+        style={[styles.statusShade, { height: insets.top + 18 }]}
+      />
     </View>
   );
 }
@@ -209,6 +228,9 @@ const styles = StyleSheet.create({
   heroText: { marginTop: 8, color: pil.textSoft, fontSize: 17, lineHeight: 25, ...pilType.sans },
   season: { marginTop: 18, padding: 14, flexDirection: "row", alignItems: "center", gap: 12, borderRadius: 18, borderWidth: 1, borderColor: pil.goldLine, backgroundColor: "rgba(232,187,98,0.10)" },
   seasonCopy: { flex: 1 },
+  seasonLive: { borderColor: pil.gold, backgroundColor: "rgba(232,187,98,0.18)" },
+  seasonAction: { marginTop: 6, color: pil.gold, fontSize: 13.5, fontWeight: "800", ...pilType.sans },
+  statusShade: { position: "absolute", top: 0, left: 0, right: 0 },
   seasonTitle: { color: pil.text, fontSize: 17, fontWeight: "800", ...pilType.sans },
   seasonText: { marginTop: 2, color: pil.textSoft, fontSize: 14, lineHeight: 20, ...pilType.sans },
   back: { position: "absolute", left: 16, width: 44, height: 44, alignItems: "center", justifyContent: "center", borderRadius: 22, backgroundColor: "rgba(33,27,44,0.9)" },

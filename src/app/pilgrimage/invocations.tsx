@@ -4,14 +4,16 @@ import { useMemo, useState } from "react";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { InvocationCard } from "../../components/pilgrimage/PilgrimBits";
+import { InvocationCard, TextScaleContext } from "../../components/pilgrimage/PilgrimBits";
 import { pil, pilType } from "../../components/pilgrimage/theme";
 import { INVOCATIONS } from "../../features/pilgrimage/pilgrimageInvocations";
+import { usePilgrimageState } from "../../features/pilgrimage/pilgrimageStorage";
 
 export default function PilgrimageInvocations() {
   const insets = useSafeAreaInsets();
   const moments = useMemo(() => [...new Set(INVOCATIONS.map((item) => item.moment))], []);
   const [moment, setMoment] = useState<string | null>(null);
+  const state = usePilgrimageState();
   const shown = moment ? INVOCATIONS.filter((item) => item.moment === moment) : INVOCATIONS;
 
   return (
@@ -32,6 +34,7 @@ export default function PilgrimageInvocations() {
           </Pressable>
         ))}
       </ScrollView>
+      <TextScaleContext.Provider value={state?.textScale ?? 1}>
       <ScrollView contentContainerStyle={[styles.content, { paddingBottom: insets.bottom + 30 }]} showsVerticalScrollIndicator={false}>
         <View style={styles.tip}>
           <Ionicons name="expand-outline" size={18} color={pil.gold} />
@@ -46,6 +49,7 @@ export default function PilgrimageInvocations() {
           </View>
         ))}
       </ScrollView>
+      </TextScaleContext.Provider>
     </View>
   );
 }

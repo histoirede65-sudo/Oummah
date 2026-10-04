@@ -4,6 +4,16 @@ import { useCallback, useEffect, useState } from "react";
 import { storageService } from "../../core/storage";
 import type { HajjType, Rite } from "./pilgrimageTypes";
 
+/** A dua someone asked the pilgrim to make (« prie pour moi là-bas »). */
+export type DuaRequest = {
+  id: string;
+  person: string;
+  request: string;
+  createdAt: number;
+  doneAt: number | null;
+  place: string | null;
+};
+
 /** Everything the pilgrimage module keeps on the device. */
 export type PilgrimageState = {
   version: 2;
@@ -11,6 +21,11 @@ export type PilgrimageState = {
   reading: Record<Rite, { stepId: string | null; done: string[] }>;
   counters: { tawaf: number; sai: number; jamaratDay: 10 | 11 | 12 | 13; jamarat: [number, number, number] };
   checklist: string[];
+  /** Reading size of the books and invocations (1 = normal). */
+  textScale: number;
+  duaRequests: DuaRequest[];
+  /** Notifications of the Hajj days (8 → 13 Dhul-Hijja, Mecca time). */
+  hajjReminders: boolean;
 };
 
 const KEY = "pilgrimage:state:v2";
@@ -22,6 +37,9 @@ export const DEFAULT_PILGRIMAGE_STATE: PilgrimageState = {
   reading: { umrah: { stepId: null, done: [] }, hajj: { stepId: null, done: [] } },
   counters: { tawaf: 0, sai: 0, jamaratDay: 10, jamarat: [0, 0, 0] },
   checklist: [],
+  textScale: 1,
+  duaRequests: [],
+  hajjReminders: false,
 };
 
 type LegacyProgress = { mode?: Rite; hajjType?: HajjType; stepId?: string; tawafCount?: number; sayCount?: number };

@@ -7,7 +7,7 @@ import { Pressable, ScrollView, StyleSheet, Text, useWindowDimensions, View } fr
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Svg, { Circle, G, Path, Rect, Text as SvgText } from "react-native-svg";
 
-import { InvocationCard } from "../../components/pilgrimage/PilgrimBits";
+import { InvocationCard, TextScaleContext } from "../../components/pilgrimage/PilgrimBits";
 import { pil, pilType } from "../../components/pilgrimage/theme";
 import { INVOCATIONS_BY_ID } from "../../features/pilgrimage/pilgrimageInvocations";
 import { updatePilgrimageState, usePilgrimageState, type PilgrimageState } from "../../features/pilgrimage/pilgrimageStorage";
@@ -80,6 +80,7 @@ export default function PilgrimModeScreen() {
         ))}
       </View>
 
+      <TextScaleContext.Provider value={state?.textScale ?? 1}>
       <ScrollView contentContainerStyle={[styles.content, { paddingBottom: insets.bottom + 30 }]} showsVerticalScrollIndicator={false}>
         {state ? (
           tool === "tawaf" ? <TawafCounter count={state.counters.tawaf} onNext={() => setTool("sai")} />
@@ -88,6 +89,7 @@ export default function PilgrimModeScreen() {
         ) : null}
         <Text style={styles.disclaimer}>Le compteur est une aide mémoire, pas une validation religieuse.</Text>
       </ScrollView>
+      </TextScaleContext.Provider>
     </View>
   );
 }

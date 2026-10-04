@@ -16,7 +16,7 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { InvocationCard, PointRow, SectionTitle } from "../../components/pilgrimage/PilgrimBits";
+import { InvocationCard, PointRow, SectionTitle, TEXT_SCALES, TextScaleContext, useScaled } from "../../components/pilgrimage/PilgrimBits";
 import { PilgrimVisual } from "../../components/pilgrimage/PilgrimVisual";
 import { pil, pilType } from "../../components/pilgrimage/theme";
 import { BOOKS, bookPages, HAJJ_TYPE_LABELS, hajjTypeGuidance, type BookPage } from "../../features/pilgrimage/pilgrimageBook";
@@ -47,6 +47,7 @@ export default function PilgrimageBookScreen() {
   const [index, setIndex] = useState<number | null>(null);
   const [tocVisible, setTocVisible] = useState(false);
   const [finished, setFinished] = useState(false);
+  const [sizeOpen, setSizeOpen] = useState(false);
   const currentStepId = useRef<string | null>(null);
 
   const done = useMemo(() => new Set(state?.reading[rite].done ?? []), [rite, state]);
@@ -119,6 +120,13 @@ export default function PilgrimageBookScreen() {
 
   if (!state || index === null || !page) return <View style={styles.screen} />;
 
+  const textScale = state.textScale ?? 1;
+  const scaleIndex = Math.max(0, TEXT_SCALES.findIndex((value) => value === textScale));
+  const setScale = (next: number) => {
+    void Haptics.selectionAsync().catch(() => undefined);
+    void updatePilgrimageState((current) => ({ ...current, textScale: TEXT_SCALES[next] }));
+  };
+
   const chapterCounts = book.chapters.map((chapter, chapterIndex) => {
     const inChapter = pages.filter((item) => item.chapterIndex === chapterIndex);
     return { chapter, total: inChapter.length, done: inChapter.filter((item) => done.has(item.step.id)).length, first: inChapter[0]?.index ?? 0 };
@@ -137,6 +145,15 @@ export default function PilgrimageBookScreen() {
             <Text style={styles.headerTitle}>{book.title}{hajjType ? ` · ${HAJJ_TYPE_LABELS[hajjType].title}` : ""}</Text>
             <Text numberOfLines={1} style={styles.headerChapter}>{page.chapter.title}</Text>
           </View>
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="Taille du texte"
+            onPress={() => setSizeOpen((value) => !value)}
+            hitSlop={8}
+            style={[styles.iconButton, sizeOpen && styles.iconButtonActive]}
+          >
+            <Text style={[styles.aaText, sizeOpen && styles.aaTextActive]}>Aa</Text>
+          </Pressable>
           <Pressable accessibilityRole="button" accessibilityLabel="Sommaire" onPress={() => setTocVisible(true)} hitSlop={8} style={styles.iconButton}>
             <Ionicons name="list" size={21} color="#FFFFFF" />
           </Pressable>
@@ -158,9 +175,25 @@ export default function PilgrimageBookScreen() {
             );
           })}
         </View>
+        {sizeOpen ? (
+          <View style={styles.sizeBar}>
+            <Pressable accessibilityRole="button" accessibilityLabel="Texte plus petit" disabled={scaleIndex === 0} onPress={() => setScale(scaleIndex - 1)} style={[styles.sizeButton, scaleIndex === 0 && styles.disabled]}>
+              <Text style={styles.sizeSmall}>A−</Text>
+            </Pressable>
+            <View style={styles.sizeDots}>
+              {TEXT_SCALES.map((value, dot) => (
+                <Pressable key={value} onPress={() => setScale(dot)} hitSlop={6} style={[styles.sizeDot, dot <= scaleIndex && styles.sizeDotOn]} />
+              ))}
+            </View>
+            <Pressable accessibilityRole="button" accessibilityLabel="Texte plus grand" disabled={scaleIndex === TEXT_SCALES.length - 1} onPress={() => setScale(scaleIndex + 1)} style={[styles.sizeButton, scaleIndex === TEXT_SCALES.length - 1 && styles.disabled]}>
+              <Text style={styles.sizeLarge}>A+</Text>
+            </Pressable>
+          </View>
+        ) : null}
         <Text style={styles.progressText}>Étape {index + 1} sur {pages.length} · {done.size ? `${pages.filter((item) => done.has(item.step.id)).length} faite${done.size > 1 ? "s" : ""}` : "glissez pour tourner les pages"}</Text>
       </View>
 
+      <TextScaleContext.Provider value={textScale}>
       <FlatList
         ref={listRef}
         data={pages}
@@ -188,6 +221,7 @@ export default function PilgrimageBookScreen() {
           />
         )}
       />
+      </TextScaleContext.Provider>
 
       {/* Fixed footer: previous · done · next. */}
       <View style={[styles.footer, { paddingBottom: insets.bottom + 10 }]}>
@@ -246,12 +280,13 @@ const BookPageView = memo(function BookPageView({ page, width, total, done, hajj
   bottomInset: number;
 }) {
   const { step, chapter, chapterIndex, index } = page;
+  const scaled = useScaled();
   const warnings = [...(step.avoid ?? []), ...(step.mistakes ?? [])];
   return (
     <ScrollView style={{ width }} contentContainerStyle={[styles.page, { paddingBottom: 110 + bottomInset }]} showsVerticalScrollIndicator={false}>
       <Text style={styles.chapterEyebrow}>CHAPITRE {chapterIndex + 1} · {chapter.marker.toUpperCase()}</Text>
       <View style={styles.titleRow}>
-        <Text style={styles.stepTitle}>{step.title}</Text>
+        <Text style={scaled(styles.stepTitle)}>{step.title}</Text>
         {done ? <Ionicons name="checkmark-circle" size={26} color={pil.green} /> : null}
       </View>
       <View style={styles.metaRow}>
@@ -266,7 +301,7 @@ const BookPageView = memo(function BookPageView({ page, width, total, done, hajj
         ) : null}
       </View>
 
-      <Text style={styles.summary}>{step.summary}</Text>
+      <Text style={scaled(styles.summary)}>{step.summary}</Text>
 
       {rite === "hajj" && step.id === "types" ? <TypeChooser value={hajjType} onChoose={onChooseType} /> : null}
 
@@ -481,6 +516,16 @@ const styles = StyleSheet.create({
   header: { paddingHorizontal: 16, paddingBottom: 10, borderBottomWidth: 1, borderBottomColor: pil.line, backgroundColor: pil.bg },
   headerRow: { flexDirection: "row", alignItems: "center", gap: 10 },
   iconButton: { width: 42, height: 42, alignItems: "center", justifyContent: "center", borderRadius: 21, backgroundColor: pil.surfaceHigh },
+  iconButtonActive: { backgroundColor: pil.gold },
+  aaText: { color: "#FFFFFF", fontSize: 16, fontWeight: "800", ...pilType.sans },
+  aaTextActive: { color: pil.ink },
+  sizeBar: { marginTop: 12, padding: 6, flexDirection: "row", alignItems: "center", gap: 12, borderRadius: 18, backgroundColor: pil.surface },
+  sizeButton: { width: 48, height: 40, alignItems: "center", justifyContent: "center", borderRadius: 14, backgroundColor: pil.surfaceHigh },
+  sizeSmall: { color: "#FFFFFF", fontSize: 14, fontWeight: "800", ...pilType.sans },
+  sizeLarge: { color: "#FFFFFF", fontSize: 20, fontWeight: "800", ...pilType.sans },
+  sizeDots: { flex: 1, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 10 },
+  sizeDot: { width: 10, height: 10, borderRadius: 5, backgroundColor: "rgba(255,255,255,0.2)" },
+  sizeDotOn: { backgroundColor: pil.gold },
   headerCopy: { flex: 1, alignItems: "center" },
   headerTitle: { color: pil.gold, fontSize: 13, fontWeight: "800", letterSpacing: 0.4, ...pilType.sans },
   headerChapter: { marginTop: 2, color: pil.text, fontSize: 16, fontWeight: "700", ...pilType.sans },

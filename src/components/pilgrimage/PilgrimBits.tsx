@@ -1,11 +1,30 @@
 import { Ionicons } from "@expo/vector-icons";
-import { useState } from "react";
-import { Modal, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { createContext, useContext, useState } from "react";
+import { Modal, Pressable, ScrollView, StyleSheet, Text, View, type TextStyle } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import type { Invocation, Point, Source } from "../../features/pilgrimage/pilgrimageTypes";
 import { sourceLabel } from "../../features/pilgrimage/pilgrimageTypes";
 import { pil, pilType } from "./theme";
+
+/** Reading size chosen by the user (A− / A+), provided by each screen. */
+export const TextScaleContext = createContext(1);
+
+export const TEXT_SCALES = [0.9, 1, 1.15, 1.3, 1.5] as const;
+
+/** A text style at the reading size. */
+export function useScaled() {
+  const scale = useContext(TextScaleContext);
+  return (style: TextStyle): TextStyle => {
+    if (scale === 1) return style;
+    const flat = StyleSheet.flatten(style) ?? {};
+    return {
+      ...flat,
+      ...(flat.fontSize ? { fontSize: flat.fontSize * scale } : {}),
+      ...(flat.lineHeight ? { lineHeight: flat.lineHeight * scale } : {}),
+    };
+  };
+}
 
 /** « Coran 2:196 · Hadith — Sahîh Muslim 1218 » on one discreet line. */
 export function SourceLine({ sources }: { sources?: Source[] }) {
@@ -33,6 +52,7 @@ export function SectionTitle({ icon, children, color = pil.gold }: { icon: keyof
 
 /** A statement with its sources and, when relevant, its weight (pillar, obligation…). */
 export function PointRow({ point, index, bullet }: { point: Point; index?: number; bullet?: keyof typeof Ionicons.glyphMap }) {
+  const scaled = useScaled();
   return (
     <View style={styles.point}>
       {index !== undefined ? (
@@ -44,7 +64,7 @@ export function PointRow({ point, index, bullet }: { point: Point; index?: numbe
         {point.importance ? (
           <Text style={[styles.importance, point.importance === "PILIER" && styles.importancePillar]}>{point.importance}</Text>
         ) : null}
-        <Text style={styles.pointText}>{point.text}</Text>
+        <Text style={scaled(styles.pointText)}>{point.text}</Text>
         <SourceLine sources={point.sources} />
       </View>
     </View>
@@ -55,6 +75,7 @@ export function PointRow({ point, index, bullet }: { point: Point; index?: numbe
 export function InvocationCard({ invocation }: { invocation: Invocation }) {
   const [large, setLarge] = useState(false);
   const insets = useSafeAreaInsets();
+  const scaled = useScaled();
   const free = !invocation.arabic;
   return (
     <View style={styles.invocation}>
@@ -67,20 +88,20 @@ export function InvocationCard({ invocation }: { invocation: Invocation }) {
           </Pressable>
         ) : null}
       </View>
-      <Text style={styles.invocationTitle}>{invocation.title}</Text>
+      <Text style={scaled(styles.invocationTitle)}>{invocation.title}</Text>
       {free ? (
         <View style={styles.freeRow}>
           <Ionicons name="chatbubbles-outline" size={22} color={pil.gold} />
-          <Text style={styles.invocationTranslation}>{invocation.translation}</Text>
+          <Text style={scaled(styles.invocationTranslation)}>{invocation.translation}</Text>
         </View>
       ) : (
         <>
-          <Text style={styles.arabic}>{invocation.arabic}</Text>
-          <Text style={styles.transliteration}>{invocation.transliteration}</Text>
-          <Text style={styles.invocationTranslation}>{invocation.translation}</Text>
+          <Text style={scaled(styles.arabic)}>{invocation.arabic}</Text>
+          <Text style={scaled(styles.transliteration)}>{invocation.transliteration}</Text>
+          <Text style={scaled(styles.invocationTranslation)}>{invocation.translation}</Text>
         </>
       )}
-      <Text style={styles.invocationContext}>{invocation.context}</Text>
+      <Text style={scaled(styles.invocationContext)}>{invocation.context}</Text>
       <SourceLine sources={invocation.sources} />
 
       <Modal visible={large} animationType="fade" onRequestClose={() => setLarge(false)} statusBarTranslucent>
