@@ -476,26 +476,35 @@ export default function PrayerCard({ onScheduleChange }: { onScheduleChange?: (s
   const [adhanCoverageLoading, setAdhanCoverageLoading] = useState(false);
   const [adhanCoverage, setAdhanCoverage] = useState<Awaited<ReturnType<typeof getAdhanNotificationDiagnostics>> | null>(null);
   const [adhanCoverageError, setAdhanCoverageError] = useState(false);
-  // One player for every voice preview: the ▶ of a voice loads that voice.
-  const adhanPlayer = useAudioPlayer(ADHAN_VOICES[0].file);
-  const adhanPlayerStatus = useAudioPlayerStatus(adhanPlayer);
-  const [previewVoice, setPreviewVoice] = useState<AdhanVoice | null>(null);
+  // One player per voice, loaded in advance: a tap plays at once. (A single player that swapped
+  // files was asked to play before the new file had loaded, so a tap was sometimes lost.)
+  // Loaded only while the adhan sheet is open, so the home screen does not carry ~6 MB of audio.
+  const makkahPreview = useAudioPlayer(adhanSettingsVisible ? ADHAN_VOICES[0].file : null);
+  const madinahPreview = useAudioPlayer(adhanSettingsVisible ? ADHAN_VOICES[1].file : null);
+  const egyptPreview = useAudioPlayer(adhanSettingsVisible ? ADHAN_VOICES[2].file : null);
+  const birdsPreview = useAudioPlayer(adhanSettingsVisible ? ADHAN_VOICES[3].file : null);
+  const previewPlayers: Record<AdhanVoice, typeof makkahPreview> = {
+    makkah: makkahPreview,
+    madinah: madinahPreview,
+    egypt: egyptPreview,
+    birds: birdsPreview,
+  };
+  const previewStatuses: Record<AdhanVoice, ReturnType<typeof useAudioPlayerStatus>> = {
+    makkah: useAudioPlayerStatus(makkahPreview),
+    madinah: useAudioPlayerStatus(madinahPreview),
+    egypt: useAudioPlayerStatus(egyptPreview),
+    birds: useAudioPlayerStatus(birdsPreview),
+  };
+  const anyPreviewPlaying = Object.values(previewStatuses).some((status) => status.playing);
   const adhanScrollRef = useRef<ScrollView>(null);
   const calculationSectionY = useRef(0);
   const scrollToCalculation = useRef(false);
-  const pendingPreview = useRef(false);
-
-  // After `replace`, the new voice loads asynchronously: start it once it is ready.
-  useEffect(() => {
-    if (!pendingPreview.current || !adhanPlayerStatus.isLoaded) return;
-    pendingPreview.current = false;
-    if (!adhanPlayerStatus.playing) adhanPlayer.play();
-  }, [adhanPlayer, adhanPlayerStatus.isLoaded, adhanPlayerStatus.playing, previewVoice]);
 
   // The preview stops when the sheet closes.
   useEffect(() => {
-    if (!adhanSettingsVisible && adhanPlayerStatus.playing) adhanPlayer.pause();
-  }, [adhanPlayer, adhanPlayerStatus.playing, adhanSettingsVisible]);
+    if (adhanSettingsVisible || !anyPreviewPlaying) return;
+    [makkahPreview, madinahPreview, egyptPreview, birdsPreview].forEach((player) => player.pause());
+  }, [adhanSettingsVisible, anyPreviewPlaying, birdsPreview, egyptPreview, madinahPreview, makkahPreview]);
 
   /** « Prochaine alerte : Asr à 15:42 · Oiseaux apaisants » — reassures that the settings work. */
   const nextAdhanAlert = useMemo(() => {
@@ -981,20 +990,21 @@ export default function PrayerCard({ onScheduleChange }: { onScheduleChange?: (s
   };
 
   const togglePreview = async (voice: AdhanVoice) => {
-    if (previewVoice === voice && adhanPlayerStatus.playing) {
-      adhanPlayer.pause();
+    const player = previewPlayers[voice];
+    const status = previewStatuses[voice];
+    if (status.playing) {
+      player.pause();
       return;
     }
+    (Object.keys(previewPlayers) as AdhanVoice[])
+      .filter((key) => key !== voice && previewStatuses[key].playing)
+      .forEach((key) => previewPlayers[key].pause());
     // A preview the user asked for must be heard, even with the iPhone's silent switch on.
     await setAudioModeAsync({ playsInSilentMode: true }).catch(() => undefined);
-    if (previewVoice !== voice) {
-      adhanPlayer.replace(ADHAN_VOICES.find((item) => item.key === voice)?.file ?? ADHAN_VOICES[0].file);
-      setPreviewVoice(voice);
-      pendingPreview.current = true;
-    } else if (adhanPlayerStatus.didJustFinish || adhanPlayerStatus.currentTime >= adhanPlayerStatus.duration - 0.2) {
-      await adhanPlayer.seekTo(0).catch(() => undefined);
+    if (status.didJustFinish || (status.duration > 0 && status.currentTime >= status.duration - 0.2)) {
+      await player.seekTo(0).catch(() => undefined);
     }
-    adhanPlayer.play();
+    player.play();
   };
 
   const usesMosqueTimes = calculationSettings.scheduleSource === "mosque" && source?.type === "mosque";
@@ -1938,7 +1948,7 @@ export default function PrayerCard({ onScheduleChange }: { onScheduleChange?: (s
                   <View style={styles.adhanVoiceGrid}>
                     {ADHAN_VOICES.map((voice) => {
                       const selected = adhanPreferences.voice === voice.key;
-                      const playing = previewVoice === voice.key && adhanPlayerStatus.playing;
+                      const playing = previewStatuses[voice.key].playing;
                       return (
                         <Pressable
                           key={voice.key}
