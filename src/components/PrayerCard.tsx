@@ -200,7 +200,7 @@ const ORBIT_POSITIONS: ReadonlyArray<{
 }> = [
   { left: "4%", top: 66 },
   { left: "19%", top: 9 },
-  { left: "41%", top: 8 },
+  { left: "41%", top: 13 },
   { left: "63%", top: 9 },
   { left: "79%", top: 66 },
   { left: "41%", top: 88 },
@@ -1459,7 +1459,7 @@ export default function PrayerCard({ onScheduleChange }: { onScheduleChange?: (s
               >
                 <Ionicons name="location-outline" size={16} color={colors.goldLight} />
                 <View style={styles.metaChipCopy}>
-                  <Text allowFontScaling={false} numberOfLines={1} style={styles.metaChipTitle}>
+                  <Text allowFontScaling={false} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.78} style={styles.metaChipTitle}>
                     {source?.type === "location" && source.label === "Votre position actuelle"
                       ? t("prayer.currentLocation")
                       : source?.label ?? t("prayer.yourLocation")}
@@ -2862,9 +2862,13 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: "100%",
     left: "50%",
-    width: 84,
-    alignItems: "center",
-    transform: [{ translateX: -42 }],
+    width: 140,
+    paddingBottom: 3,
+    flexDirection: "row",
+    alignItems: "baseline",
+    justifyContent: "center",
+    gap: 6,
+    transform: [{ translateX: -70 }],
   },
   orbitTextRight: {
     position: "absolute",
@@ -2911,9 +2915,9 @@ const styles = StyleSheet.create({
     fontSize: 24.15,
   },
   orbitNameDhuhr: {
+    width: "auto",
     fontSize: 24.15,
-    position: "relative",
-    top: 10,
+    lineHeight: 27,
   },
   orbitNameAsr: {
     fontSize: 21,
@@ -2950,8 +2954,6 @@ const styles = StyleSheet.create({
   },
   orbitTimeDhuhr: {
     fontSize: 12.65,
-    position: "relative",
-    top: 2,
   },
   orbitTimeMaghribLarge: {
     fontSize: 12.65,

@@ -113,11 +113,6 @@ export default function HomeGoalsSection() {
             <Text numberOfLines={1} style={styles.goalText}>
               {goal.title}
             </Text>
-            <View style={[styles.check, done && styles.checkDone]}>
-              {done ? (
-                <Ionicons name="checkmark" size={10} color="#11131A" />
-              ) : null}
-            </View>
           </View>
         )})}
         </View>
@@ -278,15 +273,5 @@ const styles = StyleSheet.create({
     fontSize: 10.5,
     lineHeight: 12,
   },
-  check: {
-    width: 13,
-    height: 13,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: 7,
-    borderWidth: 1.25,
-    borderColor: '#9197A0',
-  },
-  checkDone: { borderColor: '#F3B52F', backgroundColor: '#F3B52F' },
   pressed: { opacity: 0.72 },
 });
