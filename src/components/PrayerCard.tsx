@@ -1617,7 +1617,6 @@ export default function PrayerCard({ onScheduleChange }: { onScheduleChange?: (s
                       prayer.active && styles.orbitNodeActive,
                     ]}
                   >
-                    {completed ? <View style={styles.orbitNodeCompletedHalo} /> : null}
                     {prayer.active ? (
                       <>
                         <Animated.View
@@ -1629,7 +1628,7 @@ export default function PrayerCard({ onScheduleChange }: { onScheduleChange?: (s
                     <Ionicons
                       name={completed ? "checkmark" : prayer.icon}
                       size={prayer.active ? 19 : 15}
-                      color={completed ? "#071B12" : prayer.active ? "#1B1220" : "#F9E8C9"}
+                      color={prayer.active ? "#1B1220" : completed ? "#7BDD9C" : "#F9E8C9"}
                     />
                   </View>
                   <View
@@ -2802,22 +2801,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 0 },
   },
   orbitNodeCompleted: {
-    borderColor: "#8CE6A8",
-    backgroundColor: "#63CF89",
-    shadowColor: "#63CF89",
-    shadowOpacity: 0.82,
-    shadowRadius: 9,
-    shadowOffset: { width: 0, height: 0 },
-  },
-  orbitNodeCompletedHalo: {
-    position: "absolute",
-    top: -7,
-    right: -7,
-    bottom: -7,
-    left: -7,
-    borderRadius: 27,
-    borderWidth: 1.5,
-    borderColor: "rgba(99,207,137,0.72)",
+    borderColor: "rgba(99,207,137,0.8)",
   },
   orbitNodeHalo: {
     position: "absolute",
@@ -2874,8 +2858,10 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: 3,
     left: "75%",
-    width: 72,
-    alignItems: "flex-start",
+    width: 100,
+    flexDirection: "row",
+    alignItems: "baseline",
+    gap: 5,
   },
   orbitName: {
     width: "100%",
@@ -2920,7 +2906,8 @@ const styles = StyleSheet.create({
     lineHeight: 27,
   },
   orbitNameAsr: {
-    fontSize: 21,
+    width: "auto",
+    fontSize: 20,
     position: "relative",
     left: -18,
     top: -14,
@@ -2946,7 +2933,7 @@ const styles = StyleSheet.create({
   orbitTimeAsr: {
     fontSize: 12.65,
     position: "relative",
-    left: 5,
+    left: -18,
     top: -14,
   },
   orbitTimeFajr: {
