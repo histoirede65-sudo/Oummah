@@ -13,11 +13,11 @@ import { CHECKLIST_TOTAL } from "../features/pilgrimage/pilgrimageChecklist";
 import { usePilgrimageState } from "../features/pilgrimage/pilgrimageStorage";
 import type { Rite } from "../features/pilgrimage/pilgrimageTypes";
 
-/** Book covers, shown whole (portrait 1122 × 1402); a credit is shown when the image licence asks for one. */
+/** Book covers, shown whole (portrait 1122 × 1402). */
 const COVER_RATIO = 1122 / 1402;
-const COVERS: Record<Rite, { image: number; credit: string | null }> = {
-  umrah: { image: require("../assets/images/pilgrimage/umrah-cover.jpg"), credit: null },
-  hajj: { image: require("../assets/images/pilgrimage/hajj-cover.jpg"), credit: null },
+const COVERS: Record<Rite, { image: number }> = {
+  umrah: { image: require("../assets/images/pilgrimage/umrah-cover.jpg") },
+  hajj: { image: require("../assets/images/pilgrimage/hajj-cover.jpg") },
 };
 
 /** Virtues of the pilgrimage, one shown at a time. */
@@ -115,45 +115,41 @@ export default function PilgrimageHome() {
 
         <View style={styles.body}>
           <Text style={styles.section}>Vos deux livres</Text>
-          {(["umrah", "hajj"] as const).map((rite) => {
-            const book = BOOKS[rite];
-            const item = progress[rite];
-            const ratio = item.total ? item.done / item.total : 0;
-            return (
-              <Pressable
-                key={rite}
-                accessibilityRole="button"
-                onPress={() => router.push(`/pilgrimage/book?rite=${rite}`)}
-                style={({ pressed }) => [styles.cover, pressed && styles.pressed]}
-              >
-                {/* The whole picture, nothing on top of it. */}
-                <View style={styles.coverImage}>
-                  <Image source={COVERS[rite].image} resizeMode="cover" style={StyleSheet.absoluteFill} />
-                  <View pointerEvents="none" style={styles.coverFrame} />
-                  {COVERS[rite].credit ? <Text style={styles.coverCredit}>{COVERS[rite].credit}</Text> : null}
-                </View>
-                <View style={styles.coverPanel}>
-                  <View>
+          {/* Two covers side by side, like books on a shelf; each picture shown whole. */}
+          <View style={styles.shelf}>
+            {(["umrah", "hajj"] as const).map((rite) => {
+              const book = BOOKS[rite];
+              const item = progress[rite];
+              const ratio = item.total ? item.done / item.total : 0;
+              return (
+                <Pressable
+                  key={rite}
+                  accessibilityRole="button"
+                  accessibilityLabel={`Ouvrir le livre ${book.title}`}
+                  onPress={() => router.push(`/pilgrimage/book?rite=${rite}`)}
+                  style={({ pressed }) => [styles.cover, pressed && styles.pressed]}
+                >
+                  <View style={styles.coverImage}>
+                    <Image source={COVERS[rite].image} resizeMode="contain" style={StyleSheet.absoluteFill} />
+                  </View>
+                  <View style={styles.coverPanel}>
                     <View style={styles.coverTitleRow}>
                       <Text style={styles.coverTitle}>{book.title}</Text>
                       <Text style={styles.coverArabic}>{book.arabic}</Text>
                     </View>
-                    <Text style={styles.coverMeta}>
-                      {book.chapters.length} chapitres · {item.total} étapes
-                      {rite === "hajj" && state?.hajjType ? ` · ${HAJJ_TYPE_LABELS[state.hajjType].title}` : rite === "hajj" ? " · 3 types" : ""}
+                    <Text numberOfLines={1} style={styles.coverMeta}>
+                      {item.total} étapes{rite === "hajj" && state?.hajjType ? ` · ${HAJJ_TYPE_LABELS[state.hajjType].title}` : ""}
                     </Text>
-                    <View style={styles.coverFooter}>
-                      <View style={styles.coverBar}><View style={[styles.coverBarFill, { width: `${ratio * 100}%` }]} /></View>
-                      <View style={styles.coverAction}>
-                        <Text style={styles.coverActionText}>{item.resume ?? (item.done ? "Continuer" : "Ouvrir le livre")}</Text>
-                        <Ionicons name="arrow-forward" size={16} color={pil.ink} />
-                      </View>
+                    <View style={styles.coverBar}><View style={[styles.coverBarFill, { width: `${ratio * 100}%` }]} /></View>
+                    <View style={styles.coverAction}>
+                      <Text numberOfLines={1} style={styles.coverActionText}>{item.resume ?? (item.done ? "Continuer" : "Ouvrir")}</Text>
+                      <Ionicons name="arrow-forward" size={14} color={pil.ink} />
                     </View>
                   </View>
-                </View>
-              </Pressable>
-            );
-          })}
+                </Pressable>
+              );
+            })}
+          </View>
 
           <Text style={styles.section}>Sur place</Text>
           <View style={styles.tools}>
@@ -214,20 +210,18 @@ const styles = StyleSheet.create({
   back: { position: "absolute", left: 16, width: 44, height: 44, alignItems: "center", justifyContent: "center", borderRadius: 22, backgroundColor: "rgba(33,27,44,0.9)" },
   body: { paddingHorizontal: 18 },
   section: { marginTop: 26, marginBottom: 12, color: pil.text, fontSize: 28, ...pilType.display },
-  cover: { marginBottom: 18, overflow: "hidden", borderRadius: 28, borderWidth: 1, borderColor: pil.goldLine, backgroundColor: pil.surfaceHigh, shadowColor: "#000", shadowOpacity: 0.45, shadowRadius: 18, shadowOffset: { width: 0, height: 10 }, elevation: 8 },
+  shelf: { flexDirection: "row", gap: 12 },
+  cover: { flex: 1, overflow: "hidden", borderRadius: 20, borderWidth: 1, borderColor: pil.goldLine, backgroundColor: pil.surfaceHigh },
   coverImage: { width: "100%", aspectRatio: COVER_RATIO, backgroundColor: pil.surface },
-  coverFrame: { position: "absolute", top: 10, right: 10, bottom: 10, left: 10, borderRadius: 20, borderWidth: 1, borderColor: "rgba(255,236,190,0.6)" },
-  coverCredit: { position: "absolute", top: 18, right: 20, color: "rgba(255,255,255,0.72)", fontSize: 10, fontWeight: "600", textShadowColor: "rgba(0,0,0,0.7)", textShadowRadius: 4, ...pilType.sans },
-  coverArabic: { color: pil.gold, fontSize: 28, ...pilType.arabic },
-  coverTitle: { color: pil.text, fontSize: 36, lineHeight: 40, ...pilType.display },
-  coverMeta: { marginTop: 2, color: pil.text, fontSize: 14.5, fontWeight: "600", ...pilType.sans },
-  coverPanel: { paddingHorizontal: 20, paddingTop: 16, paddingBottom: 18, borderTopWidth: 1, borderTopColor: pil.goldLine },
-  coverTitleRow: { flexDirection: "row", alignItems: "baseline", justifyContent: "space-between", gap: 12 },
-  coverFooter: { marginTop: 12, flexDirection: "row", alignItems: "center", gap: 12 },
-  coverBar: { flex: 1, height: 5, overflow: "hidden", borderRadius: 3, backgroundColor: "rgba(255,255,255,0.22)" },
-  coverBarFill: { height: "100%", borderRadius: 3, backgroundColor: pil.gold },
-  coverAction: { flexDirection: "row", alignItems: "center", gap: 6, paddingHorizontal: 14, paddingVertical: 9, borderRadius: 18, backgroundColor: pil.gold },
-  coverActionText: { color: pil.ink, fontSize: 14, fontWeight: "800", ...pilType.sans },
+  coverPanel: { padding: 12, gap: 7 },
+  coverTitleRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: 6 },
+  coverTitle: { color: pil.text, fontSize: 24, lineHeight: 28, ...pilType.display },
+  coverArabic: { color: pil.gold, fontSize: 18, ...pilType.arabic },
+  coverMeta: { color: pil.textSoft, fontSize: 12.5, fontWeight: "600", ...pilType.sans },
+  coverBar: { height: 4, overflow: "hidden", borderRadius: 2, backgroundColor: "rgba(255,255,255,0.14)" },
+  coverBarFill: { height: "100%", borderRadius: 2, backgroundColor: pil.gold },
+  coverAction: { minHeight: 34, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 5, borderRadius: 17, backgroundColor: pil.gold },
+  coverActionText: { color: pil.ink, fontSize: 13, fontWeight: "800", ...pilType.sans },
   tools: { flexDirection: "row", flexWrap: "wrap", gap: 10 },
   tool: { width: "48.4%", minHeight: 128, padding: 14, borderRadius: 22, borderWidth: 1, borderColor: pil.line, backgroundColor: pil.surface },
   toolDoubt: { borderColor: "rgba(242,165,155,0.35)" },
