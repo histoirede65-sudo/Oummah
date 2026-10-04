@@ -1078,8 +1078,16 @@ const trustedSources: Record<string, TrustedSource> = {
   },
 };
 
+// Left out on purpose because they also appear in religious questions: bare
+// "droite"/"gauche" (« commencer les ablutions par la droite ») and
+// "gouvernement" (obéissance aux gouvernants). Letter lookarounds instead of
+// \b, which ignores accented letters (« élections », « député »).
+const POLITICAL_TOPIC_PATTERN = /(?<![\p{L}\p{N}])(?:politique|politics|political|élections?|elections?|électoral(?:e|es|aux)?|electoral|présidentielles?|président(?:e)?s?|presidential|presidents?|parlement|parliament|député(?:e)?s?|sénat|senate|ministres?|ministers?|parti\s+politique|extrême[- ](?:droite|gauche)|far[- ](?:right|left)|géopolitique|geopolitics?|diplomatie|diplomacy|sanctions?\s+internationales?|conflit\s+international|guerre\s+en\s+(?:ukraine|gaza)|war\s+in\s+(?:ukraine|gaza)|macron|trump|poutine|putin|zelensky|netanyahu|le\s+pen|mélenchon)(?![\p{L}\p{N}])/iu;
+
 const FIXED_REPLIES = {
   fr: {
+    politicalTitle: "Wasil est dédié aux questions sur l’islam",
+    politicalBody: "Je ne réponds pas aux questions politiques, électorales, partisanes, géopolitiques ou liées à l’actualité politique. Je peux répondre aux questions sur l’islam, à partir du Coran, de la Sunna authentique et des avis vérifiés des savants.",
     incompleteEntityTitle: "Réponse documentaire incomplète pour",
     incompleteEntityBody: "La première recherche n’a pas produit une réponse exploitable. Relancez la demande : Wasil conservera l’identité déjà résolue et ne redemandera pas de précision.",
     noVerifiedHadith: "Je n’ai pas trouvé de hadith suffisamment vérifié et directement pertinent pour répondre à cette demande.",
@@ -1089,6 +1097,8 @@ const FIXED_REPLIES = {
     outOfScopeBody: "Je peux vous accompagner sur les questions religieuses et les contenus d’OUMMAH.",
   },
   en: {
+    politicalTitle: "Wasil is dedicated to questions about Islam",
+    politicalBody: "I do not answer political, electoral, partisan or geopolitical questions, or questions about political news. I can answer questions about Islam, based on the Quran, the authentic Sunnah and verified scholarly opinions.",
     incompleteEntityTitle: "Incomplete answer about",
     incompleteEntityBody: "The first search did not produce a usable answer. Please ask again: Wasil will keep the identity it already resolved and will not ask you to clarify.",
     noVerifiedHadith: "I could not find a sufficiently verified hadith that directly answers this request.",
@@ -1955,6 +1965,21 @@ async function handleWasilRequest(
     );
   }
 
+  // Political questions are declined at once: no model call, no credit.
+  if (POLITICAL_TOPIC_PATTERN.test(question)) {
+    console.log("WASIL_POLITICAL_QUESTION_DECLINED", { requestId });
+    return json({
+      reply: {
+        kind: "out-of-scope",
+        title: fixed.politicalTitle,
+        body: fixed.politicalBody,
+      },
+      balance,
+      creditsCharged: 0,
+      classification: "out_of_scope",
+    });
+  }
+
   const featureFlags = getWasilFeatureFlags();
   const productionV4InjectionRequested =
     featureFlags.v4ProductionBrainGuidance ||
@@ -2412,7 +2437,7 @@ async function handleWasilRequest(
       featureFlags.v4ProductionBrainGuidance || featureFlags.v4ExecutionPlan
         ? buildProductionBrainGuidance(v4Analysis?.brainPlan ?? null)
         : "";
-    const productionInstructions = `${stableInstructions}${brainGuidance}${wasilVerifiedReligiousOpinionsPolicy}\n\nRÈGLE DOCUMENTAIRE UNIVERSELLE: avant de rédiger une réponse religieuse substantielle, examine séparément tous les corpus demandés. Privilégie toujours les preuves normatives directement liées à l’intention de la question. Une preuve générale, une sourate complète ou un récit historique ne doit jamais remplacer un verset ou un hadith plus direct lorsqu’il est disponible. Utilise les deux corpus lorsqu’ils sont réellement complémentaires, sans ajouter de citation décorative. Les cartes Hadith sont générées depuis les SOURCE_ID documentaires Hadith fournis (v4-hadith: ou hadith:). N’invente jamais de collection, de numéro ni de requête de navigation. Sélectionne ces SOURCE_ID seulement si le hadith est réellement utilisé dans le corps.\n\nREGISTRE: vouvoie toujours l’utilisateur (« vous »), y compris dans les consignes pratiques (« lavez », jamais « lave »).${answerLanguage === "en" ? "\n\nLANGUE: l’application est en anglais. Rédige title et body en anglais, quelle que soit toute autre consigne sur la langue ; garde les termes arabes translittérés usuels." : ""}`;
+    const productionInstructions = `${stableInstructions}${brainGuidance}${wasilVerifiedReligiousOpinionsPolicy}\n\nRÈGLE DOCUMENTAIRE UNIVERSELLE: avant de rédiger une réponse religieuse substantielle, examine séparément tous les corpus demandés. Privilégie toujours les preuves normatives directement liées à l’intention de la question. Une preuve générale, une sourate complète ou un récit historique ne doit jamais remplacer un verset ou un hadith plus direct lorsqu’il est disponible. Utilise les deux corpus lorsqu’ils sont réellement complémentaires, sans ajouter de citation décorative. Les cartes Hadith sont générées depuis les SOURCE_ID documentaires Hadith fournis (v4-hadith: ou hadith:). N’invente jamais de collection, de numéro ni de requête de navigation. Sélectionne ces SOURCE_ID seulement si le hadith est réellement utilisé dans le corps.\n\nREGISTRE: vouvoie toujours l’utilisateur (« vous »), y compris dans les consignes pratiques (« lavez », jamais « lave »).\n\nSTYLE DE RÉPONSE: réponds comme dans une conversation naturelle. Pour une demande simple de verset, hadith ou référence, donne la réponse dès la première phrase, reste bref (généralement 2 à 5 phrases), utilise une ou deux preuves directement pertinentes et évite tout préambule générique. Pour une question plus complexe, garde une structure claire mais ne rallonge jamais artificiellement la réponse.${answerLanguage === "en" ? "\n\nLANGUE: l’application est en anglais. Rédige title et body en anglais, quelle que soit toute autre consigne sur la langue ; garde les termes arabes translittérés usuels." : ""}`;
 
     console.log("WASIL_PROMPT_SYSTEM_MEASUREMENT", {
       requestId,
