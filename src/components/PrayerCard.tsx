@@ -1,5 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
-import { useAudioPlayer, useAudioPlayerStatus } from "expo-audio";
+import { setAudioModeAsync, useAudioPlayer, useAudioPlayerStatus } from "expo-audio";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import * as Location from "expo-location";
@@ -21,7 +21,6 @@ import {
   Pressable,
   ScrollView,
   StyleSheet,
-  Switch,
   Text,
   TextInput,
   useWindowDimensions,
@@ -146,6 +145,38 @@ const ADHAN_VOICES: ReadonlyArray<{ key: AdhanVoice; labelKey: TranslationKey; f
   { key: "egypt", labelKey: "prayer.voiceEgypt", file: require("../../assets/adhan/adhan_egypt.mp3") },
   { key: "birds", labelKey: "prayer.voiceBirds", file: require("../../assets/adhan/adhan_birds.wav") },
 ];
+
+/** Gold toggle drawn in JS: the native iOS switch overflows its box and looks misaligned. */
+function AlertSwitch({ value, onValueChange, accessibilityLabel }: {
+  value: boolean;
+  onValueChange: (value: boolean) => void;
+  accessibilityLabel: string;
+}) {
+  const position = useRef(new Animated.Value(value ? 1 : 0)).current;
+  useEffect(() => {
+    Animated.timing(position, { toValue: value ? 1 : 0, duration: 160, useNativeDriver: false }).start();
+  }, [position, value]);
+  return (
+    <Pressable
+      accessibilityRole="switch"
+      accessibilityLabel={accessibilityLabel}
+      accessibilityState={{ checked: value }}
+      hitSlop={8}
+      onPress={() => onValueChange(!value)}
+      style={[styles.alertSwitchTrack, value && styles.alertSwitchTrackOn]}
+    >
+      <Animated.View
+        style={[
+          styles.alertSwitchThumb,
+          {
+            backgroundColor: value ? "#F2B53D" : "#C9C1CB",
+            transform: [{ translateX: position.interpolate({ inputRange: [0, 1], outputRange: [0, 22] }) }],
+          },
+        ]}
+      />
+    </Pressable>
+  );
+}
 
 type PrayerSource = {
   latitude: number;
@@ -452,6 +483,14 @@ export default function PrayerCard({ onScheduleChange }: { onScheduleChange?: (s
   const adhanScrollRef = useRef<ScrollView>(null);
   const calculationSectionY = useRef(0);
   const scrollToCalculation = useRef(false);
+  const pendingPreview = useRef(false);
+
+  // After `replace`, the new voice loads asynchronously: start it once it is ready.
+  useEffect(() => {
+    if (!pendingPreview.current || !adhanPlayerStatus.isLoaded) return;
+    pendingPreview.current = false;
+    if (!adhanPlayerStatus.playing) adhanPlayer.play();
+  }, [adhanPlayer, adhanPlayerStatus.isLoaded, adhanPlayerStatus.playing, previewVoice]);
 
   // The preview stops when the sheet closes.
   useEffect(() => {
@@ -941,16 +980,19 @@ export default function PrayerCard({ onScheduleChange }: { onScheduleChange?: (s
     void savePrayerCalculationSettings(next);
   };
 
-  const togglePreview = (voice: AdhanVoice) => {
+  const togglePreview = async (voice: AdhanVoice) => {
     if (previewVoice === voice && adhanPlayerStatus.playing) {
       adhanPlayer.pause();
       return;
     }
+    // A preview the user asked for must be heard, even with the iPhone's silent switch on.
+    await setAudioModeAsync({ playsInSilentMode: true }).catch(() => undefined);
     if (previewVoice !== voice) {
       adhanPlayer.replace(ADHAN_VOICES.find((item) => item.key === voice)?.file ?? ADHAN_VOICES[0].file);
       setPreviewVoice(voice);
-    } else {
-      void adhanPlayer.seekTo(0);
+      pendingPreview.current = true;
+    } else if (adhanPlayerStatus.didJustFinish || adhanPlayerStatus.currentTime >= adhanPlayerStatus.duration - 0.2) {
+      await adhanPlayer.seekTo(0).catch(() => undefined);
     }
     adhanPlayer.play();
   };
@@ -1866,11 +1908,10 @@ export default function PrayerCard({ onScheduleChange }: { onScheduleChange?: (s
                   {t("prayer.choicesSavedDevice")}
                 </Text>
               </View>
-              <Switch
+              <AlertSwitch
                 value={adhanPreferences.enabled}
                 onValueChange={(enabled) => void toggleAdhanAlerts(enabled)}
-                trackColor={{ false: "#423A43", true: "rgba(236,177,61,0.55)" }}
-                thumbColor={adhanPreferences.enabled ? "#F2B53D" : "#918893"}
+                accessibilityLabel={t("prayer.enableAlerts")}
               />
             </View>
 
@@ -1894,8 +1935,8 @@ export default function PrayerCard({ onScheduleChange }: { onScheduleChange?: (s
                       onPress={() => updateAdhanPreferences((current) => ({ ...current, mode: mode.key }))}
                       style={[styles.adhanModeChoice, selected && styles.adhanChoiceSelected]}
                     >
-                      <Ionicons name={mode.icon} size={18} color={selected ? "#F6C75D" : "#A49BA8"} />
-                      <Text style={[styles.adhanModeText, selected && styles.adhanChoiceTextSelected]}>
+                      <Ionicons name={mode.icon} size={20} color={selected ? "#F6C75D" : "#FFFFFF"} />
+                      <Text adjustsFontSizeToFit numberOfLines={1} style={[styles.adhanModeText, selected && styles.adhanChoiceTextSelected]}>
                         {t(mode.labelKey)}
                       </Text>
                     </Pressable>
@@ -1924,7 +1965,7 @@ export default function PrayerCard({ onScheduleChange }: { onScheduleChange?: (s
                           <Ionicons
                             name={selected ? "checkmark-circle" : "ellipse-outline"}
                             size={16}
-                            color={selected ? "#F6C75D" : "#817985"}
+                            color={selected ? "#F6C75D" : "#FFFFFF"}
                           />
                           <Text numberOfLines={2} style={[styles.adhanVoiceText, selected && styles.adhanChoiceTextSelected]}>
                             {t(voice.labelKey)}
@@ -1933,7 +1974,7 @@ export default function PrayerCard({ onScheduleChange }: { onScheduleChange?: (s
                             accessibilityRole="button"
                             accessibilityLabel={playing ? t("prayer.pauseAdhanPreview") : t("prayer.listenAdhanPreview")}
                             hitSlop={8}
-                            onPress={() => togglePreview(voice.key)}
+                            onPress={() => void togglePreview(voice.key)}
                             style={[styles.adhanVoicePlay, playing && styles.adhanVoicePlayActive]}
                           >
                             <Ionicons name={playing ? "pause" : "play"} size={14} color={playing ? "#281816" : "#F6C75D"} />
@@ -1965,7 +2006,7 @@ export default function PrayerCard({ onScheduleChange }: { onScheduleChange?: (s
                       <Ionicons
                         name={selected ? "checkmark-circle" : "ellipse-outline"}
                         size={16}
-                        color={selected ? "#F6C75D" : "#817985"}
+                        color={selected ? "#F6C75D" : "#FFFFFF"}
                       />
                       <Text style={[styles.adhanChoiceText, selected && styles.adhanChoiceTextSelected]}>
                         {t(PRAYER_LABEL_KEYS[prayer])}
@@ -2040,7 +2081,7 @@ export default function PrayerCard({ onScheduleChange }: { onScheduleChange?: (s
                             onPress={() => updateCalculationSettings({ scheduleSource })}
                             style={[styles.adhanLeadChoice, selected && styles.adhanChoiceSelected]}
                           >
-                            <Text style={[styles.adhanModeText, selected && styles.adhanChoiceTextSelected]}>
+                            <Text adjustsFontSizeToFit numberOfLines={1} style={[styles.adhanModeText, selected && styles.adhanChoiceTextSelected]}>
                               {scheduleSource === "mosque" ? t("prayer.mosqueTimes") : t("prayer.calculationByDegrees")}
                             </Text>
                           </Pressable>
@@ -2322,10 +2363,10 @@ const styles = StyleSheet.create({
   },
   calculationHint: {
     marginTop: 8,
-    color: "rgba(242,224,202,0.72)",
+    color: "#FFFFFF",
     fontFamily: typography.sans,
-    fontSize: 10,
-    lineHeight: 14,
+    fontSize: 12.5,
+    lineHeight: 18,
   },
   metaRowPressed: {
     opacity: 0.78,
@@ -2555,24 +2596,25 @@ const styles = StyleSheet.create({
     paddingRight: 12,
   },
   adhanSettingTitle: {
-    color: "#FFF7EE",
-    fontFamily: typography.serifMedium,
-    fontSize: 15,
+    color: "#FFFFFF",
+    fontFamily: typography.serifSemibold,
+    fontSize: 18,
   },
   adhanSettingSubtitle: {
-    marginTop: 2,
-    color: "rgba(236,226,232,0.58)",
+    marginTop: 3,
+    color: "#FFFFFF",
     fontFamily: typography.sans,
-    fontSize: 10,
+    fontSize: 12.5,
+    lineHeight: 17,
   },
   adhanSectionLabel: {
-    marginTop: 17,
-    marginBottom: 8,
-    color: "rgba(246,199,93,0.68)",
+    marginTop: 20,
+    marginBottom: 9,
+    color: "#F6C75D",
     fontFamily: typography.sans,
-    fontSize: 8.5,
-    fontWeight: "700",
-    letterSpacing: 1.05,
+    fontSize: 11,
+    fontWeight: "800",
+    letterSpacing: 1.1,
   },
   adhanPrayerGrid: {
     flexDirection: "row",
@@ -2580,7 +2622,7 @@ const styles = StyleSheet.create({
     gap: 7,
   },
   adhanPrayerChoice: {
-    minHeight: 36,
+    minHeight: 42,
     paddingHorizontal: 11,
     flexDirection: "row",
     alignItems: "center",
@@ -2598,37 +2640,41 @@ const styles = StyleSheet.create({
   },
   adhanChoiceText: {
     marginLeft: 6,
-    color: "#AAA1AD",
+    color: "#FFFFFF",
     fontFamily: typography.sans,
-    fontSize: 11.5,
-    fontWeight: "600",
+    fontSize: 14,
+    fontWeight: "700",
   },
   adhanChoiceTextSelected: {
     color: "#FFE4A0",
   },
+  alertSwitchTrack: { width: 52, height: 30, padding: 2, justifyContent: "center", borderRadius: 15, borderWidth: 1, borderColor: "rgba(255,255,255,0.18)", backgroundColor: "#423A43" },
+  alertSwitchTrackOn: { borderColor: "rgba(246,199,93,0.6)", backgroundColor: "rgba(236,177,61,0.45)" },
+  alertSwitchThumb: { width: 24, height: 24, borderRadius: 12 },
   adhanOptionRow: {
     flexDirection: "row",
     gap: 7,
   },
   adhanNextAlert: { marginTop: 10, paddingHorizontal: 13, paddingVertical: 10, flexDirection: "row", alignItems: "center", gap: 8, borderRadius: 13, backgroundColor: "rgba(231,168,50,0.11)" },
-  adhanNextAlertText: { flex: 1, color: "#FFE4A0", fontFamily: typography.sans, fontSize: 11.5, fontWeight: "700" },
-  adhanNote: { marginTop: 8, color: "rgba(242,224,202,0.72)", fontFamily: typography.sans, fontSize: 10, lineHeight: 14 },
+  adhanNextAlertText: { flex: 1, color: "#FFFFFF", fontFamily: typography.sans, fontSize: 13.5, lineHeight: 18, fontWeight: "700" },
+  adhanNote: { marginTop: 9, color: "#FFFFFF", fontFamily: typography.sans, fontSize: 12.5, lineHeight: 17 },
   adhanVoiceGrid: { flexDirection: "row", flexWrap: "wrap", gap: 7 },
-  adhanVoiceChoice: { width: "48.5%", minHeight: 48, paddingLeft: 11, paddingRight: 7, flexDirection: "row", alignItems: "center", gap: 7, borderRadius: 14, borderWidth: 1, borderColor: "rgba(255,255,255,0.08)", backgroundColor: "rgba(255,255,255,0.035)" },
-  adhanVoiceText: { flex: 1, color: "#AAA1AD", fontFamily: typography.sans, fontSize: 11, fontWeight: "600" },
+  adhanVoiceChoice: { width: "48.5%", minHeight: 54, paddingLeft: 11, paddingRight: 7, flexDirection: "row", alignItems: "center", gap: 7, borderRadius: 14, borderWidth: 1, borderColor: "rgba(255,255,255,0.08)", backgroundColor: "rgba(255,255,255,0.035)" },
+  adhanVoiceText: { flex: 1, color: "#FFFFFF", fontFamily: typography.sans, fontSize: 13.5, fontWeight: "700" },
   adhanVoicePlay: { width: 30, height: 30, alignItems: "center", justifyContent: "center", borderRadius: 15, borderWidth: 1, borderColor: "rgba(246,199,93,0.55)" },
   adhanVoicePlayActive: { backgroundColor: "#F2C55B", borderColor: "#F2C55B" },
   calculationIcon: { marginRight: 10 },
   calculationPanel: { marginTop: 8, padding: 12, gap: 8, borderRadius: 13, borderWidth: 1, borderColor: "rgba(255,255,255,0.08)", backgroundColor: "rgba(255,255,255,0.025)" },
   angleStepper: { flexDirection: "row", alignItems: "center", gap: 10 },
-  angleStepperLabel: { flex: 1, color: "#FFF7EE", fontFamily: typography.serifMedium, fontSize: 15 },
+  angleStepperLabel: { flex: 1, color: "#FFFFFF", fontFamily: typography.serifSemibold, fontSize: 17 },
   angleStepButton: { width: 38, height: 38, alignItems: "center", justifyContent: "center", borderRadius: 19, borderWidth: 1, borderColor: "rgba(246,199,93,0.46)", backgroundColor: "rgba(231,168,50,0.11)" },
-  angleStepperValue: { minWidth: 52, color: "#FFE4A0", fontFamily: typography.sans, fontSize: 16, fontWeight: "800", textAlign: "center", fontVariant: ["tabular-nums"] },
-  calculationReset: { marginTop: 2, color: "#F6C75D", fontFamily: typography.sans, fontSize: 10.5, fontWeight: "700", textDecorationLine: "underline" },
+  angleStepperValue: { minWidth: 56, color: "#FFFFFF", fontFamily: typography.sans, fontSize: 18, fontWeight: "800", textAlign: "center", fontVariant: ["tabular-nums"] },
+  calculationReset: { marginTop: 2, color: "#F6C75D", fontFamily: typography.sans, fontSize: 12.5, fontWeight: "700", textDecorationLine: "underline" },
   calculationDisclosure: { minHeight: 54, marginTop: 17, paddingHorizontal: 13, flexDirection: "row", alignItems: "center", justifyContent: "space-between", borderRadius: 13, borderWidth: 1, borderColor: "rgba(255,255,255,0.10)", backgroundColor: "rgba(255,255,255,0.035)" },
   calculationDisclosureCopy: { flex: 1, paddingVertical: 8, paddingRight: 10 },
   adhanModeChoice: {
-    minHeight: 48,
+    minHeight: 60,
+    paddingHorizontal: 4,
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
@@ -2638,18 +2684,19 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(255,255,255,0.035)",
   },
   adhanModeText: {
-    marginTop: 3,
-    color: "#AAA1AD",
+    marginTop: 4,
+    color: "#FFFFFF",
     fontFamily: typography.sans,
-    fontSize: 10.5,
-    fontWeight: "600",
+    fontSize: 13,
+    fontWeight: "700",
   },
   adhanBirdText: {
     width: "100%",
     textAlign: "center",
   },
   adhanLeadChoice: {
-    minHeight: 38,
+    minHeight: 44,
+    paddingHorizontal: 4,
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
@@ -2669,7 +2716,7 @@ const styles = StyleSheet.create({
   adhanDoneText: {
     color: "#281816",
     fontFamily: typography.serifSemibold,
-    fontSize: 15,
+    fontSize: 18,
   },
   hiddenAdhanTestButton: { minHeight: 34, marginTop: 10, alignItems: "center", justifyContent: "center", borderRadius: 12, borderWidth: 1, borderColor: "rgba(242,190,85,0.26)", backgroundColor: "rgba(242,190,85,0.08)" },
   hiddenAdhanTestText: { color: "#F2BE55", fontFamily: typography.sans, fontSize: 11, fontWeight: "800" },
