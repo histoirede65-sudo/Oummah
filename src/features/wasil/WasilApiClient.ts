@@ -1,4 +1,5 @@
 import * as Application from "expo-application";
+import { fetch as streamingFetch } from "expo/fetch";
 import { Platform } from "react-native";
 import { getValidSession } from "../auth/SupabaseAuthService";
 import { storageService } from "../../core/storage/StorageService";
@@ -159,6 +160,125 @@ async function invoke(body: Record<string, unknown>) {
   return payload;
 }
 
+export type WasilStreamHandlers = {
+  /** New characters of the answer while Wasil writes it. */
+  onDelta?: (text: string) => void;
+  /** The text received so far must be discarded. */
+  onReset?: () => void;
+  /** A server stage, e.g. "web_search". */
+  onStage?: (name: string) => void;
+};
+
+/**
+ * Same request as invoke(), answered as server-sent events: the answer text
+ * arrives while it is written, then a "final" event carries the usual payload.
+ */
+async function invokeStream(
+  body: Record<string, unknown>,
+  handlers: WasilStreamHandlers,
+) {
+  let session = await getValidSession();
+  if (!session)
+    throw new WasilApiError(
+      "AUTH_REQUIRED",
+      "Connectez votre profil pour interroger Wasil.",
+    );
+  const { url, key } = configuration();
+  const deviceId = await installationDeviceId();
+  const welcomeCreditClaimed = await storageService
+    .get<boolean>(WELCOME_CREDIT_CLAIM_KEY)
+    .catch(() => true);
+  const requestBody = {
+    ...body,
+    stream: true,
+    installationDeviceId: deviceId,
+    welcomeCreditsEligible: welcomeCreditClaimed !== true,
+  };
+  if (welcomeCreditClaimed !== true) {
+    await storageService.set(WELCOME_CREDIT_CLAIM_KEY, true).catch(() => undefined);
+  }
+
+  const send = async (accessToken: string) => {
+    const response = await streamingFetch(`${url}/functions/v1/wasil`, {
+      method: "POST",
+      headers: {
+        apikey: key,
+        Authorization: `Bearer ${accessToken}`,
+        "Content-Type": "application/json",
+        Accept: "text/event-stream",
+      },
+      body: JSON.stringify(requestBody),
+    });
+    // Errors raised before the stream starts (gateway, JWT) stay plain JSON.
+    if (!response.headers.get("content-type")?.includes("text/event-stream")) {
+      const payload = (await response.json().catch(() => ({}))) as Record<string, unknown>;
+      return { status: response.status, payload };
+    }
+    if (!response.body) throw new WasilApiError("NETWORK_ERROR", "Wasil est momentanément indisponible.");
+
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = "";
+    let final: { status: number; payload: Record<string, unknown> } | null = null;
+    const handleBlock = (block: string) => {
+      const event = /^event: (.*)$/m.exec(block)?.[1];
+      const data = /^data: (.*)$/m.exec(block)?.[1];
+      if (!event || !data) return;
+      const parsed = JSON.parse(data) as Record<string, unknown>;
+      if (event === "delta" && typeof parsed.text === "string") handlers.onDelta?.(parsed.text);
+      else if (event === "reset") handlers.onReset?.();
+      else if (event === "stage" && typeof parsed.name === "string") handlers.onStage?.(parsed.name);
+      else if (event === "final") {
+        final = {
+          status: Number(parsed.status ?? 500),
+          payload: (parsed.payload ?? {}) as Record<string, unknown>,
+        };
+      }
+    };
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      buffer += decoder.decode(value, { stream: true }).replace(/\r\n/g, "\n");
+      let separator = buffer.indexOf("\n\n");
+      while (separator !== -1) {
+        handleBlock(buffer.slice(0, separator));
+        buffer = buffer.slice(separator + 2);
+        separator = buffer.indexOf("\n\n");
+      }
+    }
+    if (buffer.trim()) handleBlock(buffer);
+    if (!final) throw new WasilApiError("NETWORK_ERROR", "Wasil est momentanément indisponible.");
+    return final as { status: number; payload: Record<string, unknown> };
+  };
+
+  let result = await send(session.accessToken);
+  if (result.status === 401) {
+    session = await getValidSession(true);
+    if (!session) {
+      throw new WasilApiError(
+        "AUTH_REQUIRED",
+        "Votre session a expiré. Reconnectez votre profil.",
+      );
+    }
+    handlers.onReset?.();
+    result = await send(session.accessToken);
+  }
+
+  const payload = result.payload as {
+    code?: string;
+    message?: string;
+    balance?: number;
+  } & Partial<WasilResponse>;
+  if (result.status < 200 || result.status >= 300) {
+    throw new WasilApiError(
+      payload.code ?? "NETWORK_ERROR",
+      payload.message ?? "Wasil est momentanément indisponible.",
+      payload.balance,
+    );
+  }
+  return payload;
+}
+
 export async function getWasilBalance() {
   const payload = await invoke({ operation: "balance" });
   return payload.balance ?? 0;
@@ -268,8 +388,11 @@ export async function askWasil(
   clarificationOf?: string,
   conversationHistory: readonly WasilConversationContextMessage[] = [],
   locationContext?: WasilLocationContext,
+  streamHandlers?: WasilStreamHandlers,
+  language?: string,
 ) {
   const clientStartedAt = Date.now();
+  let firstTextAt: number | null = null;
   const recentConversation = conversationHistory
     .filter(
       (message) =>
@@ -281,10 +404,11 @@ export async function askWasil(
       role: message.role,
       content: message.content.trim().slice(0, 1200),
     }));
-  const payload = await invoke({
+  const body = {
     operation: "ask",
     requestId: requestId(),
     question,
+    language,
     mode,
     clarificationOf,
     conversationHistory: recentConversation,
@@ -294,7 +418,16 @@ export async function askWasil(
       action: localContext.action,
     },
     locationContext,
-  });
+  };
+  const payload = streamHandlers
+    ? await invokeStream(body, {
+        ...streamHandlers,
+        onDelta: (text) => {
+          firstTextAt ??= Date.now();
+          streamHandlers.onDelta?.(text);
+        },
+      })
+    : await invoke(body);
   if (!payload.reply)
     throw new WasilApiError("INVALID_RESPONSE", "Réponse Wasil invalide.");
 
@@ -307,6 +440,8 @@ export async function askWasil(
       creditsCharged: Number(payload.creditsCharged ?? 0),
       classification: payload.classification ?? null,
       clientLatencyMs: Math.max(0, Date.now() - clientStartedAt),
+      firstTextLatencyMs: firstTextAt === null ? null : firstTextAt - clientStartedAt,
+      streamed: Boolean(streamHandlers),
     },
   });
 

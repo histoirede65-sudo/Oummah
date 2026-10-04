@@ -468,6 +468,16 @@ function cleanMarkdownText(body: string) {
     .trim();
 }
 
+/** Text shown while the answer streams: links are hidden until the final answer turns them into source cards. */
+function streamingDisplayText(body: string) {
+  return cleanMarkdownText(
+    extractMarkdownLinks(body).text
+      .replace(/https?:\/\/[^\s)]+/gi, "")
+      // A link still being written ("[sunnah.com](https://sun…").
+      .replace(/\[[^\]\n]*\]?\(?[^\s)]*$/, ""),
+  );
+}
+
 function removeDuplicateQuranCoordinates(body: string) {
   return body
     .replace(
@@ -1142,6 +1152,10 @@ export default function DalilScreen() {
   const [prompt, setPrompt] = useState("");
   const [examplesExpanded, setExamplesExpanded] = useState(false);
   const [noticeExpanded, setNoticeExpanded] = useState(false);
+  // Answer text received while Wasil is still writing it.
+  const [streamingText, setStreamingText] = useState("");
+  const streamBuffer = useRef("");
+  const streamFlushTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [submittedPrompt, setSubmittedPrompt] = useState("");
   const [reply, setReply] = useState<WasilReply | null>(null);
   const [balance, setBalance] = useState<number | null>(null);
@@ -2344,6 +2358,13 @@ export default function DalilScreen() {
 
     setReply(null);
     setLoading(true);
+    const clearStream = () => {
+      if (streamFlushTimer.current) clearTimeout(streamFlushTimer.current);
+      streamFlushTimer.current = null;
+      streamBuffer.current = "";
+      setStreamingText("");
+    };
+    clearStream();
     try {
       const locationContext = await resolveWasilLocationContext(trimmedPrompt).catch(
         () => undefined,
@@ -2359,7 +2380,24 @@ export default function DalilScreen() {
           content: message.text,
         })),
         locationContext,
+        {
+          onDelta: (text) => {
+            streamBuffer.current += text;
+            // Batch small deltas into one render every 50 ms.
+            if (streamFlushTimer.current) return;
+            streamFlushTimer.current = setTimeout(() => {
+              streamFlushTimer.current = null;
+              setStreamingText(streamBuffer.current);
+            }, 50);
+          },
+          onReset: clearStream,
+          onStage: (name) => {
+            if (name === "web_search") setLoadingStatus(t("wasil.loadingSources"));
+          },
+        },
+        language,
       );
+      clearStream();
       setReply(response.reply);
       setFailedPrompt("");
       setBalance(response.balance);
@@ -2376,6 +2414,7 @@ export default function DalilScreen() {
       }
       await commitTurn(trimmedPrompt, response.reply);
     } catch (error) {
+      clearStream();
       const apiError = error instanceof WasilApiError ? error : null;
       if (typeof apiError?.balance === "number") setBalance(apiError.balance);
       const errorReply: WasilReply = {
@@ -2807,7 +2846,26 @@ export default function DalilScreen() {
                 </View>
               ) : null}
 
-              {loading ? (
+              {loading && streamingDisplayText(streamingText) ? (
+                <View style={styles.wasilMessage}>
+                  <View style={styles.wasilMessageHeader}>
+                    <View style={styles.wasilMessageIcon}>
+                      <Ionicons
+                        name="sparkles"
+                        size={14}
+                        color={colors.goldLight}
+                      />
+                    </View>
+                    <Text style={styles.messageAuthor}>Wasil</Text>
+                    <ActivityIndicator
+                      size="small"
+                      color={colors.goldLight}
+                      style={styles.wasilStreamingIndicator}
+                    />
+                  </View>
+                  {renderWasilBody(streamingDisplayText(streamingText))}
+                </View>
+              ) : loading ? (
                 <View style={styles.wasilLoading}>
                   <ActivityIndicator size="small" color={colors.goldLight} />
                   <Text style={styles.wasilLoadingText}>
@@ -3642,6 +3700,10 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 7,
+  },
+  wasilStreamingIndicator: {
+    marginLeft: "auto",
+    transform: [{ scale: 0.8 }],
   },
   wasilMessageIcon: {
     width: 25,
