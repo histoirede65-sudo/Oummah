@@ -163,6 +163,12 @@ const EMBLEMS: Partial<Record<Visual, keyof typeof Ionicons.glyphMap>> = {
   hair: "cut-outline",
   exit: "sunny-outline",
   sacrifice: "leaf-outline",
+  medina: "star-outline",
+  rawda: "flower-outline",
+  salam: "heart-outline",
+  quba: "home-outline",
+  baqi: "leaf-outline",
+  uhud: "triangle-outline",
 };
 
 /** Illustration at the top of a page. */

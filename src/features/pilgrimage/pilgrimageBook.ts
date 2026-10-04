@@ -242,6 +242,88 @@ const exitStep: Step = {
   ],
 };
 
+// ----- Medina (optional visit, in both books) ------------------------------------------------
+
+const medinaChapter: Chapter = {
+  id: "medina",
+  title: "Visite de Médine",
+  marker: "Médine",
+  steps: [
+    {
+      id: "arrive-medina",
+      title: "Arriver à Médine",
+      arabic: "المدينة المنورة",
+      visual: "medina",
+      summary: "La visite de Médine n’est ni un pilier ni une obligation de la ‘Umra ou du Hajj : c’est une visite recommandée de la Mosquée du Prophète ﷺ.",
+      todo: [
+        p("Faites le voyage avec l’intention de prier dans la Mosquée du Prophète ﷺ : on ne voyage spécialement que vers trois mosquées.", [H("Sahîh al-Bukhârî 1189")]),
+        p("Entrez dans la mosquée du pied droit, avec l’invocation d’entrée.", [H("Sahîh Muslim 713")]),
+      ],
+      notes: [
+        p("Une prière dans cette mosquée vaut mieux que mille prières ailleurs, sauf dans la Mosquée sacrée.", [H("Sahîh al-Bukhârî 1190")]),
+        p("Aucun ihrâm n’est requis pour Médine : la visite n’est pas un rite du pèlerinage.", [F("Fiqh : statut de la visite de Médine")]),
+      ],
+      say: ["mosque-entry"],
+    },
+    {
+      id: "rawda",
+      title: "Ar-Rawda",
+      arabic: "الروضة الشريفة",
+      visual: "rawda",
+      summary: "« Entre ma maison et mon minbar se trouve un jardin parmi les jardins du Paradis. »",
+      todo: [
+        p("Priez-y si vous obtenez une place, puis laissez-la aux autres.", [H("Sahîh al-Bukhârî 1196")]),
+        p("L’accès se fait généralement sur réservation : renseignez-vous auprès de votre groupe."),
+      ],
+      avoid: [p("Ne bousculez personne pour y accéder.")],
+    },
+    {
+      id: "salam",
+      title: "Saluer le Prophète ﷺ",
+      arabic: "السلام على النبي ﷺ",
+      visual: "salam",
+      summary: "Devant la tombe du Prophète ﷺ, on le salue avec calme et respect, puis ses deux compagnons Abû Bakr et ‘Umar.",
+      todo: [
+        p("Dites : « As-salâmu ‘alayka yâ Rasûla llâh », puis saluez Abû Bakr et ‘Umar.", [F("Pratique rapportée d’Ibn ‘Umar — Muwatta’ Mâlik")]),
+      ],
+      notes: [p("« Allah et Ses anges prient sur le Prophète. Ô vous qui croyez, priez sur lui et adressez-lui vos salutations. » Cela se fait de partout.", [Q("Coran 33:56")])],
+      avoid: [
+        p("N’élevez pas la voix : « N’élevez pas vos voix au-dessus de la voix du Prophète. »", [Q("Coran 49:2")]),
+        p("Les invocations s’adressent à Allah seul : « N’invoquez personne avec Allah. »", [Q("Coran 72:18")]),
+      ],
+    },
+    {
+      id: "quba",
+      title: "La mosquée de Qubâ’",
+      arabic: "مسجد قباء",
+      visual: "quba",
+      summary: "Première mosquée bâtie par le Prophète ﷺ à son arrivée à Médine.",
+      todo: [p("Le Prophète ﷺ s’y rendait chaque samedi, à pied ou monté, et y priait deux rak‘ât.", [H("Sahîh al-Bukhârî 1193")])],
+      notes: [p("Celui qui se purifie chez lui puis vient prier à Qubâ’ obtient une récompense comparable à une ‘Umra.", [H("Sunan Ibn Mâjah 1412")])],
+    },
+    {
+      id: "baqi",
+      title: "Al-Baqî‘",
+      arabic: "البقيع",
+      visual: "baqi",
+      summary: "Le cimetière de Médine, où reposent de nombreux compagnons.",
+      todo: [p("Saluez les défunts et invoquez Allah pour eux.", [H("Sahîh Muslim 975")])],
+      avoid: [p("On invoque Allah pour les défunts ; on ne leur adresse pas de demandes.", [Q("Coran 72:18")])],
+      say: ["baqi"],
+    },
+    {
+      id: "uhud",
+      title: "Le mont Uhud",
+      arabic: "جبل أحد",
+      visual: "uhud",
+      summary: "Lieu de la bataille de Uhud, où reposent les martyrs, dont Hamza.",
+      todo: [p("Saluez les martyrs et invoquez Allah pour eux, comme pour tout défunt.", [H("Sahîh Muslim 975")])],
+      notes: [p("« Uhud est une montagne qui nous aime et que nous aimons. »", [H("Sahîh al-Bukhârî 1482")])],
+      say: ["baqi"],
+    },
+  ],
+};
+
 // ----- ‘Umra ---------------------------------------------------------------------------------
 
 export const UMRAH_BOOK: Book = {
@@ -274,6 +356,7 @@ export const UMRAH_BOOK: Book = {
         say: ["acceptance"],
       }],
     },
+    medinaChapter,
   ],
 };
 
@@ -558,6 +641,7 @@ export const HAJJ_BOOK: Book = {
         },
       ],
     },
+    { ...medinaChapter, id: "h-medina" },
   ],
 };
 

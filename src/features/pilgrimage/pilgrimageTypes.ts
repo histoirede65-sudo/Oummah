@@ -14,7 +14,8 @@ export type JuristicDifference = { question: string; establishedPoint?: string; 
 export type Visual =
   | "preparation" | "miqat" | "ihram" | "talbiya" | "prohibitions" | "haram" | "tawaf" | "stone"
   | "prayer" | "zamzam" | "sai" | "hair" | "exit" | "done" | "types" | "mina" | "arafat"
-  | "muzdalifa" | "jamarat" | "sacrifice" | "ifada" | "farewell";
+  | "muzdalifa" | "jamarat" | "sacrifice" | "ifada" | "farewell"
+  | "medina" | "rawda" | "salam" | "quba" | "baqi" | "uhud";
 
 /** A companion tool the page can open (Mode Pèlerin). */
 export type Tool = "tawaf" | "sai" | "jamarat" | "miqat";
