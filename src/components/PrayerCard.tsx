@@ -1811,16 +1811,15 @@ export default function PrayerCard({ onScheduleChange }: { onScheduleChange?: (s
         statusBarTranslucent
         onRequestClose={() => setAdhanSettingsVisible(false)}
       >
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel={t("prayer.closeAdhanSettings")}
-          onPress={() => setAdhanSettingsVisible(false)}
-          style={styles.adhanModalBackdrop}
-        >
+        {/* Plain views: a Pressable around the ScrollView grabbed the start of every swipe. */}
+        <View style={styles.adhanModalBackdrop}>
           <Pressable
-            onPress={(event) => event.stopPropagation()}
-            style={[styles.adhanSheet, { maxHeight: Math.max(320, height - insets.top - insets.bottom - 12) }]}
-          >
+            accessibilityRole="button"
+            accessibilityLabel={t("prayer.closeAdhanSettings")}
+            onPress={() => setAdhanSettingsVisible(false)}
+            style={StyleSheet.absoluteFill}
+          />
+          <View style={[styles.adhanSheet, { maxHeight: Math.max(320, height - insets.top - insets.bottom - 12) }]}>
             <ScrollView
               ref={adhanScrollRef}
               style={styles.adhanScroll}
@@ -2165,8 +2164,8 @@ export default function PrayerCard({ onScheduleChange }: { onScheduleChange?: (s
               </Pressable>
 
             </ScrollView>
-          </Pressable>
-        </Pressable>
+          </View>
+        </View>
       </Modal>
 
     </View>
