@@ -4,6 +4,7 @@ import {
   type NativeScrollEvent,
   type NativeSyntheticEvent,
   FlatList,
+  Pressable,
   StyleSheet,
   Text,
   useWindowDimensions,
@@ -14,72 +15,11 @@ import { colors } from "../theme/colors";
 import { typography } from "../theme/typography";
 import { useI18n } from "../i18n";
 import HomeModuleCard from "./home/HomeModuleCard";
+import { HOME_ESSENTIALS } from "./home/homeModules";
+import { router } from "expo-router";
 
 const CARD_WIDTH = 150;
 const CARD_GAP = 8;
-
-const shortcuts = [
-  {
-    labelKey: "home.shortcutQuran",
-    subtitleKey: "home.shortcutQuranSubtitle",
-    route: "/quran",
-    image: require("../assets/images/home/shortcuts/quran-real.jpg"),
-  },
-  {
-    labelKey: "home.shortcutHadith",
-    subtitleKey: "home.shortcutHadithSubtitle",
-    route: "/hadith",
-    image: require("../assets/images/home/shortcuts/hadith-premium.jpg"),
-  },
-  {
-    labelKey: "home.shortcutDhikr",
-    subtitleKey: "home.shortcutDhikrCounterSubtitle",
-    route: "/dhikr",
-    image: require("../assets/images/home/shortcuts/dhikr-real.jpg"),
-  },
-  {
-    labelKey: "home.shortcutHifz",
-    subtitleKey: "home.shortcutHifzSubtitle",
-    route: "/hifz",
-    image: require("../assets/images/home/shortcuts/hifz-real.jpg"),
-  },
-  {
-    labelKey: "home.shortcutDua",
-    subtitleKey: "home.shortcutDuaSubtitle",
-    route: "/dua",
-    image: require("../assets/images/home/shortcuts/dua-real.jpg"),
-  },
-  {
-    labelKey: "home.shortcutMosques",
-    subtitleKey: "home.shortcutMosquesSubtitle",
-    route: "/mosques",
-    image: require("../assets/images/mosques/mosque-hero-premium.jpg"),
-  },
-  {
-    labelKey: "home.shortcutQibla",
-    subtitleKey: "home.shortcutQiblaSubtitle",
-    route: "/qibla",
-    image: require("../assets/images/home/shortcuts/qibla-real.jpg"),
-  },
-  {
-    labelKey: "home.shortcutCalendar",
-    subtitleKey: "home.shortcutCalendarSubtitle",
-    route: "/calendar",
-    image: require("../assets/images/home/shortcuts/calendar-real.jpg"),
-  },
-  {
-    labelKey: "home.shortcutZakat",
-    subtitleKey: "home.shortcutZakatSubtitle",
-    route: "/zakat",
-    image: require("../assets/images/dua/guides/debt.jpg"),
-  },
-  {
-    labelKey: "home.shortcutZawaj",
-    subtitleKey: "home.shortcutZawajSubtitle",
-    route: "/zawaj",
-    image: require("../assets/images/dua/guides/marriage.jpg"),
-  },
-] as const;
 
 export default function HomeShortcuts() {
   const { t } = useI18n();
@@ -100,10 +40,10 @@ export default function HomeShortcuts() {
     );
     const progress =
       maxOffset > 0 ? event.nativeEvent.contentOffset.x / maxOffset : 0;
-    const nextIndex = Math.round(progress * (shortcuts.length - 1));
+    const nextIndex = Math.round(progress * (HOME_ESSENTIALS.length - 1));
     const boundedIndex = Math.max(
       0,
-      Math.min(shortcuts.length - 1, nextIndex),
+      Math.min(HOME_ESSENTIALS.length - 1, nextIndex),
     );
 
     setActiveIndex((currentIndex) =>
@@ -115,14 +55,19 @@ export default function HomeShortcuts() {
     <View style={styles.wrapper}>
       <View style={styles.header}>
         <Text style={styles.heading}>{t("home.essentials")}</Text>
-        <View style={styles.swipeHint}>
-          <Text style={styles.swipeText}>{t("home.swipeToDiscover")}</Text>
-          <Ionicons name="arrow-forward" size={15} color={colors.goldLight} />
-        </View>
+        <Pressable
+          accessibilityRole="link"
+          hitSlop={10}
+          onPress={() => router.push("/modules")}
+          style={({ pressed }) => [styles.swipeHint, pressed && { opacity: 0.6 }]}
+        >
+          <Text style={styles.swipeText}>{t("home.seeAll")}</Text>
+          <Ionicons name="chevron-forward" size={14} color={colors.goldLight} />
+        </Pressable>
       </View>
 
       <FlatList
-        data={shortcuts}
+        data={HOME_ESSENTIALS}
         keyExtractor={(item) => item.labelKey}
         initialNumToRender={3}
         maxToRenderPerBatch={3}
@@ -156,7 +101,7 @@ export default function HomeShortcuts() {
       />
 
       <View style={styles.pagination}>
-        {shortcuts.map((item, index) => (
+        {HOME_ESSENTIALS.map((item, index) => (
           <View
             key={item.labelKey}
             style={[styles.dot, index === activeIndex && styles.dotActive]}
@@ -181,11 +126,11 @@ const styles = StyleSheet.create({
     fontFamily: typography.serifMedium,
     fontSize: 18,
   },
-  swipeHint: { flexDirection: "row", alignItems: "center", gap: 5 },
+  swipeHint: { flexDirection: "row", alignItems: "center", gap: 2 },
   swipeText: {
     color: colors.goldLight,
     fontFamily: typography.sans,
-    fontSize: 10.5,
+    fontSize: 12.5,
     fontWeight: "600",
   },
   row: { paddingTop: 5, paddingRight: 36, gap: CARD_GAP },
