@@ -30,11 +30,13 @@ function normalizeSearchTitle(value: string) {
 
 export default function HadithSearchScreen() {
   const { language, t } = useI18n();
-  const params = useLocalSearchParams<{ q?: string; theme?: string; category?: string; collection?: string; collectionId?: string; view?: string }>();
+  const params = useLocalSearchParams<{ q?: string; theme?: string; category?: string; chips?: string; collection?: string; collectionId?: string; view?: string }>();
   // A theme backed by a HadeethEnc category lists that category instead of searching the text.
   const themeCategory = params.theme && params.category ? params.category : "";
   const [subCategories, setSubCategories] = useState<HadeethEncCategory[]>([]);
+  // "" means the theme's own content: its category, or the text search when it has none.
   const [selectedCategory, setSelectedCategory] = useState(themeCategory);
+  const chipIds = params.theme && !themeCategory && params.chips ? params.chips : "";
   const [themeFilter, setThemeFilter] = useState("");
   const [query, setQuery] = useState(params.q ?? params.collection ?? "");
   const [results, setResults] = useState<HadithSummary[]>([]);
@@ -43,7 +45,7 @@ export default function HadithSearchScreen() {
 
   useEffect(() => {
     let active = true;
-    if (themeCategory) {
+    if (selectedCategory || themeCategory) {
       setLoading(true);
       void hadithRepository.listCategory(selectedCategory || themeCategory, language)
         .then((value) => active && setResults(value))
@@ -100,13 +102,15 @@ export default function HadithSearchScreen() {
   }, [language, query, params.view, params.collectionId, params.q, params.theme, themeCategory, selectedCategory]);
 
   useEffect(() => {
-    if (!themeCategory) return;
+    if (!themeCategory && !chipIds) return;
     let active = true;
-    void hadithRepository.subCategories(themeCategory, language)
+    void (themeCategory
+      ? hadithRepository.subCategories(themeCategory, language)
+      : hadithRepository.categoriesByIds(chipIds.split(","), language))
       .then((value) => active && setSubCategories(value))
       .catch(() => active && setSubCategories([]));
     return () => { active = false; };
-  }, [language, themeCategory]);
+  }, [chipIds, language, themeCategory]);
 
   const unique = useMemo(() => {
     const all = Array.from(new Map(results.map((item) => [item.id, item])).values());
@@ -126,9 +130,9 @@ export default function HadithSearchScreen() {
         <ScrollView keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false} contentContainerStyle={styles.content}>
           {params.view !== "favorites" && !params.theme ? <HadithSearchBar value={query} onChangeText={setQuery} /> : null}
           {params.theme ? <>
-            {themeCategory && subCategories.length ? <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.subRow} style={styles.subScroll}>
+            {subCategories.length ? <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.subRow} style={styles.subScroll}>
               {[{ id: themeCategory, title: t("hadith.allOfTheme"), count: 0, parentId: null }, ...subCategories].map((category) => {
-                const active = (selectedCategory || themeCategory) === category.id;
+                const active = selectedCategory === category.id;
                 return <Pressable key={category.id} accessibilityRole="button" accessibilityState={{ selected: active }} onPress={() => { setSelectedCategory(category.id); setThemeFilter(""); }} style={[styles.subChip, active && styles.subChipActive]}>
                   <Text numberOfLines={1} style={[styles.subChipText, active && styles.subChipTextActive]}>{shortCategoryTitle(category.title)}</Text>
                   {category.count ? <Text style={[styles.subChipCount, active && styles.subChipTextActive]}>{category.count}</Text> : null}

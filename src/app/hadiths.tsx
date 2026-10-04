@@ -162,18 +162,11 @@ export default function HadithHomeScreen() {
             ))}
           </View>
 
-          <SectionTitle
-            title={t("hadith.exploreByTheme")}
-            action={t("hadith.viewAll")}
-            onPress={() => router.push("/hadith/themes" as Href)}
-          />
+          <SectionTitle title={t("hadith.exploreByTheme")} />
 
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.themeRow}
-          >
-            {HADITH_THEMES.slice(0, 7).map((theme) => (
+          {/* Every theme at a glance: a horizontal row hid most of them off screen. */}
+          <View style={styles.themeGrid}>
+            {HADITH_THEMES.map((theme) => (
               <Pressable
                 key={theme.id}
                 onPress={() =>
@@ -185,6 +178,7 @@ export default function HadithHomeScreen() {
                         : theme.query,
                       theme: t(`hadith.theme.${theme.id}` as never),
                       category: theme.categoryId ?? "",
+                      chips: theme.chipCategoryIds?.join(",") ?? "",
                     },
                   })
                 }
@@ -214,7 +208,7 @@ export default function HadithHomeScreen() {
                 <Text style={styles.themeLabel}>{t(`hadith.theme.${theme.id}` as never)}</Text>
               </Pressable>
             ))}
-          </ScrollView>
+          </View>
 
           <View style={styles.libraryRow}>
             <LibraryCard
@@ -535,10 +529,16 @@ const styles = StyleSheet.create({
     gap: 11,
     paddingRight: 20,
   },
+  themeGrid: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "space-between",
+    rowGap: 16,
+  },
   theme: {
-    width: 84,
+    width: "31.5%",
     alignItems: "center",
-    gap: 8,
+    gap: 7,
   },
   themePressed: {
     opacity: 0.7,
@@ -560,8 +560,9 @@ const styles = StyleSheet.create({
   themeLabel: {
     color: colors.textSecondary,
     fontFamily: typography.sans,
-    fontSize: 10.5,
+    fontSize: 12,
     fontWeight: "600",
+    textAlign: "center",
   },
   themeGlowLine: {
     position: "absolute",

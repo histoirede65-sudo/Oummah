@@ -1,5 +1,8 @@
-/** categoryId: the HadeethEnc category behind the theme. Without one, the theme searches the text. */
-export type HadithTheme = { id: string; label: string; query: string; icon: string; color: string; categoryId?: string };
+/**
+ * categoryId: the HadeethEnc category behind the theme. Without one, the theme searches the text,
+ * and chipCategoryIds can still offer HadeethEnc categories as sub-themes next to "All".
+ */
+export type HadithTheme = { id: string; label: string; query: string; icon: string; color: string; categoryId?: string; chipCategoryIds?: readonly string[] };
 
 export const HADITH_THEMES: readonly HadithTheme[] = [
   { id: "foi", label: "Foi", query: "foi", icon: "heart-outline", color: "#B87992", categoryId: "3" },
@@ -14,7 +17,7 @@ export const HADITH_THEMES: readonly HadithTheme[] = [
   { id: "commerce", label: "Commerce", query: "commerce", icon: "briefcase-outline", color: "#96755E", categoryId: "122" },
   { id: "epreuves", label: "Épreuves", query: "épreuve", icon: "shield-checkmark-outline", color: "#596F8C" },
   { id: "invocation", label: "Invocation", query: "invocation", icon: "hand-left-outline", color: "#A76C98", categoryId: "268" },
-  { id: "maladie", label: "Maladie", query: "maladie", icon: "medkit-outline", color: "#518C86" },
+  { id: "maladie", label: "Maladie", query: "maladie", icon: "medkit-outline", color: "#518C86", chipCategoryIds: ["297", "125"] },
   { id: "mort", label: "Mort & au-delà", query: "mort", icon: "leaf-outline", color: "#777A89", categoryId: "63" },
   { id: "pelerinage", label: "Pèlerinage", query: "pèlerinage", icon: "location-outline", color: "#9C7E42", categoryId: "138" },
 ] as const;

@@ -22,6 +22,16 @@ import { createHadithPreview, type HadithPreview } from "../presentation/hadithP
 const themeCategoryCache = new Map<string, Promise<HadithSummary[]>>();
 const categoryTreeCache = new Map<string, Promise<HadeethEncCategory[]>>();
 
+function categoryTree(language: "fr" | "en") {
+  let tree = categoryTreeCache.get(language);
+  if (!tree) {
+    tree = fetchHadeethEncCategoryTree(language);
+    categoryTreeCache.set(language, tree);
+    tree.catch(() => categoryTreeCache.delete(language));
+  }
+  return tree;
+}
+
 export function normalizeHadithQuery(value: string) {
   return value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLocaleLowerCase("fr").trim();
 }
@@ -187,15 +197,15 @@ export const hadithRepository = {
 
   /** The direct subcategories of a HadeethEnc category, largest first. */
   async subCategories(categoryId: string, language: "fr" | "en" = "fr"): Promise<HadeethEncCategory[]> {
-    let tree = categoryTreeCache.get(language);
-    if (!tree) {
-      tree = fetchHadeethEncCategoryTree(language);
-      categoryTreeCache.set(language, tree);
-      tree.catch(() => categoryTreeCache.delete(language));
-    }
-    return (await tree)
+    return (await categoryTree(language))
       .filter((category) => category.parentId === categoryId && category.count > 0)
       .sort((left, right) => right.count - left.count);
+  },
+
+  /** The given HadeethEnc categories, in the given order. */
+  async categoriesByIds(ids: readonly string[], language: "fr" | "en" = "fr"): Promise<HadeethEncCategory[]> {
+    const tree = await categoryTree(language);
+    return ids.map((id) => tree.find((category) => category.id === id)).filter((category): category is HadeethEncCategory => Boolean(category?.count));
   },
 
   /** Every hadith HadeethEnc files under a category (subcategories included), in its own order. */
