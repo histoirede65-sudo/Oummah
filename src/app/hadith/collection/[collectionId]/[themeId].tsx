@@ -149,7 +149,7 @@ export default function HadithCollectionThemeScreen() {
             <View style={styles.list}>
               {visibleItems.map((item, index) => {
                 const preview = previews[item.id] ?? { title: t("hadith.loadingHadith"), subtitle: "" };
-                return <HadithCard key={item.id} title={preview.title} subtitle={preview.subtitle || undefined} index={index} onPress={() => router.push(`/hadith/${item.id}` as Href)} />;
+                return <HadithCard key={item.id} title={[preview.title, preview.subtitle].filter(Boolean).join(" ")} lines={4} index={index} onPress={() => router.push(`/hadith/${item.id}` as Href)} />;
               })}
 
               {visibleCount < items.length ? (
