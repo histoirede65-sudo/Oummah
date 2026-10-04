@@ -23,12 +23,14 @@ import {
 import { quranFoundationRepository } from "../../features/quranfoundation/QuranFoundationRepository";
 import type { QuranFoundationVerse } from "../../features/quranfoundation/QuranFoundationTypes";
 import { ARABIC_READING_FONT_FAMILY } from "../../features/quran/ArabicReadingPresentation";
+import { useI18n } from "../../i18n";
 import { colors } from "../../theme/colors";
 import { typography } from "../../theme/typography";
 
 type Tab = "all" | "learned" | "review" | "new";
 
 export default function HifzSurahDetail() {
+  const { t } = useI18n();
   const { surahId: rawId } = useLocalSearchParams<{ surahId: string }>();
   const surahId = Math.max(1, Math.min(114, Number(rawId) || 1));
   const surah = SURAHS.find((item) => item.id === surahId) ?? SURAHS[0];
@@ -114,11 +116,6 @@ export default function HifzSurahDetail() {
     };
     setState(next);
     void saveHifzState(next);
-    console.log("[HIFZ OPEN SESSION]", {
-      surah: surahId,
-      verse: startVerse,
-      end: endVerse,
-    });
     router.push(
       `/hifz/session?surah=${surahId}&verse=${startVerse}&end=${endVerse}&repeat=3&reciter=&portion=portion`,
     );
@@ -146,11 +143,12 @@ export default function HifzSurahDetail() {
     setVersePickerVisible(false);
   };
   const status = (number: number) =>
-    learned.has(number)
-      ? "Mémorisé"
-      : difficult.has(number)
-        ? "À revoir"
-        : "À apprendre";
+    learned.has(number) ? "learned" : difficult.has(number) ? "review" : "new";
+  const statusLabel = {
+    learned: t("hifz.surah.statusLearned"),
+    review: t("hifz.surah.statusReview"),
+    new: t("hifz.surah.statusNew"),
+  } as const;
   return (
     <SafeAreaView edges={["top"]} style={styles.safeArea}>
       <ScrollView
@@ -158,18 +156,18 @@ export default function HifzSurahDetail() {
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.top}>
-          <Pressable onPress={() => router.back()} style={styles.back}>
+          <Pressable accessibilityLabel={t("common.back")} onPress={() => router.back()} style={styles.back}>
             <Ionicons name="arrow-back" size={21} color={colors.goldLight} />
           </Pressable>
           <View style={styles.topCopy}>
             <Text style={styles.title}>{surah.transliteration}</Text>
-            <Text style={styles.subtitle}>Programme de mémorisation</Text>
+            <Text style={styles.subtitle}>{t("hifz.surah.subtitle")}</Text>
           </View>
           <Text style={styles.arabicHeader}>{surah.arabicName}</Text>
         </View>
         <View style={styles.progressCard}>
           <Text style={styles.progressTitle}>
-            {learned.size} sur {surah.verses} versets mémorisés
+            {t("hifz.surah.learnedProgress", { learned: learned.size, total: surah.verses })}
           </Text>
           <View style={styles.track}>
             <View
@@ -180,20 +178,21 @@ export default function HifzSurahDetail() {
             />
           </View>
           <Text style={styles.progressText}>
-            Vous avancez à votre rythme. Chaque verset compte.
+            {t("hifz.surah.encouragement")}
           </Text>
         </View>
         <View style={styles.rangeCard}>
           <View style={styles.rangeHeader}>
             <View>
-              <Text style={styles.rangeTitle}>Mon prochain passage</Text>
+              <Text style={styles.rangeTitle}>{t("hifz.surah.nextPassage")}</Text>
               <Text style={styles.rangeText}>
-                Choisissez exactement les versets à travailler.
+                {t("hifz.surah.nextPassageText")}
               </Text>
             </View>
           </View>
           <View style={styles.rangeControls}>
             <Pressable
+              accessibilityLabel={t("hifz.surah.removeVerse")}
               disabled={endVerse <= startVerse}
               onPress={() => persistRange(startVerse, Math.max(startVerse, endVerse - 1))}
               style={[styles.rangeButton, endVerse <= startVerse && styles.rangeButtonDisabled]}
@@ -204,7 +203,7 @@ export default function HifzSurahDetail() {
               onPress={() => openVersePicker("start")}
               style={({ pressed }) => [styles.rangeValue, pressed && styles.rangeValuePressed]}
             >
-              <Text style={styles.rangeLabel}>DÉPART</Text>
+              <Text style={styles.rangeLabel}>{t("hifz.surah.start")}</Text>
               <View style={styles.rangeNumberRow}>
                 <Text style={styles.rangeNumber}>{startVerse}</Text>
                 <Ionicons name="chevron-down" size={19} color={colors.goldLight} />
@@ -215,13 +214,14 @@ export default function HifzSurahDetail() {
               onPress={() => openVersePicker("end")}
               style={({ pressed }) => [styles.rangeValue, pressed && styles.rangeValuePressed]}
             >
-              <Text style={styles.rangeLabel}>FIN</Text>
+              <Text style={styles.rangeLabel}>{t("hifz.surah.end")}</Text>
               <View style={styles.rangeNumberRow}>
                 <Text style={styles.rangeNumber}>{endVerse}</Text>
                 <Ionicons name="chevron-down" size={19} color={colors.goldLight} />
               </View>
             </Pressable>
             <Pressable
+              accessibilityLabel={t("hifz.surah.addVerse")}
               onPress={() =>
                 persistRange(startVerse, Math.min(surah.verses, Math.max(endVerse + 1, startVerse)))
               }
@@ -234,18 +234,18 @@ export default function HifzSurahDetail() {
             <Ionicons name="play" size={16} color={colors.background} />
             <Text style={styles.planText}>
               {startVerse === endVerse
-                ? `Mémoriser le verset ${startVerse}`
-                : `Mémoriser les versets ${startVerse} à ${endVerse}`}
+                ? t("hifz.surah.memorizeOne", { verse: startVerse })
+                : t("hifz.surah.memorizeRange", { start: startVerse, end: endVerse })}
             </Text>
           </Pressable>
-          <Text style={styles.rangeHint}>Touchez DÉPART et FIN pour choisir exactement les versets souhaités</Text>
+          <Text style={styles.rangeHint}>{t("hifz.surah.rangeHint")}</Text>
         </View>
         <Modal visible={versePickerVisible} transparent animationType="slide" onRequestClose={() => setVersePickerVisible(false)}>
           <View style={styles.versePickerBackdrop}>
             <View style={styles.versePickerCard}>
               <View style={styles.optionsHeader}>
-                <Text style={styles.optionsTitle}>Choisir le verset {versePickerTarget === "start" ? "de départ" : "de fin"}</Text>
-                <Pressable onPress={() => setVersePickerVisible(false)} hitSlop={8}>
+                <Text style={styles.optionsTitle}>{versePickerTarget === "start" ? t("hifz.surah.pickStart") : t("hifz.surah.pickEnd")}</Text>
+                <Pressable accessibilityLabel={t("hifz.session.close")} onPress={() => setVersePickerVisible(false)} hitSlop={8}>
                   <Ionicons name="close" size={21} color={colors.textMuted} />
                 </Pressable>
               </View>
@@ -273,14 +273,14 @@ export default function HifzSurahDetail() {
             </View>
           </View>
         </Modal>
-        <Text style={styles.sectionTitle}>Les versets</Text>
+        <Text style={styles.sectionTitle}>{t("hifz.surah.verses")}</Text>
         <View style={styles.tabs}>
           {(
             [
-              ["all", "Tous"],
-              ["learned", "Mémorisés"],
-              ["review", "À revoir"],
-              ["new", "Nouveaux"],
+              ["all", t("hifz.surah.tabAll")],
+              ["learned", t("hifz.surah.tabLearned")],
+              ["review", t("hifz.surah.tabReview")],
+              ["new", t("hifz.surah.tabNew")],
             ] as const
           ).map(([id, label]) => (
             <Pressable
@@ -299,7 +299,7 @@ export default function HifzSurahDetail() {
         {!verses.length ? (
           <View style={styles.loading}>
             <ActivityIndicator color={colors.goldLight} />
-            <Text style={styles.loadingText}>Chargement des versets…</Text>
+            <Text style={styles.loadingText}>{t("hifz.surah.loading")}</Text>
           </View>
         ) : (
           filtered.map((verse) => {
@@ -310,11 +310,6 @@ export default function HifzSurahDetail() {
               <Pressable
                 key={verse.verseKey}
                 onPress={() => {
-                  console.log("[HIFZ OPEN SESSION]", {
-                    surah: surahId,
-                    verse: number,
-                    end: endVerse,
-                  });
                   router.push(`/hifz/session?surah=${surahId}&verse=${number}&end=${endVerse}`);
                 }}
                 style={[styles.verseRow, selectedInRange && styles.verseRowSelected]}
@@ -322,21 +317,21 @@ export default function HifzSurahDetail() {
                 <View
                   style={[
                     styles.statusDot,
-                    current === "Mémorisé" && styles.statusLearned,
-                    current === "À revoir" && styles.statusReview,
+                    current === "learned" && styles.statusLearned,
+                    current === "review" && styles.statusReview,
                   ]}
                 >
                   <Ionicons
                     name={
-                      current === "Mémorisé"
+                      current === "learned"
                         ? "checkmark"
-                        : current === "À revoir"
+                        : current === "review"
                           ? "refresh"
                           : "play"
                     }
                     size={12}
                     color={
-                      current === "À apprendre"
+                      current === "new"
                         ? colors.goldLight
                         : colors.background
                     }
@@ -344,13 +339,13 @@ export default function HifzSurahDetail() {
                 </View>
                 <View style={styles.verseCopy}>
                   <Text style={styles.verseLabel}>
-                    Verset {number} · {current}
+                    {t("hifz.surah.verseRow", { verse: number, status: statusLabel[current] })}
                   </Text>
                   <Text numberOfLines={2} style={styles.verseArabic}>
                     {verse.textUthmani}
                   </Text>
                   {selectedInRange && (
-                    <Text style={styles.selectedRangeBadge}>Passage sélectionné</Text>
+                    <Text style={styles.selectedRangeBadge}>{t("hifz.surah.selectedPassage")}</Text>
                   )}
                 </View>
                 <Ionicons

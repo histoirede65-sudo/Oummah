@@ -26,6 +26,7 @@ import {
   saveHifzState,
   type HifzState,
 } from "../features/hifz/HifzStore";
+import { useI18n } from "../i18n";
 import { colors } from "../theme/colors";
 import { typography } from "../theme/typography";
 
@@ -189,6 +190,7 @@ const HIFZ_BADGES: readonly {
 ];
 
 export default function HifzScreen() {
+  const { language, t } = useI18n();
   const [state, setState] = useState<HifzState>();
   const [showPicker, setShowPicker] = useState(false);
   const [draftSurahIds, setDraftSurahIds] = useState<Set<number>>(new Set());
@@ -354,12 +356,12 @@ export default function HifzScreen() {
   const removeSurah = (surahId: number, name: string) => {
     if (!state) return;
     Alert.alert(
-      "Retirer cette sourate ?",
-      `${name} sera retirée de vos sourates à apprendre. Votre progression sera conservée.`,
+      t("hifz.removeTitle"),
+      t("hifz.removeMessage", { surah: name }),
       [
-        { text: "Annuler", style: "cancel" },
+        { text: t("hifz.cancel"), style: "cancel" },
         {
-          text: "Retirer",
+          text: t("hifz.remove"),
           style: "destructive",
           onPress: () => {
             const next = {
@@ -383,6 +385,7 @@ export default function HifzScreen() {
       >
         <View style={styles.topBar}>
           <Pressable
+            accessibilityLabel={t("common.back")}
             onPress={() =>
               router.canGoBack() ? router.back() : router.replace("/" as Href)
             }
@@ -391,10 +394,13 @@ export default function HifzScreen() {
             <Ionicons name="arrow-back" size={21} color={colors.goldLight} />
           </Pressable>
           <View style={styles.titleCopy}>
-            <Text style={styles.title}>Mémorisation</Text>
-            <Text style={styles.subtitle}>Votre chemin de Hifz</Text>
+            <Text style={styles.title}>{t("hifz.title")}</Text>
+            <Text style={styles.subtitle}>{t("hifz.subtitle")}</Text>
           </View>
-          <View style={styles.streakPill}>
+          <View
+            accessibilityLabel={t("hifz.streakAccessibility", { count: state?.streak ?? 0 })}
+            style={styles.streakPill}
+          >
             <Ionicons name="flame" size={14} color={colors.goldLight} />
             <Text style={styles.streakText}>{state?.streak ?? 0}</Text>
           </View>
@@ -416,14 +422,14 @@ export default function HifzScreen() {
             style={StyleSheet.absoluteFill}
           />
           <View style={styles.heroGlass}>
-            <Text style={styles.eyebrow}>VOTRE HIFZ</Text>
+            <Text style={styles.eyebrow}>{t("hifz.heroEyebrow")}</Text>
             <Text style={styles.heroTitle}>
               {activeSurahs
-                ? `${activeSurahs} sourate${activeSurahs > 1 ? "s" : ""} en cours`
-                : "Prêt à commencer votre Hifz"}
+                ? t(activeSurahs > 1 ? "hifz.activeSurahsMany" : "hifz.activeSurahsOne", { count: activeSurahs })
+                : t("hifz.readyToStart")}
             </Text>
             <Text style={styles.heroMeta}>
-              {Math.round(annualProgress * 100)} % de votre objectif annuel
+              {t("hifz.annualProgress", { percent: Math.round(annualProgress * 100) })}
             </Text>
             <View style={styles.track}>
               <View
@@ -433,34 +439,38 @@ export default function HifzScreen() {
             <View style={styles.heroActions}>
               <Pressable onPress={() => begin()} style={styles.primaryButton}>
                 <Ionicons name="play" size={15} color={colors.background} />
-                <Text style={styles.primaryText}>Continuer</Text>
+                <Text style={styles.primaryText}>{t("hifz.continue")}</Text>
               </Pressable>
               <Pressable
                 onPress={() => begin(priorities[0]?.id, true)}
                 style={styles.secondaryButton}
               >
                 <Ionicons name="refresh" size={15} color={colors.goldLight} />
-                <Text style={styles.secondaryText}>Réviser</Text>
+                <Text style={styles.secondaryText}>{t("hifz.review")}</Text>
               </Pressable>
             </View>
           </View>
         </View>
 
         <View style={styles.hifzGuide}>
-          <View style={styles.hifzGuideStep}><Text style={styles.hifzGuideNumber}>1</Text><Text style={styles.hifzGuideText}>Choisir une sourate</Text></View>
-          <View style={styles.hifzGuideStep}><Text style={styles.hifzGuideNumber}>2</Text><Text style={styles.hifzGuideText}>Mémoriser les versets</Text></View>
-          <View style={styles.hifzGuideStep}><Text style={styles.hifzGuideNumber}>3</Text><Text style={styles.hifzGuideText}>Réviser régulièrement</Text></View>
+          <View style={styles.hifzGuideStep}><Text style={styles.hifzGuideNumber}>1</Text><Text style={styles.hifzGuideText}>{t("hifz.guideChoose")}</Text></View>
+          <View style={styles.hifzGuideStep}><Text style={styles.hifzGuideNumber}>2</Text><Text style={styles.hifzGuideText}>{t("hifz.guideMemorize")}</Text></View>
+          <View style={styles.hifzGuideStep}><Text style={styles.hifzGuideNumber}>3</Text><Text style={styles.hifzGuideText}>{t("hifz.guideReview")}</Text></View>
         </View>
 
         <View style={styles.primaryReviewRow}>
           <Pressable onPress={() => begin()} style={styles.primaryReviewCard}>
             <Ionicons name="play-circle-outline" size={24} color={colors.goldLight} />
             <View style={styles.primaryReviewCopy}>
-              <Text style={styles.primaryReviewTitle}>{studied.length > 0 ? "Continuer mon Hifz" : "Commencer mon Hifz"}</Text>
+              <Text style={styles.primaryReviewTitle}>{studied.length > 0 ? t("hifz.continueHifz") : t("hifz.startHifz")}</Text>
               <Text style={styles.primaryReviewMeta}>
                 {studied.length > 0 && primarySurah && primarySurahProgress
-                  ? `${primarySurah.transliteration} • ${primarySurahProgress.learnedVerses.length}/${primarySurah.verses} versets mémorisés`
-                  : "Choisir une sourate pour commencer"}
+                  ? t("hifz.primaryProgress", {
+                      surah: primarySurah.transliteration,
+                      learned: primarySurahProgress.learnedVerses.length,
+                      total: primarySurah.verses,
+                    })
+                  : t("hifz.chooseToStart")}
               </Text>
             </View>
             <Ionicons name="chevron-forward" size={18} color={colors.goldLight} />
@@ -468,18 +478,18 @@ export default function HifzScreen() {
           {due.length > 0 ? <Pressable onPress={() => begin(priorities[0]?.id, true)} style={styles.primaryReviewCard}>
             <Ionicons name="refresh-circle-outline" size={24} color={colors.goldLight} />
             <View style={styles.primaryReviewCopy}>
-              <Text style={styles.primaryReviewTitle}>Réviser aujourd’hui</Text>
-              <Text style={styles.primaryReviewMeta}>{due.length} passage{due.length > 1 ? "s" : ""} à revoir</Text>
+              <Text style={styles.primaryReviewTitle}>{t("hifz.reviewToday")}</Text>
+              <Text style={styles.primaryReviewMeta}>{t(due.length > 1 ? "hifz.dueMany" : "hifz.dueOne", { count: due.length })}</Text>
             </View>
             <Ionicons name="chevron-forward" size={18} color={colors.goldLight} />
           </Pressable> : null}
         </View>
 
         <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>Mes sourates</Text>
+          <Text style={styles.sectionTitle}>{t("hifz.mySurahs")}</Text>
           <Pressable onPress={openSurahPicker} style={styles.addSurahHeader}>
             <Ionicons name="add-circle" size={20} color={colors.background} />
-            <Text style={styles.addSurahHeaderText}>Ajouter une sourate</Text>
+            <Text style={styles.addSurahHeaderText}>{t("hifz.addSurah")}</Text>
           </Pressable>
         </View>
         {studied.slice(0, 4).map((entry) => {
@@ -487,13 +497,13 @@ export default function HifzScreen() {
           if (!surah) return null;
           return <View key={entry.surahId} style={styles.compactSurahRow}>
             <Pressable onPress={() => router.push(`/hifz/${surah.id}` as Href)} style={styles.compactSurahContent}>
-              <View><Text style={styles.compactSurahName}>{surah.transliteration}</Text><Text style={styles.compactSurahMeta}>{entry.learnedVerses.length} / {surah.verses} versets</Text></View>
+              <View><Text style={styles.compactSurahName}>{surah.transliteration}</Text><Text style={styles.compactSurahMeta}>{t("hifz.surahVerses", { learned: entry.learnedVerses.length, total: surah.verses })}</Text></View>
               <Ionicons name="chevron-forward" size={18} color={colors.goldLight} />
             </Pressable>
             <Pressable
               onPress={() => removeSurah(surah.id, surah.transliteration)}
               accessibilityRole="button"
-              accessibilityLabel={`Retirer ${surah.transliteration}`}
+              accessibilityLabel={t("hifz.removeAccessibility", { surah: surah.transliteration })}
               hitSlop={8}
               style={styles.removeSurahButton}
             >
@@ -502,7 +512,7 @@ export default function HifzScreen() {
           </View>;
         })}
         {learned > 0 ? <Pressable onPress={() => router.push("/hifz/progress" as Href)} style={styles.progressLinkCard}>
-          <View><Text style={styles.progressLinkTitle}>Progression</Text><Text style={styles.progressLinkMeta}>{learned} verset{learned > 1 ? "s" : ""} mémorisé{learned > 1 ? "s" : ""}</Text></View>
+          <View><Text style={styles.progressLinkTitle}>{t("hifz.progress")}</Text><Text style={styles.progressLinkMeta}>{t(learned > 1 ? "hifz.learnedMany" : "hifz.learnedOne", { count: learned })}</Text></View>
           <Ionicons name="chevron-forward" size={18} color={colors.goldLight} />
         </Pressable> : null}
 
@@ -895,13 +905,13 @@ export default function HifzScreen() {
           <View style={styles.modalSheet}>
             <View style={styles.modalHeader}>
               <View>
-                <Text style={styles.modalTitle}>Choisir mes sourates</Text>
+                <Text style={styles.modalTitle}>{t("hifz.pickerTitle")}</Text>
                 <Text style={styles.modalSubtitle}>
-                  Touchez + pour ajouter, ou ✓ pour retirer une sourate de votre
-                  programme.
+                  {t("hifz.pickerSubtitle")}
                 </Text>
               </View>
               <Pressable
+                accessibilityLabel={t("hifz.session.close")}
                 onPress={() => setShowPicker(false)}
                 style={styles.close}
               >
@@ -916,7 +926,7 @@ export default function HifzScreen() {
                     key={surah.id}
                     onPress={() => toggleDraftSurah(surah.id)}
                     accessibilityRole="button"
-                    accessibilityLabel={`${added ? "Retirer" : "Ajouter"} ${surah.transliteration}`}
+                    accessibilityLabel={t(added ? "hifz.removeAccessibility" : "hifz.addAccessibility", { surah: surah.transliteration })}
                     style={[styles.pickerRow, added && styles.pickerRowAdded]}
                   >
                     <View style={styles.pickerNumber}>
@@ -927,7 +937,9 @@ export default function HifzScreen() {
                         {surah.transliteration}
                       </Text>
                       <Text style={styles.pickerMeta}>
-                        {surah.frenchName} · {surah.verses} versets
+                        {language === "fr"
+                          ? `${surah.frenchName} · ${t("hifz.versesCount", { count: surah.verses })}`
+                          : t("hifz.versesCount", { count: surah.verses })}
                       </Text>
                     </View>
                     <Text style={styles.pickerArabic}>{surah.arabicName}</Text>
@@ -949,7 +961,7 @@ export default function HifzScreen() {
             </ScrollView>
             <Pressable onPress={confirmSurahSelection} style={styles.confirmSurahsButton}>
               <Ionicons name="checkmark-circle" size={20} color={colors.background} />
-              <Text style={styles.confirmSurahsText}>Confirmer ma sélection</Text>
+              <Text style={styles.confirmSurahsText}>{t("hifz.confirmSelection")}</Text>
               <View style={styles.selectionBadge}>
                 <Text style={styles.selectionBadgeText}>{draftSurahIds.size}</Text>
               </View>
@@ -1130,7 +1142,7 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(42,23,56,0.72)",
   },
   primaryReviewRow: { marginTop: 16, gap: 10 },
-  primaryReviewCard: { minHeight: 70, paddingHorizontal: 14, paddingVertical: 12, flexDirection: "row", alignItems: "center", borderRadius: 18, borderWidth: 1, borderColor: "rgba(227,181,90,0.28)", backgroundColor: "rgba(42,23,56,0.72)" },
+  primaryReviewCard: { minHeight: 70, paddingHorizontal: 14, paddingVertical: 12, flexDirection: "row", alignItems: "center", borderRadius: 18, borderWidth: 1, borderColor: "rgba(227,181,90,0.22)", backgroundColor: "#151022" },
   primaryReviewCopy: { flex: 1, marginHorizontal: 11 },
   primaryReviewTitle: { color: colors.text, fontFamily: typography.serifMedium, fontSize: 16 },
   primaryReviewMeta: { marginTop: 4, color: colors.textMuted, fontFamily: typography.sans, fontSize: 12 },
@@ -1138,12 +1150,12 @@ const styles = StyleSheet.create({
   hifzGuideStep: { flex: 1, alignItems: "center" },
   hifzGuideNumber: { color: colors.goldMuted, fontFamily: typography.sansBold, fontSize: 11 },
   hifzGuideText: { marginTop: 3, color: colors.textMuted, fontFamily: typography.sans, fontSize: 9, textAlign: "center" },
-  compactSurahRow: { minHeight: 68, marginTop: 5, paddingHorizontal: 14, flexDirection: "row", alignItems: "center", borderRadius: 16, borderWidth: 1, borderColor: "rgba(227,181,90,0.18)", backgroundColor: "rgba(34,20,51,0.62)" },
+  compactSurahRow: { minHeight: 68, marginTop: 5, paddingHorizontal: 14, flexDirection: "row", alignItems: "center", borderRadius: 16, borderWidth: 1, borderColor: "rgba(227,181,90,0.18)", backgroundColor: "#151022" },
   compactSurahContent: { flex: 1, minHeight: 66, flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
   compactSurahName: { color: colors.text, fontFamily: typography.sans, fontSize: 16, fontWeight: "800" },
   compactSurahMeta: { marginTop: 4, color: colors.textSecondary, fontFamily: typography.sans, fontSize: 12 },
   removeSurahButton: { width: 20, height: 20, marginLeft: 9, alignItems: "center", justifyContent: "center", borderRadius: 10, borderWidth: 1, borderColor: "rgba(255,220,220,0.72)", backgroundColor: "#B84B61", shadowColor: "#000000", shadowOpacity: 0.48, shadowRadius: 5, shadowOffset: { width: 0, height: 3 }, elevation: 6 },
-  progressLinkCard: { minHeight: 60, marginTop: 14, paddingHorizontal: 15, flexDirection: "row", alignItems: "center", justifyContent: "space-between", borderRadius: 17, borderWidth: 1, borderColor: colors.borderSoft, backgroundColor: colors.surface },
+  progressLinkCard: { minHeight: 60, marginTop: 14, paddingHorizontal: 15, flexDirection: "row", alignItems: "center", justifyContent: "space-between", borderRadius: 17, borderWidth: 1, borderColor: "#2B2238", backgroundColor: "#151022" },
   progressLinkTitle: { color: colors.text, fontFamily: typography.serifMedium, fontSize: 17 },
   progressLinkMeta: { marginTop: 3, color: colors.textMuted, fontFamily: typography.sans, fontSize: 12 },
   addSurahHeader: { flexDirection: "row", alignItems: "center", paddingHorizontal: 13, paddingVertical: 10, borderRadius: 16, backgroundColor: colors.goldLight, shadowColor: colors.goldLight, shadowOpacity: 0.28, shadowRadius: 8, shadowOffset: { width: 0, height: 3 }, elevation: 3 },
@@ -1167,8 +1179,8 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     borderRadius: 21,
     borderWidth: 1,
-    borderColor: colors.borderSoft,
-    backgroundColor: colors.purpleDeep,
+    borderColor: "#2B2238",
+    backgroundColor: "#151022",
   },
   titleCopy: { flex: 1, marginLeft: 12 },
   title: {
@@ -1188,8 +1200,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderRadius: 18,
     borderWidth: 1,
-    borderColor: colors.borderSoft,
-    backgroundColor: colors.surface,
+    borderColor: "#2B2238",
+    backgroundColor: "#151022",
   },
   streakText: {
     marginLeft: 4,
@@ -1228,6 +1240,7 @@ const styles = StyleSheet.create({
     color: colors.text,
     fontFamily: typography.serifSemibold,
     fontSize: 25,
+    fontVariant: ["lining-nums", "tabular-nums"],
   },
   heroMeta: {
     marginTop: 3,
@@ -1302,7 +1315,7 @@ const styles = StyleSheet.create({
   sectionHeader: {
     marginTop: 22,
     flexDirection: "row",
-    alignItems: "flex-end",
+    alignItems: "center",
     justifyContent: "space-between",
   },
   sectionTitle: {
@@ -1693,7 +1706,7 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 30,
     borderWidth: 1,
     borderColor: "rgba(227,181,90,0.30)",
-    backgroundColor: "#120B1B",
+    backgroundColor: "#100C19",
   },
   modalHeader: {
     paddingBottom: 13,
@@ -1719,7 +1732,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     borderRadius: 19,
     borderWidth: 1,
-    borderColor: colors.borderSoft,
+    borderColor: "#2B2238",
   },
   pickerRow: {
     minHeight: 63,
@@ -1729,14 +1742,14 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: "rgba(255,255,255,0.07)",
   },
-  pickerRowAdded: { backgroundColor: "rgba(87,46,105,0.32)" },
+  pickerRowAdded: { backgroundColor: "rgba(227,181,90,0.10)" },
   pickerNumber: {
     width: 28,
     height: 28,
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 14,
-    backgroundColor: "rgba(83,42,103,0.68)",
+    backgroundColor: "#1E1730",
   },
   pickerNumberText: {
     color: colors.goldLight,
