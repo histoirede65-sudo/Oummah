@@ -136,7 +136,6 @@ export default function HadithCollectionsScreen() {
                 </View>
 
                 <View style={[styles.footer, availableCollections !== null && !availableCollections.has(collection.id) && !fallbackAvailableCollections.has(collection.id) && styles.hiddenFooter]}>
-                  <Text style={styles.badge}>{t("hadith.referencedSelection")}</Text>
                   <Ionicons
                     name="arrow-forward"
                     size={16}
@@ -226,8 +225,8 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: 6,
     right: -4,
-    width: "57%",
-    height: 128,
+    width: "46%",
+    height: 118,
     zIndex: 6,
     shadowColor: "#000",
     shadowOffset: { width: -5, height: 12 },
@@ -264,7 +263,7 @@ const styles = StyleSheet.create({
     zIndex: 3,
   },
   copy: {
-    width: "44%",
+    width: "56%",
   },
   arabic: {
     color: "#F8E5B5",
@@ -299,16 +298,9 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: "rgba(244,213,138,0.17)",
     flexDirection: "row",
-    justifyContent: "space-between",
+    justifyContent: "flex-end",
     alignItems: "center",
     zIndex: 7,
-  },
-  badge: {
-    color: "#F4D58A",
-    fontFamily: typography.sans,
-    fontSize: 7,
-    fontWeight: "800",
-    letterSpacing: 0.58,
   },
   hiddenFooter: { display: "none" },
   unavailableBadge: {
