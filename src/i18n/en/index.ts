@@ -140,6 +140,7 @@ export const en: Partial<Record<TranslationKey, string>> = {
   'hadith.searchHint': 'You can enter a simple word or short phrase. The search uses the official English HadeethEnc catalogue.',
   'hadith.searchingReferences': 'Searching the references…',
   'hadith.resultCount': 'Results: {count}',
+  'hadith.allOfTheme': 'All',
   'hadith.noHadithFound': 'No hadith found',
   'hadith.noResultsHelp': 'Try a shorter word or check your connection. Previously viewed searches remain available offline.',
   'hadith.hadeethEncReference': 'HadeethEnc reference · {id}',

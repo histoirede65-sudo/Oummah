@@ -299,6 +299,13 @@ export async function searchSupabaseHadiths(phrase: string): Promise<HadithSumma
   return rows.map(supabaseRowToSummary);
 }
 
+export type HadeethEncCategory = { id: string; title: string; count: number; parentId: string | null };
+
+export async function fetchHadeethEncCategoryTree(language: "fr" | "en" = "fr"): Promise<HadeethEncCategory[]> {
+  const rows = await getJson<{ id: string; title: string; hadeeths_count: string; parent_id: string | null }[]>(`/categories/list/?language=${language}`);
+  return rows.map((row) => ({ id: String(row.id), title: row.title, count: Number(row.hadeeths_count) || 0, parentId: row.parent_id ? String(row.parent_id) : null }));
+}
+
 export async function fetchHadithPage(page = 1, perPage = 20, categoryId = "5", language: "fr" | "en" = "fr"): Promise<HadithSummary[]> {
   const payload = await getJson<ApiList>(`/hadeeths/list/?language=${language}&category_id=${encodeURIComponent(categoryId)}&page=${page}&per_page=${perPage}`);
   return summaries(payload);

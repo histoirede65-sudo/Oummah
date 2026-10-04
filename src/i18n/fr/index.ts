@@ -138,6 +138,7 @@ export const fr = {
   'hadith.searchHint': 'Vous pouvez écrire sans accents : « colere » retrouvera également « colère » dans le contenu déjà mis en cache.',
   'hadith.searchingReferences': 'Recherche dans les références…',
   'hadith.resultCount': 'Résultats : {count}',
+  'hadith.allOfTheme': 'Tout',
   'hadith.noHadithFound': 'Aucun hadith trouvé',
   'hadith.noResultsHelp': 'Essayez un mot plus court ou vérifiez votre connexion. Les recherches déjà consultées restent disponibles hors ligne.',
   'hadith.hadeethEncReference': 'Référence HadeethEnc · {id}',

@@ -3,6 +3,8 @@ import type { HadithCollection, HadithDocumentaryCategory } from "../domain/Hadi
 import {
   fetchHadith,
   fetchHadithPage,
+  fetchHadeethEncCategoryTree,
+  type HadeethEncCategory,
   fetchHadeethEncCategories,
   fetchSupabaseCollectionPage,
   fetchSupabaseHadith,
@@ -18,6 +20,7 @@ import { getHadithCategoryCache, isHadithCategoryCacheFresh, putHadithCategoryCa
 import { createHadithPreview, type HadithPreview } from "../presentation/hadithPreview";
 
 const themeCategoryCache = new Map<string, Promise<HadithSummary[]>>();
+const categoryTreeCache = new Map<string, Promise<HadeethEncCategory[]>>();
 
 export function normalizeHadithQuery(value: string) {
   return value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLocaleLowerCase("fr").trim();
@@ -180,6 +183,19 @@ export const hadithRepository = {
     detailRequests.set(key, request);
     request.finally(() => detailRequests.delete(key)).catch(() => undefined);
     return request;
+  },
+
+  /** The direct subcategories of a HadeethEnc category, largest first. */
+  async subCategories(categoryId: string, language: "fr" | "en" = "fr"): Promise<HadeethEncCategory[]> {
+    let tree = categoryTreeCache.get(language);
+    if (!tree) {
+      tree = fetchHadeethEncCategoryTree(language);
+      categoryTreeCache.set(language, tree);
+      tree.catch(() => categoryTreeCache.delete(language));
+    }
+    return (await tree)
+      .filter((category) => category.parentId === categoryId && category.count > 0)
+      .sort((left, right) => right.count - left.count);
   },
 
   /** Every hadith HadeethEnc files under a category (subcategories included), in its own order. */
