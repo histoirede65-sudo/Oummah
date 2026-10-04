@@ -9,6 +9,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { hadithRepository } from "../features/hadith-explorer/data/hadithRepository";
 import type { Hadith } from "../features/hadith-explorer/domain/Hadith";
 import { HADITH_THEMES } from "../features/hadith-explorer/domain/HadithTheme";
+import { cleanHadithLabel, hadithDisplayTitle, isReferenceTitle, knownReference } from "../features/hadith-explorer/domain/hadithDisplay";
 import DailyHadithCard from "../features/hadith-explorer/presentation/DailyHadithCard";
 import { preloadHadithCollections } from "../features/hadith-explorer/services/hadithPreloader";
 import {
@@ -48,6 +49,14 @@ export default function HadithHomeScreen() {
           setFavorites(saved);
           setHistory(recent);
           setLoading(false);
+          // Older entries stored the reference as title: fetch the opening words of the text instead.
+          recent.slice(0, 3).forEach((item) => {
+            if (item.excerpt || !isReferenceTitle(item.title, item.reference)) return;
+            void hadithRepository.get(item.id, language).then((full) => {
+              if (!active || !full.french) return;
+              setHistory((current) => current.map((entry) => entry.id === item.id ? { ...entry, excerpt: full.french.slice(0, 240) } : entry));
+            }).catch(() => undefined);
+          });
         })
         .catch(() => active && setLoading(false));
 
@@ -232,8 +241,9 @@ export default function HadithHomeScreen() {
             />
             <LibraryCard
               icon="time-outline"
-              title={t("hadith.continue")}
+              title={t("hadith.resumeReading")}
               count={history.length}
+              detail={history[0] ? hadithDisplayTitle(history[0]) : undefined}
               empty={t("hadith.readingHistory")}
               onPress={() => history[0] && open(history[0].id)}
             />
@@ -267,14 +277,14 @@ export default function HadithHomeScreen() {
 
                     <View style={styles.recentCopy}>
                       <Text numberOfLines={2} style={styles.recentTitle}>
-                        {item.title}
+                        {hadithDisplayTitle(item)}
                       </Text>
                       <Text numberOfLines={1} style={styles.recentMeta}>
-                        {item.reference}
+                        {knownReference(item.reference)}
                       </Text>
                       <View style={styles.recentGrade}>
                         <View style={styles.recentGradeDot} />
-                        <Text style={styles.recentGradeText}>{item.grade}</Text>
+                        <Text style={styles.recentGradeText}>{cleanHadithLabel(item.grade)}</Text>
                       </View>
                     </View>
 
@@ -336,12 +346,14 @@ function LibraryCard({
   icon,
   title,
   count,
+  detail,
   empty,
   onPress,
 }: {
   icon: string;
   title: string;
   count: number;
+  detail?: string;
   empty: string;
   onPress: () => void;
 }) {
@@ -367,8 +379,8 @@ function LibraryCard({
         />
       </View>
       <Text style={styles.libraryTitle}>{title}</Text>
-      <Text style={styles.libraryCount}>
-        {count ? t("hadith.savedCount", { count }) : empty}
+      <Text numberOfLines={2} style={styles.libraryCount}>
+        {detail ?? (count ? t("hadith.savedCount", { count }) : empty)}
       </Text>
       <Ionicons
         name="chevron-forward"

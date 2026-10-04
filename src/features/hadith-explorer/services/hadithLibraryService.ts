@@ -4,7 +4,7 @@ import type { Hadith } from "../domain/Hadith";
 const FAVORITES_KEY = "oumma:hadith:favorites:v1";
 const HISTORY_KEY = "oumma:hadith:history:v1";
 
-export type HadithLibraryEntry = Pick<Hadith, "id" | "title" | "grade" | "reference"> & { savedAt: number };
+export type HadithLibraryEntry = Pick<Hadith, "id" | "title" | "grade" | "reference"> & { savedAt: number; excerpt?: string };
 
 async function load(key: string): Promise<HadithLibraryEntry[]> {
   try {
@@ -16,7 +16,7 @@ async function load(key: string): Promise<HadithLibraryEntry[]> {
 }
 
 function entry(hadith: Hadith): HadithLibraryEntry {
-  return { id: hadith.id, title: hadith.title, grade: hadith.grade, reference: hadith.reference, savedAt: Date.now() };
+  return { id: hadith.id, title: hadith.title, grade: hadith.grade, reference: hadith.reference, excerpt: hadith.french?.slice(0, 240), savedAt: Date.now() };
 }
 
 export const hadithLibraryService = {

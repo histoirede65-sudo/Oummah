@@ -75,6 +75,7 @@ export const fr = {
   'hadith.myFavorites': 'Mes favoris',
   'hadith.savedHadiths': 'Vos hadiths enregistrés',
   'hadith.continue': 'Continuer',
+  'hadith.resumeReading': 'Reprendre',
   'hadith.readingHistory': 'Votre historique de lecture',
   'hadith.recentlyRead': 'Lus récemment',
   'hadith.visibleSource': 'Une source visible, toujours',

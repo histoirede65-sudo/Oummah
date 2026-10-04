@@ -77,6 +77,7 @@ export const en: Partial<Record<TranslationKey, string>> = {
   'hadith.myFavorites': 'My favorites',
   'hadith.savedHadiths': 'Your saved hadiths',
   'hadith.continue': 'Continue',
+  'hadith.resumeReading': 'Resume',
   'hadith.readingHistory': 'Your reading history',
   'hadith.recentlyRead': 'Recently read',
   'hadith.visibleSource': 'A visible source, always',
