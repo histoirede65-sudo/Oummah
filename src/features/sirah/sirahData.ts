@@ -30,8 +30,8 @@ export const SIRAH_ERAS: SirahEra[] = [
       "en": "610–622 · 13 years"
     },
     "subtitle": {
-      "fr": "La révélation, l’appel et l’épreuve",
-      "en": "Revelation, the call and the trial"
+      "fr": "De la première révélation à l’Hégire",
+      "en": "From the first revelation to the Hijra"
     }
   },
   {
@@ -60,8 +60,8 @@ export const SIRAH_ERAS: SirahEra[] = [
       "en": "622–632 · 1–10 AH"
     },
     "subtitle": {
-      "fr": "Une communauté, des épreuves et la victoire",
-      "en": "A community, trials and victory"
+      "fr": "De l’arrivée à Médine au pèlerinage d’adieu",
+      "en": "From the arrival in Medina to the farewell pilgrimage"
     }
   },
   {
@@ -75,8 +75,8 @@ export const SIRAH_ERAS: SirahEra[] = [
       "en": "632 · 11 AH"
     },
     "subtitle": {
-      "fr": "La maladie, le départ et la fidélité",
-      "en": "Illness, departure and faithfulness"
+      "fr": "La maladie et la mort du Prophète ﷺ",
+      "en": "The illness and death of the Prophet ﷺ"
     }
   },
   {
@@ -116,8 +116,8 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
       {
         "type": "text",
         "text": {
-          "fr": "La Mecque est une ville de commerce, au fond d’une vallée sans cultures. Elle vit autour de la Ka‘ba, la Maison que le Coran rattache à Ibrâhîm et à son fils Ismâ‘îl.",
-          "en": "Mecca is a trading town at the bottom of a barren valley. It lives around the Ka'ba, the House that the Quran links to Ibrahim and his son Isma'il."
+          "fr": "La Mecque vit autour de la Ka‘ba, la Maison que le Coran rattache à Ibrâhîm et à son fils Ismâ‘îl.",
+          "en": "Mecca lives around the Ka'ba, the House that the Quran links to Ibrahim and his son Isma'il."
         }
       },
       {
@@ -134,8 +134,8 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
       {
         "type": "text",
         "text": {
-          "fr": "Au fil des siècles, les Arabes ont pourtant rempli la Ka‘ba d’idoles. La tribu de Quraysh, qui garde le sanctuaire et accueille les pèlerins, en tire prestige et richesse. Ses caravanes partent vers le Yémen l’hiver et vers la Syrie l’été, comme le rappelle la sourate Quraysh.",
-          "en": "Over the centuries, however, the Arabs filled the Ka'ba with idols. The tribe of Quraysh, which guards the sanctuary and welcomes the pilgrims, draws prestige and wealth from it. Its caravans leave for Yemen in winter and Syria in summer, as Surah Quraysh recalls."
+          "fr": "Au fil des siècles, les Arabes ont rempli la Ka‘ba d’idoles. La tribu de Quraysh garde le sanctuaire et accueille les pèlerins. La sourate Quraysh rappelle ses voyages d’hiver et d’été.",
+          "en": "Over the centuries, the Arabs filled the Ka'ba with idols. The tribe of Quraysh guards the sanctuary and welcomes the pilgrims. Surah Quraysh recalls its winter and summer journeys."
         }
       },
       {
@@ -148,21 +148,9 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
           "fr": "Quraysh 106:1–4 · trad. Hamidullah",
           "en": "Quraysh 106:1–4 · Saheeh International"
         }
-      },
-      {
-        "type": "text",
-        "text": {
-          "fr": "Il n’y a ni roi ni État : chaque clan protège les siens. Être sans clan, c’est être sans défense. Ce détail compte pour comprendre la suite : la protection d’un oncle ou d’un clan décidera souvent de la vie des premiers croyants.",
-          "en": "There is neither king nor state: each clan protects its own. To be without a clan is to be defenceless. This detail matters for what follows: the protection of an uncle or a clan will often decide the fate of the first believers."
-        }
       }
     ],
-    "lessons": [
-      {
-        "fr": "La Ka‘ba a été bâtie pour l’adoration d’Allah seul ; l’Islam viendra la rendre à sa vocation.",
-        "en": "The Ka'ba was built for the worship of Allah alone; Islam will return it to its purpose."
-      }
-    ],
+    "lessons": [],
     "sources": [
       {
         "fr": "Ibn Hishâm, As-Sîra an-Nabawiyya",
@@ -212,8 +200,8 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
       {
         "type": "text",
         "text": {
-          "fr": "C’est la même année, selon la plupart des biographes, que naquit Muhammad ﷺ, fils de ‘Abd Allâh et d’Âmina, du clan des Banû Hâshim. Son père était mort quelques mois avant sa naissance. Son grand-père ‘Abd al-Muttalib l’accueillit avec joie et lui donna le nom de Muhammad, « celui qui est beaucoup loué ».",
-          "en": "It was in that same year, according to most biographers, that Muhammad ﷺ was born, son of 'Abd Allah and Amina, of the clan of Banu Hashim. His father had died a few months before his birth. His grandfather 'Abd al-Muttalib welcomed him with joy and named him Muhammad, \"the one who is much praised\"."
+          "fr": "C’est la même année, selon la plupart des biographes, que naquit Muhammad ﷺ, fils de ‘Abd Allâh et d’Âmina, du clan des Banû Hâshim. Son père était mort quelques mois avant sa naissance. Son grand-père ‘Abd al-Muttalib lui donna le nom de Muhammad, « celui qui est beaucoup loué ».",
+          "en": "It was in that same year, according to most biographers, that Muhammad ﷺ was born, son of 'Abd Allah and Amina, of the clan of Banu Hashim. His father had died a few months before his birth. His grandfather 'Abd al-Muttalib named him Muhammad, \"the one who is much praised\"."
         }
       }
     ],
@@ -221,12 +209,7 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
       "fr": "La date exacte n’est pas connue avec certitude. L’année de l’Éléphant correspond environ à 570 ; le jour souvent cité, un lundi du mois de Rabî‘ al-Awwal, est rapporté par les biographes avec des variantes. Le fait qu’il soit né un lundi est, lui, confirmé par un hadith de Muslim.",
       "en": "The exact date is not known with certainty. The Year of the Elephant corresponds roughly to 570; the day often given, a Monday in the month of Rabi' al-Awwal, is reported by biographers with variations. That he was born on a Monday is confirmed by a hadith in Muslim."
     },
-    "lessons": [
-      {
-        "fr": "Allah protège Sa Maison : l’histoire du Prophète ﷺ commence par un signe.",
-        "en": "Allah protects His House: the Prophet's ﷺ story begins with a sign."
-      }
-    ],
+    "lessons": [],
     "sources": [
       {
         "fr": "Ibn Hishâm, As-Sîra an-Nabawiyya",
@@ -258,8 +241,8 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
       {
         "type": "text",
         "text": {
-          "fr": "Les familles de La Mecque confiaient leurs nouveau-nés à des nourrices bédouines : l’air du désert était plus sain et l’on y apprenait un arabe pur. Le petit Muhammad ﷺ fut confié à Halîma, de la tribu des Banû Sa‘d. Selon la sîra, Halîma, pauvre, hésita à prendre un orphelin, puis vit sa maison et son troupeau bénis tant qu’il resta chez elle.",
-          "en": "Meccan families entrusted their newborns to Bedouin wet nurses: the desert air was healthier and the Arabic spoken there was pure. Little Muhammad ﷺ was entrusted to Halima of the Banu Sa'd. According to the sira, Halima, who was poor, hesitated to take an orphan, then saw her home and her flock blessed for as long as he stayed with her."
+          "fr": "Les familles de La Mecque confiaient leurs nouveau-nés à des nourrices bédouines. Le petit Muhammad ﷺ fut confié à Halîma, de la tribu des Banû Sa‘d. Selon la sîra, Halîma, pauvre, hésita à prendre un orphelin, puis vit sa maison et son troupeau bénis tant qu’il resta chez elle.",
+          "en": "Meccan families entrusted their newborns to Bedouin wet nurses. Little Muhammad ﷺ was entrusted to Halima of the Banu Sa'd. According to the sira, Halima, who was poor, hesitated to take an orphan, then saw her home and her flock blessed for as long as he stayed with her."
         }
       },
       {
@@ -297,12 +280,7 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
         }
       }
     ],
-    "lessons": [
-      {
-        "fr": "Allah préparait Son Prophète dès l’enfance, loin des regards.",
-        "en": "Allah was preparing His Prophet from childhood, far from people's eyes."
-      }
-    ],
+    "lessons": [],
     "sources": [
       {
         "fr": "Ibn Hishâm, As-Sîra an-Nabawiyya",
@@ -330,15 +308,15 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
       {
         "type": "text",
         "text": {
-          "fr": "Revenu à La Mecque, il vécut auprès de sa mère Âmina. Quand il eut six ans, elle l’emmena à Médine rendre visite à des parents ; sur le chemin du retour, elle tomba malade et mourut à al-Abwâ’. Son grand-père ‘Abd al-Muttalib le prit alors chez lui et l’entoura d’une affection particulière.",
-          "en": "Back in Mecca, he lived with his mother Amina. When he was six, she took him to Medina to visit relatives; on the way back, she fell ill and died at al-Abwa'. His grandfather 'Abd al-Muttalib then took him in and surrounded him with special affection."
+          "fr": "Revenu à La Mecque, il vécut auprès de sa mère Âmina. Quand il eut six ans, elle l’emmena à Médine rendre visite à des parents ; sur le chemin du retour, elle tomba malade et mourut à al-Abwâ’. Son grand-père ‘Abd al-Muttalib le prit alors chez lui.",
+          "en": "Back in Mecca, he lived with his mother Amina. When he was six, she took him to Medina to visit relatives; on the way back, she fell ill and died at al-Abwa'. His grandfather 'Abd al-Muttalib then took him in."
         }
       },
       {
         "type": "text",
         "text": {
-          "fr": "Deux ans plus tard, ‘Abd al-Muttalib mourut à son tour. L’enfant fut confié à son oncle Abû Tâlib, un homme respecté mais peu fortuné, qui l’éleva comme son propre fils et le protégea toute sa vie.",
-          "en": "Two years later, 'Abd al-Muttalib died in turn. The child was entrusted to his uncle Abu Talib, a respected but modest man, who raised him like his own son and protected him all his life."
+          "fr": "Deux ans plus tard, ‘Abd al-Muttalib mourut à son tour. L’enfant fut confié à son oncle Abû Tâlib, qui l’éleva et le protégea toute sa vie.",
+          "en": "Two years later, 'Abd al-Muttalib died in turn. The child was entrusted to his uncle Abu Talib, who raised him and protected him all his life."
         }
       },
       {
@@ -360,16 +338,7 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
         }
       }
     ],
-    "lessons": [
-      {
-        "fr": "Celui qui a connu le manque comprend mieux les orphelins et les pauvres.",
-        "en": "Whoever has known want better understands orphans and the poor."
-      },
-      {
-        "fr": "Allah n’abandonne pas ceux qui ont perdu leurs appuis.",
-        "en": "Allah does not abandon those who have lost their support."
-      }
-    ],
+    "lessons": [],
     "sources": [
       {
         "fr": "Ibn Hishâm, As-Sîra an-Nabawiyya",
@@ -397,8 +366,8 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
       {
         "type": "text",
         "text": {
-          "fr": "Pour aider son oncle, le jeune Muhammad ﷺ garda des moutons. Il en parla lui-même plus tard :",
-          "en": "To help his uncle, young Muhammad ﷺ tended sheep. He later spoke of it himself:"
+          "fr": "Le jeune Muhammad ﷺ garda des moutons. Il en parla lui-même plus tard :",
+          "en": "Young Muhammad ﷺ tended sheep. He later spoke of it himself:"
         }
       },
       {
@@ -424,17 +393,12 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
       {
         "type": "text",
         "text": {
-          "fr": "Garder un troupeau apprend la patience, la vigilance et la douceur envers les faibles. Plus tard, il accompagna son oncle dans des caravanes vers la Syrie, puis devint lui-même marchand. Les Mecquois remarquèrent son honnêteté : il ne trompait pas sur la marchandise et tenait parole. On l’appela al-Amîn, « le digne de confiance ».",
-          "en": "Tending a flock teaches patience, vigilance and gentleness towards the weak. Later he went with his uncle on caravans to Syria, then became a merchant himself. The Meccans noticed his honesty: he did not cheat on goods and kept his word. They called him al-Amin, \"the trustworthy\"."
+          "fr": "Plus tard, il accompagna son oncle dans des caravanes vers la Syrie, puis devint lui-même marchand. Les Mecquois l’appelaient al-Amîn, « le digne de confiance ».",
+          "en": "Later he went with his uncle on caravans to Syria, then became a merchant himself. The Meccans called him al-Amin, \"the trustworthy\"."
         }
       }
     ],
-    "lessons": [
-      {
-        "fr": "Aucun travail honnête n’est indigne : tous les prophètes ont gardé des moutons.",
-        "en": "No honest work is beneath anyone: every prophet tended sheep."
-      }
-    ],
+    "lessons": [],
     "sources": [
       {
         "fr": "Ibn Hishâm, As-Sîra an-Nabawiyya",
@@ -469,24 +433,19 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
       {
         "type": "text",
         "text": {
-          "fr": "Impressionnée, Khadîja lui proposa le mariage. Selon la sîra, il avait vingt-cinq ans. Ils vécurent ensemble vingt-cinq ans, jusqu’à la mort de Khadîja, et il n’épousa aucune autre femme de son vivant. Tous ses enfants, sauf Ibrâhîm, sont nés d’elle : al-Qâsim, ‘Abd Allâh, Zaynab, Ruqayya, Umm Kulthûm et Fâtima.",
-          "en": "Impressed, Khadija proposed marriage to him. According to the sira, he was twenty-five. They lived together for twenty-five years, until Khadija's death, and he married no other woman while she lived. All his children except Ibrahim were born of her: al-Qasim, 'Abd Allah, Zaynab, Ruqayya, Umm Kulthum and Fatima."
+          "fr": "Khadîja lui proposa le mariage. Selon la sîra, il avait vingt-cinq ans. Ils vécurent ensemble vingt-cinq ans, jusqu’à la mort de Khadîja, et il n’épousa aucune autre femme de son vivant. Tous ses enfants, sauf Ibrâhîm, sont nés d’elle : al-Qâsim, ‘Abd Allâh, Zaynab, Ruqayya, Umm Kulthûm et Fâtima.",
+          "en": "Khadija proposed marriage to him. According to the sira, he was twenty-five. They lived together for twenty-five years, until Khadija's death, and he married no other woman while she lived. All his children except Ibrahim were born of her: al-Qasim, 'Abd Allah, Zaynab, Ruqayya, Umm Kulthum and Fatima."
         }
       },
       {
         "type": "text",
         "text": {
-          "fr": "Il éleva aussi chez lui son jeune cousin ‘Alî, et un jeune affranchi, Zayd ibn Hâritha, qu’il aimait comme un fils.",
-          "en": "He also raised in his home his young cousin 'Ali, and a young freedman, Zayd ibn Haritha, whom he loved like a son."
+          "fr": "Il éleva aussi chez lui son jeune cousin ‘Alî, et un jeune affranchi, Zayd ibn Hâritha, qu’il avait adopté.",
+          "en": "He also raised in his home his young cousin 'Ali, and a young freedman, Zayd ibn Haritha, whom he had adopted."
         }
       }
     ],
-    "lessons": [
-      {
-        "fr": "La réputation d’honnêteté ouvre des portes que la richesse n’ouvre pas.",
-        "en": "A reputation for honesty opens doors that wealth does not."
-      }
-    ],
+    "lessons": [],
     "sources": [
       {
         "fr": "Ibn Hishâm, As-Sîra an-Nabawiyya",
@@ -525,17 +484,12 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
       {
         "type": "text",
         "text": {
-          "fr": "Ils convinrent de laisser juger le premier homme qui entrerait dans la mosquée. Ce fut Muhammad ﷺ. « C’est al-Amîn, nous l’acceptons », dirent-ils selon la sîra. Il étendit un manteau, y posa la Pierre et demanda à un représentant de chaque clan d’en tenir un bord. Puis il la plaça lui-même. La guerre fut évitée.",
-          "en": "They agreed to let the first man who entered the mosque judge. It was Muhammad ﷺ. \"It is al-Amin, we accept him\", they said according to the sira. He spread out a cloak, placed the Stone on it and asked a representative of each clan to hold one edge. Then he set it in place himself. War was avoided."
+          "fr": "Ils convinrent de laisser juger le premier homme qui entrerait dans la mosquée. Ce fut Muhammad ﷺ. « C’est al-Amîn, nous l’acceptons », dirent-ils selon la sîra. Il étendit un manteau, y posa la Pierre et demanda à un représentant de chaque clan d’en tenir un bord. Puis il la plaça lui-même.",
+          "en": "They agreed to let the first man who entered the mosque judge. It was Muhammad ﷺ. \"It is al-Amin, we accept him\", they said according to the sira. He spread out a cloak, placed the Stone on it and asked a representative of each clan to hold one edge. Then he set it in place himself."
         }
       }
     ],
-    "lessons": [
-      {
-        "fr": "Une solution juste associe chacun au lieu d’humilier quelqu’un.",
-        "en": "A just solution involves everyone instead of humiliating anyone."
-      }
-    ],
+    "lessons": [],
     "sources": [
       {
         "fr": "Ibn Hishâm, As-Sîra an-Nabawiyya",
@@ -589,21 +543,9 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
           "fr": "Sahîh",
           "en": "Sahih"
         }
-      },
-      {
-        "type": "text",
-        "text": {
-          "fr": "La grotte de Hirâ’ se trouve sur une montagne qui domine La Mecque, aujourd’hui appelée Jabal an-Nûr, la montagne de la lumière. C’est là que tout allait basculer.",
-          "en": "The cave of Hira is on a mountain overlooking Mecca, today called Jabal an-Nur, the mountain of light. It was there that everything was about to change."
-        }
       }
     ],
-    "lessons": [
-      {
-        "fr": "Se retirer pour penser à Allah prépare le cœur à recevoir.",
-        "en": "Withdrawing to think of Allah prepares the heart to receive."
-      }
-    ],
+    "lessons": [],
     "minutes": 1
   },
   {
@@ -629,8 +571,8 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
       {
         "type": "text",
         "text": {
-          "fr": "Une nuit, pendant le mois de Ramadan, l’ange Jibrîl vint à lui dans la grotte. Le Prophète ﷺ raconta lui-même la scène :",
-          "en": "One night, during the month of Ramadan, the angel Jibril came to him in the cave. The Prophet ﷺ himself described the scene:"
+          "fr": "Pendant le mois de Ramadan, l’ange Jibrîl vint à lui dans la grotte. Le Prophète ﷺ raconta lui-même la scène :",
+          "en": "During the month of Ramadan, the angel Jibril came to him in the cave. The Prophet ﷺ himself described the scene:"
         }
       },
       {
@@ -701,16 +643,7 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
       "fr": "La nuit exacte n’est pas connue. Les savants s’accordent sur le mois de Ramadan, car le Coran dit qu’il a commencé à être révélé ce mois-là (2:185), mais ils divergent sur le jour.",
       "en": "The exact night is not known. Scholars agree on the month of Ramadan, since the Quran says it began to be revealed that month (2:185), but they differ on the day."
     },
-    "lessons": [
-      {
-        "fr": "Le premier mot de la révélation est un ordre d’apprendre.",
-        "en": "The first word of the revelation is a command to learn."
-      },
-      {
-        "fr": "Khadîja rassure en rappelant le bien qu’il fait : le bien que l’on fait nous protège.",
-        "en": "Khadija reassures him by recalling the good he does: the good we do protects us."
-      }
-    ],
+    "lessons": [],
     "minutes": 2
   },
   {
@@ -796,12 +729,7 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
         }
       }
     ],
-    "lessons": [
-      {
-        "fr": "Ceux qui connaissaient les Écritures ont reconnu la même source de révélation que celle de Mûsâ.",
-        "en": "Those who knew the Scriptures recognised the same source of revelation as that of Moses."
-      }
-    ],
+    "lessons": [],
     "minutes": 2
   },
   {
@@ -826,8 +754,8 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
       {
         "type": "text",
         "text": {
-          "fr": "Beaucoup des premiers croyants étaient des jeunes, des pauvres ou des esclaves. ‘Ammâr ibn Yâsir se souvenait :",
-          "en": "Many of the first believers were young, poor or enslaved. 'Ammar ibn Yasir remembered:"
+          "fr": "‘Ammâr ibn Yâsir se souvenait :",
+          "en": "'Ammar ibn Yasir remembered:"
         }
       },
       {
@@ -852,17 +780,12 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
       {
         "type": "text",
         "text": {
-          "fr": "Ils se retrouvaient en secret dans la maison d’al-Arqam ibn Abî al-Arqam, près du mont Safâ, pour apprendre le Coran et prier.",
-          "en": "They met in secret in the house of al-Arqam ibn Abi al-Arqam, near Mount Safa, to learn the Quran and pray."
+          "fr": "Ils se retrouvaient en secret dans la maison d’al-Arqam ibn Abî al-Arqam, près du mont Safâ.",
+          "en": "They met in secret in the house of al-Arqam ibn Abi al-Arqam, near Mount Safa."
         }
       }
     ],
-    "lessons": [
-      {
-        "fr": "Le message s’est d’abord adressé aux proches et a été reçu par les plus humbles.",
-        "en": "The message was first addressed to those closest and received by the humblest."
-      }
-    ],
+    "lessons": [],
     "sources": [
       {
         "fr": "Ibn Hishâm, As-Sîra an-Nabawiyya",
@@ -934,17 +857,12 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
       {
         "type": "text",
         "text": {
-          "fr": "C’est à propos d’Abû Lahab, son propre oncle, que fut révélée la sourate al-Masad. Le refus venait parfois de la famille la plus proche.",
-          "en": "It was about Abu Lahab, his own uncle, that Surah al-Masad was revealed. Rejection sometimes came from the closest family."
+          "fr": "C’est à propos d’Abû Lahab, son propre oncle, que fut révélée la sourate al-Masad.",
+          "en": "It was about Abu Lahab, his own uncle, that Surah al-Masad was revealed."
         }
       }
     ],
-    "lessons": [
-      {
-        "fr": "Il a d’abord fait reconnaître sa sincérité avant d’annoncer son message.",
-        "en": "He first had his truthfulness acknowledged before announcing his message."
-      }
-    ],
+    "lessons": [],
     "minutes": 1
   },
   {
@@ -995,21 +913,12 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
       {
         "type": "text",
         "text": {
-          "fr": "Les plus faibles souffrirent le plus. Bilâl fut exposé au soleil brûlant ; Sumayya, la mère de ‘Ammâr, fut tuée par Abû Jahl et devint la première martyre de l’Islam.",
-          "en": "The weakest suffered most. Bilal was exposed to the scorching sun; Sumayya, the mother of 'Ammar, was killed by Abu Jahl and became the first martyr of Islam."
+          "fr": "Bilâl fut exposé au soleil brûlant ; Sumayya, la mère de ‘Ammâr, fut tuée par Abû Jahl et devint la première martyre de l’Islam.",
+          "en": "Bilal was exposed to the scorching sun; Sumayya, the mother of 'Ammar, was killed by Abu Jahl and became the first martyr of Islam."
         }
       }
     ],
-    "lessons": [
-      {
-        "fr": "La fidélité ne se mesure pas à l’absence d’épreuves.",
-        "en": "Faithfulness is not measured by the absence of trials."
-      },
-      {
-        "fr": "Défendre l’opprimé, comme Abû Bakr, fait partie de la foi.",
-        "en": "Defending the oppressed, as Abu Bakr did, is part of faith."
-      }
-    ],
+    "lessons": [],
     "sources": [
       {
         "fr": "Sahîh al-Bukhârî 240",
@@ -1064,12 +973,7 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
         }
       }
     ],
-    "lessons": [
-      {
-        "fr": "La justice se reconnaît, même chez ceux qui ne partagent pas notre religion.",
-        "en": "Justice is recognised even in those who do not share our religion."
-      }
-    ],
+    "lessons": [],
     "sources": [
       {
         "fr": "Ibn Hishâm, As-Sîra an-Nabawiyya",
@@ -1097,8 +1001,8 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
       {
         "type": "text",
         "text": {
-          "fr": "Deux conversions changèrent l’équilibre. Hamza, l’oncle du Prophète ﷺ, apprit qu’Abû Jahl l’avait insulté ; selon la sîra, il alla le frapper devant Quraysh et déclara qu’il suivait sa religion.",
-          "en": "Two conversions changed the balance. Hamza, the Prophet's ﷺ uncle, learned that Abu Jahl had insulted him; according to the sira, he went and struck him in front of Quraysh and declared that he followed his nephew's religion."
+          "fr": "Hamza, l’oncle du Prophète ﷺ, apprit qu’Abû Jahl l’avait insulté ; selon la sîra, il alla le frapper devant Quraysh et déclara qu’il suivait sa religion.",
+          "en": "Hamza, the Prophet's ﷺ uncle, learned that Abu Jahl had insulted him; according to the sira, he went and struck him in front of Quraysh and declared that he followed his nephew's religion."
         }
       },
       {
@@ -1128,12 +1032,7 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
         }
       }
     ],
-    "lessons": [
-      {
-        "fr": "Personne n’est trop loin pour être guidé.",
-        "en": "No one is too far away to be guided."
-      }
-    ],
+    "lessons": [],
     "sources": [
       {
         "fr": "Ibn Hishâm, As-Sîra an-Nabawiyya",
@@ -1161,8 +1060,8 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
       {
         "type": "text",
         "text": {
-          "fr": "Furieux de ne pas pouvoir atteindre le Prophète ﷺ, protégé par son clan, Quraysh décida de boycotter les Banû Hâshim et les Banû al-Muttalib : ni commerce, ni mariage avec eux. Le pacte fut écrit et suspendu dans la Ka‘ba.",
-          "en": "Furious at being unable to reach the Prophet ﷺ, protected by his clan, Quraysh decided to boycott the Banu Hashim and the Banu al-Muttalib: no trade and no marriage with them. The pact was written down and hung inside the Ka'ba."
+          "fr": "Le Prophète ﷺ restant protégé par son clan, Quraysh décida de boycotter les Banû Hâshim et les Banû al-Muttalib : ni commerce, ni mariage avec eux. Le pacte fut écrit et suspendu dans la Ka‘ba.",
+          "en": "As the Prophet ﷺ remained protected by his clan, Quraysh decided to boycott the Banu Hashim and the Banu al-Muttalib: no trade and no marriage with them. The pact was written down and hung inside the Ka'ba."
         }
       },
       {
@@ -1175,8 +1074,8 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
       {
         "type": "text",
         "text": {
-          "fr": "Quelques Mecquois finirent par avoir honte de cette injustice et firent annuler le pacte.",
-          "en": "Some Meccans finally became ashamed of this injustice and had the pact annulled."
+          "fr": "Quelques Mecquois s’opposèrent à ce pacte et le firent annuler.",
+          "en": "Some Meccans opposed this pact and had it annulled."
         }
       }
     ],
@@ -1184,12 +1083,7 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
       "fr": "La durée et certains détails du boycott, comme le pacte retrouvé rongé par les termites, viennent des récits de sîra, pas des recueils de hadith.",
       "en": "The duration and some details of the boycott, such as the pact found eaten by termites, come from the sira accounts, not the hadith collections."
     },
-    "lessons": [
-      {
-        "fr": "La solidarité familiale a protégé la foi, même chez ceux qui ne croyaient pas encore.",
-        "en": "Family solidarity protected the faith, even among those who did not yet believe."
-      }
-    ],
+    "lessons": [],
     "sources": [
       {
         "fr": "Ibn Hishâm, As-Sîra an-Nabawiyya",
@@ -1210,15 +1104,15 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
       "en": "3 years before the Hijra"
     },
     "title": {
-      "fr": "L’année du chagrin",
-      "en": "The year of sorrow"
+      "fr": "La mort d’Abû Tâlib et de Khadîja",
+      "en": "The deaths of Abu Talib and Khadija"
     },
     "body": [
       {
         "type": "text",
         "text": {
-          "fr": "Peu après la fin du boycott, le Prophète ﷺ perdit coup sur coup ses deux grands soutiens. Son oncle Abû Tâlib, qui l’avait protégé toute sa vie, tomba gravement malade. Le Prophète ﷺ vint à son chevet :",
-          "en": "Shortly after the boycott ended, the Prophet ﷺ lost his two great supports one after the other. His uncle Abu Talib, who had protected him all his life, fell gravely ill. The Prophet ﷺ came to his bedside:"
+          "fr": "Peu après la fin du boycott, son oncle Abû Tâlib, qui l’avait protégé toute sa vie, tomba gravement malade. Le Prophète ﷺ vint à son chevet :",
+          "en": "Shortly after the boycott ended, his uncle Abu Talib, who had protected him all his life, fell gravely ill. The Prophet ﷺ came to his bedside:"
         }
       },
       {
@@ -1244,8 +1138,8 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
       {
         "type": "text",
         "text": {
-          "fr": "Abû Jahl et un autre notable, présents, lui rappelèrent la religion de ses pères, et Abû Tâlib mourut sans prononcer la parole de foi. Le Coran consola le Prophète ﷺ :",
-          "en": "Abu Jahl and another notable, who were present, reminded him of his forefathers' religion, and Abu Talib died without saying the words of faith. The Quran consoled the Prophet ﷺ:"
+          "fr": "Abû Jahl et un autre notable, présents, lui rappelèrent la religion de ses pères, et Abû Tâlib mourut sans prononcer la parole de foi. Allah révéla à ce sujet :",
+          "en": "Abu Jahl and another notable, who were present, reminded him of his forefathers' religion, and Abu Talib died without saying the words of faith. Allah revealed about this:"
         }
       },
       {
@@ -1262,21 +1156,20 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
       {
         "type": "text",
         "text": {
-          "fr": "La même année mourut Khadîja, son épouse depuis vingt-cinq ans, la première à avoir cru en lui. La tradition appelle cette année « l’année du chagrin ».",
-          "en": "The same year died Khadija, his wife of twenty-five years, the first to have believed in him. Tradition calls this year \"the year of sorrow\"."
+          "fr": "La même année mourut Khadîja, son épouse depuis vingt-cinq ans, la première à avoir cru en lui.",
+          "en": "The same year died Khadija, his wife of twenty-five years, the first to have believed in him."
         }
       }
     ],
-    "lessons": [
-      {
-        "fr": "La guidance appartient à Allah ; notre rôle est d’appeler avec amour.",
-        "en": "Guidance belongs to Allah; our role is to call with love."
-      }
-    ],
+    "lessons": [],
     "sources": [
       {
         "fr": "Sahîh al-Bukhârî 3896",
         "en": "Sahih al-Bukhari 3896"
+      },
+      {
+        "fr": "Ibn Hishâm, As-Sîra an-Nabawiyya",
+        "en": "Ibn Hisham, As-Sira an-Nabawiyya"
       }
     ],
     "minutes": 1
@@ -1300,8 +1193,8 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
       {
         "type": "text",
         "text": {
-          "fr": "Privé de la protection de son oncle, le Prophète ﷺ partit à pied pour Tâ’if, à quelques jours de marche, espérant y trouver un soutien. Les chefs de la tribu de Thaqîf le repoussèrent et lancèrent sur lui des gamins qui le chassèrent à coups de pierres.",
-          "en": "Deprived of his uncle's protection, the Prophet ﷺ went on foot to Ta'if, a few days' walk away, hoping to find support there. The chiefs of the Thaqif tribe rejected him and set youths on him who drove him out with stones."
+          "fr": "Privé de la protection de son oncle, le Prophète ﷺ partit pour Tâ’if, espérant y trouver un soutien. Les chefs de la tribu de Thaqîf le repoussèrent et lancèrent sur lui des gamins qui le chassèrent à coups de pierres.",
+          "en": "Deprived of his uncle's protection, the Prophet ﷺ went to Ta'if, hoping to find support there. The chiefs of the Thaqif tribe rejected him and set youths on him who drove him out with stones."
         }
       },
       {
@@ -1339,12 +1232,7 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
         }
       }
     ],
-    "lessons": [
-      {
-        "fr": "Il a choisi l’espoir plutôt que la vengeance, même au plus fort de la douleur.",
-        "en": "He chose hope over revenge, even at the height of his pain."
-      }
-    ],
+    "lessons": [],
     "sources": [
       {
         "fr": "Ibn Hishâm, As-Sîra an-Nabawiyya",
@@ -1418,13 +1306,14 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
       }
     ],
     "note": {
-      "fr": "La date du voyage nocturne est discutée : les biographes la situent entre un et trois ans avant l’Hégire. La date du 27 Rajab, souvent célébrée, n’est pas établie par un texte authentique.",
-      "en": "The date of the night journey is debated: biographers place it between one and three years before the Hijra. The date of 27 Rajab, often celebrated, is not established by an authentic text."
+      "fr": "La date exacte du voyage nocturne n’est pas établie : les biographes divergent à son sujet.",
+      "en": "The exact date of the night journey is not established: biographers differ about it."
     },
-    "lessons": [
+    "lessons": [],
+    "sources": [
       {
-        "fr": "La prière est un cadeau reçu au plus près d’Allah.",
-        "en": "The prayer is a gift received in the nearest place to Allah."
+        "fr": "Ibn Hishâm, As-Sîra an-Nabawiyya",
+        "en": "Ibn Hisham, As-Sira an-Nabawiyya"
       }
     ],
     "minutes": 1
@@ -1474,17 +1363,12 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
       {
         "type": "text",
         "text": {
-          "fr": "Le Prophète ﷺ envoya avec eux Mus‘ab ibn ‘Umayr pour enseigner le Coran. L’année d’après, plus de soixante-dix personnes, dont deux femmes, vinrent prêter un second serment : elles s’engageaient à le protéger comme leurs propres familles. La voie de l’Hégire était ouverte.",
-          "en": "The Prophet ﷺ sent Mus'ab ibn 'Umayr with them to teach the Quran. The year after, more than seventy people, including two women, came to take a second pledge: they committed to protect him as they protected their own families. The way to the Hijra was open."
+          "fr": "Le Prophète ﷺ envoya avec eux Mus‘ab ibn ‘Umayr pour enseigner le Coran. L’année d’après, plus de soixante-dix personnes, dont deux femmes, vinrent prêter un second serment : elles s’engageaient à le protéger comme leurs propres familles.",
+          "en": "The Prophet ﷺ sent Mus'ab ibn 'Umayr with them to teach the Quran. The year after, more than seventy people, including two women, came to take a second pledge: they committed to protect him as they protected their own families."
         }
       }
     ],
-    "lessons": [
-      {
-        "fr": "Une nouvelle étape se prépare par l’enseignement avant de se faire par le départ.",
-        "en": "A new stage is prepared through teaching before it happens through departure."
-      }
-    ],
+    "lessons": [],
     "sources": [
       {
         "fr": "Ibn Hishâm, As-Sîra an-Nabawiyya",
@@ -1520,8 +1404,8 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
       {
         "type": "text",
         "text": {
-          "fr": "La plupart des croyants avaient déjà quitté La Mecque pour Médine, discrètement, par petits groupes. Inquiets, les chefs de Quraysh se réunirent et décidèrent de tuer le Prophète ﷺ : un jeune homme de chaque clan le frapperait en même temps, pour que la responsabilité soit partagée. Le Coran évoque ce complot :",
-          "en": "Most believers had already left Mecca for Medina, quietly, in small groups. Worried, the chiefs of Quraysh met and decided to kill the Prophet ﷺ: a young man from each clan would strike him at the same time, so that the responsibility would be shared. The Quran refers to this plot:"
+          "fr": "La plupart des croyants avaient déjà quitté La Mecque pour Médine, discrètement, par petits groupes. Les chefs de Quraysh se réunirent et décidèrent de tuer le Prophète ﷺ : un jeune homme de chaque clan le frapperait en même temps, pour que la responsabilité soit partagée. Le Coran évoque ce complot :",
+          "en": "Most believers had already left Mecca for Medina, quietly, in small groups. The chiefs of Quraysh met and decided to kill the Prophet ﷺ: a young man from each clan would strike him at the same time, so that the responsibility would be shared. The Quran refers to this plot:"
         }
       },
       {
@@ -1564,21 +1448,12 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
       {
         "type": "text",
         "text": {
-          "fr": "Selon la sîra, ‘Alî dormit cette nuit-là dans le lit du Prophète ﷺ pour tromper ceux qui guettaient sa maison, puis resta quelques jours à La Mecque pour rendre aux gens les biens qu’ils lui avaient confiés. Même ses ennemis déposaient chez lui leurs objets précieux.",
-          "en": "According to the sira, 'Ali slept in the Prophet's ﷺ bed that night to deceive those watching his house, then stayed in Mecca a few days to return to people the goods they had entrusted to him. Even his enemies left their valuables with him."
+          "fr": "Selon la sîra, ‘Alî dormit cette nuit-là dans le lit du Prophète ﷺ pour tromper ceux qui guettaient sa maison, puis resta quelques jours à La Mecque pour rendre aux gens les biens qu’ils avaient confiés au Prophète ﷺ.",
+          "en": "According to the sira, 'Ali slept in the Prophet's ﷺ bed that night to deceive those watching his house, then stayed in Mecca a few days to return to people the goods they had entrusted to the Prophet ﷺ."
         }
       }
     ],
-    "lessons": [
-      {
-        "fr": "Se préparer avec soin ne contredit pas la confiance en Allah.",
-        "en": "Careful preparation does not contradict trust in Allah."
-      },
-      {
-        "fr": "Il a rendu les dépôts de ceux qui voulaient sa mort.",
-        "en": "He returned the deposits of those who wanted him dead."
-      }
-    ],
+    "lessons": [],
     "sources": [
       {
         "fr": "Ibn Hishâm, As-Sîra an-Nabawiyya",
@@ -1648,16 +1523,7 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
         }
       }
     ],
-    "note": {
-      "fr": "Les récits populaires de l’araignée qui tisse sa toile et des colombes qui pondent à l’entrée de la grotte ne sont pas rapportés par des chaînes authentiques.",
-      "en": "The popular stories of the spider spinning its web and the doves laying eggs at the cave's entrance are not reported through authentic chains."
-    },
-    "lessons": [
-      {
-        "fr": "« Ne t’afflige pas, Allah est avec nous » : la sérénité vient de la certitude, pas de la sécurité.",
-        "en": "\"Do not grieve, Allah is with us\": serenity comes from certainty, not from safety."
-      }
-    ],
+    "lessons": [],
     "sources": [
       {
         "fr": "Sahîh al-Bukhârî 3905",
@@ -1716,10 +1582,11 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
         }
       }
     ],
-    "lessons": [
+    "lessons": [],
+    "sources": [
       {
-        "fr": "Celui qui venait pour capturer est reparti en protégeant.",
-        "en": "The man who came to capture left as a protector."
+        "fr": "Ibn Hishâm, As-Sîra an-Nabawiyya",
+        "en": "Ibn Hisham, As-Sira an-Nabawiyya"
       }
     ],
     "minutes": 1
@@ -1776,21 +1643,12 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
       {
         "type": "text",
         "text": {
-          "fr": "Chacun voulait l’accueillir chez soi. Il laissa sa chamelle avancer librement ; elle s’agenouilla devant un terrain appartenant à deux orphelins. Il logea chez Abû Ayyûb al-Ansârî, tout proche, le temps de construire la mosquée. Yathrib devint « la ville du Prophète », al-Madîna.",
-          "en": "Everyone wanted to host him. He let his she-camel walk freely; she knelt in front of a plot belonging to two orphans. He stayed with Abu Ayyub al-Ansari, close by, while the mosque was being built. Yathrib became \"the city of the Prophet\", al-Madina."
+          "fr": "Chacun voulait l’accueillir chez soi. Il laissa sa chamelle avancer librement ; elle s’agenouilla devant un terrain appartenant à deux orphelins. Il logea chez Abû Ayyûb al-Ansârî, tout proche, le temps de construire la mosquée.",
+          "en": "Everyone wanted to host him. He let his she-camel walk freely; she knelt in front of a plot belonging to two orphans. He stayed with Abu Ayyub al-Ansari, close by, while the mosque was being built."
         }
       }
     ],
-    "note": {
-      "fr": "Le chant « Tala‘a al-badru ‘alaynâ », souvent associé à cette arrivée, est rapporté par des chaînes faibles, et certains savants le rattachent plutôt au retour de Tabûk.",
-      "en": "The song \"Tala'a al-badru 'alayna\", often associated with this arrival, is reported through weak chains, and some scholars link it instead to the return from Tabuk."
-    },
-    "lessons": [
-      {
-        "fr": "L’Hégire n’est pas une fuite : c’est le début d’une communauté.",
-        "en": "The Hijra is not a flight: it is the beginning of a community."
-      }
-    ],
+    "lessons": [],
     "sources": [
       {
         "fr": "Sahîh al-Bukhârî 428",
@@ -1848,15 +1706,15 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
       {
         "type": "text",
         "text": {
-          "fr": "Les murs furent montés en briques de terre, le toit fait de branches de palmier. Le Prophète ﷺ portait lui-même les briques avec ses compagnons. La mosquée devint à la fois lieu de prière, d’enseignement, de conseil et d’accueil des pauvres, qui logeaient sous un auvent appelé la Suffa.",
-          "en": "The walls were raised in mud brick, the roof made of palm branches. The Prophet ﷺ carried bricks himself alongside his companions. The mosque became at once a place of prayer, teaching, council and shelter for the poor, who lived under a shaded area called the Suffa."
+          "fr": "Les murs furent montés en briques de terre, le toit fait de branches de palmier. Le Prophète ﷺ portait lui-même les briques avec ses compagnons. Des pauvres logeaient dans la mosquée, sous un auvent appelé la Suffa.",
+          "en": "The walls were raised in mud brick, the roof made of palm branches. The Prophet ﷺ carried bricks himself alongside his companions. Poor people lived in the mosque, under a shaded area called the Suffa."
         }
       },
       {
         "type": "text",
         "text": {
-          "fr": "Les émigrés de La Mecque, les Muhâjirûn, avaient tout laissé. Le Prophète ﷺ établit une fraternité entre chacun d’eux et un habitant de Médine, un Ansârî. Sa‘d ibn ar-Rabî‘ proposa ainsi la moitié de ses biens à ‘Abd ar-Rahmân ibn ‘Awf, qui demanda seulement le chemin du marché.",
-          "en": "The emigrants from Mecca, the Muhajirun, had left everything behind. The Prophet ﷺ established a brotherhood between each of them and a man of Medina, one of the Ansar. Sa'd ibn ar-Rabi' thus offered half his wealth to 'Abd ar-Rahman ibn 'Awf, who asked only for the way to the market."
+          "fr": "Le Prophète ﷺ établit une fraternité entre chaque émigré de La Mecque, un Muhâjir, et un habitant de Médine, un Ansârî. Sa‘d ibn ar-Rabî‘ proposa ainsi la moitié de ses biens à ‘Abd ar-Rahmân ibn ‘Awf, qui demanda seulement le chemin du marché.",
+          "en": "The Prophet ﷺ established a brotherhood between each emigrant from Mecca, a Muhajir, and a man of Medina, one of the Ansar. Sa'd ibn ar-Rabi' thus offered half his wealth to 'Abd ar-Rahman ibn 'Awf, who asked only for the way to the market."
         }
       },
       {
@@ -1867,12 +1725,7 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
         }
       }
     ],
-    "lessons": [
-      {
-        "fr": "Une communauté se construit autour d’une mosquée et d’une solidarité concrète.",
-        "en": "A community is built around a mosque and practical solidarity."
-      }
-    ],
+    "lessons": [],
     "sources": [
       {
         "fr": "Sahîh al-Bukhârî 3780",
@@ -1931,12 +1784,7 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
         }
       }
     ],
-    "lessons": [
-      {
-        "fr": "Obéir dès que l’ordre est clair, comme ceux qui se sont tournés au milieu de leur prière.",
-        "en": "Obey as soon as the command is clear, like those who turned in the middle of their prayer."
-      }
-    ],
+    "lessons": [],
     "sources": [
       {
         "fr": "Sahîh al-Bukhârî 40",
@@ -2001,8 +1849,8 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
       {
         "type": "text",
         "text": {
-          "fr": "La nuit précédant la bataille, le Prophète ﷺ pria longuement. ‘Umar raconte :",
-          "en": "The night before the battle, the Prophet ﷺ prayed at length. 'Umar relates:"
+          "fr": "Le jour de Badr, voyant l’armée ennemie, le Prophète ﷺ se tourna vers la qibla et invoqua. ‘Umar raconte :",
+          "en": "On the day of Badr, seeing the enemy army, the Prophet ﷺ turned to the qibla and supplicated. 'Umar relates:"
         }
       },
       {
@@ -2044,16 +1892,7 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
         }
       }
     ],
-    "lessons": [
-      {
-        "fr": "La victoire vient d’Allah, pas du nombre.",
-        "en": "Victory comes from Allah, not from numbers."
-      },
-      {
-        "fr": "Le Prophète ﷺ consultait ses compagnons avant de décider.",
-        "en": "The Prophet ﷺ consulted his companions before deciding."
-      }
-    ],
+    "lessons": [],
     "sources": [
       {
         "fr": "Ibn Hishâm, As-Sîra an-Nabawiyya",
@@ -2085,8 +1924,8 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
       {
         "type": "text",
         "text": {
-          "fr": "Un an plus tard, Quraysh revint venger Badr avec trois mille hommes. Le Prophète ﷺ plaça cinquante archers sur une colline, sous le commandement de ‘Abd Allâh ibn Jubayr, avec un ordre très clair :",
-          "en": "A year later, Quraysh came back to avenge Badr with three thousand men. The Prophet ﷺ placed fifty archers on a hill, under the command of 'Abd Allah ibn Jubayr, with a very clear order:"
+          "fr": "Un an plus tard, Quraysh revint venger Badr avec trois mille hommes. Le Prophète ﷺ plaça cinquante archers sur une colline, sous le commandement de ‘Abd Allâh ibn Jubayr, avec cet ordre :",
+          "en": "A year later, Quraysh came back to avenge Badr with three thousand men. The Prophet ﷺ placed fifty archers on a hill, under the command of 'Abd Allah ibn Jubayr, with this order:"
         }
       },
       {
@@ -2111,8 +1950,8 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
       {
         "type": "text",
         "text": {
-          "fr": "Les musulmans prirent d’abord l’avantage. Croyant la bataille gagnée, la plupart des archers descendirent ramasser le butin. Khâlid ibn al-Walîd, alors encore mecquois, contourna la colline avec la cavalerie et prit les musulmans à revers. Ce fut la débandade.",
-          "en": "The Muslims took the lead at first. Thinking the battle was won, most of the archers came down to collect the spoils. Khalid ibn al-Walid, still a Meccan at the time, went around the hill with the cavalry and attacked the Muslims from behind. It turned into a rout."
+          "fr": "Les musulmans prirent d’abord l’avantage. Croyant la bataille gagnée, la plupart des archers descendirent ramasser le butin. Khâlid ibn al-Walîd, alors encore mecquois, contourna la colline avec la cavalerie et prit les musulmans à revers.",
+          "en": "The Muslims took the lead at first. Thinking the battle was won, most of the archers came down to collect the spoils. Khalid ibn al-Walid, still a Meccan at the time, went around the hill with the cavalry and attacked the Muslims from behind."
         }
       },
       {
@@ -2144,8 +1983,8 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
       {
         "type": "text",
         "text": {
-          "fr": "Le Coran consola et instruisit les croyants après cette épreuve :",
-          "en": "The Quran consoled and taught the believers after this trial:"
+          "fr": "Allah révéla au sujet de Uhud :",
+          "en": "Allah revealed about Uhud:"
         }
       },
       {
@@ -2160,16 +1999,7 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
         }
       }
     ],
-    "lessons": [
-      {
-        "fr": "Une désobéissance de quelques-uns peut coûter cher à tous.",
-        "en": "The disobedience of a few can cost everyone dearly."
-      },
-      {
-        "fr": "Une défaite devient une leçon quand on en tire les enseignements.",
-        "en": "A defeat becomes a lesson when its teachings are drawn."
-      }
-    ],
+    "lessons": [],
     "sources": [
       {
         "fr": "Ibn Hishâm, As-Sîra an-Nabawiyya",
@@ -2197,8 +2027,8 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
       {
         "type": "text",
         "text": {
-          "fr": "Quraysh et plusieurs tribus formèrent une coalition de dix mille hommes pour en finir avec Médine. Sur le conseil de Salmân al-Fârisî, les musulmans creusèrent une tranchée là où la ville était ouverte. Ils travaillaient le ventre vide, dans le froid. Jâbir raconte :",
-          "en": "Quraysh and several tribes formed a coalition of ten thousand men to finish off Medina. On Salman al-Farisi's advice, the Muslims dug a trench where the town was open. They worked on empty stomachs, in the cold. Jabir relates:"
+          "fr": "Quraysh et plusieurs tribus formèrent une coalition de dix mille hommes contre Médine. Sur le conseil de Salmân al-Fârisî, les musulmans creusèrent une tranchée là où la ville était ouverte. Ils travaillaient le ventre vide, dans le froid. Jâbir raconte :",
+          "en": "Quraysh and several tribes formed a coalition of ten thousand men against Medina. On Salman al-Farisi's advice, the Muslims dug a trench where the town was open. They worked on empty stomachs, in the cold. Jabir relates:"
         }
       },
       {
@@ -2250,8 +2080,8 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
       {
         "type": "text",
         "text": {
-          "fr": "Le siège dura près d’un mois. Le Coran décrit la peur de ces jours-là :",
-          "en": "The siege lasted nearly a month. The Quran describes the fear of those days:"
+          "fr": "Le siège dura près d’un mois. Le Coran décrit ces jours-là :",
+          "en": "The siege lasted nearly a month. The Quran describes those days:"
         }
       },
       {
@@ -2273,16 +2103,7 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
         }
       }
     ],
-    "lessons": [
-      {
-        "fr": "Le chef partageait la faim et l’effort de ses compagnons.",
-        "en": "The leader shared his companions' hunger and effort."
-      },
-      {
-        "fr": "Prendre conseil, même d’un nouvel arrivant comme Salmân.",
-        "en": "Take advice, even from a newcomer like Salman."
-      }
-    ],
+    "lessons": [],
     "sources": [
       {
         "fr": "Sahîh al-Bukhârî 3043",
@@ -2318,15 +2139,15 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
       {
         "type": "text",
         "text": {
-          "fr": "Le Prophète ﷺ partit pour La Mecque avec environ mille quatre cents compagnons, en tenue de pèlerins, pour accomplir la ‘umra. Quraysh leur barra la route. Au lieu de combattre, il négocia et conclut un traité à al-Hudaybiya : une trêve de dix ans, mais les musulmans devaient repartir cette année-là sans entrer à La Mecque.",
-          "en": "The Prophet ﷺ set out for Mecca with about one thousand four hundred companions, dressed as pilgrims, to perform the 'umra. Quraysh blocked their way. Instead of fighting, he negotiated and concluded a treaty at al-Hudaybiya: a ten-year truce, but the Muslims had to go back that year without entering Mecca."
+          "fr": "Le Prophète ﷺ partit pour La Mecque avec environ mille quatre cents compagnons, en tenue de pèlerins, pour accomplir la ‘umra. Quraysh leur barra la route. Il négocia et conclut un traité à al-Hudaybiya : une trêve de dix ans, mais les musulmans devaient repartir cette année-là sans entrer à La Mecque.",
+          "en": "The Prophet ﷺ set out for Mecca with about one thousand four hundred companions, dressed as pilgrims, to perform the 'umra. Quraysh blocked their way. He negotiated and concluded a treaty at al-Hudaybiya: a ten-year truce, but the Muslims had to go back that year without entering Mecca."
         }
       },
       {
         "type": "text",
         "text": {
-          "fr": "Les conditions semblaient humiliantes. ‘Umar ne put se retenir :",
-          "en": "The terms seemed humiliating. 'Umar could not hold back:"
+          "fr": "‘Umar vint trouver le Prophète ﷺ :",
+          "en": "'Umar came to the Prophet ﷺ:"
         }
       },
       {
@@ -2351,8 +2172,8 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
       {
         "type": "text",
         "text": {
-          "fr": "Les compagnons, abattus, tardaient à sacrifier leurs bêtes. Sur le conseil de son épouse Umm Salama, le Prophète ﷺ sortit sacrifier la sienne et se fit raser la tête sans rien dire ; tous l’imitèrent aussitôt. Sur le chemin du retour, Allah révéla :",
-          "en": "The companions, dejected, were slow to sacrifice their animals. On the advice of his wife Umm Salama, the Prophet ﷺ went out, sacrificed his own and had his head shaved without a word; everyone immediately followed. On the way back, Allah revealed:"
+          "fr": "Les compagnons tardaient à sacrifier leurs bêtes. Sur le conseil de son épouse Umm Salama, le Prophète ﷺ sortit sacrifier la sienne et se fit raser la tête sans rien dire ; tous l’imitèrent aussitôt. Sur le chemin du retour, Allah révéla :",
+          "en": "The companions were slow to sacrifice their animals. On the advice of his wife Umm Salama, the Prophet ﷺ went out, sacrificed his own and had his head shaved without a word; everyone immediately followed. On the way back, Allah revealed:"
         }
       },
       {
@@ -2369,21 +2190,12 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
       {
         "type": "text",
         "text": {
-          "fr": "Pendant les deux années de paix qui suivirent, plus de gens embrassèrent l’Islam qu’au cours de toutes les années précédentes.",
-          "en": "During the two years of peace that followed, more people embraced Islam than in all the previous years."
+          "fr": "Selon az-Zuhrî, rapporté par Ibn Hishâm, pendant les deux années de paix qui suivirent, plus de gens embrassèrent l’Islam qu’au cours de toutes les années précédentes.",
+          "en": "According to az-Zuhri, as reported by Ibn Hisham, during the two years of peace that followed, more people embraced Islam than in all the previous years."
         }
       }
     ],
-    "lessons": [
-      {
-        "fr": "Ce qui ressemble à une concession peut être une victoire.",
-        "en": "What looks like a concession can be a victory."
-      },
-      {
-        "fr": "Montrer l’exemple convainc mieux que répéter l’ordre.",
-        "en": "Setting the example convinces better than repeating the order."
-      }
-    ],
+    "lessons": [],
     "sources": [
       {
         "fr": "Ibn Hishâm, As-Sîra an-Nabawiyya",
@@ -2411,8 +2223,8 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
       {
         "type": "text",
         "text": {
-          "fr": "Profitant de la trêve, le Prophète ﷺ écrivit aux souverains de son temps pour les inviter à l’Islam : à Héraclius, l’empereur byzantin ; à Khosrô, le roi de Perse ; au Négus d’Abyssinie ; au gouverneur d’Égypte et à d’autres chefs. Les lettres étaient scellées d’un anneau d’argent gravé « Muhammad Rasûl Allâh ».",
-          "en": "Taking advantage of the truce, the Prophet ﷺ wrote to the rulers of his time inviting them to Islam: to Heraclius, the Byzantine emperor; to Khosrow, the king of Persia; to the Negus of Abyssinia; to the governor of Egypt and to other chiefs. The letters were sealed with a silver ring engraved \"Muhammad Rasul Allah\"."
+          "fr": "Le Prophète ﷺ écrivit aux souverains de son temps pour les inviter à l’Islam : à Héraclius, l’empereur byzantin ; à Khosrô, le roi de Perse ; au Négus d’Abyssinie ; au gouverneur d’Égypte et à d’autres chefs. Les lettres étaient scellées d’un anneau d’argent gravé « Muhammad Rasûl Allâh ».",
+          "en": "The Prophet ﷺ wrote to the rulers of his time inviting them to Islam: to Heraclius, the Byzantine emperor; to Khosrow, the king of Persia; to the Negus of Abyssinia; to the governor of Egypt and to other chiefs. The letters were sealed with a silver ring engraved \"Muhammad Rasul Allah\"."
         }
       },
       {
@@ -2423,12 +2235,7 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
         }
       }
     ],
-    "lessons": [
-      {
-        "fr": "Le message s’adresse à tous, des plus humbles aux plus puissants.",
-        "en": "The message is addressed to everyone, from the humblest to the most powerful."
-      }
-    ],
+    "lessons": [],
     "sources": [
       {
         "fr": "Sahîh Muslim 1774",
@@ -2468,8 +2275,8 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
       {
         "type": "text",
         "text": {
-          "fr": "Khaybar, une oasis fortifiée au nord de Médine, était devenue un centre d’hostilité contre les musulmans. Le Prophète ﷺ y conduisit une expédition. Les forteresses résistèrent plusieurs jours. Un soir, il annonça :",
-          "en": "Khaybar, a fortified oasis north of Medina, had become a centre of hostility against the Muslims. The Prophet ﷺ led an expedition there. The fortresses held out for several days. One evening, he announced:"
+          "fr": "Le Prophète ﷺ conduisit une expédition contre Khaybar, une oasis fortifiée au nord de Médine. Il annonça :",
+          "en": "The Prophet ﷺ led an expedition against Khaybar, a fortified oasis north of Medina. He announced:"
         }
       },
       {
@@ -2499,12 +2306,7 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
         }
       }
     ],
-    "lessons": [
-      {
-        "fr": "Même vainqueur, il a laissé les habitants vivre de leur terre.",
-        "en": "Even as victor, he let the inhabitants live from their land."
-      }
-    ],
+    "lessons": [],
     "sources": [
       {
         "fr": "Sahîh al-Bukhârî 2285",
@@ -2571,12 +2373,7 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
         }
       }
     ],
-    "lessons": [
-      {
-        "fr": "Le Prophète ﷺ pleurait ses compagnons : la foi n’efface pas la tendresse.",
-        "en": "The Prophet ﷺ wept for his companions: faith does not erase tenderness."
-      }
-    ],
+    "lessons": [],
     "minutes": 1
   },
   {
@@ -2635,8 +2432,8 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
       {
         "type": "text",
         "text": {
-          "fr": "Ceux qui l’avaient persécuté pendant vingt ans étaient à sa merci. Selon la sîra, il leur demanda ce qu’ils pensaient qu’il allait faire d’eux, puis leur dit : « Allez, vous êtes libres. » Bilâl monta sur la Ka‘ba et lança l’appel à la prière.",
-          "en": "Those who had persecuted him for twenty years were at his mercy. According to the sira, he asked them what they thought he would do with them, then told them: \"Go, you are free.\" Bilal climbed onto the Ka'ba and gave the call to prayer."
+          "fr": "Bilâl monta sur la Ka‘ba et lança l’appel à la prière.",
+          "en": "Bilal climbed onto the Ka'ba and gave the call to prayer."
         }
       },
       {
@@ -2651,16 +2448,7 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
         }
       }
     ],
-    "note": {
-      "fr": "La parole « Allez, vous êtes libres » est rapportée par la sîra avec une chaîne discutée. Le pardon général accordé aux Mecquois, lui, est bien établi.",
-      "en": "The words \"Go, you are free\" are reported by the sira with a debated chain. The general pardon granted to the Meccans, however, is well established."
-    },
-    "lessons": [
-      {
-        "fr": "La plus grande victoire s’est faite par le pardon.",
-        "en": "The greatest victory was achieved through forgiveness."
-      }
-    ],
+    "lessons": [],
     "sources": [
       {
         "fr": "Sahîh al-Bukhârî 4280",
@@ -2675,7 +2463,7 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
         "en": "Ibn Hisham, As-Sira an-Nabawiyya"
       }
     ],
-    "minutes": 2
+    "minutes": 1
   },
   {
     "id": "hunayn",
@@ -2757,16 +2545,7 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
         }
       }
     ],
-    "lessons": [
-      {
-        "fr": "Le nombre ne suffit pas quand les cœurs s’appuient sur lui.",
-        "en": "Numbers are not enough when hearts rely on them."
-      },
-      {
-        "fr": "Il expliquait ses décisions et apaisait les cœurs blessés.",
-        "en": "He explained his decisions and soothed hurt hearts."
-      }
-    ],
+    "lessons": [],
     "sources": [
       {
         "fr": "Sahîh al-Bukhârî 2864",
@@ -2852,12 +2631,7 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
         }
       }
     ],
-    "lessons": [
-      {
-        "fr": "La vérité dite, même quand elle coûte, finit par sauver.",
-        "en": "Telling the truth, even when it costs, ends up saving you."
-      }
-    ],
+    "lessons": [],
     "minutes": 1
   },
   {
@@ -2879,8 +2653,8 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
       {
         "type": "text",
         "text": {
-          "fr": "Après la conquête de La Mecque et la victoire de Hunayn, les tribus d’Arabie comprirent que l’Islam s’imposait. Pendant l’an 9, les délégations se succédèrent à Médine : des Banû Tamîm, de Thaqîf à Tâ’if, des tribus du Yémen et de bien d’autres.",
-          "en": "After the conquest of Mecca and the victory at Hunayn, the tribes of Arabia understood that Islam was prevailing. Throughout year 9, delegations followed one another to Medina: from the Banu Tamim, from Thaqif in Ta'if, from the tribes of Yemen and many others."
+          "fr": "Après la conquête de La Mecque, pendant l’an 9, les délégations des tribus se succédèrent à Médine : des Banû Tamîm, de Thaqîf à Tâ’if, des tribus du Yémen et de bien d’autres.",
+          "en": "After the conquest of Mecca, throughout year 9, delegations of the tribes followed one another to Medina: from the Banu Tamim, from Thaqif in Ta'if, from the tribes of Yemen and many others."
         }
       },
       {
@@ -2891,12 +2665,7 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
         }
       }
     ],
-    "lessons": [
-      {
-        "fr": "Une communauté qui grandit a besoin d’enseignants, pas seulement de nouveaux membres.",
-        "en": "A growing community needs teachers, not just new members."
-      }
-    ],
+    "lessons": [],
     "sources": [
       {
         "fr": "Sahîh al-Bukhârî 4363",
@@ -3061,15 +2830,10 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
       }
     ],
     "note": {
-      "fr": "Les nombreux textes qui circulent sous le titre « sermon d’adieu » assemblent souvent des phrases venues de plusieurs récits, dont certaines sans chaîne solide. Les extraits ci-dessus viennent du récit de Jâbir dans Sahîh Muslim.",
-      "en": "The many texts circulating under the title \"farewell sermon\" often combine sentences from several accounts, some without a solid chain. The excerpts above come from Jabir's account in Sahih Muslim."
+      "fr": "Les extraits ci-dessus viennent du récit de Jâbir dans Sahîh Muslim.",
+      "en": "The excerpts above come from Jabir's account in Sahih Muslim."
     },
-    "lessons": [
-      {
-        "fr": "La vie, les biens et l’honneur de chacun sont sacrés.",
-        "en": "Every person's life, property and honour are sacred."
-      }
-    ],
+    "lessons": [],
     "minutes": 2
   },
   {
@@ -3126,12 +2890,7 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
         }
       }
     ],
-    "lessons": [
-      {
-        "fr": "Même malade, il veillait à ce que la prière continue.",
-        "en": "Even ill, he made sure the prayer went on."
-      }
-    ],
+    "lessons": [],
     "sources": [
       {
         "fr": "Sahîh al-Bukhârî 664",
@@ -3229,12 +2988,7 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
       "fr": "Le jour du décès, un lundi de Rabî‘ al-Awwal de l’an 11, est établi. La date du 12 Rabî‘ al-Awwal est la plus citée, mais les savants divergent sur le jour exact du mois.",
       "en": "The day of his death, a Monday in Rabi' al-Awwal of year 11, is established. The date of 12 Rabi' al-Awwal is the most often cited, but scholars differ on the exact day of the month."
     },
-    "lessons": [
-      {
-        "fr": "Sa dernière joie fut de voir sa communauté unie dans la prière.",
-        "en": "His last joy was to see his community united in prayer."
-      }
-    ],
+    "lessons": [],
     "sources": [
       {
         "fr": "Sahîh al-Bukhârî 4449",
@@ -3274,8 +3028,8 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
       {
         "type": "text",
         "text": {
-          "fr": "La nouvelle bouleversa Médine. ‘Umar, sous le choc, refusait d’y croire et menaçait ceux qui le diraient. Abû Bakr arriva, entra auprès du Prophète ﷺ, découvrit son visage et l’embrassa. Puis il sortit et s’adressa à la foule :",
-          "en": "The news shook Medina. 'Umar, in shock, refused to believe it and threatened anyone who said it. Abu Bakr arrived, went in to the Prophet ﷺ, uncovered his face and kissed him. Then he went out and addressed the crowd:"
+          "fr": "‘Umar se leva en disant que le Prophète ﷺ n’était pas mort. Abû Bakr arriva, entra auprès du Prophète ﷺ, découvrit son visage et l’embrassa. Puis il sortit et s’adressa à la foule :",
+          "en": "'Umar stood up saying that the Prophet ﷺ had not died. Abu Bakr arrived, went in to the Prophet ﷺ, uncovered his face and kissed him. Then he went out and addressed the crowd:"
         }
       },
       {
@@ -3300,8 +3054,8 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
       {
         "type": "text",
         "text": {
-          "fr": "Il récita ensuite ce verset ; ‘Umar dit plus tard que c’était comme s’il l’entendait pour la première fois :",
-          "en": "He then recited this verse; 'Umar later said it was as if he were hearing it for the first time:"
+          "fr": "Il récita ensuite ce verset. Selon Ibn ‘Abbâs, c’était comme si les gens ne savaient pas qu’il avait été révélé avant qu’Abû Bakr le récite :",
+          "en": "He then recited this verse. According to Ibn 'Abbas, it was as if people had not known it had been revealed until Abu Bakr recited it:"
         }
       },
       {
@@ -3318,17 +3072,12 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
       {
         "type": "text",
         "text": {
-          "fr": "Le Prophète ﷺ fut enterré dans la chambre de ‘Â’isha, là où il était mort. Abû Bakr, puis ‘Umar, furent plus tard enterrés à ses côtés. Ce lieu se trouve aujourd’hui à l’intérieur de sa mosquée, à Médine.",
-          "en": "The Prophet ﷺ was buried in 'A'isha's room, where he had died. Abu Bakr, and later 'Umar, were buried beside him. That place is today inside his mosque in Medina."
+          "fr": "Le Prophète ﷺ fut enterré dans la chambre de ‘Â’isha, là où il était mort. Abû Bakr, puis ‘Umar, furent plus tard enterrés à ses côtés.",
+          "en": "The Prophet ﷺ was buried in 'A'isha's room, where he had died. Abu Bakr, and later 'Umar, were buried beside him."
         }
       }
     ],
-    "lessons": [
-      {
-        "fr": "On aime le Prophète ﷺ, mais on adore Allah seul, le Vivant qui ne meurt pas.",
-        "en": "We love the Prophet ﷺ, but we worship Allah alone, the Ever-Living who does not die."
-      }
-    ],
+    "lessons": [],
     "sources": [
       {
         "fr": "Sahîh al-Bukhârî 1389",
@@ -3337,6 +3086,10 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
       {
         "fr": "Sahîh al-Bukhârî 3700",
         "en": "Sahih al-Bukhari 3700"
+      },
+      {
+        "fr": "Sahîh al-Bukhârî 4454",
+        "en": "Sahih al-Bukhari 4454"
       }
     ],
     "minutes": 1
@@ -3356,8 +3109,8 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
       {
         "type": "text",
         "text": {
-          "fr": "Pendant vingt-cinq ans, Khadîja fut sa seule épouse. Après sa mort, et surtout à Médine, il épousa d’autres femmes, souvent des veuves, pour des raisons de soutien, d’alliance entre tribus ou de transmission de la religion : Sawda, ‘Â’isha, Hafsa, Zaynab bint Khuzayma, Umm Salama, Zaynab bint Jahsh, Juwayriya, Umm Habîba, Safiyya et Maymûna. Le Coran les appelle « les mères des croyants ».",
-          "en": "For twenty-five years, Khadija was his only wife. After her death, and especially in Medina, he married other women, often widows, for reasons of support, alliance between tribes or the transmission of the religion: Sawda, 'A'isha, Hafsa, Zaynab bint Khuzayma, Umm Salama, Zaynab bint Jahsh, Juwayriya, Umm Habiba, Safiyya and Maymuna. The Quran calls them \"the mothers of the believers\"."
+          "fr": "Pendant vingt-cinq ans, Khadîja fut sa seule épouse. Après sa mort, il épousa d’autres femmes : Sawda, ‘Â’isha, Hafsa, Zaynab bint Khuzayma, Umm Salama, Zaynab bint Jahsh, Juwayriya, Umm Habîba, Safiyya et Maymûna. Le Coran les appelle « les mères des croyants ».",
+          "en": "For twenty-five years, Khadija was his only wife. After her death, he married other women: Sawda, 'A'isha, Hafsa, Zaynab bint Khuzayma, Umm Salama, Zaynab bint Jahsh, Juwayriya, Umm Habiba, Safiyya and Maymuna. The Quran calls them \"the mothers of the believers\"."
         }
       },
       {
@@ -3399,12 +3152,7 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
         "hadithId": "4fb42f59-fed4-4288-a620-d638fcbdc967"
       }
     ],
-    "lessons": [
-      {
-        "fr": "Pleurer ses proches n’est pas un manque de foi : c’est de la miséricorde.",
-        "en": "Weeping for loved ones is not a lack of faith: it is mercy."
-      }
-    ],
+    "lessons": [],
     "sources": [
       {
         "fr": "Ibn Hishâm, As-Sîra an-Nabawiyya",
@@ -3450,8 +3198,8 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
       {
         "type": "text",
         "text": {
-          "fr": "Quand on demanda à ‘Â’isha de décrire son caractère, elle répondit simplement :",
-          "en": "When 'A'isha was asked to describe his character, she simply answered:"
+          "fr": "Quand on demanda à ‘Â’isha de décrire son caractère, elle répondit :",
+          "en": "When 'A'isha was asked to describe his character, she answered:"
         }
       },
       {
@@ -3501,12 +3249,7 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
         }
       }
     ],
-    "lessons": [
-      {
-        "fr": "Le bon caractère est au cœur de la religion.",
-        "en": "Good character is at the heart of the religion."
-      }
-    ],
+    "lessons": [],
     "sources": [
       {
         "fr": "Sahîh al-Bukhârî 3560",
@@ -3534,15 +3277,15 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
       {
         "type": "text",
         "text": {
-          "fr": "Chef d’une communauté qui couvrait presque toute l’Arabie, il vivait dans une petite chambre accolée à la mosquée. ‘Â’isha raconte que son matelas était fait d’une housse de cuir remplie de fibres de palmier, et que des mois passaient sans qu’on allume de feu pour cuisiner chez eux : on vivait de dattes et d’eau.",
-          "en": "Leader of a community that covered almost all of Arabia, he lived in a small room next to the mosque. 'A'isha relates that his mattress was a leather case stuffed with palm fibres, and that months went by without a fire being lit to cook in their home: they lived on dates and water."
+          "fr": "‘Â’isha raconte que son matelas était fait d’une housse de cuir remplie de fibres de palmier, et que des mois passaient sans qu’on allume de feu pour cuisiner chez eux : on vivait de dattes et d’eau.",
+          "en": "'A'isha relates that his mattress was a leather case stuffed with palm fibres, and that months went by without a fire being lit to cook in their home: they lived on dates and water."
         }
       },
       {
         "type": "text",
         "text": {
-          "fr": "Chez lui, il participait aux tâches de la maison. Quand on demanda à ‘Â’isha ce qu’il faisait chez lui, elle répondit :",
-          "en": "At home, he took part in the household chores. When 'A'isha was asked what he did at home, she answered:"
+          "fr": "Quand on demanda à ‘Â’isha ce qu’il faisait chez lui, elle répondit :",
+          "en": "When 'A'isha was asked what he did at home, she answered:"
         }
       },
       {
@@ -3567,17 +3310,12 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
       {
         "type": "text",
         "text": {
-          "fr": "Selon ses compagnons, il raccommodait ses vêtements, réparait ses sandales, trayait sa chèvre, saluait les enfants, rendait visite aux malades et acceptait l’invitation des pauvres.",
-          "en": "According to his companions, he mended his clothes, repaired his sandals, milked his goat, greeted children, visited the sick and accepted the invitations of the poor."
+          "fr": "Selon ‘Â’isha, rapporté par at-Tirmidhî dans les Shamâ’il, il raccommodait ses vêtements, réparait ses sandales et trayait sa chèvre.",
+          "en": "According to 'A'isha, as reported by at-Tirmidhi in the Shama'il, he mended his clothes, repaired his sandals and milked his goat."
         }
       }
     ],
-    "lessons": [
-      {
-        "fr": "La grandeur n’empêche pas l’humilité ni les tâches de la maison.",
-        "en": "Greatness does not rule out humility or household chores."
-      }
-    ],
+    "lessons": [],
     "sources": [
       {
         "fr": "Sahîh al-Bukhârî 6456",
@@ -3627,8 +3365,8 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
       {
         "type": "text",
         "text": {
-          "fr": "Cette miséricorde, on l’a vue à Tâ’if, quand il refusa que la montagne écrase ceux qui l’avaient chassé ; à La Mecque, quand il pardonna à ceux qui l’avaient persécuté ; dans sa douceur avec les enfants, les serviteurs et même les animaux. Il disait :",
-          "en": "This mercy was seen at Ta'if, when he refused to let the mountain crush those who had driven him out; in Mecca, when he forgave those who had persecuted him; in his gentleness with children, servants and even animals. He used to say:"
+          "fr": "Il disait :",
+          "en": "He used to say:"
         }
       },
       {
@@ -3654,8 +3392,8 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
       {
         "type": "text",
         "text": {
-          "fr": "Il a laissé deux choses à sa communauté : le Coran, et sa Sunna transmise par ses compagnons. Le Coran le présente comme un modèle :",
-          "en": "He left two things to his community: the Quran, and his Sunna passed on by his companions. The Quran presents him as a model:"
+          "fr": "Le Coran le présente comme un modèle :",
+          "en": "The Quran presents him as a model:"
         }
       },
       {
@@ -3670,12 +3408,7 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
         }
       }
     ],
-    "lessons": [
-      {
-        "fr": "Lire la Sîra, c’est apprendre à lui ressembler un peu plus chaque jour.",
-        "en": "Reading the Sira means learning to resemble him a little more each day."
-      }
-    ],
+    "lessons": [],
     "minutes": 1
   }
 ];
