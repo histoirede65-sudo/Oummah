@@ -31,7 +31,7 @@ export const INVOCATIONS_EN: Record<string, { moment: string; title: string; tra
     moment: "Tawaf",
     title: "Your own supplication",
     transliteration: "Your own supplication",
-    translation: "The pilgrim calls on Allah in their own words, in their own language.",
+    translation: "The pilgrim calls on Allah in their own words.",
     context: "During the Tawaf and the Sa‘y, where no specific formula is established.",
   },
   safa: {
@@ -74,7 +74,7 @@ export const INVOCATIONS_EN: Record<string, { moment: string; title: string; tra
     moment: "Medina",
     title: "Visiting the graves",
     translation: "Peace be upon you, people of these dwellings, believers and Muslims. We will join you, if Allah wills. I ask Allah for well-being for us and for you.",
-    context: "Taught by the Prophet ﷺ to his companions for visiting cemeteries (al-Baqi‘, the martyrs of Uhud…).",
+    context: "Taught by the Prophet ﷺ to his companions for visiting cemeteries.",
   },
   acceptance: {
     moment: "At the end",
