@@ -1,6 +1,6 @@
 import type { MuslimName } from './types';
 
-export const ABD_ALLAH_NAMES: MuslimName[] = [
+const ALL_ABD_ALLAH_NAMES: MuslimName[] = [
   {
     id: 'abd-ar-rahim',
     gender: 'boy',
@@ -15,7 +15,7 @@ export const ABD_ALLAH_NAMES: MuslimName[] = [
     variants: [],
     tags: ['foi'],
     editorialLevel: 'sourced',
-    sourceNote: 'Référentiel interne OUMMAH des 99 Noms : Islamic Relief UK, contenu indiqué comme vérifié par Sheikh Dr. Saalim Al-Azhari. Principe de construction : ʿAbd + Nom d’Allah.',
+    sourceNote: 'Ce Nom figure dans la liste des Noms d’Allah établie par Ibn ‘Uthaymîn à partir du Coran et de la Sunna (al-Qawâ‘id al-Muthlâ, p. 15-16).',
   },
   {
     id: 'abd-al-malik',
@@ -31,7 +31,7 @@ export const ABD_ALLAH_NAMES: MuslimName[] = [
     variants: [],
     tags: ['foi'],
     editorialLevel: 'sourced',
-    sourceNote: 'Référentiel interne OUMMAH des 99 Noms : Islamic Relief UK, contenu indiqué comme vérifié par Sheikh Dr. Saalim Al-Azhari. Principe de construction : ʿAbd + Nom d’Allah.',
+    sourceNote: 'Ce Nom figure dans la liste des Noms d’Allah établie par Ibn ‘Uthaymîn à partir du Coran et de la Sunna (al-Qawâ‘id al-Muthlâ, p. 15-16).',
   },
   {
     id: 'abd-al-quddus',
@@ -47,7 +47,7 @@ export const ABD_ALLAH_NAMES: MuslimName[] = [
     variants: [],
     tags: ['foi'],
     editorialLevel: 'sourced',
-    sourceNote: 'Référentiel interne OUMMAH des 99 Noms : Islamic Relief UK, contenu indiqué comme vérifié par Sheikh Dr. Saalim Al-Azhari. Principe de construction : ʿAbd + Nom d’Allah.',
+    sourceNote: 'Ce Nom figure dans la liste des Noms d’Allah établie par Ibn ‘Uthaymîn à partir du Coran et de la Sunna (al-Qawâ‘id al-Muthlâ, p. 15-16).',
   },
   {
     id: 'abd-as-salam',
@@ -63,7 +63,7 @@ export const ABD_ALLAH_NAMES: MuslimName[] = [
     variants: [],
     tags: ['foi'],
     editorialLevel: 'sourced',
-    sourceNote: 'Référentiel interne OUMMAH des 99 Noms : Islamic Relief UK, contenu indiqué comme vérifié par Sheikh Dr. Saalim Al-Azhari. Principe de construction : ʿAbd + Nom d’Allah.',
+    sourceNote: 'Ce Nom figure dans la liste des Noms d’Allah établie par Ibn ‘Uthaymîn à partir du Coran et de la Sunna (al-Qawâ‘id al-Muthlâ, p. 15-16).',
   },
   {
     id: 'abd-al-mumin',
@@ -79,7 +79,7 @@ export const ABD_ALLAH_NAMES: MuslimName[] = [
     variants: [],
     tags: ['foi'],
     editorialLevel: 'sourced',
-    sourceNote: 'Référentiel interne OUMMAH des 99 Noms : Islamic Relief UK, contenu indiqué comme vérifié par Sheikh Dr. Saalim Al-Azhari. Principe de construction : ʿAbd + Nom d’Allah.',
+    sourceNote: 'Ce Nom figure dans la liste des Noms d’Allah établie par Ibn ‘Uthaymîn à partir du Coran et de la Sunna (al-Qawâ‘id al-Muthlâ, p. 15-16).',
   },
   {
     id: 'abd-al-muhaymin',
@@ -95,7 +95,7 @@ export const ABD_ALLAH_NAMES: MuslimName[] = [
     variants: [],
     tags: ['foi'],
     editorialLevel: 'sourced',
-    sourceNote: 'Référentiel interne OUMMAH des 99 Noms : Islamic Relief UK, contenu indiqué comme vérifié par Sheikh Dr. Saalim Al-Azhari. Principe de construction : ʿAbd + Nom d’Allah.',
+    sourceNote: 'Ce Nom figure dans la liste des Noms d’Allah établie par Ibn ‘Uthaymîn à partir du Coran et de la Sunna (al-Qawâ‘id al-Muthlâ, p. 15-16).',
   },
   {
     id: 'abd-al-aziz',
@@ -111,7 +111,7 @@ export const ABD_ALLAH_NAMES: MuslimName[] = [
     variants: [],
     tags: ['foi'],
     editorialLevel: 'sourced',
-    sourceNote: 'Référentiel interne OUMMAH des 99 Noms : Islamic Relief UK, contenu indiqué comme vérifié par Sheikh Dr. Saalim Al-Azhari. Principe de construction : ʿAbd + Nom d’Allah.',
+    sourceNote: 'Ce Nom figure dans la liste des Noms d’Allah établie par Ibn ‘Uthaymîn à partir du Coran et de la Sunna (al-Qawâ‘id al-Muthlâ, p. 15-16).',
   },
   {
     id: 'abd-al-jabbar',
@@ -127,7 +127,7 @@ export const ABD_ALLAH_NAMES: MuslimName[] = [
     variants: [],
     tags: ['foi'],
     editorialLevel: 'sourced',
-    sourceNote: 'Référentiel interne OUMMAH des 99 Noms : Islamic Relief UK, contenu indiqué comme vérifié par Sheikh Dr. Saalim Al-Azhari. Principe de construction : ʿAbd + Nom d’Allah.',
+    sourceNote: 'Ce Nom figure dans la liste des Noms d’Allah établie par Ibn ‘Uthaymîn à partir du Coran et de la Sunna (al-Qawâ‘id al-Muthlâ, p. 15-16).',
   },
   {
     id: 'abd-al-mutakabbir',
@@ -143,7 +143,7 @@ export const ABD_ALLAH_NAMES: MuslimName[] = [
     variants: [],
     tags: ['foi'],
     editorialLevel: 'sourced',
-    sourceNote: 'Référentiel interne OUMMAH des 99 Noms : Islamic Relief UK, contenu indiqué comme vérifié par Sheikh Dr. Saalim Al-Azhari. Principe de construction : ʿAbd + Nom d’Allah.',
+    sourceNote: 'Ce Nom figure dans la liste des Noms d’Allah établie par Ibn ‘Uthaymîn à partir du Coran et de la Sunna (al-Qawâ‘id al-Muthlâ, p. 15-16).',
   },
   {
     id: 'abd-al-khaliq',
@@ -159,7 +159,7 @@ export const ABD_ALLAH_NAMES: MuslimName[] = [
     variants: [],
     tags: ['foi'],
     editorialLevel: 'sourced',
-    sourceNote: 'Référentiel interne OUMMAH des 99 Noms : Islamic Relief UK, contenu indiqué comme vérifié par Sheikh Dr. Saalim Al-Azhari. Principe de construction : ʿAbd + Nom d’Allah.',
+    sourceNote: 'Ce Nom figure dans la liste des Noms d’Allah établie par Ibn ‘Uthaymîn à partir du Coran et de la Sunna (al-Qawâ‘id al-Muthlâ, p. 15-16).',
   },
   {
     id: 'abd-al-bari',
@@ -175,7 +175,7 @@ export const ABD_ALLAH_NAMES: MuslimName[] = [
     variants: [],
     tags: ['foi'],
     editorialLevel: 'sourced',
-    sourceNote: 'Référentiel interne OUMMAH des 99 Noms : Islamic Relief UK, contenu indiqué comme vérifié par Sheikh Dr. Saalim Al-Azhari. Principe de construction : ʿAbd + Nom d’Allah.',
+    sourceNote: 'Ce Nom figure dans la liste des Noms d’Allah établie par Ibn ‘Uthaymîn à partir du Coran et de la Sunna (al-Qawâ‘id al-Muthlâ, p. 15-16).',
   },
   {
     id: 'abd-al-musawwir',
@@ -191,7 +191,7 @@ export const ABD_ALLAH_NAMES: MuslimName[] = [
     variants: [],
     tags: ['foi'],
     editorialLevel: 'sourced',
-    sourceNote: 'Référentiel interne OUMMAH des 99 Noms : Islamic Relief UK, contenu indiqué comme vérifié par Sheikh Dr. Saalim Al-Azhari. Principe de construction : ʿAbd + Nom d’Allah.',
+    sourceNote: 'Ce Nom figure dans la liste des Noms d’Allah établie par Ibn ‘Uthaymîn à partir du Coran et de la Sunna (al-Qawâ‘id al-Muthlâ, p. 15-16).',
   },
   {
     id: 'abd-al-ghaffar',
@@ -207,7 +207,7 @@ export const ABD_ALLAH_NAMES: MuslimName[] = [
     variants: [],
     tags: ['foi'],
     editorialLevel: 'sourced',
-    sourceNote: 'Référentiel interne OUMMAH des 99 Noms : Islamic Relief UK, contenu indiqué comme vérifié par Sheikh Dr. Saalim Al-Azhari. Principe de construction : ʿAbd + Nom d’Allah.',
+    sourceNote: 'Ce Nom figure dans la liste des Noms d’Allah établie par Ibn ‘Uthaymîn à partir du Coran et de la Sunna (al-Qawâ‘id al-Muthlâ, p. 15-16).',
   },
   {
     id: 'abd-al-qahhar',
@@ -223,7 +223,7 @@ export const ABD_ALLAH_NAMES: MuslimName[] = [
     variants: [],
     tags: ['foi'],
     editorialLevel: 'sourced',
-    sourceNote: 'Référentiel interne OUMMAH des 99 Noms : Islamic Relief UK, contenu indiqué comme vérifié par Sheikh Dr. Saalim Al-Azhari. Principe de construction : ʿAbd + Nom d’Allah.',
+    sourceNote: 'Ce Nom figure dans la liste des Noms d’Allah établie par Ibn ‘Uthaymîn à partir du Coran et de la Sunna (al-Qawâ‘id al-Muthlâ, p. 15-16).',
   },
   {
     id: 'abd-al-wahhab',
@@ -239,7 +239,7 @@ export const ABD_ALLAH_NAMES: MuslimName[] = [
     variants: [],
     tags: ['foi'],
     editorialLevel: 'sourced',
-    sourceNote: 'Référentiel interne OUMMAH des 99 Noms : Islamic Relief UK, contenu indiqué comme vérifié par Sheikh Dr. Saalim Al-Azhari. Principe de construction : ʿAbd + Nom d’Allah.',
+    sourceNote: 'Ce Nom figure dans la liste des Noms d’Allah établie par Ibn ‘Uthaymîn à partir du Coran et de la Sunna (al-Qawâ‘id al-Muthlâ, p. 15-16).',
   },
   {
     id: 'abd-ar-razzaq',
@@ -255,7 +255,7 @@ export const ABD_ALLAH_NAMES: MuslimName[] = [
     variants: [],
     tags: ['foi'],
     editorialLevel: 'sourced',
-    sourceNote: 'Référentiel interne OUMMAH des 99 Noms : Islamic Relief UK, contenu indiqué comme vérifié par Sheikh Dr. Saalim Al-Azhari. Principe de construction : ʿAbd + Nom d’Allah.',
+    sourceNote: 'Ce Nom figure dans la liste des Noms d’Allah établie par Ibn ‘Uthaymîn à partir du Coran et de la Sunna (al-Qawâ‘id al-Muthlâ, p. 15-16).',
   },
   {
     id: 'abd-al-fattah',
@@ -271,7 +271,7 @@ export const ABD_ALLAH_NAMES: MuslimName[] = [
     variants: [],
     tags: ['foi'],
     editorialLevel: 'sourced',
-    sourceNote: 'Référentiel interne OUMMAH des 99 Noms : Islamic Relief UK, contenu indiqué comme vérifié par Sheikh Dr. Saalim Al-Azhari. Principe de construction : ʿAbd + Nom d’Allah.',
+    sourceNote: 'Ce Nom figure dans la liste des Noms d’Allah établie par Ibn ‘Uthaymîn à partir du Coran et de la Sunna (al-Qawâ‘id al-Muthlâ, p. 15-16).',
   },
   {
     id: 'abd-al-alim',
@@ -287,7 +287,7 @@ export const ABD_ALLAH_NAMES: MuslimName[] = [
     variants: [],
     tags: ['foi'],
     editorialLevel: 'sourced',
-    sourceNote: 'Référentiel interne OUMMAH des 99 Noms : Islamic Relief UK, contenu indiqué comme vérifié par Sheikh Dr. Saalim Al-Azhari. Principe de construction : ʿAbd + Nom d’Allah.',
+    sourceNote: 'Ce Nom figure dans la liste des Noms d’Allah établie par Ibn ‘Uthaymîn à partir du Coran et de la Sunna (al-Qawâ‘id al-Muthlâ, p. 15-16).',
   },
   {
     id: 'abd-al-qabid',
@@ -303,7 +303,7 @@ export const ABD_ALLAH_NAMES: MuslimName[] = [
     variants: [],
     tags: ['foi'],
     editorialLevel: 'sourced',
-    sourceNote: 'Référentiel interne OUMMAH des 99 Noms : Islamic Relief UK, contenu indiqué comme vérifié par Sheikh Dr. Saalim Al-Azhari. Principe de construction : ʿAbd + Nom d’Allah.',
+    sourceNote: 'Ce Nom figure dans la liste des Noms d’Allah établie par Ibn ‘Uthaymîn à partir du Coran et de la Sunna (al-Qawâ‘id al-Muthlâ, p. 15-16).',
   },
   {
     id: 'abd-al-basit',
@@ -319,7 +319,7 @@ export const ABD_ALLAH_NAMES: MuslimName[] = [
     variants: [],
     tags: ['foi'],
     editorialLevel: 'sourced',
-    sourceNote: 'Référentiel interne OUMMAH des 99 Noms : Islamic Relief UK, contenu indiqué comme vérifié par Sheikh Dr. Saalim Al-Azhari. Principe de construction : ʿAbd + Nom d’Allah.',
+    sourceNote: 'Ce Nom figure dans la liste des Noms d’Allah établie par Ibn ‘Uthaymîn à partir du Coran et de la Sunna (al-Qawâ‘id al-Muthlâ, p. 15-16).',
   },
   {
     id: 'abd-al-khafid',
@@ -335,7 +335,7 @@ export const ABD_ALLAH_NAMES: MuslimName[] = [
     variants: [],
     tags: ['foi'],
     editorialLevel: 'sourced',
-    sourceNote: 'Référentiel interne OUMMAH des 99 Noms : Islamic Relief UK, contenu indiqué comme vérifié par Sheikh Dr. Saalim Al-Azhari. Principe de construction : ʿAbd + Nom d’Allah.',
+    sourceNote: 'Ce Nom figure dans la liste des Noms d’Allah établie par Ibn ‘Uthaymîn à partir du Coran et de la Sunna (al-Qawâ‘id al-Muthlâ, p. 15-16).',
   },
   {
     id: 'abd-ar-rafi',
@@ -351,7 +351,7 @@ export const ABD_ALLAH_NAMES: MuslimName[] = [
     variants: [],
     tags: ['foi'],
     editorialLevel: 'sourced',
-    sourceNote: 'Référentiel interne OUMMAH des 99 Noms : Islamic Relief UK, contenu indiqué comme vérifié par Sheikh Dr. Saalim Al-Azhari. Principe de construction : ʿAbd + Nom d’Allah.',
+    sourceNote: 'Ce Nom figure dans la liste des Noms d’Allah établie par Ibn ‘Uthaymîn à partir du Coran et de la Sunna (al-Qawâ‘id al-Muthlâ, p. 15-16).',
   },
   {
     id: 'abd-al-muizz',
@@ -367,7 +367,7 @@ export const ABD_ALLAH_NAMES: MuslimName[] = [
     variants: [],
     tags: ['foi'],
     editorialLevel: 'sourced',
-    sourceNote: 'Référentiel interne OUMMAH des 99 Noms : Islamic Relief UK, contenu indiqué comme vérifié par Sheikh Dr. Saalim Al-Azhari. Principe de construction : ʿAbd + Nom d’Allah.',
+    sourceNote: 'Ce Nom figure dans la liste des Noms d’Allah établie par Ibn ‘Uthaymîn à partir du Coran et de la Sunna (al-Qawâ‘id al-Muthlâ, p. 15-16).',
   },
   {
     id: 'abd-al-mudhill',
@@ -383,7 +383,7 @@ export const ABD_ALLAH_NAMES: MuslimName[] = [
     variants: [],
     tags: ['foi'],
     editorialLevel: 'sourced',
-    sourceNote: 'Référentiel interne OUMMAH des 99 Noms : Islamic Relief UK, contenu indiqué comme vérifié par Sheikh Dr. Saalim Al-Azhari. Principe de construction : ʿAbd + Nom d’Allah.',
+    sourceNote: 'Ce Nom figure dans la liste des Noms d’Allah établie par Ibn ‘Uthaymîn à partir du Coran et de la Sunna (al-Qawâ‘id al-Muthlâ, p. 15-16).',
   },
   {
     id: 'abd-as-sami',
@@ -399,7 +399,7 @@ export const ABD_ALLAH_NAMES: MuslimName[] = [
     variants: [],
     tags: ['foi'],
     editorialLevel: 'sourced',
-    sourceNote: 'Référentiel interne OUMMAH des 99 Noms : Islamic Relief UK, contenu indiqué comme vérifié par Sheikh Dr. Saalim Al-Azhari. Principe de construction : ʿAbd + Nom d’Allah.',
+    sourceNote: 'Ce Nom figure dans la liste des Noms d’Allah établie par Ibn ‘Uthaymîn à partir du Coran et de la Sunna (al-Qawâ‘id al-Muthlâ, p. 15-16).',
   },
   {
     id: 'abd-al-basir',
@@ -415,7 +415,7 @@ export const ABD_ALLAH_NAMES: MuslimName[] = [
     variants: [],
     tags: ['foi'],
     editorialLevel: 'sourced',
-    sourceNote: 'Référentiel interne OUMMAH des 99 Noms : Islamic Relief UK, contenu indiqué comme vérifié par Sheikh Dr. Saalim Al-Azhari. Principe de construction : ʿAbd + Nom d’Allah.',
+    sourceNote: 'Ce Nom figure dans la liste des Noms d’Allah établie par Ibn ‘Uthaymîn à partir du Coran et de la Sunna (al-Qawâ‘id al-Muthlâ, p. 15-16).',
   },
   {
     id: 'abd-al-hakam',
@@ -431,7 +431,7 @@ export const ABD_ALLAH_NAMES: MuslimName[] = [
     variants: [],
     tags: ['foi'],
     editorialLevel: 'sourced',
-    sourceNote: 'Référentiel interne OUMMAH des 99 Noms : Islamic Relief UK, contenu indiqué comme vérifié par Sheikh Dr. Saalim Al-Azhari. Principe de construction : ʿAbd + Nom d’Allah.',
+    sourceNote: 'Ce Nom figure dans la liste des Noms d’Allah établie par Ibn ‘Uthaymîn à partir du Coran et de la Sunna (al-Qawâ‘id al-Muthlâ, p. 15-16).',
   },
   {
     id: 'abd-al-adl',
@@ -447,7 +447,7 @@ export const ABD_ALLAH_NAMES: MuslimName[] = [
     variants: [],
     tags: ['foi'],
     editorialLevel: 'sourced',
-    sourceNote: 'Référentiel interne OUMMAH des 99 Noms : Islamic Relief UK, contenu indiqué comme vérifié par Sheikh Dr. Saalim Al-Azhari. Principe de construction : ʿAbd + Nom d’Allah.',
+    sourceNote: 'Ce Nom figure dans la liste des Noms d’Allah établie par Ibn ‘Uthaymîn à partir du Coran et de la Sunna (al-Qawâ‘id al-Muthlâ, p. 15-16).',
   },
   {
     id: 'abd-al-latif',
@@ -463,7 +463,7 @@ export const ABD_ALLAH_NAMES: MuslimName[] = [
     variants: [],
     tags: ['foi'],
     editorialLevel: 'sourced',
-    sourceNote: 'Référentiel interne OUMMAH des 99 Noms : Islamic Relief UK, contenu indiqué comme vérifié par Sheikh Dr. Saalim Al-Azhari. Principe de construction : ʿAbd + Nom d’Allah.',
+    sourceNote: 'Ce Nom figure dans la liste des Noms d’Allah établie par Ibn ‘Uthaymîn à partir du Coran et de la Sunna (al-Qawâ‘id al-Muthlâ, p. 15-16).',
   },
   {
     id: 'abd-al-khabir',
@@ -479,7 +479,7 @@ export const ABD_ALLAH_NAMES: MuslimName[] = [
     variants: [],
     tags: ['foi'],
     editorialLevel: 'sourced',
-    sourceNote: 'Référentiel interne OUMMAH des 99 Noms : Islamic Relief UK, contenu indiqué comme vérifié par Sheikh Dr. Saalim Al-Azhari. Principe de construction : ʿAbd + Nom d’Allah.',
+    sourceNote: 'Ce Nom figure dans la liste des Noms d’Allah établie par Ibn ‘Uthaymîn à partir du Coran et de la Sunna (al-Qawâ‘id al-Muthlâ, p. 15-16).',
   },
   {
     id: 'abd-al-halim',
@@ -495,7 +495,7 @@ export const ABD_ALLAH_NAMES: MuslimName[] = [
     variants: [],
     tags: ['foi'],
     editorialLevel: 'sourced',
-    sourceNote: 'Référentiel interne OUMMAH des 99 Noms : Islamic Relief UK, contenu indiqué comme vérifié par Sheikh Dr. Saalim Al-Azhari. Principe de construction : ʿAbd + Nom d’Allah.',
+    sourceNote: 'Ce Nom figure dans la liste des Noms d’Allah établie par Ibn ‘Uthaymîn à partir du Coran et de la Sunna (al-Qawâ‘id al-Muthlâ, p. 15-16).',
   },
   {
     id: 'abd-al-azim',
@@ -511,7 +511,7 @@ export const ABD_ALLAH_NAMES: MuslimName[] = [
     variants: [],
     tags: ['foi'],
     editorialLevel: 'sourced',
-    sourceNote: 'Référentiel interne OUMMAH des 99 Noms : Islamic Relief UK, contenu indiqué comme vérifié par Sheikh Dr. Saalim Al-Azhari. Principe de construction : ʿAbd + Nom d’Allah.',
+    sourceNote: 'Ce Nom figure dans la liste des Noms d’Allah établie par Ibn ‘Uthaymîn à partir du Coran et de la Sunna (al-Qawâ‘id al-Muthlâ, p. 15-16).',
   },
   {
     id: 'abd-al-ghafur',
@@ -527,7 +527,7 @@ export const ABD_ALLAH_NAMES: MuslimName[] = [
     variants: [],
     tags: ['foi'],
     editorialLevel: 'sourced',
-    sourceNote: 'Référentiel interne OUMMAH des 99 Noms : Islamic Relief UK, contenu indiqué comme vérifié par Sheikh Dr. Saalim Al-Azhari. Principe de construction : ʿAbd + Nom d’Allah.',
+    sourceNote: 'Ce Nom figure dans la liste des Noms d’Allah établie par Ibn ‘Uthaymîn à partir du Coran et de la Sunna (al-Qawâ‘id al-Muthlâ, p. 15-16).',
   },
   {
     id: 'abd-ash-shakur',
@@ -543,7 +543,7 @@ export const ABD_ALLAH_NAMES: MuslimName[] = [
     variants: [],
     tags: ['foi'],
     editorialLevel: 'sourced',
-    sourceNote: 'Référentiel interne OUMMAH des 99 Noms : Islamic Relief UK, contenu indiqué comme vérifié par Sheikh Dr. Saalim Al-Azhari. Principe de construction : ʿAbd + Nom d’Allah.',
+    sourceNote: 'Ce Nom figure dans la liste des Noms d’Allah établie par Ibn ‘Uthaymîn à partir du Coran et de la Sunna (al-Qawâ‘id al-Muthlâ, p. 15-16).',
   },
   {
     id: 'abd-al-aliyy',
@@ -559,7 +559,7 @@ export const ABD_ALLAH_NAMES: MuslimName[] = [
     variants: [],
     tags: ['foi'],
     editorialLevel: 'sourced',
-    sourceNote: 'Référentiel interne OUMMAH des 99 Noms : Islamic Relief UK, contenu indiqué comme vérifié par Sheikh Dr. Saalim Al-Azhari. Principe de construction : ʿAbd + Nom d’Allah.',
+    sourceNote: 'Ce Nom figure dans la liste des Noms d’Allah établie par Ibn ‘Uthaymîn à partir du Coran et de la Sunna (al-Qawâ‘id al-Muthlâ, p. 15-16).',
   },
   {
     id: 'abd-al-kabir',
@@ -575,7 +575,7 @@ export const ABD_ALLAH_NAMES: MuslimName[] = [
     variants: [],
     tags: ['foi'],
     editorialLevel: 'sourced',
-    sourceNote: 'Référentiel interne OUMMAH des 99 Noms : Islamic Relief UK, contenu indiqué comme vérifié par Sheikh Dr. Saalim Al-Azhari. Principe de construction : ʿAbd + Nom d’Allah.',
+    sourceNote: 'Ce Nom figure dans la liste des Noms d’Allah établie par Ibn ‘Uthaymîn à partir du Coran et de la Sunna (al-Qawâ‘id al-Muthlâ, p. 15-16).',
   },
   {
     id: 'abd-al-hafiz',
@@ -591,7 +591,7 @@ export const ABD_ALLAH_NAMES: MuslimName[] = [
     variants: [],
     tags: ['foi'],
     editorialLevel: 'sourced',
-    sourceNote: 'Référentiel interne OUMMAH des 99 Noms : Islamic Relief UK, contenu indiqué comme vérifié par Sheikh Dr. Saalim Al-Azhari. Principe de construction : ʿAbd + Nom d’Allah.',
+    sourceNote: 'Ce Nom figure dans la liste des Noms d’Allah établie par Ibn ‘Uthaymîn à partir du Coran et de la Sunna (al-Qawâ‘id al-Muthlâ, p. 15-16).',
   },
   {
     id: 'abd-al-muqit',
@@ -607,7 +607,7 @@ export const ABD_ALLAH_NAMES: MuslimName[] = [
     variants: [],
     tags: ['foi'],
     editorialLevel: 'sourced',
-    sourceNote: 'Référentiel interne OUMMAH des 99 Noms : Islamic Relief UK, contenu indiqué comme vérifié par Sheikh Dr. Saalim Al-Azhari. Principe de construction : ʿAbd + Nom d’Allah.',
+    sourceNote: 'Ce Nom figure dans la liste des Noms d’Allah établie par Ibn ‘Uthaymîn à partir du Coran et de la Sunna (al-Qawâ‘id al-Muthlâ, p. 15-16).',
   },
   {
     id: 'abd-al-hasib',
@@ -623,7 +623,7 @@ export const ABD_ALLAH_NAMES: MuslimName[] = [
     variants: [],
     tags: ['foi'],
     editorialLevel: 'sourced',
-    sourceNote: 'Référentiel interne OUMMAH des 99 Noms : Islamic Relief UK, contenu indiqué comme vérifié par Sheikh Dr. Saalim Al-Azhari. Principe de construction : ʿAbd + Nom d’Allah.',
+    sourceNote: 'Ce Nom figure dans la liste des Noms d’Allah établie par Ibn ‘Uthaymîn à partir du Coran et de la Sunna (al-Qawâ‘id al-Muthlâ, p. 15-16).',
   },
   {
     id: 'abd-al-jalil',
@@ -639,7 +639,7 @@ export const ABD_ALLAH_NAMES: MuslimName[] = [
     variants: [],
     tags: ['foi'],
     editorialLevel: 'sourced',
-    sourceNote: 'Référentiel interne OUMMAH des 99 Noms : Islamic Relief UK, contenu indiqué comme vérifié par Sheikh Dr. Saalim Al-Azhari. Principe de construction : ʿAbd + Nom d’Allah.',
+    sourceNote: 'Ce Nom figure dans la liste des Noms d’Allah établie par Ibn ‘Uthaymîn à partir du Coran et de la Sunna (al-Qawâ‘id al-Muthlâ, p. 15-16).',
   },
   {
     id: 'abd-al-karim',
@@ -655,7 +655,7 @@ export const ABD_ALLAH_NAMES: MuslimName[] = [
     variants: [],
     tags: ['foi'],
     editorialLevel: 'sourced',
-    sourceNote: 'Référentiel interne OUMMAH des 99 Noms : Islamic Relief UK, contenu indiqué comme vérifié par Sheikh Dr. Saalim Al-Azhari. Principe de construction : ʿAbd + Nom d’Allah.',
+    sourceNote: 'Ce Nom figure dans la liste des Noms d’Allah établie par Ibn ‘Uthaymîn à partir du Coran et de la Sunna (al-Qawâ‘id al-Muthlâ, p. 15-16).',
   },
   {
     id: 'abd-ar-raqib',
@@ -671,7 +671,7 @@ export const ABD_ALLAH_NAMES: MuslimName[] = [
     variants: [],
     tags: ['foi'],
     editorialLevel: 'sourced',
-    sourceNote: 'Référentiel interne OUMMAH des 99 Noms : Islamic Relief UK, contenu indiqué comme vérifié par Sheikh Dr. Saalim Al-Azhari. Principe de construction : ʿAbd + Nom d’Allah.',
+    sourceNote: 'Ce Nom figure dans la liste des Noms d’Allah établie par Ibn ‘Uthaymîn à partir du Coran et de la Sunna (al-Qawâ‘id al-Muthlâ, p. 15-16).',
   },
   {
     id: 'abd-al-mujib',
@@ -687,7 +687,7 @@ export const ABD_ALLAH_NAMES: MuslimName[] = [
     variants: [],
     tags: ['foi'],
     editorialLevel: 'sourced',
-    sourceNote: 'Référentiel interne OUMMAH des 99 Noms : Islamic Relief UK, contenu indiqué comme vérifié par Sheikh Dr. Saalim Al-Azhari. Principe de construction : ʿAbd + Nom d’Allah.',
+    sourceNote: 'Ce Nom figure dans la liste des Noms d’Allah établie par Ibn ‘Uthaymîn à partir du Coran et de la Sunna (al-Qawâ‘id al-Muthlâ, p. 15-16).',
   },
   {
     id: 'abd-al-wasi',
@@ -703,7 +703,7 @@ export const ABD_ALLAH_NAMES: MuslimName[] = [
     variants: [],
     tags: ['foi'],
     editorialLevel: 'sourced',
-    sourceNote: 'Référentiel interne OUMMAH des 99 Noms : Islamic Relief UK, contenu indiqué comme vérifié par Sheikh Dr. Saalim Al-Azhari. Principe de construction : ʿAbd + Nom d’Allah.',
+    sourceNote: 'Ce Nom figure dans la liste des Noms d’Allah établie par Ibn ‘Uthaymîn à partir du Coran et de la Sunna (al-Qawâ‘id al-Muthlâ, p. 15-16).',
   },
   {
     id: 'abd-al-hakim',
@@ -719,7 +719,7 @@ export const ABD_ALLAH_NAMES: MuslimName[] = [
     variants: [],
     tags: ['foi'],
     editorialLevel: 'sourced',
-    sourceNote: 'Référentiel interne OUMMAH des 99 Noms : Islamic Relief UK, contenu indiqué comme vérifié par Sheikh Dr. Saalim Al-Azhari. Principe de construction : ʿAbd + Nom d’Allah.',
+    sourceNote: 'Ce Nom figure dans la liste des Noms d’Allah établie par Ibn ‘Uthaymîn à partir du Coran et de la Sunna (al-Qawâ‘id al-Muthlâ, p. 15-16).',
   },
   {
     id: 'abd-al-wadud',
@@ -735,7 +735,7 @@ export const ABD_ALLAH_NAMES: MuslimName[] = [
     variants: [],
     tags: ['foi'],
     editorialLevel: 'sourced',
-    sourceNote: 'Référentiel interne OUMMAH des 99 Noms : Islamic Relief UK, contenu indiqué comme vérifié par Sheikh Dr. Saalim Al-Azhari. Principe de construction : ʿAbd + Nom d’Allah.',
+    sourceNote: 'Ce Nom figure dans la liste des Noms d’Allah établie par Ibn ‘Uthaymîn à partir du Coran et de la Sunna (al-Qawâ‘id al-Muthlâ, p. 15-16).',
   },
   {
     id: 'abd-al-majid',
@@ -751,7 +751,7 @@ export const ABD_ALLAH_NAMES: MuslimName[] = [
     variants: [],
     tags: ['foi'],
     editorialLevel: 'sourced',
-    sourceNote: 'Référentiel interne OUMMAH des 99 Noms : Islamic Relief UK, contenu indiqué comme vérifié par Sheikh Dr. Saalim Al-Azhari. Principe de construction : ʿAbd + Nom d’Allah.',
+    sourceNote: 'Ce Nom figure dans la liste des Noms d’Allah établie par Ibn ‘Uthaymîn à partir du Coran et de la Sunna (al-Qawâ‘id al-Muthlâ, p. 15-16).',
   },
   {
     id: 'abd-al-baith',
@@ -767,7 +767,7 @@ export const ABD_ALLAH_NAMES: MuslimName[] = [
     variants: [],
     tags: ['foi'],
     editorialLevel: 'sourced',
-    sourceNote: 'Référentiel interne OUMMAH des 99 Noms : Islamic Relief UK, contenu indiqué comme vérifié par Sheikh Dr. Saalim Al-Azhari. Principe de construction : ʿAbd + Nom d’Allah.',
+    sourceNote: 'Ce Nom figure dans la liste des Noms d’Allah établie par Ibn ‘Uthaymîn à partir du Coran et de la Sunna (al-Qawâ‘id al-Muthlâ, p. 15-16).',
   },
   {
     id: 'abd-ash-shahid',
@@ -783,7 +783,7 @@ export const ABD_ALLAH_NAMES: MuslimName[] = [
     variants: [],
     tags: ['foi'],
     editorialLevel: 'sourced',
-    sourceNote: 'Référentiel interne OUMMAH des 99 Noms : Islamic Relief UK, contenu indiqué comme vérifié par Sheikh Dr. Saalim Al-Azhari. Principe de construction : ʿAbd + Nom d’Allah.',
+    sourceNote: 'Ce Nom figure dans la liste des Noms d’Allah établie par Ibn ‘Uthaymîn à partir du Coran et de la Sunna (al-Qawâ‘id al-Muthlâ, p. 15-16).',
   },
   {
     id: 'abd-al-haqq',
@@ -799,7 +799,7 @@ export const ABD_ALLAH_NAMES: MuslimName[] = [
     variants: [],
     tags: ['foi'],
     editorialLevel: 'sourced',
-    sourceNote: 'Référentiel interne OUMMAH des 99 Noms : Islamic Relief UK, contenu indiqué comme vérifié par Sheikh Dr. Saalim Al-Azhari. Principe de construction : ʿAbd + Nom d’Allah.',
+    sourceNote: 'Ce Nom figure dans la liste des Noms d’Allah établie par Ibn ‘Uthaymîn à partir du Coran et de la Sunna (al-Qawâ‘id al-Muthlâ, p. 15-16).',
   },
   {
     id: 'abd-al-wakil',
@@ -815,7 +815,7 @@ export const ABD_ALLAH_NAMES: MuslimName[] = [
     variants: [],
     tags: ['foi'],
     editorialLevel: 'sourced',
-    sourceNote: 'Référentiel interne OUMMAH des 99 Noms : Islamic Relief UK, contenu indiqué comme vérifié par Sheikh Dr. Saalim Al-Azhari. Principe de construction : ʿAbd + Nom d’Allah.',
+    sourceNote: 'Ce Nom figure dans la liste des Noms d’Allah établie par Ibn ‘Uthaymîn à partir du Coran et de la Sunna (al-Qawâ‘id al-Muthlâ, p. 15-16).',
   },
   {
     id: 'abd-al-qawiyy',
@@ -831,7 +831,7 @@ export const ABD_ALLAH_NAMES: MuslimName[] = [
     variants: [],
     tags: ['foi'],
     editorialLevel: 'sourced',
-    sourceNote: 'Référentiel interne OUMMAH des 99 Noms : Islamic Relief UK, contenu indiqué comme vérifié par Sheikh Dr. Saalim Al-Azhari. Principe de construction : ʿAbd + Nom d’Allah.',
+    sourceNote: 'Ce Nom figure dans la liste des Noms d’Allah établie par Ibn ‘Uthaymîn à partir du Coran et de la Sunna (al-Qawâ‘id al-Muthlâ, p. 15-16).',
   },
   {
     id: 'abd-al-matin',
@@ -847,7 +847,7 @@ export const ABD_ALLAH_NAMES: MuslimName[] = [
     variants: [],
     tags: ['foi'],
     editorialLevel: 'sourced',
-    sourceNote: 'Référentiel interne OUMMAH des 99 Noms : Islamic Relief UK, contenu indiqué comme vérifié par Sheikh Dr. Saalim Al-Azhari. Principe de construction : ʿAbd + Nom d’Allah.',
+    sourceNote: 'Ce Nom figure dans la liste des Noms d’Allah établie par Ibn ‘Uthaymîn à partir du Coran et de la Sunna (al-Qawâ‘id al-Muthlâ, p. 15-16).',
   },
   {
     id: 'abd-al-waliyy',
@@ -863,7 +863,7 @@ export const ABD_ALLAH_NAMES: MuslimName[] = [
     variants: [],
     tags: ['foi'],
     editorialLevel: 'sourced',
-    sourceNote: 'Référentiel interne OUMMAH des 99 Noms : Islamic Relief UK, contenu indiqué comme vérifié par Sheikh Dr. Saalim Al-Azhari. Principe de construction : ʿAbd + Nom d’Allah.',
+    sourceNote: 'Ce Nom figure dans la liste des Noms d’Allah établie par Ibn ‘Uthaymîn à partir du Coran et de la Sunna (al-Qawâ‘id al-Muthlâ, p. 15-16).',
   },
   {
     id: 'abd-al-hamid',
@@ -879,7 +879,7 @@ export const ABD_ALLAH_NAMES: MuslimName[] = [
     variants: [],
     tags: ['foi'],
     editorialLevel: 'sourced',
-    sourceNote: 'Référentiel interne OUMMAH des 99 Noms : Islamic Relief UK, contenu indiqué comme vérifié par Sheikh Dr. Saalim Al-Azhari. Principe de construction : ʿAbd + Nom d’Allah.',
+    sourceNote: 'Ce Nom figure dans la liste des Noms d’Allah établie par Ibn ‘Uthaymîn à partir du Coran et de la Sunna (al-Qawâ‘id al-Muthlâ, p. 15-16).',
   },
   {
     id: 'abd-al-muhsi',
@@ -895,7 +895,7 @@ export const ABD_ALLAH_NAMES: MuslimName[] = [
     variants: [],
     tags: ['foi'],
     editorialLevel: 'sourced',
-    sourceNote: 'Référentiel interne OUMMAH des 99 Noms : Islamic Relief UK, contenu indiqué comme vérifié par Sheikh Dr. Saalim Al-Azhari. Principe de construction : ʿAbd + Nom d’Allah.',
+    sourceNote: 'Ce Nom figure dans la liste des Noms d’Allah établie par Ibn ‘Uthaymîn à partir du Coran et de la Sunna (al-Qawâ‘id al-Muthlâ, p. 15-16).',
   },
   {
     id: 'abd-al-mubdi',
@@ -911,7 +911,7 @@ export const ABD_ALLAH_NAMES: MuslimName[] = [
     variants: [],
     tags: ['foi'],
     editorialLevel: 'sourced',
-    sourceNote: 'Référentiel interne OUMMAH des 99 Noms : Islamic Relief UK, contenu indiqué comme vérifié par Sheikh Dr. Saalim Al-Azhari. Principe de construction : ʿAbd + Nom d’Allah.',
+    sourceNote: 'Ce Nom figure dans la liste des Noms d’Allah établie par Ibn ‘Uthaymîn à partir du Coran et de la Sunna (al-Qawâ‘id al-Muthlâ, p. 15-16).',
   },
   {
     id: 'abd-al-muid',
@@ -927,7 +927,7 @@ export const ABD_ALLAH_NAMES: MuslimName[] = [
     variants: [],
     tags: ['foi'],
     editorialLevel: 'sourced',
-    sourceNote: 'Référentiel interne OUMMAH des 99 Noms : Islamic Relief UK, contenu indiqué comme vérifié par Sheikh Dr. Saalim Al-Azhari. Principe de construction : ʿAbd + Nom d’Allah.',
+    sourceNote: 'Ce Nom figure dans la liste des Noms d’Allah établie par Ibn ‘Uthaymîn à partir du Coran et de la Sunna (al-Qawâ‘id al-Muthlâ, p. 15-16).',
   },
   {
     id: 'abd-al-muhyi',
@@ -943,7 +943,7 @@ export const ABD_ALLAH_NAMES: MuslimName[] = [
     variants: [],
     tags: ['foi'],
     editorialLevel: 'sourced',
-    sourceNote: 'Référentiel interne OUMMAH des 99 Noms : Islamic Relief UK, contenu indiqué comme vérifié par Sheikh Dr. Saalim Al-Azhari. Principe de construction : ʿAbd + Nom d’Allah.',
+    sourceNote: 'Ce Nom figure dans la liste des Noms d’Allah établie par Ibn ‘Uthaymîn à partir du Coran et de la Sunna (al-Qawâ‘id al-Muthlâ, p. 15-16).',
   },
   {
     id: 'abd-al-mumit',
@@ -959,7 +959,7 @@ export const ABD_ALLAH_NAMES: MuslimName[] = [
     variants: [],
     tags: ['foi'],
     editorialLevel: 'sourced',
-    sourceNote: 'Référentiel interne OUMMAH des 99 Noms : Islamic Relief UK, contenu indiqué comme vérifié par Sheikh Dr. Saalim Al-Azhari. Principe de construction : ʿAbd + Nom d’Allah.',
+    sourceNote: 'Ce Nom figure dans la liste des Noms d’Allah établie par Ibn ‘Uthaymîn à partir du Coran et de la Sunna (al-Qawâ‘id al-Muthlâ, p. 15-16).',
   },
   {
     id: 'abd-al-hayy',
@@ -975,7 +975,7 @@ export const ABD_ALLAH_NAMES: MuslimName[] = [
     variants: [],
     tags: ['foi'],
     editorialLevel: 'sourced',
-    sourceNote: 'Référentiel interne OUMMAH des 99 Noms : Islamic Relief UK, contenu indiqué comme vérifié par Sheikh Dr. Saalim Al-Azhari. Principe de construction : ʿAbd + Nom d’Allah.',
+    sourceNote: 'Ce Nom figure dans la liste des Noms d’Allah établie par Ibn ‘Uthaymîn à partir du Coran et de la Sunna (al-Qawâ‘id al-Muthlâ, p. 15-16).',
   },
   {
     id: 'abd-al-qayyum',
@@ -991,7 +991,7 @@ export const ABD_ALLAH_NAMES: MuslimName[] = [
     variants: [],
     tags: ['foi'],
     editorialLevel: 'sourced',
-    sourceNote: 'Référentiel interne OUMMAH des 99 Noms : Islamic Relief UK, contenu indiqué comme vérifié par Sheikh Dr. Saalim Al-Azhari. Principe de construction : ʿAbd + Nom d’Allah.',
+    sourceNote: 'Ce Nom figure dans la liste des Noms d’Allah établie par Ibn ‘Uthaymîn à partir du Coran et de la Sunna (al-Qawâ‘id al-Muthlâ, p. 15-16).',
   },
   {
     id: 'abd-al-wajid',
@@ -1007,7 +1007,7 @@ export const ABD_ALLAH_NAMES: MuslimName[] = [
     variants: [],
     tags: ['foi'],
     editorialLevel: 'sourced',
-    sourceNote: 'Référentiel interne OUMMAH des 99 Noms : Islamic Relief UK, contenu indiqué comme vérifié par Sheikh Dr. Saalim Al-Azhari. Principe de construction : ʿAbd + Nom d’Allah.',
+    sourceNote: 'Ce Nom figure dans la liste des Noms d’Allah établie par Ibn ‘Uthaymîn à partir du Coran et de la Sunna (al-Qawâ‘id al-Muthlâ, p. 15-16).',
   },
   {
     id: 'abd-al-maajid',
@@ -1023,7 +1023,7 @@ export const ABD_ALLAH_NAMES: MuslimName[] = [
     variants: [],
     tags: ['foi'],
     editorialLevel: 'sourced',
-    sourceNote: 'Référentiel interne OUMMAH des 99 Noms : Islamic Relief UK, contenu indiqué comme vérifié par Sheikh Dr. Saalim Al-Azhari. Principe de construction : ʿAbd + Nom d’Allah.',
+    sourceNote: 'Ce Nom figure dans la liste des Noms d’Allah établie par Ibn ‘Uthaymîn à partir du Coran et de la Sunna (al-Qawâ‘id al-Muthlâ, p. 15-16).',
   },
   {
     id: 'abd-al-wahid',
@@ -1039,7 +1039,7 @@ export const ABD_ALLAH_NAMES: MuslimName[] = [
     variants: [],
     tags: ['foi'],
     editorialLevel: 'sourced',
-    sourceNote: 'Référentiel interne OUMMAH des 99 Noms : Islamic Relief UK, contenu indiqué comme vérifié par Sheikh Dr. Saalim Al-Azhari. Principe de construction : ʿAbd + Nom d’Allah.',
+    sourceNote: 'Ce Nom figure dans la liste des Noms d’Allah établie par Ibn ‘Uthaymîn à partir du Coran et de la Sunna (al-Qawâ‘id al-Muthlâ, p. 15-16).',
   },
   {
     id: 'abd-al-ahad',
@@ -1055,7 +1055,7 @@ export const ABD_ALLAH_NAMES: MuslimName[] = [
     variants: [],
     tags: ['foi'],
     editorialLevel: 'sourced',
-    sourceNote: 'Référentiel interne OUMMAH des 99 Noms : Islamic Relief UK, contenu indiqué comme vérifié par Sheikh Dr. Saalim Al-Azhari. Principe de construction : ʿAbd + Nom d’Allah.',
+    sourceNote: 'Ce Nom figure dans la liste des Noms d’Allah établie par Ibn ‘Uthaymîn à partir du Coran et de la Sunna (al-Qawâ‘id al-Muthlâ, p. 15-16).',
   },
   {
     id: 'abd-as-samad',
@@ -1071,7 +1071,7 @@ export const ABD_ALLAH_NAMES: MuslimName[] = [
     variants: [],
     tags: ['foi'],
     editorialLevel: 'sourced',
-    sourceNote: 'Référentiel interne OUMMAH des 99 Noms : Islamic Relief UK, contenu indiqué comme vérifié par Sheikh Dr. Saalim Al-Azhari. Principe de construction : ʿAbd + Nom d’Allah.',
+    sourceNote: 'Ce Nom figure dans la liste des Noms d’Allah établie par Ibn ‘Uthaymîn à partir du Coran et de la Sunna (al-Qawâ‘id al-Muthlâ, p. 15-16).',
   },
   {
     id: 'abd-al-qadir',
@@ -1087,7 +1087,7 @@ export const ABD_ALLAH_NAMES: MuslimName[] = [
     variants: [],
     tags: ['foi'],
     editorialLevel: 'sourced',
-    sourceNote: 'Référentiel interne OUMMAH des 99 Noms : Islamic Relief UK, contenu indiqué comme vérifié par Sheikh Dr. Saalim Al-Azhari. Principe de construction : ʿAbd + Nom d’Allah.',
+    sourceNote: 'Ce Nom figure dans la liste des Noms d’Allah établie par Ibn ‘Uthaymîn à partir du Coran et de la Sunna (al-Qawâ‘id al-Muthlâ, p. 15-16).',
   },
   {
     id: 'abd-al-muqtadir',
@@ -1103,7 +1103,7 @@ export const ABD_ALLAH_NAMES: MuslimName[] = [
     variants: [],
     tags: ['foi'],
     editorialLevel: 'sourced',
-    sourceNote: 'Référentiel interne OUMMAH des 99 Noms : Islamic Relief UK, contenu indiqué comme vérifié par Sheikh Dr. Saalim Al-Azhari. Principe de construction : ʿAbd + Nom d’Allah.',
+    sourceNote: 'Ce Nom figure dans la liste des Noms d’Allah établie par Ibn ‘Uthaymîn à partir du Coran et de la Sunna (al-Qawâ‘id al-Muthlâ, p. 15-16).',
   },
   {
     id: 'abd-al-muqaddim',
@@ -1119,7 +1119,7 @@ export const ABD_ALLAH_NAMES: MuslimName[] = [
     variants: [],
     tags: ['foi'],
     editorialLevel: 'sourced',
-    sourceNote: 'Référentiel interne OUMMAH des 99 Noms : Islamic Relief UK, contenu indiqué comme vérifié par Sheikh Dr. Saalim Al-Azhari. Principe de construction : ʿAbd + Nom d’Allah.',
+    sourceNote: 'Ce Nom figure dans la liste des Noms d’Allah établie par Ibn ‘Uthaymîn à partir du Coran et de la Sunna (al-Qawâ‘id al-Muthlâ, p. 15-16).',
   },
   {
     id: 'abd-al-muakhkhir',
@@ -1135,7 +1135,7 @@ export const ABD_ALLAH_NAMES: MuslimName[] = [
     variants: [],
     tags: ['foi'],
     editorialLevel: 'sourced',
-    sourceNote: 'Référentiel interne OUMMAH des 99 Noms : Islamic Relief UK, contenu indiqué comme vérifié par Sheikh Dr. Saalim Al-Azhari. Principe de construction : ʿAbd + Nom d’Allah.',
+    sourceNote: 'Ce Nom figure dans la liste des Noms d’Allah établie par Ibn ‘Uthaymîn à partir du Coran et de la Sunna (al-Qawâ‘id al-Muthlâ, p. 15-16).',
   },
   {
     id: 'abd-al-awwal',
@@ -1151,7 +1151,7 @@ export const ABD_ALLAH_NAMES: MuslimName[] = [
     variants: [],
     tags: ['foi'],
     editorialLevel: 'sourced',
-    sourceNote: 'Référentiel interne OUMMAH des 99 Noms : Islamic Relief UK, contenu indiqué comme vérifié par Sheikh Dr. Saalim Al-Azhari. Principe de construction : ʿAbd + Nom d’Allah.',
+    sourceNote: 'Ce Nom figure dans la liste des Noms d’Allah établie par Ibn ‘Uthaymîn à partir du Coran et de la Sunna (al-Qawâ‘id al-Muthlâ, p. 15-16).',
   },
   {
     id: 'abd-al-akhir',
@@ -1167,7 +1167,7 @@ export const ABD_ALLAH_NAMES: MuslimName[] = [
     variants: [],
     tags: ['foi'],
     editorialLevel: 'sourced',
-    sourceNote: 'Référentiel interne OUMMAH des 99 Noms : Islamic Relief UK, contenu indiqué comme vérifié par Sheikh Dr. Saalim Al-Azhari. Principe de construction : ʿAbd + Nom d’Allah.',
+    sourceNote: 'Ce Nom figure dans la liste des Noms d’Allah établie par Ibn ‘Uthaymîn à partir du Coran et de la Sunna (al-Qawâ‘id al-Muthlâ, p. 15-16).',
   },
   {
     id: 'abd-az-zahir',
@@ -1183,7 +1183,7 @@ export const ABD_ALLAH_NAMES: MuslimName[] = [
     variants: [],
     tags: ['foi'],
     editorialLevel: 'sourced',
-    sourceNote: 'Référentiel interne OUMMAH des 99 Noms : Islamic Relief UK, contenu indiqué comme vérifié par Sheikh Dr. Saalim Al-Azhari. Principe de construction : ʿAbd + Nom d’Allah.',
+    sourceNote: 'Ce Nom figure dans la liste des Noms d’Allah établie par Ibn ‘Uthaymîn à partir du Coran et de la Sunna (al-Qawâ‘id al-Muthlâ, p. 15-16).',
   },
   {
     id: 'abd-al-batin',
@@ -1199,7 +1199,7 @@ export const ABD_ALLAH_NAMES: MuslimName[] = [
     variants: [],
     tags: ['foi'],
     editorialLevel: 'sourced',
-    sourceNote: 'Référentiel interne OUMMAH des 99 Noms : Islamic Relief UK, contenu indiqué comme vérifié par Sheikh Dr. Saalim Al-Azhari. Principe de construction : ʿAbd + Nom d’Allah.',
+    sourceNote: 'Ce Nom figure dans la liste des Noms d’Allah établie par Ibn ‘Uthaymîn à partir du Coran et de la Sunna (al-Qawâ‘id al-Muthlâ, p. 15-16).',
   },
   {
     id: 'abd-al-wali',
@@ -1215,7 +1215,7 @@ export const ABD_ALLAH_NAMES: MuslimName[] = [
     variants: [],
     tags: ['foi'],
     editorialLevel: 'sourced',
-    sourceNote: 'Référentiel interne OUMMAH des 99 Noms : Islamic Relief UK, contenu indiqué comme vérifié par Sheikh Dr. Saalim Al-Azhari. Principe de construction : ʿAbd + Nom d’Allah.',
+    sourceNote: 'Ce Nom figure dans la liste des Noms d’Allah établie par Ibn ‘Uthaymîn à partir du Coran et de la Sunna (al-Qawâ‘id al-Muthlâ, p. 15-16).',
   },
   {
     id: 'abd-al-mutaali',
@@ -1231,7 +1231,7 @@ export const ABD_ALLAH_NAMES: MuslimName[] = [
     variants: [],
     tags: ['foi'],
     editorialLevel: 'sourced',
-    sourceNote: 'Référentiel interne OUMMAH des 99 Noms : Islamic Relief UK, contenu indiqué comme vérifié par Sheikh Dr. Saalim Al-Azhari. Principe de construction : ʿAbd + Nom d’Allah.',
+    sourceNote: 'Ce Nom figure dans la liste des Noms d’Allah établie par Ibn ‘Uthaymîn à partir du Coran et de la Sunna (al-Qawâ‘id al-Muthlâ, p. 15-16).',
   },
   {
     id: 'abd-al-barr',
@@ -1247,7 +1247,7 @@ export const ABD_ALLAH_NAMES: MuslimName[] = [
     variants: [],
     tags: ['foi'],
     editorialLevel: 'sourced',
-    sourceNote: 'Référentiel interne OUMMAH des 99 Noms : Islamic Relief UK, contenu indiqué comme vérifié par Sheikh Dr. Saalim Al-Azhari. Principe de construction : ʿAbd + Nom d’Allah.',
+    sourceNote: 'Ce Nom figure dans la liste des Noms d’Allah établie par Ibn ‘Uthaymîn à partir du Coran et de la Sunna (al-Qawâ‘id al-Muthlâ, p. 15-16).',
   },
   {
     id: 'abd-at-tawwab',
@@ -1263,7 +1263,7 @@ export const ABD_ALLAH_NAMES: MuslimName[] = [
     variants: [],
     tags: ['foi'],
     editorialLevel: 'sourced',
-    sourceNote: 'Référentiel interne OUMMAH des 99 Noms : Islamic Relief UK, contenu indiqué comme vérifié par Sheikh Dr. Saalim Al-Azhari. Principe de construction : ʿAbd + Nom d’Allah.',
+    sourceNote: 'Ce Nom figure dans la liste des Noms d’Allah établie par Ibn ‘Uthaymîn à partir du Coran et de la Sunna (al-Qawâ‘id al-Muthlâ, p. 15-16).',
   },
   {
     id: 'abd-al-muntaqim',
@@ -1279,7 +1279,7 @@ export const ABD_ALLAH_NAMES: MuslimName[] = [
     variants: [],
     tags: ['foi'],
     editorialLevel: 'sourced',
-    sourceNote: 'Référentiel interne OUMMAH des 99 Noms : Islamic Relief UK, contenu indiqué comme vérifié par Sheikh Dr. Saalim Al-Azhari. Principe de construction : ʿAbd + Nom d’Allah.',
+    sourceNote: 'Ce Nom figure dans la liste des Noms d’Allah établie par Ibn ‘Uthaymîn à partir du Coran et de la Sunna (al-Qawâ‘id al-Muthlâ, p. 15-16).',
   },
   {
     id: 'abd-al-afuw',
@@ -1295,7 +1295,7 @@ export const ABD_ALLAH_NAMES: MuslimName[] = [
     variants: [],
     tags: ['foi'],
     editorialLevel: 'sourced',
-    sourceNote: 'Référentiel interne OUMMAH des 99 Noms : Islamic Relief UK, contenu indiqué comme vérifié par Sheikh Dr. Saalim Al-Azhari. Principe de construction : ʿAbd + Nom d’Allah.',
+    sourceNote: 'Ce Nom figure dans la liste des Noms d’Allah établie par Ibn ‘Uthaymîn à partir du Coran et de la Sunna (al-Qawâ‘id al-Muthlâ, p. 15-16).',
   },
   {
     id: 'abd-ar-rauf',
@@ -1311,7 +1311,7 @@ export const ABD_ALLAH_NAMES: MuslimName[] = [
     variants: [],
     tags: ['foi'],
     editorialLevel: 'sourced',
-    sourceNote: 'Référentiel interne OUMMAH des 99 Noms : Islamic Relief UK, contenu indiqué comme vérifié par Sheikh Dr. Saalim Al-Azhari. Principe de construction : ʿAbd + Nom d’Allah.',
+    sourceNote: 'Ce Nom figure dans la liste des Noms d’Allah établie par Ibn ‘Uthaymîn à partir du Coran et de la Sunna (al-Qawâ‘id al-Muthlâ, p. 15-16).',
   },
   {
     id: 'abd-al-muqsit',
@@ -1327,7 +1327,7 @@ export const ABD_ALLAH_NAMES: MuslimName[] = [
     variants: [],
     tags: ['foi'],
     editorialLevel: 'sourced',
-    sourceNote: 'Référentiel interne OUMMAH des 99 Noms : Islamic Relief UK, contenu indiqué comme vérifié par Sheikh Dr. Saalim Al-Azhari. Principe de construction : ʿAbd + Nom d’Allah.',
+    sourceNote: 'Ce Nom figure dans la liste des Noms d’Allah établie par Ibn ‘Uthaymîn à partir du Coran et de la Sunna (al-Qawâ‘id al-Muthlâ, p. 15-16).',
   },
   {
     id: 'abd-al-jami',
@@ -1343,7 +1343,7 @@ export const ABD_ALLAH_NAMES: MuslimName[] = [
     variants: [],
     tags: ['foi'],
     editorialLevel: 'sourced',
-    sourceNote: 'Référentiel interne OUMMAH des 99 Noms : Islamic Relief UK, contenu indiqué comme vérifié par Sheikh Dr. Saalim Al-Azhari. Principe de construction : ʿAbd + Nom d’Allah.',
+    sourceNote: 'Ce Nom figure dans la liste des Noms d’Allah établie par Ibn ‘Uthaymîn à partir du Coran et de la Sunna (al-Qawâ‘id al-Muthlâ, p. 15-16).',
   },
   {
     id: 'abd-al-ghaniyy',
@@ -1359,7 +1359,7 @@ export const ABD_ALLAH_NAMES: MuslimName[] = [
     variants: [],
     tags: ['foi'],
     editorialLevel: 'sourced',
-    sourceNote: 'Référentiel interne OUMMAH des 99 Noms : Islamic Relief UK, contenu indiqué comme vérifié par Sheikh Dr. Saalim Al-Azhari. Principe de construction : ʿAbd + Nom d’Allah.',
+    sourceNote: 'Ce Nom figure dans la liste des Noms d’Allah établie par Ibn ‘Uthaymîn à partir du Coran et de la Sunna (al-Qawâ‘id al-Muthlâ, p. 15-16).',
   },
   {
     id: 'abd-al-mughni',
@@ -1375,7 +1375,7 @@ export const ABD_ALLAH_NAMES: MuslimName[] = [
     variants: [],
     tags: ['foi'],
     editorialLevel: 'sourced',
-    sourceNote: 'Référentiel interne OUMMAH des 99 Noms : Islamic Relief UK, contenu indiqué comme vérifié par Sheikh Dr. Saalim Al-Azhari. Principe de construction : ʿAbd + Nom d’Allah.',
+    sourceNote: 'Ce Nom figure dans la liste des Noms d’Allah établie par Ibn ‘Uthaymîn à partir du Coran et de la Sunna (al-Qawâ‘id al-Muthlâ, p. 15-16).',
   },
   {
     id: 'abd-al-mani',
@@ -1391,7 +1391,7 @@ export const ABD_ALLAH_NAMES: MuslimName[] = [
     variants: [],
     tags: ['foi'],
     editorialLevel: 'sourced',
-    sourceNote: 'Référentiel interne OUMMAH des 99 Noms : Islamic Relief UK, contenu indiqué comme vérifié par Sheikh Dr. Saalim Al-Azhari. Principe de construction : ʿAbd + Nom d’Allah.',
+    sourceNote: 'Ce Nom figure dans la liste des Noms d’Allah établie par Ibn ‘Uthaymîn à partir du Coran et de la Sunna (al-Qawâ‘id al-Muthlâ, p. 15-16).',
   },
   {
     id: 'abd-ad-darr',
@@ -1407,7 +1407,7 @@ export const ABD_ALLAH_NAMES: MuslimName[] = [
     variants: [],
     tags: ['foi'],
     editorialLevel: 'sourced',
-    sourceNote: 'Référentiel interne OUMMAH des 99 Noms : Islamic Relief UK, contenu indiqué comme vérifié par Sheikh Dr. Saalim Al-Azhari. Principe de construction : ʿAbd + Nom d’Allah.',
+    sourceNote: 'Ce Nom figure dans la liste des Noms d’Allah établie par Ibn ‘Uthaymîn à partir du Coran et de la Sunna (al-Qawâ‘id al-Muthlâ, p. 15-16).',
   },
   {
     id: 'abd-an-nafi',
@@ -1423,7 +1423,7 @@ export const ABD_ALLAH_NAMES: MuslimName[] = [
     variants: [],
     tags: ['foi'],
     editorialLevel: 'sourced',
-    sourceNote: 'Référentiel interne OUMMAH des 99 Noms : Islamic Relief UK, contenu indiqué comme vérifié par Sheikh Dr. Saalim Al-Azhari. Principe de construction : ʿAbd + Nom d’Allah.',
+    sourceNote: 'Ce Nom figure dans la liste des Noms d’Allah établie par Ibn ‘Uthaymîn à partir du Coran et de la Sunna (al-Qawâ‘id al-Muthlâ, p. 15-16).',
   },
   {
     id: 'abd-an-nur',
@@ -1439,7 +1439,7 @@ export const ABD_ALLAH_NAMES: MuslimName[] = [
     variants: [],
     tags: ['foi'],
     editorialLevel: 'sourced',
-    sourceNote: 'Référentiel interne OUMMAH des 99 Noms : Islamic Relief UK, contenu indiqué comme vérifié par Sheikh Dr. Saalim Al-Azhari. Principe de construction : ʿAbd + Nom d’Allah.',
+    sourceNote: 'Ce Nom figure dans la liste des Noms d’Allah établie par Ibn ‘Uthaymîn à partir du Coran et de la Sunna (al-Qawâ‘id al-Muthlâ, p. 15-16).',
   },
   {
     id: 'abd-al-hadi',
@@ -1455,7 +1455,7 @@ export const ABD_ALLAH_NAMES: MuslimName[] = [
     variants: [],
     tags: ['foi'],
     editorialLevel: 'sourced',
-    sourceNote: 'Référentiel interne OUMMAH des 99 Noms : Islamic Relief UK, contenu indiqué comme vérifié par Sheikh Dr. Saalim Al-Azhari. Principe de construction : ʿAbd + Nom d’Allah.',
+    sourceNote: 'Ce Nom figure dans la liste des Noms d’Allah établie par Ibn ‘Uthaymîn à partir du Coran et de la Sunna (al-Qawâ‘id al-Muthlâ, p. 15-16).',
   },
   {
     id: 'abd-al-badi',
@@ -1471,7 +1471,7 @@ export const ABD_ALLAH_NAMES: MuslimName[] = [
     variants: [],
     tags: ['foi'],
     editorialLevel: 'sourced',
-    sourceNote: 'Référentiel interne OUMMAH des 99 Noms : Islamic Relief UK, contenu indiqué comme vérifié par Sheikh Dr. Saalim Al-Azhari. Principe de construction : ʿAbd + Nom d’Allah.',
+    sourceNote: 'Ce Nom figure dans la liste des Noms d’Allah établie par Ibn ‘Uthaymîn à partir du Coran et de la Sunna (al-Qawâ‘id al-Muthlâ, p. 15-16).',
   },
   {
     id: 'abd-al-baqi',
@@ -1487,7 +1487,7 @@ export const ABD_ALLAH_NAMES: MuslimName[] = [
     variants: [],
     tags: ['foi'],
     editorialLevel: 'sourced',
-    sourceNote: 'Référentiel interne OUMMAH des 99 Noms : Islamic Relief UK, contenu indiqué comme vérifié par Sheikh Dr. Saalim Al-Azhari. Principe de construction : ʿAbd + Nom d’Allah.',
+    sourceNote: 'Ce Nom figure dans la liste des Noms d’Allah établie par Ibn ‘Uthaymîn à partir du Coran et de la Sunna (al-Qawâ‘id al-Muthlâ, p. 15-16).',
   },
   {
     id: 'abd-al-warith',
@@ -1503,7 +1503,7 @@ export const ABD_ALLAH_NAMES: MuslimName[] = [
     variants: [],
     tags: ['foi'],
     editorialLevel: 'sourced',
-    sourceNote: 'Référentiel interne OUMMAH des 99 Noms : Islamic Relief UK, contenu indiqué comme vérifié par Sheikh Dr. Saalim Al-Azhari. Principe de construction : ʿAbd + Nom d’Allah.',
+    sourceNote: 'Ce Nom figure dans la liste des Noms d’Allah établie par Ibn ‘Uthaymîn à partir du Coran et de la Sunna (al-Qawâ‘id al-Muthlâ, p. 15-16).',
   },
   {
     id: 'abd-ar-rashid',
@@ -1519,7 +1519,7 @@ export const ABD_ALLAH_NAMES: MuslimName[] = [
     variants: [],
     tags: ['foi'],
     editorialLevel: 'sourced',
-    sourceNote: 'Référentiel interne OUMMAH des 99 Noms : Islamic Relief UK, contenu indiqué comme vérifié par Sheikh Dr. Saalim Al-Azhari. Principe de construction : ʿAbd + Nom d’Allah.',
+    sourceNote: 'Ce Nom figure dans la liste des Noms d’Allah établie par Ibn ‘Uthaymîn à partir du Coran et de la Sunna (al-Qawâ‘id al-Muthlâ, p. 15-16).',
   },
   {
     id: 'abd-as-sabur',
@@ -1535,6 +1535,42 @@ export const ABD_ALLAH_NAMES: MuslimName[] = [
     variants: [],
     tags: ['foi'],
     editorialLevel: 'sourced',
-    sourceNote: 'Référentiel interne OUMMAH des 99 Noms : Islamic Relief UK, contenu indiqué comme vérifié par Sheikh Dr. Saalim Al-Azhari. Principe de construction : ʿAbd + Nom d’Allah.',
+    sourceNote: 'Ce Nom figure dans la liste des Noms d’Allah établie par Ibn ‘Uthaymîn à partir du Coran et de la Sunna (al-Qawâ‘id al-Muthlâ, p. 15-16).',
   },
 ];
+
+// Ibn ‘Uthaymîn, al-Qawâ‘id al-Muthlâ (p. 13-16, Shamela 8874): Allah's names are tawqîfî, the list of 99 names reported
+// by at-Tirmidhî is weak, and he lists the names he found in the Quran and the Sunnah. The fiches below use a name that is
+// not in that list: they stay hidden until a verified opinion of Ibn Bâz, Ibn ‘Uthaymîn, al-Albânî or al-Fawzân covers them.
+const NOT_IN_IBN_UTHAYMIN_LIST = new Set([
+  'abd-al-khafid',
+  'abd-ar-rafi',
+  'abd-al-muizz',
+  'abd-al-mudhill',
+  'abd-al-adl',
+  'abd-al-jalil',
+  'abd-al-baith',
+  'abd-al-muhsi',
+  'abd-al-mubdi',
+  'abd-al-muid',
+  'abd-al-muhyi',
+  'abd-al-mumit',
+  'abd-al-wajid',
+  'abd-al-maajid',
+  'abd-al-wali',
+  'abd-al-muntaqim',
+  'abd-al-muqsit',
+  'abd-al-jami',
+  'abd-al-mughni',
+  'abd-al-mani',
+  'abd-ad-darr',
+  'abd-an-nafi',
+  'abd-an-nur',
+  'abd-al-hadi',
+  'abd-al-badi',
+  'abd-al-baqi',
+  'abd-ar-rashid',
+  'abd-as-sabur',
+]);
+
+export const ABD_ALLAH_NAMES: MuslimName[] = ALL_ABD_ALLAH_NAMES.filter((item) => !NOT_IN_IBN_UTHAYMIN_LIST.has(item.id));

@@ -1,49 +1,35 @@
-import type { MuslimName } from './types';
+import type { MuslimName, NameStatus } from './types';
 
+// Stories produced from a template (they only repeat the meaning or an unsourced generality): not shown.
 const GENERIC_STORY_MARKERS = [
   'documenté dans les répertoires de prénoms',
   'oummah retient ici un sens français court',
   'fiche catalogue',
+  'la fiche retient ici son sens lexical',
+  'son sens principal retenu ici est',
 ];
 
-export function getNameStory(item: MuslimName) {
+/**
+ * Religious status shown to the user. Only « Recommandé » is backed by a text (Muslim 2132 for Abdullah and
+ * Abd ar-Rahman, prophets and people named in the Quran, Companions); the other statuses were generic verdicts
+ * without a source, so no verdict is shown for them.
+ */
+export function getShownStatus(item: MuslimName): NameStatus | null {
+  return item.status === 'recommended' ? item.status : null;
+}
+
+export function getNameStory(item: MuslimName): string | null {
   const raw = (item.story ?? '').trim();
   const lower = raw.toLocaleLowerCase('fr');
   const isGeneric = !raw || GENERIC_STORY_MARKERS.some((marker) => lower.includes(marker));
-
-  if (!isGeneric) return raw;
-
-  if (item.historicalRole) {
-    return `${item.historicalRole} Son sens principal retenu dans cette fiche est : « ${stripFinalPunctuation(item.meaning)} ».`;
-  }
-
-  if (item.quranReference) {
-    return `Ce prénom possède un repère coranique indiqué plus bas dans la fiche. Son sens principal retenu est : « ${stripFinalPunctuation(item.meaning)} ».`;
-  }
-
-  if (item.tags.includes('compagnon')) {
-    return `Prénom connu dans l’histoire des premières générations musulmanes. Il est aujourd’hui apprécié notamment pour son sens : « ${stripFinalPunctuation(item.meaning)} ».`;
-  }
-
-  if (item.tags.includes('sahabiyya')) {
-    return `Prénom féminin connu dans l’histoire des premières générations musulmanes. Son sens principal retenu est : « ${stripFinalPunctuation(item.meaning)} ».`;
-  }
-
-  const origin = item.origin.length ? item.origin.join(' / ') : 'culturelle';
-  const variants = getReadableVariants(item);
-  const variantsText = variants.length
-    ? ` On le rencontre aussi sous les formes ${variants.slice(0, 3).join(', ')}.`
-    : '';
-  return `Prénom d’origine ${origin.toLocaleLowerCase('fr')} dont le sens principal retenu par OUMMAH est : « ${stripFinalPunctuation(item.meaning)} ».${variantsText}`;
+  return isGeneric ? null : raw;
 }
 
 export function getNameCardContext(item: MuslimName) {
-  const story = getNameStory(item);
   if (item.historicalRole) return item.historicalRole;
-  if (item.quranReference && !story.toLocaleLowerCase('fr').includes('repère coranique')) {
-    return `${story} Repère coranique : ${item.quranReference}.`;
-  }
-  return story;
+  const story = getNameStory(item);
+  if (story) return story;
+  return item.quranReference ? `Repère coranique : ${item.quranReference}.` : null;
 }
 
 export function getReadableVariants(item: MuslimName) {
@@ -80,8 +66,4 @@ function normalizeVariant(value: string) {
     .replace(/[ʿʾ’‘'`-]/g, '')
     .replace(/\s+/g, '')
     .toLocaleLowerCase('fr');
-}
-
-function stripFinalPunctuation(value: string) {
-  return value.trim().replace(/[.!?;:,]+$/g, '');
 }

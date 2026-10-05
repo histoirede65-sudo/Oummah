@@ -8,9 +8,9 @@ import { getMuslimName } from '../../features/muslim-names/data';
 import { relatedNames } from '../../features/muslim-names/collections';
 import { addNameToHistory, loadNameFavorites, toggleNameFavorite } from '../../features/muslim-names/storage';
 import { NAME_STATUS_META } from '../../features/muslim-names/types';
-import { getLanguageAndCulture, getMeaningReliability, getNameSources } from '../../features/muslim-names/sources';
+import { getLanguageAndCulture, getNameSources } from '../../features/muslim-names/sources';
 import { EditorialPill, NameRow, ScreenHeader, StatusPill, prenomTheme } from '../../features/muslim-names/ui';
-import { getNameStory, getReadableVariants, isExternalSourceClickable } from '../../features/muslim-names/presentation';
+import { getNameStory, getReadableVariants, getShownStatus, isExternalSourceClickable } from '../../features/muslim-names/presentation';
 import { colors } from '../../theme/colors';
 import { typography } from '../../theme/typography';
 
@@ -22,12 +22,13 @@ export default function PrenomDetailScreen(){
   useEffect(()=>{if(!item)return;void addNameToHistory(item.id);void loadNameFavorites().then(ids=>setFavorite(ids.includes(item.id)));},[item?.id]);
   if(!item)return <LinearGradient colors={[colors.background,colors.backgroundSecondary]} style={styles.screen}><SafeAreaView style={styles.safe}><ScreenHeader title="Prénom" onBack={()=>router.back()}/><View style={styles.notFound}><Ionicons name="alert-circle-outline" size={28} color={colors.goldLight}/><Text style={styles.notFoundTitle}>Prénom introuvable</Text><Text style={styles.notFoundText}>Cette fiche n’existe plus ou l’adresse est incorrecte.</Text></View></SafeAreaView></LinearGradient>;
 
-  const status=NAME_STATUS_META[item.status];
+  const shownStatus=getShownStatus(item);
+  const status=shownStatus?NAME_STATUS_META[shownStatus]:null;
   const related=relatedNames(item);
   const toggle=async()=>{const ids=await toggleNameFavorite(item.id);setFavorite(ids.includes(item.id));};
   const story=getNameStory(item);
   const readableVariants=getReadableVariants(item);
-  const share=()=>Share.share({message:`${item.name}${item.arabic?` — ${item.arabic}`:''}\n${item.meaning}\n${story}\n\nDécouvert dans OUMMAH · Guide des prénoms`});
+  const share=()=>Share.share({message:`${item.name}${item.arabic?` — ${item.arabic}`:''}\n${item.meaning}${story?`\n${story}`:''}\n\nDécouvert dans OUMMAH · Guide des prénoms`});
   const openSource=(url?:string)=>{
     if(!isExternalSourceClickable(url))return;
     Linking.openURL(url as string).catch(()=>{
@@ -36,7 +37,6 @@ export default function PrenomDetailScreen(){
   };
   const isCatalogue=item.editorialLevel==='catalogue';
   const sources=getNameSources(item);
-  const reliability=getMeaningReliability(item);
   const {language,culture}=getLanguageAndCulture(item);
   const accent=item.gender==='boy'?'#78B9FF':'#F2A6C7';
   const accentWash=item.gender==='boy'?'rgba(86,155,235,.12)':'rgba(231,126,174,.12)';
@@ -64,22 +64,22 @@ export default function PrenomDetailScreen(){
               <Text style={styles.heroLabel}>SENS DU PRÉNOM</Text>
               <Text style={styles.heroMeaningText}>{item.meaning}</Text>
             </View>
-            <View style={styles.heroStory}>
+            {story?<View style={styles.heroStory}>
               <Text style={styles.heroLabel}>{isCatalogue?'À PROPOS DE CE PRÉNOM':'HISTOIRE, USAGE & REPÈRE'}</Text>
               <Text style={styles.heroStoryText}>{story}</Text>
-            </View>
+            </View>:null}
           </View>
 
-          <View style={styles.statusLine}>{isCatalogue?<EditorialPill item={item}/>:<StatusPill status={item.status}/>}<View style={[styles.genderPill,{borderColor:accentBorder,backgroundColor:accentWash}]}><Ionicons name={item.gender==='boy'?'male-outline':'female-outline'} size={13} color={accent}/><Text style={[styles.gender,{color:accent}]}>{item.gender==='boy'?'Garçon':'Fille'}</Text></View></View>
+          <View style={styles.statusLine}>{isCatalogue?<EditorialPill item={item}/>:shownStatus?<StatusPill status={shownStatus}/>:null}<View style={[styles.genderPill,{borderColor:accentBorder,backgroundColor:accentWash}]}><Ionicons name={item.gender==='boy'?'male-outline':'female-outline'} size={13} color={accent}/><Text style={[styles.gender,{color:accent}]}>{item.gender==='boy'?'Garçon':'Fille'}</Text></View></View>
         </View>
 
         <View style={styles.variantsCard}><Text style={styles.sectionLabel}>LES ÉCRITURES DU PRÉNOM</Text><Text style={styles.variantsIntro}>Forme principale : <Text style={styles.variantMain}>{item.name}</Text></Text><View style={styles.scriptRows}>{item.arabic?<View style={styles.scriptRow}><Text style={styles.scriptLabel}>Arabe</Text><Text style={styles.scriptArabic}>{item.arabic}</Text></View>:null}<View style={styles.scriptRow}><Text style={styles.scriptLabel}>Translittération</Text><Text style={styles.scriptValue}>{item.transliteration}</Text></View></View>{readableVariants.length?<><Text style={styles.variantHeading}>VARIANTES COURANTES</Text><View style={styles.variants}>{readableVariants.map(v=><View key={v} style={styles.variant}><Text style={styles.variantText}>{v}</Text></View>)}</View></>:<Text style={styles.variantsEmpty}>Pas d’autre graphie courante suffisamment établie pour cette fiche.</Text>}<Text style={styles.variantsNote}>Les variantes latines changent selon les pays et les habitudes de translittération. La forme arabe permet de reconnaître le même prénom malgré ces différences.</Text></View>
 
-        {isCatalogue?<View style={styles.catalogueCard}><View style={styles.statusHead}><Ionicons name="library-outline" size={20} color={colors.goldLight}/><Text style={styles.statusTitle}>Fiche catalogue</Text></View><Text style={styles.statusReason}>Cette fiche sert à élargir la découverte. OUMMAH ne lui attribue pas encore de verdict religieux ni d’étymologie définitive tant que la revue éditoriale n’est pas terminée.</Text><Text style={styles.statusDefinition}>Vous pouvez la sauvegarder et la comparer, mais vérifiez le sens exact avant un choix définitif.</Text></View>:<View style={styles.statusCard}>
+        {isCatalogue?<View style={styles.catalogueCard}><View style={styles.statusHead}><Ionicons name="library-outline" size={20} color={colors.goldLight}/><Text style={styles.statusTitle}>Fiche catalogue</Text></View><Text style={styles.statusReason}>Cette fiche sert à élargir la découverte. OUMMAH ne lui attribue pas encore de verdict religieux ni d’étymologie définitive tant que la revue éditoriale n’est pas terminée.</Text><Text style={styles.statusDefinition}>Vous pouvez la sauvegarder et la comparer, mais vérifiez le sens exact avant un choix définitif.</Text></View>:status?<View style={styles.statusCard}>
           <View style={styles.statusHead}><Ionicons name="shield-checkmark-outline" size={20} color={item.status==='note'?colors.goldLight:colors.success}/><Text style={styles.statusTitle}>{status.symbol} {status.label}</Text></View>
           <Text style={styles.statusReason}>{item.statusReason}</Text>
           <Text style={styles.statusDefinition}>{status.description}</Text>
-        </View>}
+        </View>:null}
 
         {item.historicalRole?<InfoCard icon="people-outline" eyebrow="REPÈRE HISTORIQUE" title={item.historicalRole}/>:null}
         {item.quranReference?<InfoCard icon="bookmark-outline" eyebrow="REPÈRE CORANIQUE" title={item.quranReference} note="La référence indique où le nom, la personne ou le terme apparaît ; elle ne signifie pas automatiquement que le prénom est recommandé."/>:null}
@@ -96,16 +96,15 @@ export default function PrenomDetailScreen(){
             <Identity label="Origine" value={item.origin.join(' · ') || 'À préciser'}/>
             <Identity label="Langue" value={language.join(' · ')}/>
             <Identity label="Culture / usage" value={culture.join(' · ')}/>
-            <Identity label="Fiabilité du sens" value={reliability==='high' ? 'Élevée · source explicite' : reliability==='medium' ? 'Bonne · sens renseigné et revu' : 'Non publiée'}/>
           </View>
           {item.etymology?<Text style={styles.etymology}>{item.etymology}</Text>:null}
         </View>
 
 
-        <View style={styles.sourcesCard}>
+        {sources.length?<View style={styles.sourcesCard}>
           <View style={styles.sourcesHead}><Ionicons name="library-outline" size={19} color={colors.goldLight}/><View style={{flex:1}}><Text style={styles.sourceLabel}>SOURCES & FIABILITÉ</Text><Text style={styles.sourcesIntro}>Chaque source indique ce qu’elle permet réellement d’établir. Une source culturelle n’équivaut pas à un avis religieux.</Text></View></View>
           {sources.map((source,index)=><View key={`${source.label}-${index}`} style={styles.sourceItem}><Text style={styles.sourceName}>{source.label}</Text>{source.reference?<Text style={styles.sourceText}>{source.reference}</Text>:null}{isExternalSourceClickable(source.url)?<Pressable onPress={()=>openSource(source.url)} hitSlop={6}><Text style={styles.sourceUrl}>Ouvrir la source ↗</Text></Pressable>:null}<Text style={styles.sourceSupports}>Appuie : {source.supports.join(' · ')}</Text>{source.note?<Text style={styles.sourceNote}>{source.note}</Text>:null}</View>)}
-        </View>
+        </View>:null}
 
         <Pressable onPress={()=>void toggle()} style={[styles.favoriteButton,favorite&&styles.favoriteButtonActive]}><Ionicons name={favorite?'heart':'heart-outline'} size={18} color={favorite?colors.background:colors.goldLight}/><Text style={[styles.favoriteText,favorite&&styles.favoriteTextActive]}>{favorite?'Dans mes favoris':'Ajouter à mes favoris'}</Text></Pressable>
 
