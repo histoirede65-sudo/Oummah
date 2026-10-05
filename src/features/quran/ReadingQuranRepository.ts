@@ -113,7 +113,7 @@ export const readingQuranRepository = {
     surahId: number,
     language: "fr" | "en" = "fr",
   ): Promise<QuranFoundationVerse[]> {
-    const translationResourceId = language === "en" ? 131 : 31;
+    const translationResourceId = language === "en" ? 20 : 31;
     const response = await fetch(
       `https://api.quran.com/api/v4/verses/by_chapter/${surahId}?language=${language}&words=true&word_fields=text_uthmani,code_v1,code_v2,translation,transliteration&fields=text_uthmani,code_v1,code_v2,juz_number,hizb_number,page_number&translations=${translationResourceId}&per_page=300`,
     );

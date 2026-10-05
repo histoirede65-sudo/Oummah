@@ -181,7 +181,7 @@ type QuranComTranslationVerse = {
 type QuranTranslationLanguage = "fr" | "en";
 
 function translationResource(language: QuranTranslationLanguage) {
-  return language === "en" ? 131 : 31;
+  return language === "en" ? 20 : 31;
 }
 
 async function getChapterTranslations(
