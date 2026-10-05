@@ -15,6 +15,9 @@ type LearningAudioRequest = {
   endRatio?: number;
   startOffsetSeconds?: number;
   endOffsetSeconds?: number;
+  /** Measured range in seconds; takes precedence over the ratios above. */
+  startSeconds?: number;
+  endSeconds?: number;
 };
 
 type UseLearningAudioPlayerOptions = {
@@ -39,6 +42,11 @@ function clamp(value: number, minimum: number, maximum: number) {
 }
 
 function resolveRange(duration: number, request: LearningAudioRequest): AudioRange {
+  if (request.startSeconds !== undefined && request.endSeconds !== undefined) {
+    const startAt = clamp(request.startSeconds, 0, Math.max(0, duration - 0.2));
+    const endAt = clamp(request.endSeconds, startAt + 0.2, duration);
+    return { key: request.key, startAt, endAt };
+  }
   const startRatio = clamp(request.startRatio ?? 0, 0, 0.94);
   const endRatio = clamp(request.endRatio ?? 1, startRatio + 0.03, 1);
   const startAt = clamp(
@@ -327,6 +335,8 @@ export function useLearningAudioPlayer({
       endRatio = 1,
       startOffsetSeconds = 0,
       endOffsetSeconds = 0,
+      startSeconds?: number,
+      endSeconds?: number,
     ) => {
       if (!player.isLoaded || player.duration <= 0) return;
       const request: LearningAudioRequest = {
@@ -336,6 +346,8 @@ export function useLearningAudioPlayer({
         endRatio,
         startOffsetSeconds,
         endOffsetSeconds,
+        startSeconds,
+        endSeconds,
       };
       const range = resolveRange(player.duration, request);
       rangeRef.current = range;

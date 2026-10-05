@@ -1,5 +1,8 @@
 import { storageService } from "../../core/storage";
 import { findOfficialFrenchDua } from "./OfficialFrenchDuaCatalog";
+import DUA_AUDIO_TIMINGS from "./duaAudioTimings.json";
+
+type DuaAudioTiming = { start: number; end: number; words?: number[] };
 
 export type DuaSectionId =
   | "morning"
@@ -25,6 +28,8 @@ export type DuaItem = {
   arabic: string;
   phonetic: string;
   french: string;
+  /** Traduction anglaise de la source vérifiée, quand elle existe. */
+  english?: string;
   repetitions: number;
   audioUrl?: string;
   audioSource?: number;
@@ -33,6 +38,11 @@ export type DuaItem = {
   audioStartOffsetSeconds?: number;
   audioEndOffsetSeconds?: number;
   audioHighlightDelaySeconds?: number;
+  /** Mesuré sur l'enregistrement : début et fin de la dou'a, en secondes. */
+  audioStartSeconds?: number;
+  audioEndSeconds?: number;
+  /** Début de chaque mot affiché dans l'enregistrement, en secondes. */
+  audioWordTimes?: readonly number[];
   frenchIsSummary?: boolean;
   source: string;
   sourceUrl?: string;
@@ -65,7 +75,7 @@ type RawFrenchDua = {
   category?: readonly string[];
   arabic: string;
   transliteration?: string;
-  translation?: { fr?: string };
+  translation?: { fr?: string; en?: string };
   repeat?: number;
   reference?: string;
   verify_url?: string;
@@ -831,7 +841,18 @@ function normalizeCatalog(
             : verified?.translation?.fr?.trim()
             ? { text: verified.translation.fr.trim(), isSummary: false }
             : frenchMeaning(focused.arabic, title, section);
-          const canUseLearningAudio = focused.learnable && Boolean(item.audio);
+          const timing = (DUA_AUDIO_TIMINGS as Record<string, DuaAudioTiming>)[
+            `${category.id}:${item.id}`
+          ];
+          // Un enregistrement mesuré est toujours lu, même si le texte n'a pas
+          // été reconnu comme une formule à apprendre.
+          const canUseLearningAudio =
+            Boolean(item.audio) && (focused.learnable || Boolean(timing));
+          const wordTimes =
+            timing?.words &&
+            timing.words.length === focused.arabic.trim().split(/\s+/).length
+              ? timing.words
+              : undefined;
           return {
             id: `${category.id}:${item.id}`,
             order: item.id,
@@ -840,33 +861,18 @@ function normalizeCatalog(
               verified?.transliteration?.trim() ||
               phoneticFromArabic(focused.arabic),
             french: meaning.text,
+            english: verified?.translation?.en?.trim() || undefined,
             frenchIsSummary: meaning.isSummary,
             repetitions: Math.max(
               1,
               Number(item.count) || Number(verified?.repeat) || 1,
             ),
             audioUrl: canUseLearningAudio ? resolveUrl(item.audio) : undefined,
-            audioStartRatio: focused.audioStartRatio,
-            audioEndRatio: focused.audioEndRatio,
-            // The first morning track contains a spoken explanation before
-            // Ayat al-Kursi. Start playback at the real recitation instead of
-            // playing the introduction while the Arabic word cursor advances.
-            audioStartOffsetSeconds: canUseLearningAudio
-              ? category.id === 1 && item.id === 1
-                ? 8.2
-                : focused.hasNarration
-                  ? 2.2
-                  : 0.45
-              : 0,
-            audioEndOffsetSeconds: canUseLearningAudio ? 0.28 : 0,
-            // Keep a short settling delay after the focused audio begins. Other
-            // narrated tracks retain a longer guard before highlighting.
-            audioHighlightDelaySeconds:
-              category.id === 1 && item.id === 1
-                ? 0.85
-                : focused.hasNarration
-                  ? 2.8
-                  : 0,
+            // Sans mesure, on lit l'enregistrement en entier : une coupe
+            // devinée tombait presque toujours au milieu d'un mot.
+            audioStartSeconds: timing?.start,
+            audioEndSeconds: timing?.end,
+            audioWordTimes: wordTimes,
             source: official
               ? "La Citadelle du musulman — édition française"
               : verified?.reference?.trim() || "Hisn al-Muslim",
