@@ -21,6 +21,7 @@ import {
   type CalendarSettings,
   type ReminderTiming,
 } from "../../../features/calendar/CalendarStore";
+import { refreshCalendarReminders } from "../../../features/calendar/calendarReminders";
 import {
   formatGregorian,
   formatHijri,
@@ -99,6 +100,7 @@ export default function CalendarEventDetail() {
     const next = { ...settings, eventReminders };
     setSettings(next);
     void saveCalendarSettings(next);
+    void refreshCalendarReminders(next, { force: true, askPermission: true });
   };
 
   const askWasil = () => {
