@@ -7,6 +7,7 @@ import { LAST_TEN_HADITHS, LAYLAT_AL_QADR_DUA } from '../../features/tahajjud/ta
 import { clock, type TahajjudNight } from '../../features/tahajjud/tahajjudNight';
 import { getRamadanNight, type RamadanNight } from '../../features/tahajjud/tahajjudRamadan';
 import { night as palette, nightType } from './theme';
+import { tx, txCount } from '../../features/tahajjud/tahajjudI18n';
 
 /**
  * Ramadan mode: « n-ième nuit », suhoor until Fajr, and for the last ten nights the odd nights
@@ -29,18 +30,18 @@ export function RamadanCard({ tonight, nights }: { tonight: TahajjudNight; night
       <LinearGradient colors={['#2A1F45', '#15102C']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.card}>
         <View style={styles.head}>
           <Ionicons name="moon" size={18} color={palette.goldSoft} />
-          <Text style={styles.eyebrow}>RAMADAN · {ramadan.night}{ramadan.night === 1 ? 're' : 'e'} NUIT</Text>
+          <Text style={styles.eyebrow}>{tx('RAMADAN · NUIT {0}', [ramadan.night])}</Text>
         </View>
 
         {ramadan.lastTen ? (
           <>
             <Text style={styles.title}>
-              {ramadan.odd ? 'Nuit impaire : peut-être Laylat al-Qadr' : 'Les dix dernières nuits'}
+              {ramadan.odd ? tx('Nuit impaire : peut-être Laylat al-Qadr') : tx('Les dix dernières nuits')}
             </Text>
             <Text style={styles.text}>
               {ramadan.odd
-                ? '« La nuit d’Al-Qadr est meilleure que mille mois. » (97:3)'
-                : '« Cherchez la nuit du Qadr dans les nuits impaires des dix derniers jours de Ramadan. » Demain soir est une nuit impaire.'}
+                ? tx('« La nuit d’Al-Qadr est meilleure que mille mois. » (97:3)')
+                : tx('« Cherchez la nuit du Qadr dans les nuits impaires des dix derniers jours de Ramadan. » Demain soir est une nuit impaire.')}
             </Text>
 
             <View style={styles.tracker}>
@@ -58,7 +59,7 @@ export function RamadanCard({ tonight, nights }: { tonight: TahajjudNight; night
                 );
               })}
             </View>
-            <Text style={styles.trackSummary}>{prayedInLastTen}/10 nuits priées · les nuits impaires sont en or</Text>
+            <Text style={styles.trackSummary}>{tx('{0}/10 nuits priées · les nuits impaires sont en or', [prayedInLastTen])}</Text>
 
             <View style={styles.dua}>
               <Text style={styles.duaArabic}>{LAYLAT_AL_QADR_DUA.arabic}</Text>
@@ -70,14 +71,14 @@ export function RamadanCard({ tonight, nights }: { tonight: TahajjudNight; night
           </>
         ) : (
           <>
-            <Text style={styles.title}>Le mois des nuits debout</Text>
-            <Text style={styles.text}>Encore {21 - ramadan.night} nuit{21 - ramadan.night > 1 ? 's' : ''} avant les dix dernières. Prier la nuit avec le suhoor, c’est une seule montée.</Text>
+            <Text style={styles.title}>{tx("Le mois des nuits debout")}</Text>
+            <Text style={styles.text}>{txCount(21 - ramadan.night, 'Encore {0} nuit avant les dix dernières. Prier la nuit avec le suhoor, c’est une seule montée.', 'Encore {0} nuits avant les dix dernières. Prier la nuit avec le suhoor, c’est une seule montée.')}</Text>
           </>
         )}
 
         <View style={styles.suhoor}>
           <Ionicons name="restaurant-outline" size={16} color={palette.goldSoft} />
-          <Text style={styles.suhoorText}>Suhoor jusqu’à Fajr, {clock(tonight.fajr)}</Text>
+          <Text style={styles.suhoorText}>{tx("Suhoor jusqu’à Fajr, ")}{clock(tonight.fajr)}</Text>
         </View>
       </LinearGradient>
     </Animated.View>

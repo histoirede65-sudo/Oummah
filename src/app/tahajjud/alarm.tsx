@@ -21,6 +21,7 @@ import {
 } from '../../features/tahajjud/tahajjudService';
 import { loadTahajjudSettings, saveTahajjudSettings, type TahajjudSettings } from '../../features/tahajjud/TahajjudStore';
 import { useTahajjudNight } from '../../features/tahajjud/useTahajjudNight';
+import { tx } from '../../features/tahajjud/tahajjudI18n';
 
 const NOTIFICATIONS: readonly { key: keyof TahajjudSettings['notifications']; title: string; text: string }[] = [
   { key: 'bedtime', title: 'Heure du coucher', text: 'Selon le nombre de cycles de sommeil choisi ci-dessus' },
@@ -45,9 +46,9 @@ export default function TahajjudAlarmScreen() {
   const update = async (next: TahajjudSettings) => {
     const enabling = next.alarm.enabled || Object.values(next.notifications).some(Boolean);
     if (enabling && !(await ensureTahajjudNotificationPermission())) {
-      Alert.alert('Notifications désactivées', 'Autorisez les notifications d’OUMMAH pour être réveillé.', [
-        { text: 'Plus tard', style: 'cancel' },
-        { text: 'Réglages', onPress: () => void Linking.openSettings() },
+      Alert.alert(tx('Notifications désactivées'), tx('Autorisez les notifications d’OUMMAH pour être réveillé.'), [
+        { text: tx('Plus tard'), style: 'cancel' },
+        { text: tx('Réglages'), onPress: () => void Linking.openSettings() },
       ]);
       return;
     }
@@ -56,7 +57,7 @@ export default function TahajjudAlarmScreen() {
     void refreshTahajjudNotifications(true);
   };
 
-  if (!settings) return <TahajjudShell title="Mon réveil" eyebrow="Qiyam al-Layl"><View /></TahajjudShell>;
+  if (!settings) return <TahajjudShell title={tx("Mon réveil")} eyebrow={tx("Qiyam al-Layl")}><View /></TahajjudShell>;
 
   const tonight = state?.night ?? null;
   const wakeUp = tonight ? alarmTime(tonight, settings.alarm.mode, settings.alarm.customTime) : null;
@@ -76,16 +77,16 @@ export default function TahajjudAlarmScreen() {
   const addSystemAlarm = async () => {
     if (!wakeUp) return;
     const ok = await setSystemAlarm(wakeUp);
-    if (!ok) Alert.alert('Réveil du téléphone', 'Impossible d’ouvrir l’application Horloge sur ce téléphone.');
+    if (!ok) Alert.alert(tx('Réveil du téléphone'), tx('Impossible d’ouvrir l’application Horloge sur ce téléphone.'));
   };
 
   return (
-    <TahajjudShell title="Mon réveil" eyebrow="Qiyam al-Layl">
+    <TahajjudShell title={tx("Mon réveil")} eyebrow={tx("Qiyam al-Layl")}>
       <GlassCard gold>
         <View style={styles.row}>
           <View style={styles.rowCopy}>
-            <Text style={styles.cardTitle}>Me réveiller pour prier la nuit</Text>
-            <Text style={styles.cardText}>Chaque nuit, recalculé selon vos horaires.</Text>
+            <Text style={styles.cardTitle}>{tx("Me réveiller pour prier la nuit")}</Text>
+            <Text style={styles.cardText}>{tx("Chaque nuit, recalculé selon vos horaires.")}</Text>
           </View>
           <Switch
             value={settings.alarm.enabled}
@@ -97,12 +98,12 @@ export default function TahajjudAlarmScreen() {
         {wakeUp ? (
           <View style={styles.bigTime}>
             <Text style={styles.bigTimeValue}>{clock(wakeUp)}</Text>
-            <Text style={styles.bigTimeLabel}>{settings.alarm.enabled ? 'cette nuit' : 'désactivé'}</Text>
+            <Text style={styles.bigTimeLabel}>{settings.alarm.enabled ? tx('cette nuit') : tx('désactivé')}</Text>
           </View>
         ) : null}
       </GlassCard>
 
-      <Text style={[shellStyles.sectionLabel, styles.section]}>Quand me réveiller</Text>
+      <Text style={[shellStyles.sectionLabel, styles.section]}>{tx("Quand me réveiller")}</Text>
       <GlassCard style={styles.list}>
         {ALARM_MODES.map(({ mode, label }, index) => {
           const selected = settings.alarm.mode === mode;
@@ -132,26 +133,26 @@ export default function TahajjudAlarmScreen() {
 
       {tonight && wakeUp ? (
         <>
-          <Text style={[shellStyles.sectionLabel, styles.section]}>Ma nuit</Text>
+          <Text style={[shellStyles.sectionLabel, styles.section]}>{tx("Ma nuit")}</Text>
           <GlassCard>
             <View style={styles.metric}>
               <Ionicons name="hourglass-outline" size={18} color={night.goldSoft} />
               <Text style={styles.metricText}>
-                <Text style={styles.metricStrong}>{formatDuration(available ?? 0)}</Text> pour prier, du réveil à Fajr ({clock(tonight.fajr)})
+                <Text style={styles.metricStrong}>{formatDuration(available ?? 0)}</Text> {tx("pour prier, du réveil à Fajr (")}{clock(tonight.fajr)})
               </Text>
             </View>
             {rest !== null && rest >= 45 * 60_000 ? (
               <View style={styles.metric}>
                 <Ionicons name="bed-outline" size={18} color={night.lavender} />
                 <Text style={styles.metricText}>
-                  Après une prière d’environ 30 min, <Text style={styles.metricStrong}>{formatDuration(rest)}</Text> pour vous recoucher avant Fajr
+                  {tx("Après une prière d’environ 30 min, ")}<Text style={styles.metricStrong}>{formatDuration(rest)}</Text> {tx("pour vous recoucher avant Fajr")}
                 </Text>
               </View>
             ) : null}
             {bedtimes.length ? (
               <>
-                <Text style={styles.bedTitle}>Se coucher à</Text>
-                <Text style={styles.bedHint}>Cycles de sommeil complets (≈ 1 h 30) : on se réveille plus facilement. Touchez un horaire pour être prévenu chaque soir.</Text>
+                <Text style={styles.bedTitle}>{tx("Se coucher à")}</Text>
+                <Text style={styles.bedHint}>{tx("Cycles de sommeil complets (≈ 1 h 30) : on se réveille plus facilement. Touchez un horaire pour être prévenu chaque soir.")}</Text>
                 <View style={styles.bedRow}>
                   {[...bedtimes].reverse().slice(0, 3).map((item) => {
                     const chosen = settings.notifications.bedtime && settings.bedtimeCycles === item.cycles;
@@ -163,7 +164,7 @@ export default function TahajjudAlarmScreen() {
                       >
                         {chosen ? <Ionicons name="notifications" size={13} color={night.sky0} /> : null}
                         <Text style={[styles.bedTime, chosen && styles.bedTextOn]}>{clock(item.at)}</Text>
-                        <Text style={[styles.bedSleep, chosen && styles.bedTextOn]}>{formatDuration(item.sleep)} de sommeil</Text>
+                        <Text style={[styles.bedSleep, chosen && styles.bedTextOn]}>{formatDuration(item.sleep)} {tx("de sommeil")}</Text>
                       </Pressable>
                     );
                   })}
@@ -176,26 +177,26 @@ export default function TahajjudAlarmScreen() {
             <Pressable onPress={() => void addSystemAlarm()} style={({ pressed }) => [styles.systemButton, pressed && styles.pressed]}>
               <Ionicons name="alarm-outline" size={20} color={night.goldSoft} />
               <View style={styles.rowCopy}>
-                <Text style={styles.cardTitle}>Ajouter au réveil du téléphone</Text>
-                <Text style={styles.cardText}>Une vraie sonnerie à {clock(wakeUp)}, même en mode silencieux.</Text>
+                <Text style={styles.cardTitle}>{tx("Ajouter au réveil du téléphone")}</Text>
+                <Text style={styles.cardText}>{tx("Une vraie sonnerie à ")}{clock(wakeUp)}{tx(", même en mode silencieux.")}</Text>
               </View>
               <Ionicons name="chevron-forward" size={18} color={night.muted} />
             </Pressable>
           ) : Platform.OS === 'ios' ? (
             <Text style={styles.note}>
-              Sur iPhone, OUMMAH vous réveille par une notification : gardez le son activé, ou ajoutez aussi une alarme dans l’app Horloge.
+              {tx("Sur iPhone, OUMMAH vous réveille par une notification : gardez le son activé, ou ajoutez aussi une alarme dans l’app Horloge.")}
             </Text>
           ) : null}
         </>
       ) : null}
 
-      <Text style={[shellStyles.sectionLabel, styles.section]}>Notifications</Text>
+      <Text style={[shellStyles.sectionLabel, styles.section]}>{tx("Notifications")}</Text>
       <GlassCard style={styles.list}>
         {NOTIFICATIONS.map((item, index) => (
           <View key={item.key} style={[styles.option, index > 0 && styles.optionBorder]}>
             <View style={styles.rowCopy}>
-              <Text style={styles.optionLabelOn}>{item.title}</Text>
-              <Text style={styles.cardText}>{item.text}</Text>
+              <Text style={styles.optionLabelOn}>{tx(item.title)}</Text>
+              <Text style={styles.cardText}>{tx(item.text)}</Text>
             </View>
             <Switch
               value={settings.notifications[item.key]}
@@ -206,7 +207,7 @@ export default function TahajjudAlarmScreen() {
           </View>
         ))}
       </GlassCard>
-      <Text style={styles.note}>Tout peut être désactivé à tout moment. Une nuit enregistrée ne reçoit plus de rappel.</Text>
+      <Text style={styles.note}>{tx("Tout peut être désactivé à tout moment. Une nuit enregistrée ne reçoit plus de rappel.")}</Text>
     </TahajjudShell>
   );
 }

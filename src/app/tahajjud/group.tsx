@@ -21,6 +21,7 @@ import {
   sendGroupMessage,
   type GroupMessage,
 } from '../../features/tahajjud/tahajjudGroups';
+import { tx, txCount } from '../../features/tahajjud/tahajjudI18n';
 
 const POLL_MS = 4_000;
 const AUTHOR_COLORS = ['#F4D995', '#B7ABF2', '#7FD8A6', '#8EC5FF', '#F7A8C4', '#FFB37A'];
@@ -38,7 +39,7 @@ function ReminderSheet({ visible, onClose, onCreate }: {
   onClose: () => void;
   onCreate: (body: string, at: Date, repeatDaily: boolean) => Promise<void>;
 }) {
-  const [body, setBody] = useState(REMINDER_PRESETS[0]);
+  const [body, setBody] = useState(() => tx(REMINDER_PRESETS[0]));
   const [time, setTime] = useState('04:00');
   const [repeat, setRepeat] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -63,21 +64,21 @@ function ReminderSheet({ visible, onClose, onCreate }: {
           <LinearGradient colors={['#1C1546', '#0E0A26']} style={StyleSheet.absoluteFill} />
           <View style={styles.sheetHead}>
             <Ionicons name="alarm" size={26} color={night.goldSoft} />
-            <Text style={styles.sheetTitle}>Rappel pour le groupe</Text>
+            <Text style={styles.sheetTitle}>{tx("Rappel pour le groupe")}</Text>
           </View>
-          <Text style={styles.sheetText}>Chaque membre reçoit une notification à l’heure choisie.</Text>
+          <Text style={styles.sheetText}>{tx("Chaque membre reçoit une notification à l’heure choisie.")}</Text>
 
           <View style={styles.presets}>
             {REMINDER_PRESETS.map((preset) => (
-              <Pressable key={preset} onPress={() => setBody(preset)} style={[styles.preset, body === preset && styles.presetOn]}>
-                <Text style={[styles.presetText, body === preset && styles.presetTextOn]}>{preset}</Text>
+              <Pressable key={preset} onPress={() => setBody(tx(preset))} style={[styles.preset, body === tx(preset) && styles.presetOn]}>
+                <Text style={[styles.presetText, body === tx(preset) && styles.presetTextOn]}>{tx(preset)}</Text>
               </Pressable>
             ))}
           </View>
-          <TextInput value={body} onChangeText={setBody} maxLength={200} placeholder="Texte du rappel" placeholderTextColor={night.placeholder} style={styles.field} />
+          <TextInput value={body} onChangeText={setBody} maxLength={200} placeholder={tx("Texte du rappel")} placeholderTextColor={night.placeholder} style={styles.field} />
 
           <View style={styles.timeRow}>
-            <Text style={styles.label}>Heure</Text>
+            <Text style={styles.label}>{tx("Heure")}</Text>
             <TextInput
               value={time}
               onChangeText={(value) => setTime(formatTimeInput(value))}
@@ -89,15 +90,15 @@ function ReminderSheet({ visible, onClose, onCreate }: {
             />
           </View>
           <View style={styles.timeRow}>
-            <Text style={styles.label}>Chaque jour</Text>
+            <Text style={styles.label}>{tx("Chaque jour")}</Text>
             <Switch value={repeat} onValueChange={setRepeat} trackColor={{ false: 'rgba(255,255,255,0.15)', true: night.gold }} thumbColor={night.text} />
           </View>
-          <Text style={styles.when}>{at ? reminderLabel(at.toISOString(), repeat) : 'Heure invalide (format HH:MM)'}</Text>
+          <Text style={styles.when}>{at ? reminderLabel(at.toISOString(), repeat) : tx('Heure invalide (format HH:MM)')}</Text>
 
           <Pressable disabled={!at || !body.trim() || saving} onPress={() => void create()} style={[styles.primary, (!at || !body.trim() || saving) && styles.disabled]}>
-            <Text style={styles.primaryText}>{saving ? 'Programmation…' : 'Programmer le rappel'}</Text>
+            <Text style={styles.primaryText}>{saving ? tx('Programmation…') : tx('Programmer le rappel')}</Text>
           </Pressable>
-          <Pressable onPress={onClose} style={styles.cancel}><Text style={styles.cancelText}>Annuler</Text></Pressable>
+          <Pressable onPress={onClose} style={styles.cancel}><Text style={styles.cancelText}>{tx("Annuler")}</Text></Pressable>
         </View>
       </KeyboardAvoidingView>
     </Modal>
@@ -108,7 +109,7 @@ function ReminderSheet({ visible, onClose, onCreate }: {
 export default function TahajjudGroupScreen() {
   const params = useLocalSearchParams<{ id: string; name?: string }>();
   const groupId = String(params.id ?? '');
-  const [name, setName] = useState(params.name ? String(params.name) : 'Groupe');
+  const [name, setName] = useState(params.name ? String(params.name) : tx('Groupe'));
   const [memberCount, setMemberCount] = useState<number | null>(null);
   const [isOwner, setIsOwner] = useState(false);
   const [messages, setMessages] = useState<GroupMessage[] | null>(null);
@@ -174,7 +175,7 @@ export default function TahajjudGroupScreen() {
     } catch (reason) {
       setMessages((current) => (current ?? []).filter((message) => message.id !== tempId));
       setDraft(body);
-      Alert.alert('Message', groupsErrorMessage(reason));
+      Alert.alert(tx('Message'), groupsErrorMessage(reason));
     } finally {
       sendingRef.current = false;
     }
@@ -187,7 +188,7 @@ export default function TahajjudGroupScreen() {
       setReminderSheet(false);
       await refresh();
     } catch (reason) {
-      Alert.alert('Rappel', groupsErrorMessage(reason));
+      Alert.alert(tx('Rappel'), groupsErrorMessage(reason));
     }
   };
 
@@ -195,18 +196,18 @@ export default function TahajjudGroupScreen() {
     if (message.pending || message.kind === 'system') return;
     const canCancel = message.kind === 'reminder' && message.reminderActive && (message.mine || isOwner);
     const actions = [
-      ...(canCancel ? [{ text: 'Annuler le rappel', onPress: () => void cancelGroupReminder(message.id).then(refresh).catch((reason) => Alert.alert('Rappel', groupsErrorMessage(reason))) }] : []),
+      ...(canCancel ? [{ text: tx('Annuler le rappel'), onPress: () => void cancelGroupReminder(message.id).then(refresh).catch((reason) => Alert.alert(tx('Rappel'), groupsErrorMessage(reason))) }] : []),
       ...(message.mine
         ? [{
-          text: 'Supprimer', style: 'destructive' as const, onPress: () => {
+          text: tx('Supprimer'), style: 'destructive' as const, onPress: () => {
             setMessages((current) => (current ?? []).filter((item) => item.id !== message.id));
             void deleteGroupMessage(message.id).catch(() => void refresh());
           },
         }]
-        : [{ text: 'Signaler ce message', onPress: () => void reportGroupMessage(message.id).then(() => Alert.alert('Merci', 'Le message a été signalé à l’équipe OUMMAH.')).catch((reason) => Alert.alert('Signalement', groupsErrorMessage(reason))) }]),
-      { text: 'Fermer', style: 'cancel' as const },
+        : [{ text: tx('Signaler ce message'), onPress: () => void reportGroupMessage(message.id).then(() => Alert.alert(tx('Merci'), tx('Le message a été signalé à l’équipe OUMMAH.'))).catch((reason) => Alert.alert(tx('Signalement'), groupsErrorMessage(reason))) }]),
+      { text: tx('Fermer'), style: 'cancel' as const },
     ];
-    Alert.alert(message.kind === 'reminder' ? 'Rappel' : 'Message', undefined, actions);
+    Alert.alert(message.kind === 'reminder' ? tx('Rappel') : tx('Message'), undefined, actions);
   };
 
   const openInfo = () => router.push({ pathname: '/tahajjud/group-info', params: { id: groupId } } as unknown as Href);
@@ -215,7 +216,7 @@ export default function TahajjudGroupScreen() {
     <>
       <ChatFrame
         title={name}
-        subtitle={memberCount ? `${memberCount} membre${memberCount > 1 ? 's' : ''} · touchez pour les infos` : 'Groupe'}
+        subtitle={memberCount ? txCount(memberCount, '{0} membre · touchez pour les infos', '{0} membres · touchez pour les infos') : tx('Groupe')}
         icon="people"
         onPressHeader={openInfo}
         right={(
@@ -226,14 +227,14 @@ export default function TahajjudGroupScreen() {
         messages={messages}
         onEndReached={() => void loadMore()}
         loadingMore={loadingMore}
-        emptyTitle="Bismillah"
-        emptyText="Lancez la discussion, ou programmez un rappel pour tout le groupe avec le réveil."
+        emptyTitle={tx("Bismillah")}
+        emptyText={tx("Lancez la discussion, ou programmez un rappel pour tout le groupe avec le réveil.")}
         error={error}
         draft={draft}
         onDraft={setDraft}
         onSend={() => void send()}
         composerAction={(
-          <Pressable onPress={() => setReminderSheet(true)} style={chatStyles.composerAction} accessibilityLabel="Programmer un rappel">
+          <Pressable onPress={() => setReminderSheet(true)} style={chatStyles.composerAction} accessibilityLabel={tx("Programmer un rappel")}>
             <Ionicons name="alarm-outline" size={21} color={night.goldSoft} />
           </Pressable>
         )}
@@ -253,11 +254,11 @@ export default function TahajjudGroupScreen() {
                   <View style={styles.reminderHead}>
                     <Ionicons name={item.reminderActive ? 'alarm' : 'checkmark-done'} size={18} color={night.sky0} />
                     <Text style={styles.reminderWhen}>
-                      {item.remindAt ? (item.reminderActive ? reminderLabel(item.remindAt, item.repeatDaily) : 'Rappel envoyé') : 'Rappel'}
+                      {item.remindAt ? (item.reminderActive ? reminderLabel(item.remindAt, item.repeatDaily) : tx('Rappel envoyé')) : tx('Rappel')}
                     </Text>
                   </View>
                   <Text style={styles.reminderBody}>{item.body}</Text>
-                  <Text style={styles.reminderBy}>{item.mine ? 'Vous' : item.senderPseudo ?? 'Membre'} · {timeOf(item.createdAt)}</Text>
+                  <Text style={styles.reminderBy}>{item.mine ? tx('Vous') : item.senderPseudo ?? tx('Membre')} · {timeOf(item.createdAt)}</Text>
                 </Pressable>
               </View>
             );
@@ -269,10 +270,10 @@ export default function TahajjudGroupScreen() {
               <ChatBubble
                 mine={item.mine}
                 body={item.body}
-                meta={item.pending ? 'Envoi…' : timeOf(item.createdAt)}
+                meta={item.pending ? tx('Envoi…') : timeOf(item.createdAt)}
                 tail={!newer || newer.sender !== item.sender || newer.kind !== 'text'}
                 author={!item.mine && firstOfGroup ? (
-                  <Text style={[chatStyles.author, { color: colorOf(item.sender) }]}>{item.senderPseudo ?? 'Membre'}</Text>
+                  <Text style={[chatStyles.author, { color: colorOf(item.sender) }]}>{item.senderPseudo ?? tx('Membre')}</Text>
                 ) : undefined}
                 onLongPress={() => onLongPress(item)}
               />

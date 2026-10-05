@@ -15,6 +15,7 @@ import { alarmTime, bedtimeSuggestions, clock, formatDuration, upcomingNights, t
 import { loadTahajjudSchedule } from './tahajjudSchedule';
 import { publishTahajjudWidget, refreshTahajjudWidgetValidation } from './tahajjudWidget';
 import { shareValidationWithCommunity } from './tahajjudCommunity';
+import { tx } from './tahajjudI18n';
 
 // ----- Validation ----------------------------------------------------------------------------
 
@@ -55,7 +56,7 @@ export const canSetSystemAlarm = Boolean(alarmModule);
 export async function setSystemAlarm(timestamp: number): Promise<boolean> {
   if (!alarmModule) return false;
   const date = new Date(timestamp);
-  return alarmModule.setSystemAlarm(date.getHours(), date.getMinutes(), 'Qiyam al-Layl · OUMMAH').catch(() => false);
+  return alarmModule.setSystemAlarm(date.getHours(), date.getMinutes(), tx('Qiyam al-Layl · OUMMAH')).catch(() => false);
 }
 
 // ----- Notifications -------------------------------------------------------------------------
@@ -89,15 +90,15 @@ function planNight(night: TahajjudNight, settings: Awaited<ReturnType<typeof loa
   if (notifications.evening) {
     planned.push({
       at: night.isha + 45 * 60_000, kind: 'evening', night: night.key,
-      title: 'Ce soir, Qiyam al-Layl 🌙',
-      body: `Dernier tiers de ${range}. Une intention, un réveil, et Allah fait le reste.`,
+      title: tx('Ce soir, Qiyam al-Layl 🌙'),
+      body: tx("Dernier tiers de {0}. Une intention, un réveil, et Allah fait le reste.", [range]),
     });
   }
   if (notifications.soon) {
     planned.push({
       at: night.lastThirdStart - 15 * 60_000, kind: 'soon', night: night.key,
-      title: 'Le dernier tiers commence bientôt',
-      body: `Dans 15 minutes, à ${clock(night.lastThirdStart)}.`,
+      title: tx('Le dernier tiers commence bientôt'),
+      body: tx("Dans 15 minutes, à {0}.", [clock(night.lastThirdStart)]),
     });
   }
   const wakeUp = alarm.enabled ? alarmTime(night, alarm.mode, alarm.customTime) : null;
@@ -111,30 +112,30 @@ function planNight(night: TahajjudNight, settings: Awaited<ReturnType<typeof loa
     if (choice) {
       planned.push({
         at: choice.at, kind: 'bedtime', night: night.key,
-        title: 'Il est l’heure de dormir 🌙',
-        body: `Couché maintenant : ${formatDuration(choice.sleep)} de sommeil avant ${wakeUp ? 'votre réveil' : 'le dernier tiers'} à ${clock(target)}.`,
+        title: tx('Il est l’heure de dormir 🌙'),
+        body: tx("Couché maintenant : {0} de sommeil avant {1} à {2}.", [formatDuration(choice.sleep), wakeUp ? tx('votre réveil') : tx('le dernier tiers'), clock(target)]),
       });
     }
   }
   if (wakeUp !== null) {
     planned.push({
       at: wakeUp, kind: 'alarm', night: night.key,
-      title: 'C’est l’heure de prier la nuit',
-      body: `Le Seigneur descend au ciel de ce bas monde. Fajr à ${clock(night.fajr)} · ${formatDuration(night.fajr - wakeUp)} devant soi.`,
+      title: tx('C’est l’heure de prier la nuit'),
+      body: tx("Le Seigneur descend au ciel de ce bas monde. Fajr à {0} · {1} devant soi.", [clock(night.fajr), formatDuration(night.fajr - wakeUp)]),
     });
   }
   if (notifications.start && (wakeUp === null || Math.abs(wakeUp - night.lastThirdStart) > 60_000)) {
     planned.push({
       at: night.lastThirdStart, kind: 'start', night: night.key,
-      title: 'Le dernier tiers commence maintenant',
-      body: `« Qui M’invoque, que Je lui réponde ? » Jusqu’à Fajr, ${clock(night.fajr)}.`,
+      title: tx('Le dernier tiers commence maintenant'),
+      body: tx("« Qui M’invoque, que Je lui réponde ? » Jusqu’à Fajr, {0}.", [clock(night.fajr)]),
     });
   }
   if (notifications.fajr) {
     planned.push({
       at: night.fajr - 30 * 60_000, kind: 'fajr', night: night.key,
-      title: 'Fajr approche',
-      body: `Fajr à ${clock(night.fajr)} : encore 30 minutes pour le Witr et les invocations.`,
+      title: tx('Fajr approche'),
+      body: tx("Fajr à {0} : encore 30 minutes pour le Witr et les invocations.", [clock(night.fajr)]),
     });
   }
   return planned;
@@ -171,7 +172,7 @@ export function refreshTahajjudNotifications(force = false): Promise<void> {
 
       if (Platform.OS === 'android') {
         await Notifications.setNotificationChannelAsync(CHANNEL, {
-          name: 'Qiyam al-Layl',
+          name: tx('Qiyam al-Layl'),
           importance: Notifications.AndroidImportance.MAX,
           vibrationPattern: [0, 400, 200, 400, 200, 600],
           sound: 'default',

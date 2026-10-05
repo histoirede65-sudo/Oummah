@@ -7,7 +7,8 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { GlassCard, shellStyles, TahajjudShell } from '../../components/tahajjud/TahajjudShell';
 import { night, nightType } from '../../components/tahajjud/theme';
 import type { Surah } from '../../data/surahs';
-import { loadKnownSurahs, prefetchReciteSurahs, RECITE_GROUPS, toggleKnownSurah } from '../../features/tahajjud/tahajjudRecite';
+import { loadKnownSurahs, prefetchReciteSurahs, RECITE_GROUPS, toggleKnownSurah, surahName } from '../../features/tahajjud/tahajjudRecite';
+import { tx } from '../../features/tahajjud/tahajjudI18n';
 
 /** « Que réciter dans ma prière ? » : short surahs by length, with « je la connais ». */
 export default function ReciteScreen() {
@@ -27,13 +28,13 @@ export default function ReciteScreen() {
   const open = (surah: Surah) => router.push({ pathname: '/tahajjud/recite-surah', params: { id: String(surah.id) } } as unknown as Href);
 
   return (
-    <TahajjudShell title="Que réciter ?" eyebrow="Dans ma prière">
+    <TahajjudShell title={tx("Que réciter ?")} eyebrow={tx("Dans ma prière")}>
       <Text style={styles.intro}>
-        Après Al-Fatiha, récitez ce que vous connaissez, même une courte sourate. Marquez celles que vous connaissez avec l’étoile pour les retrouver la nuit.
+        {tx("Après Al-Fatiha, récitez ce que vous connaissez, même une courte sourate. Marquez celles que vous connaissez avec l’étoile pour les retrouver la nuit.")}
       </Text>
 
       <View style={styles.filters}>
-        {([[false, 'Toutes'], [true, `Je les connais · ${known.length}`]] as const).map(([value, label]) => (
+        {([[false, tx('Toutes')], [true, tx("Je les connais · {0}", [known.length])]] as const).map(([value, label]) => (
           <Pressable key={label} onPress={() => setOnlyKnown(value)} style={[styles.filter, onlyKnown === value && styles.filterOn]}>
             <Text style={[styles.filterText, onlyKnown === value && styles.filterTextOn]}>{label}</Text>
           </Pressable>
@@ -43,7 +44,7 @@ export default function ReciteScreen() {
       {onlyKnown && known.length === 0 ? (
         <GlassCard style={styles.empty}>
           <Ionicons name="star-outline" size={28} color={night.goldSoft} />
-          <Text style={styles.emptyText}>Touchez l’étoile d’une sourate pour l’ajouter ici.</Text>
+          <Text style={styles.emptyText}>{tx("Touchez l’étoile d’une sourate pour l’ajouter ici.")}</Text>
         </GlassCard>
       ) : null}
 
@@ -62,10 +63,10 @@ export default function ReciteScreen() {
                     <View style={styles.number}><Text style={styles.numberText}>{surah.id}</Text></View>
                     <View style={styles.copy}>
                       <Text style={styles.name}>{surah.transliteration}</Text>
-                      <Text style={styles.meta}>{surah.frenchName} · {surah.verses} versets</Text>
+                      <Text style={styles.meta}>{tx('{0} · {1} versets', [surahName(surah), surah.verses])}</Text>
                     </View>
                     <Text style={styles.arabic}>{surah.arabicName}</Text>
-                    <Pressable onPress={() => void toggle(surah.id)} hitSlop={10} accessibilityLabel={isKnown ? 'Je ne la connais pas' : 'Je la connais'}>
+                    <Pressable onPress={() => void toggle(surah.id)} hitSlop={10} accessibilityLabel={isKnown ? tx('Je ne la connais pas') : tx('Je la connais')}>
                       <Ionicons name={isKnown ? 'star' : 'star-outline'} size={21} color={isKnown ? night.gold : night.muted} />
                     </Pressable>
                   </Pressable>
@@ -76,7 +77,7 @@ export default function ReciteScreen() {
         );
       })}
 
-      <Text style={styles.footer}>Texte et traduction : le Coran d’OUMMAH. Les sourates courtes restent disponibles hors connexion.</Text>
+      <Text style={styles.footer}>{tx("Texte et traduction : le Coran d’OUMMAH. Les sourates courtes restent disponibles hors connexion.")}</Text>
     </TahajjudShell>
   );
 }

@@ -13,6 +13,7 @@ import {
   saveCommunityProfile,
   type CommunityAvatar,
 } from '../../features/tahajjud/tahajjudCommunity';
+import { tx } from '../../features/tahajjud/tahajjudI18n';
 
 /** Profil OUMMAH : pseudo + avatar + confidentialité. Needed for the community features. */
 export default function TahajjudProfileScreen() {
@@ -58,30 +59,30 @@ export default function TahajjudProfileScreen() {
       router.back();
     } catch (error) {
       const code = error instanceof Error ? error.message : '';
-      Alert.alert('Profil', code === 'PSEUDO_TAKEN'
-        ? 'Ce pseudo est déjà pris. Choisissez-en un autre.'
+      Alert.alert(tx('Profil'), code === 'PSEUDO_TAKEN'
+        ? tx('Ce pseudo est déjà pris. Choisissez-en un autre.')
         : code === 'PSEUDO_LOCKED'
-          ? 'Le pseudo est définitif et ne peut pas être modifié.'
+          ? tx('Le pseudo est définitif et ne peut pas être modifié.')
           : code === 'PSEUDO_INVALID'
-          ? 'Le pseudo doit faire de 3 à 24 caractères (lettres, chiffres, espace, point, tiret).'
-          : 'Impossible d’enregistrer le profil pour le moment.');
+          ? tx('Le pseudo doit faire de 3 à 24 caractères (lettres, chiffres, espace, point, tiret).')
+          : tx('Impossible d’enregistrer le profil pour le moment.'));
     } finally {
       setSaving(false);
     }
   };
 
   if (loading) {
-    return <TahajjudShell title="Mon profil OUMMAH" eyebrow="Communauté"><ActivityIndicator color={night.gold} /></TahajjudShell>;
+    return <TahajjudShell title={tx("Mon profil OUMMAH")} eyebrow={tx("Communauté")}><ActivityIndicator color={night.gold} /></TahajjudShell>;
   }
 
   if (!signedIn) {
     return (
-      <TahajjudShell title="Mon profil OUMMAH" eyebrow="Communauté">
+      <TahajjudShell title={tx("Mon profil OUMMAH")} eyebrow={tx("Communauté")}>
         <GlassCard gold style={styles.center}>
           <Ionicons name="person-circle-outline" size={48} color={night.goldSoft} />
-          <Text style={styles.lead}>Connectez-vous pour rejoindre la communauté Qiyam al-Layl.</Text>
+          <Text style={styles.lead}>{tx("Connectez-vous pour rejoindre la communauté Qiyam al-Layl.")}</Text>
           <Pressable onPress={() => router.push('/profile' as Href)} style={styles.button}>
-            <Text style={styles.buttonText}>Se connecter</Text>
+            <Text style={styles.buttonText}>{tx("Se connecter")}</Text>
           </Pressable>
         </GlassCard>
       </TahajjudShell>
@@ -89,15 +90,15 @@ export default function TahajjudProfileScreen() {
   }
 
   return (
-    <TahajjudShell title={exists ? 'Mon profil OUMMAH' : 'Créer mon profil'} eyebrow="Communauté">
+    <TahajjudShell title={exists ? tx('Mon profil OUMMAH') : tx('Créer mon profil')} eyebrow={tx("Communauté")}>
       <View style={styles.preview}>
         <View style={styles.avatarBig}>
           <Ionicons name={AVATAR_ICONS[avatar]} size={38} color={night.sky0} />
         </View>
-        <Text style={styles.previewName}>{pseudo.trim() || 'Votre pseudo'}</Text>
+        <Text style={styles.previewName}>{pseudo.trim() || tx('Votre pseudo')}</Text>
       </View>
 
-      <Text style={shellStyles.sectionLabel}>Pseudo</Text>
+      <Text style={shellStyles.sectionLabel}>{tx("Pseudo")}</Text>
       {exists ? (
         <View style={[styles.input, styles.locked]}>
           <Text style={styles.lockedText}>{pseudo}</Text>
@@ -107,7 +108,7 @@ export default function TahajjudProfileScreen() {
         <TextInput
           value={pseudo}
           onChangeText={setPseudo}
-          placeholder="Ex. : Abdallah, Oum Yasmine…"
+          placeholder={tx("Ex. : Abdallah, Oum Yasmine…")}
           placeholderTextColor={night.placeholder}
           maxLength={24}
           autoCapitalize="words"
@@ -116,11 +117,11 @@ export default function TahajjudProfileScreen() {
       )}
       <Text style={styles.hint}>
         {exists
-          ? 'Votre pseudo est unique et lié à votre compte : il ne peut plus être modifié.'
-          : 'Unique et définitif : il ne pourra plus être modifié. Visible des autres membres, évitez votre nom complet.'}
+          ? tx('Votre pseudo est unique et lié à votre compte : il ne peut plus être modifié.')
+          : tx('Unique et définitif : il ne pourra plus être modifié. Visible des autres membres, évitez votre nom complet.')}
       </Text>
 
-      <Text style={[shellStyles.sectionLabel, styles.section]}>Avatar</Text>
+      <Text style={[shellStyles.sectionLabel, styles.section]}>{tx("Avatar")}</Text>
       <View style={styles.avatars}>
         {COMMUNITY_AVATARS.map((item) => (
           <Pressable key={item} onPress={() => setAvatar(item)} style={[styles.avatar, avatar === item && styles.avatarOn]}>
@@ -129,47 +130,47 @@ export default function TahajjudProfileScreen() {
         ))}
       </View>
 
-      <Text style={[shellStyles.sectionLabel, styles.section]}>Confidentialité</Text>
+      <Text style={[shellStyles.sectionLabel, styles.section]}>{tx("Confidentialité")}</Text>
       <GlassCard>
         <View style={styles.row}>
           <View style={styles.rowCopy}>
-            <Text style={styles.rowTitle}>Apparaître dans « La Oummah cette nuit »</Text>
-            <Text style={styles.rowText}>Compté quand vous déclarez être réveillé ou validez votre nuit. Toujours anonyme.</Text>
+            <Text style={styles.rowTitle}>{tx("Apparaître dans « La Oummah cette nuit »")}</Text>
+            <Text style={styles.rowText}>{tx("Compté quand vous déclarez être réveillé ou validez votre nuit. Toujours anonyme.")}</Text>
           </View>
           <Switch value={shareTahajjud} onValueChange={setShareTahajjud} trackColor={{ false: 'rgba(255,255,255,0.15)', true: night.gold }} thumbColor={night.text} />
         </View>
         <View style={[styles.row, styles.rowBorder]}>
           <View style={styles.rowCopy}>
-            <Text style={styles.rowTitle}>Ma zone sur la carte</Text>
-            <Text style={styles.rowText}>Une zone d’environ 30 km : vos nuits (visibles à partir de 3 membres) et l’icône de vos duas. Jamais votre adresse.</Text>
+            <Text style={styles.rowTitle}>{tx("Ma zone sur la carte")}</Text>
+            <Text style={styles.rowText}>{tx("Une zone d’environ 30 km : vos nuits (visibles à partir de 3 membres) et l’icône de vos duas. Jamais votre adresse.")}</Text>
           </View>
           <Switch value={shareZone} disabled={!shareTahajjud} onValueChange={setShareZone} trackColor={{ false: 'rgba(255,255,255,0.15)', true: night.gold }} thumbColor={night.text} />
         </View>
         <View style={[styles.row, styles.rowBorder]}>
           <View style={styles.rowCopy}>
-            <Text style={styles.rowTitle}>Mes amis voient mes nuits</Text>
-            <Text style={styles.rowText}>Réveillé ou a prié cette nuit, et le nombre de nuits sur 7 jours. Rien d’autre.</Text>
+            <Text style={styles.rowTitle}>{tx("Mes amis voient mes nuits")}</Text>
+            <Text style={styles.rowText}>{tx("Réveillé ou a prié cette nuit, et le nombre de nuits sur 7 jours. Rien d’autre.")}</Text>
           </View>
           <Switch value={shareWithFriends} onValueChange={setShareWithFriends} trackColor={{ false: 'rgba(255,255,255,0.15)', true: night.gold }} thumbColor={night.text} />
         </View>
         <View style={[styles.row, styles.rowBorder]}>
           <View style={styles.rowCopy}>
-            <Text style={styles.rowTitle}>Recevoir des demandes d’ami</Text>
-            <Text style={styles.rowText}>Désactivez pour ne plus recevoir de nouvelles demandes.</Text>
+            <Text style={styles.rowTitle}>{tx("Recevoir des demandes d’ami")}</Text>
+            <Text style={styles.rowText}>{tx("Désactivez pour ne plus recevoir de nouvelles demandes.")}</Text>
           </View>
           <Switch value={acceptFriendRequests} onValueChange={setAcceptFriendRequests} trackColor={{ false: 'rgba(255,255,255,0.15)', true: night.gold }} thumbColor={night.text} />
         </View>
         <View style={[styles.row, styles.rowBorder]}>
           <View style={styles.rowCopy}>
-            <Text style={styles.rowTitle}>Recevoir des messages</Text>
-            <Text style={styles.rowText}>Uniquement de vos amis. Désactivez pour ne plus en recevoir.</Text>
+            <Text style={styles.rowTitle}>{tx("Recevoir des messages")}</Text>
+            <Text style={styles.rowText}>{tx("Uniquement de vos amis. Désactivez pour ne plus en recevoir.")}</Text>
           </View>
           <Switch value={acceptMessages} onValueChange={setAcceptMessages} trackColor={{ false: 'rgba(255,255,255,0.15)', true: night.gold }} thumbColor={night.text} />
         </View>
       </GlassCard>
 
       <Pressable disabled={saving} onPress={() => void save()} style={[styles.button, styles.saveButton, saving && styles.disabled]}>
-        <Text style={styles.buttonText}>{saving ? 'Enregistrement…' : exists ? 'Enregistrer' : 'Créer mon profil'}</Text>
+        <Text style={styles.buttonText}>{saving ? tx('Enregistrement…') : exists ? tx('Enregistrer') : tx('Créer mon profil')}</Text>
       </Pressable>
     </TahajjudShell>
   );

@@ -7,7 +7,8 @@ import { useEffect, useRef, useState } from 'react';
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { night, nightType } from '../../components/tahajjud/theme';
-import { getReciteSurah, RECITE_ORDER, surahById, type ReciteVerse } from '../../features/tahajjud/tahajjudRecite';
+import { getReciteSurah, RECITE_ORDER, surahById, type ReciteVerse, surahName } from '../../features/tahajjud/tahajjudRecite';
+import { tx } from '../../features/tahajjud/tahajjudI18n';
 
 const PREFS_KEY = 'oummah.qiyam.recite.prefs.v1';
 type Prefs = { size: number; phonetic: boolean; translation: boolean };
@@ -57,18 +58,18 @@ export default function ReciteSurahScreen() {
     <View style={styles.root}>
       <SafeAreaView edges={['top', 'bottom']} style={styles.flex}>
         <View style={styles.header}>
-          <Pressable accessibilityRole="button" accessibilityLabel="Retour" onPress={() => router.back()} hitSlop={10} style={styles.round}>
+          <Pressable accessibilityRole="button" accessibilityLabel={tx("Retour")} onPress={() => router.back()} hitSlop={10} style={styles.round}>
             <Ionicons name="chevron-back" size={22} color={night.text} />
           </Pressable>
           <View style={styles.headerCopy}>
-            <Text style={styles.title} numberOfLines={1}>{surah?.transliteration ?? 'Sourate'}</Text>
-            <Text style={styles.sub} numberOfLines={1}>{surah ? `${surah.frenchName} · ${surah.verses} versets` : ''}</Text>
+            <Text style={styles.title} numberOfLines={1}>{surah?.transliteration ?? tx('Sourate')}</Text>
+            <Text style={styles.sub} numberOfLines={1}>{surah ? tx("{0} · {1} versets", [surahName(surah), surah.verses]) : ''}</Text>
           </View>
           <Pressable
             onPress={() => updatePrefs({ ...prefs, size: SIZES[Math.max(0, sizeIndex - 1)] })}
             disabled={sizeIndex === 0}
             style={[styles.round, sizeIndex === 0 && styles.disabled]}
-            accessibilityLabel="Texte plus petit"
+            accessibilityLabel={tx("Texte plus petit")}
           >
             <Text style={styles.sizeSmall}>A</Text>
           </Pressable>
@@ -76,14 +77,14 @@ export default function ReciteSurahScreen() {
             onPress={() => updatePrefs({ ...prefs, size: SIZES[Math.min(SIZES.length - 1, sizeIndex + 1)] })}
             disabled={sizeIndex === SIZES.length - 1}
             style={[styles.round, sizeIndex === SIZES.length - 1 && styles.disabled]}
-            accessibilityLabel="Texte plus grand"
+            accessibilityLabel={tx("Texte plus grand")}
           >
             <Text style={styles.sizeBig}>A</Text>
           </Pressable>
         </View>
 
         <View style={styles.toggles}>
-          {([['phonetic', 'Phonétique'], ['translation', 'Traduction']] as const).map(([key, label]) => (
+          {([['phonetic', tx('Phonétique')], ['translation', tx('Traduction')]] as const).map(([key, label]) => (
             <Pressable key={key} onPress={() => updatePrefs({ ...prefs, [key]: !prefs[key] })} style={[styles.toggle, prefs[key] && styles.toggleOn]}>
               <Ionicons name={prefs[key] ? 'eye' : 'eye-off-outline'} size={15} color={prefs[key] ? night.sky0 : night.muted} />
               <Text style={[styles.toggleText, prefs[key] && styles.toggleTextOn]}>{label}</Text>
@@ -94,7 +95,7 @@ export default function ReciteSurahScreen() {
         {failed ? (
           <View style={styles.center}>
             <Ionicons name="cloud-offline-outline" size={34} color={night.lavender} />
-            <Text style={styles.failed}>Cette sourate n’est pas encore enregistrée sur le téléphone. Connectez-vous une fois à Internet pour la garder hors connexion.</Text>
+            <Text style={styles.failed}>{tx("Cette sourate n’est pas encore enregistrée sur le téléphone. Connectez-vous une fois à Internet pour la garder hors connexion.")}</Text>
           </View>
         ) : verses === null ? (
           <View style={styles.center}><ActivityIndicator color={night.gold} /></View>
@@ -125,7 +126,7 @@ export default function ReciteSurahScreen() {
                 </Pressable>
               ) : <View style={styles.flex} />}
             </View>
-            <Text style={styles.source}>Traduction du sens : Hamidullah · Phonétique indicative, à vérifier avec un enseignant.</Text>
+            <Text style={styles.source}>{tx("Traduction du sens : Hamidullah · Phonétique indicative, à vérifier avec un enseignant.")}</Text>
           </ScrollView>
         )}
       </SafeAreaView>

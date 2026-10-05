@@ -1,5 +1,6 @@
 import { getValidSession } from '../auth/SupabaseAuthService';
 import { COMMUNITY_AVATARS, type CommunityAvatar } from './tahajjudCommunity';
+import { tx } from './tahajjudI18n';
 
 /**
  * Amis OUMMAH : demandes, activité (selon les réglages de chacun), encouragements prédéfinis,
@@ -25,11 +26,11 @@ export type FriendsOverview = {
 };
 
 export const ENCOURAGEMENTS = [
-  { kind: 'wake', text: 'On se réveille pour prier cette nuit ?', icon: 'alarm-outline' },
-  { kind: 'ease', text: 'Qu’Allah te facilite ta nuit.', icon: 'moon-outline' },
-  { kind: 'dua', text: 'J’ai fait doua pour toi cette nuit.', icon: 'hand-left-outline' },
-  { kind: 'keep', text: 'Barak Allahou fik, continue comme ça !', icon: 'heart-outline' },
-  { kind: 'mashallah', text: 'Ma sha Allah, qu’Allah t’accorde la constance.', icon: 'sparkles-outline' },
+  { kind: 'wake', get text() { return tx('On se réveille pour prier cette nuit ?'); }, icon: 'alarm-outline' },
+  { kind: 'ease', get text() { return tx('Qu’Allah te facilite ta nuit.'); }, icon: 'moon-outline' },
+  { kind: 'dua', get text() { return tx('J’ai fait doua pour toi cette nuit.'); }, icon: 'hand-left-outline' },
+  { kind: 'keep', get text() { return tx('Barak Allahou fik, continue comme ça !'); }, icon: 'heart-outline' },
+  { kind: 'mashallah', get text() { return tx('Ma sha Allah, qu’Allah t’accorde la constance.'); }, icon: 'sparkles-outline' },
 ] as const;
 export type EncouragementKind = typeof ENCOURAGEMENTS[number]['kind'];
 
@@ -99,16 +100,16 @@ export const markEncouragementsRead = () => rpc<void>('mark_encouragements_read'
 
 export function friendsErrorMessage(error: unknown) {
   switch (error instanceof Error ? error.message : '') {
-    case 'AUTH_REQUIRED': return 'Connectez-vous pour retrouver vos amis.';
-    case 'PROFILE_REQUIRED': return 'Créez votre profil OUMMAH (un pseudo suffit).';
-    case 'NOT_FOUND': return 'Ce membre n’est pas disponible.';
-    case 'REQUESTS_CLOSED': return 'Ce membre n’accepte pas de demandes d’ami pour le moment.';
-    case 'RATE_LIMIT': return 'Vous avez atteint la limite pour aujourd’hui. Réessayez demain.';
-    case 'NOT_FRIENDS': return 'Vous n’êtes plus amis avec ce membre.';
-    case 'MESSAGES_CLOSED': return 'Ce membre ne reçoit pas de messages pour le moment.';
-    case 'TEXT_REFUSED': return 'Ce message contient des mots qui ne sont pas acceptés.';
-    case 'ALREADY_SENT': return 'Vous l’avez déjà encouragé il y a peu. Réessayez dans quelques heures.';
-    default: return 'Action impossible pour le moment.';
+    case 'AUTH_REQUIRED': return tx('Connectez-vous pour retrouver vos amis.');
+    case 'PROFILE_REQUIRED': return tx('Créez votre profil OUMMAH (un pseudo suffit).');
+    case 'NOT_FOUND': return tx('Ce membre n’est pas disponible.');
+    case 'REQUESTS_CLOSED': return tx('Ce membre n’accepte pas de demandes d’ami pour le moment.');
+    case 'RATE_LIMIT': return tx('Vous avez atteint la limite pour aujourd’hui. Réessayez demain.');
+    case 'NOT_FRIENDS': return tx('Vous n’êtes plus amis avec ce membre.');
+    case 'MESSAGES_CLOSED': return tx('Ce membre ne reçoit pas de messages pour le moment.');
+    case 'TEXT_REFUSED': return tx('Ce message contient des mots qui ne sont pas acceptés.');
+    case 'ALREADY_SENT': return tx('Vous l’avez déjà encouragé il y a peu. Réessayez dans quelques heures.');
+    default: return tx('Action impossible pour le moment.');
   }
 }
 

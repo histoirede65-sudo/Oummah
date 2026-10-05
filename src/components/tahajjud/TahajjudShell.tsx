@@ -5,6 +5,7 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { NightSky } from './NightSky';
 import { night, nightType } from './theme';
+import { tx } from '../../features/tahajjud/tahajjudI18n';
 
 /** Frame of every Tahajjud screen: night sky, back button, optional title. */
 export function TahajjudShell({ title, eyebrow, children, scroll = true }: {
@@ -15,7 +16,7 @@ export function TahajjudShell({ title, eyebrow, children, scroll = true }: {
 }) {
   const header = (
     <View style={styles.header}>
-      <Pressable accessibilityRole="button" accessibilityLabel="Retour" onPress={() => router.back()} hitSlop={10} style={styles.back}>
+      <Pressable accessibilityRole="button" accessibilityLabel={tx("Retour")} onPress={() => router.back()} hitSlop={10} style={styles.back}>
         <Ionicons name="chevron-back" size={22} color={night.text} />
       </Pressable>
       {title ? (

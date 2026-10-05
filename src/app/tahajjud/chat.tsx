@@ -11,6 +11,7 @@ import {
   sendChatMessage,
   type ChatMessage,
 } from '../../features/tahajjud/tahajjudFriends';
+import { tx } from '../../features/tahajjud/tahajjudI18n';
 
 const POLL_MS = 4_000;
 
@@ -18,7 +19,7 @@ const POLL_MS = 4_000;
 export default function TahajjudChatScreen() {
   const params = useLocalSearchParams<{ id: string; pseudo?: string; avatar?: string }>();
   const friendId = String(params.id ?? '');
-  const pseudo = params.pseudo ? String(params.pseudo) : 'Ami';
+  const pseudo = params.pseudo ? String(params.pseudo) : tx('Ami');
   const avatar: CommunityAvatar = (COMMUNITY_AVATARS as readonly string[]).includes(String(params.avatar)) ? params.avatar as CommunityAvatar : 'moon';
 
   const [messages, setMessages] = useState<ChatMessage[] | null>(null);
@@ -75,7 +76,7 @@ export default function TahajjudChatScreen() {
     } catch (reason) {
       setMessages((current) => (current ?? []).filter((message) => message.id !== tempId));
       setDraft(body);
-      Alert.alert('Message', friendsErrorMessage(reason));
+      Alert.alert(tx('Message'), friendsErrorMessage(reason));
     } finally {
       sendingRef.current = false;
     }
@@ -84,19 +85,19 @@ export default function TahajjudChatScreen() {
   const onLongPress = (message: ChatMessage) => {
     if (message.pending) return;
     if (message.mine) {
-      Alert.alert('Mon message', 'Le supprimer pour vous deux ?', [
-        { text: 'Annuler', style: 'cancel' },
+      Alert.alert(tx('Mon message'), tx('Le supprimer pour vous deux ?'), [
+        { text: tx('Annuler'), style: 'cancel' },
         {
-          text: 'Supprimer', style: 'destructive', onPress: () => {
+          text: tx('Supprimer'), style: 'destructive', onPress: () => {
             setMessages((current) => (current ?? []).filter((item) => item.id !== message.id));
             void deleteChatMessage(message.id).catch(() => void refresh());
           },
         },
       ]);
     } else {
-      Alert.alert('Message', undefined, [
-        { text: 'Signaler ce message', onPress: () => void reportChatMessage(message.id).then(() => Alert.alert('Merci', 'Le message a été signalé à l’équipe OUMMAH.')).catch((reason) => Alert.alert('Signalement', friendsErrorMessage(reason))) },
-        { text: 'Annuler', style: 'cancel' },
+      Alert.alert(tx('Message'), undefined, [
+        { text: tx('Signaler ce message'), onPress: () => void reportChatMessage(message.id).then(() => Alert.alert(tx('Merci'), tx('Le message a été signalé à l’équipe OUMMAH.'))).catch((reason) => Alert.alert(tx('Signalement'), friendsErrorMessage(reason))) },
+        { text: tx('Annuler'), style: 'cancel' },
       ]);
     }
   };
@@ -106,13 +107,13 @@ export default function TahajjudChatScreen() {
   return (
     <ChatFrame
       title={pseudo}
-      subtitle="Message privé · entre amis"
+      subtitle={tx("Message privé · entre amis")}
       avatar={avatar}
       messages={messages}
       onEndReached={() => void loadMore()}
       loadingMore={loadingMore}
-      emptyTitle="As-salamu ‘alaykum"
-      emptyText={`Commencez la conversation avec ${pseudo}. Restez bienveillant : les messages peuvent être signalés.`}
+      emptyTitle={tx("As-salamu ‘alaykum")}
+      emptyText={tx("Commencez la conversation avec {0}. Restez bienveillant : les messages peuvent être signalés.", [pseudo])}
       error={error}
       draft={draft}
       onDraft={setDraft}
@@ -120,14 +121,14 @@ export default function TahajjudChatScreen() {
       renderItem={(item, index) => {
         const list = messages ?? [];
         const newer = list[index - 1];
-        const status = item.id === lastMineId && !item.pending ? (item.read ? ' · Vu' : ' · Envoyé') : '';
+        const status = item.id === lastMineId && !item.pending ? (item.read ? tx(' · Vu') : tx(' · Envoyé')) : '';
         return (
           <View>
             {startsDay(list, index) ? <DayLabel iso={item.createdAt} /> : null}
             <ChatBubble
               mine={item.mine}
               body={item.body}
-              meta={item.pending ? 'Envoi…' : `${timeOf(item.createdAt)}${status}`}
+              meta={item.pending ? tx('Envoi…') : `${timeOf(item.createdAt)}${status}`}
               tail={!newer || newer.mine !== item.mine}
               onLongPress={() => onLongPress(item)}
             />

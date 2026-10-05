@@ -9,6 +9,7 @@ import { clock, shiftDateKey, type NightPhase, type TahajjudNight } from '../../
 import { loadIntentions, setIntention, type TahajjudIntentions } from '../../features/tahajjud/TahajjudStore';
 import { GlassCard } from './TahajjudShell';
 import { night, nightType } from './theme';
+import { tx } from '../../features/tahajjud/tahajjudI18n';
 
 /**
  * Between Maghrib and ‘Isha (today's times): « Ce soir, j'ai l'intention de me lever ». Once made, a
@@ -43,9 +44,9 @@ export function IntentionCard({ phase, tonight, now, nights }: {
         <GlassCard style={styles.card}>
           <View style={styles.head}>
             <Ionicons name="heart" size={18} color={night.goldSoft} />
-            <Text style={styles.title}>Vous aviez l’intention de vous lever</Text>
+            <Text style={styles.title}>{tx("Vous aviez l’intention de vous lever")}</Text>
           </View>
-          <Text style={styles.text}>Le sommeil l’a emporté ? Votre intention compte déjà. Ce soir est une nouvelle nuit.</Text>
+          <Text style={styles.text}>{tx("Le sommeil l’a emporté ? Votre intention compte déjà. Ce soir est une nouvelle nuit.")}</Text>
           <View style={styles.proof}>
             <Text style={styles.proofText}>{INTENTION_PROOF.text}</Text>
             <Text style={styles.proofSource}>{INTENTION_PROOF.source}</Text>
@@ -63,10 +64,10 @@ export function IntentionCard({ phase, tonight, now, nights }: {
   return made ? (
     <View style={styles.made}>
       <Ionicons name="checkmark-circle" size={18} color={night.success} />
-      <Text style={styles.madeText}>Intention posée pour cette nuit. Qu’Allah vous facilite.</Text>
+      <Text style={styles.madeText}>{tx("Intention posée pour cette nuit. Qu’Allah vous facilite.")}</Text>
       {inWindow ? (
         <Pressable onPress={() => void toggle(false)} hitSlop={8}>
-          <Text style={styles.undo}>Retirer</Text>
+          <Text style={styles.undo}>{tx("Retirer")}</Text>
         </Pressable>
       ) : null}
     </View>
@@ -75,8 +76,8 @@ export function IntentionCard({ phase, tonight, now, nights }: {
       <GlassCard gold style={styles.cta}>
         <View style={styles.ctaIcon}><Ionicons name="moon-outline" size={20} color={night.sky0} /></View>
         <View style={styles.flex}>
-          <Text style={styles.title}>Ce soir, j’ai l’intention de me lever</Text>
-          <Text style={styles.ctaText}>Jusqu’à ‘Isha ({clock(tonight.isha)}). Même si le sommeil l’emporte, l’intention est déjà récompensée.</Text>
+          <Text style={styles.title}>{tx("Ce soir, j’ai l’intention de me lever")}</Text>
+          <Text style={styles.ctaText}>{tx("Jusqu’à ‘Isha (")}{clock(tonight.isha)}{tx("). Même si le sommeil l’emporte, l’intention est déjà récompensée.")}</Text>
         </View>
       </GlassCard>
     </Pressable>

@@ -1,5 +1,6 @@
 import { getValidSession } from '../auth/SupabaseAuthService';
 import { COMMUNITY_AVATARS, type CommunityAvatar } from './tahajjudCommunity';
+import { tx } from './tahajjudI18n';
 
 /** Binôme de réveil : « réveillez-moi cette nuit », et réveiller ceux qui comptent sur moi. */
 
@@ -51,10 +52,10 @@ export const sendWakeUp = (requestId: string) => rpc<string | null>('wake_send',
 
 export function wakeErrorMessage(error: unknown) {
   switch (error instanceof Error ? error.message : '') {
-    case 'AUTH_REQUIRED': return 'Connectez-vous pour utiliser le binôme de réveil.';
-    case 'PROFILE_REQUIRED': return 'Créez votre profil OUMMAH (un pseudo suffit).';
-    case 'NO_TARGET': return 'Choisissez au moins un ami.';
-    case 'NOT_FOUND': return 'Cette demande n’est plus disponible.';
-    default: return 'Action impossible pour le moment.';
+    case 'AUTH_REQUIRED': return tx('Connectez-vous pour utiliser le binôme de réveil.');
+    case 'PROFILE_REQUIRED': return tx('Créez votre profil OUMMAH (un pseudo suffit).');
+    case 'NO_TARGET': return tx('Choisissez au moins un ami.');
+    case 'NOT_FOUND': return tx('Cette demande n’est plus disponible.');
+    default: return tx('Action impossible pour le moment.');
   }
 }

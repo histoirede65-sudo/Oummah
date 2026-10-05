@@ -13,6 +13,7 @@ import { useTahajjudNight } from '../features/tahajjud/useTahajjudNight';
 import { night, nightType } from './tahajjud/theme';
 import { ValidateSheet } from './tahajjud/ValidateSheet';
 import { WeekMoons } from './tahajjud/WeekMoons';
+import { tx } from '../features/tahajjud/tahajjudI18n';
 
 type Props = { schedule: MosquePrayerSchedule | null };
 
@@ -35,17 +36,17 @@ export default function HomeTahajjudCard({ schedule }: Props) {
   const inLastThird = state.phase === 'lastThird';
   const wakeUp = settings?.alarm.enabled ? alarmTime(tonight, settings.alarm.mode, settings.alarm.customTime) : null;
 
-  const title = view.validated ? 'Nuit accomplie' : inLastThird ? 'Dernier tiers en cours' : `Dernier tiers à ${clock(tonight.lastThirdStart)}`;
+  const title = view.validated ? tx('Nuit accomplie') : inLastThird ? tx('Dernier tiers en cours') : tx("Dernier tiers à {0}", [clock(tonight.lastThirdStart)]);
   const detail = view.validated
-    ? view.streak > 1 ? `${view.streak} nuits de suite` : 'Qu’Allah l’accepte'
+    ? view.streak > 1 ? tx("{0} nuits de suite", [view.streak]) : tx('Qu’Allah l’accepte')
     : inLastThird
-      ? `encore ${formatDuration(tonight.fajr - now)} · Fajr à ${clock(tonight.fajr)}`
-      : `dans ${formatDuration(tonight.lastThirdStart - now)} · Fajr à ${clock(tonight.fajr)}`;
+      ? tx("encore {0} · Fajr à {1}", [formatDuration(tonight.fajr - now), clock(tonight.fajr)])
+      : tx("dans {0} · Fajr à {1}", [formatDuration(tonight.lastThirdStart - now), clock(tonight.fajr)]);
 
   return (
     <Animated.View entering={FadeIn.duration(500)} style={styles.outer}>
       <View style={styles.card}>
-        <Pressable accessibilityRole="button" accessibilityLabel="Ouvrir Qiyam al-Layl" onPress={() => router.push('/tahajjud' as Href)} style={styles.photo}>
+        <Pressable accessibilityRole="button" accessibilityLabel={tx("Ouvrir Qiyam al-Layl")} onPress={() => router.push('/tahajjud' as Href)} style={styles.photo}>
           {/* The band has the photo's proportions (2172 × 724): the whole photo is shown. */}
           <Image source={require('../assets/images/home/tahajjud-night-card-wide.png')} resizeMode="cover" style={styles.backgroundImage} />
           <LinearGradient
@@ -58,7 +59,7 @@ export default function HomeTahajjudCard({ schedule }: Props) {
           <View style={styles.copy}>
             <View style={styles.eyebrowRow}>
               {inLastThird && !view.validated ? <View style={styles.liveDot} /> : null}
-              <Text style={styles.eyebrow}>{view.validated ? 'QIYAM AL-LAYL' : inLastThird ? 'C’EST LE MOMENT' : 'CETTE NUIT'}</Text>
+              <Text style={styles.eyebrow}>{view.validated ? tx('QIYAM AL-LAYL') : inLastThird ? tx('C’EST LE MOMENT') : tx('CETTE NUIT')}</Text>
             </View>
             <Text style={styles.title} numberOfLines={1} adjustsFontSizeToFit>{title}</Text>
             <Text style={styles.detail} numberOfLines={1}>{detail}</Text>
@@ -78,23 +79,23 @@ export default function HomeTahajjudCard({ schedule }: Props) {
               <Pressable onPress={() => router.push('/tahajjud/awake' as Href)} style={({ pressed }) => [styles.flex, pressed && styles.pressed]}>
                 <LinearGradient colors={[night.goldSoft, night.gold]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.primary}>
                   <Ionicons name="sunny" size={17} color={night.sky0} />
-                  <Text style={styles.primaryText}>Je suis debout</Text>
+                  <Text style={styles.primaryText}>{tx("Je suis debout")}</Text>
                 </LinearGradient>
               </Pressable>
               <Pressable onPress={() => setSheet(true)} style={({ pressed }) => [styles.chip, pressed && styles.pressed]}>
                 <Ionicons name="checkmark-circle-outline" size={16} color={night.goldSoft} />
-                <Text style={styles.chipText}>J’ai prié</Text>
+                <Text style={styles.chipText}>{tx("J’ai prié")}</Text>
               </Pressable>
             </>
           ) : (
             <>
               <Pressable onPress={() => router.push('/tahajjud/alarm' as Href)} style={({ pressed }) => [styles.chip, pressed && styles.pressed]}>
                 <Ionicons name="alarm-outline" size={16} color={night.goldSoft} />
-                <Text style={styles.chipText}>{wakeUp ? `Réveil ${clock(wakeUp)}` : 'Régler mon réveil'}</Text>
+                <Text style={styles.chipText}>{wakeUp ? tx("Réveil {0}", [clock(wakeUp)]) : tx('Régler mon réveil')}</Text>
               </Pressable>
               <Pressable onPress={() => router.push('/tahajjud/duas' as Href)} style={({ pressed }) => [styles.chip, pressed && styles.pressed]}>
                 <Ionicons name="heart-outline" size={16} color={night.goldSoft} />
-                <Text style={styles.chipText}>Ma nuit</Text>
+                <Text style={styles.chipText}>{tx("Ma nuit")}</Text>
               </Pressable>
             </>
           )}

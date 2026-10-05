@@ -21,6 +21,7 @@ import {
   type TahajjudPause,
 } from '../../features/tahajjud/TahajjudStore';
 import { useTahajjudNight } from '../../features/tahajjud/useTahajjudNight';
+import { tx, txCount, tahajjudLocale } from '../../features/tahajjud/tahajjudI18n';
 
 const PERIODS: readonly { id: StatsPeriod; label: string }[] = [
   { id: 'week', label: 'Semaine' },
@@ -119,11 +120,11 @@ export default function TahajjudStatsScreen() {
   };
 
   return (
-    <TahajjudShell title="Mes statistiques" eyebrow="Qiyam al-Layl">
+    <TahajjudShell title={tx("Mes statistiques")} eyebrow={tx("Qiyam al-Layl")}>
       <View style={styles.segment}>
         {PERIODS.map((item) => (
           <Pressable key={item.id} onPress={() => setPeriod(item.id)} style={[styles.segmentItem, period === item.id && styles.segmentOn]}>
-            <Text style={[styles.segmentText, period === item.id && styles.segmentTextOn]}>{item.label}</Text>
+            <Text style={[styles.segmentText, period === item.id && styles.segmentTextOn]}>{tx(item.label)}</Text>
           </Pressable>
         ))}
       </View>
@@ -133,20 +134,20 @@ export default function TahajjudStatsScreen() {
           <Ring value={stats.regularity / 100} size={104} />
           <View style={styles.heroRingCenter}>
             <Text style={styles.heroPercent}>{stats.regularity}%</Text>
-            <Text style={styles.heroPercentLabel}>régularité</Text>
+            <Text style={styles.heroPercentLabel}>{tx("régularité")}</Text>
           </View>
         </View>
         <View style={styles.heroCopy}>
           <Text style={styles.heroBig}>{stats.done}</Text>
-          <Text style={styles.heroLabel}>nuit{stats.done > 1 ? 's' : ''} {period === 'week' ? 'cette semaine' : period === 'month' ? 'ce mois-ci' : 'cette année'}</Text>
+          <Text style={styles.heroLabel}>{txCount(stats.done, 'nuit', 'nuits')} {period === 'week' ? tx('cette semaine') : period === 'month' ? tx('ce mois-ci') : tx('cette année')}</Text>
         </View>
       </GlassCard>
 
       <View style={styles.metrics}>
         {[
-          { icon: 'flame' as const, value: streak, label: 'série actuelle' },
-          { icon: 'trophy-outline' as const, value: best, label: 'meilleure série' },
-          { icon: 'moon' as const, value: total, label: 'nuits au total' },
+          { icon: 'flame' as const, value: streak, label: tx('série actuelle') },
+          { icon: 'trophy-outline' as const, value: best, label: tx('meilleure série') },
+          { icon: 'moon' as const, value: total, label: tx('nuits au total') },
         ].map((item) => (
           <GlassCard key={item.label} style={styles.metric}>
             <Ionicons name={item.icon} size={18} color={night.gold} />
@@ -156,21 +157,21 @@ export default function TahajjudStatsScreen() {
         ))}
       </View>
 
-      <Text style={[shellStyles.sectionLabel, styles.section]}>Calendrier</Text>
+      <Text style={[shellStyles.sectionLabel, styles.section]}>{tx("Calendrier")}</Text>
       <GlassCard>
         <View style={styles.monthHeader}>
           <Pressable hitSlop={10} onPress={() => setMonth(new Date(month.getFullYear(), month.getMonth() - 1, 1))}>
             <Ionicons name="chevron-back" size={20} color={night.textSoft} />
           </Pressable>
-          <Text style={styles.monthTitle}>{month.toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' })}</Text>
+          <Text style={styles.monthTitle}>{month.toLocaleDateString(tahajjudLocale(), { month: 'long', year: 'numeric' })}</Text>
           <Pressable hitSlop={10} onPress={() => setMonth(new Date(month.getFullYear(), month.getMonth() + 1, 1))}>
             <Ionicons name="chevron-forward" size={20} color={night.textSoft} />
           </Pressable>
         </View>
         <Calendar month={month} nights={view.nights} pauses={allPauses} today={currentNight} />
         <View style={styles.legend}>
-          <View style={styles.legendItem}><View style={[styles.legendDot, styles.dayDone]} /><Text style={styles.legendText}>Nuit priée</Text></View>
-          <View style={styles.legendItem}><View style={[styles.legendDot, styles.dayPaused]} /><Text style={styles.legendText}>En pause</Text></View>
+          <View style={styles.legendItem}><View style={[styles.legendDot, styles.dayDone]} /><Text style={styles.legendText}>{tx("Nuit priée")}</Text></View>
+          <View style={styles.legendItem}><View style={[styles.legendDot, styles.dayPaused]} /><Text style={styles.legendText}>{tx("En pause")}</Text></View>
         </View>
       </GlassCard>
 
@@ -178,8 +179,8 @@ export default function TahajjudStatsScreen() {
         <View style={styles.pauseRow}>
           <Ionicons name="pause-circle-outline" size={22} color={night.lavender} />
           <View style={styles.pauseCopy}>
-            <Text style={styles.pauseTitle}>Mettre ma série en pause</Text>
-            <Text style={styles.pauseText}>Règles, maladie, voyage : ces nuits ne cassent pas la série.</Text>
+            <Text style={styles.pauseTitle}>{tx("Mettre ma série en pause")}</Text>
+            <Text style={styles.pauseText}>{tx("Règles, maladie, voyage : ces nuits ne cassent pas la série.")}</Text>
           </View>
           <Switch
             value={paused}
@@ -190,7 +191,7 @@ export default function TahajjudStatsScreen() {
         </View>
       </GlassCard>
 
-      <Text style={[shellStyles.sectionLabel, styles.section]}>Mon défi</Text>
+      <Text style={[shellStyles.sectionLabel, styles.section]}>{tx("Mon défi")}</Text>
       {challenge && progress ? (
         <GlassCard gold style={styles.challengeActive}>
           <View style={styles.heroRing}>
@@ -201,14 +202,14 @@ export default function TahajjudStatsScreen() {
             </View>
           </View>
           <View style={styles.heroCopy}>
-            <Text style={styles.challengeTitle}>{progress.complete ? 'Défi accompli' : challenge.label}</Text>
+            <Text style={styles.challengeTitle}>{progress.complete ? tx('Défi accompli') : tx(challenge.label)}</Text>
             <Text style={styles.challengeText}>
               {progress.complete
-                ? 'Qu’Allah fasse de cette habitude une constance.'
-                : `${challenge.target - progress.done} nuit${challenge.target - progress.done > 1 ? 's' : ''} pour y arriver. Les nuits n’ont pas besoin d’être consécutives.`}
+                ? tx('Qu’Allah fasse de cette habitude une constance.')
+                : txCount(challenge.target - progress.done, '{0} nuit pour y arriver. Les nuits n’ont pas besoin d’être consécutives.', '{0} nuits pour y arriver. Les nuits n’ont pas besoin d’être consécutives.')}
             </Text>
             <Pressable onPress={() => { setChallenge(null); void saveChallenge(null); }} hitSlop={6}>
-              <Text style={styles.challengeStop}>{progress.complete ? 'Choisir un nouveau défi' : 'Arrêter ce défi'}</Text>
+              <Text style={styles.challengeStop}>{progress.complete ? tx('Choisir un nouveau défi') : tx('Arrêter ce défi')}</Text>
             </Pressable>
           </View>
         </GlassCard>
@@ -217,35 +218,35 @@ export default function TahajjudStatsScreen() {
           {CHALLENGES.map((item) => (
             <Pressable key={item.id} onPress={() => startChallenge(item.id, item.label, item.target)} style={({ pressed }) => [pressed && styles.pressed]}>
               <GlassCard style={styles.challengeOption}>
-                <Text style={styles.challengeOptionTitle}>{item.label}</Text>
-                <Text style={styles.challengeOptionHint}>{item.hint}</Text>
+                <Text style={styles.challengeOptionTitle}>{tx(item.label)}</Text>
+                <Text style={styles.challengeOptionHint}>{tx(item.hint)}</Text>
                 <Ionicons name="arrow-forward" size={16} color={night.gold} style={styles.challengeArrow} />
               </GlassCard>
             </Pressable>
           ))}
           <GlassCard style={styles.challengeOption}>
-            <Text style={styles.challengeOptionTitle}>Mon défi personnalisé</Text>
+            <Text style={styles.challengeOptionTitle}>{tx("Mon défi personnalisé")}</Text>
             <View style={styles.customRow}>
               <TextInput
                 value={customTarget}
                 onChangeText={(value) => setCustomTarget(value.replace(/\D/g, '').slice(0, 3))}
-                placeholder="Nombre de nuits"
+                placeholder={tx("Nombre de nuits")}
                 placeholderTextColor={night.placeholder}
                 keyboardType="number-pad"
                 style={styles.customInput}
               />
               <Pressable
                 disabled={!Number(customTarget)}
-                onPress={() => startChallenge('custom', `${Number(customTarget)} nuits`, Number(customTarget))}
+                onPress={() => startChallenge('custom', tx("{0} nuits", [Number(customTarget)]), Number(customTarget))}
                 style={[styles.customStart, !Number(customTarget) && styles.disabled]}
               >
-                <Text style={styles.customStartText}>Commencer</Text>
+                <Text style={styles.customStartText}>{tx("Commencer")}</Text>
               </Pressable>
             </View>
           </GlassCard>
         </>
       )}
-      <Text style={styles.footer}>Un défi personnel, entre vous et Allah : aucun classement, aucune comparaison.</Text>
+      <Text style={styles.footer}>{tx("Un défi personnel, entre vous et Allah : aucun classement, aucune comparaison.")}</Text>
     </TahajjudShell>
   );
 }

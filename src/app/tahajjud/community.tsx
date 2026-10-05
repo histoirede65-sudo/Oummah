@@ -22,6 +22,7 @@ import {
 } from '../../features/tahajjud/tahajjudCommunity';
 import { useTahajjudNight } from '../../features/tahajjud/useTahajjudNight';
 import { getDuaMap, timeAgo, type DuaMapZone } from '../../features/tahajjud/duaWall';
+import { tx, txCount, tahajjudLocale } from '../../features/tahajjud/tahajjudI18n';
 
 /** Duas of one zone of the map: tap one to read it and reply. */
 function DuaZoneSheet({ zone, onClose }: { zone: DuaMapZone | null; onClose: () => void }) {
@@ -37,8 +38,8 @@ function DuaZoneSheet({ zone, onClose }: { zone: DuaMapZone | null; onClose: () 
           <View style={styles.sheetHead}>
             <View style={styles.sheetIcon}><Ionicons name="hand-left" size={18} color={night.sky0} /></View>
             <View style={styles.sheetCopy}>
-              <Text style={styles.sheetTitle}>{zone?.count === 1 ? 'Une doua partagée ici' : `${zone?.count ?? 0} duas partagées ici`}</Text>
-              <Text style={styles.sheetSub}>Zone d’environ 30 km · 14 derniers jours</Text>
+              <Text style={styles.sheetTitle}>{zone?.count === 1 ? tx('Une doua partagée ici') : tx("{0} duas partagées ici", [zone?.count ?? 0])}</Text>
+              <Text style={styles.sheetSub}>{tx("Zone d’environ 30 km · 14 derniers jours")}</Text>
             </View>
           </View>
           <ScrollView style={styles.sheetList} showsVerticalScrollIndicator={false}>
@@ -47,22 +48,22 @@ function DuaZoneSheet({ zone, onClose }: { zone: DuaMapZone | null; onClose: () 
                 {post.answered ? (
                   <View style={styles.duaAnswered}>
                     <Ionicons name="sparkles" size={12} color={night.sky0} />
-                    <Text style={styles.duaAnsweredText}>Exaucée</Text>
+                    <Text style={styles.duaAnsweredText}>{tx("Exaucée")}</Text>
                   </View>
                 ) : null}
                 <Text style={styles.duaExcerpt} numberOfLines={3}>{post.excerpt}</Text>
                 <View style={styles.duaMeta}>
                   <Text style={styles.duaMetaText}>{timeAgo(post.createdAt)}</Text>
-                  <Text style={styles.duaMetaText}>🤲 {post.ameenCount} · {post.replyCount} réponse{post.replyCount > 1 ? 's' : ''}</Text>
+                  <Text style={styles.duaMetaText}>🤲 {post.ameenCount} · {post.replyCount} {tx("réponse")}{post.replyCount > 1 ? 's' : ''}</Text>
                 </View>
                 <View style={styles.duaCta}>
-                  <Text style={styles.duaCtaText}>Lire et répondre</Text>
+                  <Text style={styles.duaCtaText}>{tx("Lire et répondre")}</Text>
                   <Ionicons name="chevron-forward" size={15} color={night.goldSoft} />
                 </View>
               </Pressable>
             ))}
           </ScrollView>
-          <Pressable onPress={onClose} style={styles.sheetClose}><Text style={styles.sheetCloseText}>Fermer</Text></Pressable>
+          <Pressable onPress={onClose} style={styles.sheetClose}><Text style={styles.sheetCloseText}>{tx("Fermer")}</Text></Pressable>
         </Pressable>
       </Pressable>
     </Modal>
@@ -156,22 +157,22 @@ export default function TahajjudCommunityScreen() {
   };
 
   return (
-    <TahajjudShell title="La Oummah cette nuit" eyebrow="Communauté">
+    <TahajjudShell title={tx("La Oummah cette nuit")} eyebrow={tx("Communauté")}>
       <Animated.View entering={FadeInDown.duration(500)}>
-        <Text style={styles.tagline}>Vous ne priez pas seul : la Oummah est éveillée.</Text>
+        <Text style={styles.tagline}>{tx("Vous ne priez pas seul : la Oummah est éveillée.")}</Text>
 
         <GlassCard gold style={styles.counterCard}>
           <View style={styles.liveRow}>
             <View style={styles.liveDot} />
-            <Text style={styles.liveText}>EN DIRECT · 12 DERNIÈRES HEURES</Text>
+            <Text style={styles.liveText}>{tx("EN DIRECT · 12 DERNIÈRES HEURES")}</Text>
           </View>
           {live ? (
             <>
               <Text style={styles.counter}>{awake}</Text>
-              <Text style={styles.counterLabel}>membre{awake > 1 ? 's' : ''} réveillé{awake > 1 ? 's' : ''} pour prier la nuit</Text>
+              <Text style={styles.counterLabel}>{txCount(awake, 'membre réveillé pour prier la nuit', 'membres réveillés pour prier la nuit')}</Text>
               <View style={styles.prayedPill}>
                 <Ionicons name="moon" size={15} color={night.sky0} />
-                <Text style={styles.prayedText}>dont {prayed} {prayed > 1 ? 'ont' : 'a'} prié</Text>
+                <Text style={styles.prayedText}>{txCount(prayed, 'dont {0} a prié', 'dont {0} ont prié')}</Text>
               </View>
             </>
           ) : (
@@ -185,57 +186,57 @@ export default function TahajjudCommunityScreen() {
         <View style={styles.legend}>
           <View style={styles.legendItem}>
             <View style={styles.legendHalo} />
-            <Text style={styles.legendText}>Membres réveillés (3 min. par zone)</Text>
+            <Text style={styles.legendText}>{tx("Membres réveillés (3 min. par zone)")}</Text>
           </View>
           <View style={styles.legendItem}>
             <View style={styles.legendPin}><Ionicons name="hand-left" size={10} color={night.sky0} /></View>
-            <Text style={styles.legendText}>Duas partagées · touchez pour lire</Text>
+            <Text style={styles.legendText}>{tx("Duas partagées · touchez pour lire")}</Text>
           </View>
         </View>
       </Animated.View>
 
       <Animated.View entering={FadeInDown.delay(220).duration(500)}>
-        <Text style={[shellStyles.sectionLabel, styles.section]}>Et vous ?</Text>
+        <Text style={[shellStyles.sectionLabel, styles.section]}>{tx("Et vous ?")}</Text>
         {!signedIn ? (
           <GlassCard style={styles.actionCard}>
-            <Text style={styles.actionText}>Connectez-vous pour être compté avec la Oummah.</Text>
+            <Text style={styles.actionText}>{tx("Connectez-vous pour être compté avec la Oummah.")}</Text>
             <Pressable onPress={() => router.push('/profile' as Href)} style={styles.secondary}>
-              <Text style={styles.secondaryText}>Se connecter</Text>
+              <Text style={styles.secondaryText}>{tx("Se connecter")}</Text>
             </Pressable>
           </GlassCard>
         ) : !profile ? (
           <GlassCard style={styles.actionCard}>
-            <Text style={styles.actionText}>Un pseudo suffit pour rejoindre la communauté. Tout reste volontaire.</Text>
+            <Text style={styles.actionText}>{tx("Un pseudo suffit pour rejoindre la communauté. Tout reste volontaire.")}</Text>
             <Pressable onPress={() => router.push('/tahajjud/profile' as Href)} style={styles.secondary}>
-              <Text style={styles.secondaryText}>Créer mon profil OUMMAH</Text>
+              <Text style={styles.secondaryText}>{tx("Créer mon profil OUMMAH")}</Text>
             </Pressable>
           </GlassCard>
         ) : !nightKey ? (
           <GlassCard style={styles.actionCard}>
             <Text style={styles.actionText}>
-              Revenez cette nuit, après ‘Isha{night_ ? ` (dernier tiers vers ${new Date(night_.lastThirdStart).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })})` : ''}.
+              {tx("Revenez cette nuit, après ‘Isha")}{night_ ? tx(' (dernier tiers vers {0})', [new Date(night_.lastThirdStart).toLocaleTimeString(tahajjudLocale(), { hour: '2-digit', minute: '2-digit' })]) : ''}.
             </Text>
           </GlassCard>
         ) : presence ? (
           <GlassCard gold style={styles.actionCard}>
             <View style={styles.countedRow}>
               <Ionicons name="checkmark-circle" size={24} color={night.success} />
-              <Text style={styles.countedText}>{presence === 'prayed' ? 'Votre nuit est comptée : vous avez prié.' : 'Vous êtes compté parmi les réveillés.'}</Text>
+              <Text style={styles.countedText}>{presence === 'prayed' ? tx('Votre nuit est comptée : vous avez prié.') : tx('Vous êtes compté parmi les réveillés.')}</Text>
             </View>
             <Pressable onPress={() => void withdraw()} disabled={busy} hitSlop={8}>
-              <Text style={styles.withdraw}>Me retirer pour cette nuit</Text>
+              <Text style={styles.withdraw}>{tx("Me retirer pour cette nuit")}</Text>
             </Pressable>
           </GlassCard>
         ) : (
           <Pressable disabled={busy || (!profile.shareTahajjud && !profile.shareWithFriends)} onPress={() => void declare()} style={({ pressed }) => [pressed && styles.pressed]}>
             <LinearGradient colors={[night.goldSoft, night.gold]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={[styles.cta, !profile.shareTahajjud && !profile.shareWithFriends && styles.disabled]}>
               <Ionicons name="sunny" size={20} color={night.sky0} />
-              <Text style={styles.ctaText}>{busy ? '…' : 'Je suis réveillé pour prier'}</Text>
+              <Text style={styles.ctaText}>{busy ? '…' : tx('Je suis réveillé pour prier')}</Text>
             </LinearGradient>
           </Pressable>
         )}
         {profile && !profile.shareTahajjud && !profile.shareWithFriends ? (
-          <Text style={styles.mapNote}>Vous avez choisi de ne pas apparaître. Modifiable dans votre profil.</Text>
+          <Text style={styles.mapNote}>{tx("Vous avez choisi de ne pas apparaître. Modifiable dans votre profil.")}</Text>
         ) : null}
       </Animated.View>
 
@@ -244,11 +245,11 @@ export default function TahajjudCommunityScreen() {
           <GlassCard style={styles.friends}>
             <Ionicons name="people" size={22} color={night.goldSoft} />
             <View style={styles.friendsCopy}>
-              <Text style={styles.friendsTitle}>Mes amis cette nuit</Text>
+              <Text style={styles.friendsTitle}>{tx("Mes amis cette nuit")}</Text>
               <Text style={styles.friendsText}>
                 {live?.friends
-                  ? `${live.friends} ami${live.friends > 1 ? 's' : ''} éveillé${live.friends > 1 ? 's' : ''}${live.friendsPrayed ? `, dont ${live.friendsPrayed} ${live.friendsPrayed > 1 ? 'ont' : 'a'} prié` : ''}`
-                  : 'Voir et encourager vos amis, selon leurs réglages.'}
+                  ? `${txCount(live.friends, '{0} ami éveillé', '{0} amis éveillés')}${live.friendsPrayed ? txCount(live.friendsPrayed, ', dont {0} a prié', ', dont {0} ont prié') : ''}`
+                  : tx('Voir et encourager vos amis, selon leurs réglages.')}
               </Text>
             </View>
             <Ionicons name="chevron-forward" size={18} color={night.muted} />
@@ -257,11 +258,11 @@ export default function TahajjudCommunityScreen() {
         {profile ? (
           <Pressable onPress={() => router.push('/tahajjud/profile' as Href)} style={styles.profileLink}>
             <Ionicons name="person-circle-outline" size={18} color={night.goldSoft} />
-            <Text style={styles.profileLinkText}>{profile.pseudo} · confidentialité</Text>
+            <Text style={styles.profileLinkText}>{profile.pseudo} {tx("· confidentialité")}</Text>
           </Pressable>
         ) : null}
         <Text style={styles.footer}>
-          Uniquement de vraies déclarations OUMMAH. Aucune position précise n’est envoyée ni affichée.
+          {tx("Uniquement de vraies déclarations OUMMAH. Aucune position précise n’est envoyée ni affichée.")}
         </Text>
       </Animated.View>
       <DuaZoneSheet zone={duaZone} onClose={() => setDuaZone(null)} />

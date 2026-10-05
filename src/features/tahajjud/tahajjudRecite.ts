@@ -1,10 +1,12 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { SURAHS, type Surah } from '../../data/surahs';
+import { getActiveLanguage } from '../../i18n';
 import { readingQuranRepository } from '../quran/ReadingQuranRepository';
+import { tx } from './tahajjudI18n';
 
 /**
  * « Que réciter dans ma prière ? » : short surahs sorted by length, read from OUMMAH's Quran source
- * (Arabic, phonetic, French translation), kept on the phone for the night (offline).
+ * (Arabic, phonetic, translation in the app language), kept on the phone for the night (offline).
  */
 
 export type ReciteVerse = { number: number; arabic: string; phonetic: string | null; translation: string | null };
@@ -21,34 +23,38 @@ const byLength = (a: Surah, b: Surah) => a.verses - b.verses || b.id - a.id;
 
 export const RECITE_GROUPS: ReciteGroup[] = [
   {
-    id: 'essential', title: 'À chaque rak‘a', hint: 'Al-Fatiha est récitée dans chaque unité de prière.',
+    id: 'essential', get title() { return tx('À chaque rak‘a'); }, get hint() { return tx('Al-Fatiha est récitée dans chaque unité de prière.'); },
     surahs: SURAHS.filter((surah) => surah.id === 1),
   },
   {
-    id: 'very-short', title: 'Très courtes', hint: 'Moins de 7 versets : idéales pour commencer.',
+    id: 'very-short', get title() { return tx('Très courtes'); }, get hint() { return tx('Moins de 7 versets : idéales pour commencer.'); },
     surahs: CANDIDATES.filter((surah) => surah.verses < 7).sort(byLength),
   },
   {
-    id: 'short', title: 'Courtes', hint: 'De 7 à 11 versets.',
+    id: 'short', title: 'Courtes', get hint() { return tx('De 7 à 11 versets.'); },
     surahs: CANDIDATES.filter((surah) => surah.verses >= 7 && surah.verses <= 11).sort(byLength),
   },
   {
-    id: 'medium', title: 'Moyennes', hint: 'De 12 à 30 versets : pour prolonger la station debout.',
+    id: 'medium', title: 'Moyennes', get hint() { return tx('De 12 à 30 versets : pour prolonger la station debout.'); },
     surahs: CANDIDATES.filter((surah) => surah.verses >= 12 && surah.verses <= 30).sort(byLength),
   },
   {
-    id: 'long', title: 'Pour aller plus loin', hint: 'Plus de 30 versets.',
+    id: 'long', get title() { return tx('Pour aller plus loin'); }, get hint() { return tx('Plus de 30 versets.'); },
     surahs: CANDIDATES.filter((surah) => surah.verses > 30).sort(byLength),
   },
 ];
 
 export const surahById = (id: number) => SURAHS.find((surah) => surah.id === id) ?? null;
 
+/** French name in French; the usual transliterated name in English. */
+export const surahName = (surah: Surah) => (getActiveLanguage() === 'en' ? surah.transliteration : surah.frenchName);
+
 /** Ordered list used for « sourate suivante / précédente » in the reader. */
 export const RECITE_ORDER = RECITE_GROUPS.flatMap((group) => group.surahs.map((surah) => surah.id));
 
 export async function getReciteSurah(id: number): Promise<ReciteVerse[]> {
-  const key = `${CACHE_PREFIX}${id}`;
+  const language = getActiveLanguage() === 'en' ? 'en' : 'fr';
+  const key = `${CACHE_PREFIX}${language === 'en' ? 'en.' : ''}${id}`;
   const cached = await AsyncStorage.getItem(key).catch(() => null);
   if (cached) {
     try {
@@ -57,7 +63,7 @@ export async function getReciteSurah(id: number): Promise<ReciteVerse[]> {
       // Refetched below.
     }
   }
-  const verses = await readingQuranRepository.getVerses(id, 'fr');
+  const verses = await readingQuranRepository.getVerses(id, language);
   const mapped = verses.map((verse) => ({
     number: verse.id,
     arabic: verse.textUthmani,

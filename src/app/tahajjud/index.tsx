@@ -19,13 +19,14 @@ import { verseOfTheNight } from '../../features/tahajjud/tahajjudContent';
 import { alarmTime, clock, formatDuration } from '../../features/tahajjud/tahajjudNight';
 import { loadTahajjudSettings, type TahajjudSettings } from '../../features/tahajjud/TahajjudStore';
 import { useTahajjudNight } from '../../features/tahajjud/useTahajjudNight';
+import { tx, txCount, tahajjudLocale } from '../../features/tahajjud/tahajjudI18n';
 
 function nightTitle(key: string) {
   const evening = new Date(`${key}T12:00:00`);
   const morning = new Date(evening);
   morning.setDate(evening.getDate() + 1);
-  const day = (date: Date) => date.toLocaleDateString('fr-FR', { weekday: 'long' });
-  return `Nuit du ${day(evening)} au ${day(morning)} ${morning.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' })}`;
+  const day = (date: Date) => date.toLocaleDateString(tahajjudLocale(), { weekday: 'long' });
+  return tx('Nuit du {0} au {1} {2}', [day(evening), day(morning), morning.toLocaleDateString(tahajjudLocale(), { day: 'numeric', month: 'long' })]);
 }
 
 type Tile = { icon: keyof typeof Ionicons.glyphMap; label: string; hint: string; route?: string; onPress?: () => void; soon?: boolean };
@@ -52,36 +53,36 @@ export default function TahajjudScreen() {
   const verse = tonight ? verseOfTheNight(tonight.key) : null;
 
   const tiles: Tile[] = [
-    { icon: 'book-outline', label: 'Conseils', hint: 'Apprendre le Qiyam', route: '/tahajjud/guide' },
-    { icon: 'heart-outline', label: 'Ma nuit', hint: 'Dhikr, Coran, duas…', route: '/tahajjud/duas' },
-    { icon: 'checkmark-circle-outline', label: 'J’ai prié', hint: view.validated ? 'Nuit enregistrée' : 'Valider ma nuit', onPress: () => view.canValidate && setSheet(true) },
-    { icon: 'stats-chart-outline', label: 'Statistiques', hint: 'Calendrier · défis', route: '/tahajjud/stats' },
-    { icon: 'people-outline', label: 'Mur des duas', hint: 'Dire Amine', route: '/tahajjud/wall' },
-    { icon: 'chatbubbles-outline', label: 'Amis', hint: unreadMessages ? `${unreadMessages} message${unreadMessages > 1 ? 's' : ''} non lu${unreadMessages > 1 ? 's' : ''}` : 'Messages · encourager', route: '/tahajjud/friends' },
+    { icon: 'book-outline', label: tx('Conseils'), hint: tx('Apprendre le Qiyam'), route: '/tahajjud/guide' },
+    { icon: 'heart-outline', label: tx('Ma nuit'), hint: tx('Dhikr, Coran, duas…'), route: '/tahajjud/duas' },
+    { icon: 'checkmark-circle-outline', label: tx('J’ai prié'), hint: view.validated ? tx('Nuit enregistrée') : tx('Valider ma nuit'), onPress: () => view.canValidate && setSheet(true) },
+    { icon: 'stats-chart-outline', label: tx('Statistiques'), hint: tx('Calendrier · défis'), route: '/tahajjud/stats' },
+    { icon: 'people-outline', label: tx('Mur des duas'), hint: tx('Dire Amine'), route: '/tahajjud/wall' },
+    { icon: 'chatbubbles-outline', label: tx('Amis'), hint: unreadMessages ? txCount(unreadMessages, '{0} message non lu', '{0} messages non lus') : tx('Messages · encourager'), route: '/tahajjud/friends' },
   ];
 
   // Center of the arc: what matters now, in one glance.
   const center = !tonight ? null : view.validated ? (
     <>
-      <Text style={styles.centerLabel}>NUIT ACCOMPLIE</Text>
+      <Text style={styles.centerLabel}>{tx("NUIT ACCOMPLIE")}</Text>
       <Ionicons name="checkmark-circle" size={44} color={night.goldSoft} />
-      <Text style={styles.centerSub}>{view.streak > 1 ? `${view.streak} nuits de suite` : 'Qu’Allah l’accepte'}</Text>
+      <Text style={styles.centerSub}>{view.streak > 1 ? tx("{0} nuits de suite", [view.streak]) : tx('Qu’Allah l’accepte')}</Text>
     </>
   ) : phase === 'lastThird' ? (
     <>
       <View style={styles.liveRow}>
         <View style={styles.liveDot} />
-        <Text style={[styles.centerLabel, styles.centerLabelGold]}>DERNIER TIERS EN COURS</Text>
+        <Text style={[styles.centerLabel, styles.centerLabelGold]}>{tx("DERNIER TIERS EN COURS")}</Text>
       </View>
       <Text style={styles.centerBig}>{formatDuration(tonight.fajr - now)}</Text>
-      <Text style={styles.centerSub}>restantes · Fajr à {clock(tonight.fajr)}</Text>
+      <Text style={styles.centerSub}>{tx("restantes · Fajr à ")}{clock(tonight.fajr)}</Text>
     </>
   ) : (
     <>
-      <Text style={styles.centerLabel}>{phase === 'day' ? 'PROCHAIN DERNIER TIERS' : 'DERNIER TIERS DE LA NUIT'}</Text>
+      <Text style={styles.centerLabel}>{phase === 'day' ? tx('PROCHAIN DERNIER TIERS') : tx('DERNIER TIERS DE LA NUIT')}</Text>
       <Text style={styles.centerBig}>{clock(tonight.lastThirdStart)}</Text>
       <Text style={styles.centerSub}>
-        {phase === 'day' ? `jusqu’à ${clock(tonight.fajr)} · ce soir après ‘Isha` : `commence dans ${formatDuration(tonight.lastThirdStart - now)}`}
+        {phase === 'day' ? tx("jusqu’à {0} · ce soir après ‘Isha", [clock(tonight.fajr)]) : tx("commence dans {0}", [formatDuration(tonight.lastThirdStart - now)])}
       </Text>
     </>
   );
@@ -89,9 +90,9 @@ export default function TahajjudScreen() {
   return (
     <TahajjudShell>
       <Animated.View entering={FadeInDown.duration(500)}>
-        <Text style={styles.eyebrow}>{tonight ? nightTitle(tonight.key) : 'Cette nuit'}</Text>
-        <Text style={styles.title}>Qiyam al-Layl</Text>
-        <Text style={styles.subtitle}>Un rendez-vous privilégié avec ton Seigneur</Text>
+        <Text style={styles.eyebrow}>{tonight ? nightTitle(tonight.key) : tx('Cette nuit')}</Text>
+        <Text style={styles.title}>{tx("Qiyam al-Layl")}</Text>
+        <Text style={styles.subtitle}>{tx("Un rendez-vous privilégié avec ton Seigneur")}</Text>
       </Animated.View>
 
       {view.loading && !tonight ? (
@@ -101,10 +102,10 @@ export default function TahajjudScreen() {
           <Ionicons name="cloud-offline-outline" size={26} color={night.gold} />
           <Text style={styles.errorText}>
             {view.error === 'location'
-              ? 'Autorisez la localisation (ou choisissez votre mosquée) pour calculer le dernier tiers.'
-              : 'Les horaires sont momentanément indisponibles.'}
+              ? tx('Autorisez la localisation (ou choisissez votre mosquée) pour calculer le dernier tiers.')
+              : tx('Les horaires sont momentanément indisponibles.')}
           </Text>
-          <Pressable onPress={view.reload} style={styles.retry}><Text style={styles.retryText}>Réessayer</Text></Pressable>
+          <Pressable onPress={view.reload} style={styles.retry}><Text style={styles.retryText}>{tx("Réessayer")}</Text></Pressable>
         </GlassCard>
       ) : (
         <>
@@ -120,40 +121,40 @@ export default function TahajjudScreen() {
                 <Pressable onPress={() => router.push('/tahajjud/awake' as Href)} style={({ pressed }) => [pressed && styles.pressed]}>
                   <LinearGradient colors={[night.goldSoft, night.gold]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.cta}>
                     <Ionicons name="sunny" size={20} color={night.sky0} />
-                    <Text style={styles.ctaText}>Je suis debout</Text>
+                    <Text style={styles.ctaText}>{tx("Je suis debout")}</Text>
                   </LinearGradient>
                 </Pressable>
                 <Pressable onPress={() => setSheet(true)} style={styles.lateLink}>
                   <Ionicons name="checkmark-circle-outline" size={15} color={night.goldSoft} />
-                  <Text style={styles.lateText}>J’ai déjà prié cette nuit</Text>
+                  <Text style={styles.lateText}>{tx("J’ai déjà prié cette nuit")}</Text>
                 </Pressable>
               </>
             ) : view.validated ? (
               <View style={[styles.cta, styles.ctaDone]}>
                 <Ionicons name="checkmark-circle" size={20} color={night.success} />
-                <Text style={[styles.ctaText, styles.ctaDoneText]}>Nuit enregistrée</Text>
+                <Text style={[styles.ctaText, styles.ctaDoneText]}>{tx("Nuit enregistrée")}</Text>
                 <Pressable onPress={() => void view.undo()} hitSlop={8} style={styles.undo}>
-                  <Text style={styles.undoText}>Annuler</Text>
+                  <Text style={styles.undoText}>{tx("Annuler")}</Text>
                 </Pressable>
               </View>
             ) : (
               <Pressable onPress={() => router.push('/tahajjud/alarm' as Href)} style={({ pressed }) => [pressed && styles.pressed]}>
                 <LinearGradient colors={[night.goldSoft, night.gold]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.cta}>
                   <Ionicons name="alarm" size={20} color={night.sky0} />
-                  <Text style={styles.ctaText}>{wakeUp ? `Réveil réglé · ${clock(wakeUp)}` : 'Régler mon réveil'}</Text>
+                  <Text style={styles.ctaText}>{wakeUp ? tx("Réveil réglé · {0}", [clock(wakeUp)]) : tx('Régler mon réveil')}</Text>
                 </LinearGradient>
               </Pressable>
             )}
             {phase === 'evening' && !view.validated ? (
               <Pressable onPress={() => router.push('/tahajjud/awake' as Href)} style={styles.lateLink}>
                 <Ionicons name="sunny-outline" size={15} color={night.goldSoft} />
-                <Text style={styles.lateText}>Prier maintenant · mode guidé</Text>
+                <Text style={styles.lateText}>{tx("Prier maintenant · mode guidé")}</Text>
               </Pressable>
             ) : null}
             {late ? (
               <Pressable onPress={() => setSheet(true)} style={styles.lateLink}>
                 <Ionicons name="moon-outline" size={15} color={night.goldSoft} />
-                <Text style={styles.lateText}>J’ai prié cette nuit ? Enregistrez-la jusqu’à Dhuhr.</Text>
+                <Text style={styles.lateText}>{tx("J’ai prié cette nuit ? Enregistrez-la jusqu’à Dhuhr.")}</Text>
               </Pressable>
             ) : null}
           </Animated.View>
@@ -186,9 +187,9 @@ export default function TahajjudScreen() {
                   <Ionicons name="earth" size={24} color={night.goldSoft} />
                 </View>
                 <View style={styles.communityCopy}>
-                  <Text style={styles.communityTitle}>La Oummah cette nuit</Text>
+                  <Text style={styles.communityTitle}>{tx("La Oummah cette nuit")}</Text>
                   <Text style={styles.communityText}>
-                    {awakeCount === null ? 'Vous ne priez pas seul' : `${awakeCount} membre${awakeCount > 1 ? 's' : ''} réveillé${awakeCount > 1 ? 's' : ''} · voir la carte`}
+                    {awakeCount === null ? tx('Vous ne priez pas seul') : txCount(awakeCount, '{0} membre réveillé · voir la carte', '{0} membres réveillés · voir la carte')}
                   </Text>
                 </View>
                 <Ionicons name="chevron-forward" size={20} color={night.goldSoft} />
@@ -200,7 +201,7 @@ export default function TahajjudScreen() {
             <Pressable onPress={() => router.push('/tahajjud/stats' as Href)}>
               <GlassCard style={styles.weekCard}>
                 <View style={styles.weekHeader}>
-                  <Text style={shellStyles.sectionLabel}>Mes 7 dernières nuits</Text>
+                  <Text style={shellStyles.sectionLabel}>{tx("Mes 7 dernières nuits")}</Text>
                   {view.streak > 0 ? (
                     <View style={styles.streakPill}>
                       <Ionicons name="flame" size={13} color={night.gold} />
@@ -216,14 +217,14 @@ export default function TahajjudScreen() {
           {verse ? (
             <Animated.View entering={FadeInDown.delay(480).duration(500)}>
               <GlassCard gold style={styles.verseCard}>
-                <Text style={shellStyles.sectionLabel}>Pour cette nuit</Text>
+                <Text style={shellStyles.sectionLabel}>{tx("Pour cette nuit")}</Text>
                 {verse.arabic ? <Text style={styles.arabic}>{verse.arabic}</Text> : null}
                 {verse.phonetic ? <Text style={styles.phonetic}>{verse.phonetic}</Text> : null}
                 <Text style={styles.verseText}>{verse.text}</Text>
                 <Text style={styles.verseSource}>{verse.source}</Text>
                 <Pressable onPress={() => router.push('/tahajjud/readings' as Href)} style={styles.readButton}>
                   <Ionicons name="book" size={15} color={night.goldSoft} />
-                  <Text style={styles.readText}>Lire quelques versets</Text>
+                  <Text style={styles.readText}>{tx("Lire quelques versets")}</Text>
                 </Pressable>
               </GlassCard>
             </Animated.View>

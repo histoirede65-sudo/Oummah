@@ -1,5 +1,6 @@
 import { getValidSession } from '../auth/SupabaseAuthService';
 import { approximateZone } from './tahajjudCommunity';
+import { tx } from './tahajjudI18n';
 
 /** Mur des duas : fil, Amine, réponses, signalements, « Allah m'a exaucé ». */
 
@@ -134,20 +135,20 @@ export const adminReviewWall = (kind: 'post' | 'reply', id: string, approve: boo
 export function wallErrorMessage(error: unknown) {
   const code = error instanceof Error ? error.message : '';
   switch (code) {
-    case 'AUTH_REQUIRED': return 'Connectez-vous pour participer au Mur des duas.';
-    case 'PROFILE_REQUIRED': return 'Créez votre profil OUMMAH (un pseudo suffit) pour participer.';
-    case 'TEXT_REFUSED': return 'Ce texte contient des mots qui ne sont pas acceptés sur le Mur des duas.';
-    case 'RATE_LIMIT': return 'Vous avez atteint la limite pour aujourd’hui. Réessayez demain.';
-    case 'NOT_FOUND': return 'Cette doua n’est plus disponible.';
-    default: return 'Action impossible pour le moment.';
+    case 'AUTH_REQUIRED': return tx('Connectez-vous pour participer au Mur des duas.');
+    case 'PROFILE_REQUIRED': return tx('Créez votre profil OUMMAH (un pseudo suffit) pour participer.');
+    case 'TEXT_REFUSED': return tx('Ce texte contient des mots qui ne sont pas acceptés sur le Mur des duas.');
+    case 'RATE_LIMIT': return tx('Vous avez atteint la limite pour aujourd’hui. Réessayez demain.');
+    case 'NOT_FOUND': return tx('Cette doua n’est plus disponible.');
+    default: return tx('Action impossible pour le moment.');
   }
 }
 
 export function timeAgo(iso: string) {
   const minutes = Math.max(1, Math.round((Date.now() - Date.parse(iso)) / 60_000));
-  if (minutes < 60) return `il y a ${minutes} min`;
+  if (minutes < 60) return tx("il y a {0} min", [minutes]);
   const hours = Math.round(minutes / 60);
   if (hours < 24) return `il y a ${hours} h`;
   const days = Math.round(hours / 24);
-  return days === 1 ? 'hier' : `il y a ${days} jours`;
+  return days === 1 ? 'hier' : tx("il y a {0} jours", [days]);
 }
