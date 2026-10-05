@@ -18,6 +18,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { WasilContextButton } from '../components/wasil/WasilContextButton';
+import { useI18n, type LanguageCode, type TranslationKey } from '../i18n';
 import { colors } from '../theme/colors';
 
 const STORAGE_KEY = '@oummah/zakat/history/v1';
@@ -62,20 +63,20 @@ const EMPTY_FORM: FormState = {
   debts: '',
 };
 
-const COMPLETE_FIELDS: ReadonlyArray<{
+const COMPLETE_FIELDS: readonly {
   key: keyof FormState;
-  label: string;
-  description: string;
+  label: TranslationKey;
+  description: TranslationKey;
   icon: keyof typeof Ionicons.glyphMap;
-}> = [
-  { key: 'bank', label: 'Comptes et épargne', description: 'Soldes disponibles sur vos comptes', icon: 'card-outline' },
-  { key: 'cash', label: 'Espèces', description: 'Argent liquide conservé', icon: 'wallet-outline' },
-  { key: 'gold', label: 'Or', description: 'Valeur de l’or concerné par votre calcul', icon: 'diamond-outline' },
-  { key: 'silver', label: 'Argent métal', description: 'Valeur de l’argent concerné', icon: 'ellipse-outline' },
-  { key: 'investments', label: 'Investissements', description: 'Actions, fonds et placements concernés', icon: 'trending-up-outline' },
-  { key: 'crypto', label: 'Cryptomonnaies', description: 'Valeur détenue à la date du calcul', icon: 'logo-bitcoin' },
-  { key: 'business', label: 'Biens commerciaux', description: 'Marchandises destinées à la vente', icon: 'storefront-outline' },
-  { key: 'receivables', label: 'Créances récupérables', description: 'Sommes que l’on doit vous rembourser', icon: 'receipt-outline' },
+}[] = [
+  { key: 'bank', label: 'zakat.fieldBank', description: 'zakat.fieldBankText', icon: 'card-outline' },
+  { key: 'cash', label: 'zakat.fieldCash', description: 'zakat.fieldCashText', icon: 'wallet-outline' },
+  { key: 'gold', label: 'zakat.fieldGold', description: 'zakat.fieldGoldText', icon: 'diamond-outline' },
+  { key: 'silver', label: 'zakat.fieldSilver', description: 'zakat.fieldSilverText', icon: 'ellipse-outline' },
+  { key: 'investments', label: 'zakat.fieldInvestments', description: 'zakat.fieldInvestmentsText', icon: 'trending-up-outline' },
+  { key: 'crypto', label: 'zakat.fieldCrypto', description: 'zakat.fieldCryptoText', icon: 'logo-bitcoin' },
+  { key: 'business', label: 'zakat.fieldBusiness', description: 'zakat.fieldBusinessText', icon: 'storefront-outline' },
+  { key: 'receivables', label: 'zakat.fieldReceivables', description: 'zakat.fieldReceivablesText', icon: 'receipt-outline' },
 ];
 
 function parseAmount(value: string): number {
@@ -84,16 +85,20 @@ function parseAmount(value: string): number {
   return Number.isFinite(amount) ? Math.max(0, amount) : 0;
 }
 
-function formatCurrency(value: number): string {
-  return new Intl.NumberFormat('fr-FR', {
+function localeOf(language: LanguageCode) {
+  return language === 'fr' ? 'fr-FR' : 'en-GB';
+}
+
+function formatCurrency(value: number, language: LanguageCode): string {
+  return new Intl.NumberFormat(localeOf(language), {
     style: 'currency',
     currency: 'EUR',
     maximumFractionDigits: 2,
   }).format(value);
 }
 
-function formatDate(value: string): string {
-  return new Intl.DateTimeFormat('fr-FR', {
+function formatDate(value: string, language: LanguageCode): string {
+  return new Intl.DateTimeFormat(localeOf(language), {
     day: '2-digit',
     month: 'long',
     year: 'numeric',
@@ -101,6 +106,11 @@ function formatDate(value: string): string {
 }
 
 export default function ZakatScreen() {
+  const { language, t } = useI18n();
+  const money = (value: number) => formatCurrency(value, language);
+  const percent = (rate: number) =>
+    `${(rate * 100).toLocaleString(localeOf(language), { maximumFractionDigits: 3 })} %`;
+  const yearWord = (type: ZakatYearType) => (type === 'lunar' ? t('zakat.yearLunarWord') : t('zakat.yearGregorianWord'));
   const [mode, setMode] = useState<CalculationMode>('quick');
   const [nisab, setNisab] = useState<number | null>(null);
   const [nisabUpdatedAt, setNisabUpdatedAt] = useState<string | null>(null);
@@ -181,22 +191,21 @@ export default function ZakatScreen() {
   const updateField = (key: keyof FormState, value: string) => {
     setForm((current) => ({ ...current, [key]: value }));
     setShowResult(false);
-    setHawlConfirmed(null);
   };
 
   const calculate = async () => {
     if (nisabLoading || totals.nisab <= 0) {
-      Alert.alert('Nisab indisponible', 'La valeur actuelle du nisab doit être chargée avant le calcul. Réessayez dans un instant.');
+      Alert.alert(t('zakat.nisabUnavailableTitle'), t('zakat.nisabUnavailableText'));
       return;
     }
 
     if (hawlConfirmed === null) {
-      Alert.alert('Une dernière question', `Indiquez si ce patrimoine est resté au-dessus du nisab pendant une année ${yearType === 'lunar' ? 'lunaire' : 'grégorienne'} complète.`);
+      Alert.alert(t('zakat.lastQuestionTitle'), t('zakat.lastQuestionText', { year: yearWord(yearType) }));
       return;
     }
 
     if (totals.assets <= 0) {
-      Alert.alert('Montants manquants', 'Ajoutez au moins un montant pour effectuer votre estimation.');
+      Alert.alert(t('zakat.missingAmountsTitle'), t('zakat.missingAmountsText'));
       return;
     }
 
@@ -225,10 +234,10 @@ export default function ZakatScreen() {
   };
 
   const clearHistory = () => {
-    Alert.alert('Effacer l’historique ?', 'Tous les calculs enregistrés sur cet appareil seront supprimés.', [
-      { text: 'Annuler', style: 'cancel' },
+    Alert.alert(t('zakat.clearHistoryTitle'), t('zakat.clearHistoryText'), [
+      { text: t('zakat.cancel'), style: 'cancel' },
       {
-        text: 'Effacer',
+        text: t('zakat.clear'),
         style: 'destructive',
         onPress: () => {
           setHistory([]);
@@ -240,29 +249,30 @@ export default function ZakatScreen() {
 
   return (
     <KeyboardAvoidingView style={styles.screen} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+      <SafeAreaView edges={['top']} style={styles.screen}>
       <ScrollView showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled" contentContainerStyle={styles.content}>
-        <LinearGradient colors={[colors.purpleMid, colors.surface, colors.background]} style={styles.hero}>
-          <SafeAreaView edges={['top']} style={styles.safeHeader}>
-            <Pressable onPress={() => router.back()} style={styles.backButton} accessibilityLabel="Retour">
+        <LinearGradient colors={['#1E1730', '#151022', colors.background]} style={styles.hero}>
+          <View style={styles.safeHeader}>
+            <Pressable onPress={() => router.back()} style={styles.backButton} accessibilityLabel={t('common.back')}>
               <Ionicons name="chevron-back" size={22} color="#FFFFFF" />
             </Pressable>
             <Pressable onPress={() => setShowHistory((value) => !value)} style={styles.historyButton}>
               <Ionicons name="time-outline" size={18} color="#F2D89B" />
-              <Text style={styles.historyButtonText}>Historique</Text>
+              <Text style={styles.historyButtonText}>{t('zakat.history')}</Text>
             </Pressable>
-          </SafeAreaView>
+          </View>
 
           <View style={styles.heroIcon}>
-            <Ionicons name="moon" size={26} color="#16312D" />
+            <Ionicons name="moon" size={26} color={colors.background} />
           </View>
-          <Text style={styles.heroEyebrow}>UN ACTE D’ADORATION</Text>
-          <Text style={styles.heroTitle}>Ma Zakat</Text>
-          <Text style={styles.heroText}>Estimez votre zakat simplement, comprenez chaque étape et conservez vos calculs.</Text>
+          <Text style={styles.heroEyebrow}>{t('zakat.eyebrow')}</Text>
+          <Text style={styles.heroTitle}>{t('zakat.title')}</Text>
+          <Text style={styles.heroText}>{t('zakat.subtitle')}</Text>
 
           <View style={styles.verseCard}>
             <Ionicons name="sparkles" size={16} color="#D8B767" />
-            <Text style={styles.verseText}>« Accomplissez la prière et acquittez la zakat. »</Text>
-            <Text style={styles.verseReference}>Al-Baqara · 2:43</Text>
+            <Text style={styles.verseText}>{t('zakat.verse')}</Text>
+            <Text style={styles.verseReference}>{t('zakat.verseReference')}</Text>
           </View>
         </LinearGradient>
 
@@ -271,54 +281,54 @@ export default function ZakatScreen() {
             <View style={styles.historyPanel}>
               <View style={styles.sectionHeaderRow}>
                 <View>
-                  <Text style={styles.sectionEyebrow}>VOTRE SUIVI</Text>
-                  <Text style={styles.sectionTitle}>Calculs précédents</Text>
+                  <Text style={styles.sectionEyebrow}>{t('zakat.historyEyebrow')}</Text>
+                  <Text style={styles.sectionTitle}>{t('zakat.historyTitle')}</Text>
                 </View>
                 {history.length > 0 ? (
-                  <Pressable onPress={clearHistory} style={styles.clearButton}>
+                  <Pressable accessibilityLabel={t('zakat.clearHistoryTitle')} onPress={clearHistory} style={styles.clearButton}>
                     <Ionicons name="trash-outline" size={17} color="#C8897A" />
                   </Pressable>
                 ) : null}
               </View>
               {history.length === 0 ? (
                 <View style={styles.emptyHistory}>
-                  <Ionicons name="document-text-outline" size={30} color="#8FA7A2" />
-                  <Text style={styles.emptyHistoryTitle}>Aucun calcul enregistré</Text>
-                  <Text style={styles.emptyHistoryText}>Votre prochain résultat apparaîtra ici automatiquement.</Text>
+                  <Ionicons name="document-text-outline" size={30} color={colors.textMuted} />
+                  <Text style={styles.emptyHistoryTitle}>{t('zakat.historyEmptyTitle')}</Text>
+                  <Text style={styles.emptyHistoryText}>{t('zakat.historyEmptyText')}</Text>
                 </View>
               ) : (
                 history.map((item) => (
                   <View key={item.id} style={styles.historyItem}>
                     <View style={styles.historyIcon}>
-                      <Ionicons name={item.zakat > 0 ? 'checkmark' : 'remove'} size={18} color="#17312E" />
+                      <Ionicons name={item.zakat > 0 ? 'checkmark' : 'remove'} size={18} color={colors.background} />
                     </View>
                     <View style={styles.historyCopy}>
-                      <Text style={styles.historyDate}>{formatDate(item.createdAt)}</Text>
-                      <Text style={styles.historyMeta}>{item.mode === 'quick' ? 'Calcul rapide' : 'Calcul complet'} · {item.yearType === 'gregorian' ? 'Grégorien 2,577 %' : 'Lunaire 2,5 %'} · Patrimoine {formatCurrency(item.zakatableWealth)}</Text>
+                      <Text style={styles.historyDate}>{formatDate(item.createdAt, language)}</Text>
+                      <Text style={styles.historyMeta}>{t('zakat.historyMeta', { mode: item.mode === 'quick' ? t('zakat.modeQuick') : t('zakat.modeComplete'), year: item.yearType === 'gregorian' ? t('zakat.historyGregorian') : t('zakat.historyLunar'), wealth: money(item.zakatableWealth) })}</Text>
                     </View>
-                    <Text style={styles.historyAmount}>{formatCurrency(item.zakat)}</Text>
+                    <Text style={styles.historyAmount}>{money(item.zakat)}</Text>
                   </View>
                 ))
               )}
               <Pressable onPress={() => setShowHistory(false)} style={styles.secondaryButton}>
-                <Text style={styles.secondaryButtonText}>Revenir au calcul</Text>
+                <Text style={styles.secondaryButtonText}>{t('zakat.backToCalculation')}</Text>
               </Pressable>
             </View>
           ) : (
             <>
-              <View style={styles.educationCard}>
-                <Text style={styles.educationEyebrow}>COMPRENDRE LA ZAKAT</Text>
-                <Text style={styles.educationTitle}>Qu’est-ce que la Zakat ?</Text>
-                <Text style={styles.educationText}>La Zakat est une adoration obligatoire et l’un des cinq piliers de l’Islam. Lorsque les conditions requises sont réunies, une part déterminée des biens est destinée aux bénéficiaires de la Zakat. Elle est à la fois un acte d’adoration, de purification des biens et de solidarité.</Text>
+              <View style={[styles.educationCard, styles.educationCardFirst]}>
+                <Text style={styles.educationEyebrow}>{t('zakat.understandEyebrow')}</Text>
+                <Text style={styles.educationTitle}>{t('zakat.whatTitle')}</Text>
+                <Text style={styles.educationText}>{t('zakat.whatText')}</Text>
                 {showZakatExplanation ? (
                   <View style={styles.zakatExplanation}>
-                    <EducationRow icon="scale-outline" title="Le nisab" text="Le nisab est le seuil minimal de richesse à partir duquel la Zakat peut devenir obligatoire. Pour ce calculateur, OUMMAH utilise un nisab basé sur la valeur de 85 g d’or." />
-                    <EducationRow icon="calendar-outline" title="Le hawl" text="Pour les biens concernés par ce calculateur, le patrimoine doit en principe être resté au-dessus du nisab pendant une année lunaire complète (hawl)." />
-                    <EducationRow icon="pie-chart-outline" title="Le taux" text="Le taux utilisé est de 2,5 % pour une année lunaire. Lorsque le calcul est effectué sur une année grégorienne complète, OUMMAH applique 2,577 % afin de tenir compte de sa durée plus longue." />
-                    <EducationRow icon="people-outline" title="À qui est destinée la Zakat ?" text="Le Coran mentionne huit catégories de bénéficiaires de la Zakat dans la sourate At-Tawbah, verset 60." />
-                    <EducationRow icon="help-circle-outline" title="Selon votre situation" text="Les règles peuvent différer selon la nature des biens, les dettes et certaines situations particulières. En cas de doute, demandez l’avis d’une personne qualifiée." />
+                    <EducationRow icon="scale-outline" title={t('zakat.nisabTitle')} text={t('zakat.nisabText')} />
+                    <EducationRow icon="calendar-outline" title={t('zakat.hawlTitle')} text={t('zakat.hawlText')} />
+                    <EducationRow icon="pie-chart-outline" title={t('zakat.rateTitle')} text={t('zakat.rateText')} />
+                    <EducationRow icon="people-outline" title={t('zakat.recipientsTitle')} text={t('zakat.recipientsText')} />
+                    <EducationRow icon="help-circle-outline" title={t('zakat.situationTitle')} text={t('zakat.situationText')} />
                     <WasilContextButton
-                      prompt="Qu’est-ce que la Zakat ? Explique-moi simplement ce qu’elle est, à qui elle s’applique et les principes essentiels à connaître."
+                      prompt={t('zakat.wasilPrompt')}
                       largeLabel
                     />
                   </View>
@@ -330,7 +340,7 @@ export default function ZakatScreen() {
                   }}
                   style={showZakatExplanation ? styles.secondaryButton : styles.zakatCta}
                 >
-                  <Text style={showZakatExplanation ? styles.secondaryButtonText : styles.zakatCtaText}>{showZakatExplanation ? 'Réduire' : 'En savoir plus'}</Text>
+                  <Text style={showZakatExplanation ? styles.secondaryButtonText : styles.zakatCtaText}>{showZakatExplanation ? t('zakat.collapse') : t('zakat.learnMore')}</Text>
                 </Pressable>
               </View>
 
@@ -339,124 +349,127 @@ export default function ZakatScreen() {
                   <Ionicons name="information-circle-outline" size={22} color="#D8B767" />
                 </View>
                 <View style={styles.introCopy}>
-                  <Text style={styles.introTitle}>Avant de commencer</Text>
-                  <Text style={styles.introText}>Cette estimation applique 2,5 % pour une année lunaire ou 2,577 % pour une année grégorienne, après déduction des dettes immédiates renseignées.</Text>
+                  <Text style={styles.introTitle}>{t('zakat.beforeTitle')}</Text>
+                  <Text style={styles.introText}>{t('zakat.beforeText')}</Text>
                 </View>
               </View>
 
-              <Text style={styles.sectionEyebrow}>CHOISISSEZ VOTRE PARCOURS</Text>
-              <Text style={styles.sectionTitle}>Comment souhaitez-vous calculer ?</Text>
+              <Text style={styles.sectionEyebrow}>{t('zakat.chooseEyebrow')}</Text>
+              <Text style={styles.sectionTitle}>{t('zakat.chooseTitle')}</Text>
               <View style={styles.modeRow}>
                 <ModeCard
                   active={mode === 'quick'}
                   icon="flash-outline"
-                  title="Calcul rapide"
-                  subtitle="Épargne, espèces et dettes"
+                  title={t('zakat.modeQuick')}
+                  subtitle={t('zakat.modeQuickText')}
                   onPress={() => { setMode('quick'); setShowResult(false); }}
                 />
                 <ModeCard
                   active={mode === 'complete'}
                   icon="options-outline"
-                  title="Calcul complet"
-                  subtitle="Tous vos biens concernés"
+                  title={t('zakat.modeComplete')}
+                  subtitle={t('zakat.modeCompleteText')}
                   onPress={() => { setMode('complete'); setShowResult(false); }}
                 />
               </View>
 
               <View style={styles.divider} />
-              <Text style={styles.sectionEyebrow}>ÉTAPE 1</Text>
-              <Text style={styles.sectionTitle}>Votre patrimoine</Text>
-              <Text style={styles.sectionDescription}>Indiquez les montants en euros. Laissez un champ vide lorsqu’il ne vous concerne pas.</Text>
+              <Text style={styles.sectionEyebrow}>{t('zakat.step', { number: 1 })}</Text>
+              <Text style={styles.sectionTitle}>{t('zakat.wealthTitle')}</Text>
+              <Text style={styles.sectionDescription}>{t('zakat.wealthText')}</Text>
 
               {mode === 'quick' ? (
                 <>
-                  <AmountField icon="card-outline" label="Comptes et épargne" description="Solde de vos comptes et livrets" value={form.bank} onChangeText={(value) => updateField('bank', value)} />
-                  <AmountField icon="wallet-outline" label="Espèces" description="Argent liquide que vous possédez" value={form.cash} onChangeText={(value) => updateField('cash', value)} />
+                  <AmountField icon="card-outline" label={t('zakat.fieldBank')} description={t('zakat.fieldBankQuickText')} value={form.bank} onChangeText={(value) => updateField('bank', value)} />
+                  <AmountField icon="wallet-outline" label={t('zakat.fieldCash')} description={t('zakat.fieldCashQuickText')} value={form.cash} onChangeText={(value) => updateField('cash', value)} />
                 </>
               ) : (
                 COMPLETE_FIELDS.map(({ key, label, description, icon }) => (
                   <View key={key}>
-                    <AmountField label={label} description={description} icon={icon} value={form[key]} onChangeText={(value) => updateField(key, value)} />
+                    <AmountField label={t(label)} description={t(description)} icon={icon} value={form[key]} onChangeText={(value) => updateField(key, value)} />
                   </View>
                 ))
               )}
 
               <View style={styles.divider} />
-              <Text style={styles.sectionEyebrow}>ÉTAPE 2</Text>
-              <Text style={styles.sectionTitle}>Dettes immédiates</Text>
-              <Text style={styles.sectionDescription}>Renseignez uniquement les sommes exigibles à court terme que vous choisissez de déduire selon l’avis que vous suivez.</Text>
-              <AmountField icon="remove-circle-outline" label="Dettes à déduire" description="Échéances et sommes dues prochainement" value={form.debts} onChangeText={(value) => updateField('debts', value)} />
+              <Text style={styles.sectionEyebrow}>{t('zakat.step', { number: 2 })}</Text>
+              <Text style={styles.sectionTitle}>{t('zakat.debtsTitle')}</Text>
+              <Text style={styles.sectionDescription}>{t('zakat.debtsText')}</Text>
+              <AmountField icon="remove-circle-outline" label={t('zakat.debtsField')} description={t('zakat.debtsFieldText')} value={form.debts} onChangeText={(value) => updateField('debts', value)} />
 
               <View style={styles.divider} />
-              <Text style={styles.sectionEyebrow}>ÉTAPE 3</Text>
-              <Text style={styles.sectionTitle}>Votre année de référence</Text>
-              <Text style={styles.sectionDescription}>Choisissez le calendrier utilisé pour votre échéance annuelle. Le taux est ajusté automatiquement.</Text>
+              <Text style={styles.sectionEyebrow}>{t('zakat.step', { number: 3 })}</Text>
+              <Text style={styles.sectionTitle}>{t('zakat.yearTitle')}</Text>
+              <Text style={styles.sectionDescription}>{t('zakat.yearText')}</Text>
               <View style={styles.yearRow}>
                 <Pressable
                   onPress={() => { setYearType('lunar'); setHawlConfirmed(null); setShowResult(false); }}
                   style={[styles.yearChoice, yearType === 'lunar' && styles.yearChoiceActive]}
                 >
                   <View style={[styles.yearIcon, yearType === 'lunar' && styles.yearIconActive]}>
-                    <Ionicons name="moon-outline" size={20} color={yearType === 'lunar' ? '#17312E' : '#D8B767'} />
+                    <Ionicons name="moon-outline" size={20} color={yearType === 'lunar' ? colors.background : '#D8B767'} />
                   </View>
-                  <Text style={[styles.yearChoiceTitle, yearType === 'lunar' && styles.yearChoiceTitleActive]}>Lunaire</Text>
-                  <Text style={styles.yearChoiceRate}>2,5 %</Text>
-                  <Text style={styles.yearChoiceHint}>Environ 354 jours</Text>
+                  <Text style={[styles.yearChoiceTitle, yearType === 'lunar' && styles.yearChoiceTitleActive]}>{t('zakat.lunar')}</Text>
+                  <Text style={styles.yearChoiceRate}>{percent(ZAKAT_RATES.lunar)}</Text>
+                  <Text style={styles.yearChoiceHint}>{t('zakat.lunarDays')}</Text>
                 </Pressable>
                 <Pressable
                   onPress={() => { setYearType('gregorian'); setHawlConfirmed(null); setShowResult(false); }}
                   style={[styles.yearChoice, yearType === 'gregorian' && styles.yearChoiceActive]}
                 >
                   <View style={[styles.yearIcon, yearType === 'gregorian' && styles.yearIconActive]}>
-                    <Ionicons name="sunny-outline" size={20} color={yearType === 'gregorian' ? '#17312E' : '#D8B767'} />
+                    <Ionicons name="sunny-outline" size={20} color={yearType === 'gregorian' ? colors.background : '#D8B767'} />
                   </View>
-                  <Text style={[styles.yearChoiceTitle, yearType === 'gregorian' && styles.yearChoiceTitleActive]}>Grégorienne</Text>
-                  <Text style={styles.yearChoiceRate}>2,577 %</Text>
-                  <Text style={styles.yearChoiceHint}>365 jours</Text>
+                  <Text style={[styles.yearChoiceTitle, yearType === 'gregorian' && styles.yearChoiceTitleActive]}>{t('zakat.gregorian')}</Text>
+                  <Text style={styles.yearChoiceRate}>{percent(ZAKAT_RATES.gregorian)}</Text>
+                  <Text style={styles.yearChoiceHint}>{t('zakat.gregorianDays')}</Text>
                 </Pressable>
               </View>
-              <Text style={styles.hawlQuestion}>Ce patrimoine est-il resté au-dessus du nisab pendant une année {yearType === 'lunar' ? 'lunaire' : 'grégorienne'} complète ?</Text>
+              <Text style={styles.hawlQuestion}>{t('zakat.hawlQuestion', { year: yearWord(yearType) })}</Text>
               <View style={styles.hawlRow}>
                 <Pressable onPress={() => { setHawlConfirmed(true); setShowResult(false); }} style={[styles.hawlChoice, hawlConfirmed === true && styles.hawlChoiceActive]}>
-                  <Ionicons name="checkmark-circle-outline" size={21} color={hawlConfirmed === true ? '#17312E' : '#D8B767'} />
-                  <Text style={[styles.hawlChoiceText, hawlConfirmed === true && styles.hawlChoiceTextActive]}>Oui, une année complète</Text>
+                  <Ionicons name="checkmark-circle-outline" size={21} color={hawlConfirmed === true ? colors.background : '#D8B767'} />
+                  <Text style={[styles.hawlChoiceText, hawlConfirmed === true && styles.hawlChoiceTextActive]}>{t('zakat.hawlYes')}</Text>
                 </Pressable>
                 <Pressable onPress={() => { setHawlConfirmed(false); setShowResult(false); }} style={[styles.hawlChoice, hawlConfirmed === false && styles.hawlChoiceActive]}>
-                  <Ionicons name="time-outline" size={21} color={hawlConfirmed === false ? '#17312E' : '#D8B767'} />
-                  <Text style={[styles.hawlChoiceText, hawlConfirmed === false && styles.hawlChoiceTextActive]}>Non, pas encore</Text>
+                  <Ionicons name="time-outline" size={21} color={hawlConfirmed === false ? colors.background : '#D8B767'} />
+                  <Text style={[styles.hawlChoiceText, hawlConfirmed === false && styles.hawlChoiceTextActive]}>{t('zakat.hawlNo')}</Text>
                 </Pressable>
               </View>
 
               <View style={styles.nisabAutoCard}>
                 <View style={styles.nisabAutoIcon}><Ionicons name="scale-outline" size={22} color="#D8B767" /></View>
                 <View style={styles.nisabAutoCopy}>
-                  <Text style={styles.nisabAutoLabel}>Nisab actuel automatique</Text>
+                  <Text style={styles.nisabAutoLabel}>{t('zakat.nisabCurrent')}</Text>
                   {nisabLoading ? (
-                    <View style={styles.nisabLoadingRow}><ActivityIndicator size="small" color="#D8B767" /><Text style={styles.nisabAutoHint}>Mise à jour du cours de l’or…</Text></View>
+                    <View style={styles.nisabLoadingRow}><ActivityIndicator size="small" color="#D8B767" /><Text style={styles.nisabAutoHint}>{t('zakat.nisabLoading')}</Text></View>
                   ) : nisabError || !nisab ? (
-                    <Text style={styles.nisabErrorText}>Impossible de charger la valeur actuelle.</Text>
+                    <Text style={styles.nisabErrorText}>{t('zakat.nisabError')}</Text>
                   ) : (
                     <>
-                      <Text style={styles.nisabAutoValue}>{formatCurrency(nisab)}</Text>
-                      <Text style={styles.nisabAutoHint}>Calculé automatiquement selon 85 g d’or{nisabUpdatedAt ? ` · actualisé le ${formatDate(nisabUpdatedAt)}` : ''}</Text>
+                      <Text style={styles.nisabAutoValue}>{money(nisab)}</Text>
+                      <Text style={styles.nisabAutoHint}>
+                        {t('zakat.nisabBasis')}
+                        {nisabUpdatedAt ? ` · ${t('zakat.nisabUpdated', { date: formatDate(nisabUpdatedAt, language) })}` : ''}
+                      </Text>
                     </>
                   )}
                 </View>
-                {nisabError ? <Pressable onPress={() => void loadNisab()} style={styles.retryNisab}><Ionicons name="refresh" size={18} color="#17312E" /></Pressable> : null}
+                {nisabError ? <Pressable accessibilityLabel={t('zakat.retry')} onPress={() => void loadNisab()} style={styles.retryNisab}><Ionicons name="refresh" size={18} color={colors.background} /></Pressable> : null}
               </View>
 
               <View style={styles.summaryCard}>
-                <SummaryLine label="Total des biens" value={formatCurrency(totals.assets)} />
-                <SummaryLine label="Dettes déduites" value={`− ${formatCurrency(totals.debts)}`} />
+                <SummaryLine label={t('zakat.totalAssets')} value={money(totals.assets)} />
+                <SummaryLine label={t('zakat.debtsDeducted')} value={`− ${money(totals.debts)}`} />
                 <View style={styles.summaryDivider} />
-                <SummaryLine label="Patrimoine zakatable" value={formatCurrency(totals.zakatableWealth)} emphasized />
-                <SummaryLine label={`Taux · ${yearType === 'lunar' ? 'année lunaire' : 'année grégorienne'}`} value={`${(totals.rate * 100).toLocaleString('fr-FR', { maximumFractionDigits: 3 })} %`} />
+                <SummaryLine label={t('zakat.zakatableWealth')} value={money(totals.zakatableWealth)} emphasized />
+                <SummaryLine label={t('zakat.rateLine', { year: yearWord(yearType) })} value={percent(totals.rate)} />
               </View>
 
               <Pressable onPress={calculate} style={({ pressed }) => [styles.calculateButton, pressed && styles.buttonPressed]}>
                 <LinearGradient colors={['#E6C978', '#CFA64F']} style={styles.calculateGradient}>
-                  <Ionicons name="calculator-outline" size={20} color="#17312E" />
-                  <Text style={styles.calculateText}>Calculer ma zakat</Text>
+                  <Ionicons name="calculator-outline" size={20} color={colors.background} />
+                  <Text style={styles.calculateText}>{t('zakat.calculate')}</Text>
                 </LinearGradient>
               </Pressable>
 
@@ -464,42 +477,43 @@ export default function ZakatScreen() {
                 <View style={[styles.resultCard, !totals.eligible && styles.resultCardNeutral]}>
                   <View style={styles.resultTopline}>
                     <View style={styles.resultIcon}>
-                      <Ionicons name={totals.eligible ? 'checkmark-circle' : 'information-circle'} size={29} color={totals.eligible ? '#D8B767' : '#86A49E'} />
+                      <Ionicons name={totals.eligible ? 'checkmark-circle' : 'information-circle'} size={29} color={totals.eligible ? '#D8B767' : colors.textMuted} />
                     </View>
                     <View style={styles.resultCopy}>
-                      <Text style={styles.resultEyebrow}>{totals.eligible ? 'ESTIMATION DE VOTRE ZAKAT' : 'RÉSULTAT DU CALCUL'}</Text>
-                      <Text style={styles.resultAmount}>{formatCurrency(totals.zakat)}</Text>
+                      <Text style={styles.resultEyebrow}>{totals.eligible ? t('zakat.resultEligibleEyebrow') : t('zakat.resultEyebrow')}</Text>
+                      <Text style={styles.resultAmount}>{money(totals.zakat)}</Text>
                     </View>
                   </View>
                   <Text style={styles.resultText}>
                     {totals.eligible
-                      ? `Votre patrimoine zakatable dépasse le nisab actuel. L’estimation correspond à ${(totals.rate * 100).toLocaleString('fr-FR', { maximumFractionDigits: 3 })} % de ${formatCurrency(totals.zakatableWealth)}, selon une année ${yearType === 'lunar' ? 'lunaire' : 'grégorienne'}.`
+                      ? t('zakat.resultEligible', { rate: percent(totals.rate), wealth: money(totals.zakatableWealth), year: yearWord(yearType) })
                       : hawlConfirmed === false
-                        ? `Votre patrimoine n’a pas encore été détenu pendant une année ${yearType === 'lunar' ? 'lunaire' : 'grégorienne'} complète. Aucune zakat n’est estimée pour le moment.`
-                        : `Votre patrimoine zakatable de ${formatCurrency(totals.zakatableWealth)} ne dépasse pas le nisab actuel de ${formatCurrency(totals.nisab)}.`}
+                        ? t('zakat.resultNoHawl', { year: yearWord(yearType) })
+                        : t('zakat.resultBelowNisab', { wealth: money(totals.zakatableWealth), nisab: money(totals.nisab) })}
                   </Text>
                   <View style={styles.resultNotice}>
                     <Ionicons name="shield-checkmark-outline" size={18} color="#D8B767" />
-                    <Text style={styles.resultNoticeText}>Conservez ce résultat comme estimation. Pour une situation complexe, demandez l’avis d’une personne de science qualifiée.</Text>
+                    <Text style={styles.resultNoticeText}>{t('zakat.resultNotice')}</Text>
                   </View>
                   <Pressable onPress={reset} style={styles.resetButton}>
                     <Ionicons name="refresh-outline" size={17} color="#EBD79F" />
-                    <Text style={styles.resetText}>Faire un nouveau calcul</Text>
+                    <Text style={styles.resetText}>{t('zakat.newCalculation')}</Text>
                   </Pressable>
                 </View>
               ) : null}
 
               <View style={styles.educationCard}>
-                <Text style={styles.educationEyebrow}>À RETENIR</Text>
-                <Text style={styles.educationTitle}>Les bases de la zakat</Text>
-                <EducationRow icon="calendar-outline" title="Lunaire ou grégorienne" text="Le taux est de 2,5 % sur une année lunaire et de 2,577 % sur une année grégorienne." />
-                <EducationRow icon="pie-chart-outline" title="Un taux adapté à la durée" text="Le taux grégorien est légèrement supérieur car l’année solaire compte davantage de jours." />
-                <EducationRow icon="people-outline" title="Huit catégories" text="Le Coran précise les catégories de bénéficiaires de la zakat dans At-Tawbah 9:60." />
+                <Text style={styles.educationEyebrow}>{t('zakat.rememberEyebrow')}</Text>
+                <Text style={styles.educationTitle}>{t('zakat.basicsTitle')}</Text>
+                <EducationRow icon="calendar-outline" title={t('zakat.basicsYearTitle')} text={t('zakat.basicsYearText')} />
+                <EducationRow icon="pie-chart-outline" title={t('zakat.basicsRateTitle')} text={t('zakat.basicsRateText')} />
+                <EducationRow icon="people-outline" title={t('zakat.basicsRecipientsTitle')} text={t('zakat.basicsRecipientsText')} />
               </View>
             </>
           )}
         </View>
       </ScrollView>
+      </SafeAreaView>
     </KeyboardAvoidingView>
   );
 }
@@ -508,7 +522,7 @@ function ModeCard({ active, icon, title, subtitle, onPress }: { active: boolean;
   return (
     <Pressable onPress={onPress} style={[styles.modeCard, active && styles.modeCardActive]}>
       <View style={[styles.modeIcon, active && styles.modeIconActive]}>
-        <Ionicons name={icon} size={21} color={active ? '#17312E' : '#D8B767'} />
+        <Ionicons name={icon} size={21} color={active ? colors.background : '#D8B767'} />
       </View>
       <Text style={styles.modeTitle}>{title}</Text>
       <Text style={styles.modeSubtitle}>{subtitle}</Text>
@@ -526,7 +540,7 @@ function AmountField({ icon, label, description, value, onChangeText }: { icon: 
         <Text style={styles.amountDescription}>{description}</Text>
       </View>
       <View style={styles.inputWrap}>
-        <TextInput value={value} onChangeText={onChangeText} keyboardType="decimal-pad" placeholder="0" placeholderTextColor="#718682" style={styles.input} selectTextOnFocus />
+        <TextInput value={value} onChangeText={onChangeText} keyboardType="decimal-pad" placeholder="0" placeholderTextColor={colors.textMuted} style={styles.input} selectTextOnFocus />
         <Text style={styles.currency}>€</Text>
       </View>
     </View>
@@ -562,7 +576,7 @@ const styles = StyleSheet.create({
   heroIcon: { width: 52, height: 52, borderRadius: 18, backgroundColor: colors.goldLight, alignItems: 'center', justifyContent: 'center', marginTop: 12, marginLeft: 22 },
   heroEyebrow: { marginTop: 16, marginHorizontal: 22, color: colors.goldLight, fontSize: 10, letterSpacing: 1.8, fontWeight: '800' },
   heroTitle: { marginHorizontal: 22, marginTop: 2, color: '#FFFFFF', fontSize: 40, fontFamily: 'CormorantGaramond-SemiBold' },
-  heroText: { marginHorizontal: 22, marginTop: 4, color: '#C9D6D3', fontSize: 14, lineHeight: 21, maxWidth: 350 },
+  heroText: { marginHorizontal: 22, marginTop: 4, color: colors.textSecondary, fontSize: 14, lineHeight: 21, maxWidth: 350 },
   verseCard: { marginHorizontal: 22, marginTop: 22, padding: 15, borderRadius: 18, backgroundColor: 'rgba(255,255,255,0.07)', borderWidth: 1, borderColor: 'rgba(227,181,90,0.24)' },
   verseText: { color: colors.text, fontFamily: 'CormorantGaramond-Medium', fontSize: 17, lineHeight: 23, marginTop: 8 },
   verseReference: { color: colors.goldLight, fontSize: 11, fontWeight: '700', marginTop: 7 },
@@ -571,81 +585,75 @@ const styles = StyleSheet.create({
   introIcon: { width: 40, height: 40, borderRadius: 14, backgroundColor: colors.surfaceAlt, alignItems: 'center', justifyContent: 'center' },
   introCopy: { flex: 1 },
   introTitle: { color: '#F5F1E8', fontSize: 15, fontWeight: '700' },
-  introText: { color: '#AFC0BC', fontSize: 12.5, lineHeight: 19, marginTop: 4 },
+  introText: { color: colors.textSecondary, fontSize: 12.5, lineHeight: 19, marginTop: 4 },
   sectionHeaderRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   sectionEyebrow: { color: '#CDAE63', fontSize: 9.5, letterSpacing: 1.6, fontWeight: '800' },
   sectionTitle: { color: '#F5F1E8', fontFamily: 'CormorantGaramond-SemiBold', fontSize: 25, marginTop: 2 },
-  sectionDescription: { color: '#93AAA5', fontSize: 12.5, lineHeight: 19, marginTop: 4, marginBottom: 15 },
+  sectionDescription: { color: colors.textMuted, fontSize: 12.5, lineHeight: 19, marginTop: 4, marginBottom: 15 },
   modeRow: { flexDirection: 'row', gap: 10, marginTop: 14 },
   modeCard: { flex: 1, minHeight: 155, padding: 14, borderRadius: 22, backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.border },
   modeCardActive: { borderColor: colors.goldLight, backgroundColor: colors.surfaceAlt },
   modeIcon: { width: 38, height: 38, borderRadius: 13, backgroundColor: colors.surfaceAlt, alignItems: 'center', justifyContent: 'center' },
   modeIconActive: { backgroundColor: colors.goldLight },
   modeTitle: { color: '#F5F1E8', fontSize: 14, fontWeight: '800', marginTop: 12 },
-  modeSubtitle: { color: '#91A7A2', fontSize: 11.5, lineHeight: 16, marginTop: 4, paddingRight: 14 },
-  radio: { position: 'absolute', right: 13, top: 13, width: 18, height: 18, borderRadius: 9, borderWidth: 1.5, borderColor: '#59706C', alignItems: 'center', justifyContent: 'center' },
+  modeSubtitle: { color: colors.textMuted, fontSize: 11.5, lineHeight: 16, marginTop: 4, paddingRight: 14 },
+  radio: { position: 'absolute', right: 13, top: 13, width: 18, height: 18, borderRadius: 9, borderWidth: 1.5, borderColor: '#2B2238', alignItems: 'center', justifyContent: 'center' },
   radioActive: { borderColor: '#D8B767' },
   radioDot: { width: 9, height: 9, borderRadius: 5, backgroundColor: '#D8B767' },
-  divider: { height: 1, backgroundColor: '#153532', marginVertical: 27 },
+  divider: { height: 1, backgroundColor: '#2B2238', marginVertical: 27 },
   amountCard: { minHeight: 76, flexDirection: 'row', alignItems: 'center', padding: 12, borderRadius: 18, backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.border, marginBottom: 9 },
   amountIcon: { width: 40, height: 40, borderRadius: 14, backgroundColor: colors.surfaceAlt, alignItems: 'center', justifyContent: 'center' },
   amountCopy: { flex: 1, paddingHorizontal: 11 },
   amountLabel: { color: '#F2EEE5', fontSize: 13.5, fontWeight: '700' },
-  amountDescription: { color: '#7F9994', fontSize: 10.5, lineHeight: 14, marginTop: 2 },
+  amountDescription: { color: colors.textMuted, fontSize: 10.5, lineHeight: 14, marginTop: 2 },
   inputWrap: { width: 86, height: 44, borderRadius: 13, backgroundColor: colors.backgroundSecondary, borderWidth: 1, borderColor: colors.border, flexDirection: 'row', alignItems: 'center', paddingHorizontal: 9 },
   input: { flex: 1, color: '#FFFFFF', textAlign: 'right', fontSize: 15, fontWeight: '700', paddingVertical: 0 },
   currency: { color: '#D8B767', fontSize: 13, fontWeight: '700', marginLeft: 4 },
-  nisabOptions: { flexDirection: 'row', gap: 8, marginBottom: 12 },
-  nisabChoice: { flex: 1, paddingVertical: 12, paddingHorizontal: 8, borderRadius: 15, backgroundColor: '#0D2A27', borderWidth: 1, borderColor: '#183936', alignItems: 'center' },
-  nisabChoiceActive: { borderColor: '#D8B767', backgroundColor: '#173A35' },
-  nisabTitle: { color: '#C5D0CD', fontSize: 13, fontWeight: '800' },
-  nisabTitleActive: { color: '#F0D895' },
-  nisabSubtitle: { color: '#78908B', fontSize: 9.5, marginTop: 3 },
   yearRow: { flexDirection: 'row', gap: 9, marginBottom: 16 },
   yearChoice: { flex: 1, minHeight: 142, padding: 13, borderRadius: 19, borderWidth: 1, borderColor: colors.border, backgroundColor: colors.surface },
   yearChoiceActive: { borderColor: colors.goldLight, backgroundColor: colors.surfaceAlt },
   yearIcon: { width: 38, height: 38, borderRadius: 13, backgroundColor: colors.surfaceAlt, alignItems: 'center', justifyContent: 'center' },
   yearIconActive: { backgroundColor: colors.goldLight },
-  yearChoiceTitle: { color: '#E9EEE9', fontSize: 13.5, fontWeight: '800', marginTop: 10 },
+  yearChoiceTitle: { color: colors.textSecondary, fontSize: 13.5, fontWeight: '800', marginTop: 10 },
   yearChoiceTitleActive: { color: '#F2D893' },
-  yearChoiceRate: { color: '#F5F1E8', fontFamily: 'CormorantGaramond-SemiBold', fontSize: 25, marginTop: 1 },
-  yearChoiceHint: { color: '#819A95', fontSize: 10, marginTop: 1 },
-  hawlQuestion: { color: '#C6D2CF', fontSize: 12.5, lineHeight: 19, fontWeight: '700', marginBottom: 11 },
+  yearChoiceRate: { color: '#F5F1E8', fontFamily: 'CormorantGaramond-SemiBold', fontSize: 25, marginTop: 1, fontVariant: ['lining-nums', 'tabular-nums'] },
+  yearChoiceHint: { color: colors.textMuted, fontSize: 10, marginTop: 1 },
+  hawlQuestion: { color: colors.textSecondary, fontSize: 12.5, lineHeight: 19, fontWeight: '700', marginBottom: 11 },
   hawlRow: { flexDirection: 'row', gap: 9, marginBottom: 14 },
-  hawlChoice: { flex: 1, minHeight: 72, paddingHorizontal: 12, borderRadius: 17, borderWidth: 1, borderColor: '#1A3C38', backgroundColor: '#0D2A27', alignItems: 'center', justifyContent: 'center', gap: 7 },
+  hawlChoice: { flex: 1, minHeight: 72, paddingHorizontal: 12, borderRadius: 17, borderWidth: 1, borderColor: '#2B2238', backgroundColor: '#151022', alignItems: 'center', justifyContent: 'center', gap: 7 },
   hawlChoiceActive: { backgroundColor: '#D8B767', borderColor: '#D8B767' },
-  hawlChoiceText: { color: '#E9EEE9', fontSize: 11.5, fontWeight: '700', textAlign: 'center' },
-  hawlChoiceTextActive: { color: '#17312E' },
+  hawlChoiceText: { color: colors.textSecondary, fontSize: 11.5, fontWeight: '700', textAlign: 'center' },
+  hawlChoiceTextActive: { color: colors.background },
   nisabAutoCard: { flexDirection: 'row', alignItems: 'center', padding: 15, borderRadius: 20, backgroundColor: colors.surfaceAlt, borderWidth: 1, borderColor: colors.goldLight, marginTop: 5 },
-  nisabAutoIcon: { width: 44, height: 44, borderRadius: 15, backgroundColor: colors.purpleDeep, alignItems: 'center', justifyContent: 'center' },
+  nisabAutoIcon: { width: 44, height: 44, borderRadius: 15, backgroundColor: '#1E1730', alignItems: 'center', justifyContent: 'center' },
   nisabAutoCopy: { flex: 1, paddingHorizontal: 12 },
   nisabAutoLabel: { color: '#F3EEE4', fontSize: 12.5, fontWeight: '800' },
-  nisabAutoValue: { color: '#F2D893', fontFamily: 'CormorantGaramond-SemiBold', fontSize: 25, marginTop: 2 },
-  nisabAutoHint: { color: '#91A7A2', fontSize: 9.5, lineHeight: 14, marginTop: 2 },
+  nisabAutoValue: { color: '#F2D893', fontFamily: 'CormorantGaramond-SemiBold', fontSize: 25, marginTop: 2, fontVariant: ['lining-nums', 'tabular-nums'] },
+  nisabAutoHint: { color: colors.textMuted, fontSize: 9.5, lineHeight: 14, marginTop: 2 },
   nisabLoadingRow: { flexDirection: 'row', alignItems: 'center', gap: 7, marginTop: 6 },
   nisabErrorText: { color: '#D8A89C', fontSize: 10.5, marginTop: 4 },
   retryNisab: { width: 36, height: 36, borderRadius: 13, backgroundColor: '#D8B767', alignItems: 'center', justifyContent: 'center' },
-  summaryCard: { padding: 17, borderRadius: 20, backgroundColor: '#0B2724', borderWidth: 1, borderColor: '#1A3D38', marginTop: 22 },
+  summaryCard: { padding: 17, borderRadius: 20, backgroundColor: '#151022', borderWidth: 1, borderColor: '#2B2238', marginTop: 22 },
   summaryLine: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: 5 },
-  summaryLabel: { color: '#98ADA8', fontSize: 12.5 },
-  summaryValue: { color: '#E5E9E7', fontSize: 13, fontWeight: '700' },
+  summaryLabel: { color: colors.textMuted, fontSize: 12.5 },
+  summaryValue: { color: colors.textSecondary, fontSize: 13, fontWeight: '700' },
   summaryLabelStrong: { color: '#F4EFE4', fontWeight: '800' },
   summaryValueStrong: { color: '#E2C574', fontSize: 16 },
-  summaryDivider: { height: 1, backgroundColor: '#1B3A36', marginVertical: 7 },
+  summaryDivider: { height: 1, backgroundColor: '#2B2238', marginVertical: 7 },
   calculateButton: { marginTop: 14, borderRadius: 18, overflow: 'hidden' },
   calculateGradient: { height: 58, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 9 },
-  calculateText: { color: '#17312E', fontSize: 15, fontWeight: '900' },
+  calculateText: { color: colors.background, fontSize: 15, fontWeight: '900' },
   buttonPressed: { opacity: 0.85, transform: [{ scale: 0.99 }] },
-  resultCard: { marginTop: 20, borderRadius: 24, padding: 18, backgroundColor: '#12342F', borderWidth: 1, borderColor: '#C8A95E' },
-  resultCardNeutral: { borderColor: '#41625C' },
+  resultCard: { marginTop: 20, borderRadius: 24, padding: 18, backgroundColor: '#151022', borderWidth: 1, borderColor: '#C8A95E' },
+  resultCardNeutral: { borderColor: '#2B2238' },
   resultTopline: { flexDirection: 'row', alignItems: 'center' },
-  resultIcon: { width: 46, height: 46, borderRadius: 16, backgroundColor: '#0D2926', alignItems: 'center', justifyContent: 'center' },
+  resultIcon: { width: 46, height: 46, borderRadius: 16, backgroundColor: '#151022', alignItems: 'center', justifyContent: 'center' },
   resultCopy: { marginLeft: 12 },
-  resultEyebrow: { color: '#AABCB8', fontSize: 9, letterSpacing: 1.2, fontWeight: '800' },
-  resultAmount: { color: '#F2D893', fontFamily: 'CormorantGaramond-SemiBold', fontSize: 33, marginTop: 1 },
-  resultText: { color: '#D3DDDA', fontSize: 13, lineHeight: 20, marginTop: 14 },
-  resultNotice: { flexDirection: 'row', gap: 9, padding: 12, borderRadius: 15, backgroundColor: '#0B2824', marginTop: 14 },
-  resultNoticeText: { flex: 1, color: '#9DB0AC', fontSize: 11, lineHeight: 16 },
+  resultEyebrow: { color: colors.textSecondary, fontSize: 9, letterSpacing: 1.2, fontWeight: '800' },
+  resultAmount: { color: '#F2D893', fontFamily: 'CormorantGaramond-SemiBold', fontSize: 33, marginTop: 1, fontVariant: ['lining-nums', 'tabular-nums'] },
+  resultText: { color: colors.textSecondary, fontSize: 13, lineHeight: 20, marginTop: 14 },
+  resultNotice: { flexDirection: 'row', gap: 9, padding: 12, borderRadius: 15, backgroundColor: '#151022', marginTop: 14 },
+  resultNoticeText: { flex: 1, color: colors.textMuted, fontSize: 11, lineHeight: 16 },
   resetButton: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 7, height: 43, marginTop: 13 },
   resetText: { color: '#EBD79F', fontSize: 12.5, fontWeight: '700' },
   educationCard: { marginTop: 28, padding: 18, borderRadius: 24, backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.borderSoft },
@@ -661,15 +669,16 @@ const styles = StyleSheet.create({
   clearButton: { width: 38, height: 38, borderRadius: 14, backgroundColor: '#2B302C', alignItems: 'center', justifyContent: 'center' },
   emptyHistory: { alignItems: 'center', paddingVertical: 48, paddingHorizontal: 28 },
   emptyHistoryTitle: { color: '#EDEAE2', fontSize: 15, fontWeight: '700', marginTop: 13 },
-  emptyHistoryText: { color: '#829A95', fontSize: 12, textAlign: 'center', lineHeight: 18, marginTop: 5 },
-  historyItem: { flexDirection: 'row', alignItems: 'center', padding: 13, borderRadius: 17, backgroundColor: '#0D2A27', borderWidth: 1, borderColor: '#173936', marginTop: 9 },
+  emptyHistoryText: { color: colors.textMuted, fontSize: 12, textAlign: 'center', lineHeight: 18, marginTop: 5 },
+  historyItem: { flexDirection: 'row', alignItems: 'center', padding: 13, borderRadius: 17, backgroundColor: '#151022', borderWidth: 1, borderColor: '#2B2238', marginTop: 9 },
   historyIcon: { width: 36, height: 36, borderRadius: 13, backgroundColor: '#D8B767', alignItems: 'center', justifyContent: 'center' },
   historyCopy: { flex: 1, paddingHorizontal: 10 },
   historyDate: { color: '#EDEAE2', fontSize: 12.5, fontWeight: '700' },
-  historyMeta: { color: '#7E9691', fontSize: 9.5, marginTop: 3 },
+  historyMeta: { color: colors.textMuted, fontSize: 9.5, marginTop: 3 },
   historyAmount: { color: '#E2C574', fontSize: 14, fontWeight: '800' },
   secondaryButton: { marginTop: 20, height: 49, borderRadius: 16, borderWidth: 1, borderColor: colors.border, alignItems: 'center', justifyContent: 'center' },
   secondaryButtonText: { color: colors.textSecondary, fontSize: 13, fontWeight: '700' },
-  zakatCtaText: { color: colors.purpleDeep, fontSize: 14, fontWeight: '800' },
+  zakatCtaText: { color: '#1E1730', fontSize: 14, fontWeight: '800' },
   zakatCta: { marginTop: 22, minHeight: 54, borderRadius: 16, backgroundColor: colors.goldLight, alignItems: 'center', justifyContent: 'center', shadowColor: colors.goldLight, shadowOpacity: 0.22, shadowRadius: 10, shadowOffset: { width: 0, height: 4 }, elevation: 3 },
+  educationCardFirst: { marginTop: 0 },
 });
