@@ -52,63 +52,44 @@ export default function SurahList({
           </Text>
         </View>
       }
-      renderItem={({ item }) => (
-        <Pressable
-          accessibilityRole="button"
-          onPress={() => onSurahPress(item)}
-          style={({ pressed }) => [styles.cell, pressed && styles.pressed]}
-        >
-          <View style={styles.number}>
-            <Text style={styles.numberText}>{item.id}</Text>
-          </View>
-
-          <View style={styles.main}>
-            <Text numberOfLines={1} style={styles.french}>
-              {getSurahDisplayName(item)}
-            </Text>
-            <Text numberOfLines={1} style={styles.transliteration}>
-              {item.transliteration}
-            </Text>
-            <Text numberOfLines={1} style={styles.meta}>
-              {t("common.verseCount", { count: item.verses })}
-              {"  ·  "}
-              {item.revelationType === "Médine"
-                ? t("surahReader.medina")
-                : t("surahReader.mecca")}
-              {"  ·  "}
-              Juz {item.juzStart}
-            </Text>
-          </View>
-
-          <Text numberOfLines={1} style={styles.arabic}>
-            {item.arabicName}
-          </Text>
+      renderItem={({ item }) => {
+        const favorite = favoriteSurahIds.has(item.id);
+        return (
+          // Favorites are toggled with a long press; only favorite surahs show a heart.
           <Pressable
             accessibilityRole="button"
-            accessibilityLabel={
-              favoriteSurahIds.has(item.id)
-                ? t("quran.removeSurahFavorite")
-                : t("quran.addSurahFavorite")
-            }
-            hitSlop={8}
-            onPress={(event) => {
-              event.stopPropagation();
-              onToggleFavorite(item.id);
-            }}
-            style={({ pressed }) => [
-              styles.favoriteButton,
-              pressed && styles.pressed,
-            ]}
+            accessibilityHint={favorite ? t("quran.removeSurahFavorite") : t("quran.addSurahFavorite")}
+            accessibilityActions={[{ name: "longpress", label: favorite ? t("quran.removeSurahFavorite") : t("quran.addSurahFavorite") }]}
+            onAccessibilityAction={() => onToggleFavorite(item.id)}
+            onPress={() => onSurahPress(item)}
+            onLongPress={() => onToggleFavorite(item.id)}
+            delayLongPress={350}
+            style={({ pressed }) => [styles.cell, pressed && styles.pressed]}
           >
-            <Ionicons
-              name={favoriteSurahIds.has(item.id) ? "heart" : "heart-outline"}
-              size={18}
-              color={favoriteSurahIds.has(item.id) ? colors.goldLight : "rgba(227,181,90,0.55)"}
-            />
+            <Text style={styles.numberText}>{item.id}</Text>
+
+            <View style={styles.main}>
+              <View style={styles.titleRow}>
+                <Text numberOfLines={1} style={styles.transliteration}>
+                  {item.transliteration}
+                </Text>
+                {favorite ? (
+                  <Ionicons name="heart" size={12} color={colors.goldLight} />
+                ) : null}
+              </View>
+              <Text numberOfLines={1} style={styles.meta}>
+                {getSurahDisplayName(item)}
+                {"  ·  "}
+                {t("common.verseCount", { count: item.verses })}
+              </Text>
+            </View>
+
+            <Text numberOfLines={1} style={styles.arabic}>
+              {item.arabicName}
+            </Text>
           </Pressable>
-        </Pressable>
-      )}
-      ItemSeparatorComponent={() => <View style={styles.separator} />}
+        );
+      }}
       contentContainerStyle={styles.content}
       showsVerticalScrollIndicator={false}
       keyboardShouldPersistTaps="handled"
@@ -122,73 +103,49 @@ export default function SurahList({
 }
 
 const styles = StyleSheet.create({
-  content: { paddingHorizontal: 14, paddingBottom: 108 },
+  content: { paddingHorizontal: 18, paddingBottom: 108 },
   cell: {
     minHeight: 72,
-    paddingHorizontal: 12,
-    paddingVertical: 12,
+    paddingVertical: 14,
     flexDirection: "row",
     alignItems: "center",
-    borderRadius: 16,
-    borderWidth: 1,
-    borderColor: "rgba(227,181,90,0.13)",
-    backgroundColor: colors.surface,
-  },
-  number: {
-    width: 38,
-    height: 38,
-    alignItems: "center",
-    justifyContent: "center",
-    borderRadius: 19,
-    borderWidth: 1,
-    borderColor: "rgba(227,181,90,0.55)",
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: "rgba(227,181,90,0.18)",
   },
   numberText: {
-    color: colors.goldLight,
+    width: 32,
+    color: "rgba(227,181,90,0.75)",
     fontFamily: typography.sans,
-    fontSize: 12,
+    fontSize: 14,
     fontWeight: "700",
     fontVariant: ["tabular-nums"],
   },
-  main: { flex: 1, minWidth: 0, marginLeft: 12 },
-  french: {
+  main: { flex: 1, minWidth: 0, marginLeft: 8 },
+  titleRow: { flexDirection: "row", alignItems: "center", gap: 6 },
+  transliteration: {
+    flexShrink: 1,
     color: "#FFF8F1",
     fontFamily: typography.serifMedium,
-    fontSize: 19,
-    lineHeight: 22,
-  },
-  transliteration: {
-    marginTop: 1,
-    color: colors.textSecondary,
-    fontFamily: typography.sans,
-    fontSize: 11.5,
-    fontWeight: "600",
+    fontSize: 22,
+    lineHeight: 27,
   },
   meta: {
-    marginTop: 4,
+    marginTop: 3,
     color: colors.textMuted,
     fontFamily: typography.sans,
-    fontSize: 10.5,
+    fontSize: 13,
   },
   arabic: {
-    maxWidth: "34%",
-    marginLeft: 10,
+    maxWidth: "38%",
+    marginLeft: 12,
     color: "#F2C86C",
     fontFamily: typography.arabic,
-    fontSize: 23,
-    lineHeight: 34,
+    fontSize: 26,
+    lineHeight: 38,
     textAlign: "right",
     writingDirection: "rtl",
   },
-  favoriteButton: {
-    width: 32,
-    height: 32,
-    marginLeft: 6,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  separator: { height: 8 },
-  pressed: { opacity: 0.68, transform: [{ scale: 0.992 }] },
+  pressed: { opacity: 0.6 },
   empty: { paddingVertical: 55, alignItems: "center" },
   emptyIcon: {
     width: 58,
