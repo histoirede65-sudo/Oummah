@@ -6,22 +6,27 @@ import { router, useLocalSearchParams } from "expo-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Animated, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, View } from "react-native";
 
-import { MUSA_CHAPTERS, type ProphetReference, type ProphetSourceKind } from "../../features/prophets/prophetsData";
+import { MUSA_CHAPTERS as MUSA_CHAPTERS_FR, type ProphetReference, type ProphetSourceKind } from "../../features/prophets/prophetsData";
+import { localizeChapters } from "../../features/prophets/prophetsLocalization";
 import { PROPHETS_PREVIEW } from "../../features/prophets/prophetsData";
 import { loadMusaProgress, saveMusaProgress } from "../../features/prophets/prophetProgress";
 import { PROPHET_AUDIO_EPISODES } from "../../features/prophets/audio/prophetAudioData";
+import { useI18n } from "../../i18n";
+import type { TranslationKey } from "../../i18n";
 import { colors } from "../../theme/colors";
 import { typography } from "../../theme/typography";
 
-const SOURCE_LABELS: Record<ProphetSourceKind, string> = { QURAN: "CORAN", SUNNA: "SUNNA AUTHENTIQUE", TAFSIR: "TAFSIR" };
+const SOURCE_LABELS: Record<ProphetSourceKind, TranslationKey> = { QURAN: "prophets.sourceQuran", SUNNA: "prophets.sourceSunna", TAFSIR: "prophets.sourceTafsir" };
 const MUSA_COVER = PROPHETS_PREVIEW.find((prophet) => prophet.id === "musa")?.coverImage ?? require("../../assets/images/prophets/musa-scenes/moussa.jpg");
 
 function SourceChip({ kind }: { kind: ProphetSourceKind }) {
+  const { t } = useI18n();
   const icon = kind === "QURAN" ? "book-outline" : kind === "SUNNA" ? "checkmark-circle-outline" : "library-outline";
-  return <View style={styles.sourceChip}><Ionicons name={icon} size={13} color={colors.goldLight} /><Text style={styles.sourceChipText}>{SOURCE_LABELS[kind]}</Text></View>;
+  return <View style={styles.sourceChip}><Ionicons name={icon} size={13} color={colors.goldLight} /><Text style={styles.sourceChipText}>{t(SOURCE_LABELS[kind])}</Text></View>;
 }
 
 function ReferenceCard({ reference }: { reference: ProphetReference }) {
+  const { t } = useI18n();
   const open = () => {
     if (!reference.surahId) return;
     router.push(`/surah/${reference.surahId}?verse=${reference.verse ?? 1}` as Href);
@@ -30,7 +35,7 @@ function ReferenceCard({ reference }: { reference: ProphetReference }) {
     <Pressable disabled={!reference.surahId} onPress={open} style={({ pressed }) => [styles.referenceCard, pressed && styles.pressed]}>
       <View style={styles.referenceHeader}><SourceChip kind={reference.kind} /><Text style={styles.referenceLabel}>{reference.label}</Text></View>
       <Text style={styles.referenceNote}>{reference.note}</Text>
-      {reference.surahId ? <View style={styles.referenceAction}><Ionicons name="play-circle-outline" size={17} color={colors.goldLight} /><Text style={styles.referenceActionText}>Ouvrir le passage dans le Coran</Text><Ionicons name="arrow-forward" size={14} color={colors.goldLight} /></View> : null}
+      {reference.surahId ? <View style={styles.referenceAction}><Ionicons name="play-circle-outline" size={17} color={colors.goldLight} /><Text style={styles.referenceActionText}>{t("prophets.openPassage")}</Text><Ionicons name="arrow-forward" size={14} color={colors.goldLight} /></View> : null}
     </Pressable>
   );
 }
@@ -119,6 +124,8 @@ function SceneArtwork({ chapterId }: { chapterId: string }) {
 }
 
 export default function MusaStoryScreen() {
+  const { language, t } = useI18n();
+  const MUSA_CHAPTERS = localizeChapters("musa", MUSA_CHAPTERS_FR, language);
   const params = useLocalSearchParams<{ chapter?: string }>();
   const initialIndex = Math.min(MUSA_CHAPTERS.length - 1, Math.max(0, Number(params.chapter ?? 0) || 0));
   const [activeIndex, setActiveIndex] = useState(initialIndex);
@@ -146,27 +153,27 @@ export default function MusaStoryScreen() {
     const next = Math.min(MUSA_CHAPTERS.length - 1, Math.max(0, index));
     setActiveIndex(next);
     scrollRef.current?.scrollTo({ y: 0, animated: false });
-  }, []);
+  }, [MUSA_CHAPTERS.length]);
 
   const toggleComplete = () => {
     setCompleted((current) => completedCurrent ? current.filter((id) => id !== chapter.id) : [...new Set([...current, chapter.id])]);
   };
 
-  const journeyPoints = useMemo(() => ["Nil", "Égypte", "Madyan", "Ṭuwā", "Égypte", "Mer", "Sinaï"], []);
+  const journeyPoints = useMemo(() => (["prophets.mapNile", "prophets.mapEgypt", "prophets.mapMadyan", "prophets.mapTuwa", "prophets.mapEgypt", "prophets.mapSea", "prophets.mapSinai"] as const).map((key) => t(key)), [t]);
 
   return (
     <LinearGradient colors={[colors.background, colors.backgroundSecondary, colors.background]} style={styles.screen}>
       <SafeAreaView style={styles.safeArea}>
         <View style={styles.header}>
           <Pressable onPress={() => showIntro ? router.back() : setShowIntro(true)} style={styles.backButton}><Ionicons name="chevron-back" size={22} color={colors.text} /></Pressable>
-          <View style={styles.headerCopy}><Text style={styles.headerEyebrow}>HISTOIRES DES PROPHÈTES</Text><Text style={styles.headerTitle}>Mûsâ عليه السلام</Text></View>
+          <View style={styles.headerCopy}><Text style={styles.headerEyebrow}>{t("prophets.headerEyebrow")}</Text><Text style={styles.headerTitle}>Mûsâ عليه السلام</Text></View>
           <Pressable onPress={() => setShowMap((value) => !value)} style={[styles.backButton, showMap && styles.headerButtonActive]}><Ionicons name="map-outline" size={20} color={showMap ? colors.background : colors.goldLight} /></Pressable>
         </View>
 
         {showMap ? (
           <View style={styles.mapPanel}>
-            <Text style={styles.mapTitle}>Le voyage en un regard</Text>
-            <Text style={styles.mapSubtitle}>Une carte narrative, schématique — pas une reconstitution géographique.</Text>
+            <Text style={styles.mapTitle}>{t("prophets.mapTitle")}</Text>
+            <Text style={styles.mapSubtitle}>{t("prophets.mapSubtitle")}</Text>
             <View style={styles.mapRoute}>
               {journeyPoints.map((point, index) => <View key={`${point}-${index}`} style={styles.mapPointWrap}><View style={[styles.mapPoint, index <= activeIndex + 1 && styles.mapPointActive]} /><Text style={[styles.mapPointText, index <= activeIndex + 1 && styles.mapPointTextActive]}>{point}</Text>{index < journeyPoints.length - 1 ? <View style={[styles.mapConnector, index <= activeIndex && styles.mapConnectorActive]} /> : null}</View>)}
             </View>
@@ -188,19 +195,19 @@ export default function MusaStoryScreen() {
               <LinearGradient colors={["rgba(7,7,18,0.05)", "rgba(8,7,19,0.42)", "rgba(8,7,19,0.99)"]} style={StyleSheet.absoluteFill} />
               <View style={styles.heroRim} />
               <View style={styles.heroCopy}>
-                <Text style={styles.introLabel}>PREMIER VOYAGE IMMERSIF</Text>
+                <Text style={styles.introLabel}>{t("prophets.firstJourney")}</Text>
                 <Text style={styles.heroTitle}>Mûsâ عليه السلام</Text>
-                <Text style={styles.introSubtitle}>Du Nil au Sinaï — un récit raconté par les passages du Coran.</Text>
+                <Text style={styles.introSubtitle}>{t("prophets.musaSubtitle")}</Text>
                 <Pressable onPress={() => { setShowIntro(false); scrollRef.current?.scrollTo({ y: 0, animated: false }); }} style={({ pressed }) => [styles.introButton, pressed && styles.pressed]}>
-                  <Text style={styles.introButtonText}>{completed.length ? "Reprendre le voyage" : "Commencer le voyage"}</Text>
+                  <Text style={styles.introButtonText}>{t(completed.length ? "prophets.resume" : "prophets.start")}</Text>
                   <Ionicons name="arrow-forward" size={17} color={colors.background} />
                 </Pressable>
                 {PROPHET_AUDIO_EPISODES.musa ? (
                   <Pressable onPress={() => router.push("/prophets/audio/musa" as Href)} style={({ pressed }) => [styles.audioButton, pressed && styles.pressed]}>
                     <Ionicons name="headset-outline" size={21} color={colors.goldLight} />
                     <View style={styles.audioButtonCopy}>
-                      <Text style={styles.audioButtonTitle}>Écouter l’histoire complète</Text>
-                      <Text style={styles.audioButtonSubtitle}>Récit audio immersif de Mûsâ</Text>
+                      <Text style={styles.audioButtonTitle}>{t("prophets.listen")}</Text>
+                      <Text style={styles.audioButtonSubtitle}>{t("prophets.listenSubtitle", { name: "Mûsâ" })}</Text>
                     </View>
                     <Ionicons name="play-circle" size={24} color={colors.goldLight} />
                   </Pressable>
@@ -228,38 +235,38 @@ export default function MusaStoryScreen() {
           </ScrollView>
 
           <View key={`story-${chapter.id}`} style={styles.storyCard}>
-            <Text style={styles.storyEyebrow}>LE RÉCIT</Text>
+            <Text style={styles.storyEyebrow}>{t("prophets.story")}</Text>
             <Text style={styles.storyText}>{chapter.paragraphs.join("\n\n")}</Text>
           </View>
 
           <View style={styles.sourceSection}>
-            <Text style={styles.sectionEyebrow}>REVENIR AUX SOURCES</Text>
-            <Text style={styles.sectionTitle}>Le passage coranique au cœur de la scène</Text>
+            <Text style={styles.sectionEyebrow}>{t("prophets.sourcesEyebrow")}</Text>
+            <Text style={styles.sectionTitle}>{t("prophets.sourcesTitleQuran")}</Text>
             {chapter.references.map((reference) => <ReferenceCard key={reference.label} reference={reference} />)}
           </View>
 
           <LinearGradient colors={["#1E1730", "#151022"]} style={styles.lessonCard}>
             <View style={styles.lessonIcon}><Ionicons name="sparkles" size={20} color={colors.goldLight} /></View>
-            <Text style={styles.lessonEyebrow}>CE QUE CE PASSAGE NOUS ENSEIGNE</Text>
+            <Text style={styles.lessonEyebrow}>{t("prophets.lessonsMusa")}</Text>
             {chapter.lessons.map((lesson, index) => <View key={index} style={styles.lessonRow}><Text style={styles.lessonNumber}>0{index + 1}</Text><Text style={styles.lessonText}>{lesson}</Text></View>)}
           </LinearGradient>
 
           <Pressable onPress={toggleComplete} style={({ pressed }) => [styles.completeButton, completedCurrent && styles.completeButtonDone, pressed && styles.pressed]}>
             <Ionicons name={completedCurrent ? "checkmark-circle" : "checkmark-circle-outline"} size={22} color={completedCurrent ? colors.background : colors.goldLight} />
-            <View style={styles.completeCopy}><Text style={[styles.completeTitle, completedCurrent && styles.completeTitleDone]}>{completedCurrent ? "Chapitre accompli" : "Marquer ce chapitre comme lu"}</Text><Text style={[styles.completeSubtitle, completedCurrent && styles.completeSubtitleDone]}>{completedCurrent ? "Ta progression a été sauvegardée." : "OUMMAH reprendra ici lors de ta prochaine visite."}</Text></View>
+            <View style={styles.completeCopy}><Text style={[styles.completeTitle, completedCurrent && styles.completeTitleDone]}>{t(completedCurrent ? "prophets.chapterDoneMusa" : "prophets.markRead")}</Text><Text style={[styles.completeSubtitle, completedCurrent && styles.completeSubtitleDone]}>{t(completedCurrent ? "prophets.progressSavedMusa" : "prophets.resumeLaterMusa")}</Text></View>
           </Pressable>
 
           <View style={styles.globalProgressCard}>
-            <View style={styles.globalProgressHeader}><Text style={styles.globalProgressTitle}>Ton voyage avec Mûsâ</Text><Text style={styles.globalProgressValue}>{completed.length}/{MUSA_CHAPTERS.length}</Text></View>
+            <View style={styles.globalProgressHeader}><Text style={styles.globalProgressTitle}>{t("prophets.journeyWith", { name: "Mûsâ" })}</Text><Text style={styles.globalProgressValue}>{completed.length}/{MUSA_CHAPTERS.length}</Text></View>
             <View style={styles.globalTrack}><View style={[styles.globalFill, { width: `${Math.max(2, progress * 100)}%` }]} /></View>
           </View>
 
           <View style={styles.navigationRow}>
-            <Pressable disabled={activeIndex === 0} onPress={() => goTo(activeIndex - 1)} style={({ pressed }) => [styles.navButton, activeIndex === 0 && styles.navButtonDisabled, pressed && activeIndex > 0 && styles.pressed]}><Ionicons name="arrow-back" size={17} color={activeIndex === 0 ? colors.textMuted : colors.goldLight} /><Text style={[styles.navText, activeIndex === 0 && styles.navTextDisabled]}>Précédent</Text></Pressable>
-            <Pressable disabled={activeIndex === MUSA_CHAPTERS.length - 1} onPress={() => goTo(activeIndex + 1)} style={({ pressed }) => [styles.navButton, styles.navButtonNext, activeIndex === MUSA_CHAPTERS.length - 1 && styles.navButtonDisabled, pressed && activeIndex < MUSA_CHAPTERS.length - 1 && styles.pressed]}><Text style={[styles.navText, activeIndex === MUSA_CHAPTERS.length - 1 && styles.navTextDisabled]}>Chapitre suivant</Text><Ionicons name="arrow-forward" size={17} color={activeIndex === MUSA_CHAPTERS.length - 1 ? colors.textMuted : colors.goldLight} /></Pressable>
+            <Pressable disabled={activeIndex === 0} onPress={() => goTo(activeIndex - 1)} style={({ pressed }) => [styles.navButton, activeIndex === 0 && styles.navButtonDisabled, pressed && activeIndex > 0 && styles.pressed]}><Ionicons name="arrow-back" size={17} color={activeIndex === 0 ? colors.textMuted : colors.goldLight} /><Text style={[styles.navText, activeIndex === 0 && styles.navTextDisabled]}>{t("prophets.previous")}</Text></Pressable>
+            <Pressable disabled={activeIndex === MUSA_CHAPTERS.length - 1} onPress={() => goTo(activeIndex + 1)} style={({ pressed }) => [styles.navButton, styles.navButtonNext, activeIndex === MUSA_CHAPTERS.length - 1 && styles.navButtonDisabled, pressed && activeIndex < MUSA_CHAPTERS.length - 1 && styles.pressed]}><Text style={[styles.navText, activeIndex === MUSA_CHAPTERS.length - 1 && styles.navTextDisabled]}>{t("prophets.nextChapter")}</Text><Ionicons name="arrow-forward" size={17} color={activeIndex === MUSA_CHAPTERS.length - 1 ? colors.textMuted : colors.goldLight} /></Pressable>
           </View>
 
-          <View style={styles.methodCard}><Ionicons name="shield-checkmark-outline" size={20} color={colors.goldLight} /><Text style={styles.methodText}>Cette première histoire s’appuie volontairement sur les passages coraniques indiqués. Les détails narratifs non établis ne sont pas ajoutés pour rendre la scène plus spectaculaire.</Text></View>
+          <View style={styles.methodCard}><Ionicons name="shield-checkmark-outline" size={20} color={colors.goldLight} /><Text style={styles.methodText}>{t("prophets.musaMethod")}</Text></View>
           </>
           )}
         </Animated.ScrollView>

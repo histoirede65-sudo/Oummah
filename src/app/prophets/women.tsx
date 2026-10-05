@@ -4,7 +4,46 @@ import type { Href } from "expo-router";
 import { router } from "expo-router";
 import { SafeAreaView, ScrollView, StyleSheet, Text, Pressable, View } from "react-native";
 import { colors } from "../../theme/colors";
+import { useI18n } from "../../i18n";
 import { typography } from "../../theme/typography";
+
+// English for this screen; French stays the source text.
+const WOMEN_EN: Record<string, string> = {
+  "CHOISIE ET PURIFIÉE": "CHOSEN AND PURIFIED",
+  "Le Coran raconte sa consécration, sa confiance en Allah et la naissance miraculeuse de ‘Îsâ عليه السلام. Elle est explicitement choisie et purifiée.": "The Quran tells of her consecration, her trust in Allah and the miraculous birth of ‘Îsâ عليه السلام. She is explicitly chosen and purified.",
+  "Âsiyah, épouse de Pharaon": "Âsiyah, wife of Pharaoh",
+  "FOI SOUS L’ÉPREUVE": "FAITH UNDER TRIAL",
+  "Le Coran donne son invocation en exemple aux croyants : elle demanda à Allah une demeure auprès de Lui au Paradis, malgré la tyrannie qui l’entourait.": "The Quran gives her supplication as an example to the believers: she asked Allah for a home near Him in Paradise, despite the tyranny around her.",
+  "FIDÉLITÉ ET SOUTIEN": "FAITHFULNESS AND SUPPORT",
+  "Première épouse du Prophète ﷺ et soutien majeur au commencement de la Révélation. Des hadiths authentiques rapportent son immense mérite et l’annonce d’une demeure au Paradis.": "First wife of the Prophet ﷺ and a major support at the beginning of the Revelation. Authentic hadiths report her immense merit and the good news of a home in Paradise.",
+  "FILLE DU PROPHÈTE ﷺ": "DAUGHTER OF THE PROPHET ﷺ",
+  "Fille bien-aimée du Messager d’Allah ﷺ, elle possède un rang éminent dans la Sunna et fait partie des quatre femmes citées dans le hadith de référence.": "Beloved daughter of the Messenger of Allah ﷺ, she holds an eminent rank in the Sunna and is one of the four women named in the reference hadith.",
+  "SCIENCE ET TRANSMISSION": "KNOWLEDGE AND TRANSMISSION",
+  "Mère des croyants et grande transmettrice de la Sunna. Le Prophète ﷺ a explicitement souligné son mérite dans un hadith authentique.": "Mother of the believers and a great transmitter of the Sunna. The Prophet ﷺ explicitly highlighted her merit in an authentic hadith.",
+  "CONFIANCE EN ALLAH": "TRUST IN ALLAH",
+  "Mère d’Ismâ‘îl عليه السلام. Son histoire à La Mecque, sa recherche d’eau et Zamzam sont rapportées dans la Sunna authentique.": "Mother of Ismâ‘îl عليه السلام. Her story in Makkah, her search for water and Zamzam are reported in the authentic Sunna.",
+  "La mère de Mûsâ": "The mother of Mûsâ",
+  "UNE CONFIANCE INÉBRANLABLE": "UNSHAKEABLE TRUST",
+  "Allah lui inspira de déposer son enfant dans le fleuve et lui promit de le lui rendre. Son récit est une histoire exceptionnelle de peur, de confiance et de promesse divine.": "Allah inspired her to place her child in the river and promised to return him to her. Her story is an exceptional account of fear, trust and divine promise.",
+  "SAGESSE ET PATIENCE": "WISDOM AND PATIENCE",
+  "Mère des croyants, connue pour sa sagesse, sa patience dans l’épreuve et sa place dans la transmission de la Sunna.": "Mother of the believers, known for her wisdom, her patience in trial and her place in the transmission of the Sunna.",
+  "COURAGE ET SERVICE": "COURAGE AND SERVICE",
+  "Compagne connue pour son rôle lors de l’Hijra et pour sa fermeté. Son parcours appartient à l’histoire des premières générations musulmanes.": "A companion known for her role during the Hijra and for her steadfastness. Her life belongs to the history of the first Muslim generations.",
+  "Sahih Muslim · récits authentiques des Mères des croyants": "Sahih Muslim · authentic accounts of the Mothers of the believers",
+  "Sahih al-Bukhârî · récits de l’Hijra": "Sahih al-Bukhârî · accounts of the Hijra",
+  "Femmes d’exception": "Exceptional women",
+  "FOI · PATIENCE · SCIENCE · COURAGE": "FAITH · PATIENCE · KNOWLEDGE · COURAGE",
+  "Des femmes qui ont marqué l’histoire": "Women who left their mark on history",
+  "Le Coran et la Sunna ont conservé le souvenir de femmes dont la foi, la patience, le courage ou la science éclairent encore les croyants.": "The Quran and the Sunna have preserved the memory of women whose faith, patience, courage or knowledge still light the way for believers.",
+  "HADITH DE RÉFÉRENCE": "REFERENCE HADITH",
+  "Le Prophète ﷺ a cité Maryam bint ‘Imrân, Khadîjah bint Khuwaylid, Fâtimah bint Muhammad et Âsiyah, épouse de Pharaon, parmi les femmes éminentes.": "The Prophet ﷺ named Maryam bint ‘Imrân, Khadîjah bint Khuwaylid, Fâtimah bint Muhammad and Âsiyah, wife of Pharaoh, among the most eminent women.",
+  "Jâmi‘ at-Tirmidhî 3878 · authentifié sahîh": "Jâmi‘ at-Tirmidhî 3878 · graded sahîh",
+  "Parcours remarquables": "Remarkable lives",
+  "Il ne s’agit pas d’inventer un classement. Chaque carte distingue ce qui est établi par le Coran, la Sunna authentique ou l’histoire transmise.": "This is not about inventing a ranking. Each card distinguishes what is established by the Quran, the authentic Sunna or transmitted history.",
+  "CORAN": "QURAN",
+  "Aucun portrait n’est nécessaire pour transmettre leur grandeur : le module privilégie les récits, les sources et les enseignements.": "No portrait is needed to convey their greatness: this section focuses on the stories, the sources and the teachings.",
+};
+
 
 const WOMEN = [
   { name:"Maryam bint ‘Imrân", arabic:"مريم بنت عمران", tag:"CHOISIE ET PURIFIÉE", text:"Le Coran raconte sa consécration, sa confiance en Allah et la naissance miraculeuse de ‘Îsâ عليه السلام. Elle est explicitement choisie et purifiée.", quran:[3,42], source:"Âl ‘Imrân 3:42–47" },
@@ -19,26 +58,28 @@ const WOMEN = [
 ];
 
 export default function WomenOfHistoryScreen() {
+ const { language } = useI18n();
+ const tr = (text: string) => (language === "en" ? WOMEN_EN[text] ?? text : text);
  return <LinearGradient colors={[colors.background, colors.backgroundSecondary, colors.background]} style={styles.screen}>
   <SafeAreaView style={styles.safe}>
-   <View style={styles.header}><Pressable onPress={()=>router.back()} style={styles.back}><Ionicons name="chevron-back" size={23} color={colors.text}/></Pressable><Text style={styles.headerTitle}>Femmes d’exception</Text><View style={{width:44}}/></View>
+   <View style={styles.header}><Pressable onPress={()=>router.back()} style={styles.back}><Ionicons name="chevron-back" size={23} color={colors.text}/></Pressable><Text style={styles.headerTitle}>{tr("Femmes d’exception")}</Text><View style={{width:44}}/></View>
    <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
     <LinearGradient colors={["#1E1730","#151022"]} style={styles.hero}>
       <View style={styles.heroIcon}><Ionicons name="sparkles" size={26} color={colors.goldLight}/></View>
-      <Text style={styles.kicker}>FOI · PATIENCE · SCIENCE · COURAGE</Text>
-      <Text style={styles.heroTitle}>Des femmes qui ont marqué l’histoire</Text>
-      <Text style={styles.heroText}>Le Coran et la Sunna ont conservé le souvenir de femmes dont la foi, la patience, le courage ou la science éclairent encore les croyants.</Text>
-      <View style={styles.hadithBox}><Text style={styles.hadithLabel}>HADITH DE RÉFÉRENCE</Text><Text style={styles.hadithText}>Le Prophète ﷺ a cité Maryam bint ‘Imrân, Khadîjah bint Khuwaylid, Fâtimah bint Muhammad et Âsiyah, épouse de Pharaon, parmi les femmes éminentes.</Text><Text style={styles.hadithSource}>Jâmi‘ at-Tirmidhî 3878 · authentifié sahîh</Text></View>
+      <Text style={styles.kicker}>{tr("FOI · PATIENCE · SCIENCE · COURAGE")}</Text>
+      <Text style={styles.heroTitle}>{tr("Des femmes qui ont marqué l’histoire")}</Text>
+      <Text style={styles.heroText}>{tr("Le Coran et la Sunna ont conservé le souvenir de femmes dont la foi, la patience, le courage ou la science éclairent encore les croyants.")}</Text>
+      <View style={styles.hadithBox}><Text style={styles.hadithLabel}>{tr("HADITH DE RÉFÉRENCE")}</Text><Text style={styles.hadithText}>{tr("Le Prophète ﷺ a cité Maryam bint ‘Imrân, Khadîjah bint Khuwaylid, Fâtimah bint Muhammad et Âsiyah, épouse de Pharaon, parmi les femmes éminentes.")}</Text><Text style={styles.hadithSource}>{tr("Jâmi‘ at-Tirmidhî 3878 · authentifié sahîh")}</Text></View>
     </LinearGradient>
-    <Text style={styles.sectionTitle}>Parcours remarquables</Text>
-    <Text style={styles.sectionIntro}>Il ne s’agit pas d’inventer un classement. Chaque carte distingue ce qui est établi par le Coran, la Sunna authentique ou l’histoire transmise.</Text>
+    <Text style={styles.sectionTitle}>{tr("Parcours remarquables")}</Text>
+    <Text style={styles.sectionIntro}>{tr("Il ne s’agit pas d’inventer un classement. Chaque carte distingue ce qui est établi par le Coran, la Sunna authentique ou l’histoire transmise.")}</Text>
     {WOMEN.map((w,i)=><View key={w.name} style={styles.card}>
-      <View style={styles.cardTop}><View style={styles.num}><Text style={styles.numText}>{String(i+1).padStart(2,"0")}</Text></View><Text style={styles.tag}>{w.tag}</Text></View>
-      <Text style={styles.name}>{w.name}</Text><Text style={styles.arabic}>{w.arabic}</Text><Text style={styles.body}>{w.text}</Text>
-      {w.quran ? <Pressable onPress={()=>router.push(`/surah/${w.quran[0]}?verse=${w.quran[1]}` as Href)} style={styles.source}><Ionicons name="book-outline" size={17} color={colors.goldLight}/><View style={{flex:1}}><Text style={styles.sourceType}>CORAN</Text><Text style={styles.sourceText}>{w.source}</Text></View><Ionicons name="chevron-forward" size={16} color={colors.textMuted}/></Pressable> :
-      <View style={styles.source}><Ionicons name="shield-checkmark-outline" size={17} color={colors.goldLight}/><View style={{flex:1}}><Text style={styles.sourceType}>SUNNA / SOURCE</Text><Text style={styles.sourceText}>{w.hadith}</Text></View></View>}
+      <View style={styles.cardTop}><View style={styles.num}><Text style={styles.numText}>{String(i+1).padStart(2,"0")}</Text></View><Text style={styles.tag}>{tr(w.tag)}</Text></View>
+      <Text style={styles.name}>{tr(w.name)}</Text><Text style={styles.arabic}>{w.arabic}</Text><Text style={styles.body}>{tr(w.text)}</Text>
+      {w.quran ? <Pressable onPress={()=>router.push(`/surah/${w.quran[0]}?verse=${w.quran[1]}` as Href)} style={styles.source}><Ionicons name="book-outline" size={17} color={colors.goldLight}/><View style={{flex:1}}><Text style={styles.sourceType}>{tr("CORAN")}</Text><Text style={styles.sourceText}>{w.source}</Text></View><Ionicons name="chevron-forward" size={16} color={colors.textMuted}/></Pressable> :
+      <View style={styles.source}><Ionicons name="shield-checkmark-outline" size={17} color={colors.goldLight}/><View style={{flex:1}}><Text style={styles.sourceType}>{tr("SUNNA / SOURCE")}</Text><Text style={styles.sourceText}>{tr(w.hadith)}</Text></View></View>}
     </View>)}
-    <View style={styles.note}><Ionicons name="shield-checkmark-outline" size={21} color={colors.goldLight}/><Text style={styles.noteText}>Aucun portrait n’est nécessaire pour transmettre leur grandeur : le module privilégie les récits, les sources et les enseignements.</Text></View>
+    <View style={styles.note}><Ionicons name="shield-checkmark-outline" size={21} color={colors.goldLight}/><Text style={styles.noteText}>{tr("Aucun portrait n’est nécessaire pour transmettre leur grandeur : le module privilégie les récits, les sources et les enseignements.")}</Text></View>
    </ScrollView>
   </SafeAreaView>
  </LinearGradient>

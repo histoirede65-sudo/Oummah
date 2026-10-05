@@ -3,38 +3,45 @@ import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import type { Href } from "expo-router";
 import { router, useLocalSearchParams } from "expo-router";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Animated, Image as NativeImage, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, View } from "react-native";
 
 import { PROPHET_STORIES } from "../../features/prophets/allProphetsData";
 import { PROPHET_AUDIO_EPISODES } from "../../features/prophets/audio/prophetAudioData";
-import { PROPHET_FRENCH_NAMES, PROPHETS_PREVIEW, type ProphetReference, type ProphetSourceKind } from "../../features/prophets/prophetsData";
+import { PROPHET_ENGLISH_NAMES, PROPHET_FRENCH_NAMES, PROPHETS_PREVIEW, type ProphetReference, type ProphetSourceKind } from "../../features/prophets/prophetsData";
+import { localizeStory } from "../../features/prophets/prophetsLocalization";
 import { loadProphetProgress, saveProphetProgress } from "../../features/prophets/prophetProgress";
 import { goalProgressBridge } from "../../features/daily-goals/services/goalProgressBridge";
+import { useI18n } from "../../i18n";
+import type { TranslationKey } from "../../i18n";
 import { colors } from "../../theme/colors";
 import { typography } from "../../theme/typography";
 
-const SOURCE_LABELS: Record<ProphetSourceKind, string> = { QURAN: "CORAN", SUNNA: "SUNNA AUTHENTIQUE", TAFSIR: "TAFSIR" };
+const SOURCE_LABELS: Record<ProphetSourceKind, TranslationKey> = { QURAN: "prophets.sourceQuran", SUNNA: "prophets.sourceSunna", TAFSIR: "prophets.sourceTafsir" };
 // Shown only while a chapter image loads.
 const PALETTES: [string, string, string][] = [["#080713", "#151022", "#1E1730"]];
 const ICONS: (keyof typeof Ionicons.glyphMap)[] = ["book-outline","moon-outline","flame-outline","water-outline","sparkles-outline","trail-sign-outline","shield-checkmark-outline","sunny-outline"];
 
 function SourceChip({ kind }: { kind: ProphetSourceKind }) {
+  const { t } = useI18n();
   const icon = kind === "QURAN" ? "book-outline" : kind === "SUNNA" ? "checkmark-circle-outline" : "library-outline";
-  return <View style={styles.sourceChip}><Ionicons name={icon} size={13} color={colors.goldLight} /><Text style={styles.sourceChipText}>{SOURCE_LABELS[kind]}</Text></View>;
+  return <View style={styles.sourceChip}><Ionicons name={icon} size={13} color={colors.goldLight} /><Text style={styles.sourceChipText}>{t(SOURCE_LABELS[kind])}</Text></View>;
 }
 function ReferenceCard({ reference }: { reference: ProphetReference }) {
+  const { t } = useI18n();
   const open = () => reference.surahId && router.push(`/surah/${reference.surahId}?verse=${reference.verse ?? 1}` as Href);
   return <Pressable disabled={!reference.surahId} onPress={open} style={({ pressed }) => [styles.referenceCard, pressed && styles.pressed]}>
     <View style={styles.referenceHeader}><SourceChip kind={reference.kind} /><Text style={styles.referenceLabel}>{reference.label}</Text></View>
     <Text style={styles.referenceNote}>{reference.note}</Text>
-    {reference.surahId ? <View style={styles.referenceAction}><Ionicons name="play-circle-outline" size={17} color={colors.goldLight} /><Text style={styles.referenceActionText}>Ouvrir le passage dans le Coran</Text><Ionicons name="arrow-forward" size={14} color={colors.goldLight} /></View> : null}
+    {reference.surahId ? <View style={styles.referenceAction}><Ionicons name="play-circle-outline" size={17} color={colors.goldLight} /><Text style={styles.referenceActionText}>{t("prophets.openPassage")}</Text><Ionicons name="arrow-forward" size={14} color={colors.goldLight} /></View> : null}
   </Pressable>;
 }
 
 export default function ProphetStoryScreen() {
+  const { language, t } = useI18n();
   const params = useLocalSearchParams<{ id: string; chapter?: string }>();
-  const story = PROPHET_STORIES[params.id];
+  const story = useMemo(() => (PROPHET_STORIES[params.id] ? localizeStory(PROPHET_STORIES[params.id], language) : undefined), [params.id, language]);
+  const usualName = language === "en" ? PROPHET_ENGLISH_NAMES[params.id] : PROPHET_FRENCH_NAMES[params.id];
   const preview = PROPHETS_PREVIEW.find((item) => item.id === params.id);
   const initialIndex = story ? Math.min(story.chapters.length - 1, Math.max(0, Number(params.chapter ?? 0) || 0)) : 0;
   const [activeIndex, setActiveIndex] = useState(initialIndex);
@@ -59,7 +66,7 @@ export default function ProphetStoryScreen() {
     if (uris.length) void Image.prefetch(uris, "memory-disk").catch(() => false);
   }, [activeIndex, story]);
 
-  if (!story) return <SafeAreaView style={styles.missing}><Text style={styles.missingText}>Histoire introuvable.</Text></SafeAreaView>;
+  if (!story) return <SafeAreaView style={styles.missing}><Text style={styles.missingText}>{t("prophets.storyNotFound")}</Text></SafeAreaView>;
   const chapter = story.chapters[activeIndex];
   const progress = completed.length / story.chapters.length;
   const palette = PALETTES[activeIndex % PALETTES.length];
@@ -90,7 +97,7 @@ export default function ProphetStoryScreen() {
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.header}>
         <Pressable onPress={() => showIntro ? router.back() : setShowIntro(true)} style={styles.backButton}><Ionicons name="chevron-back" size={24} color={colors.text} /></Pressable>
-        <View style={styles.headerCopy}><Text style={styles.headerEyebrow}>HISTOIRES DES PROPHÈTES</Text><Text style={styles.headerTitle}>{story.name} <Text style={styles.headerArabic}>عليه السلام</Text></Text></View>
+        <View style={styles.headerCopy}><Text style={styles.headerEyebrow}>{t("prophets.headerEyebrow")}</Text><Text style={styles.headerTitle}>{story.name} <Text style={styles.headerArabic}>عليه السلام</Text></Text></View>
         <View style={styles.headerSpacer} />
       </View>
       <ScrollView ref={scrollViewRef} contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
@@ -101,12 +108,12 @@ export default function ProphetStoryScreen() {
             <LinearGradient colors={["rgba(7,7,18,0.02)", "rgba(8,7,19,0.22)", "rgba(8,7,19,0.78)"]} style={StyleSheet.absoluteFill} />
             <View style={styles.heroRim} />
             <View style={styles.heroCopy}>
-              <Text style={styles.introLabel}>PREMIER VOYAGE IMMERSIF</Text>
+              <Text style={styles.introLabel}>{t("prophets.firstJourney")}</Text>
               <Text style={styles.heroTitle}>{story.name}</Text>
-              {PROPHET_FRENCH_NAMES[story.id] ? <Text style={styles.heroFrenchName}>{PROPHET_FRENCH_NAMES[story.id]}</Text> : null}
+              {usualName ? <Text style={styles.heroFrenchName}>{usualName}</Text> : null}
               <Text style={styles.introSubtitle}>{story.summary}</Text>
               <Pressable onPress={() => setShowIntro(false)} style={({ pressed }) => [styles.introButton, pressed && styles.pressed]}>
-                <Text style={styles.introButtonText}>Commencer le voyage</Text>
+                <Text style={styles.introButtonText}>{t("prophets.start")}</Text>
                 <Ionicons name="arrow-forward" size={17} color={colors.background} />
               </Pressable>
             </View>
@@ -118,8 +125,8 @@ export default function ProphetStoryScreen() {
             >
               <Ionicons name="headset-outline" size={20} color={colors.goldLight} />
               <View style={styles.audioButtonCopy}>
-                <Text style={styles.audioButtonTitle}>Écouter l’histoire complète</Text>
-                <Text style={styles.audioButtonSubtitle}>Récit audio immersif de {PROPHET_AUDIO_EPISODES[story.id].prophetName}</Text>
+                <Text style={styles.audioButtonTitle}>{t("prophets.listen")}</Text>
+                <Text style={styles.audioButtonSubtitle}>{t("prophets.listenSubtitle", { name: story.name })}</Text>
               </View>
               <Ionicons name="chevron-forward" size={18} color={colors.goldLight} />
             </Pressable>
@@ -149,23 +156,23 @@ export default function ProphetStoryScreen() {
 
         <Animated.View style={{ opacity: contentOpacity }}>
         <View key={`story-${story.id}-${chapter.id}`} style={styles.storyCard}>
-          <Text style={styles.storyEyebrow}>LE RÉCIT</Text>
+          <Text style={styles.storyEyebrow}>{t("prophets.story")}</Text>
           <Text style={styles.storyText}>{chapter.paragraphs.join("\n\n")}</Text>
         </View>
         </Animated.View>
 
-        <View style={styles.sourceSection}><Text style={styles.sectionEyebrow}>REVENIR AUX SOURCES</Text><Text style={styles.sectionTitle}>Le passage au cœur de la scène</Text>{chapter.references.map((r,i)=><ReferenceCard key={`${r.label}-${i}`} reference={r} />)}</View>
+        <View style={styles.sourceSection}><Text style={styles.sectionEyebrow}>{t("prophets.sourcesEyebrow")}</Text><Text style={styles.sectionTitle}>{t("prophets.sourcesTitle")}</Text>{chapter.references.map((r,i)=><ReferenceCard key={`${r.label}-${i}`} reference={r} />)}</View>
 
         <LinearGradient colors={["rgba(227,181,90,0.08)","#151022"]} style={styles.lessonCard}>
-          <View style={styles.lessonIcon}><Ionicons name="bulb-outline" size={20} color={colors.goldLight}/></View><Text style={styles.lessonEyebrow}>CE QU’ON EN RETIENT</Text>
+          <View style={styles.lessonIcon}><Ionicons name="bulb-outline" size={20} color={colors.goldLight}/></View><Text style={styles.lessonEyebrow}>{t("prophets.lessons")}</Text>
           {chapter.lessons.map((lesson,index)=><View key={index} style={styles.lessonRow}><Text style={styles.lessonNumber}>{String(index+1).padStart(2,"0")}</Text><Text style={styles.lessonText}>{lesson}</Text></View>)}
         </LinearGradient>
 
-        <Pressable onPress={toggleComplete} style={[styles.completeButton,done&&styles.completeButtonDone]}><Ionicons name={done?"checkmark-circle":"checkmark-circle-outline"} size={25} color={done?colors.background:colors.goldLight}/><View style={styles.completeCopy}><Text style={[styles.completeTitle,done&&styles.completeTitleDone]}>{done?"Chapitre terminé":"Marquer ce chapitre comme lu"}</Text><Text style={[styles.completeSubtitle,done&&styles.completeSubtitleDone]}>{done?"Ta progression est enregistrée.":"Tu pourras reprendre ici plus tard."}</Text></View></Pressable>
+        <Pressable onPress={toggleComplete} style={[styles.completeButton,done&&styles.completeButtonDone]}><Ionicons name={done?"checkmark-circle":"checkmark-circle-outline"} size={25} color={done?colors.background:colors.goldLight}/><View style={styles.completeCopy}><Text style={[styles.completeTitle,done&&styles.completeTitleDone]}>{t(done?"prophets.chapterDone":"prophets.markRead")}</Text><Text style={[styles.completeSubtitle,done&&styles.completeSubtitleDone]}>{t(done?"prophets.progressSaved":"prophets.resumeLater")}</Text></View></Pressable>
 
-        <View style={styles.globalProgressCard}><View style={styles.globalProgressHeader}><Text style={styles.globalProgressTitle}>Ton voyage avec {story.name}</Text><Text style={styles.globalProgressValue}>{completed.length}/{story.chapters.length}</Text></View><View style={styles.globalTrack}><View style={[styles.globalFill,{width:`${Math.max(2,progress*100)}%`}]} /></View></View>
-        <View style={styles.navigationRow}><Pressable disabled={activeIndex===0} onPress={()=>goTo(activeIndex-1)} style={[styles.navButton,activeIndex===0&&styles.navButtonDisabled]}><Ionicons name="arrow-back" size={17} color={activeIndex===0?colors.textMuted:colors.goldLight}/><Text style={[styles.navText,activeIndex===0&&styles.navTextDisabled]}>Précédent</Text></Pressable><Pressable disabled={activeIndex===story.chapters.length-1} onPress={()=>goTo(activeIndex+1)} style={[styles.navButton,styles.navButtonNext,activeIndex===story.chapters.length-1&&styles.navButtonDisabled]}><Text style={[styles.navText,activeIndex===story.chapters.length-1&&styles.navTextDisabled]}>Suivant</Text><Ionicons name="arrow-forward" size={17} color={activeIndex===story.chapters.length-1?colors.textMuted:colors.goldLight}/></Pressable></View>
-        <View style={styles.methodCard}><Ionicons name="shield-checkmark-outline" size={20} color={colors.goldLight}/><Text style={styles.methodText}>Ce récit reste volontairement limité aux éléments établis par les sources indiquées.</Text></View>
+        <View style={styles.globalProgressCard}><View style={styles.globalProgressHeader}><Text style={styles.globalProgressTitle}>{t("prophets.journeyWith", { name: story.name })}</Text><Text style={styles.globalProgressValue}>{completed.length}/{story.chapters.length}</Text></View><View style={styles.globalTrack}><View style={[styles.globalFill,{width:`${Math.max(2,progress*100)}%`}]} /></View></View>
+        <View style={styles.navigationRow}><Pressable disabled={activeIndex===0} onPress={()=>goTo(activeIndex-1)} style={[styles.navButton,activeIndex===0&&styles.navButtonDisabled]}><Ionicons name="arrow-back" size={17} color={activeIndex===0?colors.textMuted:colors.goldLight}/><Text style={[styles.navText,activeIndex===0&&styles.navTextDisabled]}>{t("prophets.previous")}</Text></Pressable><Pressable disabled={activeIndex===story.chapters.length-1} onPress={()=>goTo(activeIndex+1)} style={[styles.navButton,styles.navButtonNext,activeIndex===story.chapters.length-1&&styles.navButtonDisabled]}><Text style={[styles.navText,activeIndex===story.chapters.length-1&&styles.navTextDisabled]}>{t("prophets.next")}</Text><Ionicons name="arrow-forward" size={17} color={activeIndex===story.chapters.length-1?colors.textMuted:colors.goldLight}/></Pressable></View>
+        <View style={styles.methodCard}><Ionicons name="shield-checkmark-outline" size={20} color={colors.goldLight}/><Text style={styles.methodText}>{t("prophets.storyMethod")}</Text></View>
         </>
         )}
       </ScrollView>

@@ -7,8 +7,9 @@ import { useCallback, useState } from "react";
 import { Pressable, SafeAreaView, ScrollView, StyleSheet, Text, View } from "react-native";
 
 import { PROPHET_AUDIO_EPISODES } from "../features/prophets/audio/prophetAudioData";
-import { MUSA_CHAPTERS, PROPHETS_PREVIEW } from "../features/prophets/prophetsData";
+import { MUSA_CHAPTERS, PROPHET_ENGLISH_NAMES, PROPHETS_PREVIEW } from "../features/prophets/prophetsData";
 import { loadMusaProgress } from "../features/prophets/prophetProgress";
+import { useI18n } from "../i18n";
 import { colors } from "../theme/colors";
 import { typography } from "../theme/typography";
 
@@ -19,6 +20,7 @@ const CARD_RAISED = "#1E1730";
 const LINE = "#2B2238";
 
 export default function ProphetsScreen() {
+  const { language, t } = useI18n();
   const [completedCount, setCompletedCount] = useState(0);
   const [lastChapterId, setLastChapterId] = useState<string | null>(null);
 
@@ -44,7 +46,7 @@ export default function ProphetsScreen() {
             <Ionicons name="chevron-back" size={22} color={colors.text} />
           </Pressable>
           <View style={styles.headerCopy}>
-            <Text style={styles.headerTitle}>Histoires des Prophètes</Text>
+            <Text style={styles.headerTitle}>{t("prophets.title")}</Text>
           </View>
           <View style={styles.headerSpacer} />
         </View>
@@ -55,14 +57,12 @@ export default function ProphetsScreen() {
             <View style={styles.introOrnament}>
               <Ionicons name="book-outline" size={28} color={colors.goldLight} />
             </View>
-            <Text style={styles.eyebrow}>UN VOYAGE À TRAVERS LA RÉVÉLATION</Text>
-            <Text style={styles.introTitle}>Découvrir les récits des Prophètes</Text>
-            <Text style={styles.introText}>
-              Parcours les prophètes nommés dans le Coran à travers une narration sourcée, immersive et respectueuse. Lis leurs récits ou écoute leurs histoires complètes, sans romancer ce que les textes ne disent pas.
-            </Text>
+            <Text style={styles.eyebrow}>{t("prophets.eyebrow")}</Text>
+            <Text style={styles.introTitle}>{t("prophets.introTitle")}</Text>
+            <Text style={styles.introText}>{t("prophets.introText")}</Text>
             <View style={styles.sourceChips}>
-              <View style={styles.sourceChip}><Ionicons name="book-outline" size={13} color={colors.goldLight} /><Text style={styles.sourceChipText}>CORAN</Text></View>
-              <View style={styles.sourceChip}><Ionicons name="checkmark-circle-outline" size={13} color={colors.goldLight} /><Text style={styles.sourceChipText}>SUNNA AUTHENTIQUE</Text></View>
+              <View style={styles.sourceChip}><Ionicons name="book-outline" size={13} color={colors.goldLight} /><Text style={styles.sourceChipText}>{t("prophets.sourceQuran")}</Text></View>
+              <View style={styles.sourceChip}><Ionicons name="checkmark-circle-outline" size={13} color={colors.goldLight} /><Text style={styles.sourceChipText}>{t("prophets.sourceSunna")}</Text></View>
             </View>
           </LinearGradient>
 
@@ -91,8 +91,8 @@ export default function ProphetsScreen() {
 
           <View style={styles.sectionHeader}>
             <View style={styles.sectionHeaderCopy}>
-              <Text style={styles.eyebrow}>LES PROPHÈTES NOMMÉS DANS LE CORAN</Text>
-              <Text style={styles.sectionTitle}>Choisir une histoire</Text>
+              <Text style={styles.eyebrow}>{t("prophets.listEyebrow")}</Text>
+              <Text style={styles.sectionTitle}>{t("prophets.listTitle")}</Text>
             </View>
             <View style={styles.countBadge}><Text style={styles.countBadgeText}>{PROPHETS_PREVIEW.length}</Text></View>
           </View>
@@ -101,6 +101,7 @@ export default function ProphetsScreen() {
             {PROPHETS_PREVIEW.map((prophet) => {
               const available = prophet.status === "available";
               const hasAudio = Boolean(PROPHET_AUDIO_EPISODES[prophet.id]);
+              const usualName = language === "en" ? PROPHET_ENGLISH_NAMES[prophet.id] : prophet.frenchName;
               return (
                 <Pressable
                   key={prophet.id}
@@ -112,7 +113,7 @@ export default function ProphetsScreen() {
                   <LinearGradient colors={["rgba(8,7,19,0)", "rgba(8,7,19,0.18)", "rgba(8,7,19,0.86)"]} locations={[0, 0.42, 1]} style={StyleSheet.absoluteFill} />
                   <View style={styles.prophetCopy}>
                     <Text style={styles.prophetName} numberOfLines={1}>{prophet.name}</Text>
-                    {prophet.frenchName ? <Text style={styles.prophetFrenchName} numberOfLines={1}>{prophet.frenchName}</Text> : null}
+                    {usualName ? <Text style={styles.prophetFrenchName} numberOfLines={1}>{usualName}</Text> : null}
                   </View>
                   {hasAudio ? (
                     <View style={styles.audioBadge} pointerEvents="none">
@@ -125,21 +126,21 @@ export default function ProphetsScreen() {
           </View>
 
           <View style={styles.discoverySection}>
-            <Text style={styles.eyebrow}>POUR ALLER PLUS LOIN</Text>
-            <Text style={styles.discoveryTitle}>Explorer les grandes lignées</Text>
+            <Text style={styles.eyebrow}>{t("prophets.moreEyebrow")}</Text>
+            <Text style={styles.discoveryTitle}>{t("prophets.moreTitle")}</Text>
             <Pressable onPress={() => router.push("/prophets/women" as Href)} style={({pressed})=>[styles.discoveryCard,pressed&&styles.pressed]}>
-              <LinearGradient colors={[CARD_RAISED, CARD]} style={StyleSheet.absoluteFill}/><View style={styles.discoveryIcon}><Ionicons name="sparkles" size={22} color={colors.goldLight}/></View><View style={styles.discoveryCopy}><Text style={styles.discoveryKicker}>FEMMES D’EXCEPTION</Text><Text style={styles.discoveryText}>Maryam, Âsiyah, Khadîjah, Fâtimah, ‘Â’ishah et d’autres parcours remarquables.</Text></View><Ionicons name="chevron-forward" size={20} color={colors.goldLight}/>
+              <LinearGradient colors={[CARD_RAISED, CARD]} style={StyleSheet.absoluteFill}/><View style={styles.discoveryIcon}><Ionicons name="sparkles" size={22} color={colors.goldLight}/></View><View style={styles.discoveryCopy}><Text style={styles.discoveryKicker}>{t("prophets.womenKicker")}</Text><Text style={styles.discoveryText}>{t("prophets.womenText")}</Text></View><Ionicons name="chevron-forward" size={20} color={colors.goldLight}/>
             </Pressable>
             <Pressable onPress={() => router.push("/prophets/genealogy" as Href)} style={({pressed})=>[styles.discoveryCard,pressed&&styles.pressed]}>
-              <LinearGradient colors={[CARD_RAISED, CARD]} style={StyleSheet.absoluteFill}/><View style={styles.discoveryIcon}><Ionicons name="git-network-outline" size={23} color={colors.goldLight}/></View><View style={styles.discoveryCopy}><Text style={styles.discoveryKicker}>ARBRE DES PROPHÈTES</Text><Text style={styles.discoveryText}>De Âdam à Muhammad ﷺ : chronologie, filiations et liens familiaux sourcés.</Text></View><Ionicons name="chevron-forward" size={20} color={colors.goldLight}/>
+              <LinearGradient colors={[CARD_RAISED, CARD]} style={StyleSheet.absoluteFill}/><View style={styles.discoveryIcon}><Ionicons name="git-network-outline" size={23} color={colors.goldLight}/></View><View style={styles.discoveryCopy}><Text style={styles.discoveryKicker}>{t("prophets.treeKicker")}</Text><Text style={styles.discoveryText}>{t("prophets.treeText")}</Text></View><Ionicons name="chevron-forward" size={20} color={colors.goldLight}/>
             </Pressable>
           </View>
 
           <View style={styles.methodCard}>
             <Ionicons name="shield-checkmark-outline" size={21} color={colors.goldLight} />
             <View style={styles.methodCopy}>
-              <Text style={styles.methodTitle}>Raconter sans romancer</Text>
-              <Text style={styles.methodText}>Chaque récit distingue ce qui vient du Coran, de la Sunna authentique et des explications savantes.</Text>
+              <Text style={styles.methodTitle}>{t("prophets.methodTitle")}</Text>
+              <Text style={styles.methodText}>{t("prophets.methodText")}</Text>
             </View>
           </View>
         </ScrollView>

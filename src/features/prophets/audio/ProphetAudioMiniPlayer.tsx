@@ -4,14 +4,18 @@ import { type Href, router, usePathname } from "expo-router";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+import { useI18n } from "../../../i18n";
 import { colors } from "../../../theme/colors";
+import { localizeAudioEpisode } from "../prophetsLocalization";
 import { typography } from "../../../theme/typography";
 import { useProphetAudio } from "./ProphetAudioProvider";
 
 export default function ProphetAudioMiniPlayer() {
   const pathname = usePathname();
   const insets = useSafeAreaInsets();
-  const { episode, isPlaying, progress, togglePlay, close } = useProphetAudio();
+  const { language, t } = useI18n();
+  const { episode: playing, isPlaying, progress, togglePlay, close } = useProphetAudio();
+  const episode = playing ? localizeAudioEpisode(playing, language) : null;
 
   if (!episode || pathname === `/prophets/audio/${episode.prophetId}`) return null;
 
@@ -31,13 +35,13 @@ export default function ProphetAudioMiniPlayer() {
           <Ionicons name="headset" size={19} color={colors.goldLight} />
         </View>
         <View style={styles.copy}>
-          <Text numberOfLines={1} style={styles.kicker}>RÉCIT AUDIO · {episode.prophetName.toUpperCase()}</Text>
+          <Text numberOfLines={1} style={styles.kicker}>{t("prophets.miniKicker", { name: episode.prophetName.toUpperCase() })}</Text>
           <Text numberOfLines={1} style={styles.title}>{episode.title}</Text>
         </View>
       </Pressable>
 
       <Pressable
-        accessibilityLabel={isPlaying ? "Mettre en pause" : "Reprendre"}
+        accessibilityLabel={t(isPlaying ? "prophets.pause" : "prophets.play")}
         onPress={() => void togglePlay()}
         style={({ pressed }) => [styles.playButton, pressed && styles.pressed]}
       >
@@ -45,7 +49,7 @@ export default function ProphetAudioMiniPlayer() {
       </Pressable>
 
       <Pressable
-        accessibilityLabel="Fermer complètement le récit audio"
+        accessibilityLabel={t("prophets.miniCloseA11y")}
         onPress={() => void close()}
         hitSlop={8}
         style={({ pressed }) => [styles.closeButton, pressed && styles.pressed]}

@@ -18,6 +18,8 @@ import {
 import { PROPHETS_PREVIEW } from "../../../features/prophets/prophetsData";
 import { PROPHET_AUDIO_EPISODES } from "../../../features/prophets/audio/prophetAudioData";
 import { useProphetAudio } from "../../../features/prophets/audio/ProphetAudioProvider";
+import { localizeAudioEpisode } from "../../../features/prophets/prophetsLocalization";
+import { useI18n } from "../../../i18n";
 import { colors } from "../../../theme/colors";
 import { typography } from "../../../theme/typography";
 
@@ -30,8 +32,12 @@ function formatTime(value: number) {
 }
 
 export default function ProphetAudioScreen() {
+  const { language, t } = useI18n();
   const params = useLocalSearchParams<{ id: string }>();
-  const audioEpisode = PROPHET_AUDIO_EPISODES[params.id];
+  const audioEpisode = useMemo(
+    () => (PROPHET_AUDIO_EPISODES[params.id] ? localizeAudioEpisode(PROPHET_AUDIO_EPISODES[params.id], language) : undefined),
+    [params.id, language],
+  );
   const preview = PROPHETS_PREVIEW.find((item) => item.id === params.id);
   const {
     episode,
@@ -75,10 +81,7 @@ export default function ProphetAudioScreen() {
       return;
     }
     void startEpisode(audioEpisode).catch(() => {
-      Alert.alert(
-        "Téléchargement impossible",
-        "Vérifie ta connexion internet puis réessaie. Une fois téléchargée, cette histoire restera disponible hors connexion.",
-      );
+      Alert.alert(t("prophets.downloadFailedTitle"), t("prophets.downloadFailedText"));
     });
   };
 
@@ -137,9 +140,9 @@ export default function ProphetAudioScreen() {
   if (!audioEpisode) {
     return (
       <SafeAreaView style={styles.missing}>
-        <Text style={styles.missingText}>Ce récit audio n’est pas encore disponible.</Text>
+        <Text style={styles.missingText}>{t("prophets.audioUnavailable")}</Text>
         <Pressable onPress={() => router.back()} style={styles.missingButton}>
-          <Text style={styles.missingButtonText}>Retour</Text>
+          <Text style={styles.missingButtonText}>{t("common.back")}</Text>
         </Pressable>
       </SafeAreaView>
     );
@@ -155,11 +158,11 @@ export default function ProphetAudioScreen() {
             <Ionicons name="chevron-back" size={23} color={colors.text} />
           </Pressable>
           <View style={styles.headerCopy}>
-            <Text style={styles.headerKicker}>HISTOIRES DES PROPHÈTES</Text>
-            <Text style={styles.headerTitle}>Mode audio</Text>
+            <Text style={styles.headerKicker}>{t("prophets.headerEyebrow")}</Text>
+            <Text style={styles.headerTitle}>{t("prophets.audioMode")}</Text>
           </View>
           <Pressable
-            accessibilityLabel="Fermer complètement le lecteur audio"
+            accessibilityLabel={t("prophets.audioCloseA11y")}
             onPress={() => void close().then(() => router.back())}
             style={styles.headerButton}
           >
@@ -177,7 +180,7 @@ export default function ProphetAudioScreen() {
             <View style={styles.heroRim} />
             <View style={styles.audioBadge}>
               <Ionicons name="headset" size={19} color="#FFF7EC" />
-              <Text style={styles.audioBadgeText}>RÉCIT AUDIO · VERSION COMPLÈTE</Text>
+              <Text style={styles.audioBadgeText}>{t("prophets.audioBadge")}</Text>
             </View>
             <View style={styles.heroCopy}>
               <Text style={styles.prophetName}>{audioEpisode.prophetName}</Text>
@@ -185,7 +188,7 @@ export default function ProphetAudioScreen() {
               <Text style={styles.heroSubtitle}>{audioEpisode.subtitle}</Text>
               <View style={styles.heroMetaRow}>
                 <View style={styles.metaPill}><Ionicons name="time-outline" size={14} color="#F3C46E" /><Text style={styles.metaText}>{durationLabel}</Text></View>
-                <View style={styles.metaPill}><Ionicons name="shield-checkmark-outline" size={14} color="#F3C46E" /><Text style={styles.metaText}>Récit sourcé</Text></View>
+                <View style={styles.metaPill}><Ionicons name="shield-checkmark-outline" size={14} color="#F3C46E" /><Text style={styles.metaText}>{t("prophets.audioSourced")}</Text></View>
               </View>
             </View>
           </View>
@@ -196,12 +199,10 @@ export default function ProphetAudioScreen() {
               <View style={styles.nowPlayingCopy}>
                 <Text style={styles.nowPlayingKicker}>
                   {displayIsLoading
-                    ? `TÉLÉCHARGEMENT · ${Math.round((downloadProgress ?? 0) * 100)} %`
-                    : displayIsPlaying
-                      ? "LECTURE EN COURS"
-                      : "PRÊT À ÉCOUTER"}
+                    ? t("prophets.audioDownloading", { percent: Math.round((downloadProgress ?? 0) * 100) })
+                    : t(displayIsPlaying ? "prophets.audioPlaying" : "prophets.audioReady")}
                 </Text>
-                <Text style={styles.nowPlayingTitle}>{audioEpisode.prophetName} · paix sur lui</Text>
+                <Text style={styles.nowPlayingTitle}>{t("prophets.audioPeace", { name: audioEpisode.prophetName })}</Text>
               </View>
             </View>
 
@@ -209,7 +210,7 @@ export default function ProphetAudioScreen() {
               ref={trackRef}
               accessible
               accessibilityRole="adjustable"
-              accessibilityLabel="Position dans l’histoire"
+              accessibilityLabel={t("prophets.audioPosition")}
               onLayout={onTrackLayout}
               {...progressPanResponder.panHandlers}
               style={styles.progressTrack}
@@ -244,22 +245,22 @@ export default function ProphetAudioScreen() {
 
             <Pressable onPress={() => void stop()} style={({ pressed }) => [styles.stopButton, pressed && styles.pressed]}>
               <Ionicons name="stop" size={15} color={colors.textSecondary} />
-              <Text style={styles.stopText}>Arrêter et revenir au début</Text>
+              <Text style={styles.stopText}>{t("prophets.audioStop")}</Text>
             </Pressable>
           </LinearGradient>
 
           <View style={styles.backgroundCard}>
             <View style={styles.backgroundIcon}><Ionicons name="phone-portrait-outline" size={19} color="#F3C46E" /></View>
             <View style={styles.backgroundCopy}>
-              <Text style={styles.backgroundTitle}>Continue partout dans OUMMAH</Text>
-              <Text style={styles.backgroundText}>Tu peux quitter cette histoire, changer de module ou verrouiller ton téléphone : le récit continue. La petite croix ferme complètement la session audio.</Text>
+              <Text style={styles.backgroundTitle}>{t("prophets.audioBackgroundTitle")}</Text>
+              <Text style={styles.backgroundText}>{t("prophets.audioBackgroundText")}</Text>
             </View>
           </View>
 
           <View style={styles.sourceCard}>
-            <Text style={styles.sourceKicker}>SOURCES DU RÉCIT</Text>
-            <Text style={styles.sourceTitle}>Une narration plus complète, sans ajouter de légendes</Text>
-            <Text style={styles.sourceText}>Le mode audio développe le récit pour l’écoute, mais reste limité aux éléments établis. Version du script : {audioEpisode.scriptVersion}.</Text>
+            <Text style={styles.sourceKicker}>{t("prophets.audioSourcesKicker")}</Text>
+            <Text style={styles.sourceTitle}>{t("prophets.audioSourcesTitle")}</Text>
+            <Text style={styles.sourceText}>{t("prophets.audioSourcesText")}</Text>
             <View style={styles.sourceWrap}>
               {audioEpisode.sourceLabels.map((label) => (
                 <View key={label} style={styles.sourcePill}><Text style={styles.sourcePillText}>{label}</Text></View>
