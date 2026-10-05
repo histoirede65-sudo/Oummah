@@ -1,3 +1,4 @@
+import { translate } from '../../i18n';
 import * as Location from "expo-location";
 import { useCallback, useEffect, useRef, useState } from "react";
 
@@ -102,7 +103,7 @@ export function useQiblaCompass() {
         first?.district ||
         first?.subregion ||
         first?.region ||
-        "Position actuelle";
+        translate("qibla.currentPosition");
       setState((current) => ({
         ...current,
         location: current.location
@@ -120,7 +121,7 @@ export function useQiblaCompass() {
             latitude: cached.latitude,
             longitude: cached.longitude,
             accuracy: cached.accuracy,
-            city: "Dernière position connue",
+            city: translate("qibla.lastKnownPosition"),
           },
           loading: false,
         }));
@@ -192,7 +193,7 @@ export function useQiblaCompass() {
           latitude: lastKnown.coords.latitude,
           longitude: lastKnown.coords.longitude,
           accuracy: lastKnown.coords.accuracy,
-          city: "Position actuelle",
+          city: translate("qibla.currentPosition"),
         };
         setState((current) => ({ ...current, location }));
         void updateCity(location.latitude, location.longitude);
@@ -209,7 +210,7 @@ export function useQiblaCompass() {
           latitude: current.coords.latitude,
           longitude: current.coords.longitude,
           accuracy: current.coords.accuracy,
-          city: "Position actuelle",
+          city: translate("qibla.currentPosition"),
         };
         setState((previous) => ({
           ...previous,
@@ -229,7 +230,7 @@ export function useQiblaCompass() {
           ...previous,
           loading: false,
           error:
-            "Impossible d’obtenir votre position. Activez le GPS puis réessayez.",
+            translate("qibla.positionError"),
         }));
       } else {
         setState((previous) => ({ ...previous, loading: false }));
@@ -249,7 +250,7 @@ export function useQiblaCompass() {
               latitude: next.coords.latitude,
               longitude: next.coords.longitude,
               accuracy: next.coords.accuracy,
-              city: previous.location?.city ?? "Position actuelle",
+              city: previous.location?.city ?? translate("qibla.currentPosition"),
             },
           }));
           void saveCachedQiblaLocation({
@@ -269,7 +270,7 @@ export function useQiblaCompass() {
         ...current,
         loading: false,
         error:
-          "La boussole n’a pas pu démarrer. Fermez les applications utilisant le GPS puis réessayez.",
+          translate("qibla.compassError"),
       }));
     });
 
