@@ -27,7 +27,9 @@ import {
   fromDateKey,
   getEventDefinition,
   getHijriDate,
+  localizeEvent,
 } from "../../../features/calendar/IslamicCalendar";
+import { useI18n } from "../../../i18n";
 import { colors } from "../../../theme/colors";
 import { typography } from "../../../theme/typography";
 
@@ -44,13 +46,14 @@ const EVENT_IMAGES: Record<string, number> = {
   "white-days": require("../../../assets/images/mosques/mosque-b-02.jpg"),
 };
 
-const TIMINGS: readonly { id: ReminderTiming; label: string }[] = [
-  { id: "three-days", label: "3 jours avant" },
-  { id: "eve", label: "La veille" },
-  { id: "morning", label: "Le matin même" },
-];
+const TIMINGS = [
+  { id: "three-days", labelKey: "calendar.timingThreeDays" },
+  { id: "eve", labelKey: "calendar.timingEve" },
+  { id: "morning", labelKey: "calendar.timingMorning" },
+] as const satisfies readonly { id: ReminderTiming; labelKey: string }[];
 
 export default function CalendarEventDetail() {
+  const { language, t } = useI18n();
   const { eventId, date: rawDate } = useLocalSearchParams<{
     eventId: string;
     date?: string;
@@ -69,12 +72,12 @@ export default function CalendarEventDetail() {
     return (
       <SafeAreaView style={styles.safeArea}>
         <View style={styles.notFound}>
-          <Text style={styles.notFoundTitle}>Événement introuvable</Text>
+          <Text style={styles.notFoundTitle}>{t("calendar.eventNotFound")}</Text>
           <Pressable
             onPress={() => router.back()}
             style={styles.backTextButton}
           >
-            <Text style={styles.backText}>Revenir au calendrier</Text>
+            <Text style={styles.backText}>{t("calendar.backToCalendar")}</Text>
           </Pressable>
         </View>
       </SafeAreaView>
@@ -88,6 +91,7 @@ export default function CalendarEventDetail() {
     settings.country,
   );
   const reminder = settings.eventReminders[event.id];
+  const text = localizeEvent(event, language);
   const setReminder = (timing: ReminderTiming) => {
     const eventReminders = { ...settings.eventReminders };
     if (reminder === timing) delete eventReminders[event.id];
@@ -99,7 +103,7 @@ export default function CalendarEventDetail() {
 
   const askWasil = () => {
     const prompt = encodeURIComponent(
-      `Que dois-je savoir et faire pour ${event.title} ? Réponds avec douceur et des sources authentiques.`,
+      t("calendar.wasilPrompt", { event: text.title }),
     );
     router.push(`/dalil?prompt=${prompt}` as Href);
   };
@@ -108,19 +112,18 @@ export default function CalendarEventDetail() {
     <SafeAreaView edges={["top"]} style={styles.safeArea}>
       <LinearGradient
         pointerEvents="none"
-        colors={["#09060F", "#160D22", "#07050C"]}
+        colors={["#09070F", "#100C19", "#07060C"]}
         style={StyleSheet.absoluteFill}
       />
-      <View pointerEvents="none" style={styles.ambientGlow} />
       <ScrollView
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.header}>
-          <Pressable onPress={() => router.back()} style={styles.circle}>
+          <Pressable accessibilityLabel={t("common.back")} onPress={() => router.back()} style={styles.circle}>
             <Ionicons name="arrow-back" size={21} color={colors.goldLight} />
           </Pressable>
-          <Text style={styles.headerTitle}>Événement</Text>
+          <Text style={styles.headerTitle}>{t("calendar.eventTitle")}</Text>
           <View style={styles.circlePlaceholder} />
         </View>
         <View style={styles.hero}>
@@ -151,21 +154,21 @@ export default function CalendarEventDetail() {
             />
             <Text style={styles.kindText}>
               {event.kind === "recommended-fast"
-                ? "JEÛNE RECOMMANDÉ"
+                ? t("calendar.kindFastUpper")
                 : event.kind === "celebration"
-                  ? "FÊTE ISLAMIQUE"
-                  : "PÉRIODE IMPORTANTE"}
+                  ? t("calendar.kindCelebrationIslamicUpper")
+                  : t("calendar.kindPeriodUpper")}
             </Text>
           </View>
           <View style={styles.heroCopy}>
             <LinearGradient
               pointerEvents="none"
-              colors={["rgba(40,23,55,0.40)", "rgba(8,5,14,0.88)"]}
+              colors={["rgba(30,23,48,0.40)", "rgba(8,7,14,0.88)"]}
               style={StyleSheet.absoluteFill}
             />
-            <Text style={styles.heroTitle}>{event.title}</Text>
-            <Text style={styles.heroHijri}>{formatHijri(hijri)}</Text>
-            <Text style={styles.heroDate}>{formatGregorian(date)}</Text>
+            <Text style={styles.heroTitle}>{text.title}</Text>
+            <Text style={styles.heroHijri}>{formatHijri(hijri, language)}</Text>
+            <Text style={styles.heroDate}>{formatGregorian(date, true, language)}</Text>
           </View>
         </View>
         {event.estimated ? (
@@ -175,17 +178,14 @@ export default function CalendarEventDetail() {
               size={17}
               color={colors.goldLight}
             />
-            <Text style={styles.estimatedText}>
-              Date prévisionnelle — à confirmer selon l’annonce officielle de
-              votre pays.
-            </Text>
+            <Text style={styles.estimatedText}>{t("calendar.estimatedNotice")}</Text>
           </View>
         ) : null}
-        <Text style={styles.sectionTitle}>À propos</Text>
-        <Text style={styles.summary}>{event.summary}</Text>
-        <Text style={styles.sectionTitle}>Actions recommandées</Text>
+        <Text style={styles.sectionTitle}>{t("calendar.about")}</Text>
+        <Text style={styles.summary}>{text.summary}</Text>
+        <Text style={styles.sectionTitle}>{t("calendar.recommendedActions")}</Text>
         <View style={styles.actions}>
-          {event.actions.map((action, index) => (
+          {text.actions.map((action, index) => (
             <View key={action} style={styles.action}>
               <View style={styles.actionNumber}>
                 <Text style={styles.actionNumberText}>{index + 1}</Text>
@@ -194,7 +194,7 @@ export default function CalendarEventDetail() {
             </View>
           ))}
         </View>
-        <Text style={styles.sectionTitle}>Me le rappeler</Text>
+        <Text style={styles.sectionTitle}>{t("calendar.remindMe")}</Text>
         <View style={styles.timings}>
           {TIMINGS.map((timing) => (
             <Pressable
@@ -222,13 +222,13 @@ export default function CalendarEventDetail() {
                   reminder === timing.id && styles.timingTextActive,
                 ]}
               >
-                {timing.label}
+                {t(timing.labelKey)}
               </Text>
             </Pressable>
           ))}
         </View>
-        <Text style={styles.sectionTitle}>Sources</Text>
-        {event.sources.map((source) => (
+        <Text style={styles.sectionTitle}>{t("calendar.sources")}</Text>
+        {text.sources.map((source) => (
           <Pressable
             key={source.url}
             onPress={() => void Linking.openURL(source.url)}
@@ -252,10 +252,8 @@ export default function CalendarEventDetail() {
             />
           </View>
           <View style={styles.wasilCopy}>
-            <Text style={styles.wasilTitle}>Demander à Wasil</Text>
-            <Text style={styles.wasilText}>
-              Approfondir cette période et recevoir des conseils adaptés.
-            </Text>
+            <Text style={styles.wasilTitle}>{t("calendar.askWasil")}</Text>
+            <Text style={styles.wasilText}>{t("calendar.askWasilText")}</Text>
           </View>
           <Ionicons name="arrow-forward" size={18} color={colors.background} />
         </Pressable>
@@ -266,15 +264,6 @@ export default function CalendarEventDetail() {
 
 const styles = StyleSheet.create({
   safeArea: { flex: 1, backgroundColor: "#08050D" },
-  ambientGlow: {
-    position: "absolute",
-    top: 250,
-    right: -140,
-    width: 330,
-    height: 330,
-    borderRadius: 165,
-    backgroundColor: "rgba(111,59,137,0.18)",
-  },
   content: { paddingHorizontal: 15, paddingBottom: 130 },
   header: {
     height: 68,
@@ -290,7 +279,7 @@ const styles = StyleSheet.create({
     borderRadius: 21,
     borderWidth: 1,
     borderColor: colors.borderSoft,
-    backgroundColor: colors.purpleDeep,
+    backgroundColor: "#151022",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 9 },
     shadowOpacity: 0.32,
@@ -356,6 +345,7 @@ const styles = StyleSheet.create({
     color: colors.goldLight,
     fontFamily: typography.serifMedium,
     fontSize: 19,
+    fontVariant: ["lining-nums", "tabular-nums"],
   },
   heroDate: {
     marginTop: 2,
@@ -419,13 +409,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 14,
-    backgroundColor: "rgba(91,47,108,0.66)",
+    backgroundColor: "rgba(30,23,48,0.66)",
   },
   actionNumberText: {
     color: colors.goldLight,
     fontFamily: typography.sans,
     fontSize: 11,
     fontWeight: "900",
+    fontVariant: ["lining-nums", "tabular-nums"],
   },
   actionText: {
     flex: 1,

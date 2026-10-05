@@ -26,6 +26,7 @@ import {
 import {
   addDays,
   CALENDAR_COUNTRIES,
+  countryLabel as localizedCountryLabel,
   findNextEvent,
   formatGregorian,
   formatHijri,
@@ -34,9 +35,11 @@ import {
   getEventDefinition,
   getHijriDate,
   isRecommendedFastDay,
+  localizeEvent,
   toDateKey,
   type IslamicEventDefinition,
 } from "../features/calendar/IslamicCalendar";
+import { useI18n } from "../i18n";
 import { colors } from "../theme/colors";
 import { typography } from "../theme/typography";
 import {
@@ -44,11 +47,6 @@ import {
   type MosquePrayerSchedule,
 } from "../features/mosques/data/mosquePrayerTimes";
 import { getMainMosque } from "../features/mosques/data/mosquePreferences";
-import {
-  dateKey,
-  loadHifzState,
-  type HifzState,
-} from "../features/hifz/HifzStore";
 
 type CalendarTab = "today" | "month" | "events" | "reminders";
 
@@ -67,7 +65,12 @@ const MONTH_IMAGES = [
   require("../assets/images/home/shortcuts/qibla-real.jpg"),
 ] as const;
 
-const WEEKDAYS = ["L", "M", "M", "J", "V", "S", "D"];
+const WEEKDAYS = {
+  fr: ["L", "M", "M", "J", "V", "S", "D"],
+  en: ["M", "T", "W", "T", "F", "S", "S"],
+} as const;
+
+const PERSONAL_COLOR = "#7FB3D5";
 
 function eventColor(event: IslamicEventDefinition) {
   if (event.kind === "celebration") return "#F1C96E";
@@ -76,6 +79,8 @@ function eventColor(event: IslamicEventDefinition) {
 }
 
 export default function IslamicCalendarScreen() {
+  const { language, t } = useI18n();
+  const locale = language === "fr" ? "fr-FR" : "en-GB";
   const [settings, setSettings] = useState<CalendarSettings>(
     DEFAULT_CALENDAR_SETTINGS,
   );
@@ -89,7 +94,6 @@ export default function IslamicCalendarScreen() {
   const [eventQuery, setEventQuery] = useState("");
   const [prayerSchedule, setPrayerSchedule] = useState<MosquePrayerSchedule>();
   const [prayerPlace, setPrayerPlace] = useState<string>();
-  const [hifzState, setHifzState] = useState<HifzState>();
   const today = new Date();
 
   useFocusEffect(
@@ -98,12 +102,10 @@ export default function IslamicCalendarScreen() {
       const controller = new AbortController();
       void Promise.all([
         loadCalendarSettings(),
-        loadHifzState(),
         getMainMosque(),
-      ]).then(([next, hifz, mosque]) => {
+      ]).then(([next, mosque]) => {
         if (!active) return;
         setSettings(next);
-        setHifzState(hifz);
         if (!mosque) return;
         setPrayerPlace(mosque.name);
         void getMosquePrayerSchedule(
@@ -139,15 +141,10 @@ export default function IslamicCalendarScreen() {
     settings.adjustment,
     settings.country,
   );
-  const countryLabel =
-    CALENDAR_COUNTRIES.find((country) => country.id === settings.country)
-      ?.label ?? "Votre pays";
   const todayEvents = getEventsForDate(hijriToday);
   const fastingToday = isRecommendedFastDay(today, hijriToday);
+  const ramadanToday = hijriToday.month === 9;
   const isFriday = today.getDay() === 5;
-  const todayHifz = hifzState?.sessions.find(
-    (session) => session.date === dateKey(today),
-  );
 
   const monthDays = useMemo(() => {
     const first = new Date(month.getFullYear(), month.getMonth(), 1, 12);
@@ -221,11 +218,12 @@ export default function IslamicCalendarScreen() {
   }, [settings.adjustment, settings.country, settings.method]);
 
   const visibleUpcomingEvents = upcomingEvents.filter(({ event }) => {
-    const query = eventQuery.trim().toLocaleLowerCase("fr-FR");
+    const query = eventQuery.trim().toLocaleLowerCase(locale);
+    const text = localizeEvent(event, language);
     return (
       !query ||
-      `${event.title} ${event.summary}`
-        .toLocaleLowerCase("fr-FR")
+      `${event.title} ${event.summary} ${text.title} ${text.summary}`
+        .toLocaleLowerCase(locale)
         .includes(query)
     );
   });
@@ -285,25 +283,24 @@ export default function IslamicCalendarScreen() {
     <SafeAreaView edges={["top"]} style={styles.safeArea}>
       <LinearGradient
         pointerEvents="none"
-        colors={["#09060F", "#140C20", "#07050C"]}
+        colors={["#09070F", "#100C19", "#07060C"]}
         locations={[0, 0.48, 1]}
         style={StyleSheet.absoluteFill}
       />
-      <View pointerEvents="none" style={styles.ambientGlowTop} />
-      <View pointerEvents="none" style={styles.ambientGlowMiddle} />
       <ScrollView
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.header}>
-          <Pressable onPress={() => router.back()} style={styles.circleButton}>
+          <Pressable accessibilityLabel={t("common.back")} onPress={() => router.back()} style={styles.circleButton}>
             <Ionicons name="arrow-back" size={21} color={colors.goldLight} />
           </Pressable>
           <View style={styles.headerCopy}>
-            <Text style={styles.title}>Calendrier</Text>
-            <Text style={styles.subtitle}>Votre année spirituelle</Text>
+            <Text style={styles.title}>{t("calendar.title")}</Text>
+            <Text style={styles.subtitle}>{t("calendar.subtitle")}</Text>
           </View>
           <Pressable
+            accessibilityLabel={t("calendar.settingsTitle")}
             onPress={() => setShowSettings(true)}
             style={styles.circleButton}
           >
@@ -331,7 +328,9 @@ export default function IslamicCalendarScreen() {
           />
           <View style={styles.heroDatePill}>
             <Ionicons name="moon" size={12} color={colors.goldLight} />
-            <Text style={styles.heroDatePillText}>DATE PRÉVISIONNELLE</Text>
+            <Text style={styles.heroDatePillText}>
+              {t("calendar.estimatedDate")} · {localizedCountryLabel(settings.country, language) ?? ""}
+            </Text>
           </View>
           <View style={styles.heroCopy}>
             <LinearGradient
@@ -339,62 +338,29 @@ export default function IslamicCalendarScreen() {
               colors={["rgba(35,20,49,0.42)", "rgba(10,7,16,0.84)"]}
               style={StyleSheet.absoluteFill}
             />
-            <Text style={styles.heroHijri}>{formatHijri(hijriToday)}</Text>
-            <Text style={styles.heroGregorian}>{formatGregorian(today)}</Text>
+            <Text style={styles.heroHijri}>{formatHijri(hijriToday, language)}</Text>
+            <Text style={styles.heroGregorian}>{formatGregorian(today, true, language)}</Text>
             <View style={styles.heroDivider} />
             <Text style={styles.heroEvent}>
               {nextEvent
-                ? `${nextEvent.event.shortTitle} ${nextEvent.days === 0 ? "est aujourd’hui" : `approche dans ${nextEvent.days} jour${nextEvent.days > 1 ? "s" : ""}`}`
-                : "Votre calendrier est à jour"}
+                ? nextEvent.days === 0
+                  ? t("calendar.eventToday", { event: localizeEvent(nextEvent.event, language).shortTitle })
+                  : t(nextEvent.days > 1 ? "calendar.eventInDays" : "calendar.eventInDay", {
+                      event: localizeEvent(nextEvent.event, language).shortTitle,
+                      count: nextEvent.days,
+                    })
+                : t("calendar.upToDate")}
             </Text>
           </View>
-        </View>
-
-        <View style={styles.summaryStrip}>
-          <View style={styles.summaryItem}>
-            <View style={styles.summaryIcon}>
-              <Ionicons name="moon-outline" size={17} color={colors.goldLight} />
-            </View>
-            <View style={styles.summaryCopy}>
-              <Text style={styles.summaryLabel}>MOIS HÉGIRIEN</Text>
-              <Text numberOfLines={1} style={styles.summaryValue}>
-                {hijriToday.monthName}
-              </Text>
-            </View>
-          </View>
-          <View style={styles.summaryDivider} />
-          <View style={styles.summaryItem}>
-            <View style={styles.summaryIcon}>
-              <Ionicons name="sparkles-outline" size={17} color={colors.goldLight} />
-            </View>
-            <View style={styles.summaryCopy}>
-              <Text style={styles.summaryLabel}>PROCHAIN TEMPS FORT</Text>
-              <Text numberOfLines={1} style={styles.summaryValue}>
-                {nextEvent?.event.shortTitle ?? "À venir"}
-              </Text>
-            </View>
-          </View>
-          <View style={styles.summaryDivider} />
-          <Pressable onPress={() => setShowSettings(true)} style={styles.summaryItem}>
-            <View style={styles.summaryIcon}>
-              <Ionicons name="location-outline" size={17} color={colors.goldLight} />
-            </View>
-            <View style={styles.summaryCopy}>
-              <Text style={styles.summaryLabel}>RÉFÉRENCE</Text>
-              <Text numberOfLines={1} style={styles.summaryValue}>
-                {countryLabel}
-              </Text>
-            </View>
-          </Pressable>
         </View>
 
         <View style={styles.tabs}>
           {(
             [
-              ["today", "Aujourd’hui", "sunny-outline"],
-              ["month", "Mois", "calendar-outline"],
-              ["events", "Événements", "sparkles-outline"],
-              ["reminders", "Rappels", "notifications-outline"],
+              ["today", t("calendar.tabToday"), "sunny-outline"],
+              ["month", t("calendar.tabMonth"), "calendar-outline"],
+              ["events", t("calendar.tabEvents"), "sparkles-outline"],
+              ["reminders", t("calendar.tabReminders"), "notifications-outline"],
             ] as const
           ).map(([id, label, icon]) => (
             <Pressable
@@ -425,7 +391,7 @@ export default function IslamicCalendarScreen() {
 
         {tab === "today" ? (
           <View>
-            <SectionTitle title="Aujourd’hui" hint={formatHijri(hijriToday)} />
+            <SectionTitle title={t("calendar.tabToday")} hint={formatHijri(hijriToday, language)} />
             {todayEvents.length ? (
               todayEvents.map((event) => (
                 <EventCard key={event.id} event={event} date={today} days={0} />
@@ -438,36 +404,33 @@ export default function IslamicCalendarScreen() {
                   color={colors.goldLight}
                 />
                 <View style={styles.calmCopy}>
-                  <Text style={styles.calmTitle}>
-                    Une journée à faire grandir
-                  </Text>
-                  <Text style={styles.calmText}>
-                    Aucun événement majeur aujourd’hui. Les œuvres régulières,
-                    même petites, restent précieuses.
-                  </Text>
+                  <Text style={styles.calmTitle}>{t("calendar.calmTitle")}</Text>
+                  <Text style={styles.calmText}>{t("calendar.calmText")}</Text>
                 </View>
               </View>
             )}
             <View style={styles.todayGrid}>
               <TodayCard
                 icon="restaurant-outline"
-                title="Jeûne"
+                title={t("calendar.fasting")}
                 value={
-                  fastingToday
-                    ? "Recommandé aujourd’hui"
-                    : "Pas de jeûne particulier"
+                  ramadanToday
+                    ? t("calendar.fastingRamadan")
+                    : fastingToday
+                      ? t("calendar.fastingRecommended")
+                      : t("calendar.fastingNone")
                 }
-                active={fastingToday}
+                active={fastingToday || ramadanToday}
               />
               <TodayCard
                 icon="book-outline"
-                title="Objectif"
+                title={t("calendar.goal")}
                 value={
                   isFriday
-                    ? "Lire sourate Al-Kahf"
+                    ? t("calendar.goalKahf")
                     : hijriToday.month === 9
-                      ? "Lire votre portion du Coran"
-                      : "Un verset médité avec attention"
+                      ? t("calendar.goalRamadan")
+                      : t("calendar.goalVerse")
                 }
                 active
               />
@@ -484,11 +447,11 @@ export default function IslamicCalendarScreen() {
                 />
               </View>
               <View style={styles.prayerCopy}>
-                <Text style={styles.prayerTitle}>Prières du jour</Text>
+                <Text style={styles.prayerTitle}>{t("calendar.prayersTitle")}</Text>
                 <Text style={styles.prayerText}>
                   {prayerSchedule
-                    ? `${prayerPlace ?? "Votre mosquée"} · horaires du jour`
-                    : "Retrouvez vos horaires exacts et la prochaine prière sur l’accueil."}
+                    ? t("calendar.prayersAt", { place: prayerPlace ?? t("calendar.yourMosque") })
+                    : t("calendar.prayersHint")}
                 </Text>
               </View>
               <Ionicons
@@ -507,35 +470,10 @@ export default function IslamicCalendarScreen() {
                 ))}
               </View>
             ) : null}
-            <View style={styles.progressCard}>
-              <View style={styles.progressIcon}>
-                <Ionicons
-                  name="trending-up-outline"
-                  size={19}
-                  color={colors.goldLight}
-                />
-              </View>
-              <View style={styles.progressCopy}>
-                <Text style={styles.progressTitle}>
-                  Votre progression aujourd’hui
-                </Text>
-                <Text style={styles.progressText}>
-                  {todayHifz
-                    ? `${todayHifz.learned} verset${todayHifz.learned > 1 ? "s" : ""} appris · ${todayHifz.reviewed} révisé${todayHifz.reviewed > 1 ? "s" : ""} · ${todayHifz.minutes} min`
-                    : "Votre prochaine petite action peut commencer maintenant."}
-                </Text>
-              </View>
-              <Text style={styles.progressStreak}>
-                {hifzState?.streak ?? 0} j
-              </Text>
-            </View>
             <View style={styles.spiritualCard}>
-              <Text style={styles.spiritualEyebrow}>LUMIÈRE DU JOUR</Text>
-              <Text style={styles.spiritualQuote}>
-                « Allah veut pour vous la facilité, Il ne veut pas la difficulté
-                pour vous. »
-              </Text>
-              <Text style={styles.spiritualSource}>Coran · 2:185</Text>
+              <Text style={styles.spiritualEyebrow}>{t("calendar.lightEyebrow")}</Text>
+              <Text style={styles.spiritualQuote}>{t("calendar.lightQuote")}</Text>
+              <Text style={styles.spiritualSource}>{t("calendar.lightSource")}</Text>
             </View>
           </View>
         ) : null}
@@ -544,6 +482,7 @@ export default function IslamicCalendarScreen() {
           <View>
             <View style={styles.monthHeader}>
               <Pressable
+                accessibilityLabel={t("calendar.previousMonth")}
                 onPress={() => shiftMonth(-1)}
                 style={styles.monthArrow}
               >
@@ -561,16 +500,17 @@ export default function IslamicCalendarScreen() {
                 }
               >
                 <Text style={styles.monthTitle}>
-                  {new Intl.DateTimeFormat("fr-FR", {
+                  {new Intl.DateTimeFormat(locale, {
                     month: "long",
                     year: "numeric",
                   }).format(month)}
                 </Text>
                 <Text style={styles.monthHint}>
-                  Glissez · touchez pour revenir à aujourd’hui
+                  {t("calendar.monthHint")}
                 </Text>
               </Pressable>
               <Pressable
+                accessibilityLabel={t("calendar.nextMonth")}
                 onPress={() => shiftMonth(1)}
                 style={styles.monthArrow}
               >
@@ -583,7 +523,7 @@ export default function IslamicCalendarScreen() {
             </View>
             <View style={styles.calendar} {...swipe.panHandlers}>
               <View style={styles.weekRow}>
-                {WEEKDAYS.map((day, index) => (
+                {WEEKDAYS[language].map((day, index) => (
                   <Text key={`${day}:${index}`} style={styles.weekday}>
                     {day}
                   </Text>
@@ -628,27 +568,27 @@ export default function IslamicCalendarScreen() {
               </View>
             </View>
             <View style={styles.legendRow}>
-              <Legend color={colors.goldLight} label="événement" />
-              <Legend color="#A66AC4" label="rappel personnel" />
-              <Legend color="#72C694" label="jeûne recommandé" />
+              <Legend color={colors.goldLight} label={t("calendar.legendEvent")} />
+              <Legend color={PERSONAL_COLOR} label={t("calendar.legendPersonal")} />
+              <Legend color="#72C694" label={t("calendar.legendFast")} />
             </View>
           </View>
         ) : null}
 
         {tab === "events" ? (
           <View>
-            <SectionTitle title="À venir" hint="dates prévisionnelles" />
+            <SectionTitle title={t("calendar.upcoming")} hint={t("calendar.estimatedDates")} />
             <View style={styles.eventSearch}>
               <Ionicons name="search" size={18} color={colors.goldLight} />
               <TextInput
                 value={eventQuery}
                 onChangeText={setEventQuery}
-                placeholder="Rechercher Ramadan, jeûne, Aïd…"
+                placeholder={t("calendar.searchPlaceholder")}
                 placeholderTextColor={colors.textMuted}
                 style={styles.eventSearchInput}
               />
               {eventQuery ? (
-                <Pressable onPress={() => setEventQuery("")}>
+                <Pressable accessibilityLabel={t("calendar.clearSearch")} onPress={() => setEventQuery("")}>
                   <Ionicons
                     name="close-circle"
                     size={17}
@@ -672,9 +612,7 @@ export default function IslamicCalendarScreen() {
                   size={22}
                   color={colors.textMuted}
                 />
-                <Text style={styles.emptyRemindersText}>
-                  Aucun événement ne correspond à cette recherche.
-                </Text>
+                <Text style={styles.emptyRemindersText}>{t("calendar.noEventMatch")}</Text>
               </View>
             ) : null}
           </View>
@@ -682,14 +620,11 @@ export default function IslamicCalendarScreen() {
 
         {tab === "reminders" ? (
           <View>
-            <SectionTitle
-              title="Rappels intelligents"
-              hint="discrets et locaux"
-            />
+            <SectionTitle title={t("calendar.smartReminders")} hint={t("calendar.smartRemindersHint")} />
             <ReminderToggle
               icon="moon-outline"
-              title="Jours blancs"
-              subtitle="La veille des 13, 14 et 15"
+              title={t("calendar.whiteDays")}
+              subtitle={t("calendar.whiteDaysText")}
               active={settings.whiteDaysReminder}
               onPress={() =>
                 updateSettings({
@@ -699,8 +634,8 @@ export default function IslamicCalendarScreen() {
             />
             <ReminderToggle
               icon="calendar-outline"
-              title="Chaque vendredi"
-              subtitle="Lecture de sourate Al-Kahf"
+              title={t("calendar.everyFriday")}
+              subtitle={t("calendar.everyFridayText")}
               active={settings.fridayReminder}
               onPress={() =>
                 updateSettings({ fridayReminder: !settings.fridayReminder })
@@ -708,8 +643,8 @@ export default function IslamicCalendarScreen() {
             />
             <ReminderToggle
               icon="restaurant-outline"
-              title="Lundi et jeudi"
-              subtitle="Rappel du jeûne recommandé"
+              title={t("calendar.mondayThursday")}
+              subtitle={t("calendar.mondayThursdayText")}
               active={settings.mondayThursdayReminder}
               onPress={() =>
                 updateSettings({
@@ -718,8 +653,13 @@ export default function IslamicCalendarScreen() {
               }
             />
             <SectionTitle
-              title="Mes rappels"
-              hint={`${settings.personalReminders.length + activeEventReminders.length} programmé${settings.personalReminders.length + activeEventReminders.length > 1 ? "s" : ""}`}
+              title={t("calendar.myReminders")}
+              hint={t(
+                settings.personalReminders.length + activeEventReminders.length > 1
+                  ? "calendar.scheduledMany"
+                  : "calendar.scheduledOne",
+                { count: settings.personalReminders.length + activeEventReminders.length },
+              )}
             />
             {activeEventReminders.map(({ event, timing, occurrence }) =>
               event ? (
@@ -741,14 +681,14 @@ export default function IslamicCalendarScreen() {
                   </View>
                   <View style={styles.personalReminderCopy}>
                     <Text style={styles.personalReminderTitle}>
-                      {event.shortTitle}
+                      {localizeEvent(event, language).shortTitle}
                     </Text>
                     <Text style={styles.personalReminderMeta}>
                       {timing === "three-days"
-                        ? "3 jours avant"
+                        ? t("calendar.timingThreeDays")
                         : timing === "eve"
-                          ? "La veille"
-                          : "Le matin même"}
+                          ? t("calendar.timingEve")
+                          : t("calendar.timingMorning")}
                     </Text>
                   </View>
                   <Ionicons
@@ -769,7 +709,7 @@ export default function IslamicCalendarScreen() {
                         {fromDateKey(reminder.dateKey).getDate()}
                       </Text>
                       <Text style={styles.personalReminderMonth}>
-                        {new Intl.DateTimeFormat("fr-FR", {
+                        {new Intl.DateTimeFormat(locale, {
                           month: "short",
                         }).format(fromDateKey(reminder.dateKey))}
                       </Text>
@@ -779,10 +719,11 @@ export default function IslamicCalendarScreen() {
                         {reminder.title}
                       </Text>
                       <Text style={styles.personalReminderMeta}>
-                        {formatGregorian(fromDateKey(reminder.dateKey), false)}
+                        {formatGregorian(fromDateKey(reminder.dateKey), false, language)}
                       </Text>
                     </View>
                     <Pressable
+                      accessibilityLabel={t("calendar.deleteReminder")}
                       onPress={() =>
                         updateSettings({
                           personalReminders: settings.personalReminders.filter(
@@ -807,10 +748,7 @@ export default function IslamicCalendarScreen() {
                   size={22}
                   color={colors.textMuted}
                 />
-                <Text style={styles.emptyRemindersText}>
-                  Touchez un jour dans la vue Mois pour créer votre premier
-                  rappel personnel.
-                </Text>
+                <Text style={styles.emptyRemindersText}>{t("calendar.noReminders")}</Text>
               </View>
             )}
           </View>
@@ -829,13 +767,14 @@ export default function IslamicCalendarScreen() {
             <View style={styles.sheetHeader}>
               <View>
                 <Text style={styles.sheetTitle}>
-                  {selectedDate ? formatGregorian(selectedDate) : ""}
+                  {selectedDate ? formatGregorian(selectedDate, true, language) : ""}
                 </Text>
                 <Text style={styles.sheetHijri}>
-                  {selectedHijri ? formatHijri(selectedHijri) : ""}
+                  {selectedHijri ? formatHijri(selectedHijri, language) : ""}
                 </Text>
               </View>
               <Pressable
+                accessibilityLabel={t("hifz.session.close")}
                 onPress={() => setSelectedKey(undefined)}
                 style={styles.sheetClose}
               >
@@ -862,14 +801,14 @@ export default function IslamicCalendarScreen() {
                     />
                     <View style={styles.sheetEventCopy}>
                       <Text style={styles.sheetEventTitle}>
-                        {event.shortTitle}
+                        {localizeEvent(event, language).shortTitle}
                       </Text>
                       <Text style={styles.sheetEventText}>
                         {event.kind === "recommended-fast"
-                          ? "Jeûne recommandé"
+                          ? t("calendar.kindFast")
                           : event.kind === "celebration"
-                            ? "Fête islamique"
-                            : "Période importante"}
+                            ? t("calendar.kindCelebration")
+                            : t("calendar.kindPeriod")}
                       </Text>
                     </View>
                     <Ionicons
@@ -886,27 +825,26 @@ export default function IslamicCalendarScreen() {
                     size={17}
                     color={colors.goldLight}
                   />
-                  <Text style={styles.sheetEmptyText}>
-                    Aucun événement religieux majeur ce jour.
-                  </Text>
+                  <Text style={styles.sheetEmptyText}>{t("calendar.noEventDay")}</Text>
                 </View>
               )}
               {selectedReminders.map((reminder) => (
                 <View key={reminder.id} style={styles.sheetReminder}>
-                  <Ionicons name="notifications" size={16} color="#B77BD3" />
+                  <Ionicons name="notifications" size={16} color={PERSONAL_COLOR} />
                   <Text style={styles.sheetReminderText}>{reminder.title}</Text>
                 </View>
               ))}
-              <Text style={styles.addTitle}>Ajouter un rappel personnel</Text>
+              <Text style={styles.addTitle}>{t("calendar.addReminder")}</Text>
               <View style={styles.addRow}>
                 <TextInput
                   value={reminderTitle}
                   onChangeText={setReminderTitle}
-                  placeholder="Ex. Réviser Al-Mulk"
+                  placeholder={t("calendar.addReminderPlaceholder")}
                   placeholderTextColor={colors.textMuted}
                   style={styles.addInput}
                 />
                 <Pressable
+                  accessibilityLabel={t("calendar.addReminder")}
                   onPress={addPersonalReminder}
                   style={[
                     styles.addButton,
@@ -931,12 +869,11 @@ export default function IslamicCalendarScreen() {
           <View style={styles.settingsCard}>
             <View style={styles.settingsHeader}>
               <View>
-                <Text style={styles.settingsTitle}>Date hégirienne</Text>
-                <Text style={styles.settingsSubtitle}>
-                  Choisissez la méthode adaptée à votre situation.
-                </Text>
+                <Text style={styles.settingsTitle}>{t("calendar.settingsTitle")}</Text>
+                <Text style={styles.settingsSubtitle}>{t("calendar.settingsSubtitle")}</Text>
               </View>
               <Pressable
+                accessibilityLabel={t("hifz.session.close")}
                 onPress={() => setShowSettings(false)}
                 style={styles.sheetClose}
               >
@@ -945,21 +882,9 @@ export default function IslamicCalendarScreen() {
             </View>
             {(
               [
-                [
-                  "country",
-                  "Selon mon pays",
-                  "Référence locale prévisionnelle",
-                ],
-                [
-                  "astronomical",
-                  "Calcul astronomique",
-                  "Calendrier civil calculé",
-                ],
-                [
-                  "manual",
-                  "Ajustement manuel",
-                  "Décalage conservé sur cet appareil",
-                ],
+                ["country", t("calendar.methodCountry"), t("calendar.methodCountryText")],
+                ["astronomical", t("calendar.methodAstronomical"), t("calendar.methodAstronomicalText")],
+                ["manual", t("calendar.methodManual"), t("calendar.methodManualText")],
               ] as const
             ).map(([id, label, subtitle]) => (
               <Pressable
@@ -986,7 +911,7 @@ export default function IslamicCalendarScreen() {
                 </View>
               </Pressable>
             ))}
-            <Text style={styles.adjustTitle}>Pays de référence</Text>
+            <Text style={styles.adjustTitle}>{t("calendar.referenceCountry")}</Text>
             <ScrollView
               horizontal
               showsHorizontalScrollIndicator={false}
@@ -1010,12 +935,12 @@ export default function IslamicCalendarScreen() {
                         styles.countryTextActive,
                     ]}
                   >
-                    {country.label}
+                    {language === "fr" ? country.label : country.labelEn}
                   </Text>
                 </Pressable>
               ))}
             </ScrollView>
-            <Text style={styles.adjustTitle}>Ajustement local</Text>
+            <Text style={styles.adjustTitle}>{t("calendar.localAdjustment")}</Text>
             <View style={styles.adjustRow}>
               {([-1, 0, 1] as const).map((value) => (
                 <Pressable
@@ -1038,10 +963,10 @@ export default function IslamicCalendarScreen() {
                     ]}
                   >
                     {value === -1
-                      ? "−1 jour"
+                      ? t("calendar.minusDay")
                       : value === 1
-                        ? "+1 jour"
-                        : "Automatique"}
+                        ? t("calendar.plusDay")
+                        : t("calendar.automatic")}
                   </Text>
                 </Pressable>
               ))}
@@ -1052,10 +977,7 @@ export default function IslamicCalendarScreen() {
                 size={16}
                 color={colors.goldLight}
               />
-              <Text style={styles.forecastText}>
-                Les grandes fêtes restent prévisionnelles jusqu’à l’annonce
-                officielle de votre pays.
-              </Text>
+              <Text style={styles.forecastText}>{t("calendar.forecastNotice")}</Text>
             </View>
           </View>
         </View>
@@ -1112,6 +1034,7 @@ function EventCard({
   date: Date;
   days: number;
 }) {
+  const { language, t } = useI18n();
   return (
     <Pressable
       onPress={() =>
@@ -1126,7 +1049,7 @@ function EventCard({
           {date.getDate()}
         </Text>
         <Text style={styles.eventMonth}>
-          {new Intl.DateTimeFormat("fr-FR", { month: "short" }).format(date)}
+          {new Intl.DateTimeFormat(language === "fr" ? "fr-FR" : "en-GB", { month: "short" }).format(date)}
         </Text>
       </View>
       <View style={styles.eventCopy}>
@@ -1139,18 +1062,19 @@ function EventCard({
           />
           <Text style={styles.eventKind}>
             {event.kind === "recommended-fast"
-              ? "JEÛNE RECOMMANDÉ"
+              ? t("calendar.kindFastUpper")
               : event.kind === "celebration"
-                ? "FÊTE"
-                : "PÉRIODE IMPORTANTE"}
+                ? t("calendar.kindCelebrationUpper")
+                : t("calendar.kindPeriodUpper")}
           </Text>
         </View>
-        <Text style={styles.eventTitle}>{event.shortTitle}</Text>
+        <Text style={styles.eventTitle}>{localizeEvent(event, language).shortTitle}</Text>
         <Text style={styles.eventMeta}>
           {days === 0
-            ? "Aujourd’hui"
-            : `Dans ${days} jour${days > 1 ? "s" : ""}`}{" "}
-          · date prévisionnelle
+            ? t("calendar.tabToday")
+            : t(days > 1 ? "calendar.inDays" : "calendar.inDay", { count: days })}
+          {" · "}
+          {t("calendar.estimatedDateLower")}
         </Text>
       </View>
       <Ionicons name="arrow-forward" size={17} color={colors.goldLight} />
@@ -1197,24 +1121,6 @@ function ReminderToggle({
 
 const styles = StyleSheet.create({
   safeArea: { flex: 1, backgroundColor: "#08050D" },
-  ambientGlowTop: {
-    position: "absolute",
-    top: -130,
-    right: -110,
-    width: 310,
-    height: 310,
-    borderRadius: 155,
-    backgroundColor: "rgba(112,61,139,0.20)",
-  },
-  ambientGlowMiddle: {
-    position: "absolute",
-    top: 500,
-    left: -150,
-    width: 330,
-    height: 330,
-    borderRadius: 165,
-    backgroundColor: "rgba(217,165,72,0.07)",
-  },
   content: { paddingHorizontal: 15, paddingBottom: 140 },
   header: { height: 72, flexDirection: "row", alignItems: "center" },
   circleButton: {
@@ -1225,7 +1131,7 @@ const styles = StyleSheet.create({
     borderRadius: 22,
     borderWidth: 1,
     borderColor: "rgba(243,211,135,0.38)",
-    backgroundColor: "rgba(48,27,63,0.86)",
+    backgroundColor: "rgba(30,23,48,0.86)",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 7 },
     shadowOpacity: 0.42,
@@ -1290,6 +1196,7 @@ const styles = StyleSheet.create({
     color: "#FFF8EA",
     fontFamily: typography.serifSemibold,
     fontSize: 33,
+    fontVariant: ["lining-nums", "tabular-nums"],
   },
   heroGregorian: {
     marginTop: 2,
@@ -1308,59 +1215,6 @@ const styles = StyleSheet.create({
     color: colors.goldLight,
     fontFamily: typography.serifMedium,
     fontSize: 20,
-  },
-  summaryStrip: {
-    minHeight: 88,
-    marginTop: 12,
-    paddingHorizontal: 8,
-    paddingVertical: 9,
-    flexDirection: "row",
-    alignItems: "center",
-    borderRadius: 25,
-    borderWidth: 1,
-    borderColor: "rgba(240,207,128,0.24)",
-    backgroundColor: "rgba(38,22,52,0.78)",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 9 },
-    shadowOpacity: 0.33,
-    shadowRadius: 14,
-    elevation: 9,
-  },
-  summaryItem: {
-    flex: 1,
-    minWidth: 0,
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  summaryIcon: {
-    width: 34,
-    height: 34,
-    alignItems: "center",
-    justifyContent: "center",
-    borderRadius: 17,
-    borderWidth: 1,
-    borderColor: "rgba(241,208,128,0.24)",
-    backgroundColor: "rgba(91,48,108,0.48)",
-  },
-  summaryCopy: { flex: 1, minWidth: 0, marginLeft: 7 },
-  summaryLabel: {
-    color: colors.goldMuted,
-    fontFamily: typography.sans,
-    fontSize: 8.5,
-    fontWeight: "900",
-    letterSpacing: 0.45,
-  },
-  summaryValue: {
-    marginTop: 3,
-    color: colors.text,
-    fontFamily: typography.serifMedium,
-    fontSize: 13,
-  },
-  summaryDivider: {
-    width: 1,
-    height: 44,
-    marginHorizontal: 5,
-    backgroundColor: "rgba(255,255,255,0.10)",
   },
   tabs: {
     height: 78,
@@ -1498,7 +1352,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 20,
-    backgroundColor: "rgba(83,43,101,0.60)",
+    backgroundColor: "rgba(30,23,48,0.60)",
   },
   prayerCopy: { flex: 1, marginHorizontal: 10 },
   prayerTitle: {
@@ -1538,48 +1392,7 @@ const styles = StyleSheet.create({
     color: colors.goldLight,
     fontFamily: typography.serifSemibold,
     fontSize: 15,
-  },
-  progressCard: {
-    minHeight: 72,
-    marginTop: 9,
-    padding: 11,
-    flexDirection: "row",
-    alignItems: "center",
-    borderRadius: 21,
-    borderWidth: 1,
-    borderColor: "rgba(232,194,105,0.24)",
-    backgroundColor: "rgba(38,22,51,0.82)",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 9 },
-    shadowOpacity: 0.30,
-    shadowRadius: 14,
-    elevation: 9,
-  },
-  progressIcon: {
-    width: 38,
-    height: 38,
-    alignItems: "center",
-    justifyContent: "center",
-    borderRadius: 19,
-    backgroundColor: "rgba(84,43,102,0.56)",
-  },
-  progressCopy: { flex: 1, marginHorizontal: 9 },
-  progressTitle: {
-    color: colors.text,
-    fontFamily: typography.serifMedium,
-    fontSize: 17,
-  },
-  progressText: {
-    marginTop: 2,
-    color: colors.textMuted,
-    fontFamily: typography.sans,
-    fontSize: 10,
-    lineHeight: 14,
-  },
-  progressStreak: {
-    color: colors.goldLight,
-    fontFamily: typography.serifSemibold,
-    fontSize: 18,
+    fontVariant: ["lining-nums", "tabular-nums"],
   },
   spiritualCard: {
     marginTop: 9,
@@ -1587,7 +1400,7 @@ const styles = StyleSheet.create({
     borderRadius: 22,
     borderWidth: 1,
     borderColor: "rgba(232,194,105,0.28)",
-    backgroundColor: "rgba(68,35,82,0.50)",
+    backgroundColor: "rgba(30,23,48,0.50)",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 9 },
     shadowOpacity: 0.30,
@@ -1677,7 +1490,7 @@ const styles = StyleSheet.create({
   dayToday: {
     borderWidth: 1.5,
     borderColor: colors.goldLight,
-    backgroundColor: "rgba(100,53,118,0.78)",
+    backgroundColor: "rgba(30,23,48,0.78)",
     shadowColor: colors.goldLight,
     shadowOpacity: 0.34,
     shadowRadius: 8,
@@ -1687,6 +1500,7 @@ const styles = StyleSheet.create({
     color: colors.text,
     fontFamily: typography.serifSemibold,
     fontSize: 18,
+    fontVariant: ["lining-nums", "tabular-nums"],
   },
   gregorianDayToday: { color: colors.goldLight },
   hijriDay: {
@@ -1694,6 +1508,7 @@ const styles = StyleSheet.create({
     color: colors.textMuted,
     fontFamily: typography.sans,
     fontSize: 9,
+    fontVariant: ["lining-nums", "tabular-nums"],
   },
   dots: {
     height: 6,
@@ -1707,7 +1522,7 @@ const styles = StyleSheet.create({
     width: 4,
     height: 4,
     borderRadius: 2,
-    backgroundColor: "#A66AC4",
+    backgroundColor: PERSONAL_COLOR,
   },
   legendRow: {
     marginTop: 9,
@@ -1771,7 +1586,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     backgroundColor: "rgba(8,6,14,0.35)",
   },
-  eventDay: { fontFamily: typography.serifSemibold, fontSize: 26 },
+  eventDay: { fontFamily: typography.serifSemibold, fontSize: 26, fontVariant: ["lining-nums", "tabular-nums"] },
   eventMonth: {
     marginTop: -2,
     color: colors.textMuted,
@@ -1825,7 +1640,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 19,
-    backgroundColor: "rgba(78,41,95,0.52)",
+    backgroundColor: "rgba(30,23,48,0.52)",
   },
   reminderCopy: { flex: 1, marginLeft: 10 },
   reminderTitle: {
@@ -1876,12 +1691,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 15,
-    backgroundColor: "rgba(84,43,102,0.63)",
+    backgroundColor: "rgba(30,23,48,0.63)",
   },
   personalReminderDay: {
     color: colors.goldLight,
     fontFamily: typography.serifSemibold,
     fontSize: 21,
+    fontVariant: ["lining-nums", "tabular-nums"],
   },
   personalReminderMonth: {
     color: colors.textMuted,
@@ -1988,7 +1804,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     borderRadius: 18,
-    backgroundColor: "rgba(54,29,68,0.74)",
+    backgroundColor: "rgba(30,23,48,0.74)",
   },
   sheetEventDot: { width: 9, height: 9, borderRadius: 5 },
   sheetEventCopy: { flex: 1, marginLeft: 10 },
@@ -2024,7 +1840,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     borderRadius: 16,
-    backgroundColor: "rgba(109,56,129,0.30)",
+    backgroundColor: "rgba(30,23,48,0.30)",
   },
   sheetReminderText: {
     marginLeft: 8,
@@ -2107,7 +1923,7 @@ const styles = StyleSheet.create({
   },
   methodActive: {
     borderColor: "rgba(232,194,105,0.48)",
-    backgroundColor: "rgba(81,42,98,0.48)",
+    backgroundColor: "rgba(30,23,48,0.48)",
   },
   radio: {
     width: 20,
@@ -2152,7 +1968,7 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     borderWidth: 1,
     borderColor: colors.borderSoft,
-    backgroundColor: "rgba(49,28,63,0.52)",
+    backgroundColor: "rgba(30,23,48,0.52)",
   },
   countryActive: {
     borderColor: colors.goldLight,
