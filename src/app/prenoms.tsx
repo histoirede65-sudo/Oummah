@@ -5,7 +5,7 @@ import { useCallback, useMemo, useRef, useState } from 'react';
 import { FlatList, Platform, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 
 import { NAME_COLLECTIONS, getDailyName, namesForCollection } from '../features/muslim-names/collections';
-import { BOY_NAMES, CATALOGUE_NAMES, GIRL_NAMES, MUSLIM_NAMES, NAME_TAG_LABELS, VERIFIED_NAMES, isAbdName, normalizeNameSearch, searchMuslimNames } from '../features/muslim-names/data';
+import { BOY_NAMES, CATALOGUE_NAMES, GIRL_NAMES, MUSLIM_NAMES, NAME_TAG_LABELS, isAbdName, normalizeNameSearch, searchMuslimNames } from '../features/muslim-names/data';
 import { loadNameFavorites, loadNameHistory, toggleNameFavorite } from '../features/muslim-names/storage';
 import type { NameGender, NameTag } from '../features/muslim-names/types';
 import { ChoiceChip, NameRow, SectionTitle, prenomTheme } from '../features/muslim-names/ui';
@@ -106,9 +106,9 @@ export default function PrenomsScreen(){
     <View style={styles.hero}>
       <Text style={styles.eyebrow}>GUIDE OUMMAH</Text>
       <Text style={styles.heroTitle}>Quel prénom lui donnerez-vous ?</Text>
-      <Text style={styles.heroText}>Un grand répertoire éditorial pour découvrir, comparer et choisir avec nuance : sens en français, écritures, origines, variantes et sources sur chaque fiche.</Text>
+      <Text style={styles.heroText}>Un grand répertoire éditorial pour découvrir, comparer et choisir avec nuance : sens en français, écritures, origines, variantes et, quand elles existent, sources vérifiées.</Text>
       <View style={styles.heroStats}><Stat value={`${MUSLIM_NAMES.length}`} label="fiches"/><View style={styles.statDivider}/><Stat value={`${BOY_NAMES.length}`} label="garçons"/><View style={styles.statDivider}/><Stat value={`${GIRL_NAMES.length}`} label="filles"/></View>
-      <View style={styles.trustLine}><Ionicons name="shield-checkmark-outline" size={15} color={colors.goldLight}/><Text style={styles.trustText}>{VERIFIED_NAMES.length} fiches éditoriales OUMMAH · sens renseigné · sources visibles</Text></View>
+      <View style={styles.trustLine}><Ionicons name="shield-checkmark-outline" size={15} color={colors.goldLight}/><Text style={styles.trustText}>{MUSLIM_NAMES.length} fiches · statut religieux affiché seulement quand un texte l’établit</Text></View>
     </View>
 
     <View style={styles.genderRow}>
@@ -201,7 +201,7 @@ export default function PrenomsScreen(){
         <Ionicons name={abdOpen?'chevron-up':'chevron-down'} size={20} color={BOY_ACCENT}/>
       </Pressable>
       {abdOpen?<View style={styles.abdBody}>
-        <View style={styles.abdExplanation}><Ionicons name="information-circle-outline" size={17} color={BOY_ACCENT}/><Text style={styles.abdExplanationText}>La construction ʿAbd + un Nom d’Allah signifie « serviteur de… ». Abdullah et Abd ar-Rahman gardent une mention particulière dans les fiches lorsqu’une recommandation textuelle est établie.</Text></View>
+        <View style={styles.abdExplanation}><Ionicons name="information-circle-outline" size={17} color={BOY_ACCENT}/><Text style={styles.abdExplanationText}>La construction ʿAbd + un Nom d’Allah signifie « serviteur de… ». Abdullah et Abd ar-Rahman sont cités par le Prophète ﷺ parmi les noms les plus aimés d’Allah (Muslim 2132). Seuls les Noms retenus par Ibn ‘Uthaymîn dans al-Qawâ‘id al-Muthlâ sont proposés.</Text></View>
         <View style={styles.abdList}>{abdFiltered.map((item,index)=><NameRow key={`${item.id}:${item.arabic}:${index}`} item={item} onPress={()=>open(item.id)} favorite={favorites.includes(item.id)} onFavorite={()=>void toggle(item.id)}/>)}</View>
       </View>:null}
     </View>:null}
@@ -212,7 +212,7 @@ export default function PrenomsScreen(){
   const Footer=<View>
     {!filtered.length?<View style={styles.empty}><Ionicons name="search-outline" size={24} color={colors.goldLight}/><Text style={styles.emptyTitle}>Aucun prénom trouvé</Text><Text style={styles.emptyText}>Essayez une autre orthographe, une variante ou retirez un filtre.</Text></View>:null}
     {recent.length?<><SectionTitle eyebrow="VOTRE HISTORIQUE" title="Consultés récemment"/><ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.recentRow}>{recent.map(item=><Pressable key={item.id} onPress={()=>open(item.id)} style={styles.recent}>{item.arabic?<Text style={styles.recentArabic}>{item.arabic}</Text>:null}<Text style={styles.recentName}>{item.name}</Text><Text style={styles.recentMeaning} numberOfLines={2}>{item.meaning}</Text></Pressable>)}</ScrollView></>:null}
-    <View style={styles.note}><Ionicons name="shield-checkmark-outline" size={21} color={colors.goldLight}/><View style={{flex:1}}><Text style={styles.noteTitle}>Des repères, pas des verdicts rapides</Text><Text style={styles.noteText}>Un mot arabe ou coranique n’est pas automatiquement un prénom recommandé. Les nuances de sens, d’origine et de statut sont précisées dans les fiches.</Text><Pressable onPress={()=>router.push('/prenoms/guide')} style={styles.noteLink}><Text style={styles.noteLinkText}>Lire le guide des parents</Text><Ionicons name="chevron-forward" size={14} color={colors.goldLight}/></Pressable></View></View>
+    <View style={styles.note}><Ionicons name="shield-checkmark-outline" size={21} color={colors.goldLight}/><View style={{flex:1}}><Text style={styles.noteTitle}>Des repères, pas des verdicts rapides</Text><Text style={styles.noteText}>Un mot arabe ou coranique n’est pas automatiquement un prénom recommandé. Un statut n’est affiché que lorsqu’un texte l’établit.</Text><Pressable onPress={()=>router.push('/prenoms/guide')} style={styles.noteLink}><Text style={styles.noteLinkText}>Lire le guide des parents</Text><Ionicons name="chevron-forward" size={14} color={colors.goldLight}/></Pressable></View></View>
   </View>;
 
   return <LinearGradient colors={[colors.background,colors.backgroundSecondary,colors.background]} style={styles.screen}><SafeAreaView style={styles.safe}>

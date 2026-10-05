@@ -1,13 +1,13 @@
 import type { MuslimName, NameSource } from './types';
+import { VERIFIED_NAME_SOURCES } from './verified-sources';
 
-const DATASET_URL = 'https://huggingface.co/datasets/wpacademy/muslim-names-dataset';
-const BTN_ARABIC = 'https://www.behindthename.com/names/usage/arabic';
-const BTN_PERSIAN = 'https://www.behindthename.com/names/usage/persian';
-const BTN_TURKISH = 'https://www.behindthename.com/names/usage/turkish';
-const BTN_URDU = 'https://www.behindthename.com/names/usage/urdu';
-
+/**
+ * Sources shown on a fiche. Only what was checked is listed: the Quran reference, the hadiths and Ibn ‘Uthaymîn cited
+ * in the fiche, hand-written sources with a precise link, and the Muslim Names Dataset / Behind the Name entries that
+ * were found for this name (verified-sources.ts). Generic entries attached to every fiche and OUMMAH's own notes are
+ * not sources and are not shown.
+ */
 export function getNameSources(item: MuslimName): NameSource[] {
-  if (item.sources?.length) return dedupeSources(item.sources);
   const sources: NameSource[] = [];
 
   if (item.quranReference) {
@@ -21,74 +21,57 @@ export function getNameSources(item: MuslimName): NameSource[] {
     });
   }
 
-  if (item.sourceNote) {
+  if (item.sourceNote && !item.sourceNote.includes('synthèse éditoriale OUMMAH')) {
     const lower = item.sourceNote.toLocaleLowerCase('fr');
+    const isHadith = lower.includes('sahih') || lower.includes('hadith') || lower.includes('muslim') || lower.includes('bukhari');
+    const isIbnUthaymin = item.sourceNote.includes('Ibn ‘Uthaymîn');
     sources.push({
-      kind: lower.includes('sahih') || lower.includes('hadith') ? 'hadith' : 'editorial',
-      label: lower.includes('sahih') || lower.includes('hadith') ? 'Hadith / repère textuel' : 'Repère éditorial OUMMAH',
+      kind: isHadith ? 'hadith' : 'editorial',
+      label: isHadith ? 'Hadith' : isIbnUthaymin ? 'Ibn ‘Uthaymîn · al-Qawâ‘id al-Muthlâ' : 'Référence',
       reference: item.sourceNote,
-      supports: ['statut, usage historique ou repère indiqué dans la fiche'],
+      url: isIbnUthaymin ? 'https://shamela.ws/book/8874/19' : undefined,
+      supports: [isIbnUthaymin ? 'Nom d’Allah établi par le Coran ou la Sunna' : 'statut ou repère indiqué dans la fiche'],
     });
   }
 
-  // Chaque fiche dispose d'un repère de provenance linguistique, même lorsqu'un texte religieux
-  // n'est pas pertinent pour établir le sens du prénom.
-  sources.push({
-    kind: 'catalogue',
-    label: 'Muslim Names Dataset (CC0)',
-    reference: `Recherche de la forme « ${item.name} » dans le répertoire de 14 585 noms issu de muslimnames.com`,
-    supports: ['comparaison de l’écriture latine', 'écriture arabe', 'sens lexical de départ', 'genre'],
-    note: 'Cette base est un point de départ culturel. OUMMAH reformule le sens en français et ne transforme jamais cette présence en verdict religieux.',
-  });
+  for (const source of item.sources ?? []) {
+    if (source.kind === 'quran' || source.kind === 'hadith' || isPreciseLink(source.url)) sources.push(source);
+  }
 
-  sources.push({
-    kind: 'linguistic',
-    label: linguisticLabel(item),
-    reference: `Contrôle d’origine et de variantes pour « ${item.name} » lorsque l’entrée est documentée`,
-    url: linguisticUrl(item),
-    supports: ['origine linguistique', 'variantes de transcription', 'étymologie lorsque documentée'],
-    note: 'Le répertoire linguistique sert de contrepoint à la base culturelle. Une étymologie incertaine reste signalée comme telle dans la fiche.',
-  });
-
-  if (item.historicalRole && !item.sourceNote) {
+  const verified = VERIFIED_NAME_SOURCES[item.id];
+  if (verified?.dataset) {
     sources.push({
-      kind: 'historical',
-      label: 'Repère historique OUMMAH',
-      reference: item.historicalRole,
-      supports: ['identification du personnage ou de l’usage historique'],
-      note: 'Ce repère historique explique l’usage du nom ; il ne crée pas à lui seul une recommandation religieuse.',
+      kind: 'catalogue',
+      label: 'Muslim Names Dataset (CC0)',
+      reference: `Entrée « ${verified.dataset} » · base de 14 585 prénoms issue de muslimnames.com`,
+      supports: ['écriture latine', 'genre'],
+      note: 'Le sens de la fiche est une reformulation française ; la base n’est pas un avis religieux.',
+    });
+  }
+  if (verified?.behindTheName && !sources.some((source) => source.url?.includes('behindthename.com/name/'))) {
+    sources.push({
+      kind: 'linguistic',
+      label: 'Behind the Name',
+      reference: `Page « ${item.name} »`,
+      url: verified.behindTheName,
+      supports: ['origine', 'variantes'],
+      note: 'Source linguistique ; elle ne donne pas de statut religieux.',
     });
   }
 
   return dedupeSources(sources);
 }
 
-export function getMeaningReliability(item: MuslimName) {
-  if (item.meaningConfidence) return item.meaningConfidence;
-  if (item.editorialLevel === 'catalogue') return 'to-review' as const;
-  return item.editorialLevel === 'sourced' ? 'high' as const : 'medium' as const;
+/** A link to a precise page (not a generic list or a dataset home page). */
+function isPreciseLink(url?: string) {
+  if (!url) return false;
+  return !/behindthename\.com\/names\/usage|huggingface\.co/.test(url);
 }
 
 export function getLanguageAndCulture(item: MuslimName) {
   const language = item.language?.length ? item.language : inferLanguage(item.origin);
   const culture = item.culture?.length ? item.culture : inferCulture(item.origin);
   return { language, culture };
-}
-
-function linguisticUrl(item: MuslimName) {
-  const values = item.origin.map(value => value.toLocaleLowerCase('fr'));
-  if (values.some(value => value.includes('pers'))) return BTN_PERSIAN;
-  if (values.some(value => value.includes('tur'))) return BTN_TURKISH;
-  if (values.some(value => value.includes('ourdou') || value.includes('urdu'))) return BTN_URDU;
-  return BTN_ARABIC;
-}
-
-function linguisticLabel(item: MuslimName) {
-  const values = item.origin.map(value => value.toLocaleLowerCase('fr'));
-  if (values.some(value => value.includes('pers'))) return 'Behind the Name · noms persans';
-  if (values.some(value => value.includes('tur'))) return 'Behind the Name · noms turcs';
-  if (values.some(value => value.includes('ourdou') || value.includes('urdu'))) return 'Behind the Name · noms ourdous';
-  return 'Behind the Name · noms arabes et usages associés';
 }
 
 function inferLanguage(origin: string[]) {

@@ -4,7 +4,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { colors } from '../../theme/colors';
 import { typography } from '../../theme/typography';
 import { NAME_STATUS_META, type MuslimName, type NameStatus } from './types';
-import { getNameCardContext } from './presentation';
+import { getNameCardContext, getShownStatus } from './presentation';
 
 export const prenomTheme = {
   card: 'rgba(23,16,38,0.88)',
@@ -49,6 +49,8 @@ export function SectionTitle({ eyebrow, title, action, onAction }: { eyebrow?: s
 }
 
 export function NameRow({ item, onPress, favorite, onFavorite }: { item: MuslimName; onPress: () => void; favorite?: boolean; onFavorite?: () => void }) {
+  const context=getNameCardContext(item);
+  const shownStatus=getShownStatus(item);
   const genderAccent=item.gender==='boy'?'#78B9FF':'#F2A6C7';
   const genderWash=item.gender==='boy'?'rgba(86,155,235,.065)':'rgba(231,126,174,.065)';
   return <Pressable onPress={onPress} style={({pressed})=>[s.nameRow,{backgroundColor:genderWash},pressed&&s.pressed]}>
@@ -56,8 +58,8 @@ export function NameRow({ item, onPress, favorite, onFavorite }: { item: MuslimN
     <View style={s.nameMain}>
       <View style={s.nameLine}><Text style={s.name}>{item.name}</Text><Text style={s.arabic}>{item.arabic}</Text></View>
       <Text style={s.meaning} numberOfLines={2}>{item.meaning}</Text>
-      <Text style={s.story} numberOfLines={2}>{getNameCardContext(item)}</Text>
-      <View style={s.metaLine}>{item.editorialLevel==='catalogue'?<EditorialPill item={item} compact/>:<StatusPill status={item.status} compact/>}<Text style={s.origin} numberOfLines={1}>{item.origin.join(' · ')}</Text></View>
+      {context?<Text style={s.story} numberOfLines={2}>{context}</Text>:null}
+      <View style={s.metaLine}>{item.editorialLevel==='catalogue'?<EditorialPill item={item} compact/>:shownStatus?<StatusPill status={shownStatus} compact/>:null}<Text style={s.origin} numberOfLines={1}>{item.origin.join(' · ')}</Text></View>
     </View>
     {onFavorite ? <Pressable onPress={(e)=>{e.stopPropagation();onFavorite();}} style={s.favoriteButton} hitSlop={8} accessibilityRole="button" accessibilityLabel={favorite?'Retirer des favoris':'Ajouter aux favoris'}>
       <Ionicons name={favorite?'heart':'heart-outline'} size={19} color={favorite?colors.goldLight:colors.textMuted}/>

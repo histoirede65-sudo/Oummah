@@ -142,12 +142,13 @@ function mergeSameArabicNames(names: MuslimName[]) {
     const current = result[existingIndex];
     const mergedVariants = Array.from(new Set([current.name, item.name, current.transliteration, item.transliteration, ...current.variants, ...item.variants]));
     const richer = editorialScore(item) > editorialScore(current) ? item : current;
+    const statusFrom = statusRank(item.status) > statusRank(current.status) ? item : current;
     result[existingIndex] = {
       ...current,
       story: richer.story || current.story,
       meaning: richer.meaning || current.meaning,
-      status: statusRank(item.status) > statusRank(current.status) ? item.status : current.status,
-      statusReason: richer.statusReason || current.statusReason,
+      status: statusFrom.status,
+      statusReason: statusFrom.statusReason || richer.statusReason,
       historicalRole: current.historicalRole || item.historicalRole,
       quranReference: current.quranReference || item.quranReference,
       sourceNote: current.sourceNote || item.sourceNote,
