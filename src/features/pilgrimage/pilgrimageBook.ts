@@ -270,7 +270,7 @@ const medinaChapter: Chapter = {
       title: "Ar-Rawda",
       arabic: "الروضة الشريفة",
       visual: "rawda",
-      summary: "« Entre ma maison et mon minbar se trouve un jardin parmi les jardins du Paradis. »",
+      summary: "« Entre ma maison et ma chaire, il y a un jardin parmi les jardins du Paradis. »",
       todo: [
         p("Priez-y si vous obtenez une place, puis laissez-la aux autres.", [H("Sahîh al-Bukhârî 1196")]),
         p("L’accès se fait généralement sur réservation : renseignez-vous auprès de votre groupe."),
@@ -286,10 +286,10 @@ const medinaChapter: Chapter = {
       todo: [
         p("Dites : « As-salâmu ‘alayka yâ Rasûla llâh », puis saluez Abû Bakr et ‘Umar.", [F("Pratique rapportée d’Ibn ‘Umar — Muwatta’ Mâlik")]),
       ],
-      notes: [p("« Allah et Ses anges prient sur le Prophète. Ô vous qui croyez, priez sur lui et adressez-lui vos salutations. » Cela se fait de partout.", [Q("Coran 33:56")])],
+      notes: [p("« Certes, Allah et Ses Anges prient sur le Prophète ; ô vous qui croyez priez sur lui et adressez [lui] vos salutations. » Cela se fait de partout.", [Q("Coran 33:56")])],
       avoid: [
         p("N’élevez pas la voix : « N’élevez pas vos voix au-dessus de la voix du Prophète. »", [Q("Coran 49:2")]),
-        p("Les invocations s’adressent à Allah seul : « N’invoquez personne avec Allah. »", [Q("Coran 72:18")]),
+        p("Les invocations s’adressent à Allah seul : « n’invoquez donc personne avec Allah. »", [Q("Coran 72:18")]),
       ],
     },
     {
@@ -318,7 +318,7 @@ const medinaChapter: Chapter = {
       visual: "uhud",
       summary: "Lieu de la bataille de Uhud, où reposent les martyrs, dont Hamza.",
       todo: [p("Saluez les martyrs et invoquez Allah pour eux, comme pour tout défunt.", [H("Sahîh Muslim 975")])],
-      notes: [p("« Uhud est une montagne qui nous aime et que nous aimons. »", [H("Sahîh al-Bukhârî 1482")])],
+      notes: [p("En voyant Uhud, le Prophète ﷺ a dit : « Cette montagne nous aime et nous l’aimons. »", [H("Sahîh al-Bukhârî 1482")])],
       say: ["baqi"],
     },
   ],
@@ -591,7 +591,7 @@ export const HAJJ_BOOK: Book = {
             p("Respectez les horaires et ne quittez pas précipitamment avant d’avoir accompli ce qui vous incombe.", [H("Sahîh Muslim 1299"), D("Départ anticipé : fiqh comparé")], "DIVERGENCE JURIDIQUE"),
             p("Le 12, accomplissez les Jamarât ; le départ anticipé est soumis à des conditions.", [H("Sahîh Muslim 1299")]),
           ],
-          notes: [p("« Quiconque se hâte de partir en deux jours, nul péché sur lui ; et quiconque s’attarde, nul péché sur lui. »", [Q("Coran 2:203")])],
+          notes: [p("« Ensuite, il n’y a pas de péché, pour qui se comporte en piété, à partir au bout de deux jours, à s’attarder non plus. »", [Q("Coran 2:203")])],
           say: ["takbir"],
           tool: "jamarat",
         },

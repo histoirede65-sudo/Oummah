@@ -110,7 +110,7 @@ export default function PilgrimageDuas() {
       <ScrollView contentContainerStyle={[styles.content, { paddingBottom: insets.bottom + 40 }]} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
         <View style={styles.hadith}>
           <Ionicons name="sparkles" size={18} color={pil.gold} />
-          <Text style={styles.hadithText}>« L’invocation du musulman pour son frère, en son absence, est exaucée. Auprès de lui, un ange dit : Âmîn, et à toi de même. »</Text>
+          <Text style={styles.hadithText}>« La prière d’un musulman pour son frère en son absence est exaucée tant qu’il invoque pour lui une bénédiction, et l’Ange chargé dit : “Amine, et que ce soit aussi pour toi.” »</Text>
           <Text style={styles.hadithSource}>Sahîh Muslim 2733</Text>
         </View>
 

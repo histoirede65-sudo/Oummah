@@ -26,10 +26,10 @@ const COVERS: Record<Rite, { image: number }> = {
 
 /** Virtues of the pilgrimage, one shown at a time. */
 const VIRTUES = [
-  { text: "Celui qui accomplit le pèlerinage sans propos indécents ni péchés revient comme au jour où sa mère l’a mis au monde.", source: "Sahîh al-Bukhârî 1521" },
-  { text: "Une ‘Umra à une autre expie ce qui est entre elles, et le Hajj accepté n’a d’autre récompense que le Paradis.", source: "Sahîh al-Bukhârî 1773" },
-  { text: "Il n’est pas de jour où Allah affranchit du Feu plus de serviteurs que le jour de ‘Arafa.", source: "Sahîh Muslim 1348" },
-  { text: "Une ‘Umra accomplie en Ramadan équivaut à un Hajj.", source: "Sahîh al-Bukhârî 1782" },
+  { text: "Celui qui accomplit le Hajj pour plaire à Allah, sans avoir de relations intimes avec sa femme, sans commettre de mauvaises actions ni de péchés, reviendra (du Hajj pur de tout péché) comme au jour où il est né.", source: "Sahîh al-Bukhârî 1521" },
+  { text: "La ‘Umra efface les péchés commis entre elle et la précédente. Et la récompense d’un Hajj Mabrur (accepté par Allah) n’est rien d’autre que le Paradis.", source: "Sahîh al-Bukhârî 1773" },
+  { text: "Il n’y a pas de jour où Allah affranchit plus de gens de l’Enfer que le jour de ‘Arafa.", source: "Sahîh Muslim 1348" },
+  { text: "La ‘Umra pendant le Ramadan équivaut au Hajj (en récompense).", source: "Sahîh al-Bukhârî 1782" },
 ];
 
 const TOOLS: ReadonlyArray<{ id: string; title: string; text: string; icon: keyof typeof Ionicons.glyphMap; route: string }> = [
