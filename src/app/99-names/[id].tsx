@@ -86,7 +86,6 @@ export default function AllahNameDetailScreen() {
           </View>
 
           <Section icon="book-outline" eyebrow={t("names99.understand")} title={t("names99.understandTitle")}>
-            <Text style={styles.paragraph}>{name.explanation}</Text>
             <View style={styles.evidence}>
               {evidence.kind === "quran" ? (
                 <>
@@ -103,13 +102,11 @@ export default function AllahNameDetailScreen() {
             </View>
           </Section>
 
-          <Section icon="heart-outline" eyebrow={t("names99.reflect")} title={t("names99.reflectTitle")}>
-            <Text style={styles.paragraph}>{name.reflection}</Text>
-          </Section>
-
-          <Section icon="footsteps-outline" eyebrow={t("names99.live")} title={t("names99.liveTitle")}>
-            <Text style={styles.paragraph}>{name.practice}</Text>
-          </Section>
+          {name.reflection ? (
+            <Section icon="heart-outline" eyebrow={t("names99.reflect")} title={t("names99.reflectTitle")}>
+              <Text style={styles.paragraph}>{name.reflection}</Text>
+            </Section>
+          ) : null}
 
           <Pressable onPress={() => void openSourceSafely()} style={styles.sourceLine} accessibilityRole="link">
             <Text style={styles.sourceText}>
