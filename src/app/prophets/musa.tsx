@@ -1,9 +1,10 @@
 import { Ionicons } from "@expo/vector-icons";
+import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import type { Href } from "expo-router";
 import { router, useLocalSearchParams } from "expo-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Animated, Image, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, View } from "react-native";
+import { Animated, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, View } from "react-native";
 
 import { MUSA_CHAPTERS, type ProphetReference, type ProphetSourceKind } from "../../features/prophets/prophetsData";
 import { PROPHETS_PREVIEW } from "../../features/prophets/prophetsData";
@@ -144,7 +145,7 @@ export default function MusaStoryScreen() {
   const goTo = useCallback((index: number) => {
     const next = Math.min(MUSA_CHAPTERS.length - 1, Math.max(0, index));
     setActiveIndex(next);
-    scrollRef.current?.scrollTo({ y: 0, animated: true });
+    scrollRef.current?.scrollTo({ y: 0, animated: false });
   }, []);
 
   const toggleComplete = () => {
@@ -182,7 +183,7 @@ export default function MusaStoryScreen() {
           {showIntro ? (
             <View style={styles.hero}>
               <Animated.View style={[styles.heroImageLayer, { transform: [{ translateY: heroTranslate }, { scale: heroScale }] }]}>
-                <Image source={MUSA_COVER} resizeMode="cover" style={styles.heroImage} />
+                <Image source={MUSA_COVER} contentFit="cover" cachePolicy="memory-disk" priority="high" style={styles.heroImage} />
               </Animated.View>
               <LinearGradient colors={["rgba(7,7,18,0.05)", "rgba(8,7,19,0.42)", "rgba(8,7,19,0.99)"]} style={StyleSheet.absoluteFill} />
               <View style={styles.heroRim} />
@@ -210,7 +211,7 @@ export default function MusaStoryScreen() {
           <>
           <View style={styles.hero}>
             <Animated.View style={[styles.heroImageLayer, { transform: [{ translateY: heroTranslate }, { scale: heroScale }] }]}> 
-              <Image source={chapter.image} resizeMode="cover" style={styles.heroImage} />
+              <Image source={chapter.image} contentFit="cover" cachePolicy="memory-disk" priority="high" transition={{ duration: 260, effect: "cross-dissolve" }} style={styles.heroImage} />
             </Animated.View>
             <LinearGradient colors={["rgba(7,7,18,0.02)", "rgba(8,7,19,0.30)", "rgba(8,7,19,0.95)"]} style={StyleSheet.absoluteFill} />
             <View style={styles.heroRim} />

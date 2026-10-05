@@ -1,9 +1,10 @@
 import { Ionicons } from "@expo/vector-icons";
+import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import type { Href } from "expo-router";
 import { router, useLocalSearchParams } from "expo-router";
-import { useEffect, useMemo, useRef, useState } from "react";
-import { Animated, Image, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, View } from "react-native";
+import { useEffect, useRef, useState } from "react";
+import { Animated, Image as NativeImage, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, View } from "react-native";
 
 import { PROPHET_STORIES } from "../../features/prophets/allProphetsData";
 import { PROPHET_AUDIO_EPISODES } from "../../features/prophets/audio/prophetAudioData";
@@ -39,23 +40,24 @@ export default function ProphetStoryScreen() {
   const [activeIndex, setActiveIndex] = useState(initialIndex);
   const [showIntro, setShowIntro] = useState(true);
   const [completed, setCompleted] = useState<string[]>([]);
-  const [isTransitioning, setIsTransitioning] = useState(false);
   const scrollViewRef = useRef<ScrollView>(null);
-  const transitionTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const heroScale = useRef(new Animated.Value(1)).current;
-  const heroTextOpacity = useRef(new Animated.Value(1)).current;
-  const heroTextTranslateY = useRef(new Animated.Value(0)).current;
-  const storyOpacity = useRef(new Animated.Value(1)).current;
-  const storyTranslateY = useRef(new Animated.Value(0)).current;
+  const contentOpacity = useRef(new Animated.Value(1)).current;
 
   useEffect(() => {
     if (!story) return;
     loadProphetProgress(story.id).then((p) => setCompleted(p.completed));
   }, [story?.id]);
 
-  useEffect(() => () => {
-    if (transitionTimerRef.current) clearTimeout(transitionTimerRef.current);
-  }, []);
+  // Decode the neighbouring chapter images ahead of time so the next tap shows them at once.
+  useEffect(() => {
+    if (!story) return;
+    const uris = [activeIndex - 1, activeIndex + 1]
+      .map((index) => story.chapters[index]?.image)
+      .filter(Boolean)
+      .map((source) => NativeImage.resolveAssetSource(source)?.uri)
+      .filter((uri): uri is string => Boolean(uri));
+    if (uris.length) void Image.prefetch(uris, "memory-disk").catch(() => false);
+  }, [activeIndex, story]);
 
   if (!story) return <SafeAreaView style={styles.missing}><Text style={styles.missingText}>Histoire introuvable.</Text></SafeAreaView>;
   const chapter = story.chapters[activeIndex];
@@ -64,41 +66,16 @@ export default function ProphetStoryScreen() {
   const icon = ICONS[activeIndex % ICONS.length];
   const done = completed.includes(chapter.id);
 
+  // Light transition: the chapter changes at once, the image cross-fades (expo-image) and the text fades in.
   const goTo = (index: number) => {
     const next = Math.min(story.chapters.length - 1, Math.max(0, index));
-    if (next === activeIndex || isTransitioning) return;
-    setIsTransitioning(true);
-    scrollViewRef.current?.scrollTo({ y: 0, animated: true });
-    heroScale.setValue(1.035);
-    const nextImage = story.chapters[next].image;
-    const nextImageUri = nextImage ? Image.resolveAssetSource(nextImage)?.uri : null;
-    const preload = nextImageUri ? Image.prefetch(nextImageUri) : Promise.resolve(true);
-    transitionTimerRef.current = setTimeout(async () => {
-      await preload.catch(() => false);
-      setActiveIndex(next);
-      saveProphetProgress(story.id, { completed, lastChapterId: story.chapters[next].id });
-      heroTextOpacity.setValue(0);
-      heroTextTranslateY.setValue(8);
-      storyOpacity.setValue(0);
-      storyTranslateY.setValue(8);
-      Animated.parallel([
-        Animated.timing(heroScale, { toValue: 1, duration: 320, useNativeDriver: true }),
-        Animated.sequence([
-          Animated.delay(45),
-          Animated.parallel([
-            Animated.timing(heroTextOpacity, { toValue: 1, duration: 190, useNativeDriver: true }),
-            Animated.timing(heroTextTranslateY, { toValue: 0, duration: 190, useNativeDriver: true }),
-          ]),
-        ]),
-        Animated.sequence([
-          Animated.delay(110),
-          Animated.parallel([
-            Animated.timing(storyOpacity, { toValue: 1, duration: 190, useNativeDriver: true }),
-            Animated.timing(storyTranslateY, { toValue: 0, duration: 190, useNativeDriver: true }),
-          ]),
-        ]),
-      ]).start(() => setIsTransitioning(false));
-    }, 120);
+    if (next === activeIndex) return;
+    scrollViewRef.current?.scrollTo({ y: 0, animated: false });
+    contentOpacity.stopAnimation();
+    contentOpacity.setValue(0.15);
+    setActiveIndex(next);
+    void saveProphetProgress(story.id, { completed, lastChapterId: story.chapters[next].id });
+    Animated.timing(contentOpacity, { toValue: 1, duration: 220, useNativeDriver: true }).start();
   };
 
   const toggleComplete = async () => {
@@ -120,7 +97,7 @@ export default function ProphetStoryScreen() {
         {showIntro ? (
           <>
           <View style={styles.hero}>
-            {preview?.coverImage ? <Image source={preview.coverImage} resizeMode="cover" style={styles.coverImage} /> : null}
+            {preview?.coverImage ? <Image source={preview.coverImage} contentFit="cover" cachePolicy="memory-disk" priority="high" style={styles.coverImage} /> : null}
             <LinearGradient colors={["rgba(7,7,18,0.02)", "rgba(8,7,19,0.22)", "rgba(8,7,19,0.78)"]} style={StyleSheet.absoluteFill} />
             <View style={styles.heroRim} />
             <View style={styles.heroCopy}>
@@ -150,12 +127,12 @@ export default function ProphetStoryScreen() {
           </>
         ) : (
         <>
-        <Animated.View style={{ transform: [{ scale: heroScale }] }}>
+        <View>
         <LinearGradient colors={palette} style={styles.hero}>
-          {chapter.image ? <Image source={chapter.image} resizeMode="cover" style={styles.coverImage} /> : null}
+          {chapter.image ? <Image source={chapter.image} contentFit="cover" cachePolicy="memory-disk" priority="high" transition={{ duration: 260, effect: "cross-dissolve" }} style={styles.coverImage} /> : null}
           <LinearGradient colors={["rgba(7,7,18,0.08)", "rgba(8,7,19,0.38)", "rgba(8,7,19,0.90)"]} style={StyleSheet.absoluteFill} />
           <View style={styles.heroRim} />
-          <Animated.View style={[StyleSheet.absoluteFill, { zIndex: 3, opacity: heroTextOpacity, transform: [{ translateY: heroTextTranslateY }] }]}>
+          <Animated.View style={[StyleSheet.absoluteFill, { zIndex: 3, opacity: contentOpacity }]}>
           <View style={styles.heroCopy}>
             <Text style={styles.chapterNumber}>{String(chapter.index).padStart(2,"0")} / {String(story.chapters.length).padStart(2,"0")}</Text>
             <Text style={styles.heroTitle}>{chapter.title}</Text>
@@ -164,13 +141,13 @@ export default function ProphetStoryScreen() {
           </View>
           </Animated.View>
         </LinearGradient>
-        </Animated.View>
+        </View>
 
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.chapterRail}>
           {story.chapters.map((item,index)=><Pressable key={item.id} onPress={()=>goTo(index)} style={[styles.railDot,index===activeIndex&&styles.railDotActive,completed.includes(item.id)&&styles.railDotCompleted]}><Text style={[styles.railDotText,(index===activeIndex||completed.includes(item.id))&&styles.railDotTextActive]}>{item.index}</Text></Pressable>)}
         </ScrollView>
 
-        <Animated.View style={{ opacity: storyOpacity, transform: [{ translateY: storyTranslateY }] }}>
+        <Animated.View style={{ opacity: contentOpacity }}>
         <View key={`story-${story.id}-${chapter.id}`} style={styles.storyCard}>
           <Text style={styles.storyEyebrow}>LE RÉCIT</Text>
           <Text style={styles.storyText}>{chapter.paragraphs.join("\n\n")}</Text>
