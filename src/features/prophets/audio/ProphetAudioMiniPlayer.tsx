@@ -4,21 +4,25 @@ import { type Href, router, usePathname } from "expo-router";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+import { useI18n } from "../../../i18n";
 import { colors } from "../../../theme/colors";
+import { localizeAudioEpisode } from "../prophetsLocalization";
 import { typography } from "../../../theme/typography";
 import { useProphetAudio } from "./ProphetAudioProvider";
 
 export default function ProphetAudioMiniPlayer() {
   const pathname = usePathname();
   const insets = useSafeAreaInsets();
-  const { episode, isPlaying, progress, togglePlay, close } = useProphetAudio();
+  const { language, t } = useI18n();
+  const { episode: playing, isPlaying, progress, togglePlay, close } = useProphetAudio();
+  const episode = playing ? localizeAudioEpisode(playing, language) : null;
 
   if (!episode || pathname === `/prophets/audio/${episode.prophetId}`) return null;
 
   return (
     <View style={[styles.container, { bottom: 69 + insets.bottom }]}>
       <LinearGradient
-        colors={["#261323", "#401D2B", "#120B1D"]}
+        colors={["#1E1730", "#151022", "#100C19"]}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
         style={StyleSheet.absoluteFill}
@@ -28,16 +32,16 @@ export default function ProphetAudioMiniPlayer() {
         style={({ pressed }) => [styles.details, pressed && styles.pressed]}
       >
         <View style={styles.badge}>
-          <Ionicons name="headset" size={19} color="#FFF7EC" />
+          <Ionicons name="headset" size={19} color={colors.goldLight} />
         </View>
         <View style={styles.copy}>
-          <Text numberOfLines={1} style={styles.kicker}>RÉCIT AUDIO · {episode.prophetName.toUpperCase()}</Text>
+          <Text numberOfLines={1} style={styles.kicker}>{t("prophets.miniKicker", { name: episode.prophetName.toUpperCase() })}</Text>
           <Text numberOfLines={1} style={styles.title}>{episode.title}</Text>
         </View>
       </Pressable>
 
       <Pressable
-        accessibilityLabel={isPlaying ? "Mettre en pause" : "Reprendre"}
+        accessibilityLabel={t(isPlaying ? "prophets.pause" : "prophets.play")}
         onPress={() => void togglePlay()}
         style={({ pressed }) => [styles.playButton, pressed && styles.pressed]}
       >
@@ -45,7 +49,7 @@ export default function ProphetAudioMiniPlayer() {
       </Pressable>
 
       <Pressable
-        accessibilityLabel="Fermer complètement le récit audio"
+        accessibilityLabel={t("prophets.miniCloseA11y")}
         onPress={() => void close()}
         hitSlop={8}
         style={({ pressed }) => [styles.closeButton, pressed && styles.pressed]}
@@ -71,7 +75,7 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     borderRadius: 22,
     borderWidth: 1,
-    borderColor: "rgba(238,94,91,0.48)",
+    borderColor: "rgba(227,181,90,0.38)",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 7 },
     shadowOpacity: 0.35,
@@ -93,13 +97,13 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#B83C42",
+    backgroundColor: "rgba(227,181,90,0.12)",
     borderWidth: 1,
     borderColor: "rgba(255,255,255,0.24)",
   },
   copy: { flex: 1, minWidth: 0, marginLeft: 10 },
   kicker: {
-    color: "#F5B9B2",
+    color: colors.goldLight,
     fontFamily: typography.sans,
     fontSize: 8,
     fontWeight: "900",
@@ -138,6 +142,6 @@ const styles = StyleSheet.create({
     height: 3,
     backgroundColor: "rgba(255,255,255,0.10)",
   },
-  progressFill: { height: 3, backgroundColor: "#E85B5F" },
+  progressFill: { height: 3, backgroundColor: colors.goldLight },
   pressed: { opacity: 0.78 },
 });

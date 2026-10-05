@@ -18,6 +18,8 @@ import type { ProphetAudioEpisode } from "./prophetAudioData";
 import { getCachedProphetAudio } from "./prophetAudioCache";
 import { getOummahLockScreenArtworkUri } from "../../audio/lockScreenArtwork";
 import { goalProgressBridge } from "../../daily-goals/services/goalProgressBridge";
+import { getActiveLanguage, translate } from "../../../i18n";
+import { localizeAudioEpisode } from "../prophetsLocalization";
 
 type ProphetAudioContextValue = {
   episode: ProphetAudioEpisode | null;
@@ -66,8 +68,8 @@ export function ProphetAudioProvider({ children }: { children: ReactNode }) {
         player.setActiveForLockScreen(
           true,
           {
-            title: nextEpisode.title,
-            artist: "OUMMAH · Histoires des prophètes",
+            title: localizeAudioEpisode(nextEpisode, getActiveLanguage()).title,
+            artist: translate("prophets.lockArtist"),
             albumTitle: nextEpisode.prophetName,
             artworkUrl: getOummahLockScreenArtworkUri(),
           },
@@ -110,7 +112,7 @@ export function ProphetAudioProvider({ children }: { children: ReactNode }) {
       } catch (cause) {
         const message = cause instanceof Error
           ? cause.message
-          : "Impossible de télécharger cette histoire. Vérifie ta connexion puis réessaie.";
+          : translate("prophets.downloadError");
         setError(message);
         setEpisode(null);
         throw cause;

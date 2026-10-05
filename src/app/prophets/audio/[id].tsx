@@ -18,6 +18,8 @@ import {
 import { PROPHETS_PREVIEW } from "../../../features/prophets/prophetsData";
 import { PROPHET_AUDIO_EPISODES } from "../../../features/prophets/audio/prophetAudioData";
 import { useProphetAudio } from "../../../features/prophets/audio/ProphetAudioProvider";
+import { localizeAudioEpisode } from "../../../features/prophets/prophetsLocalization";
+import { useI18n } from "../../../i18n";
 import { colors } from "../../../theme/colors";
 import { typography } from "../../../theme/typography";
 
@@ -30,8 +32,12 @@ function formatTime(value: number) {
 }
 
 export default function ProphetAudioScreen() {
+  const { language, t } = useI18n();
   const params = useLocalSearchParams<{ id: string }>();
-  const audioEpisode = PROPHET_AUDIO_EPISODES[params.id];
+  const audioEpisode = useMemo(
+    () => (PROPHET_AUDIO_EPISODES[params.id] ? localizeAudioEpisode(PROPHET_AUDIO_EPISODES[params.id], language) : undefined),
+    [params.id, language],
+  );
   const preview = PROPHETS_PREVIEW.find((item) => item.id === params.id);
   const {
     episode,
@@ -75,10 +81,7 @@ export default function ProphetAudioScreen() {
       return;
     }
     void startEpisode(audioEpisode).catch(() => {
-      Alert.alert(
-        "Téléchargement impossible",
-        "Vérifie ta connexion internet puis réessaie. Une fois téléchargée, cette histoire restera disponible hors connexion.",
-      );
+      Alert.alert(t("prophets.downloadFailedTitle"), t("prophets.downloadFailedText"));
     });
   };
 
@@ -137,9 +140,9 @@ export default function ProphetAudioScreen() {
   if (!audioEpisode) {
     return (
       <SafeAreaView style={styles.missing}>
-        <Text style={styles.missingText}>Ce récit audio n’est pas encore disponible.</Text>
+        <Text style={styles.missingText}>{t("prophets.audioUnavailable")}</Text>
         <Pressable onPress={() => router.back()} style={styles.missingButton}>
-          <Text style={styles.missingButtonText}>Retour</Text>
+          <Text style={styles.missingButtonText}>{t("common.back")}</Text>
         </Pressable>
       </SafeAreaView>
     );
@@ -148,18 +151,18 @@ export default function ProphetAudioScreen() {
   return (
     <>
       <Stack.Screen options={{ gestureEnabled: false }} />
-      <LinearGradient colors={["#070612", "#130A17", "#070612"]} style={styles.screen}>
+      <LinearGradient colors={[colors.background, colors.backgroundSecondary, colors.background]} style={styles.screen}>
       <SafeAreaView style={styles.safeArea}>
         <View style={styles.header}>
           <Pressable onPress={() => router.back()} style={styles.headerButton}>
             <Ionicons name="chevron-back" size={23} color={colors.text} />
           </Pressable>
           <View style={styles.headerCopy}>
-            <Text style={styles.headerKicker}>HISTOIRES DES PROPHÈTES</Text>
-            <Text style={styles.headerTitle}>Mode audio</Text>
+            <Text style={styles.headerKicker}>{t("prophets.headerEyebrow")}</Text>
+            <Text style={styles.headerTitle}>{t("prophets.audioMode")}</Text>
           </View>
           <Pressable
-            accessibilityLabel="Fermer complètement le lecteur audio"
+            accessibilityLabel={t("prophets.audioCloseA11y")}
             onPress={() => void close().then(() => router.back())}
             style={styles.headerButton}
           >
@@ -177,7 +180,7 @@ export default function ProphetAudioScreen() {
             <View style={styles.heroRim} />
             <View style={styles.audioBadge}>
               <Ionicons name="headset" size={19} color="#FFF7EC" />
-              <Text style={styles.audioBadgeText}>RÉCIT AUDIO · VERSION COMPLÈTE</Text>
+              <Text style={styles.audioBadgeText}>{t("prophets.audioBadge")}</Text>
             </View>
             <View style={styles.heroCopy}>
               <Text style={styles.prophetName}>{audioEpisode.prophetName}</Text>
@@ -185,23 +188,21 @@ export default function ProphetAudioScreen() {
               <Text style={styles.heroSubtitle}>{audioEpisode.subtitle}</Text>
               <View style={styles.heroMetaRow}>
                 <View style={styles.metaPill}><Ionicons name="time-outline" size={14} color="#F3C46E" /><Text style={styles.metaText}>{durationLabel}</Text></View>
-                <View style={styles.metaPill}><Ionicons name="shield-checkmark-outline" size={14} color="#F3C46E" /><Text style={styles.metaText}>Récit sourcé</Text></View>
+                <View style={styles.metaPill}><Ionicons name="shield-checkmark-outline" size={14} color="#F3C46E" /><Text style={styles.metaText}>{t("prophets.audioSourced")}</Text></View>
               </View>
             </View>
           </View>
 
-          <LinearGradient colors={["rgba(49,19,36,0.96)", "rgba(21,12,29,0.98)"]} style={styles.playerCard}>
+          <LinearGradient colors={["#1E1730", "#151022"]} style={styles.playerCard}>
             <View style={styles.nowPlayingRow}>
               <View style={styles.waveBadge}><Ionicons name="pulse" size={20} color="#F3C46E" /></View>
               <View style={styles.nowPlayingCopy}>
                 <Text style={styles.nowPlayingKicker}>
                   {displayIsLoading
-                    ? `TÉLÉCHARGEMENT · ${Math.round((downloadProgress ?? 0) * 100)} %`
-                    : displayIsPlaying
-                      ? "LECTURE EN COURS"
-                      : "PRÊT À ÉCOUTER"}
+                    ? t("prophets.audioDownloading", { percent: Math.round((downloadProgress ?? 0) * 100) })
+                    : t(displayIsPlaying ? "prophets.audioPlaying" : "prophets.audioReady")}
                 </Text>
-                <Text style={styles.nowPlayingTitle}>{audioEpisode.prophetName} · paix sur lui</Text>
+                <Text style={styles.nowPlayingTitle}>{t("prophets.audioPeace", { name: audioEpisode.prophetName })}</Text>
               </View>
             </View>
 
@@ -209,7 +210,7 @@ export default function ProphetAudioScreen() {
               ref={trackRef}
               accessible
               accessibilityRole="adjustable"
-              accessibilityLabel="Position dans l’histoire"
+              accessibilityLabel={t("prophets.audioPosition")}
               onLayout={onTrackLayout}
               {...progressPanResponder.panHandlers}
               style={styles.progressTrack}
@@ -243,23 +244,23 @@ export default function ProphetAudioScreen() {
             </View>
 
             <Pressable onPress={() => void stop()} style={({ pressed }) => [styles.stopButton, pressed && styles.pressed]}>
-              <Ionicons name="stop" size={15} color="#F1A6A1" />
-              <Text style={styles.stopText}>Arrêter et revenir au début</Text>
+              <Ionicons name="stop" size={15} color={colors.textSecondary} />
+              <Text style={styles.stopText}>{t("prophets.audioStop")}</Text>
             </Pressable>
           </LinearGradient>
 
           <View style={styles.backgroundCard}>
             <View style={styles.backgroundIcon}><Ionicons name="phone-portrait-outline" size={19} color="#F3C46E" /></View>
             <View style={styles.backgroundCopy}>
-              <Text style={styles.backgroundTitle}>Continue partout dans OUMMAH</Text>
-              <Text style={styles.backgroundText}>Tu peux quitter cette histoire, changer de module ou verrouiller ton téléphone : le récit continue. La petite croix ferme complètement la session audio.</Text>
+              <Text style={styles.backgroundTitle}>{t("prophets.audioBackgroundTitle")}</Text>
+              <Text style={styles.backgroundText}>{t("prophets.audioBackgroundText")}</Text>
             </View>
           </View>
 
           <View style={styles.sourceCard}>
-            <Text style={styles.sourceKicker}>SOURCES DU RÉCIT</Text>
-            <Text style={styles.sourceTitle}>Une narration plus complète, sans ajouter de légendes</Text>
-            <Text style={styles.sourceText}>Le mode audio développe le récit pour l’écoute, mais reste limité aux éléments établis. Version du script : {audioEpisode.scriptVersion}.</Text>
+            <Text style={styles.sourceKicker}>{t("prophets.audioSourcesKicker")}</Text>
+            <Text style={styles.sourceTitle}>{t("prophets.audioSourcesTitle")}</Text>
+            <Text style={styles.sourceText}>{t("prophets.audioSourcesText")}</Text>
             <View style={styles.sourceWrap}>
               {audioEpisode.sourceLabels.map((label) => (
                 <View key={label} style={styles.sourcePill}><Text style={styles.sourcePillText}>{label}</Text></View>
@@ -283,30 +284,30 @@ const styles = StyleSheet.create({
   header: { minHeight: 72, paddingHorizontal: 16, flexDirection: "row", alignItems: "center", gap: 12 },
   headerButton: { width: 42, height: 42, borderRadius: 21, alignItems: "center", justifyContent: "center", borderWidth: 1, borderColor: "rgba(255,255,255,0.09)", backgroundColor: "rgba(255,255,255,0.045)" },
   headerCopy: { flex: 1, alignItems: "center" },
-  headerKicker: { color: "#E98B85", fontFamily: typography.sans, fontSize: 9, fontWeight: "900", letterSpacing: 1.2 },
+  headerKicker: { color: colors.goldLight, fontFamily: typography.sans, fontSize: 9, fontWeight: "900", letterSpacing: 1.2 },
   headerTitle: { marginTop: 2, color: colors.text, fontFamily: typography.serifSemibold, fontSize: 22 },
   content: { padding: 16, paddingBottom: 120 },
-  hero: { height: 405, overflow: "hidden", borderRadius: 32, borderWidth: 1, borderColor: "rgba(232,91,95,0.36)", backgroundColor: "#1C101B" },
+  hero: { height: 405, overflow: "hidden", borderRadius: 32, borderWidth: 1, borderColor: "rgba(227,181,90,0.42)", backgroundColor: "#151022" },
   coverImage: { ...StyleSheet.absoluteFill, width: "100%", height: "100%" },
   heroRim: { position: "absolute", top: 8, right: 8, bottom: 8, left: 8, borderRadius: 25, borderWidth: 1, borderColor: "rgba(255,255,255,0.10)" },
-  audioBadge: { position: "absolute", top: 20, left: 20, minHeight: 34, paddingHorizontal: 11, borderRadius: 17, flexDirection: "row", alignItems: "center", gap: 7, backgroundColor: "rgba(179,55,64,0.90)", borderWidth: 1, borderColor: "rgba(255,255,255,0.18)" },
+  audioBadge: { position: "absolute", top: 20, left: 20, minHeight: 34, paddingHorizontal: 11, borderRadius: 17, flexDirection: "row", alignItems: "center", gap: 7, backgroundColor: "rgba(8,7,19,0.62)", borderWidth: 1, borderColor: "rgba(227,181,90,0.45)" },
   audioBadgeText: { color: "#FFF7EC", fontFamily: typography.sans, fontSize: 8.5, fontWeight: "900", letterSpacing: 0.8 },
   heroCopy: { flex: 1, justifyContent: "flex-end", padding: 22 },
-  prophetName: { color: "#F3C46E", fontFamily: typography.arabic, fontSize: 18 },
+  prophetName: { color: "#F3C46E", fontFamily: typography.serifSemibold, fontSize: 19 },
   heroTitle: { marginTop: 4, color: colors.text, fontFamily: typography.serifSemibold, fontSize: 34, lineHeight: 39 },
   heroSubtitle: { marginTop: 8, color: colors.textSecondary, fontFamily: typography.sans, fontSize: 16.5, lineHeight: 24 },
   heroMetaRow: { marginTop: 15, flexDirection: "row", flexWrap: "wrap", gap: 8 },
   metaPill: { minHeight: 30, paddingHorizontal: 10, borderRadius: 15, flexDirection: "row", alignItems: "center", gap: 6, backgroundColor: "rgba(8,5,13,0.58)", borderWidth: 1, borderColor: "rgba(243,196,110,0.20)" },
   metaText: { color: "#F8E7C6", fontFamily: typography.sans, fontSize: 10.5, fontWeight: "800" },
-  playerCard: { marginTop: 15, padding: 19, borderRadius: 28, borderWidth: 1, borderColor: "rgba(232,91,95,0.30)" },
+  playerCard: { marginTop: 15, padding: 19, borderRadius: 28, borderWidth: 1, borderColor: "#2B2238" },
   nowPlayingRow: { flexDirection: "row", alignItems: "center", gap: 11 },
   waveBadge: { width: 44, height: 44, borderRadius: 15, alignItems: "center", justifyContent: "center", backgroundColor: "rgba(243,196,110,0.10)", borderWidth: 1, borderColor: "rgba(243,196,110,0.18)" },
   nowPlayingCopy: { flex: 1 },
-  nowPlayingKicker: { color: "#E98B85", fontFamily: typography.sans, fontSize: 8.5, fontWeight: "900", letterSpacing: 1 },
+  nowPlayingKicker: { color: colors.goldLight, fontFamily: typography.sans, fontSize: 8.5, fontWeight: "900", letterSpacing: 1 },
   nowPlayingTitle: { marginTop: 3, color: colors.text, fontFamily: typography.serifSemibold, fontSize: 19 },
   progressTrack: { marginTop: 16, height: 30, justifyContent: "center" },
-  progressFill: { height: 5, borderRadius: 3, backgroundColor: "#E85B5F" },
-  progressThumb: { position: "absolute", width: 14, height: 14, marginLeft: -7, borderRadius: 7, backgroundColor: "#F6D18A", borderWidth: 2, borderColor: "#8C3A42" },
+  progressFill: { height: 5, borderRadius: 3, backgroundColor: colors.goldLight },
+  progressThumb: { position: "absolute", width: 14, height: 14, marginLeft: -7, borderRadius: 7, backgroundColor: "#F6D18A", borderWidth: 2, borderColor: "#8B6A2E" },
   progressThumbDragging: { width: 18, height: 18, marginLeft: -9, borderRadius: 9 },
   timeRow: { marginTop: -1, flexDirection: "row", justifyContent: "space-between" },
   timeText: { color: colors.textMuted, fontFamily: typography.sans, fontSize: 10.5, fontVariant: ["tabular-nums"] },
@@ -315,15 +316,15 @@ const styles = StyleSheet.create({
   seekLabel: { position: "absolute", bottom: 5, color: colors.textMuted, fontFamily: typography.sans, fontSize: 7.5, fontWeight: "900" },
   mainPlayButton: { width: 70, height: 70, borderRadius: 35, alignItems: "center", justifyContent: "center", backgroundColor: "#F3C46E", borderWidth: 4, borderColor: "rgba(255,255,255,0.12)", shadowColor: "#F3C46E", shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.22, shadowRadius: 10, elevation: 7 },
   mainPlayButtonDisabled: { opacity: 0.62 },
-  stopButton: { alignSelf: "center", marginTop: 16, minHeight: 34, paddingHorizontal: 12, borderRadius: 17, flexDirection: "row", alignItems: "center", gap: 7, backgroundColor: "rgba(232,91,95,0.08)", borderWidth: 1, borderColor: "rgba(232,91,95,0.18)" },
-  stopText: { color: "#F1A6A1", fontFamily: typography.sans, fontSize: 10.5, fontWeight: "800" },
+  stopButton: { alignSelf: "center", marginTop: 16, minHeight: 34, paddingHorizontal: 12, borderRadius: 17, flexDirection: "row", alignItems: "center", gap: 7, backgroundColor: "rgba(255,255,255,0.045)", borderWidth: 1, borderColor: "rgba(255,255,255,0.10)" },
+  stopText: { color: colors.textSecondary, fontFamily: typography.sans, fontSize: 10.5, fontWeight: "800" },
   backgroundCard: { marginTop: 14, padding: 16, borderRadius: 24, flexDirection: "row", gap: 12, backgroundColor: "rgba(243,196,110,0.055)", borderWidth: 1, borderColor: "rgba(243,196,110,0.18)" },
   backgroundIcon: { width: 42, height: 42, borderRadius: 14, alignItems: "center", justifyContent: "center", backgroundColor: "rgba(243,196,110,0.08)" },
   backgroundCopy: { flex: 1 },
   backgroundTitle: { color: colors.text, fontFamily: typography.serifSemibold, fontSize: 17 },
   backgroundText: { marginTop: 5, color: colors.textSecondary, fontFamily: typography.sans, fontSize: 12.5, lineHeight: 19 },
-  sourceCard: { marginTop: 14, padding: 17, borderRadius: 24, backgroundColor: "rgba(23,16,38,0.78)", borderWidth: 1, borderColor: colors.borderSoft },
-  sourceKicker: { color: "#E98B85", fontFamily: typography.sans, fontSize: 9, fontWeight: "900", letterSpacing: 1.1 },
+  sourceCard: { marginTop: 14, padding: 17, borderRadius: 24, backgroundColor: "#151022", borderWidth: 1, borderColor: "#2B2238" },
+  sourceKicker: { color: colors.goldLight, fontFamily: typography.sans, fontSize: 9, fontWeight: "900", letterSpacing: 1.1 },
   sourceTitle: { marginTop: 6, color: colors.text, fontFamily: typography.serifSemibold, fontSize: 21, lineHeight: 26 },
   sourceText: { marginTop: 6, color: colors.textSecondary, fontFamily: typography.sans, fontSize: 12.5, lineHeight: 19 },
   sourceWrap: { marginTop: 12, flexDirection: "row", flexWrap: "wrap", gap: 7 },

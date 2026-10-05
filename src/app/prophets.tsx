@@ -7,15 +7,20 @@ import { useCallback, useState } from "react";
 import { Pressable, SafeAreaView, ScrollView, StyleSheet, Text, View } from "react-native";
 
 import { PROPHET_AUDIO_EPISODES } from "../features/prophets/audio/prophetAudioData";
-import { MUSA_CHAPTERS, PROPHETS_PREVIEW } from "../features/prophets/prophetsData";
+import { MUSA_CHAPTERS, PROPHET_ENGLISH_NAMES, PROPHETS_PREVIEW } from "../features/prophets/prophetsData";
 import { loadMusaProgress } from "../features/prophets/prophetProgress";
+import { useI18n } from "../i18n";
 import { colors } from "../theme/colors";
 import { typography } from "../theme/typography";
 
 const MUSA_COVER = require("../assets/images/prophets/musa-scenes/moussa.jpg");
 const PROPHETS_HOME_COVER = require("../assets/images/prophets/prophets-home-premium.jpg");
+const CARD = "#151022";
+const CARD_RAISED = "#1E1730";
+const LINE = "#2B2238";
 
 export default function ProphetsScreen() {
+  const { language, t } = useI18n();
   const [completedCount, setCompletedCount] = useState(0);
   const [lastChapterId, setLastChapterId] = useState<string | null>(null);
 
@@ -41,25 +46,23 @@ export default function ProphetsScreen() {
             <Ionicons name="chevron-back" size={22} color={colors.text} />
           </Pressable>
           <View style={styles.headerCopy}>
-            <Text style={styles.headerTitle}>Histoires des Prophètes</Text>
+            <Text style={styles.headerTitle}>{t("prophets.title")}</Text>
           </View>
           <View style={styles.headerSpacer} />
         </View>
 
         <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-          <LinearGradient colors={["rgba(55,28,72,0.92)", "rgba(22,14,36,0.96)"]} style={styles.introCard}>
+          <LinearGradient colors={[CARD_RAISED, CARD]} style={styles.introCard}>
             <Image source={PROPHETS_HOME_COVER} contentFit="cover" style={StyleSheet.absoluteFill} />
             <View style={styles.introOrnament}>
               <Ionicons name="book-outline" size={28} color={colors.goldLight} />
             </View>
-            <Text style={styles.eyebrow}>UN VOYAGE À TRAVERS LA RÉVÉLATION</Text>
-            <Text style={styles.introTitle}>Découvrir les récits des Prophètes</Text>
-            <Text style={styles.introText}>
-              Parcours les prophètes nommés dans le Coran à travers une narration sourcée, immersive et respectueuse. Lis leurs récits ou écoute leurs histoires complètes, sans romancer ce que les textes ne disent pas.
-            </Text>
+            <Text style={styles.eyebrow}>{t("prophets.eyebrow")}</Text>
+            <Text style={styles.introTitle}>{t("prophets.introTitle")}</Text>
+            <Text style={styles.introText}>{t("prophets.introText")}</Text>
             <View style={styles.sourceChips}>
-              <View style={styles.sourceChip}><Ionicons name="book-outline" size={13} color={colors.goldLight} /><Text style={styles.sourceChipText}>CORAN</Text></View>
-              <View style={styles.sourceChip}><Ionicons name="checkmark-circle-outline" size={13} color={colors.goldLight} /><Text style={styles.sourceChipText}>SUNNA AUTHENTIQUE</Text></View>
+              <View style={styles.sourceChip}><Ionicons name="book-outline" size={13} color={colors.goldLight} /><Text style={styles.sourceChipText}>{t("prophets.sourceQuran")}</Text></View>
+              <View style={styles.sourceChip}><Ionicons name="checkmark-circle-outline" size={13} color={colors.goldLight} /><Text style={styles.sourceChipText}>{t("prophets.sourceSunna")}</Text></View>
             </View>
           </LinearGradient>
 
@@ -73,7 +76,7 @@ export default function ProphetsScreen() {
             <View style={styles.featuredCopy}>
               <View style={styles.availablePill}><Ionicons name="sparkles" size={12} color={colors.background} /><Text style={styles.availablePillText}>DISPONIBLE</Text></View>
               <Text style={styles.featuredArabic}>مُوسَىٰ</Text>
-              <Text style={styles.featuredTitle}>Moussa عليه السلام</Text>
+              <Text style={styles.featuredTitle}>Mûsâ عليه السلام</Text>
               <Text style={styles.featuredText}>Du Nil au Sinaï — 15 chapitres racontés à partir des passages du Coran.</Text>
               <View style={styles.progressRow}>
                 <View style={styles.progressTrack}><View style={[styles.progressFill, { width: `${Math.max(3, progress * 100)}%` }]} /></View>
@@ -88,16 +91,17 @@ export default function ProphetsScreen() {
 
           <View style={styles.sectionHeader}>
             <View style={styles.sectionHeaderCopy}>
-              <Text style={styles.eyebrow}>LES PROPHÈTES NOMMÉS DANS LE CORAN</Text>
-              <Text style={styles.sectionTitle}>Choisir une histoire</Text>
+              <Text style={styles.eyebrow}>{t("prophets.listEyebrow")}</Text>
+              <Text style={styles.sectionTitle}>{t("prophets.listTitle")}</Text>
             </View>
             <View style={styles.countBadge}><Text style={styles.countBadgeText}>{PROPHETS_PREVIEW.length}</Text></View>
           </View>
 
           <View style={styles.grid}>
-            {PROPHETS_PREVIEW.map((prophet, index) => {
+            {PROPHETS_PREVIEW.map((prophet) => {
               const available = prophet.status === "available";
               const hasAudio = Boolean(PROPHET_AUDIO_EPISODES[prophet.id]);
+              const usualName = language === "en" ? PROPHET_ENGLISH_NAMES[prophet.id] : prophet.frenchName;
               return (
                 <Pressable
                   key={prophet.id}
@@ -105,20 +109,15 @@ export default function ProphetsScreen() {
                   onPress={() => available && router.push((prophet.id === "musa" ? `/prophets/musa?chapter=${resumeIndex}` : `/prophets/${prophet.id}?chapter=0`) as Href)}
                   style={({ pressed }) => [styles.prophetCard, prophet.id === "muhammad" && styles.prophetCardWide, available && styles.prophetCardAvailable, pressed && available && styles.pressed]}
                 >
-                  {prophet.coverImage ? <Image source={prophet.coverImage} contentFit="cover" style={StyleSheet.absoluteFill} /> : null}
-                  <View style={[styles.numberCircle, available && styles.numberCircleAvailable]}>
-                    {available ? <Ionicons name="sparkles" size={14} color={colors.background} /> : <Text style={styles.numberText}>{String(index + 1).padStart(2, "0")}</Text>}
-                  </View>
+                  {prophet.coverImage ? <Image source={prophet.coverImage} contentFit="cover" transition={160} style={StyleSheet.absoluteFill} /> : null}
+                  <LinearGradient colors={["rgba(8,7,19,0)", "rgba(8,7,19,0.18)", "rgba(8,7,19,0.86)"]} locations={[0, 0.42, 1]} style={StyleSheet.absoluteFill} />
                   <View style={styles.prophetCopy}>
-                    <Text style={[styles.prophetName, available && styles.prophetNameAvailable]}>{prophet.name}</Text>
-                    {prophet.id !== "muhammad" ? <Text style={styles.prophetFrenchName}>{prophet.frenchName}</Text> : null}
-                  </View>
-                  <View style={[styles.statusPill, available && styles.statusPillAvailable]}>
-                    <Text style={[styles.statusText, available && styles.statusTextAvailable]}>{available ? "EXPLORER" : "BIENTÔT"}</Text>
+                    <Text style={styles.prophetName} numberOfLines={1}>{prophet.name}</Text>
+                    {usualName ? <Text style={styles.prophetFrenchName} numberOfLines={1}>{usualName}</Text> : null}
                   </View>
                   {hasAudio ? (
                     <View style={styles.audioBadge} pointerEvents="none">
-                      <Ionicons name="headset" size={14} color="#FFF7EC" />
+                      <Ionicons name="headset-outline" size={14} color={colors.goldLight} />
                     </View>
                   ) : null}
                 </Pressable>
@@ -127,21 +126,21 @@ export default function ProphetsScreen() {
           </View>
 
           <View style={styles.discoverySection}>
-            <Text style={styles.eyebrow}>POUR ALLER PLUS LOIN</Text>
-            <Text style={styles.discoveryTitle}>Explorer les grandes lignées</Text>
+            <Text style={styles.eyebrow}>{t("prophets.moreEyebrow")}</Text>
+            <Text style={styles.discoveryTitle}>{t("prophets.moreTitle")}</Text>
             <Pressable onPress={() => router.push("/prophets/women" as Href)} style={({pressed})=>[styles.discoveryCard,pressed&&styles.pressed]}>
-              <LinearGradient colors={["rgba(75,37,89,.92)","rgba(24,15,38,.98)"]} style={StyleSheet.absoluteFill}/><View style={styles.discoveryIcon}><Ionicons name="sparkles" size={22} color={colors.goldLight}/></View><View style={styles.discoveryCopy}><Text style={styles.discoveryKicker}>FEMMES D’EXCEPTION</Text><Text style={styles.discoveryText}>Maryam, Âsiyah, Khadîjah, Fâtimah, ‘Â’ishah et d’autres parcours remarquables.</Text></View><Ionicons name="chevron-forward" size={20} color={colors.goldLight}/>
+              <LinearGradient colors={[CARD_RAISED, CARD]} style={StyleSheet.absoluteFill}/><View style={styles.discoveryIcon}><Ionicons name="sparkles" size={22} color={colors.goldLight}/></View><View style={styles.discoveryCopy}><Text style={styles.discoveryKicker}>{t("prophets.womenKicker")}</Text><Text style={styles.discoveryText}>{t("prophets.womenText")}</Text></View><Ionicons name="chevron-forward" size={20} color={colors.goldLight}/>
             </Pressable>
             <Pressable onPress={() => router.push("/prophets/genealogy" as Href)} style={({pressed})=>[styles.discoveryCard,pressed&&styles.pressed]}>
-              <LinearGradient colors={["rgba(52,30,70,.94)","rgba(20,13,34,.99)"]} style={StyleSheet.absoluteFill}/><View style={styles.discoveryIcon}><Ionicons name="git-network-outline" size={23} color={colors.goldLight}/></View><View style={styles.discoveryCopy}><Text style={styles.discoveryKicker}>ARBRE DES PROPHÈTES</Text><Text style={styles.discoveryText}>De Âdam à Muhammad ﷺ : chronologie, filiations et liens familiaux sourcés.</Text></View><Ionicons name="chevron-forward" size={20} color={colors.goldLight}/>
+              <LinearGradient colors={[CARD_RAISED, CARD]} style={StyleSheet.absoluteFill}/><View style={styles.discoveryIcon}><Ionicons name="git-network-outline" size={23} color={colors.goldLight}/></View><View style={styles.discoveryCopy}><Text style={styles.discoveryKicker}>{t("prophets.treeKicker")}</Text><Text style={styles.discoveryText}>{t("prophets.treeText")}</Text></View><Ionicons name="chevron-forward" size={20} color={colors.goldLight}/>
             </Pressable>
           </View>
 
           <View style={styles.methodCard}>
             <Ionicons name="shield-checkmark-outline" size={21} color={colors.goldLight} />
             <View style={styles.methodCopy}>
-              <Text style={styles.methodTitle}>Raconter sans romancer</Text>
-              <Text style={styles.methodText}>Chaque récit distinguera ce qui vient du Coran, de la Sunna authentique et des explications savantes. Aucun visage de prophète ne sera représenté.</Text>
+              <Text style={styles.methodTitle}>{t("prophets.methodTitle")}</Text>
+              <Text style={styles.methodText}>{t("prophets.methodText")}</Text>
             </View>
           </View>
         </ScrollView>
@@ -154,7 +153,7 @@ const styles = StyleSheet.create({
   screen: { flex: 1 },
   safeArea: { flex: 1 },
   header: { minHeight: 74, paddingHorizontal: 16, flexDirection: "row", alignItems: "center" },
-  backButton: { width: 42, height: 42, alignItems: "center", justifyContent: "center", borderRadius: 21, borderWidth: 1, borderColor: colors.borderSoft, backgroundColor: "rgba(255,255,255,0.045)" },
+  backButton: { width: 42, height: 42, alignItems: "center", justifyContent: "center", borderRadius: 21, borderWidth: 1, borderColor: LINE, backgroundColor: "rgba(255,255,255,0.045)" },
   headerCopy: { flex: 1, alignItems: "center" },
   headerSpacer: { width: 42 },
   headerTitle: { color: colors.text, fontFamily: typography.serifSemibold, fontSize: 21 },
@@ -187,22 +186,13 @@ const styles = StyleSheet.create({
   countBadge: { minWidth: 38, height: 32, paddingHorizontal: 10, borderRadius: 16, alignItems: "center", justifyContent: "center", backgroundColor: "rgba(227,181,90,0.10)", borderWidth: 1, borderColor: "rgba(227,181,90,0.22)" },
   countBadgeText: { color: colors.goldLight, fontFamily: typography.sans, fontSize: 12, fontWeight: "900" },
   grid: { flexDirection: "row", flexWrap: "wrap", justifyContent: "space-between", rowGap: 10 },
-  prophetCard: { width: "48.7%", minHeight: 142, padding: 14, borderRadius: 22, borderWidth: 1, borderColor: "rgba(255,255,255,0.055)", backgroundColor: "rgba(255,255,255,0.025)", overflow: "hidden" },
-  prophetCardWide: { width: "100%", minHeight: 190 },
-  prophetCardAvailable: { borderColor: "rgba(227,181,90,0.45)", backgroundColor: "rgba(227,181,90,0.065)" },
-  numberCircle: { width: 29, height: 29, borderRadius: 15, alignItems: "center", justifyContent: "center", backgroundColor: colors.surfaceAlt, borderWidth: 1, borderColor: colors.borderSoft },
-  numberCircleAvailable: { backgroundColor: colors.goldLight, borderColor: colors.goldLight },
-  numberText: { color: colors.textMuted, fontFamily: typography.sans, fontSize: 8.5, fontWeight: "800" },
-  prophetCopy: { marginTop: 10, flex: 1 },
-  prophetName: { color: colors.textSecondary, fontFamily: typography.serifSemibold, fontSize: 18, lineHeight: 22 },
-  prophetFrenchName: { marginTop: 3, color: colors.textMuted, fontFamily: typography.sans, fontSize: 12, lineHeight: 16 },
-  prophetNameAvailable: { color: colors.text },
-  prophetArabic: { marginTop: 3, color: colors.textMuted, fontFamily: typography.arabic, fontSize: 16, lineHeight: 22 },
-  statusPill: { alignSelf: "flex-start", marginTop: 9, paddingHorizontal: 8, paddingVertical: 5, borderRadius: 10, backgroundColor: "rgba(255,255,255,0.035)" },
-  statusPillAvailable: { backgroundColor: "rgba(227,181,90,0.12)" },
-  statusText: { color: colors.textMuted, fontFamily: typography.sans, fontSize: 7.5, fontWeight: "900", letterSpacing: 1 },
-  statusTextAvailable: { color: colors.goldLight },
-  audioBadge: { position: "absolute", right: 11, bottom: 11, width: 28, height: 28, borderRadius: 14, alignItems: "center", justifyContent: "center", backgroundColor: "rgba(76,45,96,0.96)", borderWidth: 1, borderColor: "rgba(227,181,90,0.88)", shadowColor: "#000", shadowOpacity: 0.26, shadowRadius: 5, shadowOffset: { width: 0, height: 2 }, elevation: 4 },
+  prophetCard: { width: "48.7%", height: 168, justifyContent: "flex-end", padding: 14, borderRadius: 22, borderWidth: 1, borderColor: LINE, backgroundColor: CARD, overflow: "hidden" },
+  prophetCardWide: { width: "100%", height: 200 },
+  prophetCardAvailable: { borderColor: "rgba(227,181,90,0.30)" },
+  prophetCopy: { paddingRight: 30 },
+  prophetName: { color: colors.text, fontFamily: typography.serifSemibold, fontSize: 21, lineHeight: 25, textShadowColor: "rgba(0,0,0,0.55)", textShadowRadius: 6, textShadowOffset: { width: 0, height: 1 } },
+  prophetFrenchName: { marginTop: 1, color: "rgba(248,244,238,0.82)", fontFamily: typography.sans, fontSize: 12.5, lineHeight: 17, textShadowColor: "rgba(0,0,0,0.55)", textShadowRadius: 6, textShadowOffset: { width: 0, height: 1 } },
+  audioBadge: { position: "absolute", right: 11, bottom: 12, width: 28, height: 28, borderRadius: 14, alignItems: "center", justifyContent: "center", backgroundColor: "rgba(8,7,19,0.62)", borderWidth: 1, borderColor: "rgba(227,181,90,0.45)" },
   discoverySection: { marginTop: 24 },
   discoveryTitle: { marginTop: 5, marginBottom: 12, color: colors.text, fontFamily: typography.serifSemibold, fontSize: 24 },
   discoveryCard: { minHeight: 100, marginTop: 10, padding: 16, borderRadius: 24, overflow: "hidden", borderWidth: 1, borderColor: "rgba(227,181,90,0.28)", flexDirection: "row", alignItems: "center", gap: 13 },
@@ -210,7 +200,7 @@ const styles = StyleSheet.create({
   discoveryCopy: { flex: 1, paddingLeft: 12, paddingRight: 8, paddingVertical: 7, borderLeftWidth: 1, borderLeftColor: "rgba(227,181,90,0.55)" },
   discoveryKicker: { color: colors.goldLight, fontFamily: typography.serifSemibold, fontSize: 14, letterSpacing: 0.9 },
   discoveryText: { marginTop: 5, color: "rgba(245,241,232,0.78)", fontFamily: typography.sans, fontSize: 13, lineHeight: 19 },
-  methodCard: { marginTop: 18, padding: 17, borderRadius: 24, borderWidth: 1, borderColor: colors.borderSoft, backgroundColor: "rgba(23,16,38,0.82)", flexDirection: "row", gap: 12 },
+  methodCard: { marginTop: 18, padding: 17, borderRadius: 24, borderWidth: 1, borderColor: LINE, backgroundColor: CARD, flexDirection: "row", gap: 12 },
   methodCopy: { flex: 1 },
   methodTitle: { color: colors.text, fontFamily: typography.serifSemibold, fontSize: 18 },
   methodText: { marginTop: 5, color: colors.textSecondary, fontFamily: typography.sans, fontSize: 12.5, lineHeight: 19 },
