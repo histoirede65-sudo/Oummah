@@ -114,7 +114,7 @@ const styles = StyleSheet.create({
   list: { gap: 10 },
   principle: { paddingVertical: 14, borderBottomWidth: 1, borderBottomColor: colors.borderSoft },
   principleTitle: { color: colors.text, fontFamily: typography.sans, fontSize: 14, fontWeight: '800' },
-  quote: { marginTop: 6, color: colors.textSecondary, fontFamily: typography.serifMedium, fontSize: 17, lineHeight: 23 },
+  quote: { marginTop: 6, color: colors.textSecondary, fontFamily: typography.sans, fontSize: 14, lineHeight: 21 },
   legend: { marginBottom: 12, flexDirection: 'row', flexWrap: 'wrap', gap: 12 },
   legendItem: { flexDirection: 'row', alignItems: 'center', gap: 5 }, dot: { width: 7, height: 7, borderRadius: 4 },
   legendText: { color: colors.textMuted, fontFamily: typography.sans, fontSize: 10 },
