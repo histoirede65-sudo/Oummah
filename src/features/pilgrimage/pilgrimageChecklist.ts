@@ -73,7 +73,6 @@ export const CHECKLIST: ChecklistSection[] = [
     icon: "heart-outline",
     items: [
       { id: "debts", label: { fr: "Régler ses dettes et ses affaires", en: "Settle your debts and affairs" } },
-      { id: "forgive", label: { fr: "Demander pardon à ses proches", en: "Ask forgiveness of your loved ones" } },
       { id: "will", label: { fr: "Rédiger son testament (wasiyya)", en: "Write your will (wasiyyah)" } },
       { id: "duas", label: { fr: "Préparer sa liste de dou‘as personnelles", en: "Prepare your list of personal du‘as" } },
       { id: "learn", label: { fr: "Lire le guide de son pèlerinage", en: "Read the guide for your pilgrimage" } },

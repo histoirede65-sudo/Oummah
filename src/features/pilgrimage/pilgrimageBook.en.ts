@@ -77,7 +77,6 @@ export const STEPS_EN: Record<string, StepText | Partial<StepText>> = {
     todo: [
       "Prepare your practical needs and your spiritual state before the journey.",
       "Learn the rites, check the itinerary and prepare for your health and safety needs.",
-      "Settle your debts and affairs, and ask forgiveness of those you may have hurt.",
     ],
     notes: [
       "Whoever performs the pilgrimage without obscene talk or sins returns as on the day his mother gave birth to him.",
@@ -159,7 +158,7 @@ export const STEPS_EN: Record<string, StepText | Partial<StepText>> = {
     summary: "Count seven complete circuits, keeping the Kaaba on your left.",
     todo: [
       "Complete seven circuits around the Kaaba, without imposing a supplication for each circuit.",
-      "Each circuit begins and ends in line with the Black Stone.",
+      "Al-Wajiz: the Tawaf begins at the Black Stone and ends there, with the House on your left.",
     ],
     notes: ["There is no authentic obligatory supplication for each circuit."],
     mistakes: ["Do not count back-and-forth walking as circuits, and do not push."],
@@ -207,7 +206,7 @@ export const STEPS_EN: Record<string, StepText | Partial<StepText>> = {
       "Make seven trips: Safa to Marwah counts as one, the way back as two, until you finish at Marwah.",
       "Climbing Safa, the Prophet ﷺ recited the verse about Safa and Marwah, then faced the Kaaba to declare the oneness and greatness of Allah and to supplicate; he did the same on Marwah.",
     ],
-    men: ["A man hurries between the markers (green lights) if it is safe."],
+    men: ["The Prophet ﷺ ran in the bottom of the valley; al-Wajiz: run fast between the two green markers."],
     women: ["A woman walks normally."],
   },
   hair,
@@ -223,50 +222,52 @@ export const STEPS_EN: Record<string, StepText | Partial<StepText>> = {
   // Medina
   "arrive-medina": {
     title: "Arriving in Medina",
-    summary: "Visiting Medina is neither a pillar nor an obligation of the Umrah or the Hajj: it is a recommended visit to the Mosque of the Prophet ﷺ.",
+    summary: "Al-Wajiz: visiting the Mosque of the Prophet ﷺ is a Sunnah unconnected with the Hajj: it is not one of its rites.",
     todo: [
       "Travel with the intention of praying in the Mosque of the Prophet ﷺ: one travels specially only to three mosques.",
       "Enter the mosque with the right foot, saying the supplication for entering.",
     ],
     notes: [
       "A prayer in this mosque is better than a thousand prayers elsewhere, except in the Sacred Mosque.",
-      "No ihram is needed for Medina: the visit is not a rite of the pilgrimage.",
+      "Al-Wajiz: visiting the Mosque of the Prophet ﷺ is not one of the rites of the Hajj; it is prescribed for its own sake.",
     ],
   },
   rawda: {
     title: "Ar-Rawdah",
     summary: "\"Between my house and my pulpit there is a garden of the gardens of Paradise.\"",
     todo: [
-      "Pray there if you get a place, then leave it to others.",
+      "Al-Wajiz: do not let the wish to pray in the Rawdah make you leave the front rows; prayer in the Rawdah has no merit distinguishing it from the rest of the mosque.",
       "Access is usually by booking: ask your group.",
     ],
-    avoid: ["Do not push anyone to get in."],
   },
   salam: {
     title: "Greeting the Prophet ﷺ",
-    summary: "At the grave of the Prophet ﷺ, greet him calmly and respectfully, then his two companions Abu Bakr and ‘Umar.",
-    todo: ["Say: \"As-salamu ‘alayka ya Rasula llah\", then greet Abu Bakr and ‘Umar."],
-    notes: ["\"Indeed, Allāh confers blessing upon the Prophet, and His angels [ask Him to do so]. O you who have believed, ask [Allāh to confer] blessing upon him and ask [Allāh to grant him] peace.\" This can be done from anywhere."],
+    summary: "At the grave of the Prophet ﷺ, greet him, then his two companions Abu Bakr and ‘Umar, without raising your voice.",
+    todo: ["Al-Wajiz: greet him with the words he used to greet the people of al-Baqi‘, and greet Abu Bakr and ‘Umar in the same way."],
+    notes: [
+      "\"Indeed, Allāh confers blessing upon the Prophet, and His angels [ask Him to do so]. O you who have believed, ask [Allāh to confer] blessing upon him and ask [Allāh to grant him] peace.\"",
+      "\"Do not make my grave a place of festivity, and invoke blessings on me, for your blessings reach me wherever you may be.\"",
+    ],
     avoid: [
       "Do not raise your voice: \"do not raise your voices above the voice of the Prophet.\"",
-      "Supplications are addressed to Allah alone: \"so do not invoke with Allāh anyone.\"",
+      "Al-Wajiz: avoid putting your hands on your chest, bowing your head and humbling yourself before the grave, and seeking help from the Prophet ﷺ: \"so do not invoke with Allāh anyone.\"",
     ],
   },
   quba: {
     title: "The Quba Mosque",
-    summary: "The first mosque built by the Prophet ﷺ when he arrived in Medina.",
+    summary: "Al-Wajiz: whoever comes to Medina is recommended to go and pray at the Quba Mosque, as the Prophet ﷺ did.",
     todo: ["The Prophet ﷺ went there every Saturday, walking or riding, and prayed two rak‘ahs."],
     notes: ["Whoever purifies himself at home and then comes to pray at Quba receives a reward like that of an Umrah."],
   },
   baqi: {
     title: "Al-Baqi‘",
-    summary: "The cemetery of Medina, where many companions are buried.",
+    summary: "Al-Wajiz: the Muslim cemetery of Medina, where many Companions are buried.",
     todo: ["Greet the dead and supplicate Allah for them."],
-    avoid: ["We supplicate Allah for the dead; we do not address requests to them."],
+    avoid: ["Al-Wajiz: beware of seeking blessing from graves and of seeking help from those buried in them."],
   },
   uhud: {
     title: "Mount Uhud",
-    summary: "The site of the battle of Uhud, where the martyrs are buried, among them Hamzah.",
+    summary: "Al-Wajiz: at the foot of Mount Uhud about seventy martyrs of the battle named after it are buried.",
     todo: ["Greet the martyrs and supplicate Allah for them, as for anyone who has died."],
     notes: ["On seeing Uhud, the Prophet ﷺ said: \"This mountain loves us and we love it.\""],
   },
@@ -308,10 +309,10 @@ export const STEPS_EN: Record<string, StepText | Partial<StepText>> = {
     title: "Arrival Tawaf (al-qudum)",
     summary: "In Qiran and Ifrad, the pilgrim stays in ihram and performs the Arrival Tawaf on arriving.",
     todo: [
-      "Complete seven circuits, then the two rak‘ahs, as for any Tawaf.",
+      "Complete seven circuits, then the two rak‘ahs, as for any Tawaf. The first thing the Prophet ﷺ did on reaching Makkah was the ablution and then the Tawaf.",
       "Stay in ihram: there is no cutting of the hair at this point.",
     ],
-    notes: ["The Sa‘y of Hajj may be done after this Tawaf; it is then not repeated after Tawaf al-Ifadah. Check your case with your group leaders."],
+    notes: ["The Prophet ﷺ and those of his Companions who had brought their animals ran between Safa and Marwah only once, sufficing for both Hajj and Umrah."],
   },
   "mina-8": {
     title: "The Day of Tarwiyah in Mina",
@@ -334,7 +335,7 @@ export const STEPS_EN: Record<string, StepText | Partial<StepText>> = {
       "\"Hajj is Arafah.\"",
       "There is no day when Allah sets free more servants from the Fire than the Day of ‘Arafah.",
     ],
-    avoid: ["Make sure you are inside the boundaries of ‘Arafat, which are marked on site."],
+    avoid: ["\"The whole of ‘Arafat is a place of standing, but keep away from the bottom of ‘Uranah.\""],
   },
   muzdalifah: {
     title: "The night at Muzdalifah",
@@ -359,7 +360,7 @@ export const STEPS_EN: Record<string, StepText | Partial<StepText>> = {
     summary: "On this day only the large pillar is stoned: seven pebbles, one at a time.",
     todo: [
       "Throw seven pebbles, one after another, saying \"Allahu akbar\" with each pebble.",
-      "The talbiyah stops with this stoning.",
+      "The Prophet ﷺ kept saying the talbiyah until this stoning.",
     ],
     avoid: ["Do not put yourself in danger in the crowd; keep to the times given to your group."],
   },
@@ -375,12 +376,15 @@ export const STEPS_EN: Record<string, StepText | Partial<StepText>> = {
   "nahr-hair": { ...hair, summary: "After the stoning (and the sacrifice if it is due from you), a man shaves or shortens; a woman shortens." },
   ifada: {
     title: "Tawaf al-Ifadah",
-    summary: "Tawaf al-Ifadah is a pillar of the Hajj; it may be performed on this day or the following days.",
+    summary: "Tawaf al-Ifadah is a pillar of the Hajj.",
     todo: [
       "Complete seven circuits, then the two rak‘ahs.",
       "Tamattu‘: then perform the Sa‘y of Hajj. Qiran and Ifrad: only if you did not do it after the Arrival Tawaf.",
     ],
-    notes: ["After the stoning and the cut, most prohibitions are lifted; marital relations remain forbidden until Tawaf al-Ifadah."],
+    notes: [
+      "‘A’ishah used to perfume the Prophet ﷺ when he came out of ihram, before the Tawaf around the House.",
+      "Al-Wajiz: marital relations after stoning Jamrat al-‘Aqabah and before Tawaf al-Ifadah do not invalidate the Hajj, but they are a sin.",
+    ],
   },
   "tashriq-11": {
     title: "11 Dhul-Hijjah",
