@@ -276,7 +276,7 @@ export const COMPANIONS: Companion[] = [
           {
             "kind": "quran",
             "text": {
-              "fr": "Mohammad n’est qu’un Messager - des Messagers avant lui sont passés -",
+              "fr": "Muhammad n’est qu’un Messager - des Messagers avant lui sont passés -",
               "en": "Muḥammad is not but a messenger. [Other] messengers have passed on before him."
             },
             "ref": {
@@ -1060,7 +1060,7 @@ export const COMPANIONS: Companion[] = [
           {
             "kind": "hadith",
             "text": {
-              "fr": "Tu occupes par rapport à moi la même place qu’Aaron (Harun) par rapport à Moïse, mais à cette différence près qu’il n’y a pas de prophète après moi.",
+              "fr": "Tu occupes par rapport à moi la même place qu’Hârûn par rapport à Mûsâ, mais à cette différence près qu’il n’y a pas de prophète après moi.",
               "en": "You are in the same position with relation to me as Aaron (Harun) was in relation to Moses but with (this explicit difference) that there is no prophet after me."
             },
             "ref": {
@@ -2080,7 +2080,7 @@ export const COMPANIONS: Companion[] = [
           {
             "kind": "hadith",
             "text": {
-              "fr": "Ô gens de Quraish ! Par Allah, aucun d’entre vous n’est sur la religion d’Abraham à part moi.",
+              "fr": "Ô gens de Quraish ! Par Allah, aucun d’entre vous n’est sur la religion d’Ibrâhîm à part moi.",
               "en": "O people of Quraish! By Allah, none amongst you is on the religion of Abraham except me."
             },
             "ref": {
@@ -5059,7 +5059,7 @@ export const COMPANIONS: Companion[] = [
             "en": "When the Prophet ﷺ came back from the cave of Hira, trembling after the first revelation, it was to Khadija that he went. She reassured him with these words:"
           },
           {
-            "fr": "Puis elle l’emmena chez son cousin Waraqa ibn Nawfal, qui connaissait les Écritures et confirma qu’il avait reçu la même révélation que Moïse.",
+            "fr": "Puis elle l’emmena chez son cousin Waraqa ibn Nawfal, qui connaissait les Écritures et confirma qu’il avait reçu la même révélation que Mûsâ.",
             "en": "Then she took him to her cousin Waraqa ibn Nawfal, who knew the Scriptures and confirmed that he had received the same revelation as Moses."
           }
         ],
@@ -5247,7 +5247,7 @@ export const COMPANIONS: Companion[] = [
             "en": "'A'isha lived with the Prophet ﷺ in Medina until his death; he died in her room, his head resting against her. 'Amr ibn al-'As once asked him whom he loved most:"
           },
           {
-            "fr": "Le Prophète ﷺ lui dit un jour : « Ô Aïcha ! Voici Gabriel qui te salue. »",
+            "fr": "Le Prophète ﷺ lui dit un jour : « Ô Aïcha ! Voici Jibrîl qui te salue. »",
             "en": "The Prophet ﷺ once told her: \"O Aish ('Aisha)! This is Gabriel greeting you.\""
           }
         ],

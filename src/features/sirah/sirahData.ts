@@ -123,7 +123,7 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
       {
         "type": "quran",
         "text": {
-          "fr": "Et quand Abraham et Ismaël élevaient les assises de la Maison: \"Ô notre Seigneur! Accepte ceci de notre part! Car c’est Toi l’Audient, l’Omniscient.",
+          "fr": "Et quand Ibrâhîm et Ismâ‘îl élevaient les assises de la Maison: \"Ô notre Seigneur! Accepte ceci de notre part! Car c’est Toi l’Audient, l’Omniscient.",
           "en": "And [mention] when Abraham was raising the foundations of the House and [with him] Ishmael, [saying], \"Our Lord, accept [this] from us. Indeed, You are the Hearing, the Knowing."
         },
         "ref": {
@@ -713,7 +713,7 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
       {
         "type": "hadith",
         "text": {
-          "fr": "C’est le même gardien des secrets (l’ange Gabriel) qu’Allah a envoyé à Moïse. J’aimerais être jeune et vivre jusqu’au jour où ton peuple te chassera.” L’Envoyé d’Allah (ﷺ) a demandé : “Vont-ils vraiment me chasser ?” Waraqa a répondu que oui et a dit : “Personne n’est venu avec quelque chose de semblable à ce que tu as apporté sans être traité avec hostilité. Et si je vis jusqu’au jour où tu seras chassé, je te soutiendrai de toutes mes forces.",
+          "fr": "C’est le même gardien des secrets (l’ange Jibrîl) qu’Allah a envoyé à Mûsâ. J’aimerais être jeune et vivre jusqu’au jour où ton peuple te chassera.” L’Envoyé d’Allah (ﷺ) a demandé : “Vont-ils vraiment me chasser ?” Waraqa a répondu que oui et a dit : “Personne n’est venu avec quelque chose de semblable à ce que tu as apporté sans être traité avec hostilité. Et si je vis jusqu’au jour où tu seras chassé, je te soutiendrai de toutes mes forces.",
           "en": "This is the same one who keeps the secrets (angel Gabriel) whom Allah had sent to Moses. I wish I were young and could live up to the time when your people would turn you out.\" Allah's Messenger (ﷺ) asked, \"Will they drive me out?\" Waraqa replied in the affirmative and said, \"Anyone (man) who came with something similar to what you have brought was treated with hostility; and if I should remain alive till the day when you will be turned out then I would support you strongly."
         },
         "ref": {
@@ -768,7 +768,7 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
     ],
     "lessons": [
       {
-        "fr": "Ceux qui connaissaient les Écritures ont reconnu la même source de révélation que celle de Moïse.",
+        "fr": "Ceux qui connaissaient les Écritures ont reconnu la même source de révélation que celle de Mûsâ.",
         "en": "Those who knew the Scriptures recognised the same source of revelation as that of Moses."
       }
     ],
@@ -1898,7 +1898,7 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
       {
         "type": "hadith",
         "text": {
-          "fr": "Nous ne dirons pas comme l'ont dit les gens de Moïse : “Va, toi et ton Seigneur, et combattez tous les deux.” Mais nous combattrons à ta droite, à ta gauche, devant toi et derrière toi.",
+          "fr": "Nous ne dirons pas comme l'ont dit les gens de Mûsâ : “Va, toi et ton Seigneur, et combattez tous les deux.” Mais nous combattrons à ta droite, à ta gauche, devant toi et derrière toi.",
           "en": "We will not say as the People of Moses said: Go you and your Lord and fight you two. (5.27). But we shall fight on your right and on your left and in front of you and behind you."
         },
         "ref": {
@@ -3098,7 +3098,7 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
       {
         "type": "quran",
         "text": {
-          "fr": "Mohammad n’est qu’un Messager - des Messagers avant lui sont passés - S’il mourait, donc, ou s’il était tué, retourneriez-vous sur vos talons? Quiconque retourne sur ses talons ne nuira en rien à Allah ; et Allah récompensera bientôt les reconnaissants.",
+          "fr": "Muhammad n’est qu’un Messager - des Messagers avant lui sont passés - S’il mourait, donc, ou s’il était tué, retourneriez-vous sur vos talons? Quiconque retourne sur ses talons ne nuira en rien à Allah ; et Allah récompensera bientôt les reconnaissants.",
           "en": "Muḥammad is not but a messenger. [Other] messengers have passed on before him. So if he was to die or be killed, would you turn back on your heels [to unbelief]? And he who turns back on his heels will never harm Allāh at all; but Allāh will reward the grateful."
         },
         "ref": {

@@ -2323,7 +2323,7 @@ export const fr = {
   'companions.lessons': 'À RETENIR',
   'companions.next': 'COMPAGNON SUIVANT',
   'companions.chapters': 'Chapitres',
-  'companions.method': 'Les versets sont cités dans la traduction de Hamidullah et les hadiths dans la traduction de leur recueil. Les récits qui viennent de la sîra ou des historiens sont présentés comme tels.',
+  'companions.method': 'Les versets sont cités dans la traduction de Hamidullah et les hadiths dans la traduction de leur recueil. Les récits qui viennent de la sîra ou des historiens sont présentés comme tels. Les noms des prophètes et des anges sont donnés sous leur forme arabe (Ibrâhîm, Mûsâ, Jibrîl…).',
   'wasil.noEnergyTitle': 'Vous n’avez plus d’Énergie Wasil',
   'wasil.noEnergyBody': 'Chaque question à Wasil utilise de l’Énergie, et votre solde est à zéro. Rechargez votre Énergie pour continuer : votre question est gardée, vous pourrez la renvoyer juste après.',
   'wasil.noEnergyAction': 'Recharger mon Énergie',
@@ -2350,7 +2350,7 @@ export const fr = {
   'sirah.backToContents': 'Retour au sommaire',
   'sirah.position': '{era} · {index} / {count}',
   'sirah.notFound': 'Chapitre introuvable.',
-  'sirah.method': 'Les versets sont cités dans la traduction de Hamidullah et les hadiths dans la traduction de leur recueil. Ce qui est incertain ou discuté est signalé dans l’encadré « Bon à savoir ».',
+  'sirah.method': 'Les versets sont cités dans la traduction de Hamidullah et les hadiths dans la traduction de leur recueil. Ce qui est incertain ou discuté est signalé dans l’encadré « Bon à savoir ». Les noms des prophètes et des anges sont donnés sous leur forme arabe (Ibrâhîm, Mûsâ, Jibrîl…).',
 } as const;
 
 export type TranslationKey = keyof typeof fr;
