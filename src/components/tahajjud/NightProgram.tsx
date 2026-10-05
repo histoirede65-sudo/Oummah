@@ -9,6 +9,7 @@ import type { GoalMetric } from '../../features/daily-goals/domain/GoalCategory'
 import { readGoalActivity } from '../../features/daily-goals/services/goalActivity';
 import { GlassCard, shellStyles } from './TahajjudShell';
 import { night, nightType } from './theme';
+import { tx } from '../../features/tahajjud/tahajjudI18n';
 
 /**
  * « Programme de la nuit » : dhikr, Coran, hadith, prophètes, doua. Each action opens the existing
@@ -40,7 +41,7 @@ function goalLine(goals: DailyGoal[], metrics: GoalMetric[]) {
   const current = minutes ? Math.floor(goal.progress.current / 60) : Math.floor(goal.progress.current);
   const target = minutes ? Math.ceil(goal.progress.target / 60) : goal.progress.target;
   const done = goal.progress.current >= goal.progress.target;
-  return { text: done ? 'Objectif du jour atteint' : `Objectif : ${current}/${target}${minutes ? ' min' : ''}`, done };
+  return { text: done ? tx('Objectif du jour atteint') : tx("Objectif : {0}/{1}{2}", [current, target, minutes ? ' min' : '']), done };
 }
 
 export function NightProgram({ since }: { since: number | null }) {
@@ -63,7 +64,7 @@ export function NightProgram({ since }: { since: number | null }) {
   return (
     <View style={styles.wrap}>
       <View style={styles.head}>
-        <Text style={[shellStyles.sectionLabel, styles.noMargin]}>Programme de la nuit</Text>
+        <Text style={[shellStyles.sectionLabel, styles.noMargin]}>{tx("Programme de la nuit")}</Text>
         <Text style={styles.count}>{doneCount}/{ACTIONS.length}</Text>
       </View>
       <View style={styles.track}><View style={[styles.fill, { width: `${(doneCount / ACTIONS.length) * 100}%` }]} /></View>
@@ -81,15 +82,15 @@ export function NightProgram({ since }: { since: number | null }) {
                   </View>
                   <Ionicons name="chevron-forward" size={16} color={night.muted} />
                 </View>
-                <Text style={styles.title}>{action.title}</Text>
-                <Text style={styles.hint} numberOfLines={2}>{action.hint}</Text>
+                <Text style={styles.title}>{tx(action.title)}</Text>
+                <Text style={styles.hint} numberOfLines={2}>{tx(action.hint)}</Text>
                 {goal ? <Text style={[styles.goal, goal.done && styles.goalDone]}>{goal.text}</Text> : null}
               </GlassCard>
             </Pressable>
           );
         })}
       </View>
-      <Text style={styles.note}>Chaque action compte automatiquement dans vos objectifs du jour.</Text>
+      <Text style={styles.note}>{tx("Chaque action compte automatiquement dans vos objectifs du jour.")}</Text>
     </View>
   );
 }

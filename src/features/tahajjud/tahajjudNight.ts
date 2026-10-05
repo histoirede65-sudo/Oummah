@@ -1,4 +1,5 @@
-/**
+
+import { tx, tahajjudLocale } from './tahajjudI18n';/**
  * Moteur de la nuit Tahajjud. Aucun calcul d'horaires ici : tout part des horaires déjà calculés par
  * OUMMAH (MosquePrayerSchedule).
  *
@@ -146,7 +147,7 @@ export function upcomingNights(schedule: NightSchedule): TahajjudNight[] {
 // ----- Formatting ----------------------------------------------------------------------------
 
 export function clock(timestamp: number): string {
-  return new Date(timestamp).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+  return new Date(timestamp).toLocaleTimeString(tahajjudLocale(), { hour: '2-digit', minute: '2-digit' });
 }
 
 /** 5 h 47 · 47 min · 1 min */
@@ -154,7 +155,7 @@ export function formatDuration(ms: number): string {
   const minutes = Math.max(0, Math.round(ms / 60_000));
   const hours = Math.floor(minutes / 60);
   const rest = minutes % 60;
-  if (hours === 0) return `${Math.max(1, rest)} min`;
+  if (hours === 0) return tx("{0} min", [Math.max(1, rest)]);
   return rest === 0 ? `${hours} h` : `${hours} h ${String(rest).padStart(2, '0')}`;
 }
 
@@ -163,11 +164,11 @@ export function formatDuration(ms: number): string {
 export type AlarmMode = 'start' | 'start30' | 'start60' | 'beforeFajr30' | 'custom';
 
 export const ALARM_MODES: readonly { mode: AlarmMode; label: string }[] = [
-  { mode: 'start', label: 'Début du dernier tiers' },
-  { mode: 'start30', label: '30 minutes après le début' },
-  { mode: 'start60', label: '1 heure après le début' },
-  { mode: 'beforeFajr30', label: '30 minutes avant Fajr' },
-  { mode: 'custom', label: 'Heure personnalisée' },
+  { mode: 'start', get label() { return tx('Début du dernier tiers'); } },
+  { mode: 'start30', get label() { return tx('30 minutes après le début'); } },
+  { mode: 'start60', get label() { return tx('1 heure après le début'); } },
+  { mode: 'beforeFajr30', get label() { return tx('30 minutes avant Fajr'); } },
+  { mode: 'custom', get label() { return tx('Heure personnalisée'); } },
 ];
 
 /** Wake-up time of a night. A custom time is placed in that night (between Maghrib and Fajr). */

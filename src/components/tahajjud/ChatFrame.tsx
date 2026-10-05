@@ -7,18 +7,19 @@ import type { CommunityAvatar } from '../../features/tahajjud/tahajjudCommunity'
 import { MemberAvatar } from './MemberAvatar';
 import { NightSky } from './NightSky';
 import { night, nightType } from './theme';
+import { tx, tahajjudLocale } from '../../features/tahajjud/tahajjudI18n';
 
 /** Shared frame of private and group conversations (night sky, header, inverted list, composer). */
 
-export const timeOf = (iso: string) => new Date(iso).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+export const timeOf = (iso: string) => new Date(iso).toLocaleTimeString(tahajjudLocale(), { hour: '2-digit', minute: '2-digit' });
 
 export function dayLabel(iso: string) {
   const date = new Date(iso);
   const today = new Date();
   const yesterday = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 1);
-  if (date.toDateString() === today.toDateString()) return 'Aujourd’hui';
-  if (date.toDateString() === yesterday.toDateString()) return 'Hier';
-  return date.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' });
+  if (date.toDateString() === today.toDateString()) return tx('Aujourd’hui');
+  if (date.toDateString() === yesterday.toDateString()) return tx('Hier');
+  return date.toLocaleDateString(tahajjudLocale(), { weekday: 'long', day: 'numeric', month: 'long' });
 }
 
 type Base = { id: string; createdAt: string; pending?: boolean };
@@ -64,7 +65,7 @@ export function ChatBubble({ mine, body, meta, author, tail, onLongPress }: {
 export function ChatFrame<T extends Base>({
   title, subtitle, avatar, icon, onPressHeader, right,
   messages, renderItem, onEndReached, loadingMore, emptyTitle, emptyText, error,
-  draft, onDraft, onSend, composerAction, placeholder = 'Votre message…',
+  draft, onDraft, onSend, composerAction, placeholder = tx('Votre message…'),
 }: {
   title: string;
   subtitle: string;
@@ -90,7 +91,7 @@ export function ChatFrame<T extends Base>({
       <NightSky />
       <SafeAreaView edges={['top', 'bottom']} style={styles.flex}>
         <View style={styles.header}>
-          <Pressable accessibilityRole="button" accessibilityLabel="Retour" onPress={() => router.back()} hitSlop={10} style={styles.back}>
+          <Pressable accessibilityRole="button" accessibilityLabel={tx("Retour")} onPress={() => router.back()} hitSlop={10} style={styles.back}>
             <Ionicons name="chevron-back" size={22} color={night.text} />
           </Pressable>
           <Pressable disabled={!onPressHeader} onPress={onPressHeader} style={styles.headerMain}>

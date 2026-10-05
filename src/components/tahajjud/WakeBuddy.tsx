@@ -22,6 +22,7 @@ import { FriendPicker } from './FriendPicker';
 import { MemberAvatar } from './MemberAvatar';
 import { GlassCard, shellStyles } from './TahajjudShell';
 import { night, nightType } from './theme';
+import { tx, txCount } from '../../features/tahajjud/tahajjudI18n';
 
 /** People who asked me to wake them tonight, with a « Réveiller » button each. */
 export function WakeOthers({ requests, onChanged, compact = false }: {
@@ -37,10 +38,10 @@ export function WakeOthers({ requests, onChanged, compact = false }: {
     try {
       const already = await sendWakeUp(request.id);
       void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => undefined);
-      if (already) Alert.alert('Déjà réveillé', `${already} a réveillé ${request.pseudo} avant vous. Barak Allahou fik.`);
+      if (already) Alert.alert(tx('Déjà réveillé'), tx("{0} a réveillé {1} avant vous. Barak Allahou fik.", [already, request.pseudo]));
       onChanged();
     } catch (error) {
-      Alert.alert('Réveiller', wakeErrorMessage(error));
+      Alert.alert(tx('Réveiller'), wakeErrorMessage(error));
     } finally {
       setSending(null);
     }
@@ -50,7 +51,7 @@ export function WakeOthers({ requests, onChanged, compact = false }: {
     <GlassCard gold style={compact ? styles.othersCompact : styles.others}>
       <View style={styles.othersHead}>
         <Ionicons name="people" size={17} color={night.goldSoft} />
-        <Text style={styles.othersTitle}>Ils comptent sur vous cette nuit</Text>
+        <Text style={styles.othersTitle}>{tx("Ils comptent sur vous cette nuit")}</Text>
       </View>
       {requests.map((request) => (
         <View key={request.id} style={styles.row}>
@@ -58,7 +59,7 @@ export function WakeOthers({ requests, onChanged, compact = false }: {
           <View style={styles.flex}>
             <Text style={styles.name} numberOfLines={1}>{request.pseudo}</Text>
             <Text style={styles.sub}>
-              {request.woken ? (request.wokenByMe ? 'Réveillé par vous 🤍' : 'Déjà réveillé') : request.wakeAt ? `Souhaite se lever vers ${clock(Date.parse(request.wakeAt))}` : 'Souhaite se lever pour prier'}
+              {request.woken ? (request.wokenByMe ? tx('Réveillé par vous 🤍') : tx('Déjà réveillé')) : request.wakeAt ? tx("Souhaite se lever vers {0}", [clock(Date.parse(request.wakeAt))]) : tx('Souhaite se lever pour prier')}
             </Text>
           </View>
           {request.woken ? (
@@ -68,7 +69,7 @@ export function WakeOthers({ requests, onChanged, compact = false }: {
               {sending === request.id ? <ActivityIndicator color={night.sky0} /> : (
                 <>
                   <Ionicons name="sunny" size={15} color={night.sky0} />
-                  <Text style={styles.wakeText}>Réveiller</Text>
+                  <Text style={styles.wakeText}>{tx("Réveiller")}</Text>
                 </>
               )}
             </Pressable>
@@ -111,12 +112,12 @@ function AskSheet({ visible, onClose, onSend }: {
       <Pressable style={styles.backdrop} onPress={onClose}>
         <Pressable style={styles.sheet} onPress={() => undefined}>
           <LinearGradient colors={['#1C1546', '#0E0A26']} style={StyleSheet.absoluteFill} />
-          <Text style={styles.sheetTitle}>Qui peut vous réveiller ?</Text>
-          <Text style={styles.sheetText}>Ils reçoivent une notification. Le premier debout vous réveille avec le son OUMMAH.</Text>
+          <Text style={styles.sheetTitle}>{tx("Qui peut vous réveiller ?")}</Text>
+          <Text style={styles.sheetText}>{tx("Ils reçoivent une notification. Le premier debout vous réveille avec le son OUMMAH.")}</Text>
           <ScrollView style={styles.sheetList} showsVerticalScrollIndicator={false}>
             {groups.length ? (
               <>
-                <Text style={shellStyles.sectionLabel}>Un groupe</Text>
+                <Text style={shellStyles.sectionLabel}>{tx("Un groupe")}</Text>
                 <View style={styles.groups}>
                   {groups.map((item) => (
                     <Pressable key={item.id} onPress={() => setGroup(group === item.id ? null : item.id)} style={[styles.groupChip, group === item.id && styles.groupChipOn]}>
@@ -127,7 +128,7 @@ function AskSheet({ visible, onClose, onSend }: {
                 </View>
               </>
             ) : null}
-            <Text style={[shellStyles.sectionLabel, styles.section]}>Des amis</Text>
+            <Text style={[shellStyles.sectionLabel, styles.section]}>{tx("Des amis")}</Text>
             {friends === null ? <ActivityIndicator color={night.gold} /> : (
               <FriendPicker
                 friends={friends}
@@ -137,14 +138,14 @@ function AskSheet({ visible, onClose, onSend }: {
                   if (next.has(id)) next.delete(id); else next.add(id);
                   return next;
                 })}
-                emptyText="Ajoutez d’abord des amis OUMMAH dans « Amis »."
+                emptyText={tx("Ajoutez d’abord des amis OUMMAH dans « Amis ».")}
               />
             )}
           </ScrollView>
           <Pressable disabled={sending || (!selected.size && !group)} onPress={() => void send()} style={[styles.primary, (sending || (!selected.size && !group)) && styles.disabled]}>
-            <Text style={styles.primaryText}>{sending ? 'Envoi…' : 'Demander à être réveillé'}</Text>
+            <Text style={styles.primaryText}>{sending ? tx('Envoi…') : tx('Demander à être réveillé')}</Text>
           </Pressable>
-          <Pressable onPress={onClose} style={styles.cancel}><Text style={styles.cancelText}>Annuler</Text></Pressable>
+          <Pressable onPress={onClose} style={styles.cancel}><Text style={styles.cancelText}>{tx("Annuler")}</Text></Pressable>
         </Pressable>
       </Pressable>
     </Modal>
@@ -186,10 +187,10 @@ export function WakeBuddyCard({ phase, nightKey, wakeAt, validated }: {
     try {
       const count = await requestWakeUp(nightKey, users, group, wakeAt ? new Date(wakeAt) : null);
       setSheet(false);
-      Alert.alert('Demande envoyée', `${count} ami${count > 1 ? 's' : ''} prévenu${count > 1 ? 's' : ''}. Le premier debout vous réveillera.`);
+      Alert.alert(tx('Demande envoyée'), txCount(count, '{0} ami prévenu. Le premier debout vous réveillera.', '{0} amis prévenus. Le premier debout vous réveillera.'));
       await load();
     } catch (error) {
-      Alert.alert('Binôme de réveil', wakeErrorMessage(error));
+      Alert.alert(tx('Binôme de réveil'), wakeErrorMessage(error));
     }
   };
 
@@ -203,13 +204,13 @@ export function WakeBuddyCard({ phase, nightKey, wakeAt, validated }: {
             <Ionicons name={mine.wokenBy ? 'sunny' : 'notifications-outline'} size={20} color={night.goldSoft} />
             <View style={styles.flex}>
               <Text style={styles.name}>
-                {mine.wokenBy ? `${mine.wokenBy} vous a réveillé` : `${mine.targets} ami${mine.targets > 1 ? 's' : ''} prêt${mine.targets > 1 ? 's' : ''} à vous réveiller`}
+                {mine.wokenBy ? tx("{0} vous a réveillé", [mine.wokenBy]) : txCount(mine.targets, '{0} ami prêt à vous réveiller', '{0} amis prêts à vous réveiller')}
               </Text>
-              <Text style={styles.sub}>{mine.wokenBy && mine.wokenAt ? `à ${clock(Date.parse(mine.wokenAt))} · qu’Allah le récompense` : 'Binôme de réveil'}</Text>
+              <Text style={styles.sub}>{mine.wokenBy && mine.wokenAt ? tx("à {0} · qu’Allah le récompense", [clock(Date.parse(mine.wokenAt))]) : tx('Binôme de réveil')}</Text>
             </View>
             {!mine.wokenBy ? (
               <Pressable onPress={() => void cancelWakeRequest(nightKey).then(load)} hitSlop={8}>
-                <Text style={styles.cancelLink}>Annuler</Text>
+                <Text style={styles.cancelLink}>{tx("Annuler")}</Text>
               </Pressable>
             ) : null}
           </GlassCard>
@@ -218,8 +219,8 @@ export function WakeBuddyCard({ phase, nightKey, wakeAt, validated }: {
             <GlassCard style={styles.mine}>
               <View style={styles.icon}><Ionicons name="people-outline" size={19} color={night.goldSoft} /></View>
               <View style={styles.flex}>
-                <Text style={styles.name}>Binôme de réveil</Text>
-                <Text style={styles.sub}>Demandez à un ami ou à un groupe de vous réveiller cette nuit.</Text>
+                <Text style={styles.name}>{tx("Binôme de réveil")}</Text>
+                <Text style={styles.sub}>{tx("Demandez à un ami ou à un groupe de vous réveiller cette nuit.")}</Text>
               </View>
               <Ionicons name="chevron-forward" size={18} color={night.muted} />
             </GlassCard>

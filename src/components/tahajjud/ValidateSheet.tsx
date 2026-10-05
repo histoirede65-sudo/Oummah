@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import { Modal, Pressable, StyleSheet, Text, View } from 'react-native';
 import Animated, { FadeIn, ZoomIn } from 'react-native-reanimated';
 import { night, nightType } from './theme';
+import { tx } from '../../features/tahajjud/tahajjudI18n';
 
 type Props = {
   visible: boolean;
@@ -51,24 +52,24 @@ export function ValidateSheet({ visible, late, streak, onClose, onConfirm }: Pro
               <Animated.View entering={ZoomIn.springify().damping(12)} style={styles.doneMoon}>
                 <Ionicons name="moon" size={44} color={night.sky0} />
               </Animated.View>
-              <Text style={styles.doneTitle}>Nuit accomplie</Text>
-              <Text style={styles.doneText}>Qu’Allah accepte votre prière et exauce vos invocations.</Text>
+              <Text style={styles.doneTitle}>{tx("Nuit accomplie")}</Text>
+              <Text style={styles.doneText}>{tx("Qu’Allah accepte votre prière et exauce vos invocations.")}</Text>
               {streak > 1 ? (
                 <View style={styles.streak}>
                   <Ionicons name="flame" size={16} color={night.gold} />
-                  <Text style={styles.streakText}>{streak} nuits de suite</Text>
+                  <Text style={styles.streakText}>{streak} {tx("nuits de suite")}</Text>
                 </View>
               ) : null}
               <Pressable onPress={onClose} style={styles.closeButton}>
-                <Text style={styles.closeText}>Fermer</Text>
+                <Text style={styles.closeText}>{tx("Fermer")}</Text>
               </Pressable>
             </Animated.View>
           ) : (
             <>
               <View style={styles.handle} />
-              <Text style={styles.title}>J’ai prié cette nuit</Text>
+              <Text style={styles.title}>{tx("J’ai prié cette nuit")}</Text>
               <Text style={styles.text}>
-                Une seule validation par nuit. Elle reste sur ce téléphone et nourrit votre suivi.
+                {tx("Une seule validation par nuit. Elle reste sur ce téléphone et nourrit votre suivi.")}
               </Text>
 
               <Pressable onPress={() => setWitr((value) => !value)} style={styles.option}>
@@ -76,19 +77,19 @@ export function ValidateSheet({ visible, late, streak, onClose, onConfirm }: Pro
                   {witr ? <Ionicons name="checkmark" size={16} color={night.sky0} /> : null}
                 </View>
                 <View style={styles.optionCopy}>
-                  <Text style={styles.optionTitle}>J’ai aussi prié le Witr</Text>
-                  <Text style={styles.optionText}>Facultatif</Text>
+                  <Text style={styles.optionTitle}>{tx("J’ai aussi prié le Witr")}</Text>
+                  <Text style={styles.optionText}>{tx("Facultatif")}</Text>
                 </View>
               </Pressable>
 
               <Pressable disabled={saving} onPress={() => void confirm()} style={({ pressed }) => [pressed && styles.pressed]}>
                 <LinearGradient colors={[night.goldSoft, night.gold]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.confirm}>
                   <Ionicons name="moon" size={19} color={night.sky0} />
-                  <Text style={styles.confirmText}>{saving ? 'Enregistrement…' : 'Enregistrer ma nuit'}</Text>
+                  <Text style={styles.confirmText}>{saving ? tx('Enregistrement…') : tx('Enregistrer ma nuit')}</Text>
                 </LinearGradient>
               </Pressable>
               <Pressable onPress={onClose} style={styles.cancel}>
-                <Text style={styles.cancelText}>Annuler</Text>
+                <Text style={styles.cancelText}>{tx("Annuler")}</Text>
               </Pressable>
             </>
           )}

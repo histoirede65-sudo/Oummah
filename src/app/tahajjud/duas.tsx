@@ -19,11 +19,12 @@ import {
   type TahajjudJournal,
 } from '../../features/tahajjud/TahajjudStore';
 import { useTahajjudNight } from '../../features/tahajjud/useTahajjudNight';
+import { tx, tahajjudLocale } from '../../features/tahajjud/tahajjudI18n';
 
 type Tab = 'duas' | 'journal';
 
 function formatNight(key: string) {
-  return new Date(`${key}T12:00:00`).toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' });
+  return new Date(`${key}T12:00:00`).toLocaleDateString(tahajjudLocale(), { weekday: 'long', day: 'numeric', month: 'long' });
 }
 
 export default function TahajjudDuasScreen() {
@@ -87,9 +88,9 @@ export default function TahajjudDuasScreen() {
   const history = Object.entries(journal).filter(([key]) => key !== nightKey).sort(([a], [b]) => b.localeCompare(a));
 
   return (
-    <TahajjudShell title="Ma nuit" eyebrow="Qiyam al-Layl">
+    <TahajjudShell title={tx("Ma nuit")} eyebrow={tx("Qiyam al-Layl")}>
       <View style={styles.tabs}>
-        {([['duas', 'Pour cette nuit'], ['journal', 'Journal']] as const).map(([id, label]) => (
+        {([['duas', tx('Pour cette nuit')], ['journal', tx('Journal')]] as const).map(([id, label]) => (
           <Pressable key={id} onPress={() => setTab(id)} style={[styles.tab, tab === id && styles.tabOn]}>
             <Text style={[styles.tabText, tab === id && styles.tabTextOn]}>{label}</Text>
           </Pressable>
@@ -100,15 +101,15 @@ export default function TahajjudDuasScreen() {
         <>
           <NightProgram since={state && state.phase !== 'day' ? state.night.maghrib : null} />
 
-          <Text style={shellStyles.sectionLabel}>Mes duas de la nuit</Text>
+          <Text style={shellStyles.sectionLabel}>{tx("Mes duas de la nuit")}</Text>
           <GlassCard gold>
-            <Text style={styles.prompt}>Cette nuit, je demande à Allah…</Text>
+            <Text style={styles.prompt}>{tx("Cette nuit, je demande à Allah…")}</Text>
             <View style={styles.addRow}>
               <TextInput
                 value={draft}
                 onChangeText={setDraft}
                 onSubmitEditing={add}
-                placeholder="La guérison de ma mère, un travail, le pardon…"
+                placeholder={tx("La guérison de ma mère, un travail, le pardon…")}
                 placeholderTextColor={night.placeholder}
                 returnKeyType="done"
                 maxLength={300}
@@ -124,7 +125,7 @@ export default function TahajjudDuasScreen() {
 
           {tonight.length > 0 ? (
             <Text style={[shellStyles.sectionLabel, styles.section]}>
-              {doneCount}/{tonight.length} invoquée{doneCount > 1 ? 's' : ''} cette nuit
+              {doneCount}/{tonight.length} {tx("invoquée")}{doneCount > 1 ? 's' : ''} {tx("cette nuit")}
             </Text>
           ) : null}
 
@@ -142,7 +143,7 @@ export default function TahajjudDuasScreen() {
                       <Pressable onPress={() => toggleKeep(dua)} hitSlop={6} style={styles.duaAction}>
                         <Ionicons name={dua.keep ? 'repeat' : 'repeat-outline'} size={14} color={dua.keep ? night.goldSoft : night.muted} />
                         <Text style={[styles.duaActionText, dua.keep && styles.duaActionOn]}>
-                          {dua.keep ? 'Gardée pour les prochaines nuits' : 'Garder pour les prochaines nuits'}
+                          {dua.keep ? tx('Gardée pour les prochaines nuits') : tx('Garder pour les prochaines nuits')}
                         </Text>
                       </Pressable>
                       <Pressable onPress={() => remove(dua)} hitSlop={6}>
@@ -155,7 +156,7 @@ export default function TahajjudDuasScreen() {
             );
           })}
 
-          <Text style={[shellStyles.sectionLabel, styles.section]}>Invocations de la nuit</Text>
+          <Text style={[shellStyles.sectionLabel, styles.section]}>{tx("Invocations de la nuit")}</Text>
           {NIGHT_DUAS.map((dua) => (
             <GlassCard key={dua.source} style={styles.sourceCard}>
               {dua.arabic ? <Text style={styles.arabic}>{dua.arabic}</Text> : null}
@@ -166,40 +167,40 @@ export default function TahajjudDuasScreen() {
           ))}
           <Pressable onPress={() => router.push('/dua' as Href)} style={styles.link}>
             <Ionicons name="library-outline" size={16} color={night.goldSoft} />
-            <Text style={styles.linkText}>Toutes les douas d’OUMMAH</Text>
+            <Text style={styles.linkText}>{tx("Toutes les douas d’OUMMAH")}</Text>
           </Pressable>
         </>
       ) : (
         <>
           <GlassCard gold>
-            <Text style={styles.prompt}>Cette nuit, je souhaite invoquer Allah pour…</Text>
+            <Text style={styles.prompt}>{tx("Cette nuit, je souhaite invoquer Allah pour…")}</Text>
             <TextInput
               value={intention}
               onChangeText={setIntention}
               onBlur={() => void saveEntry({ intention, note })}
-              placeholder="Mon intention pour cette nuit"
+              placeholder={tx("Mon intention pour cette nuit")}
               placeholderTextColor={night.placeholder}
               multiline
               maxLength={1000}
               style={[styles.input, styles.journalInput]}
             />
-            <Text style={[styles.prompt, styles.promptSpaced]}>Mes notes</Text>
+            <Text style={[styles.prompt, styles.promptSpaced]}>{tx("Mes notes")}</Text>
             <TextInput
               value={note}
               onChangeText={setNote}
               onBlur={() => void saveEntry({ intention, note })}
-              placeholder="Ce que j’ai ressenti, ce que je retiens…"
+              placeholder={tx("Ce que j’ai ressenti, ce que je retiens…")}
               placeholderTextColor={night.placeholder}
               multiline
               maxLength={2000}
               style={[styles.input, styles.journalInput]}
             />
             <Text style={styles.privacy}>
-              <Ionicons name="lock-closed" size={11} color={night.muted} /> Jamais publié. Enregistré automatiquement sur ce téléphone.
+              <Ionicons name="lock-closed" size={11} color={night.muted} /> {tx("Jamais publié. Enregistré automatiquement sur ce téléphone.")}
             </Text>
           </GlassCard>
 
-          {history.length ? <Text style={[shellStyles.sectionLabel, styles.section]}>Mes nuits précédentes</Text> : null}
+          {history.length ? <Text style={[shellStyles.sectionLabel, styles.section]}>{tx("Mes nuits précédentes")}</Text> : null}
           {history.map(([key, item]) => (
             <GlassCard key={key} style={styles.sourceCard}>
               <Text style={styles.historyDate}>{formatNight(key)}</Text>

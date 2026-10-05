@@ -14,6 +14,7 @@ import { clock, formatDuration } from '../../features/tahajjud/tahajjudNight';
 import { duasForNight, loadPrivateDuas, type PrivateDua } from '../../features/tahajjud/TahajjudStore';
 import { useTahajjudNight } from '../../features/tahajjud/useTahajjudNight';
 import { getWakeRequestsForMe, type WakeRequestForMe } from '../../features/tahajjud/tahajjudWakeBuddy';
+import { tx } from '../../features/tahajjud/tahajjudI18n';
 
 /**
  * « Je suis debout » : dark guided session from waking up to « J'ai prié ».
@@ -107,8 +108,8 @@ export default function AwakeScreen() {
       case 'wake':
         return (
           <>
-            <Text style={styles.big}>Bismillah, vous êtes debout.</Text>
-            <Text style={styles.lead}>Passez la main sur le visage pour chasser le sommeil, puis dites :</Text>
+            <Text style={styles.big}>{tx("Bismillah, vous êtes debout.")}</Text>
+            <Text style={styles.lead}>{tx("Passez la main sur le visage pour chasser le sommeil, puis dites :")}</Text>
             <SourceBlock source={WAKING_DUA} />
             {proofOf('wake')?.tip ? <Text style={styles.tip}>{proofOf('wake')?.tip}</Text> : null}
             <WakeOthers requests={toWake} onChanged={loadToWake} compact />
@@ -117,17 +118,17 @@ export default function AwakeScreen() {
       case 'wudu':
         return (
           <>
-            <Text style={styles.big}>Les ablutions</Text>
-            <Text style={styles.lead}>Le sommeil annule les ablutions : faites un wudu complet, calmement, à l’eau fraîche pour vous réveiller.</Text>
+            <Text style={styles.big}>{tx("Les ablutions")}</Text>
+            <Text style={styles.lead}>{tx("Le sommeil annule les ablutions : faites un wudu complet, calmement, à l’eau fraîche pour vous réveiller.")}</Text>
             {proofOf('wudu')?.proof ? <SourceBlock source={proofOf('wudu')!.proof!} /> : null}
           </>
         );
       case 'intention':
         return (
           <>
-            <Text style={styles.big}>L’intention</Text>
+            <Text style={styles.big}>{tx("L’intention")}</Text>
             <Text style={styles.lead}>
-              Dans votre cœur : prier la prière de la nuit, pour Allah seul. Nul besoin de la prononcer. Mettez votre téléphone de côté, cet écran restera allumé.
+              {tx("Dans votre cœur : prier la prière de la nuit, pour Allah seul. Nul besoin de la prononcer. Mettez votre téléphone de côté, cet écran restera allumé.")}
             </Text>
             <SourceBlock source={NIGHT_HADITHS[0]} />
           </>
@@ -135,20 +136,20 @@ export default function AwakeScreen() {
       case 'pray':
         return (
           <>
-            <Text style={styles.big}>Priez deux par deux</Text>
-            <Text style={styles.lead}>Commencez par deux rak‘at légères, puis à votre rythme. Touchez le bouton après chaque salam.</Text>
+            <Text style={styles.big}>{tx("Priez deux par deux")}</Text>
+            <Text style={styles.lead}>{tx("Commencez par deux rak‘at légères, puis à votre rythme. Touchez le bouton après chaque salam.")}</Text>
             <View style={styles.counter}>
-              <Pressable onPress={() => addRakat(-2)} disabled={rakat === 0} style={[styles.counterSmall, rakat === 0 && styles.disabled]} accessibilityLabel="Retirer deux rak‘at">
+              <Pressable onPress={() => addRakat(-2)} disabled={rakat === 0} style={[styles.counterSmall, rakat === 0 && styles.disabled]} accessibilityLabel={tx("Retirer deux rak‘at")}>
                 <Ionicons name="remove" size={22} color={night.goldSoft} />
               </Pressable>
-              <Pressable onPress={() => addRakat(2)} style={styles.counterMain} accessibilityLabel="Ajouter deux rak‘at">
+              <Pressable onPress={() => addRakat(2)} style={styles.counterMain} accessibilityLabel={tx("Ajouter deux rak‘at")}>
                 <Text style={styles.counterValue}>{rakat}</Text>
-                <Text style={styles.counterLabel}>rak‘at · touchez + 2</Text>
+                <Text style={styles.counterLabel}>{tx("rak‘at · touchez + 2")}</Text>
               </Pressable>
             </View>
             <Pressable onPress={() => router.push('/tahajjud/recite' as Href)} style={styles.link}>
               <Ionicons name="book-outline" size={18} color={night.goldSoft} />
-              <Text style={styles.linkText}>Que réciter dans ma prière ?</Text>
+              <Text style={styles.linkText}>{tx("Que réciter dans ma prière ?")}</Text>
               <Ionicons name="chevron-forward" size={16} color={night.goldSoft} />
             </Pressable>
             {proofOf('start')?.proof ? <SourceBlock source={proofOf('start')!.proof!} /> : null}
@@ -157,11 +158,11 @@ export default function AwakeScreen() {
       case 'duas':
         return (
           <>
-            <Text style={styles.big}>Le moment des invocations</Text>
-            <Text style={styles.lead}>Dans la prosternation ou après la prière, demandez à Allah ce dont vous avez besoin, dans votre langue.</Text>
+            <Text style={styles.big}>{tx("Le moment des invocations")}</Text>
+            <Text style={styles.lead}>{tx("Dans la prosternation ou après la prière, demandez à Allah ce dont vous avez besoin, dans votre langue.")}</Text>
             {duas.length ? (
               <View style={styles.duaList}>
-                <Text style={styles.duaTitle}>Ce que vous avez préparé pour cette nuit</Text>
+                <Text style={styles.duaTitle}>{tx("Ce que vous avez préparé pour cette nuit")}</Text>
                 {duas.map((dua) => (
                   <View key={dua.id} style={styles.duaRow}>
                     <Ionicons name="heart" size={14} color={night.goldSoft} />
@@ -172,7 +173,7 @@ export default function AwakeScreen() {
             ) : (
               <Pressable onPress={() => router.push('/tahajjud/duas' as Href)} style={styles.link}>
                 <Ionicons name="add-circle-outline" size={18} color={night.goldSoft} />
-                <Text style={styles.linkText}>Préparer mes duas de la nuit</Text>
+                <Text style={styles.linkText}>{tx("Préparer mes duas de la nuit")}</Text>
                 <Ionicons name="chevron-forward" size={16} color={night.goldSoft} />
               </Pressable>
             )}
@@ -182,13 +183,13 @@ export default function AwakeScreen() {
       case 'witr':
         return (
           <>
-            <Text style={styles.big}>Terminer par le Witr</Text>
-            <Text style={styles.lead}>Une ou trois rak‘at pour clore la prière de la nuit. Vous pouvez aussi le garder pour avant Fajr.</Text>
+            <Text style={styles.big}>{tx("Terminer par le Witr")}</Text>
+            <Text style={styles.lead}>{tx("Une ou trois rak‘at pour clore la prière de la nuit. Vous pouvez aussi le garder pour avant Fajr.")}</Text>
             <View style={styles.witrRow}>
               {([1, 3] as const).map((value) => (
                 <Pressable key={value} onPress={() => setWitr(witr === value ? null : value)} style={[styles.witr, witr === value && styles.witrOn]}>
                   <Text style={[styles.witrValue, witr === value && styles.witrTextOn]}>{value}</Text>
-                  <Text style={[styles.witrLabel, witr === value && styles.witrTextOn]}>rak‘a{value > 1 ? 't' : ''}</Text>
+                  <Text style={[styles.witrLabel, witr === value && styles.witrTextOn]}>{tx("rak‘a")}{value > 1 ? 't' : ''}</Text>
                 </Pressable>
               ))}
             </View>
@@ -200,21 +201,21 @@ export default function AwakeScreen() {
         return saved ? (
           <Animated.View entering={FadeIn.duration(600)} style={styles.doneWrap}>
             <Ionicons name="moon" size={58} color={night.goldSoft} />
-            <Text style={styles.big}>Qu’Allah l’accepte.</Text>
-            <Text style={styles.lead}>Votre nuit est enregistrée. Reposez-vous jusqu’à Fajr{night_ ? ` (${clock(night_.fajr)})` : ''}.</Text>
+            <Text style={styles.big}>{tx("Qu’Allah l’accepte.")}</Text>
+            <Text style={styles.lead}>{tx("Votre nuit est enregistrée. Reposez-vous jusqu’à Fajr")}{night_ ? ` (${clock(night_.fajr)})` : ''}.</Text>
             <Pressable onPress={() => router.back()} style={styles.primary}>
-              <Text style={styles.primaryText}>Terminer</Text>
+              <Text style={styles.primaryText}>{tx("Terminer")}</Text>
             </Pressable>
           </Animated.View>
         ) : (
           <>
-            <Text style={styles.big}>Al-hamdu lillah.</Text>
+            <Text style={styles.big}>{tx("Al-hamdu lillah.")}</Text>
             <Text style={styles.lead}>
-              {rakat ? `${rakat} rak‘at` : 'Votre prière'}{witr ? ` et ${witr} de Witr` : ''}. Enregistrez votre nuit pour votre régularité.
+              {rakat ? tx("{0} rak‘at", [rakat]) : tx('Votre prière')}{witr ? tx(" et {0} de Witr", [witr]) : ''}{tx(". Enregistrez votre nuit pour votre régularité.")}
             </Text>
             <Pressable onPress={() => void finish()} disabled={saving} style={[styles.primary, saving && styles.disabled]}>
               <Ionicons name="checkmark-circle" size={20} color={night.sky0} />
-              <Text style={styles.primaryText}>{view.validated ? 'Nuit déjà enregistrée' : view.canValidate ? 'J’ai prié cette nuit' : 'Fermer'}</Text>
+              <Text style={styles.primaryText}>{view.validated ? tx('Nuit déjà enregistrée') : view.canValidate ? tx('J’ai prié cette nuit') : tx('Fermer')}</Text>
             </Pressable>
           </>
         );
@@ -225,12 +226,12 @@ export default function AwakeScreen() {
     <View style={styles.root}>
       <SafeAreaView edges={['top', 'bottom']} style={styles.flex}>
         <View style={styles.header}>
-          <Pressable accessibilityRole="button" accessibilityLabel="Fermer" onPress={() => router.back()} hitSlop={10} style={styles.close}>
+          <Pressable accessibilityRole="button" accessibilityLabel={tx("Fermer")} onPress={() => router.back()} hitSlop={10} style={styles.close}>
             <Ionicons name="close" size={22} color={night.muted} />
           </Pressable>
           <View style={styles.headerCopy}>
             <Text style={styles.clock}>{clock(now)}</Text>
-            {toFajr !== null && toFajr > 0 ? <Text style={styles.fajr}>Fajr dans {formatDuration(toFajr)}</Text> : null}
+            {toFajr !== null && toFajr > 0 ? <Text style={styles.fajr}>{tx("Fajr dans ")}{formatDuration(toFajr)}</Text> : null}
           </View>
           <View style={styles.close} />
         </View>
@@ -240,7 +241,7 @@ export default function AwakeScreen() {
             <Pressable key={item.id} onPress={() => goTo(i)} hitSlop={6} style={[styles.dot, i === index && styles.dotOn, i < index && styles.dotDone]} />
           ))}
         </View>
-        <Text style={styles.stepLabel}>{index + 1}/{STEPS.length} · {step.label}</Text>
+        <Text style={styles.stepLabel}>{index + 1}/{STEPS.length} · {tx(step.label)}</Text>
 
         <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
           <Animated.View key={step.id} entering={FadeInRight.duration(350)}>
@@ -254,7 +255,7 @@ export default function AwakeScreen() {
               <Ionicons name="arrow-back" size={20} color={night.goldSoft} />
             </Pressable>
             <Pressable onPress={() => goTo(index + 1)} style={styles.next}>
-              <Text style={styles.nextText}>{STEPS[index + 1]?.id === 'done' ? 'Terminer' : 'Suivant'}</Text>
+              <Text style={styles.nextText}>{STEPS[index + 1]?.id === 'done' ? tx('Terminer') : tx('Suivant')}</Text>
               <Ionicons name="arrow-forward" size={20} color={night.sky0} />
             </Pressable>
           </View>

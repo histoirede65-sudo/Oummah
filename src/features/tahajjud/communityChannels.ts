@@ -1,5 +1,6 @@
 import * as Notifications from 'expo-notifications';
 import { Platform } from 'react-native';
+import { tx } from './tahajjudI18n';
 
 /** Messages (private + groups): own channel with the OUMMAH sound, like a messaging app. */
 export const MESSAGES_CHANNEL = 'oummah-messages-v1';
@@ -12,8 +13,8 @@ const TAHAJJUD_CHANNEL = 'oummah-tahajjud-v1';
 export async function ensureCommunityChannels() {
   if (Platform.OS !== 'android') return;
   await Notifications.setNotificationChannelAsync(MESSAGES_CHANNEL, {
-    name: 'Messages OUMMAH',
-    description: 'Messages privés et de groupe, rappels de groupe.',
+    name: tx('Messages OUMMAH'),
+    description: tx('Messages privés et de groupe, rappels de groupe.'),
     importance: Notifications.AndroidImportance.HIGH,
     sound: 'oummah_message.wav',
     vibrationPattern: [0, 120, 80, 120],
@@ -23,7 +24,7 @@ export async function ensureCommunityChannels() {
   const existing = await Notifications.getNotificationChannelAsync(TAHAJJUD_CHANNEL).catch(() => null);
   if (!existing) {
     await Notifications.setNotificationChannelAsync(TAHAJJUD_CHANNEL, {
-      name: 'Qiyam al-Layl',
+      name: tx('Qiyam al-Layl'),
       importance: Notifications.AndroidImportance.MAX,
       vibrationPattern: [0, 400, 200, 400, 200, 600],
       sound: 'default',

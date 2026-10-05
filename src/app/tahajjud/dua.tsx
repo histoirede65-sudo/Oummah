@@ -22,6 +22,7 @@ import {
   type WallReply,
 } from '../../features/tahajjud/duaWall';
 import { COMMUNITY_AVATARS, getCommunityProfile, isSignedIn, type CommunityAvatar } from '../../features/tahajjud/tahajjudCommunity';
+import { tx, txCount } from '../../features/tahajjud/tahajjudI18n';
 
 const KIND_REPLIES = ['Amine 🤲', 'Qu’Allah t’exauce', 'Je fais doua pour toi', 'Qu’Allah te facilite'];
 
@@ -61,7 +62,7 @@ export default function DuaDetailScreen() {
   const toggleAmeen = async () => {
     if (!post) return;
     if (!canWrite) {
-      Alert.alert('Amine', 'Créez votre profil OUMMAH pour dire Amine.');
+      Alert.alert(tx('Amine'), tx('Créez votre profil OUMMAH pour dire Amine.'));
       return;
     }
     const next = !ameen.on;
@@ -72,7 +73,7 @@ export default function DuaDetailScreen() {
       setAmeenState({ on: next, count: await setAmeen(post.id, next) });
     } catch (error) {
       setAmeenState(previous);
-      Alert.alert('Amine', wallErrorMessage(error));
+      Alert.alert(tx('Amine'), wallErrorMessage(error));
     }
   };
 
@@ -87,23 +88,23 @@ export default function DuaDetailScreen() {
       setReplies(await getWallReplies(postId).catch(() => replies));
       setTimeout(() => scroll.current?.scrollToEnd({ animated: true }), 150);
     } catch (error) {
-      Alert.alert('Réponse', wallErrorMessage(error));
+      Alert.alert(tx('Réponse'), wallErrorMessage(error));
     } finally {
       setSending(false);
     }
   };
 
   const replyOptions = (reply: WallReply) => {
-    Alert.alert('Réponse', undefined, reply.mine
-      ? [{ text: 'Supprimer', style: 'destructive', onPress: () => void deleteWall('reply', reply.id).then(load) }, { text: 'Annuler', style: 'cancel' }]
-      : [{ text: 'Signaler', onPress: () => void reportWall('reply', reply.id).then(() => Alert.alert('Merci', 'La réponse a été signalée.')) }, { text: 'Annuler', style: 'cancel' }]);
+    Alert.alert(tx('Réponse'), undefined, reply.mine
+      ? [{ text: tx('Supprimer'), style: 'destructive', onPress: () => void deleteWall('reply', reply.id).then(load) }, { text: tx('Annuler'), style: 'cancel' }]
+      : [{ text: tx('Signaler'), onPress: () => void reportWall('reply', reply.id).then(() => Alert.alert(tx('Merci'), tx('La réponse a été signalée.'))) }, { text: tx('Annuler'), style: 'cancel' }]);
   };
 
   const postOptions = () => {
     if (!post || post.mine) return;
-    Alert.alert('Doua', undefined, [
-      { text: 'Signaler', onPress: () => void reportWall('post', post.id).then(() => Alert.alert('Merci', 'La doua a été signalée. Elle sera masquée si plusieurs membres la signalent.')).catch((error) => Alert.alert('Signalement', wallErrorMessage(error))) },
-      { text: 'Annuler', style: 'cancel' },
+    Alert.alert(tx('Doua'), undefined, [
+      { text: tx('Signaler'), onPress: () => void reportWall('post', post.id).then(() => Alert.alert(tx('Merci'), tx('La doua a été signalée. Elle sera masquée si plusieurs membres la signalent.'))).catch((error) => Alert.alert(tx('Signalement'), wallErrorMessage(error))) },
+      { text: tx('Annuler'), style: 'cancel' },
     ]);
   };
 
@@ -112,12 +113,12 @@ export default function DuaDetailScreen() {
       <NightSky />
       <SafeAreaView edges={['top', 'bottom']} style={styles.flex}>
         <View style={styles.header}>
-          <Pressable accessibilityRole="button" accessibilityLabel="Retour" onPress={() => router.back()} hitSlop={10} style={styles.back}>
+          <Pressable accessibilityRole="button" accessibilityLabel={tx("Retour")} onPress={() => router.back()} hitSlop={10} style={styles.back}>
             <Ionicons name="chevron-back" size={22} color={night.text} />
           </Pressable>
           <View style={styles.flex}>
-            <Text style={styles.eyebrow}>Mur des duas</Text>
-            <Text style={styles.title}>Doua</Text>
+            <Text style={styles.eyebrow}>{tx("Mur des duas")}</Text>
+            <Text style={styles.title}>{tx("Doua")}</Text>
           </View>
           {post && !post.mine ? (
             <Pressable onPress={postOptions} hitSlop={10}><Ionicons name="ellipsis-horizontal" size={22} color={night.muted} /></Pressable>
@@ -130,9 +131,9 @@ export default function DuaDetailScreen() {
           ) : post === null ? (
             <View style={styles.center}>
               <Ionicons name="moon-outline" size={36} color={night.lavender} />
-              <Text style={styles.gone}>Cette doua n’est plus disponible.</Text>
+              <Text style={styles.gone}>{tx("Cette doua n’est plus disponible.")}</Text>
               <Pressable onPress={() => router.replace('/tahajjud/wall' as Href)} style={styles.primary}>
-                <Text style={styles.primaryText}>Voir le Mur des duas</Text>
+                <Text style={styles.primaryText}>{tx("Voir le Mur des duas")}</Text>
               </Pressable>
             </View>
           ) : (
@@ -141,43 +142,43 @@ export default function DuaDetailScreen() {
                 {post.answered ? (
                   <View style={styles.answeredPill}>
                     <Ionicons name="sparkles" size={14} color={night.sky0} />
-                    <Text style={styles.answeredText}>Allah l’a exaucée</Text>
+                    <Text style={styles.answeredText}>{tx("Allah l’a exaucée")}</Text>
                   </View>
                 ) : null}
                 <Text style={styles.body}>{post.body}</Text>
                 {post.gratitude ? (
                   <View style={styles.gratitude}>
-                    <Text style={styles.gratitudeLabel}>Gratitude</Text>
+                    <Text style={styles.gratitudeLabel}>{tx("Gratitude")}</Text>
                     <Text style={styles.gratitudeText}>{post.gratitude}</Text>
                   </View>
                 ) : null}
                 <View style={styles.metaRow}>
                   {post.author ? <MemberAvatar avatar={avatarOf(post.authorAvatar)} size={26} /> : null}
-                  <Text style={styles.meta}>{post.author ?? 'Anonyme'} · {timeAgo(post.createdAt)}</Text>
+                  <Text style={styles.meta}>{post.author ?? tx('Anonyme')} · {timeAgo(post.createdAt)}</Text>
                 </View>
                 <Pressable onPress={() => void toggleAmeen()} style={[styles.ameen, ameen.on && styles.ameenOn]}>
                   <Ionicons name={ameen.on ? 'hand-left' : 'hand-left-outline'} size={19} color={ameen.on ? night.sky0 : night.goldSoft} />
-                  <Text style={[styles.ameenText, ameen.on && styles.ameenTextOn]}>Amine</Text>
+                  <Text style={[styles.ameenText, ameen.on && styles.ameenTextOn]}>{tx("Amine")}</Text>
                   <View style={[styles.ameenCount, ameen.on && styles.ameenCountOn]}>
                     <Text style={[styles.ameenCountText, ameen.on && styles.ameenTextOn]}>{ameen.count}</Text>
                   </View>
                 </Pressable>
               </Animated.View>
 
-              <Text style={styles.section}>{replies.length ? `${replies.length} réponse${replies.length > 1 ? 's' : ''}` : 'Aucune réponse pour l’instant'}</Text>
+              <Text style={styles.section}>{replies.length ? txCount(replies.length, '{0} réponse', '{0} réponses') : tx('Aucune réponse pour l’instant')}</Text>
               {replies.map((reply) => (
                 <Animated.View key={reply.id} entering={FadeIn}>
                   <Pressable onLongPress={() => replyOptions(reply)} delayLongPress={350} style={[styles.reply, reply.mine && styles.replyMine]}>
                     <View style={styles.replyHead}>
                       <MemberAvatar avatar={avatarOf(reply.authorAvatar)} size={24} />
-                      <Text style={styles.replyAuthor}>{reply.mine ? 'Vous' : reply.author ?? 'Membre'}</Text>
+                      <Text style={styles.replyAuthor}>{reply.mine ? tx('Vous') : reply.author ?? tx('Membre')}</Text>
                       <Text style={styles.replyTime}>{timeAgo(reply.createdAt)}</Text>
                     </View>
                     <Text style={styles.replyBody}>{reply.body}</Text>
                   </Pressable>
                 </Animated.View>
               ))}
-              {replies.length ? <Text style={styles.hint}>Appui long sur une réponse pour la signaler.</Text> : null}
+              {replies.length ? <Text style={styles.hint}>{tx("Appui long sur une réponse pour la signaler.")}</Text> : null}
             </ScrollView>
           )}
 
@@ -187,14 +188,14 @@ export default function DuaDetailScreen() {
                 <View style={[styles.kindBanner, focused && styles.kindBannerFocused]}>
                   <Ionicons name="heart" size={15} color={night.goldSoft} />
                   <Text style={styles.kindText}>
-                    Réponse bienveillante uniquement : une doua, un encouragement. Pas de jugement ni de conseil non demandé.
+                    {tx("Réponse bienveillante uniquement : une doua, un encouragement. Pas de jugement ni de conseil non demandé.")}
                   </Text>
                 </View>
                 {focused && !draft ? (
                   <ScrollView horizontal showsHorizontalScrollIndicator={false} keyboardShouldPersistTaps="always" contentContainerStyle={styles.chips}>
                     {KIND_REPLIES.map((text) => (
-                      <Pressable key={text} onPress={() => setDraft(text)} style={styles.chip}>
-                        <Text style={styles.chipText}>{text}</Text>
+                      <Pressable key={text} onPress={() => setDraft(tx(text))} style={styles.chip}>
+                        <Text style={styles.chipText}>{tx(text)}</Text>
                       </Pressable>
                     ))}
                   </ScrollView>
@@ -208,7 +209,7 @@ export default function DuaDetailScreen() {
                       setTimeout(() => scroll.current?.scrollToEnd({ animated: true }), 250);
                     }}
                     onBlur={() => setFocused(false)}
-                    placeholder="Écrire une réponse bienveillante…"
+                    placeholder={tx("Écrire une réponse bienveillante…")}
                     placeholderTextColor={night.placeholder}
                     maxLength={300}
                     multiline
@@ -218,7 +219,7 @@ export default function DuaDetailScreen() {
                     {sending ? <ActivityIndicator color={night.sky0} /> : <Ionicons name="send" size={18} color={night.sky0} />}
                   </Pressable>
                 </View>
-                {draft.length > 240 ? <Text style={styles.counter}>{300 - draft.length} caractères restants</Text> : null}
+                {draft.length > 240 ? <Text style={styles.counter}>{300 - draft.length} {tx("caractères restants")}</Text> : null}
               </View>
             ) : (
               <Pressable
@@ -226,7 +227,7 @@ export default function DuaDetailScreen() {
                 style={styles.joinBar}
               >
                 <Ionicons name="person-circle-outline" size={20} color={night.goldSoft} />
-                <Text style={styles.joinText}>{signedIn ? 'Créez votre profil OUMMAH pour répondre' : 'Connectez-vous pour répondre'}</Text>
+                <Text style={styles.joinText}>{signedIn ? tx('Créez votre profil OUMMAH pour répondre') : tx('Connectez-vous pour répondre')}</Text>
               </Pressable>
             )
           ) : null}

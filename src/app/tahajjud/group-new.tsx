@@ -7,6 +7,7 @@ import { shellStyles, TahajjudShell } from '../../components/tahajjud/TahajjudSh
 import { night, nightType } from '../../components/tahajjud/theme';
 import { getFriendsOverview, type Member } from '../../features/tahajjud/tahajjudFriends';
 import { createGroup, groupsErrorMessage } from '../../features/tahajjud/tahajjudGroups';
+import { tx } from '../../features/tahajjud/tahajjudI18n';
 
 const NAME_IDEAS = ['Les lève-tôt', 'Famille', 'Frères de la mosquée', 'Sœurs du dernier tiers'];
 
@@ -34,44 +35,44 @@ export default function NewGroupScreen() {
       const id = await createGroup(name, [...selected]);
       router.replace({ pathname: '/tahajjud/group', params: { id, name: name.trim() } } as unknown as Href);
     } catch (error) {
-      Alert.alert('Nouveau groupe', groupsErrorMessage(error));
+      Alert.alert(tx('Nouveau groupe'), groupsErrorMessage(error));
     } finally {
       setSaving(false);
     }
   };
 
   return (
-    <TahajjudShell title="Nouveau groupe" eyebrow="Communauté">
-      <Text style={shellStyles.sectionLabel}>Nom du groupe</Text>
+    <TahajjudShell title={tx("Nouveau groupe")} eyebrow={tx("Communauté")}>
+      <Text style={shellStyles.sectionLabel}>{tx("Nom du groupe")}</Text>
       <TextInput
         value={name}
         onChangeText={setName}
-        placeholder="Donnez un nom à votre groupe"
+        placeholder={tx("Donnez un nom à votre groupe")}
         placeholderTextColor={night.placeholder}
         maxLength={40}
         style={styles.input}
       />
       <Text style={styles.ideas}>
-        Idées :{' '}
+        {tx("Idées :")}{' '}
         {NAME_IDEAS.map((idea, index) => (
-          <Text key={idea} onPress={() => setName(idea)} style={styles.idea}>{idea}{index < NAME_IDEAS.length - 1 ? ' · ' : ''}</Text>
+          <Text key={idea} onPress={() => setName(tx(idea))} style={styles.idea}>{tx(idea)}{index < NAME_IDEAS.length - 1 ? ' · ' : ''}</Text>
         ))}
       </Text>
 
-      <Text style={[shellStyles.sectionLabel, styles.section]}>Ajouter des amis{selected.size ? ` · ${selected.size}` : ''}</Text>
+      <Text style={[shellStyles.sectionLabel, styles.section]}>{tx("Ajouter des amis")}{selected.size ? ` · ${selected.size}` : ''}</Text>
       {friends === null ? <ActivityIndicator color={night.gold} /> : (
         <FriendPicker
           friends={friends}
           selected={selected}
           onToggle={toggle}
-          emptyText="Ajoutez d’abord des amis OUMMAH. Vous pouvez aussi créer le groupe maintenant et les inviter plus tard."
+          emptyText={tx("Ajoutez d’abord des amis OUMMAH. Vous pouvez aussi créer le groupe maintenant et les inviter plus tard.")}
         />
       )}
 
       <Pressable disabled={!name.trim() || saving} onPress={() => void create()} style={[styles.primary, (!name.trim() || saving) && styles.disabled]}>
-        <Text style={styles.primaryText}>{saving ? 'Création…' : 'Créer le groupe'}</Text>
+        <Text style={styles.primaryText}>{saving ? tx('Création…') : tx('Créer le groupe')}</Text>
       </Pressable>
-      <Text style={styles.note}>Seuls vos amis peuvent être ajoutés. Chacun peut quitter le groupe ou couper ses notifications.</Text>
+      <Text style={styles.note}>{tx("Seuls vos amis peuvent être ajoutés. Chacun peut quitter le groupe ou couper ses notifications.")}</Text>
     </TahajjudShell>
   );
 }

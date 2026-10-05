@@ -32,6 +32,7 @@ import {
   type WallPost,
 } from '../../features/tahajjud/duaWall';
 import { getCommunityProfile, isSignedIn, type CommunityProfile } from '../../features/tahajjud/tahajjudCommunity';
+import { tx, txCount } from '../../features/tahajjud/tahajjudI18n';
 
 const FILTERS: readonly { id: WallFilter; label: string }[] = [
   { id: 'recent', label: 'Récentes' },
@@ -47,7 +48,7 @@ function PostCard({ post, canWrite, onChanged }: { post: WallPost; canWrite: boo
 
   const toggleAmeen = async () => {
     if (!canWrite) {
-      Alert.alert('Amine', 'Créez votre profil OUMMAH pour dire Amine.');
+      Alert.alert(tx('Amine'), tx('Créez votre profil OUMMAH pour dire Amine.'));
       return;
     }
     const next = !ameen.on;
@@ -58,21 +59,21 @@ function PostCard({ post, canWrite, onChanged }: { post: WallPost; canWrite: boo
       setAmeenState({ on: next, count });
     } catch (error) {
       setAmeenState({ on: !next, count: ameen.count });
-      Alert.alert('Amine', wallErrorMessage(error));
+      Alert.alert(tx('Amine'), wallErrorMessage(error));
     }
   };
 
   const menu = () => {
     if (post.mine) {
-      Alert.alert('Ma doua', undefined, [
-        ...(!post.answered && !post.pending ? [{ text: 'Allah m’a exaucé', onPress: () => setAnswerSheet(true) }] : []),
-        { text: 'Supprimer', style: 'destructive' as const, onPress: () => void deleteWall('post', post.id).then(onChanged) },
-        { text: 'Annuler', style: 'cancel' as const },
+      Alert.alert(tx('Ma doua'), undefined, [
+        ...(!post.answered && !post.pending ? [{ text: tx('Allah m’a exaucé'), onPress: () => setAnswerSheet(true) }] : []),
+        { text: tx('Supprimer'), style: 'destructive' as const, onPress: () => void deleteWall('post', post.id).then(onChanged) },
+        { text: tx('Annuler'), style: 'cancel' as const },
       ]);
     } else {
-      Alert.alert('Doua', undefined, [
-        { text: 'Signaler', onPress: () => void reportWall('post', post.id).then(() => Alert.alert('Merci', 'La doua a été signalée. Elle sera masquée si plusieurs membres la signalent.')).catch((error) => Alert.alert('Signalement', wallErrorMessage(error))) },
-        { text: 'Annuler', style: 'cancel' },
+      Alert.alert(tx('Doua'), undefined, [
+        { text: tx('Signaler'), onPress: () => void reportWall('post', post.id).then(() => Alert.alert(tx('Merci'), tx('La doua a été signalée. Elle sera masquée si plusieurs membres la signalent.'))).catch((error) => Alert.alert(tx('Signalement'), wallErrorMessage(error))) },
+        { text: tx('Annuler'), style: 'cancel' },
       ]);
     }
   };
@@ -82,25 +83,25 @@ function PostCard({ post, canWrite, onChanged }: { post: WallPost; canWrite: boo
       {post.pending ? (
         <View style={styles.pendingPill}>
           <Ionicons name="time-outline" size={14} color={night.lavender} />
-          <Text style={styles.pendingText}>En attente de validation</Text>
+          <Text style={styles.pendingText}>{tx("En attente de validation")}</Text>
         </View>
       ) : post.answered ? (
         <View style={styles.answeredPill}>
           <Ionicons name="sparkles" size={14} color={night.sky0} />
-          <Text style={styles.answeredText}>Allah l’a exaucée</Text>
+          <Text style={styles.answeredText}>{tx("Allah l’a exaucée")}</Text>
         </View>
       ) : null}
 
       <Text onPress={post.pending ? undefined : openDetail} style={styles.body}>{post.body}</Text>
       {post.gratitude ? (
         <View style={styles.gratitude}>
-          <Text style={styles.gratitudeLabel}>Gratitude</Text>
+          <Text style={styles.gratitudeLabel}>{tx("Gratitude")}</Text>
           <Text style={styles.gratitudeText}>{post.gratitude}</Text>
         </View>
       ) : null}
 
       <View style={styles.meta}>
-        <Text style={styles.author}>{post.author ?? 'Anonyme'} · {timeAgo(post.createdAt)}</Text>
+        <Text style={styles.author}>{post.author ?? tx('Anonyme')} · {timeAgo(post.createdAt)}</Text>
         <Pressable onPress={menu} hitSlop={10}>
           <Ionicons name="ellipsis-horizontal" size={18} color={night.muted} />
         </Pressable>
@@ -110,14 +111,14 @@ function PostCard({ post, canWrite, onChanged }: { post: WallPost; canWrite: boo
         <View style={styles.actions}>
           <Pressable onPress={() => void toggleAmeen()} style={[styles.ameen, ameen.on && styles.ameenOn]}>
             <Ionicons name={ameen.on ? 'hand-left' : 'hand-left-outline'} size={18} color={ameen.on ? night.sky0 : night.goldSoft} />
-            <Text style={[styles.ameenText, ameen.on && styles.ameenTextOn]}>Amine</Text>
+            <Text style={[styles.ameenText, ameen.on && styles.ameenTextOn]}>{tx("Amine")}</Text>
             <View style={[styles.ameenCount, ameen.on && styles.ameenCountOn]}>
               <Text style={[styles.ameenCountText, ameen.on && styles.ameenCountTextOn]}>{ameen.count}</Text>
             </View>
           </Pressable>
           <Pressable onPress={openDetail} style={styles.replyToggle}>
             <Ionicons name="chatbubble-outline" size={17} color={night.textSoft} />
-            <Text style={styles.replyToggleText}>{replyCount ? `${replyCount} réponse${replyCount > 1 ? 's' : ''}` : 'Répondre'}</Text>
+            <Text style={styles.replyToggleText}>{replyCount ? txCount(replyCount, '{0} réponse', '{0} réponses') : tx('Répondre')}</Text>
           </Pressable>
         </View>
       ) : null}
@@ -140,21 +141,21 @@ function AnswerSheet({ visible, onClose, onConfirm }: { visible: boolean; onClos
         <View style={styles.sheet}>
           <LinearGradient colors={['#1C1546', '#0E0A26']} style={StyleSheet.absoluteFill} />
           <Ionicons name="sparkles" size={34} color={night.goldSoft} />
-          <Text style={styles.sheetTitle}>Allah m’a exaucé</Text>
-          <Text style={styles.sheetText}>Al-hamdu lillah. Un mot de gratitude pour encourager les autres ? (facultatif)</Text>
+          <Text style={styles.sheetTitle}>{tx("Allah m’a exaucé")}</Text>
+          <Text style={styles.sheetText}>{tx("Al-hamdu lillah. Un mot de gratitude pour encourager les autres ? (facultatif)")}</Text>
           <TextInput
             value={gratitude}
             onChangeText={setGratitude}
-            placeholder="Ce qu’Allah m’a accordé…"
+            placeholder={tx("Ce qu’Allah m’a accordé…")}
             placeholderTextColor={night.placeholder}
             maxLength={600}
             multiline
             style={styles.composeInput}
           />
-          <Pressable onPress={() => void onConfirm(gratitude).catch((error) => Alert.alert('Gratitude', wallErrorMessage(error)))} style={styles.primary}>
-            <Text style={styles.primaryText}>Partager ma gratitude</Text>
+          <Pressable onPress={() => void onConfirm(gratitude).catch((error) => Alert.alert(tx('Gratitude'), wallErrorMessage(error)))} style={styles.primary}>
+            <Text style={styles.primaryText}>{tx("Partager ma gratitude")}</Text>
           </Pressable>
-          <Pressable onPress={onClose} style={styles.cancel}><Text style={styles.cancelText}>Annuler</Text></Pressable>
+          <Pressable onPress={onClose} style={styles.cancel}><Text style={styles.cancelText}>{tx("Annuler")}</Text></Pressable>
         </View>
       </KeyboardAvoidingView>
     </Modal>
@@ -208,30 +209,30 @@ export default function DuaWallScreen() {
       await publishDua(draft, anonymous);
       setCompose(false);
       setDraft('');
-      Alert.alert('Doua publiée', 'Votre doua est sur le Mur. Qu’Allah l’exauce.');
+      Alert.alert(tx('Doua publiée'), tx('Votre doua est sur le Mur. Qu’Allah l’exauce.'));
       void load(filter);
     } catch (error) {
-      Alert.alert('Mur des duas', wallErrorMessage(error));
+      Alert.alert(tx('Mur des duas'), wallErrorMessage(error));
     } finally {
       setSending(false);
     }
   };
 
   return (
-    <TahajjudShell title="Mur des duas" eyebrow="Communauté">
-      <Text style={styles.intro}>Faites doua les uns pour les autres et dites Amine. Votre doua est publiée tout de suite.</Text>
+    <TahajjudShell title={tx("Mur des duas")} eyebrow={tx("Communauté")}>
+      <Text style={styles.intro}>{tx("Faites doua les uns pour les autres et dites Amine. Votre doua est publiée tout de suite.")}</Text>
 
       <Pressable onPress={openCompose} style={({ pressed }) => [pressed && styles.pressed]}>
         <LinearGradient colors={[night.goldSoft, night.gold]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.composeButton}>
           <Ionicons name="create-outline" size={20} color={night.sky0} />
-          <Text style={styles.composeButtonText}>Partager une doua</Text>
+          <Text style={styles.composeButtonText}>{tx("Partager une doua")}</Text>
         </LinearGradient>
       </Pressable>
 
       <View style={styles.filters}>
         {FILTERS.filter((item) => item.id !== 'mine' || profile).map((item) => (
           <Pressable key={item.id} onPress={() => setFilter(item.id)} style={[styles.filter, filter === item.id && styles.filterOn]}>
-            <Text style={[styles.filterText, filter === item.id && styles.filterTextOn]}>{item.label}</Text>
+            <Text style={[styles.filterText, filter === item.id && styles.filterTextOn]}>{tx(item.label)}</Text>
           </Pressable>
         ))}
       </View>
@@ -242,7 +243,7 @@ export default function DuaWallScreen() {
         <View style={styles.empty}>
           <Ionicons name="hand-left-outline" size={36} color={night.lavender} />
           <Text style={styles.emptyText}>
-            {filter === 'answered' ? 'Les duas exaucées apparaîtront ici, avec la gratitude de leurs auteurs.' : 'Aucune doua pour le moment. Soyez le premier à en partager une.'}
+            {filter === 'answered' ? tx('Les duas exaucées apparaîtront ici, avec la gratitude de leurs auteurs.') : tx('Aucune doua pour le moment. Soyez le premier à en partager une.')}
           </Text>
         </View>
       ) : (
@@ -253,19 +254,19 @@ export default function DuaWallScreen() {
         ))
       )}
       {posts?.length && more ? (
-        <Pressable onPress={() => void loadMore()} style={styles.more}><Text style={styles.moreText}>Voir plus</Text></Pressable>
+        <Pressable onPress={() => void loadMore()} style={styles.more}><Text style={styles.moreText}>{tx("Voir plus")}</Text></Pressable>
       ) : null}
 
       <Modal visible={compose} transparent animationType="slide" onRequestClose={() => setCompose(false)}>
         <KeyboardAvoidingView behavior="padding" style={styles.backdrop}>
           <View style={styles.sheet}>
             <LinearGradient colors={['#1C1546', '#0E0A26']} style={StyleSheet.absoluteFill} />
-            <Text style={styles.sheetTitle}>Partager une doua</Text>
-            <Text style={styles.sheetText}>Demandez à vos frères et sœurs de faire doua pour vous. Restez bienveillant.</Text>
+            <Text style={styles.sheetTitle}>{tx("Partager une doua")}</Text>
+            <Text style={styles.sheetText}>{tx("Demandez à vos frères et sœurs de faire doua pour vous. Restez bienveillant.")}</Text>
             <TextInput
               value={draft}
               onChangeText={setDraft}
-              placeholder="Faites doua pour… "
+              placeholder={tx("Faites doua pour… ")}
               placeholderTextColor={night.placeholder}
               maxLength={600}
               multiline
@@ -275,16 +276,16 @@ export default function DuaWallScreen() {
             <Text style={styles.counter}>{draft.length}/600</Text>
             <View style={styles.anonRow}>
               <View style={styles.anonCopy}>
-                <Text style={styles.anonTitle}>Publier anonymement</Text>
-                <Text style={styles.anonText}>{anonymous ? 'Votre pseudo ne sera pas affiché.' : `Signé « ${profile?.pseudo ?? ''} ».`}</Text>
+                <Text style={styles.anonTitle}>{tx("Publier anonymement")}</Text>
+                <Text style={styles.anonText}>{anonymous ? tx('Votre pseudo ne sera pas affiché.') : tx("Signé « {0} ».", [profile?.pseudo ?? ''])}</Text>
               </View>
               <Switch value={anonymous} onValueChange={setAnonymous} trackColor={{ false: 'rgba(255,255,255,0.15)', true: night.gold }} thumbColor={night.text} />
             </View>
-            <Text style={styles.rules}>Validée par la modération avant publication. Pas de malédiction contre une personne, pas d’informations permettant d’identifier quelqu’un.</Text>
+            <Text style={styles.rules}>{tx("Validée par la modération avant publication. Pas de malédiction contre une personne, pas d’informations permettant d’identifier quelqu’un.")}</Text>
             <Pressable disabled={sending || draft.trim().length < 10} onPress={() => void send()} style={[styles.primary, (sending || draft.trim().length < 10) && styles.disabled]}>
-              <Text style={styles.primaryText}>{sending ? 'Envoi…' : 'Envoyer'}</Text>
+              <Text style={styles.primaryText}>{sending ? tx('Envoi…') : tx('Envoyer')}</Text>
             </Pressable>
-            <Pressable onPress={() => setCompose(false)} style={styles.cancel}><Text style={styles.cancelText}>Annuler</Text></Pressable>
+            <Pressable onPress={() => setCompose(false)} style={styles.cancel}><Text style={styles.cancelText}>{tx("Annuler")}</Text></Pressable>
           </View>
         </KeyboardAvoidingView>
       </Modal>

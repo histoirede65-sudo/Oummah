@@ -33,14 +33,15 @@ import {
   type FriendsOverview,
   type Member,
 } from '../../features/tahajjud/tahajjudFriends';
+import { tx, txCount } from '../../features/tahajjud/tahajjudI18n';
 
 type SearchResult = Member & { relation: FriendRelation };
 
 function friendStatus(friend: Friend) {
-  if (!friend.shared) return { icon: 'lock-closed-outline' as const, text: 'Activité privée', color: night.muted };
-  if (friend.tonight === 'prayed') return { icon: 'checkmark-circle' as const, text: 'A prié cette nuit', color: night.success };
-  if (friend.tonight === 'awake') return { icon: 'sunny' as const, text: 'Réveillé pour prier', color: night.goldSoft };
-  return { icon: 'moon-outline' as const, text: 'Pas encore cette nuit', color: night.muted };
+  if (!friend.shared) return { icon: 'lock-closed-outline' as const, text: tx('Activité privée'), color: night.muted };
+  if (friend.tonight === 'prayed') return { icon: 'checkmark-circle' as const, text: tx('A prié cette nuit'), color: night.success };
+  if (friend.tonight === 'awake') return { icon: 'sunny' as const, text: tx('Réveillé pour prier'), color: night.goldSoft };
+  return { icon: 'moon-outline' as const, text: tx('Pas encore cette nuit'), color: night.muted };
 }
 
 function EncourageSheet({ friend, onClose }: { friend: Friend | null; onClose: () => void }) {
@@ -52,9 +53,9 @@ function EncourageSheet({ friend, onClose }: { friend: Friend | null; onClose: (
       await sendEncouragement(friend.id, kind);
       void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => undefined);
       onClose();
-      Alert.alert('Encouragement envoyé', `${friend.pseudo} va recevoir votre message. Qu’Allah vous récompense.`);
+      Alert.alert(tx('Encouragement envoyé'), tx("{0} va recevoir votre message. Qu’Allah vous récompense.", [friend.pseudo]));
     } catch (error) {
-      Alert.alert('Encourager', friendsErrorMessage(error));
+      Alert.alert(tx('Encourager'), friendsErrorMessage(error));
     } finally {
       setSending(null);
     }
@@ -64,8 +65,8 @@ function EncourageSheet({ friend, onClose }: { friend: Friend | null; onClose: (
       <Pressable style={styles.backdrop} onPress={onClose}>
         <Pressable style={styles.sheet} onPress={() => undefined}>
           <LinearGradient colors={['#1C1546', '#0E0A26']} style={StyleSheet.absoluteFill} />
-          <Text style={styles.sheetTitle}>Encourager {friend?.pseudo}</Text>
-          <Text style={styles.sheetText}>Choisissez un message. Votre ami le reçoit en notification.</Text>
+          <Text style={styles.sheetTitle}>{tx("Encourager ")}{friend?.pseudo}</Text>
+          <Text style={styles.sheetText}>{tx("Choisissez un message. Votre ami le reçoit en notification.")}</Text>
           {ENCOURAGEMENTS.map((item) => (
             <Pressable key={item.kind} disabled={Boolean(sending)} onPress={() => void send(item.kind)} style={({ pressed }) => [styles.encourageOption, pressed && styles.pressed]}>
               <Ionicons name={item.icon} size={20} color={night.goldSoft} />
@@ -73,7 +74,7 @@ function EncourageSheet({ friend, onClose }: { friend: Friend | null; onClose: (
               {sending === item.kind ? <ActivityIndicator color={night.gold} /> : null}
             </Pressable>
           ))}
-          <Pressable onPress={onClose} style={styles.cancel}><Text style={styles.cancelText}>Annuler</Text></Pressable>
+          <Pressable onPress={onClose} style={styles.cancel}><Text style={styles.cancelText}>{tx("Annuler")}</Text></Pressable>
         </Pressable>
       </Pressable>
     </Modal>
@@ -139,7 +140,7 @@ export default function TahajjudFriendsScreen() {
       after?.();
       await load();
     } catch (error) {
-      Alert.alert('Amis', friendsErrorMessage(error));
+      Alert.alert(tx('Amis'), friendsErrorMessage(error));
     }
   };
 
@@ -151,41 +152,41 @@ export default function TahajjudFriendsScreen() {
 
   const friendMenu = (friend: Friend) => {
     Alert.alert(friend.pseudo, undefined, [
-      { text: 'Retirer de mes amis', onPress: () => void act(() => removeFriend(friend.id)) },
+      { text: tx('Retirer de mes amis'), onPress: () => void act(() => removeFriend(friend.id)) },
       {
-        text: 'Bloquer', style: 'destructive', onPress: () => Alert.alert(
-          `Bloquer ${friend.pseudo} ?`,
-          'Il ne pourra plus vous trouver, vous écrire ni vous encourager. Vous pourrez le débloquer plus tard.',
-          [{ text: 'Annuler', style: 'cancel' }, { text: 'Bloquer', style: 'destructive', onPress: () => void act(() => blockMember(friend.id)) }],
+        text: tx('Bloquer'), style: 'destructive', onPress: () => Alert.alert(
+          tx("Bloquer {0} ?", [friend.pseudo]),
+          tx('Il ne pourra plus vous trouver, vous écrire ni vous encourager. Vous pourrez le débloquer plus tard.'),
+          [{ text: tx('Annuler'), style: 'cancel' }, { text: tx('Bloquer'), style: 'destructive', onPress: () => void act(() => blockMember(friend.id)) }],
         ),
       },
-      { text: 'Signaler', onPress: () => reportFlow(friend) },
-      { text: 'Annuler', style: 'cancel' },
+      { text: tx('Signaler'), onPress: () => reportFlow(friend) },
+      { text: tx('Annuler'), style: 'cancel' },
     ]);
   };
 
   const reportFlow = (member: Member) => {
-    Alert.alert(`Signaler ${member.pseudo}`, 'Pourquoi signalez-vous ce membre ?', [
-      ...['Pseudo inapproprié', 'Harcèlement', 'Comportement suspect'].map((reason) => ({
+    Alert.alert(tx("Signaler {0}", [member.pseudo]), tx('Pourquoi signalez-vous ce membre ?'), [
+      ...[tx('Pseudo inapproprié'), tx('Harcèlement'), tx('Comportement suspect')].map((reason) => ({
         text: reason,
-        onPress: () => void act(() => reportMember(member.id, reason), () => Alert.alert('Merci', 'Le signalement a été transmis à l’équipe OUMMAH.')),
+        onPress: () => void act(() => reportMember(member.id, reason), () => Alert.alert(tx('Merci'), tx('Le signalement a été transmis à l’équipe OUMMAH.'))),
       })),
-      { text: 'Annuler', style: 'cancel' as const },
+      { text: tx('Annuler'), style: 'cancel' as const },
     ]);
   };
 
   if (!ready) {
-    return <TahajjudShell title="Mes amis" eyebrow="Communauté"><ActivityIndicator color={night.gold} /></TahajjudShell>;
+    return <TahajjudShell title={tx("Mes amis")} eyebrow={tx("Communauté")}><ActivityIndicator color={night.gold} /></TahajjudShell>;
   }
 
   if (!signedIn || !profile) {
     return (
-      <TahajjudShell title="Mes amis" eyebrow="Communauté">
+      <TahajjudShell title={tx("Mes amis")} eyebrow={tx("Communauté")}>
         <GlassCard gold style={styles.center}>
           <Ionicons name="people-circle-outline" size={52} color={night.goldSoft} />
-          <Text style={styles.lead}>Se réveiller ensemble, s’encourager, sans classement ni comparaison.</Text>
+          <Text style={styles.lead}>{tx("Se réveiller ensemble, s’encourager, sans classement ni comparaison.")}</Text>
           <Pressable onPress={() => router.push((signedIn ? '/tahajjud/profile' : '/profile') as Href)} style={styles.primary}>
-            <Text style={styles.primaryText}>{signedIn ? 'Créer mon profil OUMMAH' : 'Se connecter'}</Text>
+            <Text style={styles.primaryText}>{signedIn ? tx('Créer mon profil OUMMAH') : tx('Se connecter')}</Text>
           </Pressable>
         </GlassCard>
       </TahajjudShell>
@@ -204,13 +205,13 @@ export default function TahajjudFriendsScreen() {
   const awakeTonight = friends.filter((friend) => friend.shared && friend.tonight).length;
 
   return (
-    <TahajjudShell title="Mes amis" eyebrow="Communauté">
+    <TahajjudShell title={tx("Mes amis")} eyebrow={tx("Communauté")}>
       <View style={styles.search}>
         <Ionicons name="search" size={19} color={night.muted} />
         <TextInput
           value={query}
           onChangeText={setQuery}
-          placeholder="Ajouter un ami par son pseudo"
+          placeholder={tx("Ajouter un ami par son pseudo")}
           placeholderTextColor={night.placeholder}
           autoCapitalize="none"
           autoCorrect={false}
@@ -221,16 +222,16 @@ export default function TahajjudFriendsScreen() {
 
       {results ? (
         <GlassCard style={styles.block}>
-          {results.length === 0 ? <Text style={styles.empty}>Aucun membre avec ce pseudo.</Text> : results.map((member, index) => (
+          {results.length === 0 ? <Text style={styles.empty}>{tx("Aucun membre avec ce pseudo.")}</Text> : results.map((member, index) => (
             <View key={member.id} style={[styles.row, index > 0 && styles.rowBorder]}>
               <MemberAvatar avatar={member.avatar} size={40} />
               <Text style={styles.name} numberOfLines={1}>{member.pseudo}</Text>
               {member.relation === 'none' ? (
-                <Pressable onPress={() => void add(member)} style={styles.smallGold}><Text style={styles.smallGoldText}>Ajouter</Text></Pressable>
+                <Pressable onPress={() => void add(member)} style={styles.smallGold}><Text style={styles.smallGoldText}>{tx("Ajouter")}</Text></Pressable>
               ) : member.relation === 'received' ? (
-                <Pressable onPress={() => void add(member)} style={styles.smallGold}><Text style={styles.smallGoldText}>Accepter</Text></Pressable>
+                <Pressable onPress={() => void add(member)} style={styles.smallGold}><Text style={styles.smallGoldText}>{tx("Accepter")}</Text></Pressable>
               ) : (
-                <Text style={styles.tag}>{member.relation === 'friend' ? 'Ami' : 'Demande envoyée'}</Text>
+                <Text style={styles.tag}>{member.relation === 'friend' ? tx('Ami') : tx('Demande envoyée')}</Text>
               )}
             </View>
           ))}
@@ -243,25 +244,25 @@ export default function TahajjudFriendsScreen() {
             <Ionicons name="moon" size={22} color={night.goldSoft} />
             <Text style={styles.summaryText}>
               {awakeTonight
-                ? `${awakeTonight} ami${awakeTonight > 1 ? 's' : ''} éveillé${awakeTonight > 1 ? 's' : ''} cette nuit${prayedTonight ? `, dont ${prayedTonight} ${prayedTonight > 1 ? 'ont' : 'a'} prié` : ''}.`
-                : 'Aucun ami éveillé pour l’instant. Envoyez-leur un encouragement.'}
+                ? `${txCount(awakeTonight, '{0} ami éveillé cette nuit', '{0} amis éveillés cette nuit')}${prayedTonight ? txCount(prayedTonight, ', dont {0} a prié', ', dont {0} ont prié') : ''}.`
+                : tx('Aucun ami éveillé pour l’instant. Envoyez-leur un encouragement.')}
             </Text>
           </GlassCard>
         </Animated.View>
       ) : null}
 
       <View style={[styles.sectionHead, styles.section]}>
-        <Text style={[shellStyles.sectionLabel, styles.noMargin]}>Mes groupes{groups.length ? ` · ${groups.length}` : ''}</Text>
+        <Text style={[shellStyles.sectionLabel, styles.noMargin]}>{tx("Mes groupes")}{groups.length ? ` · ${groups.length}` : ''}</Text>
         <Pressable onPress={() => router.push('/tahajjud/group-new' as Href)} style={styles.newGroup}>
           <Ionicons name="add" size={17} color={night.sky0} />
-          <Text style={styles.newGroupText}>Créer</Text>
+          <Text style={styles.newGroupText}>{tx("Créer")}</Text>
         </Pressable>
       </View>
       {groups.length === 0 ? (
         <Pressable onPress={() => router.push('/tahajjud/group-new' as Href)}>
           <GlassCard style={styles.groupEmpty}>
             <Ionicons name="people-circle-outline" size={30} color={night.lavender} />
-            <Text style={styles.groupEmptyText}>Créez un groupe avec vos amis pour vous parler et vous programmer des rappels (prière de la nuit, lecture, Witr…).</Text>
+            <Text style={styles.groupEmptyText}>{tx("Créez un groupe avec vos amis pour vous parler et vous programmer des rappels (prière de la nuit, lecture, Witr…).")}</Text>
           </GlassCard>
         </Pressable>
       ) : (
@@ -281,7 +282,7 @@ export default function TahajjudFriendsScreen() {
                 <Text style={[styles.groupLast, group.unread > 0 && styles.lastMessageUnread]} numberOfLines={1}>
                   {group.lastKind === 'reminder' ? '⏰ ' : ''}
                   {group.lastKind === 'text' && group.lastSender ? `${group.lastSender} : ` : ''}
-                  {group.lastBody ?? `${group.members} membre${group.members > 1 ? 's' : ''}`}
+                  {group.lastBody ?? txCount(group.members, '{0} membre', '{0} membres')}
                 </Text>
               </View>
               <View style={styles.groupSide}>
@@ -297,13 +298,13 @@ export default function TahajjudFriendsScreen() {
 
       {data?.encouragements.length ? (
         <>
-          <Text style={[shellStyles.sectionLabel, styles.section]}>Encouragements reçus</Text>
+          <Text style={[shellStyles.sectionLabel, styles.section]}>{tx("Encouragements reçus")}</Text>
           <GlassCard style={styles.block}>
             {data.encouragements.slice(0, 6).map((item, index) => (
               <View key={item.id} style={[styles.row, index > 0 && styles.rowBorder]}>
                 <MemberAvatar avatar={item.avatar} size={38} />
                 <View style={styles.flex}>
-                  <Text style={styles.encFrom}>{item.from}{item.unread ? <Text style={styles.newDot}>  • nouveau</Text> : null}</Text>
+                  <Text style={styles.encFrom}>{item.from}{item.unread ? <Text style={styles.newDot}>  {tx("• nouveau")}</Text> : null}</Text>
                   <Text style={styles.encText}>{encouragementText(item.kind)}</Text>
                 </View>
                 <Text style={styles.time}>{timeAgo(item.at)}</Text>
@@ -315,26 +316,26 @@ export default function TahajjudFriendsScreen() {
 
       {data?.received.length ? (
         <>
-          <Text style={[shellStyles.sectionLabel, styles.section]}>Demandes reçues</Text>
+          <Text style={[shellStyles.sectionLabel, styles.section]}>{tx("Demandes reçues")}</Text>
           <GlassCard gold style={styles.block}>
             {data.received.map((member, index) => (
               <View key={member.id} style={[styles.row, index > 0 && styles.rowBorder]}>
                 <MemberAvatar avatar={member.avatar} size={40} />
                 <Text style={styles.name} numberOfLines={1}>{member.pseudo}</Text>
-                <Pressable onPress={() => void act(() => respondFriend(member.id, false))} style={styles.smallGhost}><Text style={styles.smallGhostText}>Refuser</Text></Pressable>
-                <Pressable onPress={() => void act(() => respondFriend(member.id, true))} style={styles.smallGold}><Text style={styles.smallGoldText}>Accepter</Text></Pressable>
+                <Pressable onPress={() => void act(() => respondFriend(member.id, false))} style={styles.smallGhost}><Text style={styles.smallGhostText}>{tx("Refuser")}</Text></Pressable>
+                <Pressable onPress={() => void act(() => respondFriend(member.id, true))} style={styles.smallGold}><Text style={styles.smallGoldText}>{tx("Accepter")}</Text></Pressable>
               </View>
             ))}
           </GlassCard>
         </>
       ) : null}
 
-      <Text style={[shellStyles.sectionLabel, styles.section]}>Mes amis{friends.length ? ` · ${friends.length}` : ''}</Text>
+      <Text style={[shellStyles.sectionLabel, styles.section]}>{tx("Mes amis")}{friends.length ? ` · ${friends.length}` : ''}</Text>
       {!data ? <ActivityIndicator color={night.gold} /> : friends.length === 0 ? (
         <GlassCard style={styles.center}>
           <Ionicons name="people-outline" size={36} color={night.lavender} />
-          <Text style={styles.emptyTitle}>Pas encore d’amis</Text>
-          <Text style={styles.emptyText}>Cherchez le pseudo d’un proche ci-dessus. Vous verrez ses nuits seulement s’il l’autorise.</Text>
+          <Text style={styles.emptyTitle}>{tx("Pas encore d’amis")}</Text>
+          <Text style={styles.emptyText}>{tx("Cherchez le pseudo d’un proche ci-dessus. Vous verrez ses nuits seulement s’il l’autorise.")}</Text>
         </GlassCard>
       ) : friends.map((friend, index) => {
         const status = friendStatus(friend);
@@ -358,7 +359,7 @@ export default function TahajjudFriendsScreen() {
               {thread ? (
                 <Pressable onPress={() => openChat(friend)} style={styles.lastMessage}>
                   <Text style={[styles.lastMessageText, thread.unread > 0 && styles.lastMessageUnread]} numberOfLines={1}>
-                    {thread.lastMine ? 'Vous : ' : ''}{thread.lastBody}
+                    {thread.lastMine ? tx('Vous : ') : ''}{thread.lastBody}
                   </Text>
                   <Text style={styles.time}>{timeAgo(thread.lastAt)}</Text>
                 </Pressable>
@@ -369,7 +370,7 @@ export default function TahajjudFriendsScreen() {
                     {Array.from({ length: 7 }, (_, i) => (
                       <View key={i} style={[styles.weekDot, i < friend.week && styles.weekDotOn]} />
                     ))}
-                    <Text style={styles.weekText}>{friend.week} nuit{friend.week > 1 ? 's' : ''} / 7 jours</Text>
+                    <Text style={styles.weekText}>{txCount(friend.week, '{0} nuit / 7 jours', '{0} nuits / 7 jours')}</Text>
                   </View>
                 ) : <View style={styles.flex} />}
                 <Pressable onPress={() => openChat(friend)} style={styles.messageButton}>
@@ -380,7 +381,7 @@ export default function TahajjudFriendsScreen() {
                 </Pressable>
                 <Pressable onPress={() => setEncourage(friend)} style={styles.encourageButton}>
                   <Ionicons name="heart" size={15} color={night.sky0} />
-                  <Text style={styles.encourageButtonText}>Encourager</Text>
+                  <Text style={styles.encourageButtonText}>{tx("Encourager")}</Text>
                 </Pressable>
               </View>
             </GlassCard>
@@ -390,13 +391,13 @@ export default function TahajjudFriendsScreen() {
 
       {data?.sent.length ? (
         <>
-          <Text style={[shellStyles.sectionLabel, styles.section]}>Demandes envoyées</Text>
+          <Text style={[shellStyles.sectionLabel, styles.section]}>{tx("Demandes envoyées")}</Text>
           <GlassCard style={styles.block}>
             {data.sent.map((member, index) => (
               <View key={member.id} style={[styles.row, index > 0 && styles.rowBorder]}>
                 <MemberAvatar avatar={member.avatar} size={36} dim />
                 <Text style={styles.name} numberOfLines={1}>{member.pseudo}</Text>
-                <Pressable onPress={() => void act(() => removeFriend(member.id))} style={styles.smallGhost}><Text style={styles.smallGhostText}>Annuler</Text></Pressable>
+                <Pressable onPress={() => void act(() => removeFriend(member.id))} style={styles.smallGhost}><Text style={styles.smallGhostText}>{tx("Annuler")}</Text></Pressable>
               </View>
             ))}
           </GlassCard>
@@ -406,7 +407,7 @@ export default function TahajjudFriendsScreen() {
       {data?.blocked.length ? (
         <>
           <Pressable onPress={() => setShowBlocked((value) => !value)} style={styles.blockedToggle}>
-            <Text style={styles.blockedToggleText}>Membres bloqués ({data.blocked.length})</Text>
+            <Text style={styles.blockedToggleText}>{tx("Membres bloqués (")}{data.blocked.length})</Text>
             <Ionicons name={showBlocked ? 'chevron-up' : 'chevron-down'} size={16} color={night.muted} />
           </Pressable>
           {showBlocked ? (
@@ -415,7 +416,7 @@ export default function TahajjudFriendsScreen() {
                 <View key={member.id} style={[styles.row, index > 0 && styles.rowBorder]}>
                   <MemberAvatar avatar={member.avatar} size={36} dim />
                   <Text style={styles.name} numberOfLines={1}>{member.pseudo}</Text>
-                  <Pressable onPress={() => void act(() => unblockMember(member.id))} style={styles.smallGhost}><Text style={styles.smallGhostText}>Débloquer</Text></Pressable>
+                  <Pressable onPress={() => void act(() => unblockMember(member.id))} style={styles.smallGhost}><Text style={styles.smallGhostText}>{tx("Débloquer")}</Text></Pressable>
                 </View>
               ))}
             </GlassCard>
@@ -425,9 +426,9 @@ export default function TahajjudFriendsScreen() {
 
       <Pressable onPress={() => router.push('/tahajjud/profile' as Href)} style={styles.privacyLink}>
         <Ionicons name="shield-checkmark-outline" size={17} color={night.goldSoft} />
-        <Text style={styles.privacyText}>Ce que mes amis voient · confidentialité</Text>
+        <Text style={styles.privacyText}>{tx("Ce que mes amis voient · confidentialité")}</Text>
       </Pressable>
-      <Text style={styles.footer}>Pas de classement ni de comparaison : on s’encourage, Allah seul compte les nuits.</Text>
+      <Text style={styles.footer}>{tx("Pas de classement ni de comparaison : on s’encourage, Allah seul compte les nuits.")}</Text>
 
       <EncourageSheet friend={encourage} onClose={() => setEncourage(null)} />
     </TahajjudShell>

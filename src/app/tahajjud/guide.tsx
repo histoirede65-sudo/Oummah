@@ -7,6 +7,7 @@ import Animated, { FadeInDown } from 'react-native-reanimated';
 import { TahajjudShell } from '../../components/tahajjud/TahajjudShell';
 import { night, nightType } from '../../components/tahajjud/theme';
 import { GUIDE, type GuideStep, type GuideTab } from '../../features/tahajjud/tahajjudContent';
+import { tx } from '../../features/tahajjud/tahajjudI18n';
 
 function Step({ step, index, last }: { step: GuideStep; index: number; last: boolean }) {
   const [open, setOpen] = useState(index === 0);
@@ -60,7 +61,7 @@ export default function TahajjudGuideScreen() {
   const tab = GUIDE.find((item) => item.id === tabId) ?? GUIDE[0];
 
   return (
-    <TahajjudShell title="Apprendre le Qiyam" eyebrow="Guide">
+    <TahajjudShell title={tx("Apprendre le Qiyam")} eyebrow={tx("Guide")}>
       <View style={styles.tabs}>
         {GUIDE.map((item) => (
           <Pressable key={item.id} onPress={() => setTabId(item.id)} style={[styles.tab, { flex: item.label.length + 4 }, tabId === item.id && styles.tabOn]}>

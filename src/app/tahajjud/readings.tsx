@@ -6,17 +6,18 @@ import Animated, { FadeInDown } from 'react-native-reanimated';
 import { TahajjudShell } from '../../components/tahajjud/TahajjudShell';
 import { night, nightType } from '../../components/tahajjud/theme';
 import { NIGHT_READINGS } from '../../features/tahajjud/tahajjudContent';
+import { tx } from '../../features/tahajjud/tahajjudI18n';
 
 /** « Lire quelques versets » : passages of the night, or any surah of OUMMAH's Quran. */
 export default function TahajjudReadingsScreen() {
   return (
-    <TahajjudShell title="Lire quelques versets" eyebrow="Qiyam al-Layl">
-      <Text style={styles.intro}>Des passages liés à la nuit, ou la sourate de votre choix.</Text>
+    <TahajjudShell title={tx("Lire quelques versets")} eyebrow={tx("Qiyam al-Layl")}>
+      <Text style={styles.intro}>{tx("Des passages liés à la nuit, ou la sourate de votre choix.")}</Text>
       <Pressable onPress={() => router.push('/tahajjud/recite' as Href)} style={({ pressed }) => [styles.recite, pressed && styles.pressed]}>
         <Ionicons name="moon" size={22} color={night.sky0} />
         <View style={styles.copy}>
-          <Text style={styles.reciteTitle}>Que réciter dans ma prière ?</Text>
-          <Text style={styles.reciteText}>Sourates courtes classées par longueur, en grand, avec phonétique.</Text>
+          <Text style={styles.reciteTitle}>{tx("Que réciter dans ma prière ?")}</Text>
+          <Text style={styles.reciteText}>{tx("Sourates courtes classées par longueur, en grand, avec phonétique.")}</Text>
         </View>
         <Ionicons name="chevron-forward" size={20} color={night.sky0} />
       </Pressable>
@@ -42,7 +43,7 @@ export default function TahajjudReadingsScreen() {
       ))}
       <Pressable onPress={() => router.push('/quran' as Href)} style={({ pressed }) => [styles.other, pressed && styles.pressed]}>
         <Ionicons name="book-outline" size={20} color={night.sky0} />
-        <Text style={styles.otherText}>Choisir une autre sourate</Text>
+        <Text style={styles.otherText}>{tx("Choisir une autre sourate")}</Text>
       </Pressable>
     </TahajjudShell>
   );

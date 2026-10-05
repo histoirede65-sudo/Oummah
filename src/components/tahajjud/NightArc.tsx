@@ -10,6 +10,7 @@ import Animated, {
 import Svg, { Circle, Defs, LinearGradient, Path, Stop } from 'react-native-svg';
 import { clock, type NightPhase, type TahajjudNight } from '../../features/tahajjud/tahajjudNight';
 import { night as palette, nightType } from './theme';
+import { tx } from '../../features/tahajjud/tahajjudI18n';
 
 type Props = {
   width: number;
@@ -109,11 +110,11 @@ export function NightArc({ width, night, phase, now, validated, children }: Prop
       {/* Labels */}
       <Text style={[styles.thirdLabel, { left: third.x - 60, top: third.y - 34 }]}>{clock(night.lastThirdStart)}</Text>
       <View style={[styles.end, { left: 4 }]}>
-        <Text style={styles.endName}>Maghrib</Text>
+        <Text style={styles.endName}>{tx("Maghrib")}</Text>
         <Text style={styles.endTime}>{clock(night.maghrib)}</Text>
       </View>
       <View style={[styles.end, styles.endRight, { right: 4 }]}>
-        <Text style={[styles.endName, styles.endNameGold]}>Fajr</Text>
+        <Text style={[styles.endName, styles.endNameGold]}>{tx("Fajr")}</Text>
         <Text style={styles.endTime}>{clock(night.fajr)}</Text>
       </View>
 

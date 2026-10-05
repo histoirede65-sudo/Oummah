@@ -1,5 +1,6 @@
 import { getValidSession } from '../auth/SupabaseAuthService';
 import { COMMUNITY_AVATARS, type CommunityAvatar } from './tahajjudCommunity';
+import { tx, tahajjudLocale } from './tahajjudI18n';
 
 /** Groupes d'amis : nom libre, discussion, rappels programmés (envoyés à tous les membres). */
 
@@ -113,24 +114,24 @@ export function nextOccurrence(hour: number, minute: number, from = new Date()) 
 
 export function reminderLabel(iso: string, repeatDaily: boolean) {
   const at = new Date(iso);
-  const time = at.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
-  if (repeatDaily) return `Chaque jour à ${time}`;
+  const time = at.toLocaleTimeString(tahajjudLocale(), { hour: '2-digit', minute: '2-digit' });
+  if (repeatDaily) return tx("Chaque jour à {0}", [time]);
   const today = new Date();
   const tomorrow = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1);
-  if (at.toDateString() === today.toDateString()) return `Aujourd’hui à ${time}`;
-  if (at.toDateString() === tomorrow.toDateString()) return `Demain à ${time}`;
-  return `${at.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })} à ${time}`;
+  if (at.toDateString() === today.toDateString()) return tx("Aujourd’hui à {0}", [time]);
+  if (at.toDateString() === tomorrow.toDateString()) return tx("Demain à {0}", [time]);
+  return tx('{0} à {1}', [at.toLocaleDateString(tahajjudLocale(), { weekday: 'long', day: 'numeric', month: 'long' }), time]);
 }
 
 export function groupsErrorMessage(error: unknown) {
   switch (error instanceof Error ? error.message : '') {
-    case 'AUTH_REQUIRED': return 'Connectez-vous pour retrouver vos groupes.';
-    case 'PROFILE_REQUIRED': return 'Créez votre profil OUMMAH (un pseudo suffit).';
-    case 'NOT_MEMBER': return 'Vous ne faites plus partie de ce groupe.';
-    case 'NOT_OWNER': return 'Seul le créateur du groupe peut faire cela.';
-    case 'TEXT_REFUSED': return 'Ce texte contient des mots qui ne sont pas acceptés.';
-    case 'RATE_LIMIT': return 'Limite atteinte pour le moment. Réessayez plus tard.';
-    case 'INVALID': return 'Vérifiez le texte et l’heure.';
-    default: return 'Action impossible pour le moment.';
+    case 'AUTH_REQUIRED': return tx('Connectez-vous pour retrouver vos groupes.');
+    case 'PROFILE_REQUIRED': return tx('Créez votre profil OUMMAH (un pseudo suffit).');
+    case 'NOT_MEMBER': return tx('Vous ne faites plus partie de ce groupe.');
+    case 'NOT_OWNER': return tx('Seul le créateur du groupe peut faire cela.');
+    case 'TEXT_REFUSED': return tx('Ce texte contient des mots qui ne sont pas acceptés.');
+    case 'RATE_LIMIT': return tx('Limite atteinte pour le moment. Réessayez plus tard.');
+    case 'INVALID': return tx('Vérifiez le texte et l’heure.');
+    default: return tx('Action impossible pour le moment.');
   }
 }

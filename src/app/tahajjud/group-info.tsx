@@ -18,6 +18,7 @@ import {
   setGroupMuted,
   type GroupDetail,
 } from '../../features/tahajjud/tahajjudGroups';
+import { tx } from '../../features/tahajjud/tahajjudI18n';
 
 /** Group info: name, notifications, reminders, members, add friends, leave. */
 export default function GroupInfoScreen() {
@@ -36,7 +37,7 @@ export default function GroupInfoScreen() {
       setName(data.name);
       setFriends(overview?.friends ?? []);
     } catch (error) {
-      Alert.alert('Groupe', groupsErrorMessage(error));
+      Alert.alert(tx('Groupe'), groupsErrorMessage(error));
       router.back();
     }
   }, [groupId]);
@@ -48,32 +49,32 @@ export default function GroupInfoScreen() {
       await action();
       await load();
     } catch (error) {
-      Alert.alert('Groupe', groupsErrorMessage(error));
+      Alert.alert(tx('Groupe'), groupsErrorMessage(error));
     }
   };
 
   if (!detail) {
-    return <TahajjudShell title="Groupe" eyebrow="Infos"><ActivityIndicator color={night.gold} /></TahajjudShell>;
+    return <TahajjudShell title={tx("Groupe")} eyebrow={tx("Infos")}><ActivityIndicator color={night.gold} /></TahajjudShell>;
   }
 
   const memberIds = new Set(detail.members.map((member) => member.id));
   const addable = friends.filter((friend) => !memberIds.has(friend.id));
   const me = detail.members.find((member) => member.me);
 
-  const leave = () => Alert.alert('Quitter le groupe ?', 'Vous ne recevrez plus ses messages ni ses rappels.', [
-    { text: 'Annuler', style: 'cancel' },
+  const leave = () => Alert.alert(tx('Quitter le groupe ?'), tx('Vous ne recevrez plus ses messages ni ses rappels.'), [
+    { text: tx('Annuler'), style: 'cancel' },
     {
-      text: 'Quitter', style: 'destructive', onPress: () => void removeGroupMember(groupId, me?.id ?? '')
+      text: tx('Quitter'), style: 'destructive', onPress: () => void removeGroupMember(groupId, me?.id ?? '')
         .then(() => router.dismissTo('/tahajjud/friends'))
-        .catch((error) => Alert.alert('Groupe', groupsErrorMessage(error))),
+        .catch((error) => Alert.alert(tx('Groupe'), groupsErrorMessage(error))),
     },
   ]);
 
   return (
-    <TahajjudShell title={detail.name} eyebrow="Groupe">
+    <TahajjudShell title={detail.name} eyebrow={tx("Groupe")}>
       {detail.isOwner ? (
         <>
-          <Text style={shellStyles.sectionLabel}>Nom du groupe</Text>
+          <Text style={shellStyles.sectionLabel}>{tx("Nom du groupe")}</Text>
           <View style={styles.renameRow}>
             <TextInput value={name} onChangeText={setName} maxLength={40} style={styles.input} placeholderTextColor={night.placeholder} />
             <Pressable
@@ -81,7 +82,7 @@ export default function GroupInfoScreen() {
               onPress={() => void act(() => renameGroup(groupId, name))}
               style={[styles.smallGold, (!name.trim() || name.trim() === detail.name) && styles.disabled]}
             >
-              <Text style={styles.smallGoldText}>Renommer</Text>
+              <Text style={styles.smallGoldText}>{tx("Renommer")}</Text>
             </Pressable>
           </View>
         </>
@@ -91,8 +92,8 @@ export default function GroupInfoScreen() {
         <View style={styles.row}>
           <Ionicons name="notifications-outline" size={21} color={night.goldSoft} />
           <View style={styles.flex}>
-            <Text style={styles.rowTitle}>Notifications du groupe</Text>
-            <Text style={styles.rowText}>Messages et rappels, avec le son OUMMAH.</Text>
+            <Text style={styles.rowTitle}>{tx("Notifications du groupe")}</Text>
+            <Text style={styles.rowText}>{tx("Messages et rappels, avec le son OUMMAH.")}</Text>
           </View>
           <Switch
             value={!detail.muted}
@@ -103,16 +104,16 @@ export default function GroupInfoScreen() {
         </View>
       </GlassCard>
 
-      <Text style={[shellStyles.sectionLabel, styles.sectionLabel]}>Rappels programmés</Text>
+      <Text style={[shellStyles.sectionLabel, styles.sectionLabel]}>{tx("Rappels programmés")}</Text>
       <GlassCard>
         {detail.reminders.length === 0 ? (
-          <Text style={styles.empty}>Aucun rappel. Utilisez le réveil dans la discussion pour en programmer un.</Text>
+          <Text style={styles.empty}>{tx("Aucun rappel. Utilisez le réveil dans la discussion pour en programmer un.")}</Text>
         ) : detail.reminders.map((reminder, index) => (
           <View key={reminder.id} style={[styles.row, index > 0 && styles.rowBorder]}>
             <Ionicons name="alarm" size={20} color={night.goldSoft} />
             <View style={styles.flex}>
               <Text style={styles.rowTitle}>{reminder.body}</Text>
-              <Text style={styles.rowText}>{reminderLabel(reminder.remindAt, reminder.repeatDaily)} · par {reminder.mine ? 'vous' : reminder.by}</Text>
+              <Text style={styles.rowText}>{reminderLabel(reminder.remindAt, reminder.repeatDaily)} {tx("· par ")}{reminder.mine ? 'vous' : reminder.by}</Text>
             </View>
             {reminder.mine || detail.isOwner ? (
               <Pressable onPress={() => void act(() => cancelGroupReminder(reminder.id))} hitSlop={8}>
@@ -123,19 +124,19 @@ export default function GroupInfoScreen() {
         ))}
       </GlassCard>
 
-      <Text style={[shellStyles.sectionLabel, styles.sectionLabel]}>Membres · {detail.members.length}</Text>
+      <Text style={[shellStyles.sectionLabel, styles.sectionLabel]}>{tx("Membres · ")}{detail.members.length}</Text>
       <GlassCard>
         {detail.members.map((member, index) => (
           <View key={member.id} style={[styles.row, index > 0 && styles.rowBorder]}>
             <MemberAvatar avatar={member.avatar} size={40} />
-            <Text style={[styles.rowTitle, styles.flex]} numberOfLines={1}>{member.me ? `${member.pseudo} (vous)` : member.pseudo}</Text>
-            {member.owner ? <Text style={styles.tag}>Créateur</Text> : null}
+            <Text style={[styles.rowTitle, styles.flex]} numberOfLines={1}>{member.me ? tx("{0} (vous)", [member.pseudo]) : member.pseudo}</Text>
+            {member.owner ? <Text style={styles.tag}>{tx("Créateur")}</Text> : null}
             {detail.isOwner && !member.me ? (
               <Pressable
                 hitSlop={8}
-                onPress={() => Alert.alert(`Retirer ${member.pseudo} ?`, undefined, [
-                  { text: 'Annuler', style: 'cancel' },
-                  { text: 'Retirer', style: 'destructive', onPress: () => void act(() => removeGroupMember(groupId, member.id)) },
+                onPress={() => Alert.alert(tx("Retirer {0} ?", [member.pseudo]), undefined, [
+                  { text: tx('Annuler'), style: 'cancel' },
+                  { text: tx('Retirer'), style: 'destructive', onPress: () => void act(() => removeGroupMember(groupId, member.id)) },
                 ])}
               >
                 <Ionicons name="remove-circle-outline" size={22} color={night.muted} />
@@ -147,7 +148,7 @@ export default function GroupInfoScreen() {
 
       {adding ? (
         <>
-          <Text style={[shellStyles.sectionLabel, styles.sectionLabel]}>Ajouter mes amis</Text>
+          <Text style={[shellStyles.sectionLabel, styles.sectionLabel]}>{tx("Ajouter mes amis")}</Text>
           <FriendPicker
             friends={addable}
             selected={selected}
@@ -156,7 +157,7 @@ export default function GroupInfoScreen() {
               if (next.has(friendId)) next.delete(friendId); else next.add(friendId);
               return next;
             })}
-            emptyText="Tous vos amis sont déjà dans ce groupe."
+            emptyText={tx("Tous vos amis sont déjà dans ce groupe.")}
           />
           <Pressable
             disabled={!selected.size}
@@ -167,19 +168,19 @@ export default function GroupInfoScreen() {
             })}
             style={[styles.primary, !selected.size && styles.disabled]}
           >
-            <Text style={styles.primaryText}>Ajouter {selected.size || ''}</Text>
+            <Text style={styles.primaryText}>{tx("Ajouter ")}{selected.size || ''}</Text>
           </Pressable>
         </>
       ) : (
         <Pressable onPress={() => setAdding(true)} style={styles.addButton}>
           <Ionicons name="person-add-outline" size={19} color={night.goldSoft} />
-          <Text style={styles.addText}>Ajouter des amis</Text>
+          <Text style={styles.addText}>{tx("Ajouter des amis")}</Text>
         </Pressable>
       )}
 
       <Pressable onPress={leave} style={styles.leave}>
         <Ionicons name="exit-outline" size={19} color="#F28B82" />
-        <Text style={styles.leaveText}>Quitter le groupe</Text>
+        <Text style={styles.leaveText}>{tx("Quitter le groupe")}</Text>
       </Pressable>
     </TahajjudShell>
   );
