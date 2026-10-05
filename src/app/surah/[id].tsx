@@ -694,7 +694,10 @@ export default function SurahReadingScreen() {
           () => stopInlineVerse(requestId, startSeconds),
           Math.max(
             1,
-            (activeTiming.endMs - activeTiming.startMs) / playbackRate,
+            Math.max(
+              activeTiming.endMs - activeTiming.startMs,
+              activeTiming.audioMode === "single-verse" ? (player.duration || 0) * 1000 : 0,
+            ) / playbackRate,
           ),
         );
         return;
@@ -840,7 +843,8 @@ export default function SurahReadingScreen() {
           () => {
             stopInlineVerse(requestId, startSeconds);
           },
-          Math.max(1, (endMs - timestampFromMs) / playbackRate),
+          // A verse's own file is played to its end: its length can differ from the chapter timings.
+          Math.max(1, Math.max(endMs - timestampFromMs, dedicatedUrl ? (player.duration || 0) * 1000 : 0) / playbackRate),
         );
       } finally {
         if (loadingVerseKeyRef.current === verse.verseKey) {

@@ -184,6 +184,30 @@ function translationResource(language: QuranTranslationLanguage) {
   return language === "en" ? 20 : 31;
 }
 
+// Some chapter files do not match their published verse timings (Abu Bakr al-Shatri, surah 17: the file
+// lasts 1732 s, the timings run to 1737 s), so a verse cut from the chapter file plays the end of the
+// previous verse and the start of the next one. Quran.com also publishes one file per verse; the reader
+// and Hifz play that file when it exists. Ids checked: same reciter and recording in both catalogues.
+const VERSE_AUDIO_RECITERS = new Set([1, 2, 3, 4, 5, 6, 7, 9, 10, 12]);
+
+async function getVerseAudioFiles(reciter: number, chapter: number) {
+  if (!VERSE_AUDIO_RECITERS.has(Number(reciter))) return [];
+  try {
+    const response = await fetch(
+      `https://api.quran.com/api/v4/recitations/${reciter}/by_chapter/${chapter}?per_page=300`,
+    );
+    if (!response.ok) return [];
+    const body = (await response.json()) as {
+      audio_files?: { verse_key?: string; url?: string }[];
+    };
+    return (body.audio_files ?? []).flatMap((file) =>
+      file.verse_key && file.url ? [{ verseKey: file.verse_key, url: file.url }] : [],
+    );
+  } catch {
+    return [];
+  }
+}
+
 async function getChapterTranslations(
   chapter: number,
   language: QuranTranslationLanguage,
@@ -375,6 +399,10 @@ export class QuranFoundationClient {
       const recitation = await this.request<QuranFoundationRecitation>(
         `/quran-audio?chapter=${chapter}&reciter=${reciter}`,
       );
+      if (!recitation.audioFiles?.length) {
+        const audioFiles = await getVerseAudioFiles(reciter, chapter);
+        if (audioFiles.length) recitation.audioFiles = audioFiles;
+      }
       if (recitation.timestamps?.length) {
         this.recitationsCache.set(identity, recitation);
         writeCache(storageKey, recitation);
