@@ -1285,7 +1285,7 @@ export default function SurahReadingScreen() {
                 offset: averageItemLength * index,
                 animated: false,
               });
-              if (attempts > 3) {
+              if (attempts > 15) {
                 setDeepLinkPositioned(true);
                 return;
               }
@@ -1301,7 +1301,7 @@ export default function SurahReadingScreen() {
                   // Showing the list is safer than leaving the screen stuck.
                   setDeepLinkPositioned(true);
                 }
-              }, 80);
+              }, 120);
             }}
             onViewableItemsChanged={viewability}
             onScroll={(event) => {
