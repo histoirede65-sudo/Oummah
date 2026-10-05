@@ -1,15 +1,10 @@
 import { c, p, type LessonEntry } from "./types";
 
-const B = "wajiz-buyu";
-const A = "wajiz-atimah";
-const Y = "wajiz-ayman";
-const J = "wajiz-qada";
-const H = "wajiz-faraid";
 
 export const TRANSACTION_LESSONS: Record<string, LessonEntry> = {
   "transactions-consent": {
     title: "Le consentement",
-    short: "Une transaction n’est valable que si les deux parties l’acceptent librement. Le consentement ne rend pas licite ce qu’Allah a interdit.",
+    short: "Une transaction se fait par consentement mutuel, sans manger injustement les biens d’autrui.",
     rules: [
       p("« Que les uns d’entre vous ne mangent pas les biens des autres illégalement. Mais qu’il y ait du négoce (légal), entre vous, par consentement mutuel. »", "quran-4-29"),
       p("« Qu’Allah fasse miséricorde à celui qui est indulgent dans ses achats, ses ventes et quand il réclame son argent. »", "bukhari-2076"),
@@ -18,7 +13,7 @@ export const TRANSACTION_LESSONS: Record<string, LessonEntry> = {
   },
   "transactions-clarity": {
     title: "La clarté et l’absence de tromperie",
-    short: "Ce qui est vendu, son prix et son délai doivent être connus. Le Prophète ﷺ a interdit la vente aléatoire (gharar) et la tromperie.",
+    short: "Le Prophète ﷺ a interdit la vente aléatoire (gharar) et la tromperie, et de vendre ce que l’on ne possède pas.",
     rules: [
       p("Interdiction de la vente comportant un aléa (gharar).", "muslim-1513"),
       p("« Celui qui trompe n’est pas des miens. »", "muslim-102"),
@@ -28,7 +23,7 @@ export const TRANSACTION_LESSONS: Record<string, LessonEntry> = {
   },
   "transactions-sale": {
     title: "La vente",
-    short: "La vente est permise : un bien licite, possédé par le vendeur, échangé contre un prix connu, avec l’accord des deux parties. La franchise attire la bénédiction.",
+    short: "La vente est permise. On ne vend pas ce que l’on ne possède pas, et la franchise attire la bénédiction.",
     rules: [
       p("« Allah a rendu licite le commerce, et illicite l’intérêt. »", "quran-2-275"),
       p("« Si les deux disent la vérité et décrivent les défauts et les qualités de la marchandise, ils seront bénis dans leur transaction. Mais s’ils mentent ou cachent quelque chose, la bénédiction de leur transaction sera perdue. »", "bukhari-2079"),
@@ -39,7 +34,7 @@ export const TRANSACTION_LESSONS: Record<string, LessonEntry> = {
   },
   "transactions-defects": {
     title: "Les défauts cachés",
-    short: "Le vendeur doit signaler les défauts qu’il connaît. L’acheteur qui découvre un défaut caché peut rendre le bien.",
+    short: "Il n’est pas permis de vendre un bien en cachant son défaut.",
     rules: [
       p("Il n’est pas permis de vendre un bien en cachant son défaut.", "ibnmajah-2246"),
       p("« Celui qui trompe n’est pas des miens. »", "muslim-102"),
@@ -48,7 +43,7 @@ export const TRANSACTION_LESSONS: Record<string, LessonEntry> = {
   },
   "transactions-options": {
     title: "Le droit de se rétracter",
-    short: "Tant qu’acheteur et vendeur ne se sont pas séparés, chacun peut annuler. On peut aussi convenir d’un délai de réflexion.",
+    short: "Tant qu’acheteur et vendeur ne se sont pas séparés, chacun peut garder ou rendre la marchandise.",
     rules: [
       p("« Le vendeur et l’acheteur ont le droit de garder ou de rendre la marchandise tant qu’ils ne se sont pas séparés. »", "bukhari-2079"),
       p("À l’homme qui se faisait souvent tromper, le Prophète ﷺ a dit de dire au moment d’acheter : « Pas de tromperie. »", "bukhari-2117"),
@@ -69,16 +64,15 @@ export const TRANSACTION_LESSONS: Record<string, LessonEntry> = {
   },
   "transactions-loan": {
     title: "Le prêt (qard)",
-    short: "Prêter est une bonne œuvre. On rend la même quantité ; toute condition d’intérêt est interdite. Rendre un peu plus de soi-même, sans condition, est une belle manière.",
+    short: "Al-Wajîz : prêter deux fois à un musulman vaut une aumône une fois. Rendre mieux que ce qu’on a emprunté est une belle manière : le Prophète ﷺ l’a fait.",
     rules: [
       p("Le Prophète ﷺ a rendu un chameau meilleur que celui emprunté : « Donne-lui ce chameau, car les meilleures personnes sont celles qui remboursent le mieux leurs dettes. »", "muslim-1600"),
-      p("Un supplément exigé à l’avance est de l’intérêt (ribâ).", "quran-2-275", B),
+      p("Al-Wajîz cite le hadith : aucun musulman ne prête deux fois à un musulman sans que ce soit comme une aumône une fois.", "wajiz-buyu"),
     ],
-    sensitive: false,
   },
   "transactions-guarantee": {
     title: "Garantie et gage",
-    short: "On peut garantir la dette d’autrui (caution) ou remettre un bien en gage. Le Prophète ﷺ a lui-même mis sa cotte de mailles en gage.",
+    short: "On peut garantir la dette d’autrui ou remettre un bien en gage. Le Prophète ﷺ a lui-même mis sa cotte de mailles en gage.",
     rules: [
       p("« Et j’en suis garant. »", "quran-12-72"),
       p("Le gage remis en garantie d’une dette.", "quran-2-283"),
@@ -89,23 +83,22 @@ export const TRANSACTION_LESSONS: Record<string, LessonEntry> = {
   },
   "transactions-riba": {
     title: "L’intérêt (ribâ)",
-    short: "Le ribâ est strictement interdit : tout surplus exigé sur un prêt, et certains échanges inégaux ou différés de biens de même nature. Celui qui le prend, le donne, l’écrit et en témoigne est maudit.",
+    short: "Le ribâ est interdit. Celui qui le prend, le donne, l’écrit et en témoigne est maudit. Certains biens de même nature ne s’échangent qu’à quantité égale et de main à main.",
     rules: [
       p("« Allah a rendu licite le commerce, et illicite l’intérêt. »", "quran-2-275"),
       p("Le Prophète ﷺ a maudit celui qui consomme le ribâ, celui qui le donne, celui qui l’écrit et ses deux témoins.", "muslim-1598"),
       p("Or contre or, argent contre argent, blé contre blé… à quantité égale et de main à main.", "muslim-1587c"),
     ],
-    cases: [c("Un crédit immobilier classique ?", "Un prêt avec intérêt reste du ribâ, quel que soit son nom. Les savants contemporains divergent sur les cas de nécessité ; exposez votre situation à une personne de science.", "muslim-1598", B)],
   },
   "transactions-currency": {
     title: "Le change de monnaies",
-    short: "On peut changer une monnaie contre une autre à n’importe quel taux, à condition que l’échange soit immédiat. Une même monnaie s’échange à valeur égale.",
+    short: "On peut changer une monnaie contre une autre à n’importe quel taux, à condition que l’échange soit immédiat.",
     rules: [p("« Si les catégories diffèrent, alors vendez comme vous le souhaitez, à condition que le paiement soit fait sur place. »", "muslim-1587c")],
     sensitive: false,
   },
   "transactions-rental": {
     title: "La location",
-    short: "On peut louer un bien ou un service pour un prix et une durée connus. Le locataire en prend soin ; le propriétaire garantit l’usage convenu.",
+    short: "On peut louer ses services contre un salaire : le Prophète ﷺ a gardé des troupeaux contre rémunération.",
     rules: [
       p("Le Prophète ﷺ a gardé des troupeaux contre rémunération.", "bukhari-2262"),
       p("« Donnez-leur leurs salaires. »", "quran-65-6"),
@@ -114,7 +107,7 @@ export const TRANSACTION_LESSONS: Record<string, LessonEntry> = {
   },
   "transactions-wages": {
     title: "Le salaire",
-    short: "Le salaire doit être fixé à l’avance et payé à temps. Ne pas payer un salarié est un péché grave.",
+    short: "Le salaire est payé à temps. Ne pas payer un salarié est un péché grave.",
     rules: [
       p("« Donnez au travailleur son salaire avant que sa sueur ne sèche. »", "ibnmajah-2443"),
       p("Allah est l’adversaire, au Jour dernier, de celui qui emploie un salarié sans le payer.", "bukhari-2227"),
@@ -123,16 +116,16 @@ export const TRANSACTION_LESSONS: Record<string, LessonEntry> = {
   },
   "transactions-partnership": {
     title: "L’association",
-    short: "On peut s’associer en mettant en commun capital ou travail, en partageant gains et pertes selon un accord clair. La loyauté entre associés attire la bénédiction.",
+    short: "On peut s’associer pour le commerce. Al-Wajîz : dans la mudâraba, l’un apporte l’argent, l’autre le fait fructifier, et le bénéfice se partage selon ce dont ils conviennent.",
     rules: [
       p("« Beaucoup de gens transgressent les droits de leurs associés, sauf ceux qui croient et accomplissent les bonnes œuvres. »", "quran-38-24"),
       p("Le Prophète ﷺ a confié Khaybar aux exploitants contre la moitié de la récolte.", "muslim-1551"),
+      p("Al-Wajîz rapporte d’Ibn al-Mundhir le consensus sur la permission de la mudâraba avec des dinars et des dirhams.", "wajiz-buyu"),
     ],
-    cases: [c("Peut-on garantir un bénéfice fixe à un associé ?", "Non : le bénéfice se partage en pourcentage, et les pertes sur le capital sont supportées selon les parts. Garantir un montant fixe en fait un prêt à intérêt.", B)],
   },
   "transactions-agency": {
     title: "Le mandat",
-    short: "On peut charger quelqu’un d’acheter, vendre ou agir pour soi. Le mandataire agit dans les limites fixées et rend compte.",
+    short: "On peut charger quelqu’un d’acheter ou de vendre pour soi : le Prophète ﷺ a confié à ‘Urwa un dinar pour acheter un mouton.",
     rules: [p("Le Prophète ﷺ a confié à ‘Urwa un dinar pour acheter un mouton.", "bukhari-3642")],
     sensitive: false,
   },
@@ -141,7 +134,7 @@ export const TRANSACTION_LESSONS: Record<string, LessonEntry> = {
 export const FOOD_LESSONS: Record<string, LessonEntry> = {
   "food-principles": {
     title: "Le principe : tout est permis",
-    short: "Les aliments sont permis par principe ; seul est interdit ce qu’un texte interdit. On mange en disant « Bismillâh », de la main droite.",
+    short: "Al-Wajîz : le principe pour les aliments est la permission. On mange en disant « Bismillâh », de la main droite.",
     rules: [
       p("« Ce qui est permis et ce qui est interdit sont clairs, mais entre les deux il y a des choses douteuses (suspectes) que la plupart des gens ne connaissent pas. »", "bukhari-52"),
       p("La nourriture des gens du Livre vous est permise.", "quran-5-5"),
@@ -159,7 +152,6 @@ export const FOOD_LESSONS: Record<string, LessonEntry> = {
       p("« Tout ce qui enivre est du khamr, et tout khamr est interdit. »", "muslim-2003", "quran-5-90"),
       p("Les poissons, les animaux marins et les sauterelles sont permis.", "abudawud-83", "bukhari-5495"),
     ],
-    cases: [c("La gélatine et les additifs ?", "Leur origine compte : animale non abattue rituellement ou porcine, la plupart des savants les interdisent. Vérifiez les ingrédients.", A)],
   },
   "food-slaughter": {
     title: "L’abattage",
@@ -177,32 +169,35 @@ export const FOOD_LESSONS: Record<string, LessonEntry> = {
   },
   "food-udhiyah": {
     title: "Le sacrifice de l’Aïd",
-    short: "Le sacrifice de l’Aïd al-Adhâ est une Sunnah très appuyée pour celui qui en a les moyens : un mouton, ou une part d’un septième de bovin ou de chameau, sans défaut et de l’âge requis.",
+    short: "Al-Wajîz : le sacrifice de l’Aïd al-Adhâ est obligatoire pour celui qui en a les moyens. La bête est sans défaut et de l’âge requis.",
     rules: [
       p("« Accomplis la Salât pour ton Seigneur et sacrifie. »", "quran-108-2"),
+      p("Al-Wajîz cite le hadith : que celui qui en a les moyens et ne sacrifie pas ne s’approche pas de notre lieu de prière.", "wajiz-atimah"),
       p("Le Prophète ﷺ a sacrifié deux béliers de sa main, en disant « Bismillâh, Allâhu akbar ».", "muslim-1966"),
       p("N’égorgez qu’une bête de l’âge requis.", "muslim-1963"),
       p("Quatre défauts l’excluent : borgne évidente, malade évidente, boiteuse évidente, très maigre.", "abudawud-2802"),
       p("Celui qui veut sacrifier ne coupe ni cheveux ni ongles dès l’entrée de Dhul-Hijja.", "muslim-1977"),
       p("« Mangez-en, et nourrissez-en le besogneux discret et le mendiant. »", "quran-22-36"),
     ],
-    note: ["Les hanafites jugent le sacrifice obligatoire pour celui qui en a les moyens ; les autres écoles, une Sunnah très appuyée."],
   },
   "food-udhiyah-time": {
     title: "Le moment du sacrifice",
-    short: "Le sacrifice se fait après la prière de l’Aïd, et jusqu’au coucher du soleil du dernier jour de Tashrîq (13 Dhul-Hijja) selon beaucoup de savants.",
-    rules: [p("« Celui qui sacrifie avant la prière, c’est juste pour la viande de sa famille. »", "muslim-1961")],
-    note: ["Pour les hanafites, malikites et hanbalites, le temps s’arrête au 12 ; pour les shafi‘ites, au 13."],
+    short: "Le sacrifice se fait après la prière de l’Aïd. Al-Wajîz le définit comme ce qui est égorgé le jour du sacrifice et les jours de Tashrîq.",
+    rules: [
+      p("« Celui qui sacrifie avant la prière, c’est juste pour la viande de sa famille. »", "muslim-1961"),
+      p("Al-Wajîz : le sacrifice est ce que l’on égorge le jour du sacrifice et les jours de Tashrîq pour se rapprocher d’Allah.", "wajiz-atimah"),
+    ],
   },
   "food-aqiqah": {
     title: "La ‘aqîqa",
-    short: "À la naissance d’un enfant, on sacrifie deux moutons pour un garçon et un pour une fille, de préférence le septième jour, où l’on rase aussi la tête du bébé et lui donne son nom.",
+    sourceIds: ["binbaz-aqiqah"],
+    short: "À la naissance d’un enfant, on sacrifie deux moutons pour un garçon et un pour une fille, le septième jour, où l’on rase aussi la tête du bébé et lui donne son nom.",
     rules: [
       p("« On doit offrir une ‘aqiqa pour un garçon nouveau-né, alors sacrifiez un animal pour lui. »", "bukhari-5472"),
       p("Deux moutons pour le garçon, un pour la fille.", "tirmidhi-1513"),
       p("Égorgée le septième jour ; on rase l’enfant et on lui donne son nom.", "abudawud-2838"),
+      p("Al-Wajîz la juge obligatoire pour celui à qui l’enfant est né ; Ibn Bâz la présente comme une Sunnah appuyée.", "wajiz-atimah", "binbaz-aqiqah"),
     ],
-    sourceIds: ["binbaz-aqiqah"],
   },
   "food-aqiqah-time": {
     title: "Le moment de la ‘aqîqa",
@@ -265,7 +260,7 @@ export const OATH_LESSONS: Record<string, LessonEntry> = {
       p("Rapport conjugal en journée de Ramadan.", "bukhari-1935"),
       p("Rasage en ihrâm à cause d’une gêne.", "quran-2-196", "bukhari-1814"),
     ],
-    sourceIds: [Y],
+    sourceIds: ["wajiz-ayman"],
   },
 };
 
@@ -282,16 +277,15 @@ export const CLOTHING_LESSONS: Record<string, LessonEntry> = {
   },
   "clothing-awrah": {
     title: "La ‘awra",
-    short: "L’homme couvre au moins du nombril aux genoux. La femme, devant les hommes étrangers, couvre son corps sauf, selon la majorité, le visage et les mains, avec un vêtement ample.",
+    short: "Le Coran ordonne aux croyantes de rabattre leur voile sur leurs poitrines et de ramener sur elles leurs grands voiles.",
     rules: [
       p("« Qu’elles rabattent leur voile sur leurs poitrines ; et qu’elles ne montrent leurs atours qu’à leurs maris, ou à leurs pères… »", "quran-24-31"),
       p("« Dis à tes épouses, à tes filles et aux femmes des croyants de ramener sur elles leurs grands voiles. »", "quran-33-59"),
     ],
-    note: ["Le visage de la femme : la majorité ne le compte pas dans la ‘awra ; une partie des savants hanbalites en demande la couverture."],
   },
   "clothing-gold-silk": {
     title: "L’or et la soie",
-    short: "L’or et la soie naturelle sont interdits aux hommes et permis aux femmes. L’argent est permis à l’homme pour une bague.",
+    short: "L’or et la soie sont interdits aux hommes, sauf une petite bande de soie.",
     rules: [
       p("Tenant de la soie et de l’or : « Ces deux choses sont interdites aux hommes de ma communauté. »", "abudawud-4057"),
       p("La soie masculine est interdite, sauf une petite bande.", "muslim-2069i"),
@@ -299,7 +293,7 @@ export const CLOTHING_LESSONS: Record<string, LessonEntry> = {
   },
   "clothing-perfume": {
     title: "Le parfum",
-    short: "Le parfum est recommandé à l’homme, notamment le vendredi. La femme se parfume chez elle, mais pas pour sortir à la mosquée ou devant des hommes étrangers.",
+    short: "Le parfum est recommandé le vendredi. La femme qui se rend à la mosquée ne se parfume pas.",
     rules: [
       p("Le ghusl et le parfum du vendredi.", "bukhari-883"),
       p("La femme qui se rend à la mosquée ne se parfume pas.", "muslim-443b"),
@@ -317,22 +311,24 @@ export const CLOTHING_LESSONS: Record<string, LessonEntry> = {
   },
   "clothing-body-modification": {
     title: "Tatouages et modifications du corps",
-    short: "Le tatouage, l’épilation des sourcils et l’écartement des dents pour l’esthétique sont interdits. Les soins médicaux et la réparation d’un défaut ne le sont pas.",
-    rules: [p("Le Prophète ﷺ a maudit la tatoueuse et la tatouée, celle qui s’épile les sourcils et celle qui écarte ses dents pour embellir, changeant la création d’Allah.", "bukhari-5931")],
-    cases: [c("Une chirurgie réparatrice ?", "Corriger un défaut ou une blessure est permis ; ce qui est interdit, c’est modifier la création par pure recherche de beauté.", "bukhari-5931")],
+    short: "Le Prophète ﷺ a maudit la tatoueuse et la tatouée, celle qui s’épile les sourcils et celle qui écarte ses dents pour embellir, changeant la création d’Allah.",
+    rules: [
+      p("Le Prophète ﷺ a maudit la tatoueuse et la tatouée, celle qui s’épile les sourcils et celle qui écarte ses dents pour embellir, changeant la création d’Allah.", "bukhari-5931"),
+    ],
   },
 };
 
 export const DAILY_LESSONS: Record<string, LessonEntry> = {
   "daily-toilet": {
     title: "Aller aux toilettes",
-    short: "On entre du pied gauche en demandant refuge contre les démons, on se nettoie de la main gauche avec de l’eau ou du papier, on ne fait pas face à la qibla en plein air, puis on sort du pied droit en disant « Ghufrânak ».",
+    short: "On demande refuge contre les démons en entrant, on se nettoie de la main gauche avec de l’eau ou des pierres, on ne fait pas face à la qibla, puis on dit « Ghufrânak » en sortant.",
     rules: [
       p("En entrant : « Allâhumma innî a‘ûdhu bika mina-l-khubuthi wa-l-khabâ’ith. »", "bukhari-142"),
       p("En sortant : « Ghufrânak » (Ton pardon).", "tirmidhi-7"),
       p("Ne pas se nettoyer de la main droite.", "bukhari-153"),
-      p("Ne pas faire face à la qibla ni lui tourner le dos en plein air.", "bukhari-144"),
+      p("Ne pas faire face à la qibla ni lui tourner le dos ; al-Wajîz : ni en plein air ni dans un bâtiment.", "bukhari-144", "wajiz-taharah"),
       p("Se préserver des éclaboussures d’urine.", "bukhari-218"),
+      p("Al-Wajîz : on peut se nettoyer avec de l’eau ou avec des pierres, et l’eau est meilleure ; il recommande d’entrer du pied gauche et de sortir du pied droit.", "wajiz-taharah"),
     ],
   },
   "daily-sleep": {
@@ -362,7 +358,7 @@ export const DAILY_LESSONS: Record<string, LessonEntry> = {
   },
   "daily-neighbours": {
     title: "Le voisin",
-    short: "Le voisin a des droits : on ne lui nuit pas, on l’honore, on partage avec lui. Jibrîl a tant insisté que le Prophète ﷺ a cru qu’il hériterait.",
+    short: "Le voisin a des droits : on ne lui nuit pas. Jibrîl a tant insisté que le Prophète ﷺ a cru qu’il hériterait.",
     rules: [
       p("Jibrîl a tant recommandé le voisin que le Prophète ﷺ a pensé qu’il en ferait un héritier.", "bukhari-6014"),
       p("« Celui qui croit en Allah et au Jour dernier ne doit pas nuire à son voisin. »", "bukhari-6018"),
@@ -370,7 +366,7 @@ export const DAILY_LESSONS: Record<string, LessonEntry> = {
   },
   "daily-travel-etiquette": {
     title: "Le voyage",
-    short: "On voyage de préférence accompagné, en désignant un responsable, et l’on dit l’invocation du voyage en partant.",
+    short: "À trois en voyage, on désigne l’un d’entre eux comme responsable, et l’on dit l’invocation du voyage en partant.",
     rules: [
       p("L’invocation du voyage : « Subḥâna-lladhî sakhkhara lanâ hâdhâ… »", "muslim-1342"),
       p("À trois, désignez l’un de vous comme responsable.", "abudawud-2608"),
@@ -417,7 +413,7 @@ export const JUSTICE_LESSONS: Record<string, LessonEntry> = {
   },
   "justice-disputes": {
     title: "Juger un litige",
-    short: "On écoute les deux parties, on ne juge pas en colère, et l’on sait qu’un jugement humain ne rend pas licite ce qui est à autrui.",
+    short: "On ne juge pas en colère, et un jugement humain ne rend pas licite ce qui est à autrui.",
     rules: [
       p("Le juge ne juge pas en colère.", "bukhari-7158"),
       p("« Je ne suis qu’un être humain […]. Donc, si jamais je juge par erreur et que je donne le droit d’un frère à un autre, alors ce dernier ne doit pas le prendre, car je ne lui donne en réalité qu’un morceau de Feu. »", "bukhari-7169"),
@@ -426,7 +422,7 @@ export const JUSTICE_LESSONS: Record<string, LessonEntry> = {
   },
   "justice-settlement": {
     title: "La conciliation",
-    short: "La conciliation entre deux parties est une belle œuvre, tant qu’elle ne rend pas licite l’illicite ni illicite le licite.",
+    short: "La conciliation entre deux parties est permise, tant qu’elle ne rend pas licite l’illicite ni illicite le licite.",
     rules: [
       p("« La réconciliation entre musulmans est permise », « sauf la réconciliation qui rend licite ce qui est illicite et illicite ce qui est licite ».", "abudawud-3594"),
       p("« Réconciliez-les avec justice. »", "quran-49-9"),
@@ -434,12 +430,11 @@ export const JUSTICE_LESSONS: Record<string, LessonEntry> = {
   },
   "justice-found-property": {
     title: "Le bien trouvé",
-    short: "Celui qui trouve un objet de valeur le garde, l’annonce pendant un an, et le rend à son propriétaire s’il se présente. Après un an, il peut l’utiliser en restant prêt à le rembourser.",
+    short: "Al-Wajîz : celui qui trouve un bien en note la nature et le nombre, prend un témoin intègre, le garde et l’annonce un an ; si le propriétaire le décrit, il le lui rend, sinon il en profite.",
     rules: [
       p("Reconnaître le contenant et le lien, puis annoncer un an.", "bukhari-2426"),
-      p("Si son propriétaire vient, on le lui rend.", "muslim-1722"),
+      p("Si son propriétaire vient, on le lui rend.", "muslim-1722", "wajiz-qada"),
     ],
-    cases: [c("Et un objet sans valeur ?", "Un objet de peu de valeur que son propriétaire ne cherchera pas peut être utilisé sans annonce.", J)],
   },
   "justice-usurpation": {
     title: "S’emparer du bien d’autrui",
@@ -451,7 +446,7 @@ export const JUSTICE_LESSONS: Record<string, LessonEntry> = {
   },
   "justice-damages": {
     title: "Réparer un dommage",
-    short: "Celui qui abîme le bien d’autrui le répare ou le remplace. Il est interdit de nuire, comme de répondre à un tort par un tort plus grand.",
+    short: "Celui qui abîme le bien d’autrui le remplace. Il ne doit y avoir ni préjudice ni riposte au préjudice.",
     rules: [
       p("« Il ne doit y avoir ni préjudice ni riposte au préjudice. »", "ibnmajah-2340"),
       p("Un plat cassé a été remplacé par un plat semblable.", "bukhari-5225"),
@@ -462,7 +457,7 @@ export const JUSTICE_LESSONS: Record<string, LessonEntry> = {
 export const INHERITANCE_LESSONS: Record<string, LessonEntry> = {
   "wills-basics": {
     title: "Le testament",
-    short: "Le musulman qui laisse des biens écrit son testament : ses dettes, ses dépôts, et éventuellement un legs à des non-héritiers, dans la limite d’un tiers.",
+    short: "Le musulman qui a de quoi léguer ne passe pas deux nuits sans testament écrit.",
     rules: [
       p("Le musulman qui a de quoi léguer ne passe pas deux nuits sans testament écrit.", "bukhari-2738"),
       p("Le testament est mentionné dans le Coran.", "quran-2-180"),
@@ -470,7 +465,7 @@ export const INHERITANCE_LESSONS: Record<string, LessonEntry> = {
   },
   "wills-limits": {
     title: "Les limites du testament",
-    short: "On ne lègue pas plus d’un tiers, et rien à un héritier, sauf accord des autres héritiers.",
+    short: "On ne lègue pas plus d’un tiers, et rien à un héritier.",
     rules: [
       p("À Sa‘d, qui voulait léguer ses biens : « Oui, un tiers, mais même un tiers c’est trop. »", "bukhari-2742"),
       p("« Allah a attribué à chacun ses droits, il n’est donc pas permis de faire un legs à un héritier. »", "abudawud-2870"),
@@ -478,7 +473,7 @@ export const INHERITANCE_LESSONS: Record<string, LessonEntry> = {
   },
   "inheritance-estate": {
     title: "L’ordre de la succession",
-    short: "On paie d’abord les frais d’enterrement, puis les dettes, puis le legs (jusqu’au tiers), et l’on partage le reste entre les héritiers.",
+    short: "La dette et le testament passent avant le partage entre les héritiers.",
     rules: [
       p("« … après exécution du testament qu’il aurait fait ou paiement d’une dette. »", "quran-4-11"),
       p("‘Alî : le Prophète ﷺ a fait régler la dette avant le testament.", "tirmidhi-2094"),
@@ -486,7 +481,7 @@ export const INHERITANCE_LESSONS: Record<string, LessonEntry> = {
   },
   "inheritance-debts": {
     title: "Les dettes du défunt",
-    short: "Les dettes du défunt sont réglées sur sa succession avant tout partage. Les héritiers ne paient pas de leur poche au-delà de l’héritage, mais c’est une belle œuvre de le faire.",
+    short: "Les dettes du défunt sont réglées avant le testament et le partage.",
     rules: [
       p("L’âme du croyant reste suspendue à sa dette jusqu’à son règlement.", "tirmidhi-1078"),
       p("La dette passe avant le testament.", "tirmidhi-2094"),
@@ -509,19 +504,20 @@ export const INHERITANCE_LESSONS: Record<string, LessonEntry> = {
       p("Au mari la moitié sans enfant, le quart avec ; à l’épouse le quart sans enfant, le huitième avec.", "quran-4-12"),
       p("« Donnez les parts d’héritage prescrites dans le Coran à ceux qui y ont droit. Ensuite, ce qui reste doit être donné au parent masculin le plus proche du défunt. »", "bukhari-6732"),
     ],
-    note: ["Chaque succession est un calcul complet. Faites vérifier le partage par une personne compétente."],
   },
   "inheritance-blocking": {
     title: "L’exclusion entre héritiers",
-    short: "Certains héritiers en excluent d’autres : par exemple, le fils exclut les frères et sœurs ; le père exclut le grand-père.",
+    short: "Al-Wajîz : certains héritiers en excluent d’autres ; par exemple, le fils exclut le frère, et celui qui se rattache au défunt par une personne n’hérite pas avec elle.",
     rules: [p("Le reste va au plus proche parent masculin : le plus proche écarte le plus éloigné.", "bukhari-6732")],
-    sourceIds: [H],
+    sourceIds: ["wajiz-faraid"],
   },
   "inheritance-unresolved": {
     title: "Les cas complexes",
-    short: "Absence, disparition, héritiers inconnus, décès simultanés, biens à l’étranger : ces cas demandent l’examen d’une personne compétente et, souvent, d’un notaire.",
-    rules: [p("Le partage suit les textes ; les situations complexes demandent une étude au cas par cas.", "quran-4-11", "quran-4-12", "quran-4-176")],
-    sourceIds: [H],
+    sourceIds: ["wajiz-faraid"],
+    short: "Le partage suit les parts fixées par les textes.",
+    rules: [
+      p("Les parts sont fixées par le Coran.", "quran-4-11", "quran-4-12", "quran-4-176"),
+    ],
   },
 };
 
@@ -536,7 +532,7 @@ export const ANIMAL_LESSONS: Record<string, LessonEntry> = {
   },
   "hunting-tools": {
     title: "Les moyens de chasse",
-    short: "Le gibier atteint par une arme tranchante ou par un chien dressé lâché avec le nom d’Allah est permis. Celui qui est tué par un coup contondant ne l’est pas, sauf s’il est égorgé vivant.",
+    short: "Le gibier atteint par la pointe d’une arme ou par un chien dressé lâché avec le nom d’Allah est permis ; celui qui est assommé par le plat ne l’est pas.",
     rules: [
       p("Atteint par la pointe : on mange ; par le plat : il est assommé, on ne mange pas.", "bukhari-5476"),
       p("Le chien dressé lâché avec le nom d’Allah.", "muslim-1929", "bukhari-5486"),
@@ -545,12 +541,12 @@ export const ANIMAL_LESSONS: Record<string, LessonEntry> = {
   },
   "animals-domestic": {
     title: "Les animaux domestiques",
-    short: "On peut garder un chien pour la chasse, la garde d’un troupeau ou d’un champ ; sans nécessité, cela diminue les œuvres. Le chat n’est pas impur.",
+    short: "Garder un chien sans nécessité (chasse, troupeau, champ) diminue chaque jour les œuvres d’un qîrât.",
     rules: [p("Garder un chien sans nécessité diminue chaque jour les œuvres d’un qîrât.", "bukhari-2322")],
   },
   "animals-welfare": {
     title: "La bienfaisance envers les animaux",
-    short: "Il est interdit de maltraiter un animal, de l’affamer, de le frapper au visage ou de le prendre pour cible. Abreuver un animal assoiffé peut valoir le pardon.",
+    short: "Il est interdit d’enfermer un animal sans le nourrir, de le frapper au visage ou de le prendre pour cible. Abreuver un chien assoiffé a valu le pardon à un homme.",
     rules: [
       p("Un homme a été pardonné pour avoir abreuvé un chien assoiffé.", "bukhari-2363"),
       p("Une femme est entrée en Enfer à cause d’une chatte enfermée sans nourriture.", "bukhari-3482"),
@@ -558,13 +554,15 @@ export const ANIMAL_LESSONS: Record<string, LessonEntry> = {
       p("Interdiction de frapper ou de marquer au visage.", "muslim-2117"),
       p("« Lorsque vous égorgez, égorgez de la meilleure façon. »", "muslim-1955a"),
     ],
-    cases: [c("Peut-on tuer les nuisibles ?", "Oui : le Prophète ﷺ a nommé cinq nuisibles que l’on tue même dans l’enceinte sacrée, comme le rat et le scorpion.", "bukhari-3314")],
+    cases: [
+      c("Peut-on tuer les nuisibles ?", "Le Prophète ﷺ a nommé cinq nuisibles que l’on tue même dans l’enceinte sacrée, dont le rat et le scorpion.", "bukhari-3314"),
+    ],
   },
   "animals-products": {
     title: "Les produits animaux",
-    short: "La peau d’une bête morte devient pure une fois tannée. Le lait, la laine et le cuir des animaux licites sont permis.",
+    short: "La peau d’une bête morte devient pure une fois tannée.",
     rules: [p("« Quand la peau est tannée, elle devient pure. »", "muslim-366")],
-    sourceIds: [A],
+    sourceIds: ["wajiz-atimah"],
   },
 };
 
@@ -606,11 +604,10 @@ export const SIYAR_LESSONS: Record<string, LessonEntry> = {
   },
   "siyar-historical-context": {
     title: "Lire ces textes dans leur cadre",
-    short: "Les règles de la guerre et de la paix relèvent de l’autorité légitime, jamais de l’initiative individuelle. Elles se lisent dans leur contexte historique et juridique.",
+    short: "Les règles de la guerre et de la paix relèvent de l’autorité légitime, jamais de l’initiative individuelle.",
     rules: [
       p("« Et s’ils inclinent à la paix, incline vers celle-ci (toi aussi). »", "quran-8-61"),
       p("Ces matières sont replacées dans leur cadre d’autorité légitime et de droit.", "wajiz-siyar"),
     ],
-    note: ["Toute situation réelle de conflit ou de sécurité relève des autorités légitimes et du droit applicable."],
   },
 };

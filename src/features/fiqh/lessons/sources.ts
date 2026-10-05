@@ -12,14 +12,6 @@ const Q = (s: number, v: number, scope: string): FiqhSource => ({ id: `quran-${s
  * Each one is listed in the review file sent to the scholar.
  */
 export const LESSON_SOURCES: FiqhSource[] = [
-  {
-    id: "contemporary-estimates",
-    kind: "scholar",
-    author: "Savants contemporains, dont Ibn ‘Uthaymîn et le Comité permanent (al-Lajna ad-Dâ’ima)",
-    reference: "Estimations contemporaines des mesures anciennes",
-    scope: "conversion approximative des mesures des textes : sâ‘ (environ 2,7 litres), dinar et dirham (seuil d’environ 85 g d’or et 595 g d’argent), awsuq, distance du voyage (environ 80 km)",
-    limits: "Ce sont des estimations : les textes donnent des mesures anciennes, et les savants proposent des équivalences qui varient légèrement. Le poids d’un sâ‘ dépend de la denrée.",
-  },
   { id: "uthaymin-liqa-zakat", kind: "scholar", author: "Shaykh Muhammad ibn Sâlih al-‘Uthaymîn", reference: "Ibn ‘Uthaymîn — Liqâ’ al-Bâb al-Maftûh (al-Maktaba ash-Shâmila, livre 7687, p. 4153)", scope: "l’or et l’argent sont soumis à la zakât « en toutes circonstances », bijoux compris ; les biens destinés au commerce ; seuil de 85 g d’or et 595 g d’argent ; on ne complète pas l’or par l’argent" },
   { id: "uthaymin-sa", kind: "scholar", author: "Shaykh Muhammad ibn Sâlih al-‘Uthaymîn", reference: "Ibn ‘Uthaymîn — réponse sur la mesure du sâ‘ prophétique (enregistrement, alathar.net)", scope: "le sâ‘ prophétique pesé en bon blé : 2,040 kg ; le poids change selon la denrée, et il faut augmenter le poids pour une denrée plus lourde" },
   { id: "binbaz-zakat-savings", kind: "scholar", author: "Shaykh ‘Abd al-‘Azîz ibn Bâz", reference: "Ibn Bâz — Majmû‘ al-Fatâwâ, 14/129", scope: "l’argent épargné, pour le mariage, une maison ou autre, est soumis à la zakât s’il atteint le seuil et qu’une année est passée, qu’il soit en or, en argent ou en monnaie papier" },
