@@ -49,31 +49,3 @@ export type MuslimName = {
   sources?: NameSource[];
   editorialLevel?: NameEditorialLevel;
 };
-
-export const NAME_STATUS_META: Record<NameStatus, { label: string; symbol: string; description: string }> = {
-  recommended: {
-    label: 'Recommandé',
-    symbol: '✓',
-    description: 'Nom explicitement valorisé par un texte ou choix particulièrement noble par son sens et son précédent.',
-  },
-  permitted: {
-    label: 'Permis',
-    symbol: '✓',
-    description: 'Aucun problème religieux connu dans son sens ou son usage.',
-  },
-  note: {
-    label: 'À connaître',
-    symbol: '△',
-    description: 'Prénom permis, mais une nuance de sens, d’origine ou d’usage mérite d’être connue.',
-  },
-  discouraged: {
-    label: 'Déconseillé',
-    symbol: '!',
-    description: 'Mieux vaut privilégier un autre choix en raison du sens ou de l’usage.',
-  },
-  forbidden: {
-    label: 'Interdit',
-    symbol: '✕',
-    description: 'Le nom entre dans une interdiction religieuse claire.',
-  },
-};

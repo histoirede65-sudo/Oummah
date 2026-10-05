@@ -1,3 +1,5 @@
+import type { PrenomsLanguage } from './i18n';
+import { nameTextEn } from './names-en';
 import type { MuslimName, NameSource } from './types';
 import { VERIFIED_NAME_SOURCES } from './verified-sources';
 
@@ -7,7 +9,7 @@ import { VERIFIED_NAME_SOURCES } from './verified-sources';
  * were found for this name (verified-sources.ts). Generic entries attached to every fiche and OUMMAH's own notes are
  * not sources and are not shown.
  */
-export function getNameSources(item: MuslimName): NameSource[] {
+export function getNameSources(item: MuslimName, lang: PrenomsLanguage = 'fr'): NameSource[] {
   const sources: NameSource[] = [];
 
   if (item.quranReference) {
@@ -59,36 +61,15 @@ export function getNameSources(item: MuslimName): NameSource[] {
     });
   }
 
-  return dedupeSources(sources);
+  const shown = dedupeSources(sources);
+  if (lang === 'fr') return shown;
+  return shown.map((source) => ({ ...source, label: nameTextEn(source.label), reference: source.reference && nameTextEn(source.reference), note: source.note && nameTextEn(source.note) }));
 }
 
 /** A link to a precise page (not a generic list or a dataset home page). */
 function isPreciseLink(url?: string) {
   if (!url) return false;
   return !/behindthename\.com\/names\/usage|huggingface\.co/.test(url);
-}
-
-export function getLanguageAndCulture(item: MuslimName) {
-  const language = item.language?.length ? item.language : inferLanguage(item.origin);
-  const culture = item.culture?.length ? item.culture : inferCulture(item.origin);
-  return { language, culture };
-}
-
-function inferLanguage(origin: string[]) {
-  const values = origin.map(value => value.toLocaleLowerCase('fr'));
-  const result: string[] = [];
-  if (values.some(value => value.includes('arabe'))) result.push('Arabe');
-  if (values.some(value => value.includes('perse'))) result.push('Persan');
-  if (values.some(value => value.includes('tur'))) result.push('Turc');
-  if (values.some(value => value.includes('amaz') || value.includes('berb'))) result.push('Amazigh');
-  if (values.some(value => value.includes('ourdou') || value.includes('urdu'))) result.push('Ourdou');
-  if (values.some(value => value.includes('hébra') || value.includes('sémit'))) result.push('Langue sémitique ancienne / forme arabisée');
-  return result.length ? result : ['Usage culturel à préciser'];
-}
-
-function inferCulture(origin: string[]) {
-  if (!origin.length) return ['Usage culturel à préciser'];
-  return origin.map(value => value === 'Usage arabe' ? 'Tradition arabophone' : value);
 }
 
 function dedupeSources(sources: NameSource[]) {

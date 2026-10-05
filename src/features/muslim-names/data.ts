@@ -3,6 +3,7 @@ import { CURATED_EXTRA_NAMES } from './curated-extra';
 import { ABD_ALLAH_NAMES } from './abd-names';
 import { EXTENDED_CURATED_NAMES } from './extended-curated';
 import { MAGHREB_DIASPORA_NAMES, MAGHREB_VARIANTS_BY_ID } from './maghreb-diaspora';
+import { SOURCED_ADDITION_NAMES } from './sourced-additions';
 
 export const NAME_TAG_LABELS: Record<NameTag, string> = {
   court: 'Court', rare: 'Rare', classique: 'Classique', coranique: 'Coranique', prophete: 'Prophètes',
@@ -108,6 +109,7 @@ export const EDITORIAL_MUSLIM_NAMES: MuslimName[] = [
   ...EXTENDED_CURATED_NAMES.filter((candidate) => ![...VERIFIED_MUSLIM_NAMES, ...CURATED_EXTRA_NAMES].some((item) => normalizeNameSearch(item.name) === normalizeNameSearch(candidate.name))),
   ...MAGHREB_DIASPORA_NAMES.filter((candidate) => ![...VERIFIED_MUSLIM_NAMES, ...CURATED_EXTRA_NAMES, ...EXTENDED_CURATED_NAMES].some((item) => normalizeNameSearch(item.name) === normalizeNameSearch(candidate.name))),
   ...ABD_ALLAH_NAMES.filter((candidate) => !VERIFIED_MUSLIM_NAMES.some((item) => normalizeNameSearch(item.name) === normalizeNameSearch(candidate.name))),
+  ...SOURCED_ADDITION_NAMES,
 ];
 
 
