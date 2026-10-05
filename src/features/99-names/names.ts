@@ -11,9 +11,8 @@ type AllahNameEntry = {
   arabic: string;
   transliteration: string;
   translation: Localized;
-  explanation: Localized;
-  reflection: Localized;
-  practice: Localized;
+  /** Only a cited verse or hadith, quoted word for word. */
+  reflection?: Localized;
   evidence: AllahNameEvidence;
 };
 
@@ -22,9 +21,7 @@ export type AllahName = {
   arabic: string;
   transliteration: string;
   translation: string;
-  explanation: string;
-  reflection: string;
-  practice: string;
+  reflection?: string;
   evidence:
     | { kind: "quran"; ref: string; surah: string; arabic: string; text: string }
     | { kind: "sunnah"; text: string; source: string };
@@ -38,7 +35,7 @@ export const ALLAH_NAMES_SOURCE = {
 
 // Arabic, transliteration and base meanings follow the Islamic Relief UK list. Quran fragments are taken word for word
 // with the official translations used by the Coran module (Hamidullah in French, Saheeh International in English).
-// Never replace them with a home-made translation. Explanations are teaching summaries; keep FR and EN in step when editing.
+// Hadith quotes are word for word from the collections (fawazahmed0 fra/eng). Never add text that is not a cited source.
 const ENTRIES: AllahNameEntry[] = [
   {
     "id": 1,
@@ -48,17 +45,9 @@ const ENTRIES: AllahNameEntry[] = [
       "fr": "Le Tout Miséricordieux",
       "en": "The Most Merciful"
     },
-    "explanation": {
-      "fr": "Ar-Raḥmān désigne Celui dont la miséricorde est immense et embrasse toute la création, croyants comme non-croyants, dans ce monde. C’est un nom propre à Allah : on ne l’attribue à personne d’autre.",
-      "en": "Ar-Raḥmān is the One whose mercy is vast and embraces all of creation, believers and disbelievers alike, in this world. It is a name that belongs to Allah alone: no one else is called by it."
-    },
     "reflection": {
-      "fr": "Le Prophète ﷺ a dit qu’Allah a divisé la miséricorde en cent parts : Il en a fait descendre une seule sur terre, et c’est par elle que les créatures s’aiment les unes les autres (al-Bukhârî 6000, Muslim 2752).",
-      "en": "The Prophet ﷺ said that Allah divided mercy into a hundred parts and sent down only one of them to the earth; through it, creatures show compassion to one another (al-Bukhârî 6000, Muslim 2752)."
-    },
-    "practice": {
-      "fr": "Ne jamais désespérer de la miséricorde d’Allah, et faire preuve de compassion envers les gens et les animaux.",
-      "en": "Never despair of Allah’s mercy, and show compassion to people and to animals."
+      "fr": "Le Prophète ﷺ a dit : « Allah a partagé la miséricorde en cent parties. Il en a gardé quatre-vingt-dix-neuf auprès de Lui et a fait descendre une seule partie sur la terre. Grâce à cette unique part, les créatures sont compatissantes entre elles » (al-Bukhârî 6000).",
+      "en": "The Prophet ﷺ said: “Allah divided Mercy into one hundred parts. He kept ninety nine parts with Him and sent down one part to the earth, and because of that, its one single part, His Creations are merciful to each other” (al-Bukhârî 6000)."
     },
     "evidence": {
       "kind": "quran",
@@ -79,17 +68,9 @@ const ENTRIES: AllahNameEntry[] = [
       "fr": "Le Très Miséricordieux",
       "en": "The Especially Merciful"
     },
-    "explanation": {
-      "fr": "Ar-Raḥīm désigne Celui qui fait parvenir concrètement Sa miséricorde à Ses serviteurs, et tout particulièrement aux croyants, dans ce monde et dans l’au-delà.",
-      "en": "Ar-Raḥīm is the One who actually extends His mercy to His servants, and especially to the believers, in this world and in the Hereafter."
-    },
     "reflection": {
-      "fr": "Voyant une mère serrer son enfant contre elle, le Prophète ﷺ a dit : « Allah est plus miséricordieux envers Ses serviteurs que cette femme envers son enfant. » (al-Bukhârî 5999, Muslim 2754)",
-      "en": "Seeing a mother hold her child close, the Prophet ﷺ said: “Allah is more merciful to His servants than this woman is to her child.” (al-Bukhârî 5999, Muslim 2754)"
-    },
-    "practice": {
-      "fr": "Demander la miséricorde d’Allah dans ses invocations et revenir vers Lui après chaque faute, avec confiance.",
-      "en": "Ask for Allah’s mercy in your supplications and turn back to Him after every mistake, with confidence."
+      "fr": "Devant une captive qui allaitait chaque enfant qu’elle trouvait, le Prophète ﷺ a dit : « Allah est encore plus miséricordieux envers Ses serviteurs que cette femme envers son enfant. » (al-Bukhârî 5999)",
+      "en": "Seeing a captive woman nursing every child she found, the Prophet ﷺ said: “Allah is more merciful to His slaves than this lady to her son.” (al-Bukhârî 5999)"
     },
     "evidence": {
       "kind": "quran",
@@ -110,17 +91,9 @@ const ENTRIES: AllahNameEntry[] = [
       "fr": "Le Souverain",
       "en": "The King"
     },
-    "explanation": {
-      "fr": "Al-Malik est le Roi véritable : tout Lui appartient, Il dispose de Sa création comme Il veut, et Sa royauté n’a ni début, ni fin, ni besoin de personne.",
-      "en": "Al-Malik is the true King: everything belongs to Him, He governs His creation as He wills, and His kingship has no beginning, no end and no need of anyone."
-    },
     "reflection": {
-      "fr": "Le Jour de la Résurrection, Allah dira : « C’est Moi le Roi. Où sont les rois de la terre ? » (al-Bukhârî 4812, Muslim 2787). Toute autorité humaine est prêtée et passagère.",
-      "en": "On the Day of Resurrection, Allah will say: “I am the King. Where are the kings of the earth?” (al-Bukhârî 4812, Muslim 2787). All human authority is lent and temporary."
-    },
-    "practice": {
-      "fr": "Ne pas s’attacher au pouvoir ni craindre les puissants plus qu’Allah, et user avec justice de toute responsabilité confiée.",
-      "en": "Do not cling to power or fear the powerful more than Allah, and use any responsibility you are given with justice."
+      "fr": "Le Prophète ﷺ a dit : « Allah tiendra toute la terre, et enroulera tous les cieux dans Sa Main droite, puis Il dira : ‘Je suis le Roi ; où sont les rois de la terre ?’ » (al-Bukhârî 4812)",
+      "en": "The Prophet ﷺ said: “Allah will hold the whole earth, and roll all the heavens up in His Right Hand, and then He will say, ‘I am the King; where are the kings of the earth?’” (al-Bukhârî 4812)"
     },
     "evidence": {
       "kind": "quran",
@@ -141,17 +114,9 @@ const ENTRIES: AllahNameEntry[] = [
       "fr": "Le Très Saint",
       "en": "The Most Holy"
     },
-    "explanation": {
-      "fr": "Al-Quddūs est Celui qui est pur de tout défaut, de toute imperfection et de toute ressemblance avec les créatures. Rien de ce qu’on imagine de faible ne s’applique à Lui.",
-      "en": "Al-Quddūs is the One who is free of every flaw, every imperfection and every likeness to creation. Nothing weak that one might imagine applies to Him."
-    },
     "reflection": {
-      "fr": "Après le witr, le Prophète ﷺ disait trois fois « Subḥāna l-Maliki l-Quddūs » (Abû Dâwûd 1430, an-Nasâ’î 1699, authentifié par al-Albânî).",
-      "en": "After the witr prayer, the Prophet ﷺ would say three times “Subḥāna l-Maliki l-Quddūs” (Abû Dâwûd 1430, an-Nasâ’î 1699, graded authentic by al-Albânî)."
-    },
-    "practice": {
-      "fr": "Purifier son cœur et ses paroles, et dire cette glorification après le witr comme le faisait le Prophète ﷺ.",
-      "en": "Purify your heart and your words, and say this glorification after the witr as the Prophet ﷺ did."
+      "fr": "À la fin du witr, le Prophète ﷺ disait trois fois : « Subhanal-Malikil-Quddus » (Gloire au Souverain, le Très Saint) (an-Nasâ’î 1699, authentifié par al-Albânî).",
+      "en": "At the end of the witr, the Prophet ﷺ would say three times: “Subhanal-Malikil-Quddus” (Glory be to the Sovereign, the Most Holy) (an-Nasâ’î 1699, graded authentic by al-Albânî)."
     },
     "evidence": {
       "kind": "quran",
@@ -172,17 +137,9 @@ const ENTRIES: AllahNameEntry[] = [
       "fr": "La Paix, Le Parfait",
       "en": "The Source of Peace"
     },
-    "explanation": {
-      "fr": "As-Salām est Celui qui est exempt de tout défaut et de tout manque, et de qui vient toute paix et toute sécurité pour Ses créatures.",
-      "en": "As-Salām is the One who is free of every defect and every lack, and from whom all peace and safety come to His creation."
-    },
     "reflection": {
-      "fr": "Après chaque prière, le Prophète ﷺ disait : « Allāhumma anta s-Salām wa minka s-salām, tabārakta yā Dhā l-jalāli wa-l-ikrām. » (Muslim 591)",
-      "en": "After each prayer, the Prophet ﷺ would say: “Allāhumma anta s-Salām wa minka s-salām, tabārakta yā Dhā l-jalāli wa-l-ikrām.” (Muslim 591)"
-    },
-    "practice": {
-      "fr": "Répandre le salām entre les gens et dire cette invocation après chaque prière.",
-      "en": "Spread the greeting of salām among people and say this supplication after each prayer."
+      "fr": "Lorsqu’il terminait sa prière, le Prophète ﷺ disait : « Ô Allah ! Tu es la Paix, et la paix vient de Toi ; Béni sois-Tu, Ô Détenteur de Majesté et d’Honneur. » (Muslim 591)",
+      "en": "When he finished his prayer, the Prophet ﷺ would say: “O Allah! Thou art Peace, and peace comes from Thee; Blessed art Thou, O Possessor of Glory and Honour.” (Muslim 591)"
     },
     "evidence": {
       "kind": "quran",
@@ -203,18 +160,6 @@ const ENTRIES: AllahNameEntry[] = [
       "fr": "Celui qui accorde la sécurité",
       "en": "The Giver of Security"
     },
-    "explanation": {
-      "fr": "Al-Mu’min est Celui qui accorde la sécurité à Ses serviteurs, qui confirme la véracité de Ses messagers par des preuves, et qui ne trahit jamais Sa promesse.",
-      "en": "Al-Mu’min is the One who grants security to His servants, confirms the truthfulness of His messengers with proofs, and never breaks His promise."
-    },
-    "reflection": {
-      "fr": "La vraie sécurité ne vient ni de l’argent ni des gens, mais d’Allah : « Ceux qui ont cru et n’ont point entaché leur foi par quel qu’inéquité (association), ceux-là ont la sécurité; et ce sont eux les bien-guidés.\" » (6:82)",
-      "en": "True security comes neither from money nor from people, but from Allah: “They who believe and do not mix their belief with injustice - those will have security, and they are [rightly] guided.” (6:82)"
-    },
-    "practice": {
-      "fr": "Être quelqu’un auprès de qui les autres se sentent en sécurité, dans ses paroles comme dans ses actes.",
-      "en": "Be someone with whom others feel safe, in your words as in your actions."
-    },
     "evidence": {
       "kind": "quran",
       "ref": "59:23",
@@ -233,18 +178,6 @@ const ENTRIES: AllahNameEntry[] = [
     "translation": {
       "fr": "Le Gardien, Celui qui veille sur tout",
       "en": "The Overseer"
-    },
-    "explanation": {
-      "fr": "Al-Muhaymin est Celui qui veille sur toute chose, en est témoin et la maintient. Rien n’échappe à Sa surveillance ni à Sa garde.",
-      "en": "Al-Muhaymin is the One who watches over everything, witnesses it and sustains it. Nothing escapes His oversight or His care."
-    },
-    "reflection": {
-      "fr": "Savoir qu’Allah veille sur chaque situation apaise le cœur dans l’épreuve et retient la main devant le péché.",
-      "en": "Knowing that Allah oversees every situation calms the heart in hardship and holds the hand back from sin."
-    },
-    "practice": {
-      "fr": "Agir en privé comme en public, en se rappelant qu’Allah voit et garde toute chose.",
-      "en": "Act in private as you act in public, remembering that Allah sees and guards everything."
     },
     "evidence": {
       "kind": "quran",
@@ -265,17 +198,9 @@ const ENTRIES: AllahNameEntry[] = [
       "fr": "Le Tout-Puissant",
       "en": "The Almighty"
     },
-    "explanation": {
-      "fr": "Al-‘Azīz est Celui qui ne peut être vaincu ni atteint, dont la puissance est totale et à qui appartient toute dignité.",
-      "en": "Al-‘Azīz is the One who cannot be overcome or harmed, whose might is complete and to whom all honour belongs."
-    },
     "reflection": {
-      "fr": "Le Coran rappelle que la puissance appartient à Allah, à Son Messager et aux croyants (63:8) : la vraie dignité se trouve dans l’obéissance à Allah, pas dans l’orgueil.",
-      "en": "The Quran reminds us that honour belongs to Allah, to His Messenger and to the believers (63:8): true dignity is found in obeying Allah, not in pride."
-    },
-    "practice": {
-      "fr": "Rechercher sa dignité dans l’obéissance à Allah, et ne pas s’humilier devant les créatures pour obtenir ce qui n’appartient qu’à Lui.",
-      "en": "Seek your dignity in obeying Allah, and do not humble yourself before creatures to obtain what belongs only to Him."
+      "fr": "« Or c’est à Allah qu’est la puissance ainsi qu’à Son Messager et aux croyants. » (63:8)",
+      "en": "“And to Allāh belongs [all] honor, and to His Messenger, and to the believers” (63:8)"
     },
     "evidence": {
       "kind": "quran",
@@ -296,17 +221,9 @@ const ENTRIES: AllahNameEntry[] = [
       "fr": "Le Contraignant, Celui qui répare",
       "en": "The Compeller, the Restorer"
     },
-    "explanation": {
-      "fr": "Al-Jabbār réunit plusieurs sens : Celui dont la volonté s’impose à toute chose, Celui qui est au-dessus de Sa création, et Celui qui répare ce qui est brisé, console les cœurs et relève les faibles.",
-      "en": "Al-Jabbār joins several meanings: the One whose will prevails over everything, the One who is above His creation, and the One who mends what is broken, consoles hearts and lifts up the weak."
-    },
     "reflection": {
-      "fr": "Un cœur brisé, une situation cassée : Allah est Celui qui répare. Entre les deux prosternations, le Prophète ﷺ demandait notamment « wajburnī », « répare-moi » (at-Tirmidhî 284, authentifié par al-Albânî).",
-      "en": "A broken heart, a broken situation: Allah is the One who mends. Between the two prostrations, the Prophet ﷺ would ask, among other things, “wajburnī”, “mend me” (at-Tirmidhî 284, graded authentic by al-Albânî)."
-    },
-    "practice": {
-      "fr": "Confier à Allah ce qui est brisé en soi, et aider à réparer les cœurs des autres par une parole ou un geste.",
-      "en": "Entrust to Allah what is broken within you, and help mend the hearts of others with a word or a gesture."
+      "fr": "Entre les deux prosternations, le Prophète ﷺ disait : « Allahummaghfir li, warhamni, wajburni, wahdini, warzuqni » (at-Tirmidhî 284, authentifié par al-Albânî).",
+      "en": "Between the two prostrations, the Prophet ﷺ would say: “Allahummaghfir li, warhamni, wajburni, wahdini, warzuqni. O Allah! Pardon me, have mercy on me, help me, guide me, and grant me sustenance” (at-Tirmidhî 284, graded authentic by al-Albânî)."
     },
     "evidence": {
       "kind": "quran",
@@ -327,17 +244,9 @@ const ENTRIES: AllahNameEntry[] = [
       "fr": "Le Suprême, Le Majestueux",
       "en": "The Supreme in Greatness"
     },
-    "explanation": {
-      "fr": "Al-Mutakabbir est Celui à qui revient toute grandeur, au-dessus de tout défaut et de toute comparaison. Chez Allah, la grandeur est une perfection ; chez la créature, l’orgueil est un défaut.",
-      "en": "Al-Mutakabbir is the One to whom all greatness belongs, above every flaw and every comparison. In Allah, greatness is a perfection; in a creature, arrogance is a defect."
-    },
     "reflection": {
-      "fr": "Le Prophète ﷺ a dit : « N’entrera pas au Paradis celui qui a dans le cœur le poids d’un atome d’orgueil. » (Muslim 91)",
-      "en": "The Prophet ﷺ said: “Whoever has an atom’s weight of arrogance in his heart will not enter Paradise.” (Muslim 91)"
-    },
-    "practice": {
-      "fr": "Laisser la grandeur à Allah : accepter la vérité d’où qu’elle vienne et ne mépriser personne.",
-      "en": "Leave greatness to Allah: accept the truth wherever it comes from and look down on no one."
+      "fr": "Le Prophète ﷺ a dit : « Celui qui a dans son cœur ne serait-ce qu’un grain de moutarde d’orgueil n’entrera pas au Paradis. » (Muslim 91)",
+      "en": "The Prophet ﷺ said: “He who has in his heart the weight of a mustard seed of pride shall not enter Paradise.” (Muslim 91)"
     },
     "evidence": {
       "kind": "quran",
@@ -358,18 +267,6 @@ const ENTRIES: AllahNameEntry[] = [
       "fr": "Le Créateur",
       "en": "The Creator"
     },
-    "explanation": {
-      "fr": "Al-Khāliq est Celui qui crée toute chose à partir du néant, selon une mesure parfaite. Personne d’autre ne crée véritablement.",
-      "en": "Al-Khāliq is the One who creates everything from nothing, according to a perfect measure. No one else truly creates."
-    },
-    "reflection": {
-      "fr": "Regarder le ciel, un enfant ou une simple graine, c’est voir la trace du Créateur. Le Coran invite sans cesse à cette réflexion.",
-      "en": "Looking at the sky, at a child or at a simple seed is seeing the trace of the Creator. The Quran constantly invites this reflection."
-    },
-    "practice": {
-      "fr": "Contempler la création avec gratitude, et utiliser ses capacités dans ce qui plaît à Celui qui les a données.",
-      "en": "Contemplate creation with gratitude, and use your abilities in what pleases the One who gave them."
-    },
     "evidence": {
       "kind": "quran",
       "ref": "59:24",
@@ -388,18 +285,6 @@ const ENTRIES: AllahNameEntry[] = [
     "translation": {
       "fr": "Celui qui donne l’existence",
       "en": "The Originator"
-    },
-    "explanation": {
-      "fr": "Al-Bāri’ est Celui qui fait exister ce qu’Il a décrété, en le distinguant des autres choses, sans modèle préalable et sans défaut.",
-      "en": "Al-Bāri’ is the One who brings into existence what He has decreed, distinguishing it from other things, without any prior model and without flaw."
-    },
-    "reflection": {
-      "fr": "Chaque être est voulu et façonné de manière unique. Personne n’existe par hasard.",
-      "en": "Every being is willed and made in a unique way. No one exists by chance."
-    },
-    "practice": {
-      "fr": "Ne pas mépriser ce qu’Allah a créé, ni en soi ni chez les autres.",
-      "en": "Do not look down on what Allah has created, in yourself or in others."
     },
     "evidence": {
       "kind": "quran",
@@ -420,18 +305,6 @@ const ENTRIES: AllahNameEntry[] = [
       "fr": "Celui qui façonne les formes",
       "en": "The Fashioner"
     },
-    "explanation": {
-      "fr": "Al-Muṣawwir est Celui qui donne à chaque créature sa forme et son apparence propres, dans une diversité sans fin.",
-      "en": "Al-Muṣawwir is the One who gives every creature its own form and appearance, in endless variety."
-    },
-    "reflection": {
-      "fr": "Aucun visage n’est identique à un autre. Cette diversité est un signe de la science et de la puissance d’Allah.",
-      "en": "No face is identical to another. This variety is a sign of Allah’s knowledge and power."
-    },
-    "practice": {
-      "fr": "Remercier Allah pour son corps et sa forme, et ne pas se moquer de l’apparence de quiconque.",
-      "en": "Thank Allah for your body and form, and never mock anyone’s appearance."
-    },
     "evidence": {
       "kind": "quran",
       "ref": "3:6",
@@ -450,18 +323,6 @@ const ENTRIES: AllahNameEntry[] = [
     "translation": {
       "fr": "Celui qui pardonne sans cesse",
       "en": "The Ever-Forgiving"
-    },
-    "explanation": {
-      "fr": "Al-Ghaffār est Celui qui pardonne encore et encore, aussi nombreuses que soient les fautes, à celui qui revient vers Lui. Il couvre les péchés et en efface les conséquences.",
-      "en": "Al-Ghaffār is the One who forgives again and again, however many the sins, for whoever turns back to Him. He covers sins and erases their consequences."
-    },
-    "reflection": {
-      "fr": "Allah dit dans un hadith qudsî : « Ô fils d’Adam, tant que tu M’invoques et M’espères, Je te pardonne ce que tu as fait, sans M’en soucier. » (at-Tirmidhî 3540, authentifié par al-Albânî)",
-      "en": "Allah says in a hadith qudsî: “O son of Adam, as long as you call upon Me and hope in Me, I will forgive you what you have done, and I do not mind.” (at-Tirmidhî 3540, graded authentic by al-Albânî)"
-    },
-    "practice": {
-      "fr": "Demander pardon régulièrement, même après la même faute répétée, sans jamais se dire qu’il est trop tard.",
-      "en": "Ask for forgiveness regularly, even after repeating the same mistake, and never tell yourself it is too late."
     },
     "evidence": {
       "kind": "quran",
@@ -482,18 +343,6 @@ const ENTRIES: AllahNameEntry[] = [
       "fr": "Le Dominateur suprême",
       "en": "The Subduer"
     },
-    "explanation": {
-      "fr": "Al-Qahhār est Celui qui domine toute chose : toutes les créatures sont soumises à Sa volonté, et rien ne Lui résiste.",
-      "en": "Al-Qahhār is the One who prevails over everything: all creatures are subject to His will, and nothing resists Him."
-    },
-    "reflection": {
-      "fr": "Les tyrans passent, les empires tombent. Le Jour dernier, tous comparaîtront devant Allah, l’Unique, le Dominateur.",
-      "en": "Tyrants pass, empires fall. On the Last Day, all will stand before Allah, the One, the Subduer."
-    },
-    "practice": {
-      "fr": "Dominer ses passions par obéissance à Allah, et ne pas craindre l’oppresseur plus qu’Allah.",
-      "en": "Master your desires out of obedience to Allah, and do not fear an oppressor more than Allah."
-    },
     "evidence": {
       "kind": "quran",
       "ref": "14:48",
@@ -513,17 +362,9 @@ const ENTRIES: AllahNameEntry[] = [
       "fr": "Le Grand Donateur",
       "en": "The Bestower"
     },
-    "explanation": {
-      "fr": "Al-Wahhāb est Celui qui donne sans cesse et sans contrepartie, sans qu’on le mérite et sans que Ses trésors diminuent.",
-      "en": "Al-Wahhāb is the One who gives constantly and freely, without it being earned and without His treasures ever decreasing."
-    },
     "reflection": {
-      "fr": "Les prophètes demandaient à Allah par ce nom : Sulaymān (38:35) et Zakariyyā (3:38) ont invoqué « Toi, le Grand Donateur ».",
-      "en": "The prophets asked Allah by this name: Sulaymān (38:35) and Zakariyyā (3:38) called on Him as “the Bestower”."
-    },
-    "practice": {
-      "fr": "Demander à Allah ce dont on a besoin, même ce qui semble impossible, et donner soi-même sans attendre de retour.",
-      "en": "Ask Allah for what you need, even what seems impossible, and give yourself without expecting anything back."
+      "fr": "Sulaymân a dit : « C’est Toi le grand Dispensateur. » (38:35)",
+      "en": "Solomon said: “Indeed, You are the Bestower.” (38:35)"
     },
     "evidence": {
       "kind": "quran",
@@ -544,17 +385,9 @@ const ENTRIES: AllahNameEntry[] = [
       "fr": "Le Pourvoyeur",
       "en": "The Provider"
     },
-    "explanation": {
-      "fr": "Ar-Razzāq est Celui qui pourvoit à la subsistance de toutes Ses créatures : nourriture, santé, science, foi et tout ce qui fait vivre le corps et le cœur.",
-      "en": "Ar-Razzāq is the One who provides for all His creatures: food, health, knowledge, faith and everything that keeps the body and the heart alive."
-    },
     "reflection": {
-      "fr": "« Il n’y a point de bête sur Terre dont la subsistance n’incombe à Allah qui connaît son gîte et son dépôt; tout est dans un Livre explicite. » (11:6) Le rizq de chacun est écrit ; aucune âme ne meurt avant de l’avoir reçu en entier.",
-      "en": "“And there is no creature on earth but that upon Allāh is its provision, and He knows its place of dwelling and place of storage. All is in a clear register.” (11:6) Each person’s provision is written; no soul dies before receiving it in full."
-    },
-    "practice": {
-      "fr": "Travailler de manière licite, sans angoisse ni avidité, et remercier pour ce qui est accordé.",
-      "en": "Work in lawful ways, without anxiety or greed, and be thankful for what you are given."
+      "fr": "« Il n’y a point de bête sur Terre dont la subsistance n’incombe à Allah qui connaît son gîte et son dépôt; tout est dans un Livre explicite. » (11:6)",
+      "en": "“And there is no creature on earth but that upon Allāh is its provision, and He knows its place of dwelling and place of storage. All is in a clear register.” (11:6)"
     },
     "evidence": {
       "kind": "quran",
@@ -575,17 +408,9 @@ const ENTRIES: AllahNameEntry[] = [
       "fr": "Celui qui ouvre et qui juge",
       "en": "The Opener, the Judge"
     },
-    "explanation": {
-      "fr": "Al-Fattāḥ est Celui qui ouvre les portes de Sa miséricorde, de la subsistance et de la science, et qui tranche avec vérité entre Ses serviteurs.",
-      "en": "Al-Fattāḥ is the One who opens the doors of His mercy, of provision and of knowledge, and who judges with truth between His servants."
-    },
     "reflection": {
-      "fr": "Aucune porte fermée ne l’est pour Allah : « Ce qu’Allah accorde en miséricorde aux gens, il n’est personne à pouvoir le retenir. Et ce qu’Il retient, il n’est personne à le relâcher après Lui. Et c’est Lui le Puissant, le Sage. » (35:2)",
-      "en": "No closed door is closed for Allah: “Whatever Allāh grants to people of mercy - none can withhold it; and whatever He withholds - none can release it thereafter. And He is the Exalted in Might, the Wise.” (35:2)"
-    },
-    "practice": {
-      "fr": "Demander à Allah d’ouvrir son cœur à la compréhension, et ne pas désespérer face à une situation bloquée.",
-      "en": "Ask Allah to open your heart to understanding, and do not despair when a situation seems stuck."
+      "fr": "« Ce qu’Allah accorde en miséricorde aux gens, il n’est personne à pouvoir le retenir. Et ce qu’Il retient, il n’est personne à le relâcher après Lui. » (35:2)",
+      "en": "“Whatever Allāh grants to people of mercy - none can withhold it; and whatever He withholds - none can release it thereafter.” (35:2)"
     },
     "evidence": {
       "kind": "quran",
@@ -606,18 +431,6 @@ const ENTRIES: AllahNameEntry[] = [
       "fr": "L’Omniscient",
       "en": "The All-Knowing"
     },
-    "explanation": {
-      "fr": "Al-‘Alīm est Celui dont la science embrasse toute chose : le passé, le présent et l’avenir, l’apparent et le caché, ce qui est et ce qui aurait pu être.",
-      "en": "Al-‘Alīm is the One whose knowledge encompasses everything: past, present and future, the visible and the hidden, what is and what could have been."
-    },
-    "reflection": {
-      "fr": "Allah connaît les pensées que l’on ne dit à personne. Cela rassure celui qui souffre en silence et retient celui qui pense être caché.",
-      "en": "Allah knows the thoughts we tell no one. This reassures the one who suffers in silence and restrains the one who thinks they are hidden."
-    },
-    "practice": {
-      "fr": "Rechercher la science utile avec humilité, et dire « Allah sait mieux » quand on ne sait pas.",
-      "en": "Seek beneficial knowledge with humility, and say “Allah knows best” when you do not know."
-    },
     "evidence": {
       "kind": "quran",
       "ref": "2:32",
@@ -637,17 +450,9 @@ const ENTRIES: AllahNameEntry[] = [
       "fr": "Celui qui retient",
       "en": "The Withholder"
     },
-    "explanation": {
-      "fr": "Al-Qābiḍ est Celui qui restreint la subsistance ou reprend les âmes selon Sa sagesse. Ce nom se comprend avec son opposé, Al-Bāsiṭ : Allah retient et Il étend.",
-      "en": "Al-Qābiḍ is the One who restricts provision or takes back souls according to His wisdom. This name is understood together with its opposite, Al-Bāsiṭ: Allah withholds and He extends."
-    },
     "reflection": {
-      "fr": "Le Prophète ﷺ a dit : « C’est Allah qui fixe les prix, Celui qui retient, Celui qui étend, le Pourvoyeur. » (Abû Dâwûd 3451, at-Tirmidhî 1314, authentifié par al-Albânî)",
-      "en": "The Prophet ﷺ said: “Allah is the One who sets prices, who withholds, who extends, the Provider.” (Abû Dâwûd 3451, at-Tirmidhî 1314, graded authentic by al-Albânî)"
-    },
-    "practice": {
-      "fr": "Patienter dans les moments de gêne, en sachant qu’ils ont une sagesse et qu’ils ne durent pas.",
-      "en": "Be patient in times of difficulty, knowing they carry wisdom and do not last."
+      "fr": "Le Prophète ﷺ a dit : « C’est Allah qui fixe les prix, qui retient, qui donne largement et qui accorde la subsistance. » (Abû Dâwûd 3451, authentifié par al-Albânî)",
+      "en": "The Prophet ﷺ said: “Allah is the one Who fixes prices, Who withholds, gives lavishly and provides” (Abû Dâwûd 3451, graded authentic by al-Albânî)."
     },
     "evidence": {
       "kind": "quran",
@@ -668,18 +473,6 @@ const ENTRIES: AllahNameEntry[] = [
       "fr": "Celui qui étend",
       "en": "The Extender"
     },
-    "explanation": {
-      "fr": "Al-Bāsiṭ est Celui qui étend la subsistance, la miséricorde et le bien à qui Il veut. Il étend aussi Sa main la nuit pour accueillir le repentir de celui qui a fauté le jour (Muslim 2759).",
-      "en": "Al-Bāsiṭ is the One who extends provision, mercy and good to whom He wills. He also extends His hand at night to accept the repentance of the one who sinned by day (Muslim 2759)."
-    },
-    "reflection": {
-      "fr": "L’aisance est une épreuve autant que la gêne : elle demande de la gratitude.",
-      "en": "Ease is a test just as hardship is: it calls for gratitude."
-    },
-    "practice": {
-      "fr": "Remercier Allah dans l’aisance et partager ce qu’Il a donné.",
-      "en": "Thank Allah in times of ease and share what He has given."
-    },
     "evidence": {
       "kind": "quran",
       "ref": "2:245",
@@ -699,23 +492,11 @@ const ENTRIES: AllahNameEntry[] = [
       "fr": "Celui qui abaisse",
       "en": "The Abaser"
     },
-    "explanation": {
-      "fr": "Al-Khāfiḍ est Celui qui abaisse qui Il veut, par Sa justice : l’orgueilleux, l’oppresseur, celui qui se détourne de la vérité. Ce nom se comprend avec son opposé, Ar-Rāfi‘.",
-      "en": "Al-Khāfiḍ is the One who lowers whom He wills, by His justice: the arrogant, the oppressor, the one who turns away from the truth. This name is understood together with its opposite, Ar-Rāfi‘."
-    },
-    "reflection": {
-      "fr": "Le Prophète ﷺ a dit d’Allah : « Dans Son autre main est la balance : Il abaisse et Il élève. » (al-Bukhârî 7411)",
-      "en": "The Prophet ﷺ said of Allah: “In His other hand is the balance: He lowers and He raises.” (al-Bukhârî 7411)"
-    },
-    "practice": {
-      "fr": "Se méfier de l’orgueil, car c’est lui qui fait tomber, et ne pas se réjouir de l’abaissement des autres.",
-      "en": "Beware of pride, for it is what brings one down, and do not rejoice when others are brought low."
-    },
     "evidence": {
       "kind": "sunnah",
       "text": {
-        "fr": "« Dans Son autre main est la balance : Il abaisse et Il élève. »",
-        "en": "“In His other hand is the balance: He lowers and He raises.”"
+        "fr": "Le Prophète ﷺ a dit : « Son Trône est sur l’eau et dans Son autre Main se trouve la balance (de la Justice), et Il élève et abaisse qui Il veut. »",
+        "en": "The Prophet ﷺ said: “His Throne is over the water and in His other Hand is the balance (of Justice) and He raises and lowers (whomever He will).”"
       },
       "source": {
         "fr": "al-Bukhârî 7411",
@@ -731,17 +512,9 @@ const ENTRIES: AllahNameEntry[] = [
       "fr": "Celui qui élève",
       "en": "The Exalter"
     },
-    "explanation": {
-      "fr": "Ar-Rāfi‘ est Celui qui élève qui Il veut, en rang, en science et en honneur. Il élève les croyants et ceux qui ont reçu la science (58:11).",
-      "en": "Ar-Rāfi‘ is the One who raises whom He wills, in rank, in knowledge and in honour. He raises the believers and those given knowledge (58:11)."
-    },
     "reflection": {
-      "fr": "Le Prophète ﷺ a dit : « Personne ne se fait humble pour Allah sans qu’Allah ne l’élève. » (Muslim 2588)",
-      "en": "The Prophet ﷺ said: “No one humbles himself for Allah except that Allah raises him.” (Muslim 2588)"
-    },
-    "practice": {
-      "fr": "Rechercher l’élévation auprès d’Allah par l’humilité et la science, plutôt que la reconnaissance des gens.",
-      "en": "Seek to be raised by Allah through humility and knowledge, rather than through people’s recognition."
+      "fr": "Le Prophète ﷺ a dit : « … personne ne s’humilie pour Allah sans qu’Allah n’élève son rang. » (Muslim 2588)",
+      "en": "The Prophet ﷺ said: “… no one humbles himself for the sake of Allah except that Allah raises his status.” (Muslim 2588)"
     },
     "evidence": {
       "kind": "quran",
@@ -762,18 +535,6 @@ const ENTRIES: AllahNameEntry[] = [
       "fr": "Celui qui honore",
       "en": "The Honourer"
     },
-    "explanation": {
-      "fr": "Al-Mu‘izz est Celui qui donne l’honneur et la puissance à qui Il veut. Ce nom se comprend avec son opposé, Al-Mudhill.",
-      "en": "Al-Mu‘izz is the One who gives honour and strength to whom He wills. This name is understood together with its opposite, Al-Mudhill."
-    },
-    "reflection": {
-      "fr": "L’honneur ne s’achète pas et ne se prend pas : il est donné par Allah, souvent à ceux que les gens ne remarquent pas.",
-      "en": "Honour cannot be bought or seized: it is given by Allah, often to those people do not notice."
-    },
-    "practice": {
-      "fr": "Chercher l’honneur dans l’obéissance à Allah et non dans l’approbation des gens.",
-      "en": "Seek honour in obeying Allah, not in people’s approval."
-    },
     "evidence": {
       "kind": "quran",
       "ref": "3:26",
@@ -792,18 +553,6 @@ const ENTRIES: AllahNameEntry[] = [
     "translation": {
       "fr": "Celui qui humilie",
       "en": "The Humbler"
-    },
-    "explanation": {
-      "fr": "Al-Mudhill est Celui qui retire l’honneur à qui Il veut, par Sa justice et Sa sagesse. Ce nom se comprend avec son opposé, Al-Mu‘izz : Allah honore et Il humilie.",
-      "en": "Al-Mudhill is the One who removes honour from whom He wills, by His justice and wisdom. This name is understood together with its opposite, Al-Mu‘izz: Allah honours and He humbles."
-    },
-    "reflection": {
-      "fr": "Celui qui recherche l’honneur en dehors d’Allah finit par être humilié. Ce nom invite à la prudence plus qu’à la peur.",
-      "en": "Whoever seeks honour away from Allah ends up humbled. This name calls for caution more than fear."
-    },
-    "practice": {
-      "fr": "Ne jamais humilier quelqu’un, et demander à Allah de ne pas être de ceux qu’Il abaisse.",
-      "en": "Never humiliate anyone, and ask Allah not to be among those He lowers."
     },
     "evidence": {
       "kind": "quran",
@@ -824,17 +573,9 @@ const ENTRIES: AllahNameEntry[] = [
       "fr": "Celui qui entend tout",
       "en": "The All-Hearing"
     },
-    "explanation": {
-      "fr": "As-Samī‘ est Celui qui entend toute chose, les voix les plus faibles comme les plus fortes, dans toutes les langues, sans qu’aucune ne Le distraie d’une autre. Il entend aussi les invocations, au sens où Il y répond.",
-      "en": "As-Samī‘ is the One who hears everything, the faintest voices as well as the loudest, in every language, without any distracting Him from another. He also hears supplications, in the sense that He answers them."
-    },
     "reflection": {
-      "fr": "Le Prophète ﷺ a dit : « Vous n’invoquez ni un sourd ni un absent : vous invoquez Celui qui entend tout, qui est proche. » (al-Bukhârî 2992)",
-      "en": "The Prophet ﷺ said: “You are not calling upon one who is deaf or absent: you are calling upon One who is All-Hearing and near.” (al-Bukhârî 2992)"
-    },
-    "practice": {
-      "fr": "Surveiller ses paroles, et invoquer Allah même à voix basse, en sachant qu’Il entend.",
-      "en": "Watch your words, and call upon Allah even quietly, knowing that He hears."
+      "fr": "Le Prophète ﷺ a dit : « Vous n’appelez pas un sourd ou quelqu’un d’absent, mais Celui qui est avec vous. Sans aucun doute, Il entend tout et Il est tout proche. » (al-Bukhârî 2992)",
+      "en": "The Prophet ﷺ said: “You are not calling a deaf or an absent one, but One Who is with you, no doubt He is All-Hearer, ever Near (to all things).” (al-Bukhârî 2992)"
     },
     "evidence": {
       "kind": "quran",
@@ -855,17 +596,9 @@ const ENTRIES: AllahNameEntry[] = [
       "fr": "Celui qui voit tout",
       "en": "The All-Seeing"
     },
-    "explanation": {
-      "fr": "Al-Baṣīr est Celui qui voit toute chose, l’apparent et le caché, sans que rien ne Lui échappe : la fourmi noire sur la pierre noire dans la nuit noire.",
-      "en": "Al-Baṣīr is the One who sees everything, the visible and the hidden, without anything escaping Him: the black ant on a black stone in the dark night."
-    },
     "reflection": {
-      "fr": "C’est le sens de l’iḥsān décrit par le Prophète ﷺ : « Adorer Allah comme si tu Le voyais ; car si tu ne Le vois pas, Lui te voit. » (al-Bukhârî 50, Muslim 8)",
-      "en": "This is the meaning of iḥsān described by the Prophet ﷺ: “To worship Allah as though you see Him; for if you do not see Him, He sees you.” (al-Bukhârî 50, Muslim 8)"
-    },
-    "practice": {
-      "fr": "Soigner ses actes même quand personne ne regarde.",
-      "en": "Take care over your actions even when no one is watching."
+      "fr": "Le Prophète ﷺ a défini l’Ihsan : « C’est adorer Allah comme si tu Le voyais, et si tu ne Le vois pas, sache qu’Il te voit. » (al-Bukhârî 50)",
+      "en": "The Prophet ﷺ defined Ihsan: “To worship Allah as if you see Him, and if you cannot achieve this state of devotion then you must consider that He is looking at you.” (al-Bukhârî 50)"
     },
     "evidence": {
       "kind": "quran",
@@ -886,18 +619,6 @@ const ENTRIES: AllahNameEntry[] = [
       "fr": "Le Juge",
       "en": "The Judge"
     },
-    "explanation": {
-      "fr": "Al-Ḥakam est Celui qui juge entre Ses créatures, dans ce monde par Sa loi et dans l’au-delà par Son jugement, sans jamais commettre d’injustice.",
-      "en": "Al-Ḥakam is the One who judges between His creatures, in this world by His law and in the Hereafter by His judgement, without ever being unjust."
-    },
-    "reflection": {
-      "fr": "Les injustices qu’on n’a pas pu régler ici seront jugées par Celui qui n’oublie rien.",
-      "en": "The injustices we could not settle here will be judged by the One who forgets nothing."
-    },
-    "practice": {
-      "fr": "Prendre la loi d’Allah comme référence dans ses désaccords, et juger les autres avec équité.",
-      "en": "Take Allah’s law as the reference in your disagreements, and judge others fairly."
-    },
     "evidence": {
       "kind": "quran",
       "ref": "6:114",
@@ -917,17 +638,9 @@ const ENTRIES: AllahNameEntry[] = [
       "fr": "Le Parfaitement Juste",
       "en": "The Utterly Just"
     },
-    "explanation": {
-      "fr": "Al-‘Adl est Celui dont la justice est parfaite : Il ne lèse personne du poids d’un atome, et chaque décision est à sa juste place.",
-      "en": "Al-‘Adl is the One whose justice is perfect: He does not wrong anyone by an atom’s weight, and every decision is in its rightful place."
-    },
     "reflection": {
-      "fr": "Allah dit dans un hadith qudsî : « Ô Mes serviteurs, Je Me suis interdit l’injustice et Je l’ai rendue interdite entre vous. » (Muslim 2577)",
-      "en": "Allah says in a hadith qudsî: “O My servants, I have forbidden injustice for Myself and made it forbidden among you.” (Muslim 2577)"
-    },
-    "practice": {
-      "fr": "Être juste dans ses paroles et ses jugements, même envers ceux qu’on n’aime pas (5:8).",
-      "en": "Be just in your words and judgements, even towards those you dislike (5:8)."
+      "fr": "Allah a dit : « Ô Mes serviteurs, Je Me suis interdit l’injustice à Moi-même et Je l’ai rendue interdite entre vous » (Muslim 2577).",
+      "en": "Allah said: “O My servants, I have forbidden oppression for Myself and have made it forbidden amongst you” (Muslim 2577)."
     },
     "evidence": {
       "kind": "quran",
@@ -948,17 +661,9 @@ const ENTRIES: AllahNameEntry[] = [
       "fr": "Le Subtil, Le Très Doux",
       "en": "The Subtle, the Gentle"
     },
-    "explanation": {
-      "fr": "Al-Laṭīf réunit deux sens : Celui dont la science atteint les choses les plus cachées et les plus fines, et Celui qui fait parvenir Sa bonté à Ses serviteurs par des chemins qu’ils ne perçoivent pas.",
-      "en": "Al-Laṭīf joins two meanings: the One whose knowledge reaches the most hidden and subtle things, and the One who brings His kindness to His servants through ways they do not perceive."
-    },
     "reflection": {
-      "fr": "Une épreuve peut porter un bien que l’on ne voit pas encore. Après des années d’épreuves, Yūsuf a reconnu la douceur de son Seigneur dans ce qui lui était arrivé (12:100).",
-      "en": "A trial may carry a good we cannot yet see. After years of trials, Yūsuf recognised his Lord’s subtle kindness in all that had happened to him (12:100)."
-    },
-    "practice": {
-      "fr": "Être doux dans sa manière de conseiller et de corriger, et faire du bien discrètement.",
-      "en": "Be gentle in the way you advise and correct, and do good discreetly."
+      "fr": "Yûsuf a dit : « Mon Seigneur est plein de douceur pour ce qu’Il veut. » (12:100)",
+      "en": "Joseph said: “Indeed, my Lord is Subtle in what He wills.” (12:100)"
     },
     "evidence": {
       "kind": "quran",
@@ -979,18 +684,6 @@ const ENTRIES: AllahNameEntry[] = [
       "fr": "Le Parfaitement Informé",
       "en": "The All-Aware"
     },
-    "explanation": {
-      "fr": "Al-Khabīr est Celui qui connaît le fond des choses : les intentions, les secrets et les conséquences cachées de chaque acte.",
-      "en": "Al-Khabīr is the One who knows the inner reality of things: intentions, secrets and the hidden consequences of every act."
-    },
-    "reflection": {
-      "fr": "Les gens jugent sur l’apparence ; Allah connaît l’intention. Cela rend humble devant ses propres œuvres et indulgent envers celles des autres.",
-      "en": "People judge by appearances; Allah knows the intention. This makes one humble about one’s own deeds and lenient about those of others."
-    },
-    "practice": {
-      "fr": "Soigner ses intentions avant ses actes, puisque c’est sur elles qu’Allah juge.",
-      "en": "Take care of your intentions before your actions, since it is by them that Allah judges."
-    },
     "evidence": {
       "kind": "quran",
       "ref": "49:13",
@@ -1010,17 +703,9 @@ const ENTRIES: AllahNameEntry[] = [
       "fr": "Le Très Clément",
       "en": "The Forbearing"
     },
-    "explanation": {
-      "fr": "Al-Ḥalīm est Celui qui ne se hâte pas de punir alors qu’Il le pourrait. Il voit les fautes, accorde un délai et laisse le temps de revenir.",
-      "en": "Al-Ḥalīm is the One who does not hasten to punish, although He could. He sees the sins, grants respite and leaves time to return."
-    },
     "reflection": {
-      "fr": "Dans l’angoisse, le Prophète ﷺ disait : « Lā ilāha illā Allāhu l-‘Aẓīmu l-Ḥalīm… » (al-Bukhârî 6346, Muslim 2730)",
-      "en": "In distress, the Prophet ﷺ would say: “Lā ilāha illā Allāhu l-‘Aẓīmu l-Ḥalīm…” (al-Bukhârî 6346, Muslim 2730)"
-    },
-    "practice": {
-      "fr": "Ne pas profiter du délai d’Allah pour persister dans la faute, et se montrer patient face à la colère.",
-      "en": "Do not take advantage of Allah’s respite to persist in sin, and be patient in the face of anger."
+      "fr": "Dans les moments difficiles, le Prophète ﷺ invoquait : « Il n’y a pas de divinité en dehors d’Allah, le Grand, le Tolérant. » (Muslim 2730)",
+      "en": "In times of trouble, the Prophet ﷺ would supplicate: “There is no god but Allah, the Great, the Tolerant” (Muslim 2730)."
     },
     "evidence": {
       "kind": "quran",
@@ -1041,17 +726,9 @@ const ENTRIES: AllahNameEntry[] = [
       "fr": "L’Immense",
       "en": "The Magnificent"
     },
-    "explanation": {
-      "fr": "Al-‘Aẓīm est Celui dont la grandeur est absolue, dans Son être, Ses noms et Ses attributs. Les cieux et la terre ne sont rien face à Sa grandeur.",
-      "en": "Al-‘Aẓīm is the One whose greatness is absolute, in His being, His names and His attributes. The heavens and the earth are nothing before His greatness."
-    },
     "reflection": {
-      "fr": "Dans chaque inclinaison de la prière, on dit « Subḥāna rabbiya l-‘aẓīm » (Muslim 772). Ce nom est au cœur de l’adoration quotidienne.",
-      "en": "In every bowing of the prayer, one says “Subḥāna rabbiya l-‘aẓīm” (Muslim 772). This name is at the heart of daily worship."
-    },
-    "practice": {
-      "fr": "Prononcer cette glorification en pensant à son sens, et respecter ce qu’Allah a rendu sacré.",
-      "en": "Say this glorification while thinking of its meaning, and respect what Allah has made sacred."
+      "fr": "En s’inclinant, le Prophète ﷺ disait : « Gloire à mon Seigneur le Puissant » (Muslim 772).",
+      "en": "When bowing, the Prophet ﷺ would say: “Glory be to my Mighty Lord” (Muslim 772)."
     },
     "evidence": {
       "kind": "quran",
@@ -1072,18 +749,6 @@ const ENTRIES: AllahNameEntry[] = [
       "fr": "Le Grand Pardonneur",
       "en": "The All-Forgiving"
     },
-    "explanation": {
-      "fr": "Al-Ghafūr est Celui dont le pardon est immense : aucun péché n’est trop grand pour Son pardon lorsque le serviteur revient sincèrement vers Lui.",
-      "en": "Al-Ghafūr is the One whose forgiveness is immense: no sin is too great for His forgiveness when the servant sincerely returns to Him."
-    },
-    "reflection": {
-      "fr": "Ce verset s’adresse à ceux qui ont commis des excès contre eux-mêmes : il interdit le désespoir, pas l’effort.",
-      "en": "This verse speaks to those who have wronged themselves: it forbids despair, not effort."
-    },
-    "practice": {
-      "fr": "Multiplier l’istighfār, et pardonner à son tour à ceux qui nous ont fait du tort (24:22).",
-      "en": "Say istighfār often, and in turn forgive those who have wronged you (24:22)."
-    },
     "evidence": {
       "kind": "quran",
       "ref": "39:53",
@@ -1103,17 +768,9 @@ const ENTRIES: AllahNameEntry[] = [
       "fr": "Celui qui récompense abondamment",
       "en": "The Most Appreciative"
     },
-    "explanation": {
-      "fr": "Ash-Shakūr est Celui qui récompense largement les actes, même petits, et multiplie leur récompense au-delà de ce qu’ils valent.",
-      "en": "Ash-Shakūr is the One who rewards deeds generously, even small ones, and multiplies their reward beyond what they are worth."
-    },
     "reflection": {
-      "fr": "Un homme a retiré une branche épineuse du chemin : Allah l’en a remercié et lui a pardonné (al-Bukhârî 652, Muslim 1914).",
-      "en": "A man removed a thorny branch from the road: Allah thanked him for it and forgave him (al-Bukhârî 652, Muslim 1914)."
-    },
-    "practice": {
-      "fr": "Ne mépriser aucune bonne action, et remercier les gens pour ce qu’ils font.",
-      "en": "Do not belittle any good deed, and thank people for what they do."
+      "fr": "Le Prophète ﷺ a dit : « Pendant qu’un homme marchait sur un chemin, il a vu une branche épineuse et l’a enlevée du chemin. Allah a été satisfait de son action et lui a pardonné. » (al-Bukhârî 652)",
+      "en": "The Prophet ﷺ said: “While a man was going on a way, he saw a thorny branch and removed it from the way and Allah became pleased by his action and forgave him for that.” (al-Bukhârî 652)"
     },
     "evidence": {
       "kind": "quran",
@@ -1134,17 +791,9 @@ const ENTRIES: AllahNameEntry[] = [
       "fr": "Le Très-Haut",
       "en": "The Most High"
     },
-    "explanation": {
-      "fr": "Al-‘Aliyy est Celui qui est au-dessus de toute chose : par Son être, au-dessus de Sa création, par Sa valeur et par Sa domination.",
-      "en": "Al-‘Aliyy is the One who is above all things: in His being, above His creation, in His worth and in His dominion."
-    },
     "reflection": {
-      "fr": "Dans chaque prosternation, au moment où l’on est le plus bas, on dit « Subḥāna rabbiya l-a‘lā » : Gloire à mon Seigneur, le Très-Haut (Muslim 772).",
-      "en": "In every prostration, at the moment one is lowest, one says “Subḥāna rabbiya l-a‘lā”: Glory to my Lord, the Most High (Muslim 772)."
-    },
-    "practice": {
-      "fr": "Élever ses buts, et s’abaisser devant Allah seul.",
-      "en": "Raise your aims high, and lower yourself before Allah alone."
+      "fr": "En se prosternant, le Prophète ﷺ disait : « Gloire à mon Seigneur le Très-Haut » (Muslim 772).",
+      "en": "When prostrating, the Prophet ﷺ would say: “Glory be to my Lord most High” (Muslim 772)."
     },
     "evidence": {
       "kind": "quran",
@@ -1165,18 +814,6 @@ const ENTRIES: AllahNameEntry[] = [
       "fr": "Le Très Grand",
       "en": "The Most Great"
     },
-    "explanation": {
-      "fr": "Al-Kabīr est Celui qui est plus grand que tout : aucune créature ne peut Le mesurer ni L’égaler.",
-      "en": "Al-Kabīr is the One who is greater than everything: no creature can measure Him or equal Him."
-    },
-    "reflection": {
-      "fr": "« Allāhu akbar » ouvre chaque prière : ce qui occupe l’esprit est plus petit qu’Allah.",
-      "en": "“Allāhu akbar” opens every prayer: whatever occupies the mind is smaller than Allah."
-    },
-    "practice": {
-      "fr": "Dire le takbīr en le pensant, et ne pas laisser un souci prendre plus de place qu’Allah dans son cœur.",
-      "en": "Say the takbīr meaning it, and do not let a worry take more room in your heart than Allah."
-    },
     "evidence": {
       "kind": "quran",
       "ref": "13:9",
@@ -1195,18 +832,6 @@ const ENTRIES: AllahNameEntry[] = [
     "translation": {
       "fr": "Le Préservateur",
       "en": "The Preserver"
-    },
-    "explanation": {
-      "fr": "Al-Ḥafīẓ est Celui qui préserve Sa création, protège Ses serviteurs et conserve le compte exact de leurs œuvres.",
-      "en": "Al-Ḥafīẓ is the One who preserves His creation, protects His servants and keeps an exact record of their deeds."
-    },
-    "reflection": {
-      "fr": "Le Prophète ﷺ a dit à Ibn ‘Abbās : « Préserve Allah, Il te préservera. » (at-Tirmidhî 2516, authentifié par al-Albânî)",
-      "en": "The Prophet ﷺ said to Ibn ‘Abbās: “Be mindful of Allah, and He will protect you.” (at-Tirmidhî 2516, graded authentic by al-Albânî)"
-    },
-    "practice": {
-      "fr": "Préserver les limites d’Allah, sa prière et sa langue, et dire les invocations de protection du matin et du soir.",
-      "en": "Preserve Allah’s limits, your prayer and your tongue, and say the morning and evening supplications of protection."
     },
     "evidence": {
       "kind": "quran",
@@ -1227,18 +852,6 @@ const ENTRIES: AllahNameEntry[] = [
       "fr": "Le Nourricier, Le Soutien",
       "en": "The Nourisher"
     },
-    "explanation": {
-      "fr": "Al-Muqīt est Celui qui donne à chaque créature sa nourriture et ce qui la maintient en vie, et qui a pouvoir et regard sur toute chose.",
-      "en": "Al-Muqīt is the One who gives every creature its food and what keeps it alive, and who has power and oversight over everything."
-    },
-    "reflection": {
-      "fr": "Le corps a besoin de nourriture, le cœur aussi : la prière, le Coran et le rappel sont sa subsistance.",
-      "en": "The body needs food, and so does the heart: prayer, the Quran and remembrance are its nourishment."
-    },
-    "practice": {
-      "fr": "Nourrir son cœur comme on nourrit son corps, avec régularité.",
-      "en": "Nourish your heart as you nourish your body, regularly."
-    },
     "evidence": {
       "kind": "quran",
       "ref": "4:85",
@@ -1257,18 +870,6 @@ const ENTRIES: AllahNameEntry[] = [
     "translation": {
       "fr": "Celui qui suffit et qui tient les comptes",
       "en": "The Reckoner, the Sufficient"
-    },
-    "explanation": {
-      "fr": "Al-Ḥasīb réunit deux sens : Celui qui suffit à Ses serviteurs pour tout ce qui les concerne, et Celui qui leur demandera compte de leurs actes.",
-      "en": "Al-Ḥasīb joins two meanings: the One who is sufficient for His servants in all their affairs, and the One who will call them to account for their deeds."
-    },
-    "reflection": {
-      "fr": "« Ḥasbiya Allāh » : Allah me suffit. Celui qui s’en remet à Lui n’est jamais laissé seul.",
-      "en": "“Ḥasbiya Allāh”: Allah is enough for me. Whoever relies on Him is never left alone."
-    },
-    "practice": {
-      "fr": "Se demander des comptes avant d’en rendre, et se contenter d’Allah face à l’inquiétude.",
-      "en": "Take account of yourself before you are taken to account, and be content with Allah in the face of worry."
     },
     "evidence": {
       "kind": "quran",
@@ -1289,18 +890,6 @@ const ENTRIES: AllahNameEntry[] = [
       "fr": "Le Majestueux",
       "en": "The Majestic"
     },
-    "explanation": {
-      "fr": "Al-Jalīl est Celui qui possède toutes les qualités de majesté et de grandeur. Sa majesté inspire le respect et la crainte révérencielle.",
-      "en": "Al-Jalīl is the One who possesses every quality of majesty and greatness. His majesty inspires respect and reverent awe."
-    },
-    "reflection": {
-      "fr": "Le Coran décrit Allah comme « le Détenteur de la majesté et de la générosité » : Sa majesté va avec Sa bonté.",
-      "en": "The Quran describes Allah as “the Owner of majesty and honour”: His majesty goes together with His goodness."
-    },
-    "practice": {
-      "fr": "Parler d’Allah avec respect, et éviter les plaisanteries sur ce qui touche à la religion.",
-      "en": "Speak of Allah with respect, and avoid joking about matters of religion."
-    },
     "evidence": {
       "kind": "quran",
       "ref": "55:27",
@@ -1319,18 +908,6 @@ const ENTRIES: AllahNameEntry[] = [
     "translation": {
       "fr": "Le Très Généreux",
       "en": "The Most Generous"
-    },
-    "explanation": {
-      "fr": "Al-Karīm est Celui dont la générosité est sans limite : Il donne avant qu’on demande, pardonne quand Il pourrait punir et honore quand on ne le mérite pas.",
-      "en": "Al-Karīm is the One whose generosity has no limit: He gives before being asked, forgives when He could punish and honours when it is not deserved."
-    },
-    "reflection": {
-      "fr": "C’est le reproche du verset ci-dessus : la générosité d’Allah ne doit pas rendre négligent.",
-      "en": "This is the reproach of the verse above: Allah’s generosity should not make one careless."
-    },
-    "practice": {
-      "fr": "Être généreux de son temps, de son argent et de son pardon.",
-      "en": "Be generous with your time, your money and your forgiveness."
     },
     "evidence": {
       "kind": "quran",
@@ -1351,18 +928,6 @@ const ENTRIES: AllahNameEntry[] = [
       "fr": "Le Vigilant",
       "en": "The Watchful"
     },
-    "explanation": {
-      "fr": "Ar-Raqīb est Celui qui observe en permanence Ses créatures, leurs actes, leurs paroles et leurs pensées, sans jamais s’absenter.",
-      "en": "Ar-Raqīb is the One who constantly observes His creatures, their deeds, their words and their thoughts, without ever being absent."
-    },
-    "reflection": {
-      "fr": "La conscience qu’Allah observe (murāqaba) est un frein devant le péché et un réconfort dans la solitude.",
-      "en": "Awareness that Allah is watching (murāqaba) is a brake before sin and a comfort in loneliness."
-    },
-    "practice": {
-      "fr": "Se rappeler ce nom au moment de la tentation, surtout quand on est seul.",
-      "en": "Remember this name at the moment of temptation, especially when you are alone."
-    },
     "evidence": {
       "kind": "quran",
       "ref": "4:1",
@@ -1382,17 +947,9 @@ const ENTRIES: AllahNameEntry[] = [
       "fr": "Celui qui répond",
       "en": "The Responsive"
     },
-    "explanation": {
-      "fr": "Al-Mujīb est Celui qui répond aux invocations de ceux qui L’appellent et vient au secours de ceux qui sont dans la détresse.",
-      "en": "Al-Mujīb is the One who answers the supplications of those who call upon Him and comes to the aid of those in distress."
-    },
     "reflection": {
       "fr": "« Et quand Mes serviteurs t’interrogent sur Moi, alors Je suis tout proche: Je réponds à l’appel de celui qui M’invoque quand il M’invoque. Qu’ils répondent donc à Mon appel, et qu’ils croient en Moi, afin qu’ils soient bien guidés. » (2:186)",
       "en": "“And when My servants ask you, [O Muḥammad], concerning Me - indeed I am near. I respond to the invocation of the supplicant when he calls upon Me. So let them respond to Me [by obedience] and believe in Me that they may be [rightly] guided.” (2:186)"
-    },
-    "practice": {
-      "fr": "Invoquer souvent, avec certitude, sans se décourager si la réponse tarde.",
-      "en": "Make supplication often, with certainty, without losing heart if the answer is delayed."
     },
     "evidence": {
       "kind": "quran",
@@ -1413,17 +970,9 @@ const ENTRIES: AllahNameEntry[] = [
       "fr": "Celui qui embrasse toute chose",
       "en": "The All-Encompassing"
     },
-    "explanation": {
-      "fr": "Al-Wāsi‘ est Celui dont la science, la miséricorde, la générosité et la puissance s’étendent à toute chose.",
-      "en": "Al-Wāsi‘ is the One whose knowledge, mercy, generosity and power extend to everything."
-    },
     "reflection": {
-      "fr": "Allah dit que Sa miséricorde embrasse toute chose (7:156). Aucun péché, aucune situation n’est plus vaste que ce qu’Allah embrasse.",
-      "en": "Allah says that His mercy encompasses all things (7:156). No sin and no situation is wider than what Allah encompasses."
-    },
-    "practice": {
-      "fr": "Avoir l’esprit large envers les gens et ne pas restreindre la miséricorde d’Allah dans ses jugements.",
-      "en": "Be broad-minded with people and do not narrow Allah’s mercy in your judgements."
+      "fr": "Allah dit : « Et Ma miséricorde embrasse toute chose. » (7:156)",
+      "en": "Allāh said: “My mercy encompasses all things.” (7:156)"
     },
     "evidence": {
       "kind": "quran",
@@ -1444,18 +993,6 @@ const ENTRIES: AllahNameEntry[] = [
       "fr": "Le Parfaitement Sage",
       "en": "The All-Wise"
     },
-    "explanation": {
-      "fr": "Al-Ḥakīm est Celui qui place chaque chose à sa juste place : Ses ordres, Ses interdits et Ses décrets ont tous une sagesse, que nous la comprenions ou non.",
-      "en": "Al-Ḥakīm is the One who puts everything in its right place: His commands, His prohibitions and His decrees all have wisdom, whether we understand it or not."
-    },
-    "reflection": {
-      "fr": "Ne pas comprendre la sagesse d’un événement ne veut pas dire qu’elle n’existe pas.",
-      "en": "Not understanding the wisdom behind an event does not mean there is none."
-    },
-    "practice": {
-      "fr": "Faire confiance à Allah tout en prenant les moyens licites et raisonnables.",
-      "en": "Trust Allah while taking lawful and sensible means."
-    },
     "evidence": {
       "kind": "quran",
       "ref": "6:18",
@@ -1474,18 +1011,6 @@ const ENTRIES: AllahNameEntry[] = [
     "translation": {
       "fr": "Le Très Aimant",
       "en": "The Most Loving"
-    },
-    "explanation": {
-      "fr": "Al-Wadūd réunit deux sens : Celui qui aime Ses serviteurs croyants, et Celui qui est aimé par eux plus que tout.",
-      "en": "Al-Wadūd joins two meanings: the One who loves His believing servants, and the One who is loved by them above all else."
-    },
-    "reflection": {
-      "fr": "Allah aime ceux qui se repentent, ceux qui se purifient, ceux qui font le bien. Son amour se recherche par les actes qu’Il aime.",
-      "en": "Allah loves those who repent, those who purify themselves, those who do good. His love is sought through the deeds He loves."
-    },
-    "practice": {
-      "fr": "Rechercher l’amour d’Allah par les œuvres surérogatoires, et répandre l’affection entre les gens.",
-      "en": "Seek Allah’s love through voluntary good deeds, and spread affection among people."
     },
     "evidence": {
       "kind": "quran",
@@ -1506,17 +1031,9 @@ const ENTRIES: AllahNameEntry[] = [
       "fr": "Le Glorieux",
       "en": "The Most Glorious"
     },
-    "explanation": {
-      "fr": "Al-Majīd est Celui dont la gloire est immense, dont les qualités sont parfaites et dont les bienfaits sont abondants.",
-      "en": "Al-Majīd is the One whose glory is immense, whose qualities are perfect and whose favours are abundant."
-    },
     "reflection": {
-      "fr": "Dans la prière sur le Prophète ﷺ, on conclut par « innaka Ḥamīdun Majīd » : Tu es digne de louange et glorieux (al-Bukhârî 3370).",
-      "en": "In the prayer upon the Prophet ﷺ, one concludes with “innaka Ḥamīdun Majīd”: You are Praiseworthy and Glorious (al-Bukhârî 3370)."
-    },
-    "practice": {
-      "fr": "Glorifier Allah dans sa prière et dans son quotidien, et rechercher la noblesse de caractère.",
-      "en": "Glorify Allah in your prayer and in your daily life, and seek nobility of character."
+      "fr": "Dans la prière sur le Prophète ﷺ qu’il a enseignée : « car Tu es le Digne de louange, le Glorieux. » (al-Bukhârî 3370)",
+      "en": "In the prayer upon the Prophet ﷺ that he taught: “for You are the Most Praise-worthy, the Most Glorious.” (al-Bukhârî 3370)"
     },
     "evidence": {
       "kind": "quran",
@@ -1537,17 +1054,9 @@ const ENTRIES: AllahNameEntry[] = [
       "fr": "Celui qui ressuscite",
       "en": "The Resurrector"
     },
-    "explanation": {
-      "fr": "Al-Bā‘ith est Celui qui ressuscitera les morts pour le Jugement, et qui envoie les messagers vers les peuples.",
-      "en": "Al-Bā‘ith is the One who will raise the dead for the Judgement, and who sends messengers to the nations."
-    },
     "reflection": {
-      "fr": "Chaque réveil est un rappel : le Prophète ﷺ disait en se levant « Louange à Allah qui nous a rendu la vie après nous avoir fait mourir, et vers Lui est la résurrection » (al-Bukhârî 6312).",
-      "en": "Every awakening is a reminder: on waking, the Prophet ﷺ would say “Praise be to Allah who gave us life after causing us to die, and to Him is the resurrection” (al-Bukhârî 6312)."
-    },
-    "practice": {
-      "fr": "Vivre en se préparant à ce jour, et dire l’invocation du réveil.",
-      "en": "Live preparing for that day, and say the supplication on waking."
+      "fr": "Au réveil, le Prophète ﷺ disait : « Al-hamdu li l-lahil-ladhi ahyana ba'da ma amatana wa ilaihin-nushur. » (al-Bukhârî 6312)",
+      "en": "When he got up, the Prophet ﷺ would say: “Al-hamdu li l-lahil-ladhi ahyana ba'da ma amatana wa ilaihin-nushur.” (al-Bukhârî 6312)"
     },
     "evidence": {
       "kind": "quran",
@@ -1568,18 +1077,6 @@ const ENTRIES: AllahNameEntry[] = [
       "fr": "Le Témoin de toute chose",
       "en": "The Witness"
     },
-    "explanation": {
-      "fr": "Ash-Shahīd est Celui qui est présent et témoin de toute chose : rien ne se passe sans qu’Il le voie et le sache.",
-      "en": "Ash-Shahīd is the One who is present and witness to everything: nothing happens without Him seeing and knowing it."
-    },
-    "reflection": {
-      "fr": "Quand personne ne croit notre version, Allah est témoin de la vérité.",
-      "en": "When no one believes our side of the story, Allah is witness to the truth."
-    },
-    "practice": {
-      "fr": "Témoigner avec justice, même contre soi-même (4:135).",
-      "en": "Bear witness with justice, even against yourself (4:135)."
-    },
     "evidence": {
       "kind": "quran",
       "ref": "85:9",
@@ -1599,17 +1096,9 @@ const ENTRIES: AllahNameEntry[] = [
       "fr": "La Vérité",
       "en": "The Truth"
     },
-    "explanation": {
-      "fr": "Al-Ḥaqq est Celui dont l’existence est certaine et nécessaire, dont la parole, la promesse et le jugement sont vrais. Tout ce qu’on adore en dehors de Lui est faux.",
-      "en": "Al-Ḥaqq is the One whose existence is certain and necessary, whose word, promise and judgement are true. Everything worshipped besides Him is false."
-    },
     "reflection": {
-      "fr": "Dans sa prière de la nuit, le Prophète ﷺ disait : « Tu es la Vérité, Ta promesse est vérité, Ta rencontre est vérité… » (al-Bukhârî 1120, Muslim 769)",
-      "en": "In his night prayer, the Prophet ﷺ would say: “You are the Truth, Your promise is true, the meeting with You is true…” (al-Bukhârî 1120, Muslim 769)"
-    },
-    "practice": {
-      "fr": "Suivre la vérité même quand elle coûte, et ne pas dire ce qu’on sait faux.",
-      "en": "Follow the truth even when it costs, and do not say what you know to be false."
+      "fr": "Dans sa prière de la nuit, le Prophète ﷺ disait : « Tu es la Vérité, Ta promesse est Vérité, la rencontre avec Toi est Vérité. » (Muslim 769)",
+      "en": "In his night prayer, the Prophet ﷺ would say: “Thou art the Truth; Thy promise is True, the meeting with Thee is True.” (Muslim 769)"
     },
     "evidence": {
       "kind": "quran",
@@ -1630,17 +1119,9 @@ const ENTRIES: AllahNameEntry[] = [
       "fr": "Le Garant, Celui à qui l’on se confie",
       "en": "The Trustee"
     },
-    "explanation": {
-      "fr": "Al-Wakīl est Celui qui prend en charge les affaires de Ses créatures et à qui l’on peut tout confier. Il suffit à celui qui s’en remet à Lui.",
-      "en": "Al-Wakīl is the One who takes charge of the affairs of His creatures and to whom everything can be entrusted. He is enough for whoever relies on Him."
-    },
     "reflection": {
-      "fr": "« Ḥasbunā Allāhu wa ni‘ma l-Wakīl » : c’est ce qu’a dit Ibrāhīm lorsqu’il fut jeté dans le feu (al-Bukhârî 4563).",
-      "en": "“Ḥasbunā Allāhu wa ni‘ma l-Wakīl”: this is what Ibrāhīm said when he was thrown into the fire (al-Bukhârî 4563)."
-    },
-    "practice": {
-      "fr": "Prendre les moyens, puis confier le résultat à Allah sans angoisse.",
-      "en": "Take the means, then entrust the outcome to Allah without anxiety."
+      "fr": "Selon Ibn ‘Abbâs, « Allah nous suffit et Il est le meilleur garant » est ce qu’a dit Ibrâhîm lorsqu’il fut jeté dans le feu (al-Bukhârî 4563).",
+      "en": "According to Ibn ‘Abbās, “Allah is Sufficient for us and He Is the Best Disposer of affairs” was said by Abraham when he was thrown into the fire (al-Bukhârî 4563)."
     },
     "evidence": {
       "kind": "quran",
@@ -1661,17 +1142,9 @@ const ENTRIES: AllahNameEntry[] = [
       "fr": "Le Très Fort",
       "en": "The Most Strong"
     },
-    "explanation": {
-      "fr": "Al-Qawiyy est Celui dont la force est parfaite : rien ne L’épuise, rien ne Lui est difficile.",
-      "en": "Al-Qawiyy is the One whose strength is perfect: nothing tires Him and nothing is difficult for Him."
-    },
     "reflection": {
-      "fr": "« Lā ḥawla wa lā quwwata illā billāh » : il n’y a de force que par Allah. Le Prophète ﷺ l’a appelée un trésor du Paradis (al-Bukhârî 4205, Muslim 2704).",
-      "en": "“Lā ḥawla wa lā quwwata illā billāh”: there is no strength except through Allah. The Prophet ﷺ called it a treasure of Paradise (al-Bukhârî 4205, Muslim 2704)."
-    },
-    "practice": {
-      "fr": "Chercher sa force en Allah, et utiliser la sienne pour protéger plutôt que pour dominer.",
-      "en": "Seek your strength in Allah, and use your own to protect rather than to dominate."
+      "fr": "Le Prophète ﷺ a dit : « Veux-tu que je t’indique un trésor parmi les trésors du Paradis ? » … « Alors dis : “Il n’y a de force ni de puissance qu’en Allah.” » (Muslim 2704)",
+      "en": "The Prophet ﷺ said: “Should I not direct you to a treasure from amongst the treasures of Paradise?” … “Then recite: ‘There is no might and no power but that of Allah.’” (Muslim 2704)"
     },
     "evidence": {
       "kind": "quran",
@@ -1692,18 +1165,6 @@ const ENTRIES: AllahNameEntry[] = [
       "fr": "L’Inébranlable",
       "en": "The Firm"
     },
-    "explanation": {
-      "fr": "Al-Matīn est Celui dont la force est si grande et si ferme qu’elle ne faiblit jamais et ne peut être ébranlée.",
-      "en": "Al-Matīn is the One whose strength is so great and so firm that it never weakens and cannot be shaken."
-    },
-    "reflection": {
-      "fr": "S’attacher à Allah, c’est s’attacher à ce qui ne cède jamais.",
-      "en": "Holding on to Allah is holding on to what never gives way."
-    },
-    "practice": {
-      "fr": "Rester ferme dans la foi et constant dans ses bonnes habitudes, même petites.",
-      "en": "Stay firm in faith and consistent in your good habits, even small ones."
-    },
     "evidence": {
       "kind": "quran",
       "ref": "51:58",
@@ -1723,17 +1184,9 @@ const ENTRIES: AllahNameEntry[] = [
       "fr": "Le Protecteur proche",
       "en": "The Protecting Friend"
     },
-    "explanation": {
-      "fr": "Al-Waliyy est Celui qui prend soin des croyants, les aime, les soutient et les guide. Sa walāya particulière est réservée à ceux qui croient et Le craignent.",
-      "en": "Al-Waliyy is the One who takes care of the believers, loves them, supports them and guides them. His special friendship is for those who believe and fear Him."
-    },
     "reflection": {
-      "fr": "Sa protection fait sortir les croyants des ténèbres vers la lumière (2:257).",
-      "en": "His protection brings the believers out of darkness into the light (2:257)."
-    },
-    "practice": {
-      "fr": "Prendre Allah pour allié en faisant ce qu’Il aime, et choisir ses amis parmi les gens de bien.",
-      "en": "Take Allah as your ally by doing what He loves, and choose your friends among good people."
+      "fr": "« Allah est le défenseur de ceux qui ont la foi: Il les fait sortir des ténèbres à la lumière. » (2:257)",
+      "en": "“Allāh is the Ally of those who believe. He brings them out from darknesses into the light.” (2:257)"
     },
     "evidence": {
       "kind": "quran",
@@ -1754,17 +1207,9 @@ const ENTRIES: AllahNameEntry[] = [
       "fr": "Le Digne de louange",
       "en": "The Praiseworthy"
     },
-    "explanation": {
-      "fr": "Al-Ḥamīd est Celui qui est loué pour Ses noms, Ses attributs et Ses actes, dans l’aisance comme dans l’épreuve. Toute louange Lui revient.",
-      "en": "Al-Ḥamīd is the One who is praised for His names, His attributes and His actions, in ease as in hardship. All praise is His."
-    },
     "reflection": {
-      "fr": "« Al-ḥamdu lillāh » emplit la balance (Muslim 223). Le Prophète ﷺ disait « Al-ḥamdu lillāh ‘alā kulli ḥāl » face à ce qui lui déplaisait (Ibn Mâjah 3803, jugé bon par al-Albânî).",
-      "en": "“Al-ḥamdu lillāh” fills the scale (Muslim 223). The Prophet ﷺ would say “Al-ḥamdu lillāh ‘alā kulli ḥāl” when facing something he disliked (Ibn Mâjah 3803, graded good by al-Albânî)."
-    },
-    "practice": {
-      "fr": "Louer Allah en toute situation, et pas seulement quand tout va bien.",
-      "en": "Praise Allah in every situation, not only when all is well."
+      "fr": "Le Prophète ﷺ a dit : « “Al-Hamdu Lillah” (la louange et la reconnaissance reviennent à Allah seul) remplit la balance » (Muslim 223). Face à ce qu’il n’aimait pas, il disait : « Al-hamdu lillahi ‘ala kulli hal (Louange à Allah en toute circonstance). » (Ibn Mâjah 3803, jugé bon par al-Albânî)",
+      "en": "The Prophet ﷺ said: “al-Hamdu Lillah (all praise and gratitude is for Allah alone) fills the scale” (Muslim 223). When he saw something he disliked, he would say: “Al-hamdu lillahi 'ala kulli hal (Praise is to Allah in all circumstances).” (Ibn Mâjah 3803, graded good by al-Albânî)"
     },
     "evidence": {
       "kind": "quran",
@@ -1785,18 +1230,6 @@ const ENTRIES: AllahNameEntry[] = [
       "fr": "Celui qui dénombre toute chose",
       "en": "The Accounter"
     },
-    "explanation": {
-      "fr": "Al-Muḥṣī est Celui qui connaît le nombre exact de toute chose : les grains de sable, les gouttes de pluie, les souffles et les actes de chacun.",
-      "en": "Al-Muḥṣī is the One who knows the exact number of everything: grains of sand, drops of rain, every breath and every deed."
-    },
-    "reflection": {
-      "fr": "Rien n’est perdu : ni une bonne action discrète, ni une injustice subie.",
-      "en": "Nothing is lost: neither a discreet good deed nor an injustice suffered."
-    },
-    "practice": {
-      "fr": "Faire le compte de ses journées avant de dormir, pour remercier et pour corriger.",
-      "en": "Review your day before sleeping, to give thanks and to correct yourself."
-    },
     "evidence": {
       "kind": "quran",
       "ref": "72:28",
@@ -1816,17 +1249,9 @@ const ENTRIES: AllahNameEntry[] = [
       "fr": "Celui qui commence la création",
       "en": "The Originator"
     },
-    "explanation": {
-      "fr": "Al-Mubdi’ est Celui qui a commencé la création une première fois, sans modèle. Ce nom va avec Al-Mu‘īd : Celui qui commence est Celui qui ramènera.",
-      "en": "Al-Mubdi’ is the One who began creation the first time, without a model. This name goes with Al-Mu‘īd: the One who began is the One who will bring back."
-    },
     "reflection": {
-      "fr": "Celui qui a créé la première fois n’aura aucune difficulté à recréer (30:27).",
-      "en": "The One who created the first time will have no difficulty creating again (30:27)."
-    },
-    "practice": {
-      "fr": "Penser à son origine pour rester humble, et à son retour pour bien agir.",
-      "en": "Think of your origin to stay humble, and of your return to act well."
+      "fr": "« Et c’est Lui qui commence la création puis la refait; et cela Lui est plus facile. » (30:27)",
+      "en": "“And it is He who begins creation; then He repeats it, and that is [even] easier for Him.” (30:27)"
     },
     "evidence": {
       "kind": "quran",
@@ -1847,18 +1272,6 @@ const ENTRIES: AllahNameEntry[] = [
       "fr": "Celui qui ramène à la vie",
       "en": "The Restorer"
     },
-    "explanation": {
-      "fr": "Al-Mu‘īd est Celui qui ramènera les créatures à la vie après leur mort, pour le Jugement.",
-      "en": "Al-Mu‘īd is the One who will bring creatures back to life after their death, for the Judgement."
-    },
-    "reflection": {
-      "fr": "La mort n’est pas une fin mais un passage. Ce nom donne son sens à chaque acte d’ici-bas.",
-      "en": "Death is not an end but a passage. This name gives meaning to every act in this world."
-    },
-    "practice": {
-      "fr": "Agir aujourd’hui en pensant au jour du retour.",
-      "en": "Act today with the day of return in mind."
-    },
     "evidence": {
       "kind": "quran",
       "ref": "85:13",
@@ -1878,17 +1291,9 @@ const ENTRIES: AllahNameEntry[] = [
       "fr": "Celui qui donne la vie",
       "en": "The Giver of Life"
     },
-    "explanation": {
-      "fr": "Al-Muḥyī est Celui qui donne la vie aux corps, à la terre morte par la pluie, et aux cœurs par la foi.",
-      "en": "Al-Muḥyī is the One who gives life to bodies, to the dead earth through rain, and to hearts through faith."
-    },
     "reflection": {
-      "fr": "Un cœur endurci peut revivre, comme une terre sèche après la pluie (57:17).",
-      "en": "A hardened heart can come back to life, like dry earth after rain (57:17)."
-    },
-    "practice": {
-      "fr": "Faire revivre son cœur par le Coran et le rappel, et préserver la vie sous toutes ses formes.",
-      "en": "Revive your heart through the Quran and remembrance, and protect life in all its forms."
+      "fr": "« Sachez qu’Allah redonne la vie à la terre une fois morte. » (57:17)",
+      "en": "“Know that Allāh gives life to the earth after its lifelessness.” (57:17)"
     },
     "evidence": {
       "kind": "quran",
@@ -1909,18 +1314,6 @@ const ENTRIES: AllahNameEntry[] = [
       "fr": "Celui qui donne la mort",
       "en": "The Bringer of Death"
     },
-    "explanation": {
-      "fr": "Al-Mumīt est Celui qui fait mourir chaque être au moment qu’Il a fixé, ni avant ni après. La mort est un décret d’Allah, pas un accident.",
-      "en": "Al-Mumīt is the One who causes every being to die at the time He has set, neither before nor after. Death is Allah’s decree, not an accident."
-    },
-    "reflection": {
-      "fr": "Le verset ci-dessus le dit : la vie et la mort sont créées pour éprouver les gens sur la qualité de leurs actes.",
-      "en": "The verse above says it: life and death are created to test people on the quality of their deeds."
-    },
-    "practice": {
-      "fr": "Se souvenir souvent de la mort, comme le recommandait le Prophète ﷺ (at-Tirmidhî 2307), pour bien vivre et non pour avoir peur.",
-      "en": "Remember death often, as the Prophet ﷺ advised (at-Tirmidhî 2307), in order to live well, not to be afraid."
-    },
     "evidence": {
       "kind": "quran",
       "ref": "67:2",
@@ -1939,18 +1332,6 @@ const ENTRIES: AllahNameEntry[] = [
     "translation": {
       "fr": "Le Vivant",
       "en": "The Ever-Living"
-    },
-    "explanation": {
-      "fr": "Al-Ḥayy est Celui dont la vie est parfaite : sans début, sans fin, sans sommeil ni faiblesse. Toute autre vie vient de Lui.",
-      "en": "Al-Ḥayy is the One whose life is perfect: without beginning, without end, without sleep or weakness. All other life comes from Him."
-    },
-    "reflection": {
-      "fr": "S’appuyer sur quelqu’un qui mourra, c’est s’appuyer sur ce qui partira. S’appuyer sur Al-Ḥayy, c’est s’appuyer sur ce qui demeure.",
-      "en": "Leaning on someone who will die is leaning on what will leave. Leaning on Al-Ḥayy is leaning on what remains."
-    },
-    "practice": {
-      "fr": "Dans la détresse, dire « Yā Ḥayyu yā Qayyūm, bi-raḥmatika astaghīth » (at-Tirmidhî 3524, jugé bon par al-Albânî).",
-      "en": "In distress, say “Yā Ḥayyu yā Qayyūm, bi-raḥmatika astaghīth” (at-Tirmidhî 3524, graded good by al-Albânî)."
     },
     "evidence": {
       "kind": "quran",
@@ -1971,17 +1352,9 @@ const ENTRIES: AllahNameEntry[] = [
       "fr": "Celui qui subsiste par Lui-même",
       "en": "The Self-Subsisting Sustainer"
     },
-    "explanation": {
-      "fr": "Al-Qayyūm est Celui qui existe par Lui-même sans avoir besoin de rien, et par qui toute chose existe et tient. Sans Lui, rien ne subsisterait un instant.",
-      "en": "Al-Qayyūm is the One who exists by Himself without needing anything, and by whom everything exists and holds together. Without Him, nothing would last a moment."
-    },
     "reflection": {
-      "fr": "Ce nom ouvre Āyat al-Kursī, le plus grand verset du Coran (Muslim 810). Ni somnolence ni sommeil ne Le saisissent.",
-      "en": "This name opens Āyat al-Kursī, the greatest verse of the Quran (Muslim 810). Neither drowsiness nor sleep overtakes Him."
-    },
-    "practice": {
-      "fr": "Réciter Āyat al-Kursī après chaque prière et avant de dormir.",
-      "en": "Recite Āyat al-Kursī after each prayer and before sleeping."
+      "fr": "Le Prophète ﷺ a demandé à Ubayy quel est le plus grand verset du Livre d’Allah. Il a répondu : « Allah, il n’y a pas d’autre divinité que Lui, le Vivant, l’Éternel. » Le Prophète ﷺ lui a dit : « Que la connaissance te soit agréable, ô Abu al-Mundhir ! » (Muslim 810)",
+      "en": "The Prophet ﷺ asked Ubayy which verse of the Book of Allah is the greatest. He answered: “Allah, there is no god but He, the Living, the Eternal.” The Prophet ﷺ said: “May knowledge be pleasant for you, O Abu'l-Mundhir.” (Muslim 810)"
     },
     "evidence": {
       "kind": "quran",
@@ -2002,27 +1375,15 @@ const ENTRIES: AllahNameEntry[] = [
       "fr": "Celui qui ne manque de rien",
       "en": "The Finder, the Self-Sufficient"
     },
-    "explanation": {
-      "fr": "Al-Wājid est Celui qui trouve tout ce qu’Il veut et à qui rien ne manque. Rien ne Lui échappe et rien ne Lui fait défaut.",
-      "en": "Al-Wājid is the One who finds whatever He wills and lacks nothing. Nothing escapes Him and nothing is missing to Him."
-    },
-    "reflection": {
-      "fr": "Nous manquons de tout, Lui de rien : c’est pour cela qu’on se tourne vers Lui.",
-      "en": "We lack everything and He lacks nothing: that is why we turn to Him."
-    },
-    "practice": {
-      "fr": "Reconnaître son besoin d’Allah dans chaque invocation.",
-      "en": "Acknowledge your need of Allah in every supplication."
-    },
     "evidence": {
       "kind": "sunnah",
       "text": {
-        "fr": "Ce nom figure dans la liste rapportée par at-Tirmidhî (3507). Son sens est confirmé par le Coran : « Ô hommes, vous êtes les indigents ayant besoin d’Allah, et c’est Allah, Lui qui se dispense de tout et Il est Le Digne de louange. » (35:15)",
-        "en": "This name appears in the list reported by at-Tirmidhî (3507). Its meaning is confirmed by the Quran: “O mankind, you are those in need of Allāh, while Allāh is the Free of need, the Praiseworthy.” (35:15)"
+        "fr": "Ce nom figure dans la liste des 99 noms rapportée par at-Tirmidhî (3507), jugée faible par al-Albânî.",
+        "en": "This name appears in the list of 99 names reported by at-Tirmidhî (3507), graded weak by al-Albânî."
       },
       "source": {
-        "fr": "at-Tirmidhî",
-        "en": "at-Tirmidhî"
+        "fr": "at-Tirmidhî 3507",
+        "en": "at-Tirmidhî 3507"
       }
     }
   },
@@ -2033,18 +1394,6 @@ const ENTRIES: AllahNameEntry[] = [
     "translation": {
       "fr": "L’Illustre",
       "en": "The Illustrious"
-    },
-    "explanation": {
-      "fr": "Al-Mājid est Celui dont la gloire et la générosité sont immenses. Il est de la même racine qu’Al-Majīd et en partage le sens.",
-      "en": "Al-Mājid is the One whose glory and generosity are immense. It shares its root and meaning with Al-Majīd."
-    },
-    "reflection": {
-      "fr": "La gloire d’Allah se voit dans l’abondance de Ses bienfaits sur ceux qui ne les méritent pas.",
-      "en": "Allah’s glory is seen in the abundance of His favours upon those who do not deserve them."
-    },
-    "practice": {
-      "fr": "Reconnaître les bienfaits reçus et les mentionner pour remercier, sans vantardise.",
-      "en": "Acknowledge the favours you have received and mention them to give thanks, without boasting."
     },
     "evidence": {
       "kind": "quran",
@@ -2065,18 +1414,6 @@ const ENTRIES: AllahNameEntry[] = [
       "fr": "L’Unique",
       "en": "The One"
     },
-    "explanation": {
-      "fr": "Al-Wāḥid est Celui qui est unique dans Son être, Ses attributs et Ses actes : Il n’a ni associé, ni égal, ni semblable.",
-      "en": "Al-Wāḥid is the One who is unique in His being, His attributes and His actions: He has no partner, no equal and no likeness."
-    },
-    "reflection": {
-      "fr": "C’est le cœur du tawḥīd : un seul Seigneur, donc une seule direction pour le cœur.",
-      "en": "This is the heart of tawḥīd: one Lord, and therefore one direction for the heart."
-    },
-    "practice": {
-      "fr": "Vouer son adoration à Allah seul et purifier ses intentions de tout désir d’être vu.",
-      "en": "Devote your worship to Allah alone and purify your intentions of any desire to be seen."
-    },
     "evidence": {
       "kind": "quran",
       "ref": "12:39",
@@ -2096,17 +1433,9 @@ const ENTRIES: AllahNameEntry[] = [
       "fr": "L’Un, L’Absolument Unique",
       "en": "The Unique"
     },
-    "explanation": {
-      "fr": "Al-Aḥad est Celui qui est absolument un, indivisible, et à qui rien n’est comparable. Ce nom ouvre la sourate al-Ikhlāṣ.",
-      "en": "Al-Aḥad is the One who is absolutely one, indivisible, and to whom nothing is comparable. This name opens Sūrat al-Ikhlāṣ."
-    },
     "reflection": {
-      "fr": "Sous la torture, Bilāl répétait « Aḥad, Aḥad » (Ibn Mâjah 150) : l’unicité d’Allah donne une force que rien ne brise.",
-      "en": "Under torture, Bilāl kept repeating “Aḥad, Aḥad” (Ibn Mâjah 150): the oneness of Allah gives a strength that nothing breaks."
-    },
-    "practice": {
-      "fr": "Réciter souvent la sourate al-Ikhlāṣ, qui équivaut au tiers du Coran (al-Bukhârî 5013).",
-      "en": "Recite Sūrat al-Ikhlāṣ often; it equals a third of the Quran (al-Bukhârî 5013)."
+      "fr": "Torturé à La Mecque, Bilal disait : « Ahad, Ahad (Unique, Unique) » (Ibn Mâjah 150, jugé bon et authentique par al-Albânî).",
+      "en": "Tortured in Makkah, Bilal kept saying: “Ahad, Ahad (One, One)” (Ibn Mâjah 150, graded hasan sahih by al-Albânî)."
     },
     "evidence": {
       "kind": "quran",
@@ -2127,18 +1456,6 @@ const ENTRIES: AllahNameEntry[] = [
       "fr": "Celui vers qui tous se tournent",
       "en": "The Eternal Refuge"
     },
-    "explanation": {
-      "fr": "Aṣ-Ṣamad est le Seigneur parfait vers qui toutes les créatures se tournent dans leurs besoins, alors que Lui n’a besoin de personne.",
-      "en": "Aṣ-Ṣamad is the perfect Lord to whom all creatures turn in their needs, while He needs no one."
-    },
-    "reflection": {
-      "fr": "Tout le monde a besoin de quelqu’un. Celui qui se tourne vers Aṣ-Ṣamad a frappé à la seule porte qui ne se ferme pas.",
-      "en": "Everyone needs someone. Whoever turns to Aṣ-Ṣamad has knocked on the only door that never closes."
-    },
-    "practice": {
-      "fr": "Présenter ses besoins à Allah avant de les présenter aux gens.",
-      "en": "Bring your needs to Allah before bringing them to people."
-    },
     "evidence": {
       "kind": "quran",
       "ref": "112:2",
@@ -2157,18 +1474,6 @@ const ENTRIES: AllahNameEntry[] = [
     "translation": {
       "fr": "Le Tout-Capable",
       "en": "The All-Capable"
-    },
-    "explanation": {
-      "fr": "Al-Qādir est Celui qui a le pouvoir de faire tout ce qu’Il veut, sans difficulté ni aide.",
-      "en": "Al-Qādir is the One who has the power to do whatever He wills, without difficulty or help."
-    },
-    "reflection": {
-      "fr": "Ce qui nous paraît impossible ne l’est pas pour Allah. Il suffit qu’Il dise « Sois » pour que la chose soit.",
-      "en": "What seems impossible to us is not so for Allah. He only has to say “Be” and it is."
-    },
-    "practice": {
-      "fr": "Ne jamais désespérer d’une situation, et utiliser son propre pouvoir avec justice.",
-      "en": "Never despair of a situation, and use your own power with justice."
     },
     "evidence": {
       "kind": "quran",
@@ -2189,18 +1494,6 @@ const ENTRIES: AllahNameEntry[] = [
       "fr": "Le Parfaitement Puissant",
       "en": "The Omnipotent"
     },
-    "explanation": {
-      "fr": "Al-Muqtadir est Celui dont le pouvoir est total et s’exerce pleinement sur toute chose. C’est une forme plus intense d’Al-Qādir.",
-      "en": "Al-Muqtadir is the One whose power is total and fully exercised over everything. It is a more intense form of Al-Qādir."
-    },
-    "reflection": {
-      "fr": "Ce verset décrit la récompense des pieux : être auprès du Souverain tout-puissant.",
-      "en": "This verse describes the reward of the righteous: to be near the All-Powerful Sovereign."
-    },
-    "practice": {
-      "fr": "Craindre Allah plus que toute autre puissance, et ne pas abuser de celle qu’on a.",
-      "en": "Fear Allah more than any other power, and do not abuse the power you have."
-    },
     "evidence": {
       "kind": "quran",
       "ref": "54:55",
@@ -2220,27 +1513,15 @@ const ENTRIES: AllahNameEntry[] = [
       "fr": "Celui qui fait avancer",
       "en": "The Expediter"
     },
-    "explanation": {
-      "fr": "Al-Muqaddim est Celui qui fait avancer ce qu’Il veut et qui Il veut : dans le temps, en rang ou en mérite. Ce nom va avec Al-Mu’akhkhir.",
-      "en": "Al-Muqaddim is the One who brings forward what He wills and whom He wills: in time, in rank or in merit. This name goes with Al-Mu’akhkhir."
-    },
-    "reflection": {
-      "fr": "Ce qui arrive plus tôt qu’on ne l’espérait, ou plus tard, arrive au moment qu’Allah a choisi.",
-      "en": "What comes earlier than hoped, or later, comes at the moment Allah has chosen."
-    },
-    "practice": {
-      "fr": "Avancer vers le bien sans attendre, et accepter le moment choisi par Allah.",
-      "en": "Hasten towards good without waiting, and accept the moment Allah has chosen."
-    },
     "evidence": {
       "kind": "sunnah",
       "text": {
-        "fr": "Dans son invocation, le Prophète ﷺ disait : « Tu es Celui qui fait avancer et Tu es Celui qui retarde, nulle divinité en dehors de Toi. »",
-        "en": "In his supplication, the Prophet ﷺ would say: “You are the One who brings forward and You are the One who delays; there is no god but You.”"
+        "fr": "Dans sa prière de la nuit, le Prophète ﷺ disait : « Tu fais avancer qui Tu veux et reculer qui Tu veux. Il n’y a de divinité que Toi. »",
+        "en": "In his night prayer, the Prophet ﷺ would say: “You are the One who make (some people) forward And (some) backward. There is none to be worshipped but you.”"
       },
       "source": {
-        "fr": "al-Bukhârî 1120, Muslim 771",
-        "en": "al-Bukhârî 1120, Muslim 771"
+        "fr": "al-Bukhârî 1120",
+        "en": "al-Bukhârî 1120"
       }
     }
   },
@@ -2252,27 +1533,15 @@ const ENTRIES: AllahNameEntry[] = [
       "fr": "Celui qui retarde",
       "en": "The Delayer"
     },
-    "explanation": {
-      "fr": "Al-Mu’akhkhir est Celui qui retarde ce qu’Il veut et qui Il veut, selon Sa sagesse. Il retarde aussi le châtiment pour laisser le temps du repentir.",
-      "en": "Al-Mu’akhkhir is the One who delays what He wills and whom He wills, according to His wisdom. He also delays punishment to leave time for repentance."
-    },
-    "reflection": {
-      "fr": "Un retard n’est pas un refus. Ce qu’Allah retarde peut être meilleur plus tard.",
-      "en": "A delay is not a refusal. What Allah delays may be better later."
-    },
-    "practice": {
-      "fr": "Patienter quand une chose tarde, sans remettre à plus tard le repentir.",
-      "en": "Be patient when something is delayed, without delaying your own repentance."
-    },
     "evidence": {
       "kind": "sunnah",
       "text": {
-        "fr": "Dans son invocation, le Prophète ﷺ disait : « Tu es Celui qui fait avancer et Tu es Celui qui retarde, nulle divinité en dehors de Toi. »",
-        "en": "In his supplication, the Prophet ﷺ would say: “You are the One who brings forward and You are the One who delays; there is no god but You.”"
+        "fr": "Dans sa prière de la nuit, le Prophète ﷺ disait : « Tu fais avancer qui Tu veux et reculer qui Tu veux. Il n’y a de divinité que Toi. »",
+        "en": "In his night prayer, the Prophet ﷺ would say: “You are the One who make (some people) forward And (some) backward. There is none to be worshipped but you.”"
       },
       "source": {
-        "fr": "al-Bukhârî 1120, Muslim 771",
-        "en": "al-Bukhârî 1120, Muslim 771"
+        "fr": "al-Bukhârî 1120",
+        "en": "al-Bukhârî 1120"
       }
     }
   },
@@ -2283,18 +1552,6 @@ const ENTRIES: AllahNameEntry[] = [
     "translation": {
       "fr": "Le Premier",
       "en": "The First"
-    },
-    "explanation": {
-      "fr": "Al-Awwal est Celui qui existe avant toute chose : rien n’est avant Lui. Le Prophète ﷺ disait : « Tu es le Premier, rien n’est avant Toi. » (Muslim 2713)",
-      "en": "Al-Awwal is the One who exists before everything: nothing is before Him. The Prophet ﷺ said: “You are the First, nothing is before You.” (Muslim 2713)"
-    },
-    "reflection": {
-      "fr": "Tout ce que l’on a a commencé un jour et vient de Lui. Cela enlève l’orgueil de ce qu’on possède.",
-      "en": "Everything we have began one day and comes from Him. This removes pride in what we own."
-    },
-    "practice": {
-      "fr": "Mettre Allah en premier dans ses priorités, à commencer par la prière à l’heure.",
-      "en": "Put Allah first in your priorities, starting with praying on time."
     },
     "evidence": {
       "kind": "quran",
@@ -2315,18 +1572,6 @@ const ENTRIES: AllahNameEntry[] = [
       "fr": "Le Dernier",
       "en": "The Last"
     },
-    "explanation": {
-      "fr": "Al-Ākhir est Celui qui demeure après toute chose : rien n’est après Lui. Tout disparaîtra, Lui seul restera.",
-      "en": "Al-Ākhir is the One who remains after everything: nothing is after Him. Everything will vanish; He alone will remain."
-    },
-    "reflection": {
-      "fr": "Tout ce à quoi on s’attache prendra fin. Ce qui est fait pour Allah, Lui, demeure.",
-      "en": "Everything we cling to will end. What is done for Allah remains."
-    },
-    "practice": {
-      "fr": "Faire ses actes pour ce qui dure, et finir ses journées en se tournant vers Allah.",
-      "en": "Do your deeds for what lasts, and end your days by turning to Allah."
-    },
     "evidence": {
       "kind": "quran",
       "ref": "57:3",
@@ -2345,18 +1590,6 @@ const ENTRIES: AllahNameEntry[] = [
     "translation": {
       "fr": "L’Apparent, Le Très-Haut",
       "en": "The Manifest"
-    },
-    "explanation": {
-      "fr": "Aẓ-Ẓāhir est Celui qui est au-dessus de toute chose : rien n’est au-dessus de Lui (Muslim 2713). Ses signes sont aussi manifestes partout dans la création.",
-      "en": "Aẓ-Ẓāhir is the One who is above everything: nothing is above Him (Muslim 2713). His signs are also manifest throughout creation."
-    },
-    "reflection": {
-      "fr": "Les signes d’Allah sont visibles à celui qui prend le temps de regarder.",
-      "en": "Allah’s signs are visible to whoever takes the time to look."
-    },
-    "practice": {
-      "fr": "Prendre chaque jour un moment pour réfléchir à un signe de la création.",
-      "en": "Take a moment each day to reflect on a sign in creation."
     },
     "evidence": {
       "kind": "quran",
@@ -2377,18 +1610,6 @@ const ENTRIES: AllahNameEntry[] = [
       "fr": "Le Caché, Le Très Proche",
       "en": "The Hidden"
     },
-    "explanation": {
-      "fr": "Al-Bāṭin est Celui dont rien n’est plus proche : rien n’est en deçà de Lui (Muslim 2713). Il connaît l’intérieur des choses, et Son essence échappe aux regards dans ce monde.",
-      "en": "Al-Bāṭin is the One than whom nothing is closer: nothing is beneath Him (Muslim 2713). He knows the inner reality of things, and His essence is beyond sight in this world."
-    },
-    "reflection": {
-      "fr": "Allah connaît ce qu’on cache aux autres et parfois à soi-même.",
-      "en": "Allah knows what we hide from others and sometimes from ourselves."
-    },
-    "practice": {
-      "fr": "Soigner son intérieur autant que son apparence.",
-      "en": "Take care of your inner self as much as your appearance."
-    },
     "evidence": {
       "kind": "quran",
       "ref": "57:3",
@@ -2407,18 +1628,6 @@ const ENTRIES: AllahNameEntry[] = [
     "translation": {
       "fr": "Le Gouverneur",
       "en": "The Governor"
-    },
-    "explanation": {
-      "fr": "Al-Wālī est Celui qui gouverne toute chose et en dispose seul : rien ne se fait dans l’univers sans Son administration.",
-      "en": "Al-Wālī is the One who governs everything and disposes of it alone: nothing happens in the universe without His management."
-    },
-    "reflection": {
-      "fr": "Quand Allah veut une chose pour un peuple, nul ne peut la repousser, et ils n’ont pas d’autre protecteur que Lui.",
-      "en": "When Allah wills something for a people, no one can repel it, and they have no protector besides Him."
-    },
-    "practice": {
-      "fr": "Changer ce qui est en soi pour qu’Allah change la situation (13:11).",
-      "en": "Change what is within yourself so that Allah changes the situation (13:11)."
     },
     "evidence": {
       "kind": "quran",
@@ -2439,18 +1648,6 @@ const ENTRIES: AllahNameEntry[] = [
       "fr": "Le Très Élevé",
       "en": "The Supremely Exalted"
     },
-    "explanation": {
-      "fr": "Al-Muta‘ālī est Celui qui est élevé au-dessus de toute la création et au-dessus de tout ce qu’on Lui attribue de faux.",
-      "en": "Al-Muta‘ālī is the One who is exalted above all creation and above every false thing attributed to Him."
-    },
-    "reflection": {
-      "fr": "Allah est au-dessus de ce que notre imagination peut concevoir.",
-      "en": "Allah is above whatever our imagination can conceive."
-    },
-    "practice": {
-      "fr": "Parler d’Allah avec ce qu’Il a dit de Lui-même, sans inventer.",
-      "en": "Speak of Allah with what He has said about Himself, without inventing."
-    },
     "evidence": {
       "kind": "quran",
       "ref": "13:9",
@@ -2469,18 +1666,6 @@ const ENTRIES: AllahNameEntry[] = [
     "translation": {
       "fr": "Le Bienfaisant",
       "en": "The Source of All Goodness"
-    },
-    "explanation": {
-      "fr": "Al-Barr est Celui dont la bonté est vaste : Il fait du bien à Ses créatures, tient Ses promesses et récompense largement.",
-      "en": "Al-Barr is the One whose goodness is vast: He does good to His creatures, keeps His promises and rewards generously."
-    },
-    "reflection": {
-      "fr": "Ce verset rapporte les paroles des gens du Paradis : ils invoquaient Allah dans ce monde, et ils Le reconnaissent comme le Bienfaisant.",
-      "en": "This verse reports the words of the people of Paradise: they used to call upon Allah in this world, and they recognise Him as the Beneficent."
-    },
-    "practice": {
-      "fr": "Faire le bien autour de soi, en commençant par ses parents (birr al-wālidayn).",
-      "en": "Do good around you, starting with your parents (birr al-wālidayn)."
     },
     "evidence": {
       "kind": "quran",
@@ -2501,17 +1686,9 @@ const ENTRIES: AllahNameEntry[] = [
       "fr": "Celui qui accueille sans cesse le repentir",
       "en": "The Accepter of Repentance"
     },
-    "explanation": {
-      "fr": "At-Tawwāb est Celui qui guide Ses serviteurs vers le repentir, puis l’accepte, encore et encore.",
-      "en": "At-Tawwāb is the One who guides His servants to repentance, then accepts it, again and again."
-    },
     "reflection": {
-      "fr": "Le Prophète ﷺ a dit qu’Allah se réjouit plus du repentir de Son serviteur qu’un homme qui retrouve sa monture perdue dans le désert (al-Bukhârî 6309, Muslim 2747).",
-      "en": "The Prophet ﷺ said that Allah rejoices more at His servant’s repentance than a man who finds his lost mount in the desert (al-Bukhârî 6309, Muslim 2747)."
-    },
-    "practice": {
-      "fr": "Se repentir vite, sincèrement, et recommencer autant de fois qu’il le faut.",
-      "en": "Repent quickly and sincerely, and start again as many times as needed."
+      "fr": "Le Prophète ﷺ a dit : « Allah est plus heureux du repentir de Son serviteur que l’un de vous ne l’est en retrouvant son chameau qu’il avait perdu dans le désert. » (al-Bukhârî 6309)",
+      "en": "The Prophet ﷺ said: “Allah is more pleased with the repentance of His slave than anyone of you is pleased with finding his camel which he had lost in the desert.” (al-Bukhârî 6309)"
     },
     "evidence": {
       "kind": "quran",
@@ -2532,18 +1709,6 @@ const ENTRIES: AllahNameEntry[] = [
       "fr": "Celui qui châtie avec justice",
       "en": "The Avenger"
     },
-    "explanation": {
-      "fr": "Al-Muntaqim est Celui qui punit avec justice ceux qui persistent dans l’injustice après avoir été avertis. Dans le Coran, ce sens vient sous la forme « Dhū intiqām », « Détenteur du châtiment ».",
-      "en": "Al-Muntaqim is the One who punishes with justice those who persist in wrongdoing after being warned. In the Quran, this meaning comes in the form “Dhū intiqām”, “Owner of retribution”."
-    },
-    "reflection": {
-      "fr": "La justice d’Allah rassure l’opprimé : aucune injustice ne reste sans réponse.",
-      "en": "Allah’s justice reassures the oppressed: no injustice goes unanswered."
-    },
-    "practice": {
-      "fr": "Ne pas se venger soi-même au-delà du droit, et confier à Allah ce qu’on ne peut pas régler.",
-      "en": "Do not take revenge beyond what is right, and leave to Allah what you cannot settle."
-    },
     "evidence": {
       "kind": "quran",
       "ref": "3:4",
@@ -2563,17 +1728,9 @@ const ENTRIES: AllahNameEntry[] = [
       "fr": "Celui qui efface les fautes",
       "en": "The Pardoner"
     },
-    "explanation": {
-      "fr": "Al-‘Afuww est Celui qui efface les péchés au point de ne plus en laisser de trace, comme s’ils n’avaient jamais existé.",
-      "en": "Al-‘Afuww is the One who erases sins until no trace remains, as if they had never existed."
-    },
     "reflection": {
-      "fr": "Pour la Nuit du Destin, le Prophète ﷺ a enseigné : « Allāhumma innaka ‘afuwwun tuḥibbu l-‘afwa fa‘fu ‘annī » (at-Tirmidhî 3513, authentifié par al-Albânî).",
-      "en": "For the Night of Decree, the Prophet ﷺ taught: “Allāhumma innaka ‘afuwwun tuḥibbu l-‘afwa fa‘fu ‘annī” (at-Tirmidhî 3513, graded authentic by al-Albânî)."
-    },
-    "practice": {
-      "fr": "Dire cette invocation, surtout pendant les dix dernières nuits de Ramadan, et effacer soi-même les torts des autres.",
-      "en": "Say this supplication, especially during the last ten nights of Ramadan, and erase the wrongs of others yourself."
+      "fr": "À ‘Â’isha qui demandait quoi dire si elle savait quelle nuit est la Nuit du Destin, le Prophète ﷺ a répondu : « Allāhumma innaka ‘Afuwwun tuḥibbul-‘afwa fa‘fu ‘annī » (at-Tirmidhî 3513, authentifié par al-Albânî).",
+      "en": "When ‘Ā’ishah asked what to say if she knew which night is the Night of Al-Qadr, the Prophet ﷺ said: “O Allah, indeed You are Pardoning, You love pardon, so pardon me (Allāhumma innaka `Afuwwun, tuḥibbul-`afwa fa`fu `annī)” (at-Tirmidhî 3513, graded authentic by al-Albânî)."
     },
     "evidence": {
       "kind": "quran",
@@ -2594,18 +1751,6 @@ const ENTRIES: AllahNameEntry[] = [
       "fr": "Le Très Compatissant",
       "en": "The Most Kind"
     },
-    "explanation": {
-      "fr": "Ar-Ra’ūf est Celui dont la tendresse est extrême : Il épargne à Ses serviteurs ce qui leur est pénible et allège leurs obligations.",
-      "en": "Ar-Ra’ūf is the One whose tenderness is extreme: He spares His servants what is hard for them and lightens their obligations."
-    },
-    "reflection": {
-      "fr": "Les facilités de la religion (raccourcir la prière en voyage, ne pas jeûner malade) sont des traces de cette tendresse.",
-      "en": "The concessions of the religion (shortening prayer when travelling, not fasting when ill) are traces of this tenderness."
-    },
-    "practice": {
-      "fr": "Être tendre avec les faibles, et faciliter plutôt que compliquer.",
-      "en": "Be tender with the weak, and make things easy rather than difficult."
-    },
     "evidence": {
       "kind": "quran",
       "ref": "57:9",
@@ -2624,18 +1769,6 @@ const ENTRIES: AllahNameEntry[] = [
     "translation": {
       "fr": "Le Maître de la royauté",
       "en": "Owner of All Sovereignty"
-    },
-    "explanation": {
-      "fr": "Mālik al-Mulk est Celui qui possède toute royauté : Il la donne à qui Il veut et la retire à qui Il veut.",
-      "en": "Mālik al-Mulk is the One who owns all sovereignty: He gives it to whom He wills and takes it from whom He wills."
-    },
-    "reflection": {
-      "fr": "Tout pouvoir terrestre est un prêt temporaire, et il sera demandé compte de son usage.",
-      "en": "All earthly power is a temporary loan, and its use will be accounted for."
-    },
-    "practice": {
-      "fr": "Voir ce qu’on possède comme un dépôt, et l’utiliser comme Allah l’aime.",
-      "en": "See what you own as a trust, and use it as Allah loves."
     },
     "evidence": {
       "kind": "quran",
@@ -2656,18 +1789,6 @@ const ENTRIES: AllahNameEntry[] = [
       "fr": "Le Détenteur de la majesté et de la générosité",
       "en": "Lord of Majesty and Honour"
     },
-    "explanation": {
-      "fr": "Dhū l-Jalāli wa-l-Ikrām est Celui qui réunit la majesté qui inspire le respect et la générosité qui comble Ses serviteurs.",
-      "en": "Dhū l-Jalāli wa-l-Ikrām is the One who unites majesty that inspires respect and generosity that showers His servants."
-    },
-    "reflection": {
-      "fr": "Le Prophète ﷺ a dit : « Attachez-vous à “Yā Dhā l-jalāli wa-l-ikrām”. » (at-Tirmidhî 3525, authentifié par al-Albânî)",
-      "en": "The Prophet ﷺ said: “Hold fast to ‘Yā Dhā l-jalāli wa-l-ikrām’.” (at-Tirmidhî 3525, graded authentic by al-Albânî)"
-    },
-    "practice": {
-      "fr": "Invoquer Allah par ce nom, notamment après chaque prière.",
-      "en": "Call upon Allah by this name, especially after each prayer."
-    },
     "evidence": {
       "kind": "quran",
       "ref": "55:78",
@@ -2687,17 +1808,9 @@ const ENTRIES: AllahNameEntry[] = [
       "fr": "Le Parfaitement Équitable",
       "en": "The Equitable"
     },
-    "explanation": {
-      "fr": "Al-Muqsiṭ est Celui qui établit l’équité dans Ses jugements et rend à chacun son droit, y compris à l’opprimé contre l’oppresseur.",
-      "en": "Al-Muqsiṭ is the One who establishes equity in His judgements and gives everyone their due, including the oppressed against the oppressor."
-    },
     "reflection": {
-      "fr": "Le Prophète ﷺ a dit que les équitables seront auprès d’Allah sur des chaires de lumière (Muslim 1827).",
-      "en": "The Prophet ﷺ said that the just will be with Allah on pulpits of light (Muslim 1827)."
-    },
-    "practice": {
-      "fr": "Être équitable entre ses enfants, dans son travail et dans ses décisions.",
-      "en": "Be fair between your children, at work and in your decisions."
+      "fr": "Le Prophète ﷺ a dit : « Les justes seront assis sur des chaires de lumière à côté d’Allah » (Muslim 1827).",
+      "en": "The Prophet ﷺ said: “the Dispensers of justice will be seated on the pulpits of light beside God” (Muslim 1827)."
     },
     "evidence": {
       "kind": "quran",
@@ -2718,18 +1831,6 @@ const ENTRIES: AllahNameEntry[] = [
       "fr": "Le Rassembleur",
       "en": "The Gatherer"
     },
-    "explanation": {
-      "fr": "Al-Jāmi‘ est Celui qui rassemblera toutes les créatures le Jour du Jugement, et qui réunit ce qui est dispersé.",
-      "en": "Al-Jāmi‘ is the One who will gather all creatures on the Day of Judgement, and who brings together what is scattered."
-    },
-    "reflection": {
-      "fr": "Les séparations d’ici-bas ne sont pas définitives : Allah réunira.",
-      "en": "The separations of this world are not final: Allah will gather."
-    },
-    "practice": {
-      "fr": "Œuvrer à rassembler les gens et à réconcilier plutôt qu’à diviser.",
-      "en": "Work to bring people together and reconcile rather than divide."
-    },
     "evidence": {
       "kind": "quran",
       "ref": "3:9",
@@ -2748,18 +1849,6 @@ const ENTRIES: AllahNameEntry[] = [
     "translation": {
       "fr": "Celui qui se suffit à Lui-même",
       "en": "The Self-Sufficient"
-    },
-    "explanation": {
-      "fr": "Al-Ghaniyy est Celui qui n’a besoin de rien ni de personne, alors que toutes les créatures ont besoin de Lui.",
-      "en": "Al-Ghaniyy is the One who needs nothing and no one, while all creatures need Him."
-    },
-    "reflection": {
-      "fr": "Allah n’a pas besoin de notre adoration : c’est nous qui en avons besoin.",
-      "en": "Allah does not need our worship: we are the ones who need it."
-    },
-    "practice": {
-      "fr": "Chercher la vraie richesse, celle du cœur (al-Bukhârî 6446, Muslim 1051), et ne pas s’humilier devant les gens pour ce qu’ils possèdent.",
-      "en": "Seek true wealth, the wealth of the heart (al-Bukhârî 6446, Muslim 1051), and do not humble yourself before people for what they own."
     },
     "evidence": {
       "kind": "quran",
@@ -2780,18 +1869,6 @@ const ENTRIES: AllahNameEntry[] = [
       "fr": "Celui qui enrichit",
       "en": "The Enricher"
     },
-    "explanation": {
-      "fr": "Al-Mughnī est Celui qui enrichit qui Il veut, matériellement et spirituellement, et qui rend Ses serviteurs indépendants des autres.",
-      "en": "Al-Mughnī is the One who enriches whom He wills, materially and spiritually, and who makes His servants independent of others."
-    },
-    "reflection": {
-      "fr": "Le Prophète ﷺ enseignait : « Ô Allah, suffis-moi par le licite pour que je me passe de l’illicite, et enrichis-moi par Ta grâce pour que je me passe de tout autre que Toi. » (at-Tirmidhî 3563, jugé bon par al-Albânî)",
-      "en": "The Prophet ﷺ taught: “O Allah, suffice me with what is lawful against what is unlawful, and enrich me by Your grace so I need none but You.” (at-Tirmidhî 3563, graded good by al-Albânî)"
-    },
-    "practice": {
-      "fr": "Dire cette invocation et se contenter du licite.",
-      "en": "Say this supplication and be content with what is lawful."
-    },
     "evidence": {
       "kind": "quran",
       "ref": "53:48",
@@ -2811,27 +1888,15 @@ const ENTRIES: AllahNameEntry[] = [
       "fr": "Celui qui empêche et protège",
       "en": "The Preventer"
     },
-    "explanation": {
-      "fr": "Al-Māni‘ est Celui qui retient ce qu’Il veut, par sagesse, et qui protège Ses serviteurs de ce qui leur nuirait.",
-      "en": "Al-Māni‘ is the One who withholds what He wills, out of wisdom, and protects His servants from what would harm them."
-    },
-    "reflection": {
-      "fr": "Ce qu’Allah nous refuse peut être une protection. On ne voit pas toujours le mal qu’Il a écarté.",
-      "en": "What Allah refuses us may be a protection. We do not always see the harm He has kept away."
-    },
-    "practice": {
-      "fr": "Dire après la prière : « Nul ne peut empêcher ce que Tu donnes, ni donner ce que Tu empêches. »",
-      "en": "Say after the prayer: “None can withhold what You give, and none can give what You withhold.”"
-    },
     "evidence": {
       "kind": "sunnah",
       "text": {
-        "fr": "Après la prière, le Prophète ﷺ disait : « Ô Allah, nul ne peut empêcher ce que Tu donnes, ni donner ce que Tu empêches. »",
-        "en": "After the prayer, the Prophet ﷺ would say: “O Allah, none can withhold what You give, and none can give what You withhold.”"
+        "fr": "Après la prière, le Prophète ﷺ disait : « Ô Allah ! Nul ne peut retenir ce que Tu donnes, ni donner ce que Tu retiens »",
+        "en": "After the prayer, the Prophet ﷺ would say: “O Allah! no one can withhold what Thou givest, or give what Thou withholdest”"
       },
       "source": {
-        "fr": "al-Bukhârî 844, Muslim 593",
-        "en": "al-Bukhârî 844, Muslim 593"
+        "fr": "Muslim 593",
+        "en": "Muslim 593"
       }
     }
   },
@@ -2842,18 +1907,6 @@ const ENTRIES: AllahNameEntry[] = [
     "translation": {
       "fr": "Celui qui permet l’épreuve",
       "en": "The Distresser"
-    },
-    "explanation": {
-      "fr": "Aḍ-Ḍārr est Celui par la volonté de qui arrive toute épreuve, avec une sagesse. Ce nom ne s’emploie qu’avec son opposé, An-Nāfi‘ : le mal n’est jamais attribué seul à Allah.",
-      "en": "Aḍ-Ḍārr is the One by whose will every hardship comes, with wisdom. This name is used only together with its opposite, An-Nāfi‘: harm is never attributed to Allah on its own."
-    },
-    "reflection": {
-      "fr": "Le Prophète ﷺ a dit à Ibn ‘Abbās : si toute la communauté se réunissait pour te nuire, elle ne te nuirait que par ce qu’Allah a écrit pour toi (at-Tirmidhî 2516, authentifié par al-Albânî).",
-      "en": "The Prophet ﷺ told Ibn ‘Abbās: if the whole community gathered to harm you, they could only harm you with what Allah has written for you (at-Tirmidhî 2516, graded authentic by al-Albânî)."
-    },
-    "practice": {
-      "fr": "Ne craindre aucune créature au point d’oublier Allah, et patienter dans l’épreuve.",
-      "en": "Do not fear any creature to the point of forgetting Allah, and be patient in hardship."
     },
     "evidence": {
       "kind": "quran",
@@ -2874,18 +1927,6 @@ const ENTRIES: AllahNameEntry[] = [
       "fr": "Celui qui accorde le bienfait",
       "en": "The Benefactor"
     },
-    "explanation": {
-      "fr": "An-Nāfi‘ est Celui de qui vient tout bienfait. Ce nom va avec Aḍ-Ḍārr : le bien comme l’épreuve n’arrivent que par Sa volonté.",
-      "en": "An-Nāfi‘ is the One from whom every benefit comes. This name goes with Aḍ-Ḍārr: good and hardship come only by His will."
-    },
-    "reflection": {
-      "fr": "Les médicaments, les gens, les moyens ne profitent que si Allah le veut.",
-      "en": "Medicine, people and means only benefit if Allah wills."
-    },
-    "practice": {
-      "fr": "Demander à Allah une science utile et être utile aux autres.",
-      "en": "Ask Allah for beneficial knowledge and be of benefit to others."
-    },
     "evidence": {
       "kind": "quran",
       "ref": "10:107",
@@ -2905,17 +1946,9 @@ const ENTRIES: AllahNameEntry[] = [
       "fr": "La Lumière",
       "en": "The Light"
     },
-    "explanation": {
-      "fr": "An-Nūr est Celui qui est lumière, qui illumine les cieux et la terre, et qui éclaire les cœurs des croyants par la guidance.",
-      "en": "An-Nūr is the One who is light, who illuminates the heavens and the earth, and who lights up the hearts of the believers with guidance."
-    },
     "reflection": {
-      "fr": "Le Prophète ﷺ demandait : « Ô Allah, mets dans mon cœur une lumière… » (al-Bukhârî 6316, Muslim 763)",
-      "en": "The Prophet ﷺ would ask: “O Allah, place light in my heart…” (al-Bukhârî 6316, Muslim 763)"
-    },
-    "practice": {
-      "fr": "Demander la lumière de la guidance, et la chercher dans le Coran.",
-      "en": "Ask for the light of guidance, and seek it in the Quran."
+      "fr": "Le Prophète ﷺ invoquait : « … de la lumière dans mon cœur, de la lumière dans ma vue, de la lumière dans mon ouïe… » (Muslim 763)",
+      "en": "The Prophet ﷺ would supplicate: “… light in my heart, light in my sight, light in my hearing…” (Muslim 763)"
     },
     "evidence": {
       "kind": "quran",
@@ -2936,17 +1969,9 @@ const ENTRIES: AllahNameEntry[] = [
       "fr": "Le Guide",
       "en": "The Guide"
     },
-    "explanation": {
-      "fr": "Al-Hādī est Celui qui guide Ses créatures vers ce qui leur est utile, et qui guide qui Il veut vers la vérité et la foi.",
-      "en": "Al-Hādī is the One who guides His creatures to what benefits them, and who guides whom He wills to the truth and to faith."
-    },
     "reflection": {
-      "fr": "Dans chaque rak‘a, on demande : « Guide-nous dans le droit chemin, » (1:6) Même le croyant a besoin de cette guidance chaque jour.",
-      "en": "In every rak‘a, we ask: “Guide us to the straight path -” (1:6) Even the believer needs this guidance every day."
-    },
-    "practice": {
-      "fr": "Demander la guidance avec sincérité, rechercher la vérité et agir selon ce qu’on apprend.",
-      "en": "Ask for guidance sincerely, seek the truth and act on what you learn."
+      "fr": "« Guide-nous dans le droit chemin, » (1:6)",
+      "en": "“Guide us to the straight path -” (1:6)"
     },
     "evidence": {
       "kind": "quran",
@@ -2967,18 +1992,6 @@ const ENTRIES: AllahNameEntry[] = [
       "fr": "Le Créateur sans modèle",
       "en": "The Incomparable Originator"
     },
-    "explanation": {
-      "fr": "Al-Badī‘ est Celui qui a créé les cieux et la terre sans modèle préalable, d’une manière merveilleuse et sans précédent.",
-      "en": "Al-Badī‘ is the One who created the heavens and the earth without any prior model, in a wondrous and unprecedented way."
-    },
-    "reflection": {
-      "fr": "La beauté du monde est une invitation à connaître Celui qui l’a créée.",
-      "en": "The beauty of the world is an invitation to know the One who created it."
-    },
-    "practice": {
-      "fr": "S’émerveiller devant la création et en remercier Allah.",
-      "en": "Marvel at creation and thank Allah for it."
-    },
     "evidence": {
       "kind": "quran",
       "ref": "2:117",
@@ -2997,18 +2010,6 @@ const ENTRIES: AllahNameEntry[] = [
     "translation": {
       "fr": "L’Éternel, Celui qui demeure",
       "en": "The Everlasting"
-    },
-    "explanation": {
-      "fr": "Al-Bāqī est Celui qui demeure pour toujours, alors que toute chose disparaît.",
-      "en": "Al-Bāqī is the One who remains forever, while everything else passes away."
-    },
-    "reflection": {
-      "fr": "« Tout ce qui est sur elle [la terre] doit disparaître, » (55:26) Lui seul demeure, et ce qui est fait pour Lui reste.",
-      "en": "“Everyone upon it [i.e., the earth] will perish,” (55:26) He alone remains, and what is done for Him remains."
-    },
-    "practice": {
-      "fr": "Investir dans ce qui reste : la sadaqa continue, la science utile, l’enfant pieux (Muslim 1631).",
-      "en": "Invest in what lasts: ongoing charity, beneficial knowledge, a righteous child (Muslim 1631)."
     },
     "evidence": {
       "kind": "quran",
@@ -3029,17 +2030,9 @@ const ENTRIES: AllahNameEntry[] = [
       "fr": "L’Héritier ultime",
       "en": "The Inheritor"
     },
-    "explanation": {
-      "fr": "Al-Wārith est Celui qui demeure après la disparition de toutes les créatures, et à qui revient tout ce qu’elles possédaient.",
-      "en": "Al-Wārith is the One who remains after all creatures have passed away, and to whom everything they owned returns."
-    },
     "reflection": {
-      "fr": "Zakariyyā invoquait ainsi : « Et Zacharie, quand il implora son Seigneur : \"Seigneur ! Ne me laisse pas seul alors que Tu es le meilleur des héritiers !\" » (21:89)",
-      "en": "Zakariyyā prayed: “And [mention] Zechariah, when he called to his Lord, \"My Lord, do not leave me alone [with no heir], while You are the best of inheritors.\"” (21:89)"
-    },
-    "practice": {
-      "fr": "Ne pas s’attacher à ce qu’on laissera derrière soi, et donner de son vivant.",
-      "en": "Do not cling to what you will leave behind, and give while you are alive."
+      "fr": "« Et Zacharie, quand il implora son Seigneur : \"Seigneur ! Ne me laisse pas seul alors que Tu es le meilleur des héritiers !\" » (21:89)",
+      "en": "“And [mention] Zechariah, when he called to his Lord, \"My Lord, do not leave me alone [with no heir], while You are the best of inheritors.\"” (21:89)"
     },
     "evidence": {
       "kind": "quran",
@@ -3060,18 +2053,6 @@ const ENTRIES: AllahNameEntry[] = [
       "fr": "Le Guide vers la droiture",
       "en": "The Guide to the Right Path"
     },
-    "explanation": {
-      "fr": "Ar-Rashīd est Celui dont tous les actes sont droits et qui dirige Ses serviteurs vers ce qui est juste et bon pour eux.",
-      "en": "Ar-Rashīd is the One whose every act is right and who directs His servants to what is right and good for them."
-    },
-    "reflection": {
-      "fr": "Les jeunes de la caverne ont demandé à Allah de leur préparer la droiture dans leur affaire. Une décision droite vient d’Allah.",
-      "en": "The youths of the cave asked Allah to prepare right guidance for them in their affair. A right decision comes from Allah."
-    },
-    "practice": {
-      "fr": "Faire l’istikhāra avant les décisions importantes, et demander conseil aux gens sages.",
-      "en": "Pray istikhāra before important decisions, and seek advice from wise people."
-    },
     "evidence": {
       "kind": "quran",
       "ref": "18:10",
@@ -3091,27 +2072,15 @@ const ENTRIES: AllahNameEntry[] = [
       "fr": "Le Très Patient",
       "en": "The Most Patient"
     },
-    "explanation": {
-      "fr": "Aṣ-Ṣabūr est Celui qui ne se hâte pas de punir ceux qui Lui désobéissent ou Lui attribuent ce qui ne Lui convient pas, et qui leur laisse le temps de revenir.",
-      "en": "Aṣ-Ṣabūr is the One who does not hasten to punish those who disobey Him or attribute to Him what does not befit Him, and who leaves them time to return."
-    },
-    "reflection": {
-      "fr": "Si Allah est patient avec nous malgré nos fautes, nous pouvons l’être avec les autres.",
-      "en": "If Allah is patient with us despite our faults, we can be patient with others."
-    },
-    "practice": {
-      "fr": "Patienter dans l’obéissance, face au péché et dans l’épreuve.",
-      "en": "Be patient in obedience, in resisting sin and in hardship."
-    },
     "evidence": {
       "kind": "sunnah",
       "text": {
-        "fr": "Le Prophète ﷺ a dit : « Nul n’est plus patient qu’Allah face aux paroles blessantes qu’Il entend : on Lui attribue un enfant, et pourtant Il leur accorde la santé et la subsistance. »",
-        "en": "The Prophet ﷺ said: “No one is more patient than Allah with the hurtful words He hears: they attribute a son to Him, yet He still gives them health and provision.”"
+        "fr": "Le Prophète ﷺ a dit : « Personne n’est plus patient qu’Allah face aux paroles blessantes. Il entend les gens Lui attribuer des enfants, pourtant Il leur accorde la santé et leur donne de quoi vivre »",
+        "en": "The Prophet ﷺ said: “None is more patient than Allah against the harmful saying. He hears from the people they ascribe children to Him, yet He gives them health and (supplies them with) provision”"
       },
       "source": {
-        "fr": "al-Bukhârî 6099, Muslim 2804",
-        "en": "al-Bukhârî 6099, Muslim 2804"
+        "fr": "al-Bukhârî 6099",
+        "en": "al-Bukhârî 6099"
       }
     }
   }
@@ -3126,9 +2095,7 @@ function localize(entry: AllahNameEntry, language: LanguageCode): AllahName {
     arabic: entry.arabic,
     transliteration: entry.transliteration,
     translation: pick(entry.translation, language),
-    explanation: pick(entry.explanation, language),
-    reflection: pick(entry.reflection, language),
-    practice: pick(entry.practice, language),
+    reflection: entry.reflection ? pick(entry.reflection, language) : undefined,
     evidence: evidence.kind === "quran"
       ? { ...evidence, text: pick(evidence.text, language) }
       : { kind: "sunnah", text: pick(evidence.text, language), source: pick(evidence.source, language) },
