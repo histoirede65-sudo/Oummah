@@ -747,8 +747,8 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
       {
         "type": "text",
         "text": {
-          "fr": "Pendant environ trois ans, l’appel resta discret. Khadîja fut la première à croire, puis son jeune cousin ‘Alî, son fils adoptif Zayd ibn Hâritha et son ami Abû Bakr. Par Abû Bakr vinrent ‘Uthmân, az-Zubayr, ‘Abd ar-Rahmân ibn ‘Awf, Sa‘d ibn Abî Waqqâs et Talha.",
-          "en": "For about three years, the call remained discreet. Khadija was the first to believe, then his young cousin 'Ali, his adopted son Zayd ibn Haritha and his friend Abu Bakr. Through Abu Bakr came 'Uthman, az-Zubayr, 'Abd ar-Rahman ibn 'Awf, Sa'd ibn Abi Waqqas and Talha."
+          "fr": "Au début, l’appel resta discret. Khadîja fut la première à croire, puis son jeune cousin ‘Alî, son fils adoptif Zayd ibn Hâritha et son ami Abû Bakr. Par Abû Bakr vinrent ‘Uthmân, az-Zubayr, ‘Abd ar-Rahmân ibn ‘Awf, Sa‘d ibn Abî Waqqâs et Talha.",
+          "en": "At first, the call remained discreet. Khadija was the first to believe, then his young cousin 'Ali, his adopted son Zayd ibn Haritha and his friend Abu Bakr. Through Abu Bakr came 'Uthman, az-Zubayr, 'Abd ar-Rahman ibn 'Awf, Sa'd ibn Abi Waqqas and Talha."
         }
       },
       {
@@ -1161,6 +1161,10 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
         }
       }
     ],
+    "note": {
+      "fr": "On appelle souvent cette année « l’année du chagrin » (‘âm al-huzn), en attribuant ce nom au Prophète ﷺ. Cheikh al-Albânî : « De quelle source fiable a-t-on tiré cette information ? […] Après de longues recherches, je ne l’ai pas trouvée. » Il ajoute que la seule mention qu’il a vue est sans chaîne de transmission. (Difâ‘ ‘an al-hadîth an-nabawî wa-s-sîra, p. 18)",
+      "en": "This year is often called \"the year of sorrow\" ('am al-huzn), with the name attributed to the Prophet ﷺ. Shaykh al-Albani: \"From which reliable source was this information taken? […] After long research, I did not find it.\" He adds that the only mention he saw has no chain of transmission. (Difa' 'an al-hadith an-nabawi wa-s-sira, p. 18)"
+    },
     "lessons": [],
     "sources": [
       {
@@ -1306,8 +1310,8 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
       }
     ],
     "note": {
-      "fr": "La date exacte du voyage nocturne n’est pas établie : les biographes divergent à son sujet.",
-      "en": "The exact date of the night journey is not established: biographers differ about it."
+      "fr": "Cheikh Ibn Bâz : « La nuit durant laquelle eurent lieu le Voyage nocturne et l’Ascension n’a pas été précisée dans les hadiths authentiques, ni en Rajab ni à un autre moment ; et tout ce qui a été rapporté pour la préciser n’est pas établi du Prophète ﷺ selon les savants du hadith. » (Majmû‘ al-Fatâwâ, 1/183)",
+      "en": "Shaykh Ibn Baz: \"The night in which the Night Journey and the Ascension took place has not been specified in the authentic hadiths, neither in Rajab nor at any other time; and everything reported to specify it is not established from the Prophet ﷺ according to the scholars of hadith.\" (Majmu' al-Fatawa, 1/183)"
     },
     "lessons": [],
     "sources": [
@@ -1523,6 +1527,10 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
         }
       }
     ],
+    "note": {
+      "fr": "On raconte souvent qu’une araignée tissa sa toile à l’entrée de la grotte et que des colombes y firent leur nid. Cheikh Ibn ‘Uthaymîn, à propos de la parole d’Abû Bakr « Si l’un d’eux regardait sous ses pieds, il nous verrait » : « Cela montre que l’histoire de l’araignée qui tisse sa toile n’est pas authentique. Ce que l’on trouve dans certains livres d’histoire — que l’araignée tissa sa toile à l’entrée de la grotte, qu’un arbre y poussa et qu’une colombe se tenait sur sa branche — tout cela n’a aucun fondement ; car ce qui empêcha les polythéistes de voir le Prophète ﷺ et son compagnon Abû Bakr, ce ne sont pas des choses matérielles, mais un signe parmi les signes d’Allah. » (Sharh Riyâd as-Sâlihîn, Dâr al-Watan, 2/525)",
+      "en": "It is often said that a spider spun its web at the cave's entrance and that doves nested there. Shaykh Ibn 'Uthaymin, on Abu Bakr's words \"If one of them looked beneath his feet, he would see us\": \"This shows that the story of the spider spinning its web is not authentic. What is found in some history books — that the spider spun its web at the entrance of the cave, that a tree grew there and that a dove stood on its branch — none of this has any basis; for what prevented the polytheists from seeing the Prophet ﷺ and his companion Abu Bakr was not something material, but a sign among the signs of Allah.\" (Sharh Riyad as-Salihin, Dar al-Watan, 2/525)"
+    },
     "lessons": [],
     "sources": [
       {
@@ -1530,7 +1538,7 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
         "en": "Sahih al-Bukhari 3905"
       }
     ],
-    "minutes": 1
+    "minutes": 2
   },
   {
     "id": "suraqa",
@@ -1648,6 +1656,10 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
         }
       }
     ],
+    "note": {
+      "fr": "Le chant « Tala‘a al-badru ‘alaynâ » est souvent associé à cette arrivée. Cheikh al-Albânî l’a jugé faible et a dit : « L’histoire, dans son ensemble, n’est pas établie. » (Silsilat al-ahâdîth ad-da‘îfa, n° 598)",
+      "en": "The song \"Tala'a al-badru 'alayna\" is often associated with this arrival. Shaykh al-Albani graded it weak and said: \"The story as a whole is not established.\" (Silsilat al-ahadith ad-da'ifa, no. 598)"
+    },
     "lessons": [],
     "sources": [
       {
@@ -1720,11 +1732,15 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
       {
         "type": "text",
         "text": {
-          "fr": "Pour appeler à la prière, on adopta l’adhân, et la voix de Bilâl l’annonça cinq fois par jour. Le Prophète ﷺ conclut aussi avec les tribus de Médine, dont les tribus juives, un pacte réglant la défense commune et la justice : on l’appelle le pacte de Médine.",
-          "en": "To call people to prayer, the adhan was adopted, and Bilal's voice announced it five times a day. The Prophet ﷺ also concluded with the tribes of Medina, including the Jewish tribes, a pact governing common defence and justice: it is known as the Covenant of Medina."
+          "fr": "Pour appeler à la prière, on adopta l’adhân, et la voix de Bilâl l’annonça cinq fois par jour. Selon Ibn Ishâq, le Prophète ﷺ conclut aussi avec les tribus de Médine, dont les tribus juives, un pacte réglant la défense commune et la justice : on l’appelle le pacte de Médine.",
+          "en": "To call people to prayer, the adhan was adopted, and Bilal's voice announced it five times a day. According to Ibn Ishaq, the Prophet ﷺ also concluded with the tribes of Medina, including the Jewish tribes, a pact governing common defence and justice: it is known as the Covenant of Medina."
         }
       }
     ],
+    "note": {
+      "fr": "Sur le texte du pacte de Médine, cheikh al-Albânî : « On n’en connaît pas l’authenticité […] Ibn Ishâq l’a mentionné ainsi, sans chaîne de transmission ; il est donc mu‘dal (à la chaîne interrompue). » (Difâ‘ ‘an al-hadîth an-nabawî wa-s-sîra, p. 25-26)",
+      "en": "On the text of the Covenant of Medina, Shaykh al-Albani: \"Its authenticity is not known […] Ibn Ishaq mentioned it like this, without a chain of transmission, so it is mu'dal (with a broken chain).\" (Difa' 'an al-hadith an-nabawi wa-s-sira, pp. 25-26)"
+    },
     "lessons": [],
     "sources": [
       {
@@ -2448,6 +2464,10 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
         }
       }
     ],
+    "note": {
+      "fr": "On cite souvent pour ce jour la parole « Allez, vous êtes libres » (idhhabû fa-antum at-tulaqâ’). Cheikh al-Albânî : « Ce hadith, malgré sa célébrité, n’a pas de chaîne établie. » (Difâ‘ ‘an al-hadîth an-nabawî wa-s-sîra, p. 32 ; voir aussi Silsilat al-ahâdîth ad-da‘îfa, 3/308). La sécurité accordée ce jour-là aux Mecquois, elle, est rapportée par Muslim.",
+      "en": "The words \"Go, you are free\" (idhhabu fa-antum at-tulaqa') are often quoted for this day. Shaykh al-Albani: \"This hadith, despite its fame, has no established chain.\" (Difa' 'an al-hadith an-nabawi wa-s-sira, p. 32; see also Silsilat al-ahadith ad-da'ifa, 3/308). The safety granted to the Meccans that day is, however, reported by Muslim."
+    },
     "lessons": [],
     "sources": [
       {
@@ -2463,7 +2483,7 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
         "en": "Ibn Hisham, As-Sira an-Nabawiyya"
       }
     ],
-    "minutes": 1
+    "minutes": 2
   },
   {
     "id": "hunayn",
