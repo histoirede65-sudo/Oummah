@@ -5,7 +5,7 @@ import { useMemo, useState } from 'react';
 import { Pressable, SafeAreaView, Share, StyleSheet, Text, View } from 'react-native';
 import { CATALOGUE_NAMES, MUSLIM_NAMES, VERIFIED_NAMES } from '../../features/muslim-names/data';
 import type { NameGender } from '../../features/muslim-names/types';
-import { getStatusBasis } from '../../features/muslim-names/presentation';
+import { UNDOCUMENTED_MEANING, getNameMeaning, getStatusBasis } from '../../features/muslim-names/presentation';
 import { ChoiceChip, RecommendedPill, ScreenHeader, prenomTheme } from '../../features/muslim-names/ui';
 import { colors } from '../../theme/colors';
 import { typography } from '../../theme/typography';
@@ -18,11 +18,11 @@ export default function DiscoverScreen(){
   const shuffle=()=>setIndex(pick(poolIndexes(),index));
   const setG=(g:'all'|NameGender)=>{setGender(g);setIndex(pick(poolIndexes(g,verifiedOnly)));};
   const setQuality=(verified:boolean)=>{setVerifiedOnly(verified);setIndex(pick(poolIndexes(gender,verified)));};
-  const share=()=>Share.share({message:`${item.name}${item.arabic?` — ${item.arabic}`:''}\n${item.meaning}\n\nDécouvert dans OUMMAH`});
+  const share=()=>Share.share({message:`${item.name}${item.arabic?` — ${item.arabic}`:''}\n${getNameMeaning(item)?.text??''}\n\nDécouvert dans OUMMAH`});
   return <LinearGradient colors={[colors.background,colors.backgroundSecondary,colors.background]} style={styles.screen}><SafeAreaView style={styles.safe}><ScreenHeader title="Surprends-moi" onBack={()=>router.back()}/><View style={styles.content}>
     <Text style={styles.eyebrow}>DÉCOUVERTE</Text><Text style={styles.title}>Un prénom, au hasard</Text><Text style={styles.subtitle}>Laissez-vous surprendre, puis ouvrez la fiche si un prénom attire votre attention.</Text>
     <View style={styles.filters}><ChoiceChip label="Tous" active={gender==='all'} onPress={()=>setG('all')}/><ChoiceChip label="Garçons" active={gender==='boy'} onPress={()=>setG('boy')}/><ChoiceChip label="Filles" active={gender==='girl'} onPress={()=>setG('girl')}/></View>{CATALOGUE_NAMES.length?<View style={styles.filters}><ChoiceChip label="Fiches vérifiées" icon="shield-checkmark-outline" active={verifiedOnly} onPress={()=>setQuality(true)}/><ChoiceChip label="Inclure le catalogue" icon="library-outline" active={!verifiedOnly} onPress={()=>setQuality(false)}/></View>:null}
-    <View style={[styles.card,{borderColor:item.gender==='boy'?'rgba(110,181,255,.55)':'rgba(242,166,199,.55)',backgroundColor:item.gender==='boy'?'rgba(86,155,235,.08)':'rgba(231,126,174,.08)'}]}><View style={styles.spark}><Ionicons name="sparkles" size={18} color={colors.goldLight}/></View>{item.arabic?<Text style={styles.arabic}>{item.arabic}</Text>:null}<Text style={styles.name}>{item.name}</Text><Text style={styles.translit}>{item.transliteration}</Text>{getStatusBasis(item)?<RecommendedPill/>:null}<View style={styles.line}/><Text style={styles.meaning}>{item.meaning}</Text><Text style={styles.origin}>{item.origin.join(' · ')}</Text></View>
+    <View style={[styles.card,{borderColor:item.gender==='boy'?'rgba(110,181,255,.55)':'rgba(242,166,199,.55)',backgroundColor:item.gender==='boy'?'rgba(86,155,235,.08)':'rgba(231,126,174,.08)'}]}><View style={styles.spark}><Ionicons name="sparkles" size={18} color={colors.goldLight}/></View>{item.arabic?<Text style={styles.arabic}>{item.arabic}</Text>:null}<Text style={styles.name}>{item.name}</Text><Text style={styles.translit}>{item.transliteration}</Text>{getStatusBasis(item)?<RecommendedPill/>:null}<View style={styles.line}/><Text style={styles.meaning}>{getNameMeaning(item)?.text??UNDOCUMENTED_MEANING}</Text><Text style={styles.origin}>{item.origin.join(' · ')}</Text></View>
     <Pressable onPress={shuffle} style={styles.primary}><Ionicons name="shuffle" size={18} color={colors.background}/><Text style={styles.primaryText}>Un autre prénom</Text></Pressable>
     <View style={styles.secondaryRow}><Pressable onPress={()=>router.push(`/prenoms/${item.id}` as Href)} style={styles.secondary}><Ionicons name="document-text-outline" size={17} color={colors.goldLight}/><Text style={styles.secondaryText}>Voir la fiche</Text></Pressable><Pressable onPress={()=>void share()} style={styles.secondary}><Ionicons name="share-outline" size={17} color={colors.goldLight}/><Text style={styles.secondaryText}>Partager</Text></Pressable></View>
     <Text style={styles.disclaimer}>La découverte aléatoire ne classe pas les prénoms par mérite. Consultez la fiche pour le sens, les repères et les sources.</Text>

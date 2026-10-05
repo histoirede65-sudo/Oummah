@@ -1,5 +1,42 @@
+import { NAME_MEANINGS } from './name-meanings';
 import type { NameSourceId } from './scholar-sources';
+import { SOURCED_ADDITION_NAMES } from './sourced-additions';
 import type { MuslimName } from './types';
+
+export type ShownMeaning = { text: string; quote?: string; url?: string; refs?: string[]; note?: string };
+
+const SELF_SOURCED_MEANINGS = new Set(SOURCED_ADDITION_NAMES.map((item) => item.id));
+
+/**
+ * Meaning shown for a name, always with where it comes from:
+ * - the Behind the Name entry of the name (quoted in English, translated literally, with the dictionaries it cites);
+ * - for ʿAbd + a Name of Allah: ʿabd = « serviteur » (Behind the Name, Hans Wehr p. 685) joined to the Name,
+ *   which is in Ibn ‘Uthaymîn's list (see the fiche's sources);
+ * - for a prophet without an entry: the Quran reference.
+ * Otherwise null: the fiche says the meaning is not documented by our sources.
+ */
+export function getNameMeaning(item: MuslimName): ShownMeaning | null {
+  const entry = NAME_MEANINGS[item.id];
+  if (entry) return { text: entry.fr, quote: entry.en, url: entry.url, refs: entry.refs };
+  if (SELF_SOURCED_MEANINGS.has(item.id)) return { text: item.meaning };
+  if (item.gender === 'boy' && item.arabic?.startsWith('عبد ')) {
+    const divine = item.transliteration.replace(/^ʿ?Abd\s+/i, '').trim();
+    const abd = NAME_MEANINGS.abdullah;
+    return {
+      text: `« Serviteur d’${divine} » : ʿabd, « serviteur », joint à ${divine}, un Nom d’Allah.`,
+      quote: 'Arabic عبد (ʿabd) meaning "servant"',
+      url: abd?.url,
+      refs: abd?.refs,
+      note: 'Le Nom d’Allah figure dans la liste d’Ibn ‘Uthaymîn (al-Qawâ‘id al-Muthlâ).',
+    };
+  }
+  if (item.tags.includes('prophete') && item.quranReference) {
+    return { text: `Nom d’un prophète cité dans le Coran (${item.quranReference}).` };
+  }
+  return null;
+}
+
+export const UNDOCUMENTED_MEANING = 'Sens non documenté dans nos sources';
 
 // Stories produced from a template (they only repeat the meaning or an unsourced generality): not shown.
 const GENERIC_STORY_MARKERS = [

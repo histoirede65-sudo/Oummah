@@ -4,7 +4,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { colors } from '../../theme/colors';
 import { typography } from '../../theme/typography';
 import type { MuslimName } from './types';
-import { getStatusBasis } from './presentation';
+import { UNDOCUMENTED_MEANING, getNameMeaning, getStatusBasis } from './presentation';
 
 export const prenomTheme = {
   card: 'rgba(23,16,38,0.88)',
@@ -35,7 +35,8 @@ export function RecommendedPill({ compact = false }: { compact?: boolean }) {
 /** One dictionary entry: gender dot, name, Arabic, meaning on one line. */
 export function NameRow({ item, onPress, favorite, onFavorite }: { item: MuslimName; onPress: () => void; favorite?: boolean; onFavorite?: () => void }) {
   const basis = getStatusBasis(item);
-  return <Pressable onPress={onPress} style={({pressed})=>[s.row,pressed&&s.pressed]} accessibilityRole="button" accessibilityLabel={`${item.name}, ${item.meaning}`}>
+  const meaning = getNameMeaning(item);
+  return <Pressable onPress={onPress} style={({pressed})=>[s.row,pressed&&s.pressed]} accessibilityRole="button" accessibilityLabel={`${item.name}, ${meaning?.text ?? UNDOCUMENTED_MEANING}`}>
     <View style={s.rowMain}>
       <View style={s.rowTop}>
         <View style={[s.dot,{backgroundColor:GENDER_ACCENT[item.gender]}]}/>
@@ -43,7 +44,7 @@ export function NameRow({ item, onPress, favorite, onFavorite }: { item: MuslimN
         {basis ? <Text style={s.rowCheck}>✓</Text> : null}
         {item.arabic && item.arabic !== '—' ? <Text style={s.rowArabic} numberOfLines={1}>{item.arabic}</Text> : null}
       </View>
-      <Text style={s.rowMeaning} numberOfLines={1}>{item.meaning}</Text>
+      <Text style={[s.rowMeaning,!meaning&&s.rowMeaningMissing]} numberOfLines={1}>{meaning?.text ?? UNDOCUMENTED_MEANING}</Text>
     </View>
     {onFavorite ? <Pressable onPress={(e)=>{e.stopPropagation();onFavorite();}} style={s.heart} hitSlop={10} accessibilityRole="button" accessibilityLabel={favorite?'Retirer des favoris':'Ajouter aux favoris'}>
       <Ionicons name={favorite?'heart':'heart-outline'} size={18} color={favorite?colors.goldLight:colors.textMuted}/>
@@ -75,6 +76,7 @@ const s=StyleSheet.create({
   rowCheck:{color:colors.success,fontFamily:typography.sans,fontSize:12,fontWeight:'900'},
   rowArabic:{marginLeft:'auto',maxWidth:'45%',color:colors.goldLight,fontFamily:typography.arabic,fontSize:20},
   rowMeaning:{marginTop:2,marginLeft:13,color:colors.textSecondary,fontFamily:typography.sans,fontSize:12.5,lineHeight:18},
+  rowMeaningMissing:{color:colors.textMuted,fontStyle:'italic'},
   heart:{width:34,height:34,alignItems:'center',justifyContent:'center'},
   chip:{paddingHorizontal:12,paddingVertical:8,borderRadius:999,borderWidth:1,borderColor:colors.borderSoft,backgroundColor:'rgba(255,255,255,0.03)',flexDirection:'row',alignItems:'center',gap:6},
   chipActive:{borderColor:colors.goldLight,backgroundColor:colors.goldLight},

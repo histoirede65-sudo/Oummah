@@ -6,7 +6,7 @@ import { Alert, Linking, Pressable, SafeAreaView, ScrollView, Share, StyleSheet,
 
 import { relatedNames } from '../../features/muslim-names/collections';
 import { getMuslimName } from '../../features/muslim-names/data';
-import { getNameStory, getReadableVariants, getStatusBasis, isExternalSourceClickable } from '../../features/muslim-names/presentation';
+import { getNameMeaning, getNameStory, getReadableVariants, getStatusBasis, isExternalSourceClickable } from '../../features/muslim-names/presentation';
 import type { NameSourceId } from '../../features/muslim-names/scholar-sources';
 import { SourceChips, SourceSheet } from '../../features/muslim-names/SourceSheet';
 import { getNameSources } from '../../features/muslim-names/sources';
@@ -32,6 +32,7 @@ export default function PrenomDetailScreen(){
   if(!item)return <LinearGradient colors={[colors.background,colors.backgroundSecondary]} style={styles.screen}><SafeAreaView style={styles.safe}><ScreenHeader title="Prénom" onBack={()=>router.back()}/><View style={styles.notFound}><Text style={styles.notFoundTitle}>Prénom introuvable</Text><Text style={styles.notFoundText}>Cette fiche n’existe plus ou l’adresse est incorrecte.</Text></View></SafeAreaView></LinearGradient>;
 
   const basis=getStatusBasis(item);
+  const meaning=getNameMeaning(item);
   const story=getNameStory(item);
   const variants=getReadableVariants(item);
   const sources=getNameSources(item);
@@ -39,7 +40,7 @@ export default function PrenomDetailScreen(){
   const surah=firstSurah(item.quranReference);
   const hasArabic=Boolean(item.arabic&&item.arabic!=='—');
   const toggle=async()=>{const ids=await toggleNameFavorite(item.id);setFavorite(ids.includes(item.id));};
-  const share=()=>Share.share({message:`${item.name}${hasArabic?` — ${item.arabic}`:''}\n${item.meaning}\n\nDécouvert dans OUMMAH · Prénoms`});
+  const share=()=>Share.share({message:`${item.name}${hasArabic?` — ${item.arabic}`:''}${meaning?`\n${meaning.text}`:''}\n\nDécouvert dans OUMMAH · Prénoms`});
   const openUrl=(url?:string)=>{
     if(!isExternalSourceClickable(url))return;
     Linking.openURL(url as string).catch(()=>Alert.alert('Source indisponible','Impossible d’ouvrir cette source pour le moment.'));
@@ -63,7 +64,17 @@ export default function PrenomDetailScreen(){
           </View>
         </View>
 
-        <Entry label="Sens"><Text style={styles.meaning}>{item.meaning}</Text></Entry>
+        <Entry label="Sens">
+          {meaning?<>
+            <Text style={styles.meaning}>{meaning.text}</Text>
+            {meaning.quote?<Pressable disabled={!meaning.url} onPress={()=>openUrl(meaning.url)} style={({pressed})=>[styles.meaningSource,pressed&&styles.pressed]}>
+              <Text style={styles.meaningSourceLabel}>Behind the Name{meaning.url?'  ↗':''}</Text>
+              <Text style={styles.meaningQuote}>“{meaning.quote}”</Text>
+              {meaning.refs?.map(ref=><Text key={ref} style={styles.meaningRef}>{ref}</Text>)}
+            </Pressable>:null}
+            {meaning.note?<Text style={styles.note}>{meaning.note}</Text>:null}
+          </>:<Text style={styles.meaningMissing}>Nos sources ne documentent pas encore le sens de ce prénom.</Text>}
+        </Entry>
 
         {basis?<Entry label="Pourquoi « Recommandé »">
           <Text style={styles.body}>{basis.reason}</Text>
@@ -131,6 +142,11 @@ const styles=StyleSheet.create({
   entry:{paddingVertical:16,borderBottomWidth:1,borderBottomColor:'rgba(126,78,151,.20)'},
   entryLabel:{marginBottom:6,color:colors.goldLight,fontFamily:typography.sans,fontSize:9.5,fontWeight:'800',letterSpacing:1.4},
   meaning:{color:colors.text,fontFamily:typography.serifMedium,fontSize:22,lineHeight:29},
+  meaningSource:{marginTop:10,paddingLeft:11,borderLeftWidth:2,borderLeftColor:'rgba(227,181,90,.45)'},
+  meaningSourceLabel:{color:colors.goldLight,fontFamily:typography.sans,fontSize:10.5,fontWeight:'800'},
+  meaningQuote:{marginTop:3,color:colors.textSecondary,fontFamily:typography.sans,fontSize:12,lineHeight:18,fontStyle:'italic'},
+  meaningRef:{marginTop:3,color:colors.textMuted,fontFamily:typography.sans,fontSize:10.5,lineHeight:15},
+  meaningMissing:{color:colors.textMuted,fontFamily:typography.sans,fontSize:13.5,lineHeight:20,fontStyle:'italic'},
   body:{color:colors.textSecondary,fontFamily:typography.sans,fontSize:14,lineHeight:21},
   bodyStrong:{color:colors.text,fontFamily:typography.sans,fontSize:14,lineHeight:21,fontWeight:'700'},
   spaced:{marginTop:4},
