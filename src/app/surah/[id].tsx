@@ -348,6 +348,7 @@ export default function SurahReadingScreen() {
   }, [source]);
   const listRef = useRef<FlatList<QuranFoundationVerse>>(null);
   const offsetRef = useRef(0);
+  const scrollRetryRef = useRef({ index: -1, count: 0 });
   const currentVerseRef = useRef(requestedVerseNumber ?? 1);
   const verseLoadRequestRef = useRef(0);
   const [verses, setVerses] = useState<QuranFoundationVerse[]>([]);
@@ -565,6 +566,7 @@ export default function SurahReadingScreen() {
             if (!shouldRevealRequestedVerseDirectly) {
               setDeepLinkPositioned(true);
             }
+            scrollRetryRef.current = { index: -1, count: 0 };
             try {
               listRef.current?.scrollToIndex({
                 index: requestedIndex,
@@ -1144,6 +1146,7 @@ export default function SurahReadingScreen() {
     }
 
     currentVerseRef.current = verseNumber;
+    scrollRetryRef.current = { index: -1, count: 0 };
     listRef.current?.scrollToIndex({
       index,
       animated: true,
@@ -1274,10 +1277,18 @@ export default function SurahReadingScreen() {
             // the Quran reading screen, not the listening screen.
             removeClippedSubviews={false}
             onScrollToIndexFailed={({ averageItemLength, index }) => {
+              // Each retry can fail again and call this handler: without a limit the list kept
+              // jumping around the same verse (taller verses in Arabic + translation make it likelier).
+              const attempts = scrollRetryRef.current.index === index ? scrollRetryRef.current.count + 1 : 1;
+              scrollRetryRef.current = { index, count: attempts };
               listRef.current?.scrollToOffset({
                 offset: averageItemLength * index,
                 animated: false,
               });
+              if (attempts > 400) {
+                setDeepLinkPositioned(true);
+                return;
+              }
               setTimeout(() => {
                 try {
                   listRef.current?.scrollToIndex({
