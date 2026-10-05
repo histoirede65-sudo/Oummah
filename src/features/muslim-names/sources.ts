@@ -1,3 +1,5 @@
+import type { PrenomsLanguage } from './i18n';
+import { nameTextEn } from './names-en';
 import type { MuslimName, NameSource } from './types';
 import { VERIFIED_NAME_SOURCES } from './verified-sources';
 
@@ -7,7 +9,7 @@ import { VERIFIED_NAME_SOURCES } from './verified-sources';
  * were found for this name (verified-sources.ts). Generic entries attached to every fiche and OUMMAH's own notes are
  * not sources and are not shown.
  */
-export function getNameSources(item: MuslimName): NameSource[] {
+export function getNameSources(item: MuslimName, lang: PrenomsLanguage = 'fr'): NameSource[] {
   const sources: NameSource[] = [];
 
   if (item.quranReference) {
@@ -59,7 +61,9 @@ export function getNameSources(item: MuslimName): NameSource[] {
     });
   }
 
-  return dedupeSources(sources);
+  const shown = dedupeSources(sources);
+  if (lang === 'fr') return shown;
+  return shown.map((source) => ({ ...source, label: nameTextEn(source.label), reference: source.reference && nameTextEn(source.reference), note: source.note && nameTextEn(source.note) }));
 }
 
 /** A link to a precise page (not a generic list or a dataset home page). */

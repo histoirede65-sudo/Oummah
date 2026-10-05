@@ -1,4 +1,6 @@
+import type { PrenomsLanguage } from './i18n';
 import { NAME_MEANINGS } from './name-meanings';
+import { ADDITION_MEANINGS_EN, nameTextEn } from './names-en';
 import type { NameSourceId } from './scholar-sources';
 import { SOURCED_ADDITION_NAMES } from './sourced-additions';
 import type { MuslimName } from './types';
@@ -15,28 +17,41 @@ const SELF_SOURCED_MEANINGS = new Set(SOURCED_ADDITION_NAMES.map((item) => item.
  * - for a prophet without an entry: the Quran reference.
  * Otherwise null: the fiche says the meaning is not documented by our sources.
  */
-export function getNameMeaning(item: MuslimName): ShownMeaning | null {
+export function getNameMeaning(item: MuslimName, lang: PrenomsLanguage = 'fr'): ShownMeaning | null {
+  const en = lang === 'en';
   const entry = NAME_MEANINGS[item.id];
-  if (entry) return { text: entry.fr, quote: entry.en, url: entry.url, refs: entry.refs };
-  if (SELF_SOURCED_MEANINGS.has(item.id)) return { text: item.meaning };
+  // In English the Behind the Name sentence is shown as is, so it is not quoted a second time.
+  if (entry) return en ? { text: entry.en, url: entry.url, refs: entry.refs } : { text: entry.fr, quote: entry.en, url: entry.url, refs: entry.refs };
+  if (SELF_SOURCED_MEANINGS.has(item.id)) return { text: en ? ADDITION_MEANINGS_EN[item.id] ?? item.meaning : item.meaning };
   if (item.gender === 'boy' && item.arabic?.startsWith('عبد ')) {
     const divine = item.transliteration.replace(/^ʿ?Abd\s+/i, '').trim();
     const abd = NAME_MEANINGS.abdullah;
     return {
-      text: `« Serviteur d’${divine} » : ʿabd, « serviteur », joint à ${divine}, un Nom d’Allah.`,
+      text: en
+        ? `“Servant of ${divine}”: ʿabd, “servant”, joined to ${divine}, a Name of Allah.`
+        : `« Serviteur d’${divine} » : ʿabd, « serviteur », joint à ${divine}, un Nom d’Allah.`,
       quote: 'Arabic عبد (ʿabd) meaning "servant"',
       url: abd?.url,
       refs: abd?.refs,
-      note: 'Le Nom d’Allah figure dans la liste d’Ibn ‘Uthaymîn (al-Qawâ‘id al-Muthlâ).',
+      note: en
+        ? 'This Name of Allah is in Ibn ‘Uthaymîn’s list (al-Qawâ‘id al-Muthlâ).'
+        : 'Le Nom d’Allah figure dans la liste d’Ibn ‘Uthaymîn (al-Qawâ‘id al-Muthlâ).',
     };
   }
   if (item.tags.includes('prophete') && item.quranReference) {
-    return { text: `Nom d’un prophète cité dans le Coran (${item.quranReference}).` };
+    return { text: en
+      ? `Name of a prophet mentioned in the Quran (${nameTextEn(item.quranReference)}).`
+      : `Nom d’un prophète cité dans le Coran (${item.quranReference}).` };
   }
   return null;
 }
 
-export const UNDOCUMENTED_MEANING = 'Sens non documenté dans nos sources';
+/** A French sentence of the name data in the reader's language. */
+export function localText(text: string, lang: PrenomsLanguage): string;
+export function localText(text: string | undefined, lang: PrenomsLanguage): string | undefined;
+export function localText(text: string | undefined, lang: PrenomsLanguage) {
+  return text && lang === 'en' ? nameTextEn(text) : text;
+}
 
 // Stories produced from a template (they only repeat the meaning or an unsourced generality): not shown.
 const GENERIC_STORY_MARKERS = [
@@ -57,27 +72,36 @@ const PROPHET_IDS = new Set(['muhammad', 'ahmad']);
  * prophets' names (Abû Dâwûd 4950, Ibn ‘Uthaymîn) and names of the women Companions (Ibn Bâz, Ibn ‘Uthaymîn).
  * Every other name gets no verdict.
  */
-export function getStatusBasis(item: MuslimName): StatusBasis | null {
+export function getStatusBasis(item: MuslimName, lang: PrenomsLanguage = 'fr'): StatusBasis | null {
+  const en = lang === 'en';
   if (item.id === 'abdullah' || item.id === 'abdurrahman') {
-    return { reason: '« Les noms les plus aimés d’Allah sont ‘Abdullah et ‘Abd al-Rahman. »', sources: ['muslim2132'] };
+    return { reason: en
+      ? '“The names dearest to Allah are \'Abdullah and \'Abd al-Rahman.”'
+      : '« Les noms les plus aimés d’Allah sont ‘Abdullah et ‘Abd al-Rahman. »', sources: ['muslim2132'] };
   }
   if (item.gender === 'boy' && item.arabic?.startsWith('عبد ')) {
-    return { reason: 'Nom rattaché à Allah. Ibn ‘Uthaymîn : « Tout [nom] rattaché à Allah est meilleur que les autres. »', sources: ['uthNaming', 'bazWhenWho'] };
+    return { reason: en
+      ? 'Name attached to Allah. Ibn ‘Uthaymîn: “Every [name] attached to Allah is better than the others.”'
+      : 'Nom rattaché à Allah. Ibn ‘Uthaymîn : « Tout [nom] rattaché à Allah est meilleur que les autres. »', sources: ['uthNaming', 'bazWhenWho'] };
   }
   if (item.tags.includes('prophete') || PROPHET_IDS.has(item.id)) {
-    return { reason: 'Nom de prophète. Le Prophète ﷺ : « Appelez-vous par les noms des Prophètes. »', sources: ['abuDawud4950', 'uthNaming'] };
+    return { reason: en
+      ? 'Name of a prophet. The Prophet ﷺ: “Call yourselves by the names of the Prophets.”'
+      : 'Nom de prophète. Le Prophète ﷺ : « Appelez-vous par les noms des Prophètes. »', sources: ['abuDawud4950', 'uthNaming'] };
   }
   if (item.tags.includes('sahabiyya') && item.status === 'recommended') {
-    return { reason: 'Nom d’une femme des Compagnons. Ibn Bâz : pour les femmes, « ce qui était en usage parmi les femmes des Compagnons ».', sources: ['bazWhenWho', 'uthMalak'] };
+    return { reason: en
+      ? 'Name of a woman Companion. Ibn Bâz: for women, “what was in use among the women of the Companions”.'
+      : 'Nom d’une femme des Compagnons. Ibn Bâz : pour les femmes, « ce qui était en usage parmi les femmes des Compagnons ».', sources: ['bazWhenWho', 'uthMalak'] };
   }
   return null;
 }
 
-export function getNameStory(item: MuslimName): string | null {
+export function getNameStory(item: MuslimName, lang: PrenomsLanguage = 'fr'): string | null {
   const raw = (item.story ?? '').trim();
   const lower = raw.toLocaleLowerCase('fr');
   const isGeneric = !raw || GENERIC_STORY_MARKERS.some((marker) => lower.includes(marker));
-  return isGeneric ? null : raw;
+  return isGeneric ? null : localText(raw, lang);
 }
 
 export function getReadableVariants(item: MuslimName) {

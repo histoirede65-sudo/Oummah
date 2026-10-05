@@ -4,20 +4,21 @@ import type { MuslimName, NameTag } from './types';
 export type NameCollection = {
   id: string;
   title: string;
+  titleEn: string;
   tag?: NameTag;
   /** Custom membership test when a tag is not enough. */
   test?: (item: MuslimName) => boolean;
 };
 
 export const NAME_COLLECTIONS: NameCollection[] = [
-  { id:'prophets', title:'Prophètes', tag:'prophete' },
-  { id:'companions', title:'Compagnons', tag:'compagnon' },
-  { id:'sahabiyyat', title:'Compagnonnes', tag:'sahabiyya' },
-  { id:'abd', title:'ʿAbd + Nom d’Allah', test:isAbdName },
-  { id:'quran', title:'Dans le Coran', tag:'coranique' },
-  { id:'short', title:'Courts', tag:'court' },
-  { id:'rare', title:'Rares', tag:'rare' },
-  { id:'france', title:'Faciles en français', tag:'facile-france' },
+  { id:'prophets', title:'Prophètes', titleEn:'Prophets', tag:'prophete' },
+  { id:'companions', title:'Compagnons', titleEn:'Companions', tag:'compagnon' },
+  { id:'sahabiyyat', title:'Compagnonnes', titleEn:'Women Companions', tag:'sahabiyya' },
+  { id:'abd', title:'ʿAbd + Nom d’Allah', titleEn:'ʿAbd + Name of Allah', test:isAbdName },
+  { id:'quran', title:'Dans le Coran', titleEn:'In the Quran', tag:'coranique' },
+  { id:'short', title:'Courts', titleEn:'Short', tag:'court' },
+  { id:'rare', title:'Rares', titleEn:'Rare', tag:'rare' },
+  { id:'france', title:'Faciles en français', titleEn:'Easy in French', tag:'facile-france' },
 ];
 
 export function inCollection(collection: NameCollection, item: MuslimName) {
