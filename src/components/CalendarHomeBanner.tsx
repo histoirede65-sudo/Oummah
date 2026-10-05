@@ -10,6 +10,7 @@ import {
   DEFAULT_CALENDAR_SETTINGS,
   loadCalendarSettings,
 } from "../features/calendar/CalendarStore";
+import { refreshCalendarReminders } from "../features/calendar/calendarReminders";
 import {
   addDays,
   findNextEvent,
@@ -24,7 +25,10 @@ export default function CalendarHomeBanner() {
   const [settings, setSettings] = useState(DEFAULT_CALENDAR_SETTINGS);
   useFocusEffect(
     useCallback(() => {
-      void loadCalendarSettings().then(setSettings);
+      void loadCalendarSettings().then((next) => {
+        setSettings(next);
+        void refreshCalendarReminders(next);
+      });
     }, []),
   );
   const today = new Date();

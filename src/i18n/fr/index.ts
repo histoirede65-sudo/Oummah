@@ -1940,6 +1940,18 @@ export const fr = {
   'zakat.basicsRateText': 'Le taux grégorien est légèrement supérieur car l’année solaire compte davantage de jours.',
   'zakat.basicsRecipientsTitle': 'Huit catégories',
   'zakat.basicsRecipientsText': 'Le Coran précise les catégories de bénéficiaires de la zakat dans At-Tawbah 9:60.',
+  'calendar.notifEventToday': '{event} est aujourd’hui',
+  'calendar.notifEventTomorrow': '{event} commence demain',
+  'calendar.notifEventInDays': '{event} dans {count} jours',
+  'calendar.notifEventBody': 'Touchez pour voir les actions recommandées.',
+  'calendar.notifWhiteTitle': 'Demain, jour blanc ({day} {month})',
+  'calendar.notifWhiteBody': 'Le jeûne des 13, 14 et 15 du mois est recommandé.',
+  'calendar.notifMondayTitle': 'Demain, lundi : jeûne recommandé',
+  'calendar.notifThursdayTitle': 'Demain, jeudi : jeûne recommandé',
+  'calendar.notifFastBody': 'Le Prophète ﷺ jeûnait le lundi et le jeudi.',
+  'calendar.notifKahfTitle': 'C’est vendredi',
+  'calendar.notifKahfBody': 'Pensez à lire sourate Al-Kahf aujourd’hui.',
+  'calendar.notifPersonalBody': 'Votre rappel du calendrier',
 } as const;
 
 export type TranslationKey = keyof typeof fr;

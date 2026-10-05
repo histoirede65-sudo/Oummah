@@ -23,6 +23,7 @@ import {
   saveCalendarSettings,
   type CalendarSettings,
 } from "../features/calendar/CalendarStore";
+import { refreshCalendarReminders } from "../features/calendar/calendarReminders";
 import {
   addDays,
   CALENDAR_COUNTRIES,
@@ -127,6 +128,7 @@ export default function IslamicCalendarScreen() {
     const next = { ...settings, ...update };
     setSettings(next);
     void saveCalendarSettings(next);
+    void refreshCalendarReminders(next, { force: true, askPermission: true });
   };
 
   const hijriToday = getHijriDate(
