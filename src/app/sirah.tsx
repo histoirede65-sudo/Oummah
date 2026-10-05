@@ -1,31 +1,138 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
+import { LinearGradient } from "expo-linear-gradient";
+import type { Href } from "expo-router";
 import { router } from "expo-router";
-import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { Pressable, SafeAreaView, ScrollView, StyleSheet, Text, View } from "react-native";
 
-import { SIRAH_PERIODS } from "../features/sirah/sirahData";
+import { SIRAH_CHAPTERS, SIRAH_ERAS } from "../features/sirah/sirahData";
+import { useLastSirahChapter, useReadSirahChapters } from "../features/sirah/sirahStorage";
+import { useI18n } from "../i18n";
 import { colors } from "../theme/colors";
 import { typography } from "../theme/typography";
 
+const CARD = "#151022";
+const LINE = "#2B2238";
 const hero = require("../assets/images/home/shortcuts/sirah-premium.png");
 
 export default function SirahHome() {
-  return <ScrollView style={styles.screen} contentContainerStyle={styles.content}>
-    <Pressable onPress={() => router.back()} style={styles.back}><Ionicons name="chevron-back" size={24} color={colors.text} /></Pressable>
-    <Text style={styles.eyebrow}>AS-SÎRA AN-NABAWIYYA</Text>
-    <Text style={styles.title}>La Sîra du Prophète ﷺ</Text>
-    <Text style={styles.arabic}>السيرة النبوية</Text>
-    <View style={styles.hero}>
-      <Image source={hero} contentFit="cover" transition={180} style={StyleSheet.absoluteFill} />
-      <View style={styles.heroCopy}><Text style={styles.heroLabel}>UN CHEMIN DE LUMIÈRE</Text><Text style={styles.heroText}>Découvrir une vie transmise par le Coran, les hadiths authentiques et une lecture prudente de l’histoire.</Text></View>
-    </View>
-    <Text style={styles.sectionTitle}>Les grandes périodes</Text>
-    {SIRAH_PERIODS.map((period, index) => <Pressable key={period.id} onPress={() => router.push(`/sirah/${period.id}`)} style={({ pressed }) => [styles.period, period.era === "hijra" && styles.hijraPeriod, pressed && styles.pressed]}>
-      <View style={styles.dot}><Text style={styles.dotText}>{String(index + 1).padStart(2, "0")}</Text></View>
-      <View style={styles.periodCopy}><Text style={styles.periodTitle}>{period.title}</Text><Text style={styles.periodSubtitle}>{period.subtitle}</Text><Text style={styles.chapterCount}>{period.chapters.length} chapitres</Text></View>
-      <Ionicons name="arrow-forward" size={18} color={colors.goldLight} />
-    </Pressable>)}
-  </ScrollView>;
+  const { language, t } = useI18n();
+  const read = useReadSirahChapters();
+  const lastId = useLastSirahChapter();
+  const readCount = SIRAH_CHAPTERS.filter((chapter) => read.includes(chapter.id)).length;
+
+  // Resume where the reader stopped: the last chapter opened, or the next one if it was finished.
+  const lastIndex = SIRAH_CHAPTERS.findIndex((chapter) => chapter.id === lastId);
+  const resumeIndex = lastIndex < 0 ? 0 : read.includes(SIRAH_CHAPTERS[lastIndex].id) && lastIndex < SIRAH_CHAPTERS.length - 1 ? lastIndex + 1 : lastIndex;
+  const resume = SIRAH_CHAPTERS[resumeIndex];
+  const open = (id: string) => router.push(`/sirah/${id}` as Href);
+
+  return (
+    <LinearGradient colors={[colors.background, colors.backgroundSecondary, colors.background]} style={styles.screen}>
+      <SafeAreaView style={styles.safe}>
+        <View style={styles.header}>
+          <Pressable onPress={() => router.back()} style={styles.back} accessibilityRole="button" accessibilityLabel={t("common.back")}>
+            <Ionicons name="chevron-back" size={23} color={colors.text} />
+          </Pressable>
+          <Text style={styles.headerTitle}>{t("sirah.headerTitle")}</Text>
+          <View style={styles.spacer} />
+        </View>
+
+        <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
+          <View style={styles.hero}>
+            <Image source={hero} contentFit="cover" transition={180} style={StyleSheet.absoluteFill} />
+            <LinearGradient colors={["rgba(13,11,24,.05)", "rgba(13,11,24,.92)"]} style={StyleSheet.absoluteFill} />
+            <View style={styles.heroCopy}>
+              <Text style={styles.kicker}>{t("sirah.kicker")}</Text>
+              <Text style={styles.title}>{t("sirah.title")}</Text>
+              <Text style={styles.arabic}>السيرة النبوية</Text>
+              <Text style={styles.intro}>{t("sirah.intro")}</Text>
+              <View style={styles.progressRow}>
+                <View style={styles.progressBar}>
+                  <View style={[styles.progressFill, { width: `${Math.round((readCount / SIRAH_CHAPTERS.length) * 100)}%` }]} />
+                </View>
+                <Text style={styles.progressText}>{t("sirah.progress", { read: readCount, total: SIRAH_CHAPTERS.length })}</Text>
+              </View>
+            </View>
+          </View>
+
+          <Pressable onPress={() => open(resume.id)} style={({ pressed }) => [styles.resume, pressed && styles.pressed]} accessibilityRole="button">
+            <View style={styles.resumeCopy}>
+              <Text style={styles.resumeLabel}>{lastId ? t("sirah.resume") : t("sirah.start")}</Text>
+              <Text style={styles.resumeTitle} numberOfLines={1}>{resume.title[language]}</Text>
+            </View>
+            <Ionicons name="arrow-forward" size={20} color="#1B1408" />
+          </Pressable>
+
+          {SIRAH_ERAS.map((era) => {
+            const chapters = SIRAH_CHAPTERS.filter((chapter) => chapter.era === era.id);
+            return (
+              <View key={era.id} style={styles.era}>
+                <View style={styles.eraHeader}>
+                  <Text style={styles.eraTitle}>{era.title[language]}</Text>
+                  <Text style={styles.eraYears}>{era.years[language]}</Text>
+                </View>
+                <Text style={styles.eraSubtitle}>{era.subtitle[language]}</Text>
+                <View style={styles.rows}>
+                  {chapters.map((chapter, index) => (
+                    <Pressable key={chapter.id} onPress={() => open(chapter.id)} style={({ pressed }) => [styles.row, index > 0 && styles.rowBorder, pressed && styles.pressed]} accessibilityRole="button">
+                      <View style={styles.year}>
+                        <Text style={styles.yearText}>{chapter.year[language]}</Text>
+                        {chapter.yearNote ? <Text style={styles.yearNote} numberOfLines={2}>{chapter.yearNote[language]}</Text> : null}
+                      </View>
+                      <Text style={styles.rowTitle}>{chapter.title[language]}</Text>
+                      {read.includes(chapter.id)
+                        ? <Text style={styles.readMark}>{t("sirah.read")}</Text>
+                        : <Ionicons name="chevron-forward" size={17} color={colors.goldLight} />}
+                    </Pressable>
+                  ))}
+                </View>
+              </View>
+            );
+          })}
+
+          <Text style={styles.method}>{t("sirah.method")}</Text>
+        </ScrollView>
+      </SafeAreaView>
+    </LinearGradient>
+  );
 }
 
-const styles = StyleSheet.create({ screen: { flex: 1, backgroundColor: "#080611" }, content: { padding: 22, paddingTop: 62, paddingBottom: 48 }, back: { width: 44, height: 44, borderRadius: 22, borderWidth: 1, borderColor: "rgba(209,165,80,0.36)", alignItems: "center", justifyContent: "center", marginBottom: 22 }, eyebrow: { color: colors.goldLight, fontFamily: typography.sans, fontSize: 11, fontWeight: "700", letterSpacing: 2 }, title: { color: colors.text, fontFamily: typography.serifSemibold, fontSize: 31, marginTop: 8 }, arabic: { color: "#D8B66A", fontSize: 25, marginTop: 7 }, hero: { height: 300, marginTop: 24, overflow: "hidden", borderRadius: 26, borderWidth: 1, borderColor: "rgba(214,171,82,0.58)" }, heroCopy: { position: "absolute", left: 20, right: 20, bottom: 20 }, heroLabel: { color: colors.goldLight, fontFamily: typography.sans, fontSize: 11, fontWeight: "700", letterSpacing: 1.8 }, heroText: { color: "#FFF7E7", fontFamily: typography.serifMedium, fontSize: 20, lineHeight: 27, marginTop: 8 }, sectionTitle: { color: colors.text, fontFamily: typography.serifSemibold, fontSize: 22, marginTop: 28, marginBottom: 12 }, period: { flexDirection: "row", alignItems: "center", gap: 13, padding: 16, borderRadius: 20, borderWidth: 1, borderColor: "rgba(224,187,111,0.27)", backgroundColor: "#110D1C", marginBottom: 10 }, hijraPeriod: { borderColor: "rgba(224,187,111,0.82)", backgroundColor: "#1B1320" }, dot: { width: 38, height: 38, borderRadius: 19, alignItems: "center", justifyContent: "center", backgroundColor: "#24172A", borderWidth: 1, borderColor: "#D5A94F" }, dotText: { color: colors.goldLight, fontFamily: typography.sans, fontWeight: "700", fontSize: 11 }, periodCopy: { flex: 1 }, periodTitle: { color: colors.text, fontFamily: typography.serifSemibold, fontSize: 18 }, periodSubtitle: { color: "#B9AEC8", fontFamily: typography.sans, fontSize: 12, marginTop: 3 }, chapterCount: { color: colors.goldLight, fontFamily: typography.sans, fontSize: 10, marginTop: 8, fontWeight: "700" }, pressed: { opacity: 0.78, transform: [{ scale: 0.99 }] } });
+const styles = StyleSheet.create({
+  screen: { flex: 1 },
+  safe: { flex: 1 },
+  header: { minHeight: 74, paddingHorizontal: 16, flexDirection: "row", alignItems: "center" },
+  back: { width: 44, height: 44, borderRadius: 22, borderWidth: 1, borderColor: colors.borderSoft, alignItems: "center", justifyContent: "center", backgroundColor: "rgba(255,255,255,.04)" },
+  spacer: { width: 44 },
+  headerTitle: { flex: 1, textAlign: "center", color: colors.text, fontFamily: typography.serifSemibold, fontSize: 22 },
+  content: { paddingHorizontal: 16, paddingBottom: 60 },
+  hero: { minHeight: 330, borderRadius: 26, overflow: "hidden", borderWidth: 1, borderColor: "rgba(227,181,90,.30)", justifyContent: "flex-end" },
+  heroCopy: { padding: 18 },
+  kicker: { color: colors.goldLight, fontFamily: typography.sans, fontSize: 10, fontWeight: "900", letterSpacing: 1.4 },
+  title: { marginTop: 6, color: colors.text, fontFamily: typography.serifSemibold, fontSize: 29, lineHeight: 34 },
+  arabic: { marginTop: 2, color: colors.goldLight, fontFamily: typography.arabic, fontSize: 22 },
+  intro: { marginTop: 6, color: "rgba(245,241,232,.84)", fontFamily: typography.sans, fontSize: 13.5, lineHeight: 20 },
+  progressRow: { marginTop: 14, flexDirection: "row", alignItems: "center", gap: 10 },
+  progressBar: { flex: 1, height: 5, borderRadius: 3, backgroundColor: "rgba(255,255,255,.14)", overflow: "hidden" },
+  progressFill: { height: "100%", backgroundColor: colors.goldLight },
+  progressText: { color: "rgba(245,241,232,.7)", fontFamily: typography.sans, fontSize: 11.5 },
+  resume: { marginTop: 12, paddingHorizontal: 16, paddingVertical: 13, borderRadius: 18, backgroundColor: colors.goldLight, flexDirection: "row", alignItems: "center", gap: 12 },
+  resumeCopy: { flex: 1 },
+  resumeLabel: { color: "#1B1408", fontFamily: typography.sans, fontSize: 10, fontWeight: "900", letterSpacing: 1.1 },
+  resumeTitle: { marginTop: 1, color: "#1B1408", fontFamily: typography.serifSemibold, fontSize: 18 },
+  era: { marginTop: 26 },
+  eraHeader: { flexDirection: "row", alignItems: "baseline", justifyContent: "space-between", gap: 10 },
+  eraTitle: { flexShrink: 1, color: colors.text, fontFamily: typography.serifSemibold, fontSize: 22 },
+  eraYears: { color: colors.goldLight, fontFamily: typography.sans, fontSize: 11.5, fontWeight: "700" },
+  eraSubtitle: { marginTop: 2, marginBottom: 10, color: colors.textMuted, fontFamily: typography.sans, fontSize: 12.5 },
+  rows: { borderRadius: 20, borderWidth: 1, borderColor: LINE, backgroundColor: CARD, overflow: "hidden" },
+  row: { minHeight: 62, paddingHorizontal: 13, paddingVertical: 11, flexDirection: "row", alignItems: "center", gap: 12 },
+  rowBorder: { borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: LINE },
+  year: { width: 62, alignItems: "center" },
+  yearText: { color: colors.goldLight, fontFamily: typography.sans, fontSize: 11, fontWeight: "800", textAlign: "center" },
+  yearNote: { marginTop: 2, color: colors.textMuted, fontFamily: typography.sans, fontSize: 9.5, textAlign: "center" },
+  rowTitle: { flex: 1, color: colors.text, fontFamily: typography.serifSemibold, fontSize: 17, lineHeight: 21 },
+  readMark: { color: colors.textMuted, fontFamily: typography.sans, fontSize: 11, fontWeight: "700" },
+  method: { marginTop: 24, color: colors.textMuted, fontFamily: typography.sans, fontSize: 11.5, lineHeight: 17 },
+  pressed: { opacity: 0.82 },
+});
