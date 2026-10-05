@@ -3,7 +3,8 @@ import { useEffect, useRef } from 'react';
 import { StyleSheet, View } from 'react-native';
 import MapView, { Marker, type Region } from 'react-native-maps';
 
-import type { HalalCoordinates, HalalPlace } from '../../features/halal/domain/HalalPlace';
+import { halalVerificationText, type HalalCoordinates, type HalalPlace } from '../../features/halal/domain/HalalPlace';
+import { useI18n } from '../../i18n';
 import { colors } from '../../theme/colors';
 
 type HalalMapProps = {
@@ -14,6 +15,7 @@ type HalalMapProps = {
 };
 
 export default function HalalMap({ origin, places, selectedId, onSelect }: HalalMapProps) {
+  const { t } = useI18n();
   const mapRef = useRef<MapView | null>(null);
   const region: Region = { ...origin, latitudeDelta: 0.085, longitudeDelta: 0.085 };
 
@@ -38,7 +40,7 @@ export default function HalalMap({ origin, places, selectedId, onSelect }: Halal
             key={place.id}
             coordinate={{ latitude: place.latitude, longitude: place.longitude }}
             title={place.name}
-            description={place.verificationLabel}
+            description={halalVerificationText(place, t).label}
             onPress={() => onSelect(place)}
           >
             <View style={[styles.marker, selected && styles.markerSelected]}>
@@ -60,7 +62,7 @@ const styles = StyleSheet.create({
     borderRadius: 17,
     borderWidth: 1.5,
     borderColor: colors.goldLight,
-    backgroundColor: 'rgba(21,12,36,0.96)',
+    backgroundColor: 'rgba(21,16,34,0.96)',
     shadowColor: '#000',
     shadowOpacity: 0.35,
     shadowRadius: 5,

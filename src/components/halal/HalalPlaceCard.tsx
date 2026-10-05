@@ -5,10 +5,14 @@ import { useEffect, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import {
-  HALAL_CATEGORY_LABELS,
+  halalCategoryLabel,
+  halalDisplayAddress,
+  halalDistanceLabel,
+  halalVerificationText,
   type HalalPlace,
   type HalalPlaceCategory,
 } from '../../features/halal/domain/HalalPlace';
+import { useI18n } from '../../i18n';
 import { colors } from '../../theme/colors';
 import { typography } from '../../theme/typography';
 import { getGoogleHalalPhotoSource } from '../../features/halal/data/googleHalalPlaces';
@@ -37,11 +41,13 @@ function verificationColors(place: HalalPlace) {
   if (place.verificationStatus === 'declared') {
     return { color: colors.goldLight, background: 'rgba(227,181,90,0.12)', border: 'rgba(227,181,90,0.35)' };
   }
-  return { color: colors.textSecondary, background: 'rgba(143,132,154,0.12)', border: 'rgba(143,132,154,0.30)' };
+  return { color: colors.textSecondary, background: 'rgba(43,34,56,0.12)', border: 'rgba(43,34,56,0.30)' };
 }
 
 export default function HalalPlaceCard({ place, favorite, onPress, onFavorite, compact }: HalalPlaceCardProps) {
+  const { language, t } = useI18n();
   const verification = verificationColors(place);
+  const verificationText = halalVerificationText(place, t);
   const photoSource = place.communityPhotoUrl
     ? { uri: place.communityPhotoUrl }
     : getGoogleHalalPhotoSource(place.photoName);
@@ -51,12 +57,12 @@ export default function HalalPlaceCard({ place, favorite, onPress, onFavorite, c
   return (
     <Pressable
       accessibilityRole="button"
-      accessibilityLabel={`Ouvrir la fiche de ${place.name}`}
+      accessibilityLabel={t('halal.openPlace', { name: place.name })}
       onPress={onPress}
       style={({ pressed }) => [styles.shell, compact && styles.shellCompact, pressed && styles.pressed]}
     >
       <LinearGradient
-        colors={['rgba(40,24,56,0.98)', 'rgba(18,13,30,0.98)', 'rgba(10,9,21,0.99)']}
+        colors={['rgba(30,23,48,0.98)', 'rgba(21,16,34,0.98)', 'rgba(10,9,21,0.99)']}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
         style={StyleSheet.absoluteFill}
@@ -71,12 +77,12 @@ export default function HalalPlaceCard({ place, favorite, onPress, onFavorite, c
       <View style={styles.copy}>
         <View style={styles.titleRow}>
           <Text numberOfLines={1} style={styles.title}>{place.name}</Text>
-          <Text style={styles.distance}>{place.distanceLabel}</Text>
+          <Text style={styles.distance}>{halalDistanceLabel(place, language, t)}</Text>
         </View>
         <Text numberOfLines={1} style={styles.category}>
-          {HALAL_CATEGORY_LABELS[place.category]}{place.cuisine ? ` · ${place.cuisine}` : ''}
+          {halalCategoryLabel(place.category, t)}{place.cuisine ? ` · ${place.cuisine}` : ''}
         </Text>
-        <Text numberOfLines={1} style={styles.address}>{place.address}</Text>
+        <Text numberOfLines={1} style={styles.address}>{halalDisplayAddress(place.address)}</Text>
         <View style={[styles.verification, { backgroundColor: verification.background, borderColor: verification.border }]}> 
           <Ionicons
             name={place.verificationStatus === 'verified_certificate' ? 'shield-checkmark' : 'information-circle-outline'}
@@ -84,20 +90,20 @@ export default function HalalPlaceCard({ place, favorite, onPress, onFavorite, c
             color={verification.color}
           />
           <Text numberOfLines={1} style={[styles.verificationText, { color: verification.color }]}>
-            {place.verificationLabel}
+            {verificationText.label}
           </Text>
         </View>
         {place.communityPhotoUrl ? (
-          <Text numberOfLines={1} style={styles.googleAttribution}>Photo communauté · validée par OUMMAH</Text>
+          <Text numberOfLines={1} style={styles.googleAttribution}>{t('halal.communityPhoto')}</Text>
         ) : place.source === 'google' || place.photoName ? (
           <Text numberOfLines={1} style={styles.googleAttribution}>
-            Google Maps{place.photoAttribution ? ` · Photo : ${place.photoAttribution}` : ''}
+            Google Maps{place.photoAttribution ? ` · ${t('halal.photoBy', { author: place.photoAttribution })}` : ''}
           </Text>
         ) : null}
       </View>
       <Pressable
         accessibilityRole="button"
-        accessibilityLabel={favorite ? 'Retirer des favoris' : 'Ajouter aux favoris'}
+        accessibilityLabel={t(favorite ? 'halal.removeFavorite' : 'halal.addFavorite')}
         hitSlop={9}
         onPress={(event) => {
           event.stopPropagation();
@@ -145,11 +151,11 @@ const styles = StyleSheet.create({
   copy: { flex: 1, minWidth: 0, marginLeft: 11, paddingRight: 22 },
   titleRow: { flexDirection: 'row', alignItems: 'center' },
   title: { flex: 1, minWidth: 0, color: colors.text, fontFamily: typography.serifSemibold, fontSize: 19, fontWeight: '700' },
-  distance: { marginLeft: 7, color: colors.goldLight, fontFamily: typography.sans, fontSize: 11, fontWeight: '800' },
+  distance: { marginLeft: 7, color: colors.goldLight, fontFamily: typography.sans, fontSize: 11, fontWeight: '800', fontVariant: ['lining-nums', 'tabular-nums'] },
   category: { marginTop: 2, color: colors.goldMuted, fontFamily: typography.sans, fontSize: 10.5, fontWeight: '700' },
   address: { marginTop: 5, color: colors.textSecondary, fontFamily: typography.sans, fontSize: 11, lineHeight: 15 },
   verification: { alignSelf: 'flex-start', maxWidth: '100%', marginTop: 8, paddingHorizontal: 7, paddingVertical: 4, flexDirection: 'row', alignItems: 'center', gap: 4, borderRadius: 10, borderWidth: 1 },
   verificationText: { flexShrink: 1, fontFamily: typography.sans, fontSize: 9.5, fontWeight: '700' },
-  googleAttribution: { marginTop: 6, color: colors.textSecondary, fontFamily: typography.sans, fontSize: 12, fontWeight: '400' },
+  googleAttribution: { marginTop: 6, color: colors.textMuted, fontFamily: typography.sans, fontSize: 10, fontWeight: '400' },
   favorite: { position: 'absolute', top: 10, right: 10, width: 30, height: 30, alignItems: 'center', justifyContent: 'center' },
 });

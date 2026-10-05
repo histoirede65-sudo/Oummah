@@ -8,6 +8,7 @@ import {
   ActivityIndicator,
   Alert,
   FlatList,
+  KeyboardAvoidingView,
   Modal,
   Platform,
   Pressable,
@@ -34,19 +35,20 @@ import {
   type HalalPlace,
   type HalalPlaceCategory,
 } from '../features/halal/domain/HalalPlace';
+import { translate, useI18n, type TranslationKey } from '../i18n';
 import { colors } from '../theme/colors';
 import { typography } from '../theme/typography';
 
 type ExploreMode = 'list' | 'map';
 type LocationState = 'idle' | 'loading' | 'ready' | 'denied' | 'error';
 
-const CATEGORIES: Array<{ key: HalalPlaceCategory | 'all'; label: string; icon: keyof typeof Ionicons.glyphMap }> = [
-  { key: 'all', label: 'Tout', icon: 'apps-outline' },
-  { key: 'restaurant', label: 'Restaurants', icon: 'restaurant-outline' },
-  { key: 'fast_food', label: 'Fast-food', icon: 'fast-food-outline' },
-  { key: 'butcher', label: 'Boucheries', icon: 'storefront-outline' },
-  { key: 'grocery', label: 'Épiceries', icon: 'basket-outline' },
-  { key: 'bakery', label: 'Boulangeries', icon: 'cafe-outline' },
+const CATEGORIES: Array<{ key: HalalPlaceCategory | 'all'; labelKey: TranslationKey; icon: keyof typeof Ionicons.glyphMap }> = [
+  { key: 'all', labelKey: 'halal.catAll', icon: 'apps-outline' },
+  { key: 'restaurant', labelKey: 'halal.catRestaurants', icon: 'restaurant-outline' },
+  { key: 'fast_food', labelKey: 'halal.catFastFood', icon: 'fast-food-outline' },
+  { key: 'butcher', labelKey: 'halal.catButchers', icon: 'storefront-outline' },
+  { key: 'grocery', labelKey: 'halal.catGroceries', icon: 'basket-outline' },
+  { key: 'bakery', labelKey: 'halal.catBakeries', icon: 'cafe-outline' },
 ];
 const RADIUS_OPTIONS = [3_000, 5_000, 10_000, 20_000, 40_000];
 
@@ -55,7 +57,7 @@ function normalize(value: string) {
 }
 
 function formatArea(place?: Location.LocationGeocodedAddress) {
-  return place?.city ?? place?.district ?? place?.subregion ?? place?.region ?? 'Autour de moi';
+  return place?.city ?? place?.district ?? place?.subregion ?? place?.region ?? translate('halal.aroundMe');
 }
 
 function formatResolvedAddress(place?: Location.LocationGeocodedAddress) {
@@ -83,8 +85,9 @@ async function completeMissingAddresses(places: HalalPlace[]) {
 }
 
 export default function HalalAroundMeScreen() {
+  const { t } = useI18n();
   const [origin, setOrigin] = useState<HalalCoordinates | null>(null);
-  const [areaLabel, setAreaLabel] = useState('Autour de moi');
+  const [areaLabel, setAreaLabel] = useState(() => translate('halal.aroundMe'));
   const [locationState, setLocationState] = useState<LocationState>('idle');
   const [places, setPlaces] = useState<HalalPlace[]>([]);
   const [favoriteIds, setFavoriteIds] = useState<string[]>([]);
@@ -131,7 +134,7 @@ export default function HalalAroundMeScreen() {
     } catch {
       if (searchSequence !== searchSequenceRef.current) return;
       setLocationState('error');
-      Alert.alert('Recherche indisponible', 'Impossible de charger les adresses pour le moment. Vérifie ta connexion puis réessaie.');
+      Alert.alert(translate('halal.loadErrorTitle'), translate('halal.loadErrorText'));
     } finally {
       if (searchSequence === searchSequenceRef.current) {
         setSearching(false);
@@ -198,7 +201,7 @@ export default function HalalAroundMeScreen() {
       const results = await Location.geocodeAsync(value);
       const result = results[0];
       if (!result) {
-        Alert.alert('Ville introuvable', 'Essaie avec une ville et un pays, par exemple « Lyon, France ».');
+        Alert.alert(translate('halal.cityNotFoundTitle'), translate('halal.cityNotFoundText'));
         return;
       }
       const coordinates = { latitude: result.latitude, longitude: result.longitude };
@@ -209,7 +212,7 @@ export default function HalalAroundMeScreen() {
       setCityQuery('');
       await loadPlaces(coordinates, radiusMeters);
     } catch {
-      Alert.alert('Recherche impossible', 'Cette ville ne peut pas être localisée pour le moment.');
+      Alert.alert(translate('halal.cityErrorTitle'), translate('halal.cityErrorText'));
     } finally {
       setCitySearching(false);
     }
@@ -234,31 +237,31 @@ export default function HalalAroundMeScreen() {
 
   return (
     <SafeAreaView style={styles.safe} edges={['top', 'left', 'right']}>
-      <LinearGradient colors={[colors.background, '#120A20', colors.background]} style={StyleSheet.absoluteFill} />
+      <LinearGradient colors={[colors.background, '#100C19', colors.background]} style={StyleSheet.absoluteFill} />
 
       <View style={styles.header}>
-        <Pressable onPress={() => router.back()} style={styles.headerButton} hitSlop={8}>
+        <Pressable accessibilityLabel={t('common.back')} onPress={() => router.back()} style={styles.headerButton} hitSlop={8}>
           <Ionicons name="chevron-back" size={24} color={colors.goldLight} />
         </Pressable>
         <View style={styles.headerCopy}>
-          <Text style={styles.eyebrow}>OUMMAH À PROXIMITÉ</Text>
-          <Text style={styles.title}>Halal autour de moi</Text>
+          <Text style={styles.eyebrow}>{t('halal.eyebrow')}</Text>
+          <Text style={styles.title}>{t('halal.title')}</Text>
         </View>
-        <Pressable onPress={() => setFavoritesOnly((value) => !value)} style={[styles.headerButton, favoritesOnly && styles.headerButtonActive]}>
+        <Pressable accessibilityLabel={t('halal.favoritesFilter')} accessibilityState={{ selected: favoritesOnly }} onPress={() => setFavoritesOnly((value) => !value)} style={[styles.headerButton, favoritesOnly && styles.headerButtonActive]}>
           <Ionicons name={favoritesOnly ? 'heart' : 'heart-outline'} size={21} color={colors.goldLight} />
         </Pressable>
       </View>
 
       <View style={styles.locationRow}>
-        <Pressable onPress={() => setCityModalOpen(true)} style={styles.locationButton}>
+        <Pressable accessibilityLabel={t('halal.changeZone')} onPress={() => setCityModalOpen(true)} style={styles.locationButton}>
           <Ionicons name="location" size={17} color={colors.goldLight} />
           <View style={styles.locationCopy}>
-            <Text style={styles.locationCaption}>Zone explorée</Text>
+            <Text style={styles.locationCaption}>{t('halal.zone')}</Text>
             <Text numberOfLines={1} style={styles.locationName}>{areaLabel}</Text>
           </View>
           <Ionicons name="chevron-down" size={16} color={colors.textMuted} />
         </Pressable>
-        <Pressable onPress={() => void locate()} style={styles.locateButton}>
+        <Pressable accessibilityLabel={t('halal.locateMe')} onPress={() => void locate()} style={styles.locateButton}>
           <Ionicons name="navigate" size={19} color={colors.background} />
         </Pressable>
       </View>
@@ -269,16 +272,16 @@ export default function HalalAroundMeScreen() {
           <TextInput
             value={query}
             onChangeText={setQuery}
-            placeholder="Restaurant, boucherie, cuisine…"
+            placeholder={t('halal.searchPlaceholder')}
             placeholderTextColor={colors.textMuted}
             autoCorrect={false}
             style={styles.searchInput}
           />
-          {query ? <Pressable onPress={() => setQuery('')}><Ionicons name="close-circle" size={18} color={colors.textMuted} /></Pressable> : null}
+          {query ? <Pressable accessibilityLabel={t('halal.clearSearch')} hitSlop={8} onPress={() => setQuery('')}><Ionicons name="close-circle" size={18} color={colors.textMuted} /></Pressable> : null}
         </View>
         <View style={styles.modeSwitch}>
           {(['list', 'map'] as const).map((item) => (
-            <Pressable key={item} onPress={() => setMode(item)} style={[styles.modeButton, mode === item && styles.modeButtonActive]}>
+            <Pressable key={item} accessibilityLabel={t(item === 'list' ? 'halal.listMode' : 'halal.mapMode')} accessibilityState={{ selected: mode === item }} onPress={() => setMode(item)} style={[styles.modeButton, mode === item && styles.modeButtonActive]}>
               <Ionicons name={item === 'list' ? 'list' : 'map-outline'} size={18} color={mode === item ? colors.background : colors.textSecondary} />
             </Pressable>
           ))}
@@ -296,7 +299,7 @@ export default function HalalAroundMeScreen() {
           return (
             <Pressable key={item.key} onPress={() => setCategory(item.key)} style={[styles.categoryChip, active && styles.chipActive]}>
               <Ionicons name={item.icon} size={14} color={active ? colors.background : colors.goldLight} />
-              <Text style={[styles.categoryText, active && styles.chipTextActive]}>{item.label}</Text>
+              <Text style={[styles.categoryText, active && styles.chipTextActive]}>{t(item.labelKey)}</Text>
             </Pressable>
           );
         })}
@@ -317,49 +320,50 @@ export default function HalalAroundMeScreen() {
         </View>
         <Pressable onPress={() => setOpenNow((value) => !value)} style={[styles.filterChip, openNow && styles.filterChipActive]}>
           <Ionicons name="time-outline" size={14} color={openNow ? colors.goldLight : colors.textSecondary} />
-          <Text style={[styles.filterText, openNow && styles.filterTextActive]}>Ouvert</Text>
+          <Text style={[styles.filterText, openNow && styles.filterTextActive]}>{t('halal.openNow')}</Text>
         </Pressable>
         <Pressable onPress={() => setVerifiedOnly((value) => !value)} style={[styles.filterChip, verifiedOnly && styles.filterChipActive]}>
           <Ionicons name="shield-checkmark-outline" size={14} color={verifiedOnly ? colors.goldLight : colors.textSecondary} />
-          <Text style={[styles.filterText, verifiedOnly && styles.filterTextActive]}>Déclaré +</Text>
+          <Text style={[styles.filterText, verifiedOnly && styles.filterTextActive]}>{t('halal.declaredFilter')}</Text>
         </Pressable>
       </ScrollView>
 
-      <View style={styles.trustBar}>
-        <Ionicons name="shield-half-outline" size={14} color={colors.goldLight} />
-        <Text style={styles.trustText}>Chaque adresse affiche clairement le niveau de preuve disponible.</Text>
-        {fromCache ? <Text style={styles.cacheText}>Hors ligne</Text> : null}
-      </View>
+      {fromCache ? (
+        <View style={styles.trustBar}>
+          <Ionicons name="cloud-offline-outline" size={13} color={colors.goldMuted} />
+          <Text style={styles.cacheText}>{t('halal.offline')}</Text>
+        </View>
+      ) : null}
 
       <View style={styles.content}>
         {searching && places.length === 0 ? (
           <View style={styles.centerState}>
             <View style={styles.loaderHalo}><ActivityIndicator color={colors.goldLight} /></View>
-            <Text style={styles.stateTitle}>Recherche des adresses halal…</Text>
-            <Text style={styles.stateBody}>Nous explorons les établissements dans un rayon de {radiusMeters / 1_000} km.</Text>
+            <Text style={styles.stateTitle}>{t('halal.searchingTitle')}</Text>
+            <Text style={styles.stateBody}>{t('halal.searchingText', { km: radiusMeters / 1_000 })}</Text>
           </View>
         ) : locationState === 'denied' ? (
           <View style={styles.centerState}>
             <Ionicons name="location-outline" size={42} color={colors.goldLight} />
-            <Text style={styles.stateTitle}>Choisis une zone</Text>
-            <Text style={styles.stateBody}>Autorise la localisation ou cherche une ville manuellement.</Text>
-            <Pressable onPress={() => setCityModalOpen(true)} style={styles.primaryButton}><Text style={styles.primaryButtonText}>Rechercher une ville</Text></Pressable>
+            <Text style={styles.stateTitle}>{t('halal.deniedTitle')}</Text>
+            <Text style={styles.stateBody}>{t('halal.deniedText')}</Text>
+            <Pressable onPress={() => setCityModalOpen(true)} style={styles.primaryButton}><Text style={styles.primaryButtonText}>{t('halal.searchCity')}</Text></Pressable>
           </View>
         ) : locationState === 'error' ? (
           <View style={styles.centerState}>
             <Ionicons name="cloud-offline-outline" size={42} color={colors.goldLight} />
-            <Text style={styles.stateTitle}>Recherche momentanément indisponible</Text>
-            <Text style={styles.stateBody}>Vérifie ta connexion et ta localisation, puis réessaie.</Text>
-            <Pressable onPress={() => void locate()} style={styles.primaryButton}><Text style={styles.primaryButtonText}>Réessayer</Text></Pressable>
+            <Text style={styles.stateTitle}>{t('halal.errorTitle')}</Text>
+            <Text style={styles.stateBody}>{t('halal.errorText')}</Text>
+            <Pressable onPress={() => void locate()} style={styles.primaryButton}><Text style={styles.primaryButtonText}>{t('halal.retry')}</Text></Pressable>
             <Pressable onPress={() => setCityModalOpen(true)} style={styles.secondaryButton}>
               <Ionicons name="search-outline" size={16} color={colors.goldLight} />
-              <Text style={styles.secondaryButtonText}>Choisir une ville</Text>
+              <Text style={styles.secondaryButtonText}>{t('halal.chooseCity')}</Text>
             </Pressable>
           </View>
         ) : mode === 'map' && origin ? (
           <View style={styles.mapShell}>
             <HalalMap origin={origin} places={filteredPlaces} selectedId={selected?.id} onSelect={setSelected} />
-            <View style={styles.mapCount}><Text style={styles.mapCountText}>{filteredPlaces.length} adresse{filteredPlaces.length > 1 ? 's' : ''}</Text></View>
+            <View style={styles.mapCount}><Text style={styles.mapCountText}>{t(filteredPlaces.length > 1 ? 'halal.countMany' : 'halal.countOne', { count: filteredPlaces.length })}</Text></View>
             {filteredPlaces.some((place) => place.source === 'google') ? <View style={styles.mapAttribution}><Text style={styles.mapAttributionText}>Google Maps</Text></View> : null}
             {selected ? (
               <View style={styles.selectedCard}>
@@ -394,34 +398,35 @@ export default function HalalAroundMeScreen() {
             )}
             ListHeaderComponent={filteredPlaces.length > 0 ? (
               <View style={styles.resultsHeader}>
-                <Text style={styles.resultsTitle}>{filteredPlaces.length} adresse{filteredPlaces.length > 1 ? 's' : ''}</Text>
-                <Text style={styles.resultsHint}>Les plus proches en premier</Text>
+                <Text style={styles.resultsTitle}>{t(filteredPlaces.length > 1 ? 'halal.countMany' : 'halal.countOne', { count: filteredPlaces.length })}</Text>
+                <Text style={styles.resultsHint}>{t('halal.closestFirst')}</Text>
               </View>
             ) : null}
             ListEmptyComponent={(
               <View style={styles.centerState}>
                 <Ionicons name="restaurant-outline" size={40} color={colors.goldLight} />
-                <Text style={styles.stateTitle}>{favoritesOnly ? 'Aucun favori dans cette zone' : 'Aucune adresse trouvée'}</Text>
-                <Text style={styles.stateBody}>Élargis le rayon, enlève un filtre ou contribue en ajoutant une adresse.</Text>
+                <Text style={styles.stateTitle}>{t(favoritesOnly ? 'halal.noFavorites' : 'halal.noResults')}</Text>
+                <Text style={styles.stateBody}>{t('halal.noResultsText')}</Text>
               </View>
             )}
           />
         )}
       </View>
 
-      <Pressable onPress={() => router.push(addPlaceRoute as Href)} style={[styles.addButton, mode === 'map' && selected && styles.addButtonRaised]}>
+      <Pressable accessibilityLabel={t('halal.addPlace')} onPress={() => router.push(addPlaceRoute as Href)} style={[styles.addButton, mode === 'map' && selected && styles.addButtonRaised]}>
         <LinearGradient colors={[colors.goldLight, colors.gold, colors.goldDark]} style={styles.addGradient}>
           <Ionicons name="add" size={20} color={colors.background} />
-          <Text style={styles.addButtonText}>Ajouter</Text>
+          <Text style={styles.addButtonText}>{t('halal.add')}</Text>
         </LinearGradient>
       </Pressable>
 
       <Modal visible={cityModalOpen} transparent animationType="fade" onRequestClose={() => setCityModalOpen(false)}>
-        <Pressable style={styles.modalBackdrop} onPress={() => setCityModalOpen(false)}>
+        <KeyboardAvoidingView style={styles.modalKeyboard} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+        <Pressable accessibilityLabel={t('halal.close')} style={styles.modalBackdrop} onPress={() => setCityModalOpen(false)}>
           <Pressable style={styles.modalCard} onPress={(event) => event.stopPropagation()}>
             <View style={styles.modalHandle} />
-            <Text style={styles.modalTitle}>Explorer une autre ville</Text>
-            <Text style={styles.modalBody}>Entre une ville et, si besoin, le pays.</Text>
+            <Text style={styles.modalTitle}>{t('halal.cityTitle')}</Text>
+            <Text style={styles.modalBody}>{t('halal.cityText')}</Text>
             <View style={styles.cityInputBox}>
               <Ionicons name="search" size={18} color={colors.goldLight} />
               <TextInput
@@ -429,23 +434,25 @@ export default function HalalAroundMeScreen() {
                 value={cityQuery}
                 onChangeText={setCityQuery}
                 onSubmitEditing={() => void chooseCity()}
-                placeholder="Ex. Marseille, France"
+                placeholder={t('halal.cityPlaceholder')}
                 placeholderTextColor={colors.textMuted}
                 returnKeyType="search"
+                autoCorrect={false}
                 style={styles.cityInput}
               />
             </View>
             <Pressable disabled={citySearching || !cityQuery.trim()} onPress={() => void chooseCity()} style={[styles.primaryButton, (!cityQuery.trim() || citySearching) && styles.disabled]}>
-              {citySearching ? <ActivityIndicator color={colors.background} /> : <Text style={styles.primaryButtonText}>Explorer cette zone</Text>}
+              {citySearching ? <ActivityIndicator color={colors.background} /> : <Text style={styles.primaryButtonText}>{t('halal.exploreCity')}</Text>}
             </Pressable>
             {Platform.OS !== 'web' ? (
               <Pressable onPress={() => { setCityModalOpen(false); void locate(); }} style={styles.secondaryButton}>
                 <Ionicons name="navigate-outline" size={16} color={colors.goldLight} />
-                <Text style={styles.secondaryButtonText}>Revenir à ma position</Text>
+                <Text style={styles.secondaryButtonText}>{t('halal.backToMyLocation')}</Text>
               </Pressable>
             ) : null}
           </Pressable>
         </Pressable>
+        </KeyboardAvoidingView>
       </Modal>
     </SafeAreaView>
   );
@@ -454,26 +461,26 @@ export default function HalalAroundMeScreen() {
 const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: colors.background },
   header: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 18, paddingTop: 5, paddingBottom: 10 },
-  headerButton: { width: 43, height: 43, borderRadius: 22, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: 'rgba(227,181,90,0.25)', backgroundColor: 'rgba(25,15,39,0.86)' },
+  headerButton: { width: 43, height: 43, borderRadius: 22, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: 'rgba(227,181,90,0.25)', backgroundColor: 'rgba(21,16,34,0.86)' },
   headerButtonActive: { backgroundColor: 'rgba(200,148,58,0.18)', borderColor: colors.gold },
   headerCopy: { flex: 1, alignItems: 'center' },
   eyebrow: { color: colors.goldMuted, fontFamily: typography.sans, fontSize: 8, fontWeight: '800', letterSpacing: 2 },
   title: { marginTop: 1, color: colors.text, fontFamily: typography.serifSemibold, fontSize: 25, fontWeight: '700' },
   locationRow: { flexDirection: 'row', paddingHorizontal: 18, gap: 9 },
-  locationButton: { flex: 1, minWidth: 0, height: 54, flexDirection: 'row', alignItems: 'center', gap: 9, paddingHorizontal: 14, borderRadius: 18, borderWidth: 1, borderColor: colors.borderSoft, backgroundColor: 'rgba(31,20,45,0.86)' },
+  locationButton: { flex: 1, minWidth: 0, height: 54, flexDirection: 'row', alignItems: 'center', gap: 9, paddingHorizontal: 14, borderRadius: 18, borderWidth: 1, borderColor: colors.borderSoft, backgroundColor: 'rgba(30,23,48,0.86)' },
   locationCopy: { flex: 1, minWidth: 0 },
   locationCaption: { color: colors.textMuted, fontFamily: typography.sans, fontSize: 9, fontWeight: '600' },
   locationName: { marginTop: 1, color: colors.text, fontFamily: typography.sans, fontSize: 14, fontWeight: '800' },
   locateButton: { width: 54, height: 54, borderRadius: 18, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.goldLight },
   searchRow: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 18, marginTop: 10, gap: 9 },
-  searchBox: { flex: 1, height: 46, flexDirection: 'row', alignItems: 'center', gap: 8, paddingHorizontal: 13, borderRadius: 16, borderWidth: 1, borderColor: 'rgba(126,78,151,0.32)', backgroundColor: 'rgba(14,10,27,0.94)' },
+  searchBox: { flex: 1, height: 46, flexDirection: 'row', alignItems: 'center', gap: 8, paddingHorizontal: 13, borderRadius: 16, borderWidth: 1, borderColor: 'rgba(43,34,56,0.32)', backgroundColor: 'rgba(21,16,34,0.94)' },
   searchInput: { flex: 1, color: colors.text, fontFamily: typography.sans, fontSize: 12.5, paddingVertical: 0 },
   modeSwitch: { flexDirection: 'row', padding: 3, borderRadius: 15, backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.borderSoft },
   modeButton: { width: 36, height: 36, borderRadius: 12, alignItems: 'center', justifyContent: 'center' },
   modeButtonActive: { backgroundColor: colors.goldLight },
   categoryScroller: { flexGrow: 0, flexShrink: 0, height: 51 },
   categoryRail: { paddingHorizontal: 18, paddingTop: 10, paddingBottom: 6, gap: 7 },
-  categoryChip: { height: 35, flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: 12, borderRadius: 18, borderWidth: 1, borderColor: colors.borderSoft, backgroundColor: 'rgba(23,16,38,0.88)' },
+  categoryChip: { height: 35, flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: 12, borderRadius: 18, borderWidth: 1, borderColor: colors.borderSoft, backgroundColor: 'rgba(21,16,34,0.88)' },
   chipActive: { borderColor: colors.goldLight, backgroundColor: colors.goldLight },
   categoryText: { color: colors.textSecondary, fontFamily: typography.sans, fontSize: 10.5, fontWeight: '700' },
   chipTextActive: { color: colors.background },
@@ -482,14 +489,13 @@ const styles = StyleSheet.create({
   radiusGroup: { height: 31, flexDirection: 'row', padding: 2, borderRadius: 16, borderWidth: 1, borderColor: colors.borderSoft, backgroundColor: colors.surface },
   radiusButton: { minWidth: 38, paddingHorizontal: 7, alignItems: 'center', justifyContent: 'center', borderRadius: 13 },
   radiusButtonActive: { backgroundColor: 'rgba(227,181,90,0.18)' },
-  radiusText: { color: colors.textMuted, fontFamily: typography.sans, fontSize: 9, fontWeight: '700' },
+  radiusText: { color: colors.textMuted, fontFamily: typography.sans, fontSize: 9, fontWeight: '700', fontVariant: ['lining-nums', 'tabular-nums'] },
   radiusTextActive: { color: colors.goldLight },
   filterChip: { height: 31, flexDirection: 'row', alignItems: 'center', gap: 5, paddingHorizontal: 10, borderRadius: 16, borderWidth: 1, borderColor: colors.borderSoft, backgroundColor: colors.surface },
   filterChipActive: { borderColor: 'rgba(227,181,90,0.50)', backgroundColor: 'rgba(200,148,58,0.12)' },
   filterText: { color: colors.textSecondary, fontFamily: typography.sans, fontSize: 9.5, fontWeight: '700' },
   filterTextActive: { color: colors.goldLight },
-  trustBar: { marginHorizontal: 18, marginTop: 2, marginBottom: 7, flexDirection: 'row', alignItems: 'center', gap: 6 },
-  trustText: { flex: 1, color: colors.textMuted, fontFamily: typography.sans, fontSize: 8.5 },
+  trustBar: { marginHorizontal: 18, marginTop: 0, marginBottom: 6, flexDirection: 'row', alignItems: 'center', gap: 6 },
   cacheText: { color: colors.goldMuted, fontFamily: typography.sans, fontSize: 8, fontWeight: '800' },
   content: { flex: 1, minHeight: 0 },
   list: { paddingHorizontal: 18, paddingTop: 3, paddingBottom: 105 },
@@ -524,4 +530,5 @@ const styles = StyleSheet.create({
   disabled: { opacity: 0.42 },
   secondaryButton: { height: 43, marginTop: 9, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 7 },
   secondaryButtonText: { color: colors.goldLight, fontFamily: typography.sans, fontSize: 11, fontWeight: '800' },
+  modalKeyboard: { flex: 1 },
 });
