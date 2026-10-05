@@ -30,6 +30,8 @@ export const LESSON_SOURCES: FiqhSource[] = [
   { id: "abudawud-1985", kind: "hadith", reference: "Sunan Abî Dâwûd, 1985", authenticity: "Sahîh selon al-Albânî", scope: "« Le rasage n’est pas une obligation pour les femmes ; seule la coupe des cheveux leur est demandée »" },
   { id: "bukhari-1536", kind: "hadith", reference: "Sahîh al-Bukhârî, 1536", authenticity: "Sahîh", scope: "l’homme entré en ihrâm parfumé et vêtu d’un manteau : « Lave le parfum de ton corps trois fois, enlève le manteau »" },
   { id: "bukhari-1685", kind: "hadith", reference: "Sahîh al-Bukhârî, 1685", authenticity: "Sahîh", scope: "al-Fadl rapporte que le Prophète ﷺ a continué la talbiya jusqu’à la lapidation de Jamrat al-‘Aqaba" },
+  { id: "abudawud-365", kind: "hadith", reference: "Sunan Abî Dâwûd, 365", authenticity: "Sahîh selon al-Albânî", scope: "Khawla bint Yasâr : « Il te suffit de laver le sang, la trace ne te fera aucun mal »" },
+  { id: "abudawud-376", kind: "hadith", reference: "Sunan Abî Dâwûd, 376", authenticity: "Sahîh selon al-Albânî", scope: "« Seule l’urine d’une fille doit être lavée ; celle d’un garçon doit être simplement aspergée d’eau »" },
   // Purification
   M("223", "La purification est la moitié de la foi"),
   M("224", "aucune prière n’est acceptée sans purification"),
