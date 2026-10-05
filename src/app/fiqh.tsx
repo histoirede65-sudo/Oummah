@@ -5,21 +5,25 @@ import { Image, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { FiqhTopBar, fq, fqType } from "../features/fiqh/components/FiqhUI";
-import { FIQH_BOOK_IMAGES, FIQH_BOOK_INTROS, FIQH_WORSHIP_BOOKS } from "../features/fiqh/fiqhBooks";
-import { FIQH_CATEGORIES, categoryById, topicById } from "../features/fiqh/fiqhData";
+import { FIQH_BOOK_IMAGES, FIQH_WORSHIP_BOOKS } from "../features/fiqh/fiqhBooks";
+import { FIQH_CATEGORIES } from "../features/fiqh/fiqhData";
 import { lessonOf } from "../features/fiqh/fiqhLessons";
+import { bookIntro, categoryIn, localizeCategory, topicIn } from "../features/fiqh/fiqhLocalization";
 import { searchFiqhTopics } from "../features/fiqh/fiqhSearch";
 import { useFiqhReading } from "../features/fiqh/fiqhStorage";
+import { useI18n } from "../i18n";
 
 /** Fiqh library: search, last lesson, then the books grouped in two shelves. */
 export default function FiqhHome() {
+  const { language, t } = useI18n();
   const [query, setQuery] = useState("");
   const [showMethod, setShowMethod] = useState(false);
   const reading = useFiqhReading();
-  const results = useMemo(() => (query.trim() ? searchFiqhTopics(query).slice(0, 30) : []), [query]);
-  const last = reading.lastTopicId ? topicById.get(reading.lastTopicId) : undefined;
-  const worship = FIQH_CATEGORIES.filter((category) => FIQH_WORSHIP_BOOKS.includes(category.id));
-  const life = FIQH_CATEGORIES.filter((category) => !FIQH_WORSHIP_BOOKS.includes(category.id));
+  const results = useMemo(() => (query.trim() ? searchFiqhTopics(query, language).slice(0, 30) : []), [query, language]);
+  const last = topicIn(reading.lastTopicId, language);
+  const books = FIQH_CATEGORIES.map((category) => localizeCategory(category, language));
+  const worship = books.filter((category) => FIQH_WORSHIP_BOOKS.includes(category.id));
+  const life = books.filter((category) => !FIQH_WORSHIP_BOOKS.includes(category.id));
   const openLesson = (id: string) => router.push({ pathname: "/fiqh/topic/[topicId]", params: { topicId: id } });
 
   const shelf = (title: string, books: typeof FIQH_CATEGORIES) => (
@@ -38,8 +42,8 @@ export default function FiqhHome() {
                 <Text style={styles.bookTitle} numberOfLines={1}>{book.title}</Text>
                 {book.arabicTitle ? <Text style={styles.bookArabic} numberOfLines={1}>{book.arabicTitle}</Text> : null}
               </View>
-              <Text style={styles.bookIntro} numberOfLines={2}>{FIQH_BOOK_INTROS[book.id] ?? book.summary}</Text>
-              <Text style={styles.bookMeta}>{done ? `${done} / ${total} leçons lues` : `${total} leçons`}</Text>
+              <Text style={styles.bookIntro} numberOfLines={2}>{bookIntro(book, language)}</Text>
+              <Text style={styles.bookMeta}>{done ? t("fiqh.lessonsRead", { done, total }) : t("fiqh.lessonsCount", { count: total })}</Text>
             </View>
           </Pressable>
         );
@@ -51,30 +55,30 @@ export default function FiqhHome() {
     <SafeAreaView style={styles.screen} edges={["top"]}>
       <FiqhTopBar />
       <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
-        <Text style={styles.title}>Fiqh</Text>
+        <Text style={styles.title}>{t("fiqh.title")}</Text>
         <Text style={styles.arabic}>الفقه</Text>
-        <Text style={styles.lead}>Les règles de la pratique, expliquées simplement, avec leurs preuves.</Text>
+        <Text style={styles.lead}>{t("fiqh.lead")}</Text>
 
         <View style={styles.search}>
           <Ionicons name="search" size={18} color={fq.inkMuted} />
           <TextInput
             value={query}
             onChangeText={setQuery}
-            placeholder="Ablutions, voyage, zakât de l’or…"
+            placeholder={t("fiqh.searchPlaceholder")}
             placeholderTextColor={fq.inkMuted}
             style={styles.input}
             returnKeyType="search"
-            accessibilityLabel="Rechercher une leçon"
+            accessibilityLabel={t("fiqh.searchLabel")}
           />
-          {query ? <Pressable hitSlop={8} onPress={() => setQuery("")} accessibilityLabel="Effacer"><Ionicons name="close-circle" size={18} color={fq.inkMuted} /></Pressable> : null}
+          {query ? <Pressable hitSlop={8} onPress={() => setQuery("")} accessibilityLabel={t("fiqh.clear")}><Ionicons name="close-circle" size={18} color={fq.inkMuted} /></Pressable> : null}
         </View>
 
         {query.trim() ? (
           <View style={styles.results}>
-            <Text style={styles.resultsCount}>{results.length ? `${results.length} leçon${results.length > 1 ? "s" : ""}` : "Aucune leçon ne correspond. Essayez un autre mot."}</Text>
+            <Text style={styles.resultsCount}>{results.length ? t(results.length > 1 ? "fiqh.resultsMany" : "fiqh.resultsOne", { count: results.length }) : t("fiqh.noResults")}</Text>
             {results.map((topic) => (
               <Pressable key={topic.id} onPress={() => openLesson(topic.id)} style={({ pressed }) => [styles.result, pressed && styles.pressed]}>
-                <Text style={styles.resultBook}>{categoryById.get(topic.categoryId)?.title}</Text>
+                <Text style={styles.resultBook}>{categoryIn(topic.categoryId, language)?.title}</Text>
                 <Text style={styles.resultTitle}>{topic.title}</Text>
                 <Text style={styles.resultText} numberOfLines={2}>{lessonOf(topic).short}</Text>
               </Pressable>
@@ -86,26 +90,26 @@ export default function FiqhHome() {
               <Pressable onPress={() => openLesson(last.id)} style={({ pressed }) => [styles.resume, pressed && styles.pressed]}>
                 <Ionicons name="bookmark" size={18} color={fq.gold} />
                 <View style={styles.flex}>
-                  <Text style={styles.resumeLabel}>Reprendre · {categoryById.get(last.categoryId)?.title}</Text>
+                  <Text style={styles.resumeLabel}>{t("fiqh.resume", { book: categoryIn(last.categoryId, language)?.title ?? "" })}</Text>
                   <Text style={styles.resumeTitle} numberOfLines={1}>{last.title}</Text>
                 </View>
                 <Ionicons name="chevron-forward" size={18} color={fq.gold} />
               </Pressable>
             ) : null}
 
-            {shelf("Les actes d’adoration", worship)}
-            {shelf("La vie du musulman", life)}
+            {shelf(t("fiqh.shelfWorship"), worship)}
+            {shelf(t("fiqh.shelfLife"), life)}
 
             <Pressable onPress={() => setShowMethod((value) => !value)} style={styles.method} accessibilityRole="button" accessibilityState={{ expanded: showMethod }}>
               <Ionicons name="library-outline" size={18} color={fq.gold} />
-              <Text style={styles.methodTitle}>D’où vient ce contenu ?</Text>
+              <Text style={styles.methodTitle}>{t("fiqh.methodTitle")}</Text>
               <Ionicons name={showMethod ? "chevron-up" : "chevron-down"} size={17} color={fq.inkMuted} />
             </Pressable>
             {showMethod ? (
               <View style={styles.methodBody}>
-                <Text style={styles.methodText}>Chaque règle renvoie au Coran ou à un hadith authentique (Bukhârî, Muslim, ou les Sunan avec le jugement d’al-Albânî). Touchez une référence pour la consulter.</Text>
-                <Text style={styles.methodText}>Le livre de référence est Al-Wajîz fî Fiqh as-Sunna wa-l-Kitâb al-‘Azîz de ‘Abd al-‘Azîm Badawî. Quand les écoles divergent, leurs avis sont présentés d’après leurs ouvrages : Badâ’i‘ as-Sanâ’i‘ (hanafite), Al-Mudawwana et Mawâhib al-Jalîl (malikite), Al-Majmû‘ (shafi‘ite) et Al-Mughnî (hanbalite).</Text>
-                <Text style={styles.methodText}>Ces leçons enseignent les règles générales. Pour une situation personnelle, adressez-vous à une personne de science qualifiée.</Text>
+                <Text style={styles.methodText}>{t("fiqh.method1")}</Text>
+                <Text style={styles.methodText}>{t("fiqh.method2")}</Text>
+                <Text style={styles.methodText}>{t("fiqh.method3")}</Text>
               </View>
             ) : null}
           </>
