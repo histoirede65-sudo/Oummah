@@ -115,7 +115,7 @@ export const HOME_DEEPER = [
     labelKey: "home.moduleAkhira",
     subtitleKey: "home.moduleAkhiraSubtitle",
     route: "/akhira",
-    image: require("../../assets/images/dua/guides/sleep.jpg"),
+    image: require("../../assets/images/akhira/card.jpg"),
   },
 ] as const;
 

@@ -1,7 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { router, type Href } from "expo-router";
-import { Pressable, SafeAreaView, ScrollView, StyleSheet, Text, View } from "react-native";
+import { ImageBackground, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, View } from "react-native";
 
 import { AKHIRA_PARTS } from "../features/akhira/akhiraContent";
 import { useI18n } from "../i18n";
@@ -21,19 +21,25 @@ export default function AkhiraScreen() {
   return (
     <LinearGradient colors={[colors.background, colors.backgroundSecondary, colors.background]} style={styles.screen}>
       <SafeAreaView style={styles.safe}>
-        <View style={styles.header}>
-          <Pressable onPress={() => router.back()} style={styles.iconButton} accessibilityRole="button" accessibilityLabel={tx.back}>
-            <Ionicons name="chevron-back" size={22} color={colors.text} />
-          </Pressable>
-        </View>
-        <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-          <Text style={styles.arabicTitle}>الآخرة</Text>
-          <Text style={styles.title}>{tx.title}</Text>
+        <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
+          <ImageBackground source={require("../assets/images/akhira/hero.jpg")} style={styles.hero} imageStyle={styles.heroImage}>
+            <LinearGradient colors={["rgba(8,7,19,0.10)", "rgba(8,7,19,0.35)", colors.background]} style={styles.heroShade}>
+              <Pressable onPress={() => router.back()} style={styles.iconButton} accessibilityRole="button" accessibilityLabel={tx.back}>
+                <Ionicons name="chevron-back" size={22} color={colors.text} />
+              </Pressable>
+              <View style={styles.heroText}>
+                <Text style={styles.arabicTitle}>الآخرة</Text>
+                <Text style={styles.title}>{tx.title}</Text>
+              </View>
+            </LinearGradient>
+          </ImageBackground>
+          <View style={styles.content}>
           <Text style={styles.lead}>{tx.lead}</Text>
 
           {AKHIRA_PARTS.map((part, partIndex) => (
             <View key={part.id} style={styles.part}>
               <Text style={styles.partTitle}>{(en ? part.titleEn : part.title).toUpperCase()}</Text>
+              {part.note ? <Text style={styles.partNote}>{en ? part.noteEn : part.note}</Text> : null}
               {part.stages.map((stage, index) => {
                 const first = stage.texts[0];
                 const lastOfAll = partIndex === AKHIRA_PARTS.length - 1 && index === part.stages.length - 1;
@@ -61,6 +67,7 @@ export default function AkhiraScreen() {
               })}
             </View>
           ))}
+          </View>
         </ScrollView>
       </SafeAreaView>
     </LinearGradient>
@@ -71,12 +78,17 @@ const styles = StyleSheet.create({
   screen: { flex: 1 },
   safe: { flex: 1 },
   pressed: { opacity: 0.7 },
-  header: { minHeight: 56, paddingHorizontal: 16, flexDirection: "row", alignItems: "center" },
-  iconButton: { width: 42, height: 42, borderRadius: 15, alignItems: "center", justifyContent: "center", borderWidth: 1, borderColor: colors.borderSoft },
-  content: { paddingHorizontal: 22, paddingBottom: 70 },
+  scroll: { paddingBottom: 70 },
+  hero: { height: 300 },
+  heroImage: { resizeMode: "cover" },
+  heroShade: { flex: 1, paddingHorizontal: 16, paddingTop: 8, justifyContent: "space-between" },
+  heroText: { paddingHorizontal: 6, paddingBottom: 4 },
+  iconButton: { width: 42, height: 42, borderRadius: 15, alignItems: "center", justifyContent: "center", borderWidth: 1, borderColor: "rgba(255,255,255,0.18)", backgroundColor: "rgba(8,7,19,0.35)" },
+  content: { paddingHorizontal: 22 },
+  partNote: { marginBottom: 8, color: colors.textMuted, fontFamily: typography.sans, fontSize: 12.5, lineHeight: 18 },
   arabicTitle: { color: colors.goldLight, fontFamily: typography.arabic, fontSize: 40, lineHeight: 62 },
   title: { color: colors.text, fontFamily: typography.serifSemibold, fontSize: 42, lineHeight: 46 },
-  lead: { marginTop: 10, color: colors.textSecondary, fontFamily: typography.sans, fontSize: 15.5, lineHeight: 23 },
+  lead: { marginTop: 4, color: colors.textSecondary, fontFamily: typography.sans, fontSize: 15.5, lineHeight: 23 },
   part: { marginTop: 34 },
   partTitle: { marginBottom: 6, color: colors.goldLight, fontFamily: typography.sans, fontSize: 11.5, fontWeight: "800", letterSpacing: 1.6 },
   stage: { flexDirection: "row", alignItems: "stretch", gap: 14 },

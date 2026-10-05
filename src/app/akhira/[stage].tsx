@@ -9,8 +9,8 @@ import { colors } from "../../theme/colors";
 import { typography } from "../../theme/typography";
 
 const TEXT = {
-  fr: { back: "Retour", previous: "Étape précédente", next: "Étape suivante", overview: "Toutes les étapes", unavailableTitle: "Source indisponible", unavailableText: "Impossible d’ouvrir cette source pour le moment.", notFound: "Étape introuvable" },
-  en: { back: "Back", previous: "Previous step", next: "Next step", overview: "All steps", unavailableTitle: "Source unavailable", unavailableText: "This source cannot be opened right now.", notFound: "Step not found" },
+  fr: { literal: "Traduction littérale de l’arabe ci-dessus.", back: "Retour", previous: "Étape précédente", next: "Étape suivante", overview: "Toutes les étapes", unavailableTitle: "Source indisponible", unavailableText: "Impossible d’ouvrir cette source pour le moment.", notFound: "Étape introuvable" },
+  en: { literal: "Literal translation of the Arabic above.", back: "Back", previous: "Previous step", next: "Next step", overview: "All steps", unavailableTitle: "Source unavailable", unavailableText: "This source cannot be opened right now.", notFound: "Step not found" },
 };
 
 export default function AkhiraStageScreen() {
@@ -52,8 +52,9 @@ export default function AkhiraStageScreen() {
                 </View>
                 {item.arabic ? <Text style={styles.arabic}>{item.arabic}</Text> : null}
                 <Text style={styles.body}>{en ? item.en : item.fr}</Text>
+                {item.kind === "scholar" ? <Text style={styles.literal}>{tx.literal}</Text> : null}
                 <Pressable onPress={() => openSource(item)} style={({ pressed }) => [styles.ref, pressed && styles.pressed]} accessibilityRole="link" hitSlop={6}>
-                  <Ionicons name={item.kind === "quran" ? "book-outline" : "document-text-outline"} size={13} color={colors.goldLight} />
+                  <Ionicons name={item.kind === "quran" ? "book-outline" : item.kind === "scholar" ? "person-outline" : "document-text-outline"} size={13} color={colors.goldLight} />
                   <Text style={styles.refText}>{en ? item.refEn ?? item.ref : item.ref}</Text>
                   <Ionicons name="open-outline" size={12} color={colors.goldLight} />
                 </Pressable>
@@ -103,6 +104,7 @@ const styles = StyleSheet.create({
   highlightText: { color: colors.text, fontFamily: typography.serifMedium, fontSize: 24, lineHeight: 31 },
   arabic: { marginTop: 16, color: colors.text, fontFamily: typography.arabic, fontSize: 23, lineHeight: 42, textAlign: "right", writingDirection: "rtl" },
   body: { marginTop: 14, color: colors.textSecondary, fontFamily: typography.sans, fontSize: 15.5, lineHeight: 24 },
+  literal: { marginTop: 6, color: colors.textMuted, fontFamily: typography.sans, fontSize: 12, lineHeight: 17 },
   ref: { marginTop: 12, alignSelf: "flex-start", flexDirection: "row", alignItems: "center", gap: 6, paddingHorizontal: 10, paddingVertical: 6, borderRadius: 999, borderWidth: 1, borderColor: "rgba(227,181,90,0.36)", backgroundColor: "rgba(227,181,90,0.07)" },
   refText: { color: colors.goldLight, fontFamily: typography.sans, fontSize: 12.5, fontWeight: "800" },
   nav: { marginTop: 30, flexDirection: "row", gap: 10 },
