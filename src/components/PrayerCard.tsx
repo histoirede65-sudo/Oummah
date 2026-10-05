@@ -1289,9 +1289,11 @@ export default function PrayerCard({ onScheduleChange }: { onScheduleChange?: (s
     : daySource;
   const overlaySource = isNightToDayTransition ? daySource : nightSource;
   const showNightOverlay = isDayToNightTransition || isNightToDayTransition;
+  // The overlay is the image being revealed: night grows down from the top (progress 0 → 1),
+  // day grows up from the bottom (progress 1 → 0), so its height follows the opposite direction.
   const nightRevealHeight = nightRevealProgress.interpolate({
     inputRange: [0, 1],
-    outputRange: [0, cardSize.height],
+    outputRange: isNightToDayTransition ? [cardSize.height, 0] : [0, cardSize.height],
   });
 
   return (
