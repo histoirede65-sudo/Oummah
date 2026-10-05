@@ -6,7 +6,7 @@ export const HAJJ_LESSONS: Record<string, LessonEntry> = {
     title: "L’obligation du Hajj",
     short: "Al-Wajîz : le Hajj est obligatoire, avec la ‘Umra, une fois dans la vie, pour tout musulman pubère, sain d’esprit, libre et qui en a la capacité.",
     rules: [
-      p("« Et c’est un devoir envers Allah pour les gens qui ont les moyens, d’aller faire le pèlerinage de la Maison. »", "quran-3-97"),
+      p("« Et c’est un devoir envers Allah pour les gens qui [en] ont les moyens, d’aller faire le pèlerinage de la Maison. »", "quran-3-97"),
       p("C’est le cinquième pilier de l’islam.", "bukhari-8"),
       p("Celui qui le fait sans obscénité ni perversité en revient comme au jour où sa mère l’a mis au monde.", "bukhari-1521"),
       p("Le Hajj accepté n’a d’autre récompense que le Paradis.", "bukhari-1773"),
@@ -86,7 +86,7 @@ export const HAJJ_LESSONS: Record<string, LessonEntry> = {
     short: "Le tawâf, ce sont sept tours autour de la Ka‘ba, en la gardant à gauche, de la Pierre noire à la Pierre noire. Le sa‘y, ce sont sept trajets entre Safâ et Marwa, en commençant par Safâ.",
     rules: [
       p("Le Prophète ﷺ a fait sept tours, puis a prié deux rak‘ât derrière le Maqâm Ibrâhîm, puis est allé à Safâ.", "muslim-1218a"),
-      p("« As-Safâ et Al-Marwah sont vraiment parmi les lieux sacrés d’Allah. »", "quran-2-158"),
+      p("« As-Safâ et Al Marwah sont vraiment parmi les lieux sacrés d’Allah. »", "quran-2-158"),
       p("Al-Wajîz : conditions du tawâf : la purification des deux impuretés, couvrir la ‘awra, sept tours complets, de la Pierre noire à la Pierre noire avec la Maison à gauche, en dehors du Hijr, et sans longue interruption.", "wajiz-hajj"),
       p("Al-Wajîz : conditions du sa‘y : sept trajets, commencer par Safâ et finir à Marwa, dans le mas‘â.", "wajiz-hajj"),
     ],
@@ -150,7 +150,7 @@ export const HAJJ_LESSONS: Record<string, LessonEntry> = {
     aliases: ["umra", "omra", "oumra"],
     short: "Al-Wajîz : les piliers de la ‘Umra sont l’ihrâm, le tawâf, le sa‘y, puis le rasage ou le raccourcissement. Elle se fait à tout moment de l’année, et en Ramadan elle vaut mieux.",
     rules: [
-      p("« Et accomplissez pour Allah le pèlerinage et l’Umra. »", "quran-2-196"),
+      p("« Et accomplissez pour Allah le pèlerinage (Al Hajj) et l’Umra. »", "quran-2-196"),
       p("D’une ‘Umra à l’autre, les péchés commis entre les deux sont expiés.", "bukhari-1773"),
       p("Une ‘Umra en Ramadan équivaut à un Hajj.", "bukhari-1782"),
       p("Al-Wajîz : le Hajj est obligatoire avec la ‘Umra, une fois dans la vie.", "wajiz-hajj"),

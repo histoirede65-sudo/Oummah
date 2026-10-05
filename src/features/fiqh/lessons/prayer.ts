@@ -35,7 +35,7 @@ export const PRAYER_LESSONS: Record<string, LessonEntry> = {
     rules: [
       p("Aucune prière n’est acceptée sans purification : le wudû’, le ghusl si nécessaire, ou le tayammum.", "muslim-224", "quran-5-6", "quran-4-43"),
       p("Le corps, le vêtement et le lieu doivent être purs de toute impureté.", "quran-74-4", "wajiz-salah"),
-      p("Il faut couvrir sa ‘awra : « Dans chaque lieu de Salât portez votre parure (vos habits). »", "quran-7-31"),
+      p("Il faut couvrir sa ‘awra : « Ô enfants d’Adam ! Portez votre parure (vos habits) dans chaque lieu de prière ! »", "quran-7-31"),
       p("Al-Wajîz : la ‘awra de l’homme est ce qui est entre le nombril et le genou ; il ne prie pas les épaules entièrement découvertes.", "bukhari-359", "wajiz-salah"),
       p("« Allah n’accepte pas la prière d’une femme qui a atteint la puberté si elle ne porte pas de voile. » Al-Wajîz : dans la prière, toute la femme est ‘awra sauf le visage et les mains.", "abudawud-641", "wajiz-salah"),
       p("L’heure de la prière doit être entrée.", "quran-4-103"),
@@ -312,7 +312,7 @@ export const PRAYER_LESSONS: Record<string, LessonEntry> = {
     title: "La prière du vendredi",
     short: "La prière du vendredi (jumu‘a) remplace Dhuhr. Elle comprend un sermon puis deux rak‘ât en groupe.",
     rules: [
-      p("« Quand on appelle à la Salât du jour du Vendredi, accourez à l’invocation d’Allah et laissez tout négoce. »", "quran-62-9"),
+      p("« Quand on appelle à la Ṣalāt du jour du Vendredi, accourez à l’invocation d’Allah et laissez tout négoce. »", "quran-62-9"),
       p("Elle est un devoir pour tout musulman, sauf l’esclave, la femme, l’enfant et le malade.", "abudawud-1067"),
       p("Al-Wajîz : elle est une obligation individuelle pour tout musulman, sauf l’esclave, la femme, l’enfant, le malade et le voyageur.", "wajiz-salah"),
       p("Délaisser trois vendredis par négligence est une grave faute.", "abudawud-1052"),

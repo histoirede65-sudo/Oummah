@@ -196,7 +196,7 @@ export const FAMILY_LESSONS: Record<string, LessonEntry> = {
     title: "Le mahr (la dot)",
     short: "Le mahr est un droit de l’épouse et lui appartient. Al-Wajîz : la Charia ne lui fixe ni minimum ni maximum, mais elle encourage à l’alléger.",
     rules: [
-      p("« Et donnez aux épouses leur mahr, de bonne grâce. »", "quran-4-4"),
+      p("« Et donnez aux épouses leur dot (Al Mahr), de bonne grâce. »", "quran-4-4"),
       p("« Cherche même si ce n’est qu’une bague en fer. »", "muslim-1425"),
       p("Al-Wajîz : le mahr est la propriété de la femme ; personne, pas même son père, ne peut en prendre sans son accord.", "wajiz-nikah"),
     ],
@@ -232,7 +232,7 @@ export const FAMILY_LESSONS: Record<string, LessonEntry> = {
     sensitive: true,
     short: "Si la discorde est à craindre, chaque famille désigne un arbitre pour tenter la réconciliation.",
     rules: [
-      p("« Si vous craignez le désaccord entre les deux [époux], envoyez alors un arbitre de sa famille à lui, et un arbitre de sa famille à elle. Si les deux veulent la réconciliation, Allah rétablira l’entente entre eux. »", "quran-4-35"),
+      p("« Si vous craignez une rupture entre les deux [époux], envoyez alors un arbitre de sa famille à lui, et un arbitre de sa famille à elle. Si les deux veulent la réconciliation, Allah rétablira l’entente entre eux. »", "quran-4-35"),
     ],
   },
 
@@ -243,7 +243,7 @@ export const FAMILY_LESSONS: Record<string, LessonEntry> = {
     rules: [
       p("« Répudiez-les conformément à leur période d’attente prescrite ; et comptez la période. »", "quran-65-1"),
       p("Ibn ‘Umar avait divorcé pendant les règles : le Prophète ﷺ lui a ordonné de reprendre son épouse.", "bukhari-5251"),
-      p("« Le divorce est permis pour seulement deux fois. Alors, c’est soit la reprise conformément à la bienséance, ou la libération avec gentillesse. »", "quran-2-229"),
+      p("« Le divorce (réconciliable) est permis pour seulement deux fois. Alors, c’est soit la reprise conformément à la bienséance, ou la libération avec gentillesse. »", "quran-2-229"),
       p("Après le troisième, elle ne lui est plus permise avant d’avoir épousé un autre homme.", "quran-2-230"),
     ],
   },

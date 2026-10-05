@@ -6,7 +6,7 @@ export const ZAKAT_LESSONS: Record<string, LessonEntry> = {
     title: "L’obligation de la zakât",
     short: "La zakât est le troisième pilier de l’islam : une part déterminée de certains biens, due chaque année par le musulman qui possède le seuil (nisâb), et versée à des bénéficiaires précis.",
     rules: [
-      p("« Et accomplissez la Salât, et acquittez la Zakât. »", "quran-2-43"),
+      p("« Et accomplissez la prière (As-Ṣalāt), et acquittez l’aumône (Az- Zakāt). »", "quran-2-43"),
       p("Elle est l’un des cinq piliers de l’islam.", "bukhari-8"),
       p("Elle est prise des riches et rendue aux pauvres.", "bukhari-1395"),
       p("Celui qui ne la paie pas s’expose à un châtiment sévère.", "bukhari-1403", "quran-9-34"),
@@ -22,7 +22,7 @@ export const ZAKAT_LESSONS: Record<string, LessonEntry> = {
     title: "Le sens de la zakât",
     short: "La zakât purifie le croyant de l’avarice, purifie ses biens et y met la bénédiction. Elle ne diminue pas la richesse.",
     rules: [
-      p("« Prélève de leurs biens une Sadaqa par laquelle tu les purifies et les bénis. »", "quran-9-103"),
+      p("« Prélève de leurs biens une aumône (As-Sadaqâh) par laquelle tu les purifies et les bénis. »", "quran-9-103"),
       p("« L’aumône ne diminue pas la richesse. »", "muslim-2588"),
     ],
   },

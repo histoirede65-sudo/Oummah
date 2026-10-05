@@ -54,7 +54,7 @@ export const TRANSACTION_LESSONS: Record<string, LessonEntry> = {
     title: "La dette",
     short: "On écrit la dette à terme, on la rembourse à l’échéance, et l’on accorde un délai au débiteur en difficulté. Le riche qui retarde le paiement commet une injustice.",
     rules: [
-      p("« Quand vous contractez une dette à échéance déterminée, mettez-la en écrit. »", "quran-2-282"),
+      p("« Quand vous contractez une dette à échéance déterminée, mettez-la par écrit. »", "quran-2-282"),
       p("« A celui qui est dans la gêne, accordez un sursis jusqu’à ce qu’il soit dans l’aisance. »", "quran-2-280"),
       p("« Retarder le paiement d’une dette par une personne riche est une injustice. »", "bukhari-2287"),
       p("L’âme du croyant reste suspendue à sa dette jusqu’à son règlement.", "tirmidhi-1078"),
@@ -171,7 +171,7 @@ export const FOOD_LESSONS: Record<string, LessonEntry> = {
     title: "Le sacrifice de l’Aïd",
     short: "Al-Wajîz : le sacrifice de l’Aïd al-Adhâ est obligatoire pour celui qui en a les moyens. La bête est sans défaut et de l’âge requis.",
     rules: [
-      p("« Accomplis la Salât pour ton Seigneur et sacrifie. »", "quran-108-2"),
+      p("« Accomplis la Ṣalāt pour ton Seigneur et sacrifie. »", "quran-108-2"),
       p("Al-Wajîz cite le hadith : que celui qui en a les moyens et ne sacrifie pas ne s’approche pas de notre lieu de prière.", "wajiz-atimah"),
       p("Le Prophète ﷺ a sacrifié deux béliers de sa main, en disant « Bismillâh, Allâhu akbar ».", "muslim-1966"),
       p("N’égorgez qu’une bête de l’âge requis.", "muslim-1963"),
@@ -526,7 +526,7 @@ export const ANIMAL_LESSONS: Record<string, LessonEntry> = {
     title: "La chasse",
     short: "La chasse est permise pour se nourrir, en mentionnant le nom d’Allah. Le gibier de mer est toujours permis ; le gibier de terre est interdit en ihrâm.",
     rules: [
-      p("« La chasse en mer vous est permise » ; « Et vous est illicite la chasse à terre tant que vous êtes en état d’Ihram. »", "quran-5-96"),
+      p("« La chasse en mer vous est permise » ; « Et vous est illicite la chasse à terre tant que vous êtes en état de sacralisation (Ihrâm). »", "quran-5-96"),
       p("Ce que capturent les animaux dressés, en mentionnant le nom d’Allah.", "quran-5-4"),
     ],
   },
@@ -580,7 +580,7 @@ export const SIYAR_LESSONS: Record<string, LessonEntry> = {
     title: "La protection accordée",
     short: "Celui qui demande protection la reçoit et est conduit en lieu sûr. La protection accordée par un musulman engage tous les musulmans.",
     rules: [
-      p("« Et si l’un des associateurs te demande asile, accorde-le lui » … « puis fais-le parvenir à son lieu de sécurité. »", "quran-9-6"),
+      p("« Et si l’un des polythéistes te demande asile, accorde-le lui » … « puis fais-le parvenir à son lieu de sécurité. »", "quran-9-6"),
       p("La protection des musulmans est une : le plus humble d’entre eux peut l’accorder.", "bukhari-3179"),
       p("Tuer une personne sous pacte est une faute très grave.", "bukhari-3166"),
     ],
@@ -598,7 +598,7 @@ export const SIYAR_LESSONS: Record<string, LessonEntry> = {
     title: "Justice envers tous",
     short: "La justice est due à tous, même à celui qu’on n’aime pas. Allah n’interdit pas la bonté envers ceux qui ne combattent pas les musulmans.",
     rules: [
-      p("« Et que la haine pour un peuple ne vous incite pas à être injustes. Pratiquez l’équité. »", "quran-5-8"),
+      p("« Et que la haine pour un peuple ne vous incite pas à être injuste. Soyez justes, cela est plus proche de la piété. »", "quran-5-8"),
       p("« Allah ne vous défend pas d’être bienfaisants et équitables envers ceux qui ne vous ont pas combattus pour la religion. »", "quran-60-8"),
     ],
   },

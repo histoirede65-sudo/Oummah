@@ -119,7 +119,7 @@ export const PURIFICATION_LESSONS: Record<string, LessonEntry> = {
     sourceIds: ["wajiz-taharah"],
     short: "Le ghusl consiste à faire couler l’eau sur tout le corps avec l’intention de se purifier. Le Prophète ﷺ commençait par laver ses mains et sa partie intime, faisait le wudû’, puis versait l’eau sur sa tête et sur tout son corps.",
     rules: [
-      p("Le ghusl est obligatoire en état de janâba : « Et si vous êtes pollués junub, alors purifiez-vous (par un bain). »", "quran-5-6", "quran-4-43"),
+      p("Le ghusl est obligatoire en état de janâba : « Et si vous êtes en état d’impureté majeure (Junuban), alors purifiez-vous (par un bain). »", "quran-5-6", "quran-4-43"),
       p("Al-Wajîz : ses piliers sont l’intention et que l’eau atteigne tout le corps.", "bukhari-1", "wajiz-taharah"),
       p("La femme n’a pas à défaire ses tresses pour le ghusl de la janâba : trois poignées d’eau sur la tête suffisent.", "muslim-330"),
       p("Le Prophète ﷺ faisait le ghusl avec un sâ‘ d’eau.", "bukhari-201"),

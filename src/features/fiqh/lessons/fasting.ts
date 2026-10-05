@@ -6,10 +6,10 @@ export const FASTING_LESSONS: Record<string, LessonEntry> = {
     title: "L’obligation du jeûne de Ramadan",
     short: "Le jeûne de Ramadan est obligatoire pour tout musulman pubère, sain d’esprit, résident et en bonne santé. Il consiste à s’abstenir de manger, de boire et des rapports conjugaux de l’aube au coucher du soleil.",
     rules: [
-      p("« O les croyants ! On vous a prescrit as-Siyâm comme on l’a prescrit à ceux d’avant vous. »", "quran-2-183"),
+      p("« Ô les croyants ! On vous a prescrit le jeûne (aṣ-Ṣiyām) comme on l’a prescrit à ceux d’avant vous. »", "quran-2-183"),
       p("« Quiconque d’entre vous est présent en ce mois, qu’il jeûne ! »", "quran-2-185"),
       p("Le jeûne de Ramadan est l’un des cinq piliers de l’islam.", "bukhari-8"),
-      p("On s’abstient de l’aube jusqu’à la nuit : « Mangez et buvez jusqu’à ce que se distingue, pour vous, le fil blanc de l’aube du fil noir de la nuit. Puis accomplissez le jeûne jusqu’à la nuit. »", "quran-2-187"),
+      p("On s’abstient de l’aube jusqu’à la nuit : « Mangez et buvez jusqu’à ce que se distingue, pour vous, le fil blanc de l’aube du fil noir de la nuit. Puis accomplissez le jeûne jusqu’à [la tombée de] la nuit. »", "quran-2-187"),
       p("Al-Wajîz : les savants sont unanimes qu’il est obligatoire pour le musulman sain d’esprit, pubère, en bonne santé et résident, et que la femme doit être pure des règles et des lochies.", "wajiz-siyam"),
     ],
     cases: [
@@ -182,7 +182,7 @@ export const FASTING_LESSONS: Record<string, LessonEntry> = {
     title: "Le malade",
     short: "Le malade peut rompre et rattrape plus tard. Al-Wajîz : s’il ne trouve pas de difficulté à jeûner, le jeûne vaut mieux ; s’il en trouve, la rupture vaut mieux. Celui qui ne peut plus jeûner nourrit un pauvre par jour.",
     rules: [
-      p("« Quiconque d’entre vous est malade ou en voyage, devra jeûner un nombre égal d’autres jours. »", "quran-2-184", "quran-2-185"),
+      p("« Quiconque d’entre vous est malade ou en voyage, devra jeûner alors un nombre égal d’autres jours. »", "quran-2-184", "quran-2-185"),
       p("Al-Wajîz : si le malade ou le voyageur jeûne, son jeûne est valable ; sans difficulté, le jeûne vaut mieux ; avec difficulté, la rupture vaut mieux.", "wajiz-siyam"),
       p("Celui qui ne peut pas jeûner du tout nourrit un pauvre pour chaque jour.", "quran-2-184", "bukhari-4505"),
     ],
