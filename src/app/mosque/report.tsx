@@ -4,20 +4,22 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { ActivityIndicator, Alert, Keyboard, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { createMosqueReport, type MosqueReportReason } from "../../features/mosques/data/mosqueReports";
+import { useI18n } from "../../i18n";
 import { colors } from "../../theme/colors";
 import { typography } from "../../theme/typography";
 
-const REASONS: Array<{value:MosqueReportReason;label:string;icon:keyof typeof Ionicons.glyphMap}> = [
-  { value:"wrong_address", label:"Mauvaise adresse", icon:"location-outline" },
-  { value:"wrong_hours", label:"Horaires incorrects", icon:"time-outline" },
-  { value:"closed", label:"Mosquée fermée", icon:"lock-closed-outline" },
-  { value:"duplicate", label:"Doublon", icon:"copy-outline" },
-  { value:"wrong_information", label:"Informations erronées", icon:"alert-circle-outline" },
-  { value:"other", label:"Autre problème", icon:"ellipsis-horizontal-circle-outline" },
-];
+const REASONS = [
+  { value:"wrong_address", labelKey:"mosque.reasonAddress", icon:"location-outline" },
+  { value:"wrong_hours", labelKey:"mosque.reasonHours", icon:"time-outline" },
+  { value:"closed", labelKey:"mosque.reasonClosed", icon:"lock-closed-outline" },
+  { value:"duplicate", labelKey:"mosque.reasonDuplicate", icon:"copy-outline" },
+  { value:"wrong_information", labelKey:"mosque.reasonInformation", icon:"alert-circle-outline" },
+  { value:"other", labelKey:"mosque.reasonOther", icon:"ellipsis-horizontal-circle-outline" },
+] as const satisfies readonly {value:MosqueReportReason;labelKey:string;icon:keyof typeof Ionicons.glyphMap}[];
 const one=(v:string|string[]|undefined)=>Array.isArray(v)?v[0]:v;
 
 export default function MosqueReportScreen() {
+  const { t } = useI18n();
   const p=useLocalSearchParams<{mosqueId?:string;mosqueName?:string;mosqueAddress?:string;latitude?:string;longitude?:string}>();
   const mosque=useMemo(()=> {
     const id=one(p.mosqueId), name=one(p.mosqueName), address=one(p.mosqueAddress);
@@ -41,16 +43,16 @@ export default function MosqueReportScreen() {
     setSending(true);
     try{
       await createMosqueReport({mosqueId:mosque.id,mosqueName:mosque.name,mosqueAddress:mosque.address,latitude:mosque.latitude,longitude:mosque.longitude,reason,details});
-      Alert.alert("Signalement envoyé","Merci. Il sera vérifié par l’équipe OUMMAH.",[{text:"OK",onPress:()=>router.back()}]);
+      Alert.alert(t("mosque.reportSentTitle"),t("mosque.reportSentText"),[{text:"OK",onPress:()=>router.back()}]);
     }catch{
-      Alert.alert("Envoi impossible","Réessayez dans quelques instants.");
+      Alert.alert(t("mosque.sendFailedTitle"),t("mosque.tryAgainSoon"));
     }finally{setSending(false);}
   };
 
   return <SafeAreaView style={s.safe} edges={["top"]}>
     <View style={s.header}>
-      <Pressable onPress={()=>router.back()} style={s.back}><Ionicons name="arrow-back" size={22} color={colors.goldLight}/></Pressable>
-      <Text style={s.title}>Signaler un problème</Text><View style={{width:42}}/>
+      <Pressable accessibilityLabel={t("common.back")} onPress={()=>router.back()} style={s.back}><Ionicons name="arrow-back" size={22} color={colors.goldLight}/></Pressable>
+      <Text style={s.title}>{t("mosque.reportTitle")}</Text><View style={{width:42}}/>
     </View>
     <KeyboardAvoidingView
       style={s.keyboard}
@@ -64,16 +66,16 @@ export default function MosqueReportScreen() {
       keyboardDismissMode={Platform.OS === "ios" ? "interactive" : "on-drag"}
       automaticallyAdjustKeyboardInsets
     >
-      <View style={s.mosque}><Ionicons name="business-outline" size={22} color={colors.goldLight}/><View style={{flex:1,marginLeft:12}}><Text style={s.name}>{mosque?.name??"Mosquée"}</Text><Text style={s.address}>{mosque?.address??""}</Text></View></View>
-      <Text style={s.section}>Quel est le problème ?</Text>
+      <View style={s.mosque}><Ionicons name="business-outline" size={22} color={colors.goldLight}/><View style={{flex:1,marginLeft:12}}><Text style={s.name}>{mosque?.name??t("mosque.headerShort")}</Text><Text style={s.address}>{mosque?.address??""}</Text></View></View>
+      <Text style={s.section}>{t("mosque.reportQuestion")}</Text>
       {REASONS.map(x=><Pressable key={x.value} onPress={()=>setReason(x.value)} style={[s.reason,reason===x.value&&s.selected]}>
-        <Ionicons name={x.icon} size={19} color={colors.goldLight}/><Text style={s.reasonText}>{x.label}</Text><Ionicons name={reason===x.value?"checkmark-circle":"ellipse-outline"} size={20} color={reason===x.value?colors.goldLight:colors.textMuted}/>
+        <Ionicons name={x.icon} size={19} color={colors.goldLight}/><Text style={s.reasonText}>{t(x.labelKey)}</Text><Ionicons name={reason===x.value?"checkmark-circle":"ellipse-outline"} size={20} color={reason===x.value?colors.goldLight:colors.textMuted}/>
       </Pressable>)}
-      <Text style={s.section}>Précisions</Text>
-      <TextInput value={details} onChangeText={setDetails} multiline maxLength={1000} placeholder="Expliquez brièvement…" placeholderTextColor={colors.textMuted} style={s.area}/>
+      <Text style={s.section}>{t("mosque.reportDetails")}</Text>
+      <TextInput value={details} onChangeText={setDetails} multiline maxLength={1000} placeholder={t("mosque.reportPlaceholder")} placeholderTextColor={colors.textMuted} style={s.area}/>
       <Pressable disabled={!reason||sending||!mosque} onPress={()=>void submit()} style={[s.submit,(!reason||sending||!mosque)&&{opacity:.45}]}>
         {sending?<ActivityIndicator color={colors.background}/>:<Ionicons name="send-outline" size={18} color={colors.background}/>}
-        <Text style={s.submitText}>{sending?"Envoi…":"Envoyer le signalement"}</Text>
+        <Text style={s.submitText}>{sending?t("mosque.sending"):t("mosque.reportSend")}</Text>
       </Pressable>
     </ScrollView>
     </KeyboardAvoidingView>

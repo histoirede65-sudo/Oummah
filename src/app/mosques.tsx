@@ -24,7 +24,6 @@ import MapView, { Marker, Polyline, type Region } from 'react-native-maps';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import {
-  clearMainMosque,
   getFavoriteMosques,
   getMainMosque,
   setMosqueFavorite,
@@ -63,10 +62,9 @@ import { styles } from '../components/mosques/mosquesScreenStyles';
 import {
   distanceBetween,
   formatDistance,
-  formatWalkingTime,
+  walkingMinutes,
   getLocationErrorMessage,
   INITIAL_REGION,
-  MOSQUE_HERO_IMAGE,
   MOSQUE_RENDER_BATCH_SIZE,
   namesLookSimilar,
   openMosqueDetails,
@@ -75,6 +73,7 @@ import {
   type DisplayMosque,
   type UserCoordinates,
 } from '../features/mosques/mosquesScreenData';
+import { useI18n } from '../i18n';
 import { colors } from '../theme/colors';
 
 type ExploreMode = 'list' | 'map';
@@ -82,6 +81,7 @@ type ExploreMode = 'list' | 'map';
 type LocationState = 'idle' | 'loading' | 'ready' | 'denied' | 'error';
 
 export default function MosquesScreen() {
+  const { language, t } = useI18n();
   const [mode, setMode] = useState<ExploreMode>('list');
   const [query, setQuery] = useState('');
   const [locationState, setLocationState] = useState<LocationState>('idle');
@@ -120,7 +120,7 @@ export default function MosquesScreen() {
 
   const displayMosques = useMemo<DisplayMosque[]>(() => {
     const userDisplays = userMosques.map((mosque) =>
-      userMosqueToDisplay(mosque, userCoordinates),
+      userMosqueToDisplay(mosque, userCoordinates, language, t),
     );
 
     const mergedMosques: DisplayMosque[] = [
@@ -155,12 +155,12 @@ export default function MosquesScreen() {
         return {
           ...mosque,
           distanceMeters,
-          distanceLabel: formatDistance(distanceMeters),
-          walkingTimeLabel: formatWalkingTime(distanceMeters),
+          distanceLabel: formatDistance(distanceMeters, language),
+          walkingTimeLabel: t('mosques.walkMinutes', { count: walkingMinutes(distanceMeters) }),
         };
       })
       .sort((first, second) => first.distanceMeters - second.distanceMeters);
-  }, [mosques, userMosques, userCoordinates]);
+  }, [language, mosques, t, userMosques, userCoordinates]);
 
   const filteredMosques = useMemo(() => {
     const normalized = query.trim().toLocaleLowerCase('fr');
@@ -316,9 +316,7 @@ export default function MosquesScreen() {
       }
 
       setRoute(null);
-      setRouteError(
-        'Impossible de calculer le trajet dans OUMMAH pour le moment.',
-      );
+      setRouteError(t('mosques.routeError'));
     } finally {
       setRouteLoading(false);
     }
@@ -400,42 +398,10 @@ export default function MosquesScreen() {
         return next;
       });
 
-      Alert.alert(
-        'Favori non enregistré',
-        'Impossible de modifier vos mosquées favorites pour le moment.',
-      );
+      Alert.alert(t('mosques.favoriteErrorTitle'), t('mosques.favoriteErrorMessage'));
     } finally {
       setSavingFavoriteId(null);
     }
-  };
-
-  const removeMainMosque = () => {
-    if (!mainMosque) return;
-
-    Alert.alert(
-      'Retirer ma mosquée',
-      `Voulez-vous retirer ${mainMosque.name} comme votre mosquée principale ?`,
-      [
-        { text: 'Annuler', style: 'cancel' },
-        {
-          text: 'Retirer',
-          style: 'destructive',
-          onPress: () => {
-            void clearMainMosque()
-              .then(() => {
-                setMainMosqueState(null);
-                setMainMosqueNextPrayer(null);
-              })
-              .catch(() => {
-                Alert.alert(
-                  'Suppression impossible',
-                  'Impossible de retirer votre mosquée principale pour le moment.',
-                );
-              });
-          },
-        },
-      ],
-    );
   };
 
   const searchFromCoordinates = async (
@@ -581,9 +547,7 @@ export default function MosquesScreen() {
         setMosques(cache.mosques);
         setUsingCachedResults(true);
         setLocationState('ready');
-        setErrorMessage(
-          'Connexion instable : les derniers résultats enregistrés sont affichés.',
-        );
+        setErrorMessage(t('mosques.unstableConnection'));
         return;
       }
 
@@ -597,11 +561,11 @@ export default function MosquesScreen() {
       }
 
       setMosques([]);
-      setErrorMessage(getLocationErrorMessage(error));
+      setErrorMessage(getLocationErrorMessage(error, t));
       setLocationState('error');
 
       if (!silent) {
-        Alert.alert('Recherche impossible', getLocationErrorMessage(error));
+        Alert.alert(t('mosques.searchFailed'), getLocationErrorMessage(error, t));
       }
     }
   };
@@ -610,10 +574,7 @@ export default function MosquesScreen() {
     try {
       await Linking.openSettings();
     } catch {
-      Alert.alert(
-        'Réglages indisponibles',
-        'Ouvrez les réglages du téléphone puis autorisez la localisation pour OUMMAH.',
-      );
+      Alert.alert(t('mosques.settingsUnavailableTitle'), t('mosques.settingsUnavailableMessage'));
     }
   };
 
@@ -721,10 +682,10 @@ export default function MosquesScreen() {
 
   const locationButtonLabel =
     locationState === 'loading'
-      ? 'Recherche en cours…'
+      ? t('mosques.searching')
       : locationState === 'ready'
-        ? 'Actualiser ma position'
-        : 'Appuyer pour rechercher';
+        ? t('mosques.refreshLocation')
+        : t('mosques.useLocation');
 
   const myMosqueSectionElement = (
     <MyMosqueSection
@@ -733,7 +694,6 @@ export default function MosquesScreen() {
       iqama={mainMosqueIqama}
       nextEvent={mainMosqueNextEvent}
       favorites={favoriteMosques}
-      onRemoveMainMosque={removeMainMosque}
     />
   );
 
@@ -741,7 +701,7 @@ export default function MosquesScreen() {
     <SafeAreaView edges={['top']} style={styles.safeArea}>
       <View style={styles.header}>
         <Pressable
-          accessibilityLabel="Retour"
+          accessibilityLabel={t('common.back')}
           onPress={() => router.back()}
           style={styles.headerButton}
         >
@@ -749,12 +709,12 @@ export default function MosquesScreen() {
         </Pressable>
 
         <View style={styles.headerCopy}>
-          <Text style={styles.eyebrow}>AUTOUR DE VOUS</Text>
-          <Text style={styles.title}>Mosquées</Text>
+          <Text style={styles.eyebrow}>{t('mosques.eyebrow')}</Text>
+          <Text style={styles.title}>{t('mosques.title')}</Text>
         </View>
 
         <Pressable
-          accessibilityLabel="Mes mosquées favorites"
+          accessibilityLabel={t('mosques.favoritesAccessibility')}
           onPress={() => router.push('/mosque/favorites' as Href)}
           style={styles.headerButton}
         >
@@ -772,116 +732,76 @@ export default function MosquesScreen() {
       >
         {mainMosque ? myMosqueSectionElement : null}
 
-        <View style={styles.heroCard}>
-          <Image
-            source={MOSQUE_HERO_IMAGE}
-            resizeMode="cover"
-            style={styles.heroImage}
-          />
-          <LinearGradient
-            colors={[
-              'rgba(7,5,16,0.03)',
-              'rgba(8,5,18,0.16)',
-              'rgba(8,5,18,0.74)',
-            ]}
-            locations={[0, 0.44, 1]}
-            style={StyleSheet.absoluteFill}
-          />
+        <View style={styles.searchRow}>
+          <View style={styles.searchWrap}>
+            <Ionicons name="search-outline" size={21} color={colors.textMuted} />
 
-          <View style={styles.heroPhotoLabel}>
-            <Ionicons
-              name="location-outline"
-              size={15}
-              color={colors.goldLight}
+            <TextInput
+              accessibilityLabel={t('mosques.searchPlaceholder')}
+              value={query}
+              onChangeText={setQuery}
+              placeholder={t('mosques.searchPlaceholder')}
+              placeholderTextColor={colors.textMuted}
+              returnKeyType="search"
+              style={styles.searchInput}
             />
-            <Text style={styles.heroPhotoLabelText}>
-              MOSQUÉES AUTOUR DE VOUS
-            </Text>
+
+            {query ? (
+              <Pressable
+                accessibilityLabel={t('mosques.clearSearch')}
+                hitSlop={8}
+                onPress={() => setQuery('')}
+              >
+                <Ionicons
+                  name="close-circle"
+                  size={20}
+                  color={colors.textMuted}
+                />
+              </Pressable>
+            ) : null}
           </View>
 
-          <LinearGradient
-            colors={[
-              'rgba(82,57,94,0.54)',
-              'rgba(38,24,51,0.67)',
-              'rgba(13,8,24,0.79)',
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel={locationButtonLabel}
+            disabled={locationState === 'loading'}
+            onPress={() => void locateMosques(false)}
+            style={({ pressed }) => [
+              styles.locateButton,
+              pressed && styles.pressed,
+              locationState === 'loading' && styles.disabledButton,
             ]}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-            style={styles.heroGlassPanel}
           >
-            <View pointerEvents="none" style={styles.heroGlassOrbTop} />
-            <View pointerEvents="none" style={styles.heroGlassOrbBottom} />
-            <LinearGradient
-              pointerEvents="none"
-              colors={[
-                'rgba(255,255,255,0.18)',
-                'rgba(255,255,255,0.035)',
-                'transparent',
-              ]}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 0.72, y: 0.9 }}
-              style={styles.heroGlassSheen}
-            />
-            <View pointerEvents="none" style={styles.heroGlassTopLine} />
-
-            <View style={styles.heroHeadingRow}>
-              <View style={styles.heroLocationIcon}>
-                <Ionicons
-                  name="location-outline"
-                  size={20}
-                  color={colors.goldLight}
-                />
-              </View>
-
-              <Text style={styles.heroTitle}>
-                Trouvez une mosquée près de vous
-              </Text>
-            </View>
-
-            <Text style={styles.heroText}>
-              OUMMAH utilise votre position pour afficher les mosquées proches
-              et calculer leur distance.
-            </Text>
-
-            <Pressable
-              accessibilityRole="button"
-              disabled={locationState === 'loading'}
-              onPress={() => void locateMosques(false)}
-              style={({ pressed }) => [
-                pressed && styles.pressed,
-                locationState === 'loading' && styles.disabledButton,
-              ]}
-            >
-              <LinearGradient
-                colors={['#F3D27A', '#D9A846']}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 1 }}
-                style={styles.locationButton}
-              >
-                {locationState === 'loading' ? (
-                  <ActivityIndicator size="small" color={colors.background} />
-                ) : (
-                  <Ionicons
-                    name="navigate"
-                    size={19}
-                    color={colors.background}
-                  />
-                )}
-
-                <Text style={styles.locationButtonText}>
-                  {locationButtonLabel}
-                </Text>
-              </LinearGradient>
-            </Pressable>
-
-            <View style={styles.privacyPill}>
-              <Ionicons name="lock-closed" size={11} color="#C9BFCE" />
-              <Text style={styles.privacyText}>
-                Votre position n’est ni publiée ni enregistrée.
-              </Text>
-            </View>
-          </LinearGradient>
+            {locationState === 'loading' ? (
+              <ActivityIndicator size="small" color={colors.background} />
+            ) : (
+              <Ionicons name="navigate" size={20} color={colors.background} />
+            )}
+          </Pressable>
         </View>
+
+        <View style={styles.privacyRow}>
+          <Ionicons name="lock-closed" size={11} color={colors.textMuted} />
+          <Text style={styles.privacyText}>{t('mosques.privacy')}</Text>
+        </View>
+
+        {locationState !== 'ready' && locationState !== 'loading' && !initializing && displayMosques.length === 0 ? (
+          <View style={styles.locatePrompt}>
+            <View style={styles.locatePromptIcon}>
+              <Ionicons name="location-outline" size={22} color={colors.goldLight} />
+            </View>
+            <View style={styles.locatePromptCopy}>
+              <Text style={styles.locatePromptTitle}>{t('mosques.promptTitle')}</Text>
+              <Text style={styles.locatePromptText}>{t('mosques.promptText')}</Text>
+            </View>
+            <Pressable
+              onPress={() => void locateMosques(false)}
+              style={({ pressed }) => [styles.locatePromptButton, pressed && styles.pressed]}
+            >
+              <Text style={styles.locatePromptButtonText}>{t('mosques.useLocation')}</Text>
+            </Pressable>
+          </View>
+        ) : null}
 
         {locationState === 'denied' ? (
           <View style={styles.messageCard}>
@@ -892,18 +812,15 @@ export default function MosquesScreen() {
             />
 
             <View style={styles.messageCopy}>
-              <Text style={styles.messageTitle}>Localisation refusée</Text>
-              <Text style={styles.messageText}>
-                Autorisez la localisation dans les réglages pour découvrir les
-                mosquées autour de vous.
-              </Text>
+              <Text style={styles.messageTitle}>{t('mosques.deniedTitle')}</Text>
+              <Text style={styles.messageText}>{t('mosques.deniedText')}</Text>
             </View>
 
             <Pressable
               onPress={() => void openAppSettings()}
               style={styles.settingsButton}
             >
-              <Text style={styles.settingsButtonText}>Réglages</Text>
+              <Text style={styles.settingsButtonText}>{t('mosques.settings')}</Text>
             </Pressable>
           </View>
         ) : null}
@@ -932,57 +849,6 @@ export default function MosquesScreen() {
 
         {!mainMosque ? myMosqueSectionElement : null}
 
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel="Ajouter une mosquée"
-          onPress={() => router.push('/mosque/add' as Href)}
-          style={({ pressed }) => [
-            styles.addMosqueButton,
-            pressed && styles.pressed,
-          ]}
-        >
-          <View style={styles.addMosqueIcon}>
-            <Ionicons name="add" size={21} color={colors.background} />
-          </View>
-          <View style={styles.addMosqueCopy}>
-            <Text style={styles.addMosqueTitle}>Tu ne trouves pas ta mosquée ?</Text>
-            <Text style={styles.addMosqueSubtitle}>
-              Ajoute-la à la carte
-            </Text>
-          </View>
-          <Ionicons
-            name="chevron-forward"
-            size={19}
-            color={colors.goldLight}
-          />
-        </Pressable>
-
-        <View style={styles.searchWrap}>
-          <Ionicons name="search-outline" size={21} color={colors.textMuted} />
-
-          <TextInput
-            value={query}
-            onChangeText={setQuery}
-            placeholder="Rechercher une mosquée"
-            placeholderTextColor={colors.textMuted}
-            returnKeyType="search"
-            style={styles.searchInput}
-          />
-
-          {query ? (
-            <Pressable
-              accessibilityLabel="Effacer la recherche"
-              onPress={() => setQuery('')}
-            >
-              <Ionicons
-                name="close-circle"
-                size={20}
-                color={colors.textMuted}
-              />
-            </Pressable>
-          ) : null}
-        </View>
-
         <View
           onLayout={(event: LayoutChangeEvent) => {
             resultsSectionY.current = event.nativeEvent.layout.y;
@@ -991,27 +857,24 @@ export default function MosquesScreen() {
         >
           <View style={styles.sectionHeaderCopy}>
             <Text style={styles.sectionTitle}>
-              {locationState === 'ready' ? 'Mosquées proches' : 'Explorer'}
+              {locationState === 'ready' ? t('mosques.nearbyTitle') : t('mosques.exploreTitle')}
             </Text>
 
             <Text style={styles.sectionSubtitle}>
-              {locationState === 'ready'
-                ? `${mosques.length} résultat${mosques.length > 1 ? 's' : ''} autour de vous`
+              {locationState === 'ready' || filteredMosques.length > 0
+                ? t(filteredMosques.length > 1 ? 'mosques.resultsMany' : 'mosques.resultsOne', {
+                    count: filteredMosques.length,
+                  })
                 : initializing
-                  ? 'Préparation de la recherche…'
-                  : 'Appuyez sur le bouton pour chercher les mosquées proches'}
+                  ? t('mosques.preparing')
+                  : t('mosques.pressToSearch')}
+              {usingCachedResults ? ` · ${t('mosques.cachedResults')}` : ''}
             </Text>
-
-            {usingCachedResults ? (
-              <Text style={styles.cacheStatus}>
-                Derniers résultats enregistrés
-              </Text>
-            ) : null}
           </View>
 
           <View style={styles.modeSwitch}>
             <Pressable
-              accessibilityLabel="Afficher la liste"
+              accessibilityLabel={t('mosques.showList')}
               onPress={() => selectMode('list')}
               style={[
                 styles.modeButton,
@@ -1030,12 +893,12 @@ export default function MosquesScreen() {
                   mode === 'list' && styles.modeButtonTextActive,
                 ]}
               >
-                Liste
+                {t('mosques.list')}
               </Text>
             </Pressable>
 
             <Pressable
-              accessibilityLabel="Afficher la carte"
+              accessibilityLabel={t('mosques.showMap')}
               onPress={() => selectMode('map')}
               style={[
                 styles.modeButton,
@@ -1054,7 +917,7 @@ export default function MosquesScreen() {
                   mode === 'map' && styles.modeButtonTextActive,
                 ]}
               >
-                Carte
+                {t('mosques.map')}
               </Text>
             </Pressable>
           </View>
@@ -1075,7 +938,7 @@ export default function MosquesScreen() {
               {route ? (
                 <Polyline
                   coordinates={route.coordinates}
-                  strokeColor="#7b4b92"
+                  strokeColor={colors.goldLight}
                   strokeWidth={6}
                   lineCap="round"
                   lineJoin="round"
@@ -1092,7 +955,7 @@ export default function MosquesScreen() {
                   title={mosque.name}
                   description={`${mosque.distanceLabel} • ${mosque.address}`}
                   pinColor={
-                    selectedMosque?.id === mosque.id ? '#d9b45f' : '#8a5aa4'
+                    selectedMosque?.id === mosque.id ? '#E3B55A' : '#8C6A2E'
                   }
                   tracksViewChanges={false}
                   onPress={() => selectMosqueOnMap(mosque)}
@@ -1111,22 +974,15 @@ export default function MosquesScreen() {
                   />
                 </View>
 
-                <Text style={styles.mapOverlayTitle}>
-                  Activez votre position
-                </Text>
+                <Text style={styles.mapOverlayTitle}>{t('mosques.mapOverlayTitle')}</Text>
 
-                <Text style={styles.mapOverlayText}>
-                  La carte affichera votre position et les mosquées autour de
-                  vous.
-                </Text>
+                <Text style={styles.mapOverlayText}>{t('mosques.mapOverlayText')}</Text>
 
                 <Pressable
                   onPress={() => void locateMosques(false)}
                   style={styles.mapOverlayButton}
                 >
-                  <Text style={styles.mapOverlayButtonText}>
-                    Utiliser ma position
-                  </Text>
+                  <Text style={styles.mapOverlayButtonText}>{t('mosques.useLocation')}</Text>
                 </Pressable>
               </View>
             ) : null}
@@ -1134,7 +990,7 @@ export default function MosquesScreen() {
             {selectedMosque ? (
               <View style={styles.selectedMosqueCard}>
                 <Pressable
-                  accessibilityLabel="Fermer la sélection"
+                  accessibilityLabel={t('mosques.closeSelection')}
                   onPress={clearSelectedMosque}
                   style={styles.selectedMosqueClose}
                 >
@@ -1189,7 +1045,7 @@ export default function MosquesScreen() {
                     )}
 
                     <Text style={styles.routeButtonText}>
-                      {route ? 'Recalculer' : 'Afficher le trajet'}
+                      {route ? t('mosques.recalculate') : t('mosques.showRoute')}
                     </Text>
                   </Pressable>
 
@@ -1200,7 +1056,7 @@ export default function MosquesScreen() {
                       pressed && styles.pressed,
                     ]}
                   >
-                    <Text style={styles.detailButtonText}>Voir la fiche</Text>
+                    <Text style={styles.detailButtonText}>{t('mosques.openSheet')}</Text>
                   </Pressable>
                 </View>
               </View>
@@ -1214,7 +1070,7 @@ export default function MosquesScreen() {
                 ]}
               >
                 <Pressable
-                  accessibilityLabel="Centrer sur ma position"
+                  accessibilityLabel={t('mosques.centerOnMe')}
                   onPress={centerMapOnUser}
                   style={styles.mapControlButton}
                 >
@@ -1222,7 +1078,7 @@ export default function MosquesScreen() {
                 </Pressable>
 
                 <Pressable
-                  accessibilityLabel="Afficher toutes les mosquées"
+                  accessibilityLabel={t('mosques.showAll')}
                   onPress={fitAllMarkers}
                   style={styles.mapControlButton}
                 >
@@ -1238,9 +1094,7 @@ export default function MosquesScreen() {
             {locationState === 'loading' ? (
               <View style={styles.mapLoading}>
                 <ActivityIndicator size="small" color={colors.goldLight} />
-                <Text style={styles.mapLoadingText}>
-                  Recherche des mosquées…
-                </Text>
+                <Text style={styles.mapLoadingText}>{t('mosques.searchingMosques')}</Text>
               </View>
             ) : null}
           </View>
@@ -1248,11 +1102,9 @@ export default function MosquesScreen() {
           <View style={styles.emptyCard}>
             <ActivityIndicator size="large" color={colors.goldLight} />
 
-            <Text style={styles.emptyTitle}>Recherche autour de vous</Text>
+            <Text style={styles.emptyTitle}>{t('mosques.searchingTitle')}</Text>
 
-            <Text style={styles.emptyText}>
-              La première recherche peut prendre quelques secondes.
-            </Text>
+            <Text style={styles.emptyText}>{t('mosques.searchingText')}</Text>
           </View>
         ) : locationState === 'ready' && filteredMosques.length === 0 ? (
           <View style={styles.emptyCard}>
@@ -1262,11 +1114,9 @@ export default function MosquesScreen() {
               color={colors.goldLight}
             />
 
-            <Text style={styles.emptyTitle}>Aucune mosquée trouvée</Text>
+            <Text style={styles.emptyTitle}>{t('mosques.noneTitle')}</Text>
 
-            <Text style={styles.emptyText}>
-              Effacez la recherche ou actualisez votre position.
-            </Text>
+            <Text style={styles.emptyText}>{t('mosques.noneText')}</Text>
           </View>
         ) : filteredMosques.length > 0 ? (
           <View style={styles.list}>
@@ -1293,6 +1143,7 @@ export default function MosquesScreen() {
                     colors={['transparent', 'rgba(9,7,19,0.72)']}
                     style={StyleSheet.absoluteFill}
                   />
+                  <Text style={styles.illustrationLabel}>{t('mosques.illustration')}</Text>
                 </View>
 
                 <View style={styles.mosqueCopy}>
@@ -1316,30 +1167,30 @@ export default function MosquesScreen() {
                     </Text>
                   </View>
 
-                  <View style={styles.tags}>
-                    <View style={[styles.tag, styles.availableTag]}>
-                      <View style={styles.availableDot} />
-                      <Text style={styles.availableTagText}>
-                        {mosque.source === 'user'
-                          ? 'Ajoutée sur cet appareil'
-                          : 'Fiche disponible'}
-                      </Text>
-                    </View>
+                  {mosque.source === 'user' || mosque.openingHours ? (
+                    <View style={styles.tags}>
+                      {mosque.source === 'user' ? (
+                        <View style={[styles.tag, styles.availableTag]}>
+                          <View style={styles.availableDot} />
+                          <Text style={styles.availableTagText}>{t('mosques.communityAdded')}</Text>
+                        </View>
+                      ) : null}
 
-                    {mosque.openingHours ? (
-                      <View style={styles.tag}>
-                        <Text style={styles.tagText}>Horaires renseignés</Text>
-                      </View>
-                    ) : null}
-                  </View>
+                      {mosque.openingHours ? (
+                        <View style={styles.tag}>
+                          <Text style={styles.tagText}>{t('mosques.hoursProvided')}</Text>
+                        </View>
+                      ) : null}
+                    </View>
+                  ) : null}
                 </View>
 
                 <View style={styles.mosqueActions}>
                   <Pressable
                     accessibilityLabel={
                       favoriteMosqueIds.has(mosque.id)
-                        ? 'Retirer des favoris'
-                        : 'Ajouter aux favoris'
+                        ? t('mosques.removeFavorite')
+                        : t('mosques.addFavorite')
                     }
                     disabled={savingFavoriteId !== null}
                     onPress={(event) =>
@@ -1382,15 +1233,32 @@ export default function MosquesScreen() {
               color={colors.goldLight}
             />
 
-            <Text style={styles.emptyTitle}>
-              Découvrez les mosquées proches
-            </Text>
+            <Text style={styles.emptyTitle}>{t('mosques.discoverTitle')}</Text>
 
-            <Text style={styles.emptyText}>
-              Appuyez sur « Utiliser ma position » pour commencer.
-            </Text>
+            <Text style={styles.emptyText}>{t('mosques.discoverText')}</Text>
           </View>
         )}
+        <Pressable
+          accessibilityRole="button"
+          onPress={() => router.push('/mosque/add' as Href)}
+          style={({ pressed }) => [
+            styles.addMosqueButton,
+            pressed && styles.pressed,
+          ]}
+        >
+          <View style={styles.addMosqueIcon}>
+            <Ionicons name="add" size={21} color={colors.background} />
+          </View>
+          <View style={styles.addMosqueCopy}>
+            <Text style={styles.addMosqueTitle}>{t('mosques.addTitle')}</Text>
+            <Text style={styles.addMosqueSubtitle}>{t('mosques.addSubtitle')}</Text>
+          </View>
+          <Ionicons
+            name="chevron-forward"
+            size={19}
+            color={colors.goldLight}
+          />
+        </Pressable>
       </ScrollView>
     </SafeAreaView>
   );

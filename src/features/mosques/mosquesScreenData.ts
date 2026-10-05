@@ -1,6 +1,7 @@
 import type { Href } from 'expo-router';
 import { router } from 'expo-router';
 import type { Region } from 'react-native-maps';
+import type { LanguageCode, TranslationKey } from '../../i18n';
 import type { MosquePost } from './data/mosquePosts';
 import type { StoredMosque } from './data/mosquePreferences';
 import type { NearbyMosque } from './data/nearbyMosques';
@@ -8,12 +9,13 @@ import type { UserMosque } from './data/userMosques';
 
 /** Constants and helpers of the Mosquées screen (src/app/mosques.tsx). */
 
+type Translate = (key: TranslationKey, values?: Record<string, string | number>) => string;
+
 export type UserCoordinates = {
   latitude: number;
   longitude: number;
 };
 
-export const MOSQUE_HERO_IMAGE = require('../../assets/images/mosques/mosque-hero-premium.jpg');
 export const MOSQUE_RENDER_BATCH_SIZE = 24;
 export const SAME_ZONE_MAX_DISTANCE_METERS = 3_000;
 
@@ -43,13 +45,15 @@ export function distanceBetween(
   return 6_371_000 * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 }
 
-export function formatDistance(distanceMeters: number) {
+export function formatDistance(distanceMeters: number, language: LanguageCode = 'fr') {
   if (distanceMeters < 1_000) return `${Math.max(1, Math.round(distanceMeters))} m`;
-  return `${(distanceMeters / 1_000).toFixed(distanceMeters < 10_000 ? 1 : 0)} km`;
+  const kilometers = (distanceMeters / 1_000).toFixed(distanceMeters < 10_000 ? 1 : 0);
+  return `${language === 'fr' ? kilometers.replace('.', ',') : kilometers} km`;
 }
 
-export function formatWalkingTime(distanceMeters: number) {
-  return `${Math.max(1, Math.round(distanceMeters / 80))} min à pied`;
+/** Minutes de marche, à 80 m par minute. */
+export function walkingMinutes(distanceMeters: number) {
+  return Math.max(1, Math.round(distanceMeters / 80));
 }
 
 export function normalizeMosqueName(value: string) {
@@ -70,6 +74,8 @@ export function namesLookSimilar(first: string, second: string) {
 export function userMosqueToDisplay(
   mosque: UserMosque,
   userCoordinates: UserCoordinates | null,
+  language: LanguageCode,
+  t: Translate,
 ): DisplayMosque {
   const distanceMeters = userCoordinates
     ? distanceBetween(userCoordinates, {
@@ -89,12 +95,12 @@ export function userMosqueToDisplay(
     distanceMeters: distanceMeters ?? 0,
     distanceLabel:
       distanceMeters === null
-        ? 'Distance indisponible'
-        : formatDistance(distanceMeters),
+        ? t('mosques.distanceUnavailable')
+        : formatDistance(distanceMeters, language),
     walkingTimeLabel:
       distanceMeters === null
         ? '—'
-        : formatWalkingTime(distanceMeters),
+        : t('mosques.walkMinutes', { count: walkingMinutes(distanceMeters) }),
     phone: mosque.phone,
     email: mosque.email,
     website: mosque.website,
@@ -120,12 +126,12 @@ export const INITIAL_REGION: Region = {
   longitudeDelta: 10,
 };
 
-export function getLocationErrorMessage(error: unknown) {
+export function getLocationErrorMessage(error: unknown, t: Translate) {
   if (error instanceof Error && error.message.startsWith('OVERPASS_')) {
-    return 'Le service de recherche des mosquées est momentanément indisponible.';
+    return t('mosques.serviceUnavailable');
   }
 
-  return 'Impossible de récupérer les mosquées autour de vous pour le moment.';
+  return t('mosques.searchError');
 }
 
 export function openMosqueDetails(mosque: DisplayMosque) {
@@ -182,15 +188,19 @@ export function openStoredMosque(mosque: StoredMosque) {
   } as Href);
 }
 
-export function formatEventMoment(post: MosquePost) {
+export function formatEventMoment(post: MosquePost, language: LanguageCode, t: Translate) {
   if (!post.startsAt) return '';
+  const locale = language === 'fr' ? 'fr-FR' : 'en-GB';
   const start = new Date(post.startsAt);
   const today = new Date();
   const tomorrow = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1);
   const day = start.toDateString() === today.toDateString()
-    ? 'aujourd’hui'
+    ? t('mosques.today')
     : start.toDateString() === tomorrow.toDateString()
-      ? 'demain'
-      : start.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' });
-  return `${day} à ${start.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}`;
+      ? t('mosques.tomorrow')
+      : start.toLocaleDateString(locale, { weekday: 'long', day: 'numeric', month: 'long' });
+  return t('mosques.eventMoment', {
+    day,
+    time: start.toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' }),
+  });
 }

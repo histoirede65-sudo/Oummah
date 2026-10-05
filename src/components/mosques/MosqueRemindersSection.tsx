@@ -6,6 +6,7 @@ import {
   type MosqueReminderSettings,
   type ReminderPrayer,
 } from '../../features/mosques/mosqueReminders';
+import { useI18n } from '../../i18n';
 import { colors } from '../../theme/colors';
 import { typography } from '../../theme/typography';
 
@@ -15,12 +16,13 @@ const PRAYERS: readonly { key: ReminderPrayer; label: string }[] = [
   { key: 'asr', label: 'Asr' },
   { key: 'maghrib', label: 'Maghrib' },
   { key: 'isha', label: 'Isha' },
-  { key: 'jumuah', label: 'Joumou’a' },
+  { key: 'jumuah', label: '' },
 ];
 
 type Props = { mosque: MosqueReminderSettings['mosque']; hasJumuahTime: boolean };
 
 export default function MosqueRemindersSection({ mosque, hasJumuahTime }: Props) {
+  const { t } = useI18n();
   const [events, setEvents] = useState(false);
   const [leaveNow, setLeaveNow] = useState<ReminderPrayer[]>([]);
   const [saving, setSaving] = useState(false);
@@ -47,11 +49,12 @@ export default function MosqueRemindersSection({ mosque, hasJumuahTime }: Props)
         setEvents(previous.events);
         setLeaveNow(previous.leaveNow);
         Alert.alert(
-          result.reason === 'location' ? 'Position nécessaire' : 'Notifications désactivées',
-          result.reason === 'location'
-            ? 'Autorisez la localisation pour calculer le moment de partir vers la mosquée.'
-            : 'Autorisez les notifications d’OUMMAH dans les réglages du téléphone.',
-          [{ text: 'Plus tard', style: 'cancel' }, { text: 'Réglages', onPress: () => void Linking.openSettings() }],
+          result.reason === 'location' ? t('mosque.locationNeededTitle') : t('mosque.notificationsOffTitle'),
+          result.reason === 'location' ? t('mosque.locationNeededText') : t('mosque.notificationsOffText'),
+          [
+            { text: t('mosque.later'), style: 'cancel' },
+            { text: t('mosques.settings'), onPress: () => void Linking.openSettings() },
+          ],
         );
       }
     } finally {
@@ -66,15 +69,12 @@ export default function MosqueRemindersSection({ mosque, hasJumuahTime }: Props)
 
   return (
     <View style={styles.section}>
-      <Text style={styles.sectionTitle}>Notifications</Text>
+      <Text style={styles.sectionTitle}>{t('mosque.notifications')}</Text>
       <View style={styles.card}>
         <View style={styles.row}>
           <View style={styles.copy}>
-            <Text style={styles.title}>Annonces et événements</Text>
-            <Text style={styles.text}>
-              Une notification dès qu’une annonce ou un événement est publié (compte connecté), et un rappel
-              2 heures avant chaque événement.
-            </Text>
+            <Text style={styles.title}>{t('mosque.postsTitle')}</Text>
+            <Text style={styles.text}>{t('mosque.eventsNotifText')}</Text>
           </View>
           <Switch
             value={events}
@@ -87,11 +87,8 @@ export default function MosqueRemindersSection({ mosque, hasJumuahTime }: Props)
 
         <View style={styles.divider} />
 
-        <Text style={styles.title}>Pars maintenant</Text>
-        <Text style={styles.text}>
-          Une notification au moment de partir pour arriver 5 minutes avant l’iqama, selon le temps de trajet
-          depuis votre position.
-        </Text>
+        <Text style={styles.title}>{t('mosque.leaveNowTitle')}</Text>
+        <Text style={styles.text}>{t('mosque.leaveNowText')}</Text>
         <View style={styles.chips}>
           {PRAYERS.map(({ key, label }) => {
             const active = leaveNow.includes(key);
@@ -102,15 +99,15 @@ export default function MosqueRemindersSection({ mosque, hasJumuahTime }: Props)
                 onPress={() => togglePrayer(key)}
                 style={[styles.chip, active && styles.chipActive]}
               >
-                <Text style={[styles.chipText, active && styles.chipTextActive]}>{label}</Text>
+                <Text style={[styles.chipText, active && styles.chipTextActive]}>
+                  {key === 'jumuah' ? t('mosque.jumuah') : label}
+                </Text>
               </Pressable>
             );
           })}
         </View>
         {leaveNow.includes('jumuah') && !hasJumuahTime ? (
-          <Text style={styles.warning}>
-            L’heure de Joumou’a de cette mosquée n’est pas encore connue : proposez-la dans les horaires.
-          </Text>
+          <Text style={styles.warning}>{t('mosque.jumuahUnknown')}</Text>
         ) : null}
       </View>
     </View>

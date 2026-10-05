@@ -15,6 +15,7 @@ import {
     type MosquePrayerTime,
 } from '../features/mosques/data/mosquePrayerTimes';
 import { applyApprovedMosquePrayerTimes, getApprovedMosquePrayerTimes } from '../features/mosques/data/mosquePrayerUpdates';
+import { useI18n } from '../i18n';
 import { colors } from '../theme/colors';
 import { typography } from '../theme/typography';
 
@@ -72,6 +73,8 @@ function MosquePrayerCountdown({
   longitude,
   mosqueId,
 }: MosquePrayerCountdownProps) {
+  const { t } = useI18n();
+  const [method, setMethod] = useState<{ fajr: number; isha: number; fromMosque: boolean } | null>(null);
   const [schedule, setSchedule] =
     useState<MosquePrayerSchedule | null>(null);
   const [loading, setLoading] = useState(true);
@@ -95,6 +98,11 @@ function MosquePrayerCountdown({
         const approved = mosqueId ? await getApprovedMosquePrayerTimes(mosqueId).catch(() => null) : null;
 
         if (!signal.aborted) {
+          setMethod({
+            fajr: settings.fajrAngle,
+            isha: settings.ishaAngle,
+            fromMosque: settings.scheduleSource === 'mosque' && Boolean(approved),
+          });
           setSchedule(
             settings.scheduleSource === 'mosque'
               ? applyApprovedMosquePrayerTimes(result, approved)
@@ -110,9 +118,7 @@ function MosquePrayerCountdown({
         }
 
         if (!signal.aborted) {
-          setErrorMessage(
-            'Les horaires de prière sont momentanément indisponibles.',
-          );
+          setErrorMessage(t('mosque.timesUnavailableText'));
         }
       } finally {
         if (!signal.aborted) {
@@ -120,7 +126,7 @@ function MosquePrayerCountdown({
         }
       }
     },
-    [latitude, longitude, mosqueId],
+    [latitude, longitude, mosqueId, t],
   );
 
   useEffect(() => {
@@ -163,12 +169,8 @@ function MosquePrayerCountdown({
           color={colors.goldLight}
         />
         <View style={styles.loadingCopy}>
-          <Text style={styles.loadingTitle}>
-            Horaires de prière
-          </Text>
-          <Text style={styles.loadingText}>
-            Calcul en cours pour cette mosquée…
-          </Text>
+          <Text style={styles.loadingTitle}>{t('mosque.prayerTimes')}</Text>
+          <Text style={styles.loadingText}>{t('mosque.calculating')}</Text>
         </View>
       </View>
     );
@@ -184,16 +186,14 @@ function MosquePrayerCountdown({
         />
 
         <View style={styles.errorCopy}>
-          <Text style={styles.errorTitle}>
-            Horaires indisponibles
-          </Text>
+          <Text style={styles.errorTitle}>{t('mosque.timesUnavailableTitle')}</Text>
           <Text style={styles.errorText}>
             {errorMessage}
           </Text>
         </View>
 
         <Pressable
-          accessibilityLabel="Réessayer le chargement des horaires"
+          accessibilityLabel={t('mosque.retryTimes')}
           onPress={() =>
             setRefreshKey((value) => value + 1)
           }
@@ -217,11 +217,9 @@ function MosquePrayerCountdown({
       <View style={styles.sectionHeader}>
         <View>
           <Text style={styles.sectionEyebrow}>
-            HORAIRES CALCULÉS
+            {method?.fromMosque ? t('mosque.timesFromMosqueEyebrow') : t('mosque.timesCalculatedEyebrow')}
           </Text>
-          <Text style={styles.sectionTitle}>
-            Prières du jour
-          </Text>
+          <Text style={styles.sectionTitle}>{t('mosque.todayPrayers')}</Text>
         </View>
 
         {schedule.fromCache ? (
@@ -231,9 +229,7 @@ function MosquePrayerCountdown({
               size={12}
               color={colors.goldLight}
             />
-            <Text style={styles.cacheBadgeText}>
-              Enregistrés
-            </Text>
+            <Text style={styles.cacheBadgeText}>{t('mosque.saved')}</Text>
           </View>
         ) : null}
       </View>
@@ -250,9 +246,7 @@ function MosquePrayerCountdown({
         </View>
 
         <View style={styles.nextPrayerCopy}>
-          <Text style={styles.nextPrayerEyebrow}>
-            PROCHAINE PRIÈRE
-          </Text>
+          <Text style={styles.nextPrayerEyebrow}>{t('mosque.nextPrayerEyebrow')}</Text>
           <Text style={styles.nextPrayerName}>
             {nextPrayer?.label ?? 'Fajr'}
           </Text>
@@ -266,47 +260,9 @@ function MosquePrayerCountdown({
             {nextPrayer?.time ?? '--:--'}
           </Text>
           <Text style={styles.countdown}>
-            {remainingTime || 'Actualisation…'}
+            {remainingTime || t('mosque.refreshing')}
           </Text>
         </View>
-      </View>
-
-      <View style={styles.prayerGrid}>
-        {schedule.prayers.map((prayer) => {
-          const active =
-            prayer.timestamp === nextPrayer?.timestamp;
-
-          return (
-            <View
-              key={prayer.key}
-              style={[
-                styles.prayerItem,
-                active && styles.prayerItemActive,
-              ]}
-            >
-              <Text
-                style={[
-                  styles.prayerLabel,
-                  active && styles.prayerLabelActive,
-                ]}
-              >
-                {prayer.label}
-              </Text>
-              <Text
-                style={[
-                  styles.prayerTime,
-                  active && styles.prayerTimeActive,
-                ]}
-              >
-                {prayer.time}
-              </Text>
-
-              {active ? (
-                <View style={styles.activeDot} />
-              ) : null}
-            </View>
-          );
-        })}
       </View>
 
       <View style={styles.methodNotice}>
@@ -316,9 +272,9 @@ function MosquePrayerCountdown({
           color={colors.goldLight}
         />
         <Text style={styles.methodText}>
-          Méthode France/UOIF (12°). Les horaires calculés
-          peuvent différer de quelques minutes du calendrier
-          affiché par la mosquée.
+          {method?.fromMosque
+            ? t('mosque.methodFromMosque')
+            : t('mosque.methodCalculated', { fajr: method?.fajr ?? 15, isha: method?.isha ?? 15 })}
         </Text>
       </View>
     </View>
@@ -444,7 +400,7 @@ const styles = StyleSheet.create({
     width: 170,
     height: 170,
     borderRadius: 85,
-    backgroundColor: 'rgba(126,72,148,0.28)',
+    backgroundColor: 'rgba(227,181,90,0.12)',
   },
   nextPrayerIcon: {
     width: 51,
@@ -487,63 +443,14 @@ const styles = StyleSheet.create({
     color: colors.goldLight,
     fontFamily: typography.serifMedium,
     fontSize: 25,
+    fontVariant: ['lining-nums', 'tabular-nums'],
   },
   countdown: {
     marginTop: 4,
     color: colors.textSecondary,
     fontFamily: typography.sans,
     fontSize: 10.5,
-    fontVariant: ['tabular-nums'],
-  },
-  prayerGrid: {
-    marginTop: 9,
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 8,
-  },
-  prayerItem: {
-    position: 'relative',
-    overflow: 'hidden',
-    width: '31%',
-    minHeight: 69,
-    paddingHorizontal: 8,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: 16,
-    borderWidth: 1,
-    borderColor: colors.borderSoft,
-    backgroundColor: colors.backgroundSecondary,
-  },
-  prayerItemActive: {
-    borderColor: colors.goldLight,
-    backgroundColor: 'rgba(224,188,112,0.08)',
-  },
-  prayerLabel: {
-    color: colors.textMuted,
-    fontFamily: typography.sans,
-    fontSize: 10.5,
-  },
-  prayerLabelActive: {
-    color: colors.goldLight,
-    fontWeight: '700',
-  },
-  prayerTime: {
-    marginTop: 5,
-    color: colors.text,
-    fontFamily: typography.serifMedium,
-    fontSize: 17,
-    fontVariant: ['tabular-nums'],
-  },
-  prayerTimeActive: {
-    color: colors.goldLight,
-  },
-  activeDot: {
-    position: 'absolute',
-    bottom: 6,
-    width: 4,
-    height: 4,
-    borderRadius: 2,
-    backgroundColor: colors.goldLight,
+    fontVariant: ['lining-nums', 'tabular-nums'],
   },
   methodNotice: {
     marginTop: 9,

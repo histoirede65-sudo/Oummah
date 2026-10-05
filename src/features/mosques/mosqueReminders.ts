@@ -2,6 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Location from 'expo-location';
 import * as Notifications from 'expo-notifications';
 import { Platform } from 'react-native';
+import { getActiveLanguage, translate } from '../../i18n';
 import { getValidSession } from '../auth/SupabaseAuthService';
 import { resolveMosqueId } from './data/mosqueIdentity';
 import { getMosquePosts } from './data/mosquePosts';
@@ -40,9 +41,14 @@ const ARRIVAL_MARGIN_MIN = 5;
 const MAX_NOTIFICATIONS = 40;
 const IOS_MAX_NOTIFICATIONS = 6;
 
-const PRAYER_LABELS: Record<ReminderPrayer, string> = {
-  fajr: 'Fajr', dhuhr: 'Dhuhr', asr: 'Asr', maghrib: 'Maghrib', isha: 'Isha', jumuah: 'Joumou’a',
-};
+function prayerLabel(prayer: ReminderPrayer) {
+  if (prayer === 'jumuah') return translate('mosque.jumuah');
+  return { fajr: 'Fajr', dhuhr: 'Dhuhr', asr: 'Asr', maghrib: 'Maghrib', isha: 'Isha' }[prayer];
+}
+
+function timeLocale() {
+  return getActiveLanguage() === 'fr' ? 'fr-FR' : 'en-GB';
+}
 
 // ----- Settings ------------------------------------------------------------------------------
 
@@ -155,8 +161,8 @@ function distanceMeters(a: Origin, b: Origin) {
 /** Travel estimate: on foot up to 2.5 km (streets ≈ 1.3 × straight line, 80 m/min), else by car. */
 export function estimateTravel(origin: Origin, mosque: Origin) {
   const meters = distanceMeters(origin, mosque) * 1.3;
-  if (meters <= 2_500) return { minutes: Math.max(1, Math.round(meters / 80)), mode: 'à pied' as const };
-  return { minutes: Math.round(meters / 420) + 5, mode: 'en voiture' as const };
+  if (meters <= 2_500) return { minutes: Math.max(1, Math.round(meters / 80)), mode: 'walk' as const };
+  return { minutes: Math.round(meters / 420) + 5, mode: 'car' as const };
 }
 
 // ----- Scheduling ----------------------------------------------------------------------------
@@ -185,8 +191,12 @@ async function plannedForMosque(settings: MosqueReminderSettings, origin: Origin
       const start = Date.parse(post.startsAt);
       const at = start - EVENT_LEAD_MS;
       if (at <= now || at > now + 14 * 86_400_000) continue;
-      const time = new Date(start).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
-      planned.push({ at, route, key: `event-${post.id}`, title: `${post.title} à ${time}`, body: `${mosque.name} · dans 2 heures.` });
+      const time = new Date(start).toLocaleTimeString(timeLocale(), { hour: '2-digit', minute: '2-digit' });
+      planned.push({
+        at, route, key: `event-${post.id}`,
+        title: translate('mosque.notifEventTitle', { title: post.title, time }),
+        body: translate('mosque.notifEventBody', { mosque: mosque.name }),
+      });
     }
   }
 
@@ -211,14 +221,14 @@ async function plannedForMosque(settings: MosqueReminderSettings, origin: Origin
 
       let label: ReminderPrayer = key;
       let target = prayer.timestamp;
-      let targetLabel = `adhan à ${prayer.time}`;
+      let targetLabel = translate('mosque.notifTargetAdhan', { time: prayer.time });
       if (isFridayDhuhr && settings.leaveNow.includes('jumuah') && jumuah) {
         const [hours, minutes] = jumuah.split(':').map(Number);
         const friday = new Date(day);
         friday.setHours(hours, minutes, 0, 0);
         label = 'jumuah';
         target = friday.getTime();
-        targetLabel = `Joumou’a à ${jumuah}`;
+        targetLabel = translate('mosque.notifTargetJumuah', { time: jumuah });
       } else {
         if (!settings.leaveNow.includes(key)) continue;
         const iqama = getIqamaTime(approved?.iqama?.[key], prayer, schedule.timezone);
@@ -227,7 +237,7 @@ async function plannedForMosque(settings: MosqueReminderSettings, origin: Origin
           const iqamaDate = new Date(day);
           iqamaDate.setHours(hours, minutes, 0, 0);
           target = iqamaDate.getTime();
-          targetLabel = `iqama à ${iqama}`;
+          targetLabel = translate('mosque.notifTargetIqama', { time: iqama });
         }
       }
 
@@ -235,8 +245,12 @@ async function plannedForMosque(settings: MosqueReminderSettings, origin: Origin
       if (at <= now || at > horizon) continue;
       planned.push({
         at, route, key: `leave-${label}-${target}`,
-        title: `Pars maintenant pour ${PRAYER_LABELS[label]}`,
-        body: `${mosque.name} · ${travel.minutes} min ${travel.mode}, ${targetLabel}.`,
+        title: translate('mosque.notifLeaveTitle', { prayer: prayerLabel(label) }),
+        body: translate(travel.mode === 'walk' ? 'mosque.notifLeaveBodyWalk' : 'mosque.notifLeaveBodyCar', {
+          mosque: mosque.name,
+          minutes: travel.minutes,
+          target: targetLabel,
+        }),
       });
     }
   }
@@ -269,7 +283,7 @@ export function refreshMosqueReminders(force = false): Promise<void> {
 
       if (Platform.OS === 'android') {
         await Notifications.setNotificationChannelAsync(CHANNEL, {
-          name: 'Ma mosquée',
+          name: translate('mosques.myMosque'),
           importance: Notifications.AndroidImportance.HIGH,
           vibrationPattern: [0, 200, 100, 200],
           sound: 'default',
