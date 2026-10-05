@@ -112,9 +112,9 @@ export const HOME_DEEPER = [
     image: require("../../assets/images/fiqh/family.png"),
   },
   {
-    labelKey: "home.moduleDreams",
-    subtitleKey: "home.moduleDreamsSubtitle",
-    route: "/dreams",
+    labelKey: "home.moduleAkhira",
+    subtitleKey: "home.moduleAkhiraSubtitle",
+    route: "/akhira",
     image: require("../../assets/images/dua/guides/sleep.jpg"),
   },
 ] as const;
