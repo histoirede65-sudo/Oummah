@@ -104,8 +104,8 @@ export const COMPANIONS: Companion[] = [
         },
         "paragraphs": [
           {
-            "fr": "Abû Bakr mit son influence au service de l’Islam. Selon la sîra, ‘Uthmân ibn ‘Affân, az-Zubayr, ‘Abd ar-Rahmân ibn ‘Awf, Sa‘d ibn Abî Waqqâs et Talha embrassèrent l’Islam par son intermédiaire.",
-            "en": "Abu Bakr put his influence at the service of Islam. According to the sira, 'Uthman ibn 'Affan, az-Zubayr, 'Abd ar-Rahman ibn 'Awf, Sa'd ibn Abi Waqqas and Talha embraced Islam through him."
+            "fr": "Abû Bakr appela à l’Islam ceux qui lui faisaient confiance. Selon la sîra, ‘Uthmân ibn ‘Affân, az-Zubayr, ‘Abd ar-Rahmân ibn ‘Awf, Sa‘d ibn Abî Waqqâs et Talha embrassèrent l’Islam par son intermédiaire.",
+            "en": "Abu Bakr called to Islam those who trusted him. According to the sira, 'Uthman ibn 'Affan, az-Zubayr, 'Abd ar-Rahman ibn 'Awf, Sa'd ibn Abi Waqqas and Talha embraced Islam through him."
           },
           {
             "fr": "Il dépensa ses biens pour racheter et affranchir des croyants réduits en esclavage et torturés, dont Bilâl. ‘Umar disait de lui : « Abu Bakr est notre chef, et il a affranchi notre chef. »",
@@ -249,12 +249,12 @@ export const COMPANIONS: Companion[] = [
         },
         "paragraphs": [
           {
-            "fr": "À l’annonce de la mort du Prophète ﷺ, les Compagnons furent bouleversés ; ‘Umar refusait d’y croire. Abû Bakr entra, embrassa le visage du Prophète ﷺ, puis sortit parler aux gens.",
-            "en": "When the Prophet ﷺ died, the Companions were overwhelmed; 'Umar refused to believe it. Abu Bakr went in, kissed the Prophet's ﷺ face, then came out to speak to the people."
+            "fr": "À la mort du Prophète ﷺ, ‘Umar se leva en disant qu’il n’était pas mort. Abû Bakr entra, embrassa le visage du Prophète ﷺ, puis sortit parler aux gens.",
+            "en": "When the Prophet ﷺ died, 'Umar stood up saying that he had not died. Abu Bakr went in, kissed the Prophet's ﷺ face, then came out to speak to the people."
           },
           {
-            "fr": "Il récita ensuite le verset de la sourate Âl ‘Imrân, et ce fut comme si les gens l’entendaient pour la première fois. Le même jour, les Compagnons lui prêtèrent allégeance.",
-            "en": "He then recited the verse of Surah Al 'Imran, and it was as if people were hearing it for the first time. That same day, the Companions pledged allegiance to him."
+            "fr": "Il récita ensuite le verset de la sourate Âl ‘Imrân. Selon Ibn ‘Abbâs, c’était comme si les gens ne savaient pas qu’il avait été révélé avant qu’Abû Bakr le récite. Le même jour, les Compagnons lui prêtèrent allégeance.",
+            "en": "He then recited the verse of Surah Al 'Imran. According to Ibn 'Abbas, it was as if people had not known it had been revealed until Abu Bakr recited it. That same day, the Companions pledged allegiance to him."
           }
         ],
         "quotes": [
@@ -284,13 +284,19 @@ export const COMPANIONS: Companion[] = [
               "en": "Al 'Imran 3:144 · Saheeh International"
             }
           }
+        ],
+        "sources": [
+          {
+            "fr": "Sahîh al-Bukhârî 4454",
+            "en": "Sahih al-Bukhari 4454"
+          }
         ]
       },
       {
         "id": "caliphate",
         "title": {
-          "fr": "Deux ans pour sauver l’unité",
-          "en": "Two years to save the unity"
+          "fr": "Son califat",
+          "en": "His caliphate"
         },
         "date": {
           "fr": "11–13 H",
@@ -298,8 +304,8 @@ export const COMPANIONS: Companion[] = [
         },
         "paragraphs": [
           {
-            "fr": "Malgré le danger, Abû Bakr maintint l’armée d’Usâma ibn Zayd que le Prophète ﷺ avait préparée. Puis des tribus refusèrent de payer la zakât : il décida de les combattre, et ‘Umar finit par reconnaître qu’il avait raison.",
-            "en": "Despite the danger, Abu Bakr kept the army of Usama ibn Zayd that the Prophet ﷺ had prepared. Then tribes refused to pay the zakat: he decided to fight them, and 'Umar came to recognise that he was right."
+            "fr": "Abû Bakr maintint l’armée d’Usâma ibn Zayd que le Prophète ﷺ avait préparée. Puis des tribus refusèrent de payer la zakât : il décida de les combattre, et ‘Umar finit par reconnaître qu’il avait raison.",
+            "en": "Abu Bakr kept the army of Usama ibn Zayd that the Prophet ﷺ had prepared. Then tribes refused to pay the zakat: he decided to fight them, and 'Umar came to recognise that he was right."
           },
           {
             "fr": "Après la bataille de Yamâma (12 H), où de nombreux récitateurs du Coran tombèrent, il chargea Zayd ibn Thâbit de rassembler le Coran par écrit. Les feuillets furent confiés à Abû Bakr, puis à ‘Umar, puis à Hafsa.",
@@ -366,20 +372,7 @@ export const COMPANIONS: Companion[] = [
         ]
       }
     ],
-    "lessons": [
-      {
-        "fr": "Croire à la vérité dès qu’elle est claire, sans attendre l’avis des autres.",
-        "en": "Believe the truth as soon as it is clear, without waiting for others' approval."
-      },
-      {
-        "fr": "Mettre ses biens au service d’Allah et des plus faibles.",
-        "en": "Put your wealth at the service of Allah and of the weakest."
-      },
-      {
-        "fr": "Rester ferme et lucide quand tout le monde est bouleversé.",
-        "en": "Stay firm and clear-headed when everyone else is overwhelmed."
-      }
-    ]
+    "lessons": []
   },
   {
     "id": "umar",
@@ -416,8 +409,8 @@ export const COMPANIONS: Companion[] = [
       "en": "Caliph 13–23 AH"
     },
     "summary": {
-      "fr": "D’abord adversaire déclaré de l’Islam, il devint l’un de ses plus grands défenseurs. Calife pendant dix ans, il organisa un État immense avec une rigueur et une justice restées célèbres.",
-      "en": "At first an open opponent of Islam, he became one of its greatest defenders. Caliph for ten years, he organised a vast state with a rigour and justice that remain famous."
+      "fr": "D’abord adversaire déclaré de l’Islam, il devint l’un de ses plus grands défenseurs. Calife pendant dix ans, il étendit et organisa l’État musulman.",
+      "en": "At first an open opponent of Islam, he became one of its greatest defenders. Caliph for ten years, he extended and organised the Muslim state."
     },
     "facts": [
       {
@@ -453,17 +446,17 @@ export const COMPANIONS: Companion[] = [
       {
         "id": "conversion",
         "title": {
-          "fr": "Une conversion qui change tout",
-          "en": "A conversion that changed everything"
+          "fr": "Sa conversion",
+          "en": "His conversion"
         },
         "paragraphs": [
           {
-            "fr": "‘Umar était un homme fort et redouté de Quraysh, d’abord hostile aux musulmans. Selon la sîra, il découvrit le Coran chez sa sœur Fâtima, déjà musulmane avec son mari Sa‘îd ibn Zayd, et en fut bouleversé.",
-            "en": "'Umar was a strong man feared among Quraysh, at first hostile to the Muslims. According to the sira, he discovered the Quran at the home of his sister Fatima, already a Muslim with her husband Sa'id ibn Zayd, and was overwhelmed by it."
+            "fr": "‘Umar était un homme fort et redouté de Quraysh, d’abord hostile aux musulmans. Selon la sîra, il découvrit le Coran chez sa sœur Fâtima, déjà musulmane avec son mari Sa‘îd ibn Zayd, et embrassa l’Islam.",
+            "en": "'Umar was a strong man feared among Quraysh, at first hostile to the Muslims. According to the sira, he discovered the Quran at the home of his sister Fatima, already a Muslim with her husband Sa'id ibn Zayd, and embraced Islam."
           },
           {
-            "fr": "Son entrée dans l’Islam donna confiance aux croyants, qui purent prier plus ouvertement. Ibn Mas‘ûd résumait :",
-            "en": "His entry into Islam gave the believers confidence, and they could pray more openly. Ibn Mas'ud summed it up:"
+            "fr": "Selon Ibn Hishâm, les musulmans purent alors prier près de la Ka‘ba. Ibn Mas‘ûd disait :",
+            "en": "According to Ibn Hisham, the Muslims could then pray near the Ka'ba. Ibn Mas'ud used to say:"
           }
         ],
         "quotes": [
@@ -529,6 +522,10 @@ export const COMPANIONS: Companion[] = [
         ],
         "sources": [
           {
+            "fr": "Sahîh al-Bukhârî 402",
+            "en": "Sahih al-Bukhari 402"
+          },
+          {
             "fr": "Sahîh al-Bukhârî 3691",
             "en": "Sahih al-Bukhari 3691"
           },
@@ -541,8 +538,8 @@ export const COMPANIONS: Companion[] = [
       {
         "id": "caliphate",
         "title": {
-          "fr": "Organiser un État",
-          "en": "Organising a state"
+          "fr": "Son califat",
+          "en": "His caliphate"
         },
         "date": {
           "fr": "13–23 H",
@@ -558,8 +555,8 @@ export const COMPANIONS: Companion[] = [
             "en": "He created registers (diwan) to pay an allowance to the Muslims, founded cities such as Kufa and Basra, and adopted the Hijri calendar."
           },
           {
-            "fr": "Il contrôlait de près ses gouverneurs. Peu avant sa mort, on le voit encore demander à ses agents s’ils n’avaient pas imposé aux paysans d’Irak plus qu’ils ne pouvaient supporter.",
-            "en": "He kept a close watch on his governors. Shortly before his death, he can still be seen asking his officials whether they had taxed the farmers of Iraq more than they could bear."
+            "fr": "Peu avant sa mort, il demanda encore à ses agents s’ils n’avaient pas imposé aux paysans d’Irak plus qu’ils ne pouvaient supporter.",
+            "en": "Shortly before his death, he was still asking his officials whether they had taxed the farmers of Iraq more than they could bear."
           }
         ],
         "sources": [
@@ -622,20 +619,7 @@ export const COMPANIONS: Companion[] = [
         ]
       }
     ],
-    "lessons": [
-      {
-        "fr": "Un cœur dur peut devenir l’un des plus fidèles : personne n’est perdu d’avance.",
-        "en": "A hard heart can become one of the most faithful: no one is lost in advance."
-      },
-      {
-        "fr": "Le pouvoir est une responsabilité dont on rendra compte.",
-        "en": "Power is a responsibility one will answer for."
-      },
-      {
-        "fr": "La justice commence par se surveiller soi-même et ses proches.",
-        "en": "Justice begins with watching over oneself and one's own people."
-      }
-    ]
+    "lessons": []
   },
   {
     "id": "uthman",
@@ -736,8 +720,8 @@ export const COMPANIONS: Companion[] = [
       {
         "id": "generosity",
         "title": {
-          "fr": "La générosité au service de la communauté",
-          "en": "Generosity at the service of the community"
+          "fr": "Le puits de Rûma et l’armée de Tabûk",
+          "en": "The well of Ruma and the army of Tabuk"
         },
         "paragraphs": [
           {
@@ -894,20 +878,7 @@ export const COMPANIONS: Companion[] = [
         ]
       }
     ],
-    "lessons": [
-      {
-        "fr": "La richesse est un moyen de servir, pas une fin.",
-        "en": "Wealth is a means to serve, not an end."
-      },
-      {
-        "fr": "La pudeur est une qualité que même les anges respectent.",
-        "en": "Modesty is a quality that even the angels respect."
-      },
-      {
-        "fr": "Préserver le Coran est un service rendu à toutes les générations.",
-        "en": "Preserving the Quran is a service to every generation."
-      }
-    ]
+    "lessons": []
   },
   {
     "id": "ali",
@@ -945,8 +916,8 @@ export const COMPANIONS: Companion[] = [
       "en": "Caliph 35–40 AH"
     },
     "summary": {
-      "fr": "Élevé dans la maison du Prophète ﷺ, il crut en lui enfant. Mari de Fâtima, père d’al-Hasan et d’al-Husayn, cavalier courageux et grand savant, il fut le quatrième calife dans une période de grande division.",
-      "en": "Raised in the Prophet's ﷺ household, he believed in him as a child. Husband of Fatima, father of al-Hasan and al-Husayn, a brave fighter and a great scholar, he was the fourth caliph in a time of deep division."
+      "fr": "Élevé dans la maison du Prophète ﷺ, il crut en lui enfant. Mari de Fâtima, père d’al-Hasan et d’al-Husayn, il fut le quatrième calife.",
+      "en": "Raised in the Prophet's ﷺ household, he believed in him as a child. Husband of Fatima, father of al-Hasan and al-Husayn, he was the fourth caliph."
     },
     "facts": [
       {
@@ -1014,12 +985,12 @@ export const COMPANIONS: Companion[] = [
         },
         "paragraphs": [
           {
-            "fr": "En 2 H, ‘Alî épousa Fâtima, fille du Prophète ﷺ. Ils vécurent simplement : Fâtima avait les mains abîmées par le moulin et demanda un serviteur. Le Prophète ﷺ vint chez eux et leur apprit à la place une invocation du soir :",
-            "en": "In 2 AH, 'Ali married Fatima, the Prophet's ﷺ daughter. They lived simply: Fatima's hands were worn by the hand mill and she asked for a servant. The Prophet ﷺ came to their home and instead taught them an evening remembrance:"
+            "fr": "En 2 H, ‘Alî épousa Fâtima, fille du Prophète ﷺ. Fâtima avait les mains abîmées par le moulin et demanda un serviteur. Le Prophète ﷺ vint chez eux et leur apprit à la place une invocation du soir :",
+            "en": "In 2 AH, 'Ali married Fatima, the Prophet's ﷺ daughter. Fatima's hands were worn by the hand mill and she asked for a servant. The Prophet ﷺ came to their home and instead taught them an evening remembrance:"
           },
           {
-            "fr": "Ils eurent al-Hasan et al-Husayn, que le Prophète ﷺ aimait profondément.",
-            "en": "They had al-Hasan and al-Husayn, whom the Prophet ﷺ loved deeply."
+            "fr": "Ils eurent al-Hasan et al-Husayn.",
+            "en": "They had al-Hasan and al-Husayn."
           }
         ],
         "quotes": [
@@ -1129,8 +1100,8 @@ export const COMPANIONS: Companion[] = [
       {
         "id": "caliphate",
         "title": {
-          "fr": "Gouverner dans la tempête",
-          "en": "Governing through the storm"
+          "fr": "Son califat",
+          "en": "His caliphate"
         },
         "date": {
           "fr": "35–40 H",
@@ -1138,12 +1109,12 @@ export const COMPANIONS: Companion[] = [
         },
         "paragraphs": [
           {
-            "fr": "Après l’assassinat de ‘Uthmân, ‘Alî reçut l’allégeance à Médine. La communauté était profondément divisée sur la manière de punir les meurtriers, et il installa son gouvernement à Kûfa.",
-            "en": "After 'Uthman's assassination, 'Ali received the pledge of allegiance in Medina. The community was deeply divided over how to punish the killers, and he moved his government to Kufa."
+            "fr": "Après l’assassinat de ‘Uthmân, ‘Alî reçut l’allégeance à Médine. La communauté était divisée sur la manière de punir les meurtriers, et il installa son gouvernement à Kûfa.",
+            "en": "After 'Uthman's assassination, 'Ali received the pledge of allegiance in Medina. The community was divided over how to punish the killers, and he moved his government to Kufa."
           },
           {
-            "fr": "Ces années virent la bataille du Chameau (36 H), puis celle de Siffîn contre Mu‘âwiya (37 H) suivie d’un arbitrage. Un groupe le rejeta et se retourna contre lui : les Khârijites, qu’il combattit à Nahrawân. Les savants abordent ces conflits entre Compagnons avec retenue, sans prendre parti contre aucun d’eux.",
-            "en": "These years saw the battle of the Camel (36 AH), then Siffin against Mu'awiya (37 AH), followed by an arbitration. A group rejected it and turned against him: the Kharijites, whom he fought at Nahrawan. Scholars approach these conflicts between Companions with restraint, without taking sides against any of them."
+            "fr": "Ces années virent la bataille du Chameau (36 H), puis celle de Siffîn contre Mu‘âwiya (37 H) suivie d’un arbitrage. Un groupe le rejeta et se retourna contre lui : les Khârijites, qu’il combattit à Nahrawân.",
+            "en": "These years saw the battle of the Camel (36 AH), then Siffin against Mu'awiya (37 AH), followed by an arbitration. A group rejected it and turned against him: the Kharijites, whom he fought at Nahrawan."
           }
         ],
         "sources": [
@@ -1177,20 +1148,7 @@ export const COMPANIONS: Companion[] = [
         ]
       }
     ],
-    "lessons": [
-      {
-        "fr": "Le courage et la science peuvent aller ensemble.",
-        "en": "Courage and knowledge can go together."
-      },
-      {
-        "fr": "Le dhikr du soir vaut mieux qu’un confort matériel.",
-        "en": "Evening remembrance is worth more than material comfort."
-      },
-      {
-        "fr": "On ne rapporte du Prophète ﷺ que ce qu’on est sûr qu’il a dit.",
-        "en": "Only report from the Prophet ﷺ what you are sure he said."
-      }
-    ]
+    "lessons": []
   },
   {
     "id": "talha",
@@ -1357,8 +1315,8 @@ export const COMPANIONS: Companion[] = [
         },
         "paragraphs": [
           {
-            "fr": "Après l’assassinat de ‘Uthmân, Talha se rendit à Bassora avec az-Zubayr et ‘Â’isha pour réclamer le jugement des meurtriers. Il y mourut, touché par une flèche, lors de la bataille du Chameau. Les savants considèrent que chacun des Compagnons engagés dans ce drame cherchait la vérité.",
-            "en": "After 'Uthman's assassination, Talha went to Basra with az-Zubayr and 'A'isha to demand that the killers be judged. He died there, struck by an arrow, at the battle of the Camel. Scholars hold that each of the Companions caught up in this tragedy was seeking the truth."
+            "fr": "Après l’assassinat de ‘Uthmân, Talha se rendit à Bassora avec az-Zubayr et ‘Â’isha pour réclamer le jugement des meurtriers. Il y mourut, touché par une flèche, lors de la bataille du Chameau.",
+            "en": "After 'Uthman's assassination, Talha went to Basra with az-Zubayr and 'A'isha to demand that the killers be judged. He died there, struck by an arrow, at the battle of the Camel."
           },
           {
             "fr": "Le hadith des dix promis au Paradis, rapporté par Sa‘îd ibn Zayd lui-même, le cite nommément.",
@@ -1377,16 +1335,7 @@ export const COMPANIONS: Companion[] = [
         ]
       }
     ],
-    "lessons": [
-      {
-        "fr": "Protéger ce qui est précieux, même au prix de sa propre santé.",
-        "en": "Protect what is precious, even at the cost of your own health."
-      },
-      {
-        "fr": "La richesse bien employée devient une bonne réputation durable.",
-        "en": "Wealth well spent becomes a lasting good name."
-      }
-    ]
+    "lessons": []
   },
   {
     "id": "zubayr",
@@ -1421,8 +1370,8 @@ export const COMPANIONS: Companion[] = [
       "en": "d. 36 AH"
     },
     "summary": {
-      "fr": "Cousin du Prophète ﷺ par sa mère Safiyya, il crut adolescent. Cavalier d’un courage exceptionnel, il fut appelé par le Prophète ﷺ « mon disciple ».",
-      "en": "The Prophet's ﷺ cousin through his mother Safiyya, he believed as a teenager. A horseman of exceptional courage, he was called by the Prophet ﷺ \"my disciple\"."
+      "fr": "Cousin du Prophète ﷺ par sa mère Safiyya, il crut adolescent. Le Prophète ﷺ l’appela « mon disciple ».",
+      "en": "The Prophet's ﷺ cousin through his mother Safiyya, he believed as a teenager. The Prophet ﷺ called him \"my disciple\"."
     },
     "facts": [
       {
@@ -1458,8 +1407,8 @@ export const COMPANIONS: Companion[] = [
       {
         "id": "early",
         "title": {
-          "fr": "Un adolescent inébranlable",
-          "en": "An unshakeable teenager"
+          "fr": "Sa conversion",
+          "en": "His conversion"
         },
         "paragraphs": [
           {
@@ -1577,16 +1526,7 @@ export const COMPANIONS: Companion[] = [
         ]
       }
     ],
-    "lessons": [
-      {
-        "fr": "Se porter volontaire quand les autres hésitent.",
-        "en": "Volunteer when others hesitate."
-      },
-      {
-        "fr": "Savoir se retirer d’un conflit est aussi une forme de courage.",
-        "en": "Knowing when to withdraw from a conflict is also a kind of courage."
-      }
-    ]
+    "lessons": []
   },
   {
     "id": "abd-rahman",
@@ -1613,8 +1553,8 @@ export const COMPANIONS: Companion[] = [
       "en": "d. 32 AH"
     },
     "summary": {
-      "fr": "Arrivé à Médine sans rien, il refusa la moitié des biens qu’on lui offrait et demanda seulement le chemin du marché. Devenu très riche, il resta humble et donna sans compter.",
-      "en": "Arriving in Medina with nothing, he refused the half of a man's wealth that was offered to him and asked only for the way to the market. Having become very rich, he stayed humble and gave without counting."
+      "fr": "Arrivé à Médine sans rien, il refusa la moitié des biens qu’on lui offrait et demanda seulement le chemin du marché. Devenu riche, il pleurait en pensant à ses compagnons morts pauvres.",
+      "en": "Arriving in Medina with nothing, he refused the half of a man's wealth that was offered to him and asked only for the way to the market. Having become rich, he wept when he thought of his companions who had died poor."
     },
     "facts": [
       {
@@ -1711,13 +1651,13 @@ export const COMPANIONS: Companion[] = [
       {
         "id": "fear",
         "title": {
-          "fr": "Riche, et pourtant inquiet",
-          "en": "Rich, and yet worried"
+          "fr": "Les larmes devant un repas",
+          "en": "Tears before a meal"
         },
         "paragraphs": [
           {
-            "fr": "Ses caravanes étaient parmi les plus importantes de Médine et il en consacrait une large part à Allah. Un jour qu’on lui servait un repas alors qu’il jeûnait, il se mit à pleurer en pensant à ses compagnons morts pauvres :",
-            "en": "His caravans were among the largest in Medina and he devoted a large part of them to Allah. One day, when a meal was served to him while he was fasting, he began to weep, thinking of his companions who had died poor:"
+            "fr": "Un jour qu’on lui servait un repas alors qu’il jeûnait, il se mit à pleurer en pensant à ses compagnons morts pauvres :",
+            "en": "One day, when a meal was served to him while he was fasting, he began to weep, thinking of his companions who had died poor:"
           }
         ],
         "quotes": [
@@ -1774,16 +1714,7 @@ export const COMPANIONS: Companion[] = [
         ]
       }
     ],
-    "lessons": [
-      {
-        "fr": "Préférer gagner sa vie plutôt que dépendre d’un don.",
-        "en": "Prefer earning your living to depending on a gift."
-      },
-      {
-        "fr": "La réussite ne doit pas faire oublier la crainte d’Allah.",
-        "en": "Success must not make you forget the fear of Allah."
-      }
-    ]
+    "lessons": []
   },
   {
     "id": "sad",
@@ -1932,8 +1863,8 @@ export const COMPANIONS: Companion[] = [
             "en": "Seriously ill in Mecca during the farewell pilgrimage, Sa'd wanted to give all his wealth away in charity. The Prophet ﷺ answered:"
           },
           {
-            "fr": "Sa‘d guérit et vécut encore plus de quarante ans. Cette parole est devenue la règle du testament en Islam : on ne lègue pas plus d’un tiers.",
-            "en": "Sa'd recovered and lived more than forty more years. This saying became the rule of bequests in Islam: one does not bequeath more than a third."
+            "fr": "Sa‘d guérit et vécut jusqu’en 55 H.",
+            "en": "Sa'd recovered and lived until 55 AH."
           }
         ],
         "quotes": [
@@ -1990,16 +1921,7 @@ export const COMPANIONS: Companion[] = [
         ]
       }
     ],
-    "lessons": [
-      {
-        "fr": "On peut refuser l’association sans cesser d’honorer ses parents.",
-        "en": "You can refuse to associate partners with Allah without ceasing to honour your parents."
-      },
-      {
-        "fr": "Penser à ses héritiers fait partie de la générosité.",
-        "en": "Thinking of your heirs is part of generosity."
-      }
-    ]
+    "lessons": []
   },
   {
     "id": "said-ibn-zayd",
@@ -2177,13 +2099,13 @@ export const COMPANIONS: Companion[] = [
       {
         "id": "later",
         "title": {
-          "fr": "Une vie loin du pouvoir",
-          "en": "A life far from power"
+          "fr": "Après le Prophète ﷺ",
+          "en": "After the Prophet ﷺ"
         },
         "paragraphs": [
           {
-            "fr": "Sa‘îd prit part à la conquête de la Syrie, notamment au Yarmûk, sans chercher de fonction importante. Il mourut vers 51 H à al-‘Aqîq et fut enterré à Médine.",
-            "en": "Sa'id took part in the conquest of Syria, notably at Yarmuk, without seeking any important office. He died around 51 AH at al-'Aqiq and was buried in Medina."
+            "fr": "Sa‘îd prit part à la conquête de la Syrie, notamment au Yarmûk. Il mourut vers 51 H à al-‘Aqîq et fut enterré à Médine.",
+            "en": "Sa'id took part in the conquest of Syria, notably at Yarmuk. He died around 51 AH at al-'Aqiq and was buried in Medina."
           }
         ],
         "sources": [
@@ -2194,16 +2116,7 @@ export const COMPANIONS: Companion[] = [
         ]
       }
     ],
-    "lessons": [
-      {
-        "fr": "Chercher la vérité même quand tout le monde suit l’habitude.",
-        "en": "Seek the truth even when everyone follows custom."
-      },
-      {
-        "fr": "Une maison croyante peut changer le destin d’un homme comme ‘Umar.",
-        "en": "A believing household can change the destiny of a man like 'Umar."
-      }
-    ]
+    "lessons": []
   },
   {
     "id": "abu-ubayda",
@@ -2238,8 +2151,8 @@ export const COMPANIONS: Companion[] = [
       "en": "d. 18 AH"
     },
     "summary": {
-      "fr": "Le Prophète ﷺ l’appela « l’homme de confiance de cette communauté ». Commandant des armées de Syrie, il resta d’une grande simplicité et mourut de la peste de ‘Amwâs.",
-      "en": "The Prophet ﷺ called him \"the trustworthy one of this nation\". Commander of the armies of Syria, he remained very simple and died in the plague of 'Amwas."
+      "fr": "Le Prophète ﷺ l’appela « l’homme de confiance de cette communauté ». Commandant des armées de Syrie, il mourut de la peste de ‘Amwâs.",
+      "en": "The Prophet ﷺ called him \"the trustworthy one of this nation\". Commander of the armies of Syria, he died in the plague of 'Amwas."
     },
     "facts": [
       {
@@ -2402,16 +2315,7 @@ export const COMPANIONS: Companion[] = [
         ]
       }
     ],
-    "lessons": [
-      {
-        "fr": "La confiance des autres se mérite par la droiture, pas par le rang.",
-        "en": "Others' trust is earned through integrity, not rank."
-      },
-      {
-        "fr": "Un chef partage les privations de ses hommes.",
-        "en": "A leader shares the hardships of his men."
-      }
-    ]
+    "lessons": []
   },
   {
     "id": "hamza",
@@ -2444,8 +2348,8 @@ export const COMPANIONS: Companion[] = [
       "en": "d. 3 AH"
     },
     "summary": {
-      "fr": "Oncle et frère de lait du Prophète ﷺ, chasseur redouté de La Mecque. Sa conversion protégea les premiers croyants, et sa mort à Uhud fut l’une des plus grandes peines du Prophète ﷺ.",
-      "en": "The Prophet's ﷺ uncle and foster brother, a feared hunter of Mecca. His conversion protected the first believers, and his death at Uhud was one of the Prophet's ﷺ greatest sorrows."
+      "fr": "Oncle et frère de lait du Prophète ﷺ. Il embrassa l’Islam à La Mecque et tomba martyr à Uhud.",
+      "en": "The Prophet's ﷺ uncle and foster brother. He embraced Islam in Mecca and fell as a martyr at Uhud."
     },
     "facts": [
       {
@@ -2490,8 +2394,8 @@ export const COMPANIONS: Companion[] = [
             "en": "Hamza was about the Prophet's ﷺ age and had been nursed by the same wet nurse. According to the sira, returning from the hunt, he learned that Abu Jahl had insulted his nephew. He went and struck Abu Jahl with his bow in front of Quraysh and declared that he followed Muhammad's ﷺ religion."
           },
           {
-            "fr": "Ce qui avait commencé par la colère devint une foi solide. Quraysh comprit que le Prophète ﷺ était désormais protégé, et l’on cessa de s’en prendre à lui aussi ouvertement.",
-            "en": "What began in anger became a firm faith. Quraysh understood that the Prophet ﷺ was now protected, and they stopped attacking him so openly."
+            "fr": "Selon Ibn Hishâm, Quraysh comprit que le Prophète ﷺ était désormais protégé, et l’on cessa de s’en prendre à lui aussi ouvertement.",
+            "en": "According to Ibn Hisham, Quraysh understood that the Prophet ﷺ was now protected, and they stopped attacking him so openly."
           }
         ],
         "sources": [
@@ -2557,8 +2461,8 @@ export const COMPANIONS: Companion[] = [
             "en": "Wahshi later embraced Islam. The Prophet ﷺ accepted him but asked him not to appear before him. Wahshi then sought to make amends by fighting Musaylima, the false prophet."
           },
           {
-            "fr": "Hamza est enterré au pied du mont Uhud, avec les autres martyrs de la bataille. La tradition l’appelle « le maître des martyrs ».",
-            "en": "Hamza is buried at the foot of Mount Uhud, with the other martyrs of the battle. Tradition calls him \"the master of the martyrs\"."
+            "fr": "Hamza est enterré au pied du mont Uhud, avec les autres martyrs de la bataille.",
+            "en": "Hamza is buried at the foot of Mount Uhud, with the other martyrs of the battle."
           }
         ],
         "sources": [
@@ -2573,16 +2477,7 @@ export const COMPANIONS: Companion[] = [
         ]
       }
     ],
-    "lessons": [
-      {
-        "fr": "Défendre l’opprimé, même quand il en coûte.",
-        "en": "Defend the oppressed, even when it costs you."
-      },
-      {
-        "fr": "La porte du repentir reste ouverte, même à celui qui a tué Hamza.",
-        "en": "The door of repentance stays open, even to the man who killed Hamza."
-      }
-    ]
+    "lessons": []
   },
   {
     "id": "bilal",
@@ -2724,8 +2619,8 @@ export const COMPANIONS: Companion[] = [
         },
         "paragraphs": [
           {
-            "fr": "Un matin, le Prophète ﷺ demanda à Bilâl quelle action il espérait le plus, car il avait entendu ses pas devant lui au Paradis. Sa réponse est un conseil simple pour chacun :",
-            "en": "One morning, the Prophet ﷺ asked Bilal which deed he had the most hope in, for he had heard his footsteps ahead of him in Paradise. His answer is simple advice for everyone:"
+            "fr": "Un matin, le Prophète ﷺ demanda à Bilâl quelle action il espérait le plus, car il avait entendu ses pas devant lui au Paradis. Bilâl répondit :",
+            "en": "One morning, the Prophet ﷺ asked Bilal which deed he had the most hope in, for he had heard his footsteps ahead of him in Paradise. Bilal answered:"
           }
         ],
         "quotes": [
@@ -2766,16 +2661,7 @@ export const COMPANIONS: Companion[] = [
         ]
       }
     ],
-    "lessons": [
-      {
-        "fr": "En Islam, la valeur d’une personne ne dépend ni de sa couleur ni de son origine.",
-        "en": "In Islam, a person's worth depends neither on colour nor on origin."
-      },
-      {
-        "fr": "Prier deux unités après chaque ablution, c’est l’action que Bilâl espérait le plus.",
-        "en": "Praying two units after each ablution was the deed Bilal hoped in most."
-      }
-    ]
+    "lessons": []
   },
   {
     "id": "musab",
@@ -2800,8 +2686,8 @@ export const COMPANIONS: Companion[] = [
       "en": "d. 3 AH"
     },
     "summary": {
-      "fr": "Jeune homme élégant et choyé de La Mecque, il quitta tout pour l’Islam. Envoyé à Médine pour enseigner le Coran, il prépara l’arrivée du Prophète ﷺ, puis tomba à Uhud en portant l’étendard.",
-      "en": "An elegant and pampered young man of Mecca, he left everything for Islam. Sent to Medina to teach the Quran, he prepared the Prophet's ﷺ arrival, then fell at Uhud carrying the banner."
+      "fr": "Jeune homme élégant et choyé de La Mecque, il fut privé de tout par sa famille quand il crut. Envoyé à Médine pour enseigner le Coran, il prépara l’arrivée du Prophète ﷺ, puis tomba à Uhud en portant l’étendard.",
+      "en": "An elegant and pampered young man of Mecca, he was deprived of everything by his family when he believed. Sent to Medina to teach the Quran, he prepared the Prophet's ﷺ arrival, then fell at Uhud carrying the banner."
     },
     "facts": [
       {
@@ -2837,8 +2723,8 @@ export const COMPANIONS: Companion[] = [
       {
         "id": "youth",
         "title": {
-          "fr": "Quitter le confort",
-          "en": "Leaving comfort behind"
+          "fr": "Sa conversion",
+          "en": "His conversion"
         },
         "paragraphs": [
           {
@@ -2846,8 +2732,8 @@ export const COMPANIONS: Companion[] = [
             "en": "According to the biographers, Mus'ab was the best-dressed and most perfumed young man in Mecca, surrounded by his mother's affection. He believed in secret, then his family found out, locked him up and deprived him of everything."
           },
           {
-            "fr": "Il s’échappa et émigra en Abyssinie. À son retour, il avait perdu sa richesse mais gardé sa foi.",
-            "en": "He escaped and emigrated to Abyssinia. When he returned, he had lost his wealth but kept his faith."
+            "fr": "Il s’échappa et émigra en Abyssinie.",
+            "en": "He escaped and emigrated to Abyssinia."
           }
         ],
         "sources": [
@@ -2900,8 +2786,8 @@ export const COMPANIONS: Companion[] = [
         },
         "paragraphs": [
           {
-            "fr": "À Uhud, Mus‘ab portait l’étendard des musulmans ; il fut tué en le défendant. Lui qui avait été le jeune homme le plus élégant de La Mecque ne laissa qu’un manteau. Khabbâb raconte :",
-            "en": "At Uhud, Mus'ab carried the Muslims' banner; he was killed defending it. He who had been the most elegant young man of Mecca left only a cloak behind. Khabbab relates:"
+            "fr": "À Uhud, Mus‘ab portait l’étendard des musulmans ; il fut tué en le défendant. Il ne laissa qu’un manteau. Khabbâb raconte :",
+            "en": "At Uhud, Mus'ab carried the Muslims' banner; he was killed defending it. He left only a cloak behind. Khabbab relates:"
           },
           {
             "fr": "Le Prophète ﷺ demanda de lui couvrir la tête et de mettre de l’herbe sur ses pieds. Des années plus tard, ‘Abd ar-Rahmân ibn ‘Awf pleurait encore en pensant à lui.",
@@ -2933,16 +2819,7 @@ export const COMPANIONS: Companion[] = [
         ]
       }
     ],
-    "lessons": [
-      {
-        "fr": "On peut tout quitter pour Allah et y gagner davantage.",
-        "en": "You can leave everything for Allah and gain more."
-      },
-      {
-        "fr": "Un seul enseignant sincère peut ouvrir une ville entière.",
-        "en": "A single sincere teacher can open an entire city."
-      }
-    ]
+    "lessons": []
   },
   {
     "id": "jafar",
@@ -3056,8 +2933,8 @@ export const COMPANIONS: Companion[] = [
             "en": "Ja'far reached Medina at the time of the conquest of Khaybar. The Prophet ﷺ told him: \"You resemble me in appearance and character.\""
           },
           {
-            "fr": "Il était si bon envers les pauvres qu’Abû Hurayra, qui souffrait souvent de la faim, se souvenait de lui :",
-            "en": "He was so kind to the poor that Abu Hurayra, who often went hungry, remembered him:"
+            "fr": "Abû Hurayra disait qu’il était le meilleur des gens envers les pauvres :",
+            "en": "Abu Hurayra used to say that he was the best of people to the poor:"
           }
         ],
         "quotes": [
@@ -3129,16 +3006,7 @@ export const COMPANIONS: Companion[] = [
         ]
       }
     ],
-    "lessons": [
-      {
-        "fr": "Parler avec vérité et sagesse peut toucher même un roi.",
-        "en": "Speaking with truth and wisdom can move even a king."
-      },
-      {
-        "fr": "Être bon envers les pauvres, c’est ressembler au Prophète ﷺ.",
-        "en": "Being kind to the poor is resembling the Prophet ﷺ."
-      }
-    ]
+    "lessons": []
   },
   {
     "id": "abu-dharr",
@@ -3155,16 +3023,16 @@ export const COMPANIONS: Companion[] = [
     "arabicName": "أبو ذر الغفاري",
     "initial": "أ",
     "shortTitle": {
-      "fr": "La voix de la sincérité",
-      "en": "The voice of sincerity"
+      "fr": "Celui qui cria sa foi devant la Ka‘ba",
+      "en": "He who proclaimed his faith before the Ka'ba"
     },
     "years": {
       "fr": "m. 32 H",
       "en": "d. 32 AH"
     },
     "summary": {
-      "fr": "Venu du désert pour vérifier ce que disait le Prophète ﷺ, il proclama sa foi devant la Ka‘ba et fut battu. Toute sa vie, il resta d’une franchise et d’une austérité totales.",
-      "en": "Having come from the desert to check what the Prophet ﷺ was saying, he proclaimed his faith before the Ka'ba and was beaten. All his life he remained completely frank and austere."
+      "fr": "Venu du désert pour vérifier ce que disait le Prophète ﷺ, il proclama sa foi devant la Ka‘ba et fut battu.",
+      "en": "Having come from the desert to check what the Prophet ﷺ was saying, he proclaimed his faith before the Ka'ba and was beaten."
     },
     "facts": [
       {
@@ -3209,8 +3077,8 @@ export const COMPANIONS: Companion[] = [
             "en": "Abu Dharr heard of a man who said he received news from heaven. He first sent his brother, then came to Mecca himself, found the Prophet ﷺ through 'Ali and believed."
           },
           {
-            "fr": "Au lieu de rester discret, il alla à la mosquée sacrée et cria sa foi devant Quraysh. Les gens le battirent jusqu’à ce qu’al-‘Abbâs le protège ; il recommença le lendemain.",
-            "en": "Instead of staying discreet, he went to the Sacred Mosque and shouted his faith before Quraysh. People beat him until al-'Abbas protected him; he did it again the next day."
+            "fr": "Le Prophète ﷺ lui conseilla de rester discret, mais il alla à la mosquée sacrée et cria sa foi devant Quraysh. Les gens le battirent jusqu’à ce qu’al-‘Abbâs le protège ; il recommença le lendemain.",
+            "en": "The Prophet ﷺ advised him to keep it secret, but he went to the Sacred Mosque and shouted his faith before Quraysh. People beat him until al-'Abbas protected him; he did it again the next day."
           },
           {
             "fr": "De retour chez les Ghifâr, il appela sa tribu à l’Islam.",
@@ -3238,13 +3106,13 @@ export const COMPANIONS: Companion[] = [
       {
         "id": "lessons",
         "title": {
-          "fr": "Des leçons reçues sans détour",
-          "en": "Lessons received without detour"
+          "fr": "Deux conseils du Prophète ﷺ",
+          "en": "Two pieces of advice from the Prophet ﷺ"
         },
         "paragraphs": [
           {
-            "fr": "Abû Dharr demanda un jour au Prophète ﷺ une fonction de gouverneur. La réponse fut franche et affectueuse :",
-            "en": "Abu Dharr once asked the Prophet ﷺ for a governor's post. The answer was frank and affectionate:"
+            "fr": "Abû Dharr demanda un jour au Prophète ﷺ une fonction de gouverneur. Le Prophète ﷺ lui répondit :",
+            "en": "Abu Dharr once asked the Prophet ﷺ for a governor's post. The Prophet ﷺ answered:"
           },
           {
             "fr": "Une autre fois, il insulta un homme en évoquant sa mère. Le Prophète ﷺ lui dit : « Tu as encore des traits de l’ignorance. Vos esclaves sont vos frères. » Depuis, Abû Dharr habillait son serviteur exactement comme lui.",
@@ -3303,16 +3171,7 @@ export const COMPANIONS: Companion[] = [
         ]
       }
     ],
-    "lessons": [
-      {
-        "fr": "Dire la vérité, même quand elle dérange.",
-        "en": "Tell the truth, even when it disturbs."
-      },
-      {
-        "fr": "Accepter d’être corrigé, et changer vraiment.",
-        "en": "Accept correction, and truly change."
-      }
-    ]
+    "lessons": []
   },
   {
     "id": "ibn-masud",
@@ -3339,8 +3198,8 @@ export const COMPANIONS: Companion[] = [
       "en": "d. 32 AH"
     },
     "summary": {
-      "fr": "Jeune berger de La Mecque, il devint l’un des plus grands connaisseurs du Coran. Le Prophète ﷺ aimait l’entendre réciter et recommandait d’apprendre le Coran auprès de lui.",
-      "en": "A young shepherd of Mecca, he became one of the greatest experts in the Quran. The Prophet ﷺ loved hearing him recite and recommended learning the Quran from him."
+      "fr": "Jeune berger de La Mecque. Le Prophète ﷺ aimait l’entendre réciter et recommandait d’apprendre le Coran auprès de lui.",
+      "en": "A young shepherd of Mecca. The Prophet ﷺ loved hearing him recite and recommended learning the Quran from him."
     },
     "facts": [
       {
@@ -3397,6 +3256,10 @@ export const COMPANIONS: Companion[] = [
           }
         ],
         "sources": [
+          {
+            "fr": "Sahîh al-Bukhârî 3763",
+            "en": "Sahih al-Bukhari 3763"
+          },
           {
             "fr": "Ibn Hishâm, As-Sîra an-Nabawiyya ; Ibn Sa‘d, At-Tabaqât al-Kubrâ",
             "en": "Ibn Hisham, As-Sira an-Nabawiyya; Ibn Sa'd, At-Tabaqat al-Kubra"
@@ -3455,8 +3318,8 @@ export const COMPANIONS: Companion[] = [
         },
         "paragraphs": [
           {
-            "fr": "‘Umar l’envoya à Kûfa pour enseigner le Coran et la religion, et gérer le trésor public. Ses élèves fondèrent l’une des grandes écoles de droit musulman, dont hérita plus tard l’imam Abû Hanîfa.",
-            "en": "'Umar sent him to Kufa to teach the Quran and the religion, and to manage the public treasury. His students founded one of the great schools of Islamic law, later inherited by Imam Abu Hanifa."
+            "fr": "‘Umar l’envoya à Kûfa pour enseigner le Coran et la religion, et gérer le trésor public.",
+            "en": "'Umar sent him to Kufa to teach the Quran and the religion, and to manage the public treasury."
           },
           {
             "fr": "Il revint à Médine à la fin de sa vie et y mourut en 32 H.",
@@ -3471,16 +3334,7 @@ export const COMPANIONS: Companion[] = [
         ]
       }
     ],
-    "lessons": [
-      {
-        "fr": "Le Coran élève celui qui le porte, quelle que soit son origine.",
-        "en": "The Quran raises those who carry it, whatever their origin."
-      },
-      {
-        "fr": "Continuer à apprendre, même quand on est déjà un maître.",
-        "en": "Keep learning, even when you are already a master."
-      }
-    ]
+    "lessons": []
   },
   {
     "id": "sad-ibn-muadh",
@@ -3507,8 +3361,8 @@ export const COMPANIONS: Companion[] = [
       "en": "d. 5 AH"
     },
     "summary": {
-      "fr": "Chef de la tribu des Aws à Médine, il embrassa l’Islam en écoutant Mus‘ab ibn ‘Umayr et entraîna son clan avec lui. Il ne vécut que six ans musulman, mais le Trône d’Allah trembla à sa mort.",
-      "en": "Chief of the Aws tribe in Medina, he embraced Islam after listening to Mus'ab ibn 'Umayr and brought his clan with him. He lived only six years as a Muslim, yet the Throne of Allah shook at his death."
+      "fr": "Chef de la tribu des Aws à Médine, il embrassa l’Islam en écoutant Mus‘ab ibn ‘Umayr et entraîna son clan avec lui. Le Trône d’Allah trembla à sa mort.",
+      "en": "Chief of the Aws tribe in Medina, he embraced Islam after listening to Mus'ab ibn 'Umayr and brought his clan with him. The Throne of Allah shook at his death."
     },
     "facts": [
       {
@@ -3544,8 +3398,8 @@ export const COMPANIONS: Companion[] = [
       {
         "id": "conversion",
         "title": {
-          "fr": "Un chef convaincu en une rencontre",
-          "en": "A chief convinced in one meeting"
+          "fr": "Sa conversion",
+          "en": "His conversion"
         },
         "paragraphs": [
           {
@@ -3636,16 +3490,7 @@ export const COMPANIONS: Companion[] = [
         ]
       }
     ],
-    "lessons": [
-      {
-        "fr": "Écouter avant de juger peut changer une vie.",
-        "en": "Listening before judging can change a life."
-      },
-      {
-        "fr": "Quelques années sincères peuvent peser plus qu’une longue vie.",
-        "en": "A few sincere years can weigh more than a long life."
-      }
-    ]
+    "lessons": []
   },
   {
     "id": "muadh",
@@ -3717,8 +3562,8 @@ export const COMPANIONS: Companion[] = [
       {
         "id": "youth",
         "title": {
-          "fr": "Un jeune homme parmi les savants",
-          "en": "A young man among the scholars"
+          "fr": "Sa jeunesse",
+          "en": "His youth"
         },
         "paragraphs": [
           {
@@ -3847,16 +3692,7 @@ export const COMPANIONS: Companion[] = [
         ]
       }
     ],
-    "lessons": [
-      {
-        "fr": "Enseigner, c’est faciliter et donner espoir, pas repousser.",
-        "en": "Teaching means making things easy and giving hope, not driving people away."
-      },
-      {
-        "fr": "Dire après chaque prière : « Ô Allah, aide-moi à me souvenir de Toi, à Te remercier et à T’adorer de la meilleure façon. »",
-        "en": "Say after every prayer: \"O Allah, help me in remembering You, in giving You thanks, and worshipping You well.\""
-      }
-    ]
+    "lessons": []
   },
   {
     "id": "zayd-ibn-thabit",
@@ -3884,8 +3720,8 @@ export const COMPANIONS: Companion[] = [
       "en": "d. around 45 AH"
     },
     "summary": {
-      "fr": "Adolescent brillant de Médine, il écrivait la révélation pour le Prophète ﷺ. C’est lui qu’Abû Bakr, puis ‘Uthmân, chargèrent de rassembler le Coran.",
-      "en": "A brilliant teenager of Medina, he wrote down the revelation for the Prophet ﷺ. It was he whom Abu Bakr, and then 'Uthman, charged with gathering the Quran."
+      "fr": "Adolescent de Médine, il écrivait la révélation pour le Prophète ﷺ. C’est lui qu’Abû Bakr, puis ‘Uthmân, chargèrent de rassembler le Coran.",
+      "en": "A teenager of Medina, he wrote down the revelation for the Prophet ﷺ. It was he whom Abu Bakr, and then 'Uthman, charged with gathering the Quran."
     },
     "facts": [
       {
@@ -3921,13 +3757,13 @@ export const COMPANIONS: Companion[] = [
       {
         "id": "youth",
         "title": {
-          "fr": "Un adolescent doué",
-          "en": "A gifted teenager"
+          "fr": "Sa jeunesse",
+          "en": "His youth"
         },
         "paragraphs": [
           {
-            "fr": "Zayd avait environ onze ans à l’arrivée du Prophète ﷺ à Médine et connaissait déjà plusieurs sourates. Trop jeune pour combattre à Badr, il servit autrement.",
-            "en": "Zayd was about eleven when the Prophet ﷺ arrived in Medina and already knew several surahs. Too young to fight at Badr, he served in another way."
+            "fr": "Zayd avait environ onze ans à l’arrivée du Prophète ﷺ à Médine et connaissait déjà plusieurs sourates. Il était trop jeune pour combattre à Badr.",
+            "en": "Zayd was about eleven when the Prophet ﷺ arrived in Medina and already knew several surahs. He was too young to fight at Badr."
           },
           {
             "fr": "Le Prophète ﷺ lui demanda d’apprendre l’écriture des Juifs pour pouvoir lire et écrire sa correspondance. Zayd raconte qu’il la maîtrisa en moins de quinze jours.",
@@ -4013,16 +3849,7 @@ export const COMPANIONS: Companion[] = [
         ]
       }
     ],
-    "lessons": [
-      {
-        "fr": "On peut servir la religion par le savoir et l’écriture autant que par le combat.",
-        "en": "You can serve the religion through knowledge and writing as much as through fighting."
-      },
-      {
-        "fr": "Plus une responsabilité est grande, plus il faut la prendre avec crainte et rigueur.",
-        "en": "The greater the responsibility, the more it must be taken with awe and rigour."
-      }
-    ]
+    "lessons": []
   },
   {
     "id": "salman",
@@ -4202,16 +4029,7 @@ export const COMPANIONS: Companion[] = [
         ]
       }
     ],
-    "lessons": [
-      {
-        "fr": "La vérité se cherche, parfois au prix d’un long voyage.",
-        "en": "Truth is to be sought, sometimes at the cost of a long journey."
-      },
-      {
-        "fr": "L’équilibre fait partie de la religion : Allah, son âme et sa famille ont chacun un droit.",
-        "en": "Balance is part of the religion: Allah, your soul and your family each have a right."
-      }
-    ]
+    "lessons": []
   },
   {
     "id": "khalid",
@@ -4328,8 +4146,8 @@ export const COMPANIONS: Companion[] = [
             "en": "A few months after his conversion, at Mu'ta, the three appointed commanders fell one after the other. Khalid took the banner and managed to save the army. In Medina, the Prophet ﷺ announced the news, his eyes in tears:"
           },
           {
-            "fr": "Le Prophète ﷺ le défendit aussi quand on lui reprocha de ne pas payer la zakât : « il garde son armure pour la cause d’Allah ». Mais il le reprit sévèrement quand Khâlid tua à tort des hommes des Banû Jadhîma : même un grand chef est corrigé quand il se trompe.",
-            "en": "The Prophet ﷺ also defended him when he was blamed for not paying zakat: \"he is keeping his armor for Allah's Cause\". But he firmly disowned Khalid's act when he wrongly killed men of the Banu Jadhima: even a great commander is corrected when he errs."
+            "fr": "Le Prophète ﷺ le défendit aussi quand on lui reprocha de ne pas payer la zakât : « il garde son armure pour la cause d’Allah ». Mais il désavoua ce que fit Khâlid quand celui-ci tua à tort des hommes des Banû Jadhîma.",
+            "en": "The Prophet ﷺ also defended him when he was blamed for not paying zakat: \"he is keeping his armor for Allah's Cause\". But he disowned what Khalid did when he wrongly killed men of the Banu Jadhima."
           }
         ],
         "quotes": [
@@ -4411,16 +4229,7 @@ export const COMPANIONS: Companion[] = [
         ]
       }
     ],
-    "lessons": [
-      {
-        "fr": "L’Islam efface ce qui précède : un ancien adversaire peut devenir un pilier.",
-        "en": "Islam wipes out what came before: a former opponent can become a pillar."
-      },
-      {
-        "fr": "La victoire vient d’Allah, pas d’un homme, si brillant soit-il.",
-        "en": "Victory comes from Allah, not from one man, however brilliant."
-      }
-    ]
+    "lessons": []
   },
   {
     "id": "anas",
@@ -4573,8 +4382,8 @@ export const COMPANIONS: Companion[] = [
         },
         "paragraphs": [
           {
-            "fr": "Après la mort du Prophète ﷺ, Anas participa aux conquêtes puis s’installa à Bassora, où il enseigna. Il est l’un des Compagnons qui ont transmis le plus de hadiths, en particulier sur la prière, le caractère et les habitudes du Prophète ﷺ.",
-            "en": "After the Prophet's ﷺ death, Anas took part in the conquests and then settled in Basra, where he taught. He is one of the Companions who transmitted the most hadiths, especially about the prayer, the character and the habits of the Prophet ﷺ."
+            "fr": "Après la mort du Prophète ﷺ, Anas participa aux conquêtes puis s’installa à Bassora, où il enseigna. Il est l’un des Compagnons qui ont transmis le plus de hadiths.",
+            "en": "After the Prophet's ﷺ death, Anas took part in the conquests and then settled in Basra, where he taught. He is one of the Companions who transmitted the most hadiths."
           },
           {
             "fr": "Il mourut vers 93 H, à plus de cent ans selon plusieurs sources ; il est souvent cité comme le dernier Compagnon mort à Bassora.",
@@ -4589,16 +4398,7 @@ export const COMPANIONS: Companion[] = [
         ]
       }
     ],
-    "lessons": [
-      {
-        "fr": "La douceur avec ceux qui nous servent fait partie de la Sunna.",
-        "en": "Gentleness with those who serve us is part of the Sunna."
-      },
-      {
-        "fr": "Transmettre fidèlement ce qu’on a vu est un service pour toute la communauté.",
-        "en": "Faithfully passing on what you have seen is a service to the whole community."
-      }
-    ]
+    "lessons": []
   },
   {
     "id": "abu-hurayra",
@@ -4617,16 +4417,16 @@ export const COMPANIONS: Companion[] = [
     "arabicName": "أبو هريرة",
     "initial": "أ",
     "shortTitle": {
-      "fr": "La mémoire de la Sunna",
-      "en": "The memory of the Sunna"
+      "fr": "Le compagnon de la Suffa",
+      "en": "The companion of the Suffa"
     },
     "years": {
       "fr": "m. vers 58 H",
       "en": "d. around 58 AH"
     },
     "summary": {
-      "fr": "Venu du Yémen en 7 H, pauvre et sans famille à Médine, il ne quitta plus le Prophète ﷺ. En quatre ans, il mémorisa plus de hadiths que quiconque.",
-      "en": "Having come from Yemen in 7 AH, poor and without family in Medina, he never left the Prophet's ﷺ side. In four years, he memorised more hadiths than anyone."
+      "fr": "Venu du Yémen en 7 H, pauvre et sans famille à Médine, il ne quitta plus le Prophète ﷺ et retint ce qu’il entendait de lui.",
+      "en": "Having come from Yemen in 7 AH, poor and without family in Medina, he never left the Prophet's ﷺ side and retained what he heard from him."
     },
     "facts": [
       {
@@ -4669,8 +4469,8 @@ export const COMPANIONS: Companion[] = [
       {
         "id": "suffa",
         "title": {
-          "fr": "La faim et la proximité",
-          "en": "Hunger and closeness"
+          "fr": "La Suffa",
+          "en": "The Suffa"
         },
         "paragraphs": [
           {
@@ -4743,8 +4543,8 @@ export const COMPANIONS: Companion[] = [
       {
         "id": "teaching",
         "title": {
-          "fr": "Transmettre jusqu’au bout",
-          "en": "Passing on to the end"
+          "fr": "Après le Prophète ﷺ",
+          "en": "After the Prophet ﷺ"
         },
         "paragraphs": [
           {
@@ -4764,16 +4564,7 @@ export const COMPANIONS: Companion[] = [
         ]
       }
     ],
-    "lessons": [
-      {
-        "fr": "La pauvreté n’empêche pas de devenir une référence.",
-        "en": "Poverty does not prevent you from becoming a reference."
-      },
-      {
-        "fr": "Ne jamais désespérer de la guidance d’un proche : on peut toujours invoquer pour lui.",
-        "en": "Never despair of a loved one's guidance: you can always supplicate for them."
-      }
-    ]
+    "lessons": []
   },
   {
     "id": "ibn-abbas",
@@ -4808,8 +4599,8 @@ export const COMPANIONS: Companion[] = [
       "en": "d. 68 AH"
     },
     "summary": {
-      "fr": "Cousin du Prophète ﷺ, il n’avait que treize ans à sa mort. Grâce à une invocation du Prophète ﷺ et à une soif d’apprendre hors du commun, il devint le grand savant du Coran de sa génération.",
-      "en": "The Prophet's ﷺ cousin, he was only thirteen when the Prophet died. Thanks to the Prophet's ﷺ supplication and an extraordinary thirst for learning, he became the great Quran scholar of his generation."
+      "fr": "Cousin du Prophète ﷺ, il n’avait que treize ans à sa mort. Le Prophète ﷺ invoqua pour qu’Allah lui enseigne le Livre.",
+      "en": "The Prophet's ﷺ cousin, he was only thirteen when the Prophet died. The Prophet ﷺ supplicated for Allah to teach him the Book."
     },
     "facts": [
       {
@@ -4925,17 +4716,17 @@ export const COMPANIONS: Companion[] = [
       {
         "id": "teaching",
         "title": {
-          "fr": "Le maître de La Mecque",
-          "en": "The master of Mecca"
+          "fr": "L’enseignement à La Mecque",
+          "en": "Teaching in Mecca"
         },
         "paragraphs": [
           {
-            "fr": "Ibn ‘Abbâs enseigna le tafsîr, le droit, la poésie arabe et l’histoire à La Mecque. Ses élèves, comme Mujâhid, ‘Ikrima et Sa‘îd ibn Jubayr, fondèrent l’école d’exégèse de La Mecque.",
-            "en": "Ibn 'Abbas taught tafsir, law, Arabic poetry and history in Mecca. His students, such as Mujahid, 'Ikrima and Sa'id ibn Jubayr, founded the Meccan school of exegesis."
+            "fr": "Ibn ‘Abbâs enseigna le tafsîr, le droit, la poésie arabe et l’histoire à La Mecque. Parmi ses élèves figurent Mujâhid, ‘Ikrima et Sa‘îd ibn Jubayr.",
+            "en": "Ibn 'Abbas taught tafsir, law, Arabic poetry and history in Mecca. His students included Mujahid, 'Ikrima and Sa'id ibn Jubayr."
           },
           {
-            "fr": "Toutes les explications du Coran qui portent son nom ne remontent pas forcément à lui : les spécialistes vérifient chaque chaîne. Il perdit la vue à la fin de sa vie et mourut à Tâ’if en 68 H.",
-            "en": "Not every explanation of the Quran that bears his name necessarily goes back to him: specialists check each chain. He lost his sight at the end of his life and died in Ta'if in 68 AH."
+            "fr": "Il perdit la vue à la fin de sa vie et mourut à Tâ’if en 68 H.",
+            "en": "He lost his sight at the end of his life and died in Ta'if in 68 AH."
           }
         ],
         "sources": [
@@ -4946,16 +4737,7 @@ export const COMPANIONS: Companion[] = [
         ]
       }
     ],
-    "lessons": [
-      {
-        "fr": "Le savoir se gagne par l’humilité et la patience devant ceux qui savent.",
-        "en": "Knowledge is gained through humility and patience before those who know."
-      },
-      {
-        "fr": "Un petit service rendu peut valoir une grande invocation.",
-        "en": "A small service can earn a great supplication."
-      }
-    ]
+    "lessons": []
   },
   {
     "id": "khadija",
@@ -4990,8 +4772,8 @@ export const COMPANIONS: Companion[] = [
       "en": "d. 3 years before the Hijra"
     },
     "summary": {
-      "fr": "Femme d’affaires respectée de La Mecque, elle épousa le Prophète ﷺ quinze ans avant la révélation. Elle fut la première à croire en lui et le soutint de toute sa personne et de tous ses biens.",
-      "en": "A respected businesswoman of Mecca, she married the Prophet ﷺ fifteen years before the revelation. She was the first to believe in him and supported him with all her person and wealth."
+      "fr": "Femme d’affaires respectée de La Mecque, elle épousa le Prophète ﷺ quinze ans avant la révélation. Elle fut la première à croire en lui.",
+      "en": "A respected businesswoman of Mecca, she married the Prophet ﷺ fifteen years before the revelation. She was the first to believe in him."
     },
     "facts": [
       {
@@ -5089,8 +4871,8 @@ export const COMPANIONS: Companion[] = [
         },
         "paragraphs": [
           {
-            "fr": "Pendant les années de persécution et le boycott de la vallée d’Abû Tâlib, Khadîja partagea les privations du Prophète ﷺ. Un jour, Jibrîl vint lui dire :",
-            "en": "During the years of persecution and the boycott in the valley of Abu Talib, Khadija shared the Prophet's ﷺ hardships. One day Jibril came and said to him:"
+            "fr": "Un jour, Jibrîl vint dire au Prophète ﷺ :",
+            "en": "One day Jibril came and said to the Prophet ﷺ:"
           },
           {
             "fr": "Le Prophète ﷺ dit aussi : « Khadija est la meilleure parmi les femmes (de cette communauté). »",
@@ -5124,17 +4906,17 @@ export const COMPANIONS: Companion[] = [
       {
         "id": "death",
         "title": {
-          "fr": "L’année du chagrin",
-          "en": "The year of sorrow"
+          "fr": "Sa mort",
+          "en": "Her death"
         },
         "paragraphs": [
           {
-            "fr": "Khadîja mourut à La Mecque trois ans avant l’Hégire, la même année qu’Abû Tâlib ; la tradition appelle cette année « l’année du chagrin ».",
-            "en": "Khadija died in Mecca three years before the Hijra, the same year as Abu Talib; tradition calls it \"the year of sorrow\"."
+            "fr": "Khadîja mourut à La Mecque trois ans avant l’Hégire, la même année qu’Abû Tâlib.",
+            "en": "Khadija died in Mecca three years before the Hijra, the same year as Abu Talib."
           },
           {
-            "fr": "Le Prophète ﷺ ne l’oublia jamais. ‘Â’isha disait n’avoir été jalouse d’aucune épouse autant que de Khadîja, qu’elle n’avait pourtant jamais vue, tant il parlait d’elle et envoyait de la viande à ses amies.",
-            "en": "The Prophet ﷺ never forgot her. 'A'isha said she had not been jealous of any wife as much as of Khadija, whom she had never even seen, because he spoke of her so often and sent meat to her friends."
+            "fr": "‘Â’isha disait n’avoir été jalouse d’aucune épouse autant que de Khadîja, qu’elle n’avait pourtant jamais vue, tant il parlait d’elle et envoyait de la viande à ses amies.",
+            "en": "'A'isha said she had not been jealous of any wife as much as of Khadija, whom she had never even seen, because he spoke of her so often and sent meat to her friends."
           }
         ],
         "sources": [
@@ -5149,16 +4931,7 @@ export const COMPANIONS: Companion[] = [
         ]
       }
     ],
-    "lessons": [
-      {
-        "fr": "Soutenir ceux qu’on aime dans les moments où ils doutent.",
-        "en": "Support those you love when they are in doubt."
-      },
-      {
-        "fr": "La fidélité se prouve aussi après la mort : le Prophète ﷺ honorait encore les amies de Khadîja.",
-        "en": "Loyalty also shows after death: the Prophet ﷺ still honoured Khadija's friends."
-      }
-    ]
+    "lessons": []
   },
   {
     "id": "aisha",
@@ -5194,8 +4967,8 @@ export const COMPANIONS: Companion[] = [
       "en": "d. 58 AH"
     },
     "summary": {
-      "fr": "Fille d’Abû Bakr et épouse du Prophète ﷺ, elle devint l’une des plus grandes savantes de l’Islam. Les Compagnons venaient la consulter, et elle a transmis plus de deux mille hadiths.",
-      "en": "Daughter of Abu Bakr and wife of the Prophet ﷺ, she became one of the greatest scholars of Islam. The Companions came to consult her, and she transmitted more than two thousand hadiths."
+      "fr": "Fille d’Abû Bakr et épouse du Prophète ﷺ. Après lui, les Compagnons venaient la consulter, et elle a transmis plus de deux mille hadiths.",
+      "en": "Daughter of Abu Bakr and wife of the Prophet ﷺ. After him, the Companions came to consult her, and she transmitted more than two thousand hadiths."
     },
     "facts": [
       {
@@ -5322,17 +5095,17 @@ export const COMPANIONS: Companion[] = [
       {
         "id": "scholar",
         "title": {
-          "fr": "Une école à elle seule",
-          "en": "A school in herself"
+          "fr": "Après le Prophète ﷺ",
+          "en": "After the Prophet ﷺ"
         },
         "paragraphs": [
           {
-            "fr": "Après la mort du Prophète ﷺ, ‘Â’isha devint une référence. Les grands Compagnons venaient lui poser des questions de droit, de Coran, de médecine ou de poésie, et elle corrigeait parfois leurs erreurs avec précision.",
-            "en": "After the Prophet's ﷺ death, 'A'isha became a reference. Senior Companions came to ask her about law, the Quran, medicine or poetry, and she sometimes corrected their mistakes with precision."
+            "fr": "Après la mort du Prophète ﷺ, ‘Â’isha devint une référence. Les grands Compagnons venaient lui poser des questions de droit, de Coran, de médecine ou de poésie.",
+            "en": "After the Prophet's ﷺ death, 'A'isha became a reference. Senior Companions came to ask her about law, the Quran, medicine or poetry."
           },
           {
-            "fr": "Elle est, avec Abû Hurayra, Ibn ‘Umar et Anas, parmi ceux qui ont transmis le plus de hadiths, en particulier sur la vie intime et la pratique du Prophète ﷺ.",
-            "en": "Along with Abu Hurayra, Ibn 'Umar and Anas, she is among those who transmitted the most hadiths, especially about the Prophet's ﷺ private life and practice."
+            "fr": "Elle est, avec Abû Hurayra, Ibn ‘Umar et Anas, parmi ceux qui ont transmis le plus de hadiths.",
+            "en": "Along with Abu Hurayra, Ibn 'Umar and Anas, she is among those who transmitted the most hadiths."
           },
           {
             "fr": "Elle prit part à la bataille du Chameau en 36 H, ce qu’elle regretta ensuite. Elle mourut à Médine en 58 H et fut enterrée au Baqî‘.",
@@ -5351,16 +5124,7 @@ export const COMPANIONS: Companion[] = [
         ]
       }
     ],
-    "lessons": [
-      {
-        "fr": "Une femme peut être la référence savante de toute une communauté.",
-        "en": "A woman can be the scholarly reference of a whole community."
-      },
-      {
-        "fr": "Face à la calomnie, s’en remettre à Allah, qui fait triompher la vérité.",
-        "en": "In the face of slander, rely on Allah, who makes the truth prevail."
-      }
-    ]
+    "lessons": []
   },
   {
     "id": "hafsa",
@@ -5499,12 +5263,7 @@ export const COMPANIONS: Companion[] = [
         ]
       }
     ],
-    "lessons": [
-      {
-        "fr": "Garder un dépôt précieux est un honneur et une responsabilité.",
-        "en": "Keeping a precious trust is both an honour and a responsibility."
-      }
-    ]
+    "lessons": []
   },
   {
     "id": "umm-salama",
@@ -5524,8 +5283,8 @@ export const COMPANIONS: Companion[] = [
     "arabicName": "أم سلمة",
     "initial": "أ",
     "shortTitle": {
-      "fr": "La sagesse d’al-Hudaybiya",
-      "en": "The wisdom of al-Hudaybiya"
+      "fr": "Le conseil d’al-Hudaybiya",
+      "en": "The advice at al-Hudaybiya"
     },
     "laqab": {
       "fr": "Umm al-Mu’minîn",
@@ -5540,8 +5299,8 @@ export const COMPANIONS: Companion[] = [
       "en": "d. around 61 AH"
     },
     "summary": {
-      "fr": "Émigrée en Abyssinie puis à Médine, veuve d’Abû Salama, elle épousa le Prophète ﷺ. Son conseil à al-Hudaybiya dénoua une crise, et elle fut la dernière des mères des croyants à mourir.",
-      "en": "An emigrant to Abyssinia and then Medina, widow of Abu Salama, she married the Prophet ﷺ. Her advice at al-Hudaybiya resolved a crisis, and she was the last of the mothers of the believers to die."
+      "fr": "Émigrée en Abyssinie puis à Médine, veuve d’Abû Salama, elle épousa le Prophète ﷺ. Elle conseilla le Prophète ﷺ à al-Hudaybiya, et elle fut la dernière des mères des croyants à mourir.",
+      "en": "An emigrant to Abyssinia and then Medina, widow of Abu Salama, she married the Prophet ﷺ. She advised the Prophet ﷺ at al-Hudaybiya, and she was the last of the mothers of the believers to die."
     },
     "facts": [
       {
@@ -5639,8 +5398,8 @@ export const COMPANIONS: Companion[] = [
         },
         "paragraphs": [
           {
-            "fr": "Après la signature du traité d’al-Hudaybiya, les Compagnons, déçus de ne pas pouvoir accomplir la ‘umra, ne se levaient pas pour sacrifier leurs bêtes malgré l’ordre du Prophète ﷺ. Il alla voir Umm Salama, qui lui conseilla :",
-            "en": "After the treaty of al-Hudaybiya was signed, the Companions, disappointed at not being able to perform the 'umra, did not get up to sacrifice their animals despite the Prophet's ﷺ order. He went to see Umm Salama, who advised him:"
+            "fr": "Après la signature du traité d’al-Hudaybiya, les Compagnons ne se levaient pas pour sacrifier leurs bêtes malgré l’ordre du Prophète ﷺ. Il alla voir Umm Salama, qui lui conseilla :",
+            "en": "After the treaty of al-Hudaybiya was signed, the Companions did not get up to sacrifice their animals despite the Prophet's ﷺ order. He went to see Umm Salama, who advised him:"
           },
           {
             "fr": "Il le fit, et en le voyant, tous se levèrent pour sacrifier et se raser la tête.",
@@ -5685,16 +5444,7 @@ export const COMPANIONS: Companion[] = [
         ]
       }
     ],
-    "lessons": [
-      {
-        "fr": "Dans l’épreuve, dire « Inna lillâhi wa innâ ilayhi râji‘ûn » et demander mieux à Allah.",
-        "en": "In hardship, say \"Inna lillahi wa inna ilayhi raji'un\" and ask Allah for something better."
-      },
-      {
-        "fr": "Un bon conseil, donné au bon moment, peut sauver une situation.",
-        "en": "Good advice, given at the right time, can save a situation."
-      }
-    ]
+    "lessons": []
   },
   {
     "id": "asma",
@@ -5729,8 +5479,8 @@ export const COMPANIONS: Companion[] = [
       "en": "d. 73 AH"
     },
     "summary": {
-      "fr": "Fille d’Abû Bakr, elle ravitailla en secret le Prophète ﷺ et son père pendant l’Hégire. Épouse d’az-Zubayr, mère d’‘Abd Allâh ibn az-Zubayr, elle vécut près de cent ans sans jamais perdre son courage.",
-      "en": "Abu Bakr's daughter, she secretly supplied the Prophet ﷺ and her father during the Hijra. Wife of az-Zubayr and mother of 'Abd Allah ibn az-Zubayr, she lived nearly a hundred years without ever losing her courage."
+      "fr": "Fille d’Abû Bakr, elle ravitailla en secret le Prophète ﷺ et son père pendant l’Hégire. Épouse d’az-Zubayr, mère d’‘Abd Allâh ibn az-Zubayr, elle vécut près de cent ans.",
+      "en": "Abu Bakr's daughter, she secretly supplied the Prophet ﷺ and her father during the Hijra. Wife of az-Zubayr and mother of 'Abd Allah ibn az-Zubayr, she lived nearly a hundred years."
     },
     "facts": [
       {
@@ -5810,8 +5560,8 @@ export const COMPANIONS: Companion[] = [
       {
         "id": "life",
         "title": {
-          "fr": "Une vie de travail et de fidélité",
-          "en": "A life of work and loyalty"
+          "fr": "Sa vie à Médine",
+          "en": "Her life in Medina"
         },
         "paragraphs": [
           {
@@ -5846,8 +5596,8 @@ export const COMPANIONS: Companion[] = [
         },
         "paragraphs": [
           {
-            "fr": "Très âgée et aveugle, Asmâ’ vit son fils ‘Abd Allâh tué à La Mecque par l’armée d’al-Hajjâj, qui exposa son corps. Al-Hajjâj vint la provoquer en se moquant du « fils de la femme aux deux ceintures ». Elle répondit sans trembler :",
-            "en": "Very old and blind, Asma' saw her son 'Abd Allah killed in Mecca by the army of al-Hajjaj, who displayed his body. Al-Hajjaj came to provoke her, mocking \"the son of the woman with two belts\". She answered without trembling:"
+            "fr": "Asmâ’ vit son fils ‘Abd Allâh tué à La Mecque par l’armée d’al-Hajjâj, qui exposa son corps. Al-Hajjâj vint la provoquer en se moquant du « fils de la femme aux deux ceintures ». Elle répondit :",
+            "en": "Asma' saw her son 'Abd Allah killed in Mecca by the army of al-Hajjaj, who displayed his body. Al-Hajjaj came to provoke her, mocking \"the son of the woman with two belts\". She answered:"
           },
           {
             "fr": "Elle mourut peu après, en 73 H.",
@@ -5873,16 +5623,7 @@ export const COMPANIONS: Companion[] = [
         ]
       }
     ],
-    "lessons": [
-      {
-        "fr": "Servir la cause d’Allah avec ce qu’on a sous la main, même une simple ceinture.",
-        "en": "Serve Allah's cause with whatever you have to hand, even a simple belt."
-      },
-      {
-        "fr": "Rester bon envers ses parents, même s’ils ne partagent pas sa foi.",
-        "en": "Stay kind to your parents, even if they do not share your faith."
-      }
-    ]
+    "lessons": []
   },
   {
     "id": "fatima-bint-khattab",
@@ -5981,8 +5722,8 @@ export const COMPANIONS: Companion[] = [
             "en": "According to the sira, 'Umar, learning that his sister was a Muslim, burst into her home while the Quran was being recited there. He struck his brother-in-law and wounded her in the face. Seeing the blood and his sister's firmness, he felt ashamed and asked to read the page."
           },
           {
-            "fr": "Elle exigea qu’il se purifie d’abord. Il lut le début de la sourate Tâ-Hâ, fut bouleversé, et se rendit chez le Prophète ﷺ pour embrasser l’Islam.",
-            "en": "She insisted that he purify himself first. He read the opening of Surah Ta-Ha, was overwhelmed, and went to the Prophet ﷺ to embrace Islam."
+            "fr": "Elle exigea qu’il se purifie d’abord. Il lut le début de la sourate Tâ-Hâ, trouva ces paroles belles, et se rendit chez le Prophète ﷺ pour embrasser l’Islam.",
+            "en": "She insisted that he purify himself first. He read the opening of Surah Ta-Ha, found the words beautiful, and went to the Prophet ﷺ to embrace Islam."
           }
         ],
         "sources": [
@@ -5993,12 +5734,7 @@ export const COMPANIONS: Companion[] = [
         ]
       }
     ],
-    "lessons": [
-      {
-        "fr": "La fermeté calme d’un croyant peut toucher le cœur le plus dur.",
-        "en": "A believer's calm firmness can touch the hardest heart."
-      }
-    ]
+    "lessons": []
   },
   {
     "id": "sumayya",
@@ -6109,8 +5845,8 @@ export const COMPANIONS: Companion[] = [
             "en": "According to a report narrated by al-Hakim, the Prophet ﷺ, passing by the tortured family, told them: \"Patience, family of Yasir, your meeting place is Paradise.\""
           },
           {
-            "fr": "Leur fils ‘Ammâr survécut, émigra à Médine et devint un grand Compagnon.",
-            "en": "Their son 'Ammar survived, emigrated to Medina and became a great Companion."
+            "fr": "Leur fils ‘Ammâr survécut et émigra à Médine.",
+            "en": "Their son 'Ammar survived and emigrated to Medina."
           }
         ],
         "sources": [
@@ -6121,12 +5857,7 @@ export const COMPANIONS: Companion[] = [
         ]
       }
     ],
-    "lessons": [
-      {
-        "fr": "La foi n’a pas besoin de rang social pour être la plus forte.",
-        "en": "Faith does not need social rank to be the strongest."
-      }
-    ]
+    "lessons": []
   },
   {
     "id": "nusayba",
@@ -6283,16 +6014,7 @@ export const COMPANIONS: Companion[] = [
         ]
       }
     ],
-    "lessons": [
-      {
-        "fr": "Les femmes ont été présentes à chaque grand moment de l’histoire de l’Islam.",
-        "en": "Women were present at every great moment in the history of Islam."
-      },
-      {
-        "fr": "Poser une question sincère peut faire descendre une réponse pour toute la communauté.",
-        "en": "Asking a sincere question can bring an answer for the whole community."
-      }
-    ]
+    "lessons": []
   },
   {
     "id": "umm-sulaym",
@@ -6324,8 +6046,8 @@ export const COMPANIONS: Companion[] = [
       "en": "mother of Anas ibn Malik"
     },
     "summary": {
-      "fr": "Mère d’Anas ibn Mâlik, elle demanda pour seule dot qu’Abû Talha devienne musulman. Sa patience à la mort de son enfant reste un modèle, et le Prophète ﷺ la vit en rêve au Paradis.",
-      "en": "Mother of Anas ibn Malik, she asked for no dowry except that Abu Talha become a Muslim. Her patience at the death of her child remains a model, and the Prophet ﷺ saw her in Paradise in a dream."
+      "fr": "Mère d’Anas ibn Mâlik, elle demanda pour seule dot qu’Abû Talha devienne musulman. À la mort de son enfant, elle accueillit son mari avec calme, et le Prophète ﷺ la vit en rêve au Paradis.",
+      "en": "Mother of Anas ibn Malik, she asked for no dowry except that Abu Talha become a Muslim. When her child died, she received her husband calmly, and the Prophet ﷺ saw her in Paradise in a dream."
     },
     "facts": [
       {
@@ -6429,8 +6151,8 @@ export const COMPANIONS: Companion[] = [
         },
         "paragraphs": [
           {
-            "fr": "Umm Sulaym posait sans gêne au Prophète ﷺ les questions que d’autres n’osaient pas poser, en commençant par : « En vérité, Allah n’a pas honte de dire la vérité. »",
-            "en": "Umm Sulaym asked the Prophet ﷺ without embarrassment the questions others did not dare to ask, beginning with: \"Verily, Allah is not shy of (telling you) the truth.\""
+            "fr": "Umm Sulaym posa au Prophète ﷺ une question sur la purification des femmes, en commençant par : « En vérité, Allah n’a pas honte de dire la vérité. »",
+            "en": "Umm Sulaym asked the Prophet ﷺ a question about women's purification, beginning with: \"Verily, Allah is not shy of (telling you) the truth.\""
           },
           {
             "fr": "Le Prophète ﷺ raconta : « Je me suis vu (en rêve) entrer au Paradis, et voilà que j’ai vu Ar-Rumaisa’, la femme d’Abu Talha. »",
@@ -6449,15 +6171,6 @@ export const COMPANIONS: Companion[] = [
         ]
       }
     ],
-    "lessons": [
-      {
-        "fr": "La foi d’un futur époux vaut plus que n’importe quelle dot.",
-        "en": "A future husband's faith is worth more than any dowry."
-      },
-      {
-        "fr": "On ne doit pas avoir honte d’apprendre sa religion.",
-        "en": "One should never be ashamed to learn one's religion."
-      }
-    ]
+    "lessons": []
   }
 ];
