@@ -1,6 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
-import { LinearGradient } from "expo-linear-gradient";
 import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
@@ -30,12 +29,14 @@ import {
   saveDuaProgress,
   toggleDuaFavorite,
 } from "../../features/dua/DuaStore";
+import { duaCategoryTitle, duaMeaning } from "../../features/dua/DuaLocalization";
 import { ensureDuaCategoryFrench } from "../../features/dua/DuaTranslationService";
 import { useDuaSpeech } from "../../features/dua/useDuaSpeech";
 import { goalProgressBridge } from "../../features/daily-goals/services/goalProgressBridge";
 import { loadReadConfirmations, onLocalMidnight, setReadConfirmation } from "../../features/reading-progress/ReadingValidationStore";
 import { useLearningAudioPlayer } from "../../features/learning-audio/useLearningAudioPlayer";
 import { ARABIC_READING_FONT_FAMILY } from "../../features/quran/ArabicReadingPresentation";
+import { useI18n } from "../../i18n";
 import { colors } from "../../theme/colors";
 import { typography } from "../../theme/typography";
 
@@ -56,7 +57,9 @@ function AudioSeekBar({
   disabled,
   onSeek,
   onPreviewChange,
+  accessibilityLabel,
 }: {
+  accessibilityLabel: string;
   progress: number;
   disabled: boolean;
   onSeek: (progress: number) => void;
@@ -69,8 +72,7 @@ function AudioSeekBar({
 
   return (
     <Slider
-      accessibilityLabel="Barre de progression audio"
-      accessibilityHint="Touchez ou faites glisser pour avancer ou reculer"
+      accessibilityLabel={accessibilityLabel}
       accessibilityRole="adjustable"
       disabled={disabled}
       maximumTrackTintColor={colors.surfaceLight}
@@ -100,6 +102,7 @@ function AudioSeekBar({
 }
 
 export default function DuaReaderScreen() {
+  const { language, t } = useI18n();
   const { categoryId, item: requestedItem, period } = useLocalSearchParams<{
     categoryId: string;
     item?: string;
@@ -120,14 +123,11 @@ export default function DuaReaderScreen() {
   }, []));
   useEffect(() => onLocalMidnight(() => setReadDuaIds(new Set())), []);
   const [listVisible, setListVisible] = useState(false);
-  const [showPhonetic, setShowPhonetic] = useState(false);
-  const [showArabic, setShowArabic] = useState(false);
   const [audioScrubProgress, setAudioScrubProgress] = useState<number | null>(null);
   const [learningRepeatCount, setLearningRepeatCount] = useState<1 | 3 | 5>(3);
   const [learningRepeatIndex, setLearningRepeatIndex] = useState(0);
   const repeatTimerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const repeatCompletionRef = useRef(0);
-  const [showDetails, setShowDetails] = useState(false);
   const saveTimerRef = useRef<ReturnType<typeof setTimeout> | undefined>(
     undefined,
   );
@@ -239,6 +239,9 @@ export default function DuaReaderScreen() {
   const audioStartOffsetSeconds = current?.audioStartOffsetSeconds ?? 0;
   const audioEndOffsetSeconds = current?.audioEndOffsetSeconds ?? 0;
   const audioHighlightDelaySeconds = current?.audioHighlightDelaySeconds ?? 0;
+  const audioStartSeconds = current?.audioStartSeconds;
+  const audioEndSeconds = current?.audioEndSeconds;
+  const audioWordTimes = current?.audioWordTimes;
   const audioProgress = hasRecordedAudio
     ? learningAudio.activeKey === current?.id
       ? learningAudio.focusedProgress
@@ -252,6 +255,17 @@ export default function DuaReaderScreen() {
   );
 
   const recordedActiveWordIndex = useMemo(() => {
+    if (
+      audioWordTimes?.length &&
+      current &&
+      learningAudio.activeKey === current.id
+    ) {
+      // Temps mesurés sur l'enregistrement : le mot affiché suit la voix.
+      const position = learningAudio.currentTime + 0.05;
+      if (position < audioWordTimes[0]) return -1;
+      const next = audioWordTimes.findIndex((time) => time > position);
+      return next === -1 ? audioWordTimes.length - 1 : next - 1;
+    }
     if (
       !current ||
       !currentAudioKey ||
@@ -281,22 +295,23 @@ export default function DuaReaderScreen() {
       ),
     );
     const cursor = Math.min(0.999999, Math.max(0, effectiveProgress)) * totalWeight;
-    let elapsed = 0;
-    const found = weights.findIndex((weight) => {
-      elapsed += weight;
-      return cursor <= elapsed;
-    });
+    const cumulative = weights.reduce<number[]>((sums, weight) => {
+      sums.push((sums.at(-1) ?? 0) + weight);
+      return sums;
+    }, []);
+    const found = cumulative.findIndex((elapsed) => cursor <= elapsed);
     return found < 0 ? Math.max(0, arabicWords.length - 1) : found;
   }, [
     arabicWords,
     learningAudio.activeKey,
-    learningAudio.focusedProgress,
     learningAudio.focusedDuration,
-    learningAudio.progress,
     learningAudio.duration,
     audioHighlightDelaySeconds,
-    current?.id,
+    audioWordTimes,
+    current,
     currentAudioKey,
+    learningAudio.currentTime,
+    learningAudio.focusedCurrentTime,
   ]);
   const activeWordIndex = hasRecordedAudio
     ? recordedActiveWordIndex
@@ -325,21 +340,13 @@ export default function DuaReaderScreen() {
   const audioError = hasRecordedAudio ? learningAudio.error : duaSpeech.error;
   const periodTitle =
     adhkarPeriod === "morning"
-      ? "Adhkār du matin"
+      ? t("dua.morningAdhkar")
       : adhkarPeriod === "evening"
-        ? "Adhkār du soir"
-        : category?.frenchTitle ?? "Invocation";
-  const periodIcon = adhkarPeriod === "evening" ? "moon-outline" : adhkarPeriod === "morning" ? "sunny-outline" : "book-outline";
-
-  const contextLabel = useMemo(() => {
-    if (!category) return "Invocation";
-    if (adhkarPeriod === "morning") return "Parcours du matin";
-    if (adhkarPeriod === "evening") return "Parcours du soir";
-    if (category.section === "morning-evening") return "Adhkār quotidiens";
-    if (category.section === "sleep") return "Sommeil et réveil";
-    if (category.section === "prayer") return "Prière et mosquée";
-    return category.frenchTitle;
-  }, [adhkarPeriod, category]);
+        ? t("dua.eveningAdhkar")
+        : category
+          ? duaCategoryTitle(category, language)
+          : t("dua.reader.invocation");
+  const meaning = current ? duaMeaning(current, language) : "";
 
   useEffect(() => {
     const tracker = goalAudioRef.current;
@@ -398,9 +405,6 @@ export default function DuaReaderScreen() {
     }
     setLearningRepeatIndex(0);
     setAudioScrubProgress(null);
-    setShowPhonetic(false);
-    setShowArabic(false);
-    setShowDetails(false);
   }, [current?.id]);
 
   const changeItem = useCallback(
@@ -423,10 +427,14 @@ export default function DuaReaderScreen() {
       endRatio: audioEndRatio,
       startOffsetSeconds: audioStartOffsetSeconds,
       endOffsetSeconds: audioEndOffsetSeconds,
+      startSeconds: audioStartSeconds,
+      endSeconds: audioEndSeconds,
     });
   }, [
     audioEndOffsetSeconds,
     audioEndRatio,
+    audioEndSeconds,
+    audioStartSeconds,
     audioStartOffsetSeconds,
     audioStartRatio,
     current,
@@ -508,46 +516,22 @@ export default function DuaReaderScreen() {
         audioEndRatio,
         audioStartOffsetSeconds,
         audioEndOffsetSeconds,
+        audioStartSeconds,
+        audioEndSeconds,
       );
     },
     [
       audioDuration,
       audioEndOffsetSeconds,
       audioEndRatio,
+      audioEndSeconds,
+      audioStartSeconds,
       audioStartOffsetSeconds,
       audioStartRatio,
       hasRecordedAudio,
       learningAudio,
     ],
   );
-
-  const seekRecordedAudioBy = useCallback(
-    (delta: number) => {
-      if (!hasRecordedAudio || audioDuration <= 0) return;
-      const nextTime = Math.min(
-        audioDuration,
-        Math.max(0, audioCurrentTime + delta),
-      );
-      seekRecordedAudio(nextTime / audioDuration);
-    },
-    [audioCurrentTime, audioDuration, hasRecordedAudio, seekRecordedAudio],
-  );
-
-  const incrementCounter = useCallback(() => {
-    if (!current) return;
-    const previous = counters[current.id] ?? 0;
-    const next = Math.min(target, previous + 1);
-    setCounters((values) => ({ ...values, [current.id]: next }));
-    if (next >= target && previous < target) {
-      void Haptics.notificationAsync(
-        Haptics.NotificationFeedbackType.Success,
-      ).catch(() => undefined);
-    } else {
-      void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(
-        () => undefined,
-      );
-    }
-  }, [counters, current, target]);
 
   const toggleReadDua = useCallback(() => {
     if (!current || savingReadIds.has(current.id)) return;
@@ -561,12 +545,30 @@ export default function DuaReaderScreen() {
         setReadDuaIds(ids);
       } catch {
         await setReadConfirmation('dua', id, !selected).catch(() => undefined);
-        Alert.alert('Enregistrement impossible', 'Réessayez dans un instant.');
+        Alert.alert(t("dua.reader.saveFailedTitle"), t("dua.reader.saveFailedMessage"));
       } finally {
         setSavingReadIds(previous => { const next = new Set(previous); next.delete(id); return next; });
       }
     })();
-  }, [current, readDuaIds, savingReadIds]);
+  }, [current, readDuaIds, savingReadIds, t]);
+
+  const incrementCounter = useCallback(() => {
+    if (!current) return;
+    const previous = counters[current.id] ?? 0;
+    const next = Math.min(target, previous + 1);
+    setCounters((values) => ({ ...values, [current.id]: next }));
+    if (next >= target && previous < target) {
+      // Le compteur terminé vaut confirmation de lecture.
+      if (!readDuaIds.has(current.id)) toggleReadDua();
+      void Haptics.notificationAsync(
+        Haptics.NotificationFeedbackType.Success,
+      ).catch(() => undefined);
+    } else {
+      void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(
+        () => undefined,
+      );
+    }
+  }, [counters, current, readDuaIds, target, toggleReadDua]);
 
   const resetCounter = useCallback(() => {
     if (!current) return;
@@ -583,16 +585,16 @@ export default function DuaReaderScreen() {
   const share = useCallback(() => {
     if (!current || !category) return;
     void Share.share({
-      message: `${current.arabic}\n\n${current.phonetic}\n\n${current.french}\n\n${category.frenchTitle}\nSource : ${current.source}`,
+      message: `${current.arabic}\n\n${current.phonetic}\n\n${meaning}\n\n${duaCategoryTitle(category, language)}\n${t("dua.reader.sourceLabel", { source: current.source })}`,
     });
-  }, [category, current]);
+  }, [category, current, language, meaning, t]);
 
   if (loading) {
     return (
       <SafeAreaView style={styles.loadingScreen}>
         <ActivityIndicator color={colors.goldLight} />
         <Text style={styles.loadingText}>
-          Préparation de la dou‘ā et de sa traduction…
+          {t("dua.reader.loading")}
         </Text>
       </SafeAreaView>
     );
@@ -607,19 +609,26 @@ export default function DuaReaderScreen() {
           color={colors.goldLight}
         />
         <Text style={styles.loadingText}>
-          Cette invocation est momentanément indisponible.
+          {t("dua.reader.unavailable")}
         </Text>
         <Pressable onPress={() => router.back()} style={styles.errorButton}>
-          <Text style={styles.errorButtonText}>Revenir</Text>
+          <Text style={styles.errorButtonText}>{t("dua.reader.goBack")}</Text>
         </Pressable>
       </SafeAreaView>
     );
   }
 
+  const isRead = readDuaIds.has(current.id);
+  const isSavingRead = savingReadIds.has(current.id);
+
   return (
     <SafeAreaView edges={["top"]} style={styles.safeArea}>
       <View style={styles.topBar}>
-        <Pressable onPress={() => router.back()} style={styles.circleButton}>
+        <Pressable
+          accessibilityLabel={t("common.back")}
+          onPress={() => router.back()}
+          style={styles.circleButton}
+        >
           <Ionicons name="arrow-back" size={21} color={colors.goldLight} />
         </Pressable>
         <View style={styles.titleCopy}>
@@ -627,14 +636,22 @@ export default function DuaReaderScreen() {
             {periodTitle}
           </Text>
           <Text style={styles.subtitle}>
-            Dou‘ā {safeIndex + 1} sur {items.length}
+            {t("dua.reader.position", { current: safeIndex + 1, total: items.length })}
           </Text>
         </View>
         <View style={styles.topActions}>
-          <Pressable onPress={() => setListVisible(true)} style={styles.circleButton}>
+          <Pressable
+            accessibilityLabel={t("dua.reader.chooseDua")}
+            onPress={() => setListVisible(true)}
+            style={styles.circleButton}
+          >
             <Ionicons name="list" size={20} color={colors.goldLight} />
           </Pressable>
-          <Pressable onPress={toggleFavorite} style={styles.circleButton}>
+          <Pressable
+            accessibilityLabel={t(isFavorite ? "dua.reader.removeFavorite" : "dua.reader.addFavorite")}
+            onPress={toggleFavorite}
+            style={styles.circleButton}
+          >
             <Ionicons
               name={isFavorite ? "heart" : "heart-outline"}
               size={20}
@@ -645,10 +662,7 @@ export default function DuaReaderScreen() {
       </View>
 
       <View style={styles.pageProgress}>
-        <LinearGradient
-          colors={[colors.goldDark, colors.goldLight]}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 0 }}
+        <View
           style={[
             styles.pageProgressFill,
             { width: `${((safeIndex + 1) / items.length) * 100}%` },
@@ -656,266 +670,207 @@ export default function DuaReaderScreen() {
         />
       </View>
 
-      <View style={styles.contextBar}>
-        <View style={styles.contextIcon}>
-          <Ionicons name={periodIcon} size={14} color={colors.goldLight} />
-        </View>
-        <View style={styles.contextCopy}>
-          <Text style={styles.contextEyebrow}>PARCOURS EN COURS</Text>
-          <Text numberOfLines={1} style={styles.contextText}>{contextLabel}</Text>
-        </View>
-        <Pressable onPress={() => setListVisible(true)} style={styles.chooseButton}>
-          <Text style={styles.chooseText}>Choisir</Text>
-          <Ionicons name="chevron-down" size={14} color={colors.goldLight} />
-        </Pressable>
-      </View>
-
       <ScrollView
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
       >
+        <View style={styles.readerCard}>
+          <Text selectable style={styles.arabic}>
+            {arabicWords.map((word, wordIndex) => (
+              <Text
+                key={`${wordIndex}:${word}`}
+                style={[
+                  styles.arabicWord,
+                  activeWordIndex >= 0 && wordIndex < activeWordIndex && styles.arabicWordRead,
+                  wordIndex === activeWordIndex && styles.arabicWordActive,
+                ]}
+              >
+                {word}
+                {wordIndex < arabicWords.length - 1 ? " " : ""}
+              </Text>
+            ))}
+          </Text>
+          {isWaitingForRecitation ? (
+            <Text style={styles.readerHint}>{t("dua.reader.introPlaying")}</Text>
+          ) : null}
+
+          <Text selectable style={styles.phonetic}>{current.phonetic}</Text>
+          <View style={styles.languageDivider} />
+          <Text selectable style={styles.french}>{meaning}</Text>
+
+          <View style={styles.readerFooter}>
+            <Pressable
+              accessibilityLabel={t("dua.reader.openSource", { source: current.source })}
+              disabled={!current.sourceUrl}
+              onPress={() => current.sourceUrl && void Linking.openURL(current.sourceUrl)}
+              style={styles.sourcePill}
+            >
+              <Ionicons name="shield-checkmark-outline" size={13} color={colors.goldLight} />
+              <Text numberOfLines={1} style={styles.sourceText}>{current.source}</Text>
+            </Pressable>
+            <Pressable
+              accessibilityLabel={t("dua.reader.share")}
+              onPress={share}
+              style={styles.shareButton}
+            >
+              <Ionicons name="share-social-outline" size={17} color={colors.textSecondary} />
+            </Pressable>
+          </View>
+          <WasilContextButton
+            compact
+            prompt={t("dua.reader.wasilPrompt", {
+              arabic: current.arabic,
+              meaning,
+              source: current.source,
+            })}
+          />
+        </View>
+
         <View style={styles.audioCard}>
-          <View style={styles.audioLiquidOrb} />
-          <View style={styles.audioSheen} />
-          <Pressable
-            disabled={!current}
-            onPress={toggleAudio}
-            style={[styles.audioPlay, !current && styles.disabled]}
-          >
-            {isAudioLoading ? (
-              <ActivityIndicator size="small" color={colors.background} />
-            ) : (
-              <Ionicons
-                name={isPlaying ? "pause" : "play"}
-                size={24}
-                color={colors.background}
-              />
-            )}
-          </Pressable>
-          <View style={styles.audioCopy}>
-            <Text style={styles.audioTitle}>
-              {isAudioLoading
-                ? "Chargement de la récitation…"
-                : hasRecordedAudio
-                  ? "Écouter pour apprendre"
-                  : "Écouter avec la voix arabe du téléphone"}
-            </Text>
-            {hasRecordedAudio ? (
-              <View style={styles.audioSeekRow}>
-                <Pressable
-                  accessibilityLabel="Reculer de 10 secondes"
-                  accessibilityRole="button"
-                  disabled={!canSeekRecordedAudio || isAudioLoading}
-                  onPress={() => seekRecordedAudioBy(-10)}
-                  style={[styles.audioSkipButton, (!canSeekRecordedAudio || isAudioLoading) && styles.disabled]}
-                >
-                  <Text style={styles.audioSkipText}>−10</Text>
-                </Pressable>
+          <View style={styles.audioRow}>
+            <Pressable
+              accessibilityLabel={isPlaying ? t("dua.reader.pause") : t("dua.reader.play")}
+              disabled={!current}
+              onPress={toggleAudio}
+              style={[styles.audioPlay, !current && styles.disabled]}
+            >
+              {isAudioLoading ? (
+                <ActivityIndicator size="small" color={colors.background} />
+              ) : (
+                <Ionicons
+                  name={isPlaying ? "pause" : "play"}
+                  size={22}
+                  color={colors.background}
+                />
+              )}
+            </Pressable>
+            <View style={styles.audioCopy}>
+              {hasRecordedAudio ? (
                 <AudioSeekBar
+                  accessibilityLabel={t("dua.reader.seekBar")}
                   disabled={!canSeekRecordedAudio || isAudioLoading}
                   onSeek={seekRecordedAudio}
                   onPreviewChange={setAudioScrubProgress}
                   progress={displayedAudioProgress}
                 />
-                <Pressable
-                  accessibilityLabel="Avancer de 10 secondes"
-                  accessibilityRole="button"
-                  disabled={!canSeekRecordedAudio || isAudioLoading}
-                  onPress={() => seekRecordedAudioBy(10)}
-                  style={[styles.audioSkipButton, (!canSeekRecordedAudio || isAudioLoading) && styles.disabled]}
-                >
-                  <Text style={styles.audioSkipText}>+10</Text>
-                </Pressable>
+              ) : (
+                <View style={styles.audioTrack}>
+                  <View style={[styles.audioFill, { width: `${audioProgress * 100}%` }]} />
+                </View>
+              )}
+              <View style={styles.audioTimes}>
+                <Text style={styles.audioTime}>
+                  {isAudioLoading
+                    ? t("dua.reader.loadingAudio")
+                    : hasRecordedAudio
+                      ? `${formatTime(displayedAudioCurrentTime)} / ${formatTime(audioDuration)}`
+                      : t("dua.reader.phoneVoice")}
+                </Text>
               </View>
-            ) : (
-              <View style={styles.audioTrack}>
-                <View style={[styles.audioFill, { width: `${audioProgress * 100}%` }]} />
-              </View>
-            )}
-            <View style={styles.audioTimes}>
-              <Text style={styles.audioTime}>
-                {formatTime(displayedAudioCurrentTime)}
-              </Text>
-              <Text style={styles.audioTime}>
-                -{formatTime(Math.max(0, audioDuration - audioCurrentTime))}
-              </Text>
             </View>
-            {hasRecordedAudio ? (
-              <View style={styles.learningRepeatRow}>
-                <Text style={styles.learningRepeatLabel}>Répéter</Text>
-                {([1, 3, 5] as const).map((count) => (
-                  <Pressable
-                    key={count}
-                    onPress={() => {
-                      stopAudio();
-                      setLearningRepeatCount(count);
-                    }}
-                    style={[
-                      styles.learningRepeatChoice,
-                      learningRepeatCount === count && styles.learningRepeatChoiceActive,
-                    ]}
-                  >
-                    <Text style={[
-                      styles.learningRepeatChoiceText,
-                      learningRepeatCount === count && styles.learningRepeatChoiceTextActive,
-                    ]}>
-                      {count}×
-                    </Text>
-                  </Pressable>
-                ))}
-                {learningRepeatIndex > 0 ? (
-                  <Text style={styles.learningRepeatStatus}>
-                    {learningRepeatIndex}/{learningRepeatCount}
-                  </Text>
-                ) : null}
-              </View>
-            ) : null}
-          </View>
-          <Pressable onPress={cycleAudioSpeed} style={styles.speedButton}>
-            <Text style={styles.speedText}>{audioSpeed}×</Text>
-          </Pressable>
-        </View>
-
-        <View style={styles.readerCard}>
-          <View style={styles.readerTopRow}>
-            <View>
-              <Text style={styles.readerEyebrow}>TEXTE ARABE</Text>
-              <Text style={styles.readerHint}>
-                {isWaitingForRecitation
-                  ? "Introduction en cours — le suivi commencera avec la dou‘a"
-                  : isPlaying
-                    ? "Suivez le mot doré pendant la récitation"
-                    : "Lancez l’audio pour suivre la récitation"}
-              </Text>
-            </View>
-            <Pressable onPress={share} style={styles.shareButton}>
-              <Ionicons name="share-social-outline" size={17} color={colors.textSecondary} />
+            <Pressable
+              accessibilityLabel={t("dua.reader.speed")}
+              onPress={cycleAudioSpeed}
+              style={styles.speedButton}
+            >
+              <Text style={styles.speedText}>{audioSpeed}×</Text>
             </Pressable>
           </View>
-
-          <Text selectable style={styles.frenchMain}>{current.french}</Text>
-          <Pressable
-            accessibilityRole="button"
-            disabled={savingReadIds.has(current.id)}
-            onPress={toggleReadDua}
-            style={[styles.readDuaButton, readDuaIds.has(current.id) && styles.readDuaButtonDone]}
-          >
-            <Ionicons name={readDuaIds.has(current.id) ? "checkmark-circle" : "ellipse-outline"} size={21} color={readDuaIds.has(current.id) ? colors.success : colors.goldLight} />
-            <Text style={styles.readDuaButtonText}>{readDuaIds.has(current.id) ? "Dou’a lue · décocher" : "J’ai lu cette dou’a"}</Text>
-          </Pressable>
-
-          <View style={styles.languageDivider} />
-          <Pressable onPress={() => setShowPhonetic((value) => !value)} style={styles.accordionHeader}>
-            <View style={styles.languageHeading}>
-              <Ionicons name="language-outline" size={16} color={colors.goldLight} />
-              <Text style={styles.languageLabel}>PHONÉTIQUE</Text>
-            </View>
-            <Ionicons name={showPhonetic ? "chevron-up" : "chevron-down"} size={17} color={colors.textMuted} />
-          </Pressable>
-          {showPhonetic ? <Text selectable style={styles.phonetic}>{current.phonetic}</Text> : null}
-
-          <Pressable onPress={() => setShowArabic((value) => !value)} style={styles.accordionHeader}>
-            <View style={styles.languageHeading}>
-              <Ionicons name="text-outline" size={16} color={colors.goldLight} />
-              <Text style={styles.languageLabel}>ARABE</Text>
-            </View>
-            <Ionicons name={showArabic ? "chevron-up" : "chevron-down"} size={17} color={colors.textMuted} />
-          </Pressable>
-          {showArabic ? (
-            <Text selectable style={styles.arabic}>
-              {arabicWords.map((word, wordIndex) => (
-                <Text
-                  key={`${wordIndex}:${word}`}
+          {hasRecordedAudio ? (
+            <View style={styles.learningRepeatRow}>
+              <Text style={styles.learningRepeatLabel}>{t("dua.reader.listenRepeat")}</Text>
+              {([1, 3, 5] as const).map((count) => (
+                <Pressable
+                  accessibilityState={{ selected: learningRepeatCount === count }}
+                  key={count}
+                  onPress={() => {
+                    stopAudio();
+                    setLearningRepeatCount(count);
+                  }}
                   style={[
-                    styles.arabicWord,
-                    wordIndex === activeWordIndex && styles.arabicWordActive,
+                    styles.learningRepeatChoice,
+                    learningRepeatCount === count && styles.learningRepeatChoiceActive,
                   ]}
                 >
-                  {word}
-                  {wordIndex < arabicWords.length - 1 ? " " : ""}
-                </Text>
+                  <Text style={[
+                    styles.learningRepeatChoiceText,
+                    learningRepeatCount === count && styles.learningRepeatChoiceTextActive,
+                  ]}>
+                    {count}×
+                  </Text>
+                </Pressable>
               ))}
-            </Text>
-          ) : null}
-
-          <Pressable onPress={() => setShowDetails((value) => !value)} style={styles.detailsHeader}>
-            <View style={styles.languageHeading}>
-              <Ionicons name="shield-checkmark-outline" size={16} color={colors.goldLight} />
-              <Text style={styles.languageLabel}>SOURCE ET EXPLICATION</Text>
-            </View>
-            <Ionicons name={showDetails ? "chevron-up" : "chevron-down"} size={17} color={colors.textMuted} />
-          </Pressable>
-          {showDetails ? (
-            <View style={styles.detailsBody}>
-              <Pressable disabled={!current.sourceUrl} onPress={() => current.sourceUrl && void Linking.openURL(current.sourceUrl)} style={styles.sourcePill}>
-                <Text style={styles.sourceText}>{current.source}</Text>
-              </Pressable>
-              <WasilContextButton compact prompt={`Explique-moi quand et comment réciter cette dou‘a, uniquement à partir des sources vérifiées d’OUMMAH. Dou‘a : ${current.arabic}. Traduction : ${current.french}. Source : ${current.source}`} />
+              {learningRepeatIndex > 0 ? (
+                <Text style={styles.learningRepeatStatus}>
+                  {learningRepeatIndex}/{learningRepeatCount}
+                </Text>
+              ) : null}
             </View>
           ) : null}
-
-          <View style={styles.readerFooter}>
-            <View style={styles.repeatPill}><Ionicons name="repeat-outline" size={14} color={colors.goldLight} /><Text style={styles.repeatText}>{target}× recommandé</Text></View>
-            <Text style={styles.orderText}>N° {current.order}</Text>
-          </View>
         </View>
 
         {audioError ? (
-          <Text style={styles.audioError}>{audioError}</Text>
+          <Text style={styles.audioError}>
+            {language === "fr" ? audioError : t("dua.reader.audioError")}
+          </Text>
         ) : null}
 
-        <View style={styles.counterSection}>
-          <View style={styles.counterHeading}>
-            <View>
-              <Text style={styles.counterEyebrow}>COMPTEUR DE RÉPÉTITIONS</Text>
-              <Text style={styles.counterTitle}>
-                {complete
-                  ? "Terminé, mā shā’ Allāh"
-                  : `${target - currentCount} restant${target - currentCount > 1 ? "s" : ""}`}
+        {target > 1 ? (
+          <View style={[styles.counterBar, complete && styles.counterBarComplete]}>
+            <View style={styles.counterCopy}>
+              <Text style={styles.counterEyebrow}>
+                {complete ? t("dua.reader.counterDone") : t("dua.reader.counterTitle")}
+              </Text>
+              <Text style={styles.counterLine}>
+                <Text style={styles.counterValue}>{currentCount}</Text>
+                <Text style={styles.counterTarget}>
+                  {"  "}{t("dua.reader.counterOutOf", { target })}
+                </Text>
               </Text>
             </View>
-            <Pressable onPress={resetCounter} style={styles.resetButton}>
+            <Pressable
+              accessibilityLabel={t("dua.reader.counterReset")}
+              disabled={currentCount === 0}
+              onPress={resetCounter}
+              style={[styles.resetButton, currentCount === 0 && styles.disabled]}
+            >
               <Ionicons name="refresh" size={16} color={colors.textMuted} />
             </Pressable>
+            <Pressable
+              accessibilityLabel={t("dua.reader.counterAccessibility", { count: currentCount, target })}
+              disabled={complete}
+              onPress={incrementCounter}
+              style={({ pressed }) => [
+                styles.counterButton,
+                complete && styles.counterButtonComplete,
+                pressed && styles.counterPressed,
+              ]}
+            >
+              {complete ? (
+                <Ionicons name="checkmark" size={22} color={colors.background} />
+              ) : (
+                <Text style={styles.counterButtonText}>+1</Text>
+              )}
+            </Pressable>
           </View>
-
+        ) : (
           <Pressable
-            onPress={incrementCounter}
-            style={({ pressed }) => [
-              styles.counterButton,
-              complete && styles.counterComplete,
-              pressed && styles.counterPressed,
-            ]}
+            accessibilityRole="button"
+            accessibilityState={{ checked: isRead }}
+            disabled={isSavingRead}
+            onPress={toggleReadDua}
+            style={[styles.readDuaButton, isRead && styles.readDuaButtonDone]}
           >
-            <LinearGradient
-              colors={
-                complete ? ["#D9A94D", "#F1CC73"] : ["#4E275F", "#251431"]
-              }
-              style={StyleSheet.absoluteFill}
+            <Ionicons
+              name={isRead ? "checkmark-circle" : "ellipse-outline"}
+              size={20}
+              color={isRead ? colors.success : colors.goldLight}
             />
-            <Text
-              style={[
-                styles.counterValue,
-                complete && styles.counterValueComplete,
-              ]}
-            >
-              {currentCount}
-            </Text>
-            <Text
-              style={[
-                styles.counterTarget,
-                complete && styles.counterTargetComplete,
-              ]}
-            >
-              / {target}
-            </Text>
-            <Text
-              style={[styles.tapHint, complete && styles.counterTargetComplete]}
-            >
-              {complete ? "COMPLÉTÉ" : "TOUCHEZ POUR COMPTER"}
+            <Text style={styles.readDuaButtonText}>
+              {isRead ? t("dua.reader.readDone") : t("dua.reader.markRead")}
             </Text>
           </Pressable>
-        </View>
+        )}
       </ScrollView>
 
       <View style={styles.navigation}>
@@ -925,7 +880,7 @@ export default function DuaReaderScreen() {
           style={[styles.navButton, safeIndex <= 0 && styles.disabled]}
         >
           <Ionicons name="arrow-back" size={18} color={colors.goldLight} />
-          <Text style={styles.navText}>Précédent</Text>
+          <Text style={styles.navText}>{t("dua.reader.previous")}</Text>
         </Pressable>
         <Pressable
           disabled={safeIndex >= items.length - 1}
@@ -936,7 +891,7 @@ export default function DuaReaderScreen() {
             safeIndex >= items.length - 1 && styles.disabled,
           ]}
         >
-          <Text style={styles.navTextPrimary}>Suivant</Text>
+          <Text style={styles.navTextPrimary}>{t("dua.reader.next")}</Text>
           <Ionicons name="arrow-forward" size={18} color={colors.background} />
         </Pressable>
       </View>
@@ -952,10 +907,10 @@ export default function DuaReaderScreen() {
             <View style={styles.modalHandle} />
             <View style={styles.modalHeader}>
               <View>
-                <Text style={styles.modalEyebrow}>CHOISIR UNE DOU‘Ā</Text>
+                <Text style={styles.modalEyebrow}>{t("dua.reader.chooseDuaEyebrow")}</Text>
                 <Text style={styles.modalTitle}>{periodTitle}</Text>
               </View>
-              <Pressable onPress={() => setListVisible(false)} style={styles.modalClose}>
+              <Pressable accessibilityLabel={t("hifz.session.close")} onPress={() => setListVisible(false)} style={styles.modalClose}>
                 <Ionicons name="close" size={20} color={colors.textSecondary} />
               </Pressable>
             </View>
@@ -979,7 +934,7 @@ export default function DuaReaderScreen() {
                     </View>
                     <View style={styles.modalItemCopy}>
                       <Text numberOfLines={1} style={styles.modalItemArabic}>{item.arabic}</Text>
-                      <Text numberOfLines={2} style={styles.modalItemFrench}>{item.french}</Text>
+                      <Text numberOfLines={2} style={styles.modalItemFrench}>{duaMeaning(item, language)}</Text>
                     </View>
                     {done ? (
                       <Ionicons name="checkmark-circle" size={20} color={colors.goldLight} />
@@ -1039,8 +994,8 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     borderRadius: 21,
     borderWidth: 1,
-    borderColor: colors.borderSoft,
-    backgroundColor: colors.purpleDeep,
+    borderColor: "#2B2238",
+    backgroundColor: "#151022",
   },
   titleCopy: { flex: 1, minWidth: 0, marginHorizontal: 11 },
   title: {
@@ -1049,64 +1004,45 @@ const styles = StyleSheet.create({
     fontSize: 21,
   },
   subtitle: {
+    marginTop: 1,
     color: colors.textMuted,
     fontFamily: typography.sans,
-    fontSize: 9,
+    fontSize: 11,
+    fontVariant: ["lining-nums", "tabular-nums"],
   },
   pageProgress: {
     height: 3,
     marginHorizontal: 14,
     overflow: "hidden",
     borderRadius: 2,
-    backgroundColor: colors.surfaceLight,
+    backgroundColor: "#1E1730",
   },
-  pageProgressFill: { height: "100%", borderRadius: 2 },
-  content: { padding: 14, paddingBottom: 105 },
+  pageProgressFill: { height: "100%", borderRadius: 2, backgroundColor: colors.goldLight },
+  content: { padding: 14, paddingBottom: 110 },
   readerCard: {
-    marginTop: 10,
-    padding: 17,
+    padding: 16,
     borderRadius: 23,
     borderWidth: 1,
-    borderColor: colors.borderSoft,
-    backgroundColor: "rgba(25,16,36,0.96)",
-  },
-  readerLiquidOrb: {
-    position: "absolute",
-    top: -105,
-    right: -78,
-    width: 245,
-    height: 245,
-    borderRadius: 123,
-    backgroundColor: "rgba(255,255,255,0.055)",
-  },
-  readerSheen: {
-    position: "absolute",
-    top: 0,
-    right: 28,
-    left: 28,
-    height: 1,
-    backgroundColor: "rgba(255,255,255,0.38)",
-  },
-  readerTopRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
+    borderColor: "#2B2238",
+    backgroundColor: "#151022",
   },
   sourcePill: {
-    height: 29,
-    paddingHorizontal: 9,
+    flexShrink: 1,
+    height: 30,
+    paddingHorizontal: 10,
     flexDirection: "row",
     alignItems: "center",
     borderRadius: 15,
     borderWidth: 1,
-    borderColor: colors.borderSoft,
-    backgroundColor: "rgba(12,8,22,0.58)",
+    borderColor: "#2B2238",
+    backgroundColor: "#100C19",
   },
   sourceText: {
-    marginLeft: 5,
+    flexShrink: 1,
+    marginLeft: 6,
     color: colors.textSecondary,
     fontFamily: typography.sans,
-    fontSize: 8,
+    fontSize: 11,
     fontWeight: "700",
   },
   shareButton: {
@@ -1115,30 +1051,31 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 17,
-    backgroundColor: "rgba(18,11,30,0.72)",
+    backgroundColor: "#1E1730",
   },
   arabic: {
-    flexGrow: 0,
-    marginVertical: 23,
+    marginTop: 2,
+    marginBottom: 10,
     color: "#FFF9F0",
     fontFamily: ARABIC_READING_FONT_FAMILY,
-    fontSize: 31,
+    fontSize: 30,
     lineHeight: 52,
     textAlign: "right",
     writingDirection: "rtl",
   },
-  frenchMain: {
-    flexGrow: 0,
-    marginVertical: 23,
-    color: colors.textSecondary,
-    fontFamily: typography.sans,
-    fontSize: 16,
-    lineHeight: 25,
-    textAlign: "left",
-    writingDirection: "ltr",
+  readDuaButton: {
+    marginTop: 12,
+    minHeight: 50,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 8,
+    borderRadius: 18,
+    borderWidth: 1,
+    borderColor: "rgba(227,181,90,0.55)",
+    backgroundColor: "rgba(227,181,90,0.10)",
   },
-  readDuaButton: { alignSelf: "flex-end", flexDirection: "row", alignItems: "center", gap: 8, paddingHorizontal: 15, paddingVertical: 11, marginBottom: 18, borderRadius: 15, borderWidth: 1, borderColor: colors.goldLight, backgroundColor: "rgba(227,181,90,0.2)", shadowColor: colors.goldLight, shadowOpacity: 0.35, shadowRadius: 9, elevation: 4 },
-  readDuaButtonDone: { borderColor: colors.success, backgroundColor: "rgba(98,197,139,0.17)", shadowColor: colors.success, shadowOpacity: 0.8, shadowRadius: 17, elevation: 9 },
+  readDuaButtonDone: { borderColor: colors.success, backgroundColor: "rgba(98,197,139,0.14)" },
   readDuaButtonText: { color: colors.text, fontFamily: typography.sans, fontSize: 14, fontWeight: "800" },
   arabicWord: { color: "#FFF9F0" },
   arabicWordActive: {
@@ -1151,202 +1088,90 @@ const styles = StyleSheet.create({
   },
   languageDivider: {
     height: 1,
-    marginBottom: 16,
+    marginVertical: 14,
     backgroundColor: "rgba(227,181,90,0.16)",
   },
-  languageHeading: {
-    marginTop: 2,
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  languageLabel: {
-    marginLeft: 6,
-    color: colors.goldLight,
-    fontFamily: typography.sans,
-    fontSize: 7.5,
-    fontWeight: "800",
-    letterSpacing: 1,
-  },
   phonetic: {
-    marginTop: 8,
-    marginBottom: 18,
-    color: "#F1E7F3",
-    fontFamily: typography.sans,
-    fontSize: 18,
-    lineHeight: 28,
-  },
-  french: {
-    marginTop: 8,
-    marginBottom: 21,
     color: colors.textSecondary,
     fontFamily: typography.sans,
-    fontSize: 16,
-    lineHeight: 25,
+    fontSize: 15,
+    fontStyle: "italic",
+    lineHeight: 23,
   },
-  summaryNotice: {
-    marginTop: 10,
-    paddingHorizontal: 11,
-    paddingVertical: 9,
-    flexDirection: "row",
-    alignItems: "flex-start",
-    gap: 7,
-    borderRadius: 14,
-    borderWidth: 1,
-    borderColor: "rgba(227,181,90,0.18)",
-    backgroundColor: "rgba(9,7,15,0.28)",
-  },
-  summaryNoticeText: {
-    flex: 1,
-    color: colors.textMuted,
+  french: {
+    color: colors.text,
     fontFamily: typography.sans,
-    fontSize: 9.2,
-    lineHeight: 13.5,
+    fontSize: 15,
+    lineHeight: 23,
   },
-  readerEyebrow: { color: colors.goldLight, fontFamily: typography.sans, fontSize: 8, fontWeight: "800", letterSpacing: 1 },
-  readerHint: { marginTop: 3, color: colors.textMuted, fontFamily: typography.sans, fontSize: 9.5 },
-  accordionHeader: { minHeight: 44, flexDirection: "row", alignItems: "center", justifyContent: "space-between", borderTopWidth: 1, borderTopColor: "rgba(227,181,90,0.12)" },
-  detailsHeader: { minHeight: 44, flexDirection: "row", alignItems: "center", justifyContent: "space-between", borderTopWidth: 1, borderTopColor: "rgba(227,181,90,0.12)" },
-  detailsBody: { paddingBottom: 14, flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: 10 },
+  readerHint: { marginBottom: 8, color: colors.textMuted, fontFamily: typography.sans, fontSize: 11 },
   readerFooter: {
+    marginTop: 16,
+    marginBottom: 10,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-  },
-  repeatPill: {
-    height: 30,
-    paddingHorizontal: 10,
-    flexDirection: "row",
-    alignItems: "center",
-    borderRadius: 15,
-    backgroundColor: "rgba(132,76,153,0.22)",
-  },
-  repeatText: {
-    marginLeft: 6,
-    color: colors.goldLight,
-    fontFamily: typography.sans,
-    fontSize: 8.5,
-    fontWeight: "700",
-  },
-  orderText: {
-    color: colors.textMuted,
-    fontFamily: typography.sans,
-    fontSize: 8.5,
+    gap: 10,
   },
   audioCard: {
-    minHeight: 92,
-    paddingHorizontal: 12,
-    paddingVertical: 12,
-    overflow: "hidden",
-    flexDirection: "row",
-    alignItems: "center",
+    marginTop: 12,
+    padding: 12,
     borderRadius: 21,
     borderWidth: 1,
-    borderColor: "rgba(227,181,90,0.28)",
-    backgroundColor: "rgba(31,20,42,0.96)",
-  },
-  audioLiquidOrb: {
-    position: "absolute",
-    top: -58,
-    right: -22,
-    width: 128,
-    height: 128,
-    borderRadius: 64,
-    backgroundColor: "rgba(255,255,255,0.055)",
-  },
-  audioSheen: {
-    position: "absolute",
-    top: 0,
-    right: 20,
-    left: 20,
-    height: 1,
-    backgroundColor: "rgba(255,255,255,0.28)",
+    borderColor: "#2B2238",
+    backgroundColor: "#151022",
   },
   audioPlay: {
-    width: 49,
-    height: 49,
+    width: 48,
+    height: 48,
     alignItems: "center",
     justifyContent: "center",
-    borderRadius: 25,
+    borderRadius: 24,
     backgroundColor: colors.goldLight,
-    shadowColor: colors.goldLight,
-    shadowOpacity: 0.38,
-    shadowRadius: 8,
-    elevation: 4,
   },
-  audioCopy: { flex: 1, minWidth: 0, marginHorizontal: 11 },
-  audioTitle: {
-    color: colors.text,
-    fontFamily: typography.serifMedium,
-    fontSize: 15,
-  },
+  audioCopy: { flex: 1, minWidth: 0, marginHorizontal: 10 },
   audioTrack: {
-    flex: 1,
     height: 4,
+    marginVertical: 18,
     overflow: "hidden",
     borderRadius: 2,
-    backgroundColor: colors.surfaceLight,
+    backgroundColor: "#1E1730",
   },
   audioSlider: {
     flex: 1,
     height: 40,
-  },
-  audioSeekRow: {
-    marginTop: 9,
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 6,
-  },
-  audioSkipButton: {
-    minWidth: 29,
-    height: 26,
-    alignItems: "center",
-    justifyContent: "center",
-    borderRadius: 9,
-    borderWidth: 1,
-    borderColor: "rgba(227,181,90,0.3)",
-    backgroundColor: "rgba(227,181,90,0.08)",
-  },
-  audioSkipText: {
-    color: colors.goldLight,
-    fontFamily: typography.sans,
-    fontSize: 8.5,
-    fontWeight: "800",
-    fontVariant: ["tabular-nums"],
   },
   audioFill: {
     height: "100%",
     borderRadius: 2,
     backgroundColor: colors.goldLight,
   },
-  audioTimes: {
-    marginTop: 3,
-    flexDirection: "row",
-    justifyContent: "space-between",
-  },
+  audioTimes: { marginTop: -4, flexDirection: "row", justifyContent: "flex-start" },
   audioTime: {
     color: colors.textMuted,
     fontFamily: typography.sans,
-    fontSize: 7,
-    fontVariant: ["tabular-nums"],
+    fontSize: 11,
+    fontVariant: ["lining-nums", "tabular-nums"],
   },
   speedButton: {
-    width: 38,
-    height: 32,
+    minWidth: 44,
+    height: 34,
+    paddingHorizontal: 6,
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 14,
     borderWidth: 1,
-    borderColor: colors.borderSoft,
-    backgroundColor: colors.purpleDeep,
+    borderColor: "#2B2238",
+    backgroundColor: "#1E1730",
   },
   speedText: {
     color: colors.goldLight,
     fontFamily: typography.sans,
-    fontSize: 8.5,
+    fontSize: 11,
     fontWeight: "800",
   },
   learningRepeatRow: {
-    marginTop: 9,
+    marginTop: 10,
     flexDirection: "row",
     alignItems: "center",
     gap: 6,
@@ -1355,20 +1180,18 @@ const styles = StyleSheet.create({
     marginRight: 2,
     color: colors.textMuted,
     fontFamily: typography.sans,
-    fontSize: 8,
-    fontWeight: "700",
-    textTransform: "uppercase",
+    fontSize: 11,
   },
   learningRepeatChoice: {
-    minWidth: 34,
-    height: 27,
+    minWidth: 40,
+    height: 30,
     paddingHorizontal: 8,
     alignItems: "center",
     justifyContent: "center",
-    borderRadius: 14,
+    borderRadius: 12,
     borderWidth: 1,
-    borderColor: colors.borderSoft,
-    backgroundColor: "rgba(18,11,30,0.7)",
+    borderColor: "#2B2238",
+    backgroundColor: "#100C19",
   },
   learningRepeatChoiceActive: {
     borderColor: "rgba(227,181,90,0.62)",
@@ -1377,7 +1200,7 @@ const styles = StyleSheet.create({
   learningRepeatChoiceText: {
     color: colors.textMuted,
     fontFamily: typography.sans,
-    fontSize: 9,
+    fontSize: 11,
     fontWeight: "800",
   },
   learningRepeatChoiceTextActive: { color: colors.goldLight },
@@ -1385,87 +1208,55 @@ const styles = StyleSheet.create({
     marginLeft: "auto",
     color: colors.goldLight,
     fontFamily: typography.sans,
-    fontSize: 9,
+    fontSize: 11,
     fontWeight: "800",
+    fontVariant: ["lining-nums", "tabular-nums"],
   },
   audioError: {
-    marginTop: 7,
+    marginTop: 8,
     paddingHorizontal: 8,
     color: colors.danger,
     fontFamily: typography.sans,
-    fontSize: 8.5,
+    fontSize: 11,
     textAlign: "center",
-  },
-  counterSection: { marginTop: 15 },
-  counterHeading: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
   },
   counterEyebrow: {
     color: colors.goldMuted,
     fontFamily: typography.sans,
-    fontSize: 7.5,
+    fontSize: 10,
     fontWeight: "800",
     letterSpacing: 1,
   },
-  counterTitle: {
-    marginTop: 3,
-    color: colors.text,
-    fontFamily: typography.serifMedium,
-    fontSize: 18,
-  },
   resetButton: {
-    width: 35,
-    height: 35,
+    width: 38,
+    height: 38,
     alignItems: "center",
     justifyContent: "center",
-    borderRadius: 18,
+    borderRadius: 19,
     borderWidth: 1,
-    borderColor: colors.borderSoft,
+    borderColor: "#2B2238",
   },
   counterButton: {
-    width: 174,
-    height: 174,
-    marginTop: 14,
-    overflow: "hidden",
-    alignSelf: "center",
+    width: 64,
+    height: 52,
     alignItems: "center",
     justifyContent: "center",
-    borderRadius: 87,
-    borderWidth: 2,
-    borderColor: "rgba(227,181,90,0.40)",
-    shadowColor: colors.purpleGlow,
-    shadowOpacity: 0.7,
-    shadowRadius: 20,
-    elevation: 7,
+    borderRadius: 16,
+    backgroundColor: colors.goldLight,
   },
-  counterComplete: {
-    borderColor: colors.goldLight,
-    shadowColor: colors.goldLight,
-  },
-  counterPressed: { transform: [{ scale: 0.97 }] },
+  counterPressed: { transform: [{ scale: 0.96 }] },
   counterValue: {
-    color: colors.goldLight,
-    fontFamily: typography.serifSemibold,
-    fontSize: 58,
-    lineHeight: 62,
-    fontVariant: ["tabular-nums"],
-  },
-  counterValueComplete: { color: colors.background },
-  counterTarget: {
-    color: colors.textSecondary,
+    color: colors.text,
     fontFamily: typography.sans,
-    fontSize: 13,
+    fontSize: 26,
+    fontWeight: "800",
+    fontVariant: ["lining-nums", "tabular-nums"],
   },
-  counterTargetComplete: { color: "rgba(8,7,19,0.72)" },
-  tapHint: {
-    marginTop: 8,
+  counterTarget: {
     color: colors.textMuted,
     fontFamily: typography.sans,
-    fontSize: 7,
-    fontWeight: "800",
-    letterSpacing: 0.9,
+    fontSize: 12,
+    fontVariant: ["lining-nums", "tabular-nums"],
   },
   navigation: {
     position: "absolute",
@@ -1478,7 +1269,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 9,
     borderTopWidth: 1,
-    borderTopColor: colors.borderSoft,
+    borderTopColor: "#2B2238",
     backgroundColor: "rgba(8,7,19,0.97)",
   },
   navButton: {
@@ -1489,8 +1280,8 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     borderRadius: 20,
     borderWidth: 1,
-    borderColor: colors.borderSoft,
-    backgroundColor: colors.surface,
+    borderColor: "#2B2238",
+    backgroundColor: "#151022",
   },
   navButtonPrimary: {
     borderColor: colors.goldLight,
@@ -1500,67 +1291,18 @@ const styles = StyleSheet.create({
     marginLeft: 7,
     color: colors.textSecondary,
     fontFamily: typography.sans,
-    fontSize: 10,
+    fontSize: 13,
     fontWeight: "700",
   },
   navTextPrimary: {
     marginRight: 7,
     color: colors.background,
     fontFamily: typography.sans,
-    fontSize: 10,
+    fontSize: 13,
     fontWeight: "800",
   },
   disabled: { opacity: 0.3 },
   topActions: { flexDirection: "row", alignItems: "center", gap: 8 },
-  contextBar: {
-    marginHorizontal: 14,
-    marginTop: 10,
-    paddingHorizontal: 12,
-    minHeight: 58,
-    flexDirection: "row",
-    alignItems: "center",
-    borderRadius: 18,
-    borderWidth: 1,
-    borderColor: colors.borderSoft,
-    backgroundColor: "rgba(35,20,45,0.82)",
-  },
-  contextIcon: {
-    width: 34,
-    height: 34,
-    alignItems: "center",
-    justifyContent: "center",
-    borderRadius: 17,
-    backgroundColor: "rgba(227,181,90,0.10)",
-  },
-  contextCopy: { flex: 1, minWidth: 0, marginLeft: 9 },
-  contextEyebrow: {
-    color: colors.goldLight,
-    fontFamily: typography.sans,
-    fontSize: 7.5,
-    fontWeight: "800",
-    letterSpacing: 1.1,
-  },
-  contextText: {
-    marginTop: 2,
-    color: colors.text,
-    fontFamily: typography.serifMedium,
-    fontSize: 14,
-  },
-  chooseButton: {
-    height: 34,
-    paddingHorizontal: 11,
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 4,
-    borderRadius: 17,
-    backgroundColor: "rgba(92,46,110,0.45)",
-  },
-  chooseText: {
-    color: colors.goldLight,
-    fontFamily: typography.sans,
-    fontSize: 9,
-    fontWeight: "800",
-  },
   modalBackdrop: {
     flex: 1,
     justifyContent: "flex-end",
@@ -1610,7 +1352,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 19,
-    backgroundColor: colors.purpleDeep,
+    backgroundColor: "#151022",
   },
   modalList: { gap: 8, paddingBottom: 10 },
   modalItem: {
@@ -1620,12 +1362,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderRadius: 18,
     borderWidth: 1,
-    borderColor: colors.borderSoft,
-    backgroundColor: "rgba(35,20,45,0.70)",
+    borderColor: "#2B2238",
+    backgroundColor: "#151022",
   },
   modalItemSelected: {
     borderColor: "rgba(227,181,90,0.58)",
-    backgroundColor: "rgba(73,37,89,0.78)",
+    backgroundColor: "rgba(227,181,90,0.10)",
   },
   modalIndex: {
     width: 34,
@@ -1641,6 +1383,7 @@ const styles = StyleSheet.create({
     fontFamily: typography.sans,
     fontSize: 10,
     fontWeight: "800",
+    fontVariant: ["lining-nums", "tabular-nums"],
   },
   modalIndexTextSelected: { color: colors.background },
   modalItemCopy: { flex: 1, minWidth: 0, marginHorizontal: 10 },
@@ -1656,7 +1399,30 @@ const styles = StyleSheet.create({
     marginTop: 3,
     color: colors.textSecondary,
     fontFamily: typography.sans,
-    fontSize: 10.5,
+    fontSize: 12,
     lineHeight: 15,
+  },
+  arabicWordRead: { color: colors.goldMuted },
+  audioRow: { flexDirection: "row", alignItems: "center" },
+  counterBar: {
+    marginTop: 12,
+    padding: 12,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: "#2B2238",
+    backgroundColor: "#1E1730",
+  },
+  counterBarComplete: { borderColor: colors.goldLight },
+  counterCopy: { flex: 1, minWidth: 0 },
+  counterLine: { marginTop: 2 },
+  counterButtonComplete: { backgroundColor: colors.success },
+  counterButtonText: {
+    color: colors.background,
+    fontFamily: typography.sans,
+    fontSize: 18,
+    fontWeight: "800",
   },
 });
