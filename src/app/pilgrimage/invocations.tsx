@@ -6,31 +6,34 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { InvocationCard, TextScaleContext } from "../../components/pilgrimage/PilgrimBits";
 import { pil, pilType } from "../../components/pilgrimage/theme";
-import { INVOCATIONS } from "../../features/pilgrimage/pilgrimageInvocations";
+import { usePilgrimageContent } from "../../features/pilgrimage/pilgrimageI18n";
 import { usePilgrimageState } from "../../features/pilgrimage/pilgrimageStorage";
+import { useI18n } from "../../i18n";
 
 export default function PilgrimageInvocations() {
   const insets = useSafeAreaInsets();
-  const moments = useMemo(() => [...new Set(INVOCATIONS.map((item) => item.moment))], []);
+  const { t } = useI18n();
+  const { invocations } = usePilgrimageContent();
+  const moments = useMemo(() => [...new Set(invocations.map((item) => item.moment))], [invocations]);
   const [moment, setMoment] = useState<string | null>(null);
   const state = usePilgrimageState();
-  const shown = moment ? INVOCATIONS.filter((item) => item.moment === moment) : INVOCATIONS;
+  const shown = moment ? invocations.filter((item) => item.moment === moment) : invocations;
 
   return (
     <View style={[styles.screen, { paddingTop: insets.top + 6 }]}>
       <View style={styles.header}>
-        <Pressable accessibilityRole="button" accessibilityLabel="Retour" onPress={() => router.back()} hitSlop={8} style={styles.iconButton}>
+        <Pressable accessibilityRole="button" accessibilityLabel={t("common.back")} onPress={() => router.back()} hitSlop={8} style={styles.iconButton}>
           <Ionicons name="chevron-back" size={22} color="#FFFFFF" />
         </Pressable>
         <View style={styles.headerCopy}>
-          <Text style={styles.eyebrow}>DANS L’ORDRE DU PARCOURS</Text>
-          <Text style={styles.title}>Invocations</Text>
+          <Text style={styles.eyebrow}>{t("pilgrimage.invocations.eyebrow")}</Text>
+          <Text style={styles.title}>{t("pilgrimage.tool.duas")}</Text>
         </View>
       </View>
       <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.filters} style={styles.filtersBar}>
         {[null, ...moments].map((item) => (
           <Pressable key={item ?? "all"} onPress={() => setMoment(item)} style={[styles.filter, moment === item && styles.filterActive]}>
-            <Text style={[styles.filterText, moment === item && styles.filterTextActive]}>{item ?? "Tout"}</Text>
+            <Text style={[styles.filterText, moment === item && styles.filterTextActive]}>{item ?? t("pilgrimage.all")}</Text>
           </Pressable>
         ))}
       </ScrollView>
@@ -38,7 +41,7 @@ export default function PilgrimageInvocations() {
       <ScrollView contentContainerStyle={[styles.content, { paddingBottom: insets.bottom + 30 }]} showsVerticalScrollIndicator={false}>
         <View style={styles.tip}>
           <Ionicons name="expand-outline" size={18} color={pil.gold} />
-          <Text style={styles.tipText}>Touchez « En grand » pour lire une invocation en plein écran pendant le rite.</Text>
+          <Text style={styles.tipText}>{t("pilgrimage.invocations.tip")}</Text>
         </View>
         {shown.map((invocation, index) => (
           <View key={invocation.id}>

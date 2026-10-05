@@ -9,14 +9,15 @@ import Svg, { Circle, G, Path, Rect, Text as SvgText } from "react-native-svg";
 
 import { InvocationCard, TextScaleContext } from "../../components/pilgrimage/PilgrimBits";
 import { pil, pilType } from "../../components/pilgrimage/theme";
-import { INVOCATIONS_BY_ID } from "../../features/pilgrimage/pilgrimageInvocations";
+import { usePilgrimageContent } from "../../features/pilgrimage/pilgrimageI18n";
 import { updatePilgrimageState, usePilgrimageState, type PilgrimageState } from "../../features/pilgrimage/pilgrimageStorage";
 import type { Tool } from "../../features/pilgrimage/pilgrimageTypes";
+import { useI18n, type TranslationKey } from "../../i18n";
 
-const TABS: ReadonlyArray<{ id: Tool; label: string; icon: keyof typeof Ionicons.glyphMap }> = [
-  { id: "tawaf", label: "Tawâf", icon: "sync-outline" },
-  { id: "sai", label: "Sa‘y", icon: "swap-vertical-outline" },
-  { id: "jamarat", label: "Jamarât", icon: "ellipsis-horizontal-circle-outline" },
+const TABS: ReadonlyArray<{ id: Tool; label: TranslationKey; icon: keyof typeof Ionicons.glyphMap }> = [
+  { id: "tawaf", label: "pilgrimage.mode.tabTawaf", icon: "sync-outline" },
+  { id: "sai", label: "pilgrimage.mode.tabSai", icon: "swap-vertical-outline" },
+  { id: "jamarat", label: "pilgrimage.mode.tabJamarat", icon: "ellipsis-horizontal-circle-outline" },
 ];
 
 const tap = () => void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => undefined);
@@ -41,6 +42,7 @@ export default function PilgrimModeScreen() {
   const [tool, setTool] = useState<Tool>(params.tool === "sai" || params.tool === "jamarat" ? params.tool : "tawaf");
   const state = usePilgrimageState();
   const insets = useSafeAreaInsets();
+  const { t } = useI18n();
 
   useEffect(() => {
     if (params.tool === "tawaf" || params.tool === "sai" || params.tool === "jamarat") setTool(params.tool);
@@ -49,16 +51,16 @@ export default function PilgrimModeScreen() {
   return (
     <View style={[styles.screen, { paddingTop: insets.top + 6 }]}>
       <View style={styles.header}>
-        <Pressable accessibilityRole="button" accessibilityLabel="Retour" onPress={() => router.back()} hitSlop={8} style={styles.iconButton}>
+        <Pressable accessibilityRole="button" accessibilityLabel={t("common.back")} onPress={() => router.back()} hitSlop={8} style={styles.iconButton}>
           <Ionicons name="chevron-back" size={22} color="#FFFFFF" />
         </Pressable>
         <View style={styles.headerCopy}>
-          <Text style={styles.eyebrow}>MODE PÈLERIN</Text>
-          <Text style={styles.title}>Sur place</Text>
+          <Text style={styles.eyebrow}>{t("pilgrimage.mode.eyebrow")}</Text>
+          <Text style={styles.title}>{t("pilgrimage.onSite")}</Text>
         </View>
         <View style={styles.awake}>
           <Ionicons name="sunny-outline" size={14} color={pil.gold} />
-          <Text style={styles.awakeText}>Écran allumé</Text>
+          <Text style={styles.awakeText}>{t("pilgrimage.mode.awake")}</Text>
         </View>
       </View>
 
@@ -75,7 +77,7 @@ export default function PilgrimModeScreen() {
             style={[styles.tab, tool === tab.id && styles.tabActive]}
           >
             <Ionicons name={tab.icon} size={17} color={tool === tab.id ? pil.ink : "#FFFFFF"} />
-            <Text style={[styles.tabText, tool === tab.id && styles.tabTextActive]}>{tab.label}</Text>
+            <Text style={[styles.tabText, tool === tab.id && styles.tabTextActive]}>{t(tab.label)}</Text>
           </Pressable>
         ))}
       </View>
@@ -87,7 +89,7 @@ export default function PilgrimModeScreen() {
             : tool === "sai" ? <SaiCounter count={state.counters.sai} />
               : <JamaratCounter day={state.counters.jamaratDay} counts={state.counters.jamarat} />
         ) : null}
-        <Text style={styles.disclaimer}>Le compteur est une aide mémoire, pas une validation religieuse.</Text>
+        <Text style={styles.disclaimer}>{t("pilgrimage.mode.disclaimer")}</Text>
       </ScrollView>
       </TextScaleContext.Provider>
     </View>
@@ -103,6 +105,8 @@ function TawafCounter({ count, onNext }: { count: number; onNext: () => void }) 
   const r = c - 18;
   const complete = count >= 7;
   const segment = 360 / 7;
+  const { t } = useI18n();
+  const { invocationsById } = usePilgrimageContent();
 
   const add = () => {
     if (complete) return;
@@ -137,36 +141,34 @@ function TawafCounter({ count, onNext }: { count: number; onNext: () => void }) 
             <Rect x={c - 34} y={c - 18} width={68} height={7} fill={pil.gold} />
             <Circle cx={c - 34} cy={c + 34} r={5} fill={pil.gold} />
           </G>
-          <SvgText x={c} y={c + 62} fill="#FFFFFF" fontSize={13} fontWeight="700" textAnchor="middle">Kaaba à votre gauche</SvgText>
+          <SvgText x={c} y={c + 62} fill="#FFFFFF" fontSize={13} fontWeight="700" textAnchor="middle">{t("pilgrimage.mode.kaabaLeft")}</SvgText>
         </Svg>
       </View>
       <View style={styles.countRow}>
         <Text style={styles.bigCount}>{count}</Text>
-        <Text style={styles.bigCountLabel}>/ 7 tours</Text>
+        <Text style={styles.bigCountLabel}>{t("pilgrimage.mode.circuits")}</Text>
       </View>
 
       {complete ? (
         <View style={styles.doneCard}>
           <Ionicons name="checkmark-circle" size={30} color={pil.green} />
-          <Text style={styles.doneTitle}>Tawâf terminé</Text>
-          <Text style={styles.doneText}>Priez deux rak‘ât, si possible derrière Maqâm Ibrâhîm sans gêner les flux, puis buvez de Zamzam.</Text>
+          <Text style={styles.doneTitle}>{t("pilgrimage.mode.tawafDone")}</Text>
+          <Text style={styles.doneText}>{t("pilgrimage.mode.tawafDoneText")}</Text>
           <Pressable onPress={onNext} style={styles.primary}>
-            <Text style={styles.primaryText}>Passer au Sa‘y</Text>
+            <Text style={styles.primaryText}>{t("pilgrimage.mode.goSai")}</Text>
             <Ionicons name="arrow-forward" size={18} color={pil.ink} />
           </Pressable>
         </View>
       ) : (
         <>
           <Pressable accessibilityRole="button" onPress={add} style={({ pressed }) => [styles.bigButton, pressed && styles.bigButtonPressed]}>
-            <Text style={styles.bigButtonText}>Tour {count + 1} terminé</Text>
-            <Text style={styles.bigButtonHint}>De retour à l’alignement de la Pierre noire</Text>
+            <Text style={styles.bigButtonText}>{t("pilgrimage.mode.circuitDone", { number: count + 1 })}</Text>
+            <Text style={styles.bigButtonHint}>{t("pilgrimage.mode.circuitHint")}</Text>
           </Pressable>
           <View style={styles.hint}>
             <Ionicons name="information-circle-outline" size={18} color={pil.gold} />
             <Text style={styles.hintText}>
-              {count < 3
-                ? "Tours 1 à 3 : les hommes pressent le pas (ramal) lorsque cela s’applique et sans gêner personne."
-                : "À chaque passage de la Pierre noire : un signe de la main et « Allâhu akbar »."}
+              {count < 3 ? t("pilgrimage.mode.ramalHint") : t("pilgrimage.mode.stoneHint")}
             </Text>
           </View>
         </>
@@ -176,8 +178,8 @@ function TawafCounter({ count, onNext }: { count: number; onNext: () => void }) 
         onUndo={() => setCounters((counters) => ({ ...counters, tawaf: Math.max(0, counters.tawaf - 1) }))}
         onReset={() => setCounters((counters) => ({ ...counters, tawaf: 0 }))}
       />
-      <Text style={styles.sayTitle}>À dire</Text>
-      {["takbir", "rabbana", "free"].map((id) => <InvocationCard key={id} invocation={INVOCATIONS_BY_ID[id]} />)}
+      <Text style={styles.sayTitle}>{t("pilgrimage.mode.toSay")}</Text>
+      {["takbir", "rabbana", "free"].map((id) => <InvocationCard key={id} invocation={invocationsById[id]} />)}
     </View>
   );
 }
@@ -188,6 +190,10 @@ function SaiCounter({ count }: { count: number }) {
   const complete = count >= 7;
   const lap = Math.min(7, count + 1);
   const fromSafa = lap % 2 === 1;
+  const { t } = useI18n();
+  const { invocationsById } = usePilgrimageContent();
+  const safa = t("pilgrimage.mode.safa");
+  const marwa = t("pilgrimage.mode.marwa");
 
   const add = () => {
     if (complete) return;
@@ -200,7 +206,7 @@ function SaiCounter({ count }: { count: number }) {
     <View>
       <View style={styles.track}>
         <View style={styles.hill}>
-          <Text style={styles.hillName}>Safâ</Text>
+          <Text style={styles.hillName}>{safa}</Text>
           <Text style={styles.hillArabic}>الصفا</Text>
         </View>
         <View style={styles.laps}>
@@ -216,9 +222,9 @@ function SaiCounter({ count }: { count: number }) {
             );
           })}
         </View>
-        <View style={styles.greenZone}><Text style={styles.greenZoneText}>Repères verts : les hommes pressent le pas</Text></View>
+        <View style={styles.greenZone}><Text style={styles.greenZoneText}>{t("pilgrimage.mode.greenZone")}</Text></View>
         <View style={styles.hill}>
-          <Text style={styles.hillName}>Marwa</Text>
+          <Text style={styles.hillName}>{marwa}</Text>
           <Text style={styles.hillArabic}>المروة</Text>
         </View>
       </View>
@@ -226,20 +232,20 @@ function SaiCounter({ count }: { count: number }) {
       {complete ? (
         <View style={styles.doneCard}>
           <Ionicons name="checkmark-circle" size={30} color={pil.green} />
-          <Text style={styles.doneTitle}>Sa‘y terminé, à Marwa</Text>
-          <Text style={styles.doneText}>Pour la ‘Umra : l’homme rase ou raccourcit, la femme raccourcit une partie des pointes. Qu’Allah accepte.</Text>
+          <Text style={styles.doneTitle}>{t("pilgrimage.mode.saiDone")}</Text>
+          <Text style={styles.doneText}>{t("pilgrimage.mode.saiDoneText")}</Text>
         </View>
       ) : (
         <>
-          <Text style={styles.direction}>Trajet {lap} sur 7</Text>
-          <Text style={styles.directionWay}>{fromSafa ? "Safâ  →  Marwa" : "Marwa  →  Safâ"}</Text>
+          <Text style={styles.direction}>{t("pilgrimage.mode.trip", { number: lap })}</Text>
+          <Text style={styles.directionWay}>{fromSafa ? `${safa}  →  ${marwa}` : `${marwa}  →  ${safa}`}</Text>
           <Pressable accessibilityRole="button" onPress={add} style={({ pressed }) => [styles.bigButton, pressed && styles.bigButtonPressed]}>
-            <Text style={styles.bigButtonText}>Arrivé à {fromSafa ? "Marwa" : "Safâ"}</Text>
-            <Text style={styles.bigButtonHint}>Le trajet {lap} est terminé</Text>
+            <Text style={styles.bigButtonText}>{t("pilgrimage.mode.arrivedAt", { place: fromSafa ? marwa : safa })}</Text>
+            <Text style={styles.bigButtonHint}>{t("pilgrimage.mode.tripDone", { number: lap })}</Text>
           </Pressable>
           <View style={styles.hint}>
             <Ionicons name="information-circle-outline" size={18} color={pil.gold} />
-            <Text style={styles.hintText}>Sur Safâ et sur Marwa, tournez-vous vers la Kaaba : proclamez la grandeur d’Allah et invoquez, trois fois.</Text>
+            <Text style={styles.hintText}>{t("pilgrimage.mode.saiHint")}</Text>
           </View>
         </>
       )}
@@ -248,21 +254,23 @@ function SaiCounter({ count }: { count: number }) {
         onUndo={() => setCounters((counters) => ({ ...counters, sai: Math.max(0, counters.sai - 1) }))}
         onReset={() => setCounters((counters) => ({ ...counters, sai: 0 }))}
       />
-      <Text style={styles.sayTitle}>À dire</Text>
-      {(count === 0 ? ["safa", "safa-dhikr", "forgiveness"] : ["safa-dhikr", "forgiveness", "free"]).map((id) => <InvocationCard key={id} invocation={INVOCATIONS_BY_ID[id]} />)}
+      <Text style={styles.sayTitle}>{t("pilgrimage.mode.toSay")}</Text>
+      {(count === 0 ? ["safa", "safa-dhikr", "forgiveness"] : ["safa-dhikr", "forgiveness", "free"]).map((id) => <InvocationCard key={id} invocation={invocationsById[id]} />)}
     </View>
   );
 }
 
 // ----- Jamarât -------------------------------------------------------------------------------
 
-const PILLARS = ["Petite", "Moyenne", "Grande"] as const;
+const PILLARS: readonly TranslationKey[] = ["pilgrimage.mode.pillarSmall", "pilgrimage.mode.pillarMiddle", "pilgrimage.mode.pillarLarge"];
 
 function JamaratCounter({ day, counts }: { day: 10 | 11 | 12 | 13; counts: [number, number, number] }) {
   // On the 10th, only the big one (Jamrat al-‘Aqaba).
   const order = day === 10 ? [2] : [0, 1, 2];
   const active = order.find((pillar) => counts[pillar] < 7);
   const showPause = active !== undefined && active !== order[0] && counts[active] === 0;
+  const { t } = useI18n();
+  const { invocationsById } = usePilgrimageContent();
 
   const throwOne = () => {
     if (active === undefined) return;
@@ -275,7 +283,7 @@ function JamaratCounter({ day, counts }: { day: 10 | 11 | 12 | 13; counts: [numb
 
   return (
     <View>
-      <Text style={styles.dayLabel}>Jour de Dhul-Hijja</Text>
+      <Text style={styles.dayLabel}>{t("pilgrimage.mode.dayLabel")}</Text>
       <View style={styles.days}>
         {([10, 11, 12, 13] as const).map((value) => (
           <Pressable
@@ -297,15 +305,15 @@ function JamaratCounter({ day, counts }: { day: 10 | 11 | 12 | 13; counts: [numb
           const isActive = pillar === active;
           return (
             <View key={label} style={[styles.pillar, !used && styles.pillarUnused, isActive && styles.pillarActive]}>
-              <Text style={styles.pillarOrder}>{used ? (day === 10 ? "‘Aqaba" : `${order.indexOf(pillar) + 1}`) : "—"}</Text>
+              <Text style={styles.pillarOrder}>{used ? (day === 10 ? t("pilgrimage.mode.aqaba") : `${order.indexOf(pillar) + 1}`) : "—"}</Text>
               <View style={[styles.pillarStone, { height: 46 + pillar * 16 }, counts[pillar] >= 7 && styles.pillarStoneDone]} />
-              <Text style={styles.pillarName}>{label}</Text>
+              <Text style={styles.pillarName}>{t(label)}</Text>
               <View style={styles.pebbles}>
                 {Array.from({ length: 7 }, (_, index) => (
                   <View key={index} style={[styles.pebble, index < counts[pillar] && styles.pebbleThrown]} />
                 ))}
               </View>
-              <Text style={styles.pillarCount}>{used ? `${counts[pillar]} / 7` : "pas ce jour"}</Text>
+              <Text style={styles.pillarCount}>{used ? `${counts[pillar]} / 7` : t("pilgrimage.mode.notToday")}</Text>
             </View>
           );
         })}
@@ -314,24 +322,22 @@ function JamaratCounter({ day, counts }: { day: 10 | 11 | 12 | 13; counts: [numb
       {showPause ? (
         <View style={styles.pause}>
           <Ionicons name="hand-left-outline" size={20} color={pil.green} />
-          <Text style={styles.pauseText}>Arrêtez-vous un moment, face à la qibla, et invoquez longuement avant la stèle suivante.</Text>
+          <Text style={styles.pauseText}>{t("pilgrimage.mode.pause")}</Text>
         </View>
       ) : null}
 
       {active === undefined ? (
         <View style={styles.doneCard}>
           <Ionicons name="checkmark-circle" size={30} color={pil.green} />
-          <Text style={styles.doneTitle}>Lapidation du {day} terminée</Text>
+          <Text style={styles.doneTitle}>{t("pilgrimage.mode.stoningDone", { day })}</Text>
           <Text style={styles.doneText}>
-            {day === 10
-              ? "Ensuite : le sacrifice s’il vous incombe, la coupe des cheveux et le Tawâf al-Ifâda."
-              : "Après la grande stèle, partez sans vous arrêter. Le séjour à Mina se poursuit selon votre programme."}
+            {day === 10 ? t("pilgrimage.mode.stoningDone10") : t("pilgrimage.mode.stoningDoneOther")}
           </Text>
         </View>
       ) : (
         <Pressable accessibilityRole="button" onPress={throwOne} style={({ pressed }) => [styles.bigButton, pressed && styles.bigButtonPressed]}>
-          <Text style={styles.bigButtonText}>Caillou lancé · Allâhu akbar</Text>
-          <Text style={styles.bigButtonHint}>{PILLARS[active]} stèle — caillou {counts[active] + 1} sur 7</Text>
+          <Text style={styles.bigButtonText}>{t("pilgrimage.mode.throw")}</Text>
+          <Text style={styles.bigButtonHint}>{t("pilgrimage.mode.throwHint", { pillar: t(PILLARS[active]), number: counts[active] + 1 })}</Text>
         </Pressable>
       )}
       <Controls
@@ -345,19 +351,20 @@ function JamaratCounter({ day, counts }: { day: 10 | 11 | 12 | 13; counts: [numb
         })}
         onReset={() => setCounters((counters) => ({ ...counters, jamarat: [0, 0, 0] }))}
       />
-      <Text style={styles.sayTitle}>À dire</Text>
-      <InvocationCard invocation={INVOCATIONS_BY_ID.takbir} />
+      <Text style={styles.sayTitle}>{t("pilgrimage.mode.toSay")}</Text>
+      <InvocationCard invocation={invocationsById.takbir} />
     </View>
   );
 }
 
 function Controls({ canUndo, onUndo, onReset }: { canUndo: boolean; onUndo: () => void; onReset: () => void }) {
   const [confirm, setConfirm] = useState(false);
+  const { t } = useI18n();
   return (
     <View style={styles.controls}>
       <Pressable disabled={!canUndo} onPress={onUndo} style={[styles.control, !canUndo && styles.disabled]}>
         <Ionicons name="arrow-undo-outline" size={18} color="#FFFFFF" />
-        <Text style={styles.controlText}>Annuler le dernier</Text>
+        <Text style={styles.controlText}>{t("pilgrimage.mode.undo")}</Text>
       </Pressable>
       <Pressable
         disabled={!canUndo}
@@ -373,7 +380,7 @@ function Controls({ canUndo, onUndo, onReset }: { canUndo: boolean; onUndo: () =
         style={[styles.control, confirm && styles.controlConfirm, !canUndo && styles.disabled]}
       >
         <Ionicons name="refresh-outline" size={18} color={confirm ? pil.ink : "#FFFFFF"} />
-        <Text style={[styles.controlText, confirm && styles.controlTextConfirm]}>{confirm ? "Toucher pour confirmer" : "Recommencer"}</Text>
+        <Text style={[styles.controlText, confirm && styles.controlTextConfirm]}>{confirm ? t("pilgrimage.mode.confirmReset") : t("pilgrimage.mode.reset")}</Text>
       </Pressable>
     </View>
   );

@@ -82,12 +82,3 @@ export type Problem = {
   whatToKnow: string;
   whatToDoNow: string;
 };
-
-export function sourceLabel(kind: SourceKind): string {
-  switch (kind) {
-    case "QURAN": return "Coran";
-    case "AUTHENTIC_HADITH": return "Hadith";
-    case "JURISTIC_DIFFERENCE": return "Divergence";
-    default: return "Fiqh";
-  }
-}

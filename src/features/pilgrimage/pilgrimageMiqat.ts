@@ -1,3 +1,4 @@
+import type { LanguageCode } from "../../i18n";
 import type { Source } from "./pilgrimageTypes";
 
 /**
@@ -9,9 +10,9 @@ export type Miqat = {
   id: string;
   name: string;
   arabic: string;
-  place: string;
+  place: Record<LanguageCode, string>;
   /** Who usually passes it. */
-  people: string;
+  people: Record<LanguageCode, string>;
   latitude: number;
   longitude: number;
   sources: Source[];
@@ -22,11 +23,11 @@ const H = (reference: string): Source => ({ kind: "AUTHENTIC_HADITH", reference 
 export const KAABA = { latitude: 21.4225, longitude: 39.8262 };
 
 export const MIQATS: Miqat[] = [
-  { id: "dhul-hulayfa", name: "Dhul-Hulayfa", arabic: "ذو الحليفة", place: "Abyâr ‘Alî, près de Médine", people: "Médine et ceux qui viennent du nord", latitude: 24.4136, longitude: 39.5431, sources: [H("Sahîh al-Bukhârî 1526")] },
-  { id: "juhfa", name: "Al-Juhfa", arabic: "الجحفة", place: "près de Râbigh", people: "Europe, Maghreb, Égypte, Shâm", latitude: 22.7065, longitude: 39.1445, sources: [H("Sahîh al-Bukhârî 1526")] },
-  { id: "qarn", name: "Qarn al-Manâzil", arabic: "قرن المنازل", place: "As-Sayl al-Kabîr", people: "Najd, Golfe, Asie par l’est", latitude: 21.6333, longitude: 40.4167, sources: [H("Sahîh al-Bukhârî 1526")] },
-  { id: "dhat-irq", name: "Dhât ‘Irq", arabic: "ذات عرق", place: "au nord-est de La Mecque", people: "Irak", latitude: 21.9333, longitude: 40.4333, sources: [H("Sahîh al-Bukhârî 1531")] },
-  { id: "yalamlam", name: "Yalamlam", arabic: "يلملم", place: "As-Sa‘diyya", people: "Yémen et ceux qui viennent du sud", latitude: 20.5167, longitude: 39.8667, sources: [H("Sahîh al-Bukhârî 1526")] },
+  { id: "dhul-hulayfa", name: "Dhul-Hulayfa", arabic: "ذو الحليفة", place: { fr: "Abyâr ‘Alî, près de Médine", en: "Abyar ‘Ali, near Medina" }, people: { fr: "Médine et ceux qui viennent du nord", en: "Medina and those coming from the north" }, latitude: 24.4136, longitude: 39.5431, sources: [H("Sahîh al-Bukhârî 1526")] },
+  { id: "juhfa", name: "Al-Juhfa", arabic: "الجحفة", place: { fr: "près de Râbigh", en: "near Rabigh" }, people: { fr: "Europe, Maghreb, Égypte, Shâm", en: "Europe, North Africa, Egypt, Sham" }, latitude: 22.7065, longitude: 39.1445, sources: [H("Sahîh al-Bukhârî 1526")] },
+  { id: "qarn", name: "Qarn al-Manâzil", arabic: "قرن المنازل", place: { fr: "As-Sayl al-Kabîr", en: "As-Sayl al-Kabir" }, people: { fr: "Najd, Golfe, Asie par l’est", en: "Najd, the Gulf, Asia from the east" }, latitude: 21.6333, longitude: 40.4167, sources: [H("Sahîh al-Bukhârî 1526")] },
+  { id: "dhat-irq", name: "Dhât ‘Irq", arabic: "ذات عرق", place: { fr: "au nord-est de La Mecque", en: "north-east of Makkah" }, people: { fr: "Irak", en: "Iraq" }, latitude: 21.9333, longitude: 40.4333, sources: [H("Sahîh al-Bukhârî 1531")] },
+  { id: "yalamlam", name: "Yalamlam", arabic: "يلملم", place: { fr: "As-Sa‘diyya", en: "As-Sa‘diyyah" }, people: { fr: "Yémen et ceux qui viennent du sud", en: "Yemen and those coming from the south" }, latitude: 20.5167, longitude: 39.8667, sources: [H("Sahîh al-Bukhârî 1526")] },
 ];
 
 const RAD = Math.PI / 180;

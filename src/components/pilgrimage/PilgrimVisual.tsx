@@ -4,7 +4,9 @@ import { memo } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import Svg, { Circle, Defs, Ellipse, G, Line, Path, Polygon, RadialGradient, Rect, Stop, Text as SvgText } from "react-native-svg";
 
-import type { Visual } from "../../features/pilgrimage/pilgrimageTypes";
+import { hajjTypeLabel } from "../../features/pilgrimage/pilgrimageI18n";
+import type { HajjType, Visual } from "../../features/pilgrimage/pilgrimageTypes";
+import { useI18n } from "../../i18n";
 import { pil, pilType } from "./theme";
 
 const W = 320;
@@ -21,6 +23,7 @@ function Kaaba({ x, y, size }: { x: number; y: number; size: number }) {
 }
 
 function Tawaf() {
+  const { t } = useI18n();
   const cx = W / 2;
   const cy = H / 2 + 2;
   const dots = Array.from({ length: 7 }, (_, index) => {
@@ -37,12 +40,13 @@ function Tawaf() {
       <Polygon points={`${cx + 102},${cy + 20} ${cx + 94},${cy + 22} ${cx + 101},${cy + 29}`} fill="#FFFFFF" />
       <Kaaba x={cx} y={cy} size={38} />
       <Circle cx={cx - 19} cy={cy + 19} r={3.4} fill={pil.gold} />
-      <SvgText x={cx - 26} y={cy + 36} fill={pil.gold} fontSize={9} fontWeight="700" textAnchor="end">Pierre noire</SvgText>
+      <SvgText x={cx - 26} y={cy + 36} fill={pil.gold} fontSize={9} fontWeight="700" textAnchor="end">{t("pilgrimage.visual.blackStone")}</SvgText>
     </>
   );
 }
 
 function Sai() {
+  const { t } = useI18n();
   return (
     <>
       <Line x1={60} y1={H / 2} x2={260} y2={H / 2} stroke={pil.goldLine} strokeWidth={16} strokeLinecap="round" />
@@ -52,9 +56,9 @@ function Sai() {
       ))}
       <Circle cx={60} cy={H / 2} r={20} fill={pil.surfaceHigh} stroke={pil.gold} strokeWidth={2} />
       <Circle cx={260} cy={H / 2} r={20} fill={pil.surfaceHigh} stroke={pil.gold} strokeWidth={2} />
-      <SvgText x={60} y={H / 2 + 42} fill="#FFFFFF" fontSize={12} fontWeight="700" textAnchor="middle">Safâ</SvgText>
-      <SvgText x={260} y={H / 2 + 42} fill="#FFFFFF" fontSize={12} fontWeight="700" textAnchor="middle">Marwa</SvgText>
-      <SvgText x={160} y={H / 2 - 18} fill={pil.green} fontSize={10} fontWeight="700" textAnchor="middle">repères verts</SvgText>
+      <SvgText x={60} y={H / 2 + 42} fill="#FFFFFF" fontSize={12} fontWeight="700" textAnchor="middle">{t("pilgrimage.mode.safa")}</SvgText>
+      <SvgText x={260} y={H / 2 + 42} fill="#FFFFFF" fontSize={12} fontWeight="700" textAnchor="middle">{t("pilgrimage.mode.marwa")}</SvgText>
+      <SvgText x={160} y={H / 2 - 18} fill={pil.green} fontSize={10} fontWeight="700" textAnchor="middle">{t("pilgrimage.visual.greenMarkers")}</SvgText>
       <SvgText x={60} y={H / 2 + 4} fill={pil.gold} fontSize={11} fontWeight="800" textAnchor="middle">1</SvgText>
       <SvgText x={260} y={H / 2 + 4} fill={pil.gold} fontSize={11} fontWeight="800" textAnchor="middle">7</SvgText>
     </>
@@ -62,10 +66,11 @@ function Sai() {
 }
 
 function Jamarat() {
+  const { t } = useI18n();
   const pillars = [
-    { x: 80, h: 46, label: "Petite" },
-    { x: 160, h: 60, label: "Moyenne" },
-    { x: 240, h: 76, label: "Grande" },
+    { x: 80, h: 46, label: t("pilgrimage.mode.pillarSmall") },
+    { x: 160, h: 60, label: t("pilgrimage.mode.pillarMiddle") },
+    { x: 240, h: 76, label: t("pilgrimage.mode.pillarLarge") },
   ];
   return (
     <>
@@ -124,7 +129,8 @@ function NightSky() {
 }
 
 function Types() {
-  const items = [{ x: 70, label: "Tamattu‘" }, { x: 160, label: "Qirân" }, { x: 250, label: "Ifrâd" }];
+  const { language } = useI18n();
+  const items = (["tamattu", "qiran", "ifrad"] as HajjType[]).map((type, index) => ({ x: 70 + index * 90, label: hajjTypeLabel(type, language).title }));
   return (
     <>
       {items.map((item, index) => (

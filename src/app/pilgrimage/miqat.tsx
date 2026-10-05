@@ -13,6 +13,7 @@ import { SourceLine } from "../../components/pilgrimage/PilgrimBits";
 import { pil, pilType } from "../../components/pilgrimage/theme";
 import { ensureReminderChannel, reminderChannelId } from "../../features/notifications/notificationChannels";
 import { alignedMiqat, kmToMiqat, MIQATS, type Miqat } from "../../features/pilgrimage/pilgrimageMiqat";
+import { useI18n, type TranslationKey } from "../../i18n";
 
 /** Typical cruise speed when the GPS gives none (m/s, ≈ 830 km/h). */
 const DEFAULT_SPEED = 230;
@@ -20,6 +21,8 @@ const PREPARE_MINUTES = 30;
 const NOW_MINUTES = 10;
 
 type Stage = "far" | "prepare" | "now" | "passed";
+
+const NOTES: TranslationKey[] = ["pilgrimage.miqat.note1", "pilgrimage.miqat.note2", "pilgrimage.miqat.note3"];
 
 async function alert(title: string, body: string) {
   Vibration.vibrate([0, 500, 250, 500, 250, 800]);
@@ -40,6 +43,7 @@ async function alert(title: string, body: string) {
 export default function MiqatScreen() {
   useKeepAwake();
   const insets = useSafeAreaInsets();
+  const { language, t } = useI18n();
   const [tracking, setTracking] = useState(false);
   const [denied, setDenied] = useState(false);
   const [position, setPosition] = useState<{ latitude: number; longitude: number; speed: number | null } | null>(null);
@@ -83,33 +87,35 @@ export default function MiqatScreen() {
     if (!tracking || !miqat) return;
     if ((stage === "prepare" || stage === "now") && !alerted.current.prepare) {
       alerted.current.prepare = true;
-      if (stage === "prepare") void alert("Préparez votre ihrâm", `Le mîqât ${miqat.name} approche : environ ${minutes} minutes.`);
+      if (stage === "prepare") void alert(t("pilgrimage.miqat.prepareTitle"), t("pilgrimage.miqat.prepareBody", { name: miqat.name, minutes: minutes ?? 0 }));
     }
     if (stage === "now" && !alerted.current.now) {
       alerted.current.now = true;
-      void alert("Le mîqât approche", `${miqat.name} dans environ ${minutes} minutes. Formulez votre intention et commencez la talbiya.`);
+      void alert(t("pilgrimage.miqat.nowTitle"), t("pilgrimage.miqat.nowBody", { name: miqat.name, minutes: minutes ?? 0 }));
     }
-  }, [miqat, minutes, stage, tracking]);
+  }, [miqat, minutes, stage, t, tracking]);
 
   const ring = 2 * Math.PI * 92;
   const progress = km === null ? 0 : Math.max(0, Math.min(1, 1 - km / 1500));
   const stageCopy: Record<Stage, { title: string; text: string; color: string }> = {
-    far: { title: tracking ? "En route" : "Suivi arrêté", text: tracking ? "Une alerte sonnera environ 30 minutes, puis 10 minutes avant le mîqât." : "Activez le suivi après le décollage, téléphone en mode avion si besoin.", color: pil.gold },
-    prepare: { title: "Préparez votre ihrâm", text: "Ablutions, tenue, puis attendez le moment de l’intention.", color: pil.gold },
-    now: { title: "Le mîqât approche", text: "Formulez l’intention de votre rite et commencez la talbiya.", color: pil.green },
-    passed: { title: "Mîqât franchi", text: "Vous êtes à l’intérieur des limites. Si vous n’étiez pas en ihrâm, demandez conseil rapidement.", color: pil.red },
+    far: tracking
+      ? { title: t("pilgrimage.miqat.farOn"), text: t("pilgrimage.miqat.farOnText"), color: pil.gold }
+      : { title: t("pilgrimage.miqat.farOff"), text: t("pilgrimage.miqat.farOffText"), color: pil.gold },
+    prepare: { title: t("pilgrimage.miqat.prepareTitle"), text: t("pilgrimage.miqat.prepareText"), color: pil.gold },
+    now: { title: t("pilgrimage.miqat.nowTitle"), text: t("pilgrimage.miqat.nowText"), color: pil.green },
+    passed: { title: t("pilgrimage.miqat.passed"), text: t("pilgrimage.miqat.passedText"), color: pil.red },
   };
   const copy = stageCopy[stage];
 
   return (
     <View style={[styles.screen, { paddingTop: insets.top + 6 }]}>
       <View style={styles.header}>
-        <Pressable accessibilityRole="button" accessibilityLabel="Retour" onPress={() => router.back()} hitSlop={8} style={styles.iconButton}>
+        <Pressable accessibilityRole="button" accessibilityLabel={t("common.back")} onPress={() => router.back()} hitSlop={8} style={styles.iconButton}>
           <Ionicons name="chevron-back" size={22} color="#FFFFFF" />
         </Pressable>
         <View style={styles.headerCopy}>
-          <Text style={styles.eyebrow}>EN AVION</Text>
-          <Text style={styles.title}>Alerte mîqât</Text>
+          <Text style={styles.eyebrow}>{t("pilgrimage.miqat.eyebrow")}</Text>
+          <Text style={styles.title}>{t("pilgrimage.tool.miqat")}</Text>
         </View>
       </View>
 
@@ -132,7 +138,7 @@ export default function MiqatScreen() {
           <View style={styles.gaugeCenter} pointerEvents="none">
             <Ionicons name="airplane" size={26} color={copy.color} />
             <Text style={styles.gaugeValue}>{km === null ? "—" : `${Math.round(km)} km`}</Text>
-            <Text style={styles.gaugeLabel}>{minutes === null ? "avant le mîqât" : stage === "passed" ? "franchi" : `≈ ${minutes} min`}</Text>
+            <Text style={styles.gaugeLabel}>{minutes === null ? t("pilgrimage.miqat.beforeMiqat") : stage === "passed" ? t("pilgrimage.miqat.crossed") : `≈ ${minutes} min`}</Text>
           </View>
         </View>
 
@@ -147,11 +153,11 @@ export default function MiqatScreen() {
           style={({ pressed }) => [styles.primary, tracking && styles.primaryStop, pressed && styles.pressed]}
         >
           <Ionicons name={tracking ? "stop-circle-outline" : "navigate-outline"} size={22} color={tracking ? "#FFFFFF" : pil.ink} />
-          <Text style={[styles.primaryText, tracking && styles.primaryTextStop]}>{tracking ? "Arrêter le suivi" : "Activer le suivi en vol"}</Text>
+          <Text style={[styles.primaryText, tracking && styles.primaryTextStop]}>{tracking ? t("pilgrimage.miqat.stop") : t("pilgrimage.miqat.start")}</Text>
         </Pressable>
-        {denied ? <Text style={styles.denied}>Autorisez la localisation d’OUMMAH pour utiliser l’alerte.</Text> : null}
+        {denied ? <Text style={styles.denied}>{t("pilgrimage.miqat.denied")}</Text> : null}
 
-        <Text style={styles.section}>Votre mîqât</Text>
+        <Text style={styles.section}>{t("pilgrimage.miqat.yours")}</Text>
         <View style={styles.miqats}>
           {MIQATS.map((item) => {
             const selected = miqat?.id === item.id;
@@ -165,28 +171,24 @@ export default function MiqatScreen() {
                   <Text style={styles.miqatName}>{item.name}</Text>
                   <Text style={styles.miqatArabic}>{item.arabic}</Text>
                 </View>
-                <Text style={styles.miqatText}>{item.people} · {item.place}</Text>
-                {selected ? <Text style={styles.miqatBadge}>{manual ? "Choisi par vous" : "Détecté selon votre direction"}</Text> : null}
+                <Text style={styles.miqatText}>{item.people[language]} · {item.place[language]}</Text>
+                {selected ? <Text style={styles.miqatBadge}>{manual ? t("pilgrimage.miqat.manual") : t("pilgrimage.miqat.detected")}</Text> : null}
               </Pressable>
             );
           })}
         </View>
         <SourceLine sources={[{ kind: "AUTHENTIC_HADITH", reference: "Sahîh al-Bukhârî 1526" }, { kind: "AUTHENTIC_HADITH", reference: "Sahîh al-Bukhârî 1531" }]} />
 
-        <Pressable onPress={() => void alert("Test de l’alerte mîqât", "Voici le son et la vibration que vous recevrez en vol.")} style={styles.test}>
+        <Pressable onPress={() => void alert(t("pilgrimage.miqat.testTitle"), t("pilgrimage.miqat.testBody"))} style={styles.test}>
           <Ionicons name="volume-high-outline" size={18} color={pil.gold} />
-          <Text style={styles.testText}>Tester le son et la vibration</Text>
+          <Text style={styles.testText}>{t("pilgrimage.miqat.test")}</Text>
         </Pressable>
 
         <View style={styles.notes}>
-          {[
-            "Le GPS fonctionne sans réseau, en mode avion, sur la plupart des téléphones. Placez-vous près d’un hublot si la position tarde.",
-            "Laissez cet écran ouvert : l’écran reste allumé pendant le suivi.",
-            "Les distances sont approximatives : l’alerte arrive volontairement en avance. Suivez aussi les annonces de l’équipage et la consigne de votre groupe.",
-          ].map((text) => (
-            <View key={text} style={styles.note}>
+          {NOTES.map((key) => (
+            <View key={key} style={styles.note}>
               <Ionicons name="information-circle-outline" size={17} color={pil.gold} />
-              <Text style={styles.noteText}>{text}</Text>
+              <Text style={styles.noteText}>{t(key)}</Text>
             </View>
           ))}
         </View>

@@ -1,6 +1,7 @@
 import * as Notifications from "expo-notifications";
 import { Platform } from "react-native";
 
+import { translate } from "../../i18n";
 import { getHijriDate } from "../calendar/IslamicCalendar";
 import { ensureReminderChannel, reminderChannelId } from "../notifications/notificationChannels";
 import { isNotificationPermissionGranted } from "../notifications/NotificationPermissions";
@@ -96,14 +97,14 @@ export function syncHajjReminders(enabled: boolean, askPermission = false): Prom
 
     const book = (step: string) => `/pilgrimage/book?rite=hajj&step=${step}`;
     const items = [
-      { at: atMecca(day(8), { h: 7, m: 0 }), title: "Jour de Tarwiya", body: "Aujourd’hui, les pèlerins rejoignent Mina. Ouvrez le chapitre du jour.", route: book("mina-8") },
-      { at: atMecca(day(9), { h: 6, m: 30 }), title: "Jour de ‘Arafa", body: approximate ? "Le wuqûf commence après le passage du soleil au zénith. Préparez vos dou‘as." : `Le wuqûf commence après le zénith (Dhuhr à ${label(t9.dhuhr)}). Préparez vos dou‘as.`, route: book("arafat-9") },
-      { at: atMecca(day(9), t9.maghrib, -60), title: "Dernière heure avant le coucher du soleil", body: "Multipliez les invocations — et pensez aux dou‘as que vos proches vous ont confiées.", route: "/pilgrimage/duas" },
-      { at: atMecca(day(9), t9.maghrib, 5), title: "Le soleil s’est couché", body: "Départ pour Muzdalifa, selon les consignes de votre groupe.", route: book("muzdalifah") },
-      { at: atMecca(day(10), { h: 6, m: 30 }), title: "Jour du sacrifice — ‘Îd al-Adhâ", body: "Jamrat al-‘Aqaba, le sacrifice s’il vous incombe, les cheveux et le Tawâf al-Ifâda.", route: book("nahr-10") },
-      { at: atMecca(day(11), t11.dhuhr, 10), title: "Jamarât du 11", body: "Le soleil a passé le zénith : les trois stèles, dans l’ordre, sept cailloux chacune.", route: book("tashriq-11") },
-      { at: atMecca(day(12), t12.dhuhr, 10), title: "Jamarât du 12", body: "Les trois stèles, dans l’ordre. Un départ anticipé obéit à des conditions : voir le livre.", route: book("tashriq-12") },
-      { at: atMecca(day(13), t13.dhuhr, 10), title: "Jamarât du 13", body: "Si vous êtes resté à Mina : les trois stèles, dans l’ordre.", route: book("tashriq-13") },
+      { at: atMecca(day(8), { h: 7, m: 0 }), title: translate("pilgrimage.reminder.tarwiyaTitle"), body: translate("pilgrimage.reminder.tarwiyaBody"), route: book("mina-8") },
+      { at: atMecca(day(9), { h: 6, m: 30 }), title: translate("pilgrimage.reminder.arafaTitle"), body: approximate ? translate("pilgrimage.reminder.arafaBodyApprox") : translate("pilgrimage.reminder.arafaBody", { time: label(t9.dhuhr) }), route: book("arafat-9") },
+      { at: atMecca(day(9), t9.maghrib, -60), title: translate("pilgrimage.reminder.lastHourTitle"), body: translate("pilgrimage.reminder.lastHourBody"), route: "/pilgrimage/duas" },
+      { at: atMecca(day(9), t9.maghrib, 5), title: translate("pilgrimage.reminder.sunsetTitle"), body: translate("pilgrimage.reminder.sunsetBody"), route: book("muzdalifah") },
+      { at: atMecca(day(10), { h: 6, m: 30 }), title: translate("pilgrimage.reminder.nahrTitle"), body: translate("pilgrimage.reminder.nahrBody"), route: book("nahr-10") },
+      { at: atMecca(day(11), t11.dhuhr, 10), title: translate("pilgrimage.reminder.j11Title"), body: translate("pilgrimage.reminder.j11Body"), route: book("tashriq-11") },
+      { at: atMecca(day(12), t12.dhuhr, 10), title: translate("pilgrimage.reminder.j12Title"), body: translate("pilgrimage.reminder.j12Body"), route: book("tashriq-12") },
+      { at: atMecca(day(13), t13.dhuhr, 10), title: translate("pilgrimage.reminder.j13Title"), body: translate("pilgrimage.reminder.j13Body"), route: book("tashriq-13") },
     ].filter((item) => item.at > Date.now() + 60_000);
 
     await ensureReminderChannel("sound");
