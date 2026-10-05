@@ -158,6 +158,8 @@ export const NAME_TEXT_EN: Record<string, string> = {
   'Sahih Muslim 2140-2142 ; Sahih al-Bukhari 6192.': 'Sahih Muslim 2140-2142; Sahih al-Bukhari 6192.',
   'Racine ب ح ر : baḥr, « mer »': 'Root ب ح ر: baḥr, “sea”',
   'Yanis — usage grec et français ; variante de Gianis/Yannis': 'Yanis — Greek and French usage; variant of Gianis/Yannis',
+  'Nail / نائل — « attainer »': 'Nail / نائل — “attainer”',
+  'Naim / نعيم — « tranquil, happy, at ease »': 'Naim / نعيم — “tranquil, happy, at ease”',
   'Iskandar — forme arabe d’Alexander': 'Iskandar — Arabic form of Alexander',
   'Sonia — variante de Sonya ; Sonya est un diminutif russe de Sophia': 'Sonia — variant of Sonya; Sonya is a Russian diminutive of Sophia',
   'Sonya — diminutif russe de Sophia': 'Sonya — Russian diminutive of Sophia',

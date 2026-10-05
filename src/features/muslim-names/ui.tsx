@@ -4,7 +4,8 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { colors } from '../../theme/colors';
 import { typography } from '../../theme/typography';
 import type { MuslimName } from './types';
-import { UNDOCUMENTED_MEANING, getNameMeaning, getStatusBasis } from './presentation';
+import { usePrenomsText } from './i18n';
+import { getNameMeaning, getStatusBasis } from './presentation';
 
 export const prenomTheme = {
   card: 'rgba(23,16,38,0.88)',
@@ -16,8 +17,9 @@ export const prenomTheme = {
 export const GENDER_ACCENT = { boy: '#78B9FF', girl: '#F2A6C7' } as const;
 
 export function ScreenHeader({ title, onBack, right }: { title: string; onBack: () => void; right?: ReactNode }) {
+  const { tx } = usePrenomsText();
   return <View style={s.header}>
-    <Pressable onPress={onBack} style={({pressed})=>[s.iconButton,pressed&&s.pressed]} accessibilityRole="button" accessibilityLabel="Retour">
+    <Pressable onPress={onBack} style={({pressed})=>[s.iconButton,pressed&&s.pressed]} accessibilityRole="button" accessibilityLabel={tx.back}>
       <Ionicons name="chevron-back" size={22} color={colors.text}/>
     </Pressable>
     <Text style={s.headerTitle} numberOfLines={1}>{title}</Text>
@@ -27,16 +29,18 @@ export function ScreenHeader({ title, onBack, right }: { title: string; onBack: 
 
 /** « ✓ Recommandé », shown only when a text establishes it (getStatusBasis). */
 export function RecommendedPill({ compact = false }: { compact?: boolean }) {
+  const { tx } = usePrenomsText();
   return <View style={[s.recommended, compact && s.recommendedCompact]}>
-    <Text style={[s.recommendedText, compact && s.recommendedTextCompact]}>✓ Recommandé</Text>
+    <Text style={[s.recommendedText, compact && s.recommendedTextCompact]}>{tx.recommended}</Text>
   </View>;
 }
 
 /** One dictionary entry: gender dot, name, Arabic, meaning on one line. */
 export function NameRow({ item, onPress, favorite, onFavorite }: { item: MuslimName; onPress: () => void; favorite?: boolean; onFavorite?: () => void }) {
-  const basis = getStatusBasis(item);
-  const meaning = getNameMeaning(item);
-  return <Pressable onPress={onPress} style={({pressed})=>[s.row,pressed&&s.pressed]} accessibilityRole="button" accessibilityLabel={`${item.name}, ${meaning?.text ?? UNDOCUMENTED_MEANING}`}>
+  const { lang, tx } = usePrenomsText();
+  const basis = getStatusBasis(item, lang);
+  const meaning = getNameMeaning(item, lang);
+  return <Pressable onPress={onPress} style={({pressed})=>[s.row,pressed&&s.pressed]} accessibilityRole="button" accessibilityLabel={`${item.name}, ${meaning?.text ?? tx.undocumented}`}>
     <View style={s.rowMain}>
       <View style={s.rowTop}>
         <View style={[s.dot,{backgroundColor:GENDER_ACCENT[item.gender]}]}/>
@@ -44,9 +48,9 @@ export function NameRow({ item, onPress, favorite, onFavorite }: { item: MuslimN
         {basis ? <Text style={s.rowCheck}>✓</Text> : null}
         {item.arabic && item.arabic !== '—' ? <Text style={s.rowArabic} numberOfLines={1}>{item.arabic}</Text> : null}
       </View>
-      <Text style={[s.rowMeaning,!meaning&&s.rowMeaningMissing]} numberOfLines={1}>{meaning?.text ?? UNDOCUMENTED_MEANING}</Text>
+      <Text style={[s.rowMeaning,!meaning&&s.rowMeaningMissing]} numberOfLines={1}>{meaning?.text ?? tx.undocumented}</Text>
     </View>
-    {onFavorite ? <Pressable onPress={(e)=>{e.stopPropagation();onFavorite();}} style={s.heart} hitSlop={10} accessibilityRole="button" accessibilityLabel={favorite?'Retirer des favoris':'Ajouter aux favoris'}>
+    {onFavorite ? <Pressable onPress={(e)=>{e.stopPropagation();onFavorite();}} style={s.heart} hitSlop={10} accessibilityRole="button" accessibilityLabel={favorite?tx.removeFavorite:tx.addFavorite}>
       <Ionicons name={favorite?'heart':'heart-outline'} size={18} color={favorite?colors.goldLight:colors.textMuted}/>
     </Pressable> : null}
   </Pressable>;

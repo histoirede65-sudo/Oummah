@@ -91,7 +91,7 @@ export function getStatusBasis(item: MuslimName, lang: PrenomsLanguage = 'fr'): 
   }
   if (item.tags.includes('sahabiyya') && item.status === 'recommended') {
     return { reason: en
-      ? 'Name of a woman Companion. Ibn Bâz: for women, “what was in use among the women of the Companions”.'
+      ? 'Name of a woman Companion. Ibn Bâz: for women, “what was customary among the women of the Companions”.'
       : 'Nom d’une femme des Compagnons. Ibn Bâz : pour les femmes, « ce qui était en usage parmi les femmes des Compagnons ».', sources: ['bazWhenWho', 'uthMalak'] };
   }
   return null;

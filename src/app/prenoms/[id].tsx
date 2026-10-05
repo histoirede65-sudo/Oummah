@@ -6,7 +6,8 @@ import { Alert, Linking, Pressable, SafeAreaView, ScrollView, Share, StyleSheet,
 
 import { relatedNames } from '../../features/muslim-names/collections';
 import { getMuslimName } from '../../features/muslim-names/data';
-import { getNameMeaning, getNameStory, getReadableVariants, getStatusBasis, isExternalSourceClickable } from '../../features/muslim-names/presentation';
+import { usePrenomsText } from '../../features/muslim-names/i18n';
+import { getNameMeaning, getNameStory, getReadableVariants, getStatusBasis, isExternalSourceClickable, localText } from '../../features/muslim-names/presentation';
 import type { NameSourceId } from '../../features/muslim-names/scholar-sources';
 import { SourceChips, SourceSheet } from '../../features/muslim-names/SourceSheet';
 import { getNameSources } from '../../features/muslim-names/sources';
@@ -23,82 +24,84 @@ function firstSurah(reference?: string) {
 }
 
 export default function PrenomDetailScreen(){
+  const { lang, tx } = usePrenomsText();
+  const en = lang === 'en';
   const params=useLocalSearchParams<{id:string}>();
   const item=getMuslimName(params.id);
   const [favorite,setFavorite]=useState(false);
   const [source,setSource]=useState<NameSourceId|null>(null);
 
   useEffect(()=>{if(!item)return;void addNameToHistory(item.id);void loadNameFavorites().then(ids=>setFavorite(ids.includes(item.id)));},[item?.id]);
-  if(!item)return <LinearGradient colors={[colors.background,colors.backgroundSecondary]} style={styles.screen}><SafeAreaView style={styles.safe}><ScreenHeader title="Prénom" onBack={()=>router.back()}/><View style={styles.notFound}><Text style={styles.notFoundTitle}>Prénom introuvable</Text><Text style={styles.notFoundText}>Cette fiche n’existe plus ou l’adresse est incorrecte.</Text></View></SafeAreaView></LinearGradient>;
+  if(!item)return <LinearGradient colors={[colors.background,colors.backgroundSecondary]} style={styles.screen}><SafeAreaView style={styles.safe}><ScreenHeader title={tx.namePage} onBack={()=>router.back()}/><View style={styles.notFound}><Text style={styles.notFoundTitle}>{tx.notFoundTitle}</Text><Text style={styles.notFoundText}>{tx.notFoundText}</Text></View></SafeAreaView></LinearGradient>;
 
-  const basis=getStatusBasis(item);
-  const meaning=getNameMeaning(item);
-  const story=getNameStory(item);
+  const basis=getStatusBasis(item,lang);
+  const meaning=getNameMeaning(item,lang);
+  const story=getNameStory(item,lang);
   const variants=getReadableVariants(item);
-  const sources=getNameSources(item);
+  const sources=getNameSources(item,lang);
   const related=relatedNames(item);
   const surah=firstSurah(item.quranReference);
   const hasArabic=Boolean(item.arabic&&item.arabic!=='—');
   const toggle=async()=>{const ids=await toggleNameFavorite(item.id);setFavorite(ids.includes(item.id));};
-  const share=()=>Share.share({message:`${item.name}${hasArabic?` — ${item.arabic}`:''}${meaning?`\n${meaning.text}`:''}\n\nDécouvert dans OUMMAH · Prénoms`});
+  const share=()=>Share.share({message:`${item.name}${hasArabic?` — ${item.arabic}`:''}${meaning?`\n${meaning.text}`:''}\n\n${tx.shareFooter}`});
   const openUrl=(url?:string)=>{
     if(!isExternalSourceClickable(url))return;
-    Linking.openURL(url as string).catch(()=>Alert.alert('Source indisponible','Impossible d’ouvrir cette source pour le moment.'));
+    Linking.openURL(url as string).catch(()=>Alert.alert(tx.unavailableTitle,tx.unavailableText));
   };
 
   return <LinearGradient colors={[colors.background,colors.backgroundSecondary,colors.background]} style={styles.screen}>
     <SafeAreaView style={styles.safe}>
       <ScreenHeader title="" onBack={()=>router.back()} right={<View style={styles.headerActions}>
-        <Pressable onPress={()=>void share()} style={styles.headerButton} accessibilityLabel="Partager"><Ionicons name="share-outline" size={19} color={colors.text}/></Pressable>
-        <Pressable onPress={()=>void toggle()} style={styles.headerButton} accessibilityLabel={favorite?'Retirer des favoris':'Ajouter aux favoris'}><Ionicons name={favorite?'heart':'heart-outline'} size={20} color={colors.goldLight}/></Pressable>
+        <Pressable onPress={()=>void share()} style={styles.headerButton} accessibilityLabel={tx.share}><Ionicons name="share-outline" size={19} color={colors.text}/></Pressable>
+        <Pressable onPress={()=>void toggle()} style={styles.headerButton} accessibilityLabel={favorite?tx.removeFavorite:tx.addFavorite}><Ionicons name={favorite?'heart':'heart-outline'} size={20} color={colors.goldLight}/></Pressable>
       </View>}/>
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <View style={styles.head}>
           {hasArabic?<Text style={styles.arabic}>{item.arabic}</Text>:null}
           <Text style={styles.name}>{item.name}</Text>
-          <Text style={styles.translit}>{item.transliteration}{item.pronunciation?<Text style={styles.pronounce}>  ·  prononcé {item.pronunciation}</Text>:null}</Text>
+          <Text style={styles.translit}>{item.transliteration}{item.pronunciation&&!en?<Text style={styles.pronounce}>  ·  {tx.pronounced} {item.pronunciation}</Text>:null}</Text>
           <View style={styles.tags}>
-            <View style={[styles.tag,{borderColor:`${GENDER_ACCENT[item.gender]}77`}]}><Text style={[styles.tagText,{color:GENDER_ACCENT[item.gender]}]}>{item.gender==='boy'?'Garçon':'Fille'}</Text></View>
+            <View style={[styles.tag,{borderColor:`${GENDER_ACCENT[item.gender]}77`}]}><Text style={[styles.tagText,{color:GENDER_ACCENT[item.gender]}]}>{item.gender==='boy'?tx.boy:tx.girl}</Text></View>
             {basis?<RecommendedPill/>:null}
-            {item.origin.length?<View style={styles.tag}><Text style={styles.tagText}>{item.origin.join(' · ')}</Text></View>:null}
+            {item.origin.length?<View style={styles.tag}><Text style={styles.tagText}>{item.origin.map(value=>localText(value,lang)).join(' · ')}</Text></View>:null}
           </View>
         </View>
 
-        <Entry label="Sens">
+        <Entry label={tx.meaning}>
           {meaning?<>
             <Text style={styles.meaning}>{meaning.text}</Text>
-            {meaning.quote?<Pressable disabled={!meaning.url} onPress={()=>openUrl(meaning.url)} style={({pressed})=>[styles.meaningSource,pressed&&styles.pressed]}>
+            {meaning.url?<Pressable disabled={!meaning.url} onPress={()=>openUrl(meaning.url)} style={({pressed})=>[styles.meaningSource,pressed&&styles.pressed]}>
               <Text style={styles.meaningSourceLabel}>Behind the Name{meaning.url?'  ↗':''}</Text>
-              <Text style={styles.meaningQuote}>“{meaning.quote}”</Text>
+              {meaning.quote?<Text style={styles.meaningQuote}>“{meaning.quote}”</Text>:null}
               {meaning.refs?.map(ref=><Text key={ref} style={styles.meaningRef}>{ref}</Text>)}
             </Pressable>:null}
             {meaning.note?<Text style={styles.note}>{meaning.note}</Text>:null}
-          </>:<Text style={styles.meaningMissing}>Nos sources ne documentent pas encore le sens de ce prénom.</Text>}
+          </>:<Text style={styles.meaningMissing}>{tx.meaningMissing}</Text>}
         </Entry>
 
-        {basis?<Entry label="Pourquoi « Recommandé »">
+        {basis?<Entry label={tx.whyRecommended}>
           <Text style={styles.body}>{basis.reason}</Text>
           <SourceChips ids={basis.sources} onOpen={setSource}/>
         </Entry>:null}
 
-        {item.historicalRole||story?<Entry label="Repère">
-          {item.historicalRole?<Text style={styles.bodyStrong}>{item.historicalRole}</Text>:null}
+        {item.historicalRole||story?<Entry label={tx.landmark}>
+          {item.historicalRole?<Text style={styles.bodyStrong}>{localText(item.historicalRole,lang)}</Text>:null}
           {story?<Text style={[styles.body,item.historicalRole&&styles.spaced]}>{story}</Text>:null}
         </Entry>:null}
 
-        {item.quranReference?<Entry label="Dans le Coran">
-          <Text style={styles.body}>{item.quranReference}</Text>
-          {surah?<Pressable onPress={()=>router.push(`/surah/${surah}` as Href)} hitSlop={6}><Text style={styles.link}>Lire la sourate {surah} ›</Text></Pressable>:null}
-          <Text style={styles.note}>La référence indique où le nom, la personne ou le mot apparaît ; elle ne fait pas à elle seule du prénom un nom recommandé.</Text>
+        {item.quranReference?<Entry label={tx.inQuran}>
+          <Text style={styles.body}>{localText(item.quranReference,lang)}</Text>
+          {surah?<Pressable onPress={()=>router.push(`/surah/${surah}` as Href)} hitSlop={6}><Text style={styles.link}>{tx.readSurah(surah)}</Text></Pressable>:null}
+          <Text style={styles.note}>{tx.quranNote}</Text>
         </Entry>:null}
 
-        {item.nuance?<Entry label="À connaître"><Text style={styles.body}>{item.nuance}</Text></Entry>:null}
+        {item.nuance?<Entry label={tx.toKnow}><Text style={styles.body}>{localText(item.nuance,lang)}</Text></Entry>:null}
 
-        {variants.length?<Entry label="Autres écritures">
+        {variants.length?<Entry label={tx.otherSpellings}>
           <View style={styles.variants}>{variants.map(value=><View key={value} style={styles.variant}><Text style={styles.variantText}>{value}</Text></View>)}</View>
         </Entry>:null}
 
-        {sources.length?<Entry label="Sources">
+        {sources.length?<Entry label={tx.sources}>
           {sources.map((entry,index)=>{const clickable=isExternalSourceClickable(entry.url);return <Pressable key={`${entry.label}-${index}`} disabled={!clickable} onPress={()=>openUrl(entry.url)} style={({pressed})=>[styles.source,pressed&&clickable&&styles.pressed]}>
             <View style={{flex:1}}>
               <Text style={styles.sourceLabel}>{entry.label}</Text>
@@ -109,14 +112,14 @@ export default function PrenomDetailScreen(){
           </Pressable>;})}
         </Entry>:null}
 
-        <Pressable onPress={()=>void toggle()} style={[styles.favorite,favorite&&styles.favoriteActive]}><Ionicons name={favorite?'heart':'heart-outline'} size={18} color={favorite?colors.background:colors.goldLight}/><Text style={[styles.favoriteText,favorite&&styles.favoriteTextActive]}>{favorite?'Dans mes favoris':'Ajouter à mes favoris'}</Text></Pressable>
+        <Pressable onPress={()=>void toggle()} style={[styles.favorite,favorite&&styles.favoriteActive]}><Ionicons name={favorite?'heart':'heart-outline'} size={18} color={favorite?colors.background:colors.goldLight}/><Text style={[styles.favoriteText,favorite&&styles.favoriteTextActive]}>{favorite?tx.inFavorites:tx.addToFavorites}</Text></Pressable>
 
         {related.length?<>
-          <Text style={styles.relatedLabel}>DANS LE MÊME ESPRIT</Text>
+          <Text style={styles.relatedLabel}>{tx.related}</Text>
           {related.map(candidate=><NameRow key={candidate.id} item={candidate} onPress={()=>router.push(`/prenoms/${candidate.id}` as Href)}/>)}
         </>:null}
 
-        <Pressable onPress={()=>router.push('/prenoms/guide')} style={styles.guide}><Text style={styles.guideText}>Avant de choisir : repères et avis des savants</Text><Ionicons name="chevron-forward" size={15} color={colors.goldLight}/></Pressable>
+        <Pressable onPress={()=>router.push('/prenoms/guide')} style={styles.guide}><Text style={styles.guideText}>{tx.guideLink}</Text><Ionicons name="chevron-forward" size={15} color={colors.goldLight}/></Pressable>
       </ScrollView>
       <SourceSheet id={source} onClose={()=>setSource(null)}/>
     </SafeAreaView>

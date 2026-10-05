@@ -6,6 +6,7 @@ import { Platform, Pressable, SafeAreaView, ScrollView, SectionList, StyleSheet,
 
 import { NAME_COLLECTIONS, inCollection, namesForCollection } from '../features/muslim-names/collections';
 import { MUSLIM_NAMES, isAbdName, normalizeNameSearch, searchMuslimNames } from '../features/muslim-names/data';
+import { usePrenomsText } from '../features/muslim-names/i18n';
 import { loadNameFavorites, toggleNameFavorite } from '../features/muslim-names/storage';
 import type { MuslimName, NameGender } from '../features/muslim-names/types';
 import { ChoiceChip, GENDER_ACCENT, NameRow } from '../features/muslim-names/ui';
@@ -13,12 +14,14 @@ import { colors } from '../theme/colors';
 import { typography } from '../theme/typography';
 
 type GenderFilter = 'all' | NameGender;
-const GENDERS: { id: GenderFilter; label: string }[] = [{ id:'all', label:'Tous' }, { id:'boy', label:'Garçons' }, { id:'girl', label:'Filles' }];
+const GENDERS: { id: GenderFilter; label: 'genderAll' | 'genderBoys' | 'genderGirls' }[] = [{ id:'all', label:'genderAll' }, { id:'boy', label:'genderBoys' }, { id:'girl', label:'genderGirls' }];
 const ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
 const collator = new Intl.Collator('fr', { sensitivity:'base' });
 const initialOf = (item: MuslimName) => normalizeNameSearch(item.name).charAt(0).toUpperCase();
 
 export default function PrenomsScreen(){
+  const { lang, tx } = usePrenomsText();
+  const collectionTitle=(item:{title:string;titleEn:string})=>lang==='en'?item.titleEn:item.title;
   const [query,setQuery]=useState('');
   const [gender,setGender]=useState<GenderFilter>('all');
   const [collectionId,setCollectionId]=useState<string|null>(null);
@@ -71,65 +74,65 @@ export default function PrenomsScreen(){
   const showAbdEntry=!searching&&!collection&&gender!=='girl'&&(!letter||letter==='A');
 
   const Header=<View>
-    <Text style={styles.title}>Prénoms</Text>
-    <Text style={styles.sub}>{MUSLIM_NAMES.length} fiches · sens, écriture arabe, variantes, sources</Text>
+    <Text style={styles.title}>{tx.title}</Text>
+    <Text style={styles.sub}>{tx.sub(MUSLIM_NAMES.length)}</Text>
 
     <View style={styles.search}>
       <Ionicons name="search" size={18} color={colors.goldLight}/>
-      <TextInput value={query} onChangeText={setQuery} placeholder="Rechercher : Yusuf, Maryam, Youssef…" placeholderTextColor={colors.textMuted} style={styles.searchInput} autoCorrect={false} autoCapitalize="words" autoComplete="off" returnKeyType="search" accessibilityLabel="Rechercher un prénom"/>
-      {query?<Pressable onPress={()=>setQuery('')} hitSlop={10} accessibilityLabel="Effacer la recherche"><Ionicons name="close-circle" size={19} color={colors.textMuted}/></Pressable>:null}
+      <TextInput value={query} onChangeText={setQuery} placeholder={tx.searchPlaceholder} placeholderTextColor={colors.textMuted} style={styles.searchInput} autoCorrect={false} autoCapitalize="words" autoComplete="off" returnKeyType="search" accessibilityLabel={tx.searchLabel}/>
+      {query?<Pressable onPress={()=>setQuery('')} hitSlop={10} accessibilityLabel={tx.clearSearch}><Ionicons name="close-circle" size={19} color={colors.textMuted}/></Pressable>:null}
     </View>
 
     <View style={styles.segment}>
       {GENDERS.map(item=>{const active=gender===item.id;return <Pressable key={item.id} onPress={()=>setGender(item.id)} style={[styles.segmentItem,active&&styles.segmentActive]} accessibilityRole="button" accessibilityState={{selected:active}}>
         {item.id!=='all'?<View style={[styles.segmentDot,{backgroundColor:GENDER_ACCENT[item.id]}]}/>:null}
-        <Text style={[styles.segmentText,active&&styles.segmentTextActive]}>{item.label}</Text>
+        <Text style={[styles.segmentText,active&&styles.segmentTextActive]}>{tx[item.label]}</Text>
       </Pressable>;})}
     </View>
 
     {!searching?<>
-      <Text style={styles.label}>COLLECTIONS</Text>
+      <Text style={styles.label}>{tx.collections}</Text>
       <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.chips} keyboardShouldPersistTaps="handled">
-        {NAME_COLLECTIONS.filter(item=>counts[item.id]>0).map(item=><ChoiceChip key={item.id} label={item.title} count={counts[item.id]} active={collectionId===item.id} onPress={()=>{setCollectionId(collectionId===item.id?null:item.id);setLetter(null);}}/>)}
+        {NAME_COLLECTIONS.filter(item=>counts[item.id]>0).map(item=><ChoiceChip key={item.id} label={collectionTitle(item)} count={counts[item.id]} active={collectionId===item.id} onPress={()=>{setCollectionId(collectionId===item.id?null:item.id);setLetter(null);}}/>)}
       </ScrollView>
 
       <View style={styles.links}>
-        <LinkTile title="Aidez-nous à choisir" subtitle="Origine, longueur, lettre" onPress={()=>router.push('/prenoms/choisir')}/>
-        <LinkTile title="Avant de choisir" subtitle="Repères, prénoms à éviter, avis des savants" tone="warn" onPress={()=>router.push('/prenoms/guide')}/>
+        <LinkTile title={tx.helpTitle} subtitle={tx.helpSub} onPress={()=>router.push('/prenoms/choisir')}/>
+        <LinkTile title={tx.beforeTitle} subtitle={tx.beforeSub} tone="warn" onPress={()=>router.push('/prenoms/guide')}/>
       </View>
 
       {!collection?<ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.letters} keyboardShouldPersistTaps="handled">
-        {ALPHABET.map(char=>{const active=letter===char;return <Pressable key={char} onPress={()=>setLetter(active?null:char)} style={[styles.letter,active&&styles.letterActive]} accessibilityRole="button" accessibilityLabel={`Lettre ${char}`} accessibilityState={{selected:active}}><Text style={[styles.letterText,active&&styles.letterTextActive]}>{char}</Text></Pressable>;})}
+        {ALPHABET.map(char=>{const active=letter===char;return <Pressable key={char} onPress={()=>setLetter(active?null:char)} style={[styles.letter,active&&styles.letterActive]} accessibilityRole="button" accessibilityLabel={tx.letterLabel(char)} accessibilityState={{selected:active}}><Text style={[styles.letterText,active&&styles.letterTextActive]}>{char}</Text></Pressable>;})}
       </ScrollView>:null}
 
       {showAbdEntry?<Pressable onPress={()=>{setCollectionId('abd');setLetter(null);}} style={({pressed})=>[styles.abdEntry,pressed&&styles.pressed]}>
-        <View style={{flex:1}}><Text style={styles.abdTitle}>ʿAbd + Nom d’Allah</Text><Text style={styles.abdSub}>{abdCount} prénoms « serviteur de… », regroupés à part</Text></View>
+        <View style={{flex:1}}><Text style={styles.abdTitle}>{tx.abdTitle}</Text><Text style={styles.abdSub}>{tx.abdSub(abdCount)}</Text></View>
         <Ionicons name="chevron-forward" size={17} color={colors.goldLight}/>
       </Pressable>:null}
     </>:null}
 
     {searching||collection?<View style={styles.resultHead}>
-      <Text style={styles.resultText}>{visible.length} résultat{visible.length>1?'s':''}{collection?` · ${collection.title}`:''}</Text>
-      {collection?<Pressable onPress={()=>setCollectionId(null)} hitSlop={8}><Text style={styles.reset}>Tout afficher</Text></Pressable>:null}
+      <Text style={styles.resultText}>{tx.results(visible.length)}{collection?` · ${collectionTitle(collection)}`:''}</Text>
+      {collection?<Pressable onPress={()=>setCollectionId(null)} hitSlop={8}><Text style={styles.reset}>{tx.showAll}</Text></Pressable>:null}
     </View>:null}
 
     {!searching&&!autoOpen&&sections.length>1?<View style={styles.foldBar}>
-      <Text style={styles.foldHint}>Touchez une lettre pour voir ses prénoms</Text>
-      <Pressable onPress={toggleAll} hitSlop={8}><Text style={styles.reset}>{allOpen?'Tout replier':'Tout déplier'}</Text></Pressable>
+      <Text style={styles.foldHint}>{tx.foldHint}</Text>
+      <Pressable onPress={toggleAll} hitSlop={8}><Text style={styles.reset}>{allOpen?tx.foldAll:tx.unfoldAll}</Text></Pressable>
     </View>:null}
   </View>;
 
   const Empty=<View style={styles.empty}>
-    <Text style={styles.emptyTitle}>Aucun prénom trouvé</Text>
-    <Text style={styles.emptyText}>Essayez une autre graphie ou une variante (Youssef, Yusuf, Yousef…).</Text>
+    <Text style={styles.emptyTitle}>{tx.emptyTitle}</Text>
+    <Text style={styles.emptyText}>{tx.emptyText}</Text>
   </View>;
 
   return <LinearGradient colors={[colors.background,colors.backgroundSecondary,colors.background]} style={styles.screen}><SafeAreaView style={styles.safe}>
     <View style={styles.header}>
-      <Pressable onPress={()=>router.back()} style={styles.iconButton} accessibilityLabel="Retour"><Ionicons name="chevron-back" size={22} color={colors.text}/></Pressable>
+      <Pressable onPress={()=>router.back()} style={styles.iconButton} accessibilityLabel={tx.back}><Ionicons name="chevron-back" size={22} color={colors.text}/></Pressable>
       <View style={{flex:1}}/>
-      <Pressable onPress={()=>router.push('/prenoms/decouvrir')} style={styles.iconButton} accessibilityLabel="Un prénom au hasard"><Ionicons name="shuffle" size={19} color={colors.goldLight}/></Pressable>
-      <Pressable onPress={()=>router.push('/prenoms/favoris')} style={styles.iconButton} accessibilityLabel="Mes favoris"><Ionicons name="heart-outline" size={20} color={colors.goldLight}/>{favorites.length?<View style={styles.badge}><Text style={styles.badgeText}>{favorites.length>9?'9+':favorites.length}</Text></View>:null}</Pressable>
+      <Pressable onPress={()=>router.push('/prenoms/decouvrir')} style={styles.iconButton} accessibilityLabel={tx.randomName}><Ionicons name="shuffle" size={19} color={colors.goldLight}/></Pressable>
+      <Pressable onPress={()=>router.push('/prenoms/favoris')} style={styles.iconButton} accessibilityLabel={tx.myFavorites}><Ionicons name="heart-outline" size={20} color={colors.goldLight}/>{favorites.length?<View style={styles.badge}><Text style={styles.badgeText}>{favorites.length>9?'9+':favorites.length}</Text></View>:null}</Pressable>
     </View>
     <SectionList
       sections={sections}
@@ -138,9 +141,9 @@ export default function PrenomsScreen(){
       renderSectionHeader={({section})=>{
         if(!section.title) return null;
         const opened=section.data.length>0;
-        return <Pressable disabled={autoOpen} onPress={()=>toggleLetter(section.title)} style={({pressed})=>[styles.sectionHead,pressed&&styles.pressed]} accessibilityRole="button" accessibilityState={{expanded:opened}} accessibilityLabel={`Lettre ${section.title}, ${section.count} prénoms`}>
+        return <Pressable disabled={autoOpen} onPress={()=>toggleLetter(section.title)} style={({pressed})=>[styles.sectionHead,pressed&&styles.pressed]} accessibilityRole="button" accessibilityState={{expanded:opened}} accessibilityLabel={tx.sectionLabel(section.title,section.count)}>
           <Text style={styles.sectionLetter}>{section.title}</Text>
-          <Text style={styles.sectionCount}>{section.count} prénom{section.count>1?'s':''}</Text>
+          <Text style={styles.sectionCount}>{tx.sectionCount(section.count)}</Text>
           {!autoOpen?<Ionicons name={opened?'chevron-up':'chevron-down'} size={18} color={colors.goldLight} style={styles.sectionChevron}/>:null}
         </Pressable>;
       }}

@@ -4,27 +4,29 @@ import { Alert, Linking, Modal, Pressable, ScrollView, StyleSheet, Text, View } 
 import { colors } from '../../theme/colors';
 import { typography } from '../../theme/typography';
 import { NAME_SOURCES, type NameSourceId, type NameTextSource } from './scholar-sources';
+import { usePrenomsText } from './i18n';
 import { prenomTheme } from './ui';
 
 /** Full text of one source: Arabic excerpt when it is a fatwa, French text, link to the page. */
 export function SourceSheet({ id, onClose }: { id: NameSourceId | null; onClose: () => void }) {
+  const { lang, tx } = usePrenomsText();
   const item: NameTextSource | null = id ? NAME_SOURCES[id] : null;
   const arabic = item?.arabic;
   const openUrl = () => {
     if (!item) return;
-    Linking.openURL(item.url).catch(() => Alert.alert('Source indisponible', 'Impossible d’ouvrir cette source pour le moment.'));
+    Linking.openURL(item.url).catch(() => Alert.alert(tx.unavailableTitle, tx.unavailableText));
   };
   return <Modal visible={Boolean(item)} transparent animationType="slide" onRequestClose={onClose}>
-    <Pressable style={s.backdrop} onPress={onClose} accessibilityLabel="Fermer"/>
+    <Pressable style={s.backdrop} onPress={onClose} accessibilityLabel={tx.close}/>
     {item ? <View style={s.sheet}>
       <View style={s.handle}/>
       <ScrollView contentContainerStyle={s.content}>
         <Text style={s.author}>{item.author}</Text>
-        <Text style={s.ref}>{item.reference}</Text>
+        <Text style={s.ref}>{lang === 'en' ? item.referenceEn ?? item.reference : item.reference}</Text>
         {arabic ? <Text style={s.arabic}>{arabic}</Text> : null}
-        <Text style={s.french}>{item.french}</Text>
-        {arabic ? <Text style={s.note}>Traduction littérale de l’extrait arabe ci-dessus.</Text> : null}
-        <Pressable onPress={openUrl} style={({ pressed }) => [s.button, pressed && s.pressed]}><Text style={s.buttonText}>Ouvrir la source</Text><Ionicons name="open-outline" size={15} color={colors.background}/></Pressable>
+        <Text style={s.french}>{lang === 'en' ? item.english : item.french}</Text>
+        {arabic ? <Text style={s.note}>{tx.literalNote}</Text> : null}
+        <Pressable onPress={openUrl} style={({ pressed }) => [s.button, pressed && s.pressed]}><Text style={s.buttonText}>{tx.openSource}</Text><Ionicons name="open-outline" size={15} color={colors.background}/></Pressable>
       </ScrollView>
     </View> : null}
   </Modal>;

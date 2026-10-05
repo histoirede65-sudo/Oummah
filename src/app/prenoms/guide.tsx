@@ -5,55 +5,62 @@ import { useState } from 'react';
 import { Pressable, SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { RESTRICTION_SECTIONS, type RestrictionTone } from '../../features/muslim-names/restricted-names';
-import { NAME_SOURCES, type NameSourceId } from '../../features/muslim-names/scholar-sources';
+import { NAME_SOURCES, type NameSourceId, type NameTextSource } from '../../features/muslim-names/scholar-sources';
+import { usePrenomsText } from '../../features/muslim-names/i18n';
 import { SourceChips, SourceSheet } from '../../features/muslim-names/SourceSheet';
 import { ScreenHeader, prenomTheme } from '../../features/muslim-names/ui';
 import { colors } from '../../theme/colors';
 import { typography } from '../../theme/typography';
 
 // Each principle quotes its source word for word (French text of NAME_SOURCES).
-const PRINCIPLES: { title: string; quote: string; sources: NameSourceId[] }[] = [
-  { title: 'La règle de base', quote: 'La règle de base en matière de noms est la permission, sauf ce dont une preuve montre qu’il est réprouvé, en lui-même ou par un nom semblable.', sources: ['uthQuranNames'] },
-  { title: 'Les noms les plus aimés d’Allah', quote: '« Les noms les plus aimés d’Allah sont ‘Abdullah et ‘Abd al-Rahman. »', sources: ['muslim2132'] },
-  { title: 'Les noms rattachés à Allah', quote: 'Tout [nom] rattaché à Allah est meilleur que les autres.', sources: ['uthNaming'] },
-  { title: 'Les noms des prophètes', quote: '« Appelez-vous par les noms des Prophètes. »', sources: ['abuDawud4950'] },
-  { title: 'Les noms des messagers', quote: 'Les noms des messagers sont meilleurs que les autres, sauf ce qui est plus aimé d’Allah, qui est meilleur.', sources: ['uthNaming'] },
-  { title: 'Pour une fille', quote: 'Pour les femmes, ce qui était en usage parmi les femmes des Compagnons et les croyantes après elles : des noms connus, sans laideur.', sources: ['bazWhenWho', 'uthMalak'] },
-  { title: 'Qui choisit ?', quote: 'Celui qui a le plus droit de nommer est le père […] Il est recommandé de s’entraider et de se concerter entre le père et la mère afin que tous choisissent un beau nom.', sources: ['bazWhenWho', 'uthNaming'] },
-  { title: 'Quand nommer ?', quote: 'Le mieux est de nommer le septième jour ; si l’on nomme le jour de la naissance, il n’y a pas de mal.', sources: ['bazWhenWho'] },
+const PRINCIPLES: { title: string; quote: string; titleEn: string; quoteEn: string; sources: NameSourceId[] }[] = [
+  { title: 'La règle de base', quote: 'La règle de base en matière de noms est la permission, sauf ce dont une preuve montre qu’il est réprouvé, en lui-même ou par un nom semblable.', titleEn: 'The basic rule', quoteEn: 'The basic rule in naming is permissibility, except what evidence shows to be disliked, in itself or through a similar name.', sources: ['uthQuranNames'] },
+  { title: 'Les noms les plus aimés d’Allah', quote: '« Les noms les plus aimés d’Allah sont ‘Abdullah et ‘Abd al-Rahman. »', titleEn: 'The names dearest to Allah', quoteEn: '“The names dearest to Allah are \'Abdullah and \'Abd al-Rahman.”', sources: ['muslim2132'] },
+  { title: 'Les noms rattachés à Allah', quote: 'Tout [nom] rattaché à Allah est meilleur que les autres.', titleEn: 'Names attached to Allah', quoteEn: 'Every [name] attached to Allah is better than the others.', sources: ['uthNaming'] },
+  { title: 'Les noms des prophètes', quote: '« Appelez-vous par les noms des Prophètes. »', titleEn: 'Names of the prophets', quoteEn: '“Call yourselves by the names of the Prophets.”', sources: ['abuDawud4950'] },
+  { title: 'Les noms des messagers', quote: 'Les noms des messagers sont meilleurs que les autres, sauf ce qui est plus aimé d’Allah, qui est meilleur.', titleEn: 'Names of the messengers', quoteEn: 'The names of the messengers are better than the names of others, except what is dearer to Allah, which is better.', sources: ['uthNaming'] },
+  { title: 'Pour une fille', quote: 'Pour les femmes, ce qui était en usage parmi les femmes des Compagnons et les croyantes après elles : des noms connus, sans laideur.', titleEn: 'For a girl', quoteEn: 'For women, what was customary among the women of the Companions and the believing women after them: well-known names with nothing ugly in them.', sources: ['bazWhenWho', 'uthMalak'] },
+  { title: 'Qui choisit ?', quote: 'Celui qui a le plus droit de nommer est le père […] Il est recommandé de s’entraider et de se concerter entre le père et la mère afin que tous choisissent un beau nom.', titleEn: 'Who chooses?', quoteEn: 'The one with the most right to name is the father […] It is recommended to help one another in this and for the father and the mother to consult each other, so that all choose a good name.', sources: ['bazWhenWho', 'uthNaming'] },
+  { title: 'Quand nommer ?', quote: 'Le mieux est de nommer le septième jour ; si l’on nomme le jour de la naissance, il n’y a pas de mal.', titleEn: 'When to name?', quoteEn: 'It is best to name on the seventh day; if one names on the day of birth, there is no harm.', sources: ['bazWhenWho'] },
 ];
 
-const TONES: Record<RestrictionTone, { label: string; accent: string; wash: string; border: string; icon: keyof typeof Ionicons.glyphMap }> = {
-  forbidden: { label: 'Interdit', accent: '#FF7E86', wash: 'rgba(255,86,96,.09)', border: 'rgba(255,104,112,.34)', icon: 'close-circle-outline' },
-  avoid: { label: 'À éviter', accent: '#FFAD68', wash: 'rgba(255,157,79,.08)', border: 'rgba(255,173,104,.30)', icon: 'warning-outline' },
-  disputed: { label: 'Avis divergents', accent: '#D5B4FF', wash: 'rgba(190,144,255,.08)', border: 'rgba(213,180,255,.28)', icon: 'git-compare-outline' },
-  allowed: { label: 'Permis', accent: '#62C58B', wash: 'rgba(98,197,139,.08)', border: 'rgba(98,197,139,.30)', icon: 'checkmark-circle-outline' },
+const TONES: Record<RestrictionTone, { label: 'toneForbidden' | 'toneAvoid' | 'toneDisputed' | 'toneAllowed'; accent: string; wash: string; border: string; icon: keyof typeof Ionicons.glyphMap }> = {
+  forbidden: { label: 'toneForbidden', accent: '#FF7E86', wash: 'rgba(255,86,96,.09)', border: 'rgba(255,104,112,.34)', icon: 'close-circle-outline' },
+  avoid: { label: 'toneAvoid', accent: '#FFAD68', wash: 'rgba(255,157,79,.08)', border: 'rgba(255,173,104,.30)', icon: 'warning-outline' },
+  disputed: { label: 'toneDisputed', accent: '#D5B4FF', wash: 'rgba(190,144,255,.08)', border: 'rgba(213,180,255,.28)', icon: 'git-compare-outline' },
+  allowed: { label: 'toneAllowed', accent: '#62C58B', wash: 'rgba(98,197,139,.08)', border: 'rgba(98,197,139,.30)', icon: 'checkmark-circle-outline' },
 };
 
 export default function BeforeChoosingScreen() {
+  const { lang, tx } = usePrenomsText();
+  const en = lang === 'en';
   const [open, setOpen] = useState<string[]>(['taabid']);
   const [source, setSource] = useState<NameSourceId | null>(null);
   const toggle = (id: string) => setOpen((current) => current.includes(id) ? current.filter((value) => value !== id) : [...current, id]);
   const usedSources = Object.keys(NAME_SOURCES) as NameSourceId[];
+  const sourceReference = (id: NameSourceId) => {
+    const item: NameTextSource = NAME_SOURCES[id];
+    return en ? item.referenceEn ?? item.reference : item.reference;
+  };
 
   return <LinearGradient colors={[colors.background, colors.backgroundSecondary, colors.background]} style={styles.screen}>
     <SafeAreaView style={styles.safe}>
-      <ScreenHeader title="Avant de choisir" onBack={() => router.back()}/>
+      <ScreenHeader title={tx.beforeTitle} onBack={() => router.back()}/>
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-        <Text style={styles.title}>Avant de choisir</Text>
-        <Text style={styles.lead}>Chaque repère et chaque avis de cette page est cité mot pour mot : hadiths, fatwas d’Ibn Bâz et d’Ibn ‘Uthaymîn. Touchez une source pour lire le texte complet.</Text>
+        <Text style={styles.title}>{tx.beforeTitle}</Text>
+        <Text style={styles.lead}>{tx.beforeLead}</Text>
 
-        <Text style={styles.label}>REPÈRES</Text>
+        <Text style={styles.label}>{tx.principles}</Text>
         <View style={styles.list}>
           {PRINCIPLES.map((item) => <View key={item.title} style={styles.principle}>
-            <Text style={styles.principleTitle}>{item.title}</Text>
-            <Text style={styles.quote}>{item.quote}</Text>
+            <Text style={styles.principleTitle}>{en ? item.titleEn : item.title}</Text>
+            <Text style={styles.quote}>{en ? item.quoteEn : item.quote}</Text>
             <SourceChips ids={item.sources} onOpen={setSource}/>
           </View>)}
         </View>
 
-        <Text style={styles.label}>PRÉNOMS INTERDITS, À ÉVITER OU DISCUTÉS</Text>
-        <View style={styles.legend}>{(Object.keys(TONES) as RestrictionTone[]).map((tone) => <View key={tone} style={styles.legendItem}><View style={[styles.dot, { backgroundColor: TONES[tone].accent }]}/><Text style={styles.legendText}>{TONES[tone].label}</Text></View>)}</View>
+        <Text style={styles.label}>{tx.restricted}</Text>
+        <View style={styles.legend}>{(Object.keys(TONES) as RestrictionTone[]).map((tone) => <View key={tone} style={styles.legendItem}><View style={[styles.dot, { backgroundColor: TONES[tone].accent }]}/><Text style={styles.legendText}>{tx[TONES[tone].label]}</Text></View>)}</View>
         <View style={styles.list}>
           {RESTRICTION_SECTIONS.map((section) => {
             const tone = TONES[section.tone];
@@ -61,7 +68,7 @@ export default function BeforeChoosingScreen() {
             return <View key={section.id} style={[styles.section, { borderColor: tone.border }]}>
               <Pressable onPress={() => toggle(section.id)} style={({ pressed }) => [styles.sectionHeader, pressed && styles.pressed]} accessibilityRole="button" accessibilityState={{ expanded: opened }}>
                 <Ionicons name={tone.icon} size={19} color={tone.accent}/>
-                <Text style={styles.sectionTitle}>{section.title}</Text>
+                <Text style={styles.sectionTitle}>{en ? section.titleEn : section.title}</Text>
                 <Text style={styles.count}>{section.examples.length}</Text>
                 <Ionicons name={opened ? 'chevron-up' : 'chevron-down'} size={17} color={colors.textMuted}/>
               </Pressable>
@@ -71,15 +78,15 @@ export default function BeforeChoosingScreen() {
                   return <View key={example.name} style={styles.example}>
                     <View style={styles.exampleTop}>
                       <View style={{ flex: 1 }}>
-                        <Text style={styles.exampleName}>{example.name}</Text>
-                        {example.meaning ? <Text style={styles.meaning}>{example.meaning}</Text> : null}
+                        <Text style={styles.exampleName}>{en ? example.nameEn ?? example.name : example.name}</Text>
+                        {example.meaning ? <Text style={styles.meaning}>{en ? example.meaningEn ?? example.meaning : example.meaning}</Text> : null}
                       </View>
                       {example.arabic ? <Text style={styles.arabic}>{example.arabic}</Text> : null}
                     </View>
-                    <View style={[styles.verdictPill, { borderColor: exampleTone.border, backgroundColor: exampleTone.wash }]}><Text style={[styles.verdictPillText, { color: exampleTone.accent }]}>{exampleTone.label}</Text></View>
+                    <View style={[styles.verdictPill, { borderColor: exampleTone.border, backgroundColor: exampleTone.wash }]}><Text style={[styles.verdictPillText, { color: exampleTone.accent }]}>{tx[exampleTone.label]}</Text></View>
                     {example.verdicts.map((verdict) => <Pressable key={verdict.source} onPress={() => setSource(verdict.source)} style={({ pressed }) => [styles.verdict, pressed && styles.pressed]}>
                       <Text style={styles.verdictSource}>{NAME_SOURCES[verdict.source].short}</Text>
-                      <Text style={styles.verdictText}>{verdict.says}</Text>
+                      <Text style={styles.verdictText}>{en ? verdict.saysEn : verdict.says}</Text>
                       <Ionicons name="chevron-forward" size={14} color={colors.textMuted}/>
                     </Pressable>)}
                   </View>;
@@ -89,12 +96,12 @@ export default function BeforeChoosingScreen() {
           })}
         </View>
 
-        <Text style={styles.label}>SOURCES</Text>
+        <Text style={styles.label}>{tx.sourcesLabel}</Text>
         <View style={styles.sources}>
           {usedSources.map((id) => <Pressable key={id} onPress={() => setSource(id)} style={({ pressed }) => [styles.sourceRow, pressed && styles.pressed]}>
             <View style={{ flex: 1 }}>
               <Text style={styles.sourceAuthor}>{NAME_SOURCES[id].author}</Text>
-              <Text style={styles.sourceRef}>{NAME_SOURCES[id].reference}</Text>
+              <Text style={styles.sourceRef}>{sourceReference(id)}</Text>
             </View>
             <Ionicons name="chevron-forward" size={15} color={colors.textMuted}/>
           </Pressable>)}
