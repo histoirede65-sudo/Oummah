@@ -27,6 +27,13 @@ import {
   getDuaProgress,
   type DuaProgress,
 } from "../features/dua/DuaStore";
+import {
+  duaCategoryTitle,
+  duaGuideText,
+  duaMeaning,
+  duaSectionText,
+} from "../features/dua/DuaLocalization";
+import { useI18n, type LanguageCode } from "../i18n";
 import { colors } from "../theme/colors";
 import { typography } from "../theme/typography";
 
@@ -53,12 +60,12 @@ function normalize(value: string) {
     .toLowerCase();
 }
 
-function matchingItemIndex(category: DuaCategory, query: string) {
+function matchingItemIndex(category: DuaCategory, query: string, language: LanguageCode) {
   const search = normalize(query.trim());
   if (!search) return 0;
   const index = category.items.findIndex((item) =>
     normalize(
-      `${item.arabic} ${item.phonetic} ${item.french} ${category.frenchTitle}`,
+      `${item.arabic} ${item.phonetic} ${item.french} ${duaMeaning(item, language)} ${duaCategoryTitle(category, language)}`,
     ).includes(search),
   );
   return Math.max(0, index);
@@ -84,6 +91,7 @@ function sectionFor(id: DuaSectionId) {
 }
 
 export default function DuaHomeScreen() {
+  const { language, t } = useI18n();
   const { section: requestedSection, focus: requestedFocus } = useLocalSearchParams<{
     section?: string | string[];
     focus?: string | string[];
@@ -149,8 +157,8 @@ export default function DuaHomeScreen() {
         if (!category.items.length) return false;
         if (!search) return true;
         return normalize(
-          `${category.frenchTitle} ${category.arabicTitle} ${category.items
-            .map((item) => `${item.arabic} ${item.phonetic} ${item.french}`)
+          `${category.frenchTitle} ${duaCategoryTitle(category, language)} ${category.arabicTitle} ${category.items
+            .map((item) => `${item.arabic} ${item.phonetic} ${item.french} ${duaMeaning(item, language)}`)
             .join(" ")}`,
         ).includes(search);
       })
@@ -161,17 +169,20 @@ export default function DuaHomeScreen() {
         if (sectionDifference !== 0) return sectionDifference;
         return a.frenchTitle.localeCompare(b.frenchTitle, "fr");
       });
-  }, [catalog, favoriteIds, filter, query]);
+  }, [catalog, favoriteIds, filter, language, query]);
 
-  const totalItems = catalog.reduce(
+  const searching = query.trim().length > 0;
+  const visibleDuaCount = filtered.reduce(
     (sum, category) => sum + category.items.length,
     0,
   );
-  const exactTranslationCount = catalog.reduce(
-    (sum, category) =>
-      sum + category.items.filter((item) => !item.frenchIsSummary).length,
-    0,
-  );
+  const duaCountBySection = new Map<DuaSectionId, number>();
+  for (const category of catalog) {
+    duaCountBySection.set(
+      category.section,
+      (duaCountBySection.get(category.section) ?? 0) + category.items.length,
+    );
+  }
 
   const quickSections = QUICK_SECTION_IDS.map(sectionFor).filter((section) =>
     catalog.some((category) => category.section === section.id),
@@ -227,7 +238,7 @@ export default function DuaHomeScreen() {
       : candidates[0];
 
     if (matchingCategory) {
-      openCategory(matchingCategory.id, focusQuery ? matchingItemIndex(matchingCategory, focusQuery) : 0);
+      openCategory(matchingCategory.id, focusQuery ? matchingItemIndex(matchingCategory, focusQuery, "fr") : 0);
     } else if (validSection) {
       revealSection(validSection);
     }
@@ -265,6 +276,7 @@ export default function DuaHomeScreen() {
     <View style={styles.headerContent}>
       <View style={styles.topBar}>
         <Pressable
+          accessibilityLabel={t("common.back")}
           onPress={() =>
             router.canGoBack() ? router.back() : router.replace("/" as Href)
           }
@@ -273,12 +285,14 @@ export default function DuaHomeScreen() {
           <Ionicons name="arrow-back" size={21} color={colors.goldLight} />
         </Pressable>
         <View style={styles.titleCopy}>
-          <Text style={styles.title}>Dou‘ā</Text>
-          <Text style={styles.subtitle}>Trouver, comprendre et apprendre</Text>
+          <Text style={styles.title}>{t("dua.home.title")}</Text>
+          <Text style={styles.subtitle}>{t("dua.home.subtitle")}</Text>
         </View>
         <Pressable
+          accessibilityLabel={t("dua.home.favorites")}
+          accessibilityState={{ selected: filter === "favorites" }}
           onPress={() => setFilter(filter === "favorites" ? "all" : "favorites")}
-          style={styles.circleButton}
+          style={[styles.circleButton, filter === "favorites" && styles.circleButtonActive]}
         >
           <Ionicons
             name={filter === "favorites" ? "heart" : "heart-outline"}
@@ -288,168 +302,119 @@ export default function DuaHomeScreen() {
         </Pressable>
       </View>
 
-      <View style={styles.hero}>
-        <Image
-          source={require("../assets/images/home/shortcuts/dua-real.jpg")}
-          contentFit="cover"
-          style={StyleSheet.absoluteFill}
-        />
-        <LinearGradient
-          colors={[
-            "rgba(7,6,16,0.03)",
-            "rgba(18,9,29,0.46)",
-            "rgba(7,6,15,0.96)",
-          ]}
-          locations={[0, 0.48, 1]}
-          style={StyleSheet.absoluteFill}
-        />
-        <View style={styles.heroRim} />
-        <View style={styles.heroGlass}>
-          <View style={styles.heroEyebrowRow}>
-            <View style={styles.liveDot} />
-            <Text style={styles.heroEyebrow}>DOU‘Ā CONSEILLÉE MAINTENANT</Text>
-          </View>
-          <Text numberOfLines={2} style={styles.heroTitle}>
-            {suggestedCategory?.frenchTitle ?? "Invocations essentielles"}
-          </Text>
-          <Text numberOfLines={1} style={styles.heroArabic}>
-            {suggestedCategory?.arabicTitle ?? "الأذكار"}
-          </Text>
-          <View style={styles.heroBottom}>
-            <View style={styles.heroMetaWrap}>
-              <Ionicons name="language-outline" size={13} color={colors.goldMuted} />
-              <Text style={styles.heroMeta}>arabe · phonétique · français</Text>
-            </View>
-            <Pressable
-              disabled={!suggestedCategory}
-              onPress={() => suggestedCategory && openCategory(suggestedCategory.id)}
-              style={styles.startButton}
-            >
-              <Ionicons name="play" size={15} color={colors.background} />
-              <Text style={styles.startText}>Commencer</Text>
-            </Pressable>
-          </View>
-        </View>
-      </View>
-
-      <View style={styles.statsRow}>
-        <Stat icon="albums-outline" value={String(catalog.length)} label="rubriques" />
-        <Stat icon="sparkles-outline" value={String(totalItems)} label="dou‘ā" />
-        <Stat
-          icon="language-outline"
-          value={String(exactTranslationCount)}
-          label="traductions"
-        />
-      </View>
-
-      {resumeCategory ? (
-        <Pressable
-          onPress={() => openCategory(resumeCategory.id, resume?.itemIndex ?? 0)}
-          style={({ pressed }) => [styles.resumeCard, pressed && styles.pressed]}
-        >
-          <LinearGradient
-            colors={["rgba(87,43,105,0.84)", "rgba(25,15,35,0.96)"]}
-            style={StyleSheet.absoluteFill}
-          />
-          <View style={styles.resumeIcon}>
-            <Ionicons name="time-outline" size={20} color={colors.goldLight} />
-          </View>
-          <View style={styles.resumeCopy}>
-            <Text style={styles.resumeEyebrow}>REPRENDRE MON APPRENTISSAGE</Text>
-            <Text numberOfLines={1} style={styles.resumeTitle}>
-              {resumeCategory.frenchTitle}
-            </Text>
-            <Text style={styles.resumeMeta}>
-              Dou‘ā {(resume?.itemIndex ?? 0) + 1} sur {resumeCategory.items.length}
-            </Text>
-          </View>
-          <Ionicons name="chevron-forward" size={18} color={colors.goldLight} />
-        </Pressable>
-      ) : null}
-
-      <SectionHeading
-        eyebrow="ACCÈS RAPIDE"
-        title="Les moments essentiels"
-        action="Tout afficher"
-        onAction={() => {
-          setFilter("all");
-          setQuery("");
-        }}
-      />
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={styles.quickRow}
-      >
-        {quickSections.map((section) => (
-          <QuickCard
-            key={section.id}
-            section={section}
-            active={filter === section.id}
-            onPress={() => applySection(section.id)}
-          />
-        ))}
-      </ScrollView>
-
-      <SectionHeading
-        eyebrow="SELON VOTRE BESOIN"
-        title="Que traversez-vous aujourd’hui ?"
-      />
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={styles.guideRow}
-      >
-        {DUA_GUIDES.map((guide) => (
-          <GuideCard key={guide.id} guide={guide} onPress={() => applyGuide(guide)} />
-        ))}
-      </ScrollView>
-
       <View style={styles.search}>
-        <View style={styles.searchGlow} />
         <Ionicons name="search" size={19} color={colors.goldMuted} />
         <TextInput
+          accessibilityLabel={t("dua.home.searchPlaceholder")}
           value={query}
           onChangeText={setQuery}
-          placeholder="Rechercher une dou‘ā, un besoin, une phrase…"
+          placeholder={t("dua.home.searchPlaceholder")}
           placeholderTextColor={colors.textMuted}
           selectionColor={colors.goldLight}
           style={styles.searchInput}
         />
         {query ? (
-          <Pressable onPress={() => setQuery("")}>
+          <Pressable
+            accessibilityLabel={t("dua.home.clearSearch")}
+            hitSlop={8}
+            onPress={() => setQuery("")}
+          >
             <Ionicons name="close-circle" size={18} color={colors.textMuted} />
           </Pressable>
         ) : null}
       </View>
 
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={styles.filtersRow}
-      >
-        <FilterChip
-          label="Toutes"
-          icon="apps-outline"
-          active={filter === "all"}
-          onPress={() => setFilter("all")}
-        />
-        <FilterChip
-          label="Favoris"
-          icon="heart-outline"
-          active={filter === "favorites"}
-          onPress={() => setFilter("favorites")}
-        />
-        {DUA_SECTIONS.map((section) => (
-          <FilterChip
-            key={section.id}
-            label={section.label}
-            icon={section.icon as keyof typeof Ionicons.glyphMap}
-            active={filter === section.id}
-            onPress={() => applySection(section.id)}
-          />
-        ))}
-      </ScrollView>
+      {!searching ? (
+        <>
+          <View style={styles.hero}>
+            <Image
+              source={require("../assets/images/home/shortcuts/dua-real.jpg")}
+              contentFit="cover"
+              style={StyleSheet.absoluteFill}
+            />
+            <LinearGradient
+              colors={["rgba(8,7,19,0.10)", "rgba(8,7,19,0.62)", "rgba(8,7,19,0.97)"]}
+              locations={[0, 0.45, 1]}
+              style={StyleSheet.absoluteFill}
+            />
+            <View style={styles.heroContent}>
+              <Text style={styles.heroEyebrow}>{t("dua.home.suggestedNow")}</Text>
+              <Text numberOfLines={2} style={styles.heroTitle}>
+                {suggestedCategory
+                  ? duaCategoryTitle(suggestedCategory, language)
+                  : t("dua.home.essentials")}
+              </Text>
+              <View style={styles.heroBottom}>
+                <Text numberOfLines={1} style={styles.heroArabic}>
+                  {suggestedCategory?.arabicTitle ?? "الأذكار"}
+                </Text>
+                <Pressable
+                  disabled={!suggestedCategory}
+                  onPress={() => suggestedCategory && openCategory(suggestedCategory.id)}
+                  style={styles.startButton}
+                >
+                  <Ionicons name="play" size={15} color={colors.background} />
+                  <Text style={styles.startText}>{t("dua.home.start")}</Text>
+                </Pressable>
+              </View>
+            </View>
+          </View>
+
+          {resumeCategory ? (
+            <Pressable
+              onPress={() => openCategory(resumeCategory.id, resume?.itemIndex ?? 0)}
+              style={({ pressed }) => [styles.resumeCard, pressed && styles.pressed]}
+            >
+              <View style={styles.resumeIcon}>
+                <Ionicons name="time-outline" size={19} color={colors.goldLight} />
+              </View>
+              <View style={styles.resumeCopy}>
+                <Text style={styles.resumeEyebrow}>{t("dua.home.resume")}</Text>
+                <Text numberOfLines={1} style={styles.resumeTitle}>
+                  {duaCategoryTitle(resumeCategory, language)}
+                </Text>
+              </View>
+              <Text style={styles.resumeMeta}>
+                {(resume?.itemIndex ?? 0) + 1} / {resumeCategory.items.length}
+              </Text>
+              <Ionicons name="chevron-forward" size={18} color={colors.goldLight} />
+            </Pressable>
+          ) : null}
+
+          <SectionHeading eyebrow={t("dua.home.quickEyebrow")} title={t("dua.home.quickTitle")} />
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.quickRow}
+          >
+            {quickSections.map((section) => (
+              <QuickCard
+                key={section.id}
+                section={section}
+                text={duaSectionText(section, language)}
+                countLabel={t("dua.home.duaCount", { count: duaCountBySection.get(section.id) ?? 0 })}
+                onPress={() => applySection(section.id)}
+              />
+            ))}
+          </ScrollView>
+
+          <SectionHeading eyebrow={t("dua.home.needEyebrow")} title={t("dua.home.needTitle")} />
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.guideRow}
+          >
+            {DUA_GUIDES.map((guide) => (
+              <GuideCard
+                key={guide.id}
+                guide={guide}
+                text={duaGuideText(guide, language)}
+                onPress={() => applyGuide(guide)}
+              />
+            ))}
+          </ScrollView>
+        </>
+      ) : null}
 
       <View
         onLayout={(event) => {
@@ -457,40 +422,47 @@ export default function DuaHomeScreen() {
         }}
         style={styles.catalogHeading}
       >
-        <View>
-          <Text style={styles.catalogEyebrow}>BIBLIOTHÈQUE ORGANISÉE</Text>
-          <Text style={styles.catalogTitle}>
-            {filter === "all"
-              ? "Toutes les invocations"
-              : filter === "favorites"
-                ? "Vos invocations favorites"
-                : sectionFor(filter).label}
-          </Text>
-        </View>
-        <Text style={styles.resultCount}>{filtered.length} catégories</Text>
+        <Text style={styles.catalogTitle}>
+          {searching
+            ? t("dua.home.results")
+            : filter === "favorites"
+              ? t("dua.home.favoritesTitle")
+              : t("dua.home.libraryTitle")}
+        </Text>
+        <Text style={styles.resultCount}>
+          {t("dua.home.duaCount", { count: visibleDuaCount })}
+        </Text>
       </View>
 
       {loading ? (
         <View style={styles.empty}>
           <ActivityIndicator color={colors.goldLight} />
-          <Text style={styles.emptyText}>Organisation des invocations…</Text>
+          <Text style={styles.emptyText}>{t("dua.home.loading")}</Text>
         </View>
       ) : filtered.length === 0 ? (
         <View style={styles.empty}>
-          <Ionicons name="search-outline" size={25} color={colors.goldLight} />
+          <Ionicons
+            name={filter === "favorites" ? "heart-outline" : "search-outline"}
+            size={25}
+            color={colors.goldLight}
+          />
           <Text style={styles.emptyText}>
-            Aucune invocation ne correspond à cette sélection.
+            {filter === "favorites" && !searching
+              ? t("dua.home.noFavorites")
+              : t("dua.home.noResults")}
           </Text>
         </View>
-      ) : filter !== "all" || query.trim() ? (
+      ) : filter !== "all" || searching ? (
         <View style={styles.filteredList}>
           {filtered.map((category) => (
             <CategoryCard
               key={category.id}
               category={category}
+              title={duaCategoryTitle(category, language)}
+              countLabel={t("dua.home.duaCount", { count: category.items.length })}
               section={sectionFor(category.section)}
               favoriteCount={category.items.filter((entry) => favoriteIds.includes(entry.id)).length}
-              onPress={() => openCategory(category.id, matchingItemIndex(category, query))}
+              onPress={() => openCategory(category.id, matchingItemIndex(category, query, language))}
             />
           ))}
         </View>
@@ -498,6 +470,8 @@ export default function DuaHomeScreen() {
         <View style={styles.accordionList}>
           {groupedSections.map(({ section, categories }) => {
             const expanded = expandedSections.includes(section.id);
+            const text = duaSectionText(section, language);
+            const duaCount = categories.reduce((sum, category) => sum + category.items.length, 0);
             return (
               <View
                 key={section.id}
@@ -507,6 +481,7 @@ export default function DuaHomeScreen() {
                 }}
               >
                 <Pressable
+                  accessibilityState={{ expanded }}
                   onPress={() => toggleSection(section.id)}
                   style={({ pressed }) => [styles.accordionHeader, pressed && styles.pressed]}
                 >
@@ -518,10 +493,11 @@ export default function DuaHomeScreen() {
                     />
                   </View>
                   <View style={styles.accordionCopy}>
-                    <Text style={styles.catalogSectionTitle}>{section.label}</Text>
-                    <Text style={styles.catalogSectionSubtitle}>{section.subtitle}</Text>
+                    <Text style={styles.catalogSectionTitle}>{text.label}</Text>
+                    <Text style={styles.catalogSectionSubtitle}>
+                      {t("dua.home.duaCount", { count: duaCount })}
+                    </Text>
                   </View>
-                  <Text style={styles.accordionCount}>{categories.length}</Text>
                   <Ionicons
                     name={expanded ? "chevron-up" : "chevron-down"}
                     size={18}
@@ -534,6 +510,8 @@ export default function DuaHomeScreen() {
                       <CategoryCard
                         key={category.id}
                         category={category}
+                        title={duaCategoryTitle(category, language)}
+                        countLabel={t("dua.home.duaCount", { count: category.items.length })}
                         section={section}
                         favoriteCount={category.items.filter((entry) => favoriteIds.includes(entry.id)).length}
                         onPress={() => openCategory(category.id)}
@@ -563,67 +541,30 @@ export default function DuaHomeScreen() {
   );
 }
 
-function Stat({
-  icon,
-  value,
-  label,
-}: {
-  icon: keyof typeof Ionicons.glyphMap;
-  value: string;
-  label: string;
-}) {
-  return (
-    <View style={styles.stat}>
-      <Ionicons name={icon} size={16} color={colors.goldLight} />
-      <Text style={styles.statValue}>{value}</Text>
-      <Text style={styles.statLabel}>{label}</Text>
-    </View>
-  );
-}
-
-function SectionHeading({
-  eyebrow,
-  title,
-  action,
-  onAction,
-}: {
-  eyebrow: string;
-  title: string;
-  action?: string;
-  onAction?: () => void;
-}) {
+function SectionHeading({ eyebrow, title }: { eyebrow: string; title: string }) {
   return (
     <View style={styles.sectionHeading}>
-      <View style={styles.sectionHeadingCopy}>
-        <Text style={styles.sectionEyebrow}>{eyebrow}</Text>
-        <Text style={styles.sectionTitle}>{title}</Text>
-      </View>
-      {action && onAction ? (
-        <Pressable onPress={onAction} style={styles.seeAllPill}>
-          <Text style={styles.seeAllText}>{action}</Text>
-        </Pressable>
-      ) : null}
+      <Text style={styles.sectionEyebrow}>{eyebrow}</Text>
+      <Text style={styles.sectionTitle}>{title}</Text>
     </View>
   );
 }
 
 function QuickCard({
   section,
-  active,
+  text,
+  countLabel,
   onPress,
 }: {
   section: SectionDefinition;
-  active: boolean;
+  text: { label: string; subtitle: string };
+  countLabel: string;
   onPress: () => void;
 }) {
   return (
     <Pressable
       onPress={onPress}
-      style={({ pressed }) => [
-        styles.quickCard,
-        active && styles.quickCardActive,
-        pressed && styles.pressed,
-      ]}
+      style={({ pressed }) => [styles.quickCard, pressed && styles.pressed]}
     >
       <Image source={section.imageSource} contentFit="cover" style={StyleSheet.absoluteFill} />
       <LinearGradient
@@ -637,15 +578,23 @@ function QuickCard({
           color={colors.goldLight}
         />
       </View>
-      <Text style={styles.quickTitle}>{section.label}</Text>
-      <Text numberOfLines={2} style={styles.quickSubtitle}>
-        {section.subtitle}
+      <Text style={styles.quickTitle}>{text.label}</Text>
+      <Text numberOfLines={1} style={styles.quickSubtitle}>
+        {countLabel}
       </Text>
     </Pressable>
   );
 }
 
-function GuideCard({ guide, onPress }: { guide: GuideDefinition; onPress: () => void }) {
+function GuideCard({
+  guide,
+  text,
+  onPress,
+}: {
+  guide: GuideDefinition;
+  text: { label: string; subtitle: string };
+  onPress: () => void;
+}) {
   return (
     <Pressable
       onPress={onPress}
@@ -667,117 +616,29 @@ function GuideCard({ guide, onPress }: { guide: GuideDefinition; onPress: () => 
         </View>
         <Ionicons name="arrow-forward" size={15} color={colors.goldLight} />
       </View>
-      <Text style={styles.guideTitle}>{guide.label}</Text>
+      <Text style={styles.guideTitle}>{text.label}</Text>
       <Text numberOfLines={2} style={styles.guideSubtitle}>
-        {guide.subtitle}
+        {text.subtitle}
       </Text>
-    </Pressable>
-  );
-}
-
-function FilterChip({
-  label,
-  icon,
-  active,
-  onPress,
-}: {
-  label: string;
-  icon: keyof typeof Ionicons.glyphMap;
-  active: boolean;
-  onPress: () => void;
-}) {
-  return (
-    <Pressable
-      onPress={onPress}
-      style={[styles.filterChip, active && styles.filterChipActive]}
-    >
-      <Ionicons
-        name={icon}
-        size={13}
-        color={active ? colors.background : colors.goldMuted}
-      />
-      <Text style={[styles.filterText, active && styles.filterTextActive]}>
-        {label}
-      </Text>
-    </Pressable>
-  );
-}
-
-function CatalogSectionHeader({ section }: { section: SectionDefinition }) {
-  return (
-    <View style={styles.catalogSectionHeader}>
-      <View style={styles.catalogSectionIcon}>
-        <Ionicons
-          name={section.icon as keyof typeof Ionicons.glyphMap}
-          size={17}
-          color={colors.goldLight}
-        />
-      </View>
-      <View style={styles.catalogSectionCopy}>
-        <Text style={styles.catalogSectionTitle}>{section.label}</Text>
-        <Text style={styles.catalogSectionSubtitle}>{section.subtitle}</Text>
-      </View>
-      <View style={styles.catalogSectionLine} />
-    </View>
-  );
-}
-
-function AdhkarPeriodCard({
-  period,
-  count,
-  onPress,
-}: {
-  period: "morning" | "evening";
-  count: number;
-  onPress: () => void;
-}) {
-  const morning = period === "morning";
-  return (
-    <Pressable
-      onPress={onPress}
-      style={({ pressed }) => [
-        styles.periodCard,
-        morning ? styles.morningCard : styles.eveningCard,
-        pressed && styles.pressed,
-      ]}
-    >
-      <View style={styles.periodIcon}>
-        <Ionicons
-          name={morning ? "sunny-outline" : "moon-outline"}
-          size={21}
-          color={colors.goldLight}
-        />
-      </View>
-      <View style={styles.periodCopy}>
-        <Text style={styles.periodEyebrow}>PARCOURS DISTINCT</Text>
-        <Text style={styles.periodTitle}>
-          {morning ? "Adhkār du matin" : "Adhkār du soir"}
-        </Text>
-        <Text style={styles.periodSubtitle}>
-          {morning ? "Invocations du réveil et du début de journée" : "Invocations de fin de journée et de protection"}
-        </Text>
-      </View>
-      <View style={styles.periodCount}>
-        <Text style={styles.periodCountText}>{count}</Text>
-        <Ionicons name="arrow-forward" size={15} color={colors.goldLight} />
-      </View>
     </Pressable>
   );
 }
 
 function CategoryCard({
   category,
+  title,
+  countLabel,
   section,
   favoriteCount,
   onPress,
 }: {
   category: DuaCategory;
+  title: string;
+  countLabel: string;
   section: SectionDefinition;
   favoriteCount: number;
   onPress: () => void;
 }) {
-  const audioCount = category.items.filter((item) => item.audioUrl || item.audioSource).length;
-  const translatedCount = category.items.filter((item) => !item.frenchIsSummary).length;
   return (
     <Pressable
       onPress={onPress}
@@ -799,27 +660,13 @@ function CategoryCard({
       </View>
       <View style={styles.categoryCopy}>
         <Text numberOfLines={2} style={styles.categoryTitle}>
-          {category.frenchTitle}
+          {title}
         </Text>
         <Text numberOfLines={1} style={styles.categoryArabic}>
           {category.arabicTitle}
         </Text>
         <View style={styles.categoryMetaRow}>
-          <Text style={styles.categoryMeta}>{category.items.length} dou‘ā</Text>
-          {audioCount > 0 ? (
-            <>
-              <View style={styles.metaDot} />
-              <Ionicons name="headset-outline" size={11} color={colors.textMuted} />
-              <Text style={styles.categoryMeta}>{audioCount}</Text>
-            </>
-          ) : null}
-          {translatedCount > 0 ? (
-            <>
-              <View style={styles.metaDot} />
-              <Ionicons name="language-outline" size={11} color={colors.textMuted} />
-              <Text style={styles.categoryMeta}>{translatedCount}</Text>
-            </>
-          ) : null}
+          <Text style={styles.categoryMeta}>{countLabel}</Text>
           {favoriteCount > 0 ? (
             <>
               <View style={styles.metaDot} />
@@ -837,66 +684,6 @@ function CategoryCard({
 }
 
 const styles = StyleSheet.create({
-  periodCards: { gap: 10 },
-  periodCard: {
-    minHeight: 112,
-    borderRadius: 20,
-    borderWidth: 1,
-    paddingHorizontal: 15,
-    paddingVertical: 14,
-    flexDirection: "row",
-    alignItems: "center",
-    overflow: "hidden",
-  },
-  morningCard: {
-    backgroundColor: "rgba(84,55,21,0.38)",
-    borderColor: "rgba(244,211,143,0.28)",
-  },
-  eveningCard: {
-    backgroundColor: "rgba(35,32,72,0.48)",
-    borderColor: "rgba(146,140,210,0.24)",
-  },
-  periodIcon: {
-    width: 43,
-    height: 43,
-    borderRadius: 15,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "rgba(255,255,255,0.06)",
-    marginRight: 12,
-  },
-  periodCopy: { flex: 1 },
-  periodEyebrow: {
-    color: colors.goldMuted,
-    fontFamily: typography.sans,
-    fontWeight: typography.sansSemibold,
-    fontSize: 9,
-    letterSpacing: 1.1,
-    marginBottom: 4,
-  },
-  periodTitle: {
-    color: colors.text,
-    fontFamily: typography.serifMedium,
-    fontSize: 20,
-    marginBottom: 4,
-  },
-  periodSubtitle: {
-    color: colors.textMuted,
-    fontFamily: typography.sans,
-    fontSize: 11,
-    lineHeight: 16,
-  },
-  periodCount: {
-    minWidth: 40,
-    alignItems: "center",
-    gap: 6,
-  },
-  periodCountText: {
-    color: colors.goldLight,
-    fontFamily: typography.sans,
-    fontWeight: typography.sansSemibold,
-    fontSize: 12,
-  },
   safeArea: { flex: 1, backgroundColor: colors.background },
   content: { paddingHorizontal: 14, paddingBottom: 116 },
   headerContent: { marginHorizontal: -14, paddingHorizontal: 14 },
@@ -908,62 +695,25 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     borderRadius: 21,
     borderWidth: 1,
-    borderColor: "rgba(244,211,143,0.24)",
-    backgroundColor: "rgba(55,29,72,0.78)",
+    borderColor: "#2B2238",
+    backgroundColor: "#151022",
   },
   titleCopy: { flex: 1, marginHorizontal: 12 },
   title: { color: colors.text, fontFamily: typography.serifMedium, fontSize: 29 },
-  subtitle: { color: colors.textMuted, fontFamily: typography.sans, fontSize: 10.5 },
+  subtitle: { color: colors.textMuted, fontFamily: typography.sans, fontSize: 11 },
   hero: {
-    height: 300,
+    height: 200,
+    marginTop: 12,
     overflow: "hidden",
-    borderRadius: 29,
-    borderWidth: 1,
-    borderColor: "rgba(237,196,111,0.38)",
-    backgroundColor: colors.surface,
-    shadowColor: "#8A4FA4",
-    shadowOffset: { width: 0, height: 15 },
-    shadowOpacity: 0.28,
-    shadowRadius: 22,
-    elevation: 10,
-  },
-  heroRim: {
-    position: "absolute",
-    top: 5,
-    right: 5,
-    bottom: 5,
-    left: 5,
     borderRadius: 24,
     borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.16)",
-  },
-  heroGlass: {
-    position: "absolute",
-    right: 12,
-    bottom: 12,
-    left: 12,
-    padding: 15,
-    overflow: "hidden",
-    borderRadius: 22,
-    borderWidth: 1,
-    borderColor: "rgba(255,241,220,0.28)",
-    backgroundColor: "rgba(12,9,20,0.76)",
-  },
-  heroEyebrowRow: { flexDirection: "row", alignItems: "center" },
-  liveDot: {
-    width: 6,
-    height: 6,
-    marginRight: 7,
-    borderRadius: 3,
-    backgroundColor: colors.goldLight,
-    shadowColor: colors.goldLight,
-    shadowOpacity: 1,
-    shadowRadius: 6,
+    borderColor: "rgba(227,181,90,0.30)",
+    backgroundColor: "#151022",
   },
   heroEyebrow: {
     color: colors.goldLight,
     fontFamily: typography.sans,
-    fontSize: 8.2,
+    fontSize: 10,
     fontWeight: "800",
     letterSpacing: 1.05,
   },
@@ -975,17 +725,14 @@ const styles = StyleSheet.create({
     lineHeight: 27,
   },
   heroArabic: {
-    marginTop: 3,
+    flex: 1,
     color: "#EBC86F",
     fontFamily: typography.arabic,
     fontSize: 19,
     lineHeight: 27,
-    textAlign: "right",
-    writingDirection: "rtl",
+    textAlign: "left",
   },
-  heroBottom: { marginTop: 9, flexDirection: "row", alignItems: "center" },
-  heroMetaWrap: { flex: 1, flexDirection: "row", alignItems: "center", gap: 5 },
-  heroMeta: { color: colors.textSecondary, fontFamily: typography.sans, fontSize: 8.6 },
+  heroBottom: { marginTop: 8, flexDirection: "row", alignItems: "center", gap: 10 },
   startButton: {
     height: 38,
     paddingHorizontal: 13,
@@ -994,89 +741,58 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     borderRadius: 20,
     backgroundColor: colors.goldLight,
-    shadowColor: colors.goldLight,
-    shadowOpacity: 0.42,
-    shadowRadius: 9,
-    elevation: 5,
   },
   startText: {
     marginLeft: 6,
     color: colors.background,
     fontFamily: typography.sans,
-    fontSize: 10,
+    fontSize: 13,
     fontWeight: "800",
   },
-  statsRow: { height: 70, marginTop: 11, flexDirection: "row", gap: 7 },
-  stat: {
-    flex: 1,
-    minWidth: 0,
-    alignItems: "center",
-    justifyContent: "center",
-    borderRadius: 19,
-    borderWidth: 1,
-    borderColor: "rgba(244,211,143,0.18)",
-    backgroundColor: "rgba(29,18,42,0.86)",
-  },
-  statValue: { marginTop: 2, color: colors.text, fontFamily: typography.serifSemibold, fontSize: 15 },
-  statLabel: { color: colors.textMuted, fontFamily: typography.sans, fontSize: 7.5 },
   resumeCard: {
-    minHeight: 80,
+    minHeight: 64,
     marginTop: 10,
     paddingHorizontal: 12,
-    overflow: "hidden",
     flexDirection: "row",
     alignItems: "center",
-    borderRadius: 22,
+    gap: 8,
+    borderRadius: 20,
     borderWidth: 1,
-    borderColor: "rgba(227,181,90,0.30)",
+    borderColor: "rgba(227,181,90,0.26)",
+    backgroundColor: "#151022",
   },
   resumeIcon: {
-    width: 44,
-    height: 44,
+    width: 40,
+    height: 40,
     alignItems: "center",
     justifyContent: "center",
-    borderRadius: 22,
-    borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.14)",
-    backgroundColor: "rgba(20,12,31,0.68)",
+    borderRadius: 20,
+    backgroundColor: "#1E1730",
   },
-  resumeCopy: { flex: 1, minWidth: 0, marginHorizontal: 11 },
+  resumeCopy: { flex: 1, minWidth: 0, marginLeft: 3 },
   resumeEyebrow: {
     color: colors.goldMuted,
     fontFamily: typography.sans,
-    fontSize: 7.4,
+    fontSize: 10,
     fontWeight: "800",
     letterSpacing: 0.9,
   },
   resumeTitle: { marginTop: 2, color: colors.text, fontFamily: typography.serifMedium, fontSize: 16 },
-  resumeMeta: { color: colors.textMuted, fontFamily: typography.sans, fontSize: 8 },
-  sectionHeading: {
-    marginTop: 22,
-    paddingHorizontal: 2,
-    flexDirection: "row",
-    alignItems: "flex-end",
-    justifyContent: "space-between",
+  resumeMeta: {
+    color: colors.textMuted,
+    fontFamily: typography.sans,
+    fontSize: 12,
+    fontVariant: ["lining-nums", "tabular-nums"],
   },
-  sectionHeadingCopy: { flex: 1, minWidth: 0 },
+  sectionHeading: { marginTop: 22, paddingHorizontal: 2 },
   sectionEyebrow: {
     color: colors.goldMuted,
     fontFamily: typography.sans,
-    fontSize: 7.5,
+    fontSize: 10,
     fontWeight: "800",
     letterSpacing: 1.1,
   },
   sectionTitle: { marginTop: 3, color: colors.text, fontFamily: typography.serifMedium, fontSize: 20.5 },
-  seeAllPill: {
-    height: 29,
-    paddingHorizontal: 11,
-    alignItems: "center",
-    justifyContent: "center",
-    borderRadius: 15,
-    borderWidth: 1,
-    borderColor: "rgba(227,181,90,0.34)",
-    backgroundColor: "rgba(79,38,97,0.55)",
-  },
-  seeAllText: { color: colors.goldLight, fontFamily: typography.sans, fontSize: 8.5, fontWeight: "800" },
   quickRow: { paddingTop: 10, paddingRight: 28, gap: 9 },
   quickCard: {
     width: 164,
@@ -1085,15 +801,14 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     borderRadius: 24,
     borderWidth: 1,
-    borderColor: "rgba(255,242,220,0.21)",
-    backgroundColor: colors.surface,
+    borderColor: "#2B2238",
+    backgroundColor: "#151022",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.26,
     shadowRadius: 13,
     elevation: 6,
   },
-  quickCardActive: { borderColor: "rgba(240,204,124,0.66)", shadowColor: "#9360A8", shadowOpacity: 0.36 },
   quickIcon: {
     width: 34,
     height: 34,
@@ -1105,7 +820,7 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(15,10,24,0.66)",
   },
   quickTitle: { marginTop: "auto", color: "#FFF8EF", fontFamily: typography.serifSemibold, fontSize: 16.5 },
-  quickSubtitle: { marginTop: 3, color: colors.textSecondary, fontFamily: typography.sans, fontSize: 8.2, lineHeight: 11.5 },
+  quickSubtitle: { marginTop: 3, color: colors.textSecondary, fontFamily: typography.sans, fontSize: 11 },
   guideRow: { paddingTop: 10, paddingRight: 28, gap: 9 },
   guideCard: {
     width: 146,
@@ -1114,8 +829,8 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     borderRadius: 24,
     borderWidth: 1,
-    borderColor: "rgba(255,242,220,0.21)",
-    backgroundColor: colors.surface,
+    borderColor: "#2B2238",
+    backgroundColor: "#151022",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 9 },
     shadowOpacity: 0.28,
@@ -1132,83 +847,51 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(13,9,21,0.70)",
   },
   guideTitle: { marginTop: "auto", color: colors.text, fontFamily: typography.serifSemibold, fontSize: 15.5, lineHeight: 17.5 },
-  guideSubtitle: { marginTop: 4, color: colors.textSecondary, fontFamily: typography.sans, fontSize: 8, lineHeight: 11.5 },
+  guideSubtitle: { marginTop: 4, color: colors.textSecondary, fontFamily: typography.sans, fontSize: 11, lineHeight: 15 },
   search: {
-    height: 54,
-    marginTop: 21,
+    height: 50,
+    marginTop: 4,
     paddingHorizontal: 14,
-    overflow: "hidden",
     flexDirection: "row",
     alignItems: "center",
-    borderRadius: 20,
-    borderWidth: 1,
-    borderColor: "rgba(255,242,220,0.27)",
-    backgroundColor: "rgba(23,17,30,0.91)",
-    shadowColor: "#8B4FA6",
-    shadowOpacity: 0.23,
-    shadowRadius: 12,
-  },
-  searchGlow: {
-    position: "absolute",
-    top: -30,
-    right: -5,
-    width: 110,
-    height: 80,
-    borderRadius: 50,
-    backgroundColor: "rgba(159,94,184,0.12)",
-  },
-  searchInput: { flex: 1, marginHorizontal: 9, padding: 0, color: colors.text, fontFamily: typography.sans, fontSize: 12 },
-  filtersRow: { paddingTop: 10, paddingRight: 28, gap: 7 },
-  filterChip: {
-    height: 35,
-    paddingHorizontal: 11,
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 6,
     borderRadius: 18,
     borderWidth: 1,
-    borderColor: "rgba(255,242,220,0.18)",
-    backgroundColor: "rgba(35,21,47,0.84)",
+    borderColor: "#2B2238",
+    backgroundColor: "#151022",
   },
-  filterChipActive: { borderColor: colors.goldLight, backgroundColor: colors.goldLight },
-  filterText: { color: colors.textSecondary, fontFamily: typography.sans, fontSize: 9, fontWeight: "700" },
-  filterTextActive: { color: colors.background, fontWeight: "900" },
+  searchInput: { flex: 1, marginHorizontal: 9, padding: 0, color: colors.text, fontFamily: typography.sans, fontSize: 14 },
   catalogHeading: {
-    marginTop: 22,
+    marginTop: 24,
+    marginBottom: 10,
     flexDirection: "row",
-    alignItems: "flex-end",
+    alignItems: "baseline",
     justifyContent: "space-between",
   },
-  catalogEyebrow: {
-    color: colors.goldMuted,
+  catalogTitle: { color: colors.goldLight, fontFamily: typography.serifMedium, fontSize: 21 },
+  resultCount: {
+    color: colors.textMuted,
     fontFamily: typography.sans,
-    fontSize: 7.5,
-    fontWeight: "800",
-    letterSpacing: 1,
-  },
-  catalogTitle: { marginTop: 3, color: colors.goldLight, fontFamily: typography.serifMedium, fontSize: 21 },
-  resultCount: { marginBottom: 2, color: colors.textMuted, fontFamily: typography.sans, fontSize: 9 },
-  catalogSectionHeader: {
-    minHeight: 58,
-    marginTop: 18,
-    paddingHorizontal: 2,
-    flexDirection: "row",
-    alignItems: "center",
+    fontSize: 12,
+    fontVariant: ["lining-nums", "tabular-nums"],
   },
   catalogSectionIcon: {
-    width: 37,
-    height: 37,
+    width: 38,
+    height: 38,
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 19,
     borderWidth: 1,
     borderColor: "rgba(227,181,90,0.30)",
-    backgroundColor: "rgba(71,36,88,0.62)",
+    backgroundColor: "#1E1730",
   },
-  catalogSectionCopy: { marginLeft: 9 },
   catalogSectionTitle: { color: colors.text, fontFamily: typography.serifMedium, fontSize: 16.5 },
-  catalogSectionSubtitle: { color: colors.textMuted, fontFamily: typography.sans, fontSize: 8 },
-  catalogSectionLine: { flex: 1, height: 1, marginLeft: 10, backgroundColor: "rgba(227,181,90,0.16)" },
+  catalogSectionSubtitle: {
+    marginTop: 1,
+    color: colors.textMuted,
+    fontFamily: typography.sans,
+    fontSize: 12,
+    fontVariant: ["lining-nums", "tabular-nums"],
+  },
   categoryCard: {
     minHeight: 116,
     overflow: "hidden",
@@ -1217,8 +900,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderRadius: 23,
     borderWidth: 1,
-    borderColor: "rgba(255,242,220,0.20)",
-    backgroundColor: "rgba(29,18,39,0.94)",
+    borderColor: "#2B2238",
+    backgroundColor: "#100C19",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.24,
@@ -1249,7 +932,12 @@ const styles = StyleSheet.create({
     writingDirection: "rtl",
   },
   categoryMetaRow: { marginTop: 6, flexDirection: "row", alignItems: "center", flexWrap: "wrap" },
-  categoryMeta: { color: colors.textMuted, fontFamily: typography.sans, fontSize: 7.8 },
+  categoryMeta: {
+    color: colors.textMuted,
+    fontFamily: typography.sans,
+    fontSize: 11,
+    fontVariant: ["lining-nums", "tabular-nums"],
+  },
   metaDot: { width: 3, height: 3, marginHorizontal: 5, borderRadius: 2, backgroundColor: colors.goldDark },
   categoryArrow: {
     width: 31,
@@ -1257,11 +945,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 16,
-    backgroundColor: "rgba(85,44,105,0.48)",
+    backgroundColor: "#1E1730",
   },
-  separator: { height: 9 },
   empty: { minHeight: 170, alignItems: "center", justifyContent: "center" },
-  emptyText: { marginTop: 10, color: colors.textMuted, fontFamily: typography.sans, fontSize: 10, textAlign: "center" },
+  emptyText: { marginTop: 10, color: colors.textMuted, fontFamily: typography.sans, fontSize: 13, textAlign: "center" },
   pressed: { opacity: 0.72, transform: [{ scale: 0.992 }] },
   filteredList: { gap: 10, paddingBottom: 18 },
   accordionList: { gap: 10, paddingBottom: 22 },
@@ -1269,26 +956,26 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     borderRadius: 22,
     borderWidth: 1,
-    borderColor: colors.borderSoft,
-    backgroundColor: "rgba(35,20,45,0.78)",
+    borderColor: "#2B2238",
+    backgroundColor: "#151022",
   },
   accordionHeader: {
-    minHeight: 76,
+    minHeight: 68,
     paddingHorizontal: 13,
     flexDirection: "row",
     alignItems: "center",
   },
   accordionCopy: { flex: 1, minWidth: 0, marginLeft: 10 },
-  accordionCount: {
-    marginRight: 10,
-    color: colors.textMuted,
-    fontFamily: typography.sans,
-    fontSize: 10,
-    fontWeight: "700",
-  },
   accordionBody: {
     gap: 10,
     paddingHorizontal: 9,
     paddingBottom: 10,
+  },
+  circleButtonActive: { borderColor: colors.goldLight, backgroundColor: "rgba(227,181,90,0.12)" },
+  heroContent: {
+    position: "absolute",
+    right: 16,
+    bottom: 14,
+    left: 16,
   },
 });
