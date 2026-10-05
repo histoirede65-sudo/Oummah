@@ -34,6 +34,7 @@ import {
   type QiblaSensorQuality,
   useQiblaCompass,
 } from "../features/qibla/useQiblaCompass";
+import { useI18n, type LanguageCode, type TranslationKey } from "../i18n";
 import { colors } from "../theme/colors";
 import { typography } from "../theme/typography";
 
@@ -55,15 +56,15 @@ function unwrapTarget(previous: number, nextNormalized: number) {
   return previous + shortestAngle(nextNormalized - normalizeDegrees(previous));
 }
 
-function formatDistance(distanceKm: number | null) {
+function formatDistance(distanceKm: number | null, language: LanguageCode) {
   if (distanceKm === null) return "—";
-  return `${Math.round(distanceKm).toLocaleString("fr-FR")} km`;
+  return `${Math.round(distanceKm).toLocaleString(language === "fr" ? "fr-FR" : "en-GB")} km`;
 }
 
-function qualityCopy(quality: QiblaSensorQuality) {
-  if (quality === "excellent") return "Précision optimale";
-  if (quality === "medium") return "Précision correcte";
-  return "Calibrage conseillé";
+function qualityKey(quality: QiblaSensorQuality): TranslationKey {
+  if (quality === "excellent") return "qibla.qualityExcellent";
+  if (quality === "medium") return "qibla.qualityMedium";
+  return "qibla.qualityLow";
 }
 
 function GlassCard({ children, style }: { children: ReactNode; style?: object }) {
@@ -71,7 +72,7 @@ function GlassCard({ children, style }: { children: ReactNode; style?: object })
     <View style={[styles.glassCard, style]}>
       <LinearGradient
         pointerEvents="none"
-        colors={["rgba(255,255,255,0.12)", "rgba(89,45,119,0.12)", "rgba(10,6,19,0.82)"]}
+        colors={["rgba(255,255,255,0.08)", "rgba(227,181,90,0.04)", "rgba(10,8,18,0.86)"]}
         locations={[0, 0.35, 1]}
         style={StyleSheet.absoluteFill}
       />
@@ -93,6 +94,7 @@ function PremiumCompass({
   isAligned: boolean;
   isNear: boolean;
 }) {
+  const { t } = useI18n();
   const faceSize = size - 9;
   const dialRotation = useRef(new Animated.Value(0)).current;
   const needleRotation = useRef(new Animated.Value(0)).current;
@@ -207,7 +209,7 @@ function PremiumCompass({
       >
         <View style={[styles.compassFace, { width: faceSize, height: faceSize, borderRadius: faceSize / 2 }]}> 
           <LinearGradient
-            colors={["rgba(57,31,78,0.97)", "rgba(9,6,17,0.99)", "rgba(22,11,34,0.99)"]}
+            colors={["rgba(30,23,48,0.97)", "rgba(10,8,18,0.99)", "rgba(21,16,34,0.99)"]}
             style={StyleSheet.absoluteFill}
           />
 
@@ -220,10 +222,10 @@ function PremiumCompass({
                 <View style={[styles.tick, index % 3 === 0 && styles.tickMajor]} />
               </View>
             ))}
-            <Text style={[styles.cardinal, styles.north]}>N</Text>
-            <Text style={[styles.cardinal, styles.east]}>E</Text>
-            <Text style={[styles.cardinal, styles.south]}>S</Text>
-            <Text style={[styles.cardinal, styles.west]}>O</Text>
+            <Text style={[styles.cardinal, styles.north]}>{t("qibla.north")}</Text>
+            <Text style={[styles.cardinal, styles.east]}>{t("qibla.east")}</Text>
+            <Text style={[styles.cardinal, styles.south]}>{t("qibla.south")}</Text>
+            <Text style={[styles.cardinal, styles.west]}>{t("qibla.west")}</Text>
           </Animated.View>
 
           <Animated.View style={[styles.needleLayer, { width: faceSize, height: faceSize, transform: [{ rotate: needleRotate }] }]}> 
@@ -239,15 +241,8 @@ function PremiumCompass({
             <View style={styles.pointerTail} />
           </Animated.View>
 
-          <Animated.View style={[styles.centerMedallion, { transform: [{ scale: kaabaScale }] }]}>
-            <LinearGradient colors={["#F7DC91", "#A76D1D", "#E7B954"]} style={styles.centerGold}>
-              <View style={styles.centerInner}>
-                <View style={styles.kaaba}>
-                  <View style={styles.kaabaBand} />
-                  <View style={styles.kaabaDoor} />
-                </View>
-              </View>
-            </LinearGradient>
+          <Animated.View style={[styles.centerPivot, { transform: [{ scale: kaabaScale }] }]}>
+            <LinearGradient colors={["#F7DC91", "#A76D1D", "#E7B954"]} style={styles.centerPivotGold} />
           </Animated.View>
 
           <View style={styles.phoneMarker} />
@@ -258,6 +253,7 @@ function PremiumCompass({
 }
 
 export default function QiblaScreen() {
+  const { language, t } = useI18n();
   const { width } = useWindowDimensions();
   const {
     location,
@@ -321,12 +317,17 @@ export default function QiblaScreen() {
   };
 
   const instruction = loading || !hasDirection
-    ? { icon: "compass-outline" as const, eyebrow: "UN INSTANT", title: "Recherche de la Qibla", subtitle: "Gardez votre téléphone à plat" }
+    ? { icon: "compass-outline" as const, eyebrow: t("qibla.waitEyebrow"), title: t("qibla.searchingTitle"), subtitle: t("qibla.keepFlat") }
     : isAligned
-      ? { icon: "checkmark" as const, eyebrow: "QIBLA TROUVÉE", title: "Vous êtes bien orienté", subtitle: "La flèche dorée pointe vers La Mecque" }
-      : relativeAngle > 0
-        ? { icon: "arrow-redo" as const, eyebrow: isNear ? "PRESQUE" : "ORIENTATION", title: isNear ? "Un peu à droite" : "Tournez à droite", subtitle: `${Math.max(1, Math.round(absoluteDifference))}° avant l’alignement` }
-        : { icon: "arrow-undo" as const, eyebrow: isNear ? "PRESQUE" : "ORIENTATION", title: isNear ? "Un peu à gauche" : "Tournez à gauche", subtitle: `${Math.max(1, Math.round(absoluteDifference))}° avant l’alignement` };
+      ? { icon: "checkmark" as const, eyebrow: t("qibla.foundEyebrow"), title: t("qibla.alignedTitle"), subtitle: t("qibla.alignedSubtitle") }
+      : {
+          icon: relativeAngle > 0 ? ("arrow-redo" as const) : ("arrow-undo" as const),
+          eyebrow: isNear ? t("qibla.nearEyebrow") : t("qibla.orientationEyebrow"),
+          title: relativeAngle > 0
+            ? (isNear ? t("qibla.slightlyRight") : t("qibla.turnRight"))
+            : (isNear ? t("qibla.slightlyLeft") : t("qibla.turnLeft")),
+          subtitle: t("qibla.degreesLeft", { degrees: Math.max(1, Math.round(absoluteDifference)) }),
+        };
 
   return (
     <View style={styles.screen}>
@@ -342,24 +343,22 @@ export default function QiblaScreen() {
           locations={[0, 0.42, 1]}
           style={StyleSheet.absoluteFill}
         />
-        <View style={styles.backgroundOrbTop} />
-        <View style={styles.backgroundOrbBottom} />
       </ImageBackground>
 
       <SafeAreaView edges={["top", "left", "right"]} style={styles.safeArea}>
         <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
           <View style={styles.header}>
-            <Pressable onPress={() => (router.canGoBack() ? router.back() : router.replace("/"))} style={styles.headerButton}>
+            <Pressable accessibilityLabel={t("common.back")} onPress={() => (router.canGoBack() ? router.back() : router.replace("/"))} style={styles.headerButton}>
               <Ionicons name="chevron-back" size={23} color={colors.goldLight} />
             </Pressable>
             <View style={styles.headerCopy}>
-              <Text style={styles.title}>Qibla</Text>
+              <Text style={styles.title}>{t("qibla.title")}</Text>
               <View style={styles.locationLine}>
                 <Ionicons name="location" size={11} color={colors.goldLight} />
-                <Text numberOfLines={1} style={styles.locationText}>{location?.city ?? "Localisation en cours"}</Text>
+                <Text numberOfLines={1} style={styles.locationText}>{location?.city ?? t("qibla.locating")}</Text>
               </View>
             </View>
-            <Pressable onPress={() => setHelpVisible(true)} style={styles.headerButton}>
+            <Pressable accessibilityLabel={t("qibla.calibrateTitle")} onPress={() => setHelpVisible(true)} style={styles.headerButton}>
               <Ionicons name="help-circle-outline" size={22} color={colors.goldLight} />
             </Pressable>
           </View>
@@ -369,11 +368,11 @@ export default function QiblaScreen() {
               <View style={styles.errorIcon}>
                 <Ionicons name={permissionDenied ? "location-outline" : "compass-outline"} size={34} color={colors.goldLight} />
               </View>
-              <Text style={styles.errorTitle}>{permissionDenied ? "Localisation nécessaire" : "Boussole indisponible"}</Text>
-              <Text style={styles.errorText}>{permissionDenied ? "Autorisez la localisation pour calculer précisément la direction de La Mecque." : error}</Text>
+              <Text style={styles.errorTitle}>{permissionDenied ? t("qibla.locationNeeded") : t("qibla.compassUnavailable")}</Text>
+              <Text style={styles.errorText}>{permissionDenied ? t("qibla.locationNeededText") : error}</Text>
               <Pressable onPress={restart} style={styles.primaryButton}>
                 <LinearGradient colors={["#F4CF77", "#C98C2F"]} style={StyleSheet.absoluteFill} />
-                <Text style={styles.primaryButtonText}>Réessayer</Text>
+                <Text style={styles.primaryButtonText}>{t("qibla.retry")}</Text>
               </Pressable>
             </GlassCard>
           ) : (
@@ -397,17 +396,10 @@ export default function QiblaScreen() {
                 isNear={isNear}
               />
 
-              <View style={styles.offlineHint}>
-                <View style={styles.offlineHintIcon}>
-                  <Ionicons name="cloud-offline-outline" size={18} color={colors.goldLight} />
-                </View>
-                <Text style={styles.offlineHintText}>Disponible hors connexion</Text>
-              </View>
-
               <Pressable onPress={() => setDetailsVisible((value) => !value)} style={styles.detailsToggle}>
                 <View style={styles.detailsToggleLeft}>
                   <Ionicons name="options-outline" size={17} color={colors.textSecondary} />
-                  <Text style={styles.detailsToggleText}>Détails et réglages</Text>
+                  <Text style={styles.detailsToggleText}>{t("qibla.details")}</Text>
                 </View>
                 <Ionicons name={detailsVisible ? "chevron-up" : "chevron-down"} size={18} color={colors.textSecondary} />
               </Pressable>
@@ -415,17 +407,17 @@ export default function QiblaScreen() {
               {detailsVisible ? (
                 <GlassCard style={styles.detailsCard}>
                   <View style={styles.detailRow}>
-                    <View><Text style={styles.detailLabel}>Direction</Text><Text style={styles.detailValue}>{qiblaBearing === null ? "—" : `${Math.round(qiblaBearing)}°`}</Text></View>
+                    <View><Text style={styles.detailLabel}>{t("qibla.direction")}</Text><Text style={styles.detailValue}>{qiblaBearing === null ? "—" : `${Math.round(qiblaBearing)}°`}</Text></View>
                     <View style={styles.detailDivider} />
-                    <View><Text style={styles.detailLabel}>La Mecque</Text><Text style={styles.detailValue}>{formatDistance(distanceKm)}</Text></View>
+                    <View><Text style={styles.detailLabel}>{t("qibla.mecca")}</Text><Text style={styles.detailValue}>{formatDistance(distanceKm, language)}</Text></View>
                     <View style={styles.detailDivider} />
-                    <View><Text style={styles.detailLabel}>Capteur</Text><Text style={styles.detailValueSmall}>{qualityCopy(sensorQuality)}</Text></View>
+                    <View><Text style={styles.detailLabel}>{t("qibla.sensor")}</Text><Text style={styles.detailValueSmall}>{t(qualityKey(sensorQuality))}</Text></View>
                   </View>
                   <View style={styles.settingSeparator} />
                   <View style={styles.settingRow}>
                     <View style={styles.settingCopy}>
                       <Ionicons name="phone-portrait-outline" size={19} color={colors.goldLight} />
-                      <View><Text style={styles.settingTitle}>Vibration à l’alignement</Text><Text style={styles.settingSubtitle}>Confirme lorsque la Qibla est trouvée</Text></View>
+                      <View><Text style={styles.settingTitle}>{t("qibla.vibration")}</Text><Text style={styles.settingSubtitle}>{t("qibla.vibrationText")}</Text></View>
                     </View>
                     <Switch
                       value={hapticsEnabled}
@@ -436,7 +428,7 @@ export default function QiblaScreen() {
                   </View>
                   <Pressable onPress={() => setHelpVisible(true)} style={styles.calibrateButton}>
                     <Ionicons name="scan-outline" size={18} color={colors.goldLight} />
-                    <Text style={styles.calibrateText}>Calibrer la boussole</Text>
+                    <Text style={styles.calibrateText}>{t("qibla.calibrateTitle")}</Text>
                   </Pressable>
                 </GlassCard>
               ) : null}
@@ -449,16 +441,16 @@ export default function QiblaScreen() {
         <View style={styles.modalBackdrop}>
           <GlassCard style={styles.modalCard}>
             <View style={styles.modalHeader}>
-              <View><Text style={styles.modalEyebrow}>PRÉCISION</Text><Text style={styles.modalTitle}>Calibrer la boussole</Text></View>
-              <Pressable onPress={() => setHelpVisible(false)} style={styles.modalClose}><Ionicons name="close" size={22} color={colors.text} /></Pressable>
+              <View><Text style={styles.modalEyebrow}>{t("qibla.precisionEyebrow")}</Text><Text style={styles.modalTitle}>{t("qibla.calibrateTitle")}</Text></View>
+              <Pressable accessibilityLabel={t("hifz.session.close")} onPress={() => setHelpVisible(false)} style={styles.modalClose}><Ionicons name="close" size={22} color={colors.text} /></Pressable>
             </View>
             <View style={styles.figureEight}><Text style={styles.figureEightText}>∞</Text></View>
-            <Text style={styles.modalBody}>Dessinez doucement un huit avec votre téléphone pendant quelques secondes, puis tenez-le à plat.</Text>
-            <View style={styles.helpRow}><Ionicons name="remove-circle-outline" size={18} color={colors.goldLight} /><Text style={styles.helpText}>Retirez les coques ou accessoires aimantés.</Text></View>
-            <View style={styles.helpRow}><Ionicons name="hardware-chip-outline" size={18} color={colors.goldLight} /><Text style={styles.helpText}>Éloignez-vous des véhicules et objets métalliques.</Text></View>
+            <Text style={styles.modalBody}>{t("qibla.calibrateBody")}</Text>
+            <View style={styles.helpRow}><Ionicons name="remove-circle-outline" size={18} color={colors.goldLight} /><Text style={styles.helpText}>{t("qibla.helpMagnets")}</Text></View>
+            <View style={styles.helpRow}><Ionicons name="hardware-chip-outline" size={18} color={colors.goldLight} /><Text style={styles.helpText}>{t("qibla.helpMetal")}</Text></View>
             <Pressable onPress={() => { setHelpVisible(false); restart(); }} style={styles.primaryButton}>
               <LinearGradient colors={["#F4CF77", "#C98C2F"]} style={StyleSheet.absoluteFill} />
-              <Text style={styles.primaryButtonText}>Recalibrer maintenant</Text>
+              <Text style={styles.primaryButtonText}>{t("qibla.recalibrate")}</Text>
             </Pressable>
           </GlassCard>
         </View>
@@ -472,19 +464,14 @@ const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: colors.background },
   safeArea: { flex: 1 },
   backgroundImage: { opacity: 0.66 },
-  backgroundOrbTop: { position: "absolute", top: -110, right: -90, width: 270, height: 270, borderRadius: 135, backgroundColor: "rgba(102,44,137,0.26)" },
-  backgroundOrbBottom: { position: "absolute", bottom: 30, left: -140, width: 320, height: 320, borderRadius: 160, backgroundColor: "rgba(201,144,48,0.09)" },
   content: { paddingHorizontal: 17, paddingBottom: 36 },
-  offlineHint: { flexDirection: "row", alignItems: "center", alignSelf: "center", gap: 9, marginTop: 8, marginBottom: 12, paddingHorizontal: 16, paddingVertical: 10, borderRadius: 16, borderWidth: 1, borderColor: "rgba(227,181,90,0.42)", backgroundColor: "rgba(227,181,90,0.12)" },
-  offlineHintIcon: { width: 30, height: 30, borderRadius: 15, alignItems: "center", justifyContent: "center", backgroundColor: "rgba(227,181,90,0.18)" },
-  offlineHintText: { color: colors.goldLight, fontFamily: typography.sans, fontSize: 13, fontWeight: "700", letterSpacing: 0.15 },
   header: { height: 70, flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
-  headerButton: { width: 43, height: 43, borderRadius: 22, alignItems: "center", justifyContent: "center", borderWidth: 1, borderColor: "rgba(227,181,90,0.25)", backgroundColor: "rgba(18,11,30,0.62)" },
+  headerButton: { width: 43, height: 43, borderRadius: 22, alignItems: "center", justifyContent: "center", borderWidth: 1, borderColor: "rgba(227,181,90,0.25)", backgroundColor: "rgba(21,16,34,0.72)" },
   headerCopy: { flex: 1, alignItems: "center", paddingHorizontal: 8 },
   title: { color: colors.goldLight, fontFamily: typography.serifSemibold, fontSize: 34, lineHeight: 36 },
   locationLine: { maxWidth: 190, flexDirection: "row", alignItems: "center", marginTop: 1 },
   locationText: { marginLeft: 4, color: colors.textSecondary, fontFamily: typography.sans, fontSize: 10 },
-  instructionCard: { minHeight: 86, marginTop: 3, marginBottom: 14, paddingHorizontal: 16, borderRadius: 24, flexDirection: "row", alignItems: "center", borderWidth: 1, borderColor: "rgba(227,181,90,0.22)", backgroundColor: "rgba(16,9,28,0.76)" },
+  instructionCard: { minHeight: 86, marginTop: 3, marginBottom: 14, paddingHorizontal: 16, borderRadius: 24, flexDirection: "row", alignItems: "center", borderWidth: 1, borderColor: "rgba(227,181,90,0.22)", backgroundColor: "rgba(21,16,34,0.82)" },
   instructionCardAligned: { borderColor: "rgba(246,210,111,0.72)", backgroundColor: "rgba(83,58,18,0.72)", shadowColor: "#F2C65B", shadowOpacity: 0.35, shadowRadius: 18 },
   instructionIcon: { width: 46, height: 46, borderRadius: 23, alignItems: "center", justifyContent: "center", borderWidth: 1, borderColor: "rgba(227,181,90,0.38)", backgroundColor: "rgba(13,8,23,0.82)" },
   instructionIconAligned: { borderColor: colors.goldLight, backgroundColor: colors.goldLight },
@@ -514,22 +501,16 @@ const styles = StyleSheet.create({
   miniKaabaBand: { position: "absolute", top: 5, right: 0, left: 0, height: 3, backgroundColor: "#B88729" },
   qiblaPointer: { position: "absolute", top: "21%", left: "50%", width: 8, height: "31%", marginLeft: -4, borderRadius: 6, shadowColor: "#F6C24B", shadowOpacity: 0.7, shadowRadius: 9, elevation: 6 },
   pointerTail: { position: "absolute", top: "52%", left: "50%", width: 3, height: "13%", marginLeft: -1.5, borderRadius: 3, backgroundColor: "rgba(230,218,194,0.32)" },
-  centerMedallion: { width: 82, height: 82, borderRadius: 41, alignItems: "center", justifyContent: "center", backgroundColor: "rgba(5,3,11,0.88)", shadowColor: "#000", shadowOpacity: 0.85, shadowRadius: 14, elevation: 11 },
-  centerGold: { width: 74, height: 74, borderRadius: 37, alignItems: "center", justifyContent: "center" },
-  centerInner: { width: 64, height: 64, borderRadius: 32, alignItems: "center", justifyContent: "center", borderWidth: 1, borderColor: "rgba(255,240,189,0.4)", backgroundColor: "#120C1B" },
-  kaaba: { width: 34, height: 29, borderWidth: 1.5, borderColor: "#E7B752", backgroundColor: "#050408", shadowColor: "#F2C45D", shadowOpacity: 0.5, shadowRadius: 8 },
-  kaabaBand: { position: "absolute", top: 9, right: 0, left: 0, height: 5, borderTopWidth: 1, borderBottomWidth: 1, borderColor: "#E7B752", backgroundColor: "rgba(199,146,49,0.35)" },
-  kaabaDoor: { position: "absolute", right: 8, bottom: 0, width: 8, height: 15, borderWidth: 1, borderBottomWidth: 0, borderColor: "#D9A742" },
   phoneMarker: { position: "absolute", top: 2, left: "50%", width: 0, height: 0, marginLeft: -9, borderLeftWidth: 9, borderRightWidth: 9, borderBottomWidth: 15, borderLeftColor: "transparent", borderRightColor: "transparent", borderBottomColor: "#FFF0A3", transform: [{ rotate: "180deg" }] },
   detailsToggle: { height: 48, marginTop: 0, paddingHorizontal: 13, flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
   detailsToggleLeft: { flexDirection: "row", alignItems: "center" },
   detailsToggleText: { marginLeft: 8, color: colors.textSecondary, fontFamily: typography.sans, fontSize: 12, fontWeight: "700" },
-  glassCard: { overflow: "hidden", borderWidth: 1, borderColor: "rgba(223,190,129,0.19)", backgroundColor: "rgba(16,9,28,0.78)", shadowColor: "#000", shadowOpacity: 0.28, shadowRadius: 18, shadowOffset: { width: 0, height: 10 }, elevation: 7 },
+  glassCard: { overflow: "hidden", borderWidth: 1, borderColor: "rgba(223,190,129,0.19)", backgroundColor: "rgba(21,16,34,0.82)", shadowColor: "#000", shadowOpacity: 0.28, shadowRadius: 18, shadowOffset: { width: 0, height: 10 }, elevation: 7 },
   detailsCard: { borderRadius: 24, padding: 16 },
   detailRow: { flexDirection: "row", alignItems: "stretch" },
   detailDivider: { width: 1, marginHorizontal: 12, backgroundColor: "rgba(255,255,255,0.12)" },
   detailLabel: { color: colors.textMuted, fontFamily: typography.sans, fontSize: 9 },
-  detailValue: { marginTop: 4, color: colors.goldLight, fontFamily: typography.serifSemibold, fontSize: 18 },
+  detailValue: { marginTop: 4, color: colors.goldLight, fontFamily: typography.serifSemibold, fontSize: 18, fontVariant: ["lining-nums", "tabular-nums"] },
   detailValueSmall: { maxWidth: 95, marginTop: 5, color: colors.text, fontFamily: typography.sans, fontSize: 11, fontWeight: "700" },
   settingSeparator: { height: 1, marginVertical: 15, backgroundColor: "rgba(255,255,255,0.1)" },
   settingRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
@@ -555,4 +536,6 @@ const styles = StyleSheet.create({
   modalBody: { marginBottom: 15, color: colors.textSecondary, fontFamily: typography.sans, fontSize: 12.5, lineHeight: 19, textAlign: "center" },
   helpRow: { flexDirection: "row", alignItems: "center", marginTop: 10 },
   helpText: { flex: 1, marginLeft: 10, color: colors.textSecondary, fontFamily: typography.sans, fontSize: 11.5, lineHeight: 17 },
+  centerPivot: { width: 26, height: 26, borderRadius: 13, alignItems: "center", justifyContent: "center", backgroundColor: "rgba(5,3,11,0.9)", shadowColor: "#000", shadowOpacity: 0.7, shadowRadius: 8, elevation: 8 },
+  centerPivotGold: { width: 16, height: 16, borderRadius: 8 },
 });
