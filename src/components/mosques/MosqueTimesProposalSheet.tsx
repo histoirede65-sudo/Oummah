@@ -21,6 +21,7 @@ import {
   type MosqueSpecialTimes,
 } from '../../features/mosques/data/mosquePrayerUpdates';
 import { formatDateInput, formatTimeInput, isoToDateInput as isoToInput, parseDate, parseTime } from '../../features/mosques/timeInput';
+import { useI18n } from '../../i18n';
 import { colors } from '../../theme/colors';
 import { typography } from '../../theme/typography';
 
@@ -33,12 +34,12 @@ const PRAYERS = [
 ] as const;
 type PrayerKey = typeof PRAYERS[number]['key'];
 
-const KINDS: readonly { kind: MosqueProposalKind; label: string }[] = [
-  { kind: 'regular', label: 'Horaires' },
-  { kind: 'ramadan', label: 'Ramadan' },
-  { kind: 'eid_fitr', label: 'Aïd al-Fitr' },
-  { kind: 'eid_adha', label: 'Aïd al-Adha' },
-];
+const KINDS = [
+  { kind: 'regular', labelKey: 'mosque.kindRegular' },
+  { kind: 'ramadan', labelKey: 'mosque.ramadan' },
+  { kind: 'eid_fitr', labelKey: 'mosque.eidFitr' },
+  { kind: 'eid_adha', labelKey: 'mosque.eidAdha' },
+] as const satisfies readonly { kind: MosqueProposalKind; labelKey: string }[];
 
 const MAX_JUMUAH = 3;
 const MAX_EID_TIMES = 3;
@@ -83,6 +84,7 @@ type Props = {
 };
 
 export default function MosqueTimesProposalSheet({ visible, onClose, mosque, schedule, approved, special }: Props) {
+  const { t } = useI18n();
   const [kind, setKind] = useState<MosqueProposalKind>('regular');
   const [regular, setRegular] = useState<RegularForm>(() => initialRegularForm(schedule, approved));
   const [tarawih, setTarawih] = useState('');
@@ -118,7 +120,7 @@ export default function MosqueTimesProposalSheet({ visible, onClose, mosque, sch
   };
 
   const fail = (message: string) => {
-    Alert.alert('Vérifiez la saisie', message);
+    Alert.alert(t('mosque.checkInputTitle'), message);
     return null;
   };
 
@@ -130,52 +132,52 @@ export default function MosqueTimesProposalSheet({ visible, onClose, mosque, sch
       const iqama: Partial<Record<PrayerKey, IqamaRule>> = {};
       for (const { key, label } of PRAYERS) {
         const adhan = parseTime(regular.adhan[key]);
-        if (adhan === null) return fail(`L’heure de l’adhan de ${label} n’est pas valide (exemple : 13H30).`);
+        if (adhan === null) return fail(t('mosque.timesErrorAdhan', { prayer: label }));
         if (adhan) times[key] = adhan;
         const rule = regular.iqama[key];
         if (!rule.value.trim()) continue;
         if (rule.mode === 'after') {
           const minutes = Number(rule.value);
-          if (!Number.isInteger(minutes) || minutes < 0 || minutes > 90) return fail(`L’iqama de ${label} doit être entre 0 et 90 minutes après l’adhan.`);
+          if (!Number.isInteger(minutes) || minutes < 0 || minutes > 90) return fail(t('mosque.timesErrorIqamaRange', { prayer: label }));
           iqama[key] = { after: minutes };
         } else {
           const at = parseTime(rule.value);
-          if (!at) return fail(`L’heure de l’iqama de ${label} n’est pas valide (exemple : 13H45).`);
+          if (!at) return fail(t('mosque.timesErrorIqama', { prayer: label }));
           iqama[key] = { at };
         }
       }
       const jumuahTimes = [];
       for (const slot of regular.jumuah) {
         const time = parseTime(slot.time);
-        if (time === null) return fail('L’heure de Joumou’a n’est pas valide (exemple : 12H45).');
+        if (time === null) return fail(t('mosque.timesErrorJumuah'));
         if (time) jumuahTimes.push({ time, language: slot.language });
       }
       if (!Object.keys(times).length && !Object.keys(iqama).length && !jumuahTimes.length) {
-        return fail('Renseignez au moins un horaire.');
+        return fail(t('mosque.timesErrorEmpty'));
       }
       return { ...base, ...times, iqama, jumuahTimes };
     }
 
     if (kind === 'ramadan') {
       const time = parseTime(tarawih);
-      if (!time) return fail('Indiquez l’heure des tarawih (exemple : 21H30).');
+      if (!time) return fail(t('mosque.timesErrorTarawih'));
       const from = parseDate(ramadanFrom);
       const to = parseDate(ramadanTo);
-      if (!from || !to) return fail('Indiquez le premier et le dernier jour du Ramadan (exemple : 08/02/2027).');
+      if (!from || !to) return fail(t('mosque.timesErrorRamadanDates'));
       const days = (Date.parse(to) - Date.parse(from)) / 86_400_000;
-      if (days < 0 || days > 31) return fail('Le dernier jour doit suivre le premier, sur 31 jours au plus.');
+      if (days < 0 || days > 31) return fail(t('mosque.timesErrorRamadanOrder'));
       return { ...base, tarawih: time, validFrom: from, validTo: to };
     }
 
     const date = parseDate(eidDate);
-    if (!date) return fail('Indiquez la date de l’Aïd (exemple : 09/03/2027).');
+    if (!date) return fail(t('mosque.timesErrorEidDate'));
     const times = [];
     for (const value of eidTimes) {
       const time = parseTime(value);
-      if (time === null) return fail('L’heure de la prière de l’Aïd n’est pas valide (exemple : 08H30).');
+      if (time === null) return fail(t('mosque.timesErrorEidTime'));
       if (time) times.push(time);
     }
-    if (!times.length) return fail('Indiquez l’heure de la prière de l’Aïd.');
+    if (!times.length) return fail(t('mosque.timesErrorEidMissing'));
     return { ...base, eidTimes: times, validFrom: date };
   };
 
@@ -187,13 +189,13 @@ export default function MosqueTimesProposalSheet({ visible, onClose, mosque, sch
     try {
       await proposeMosquePrayerTimes(proposal);
       onClose();
-      Alert.alert('Proposition envoyée', 'Les horaires seront affichés après validation par un administrateur.');
+      Alert.alert(t('mosque.proposalSentTitle'), t('mosque.timesSentText'));
     } catch (error) {
-      Alert.alert('Envoi impossible', error instanceof Error && error.message === 'AUTH_REQUIRED'
-        ? 'Connectez-vous pour proposer des horaires.'
+      Alert.alert(t('mosque.sendFailedTitle'), error instanceof Error && error.message === 'AUTH_REQUIRED'
+        ? t('mosque.timesAuthRequired')
         : error instanceof Error && error.message === 'HORAIRE_INVALIDE'
-          ? 'Saisissez une heure valide, par exemple 13H30.'
-          : 'Impossible d’envoyer la proposition.');
+          ? t('mosque.timesInvalidHour')
+          : t('mosque.sendFailedText'));
     } finally {
       setSaving(false);
     }
@@ -208,7 +210,7 @@ export default function MosqueTimesProposalSheet({ visible, onClose, mosque, sch
     returnKeyType: 'done' as const,
   };
   const dateInputProps = {
-    placeholder: 'JJ/MM/AAAA',
+    placeholder: t('mosque.datePlaceholder'),
     placeholderTextColor: '#837789',
     keyboardType: 'number-pad' as const,
     inputMode: 'numeric' as const,
@@ -228,9 +230,9 @@ export default function MosqueTimesProposalSheet({ visible, onClose, mosque, sch
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.backdrop}>
         <ScrollView bounces={false} keyboardShouldPersistTaps="handled" contentContainerStyle={styles.scrollContent}>
           <View style={styles.sheet}>
-            <Text style={styles.title}>Proposer les horaires</Text>
+            <Text style={styles.title}>{t('mosque.timesSheetTitle')}</Text>
             <Text style={styles.subtitle}>
-              Vos horaires seront affichés à tous après validation par un administrateur.
+              {t('mosque.timesSheetSubtitle')}
             </Text>
 
             <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.kinds}>
@@ -240,7 +242,7 @@ export default function MosqueTimesProposalSheet({ visible, onClose, mosque, sch
                   onPress={() => selectKind(item.kind)}
                   style={[styles.kindChip, kind === item.kind && styles.kindChipActive]}
                 >
-                  <Text style={[styles.kindChipText, kind === item.kind && styles.kindChipTextActive]}>{item.label}</Text>
+                  <Text style={[styles.kindChipText, kind === item.kind && styles.kindChipTextActive]}>{t(item.labelKey)}</Text>
                 </Pressable>
               ))}
             </ScrollView>
@@ -275,21 +277,21 @@ export default function MosqueTimesProposalSheet({ visible, onClose, mosque, sch
                           style={[styles.input, styles.iqamaInput]}
                         />
                         <Pressable
-                          accessibilityLabel={iqama.mode === 'after' ? 'Iqama en minutes après l’adhan' : 'Iqama à heure fixe'}
+                          accessibilityLabel={iqama.mode === 'after' ? t('mosque.iqamaAfterAccessibility') : t('mosque.iqamaAtAccessibility')}
                           onPress={() => setIqama(key, { mode: iqama.mode === 'after' ? 'at' : 'after', value: '' })}
                           style={styles.unitButton}
                         >
-                          <Text style={styles.unitText}>{iqama.mode === 'after' ? '+ min' : 'heure'}</Text>
+                          <Text style={styles.unitText}>{iqama.mode === 'after' ? '+ min' : t('mosque.hour')}</Text>
                         </Pressable>
                       </View>
                     </View>
                   );
                 })}
                 <Text style={styles.help}>
-                  Iqama : appuyez sur « + min » pour choisir entre un délai après l’adhan et une heure fixe.
+                  {t('mosque.iqamaHelp')}
                 </Text>
 
-                <Text style={styles.groupTitle}>Joumou’a</Text>
+                <Text style={styles.groupTitle}>{t('mosque.jumuah')}</Text>
                 {regular.jumuah.map((slot, index) => (
                   <View key={index} style={styles.jumuahRow}>
                     <TextInput
@@ -301,14 +303,14 @@ export default function MosqueTimesProposalSheet({ visible, onClose, mosque, sch
                     <TextInput
                       value={slot.language}
                       onChangeText={(value) => setJumuah(index, { language: value })}
-                      placeholder="Langue de la khoutba (facultatif)"
+                      placeholder={t('mosque.khutbaPlaceholder')}
                       placeholderTextColor="#837789"
                       maxLength={40}
                       style={[styles.input, styles.jumuahLanguage]}
                     />
                     {regular.jumuah.length > 1 ? (
                       <Pressable
-                        accessibilityLabel="Retirer cette Joumou’a"
+                        accessibilityLabel={t('mosque.removeJumuah')}
                         onPress={() => setRegular((current) => ({ ...current, jumuah: current.jumuah.filter((_, i) => i !== index) }))}
                         style={styles.removeButton}
                       >
@@ -323,7 +325,7 @@ export default function MosqueTimesProposalSheet({ visible, onClose, mosque, sch
                     style={styles.addButton}
                   >
                     <Ionicons name="add" size={17} color={colors.goldLight} />
-                    <Text style={styles.addText}>Ajouter une Joumou’a</Text>
+                    <Text style={styles.addText}>{t('mosque.addJumuah')}</Text>
                   </Pressable>
                 ) : null}
               </>
@@ -331,15 +333,15 @@ export default function MosqueTimesProposalSheet({ visible, onClose, mosque, sch
 
             {kind === 'ramadan' ? (
               <>
-                <Text style={styles.label}>Heure des tarawih</Text>
+                <Text style={styles.label}>{t('mosque.tarawihTime')}</Text>
                 <TextInput {...timeInputProps} value={tarawih} onChangeText={(value) => setTarawih(formatTimeInput(value))} style={styles.input} />
                 <View style={styles.dateRow}>
                   <View style={styles.dateBlock}>
-                    <Text style={styles.label}>Premier jour</Text>
+                    <Text style={styles.label}>{t('mosque.firstDay')}</Text>
                     <TextInput {...dateInputProps} value={ramadanFrom} onChangeText={(value) => setRamadanFrom(formatDateInput(value))} style={styles.input} />
                   </View>
                   <View style={styles.dateBlock}>
-                    <Text style={styles.label}>Dernier jour</Text>
+                    <Text style={styles.label}>{t('mosque.lastDay')}</Text>
                     <TextInput {...dateInputProps} value={ramadanTo} onChangeText={(value) => setRamadanTo(formatDateInput(value))} style={styles.input} />
                   </View>
                 </View>
@@ -348,9 +350,9 @@ export default function MosqueTimesProposalSheet({ visible, onClose, mosque, sch
 
             {kind === 'eid_fitr' || kind === 'eid_adha' ? (
               <>
-                <Text style={styles.label}>Date de l’Aïd</Text>
+                <Text style={styles.label}>{t('mosque.eidDate')}</Text>
                 <TextInput {...dateInputProps} value={eidDate} onChangeText={(value) => setEidDate(formatDateInput(value))} style={styles.input} />
-                <Text style={styles.label}>{eidTimes.length > 1 ? 'Heures des prières' : 'Heure de la prière'}</Text>
+                <Text style={styles.label}>{eidTimes.length > 1 ? t('mosque.eidTimesPlural') : t('mosque.eidTimeSingle')}</Text>
                 {eidTimes.map((value, index) => (
                   <View key={index} style={styles.jumuahRow}>
                     <TextInput
@@ -361,7 +363,7 @@ export default function MosqueTimesProposalSheet({ visible, onClose, mosque, sch
                     />
                     {eidTimes.length > 1 ? (
                       <Pressable
-                        accessibilityLabel="Retirer cet horaire"
+                        accessibilityLabel={t('mosque.removeTime')}
                         onPress={() => setEidTimes((current) => current.filter((_, i) => i !== index))}
                         style={styles.removeButton}
                       >
@@ -373,7 +375,7 @@ export default function MosqueTimesProposalSheet({ visible, onClose, mosque, sch
                 {eidTimes.length < MAX_EID_TIMES ? (
                   <Pressable onPress={() => setEidTimes((current) => [...current, ''])} style={styles.addButton}>
                     <Ionicons name="add" size={17} color={colors.goldLight} />
-                    <Text style={styles.addText}>Ajouter une prière</Text>
+                    <Text style={styles.addText}>{t('mosque.addPrayer')}</Text>
                   </Pressable>
                 ) : null}
               </>
@@ -382,7 +384,7 @@ export default function MosqueTimesProposalSheet({ visible, onClose, mosque, sch
             <TextInput
               value={note}
               onChangeText={setNote}
-              placeholder="Note facultative (source, précision…)"
+              placeholder={t('mosque.notePlaceholder')}
               placeholderTextColor="#837789"
               maxLength={300}
               style={[styles.input, styles.noteInput]}
@@ -390,10 +392,10 @@ export default function MosqueTimesProposalSheet({ visible, onClose, mosque, sch
 
             <View style={styles.actions}>
               <Pressable onPress={onClose} style={styles.cancel}>
-                <Text style={styles.cancelText}>Annuler</Text>
+                <Text style={styles.cancelText}>{t('mosques.cancel')}</Text>
               </Pressable>
               <Pressable disabled={saving} onPress={() => void submit()} style={styles.submit}>
-                <Text style={styles.submitText}>{saving ? 'Envoi…' : 'Envoyer'}</Text>
+                <Text style={styles.submitText}>{saving ? t('mosque.sending') : t('mosque.send')}</Text>
               </Pressable>
             </View>
           </View>

@@ -19,20 +19,23 @@ import {
   type MosquePostKind,
 } from '../../features/mosques/data/mosquePosts';
 import { formatDateInput, formatTimeInput, localDateTime, parseDate, parseTime } from '../../features/mosques/timeInput';
+import { useI18n, type LanguageCode } from '../../i18n';
 import { colors } from '../../theme/colors';
 import { typography } from '../../theme/typography';
 
-function formatEventDate(post: MosquePost) {
+function formatEventDate(post: MosquePost, language: LanguageCode) {
   if (!post.startsAt) return '';
+  const locale = language === 'fr' ? 'fr-FR' : 'en-GB';
   const start = new Date(post.startsAt);
-  const day = start.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' });
-  const time = (date: Date) => date.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+  const day = start.toLocaleDateString(locale, { weekday: 'long', day: 'numeric', month: 'long' });
+  const time = (date: Date) => date.toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' });
   const end = post.endsAt ? new Date(post.endsAt) : null;
   const sameDay = end && end.toDateString() === start.toDateString();
   return `${day.charAt(0).toUpperCase()}${day.slice(1)} · ${time(start)}${end && sameDay ? ` – ${time(end)}` : ''}`;
 }
 
 function PostCard({ post }: { post: MosquePost }) {
+  const { language, t } = useI18n();
   const [expanded, setExpanded] = useState(false);
   const isEvent = post.kind === 'event';
   return (
@@ -41,9 +44,9 @@ function PostCard({ post }: { post: MosquePost }) {
         <Ionicons name={isEvent ? 'calendar-outline' : 'megaphone-outline'} size={18} color={isEvent ? colors.background : colors.goldLight} />
       </View>
       <View style={styles.postCopy}>
-        <Text style={styles.postKind}>{isEvent ? 'Événement' : 'Annonce'}</Text>
+        <Text style={styles.postKind}>{isEvent ? t('mosque.event') : t('mosque.announcement')}</Text>
         <Text style={styles.postTitle}>{post.title}</Text>
-        {isEvent ? <Text style={styles.postDate}>{formatEventDate(post)}</Text> : null}
+        {isEvent ? <Text style={styles.postDate}>{formatEventDate(post, language)}</Text> : null}
         {post.body ? (
           <Text style={styles.postBody} numberOfLines={expanded ? undefined : 3}>{post.body}</Text>
         ) : null}
@@ -55,6 +58,7 @@ function PostCard({ post }: { post: MosquePost }) {
 type Props = { mosque: { id: string; name: string } };
 
 export default function MosquePostsSection({ mosque }: Props) {
+  const { t } = useI18n();
   const [posts, setPosts] = useState<MosquePost[]>([]);
   const [sheetVisible, setSheetVisible] = useState(false);
 
@@ -68,14 +72,14 @@ export default function MosquePostsSection({ mosque }: Props) {
 
   return (
     <View style={styles.section}>
-      <Text style={styles.sectionTitle}>Annonces et événements</Text>
+      <Text style={styles.sectionTitle}>{t('mosque.postsTitle')}</Text>
       <View style={styles.card}>
         {posts.length === 0 ? (
-          <Text style={styles.empty}>Aucune annonce ni événement pour le moment.</Text>
+          <Text style={styles.empty}>{t('mosque.postsEmpty')}</Text>
         ) : posts.map((post) => <PostCard key={post.id} post={post} />)}
         <Pressable onPress={() => setSheetVisible(true)} style={({ pressed }) => [styles.proposeButton, pressed && styles.pressed]}>
           <Ionicons name="add-circle-outline" size={18} color={colors.goldLight} />
-          <Text style={styles.proposeText}>Proposer une annonce ou un événement</Text>
+          <Text style={styles.proposeText}>{t('mosque.postsPropose')}</Text>
         </Pressable>
       </View>
       <MosquePostProposalSheet visible={sheetVisible} onClose={() => setSheetVisible(false)} mosque={mosque} />
@@ -84,6 +88,7 @@ export default function MosquePostsSection({ mosque }: Props) {
 }
 
 function MosquePostProposalSheet({ visible, onClose, mosque }: { visible: boolean; onClose: () => void; mosque: Props['mosque'] }) {
+  const { t } = useI18n();
   const [kind, setKind] = useState<MosquePostKind>('event');
   const [title, setTitle] = useState('');
   const [body, setBody] = useState('');
@@ -102,44 +107,44 @@ function MosquePostProposalSheet({ visible, onClose, mosque }: { visible: boolea
     setEndTime('');
   }, [visible]);
 
-  const fail = (message: string) => Alert.alert('Vérifiez la saisie', message);
+  const fail = (message: string) => Alert.alert(t('mosque.checkInputTitle'), message);
 
   const submit = async () => {
     if (saving) return;
-    if (title.trim().length < 3) return fail('Donnez un titre (3 caractères au moins).');
+    if (title.trim().length < 3) return fail(t('mosque.postErrorTitle'));
     let startsAt: Date | undefined;
     let endsAt: Date | undefined;
     const day = date.trim() ? parseDate(date) : '';
-    if (day === null) return fail('La date n’est pas valide (exemple : 18/10/2026).');
+    if (day === null) return fail(t('mosque.postErrorDate'));
     if (kind === 'event') {
       const start = parseTime(startTime);
-      if (!day) return fail('Indiquez la date de l’événement.');
-      if (!start) return fail('Indiquez l’heure de début (exemple : 19H30).');
+      if (!day) return fail(t('mosque.postErrorEventDate'));
+      if (!start) return fail(t('mosque.postErrorStart'));
       startsAt = localDateTime(day, start);
-      if (startsAt.getTime() < Date.now()) return fail('L’événement doit être à venir.');
+      if (startsAt.getTime() < Date.now()) return fail(t('mosque.postErrorPast'));
       const end = parseTime(endTime);
-      if (end === null) return fail('L’heure de fin n’est pas valide (exemple : 21H00).');
+      if (end === null) return fail(t('mosque.postErrorEnd'));
       if (end) {
         endsAt = localDateTime(day, end);
-        if (endsAt <= startsAt) return fail('L’heure de fin doit suivre l’heure de début.');
+        if (endsAt <= startsAt) return fail(t('mosque.postErrorEndOrder'));
       }
     } else if (day) {
       // Announcement shown until the end of this day.
       endsAt = localDateTime(day, '23:59');
-      if (endsAt.getTime() < Date.now()) return fail('La date de fin doit être à venir.');
+      if (endsAt.getTime() < Date.now()) return fail(t('mosque.postErrorEndPast'));
     }
     setSaving(true);
     try {
       await proposeMosquePost({ mosqueId: mosque.id, mosqueName: mosque.name, kind, title, body, startsAt, endsAt });
       onClose();
-      Alert.alert('Proposition envoyée', 'Elle sera affichée après validation par un administrateur.');
+      Alert.alert(t('mosque.proposalSentTitle'), t('mosque.postSentText'));
     } catch (error) {
       const code = error instanceof Error ? error.message : '';
-      Alert.alert('Envoi impossible', code === 'AUTH_REQUIRED'
-        ? 'Connectez-vous pour proposer une annonce.'
+      Alert.alert(t('mosque.sendFailedTitle'), code === 'AUTH_REQUIRED'
+        ? t('mosque.postAuthRequired')
         : code === 'MOSQUE_POST_LIMIT'
-          ? 'Vous avez déjà envoyé 5 propositions aujourd’hui. Réessayez demain.'
-          : 'Impossible d’envoyer la proposition.');
+          ? t('mosque.postLimit')
+          : t('mosque.sendFailedText'));
     } finally {
       setSaving(false);
     }
@@ -152,32 +157,32 @@ function MosquePostProposalSheet({ visible, onClose, mosque }: { visible: boolea
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.backdrop}>
         <ScrollView bounces={false} keyboardShouldPersistTaps="handled" contentContainerStyle={styles.scrollContent}>
           <View style={styles.sheet}>
-            <Text style={styles.sheetTitle}>Proposer</Text>
-            <Text style={styles.sheetSubtitle}>{mosque.name} · affiché après validation par un administrateur.</Text>
+            <Text style={styles.sheetTitle}>{t('mosque.propose')}</Text>
+            <Text style={styles.sheetSubtitle}>{t('mosque.postSheetSubtitle', { mosque: mosque.name })}</Text>
 
             <View style={styles.kinds}>
-              {([['event', 'Événement'], ['announcement', 'Annonce']] as const).map(([value, label]) => (
+              {([['event', t('mosque.event')], ['announcement', t('mosque.announcement')]] as const).map(([value, label]) => (
                 <Pressable key={value} onPress={() => setKind(value)} style={[styles.kindChip, kind === value && styles.kindChipActive]}>
                   <Text style={[styles.kindText, kind === value && styles.kindTextActive]}>{label}</Text>
                 </Pressable>
               ))}
             </View>
 
-            <Text style={styles.label}>Titre</Text>
+            <Text style={styles.label}>{t('mosque.postTitleLabel')}</Text>
             <TextInput
               value={title}
               onChangeText={setTitle}
-              placeholder={kind === 'event' ? 'Conférence, cours, iftar collectif…' : 'Collecte, travaux, fermeture…'}
+              placeholder={kind === 'event' ? t('mosque.postTitleEventPlaceholder') : t('mosque.postTitleAnnouncementPlaceholder')}
               placeholderTextColor="#837789"
               maxLength={120}
               style={styles.input}
             />
 
-            <Text style={styles.label}>Détails (facultatif)</Text>
+            <Text style={styles.label}>{t('mosque.postDetails')}</Text>
             <TextInput
               value={body}
               onChangeText={setBody}
-              placeholder="Intervenant, public, lieu dans la mosquée…"
+              placeholder={t('mosque.postDetailsPlaceholder')}
               placeholderTextColor="#837789"
               maxLength={1000}
               multiline
@@ -187,29 +192,29 @@ function MosquePostProposalSheet({ visible, onClose, mosque }: { visible: boolea
             {kind === 'event' ? (
               <View style={styles.row}>
                 <View style={styles.dateBlock}>
-                  <Text style={styles.label}>Date</Text>
-                  <TextInput {...numericProps} placeholder="JJ/MM/AAAA" maxLength={10} value={date} onChangeText={(value) => setDate(formatDateInput(value))} style={styles.input} />
+                  <Text style={styles.label}>{t('mosque.date')}</Text>
+                  <TextInput {...numericProps} placeholder={t('mosque.datePlaceholder')} maxLength={10} value={date} onChangeText={(value) => setDate(formatDateInput(value))} style={styles.input} />
                 </View>
                 <View style={styles.timeBlock}>
-                  <Text style={styles.label}>Début</Text>
+                  <Text style={styles.label}>{t('mosque.start')}</Text>
                   <TextInput {...numericProps} placeholder="00H00" maxLength={5} value={startTime} onChangeText={(value) => setStartTime(formatTimeInput(value))} style={styles.input} />
                 </View>
                 <View style={styles.timeBlock}>
-                  <Text style={styles.label}>Fin</Text>
+                  <Text style={styles.label}>{t('mosque.end')}</Text>
                   <TextInput {...numericProps} placeholder="—" maxLength={5} value={endTime} onChangeText={(value) => setEndTime(formatTimeInput(value))} style={styles.input} />
                 </View>
               </View>
             ) : (
               <>
-                <Text style={styles.label}>Afficher jusqu’au (facultatif, sinon 30 jours)</Text>
-                <TextInput {...numericProps} placeholder="JJ/MM/AAAA" maxLength={10} value={date} onChangeText={(value) => setDate(formatDateInput(value))} style={styles.input} />
+                <Text style={styles.label}>{t('mosque.showUntil')}</Text>
+                <TextInput {...numericProps} placeholder={t('mosque.datePlaceholder')} maxLength={10} value={date} onChangeText={(value) => setDate(formatDateInput(value))} style={styles.input} />
               </>
             )}
 
             <View style={styles.actions}>
-              <Pressable onPress={onClose} style={styles.cancel}><Text style={styles.cancelText}>Annuler</Text></Pressable>
+              <Pressable onPress={onClose} style={styles.cancel}><Text style={styles.cancelText}>{t('mosques.cancel')}</Text></Pressable>
               <Pressable disabled={saving} onPress={() => void submit()} style={styles.submit}>
-                <Text style={styles.submitText}>{saving ? 'Envoi…' : 'Envoyer'}</Text>
+                <Text style={styles.submitText}>{saving ? t('mosque.sending') : t('mosque.send')}</Text>
               </Pressable>
             </View>
           </View>

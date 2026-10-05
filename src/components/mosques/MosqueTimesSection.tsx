@@ -6,6 +6,7 @@ import {
   type MosquePrayerTimes,
   type MosqueSpecialTimes,
 } from '../../features/mosques/data/mosquePrayerUpdates';
+import { useI18n, type LanguageCode } from '../../i18n';
 import { colors } from '../../theme/colors';
 import { typography } from '../../theme/typography';
 
@@ -17,11 +18,11 @@ const PRAYERS = [
   { key: 'isha', label: 'Isha' },
 ] as const;
 
-const SPECIAL_LABELS: Record<MosqueSpecialTimes['kind'], string> = {
-  ramadan: 'Ramadan',
-  eid_fitr: 'Aïd al-Fitr',
-  eid_adha: 'Aïd al-Adha',
-};
+const SPECIAL_LABEL_KEYS = {
+  ramadan: 'mosque.ramadan',
+  eid_fitr: 'mosque.eidFitr',
+  eid_adha: 'mosque.eidAdha',
+} as const;
 
 function todayKey() {
   const now = new Date();
@@ -32,9 +33,9 @@ function daysBetween(from: string, to: string) {
   return Math.round((Date.parse(`${to}T12:00:00`) - Date.parse(`${from}T12:00:00`)) / 86_400_000);
 }
 
-function formatDay(value: string, withWeekday = false) {
+function formatDay(value: string, language: LanguageCode, withWeekday = false) {
   try {
-    return new Date(`${value}T12:00:00`).toLocaleDateString('fr-FR', {
+    return new Date(`${value}T12:00:00`).toLocaleDateString(language === 'fr' ? 'fr-FR' : 'en-GB', {
       ...(withWeekday ? { weekday: 'long' } : {}), day: 'numeric', month: 'long',
     });
   } catch {
@@ -60,6 +61,7 @@ type Props = {
 };
 
 export default function MosqueTimesSection({ schedule, approved, special, onPropose }: Props) {
+  const { language, t } = useI18n();
   const iqamaFor = (key: typeof PRAYERS[number]['key']) => {
     const adhan = schedule?.prayers.find((prayer) => prayer.key.toLowerCase() === key);
     return adhan && schedule ? getIqamaTime(approved?.iqama?.[key], adhan, schedule.timezone) : null;
@@ -71,18 +73,21 @@ export default function MosqueTimesSection({ schedule, approved, special, onProp
 
   return (
     <View style={styles.section}>
-      <Text style={styles.sectionTitle}>Horaires de la mosquée</Text>
+      <Text style={styles.sectionTitle}>{t('mosque.mosqueTimes')}</Text>
 
       {specialTimes.map((item) => (
         <View key={item.kind} style={styles.specialCard}>
           <View style={styles.specialHeader}>
             <Ionicons name={item.kind === 'ramadan' ? 'moon-outline' : 'star-outline'} size={18} color={colors.goldLight} />
-            <Text style={styles.specialTitle}>{SPECIAL_LABELS[item.kind]}</Text>
+            <Text style={styles.specialTitle}>{t(SPECIAL_LABEL_KEYS[item.kind])}</Text>
           </View>
           {item.kind === 'ramadan' ? (
             <>
               <Text style={styles.specialDates}>
-                Du {formatDay(item.validFrom)} au {formatDay(item.validTo ?? item.validFrom)}
+                {t('mosque.dateRange', {
+                  from: formatDay(item.validFrom, language),
+                  to: formatDay(item.validTo ?? item.validFrom, language),
+                })}
               </Text>
               {item.tarawih ? (
                 <View style={styles.row}>
@@ -93,10 +98,10 @@ export default function MosqueTimesSection({ schedule, approved, special, onProp
             </>
           ) : (
             <>
-              <Text style={styles.specialDates}>{formatDay(item.validFrom, true)}</Text>
+              <Text style={styles.specialDates}>{formatDay(item.validFrom, language, true)}</Text>
               <View style={styles.row}>
-                <Text style={styles.label}>{(item.eidTimes?.length ?? 0) > 1 ? 'Prières' : 'Prière'}</Text>
-                <Text style={styles.specialValue}>{item.eidTimes?.join(' · ') ?? 'Non renseigné'}</Text>
+                <Text style={styles.label}>{(item.eidTimes?.length ?? 0) > 1 ? t('mosque.prayersLabel') : t('mosque.prayerLabel')}</Text>
+                <Text style={styles.specialValue}>{item.eidTimes?.join(' · ') ?? t('mosque.notProvided')}</Text>
               </View>
             </>
           )}
@@ -128,16 +133,18 @@ export default function MosqueTimesSection({ schedule, approved, special, onProp
 
         {jumuahTimes.length === 0 ? (
           <View style={styles.row}>
-            <Text style={styles.jumuahLabel}>Joumou’a</Text>
-            <Text style={styles.jumuahValue}>Non renseigné</Text>
+            <Text style={styles.jumuahLabel}>{t('mosque.jumuah')}</Text>
+            <Text style={styles.jumuahValue}>{t('mosque.notProvided')}</Text>
           </View>
         ) : jumuahTimes.map((slot, index) => (
           <View key={`${slot.time}-${index}`} style={styles.row}>
             <View style={styles.jumuahCopy}>
               <Text style={styles.jumuahLabel}>
-                {jumuahTimes.length > 1 ? `${index === 0 ? '1re' : `${index + 1}e`} Joumou’a` : 'Joumou’a'}
+                {jumuahTimes.length > 1
+                  ? t(index === 0 ? 'mosque.jumuahFirst' : 'mosque.jumuahNth', { number: index + 1 })
+                  : t('mosque.jumuah')}
               </Text>
-              {slot.language ? <Text style={styles.jumuahLanguage}>Khoutba : {slot.language}</Text> : null}
+              {slot.language ? <Text style={styles.jumuahLanguage}>{t('mosque.khutbaLanguage', { language: slot.language })}</Text> : null}
             </View>
             <Text style={styles.jumuahValue}>{slot.time}</Text>
           </View>
@@ -145,13 +152,15 @@ export default function MosqueTimesSection({ schedule, approved, special, onProp
 
         <Text style={styles.footnote}>
           {hasMosqueTimes && approved?.updatedAt
-            ? `Horaires communiqués par les fidèles, validés le ${new Date(approved.updatedAt).toLocaleDateString('fr-FR')}.`
-            : 'Horaires calculés : aucun fidèle n’a encore communiqué les horaires de cette mosquée.'}
+            ? t('mosque.timesValidated', {
+                date: new Date(approved.updatedAt).toLocaleDateString(language === 'fr' ? 'fr-FR' : 'en-GB'),
+              })
+            : t('mosque.timesNotCommunicated')}
         </Text>
 
         <Pressable onPress={onPropose} style={({ pressed }) => [styles.proposeButton, pressed && styles.pressed]}>
           <Ionicons name="create-outline" size={18} color={colors.background} />
-          <Text style={styles.proposeButtonText}>Proposer une modification</Text>
+          <Text style={styles.proposeButtonText}>{t('mosque.proposeChange')}</Text>
         </Pressable>
       </View>
     </View>
