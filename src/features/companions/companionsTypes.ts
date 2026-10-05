@@ -1,42 +1,48 @@
-export type CompanionCategory = "all" | "caliphs" | "promised";
+export type Localized = { fr: string; en: string };
 
-export type CompanionCalloutKind =
-  | "AUTHENTIC_HADITH"
-  | "PROPHET_WORD"
-  | "ESTABLISHED_FACT"
-  | "HISTORICAL_MARKER"
-  | "SOURCE_NOTE"
-  | "DISPUTED_ACCOUNT";
+/** Where a companion appears in the full list. */
+export type CompanionSection = "caliphs" | "promised" | "mecca" | "medina" | "women";
 
-export type CompanionSource = {
-  label: string;
-  reference: string;
-  kind: "QURAN" | "HADITH" | "SIRA" | "HISTORY";
-  grade?: string;
-  note?: string;
-};
+/** Filters on the list; a companion can belong to several. */
+export type CompanionGroup = "caliphs" | "promised" | "women" | "ansar" | "scholars";
 
-export type CompanionCallout = {
-  kind: CompanionCalloutKind;
-  text: string;
-  source?: CompanionSource;
+export type CompanionFactKey = "name" | "kunya" | "tribe" | "islam" | "death";
+
+export type CompanionQuote = {
+  kind: "quran" | "hadith";
+  /** Exact text of the official translation (Hamidullah / Saheeh) or of the collection's translation. */
+  text: Localized;
+  ref: Localized;
+  grade?: Localized;
 };
 
 export type CompanionPeriod = {
   id: string;
-  title: string;
-  dateLabel?: string;
-  paragraphs: string[];
-  callouts?: CompanionCallout[];
-  sources?: CompanionSource[];
+  title: Localized;
+  date?: Localized;
+  paragraphs: Localized[];
+  quotes?: CompanionQuote[];
+  sources?: Localized[];
 };
 
 export type Companion = {
   id: string;
-  name: string;
+  section: CompanionSection;
+  groups: CompanionGroup[];
+  name: Localized;
+  /** Name used in headers and on the caliph cards (« Abû Bakr », « Ibn ‘Abbâs »). */
+  shortName: Localized;
   arabicName: string;
-  shortTitle: string;
-  categories: CompanionCategory[];
-  summary: string;
+  arabicShort?: string;
+  /** First letter of the Arabic name, shown instead of a portrait. */
+  initial: string;
+  shortTitle: Localized;
+  /** Title or nickname (« as-Siddîq ») and what it means. */
+  laqab?: Localized;
+  laqabMeaning?: Localized;
+  years?: Localized;
+  summary: Localized;
+  facts: { key: CompanionFactKey; value: Localized }[];
   periods: CompanionPeriod[];
+  lessons: Localized[];
 };
