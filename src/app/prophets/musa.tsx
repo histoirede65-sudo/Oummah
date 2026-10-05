@@ -158,7 +158,7 @@ export default function MusaStoryScreen() {
       <SafeAreaView style={styles.safeArea}>
         <View style={styles.header}>
           <Pressable onPress={() => showIntro ? router.back() : setShowIntro(true)} style={styles.backButton}><Ionicons name="chevron-back" size={22} color={colors.text} /></Pressable>
-          <View style={styles.headerCopy}><Text style={styles.headerEyebrow}>HISTOIRES DES PROPHÈTES</Text><Text style={styles.headerTitle}>Moussa عليه السلام</Text></View>
+          <View style={styles.headerCopy}><Text style={styles.headerEyebrow}>HISTOIRES DES PROPHÈTES</Text><Text style={styles.headerTitle}>Mûsâ عليه السلام</Text></View>
           <Pressable onPress={() => setShowMap((value) => !value)} style={[styles.backButton, showMap && styles.headerButtonActive]}><Ionicons name="map-outline" size={20} color={showMap ? colors.background : colors.goldLight} /></Pressable>
         </View>
 
@@ -188,7 +188,7 @@ export default function MusaStoryScreen() {
               <View style={styles.heroRim} />
               <View style={styles.heroCopy}>
                 <Text style={styles.introLabel}>PREMIER VOYAGE IMMERSIF</Text>
-                <Text style={styles.heroTitle}>Moussa عليه السلام</Text>
+                <Text style={styles.heroTitle}>Mûsâ عليه السلام</Text>
                 <Text style={styles.introSubtitle}>Du Nil au Sinaï — un récit raconté par les passages du Coran.</Text>
                 <Pressable onPress={() => { setShowIntro(false); scrollRef.current?.scrollTo({ y: 0, animated: false }); }} style={({ pressed }) => [styles.introButton, pressed && styles.pressed]}>
                   <Text style={styles.introButtonText}>{completed.length ? "Reprendre le voyage" : "Commencer le voyage"}</Text>
@@ -199,7 +199,7 @@ export default function MusaStoryScreen() {
                     <Ionicons name="headset-outline" size={21} color={colors.goldLight} />
                     <View style={styles.audioButtonCopy}>
                       <Text style={styles.audioButtonTitle}>Écouter l’histoire complète</Text>
-                      <Text style={styles.audioButtonSubtitle}>Récit audio immersif de Moussa</Text>
+                      <Text style={styles.audioButtonSubtitle}>Récit audio immersif de Mûsâ</Text>
                     </View>
                     <Ionicons name="play-circle" size={24} color={colors.goldLight} />
                   </Pressable>
@@ -249,7 +249,7 @@ export default function MusaStoryScreen() {
           </Pressable>
 
           <View style={styles.globalProgressCard}>
-            <View style={styles.globalProgressHeader}><Text style={styles.globalProgressTitle}>Ton voyage avec Moussa</Text><Text style={styles.globalProgressValue}>{completed.length}/{MUSA_CHAPTERS.length}</Text></View>
+            <View style={styles.globalProgressHeader}><Text style={styles.globalProgressTitle}>Ton voyage avec Mûsâ</Text><Text style={styles.globalProgressValue}>{completed.length}/{MUSA_CHAPTERS.length}</Text></View>
             <View style={styles.globalTrack}><View style={[styles.globalFill, { width: `${Math.max(2, progress * 100)}%` }]} /></View>
           </View>
 

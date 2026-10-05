@@ -128,7 +128,7 @@ export default function ProphetStoryScreen() {
             <View style={styles.heroCopy}>
               <Text style={styles.introLabel}>PREMIER VOYAGE IMMERSIF</Text>
               <Text style={styles.heroTitle}>{story.name}</Text>
-              {story.id !== "muhammad" ? <Text style={styles.heroFrenchName}>{PROPHET_FRENCH_NAMES[story.id] ?? story.name}</Text> : null}
+              {PROPHET_FRENCH_NAMES[story.id] ? <Text style={styles.heroFrenchName}>{PROPHET_FRENCH_NAMES[story.id]}</Text> : null}
               <Text style={styles.introSubtitle}>{story.summary}</Text>
               <Pressable onPress={() => setShowIntro(false)} style={({ pressed }) => [styles.introButton, pressed && styles.pressed]}>
                 <Text style={styles.introButtonText}>Commencer le voyage</Text>

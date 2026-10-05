@@ -73,7 +73,7 @@ export default function ProphetsScreen() {
             <View style={styles.featuredCopy}>
               <View style={styles.availablePill}><Ionicons name="sparkles" size={12} color={colors.background} /><Text style={styles.availablePillText}>DISPONIBLE</Text></View>
               <Text style={styles.featuredArabic}>مُوسَىٰ</Text>
-              <Text style={styles.featuredTitle}>Moussa عليه السلام</Text>
+              <Text style={styles.featuredTitle}>Mûsâ عليه السلام</Text>
               <Text style={styles.featuredText}>Du Nil au Sinaï — 15 chapitres racontés à partir des passages du Coran.</Text>
               <View style={styles.progressRow}>
                 <View style={styles.progressTrack}><View style={[styles.progressFill, { width: `${Math.max(3, progress * 100)}%` }]} /></View>
@@ -111,7 +111,7 @@ export default function ProphetsScreen() {
                   </View>
                   <View style={styles.prophetCopy}>
                     <Text style={[styles.prophetName, available && styles.prophetNameAvailable]}>{prophet.name}</Text>
-                    {prophet.id !== "muhammad" ? <Text style={styles.prophetFrenchName}>{prophet.frenchName}</Text> : null}
+                    {prophet.frenchName ? <Text style={styles.prophetFrenchName}>{prophet.frenchName}</Text> : null}
                   </View>
                   <View style={[styles.statusPill, available && styles.statusPillAvailable]}>
                     <Text style={[styles.statusText, available && styles.statusTextAvailable]}>{available ? "EXPLORER" : "BIENTÔT"}</Text>
