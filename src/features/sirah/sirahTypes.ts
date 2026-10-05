@@ -12,6 +12,10 @@ export type SirahBlock =
       text: Localized;
       ref: Localized;
       grade?: Localized;
+      /** Hadiths: who reports it, when and why it was said. */
+      context?: Localized;
+      /** Hadiths: the same hadith in the app's Hadith module, when it is there. */
+      hadithId?: string;
     };
 
 export type SirahChapter = {

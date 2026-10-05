@@ -15,6 +15,8 @@ import { typography } from "../../theme/typography";
 const CARD = "#151022";
 const CARD_RAISED = "#1E1730";
 const LINE = "#2B2238";
+/** Reading text: pure white, as in the other reading modules. */
+const READING = "#FFFFFF";
 
 export default function SirahChapterPage() {
   const { chapterId } = useLocalSearchParams<{ chapterId: string }>();
@@ -83,8 +85,20 @@ export default function SirahChapterPage() {
                 <Text style={styles.quoteLabel}>{t(block.type === "quran" ? "sirah.quoteQuran" : "sirah.quoteHadith")}</Text>
                 {block.grade ? <Text style={styles.grade}>{block.grade[language]}</Text> : null}
               </View>
-              <Text style={styles.quoteText}>« {block.text[language]} »</Text>
+              {block.context ? <Text style={styles.context}>{block.context[language]}</Text> : null}
+              <Text style={styles.quoteText}>{language === "fr" ? `« ${block.text[language]} »` : `“${block.text[language]}”`}</Text>
               <Text style={styles.quoteRef}>{block.ref[language]}</Text>
+              {block.hadithId ? (
+                <Pressable
+                  onPress={() => router.push({ pathname: "/hadith/[hadithId]", params: { hadithId: block.hadithId! } })}
+                  style={({ pressed }) => [styles.openHadith, pressed && styles.pressed]}
+                  accessibilityRole="button"
+                >
+                  <Ionicons name="book-outline" size={16} color={colors.goldLight} />
+                  <Text style={styles.openHadithText}>{t("sirah.openHadith")}</Text>
+                  <Ionicons name="chevron-forward" size={16} color={colors.goldLight} />
+                </Pressable>
+              ) : null}
             </View>
           ))}
 
@@ -148,23 +162,26 @@ const styles = StyleSheet.create({
   tags: { marginTop: 10, flexDirection: "row", flexWrap: "wrap", gap: 6 },
   tag: { paddingHorizontal: 8, paddingVertical: 3, borderRadius: 7, overflow: "hidden", backgroundColor: "rgba(227,181,90,.14)", color: colors.goldLight, fontFamily: typography.sans, fontSize: 10.5, fontWeight: "700" },
   tagHadith: { backgroundColor: "rgba(80,170,110,.16)", color: "#A6DDB8" },
-  paragraph: { marginTop: 14, color: colors.text, fontFamily: typography.sans, fontSize: 16.5, lineHeight: 27 },
+  paragraph: { marginTop: 16, color: READING, fontFamily: typography.sans, fontSize: 18, lineHeight: 29 },
   quote: { marginTop: 16, padding: 15, borderRadius: 18, borderWidth: 1, borderColor: "rgba(227,181,90,.24)", backgroundColor: CARD_RAISED },
   quoteQuran: { backgroundColor: "#13221A", borderColor: "#2C4A37" },
   quoteHead: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: 8 },
   quoteLabel: { color: colors.goldLight, fontFamily: typography.sans, fontSize: 9.5, fontWeight: "900", letterSpacing: 1.1 },
   grade: { flexShrink: 1, paddingHorizontal: 7, paddingVertical: 2, borderRadius: 6, overflow: "hidden", backgroundColor: "rgba(80,170,110,.16)", color: "#A6DDB8", fontFamily: typography.sans, fontSize: 9.5, fontWeight: "700" },
-  quoteText: { marginTop: 8, color: colors.text, fontFamily: typography.serif, fontSize: 19, lineHeight: 27 },
-  quoteRef: { marginTop: 9, color: colors.textMuted, fontFamily: typography.sans, fontSize: 11.5 },
+  context: { marginTop: 9, color: colors.textSecondary, fontFamily: typography.sans, fontSize: 14.5, lineHeight: 22 },
+  quoteText: { marginTop: 10, color: READING, fontFamily: typography.sans, fontSize: 18, lineHeight: 28, fontWeight: "500" },
+  quoteRef: { marginTop: 10, color: colors.textSecondary, fontFamily: typography.sans, fontSize: 13 },
+  openHadith: { marginTop: 12, minHeight: 44, paddingHorizontal: 12, borderRadius: 14, borderWidth: 1, borderColor: "rgba(227,181,90,.30)", backgroundColor: "rgba(227,181,90,.07)", flexDirection: "row", alignItems: "center", gap: 8 },
+  openHadithText: { flex: 1, color: colors.goldLight, fontFamily: typography.sans, fontSize: 14, fontWeight: "700" },
   note: { marginTop: 22, paddingLeft: 13, borderLeftWidth: 2, borderLeftColor: colors.goldLight },
   noteLabel: { color: colors.goldLight, fontFamily: typography.sans, fontSize: 10, fontWeight: "900", letterSpacing: 1.1 },
-  noteText: { marginTop: 4, color: colors.textSecondary, fontFamily: typography.sans, fontSize: 14, lineHeight: 21 },
+  noteText: { marginTop: 4, color: READING, fontFamily: typography.sans, fontSize: 16, lineHeight: 25 },
   lessons: { marginTop: 24, padding: 16, borderRadius: 20, borderWidth: 1, borderColor: LINE, backgroundColor: CARD, gap: 10 },
   lessonsLabel: { color: colors.goldLight, fontFamily: typography.sans, fontSize: 10, fontWeight: "900", letterSpacing: 1.2 },
   lesson: { flexDirection: "row", gap: 10 },
-  lessonDot: { width: 6, height: 6, marginTop: 8, borderRadius: 3, backgroundColor: colors.goldLight },
-  lessonText: { flex: 1, color: colors.text, fontFamily: typography.sans, fontSize: 15, lineHeight: 22 },
-  sources: { marginTop: 16, color: colors.textMuted, fontFamily: typography.sans, fontSize: 11.5, lineHeight: 17 },
+  lessonDot: { width: 6, height: 6, marginTop: 10, borderRadius: 3, backgroundColor: colors.goldLight },
+  lessonText: { flex: 1, color: READING, fontFamily: typography.sans, fontSize: 17, lineHeight: 26 },
+  sources: { marginTop: 16, color: colors.textSecondary, fontFamily: typography.sans, fontSize: 13, lineHeight: 19 },
   nav: { marginTop: 22, flexDirection: "row", gap: 8 },
   navCard: { flex: 1, minHeight: 74, padding: 12, borderRadius: 16, borderWidth: 1, borderColor: LINE, backgroundColor: CARD, justifyContent: "center" },
   navNext: { backgroundColor: colors.goldLight, borderColor: colors.goldLight, alignItems: "flex-end" },

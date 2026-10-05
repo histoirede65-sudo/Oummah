@@ -2554,4 +2554,5 @@ export const en: Partial<Record<TranslationKey, string>> = {
   'pilgrimage.reminder.j12Body': 'The three pillars, in order. Leaving early is subject to conditions: see the book.',
   'pilgrimage.reminder.j13Title': 'Jamarat of the 13th',
   'pilgrimage.reminder.j13Body': 'If you stayed in Mina: the three pillars, in order.',
+  'sirah.openHadith': 'Read the full hadith',
 };

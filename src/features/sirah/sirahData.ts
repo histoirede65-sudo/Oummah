@@ -271,6 +271,10 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
       },
       {
         "type": "hadith",
+        "context": {
+          "fr": "Anas ibn Mâlik rapporte cet événement de l’enfance du Prophète ﷺ, quand il vivait chez sa nourrice Halîma, dans le désert. C’est l’« ouverture de la poitrine ».",
+          "en": "Anas ibn Malik relates this event from the Prophet's ﷺ childhood, when he lived with his wet nurse Halima in the desert. It is known as the \"opening of the chest\"."
+        },
         "text": {
           "fr": "Il l’a attrapé, l’a allongé sur le sol, lui a ouvert la poitrine, a sorti son cœur, puis en a extrait un caillot de sang en disant : « C’était la part de Satan en toi. » Ensuite, il l’a lavé avec l’eau de Zamzam dans un bassin en or, puis il a remis le cœur à sa place.",
           "en": "He took hold of him and lay him prostrate on the ground and tore open his breast and took out the heart from it and then extracted a blood-clot out of it and said:That was the part of Satan in thee. And then he washed it with the water of Zamzam in a golden basin and then it was joined together and restored to it place."
@@ -282,7 +286,8 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
         "grade": {
           "fr": "Sahîh",
           "en": "Sahih"
-        }
+        },
+        "hadithId": "c13393ce-8189-4195-b375-c2002cbd14ca"
       },
       {
         "type": "text",
@@ -398,6 +403,10 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
       },
       {
         "type": "hadith",
+        "context": {
+          "fr": "Abû Hurayra rapporte cette parole. Le Prophète ﷺ y rappelle à ses compagnons qu’il avait gagné sa vie, jeune, comme berger à La Mecque, comme les prophètes avant lui.",
+          "en": "Abu Hurayra reports this saying. The Prophet ﷺ reminds his companions that as a young man he earned his living as a shepherd in Mecca, like the prophets before him."
+        },
         "text": {
           "fr": "Allah n’a envoyé aucun prophète sans qu’il n’ait gardé des moutons. » Ses compagnons lui ont demandé : « Et toi aussi ? » Le Prophète (ﷺ) a répondu : « Oui, je gardais les moutons des gens de La Mecque pour quelques qirats.",
           "en": "Allah did not send any prophet but shepherded sheep.\" His companions asked him, \"Did you do the same?\" The Prophet (ﷺ) replied, \"Yes, I used to shepherd the sheep of the people of Mecca for some Qirats"
@@ -409,7 +418,8 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
         "grade": {
           "fr": "Sahîh",
           "en": "Sahih"
-        }
+        },
+        "hadithId": "aed9b0af-a151-4f38-af9f-8df5327926fc"
       },
       {
         "type": "text",
@@ -563,6 +573,10 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
       },
       {
         "type": "hadith",
+        "context": {
+          "fr": "‘Â’isha raconte comment la révélation a commencé, quelque temps avant la première rencontre avec l’ange, quand le Prophète ﷺ avait près de quarante ans.",
+          "en": "'A'isha describes how revelation began, some time before the first meeting with the angel, when the Prophet ﷺ was nearly forty."
+        },
         "text": {
           "fr": "Le début de la Révélation divine à l’Envoyé d’Allah (ﷺ) s’est manifesté par de bons rêves qui se réalisaient aussi clairement que la lumière du jour. Ensuite, il a ressenti un amour pour la solitude. Il allait alors se retirer dans la grotte de Hira où il adorait Allah seul, plusieurs jours d’affilée, avant de ressentir l’envie de retrouver sa famille. Il emportait avec lui de quoi se nourrir pendant son séjour, puis revenait auprès de son épouse Khadija pour reprendre des provisions,",
           "en": "The commencement of the Divine Inspiration to Allah's Messenger (ﷺ) was in the form of good dreams which came true like bright daylight, and then the love of seclusion was bestowed upon him. He used to go in seclusion in the cave of Hira where he used to worship (Allah alone) continuously for many days before his desire to see his family. He used to take with him the journey food for the stay and then come back to (his wife) Khadija to take his food likewise again"
@@ -621,6 +635,10 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
       },
       {
         "type": "hadith",
+        "context": {
+          "fr": "Le Prophète ﷺ raconte lui-même la première révélation, dans la grotte de Hirâ’, pendant le mois de Ramadan. ‘Â’isha a transmis son récit.",
+          "en": "The Prophet ﷺ himself recounts the first revelation in the cave of Hira, during the month of Ramadan. 'A'isha passed on his account."
+        },
         "text": {
           "fr": "L’ange m’a alors saisi avec force et m’a serré si fort que je n’ai plus pu supporter, puis il m’a relâché et m’a de nouveau demandé de lire. J’ai répondu : “Je ne sais pas lire.” Il m’a saisi une seconde fois et m’a serré jusqu’à ce que je ne puisse plus supporter, puis il m’a relâché et m’a encore demandé de lire. J’ai répondu encore : “Je ne sais pas lire (ou que dois-je lire) ?” Il m’a alors saisi une troisième fois, m’a serré, puis m’a relâché et a dit : “Lis au nom de ton Seigneur qui a créé, qui a créé l’homme d’une adhérence. Lis ! Et ton Seigneur est le plus Généreux.”",
           "en": "The angel caught me (forcefully) and pressed me so hard that I could not bear it any more. He then released me and again asked me to read and I replied, 'I do not know how to read.' Thereupon he caught me again and pressed me a second time till I could not bear it any more. He then released me and again asked me to read but again I replied, 'I do not know how to read (or what shall I read)?' Thereupon he caught me for the third time and pressed me, and then released me and said, 'Read in the name of your Lord, who has created (all that exists), created man from a clot. Read! And your Lord is the Most Generous."
@@ -661,6 +679,10 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
       },
       {
         "type": "hadith",
+        "context": {
+          "fr": "Khadîja répond ainsi à son mari, qui rentre bouleversé de Hirâ’ et lui dit avoir eu peur pour lui-même. Elle le rassure en rappelant ses qualités.",
+          "en": "Khadija answers her husband this way when he comes back shaken from Hira and tells her he feared for himself. She reassures him by recalling his qualities."
+        },
         "text": {
           "fr": "Jamais ! Par Allah, Allah ne t’abandonnera jamais. Tu entretiens les liens de parenté, tu aides les pauvres et les démunis, tu es généreux envers tes invités et tu soutiens ceux qui sont frappés par le malheur.",
           "en": "Never! By Allah, Allah will never disgrace you. You keep good relations with your kith and kin, help the poor and the destitute, serve your guests generously and assist the deserving calamity-afflicted ones."
@@ -712,6 +734,10 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
       },
       {
         "type": "hadith",
+        "context": {
+          "fr": "Waraqa ibn Nawfal, cousin de Khadîja et connaisseur des Écritures, parle ainsi après avoir entendu le récit de la première révélation.",
+          "en": "Waraqa ibn Nawfal, Khadija's cousin and a man who knew the Scriptures, speaks these words after hearing the account of the first revelation."
+        },
         "text": {
           "fr": "C’est le même gardien des secrets (l’ange Jibrîl) qu’Allah a envoyé à Mûsâ. J’aimerais être jeune et vivre jusqu’au jour où ton peuple te chassera.” L’Envoyé d’Allah (ﷺ) a demandé : “Vont-ils vraiment me chasser ?” Waraqa a répondu que oui et a dit : “Personne n’est venu avec quelque chose de semblable à ce que tu as apporté sans être traité avec hostilité. Et si je vis jusqu’au jour où tu seras chassé, je te soutiendrai de toutes mes forces.",
           "en": "This is the same one who keeps the secrets (angel Gabriel) whom Allah had sent to Moses. I wish I were young and could live up to the time when your people would turn you out.\" Allah's Messenger (ﷺ) asked, \"Will they drive me out?\" Waraqa replied in the affirmative and said, \"Anyone (man) who came with something similar to what you have brought was treated with hostility; and if I should remain alive till the day when you will be turned out then I would support you strongly."
@@ -734,6 +760,10 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
       },
       {
         "type": "hadith",
+        "context": {
+          "fr": "Jâbir ibn ‘Abd Allâh rapporte ce récit du Prophète ﷺ : après une interruption de la révélation, il revoit l’ange. Les premiers versets de la sourate al-Muddaththir descendent alors.",
+          "en": "Jabir ibn 'Abd Allah reports this account of the Prophet ﷺ: after a pause in revelation, he sees the angel again. The first verses of Surat al-Muddaththir are then revealed."
+        },
         "text": {
           "fr": "Pendant que je marchais, j'ai entendu des voix venant du ciel. J'ai levé les yeux et, voilà ! J'ai vu le même Ange qui était venu à moi dans la grotte de Hira, assis sur une chaise entre le ciel et la terre. J'ai eu très peur de lui (alors je suis rentré chez moi) et j'ai dit : Enveloppez-moi dans des vêtements ! Ils m'ont enveloppé.",
           "en": "While I was walking, I heard voices from the sky. I looked up, and behold ! I saw the same Angel who came to me in the cave of Hira' sitting on a chair between the sky and the earth. I was too much afraid of him (so I returned to my house) and said, 'Fold me up in garments!' They wrapped me up."
@@ -772,7 +802,7 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
         "en": "Those who knew the Scriptures recognised the same source of revelation as that of Moses."
       }
     ],
-    "minutes": 1
+    "minutes": 2
   },
   {
     "id": "first-believers",
@@ -802,6 +832,10 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
       },
       {
         "type": "hadith",
+        "context": {
+          "fr": "‘Ammâr ibn Yâsir décrit les tout premiers jours de l’Islam à La Mecque, quand les croyants n’étaient qu’une poignée.",
+          "en": "'Ammar ibn Yasir describes the very first days of Islam in Mecca, when the believers were only a handful."
+        },
         "text": {
           "fr": "J’ai vu le Messager d’Allah (ﷺ) et il n’y avait avec lui que cinq esclaves, deux femmes et Abou Bakr",
           "en": "I saw Allah's Messenger (ﷺ) and there was none with him but five slaves, two women and Abu Bakr"
@@ -880,6 +914,10 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
       },
       {
         "type": "hadith",
+        "context": {
+          "fr": "Ibn ‘Abbâs rapporte la scène. Quand Allah ordonna au Prophète ﷺ d’avertir ses plus proches parents (sourate ash-Shu‘arâ’, 26:214), il monta sur le Safâ et appela les clans de Quraysh.",
+          "en": "Ibn 'Abbas reports the scene. When Allah commanded the Prophet ﷺ to warn his closest kin (Surat ash-Shu'ara', 26:214), he climbed as-Safa and called the clans of Quraysh."
+        },
         "text": {
           "fr": "Supposons que je vous dise qu’une cavalerie ennemie est dans la vallée et s’apprête à vous attaquer, me croiriez-vous ? » Ils ont répondu : « Oui, car nous ne t’avons jamais entendu dire autre chose que la vérité. » Il a alors dit : « Je suis un avertisseur pour vous face à un terrible châtiment. » Abu Lahab a dit (au Prophète) : « Que tes mains périssent toute cette journée ! Est-ce pour cela que tu nous as rassemblés ?",
           "en": "Suppose I told you that there is an (enemy) cavalry in the valley intending to attack you, would you believe me?\" They said, \"Yes, for we have not found you telling anything other than the truth.\" He then said, \"I am a warner to you in face of a terrific punishment.\" Abu Lahab said (to the Prophet) \"May your hands perish all this day. Is it for this purpose you have gathered us?"
@@ -937,6 +975,10 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
       },
       {
         "type": "hadith",
+        "context": {
+          "fr": "‘Urwa demanda à ‘Abd Allâh ibn ‘Amr quelle était la pire chose que les polythéistes avaient faite au Prophète ﷺ. Il raconta cette agression, près de la Ka‘ba.",
+          "en": "'Urwa asked 'Abd Allah ibn 'Amr what was the worst thing the idolaters had done to the Prophet ﷺ. He described this attack, near the Ka'ba."
+        },
         "text": {
           "fr": "Abu Bakr est intervenu, l’a attrapé par l’épaule et l’a éloigné du Prophète (ﷺ), puis il a dit : ‘Voulez-vous tuer un homme simplement parce qu’il dit : Mon Seigneur est Allah ?",
           "en": "Abu Bakr came and caught him by his shoulder and pushed him away from the Prophet (ﷺ) and said, \"Do you want to kill a man just because he says, 'My Lord is Allah?"
@@ -1068,6 +1110,10 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
       },
       {
         "type": "hadith",
+        "context": {
+          "fr": "‘Abd Allâh ibn Mas‘ûd, l’un des premiers musulmans, résume ainsi ce que la conversion de ‘Umar changea pour des croyants encore peu nombreux et persécutés.",
+          "en": "'Abd Allah ibn Mas'ud, one of the first Muslims, sums up this way what 'Umar's conversion changed for believers who were still few and persecuted."
+        },
         "text": {
           "fr": "Nous avons été forts depuis qu’`Umar a embrassé l’islam",
           "en": "We have been powerful since `Umar embraced Islam"
@@ -1177,6 +1223,10 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
       },
       {
         "type": "hadith",
+        "context": {
+          "fr": "Al-Musayyab rapporte la scène : Abû Tâlib est sur son lit de mort, entouré d’Abû Jahl et d’un autre chef de Quraysh. Le Prophète ﷺ l’invite une dernière fois à l’Islam.",
+          "en": "Al-Musayyab reports the scene: Abu Talib is on his deathbed, with Abu Jahl and another chief of Quraysh beside him. The Prophet ﷺ invites him to Islam one last time."
+        },
         "text": {
           "fr": "Ô mon oncle ! Dis : Il n’y a de divinité digne d’être adorée qu’Allah, une parole avec laquelle je plaiderai en ta faveur auprès d’Allah.",
           "en": "O my uncle! Say: None has the right to be worshipped except Allah, an expression I will defend your case with, before Allah."
@@ -1188,7 +1238,8 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
         "grade": {
           "fr": "Sahîh",
           "en": "Sahih"
-        }
+        },
+        "hadithId": "ff88d13c-e631-4f68-9eb1-4fe50beb2287"
       },
       {
         "type": "text",
@@ -1262,6 +1313,10 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
       },
       {
         "type": "hadith",
+        "context": {
+          "fr": "Des années plus tard, ‘Â’isha demanda au Prophète ﷺ s’il avait vécu un jour plus dur que Uhud. Il raconta le retour de Tâ’if, rejeté et blessé, et la venue de l’ange des montagnes.",
+          "en": "Years later, 'A'isha asked the Prophet ﷺ whether he had known a harder day than Uhud. He told of the return from Ta'if, rejected and wounded, and the coming of the angel of the mountains."
+        },
         "text": {
           "fr": "Ô Muhammad ! Ordonne ce que tu veux. Si tu veux, je ferai tomber sur eux les deux montagnes.” Le Prophète ﷺ a dit : « Non, mais j’espère qu’Allah fera naître d’eux des gens qui adoreront Allah seul, sans rien Lui associer.",
           "en": "O Muhammad! Order what you wish. If you like, I will let Al-Akh-Shabain (i.e. two mountains) fall on them.\" The Prophet (ﷺ) said, \"No but I hope that Allah will let them beget children who will worship Allah Alone, and will worship None besides Him"
@@ -1273,7 +1328,8 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
         "grade": {
           "fr": "Sahîh",
           "en": "Sahih"
-        }
+        },
+        "hadithId": "40047b4e-71e3-4547-905f-fbedbb8ddefe"
       },
       {
         "type": "text",
@@ -1336,6 +1392,10 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
       },
       {
         "type": "hadith",
+        "context": {
+          "fr": "Anas ibn Mâlik rapporte le récit du Voyage nocturne fait par le Prophète ﷺ. Ici, sur le conseil de Mûsâ, il retourne demander l’allègement des prières prescrites.",
+          "en": "Anas ibn Malik reports the Prophet's ﷺ account of the Night Journey. Here, on Moses' advice, he goes back to ask for the prescribed prayers to be lightened."
+        },
         "text": {
           "fr": "Je suis retourné vers mon Seigneur et j’ai dit : “Mon Seigneur, allège la charge de ma communauté.”",
           "en": "I went back to my Lord and said: My Lord, make things lighter for my Ummah."
@@ -1394,6 +1454,10 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
       },
       {
         "type": "hadith",
+        "context": {
+          "fr": "‘Ubâda ibn as-Sâmit, l’un des hommes de Médine présents ce soir-là près de Minâ, rapporte les termes du premier serment d’al-‘Aqaba.",
+          "en": "'Ubada ibn as-Samit, one of the men of Medina present that night near Mina, reports the terms of the first pledge of al-'Aqaba."
+        },
         "text": {
           "fr": "Jurez-moi fidélité pour : 1. N'associer personne à Allah dans l'adoration. 2. Ne pas voler. 3. Ne pas commettre d'adultère. 4. Ne pas tuer vos enfants. 5. Ne pas accuser injustement une personne innocente. 6. Ne pas désobéir lorsqu'on vous ordonne de faire le bien.",
           "en": "Swear allegiance to me for: 1. Not to join anything in worship along with Allah. 2. Not to steal. 3. Not to commit illegal sexual intercourse. 4. Not to kill your children. 5. Not to accuse an innocent person (to spread such an accusation among people). 6. Not to be disobedient (when ordered) to do good deed."
@@ -1480,6 +1544,10 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
       },
       {
         "type": "hadith",
+        "context": {
+          "fr": "‘Â’isha raconte ce moment : le Prophète ﷺ arrive chez son père Abû Bakr en pleine chaleur de midi pour annoncer que l’émigration vers Médine est permise.",
+          "en": "'A'isha recounts this moment: the Prophet ﷺ arrives at her father Abu Bakr's house in the midday heat to announce that emigration to Medina is permitted."
+        },
         "text": {
           "fr": "J’ai reçu la permission d’émigrer. » Abu Bakr a dit : « Puis-je t’accompagner ? Que mon père soit sacrifié pour toi, ô Messager d’Allah (ﷺ) ! » Le Messager d’Allah (ﷺ) a dit : « Oui. »",
           "en": "I have been given permission to migrate.\" Abu Bakr said, \"Shall I accompany you? May my father be sacrificed for you, O Allah's Messenger (ﷺ)!\" Allah's Messenger (ﷺ) said, \"Yes.\""
@@ -1551,6 +1619,10 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
       },
       {
         "type": "hadith",
+        "context": {
+          "fr": "Abû Bakr raconte ces instants à Anas : caché avec le Prophète ﷺ dans la grotte de Thawr, il voit les pieds des poursuivants à l’entrée.",
+          "en": "Abu Bakr told Anas about these moments: hidden with the Prophet ﷺ in the cave of Thawr, he could see the feet of their pursuers at the entrance."
+        },
         "text": {
           "fr": "J’ai dit au Prophète (ﷺ) alors que nous étions dans la grotte : « Si l’un d’eux regarde sous ses pieds, il nous verra. » Il a dit : « Ô Abou Bakr ! Que penses-tu de deux personnes dont le troisième est Allah ?",
           "en": "I said to the Prophet (ﷺ) while I was in the Cave. \"If any of them should look under his feet, he would see us.\" He said, \"O Abu Bakr! What do you think of two (persons) the third of whom is Allah?"
@@ -1619,6 +1691,10 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
       },
       {
         "type": "hadith",
+        "context": {
+          "fr": "Suraqa ibn Mâlik raconte lui-même sa poursuite. Il voulait la récompense promise par Quraysh pour la capture du Prophète ﷺ ; il se convertit des années plus tard.",
+          "en": "Suraqa ibn Malik tells of his own pursuit. He wanted the reward Quraysh had promised for capturing the Prophet ﷺ; he became Muslim years later."
+        },
         "text": {
           "fr": "Quand j’ai entendu la récitation du Coran par le Messager d’Allah (ﷺ), qui ne regardait pas autour de lui alors qu’Abu Bakr le faisait souvent, soudain les pattes avant de mon cheval se sont enfoncées dans le sol jusqu’aux genoux et je suis tombé. Je l’ai réprimandé, il s’est relevé mais avait du mal à sortir ses pattes, et quand il s’est redressé, la poussière est montée comme de la fumée. J’ai de nouveau tiré les flèches, et le tirage que je n’aimais pas est encore sorti. Alors je les ai appelés pour les rassurer. Ils se sont arrêtés, je suis remonté et je suis allé vers eux. Quand j’ai vu que je ne pouvais pas leur faire de mal, j’ai compris que la cause du Messager d’Allah (ﷺ) allait triompher.",
           "en": "When I heard the recitation of the Quran by Allah's Messenger (ﷺ) who did not look hither and thither while Abu Bakr was doing it often, suddenly the forelegs of my horse sank into the ground up to the knees, and I fell down from it. Then I rebuked it and it got up but could hardly take out its forelegs from the ground, and when it stood up straight again, its fore-legs caused dust to rise up in the sky like smoke. Then again I drew lots with the divining arrows, and the lot which I disliked, came out. So I called upon them to feel secure. They stopped, and I remounted my horse and went to them. When I saw how I had been hampered from harming them, it came to my mind that the cause of Allah's Messenger (ﷺ) (i.e. Islam) will become victorious."
@@ -1680,6 +1756,10 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
       },
       {
         "type": "hadith",
+        "context": {
+          "fr": "Al-Barâ’ ibn ‘Âzib, qui était alors un jeune garçon à Médine, se souvient de l’arrivée du Prophète ﷺ après l’émigration.",
+          "en": "Al-Bara' ibn 'Azib, then a young boy in Medina, remembers the arrival of the Prophet ﷺ after the emigration."
+        },
         "text": {
           "fr": "jamais vu les gens de Médine aussi joyeux qu’à l’arrivée de l’Envoyé d’Allah, car même les jeunes esclaves disaient : « Le Messager d’Allah (ﷺ) est arrivé ! »",
           "en": "never seen the people of Medina so joyful as they were on the arrival of Allah's Apostle, for even the slave girls were saying, \"Allah's Messenger (ﷺ) has arrived!\""
@@ -1748,6 +1828,10 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
       },
       {
         "type": "hadith",
+        "context": {
+          "fr": "Anas ibn Mâlik rapporte l’achat du terrain de la mosquée de Médine : le Prophète ﷺ proposa au clan des Banû an-Najjâr de leur payer cet enclos.",
+          "en": "Anas ibn Malik reports the purchase of the land for the mosque in Medina: the Prophet ﷺ offered to pay the Banu an-Najjar clan for this walled plot."
+        },
         "text": {
           "fr": "Ô Banu An-Najjar ! Proposez-moi le prix de ce terrain clos. » Ils ont répondu : « Non ! Par Allah ! Nous n'en demandons le prix qu'à Allah.",
           "en": "O Banu An-Najjar! Suggest to me the price of this (walled) piece of land of yours.\" They replied, \"No! By Allah! We do not demand its price except from Allah."
@@ -1897,6 +1981,10 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
       },
       {
         "type": "hadith",
+        "context": {
+          "fr": "Ibn Mas‘ûd rapporte cette parole d’al-Miqdâd. Avant Badr, le Prophète ﷺ demandait l’avis de ses compagnons sur le combat qui s’annonçait.",
+          "en": "Ibn Mas'ud reports these words of al-Miqdad. Before Badr, the Prophet ﷺ was asking his companions' opinion about the coming battle."
+        },
         "text": {
           "fr": "Nous ne dirons pas comme l'ont dit les gens de Mûsâ : “Va, toi et ton Seigneur, et combattez tous les deux.” Mais nous combattrons à ta droite, à ta gauche, devant toi et derrière toi.",
           "en": "We will not say as the People of Moses said: Go you and your Lord and fight you two. (5.27). But we shall fight on your right and on your left and in front of you and behind you."
@@ -1919,6 +2007,10 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
       },
       {
         "type": "hadith",
+        "context": {
+          "fr": "‘Umar, rapporté par Ibn ‘Abbâs : le jour de Badr, le Prophète ﷺ voit mille combattants ennemis face à environ trois cents musulmans. Il se tourne vers la qibla et invoque ainsi.",
+          "en": "'Umar, as reported by Ibn 'Abbas: on the day of Badr, the Prophet ﷺ sees a thousand enemy fighters facing about three hundred Muslims. He turns to the qibla and supplicates this way."
+        },
         "text": {
           "fr": "Ô Allah, accomplis ce que Tu m’as promis. Ô Allah, réalise ce que Tu m’as promis. Ô Allah, si ce petit groupe de musulmans est anéanti, Tu ne seras plus adoré sur cette terre.",
           "en": "O Allah, accomplish for me what Thou hast promised to me. O Allah, bring about what Thou hast promised to me. O Allah, if this small band of Muslims is destroyed. Thou will not be worshipped on this earth."
@@ -1930,7 +2022,8 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
         "grade": {
           "fr": "Sahîh",
           "en": "Sahih"
-        }
+        },
+        "hadithId": "da33430d-85f7-4e5a-94ea-aa992ed98d9b"
       },
       {
         "type": "text",
@@ -1998,6 +2091,10 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
       },
       {
         "type": "hadith",
+        "context": {
+          "fr": "Al-Barâ’ ibn ‘Âzib rapporte l’ordre donné aux cinquante archers postés sur la colline avant la bataille. Leur départ, plus tard, renversa le cours du combat.",
+          "en": "Al-Bara' ibn 'Azib reports the order given to the fifty archers posted on the hill before the battle. Their leaving it later turned the tide of the fight."
+        },
         "text": {
           "fr": "Ne quittez pas cet endroit ; si vous voyez que nous vainquons l'ennemi, ne partez pas d'ici, et si vous voyez qu'ils nous battent, ne venez pas nous aider.",
           "en": "Do not leave this place; if you should see us conquering the enemy, do not leave this place, and if you should see them conquering us, do not (come to) help us,\""
@@ -2027,6 +2124,10 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
       },
       {
         "type": "hadith",
+        "context": {
+          "fr": "Anas ibn Mâlik rapporte cette parole, dite à Uhud alors que le Prophète ﷺ essuyait le sang de son visage blessé. Allah révéla ensuite un verset pour lui rappeler que la décision Lui revient.",
+          "en": "Anas ibn Malik reports these words, said at Uhud as the Prophet ﷺ wiped the blood from his wounded face. Allah then revealed a verse reminding him that the decision is His."
+        },
         "text": {
           "fr": "Comment ces gens peuvent-ils espérer le salut alors qu’ils ont blessé leur Prophète et lui ont cassé une dent, alors qu’il les appelait vers Allah ?",
           "en": "How will these people attain salvation who have wounded their Prophet and broken his tooth while he called them towards God?"
@@ -2102,6 +2203,10 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
       },
       {
         "type": "hadith",
+        "context": {
+          "fr": "Jâbir ibn ‘Abd Allâh raconte le creusement de la tranchée, en l’an 5. Les compagnons butaient sur un rocher que personne ne parvenait à briser.",
+          "en": "Jabir ibn 'Abd Allah describes the digging of the trench in year 5. The companions had hit a rock that no one could break."
+        },
         "text": {
           "fr": "Il se leva, et une pierre était attachée à son ventre car nous n’avions rien mangé depuis trois jours. Le Prophète (ﷺ) prit la pioche, frappa le rocher qui devint comme du sable.",
           "en": "Then he got up, and a stone was tied to his belly for we had not eaten anything for three days. So the Prophet (ﷺ) took the spade and struck the big solid rock and it became like sand."
@@ -2113,7 +2218,8 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
         "grade": {
           "fr": "Sahîh",
           "en": "Sahih"
-        }
+        },
+        "hadithId": "024b6ab4-09cc-43d1-bc42-2c4dc4efc2a3"
       },
       {
         "type": "text",
@@ -2124,6 +2230,10 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
       },
       {
         "type": "hadith",
+        "context": {
+          "fr": "Anas ibn Mâlik rapporte que le Prophète ﷺ chantait ces mots avec les Ansâr et les Émigrants qui creusaient, affamés, dans le froid, pour les encourager.",
+          "en": "Anas ibn Malik reports that the Prophet ﷺ sang these words with the Ansar and the Emigrants who were digging, hungry, in the cold, to encourage them."
+        },
         "text": {
           "fr": "Ô Allah ! La vraie vie est celle de l’au-delà, alors pardonne aux Ansar et aux Émigrants.",
           "en": "O Allah! The real life is the life of the Hereafter, so please forgive Ansar and the Emigrants."
@@ -2221,6 +2331,10 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
       },
       {
         "type": "hadith",
+        "context": {
+          "fr": "‘Umar raconte sa propre réaction au traité d’al-Hudaybiya, dont les conditions lui semblaient injustes. Il regretta plus tard d’avoir ainsi questionné le Prophète ﷺ.",
+          "en": "'Umar recounts his own reaction to the treaty of al-Hudaybiya, whose terms seemed unjust to him. He later regretted having questioned the Prophet ﷺ this way."
+        },
         "text": {
           "fr": "N’es-tu pas vraiment le Messager d’Allah ?’ Le Prophète (ﷺ) a répondu : ‘Oui, bien sûr.’ J’ai dit : ‘Notre cause n’est-elle pas juste et celle de l’ennemi injuste ?’ Il a dit : ‘Oui.’ J’ai dit : ‘Alors pourquoi devrions-nous être humiliés dans notre religion ?’ Il a dit : ‘Je suis le Messager d’Allah (ﷺ) et je n’enfreins pas Ses ordres, et Il me donnera la victoire.’",
           "en": "Aren't you truly the Messenger of Allah?' The Prophet (ﷺ) said, 'Yes, indeed.' I said, 'Isn't our Cause just and the cause of the enemy unjust?' He said, 'Yes.' I said, 'Then why should we be humble in our religion?' He said, 'I am Allah's Messenger (ﷺ) and I do not disobey Him, and He will make me victorious.'"
@@ -2360,6 +2474,10 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
       },
       {
         "type": "hadith",
+        "context": {
+          "fr": "Sahl ibn Sa‘d rapporte cette annonce, faite la veille de la prise de Khaybar. Le lendemain, l’étendard fut donné à ‘Alî ibn Abî Tâlib.",
+          "en": "Sahl ibn Sa'd reports this announcement, made the evening before Khaybar was taken. The next day, the banner was given to 'Ali ibn Abi Talib."
+        },
         "text": {
           "fr": "Demain, je donnerai l’étendard à un homme sous la direction duquel Allah accordera la victoire (aux musulmans).",
           "en": "Tomorrow I will give the flag to a man with whose leadership Allah will grant (the Muslims) victory."
@@ -2435,6 +2553,10 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
       },
       {
         "type": "hadith",
+        "context": {
+          "fr": "Anas ibn Mâlik rapporte que le Prophète ﷺ annonça à Médine la mort des trois chefs de l’armée de Mu’ta avant que la nouvelle n’arrive.",
+          "en": "Anas ibn Malik reports that the Prophet ﷺ announced in Medina the death of the three commanders of the army at Mu'ta before the news arrived."
+        },
         "text": {
           "fr": "Zaid a pris l’étendard (en tant que chef de l’armée) et il a été tué, puis Ja`far l’a pris et il a été tué, puis Ibn Rawaha l’a pris et il a été tué. » À ce moment-là, les yeux du Prophète étaient remplis de larmes. Il a ajouté : « Ensuite, l’étendard a été pris par une épée parmi les épées d’Allah (c’est-à-dire Khalid) et Allah a accordé la victoire aux musulmans.",
           "en": "Zaid took the flag (as the commander of the army) and was martyred, then Ja`far took it and was martyred, and then Ibn Rawaha took it and was martyred.\" At that time the Prophet's eyes were shedding tears. He added, \"Then the flag was taken by a Sword amongst the Swords of Allah (i.e. Khalid) and Allah made them (i.e. the Muslims) victorious"
@@ -2493,6 +2615,10 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
       },
       {
         "type": "hadith",
+        "context": {
+          "fr": "Ibn Mas‘ûd rapporte ces mots, récités par le Prophète ﷺ le jour de la conquête de La Mecque, pendant qu’il faisait tomber les idoles autour de la Ka‘ba. Ce sont des versets du Coran (17:81 et 34:49).",
+          "en": "Ibn Mas'ud reports these words, recited by the Prophet ﷺ on the day Mecca was conquered, as he struck down the idols around the Ka'ba. They are verses of the Quran (17:81 and 34:49)."
+        },
         "text": {
           "fr": "La vérité est venue et le faux a disparu. La vérité est venue, et le faux ne commence rien et ne ramène rien.",
           "en": "Truth has come and Falsehood will neither start nor will it reappear"
@@ -2549,7 +2675,7 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
         "en": "Ibn Hisham, As-Sira an-Nabawiyya"
       }
     ],
-    "minutes": 1
+    "minutes": 2
   },
   {
     "id": "hunayn",
@@ -2605,6 +2731,10 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
       },
       {
         "type": "hadith",
+        "context": {
+          "fr": "‘Abd Allâh ibn Zayd rapporte ce discours. Après Hunayn, les Ansâr s’étaient sentis oubliés dans le partage du butin ; le Prophète ﷺ les réunit pour leur parler.",
+          "en": "'Abd Allah ibn Zayd reports this speech. After Hunayn, the Ansar felt overlooked in the sharing of the spoils; the Prophet ﷺ gathered them to speak to them."
+        },
         "text": {
           "fr": "N’aimeriez-vous pas voir les gens repartir avec des moutons et des chameaux, tandis que vous repartez avec le Prophète (ﷺ) chez vous ? Sans la migration, j’aurais été un des Ansar, et si les gens prenaient une vallée ou un col, je choisirais la vallée ou le col des Ansar.",
           "en": "Wouldn't you be willing to see the people go away with sheep and camels while you go with the Prophet (ﷺ) to your homes? But for the migration, I would have been one of the Ansar, and if the people took their way through a valley or mountain pass, I would select the valley or mountain pass of the Ansar."
@@ -2616,7 +2746,8 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
         "grade": {
           "fr": "Sahîh",
           "en": "Sahih"
-        }
+        },
+        "hadithId": "3424ec0d-954b-4523-8362-392e146c8de0"
       },
       {
         "type": "text",
@@ -2684,6 +2815,10 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
       },
       {
         "type": "hadith",
+        "context": {
+          "fr": "Ka‘b ibn Mâlik raconte lui-même cette scène, au retour de Tabûk. Il venait d’avouer qu’il n’avait aucune excuse pour être resté à Médine.",
+          "en": "Ka'b ibn Malik himself recounts this scene, on the return from Tabuk. He had just admitted he had no excuse for staying behind in Medina."
+        },
         "text": {
           "fr": "Quant à lui, il a dit la vérité. Lève-toi jusqu’à ce qu’Allah décide de ton cas.",
           "en": "As regards this man, he has surely told the truth. So get up till Allah decides your case."
@@ -2695,7 +2830,8 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
         "grade": {
           "fr": "Sahîh",
           "en": "Sahih"
-        }
+        },
+        "hadithId": "b976dea7-8c09-4d4c-a0a5-13d238c9f4fe"
       },
       {
         "type": "text",
@@ -2806,6 +2942,10 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
       },
       {
         "type": "hadith",
+        "context": {
+          "fr": "Jâbir ibn ‘Abd Allâh rapporte le sermon prononcé le jour de ‘Arafa, devant la foule du pèlerinage d’adieu, quelques mois avant la mort du Prophète ﷺ.",
+          "en": "Jabir ibn 'Abd Allah reports the sermon given on the day of 'Arafa, before the crowd of the farewell pilgrimage, a few months before the Prophet's ﷺ death."
+        },
         "text": {
           "fr": "sang et vos biens sont sacrés, tout comme ce jour-ci, dans ce mois-ci, dans cette ville-ci.",
           "en": "Verily your blood, your property are as sacred and inviolable as the sacredness of this day of yours, in this month of yours, in this town of yours."
@@ -2817,13 +2957,25 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
         "grade": {
           "fr": "Sahîh",
           "en": "Sahih"
+        },
+        "hadithId": "12cd10ef-f131-4407-839f-b3a1e18f732a"
+      },
+      {
+        "type": "text",
+        "text": {
+          "fr": "Il déclara abolies les vengeances de sang et l’usure de l’époque préislamique, en commençant par celles de sa propre famille. Puis il parla des femmes, à des hommes habitués à en disposer sans leur reconnaître de droits :",
+          "en": "He declared the blood feuds and the usury of the pre-Islamic era abolished, starting with those of his own family. Then he spoke about women, to men used to disposing of them without granting them rights:"
         }
       },
       {
         "type": "hadith",
+        "context": {
+          "fr": "Même sermon de ‘Arafa. Dans une société où les femmes étaient souvent privées de droits, le Prophète ﷺ rappelle aux maris qu’ils devront rendre compte à Allah de leurs épouses.",
+          "en": "The same sermon at 'Arafa. In a society where women were often deprived of rights, the Prophet ﷺ reminds husbands that they will answer to Allah for their wives."
+        },
         "text": {
-          "fr": "Craignez Allah à propos des femmes !",
-          "en": "Fear Allah concerning women!"
+          "fr": "Craignez Allah à propos des femmes ! Vous les avez prises sous la protection d’Allah, et les rapports avec elles vous ont été rendus licites par la parole d’Allah.",
+          "en": "Fear Allah concerning women! Verily you have taken them on the security of Allah, and intercourse with them has been made lawful unto you by words of Allah."
         },
         "ref": {
           "fr": "Sahîh Muslim 1218",
@@ -2832,13 +2984,25 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
         "grade": {
           "fr": "Sahîh",
           "en": "Sahih"
+        },
+        "hadithId": "12cd10ef-f131-4407-839f-b3a1e18f732a"
+      },
+      {
+        "type": "text",
+        "text": {
+          "fr": "Il rappela aussi les devoirs des épouses envers leurs maris, puis ce que les maris leur doivent :",
+          "en": "He also recalled the duties of wives towards their husbands, then what husbands owe them:"
         }
       },
       {
         "type": "hadith",
+        "context": {
+          "fr": "Même sermon : dans la même phrase, il précise ce que les épouses peuvent exiger de leurs maris.",
+          "en": "The same sermon: in the same passage, he states what wives are entitled to from their husbands."
+        },
         "text": {
-          "fr": "Livre d’Allah, et si vous vous y attachez, vous ne vous égarerez jamais.",
-          "en": "Book of Allah, and if you hold fast to it, you would never go astray."
+          "fr": "Leurs droits sur vous sont que vous leur donniez nourriture et vêtements convenablement.",
+          "en": "Their rights upon you are that you should provide them with food and clothing in a fitting manner."
         },
         "ref": {
           "fr": "Sahîh Muslim 1218",
@@ -2847,7 +3011,35 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
         "grade": {
           "fr": "Sahîh",
           "en": "Sahih"
+        },
+        "hadithId": "12cd10ef-f131-4407-839f-b3a1e18f732a"
+      },
+      {
+        "type": "text",
+        "text": {
+          "fr": "Enfin, il dit ce qu’il laissait à sa communauté :",
+          "en": "Finally, he said what he was leaving to his community:"
         }
+      },
+      {
+        "type": "hadith",
+        "context": {
+          "fr": "Fin du sermon de ‘Arafa : avant de prendre la foule à témoin, le Prophète ﷺ dit ce qu’il laisse à sa communauté pour ne pas s’égarer.",
+          "en": "End of the sermon at 'Arafa: before calling the crowd to witness, the Prophet ﷺ says what he leaves his community so that it does not go astray."
+        },
+        "text": {
+          "fr": "J’ai laissé parmi vous le Livre d’Allah, et si vous vous y attachez, vous ne vous égarerez jamais.",
+          "en": "I have left among you the Book of Allah, and if you hold fast to it, you would never go astray."
+        },
+        "ref": {
+          "fr": "Sahîh Muslim 1218",
+          "en": "Sahih Muslim 1218"
+        },
+        "grade": {
+          "fr": "Sahîh",
+          "en": "Sahih"
+        },
+        "hadithId": "12cd10ef-f131-4407-839f-b3a1e18f732a"
       },
       {
         "type": "text",
@@ -2878,7 +3070,7 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
         "en": "Every person's life, property and honour are sacred."
       }
     ],
-    "minutes": 1
+    "minutes": 2
   },
   {
     "id": "illness",
@@ -2909,6 +3101,10 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
       },
       {
         "type": "hadith",
+        "context": {
+          "fr": "Abû Sa‘îd al-Khudrî rapporte ce sermon, l’un des derniers du Prophète ﷺ, pendant sa maladie. Abû Bakr fut le seul à comprendre qu’il annonçait sa propre mort.",
+          "en": "Abu Sa'id al-Khudri reports this sermon, one of the Prophet's ﷺ last, during his illness. Abu Bakr alone understood he was announcing his own death."
+        },
         "text": {
           "fr": "Allah a donné à un serviteur le choix entre ce monde et ce qu’il y a auprès de Lui. Le serviteur a choisi ce qu’il y a auprès d’Allah.",
           "en": "Allah has given option to a slave to choose this world or what is with Him. The slave has chosen what is with Allah."
@@ -2977,6 +3173,10 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
       },
       {
         "type": "hadith",
+        "context": {
+          "fr": "Anas ibn Mâlik raconte l’aube du lundi où le Prophète ﷺ mourut : les musulmans priaient derrière Abû Bakr quand il souleva le rideau de sa chambre.",
+          "en": "Anas ibn Malik describes the dawn of the Monday the Prophet ﷺ died: the Muslims were praying behind Abu Bakr when he lifted the curtain of his room."
+        },
         "text": {
           "fr": "rideau de la chambre et nous regarda, debout, son visage semblant une page de Coran. Il sourit alors, riant. Nous avons failli être troublés de joie en voyant le Prophète ﷺ. Abou Bakr recula alors pour rejoindre le rang, pensant que le Prophète ﷺ allait sortir pour la prière. Le Prophète ﷺ nous fit signe de compléter notre prière, puis il laissa retomber le rideau. Il mourut ce jour-là",
           "en": "curtain of his house and started looking at us and was standing at that time. His face was (glittering) like a page of the Qur'an and he smiled cheerfully. We were about to be put to trial for the pleasure of seeing the Prophet, Abu Bakr retreated to join the row as he thought that the Prophet (ﷺ) would lead the prayer. The Prophet (ﷺ) beckoned us to complete the prayer and he let the curtain fall. On the same day he died"
@@ -2988,7 +3188,8 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
         "grade": {
           "fr": "Sahîh",
           "en": "Sahih"
-        }
+        },
+        "hadithId": "b4b411a1-6316-4750-82f6-21bd46b85fe0"
       },
       {
         "type": "text",
@@ -2999,6 +3200,10 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
       },
       {
         "type": "hadith",
+        "context": {
+          "fr": "‘Â’isha rapporte ces dernières paroles : le Prophète ﷺ les prononça appuyé contre elle, quelques instants avant de mourir.",
+          "en": "'A'isha reports these last words: the Prophet ﷺ spoke them leaning against her, moments before he died."
+        },
         "text": {
           "fr": "Ô Allah ! Pardonne-moi, accorde-moi Ta miséricorde et fais-moi rejoindre les plus hauts compagnons (de l’au-delà).",
           "en": "O Allah! Forgive me, and bestow Your Mercy on me, and let me meet the (highest) companions (of the Hereafter)."
@@ -3075,6 +3280,10 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
       },
       {
         "type": "hadith",
+        "context": {
+          "fr": "‘Â’isha rapporte ce discours d’Abû Bakr, prononcé le jour de la mort du Prophète ﷺ, alors que les gens refusaient d’y croire.",
+          "en": "'A'isha reports this speech of Abu Bakr, given on the day the Prophet ﷺ died, when people refused to believe it."
+        },
         "text": {
           "fr": "Celui qui adorait Muhammad, Muhammad est mort. Mais celui qui adorait Allah, Allah est Vivant et ne mourra jamais.",
           "en": "Whoever worshipped Muhammad, then Muhammad is dead, but whoever worshipped Allah, then Allah is Alive and shall never die."
@@ -3171,6 +3380,10 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
       },
       {
         "type": "hadith",
+        "context": {
+          "fr": "Anas ibn Mâlik rapporte ces mots, dits par le Prophète ﷺ en pleurant à la mort de son fils Ibrâhîm, encore bébé. ‘Abd ar-Rahmân ibn ‘Awf s’étonnait de ses larmes.",
+          "en": "Anas ibn Malik reports these words, said by the Prophet ﷺ as he wept at the death of his infant son Ibrahim. 'Abd ar-Rahman ibn 'Awf had been surprised by his tears."
+        },
         "text": {
           "fr": "Les yeux pleurent, le cœur est triste, et nous ne disons que ce qui plaît à notre Seigneur. Ô Ibrahim ! Nous sommes vraiment attristés par ta séparation.",
           "en": "The eyes are shedding tears and the heart is grieved, and we will not say except what pleases our Lord, O Ibrahim ! Indeed we are grieved by your separation"
@@ -3182,7 +3395,8 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
         "grade": {
           "fr": "Sahîh",
           "en": "Sahih"
-        }
+        },
+        "hadithId": "4fb42f59-fed4-4288-a620-d638fcbdc967"
       }
     ],
     "lessons": [
@@ -3242,6 +3456,10 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
       },
       {
         "type": "hadith",
+        "context": {
+          "fr": "Sa‘d ibn Hishâm, venu interroger ‘Â’isha après la mort du Prophète ﷺ, lui demanda de décrire son caractère. Elle répondit par cette phrase.",
+          "en": "Sa'd ibn Hisham, who came to question 'A'isha after the Prophet's ﷺ death, asked her to describe his character. She answered with this sentence."
+        },
         "text": {
           "fr": "Le caractère du Messager d’Allah ﷺ était le Coran.",
           "en": "The character of the Messenger of Allah (ﷺ) was the Qur'an."
@@ -3253,7 +3471,8 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
         "grade": {
           "fr": "Sahîh",
           "en": "Sahih"
-        }
+        },
+        "hadithId": "4d3650c4-c244-4a48-b6e0-436753ce685a"
       },
       {
         "type": "text",
@@ -3264,6 +3483,10 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
       },
       {
         "type": "hadith",
+        "context": {
+          "fr": "‘Abd Allâh ibn ‘Amr rapporte que le Prophète ﷺ ne disait jamais de grossièretés, et qu’il enseignait cela à ses compagnons.",
+          "en": "'Abd Allah ibn 'Amr reports that the Prophet ﷺ never used obscene words, and that he taught this to his companions."
+        },
         "text": {
           "fr": "meilleurs parmi vous sont ceux qui ont le meilleur comportement et le meilleur caractère.",
           "en": "best among you are those who have the best manners and character"
@@ -3324,6 +3547,10 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
       },
       {
         "type": "hadith",
+        "context": {
+          "fr": "Al-Aswad demanda à ‘Â’isha ce que faisait le Prophète ﷺ chez lui. Elle répondit ainsi.",
+          "en": "Al-Aswad asked 'A'isha what the Prophet ﷺ used to do at home. This was her answer."
+        },
         "text": {
           "fr": "Il s’occupait de sa famille, et quand venait l’heure de la prière, il partait prier.",
           "en": "He used to keep himself busy serving his family and when it was the time for prayer he would go for it"
@@ -3406,6 +3633,10 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
       },
       {
         "type": "hadith",
+        "context": {
+          "fr": "Jarîr ibn ‘Abd Allâh rapporte cette parole du Prophète ﷺ, qui résume son enseignement sur la miséricorde envers les gens.",
+          "en": "Jarir ibn 'Abd Allah reports this saying of the Prophet ﷺ, which sums up his teaching on mercy towards people."
+        },
         "text": {
           "fr": "Celui qui n’est pas miséricordieux envers les autres ne recevra pas de miséricorde.",
           "en": "He who is not merciful to others, will not be treated mercifully"
@@ -3417,7 +3648,8 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
         "grade": {
           "fr": "Sahîh",
           "en": "Sahih"
-        }
+        },
+        "hadithId": "7bf90e8b-87cc-4ec7-aaaf-c62adf51027d"
       },
       {
         "type": "text",

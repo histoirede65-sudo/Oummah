@@ -2563,6 +2563,7 @@ export const fr = {
   'pilgrimage.reminder.j12Body': 'Les trois stèles, dans l’ordre. Un départ anticipé obéit à des conditions : voir le livre.',
   'pilgrimage.reminder.j13Title': 'Jamarât du 13',
   'pilgrimage.reminder.j13Body': 'Si vous êtes resté à Mina : les trois stèles, dans l’ordre.',
+  'sirah.openHadith': 'Lire le hadith complet',
 } as const;
 
 export type TranslationKey = keyof typeof fr;
