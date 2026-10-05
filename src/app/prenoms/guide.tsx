@@ -1,74 +1,140 @@
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
+import { useState } from 'react';
 import { Pressable, SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native';
+
+import { RESTRICTION_SECTIONS, type RestrictionTone } from '../../features/muslim-names/restricted-names';
+import { NAME_SOURCES, type NameSourceId } from '../../features/muslim-names/scholar-sources';
+import { SourceChips, SourceSheet } from '../../features/muslim-names/SourceSheet';
 import { ScreenHeader, prenomTheme } from '../../features/muslim-names/ui';
 import { colors } from '../../theme/colors';
 import { typography } from '../../theme/typography';
 
-const PRINCIPLES=[
-  {icon:'heart-outline' as const,title:'Chercher d’abord un bon sens',text:'Un prénom doit avoir une signification convenable et ne pas porter d’humiliation, de vulgarité ou de mauvaise qualité évidente.'},
-  {icon:'language-outline' as const,title:'Un prénom n’a pas besoin d’être arabe',text:'La langue d’origine ne décide pas, à elle seule, du statut religieux. Un prénom culturel ou non arabe peut être parfaitement permis si son sens et ce qu’il implique sont convenables.'},
-  {icon:'star-outline' as const,title:'Certains choix ont un précédent particulièrement noble',text:'Abdullah et Abd ar-Rahman sont explicitement cités parmi les noms les plus aimés d’Allah. Les noms des prophètes et des premières générations sont également de beaux précédents, sans que tous fassent l’objet d’une recommandation textuelle identique.'},
-  {icon:'book-outline' as const,title:'« Coranique » ne veut pas dire automatiquement « recommandé »',text:'Un nom propre ou un mot peut apparaître dans le Coran sans que le texte demande d’en faire un prénom. OUMMAH distingue donc la présence dans le Coran du jugement sur le prénom.'},
-  {icon:'search-outline' as const,title:'Vérifier les sens multiples',text:'Une même sonorité peut venir de plusieurs langues. Quand une étymologie est incertaine, mieux vaut préciser le sens réellement visé plutôt que reprendre une définition virale non vérifiée.'},
+// Each principle quotes its source word for word (French text of NAME_SOURCES).
+const PRINCIPLES: { title: string; quote: string; sources: NameSourceId[] }[] = [
+  { title: 'La règle de base', quote: 'La règle de base en matière de noms est la permission, sauf ce dont une preuve montre qu’il est réprouvé, en lui-même ou par un nom semblable.', sources: ['uthQuranNames'] },
+  { title: 'Les noms les plus aimés d’Allah', quote: '« Les noms les plus aimés d’Allah sont ‘Abdullah et ‘Abd al-Rahman. »', sources: ['muslim2132'] },
+  { title: 'Les noms rattachés à Allah', quote: 'Tout [nom] rattaché à Allah est meilleur que les autres.', sources: ['uthNaming'] },
+  { title: 'Les noms des prophètes', quote: '« Appelez-vous par les noms des Prophètes. »', sources: ['abuDawud4950'] },
+  { title: 'Les noms des messagers', quote: 'Les noms des messagers sont meilleurs que les autres, sauf ce qui est plus aimé d’Allah, qui est meilleur.', sources: ['uthNaming'] },
+  { title: 'Pour une fille', quote: 'Pour les femmes, ce qui était en usage parmi les femmes des Compagnons et les croyantes après elles : des noms connus, sans laideur.', sources: ['bazWhenWho', 'uthMalak'] },
+  { title: 'Qui choisit ?', quote: 'Celui qui a le plus droit de nommer est le père […] Il est recommandé de s’entraider et de se concerter entre le père et la mère afin que tous choisissent un beau nom.', sources: ['bazWhenWho', 'uthNaming'] },
+  { title: 'Quand nommer ?', quote: 'Le mieux est de nommer le septième jour ; si l’on nomme le jour de la naissance, il n’y a pas de mal.', sources: ['bazWhenWho'] },
 ];
 
-const CAUTIONS=[
-  {symbol:'✕',title:'Servitude envers autre qu’Allah',text:'Les constructions en « ʿAbd / serviteur de… » doivent réserver la servitude religieuse à Allah et à Ses noms authentiques. Une servitude nominative vouée à une créature n’est pas un bon choix islamique.'},
-  {symbol:'✕',title:'Noms exclusivement propres à Allah',text:'Les noms divins qui appartiennent exclusivement à Allah ne sont pas donnés tels quels à une personne. D’autres attributs peuvent exister dans un sens humain relatif : il faut donc distinguer les cas.'},
-  {symbol:'!',title:'Mauvais sens ou auto-éloge',text:'La Sunna montre que certains noms ont été changés lorsque leur sens était mauvais ou lorsqu’ils impliquaient une auto-éloge excessive. Le problème vient du sens, pas d’une simple sonorité.'},
-  {symbol:'△',title:'Prénoms modernes, mots coraniques ou étymologies discutées',text:'Dans ces cas, OUMMAH préfère un badge « À connaître » et une explication plutôt qu’un verdict catégorique.'},
-];
+const TONES: Record<RestrictionTone, { label: string; accent: string; wash: string; border: string; icon: keyof typeof Ionicons.glyphMap }> = {
+  forbidden: { label: 'Interdit', accent: '#FF7E86', wash: 'rgba(255,86,96,.09)', border: 'rgba(255,104,112,.34)', icon: 'close-circle-outline' },
+  avoid: { label: 'À éviter', accent: '#FFAD68', wash: 'rgba(255,157,79,.08)', border: 'rgba(255,173,104,.30)', icon: 'warning-outline' },
+  disputed: { label: 'Avis divergents', accent: '#D5B4FF', wash: 'rgba(190,144,255,.08)', border: 'rgba(213,180,255,.28)', icon: 'git-compare-outline' },
+  allowed: { label: 'Permis', accent: '#62C58B', wash: 'rgba(98,197,139,.08)', border: 'rgba(98,197,139,.30)', icon: 'checkmark-circle-outline' },
+};
 
+export default function BeforeChoosingScreen() {
+  const [open, setOpen] = useState<string[]>(['taabid']);
+  const [source, setSource] = useState<NameSourceId | null>(null);
+  const toggle = (id: string) => setOpen((current) => current.includes(id) ? current.filter((value) => value !== id) : [...current, id]);
+  const usedSources = Object.keys(NAME_SOURCES) as NameSourceId[];
 
-const CLEAR_CASES=[
-  {status:'INTERDIT',name:'Malik al-Amlak / « Roi des rois »',reason:'Titre absolu que le hadith interdit pour une personne.',source:'Sahih Muslim 2143'},
-  {status:'INTERDIT',name:'ʿAbd an-Nabi / ʿAbd ar-Rasul',reason:'La construction signifie « serviteur du Prophète / du Messager » et attribue la servitude à autre qu’Allah.',source:'Principe de servitude exclusive à Allah ; accord rapporté des juristes'},
-  {status:'À CHANGER DE PRÉFÉRENCE',name:'ʿĀṣiya — عاصية',reason:'Ce mot signifie « désobéissante ». Le Prophète ﷺ l’a remplacé par Jamila dans un récit authentique.',source:'Sahih Muslim 2139'},
-  {status:'À ÉVITER',name:'Barrah — برّة',reason:'Le nom pouvait être compris comme une auto-éloge de piété ; il fut remplacé par Zaynab ou Juwayriya.',source:'Sahih Muslim 2140-2142 · al-Bukhari 6192'},
-];
+  return <LinearGradient colors={[colors.background, colors.backgroundSecondary, colors.background]} style={styles.screen}>
+    <SafeAreaView style={styles.safe}>
+      <ScreenHeader title="Avant de choisir" onBack={() => router.back()}/>
+      <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
+        <Text style={styles.title}>Avant de choisir</Text>
+        <Text style={styles.lead}>Chaque repère et chaque avis de cette page est cité mot pour mot : hadiths, fatwas d’Ibn Bâz et d’Ibn ‘Uthaymîn. Touchez une source pour lire le texte complet.</Text>
 
-const SOURCES=[
-  {ref:'Sahih Muslim 2132',text:'Abdullah et Abd ar-Rahman sont cités parmi les noms les plus aimés d’Allah.'},
-  {ref:'Sahih Muslim 2139',text:'Le nom ʿĀṣiya — عاصية (« désobéissante ») fut changé en Jamila. À ne pas confondre avec le prénom Asiya/Āsiya couramment écrit différemment en arabe.'},
-  {ref:'Sahih Muslim 2143',text:'Le titre Malik al-Amlak (« Roi des rois ») est explicitement interdit.'},
-  {ref:'Sahih Muslim 2140-2142 · Sahih al-Bukhari 6192',text:'Le nom Barrah fut changé en Zaynab ou Juwayriya afin d’éviter l’auto-éloge.'},
-];
+        <Text style={styles.label}>REPÈRES</Text>
+        <View style={styles.list}>
+          {PRINCIPLES.map((item) => <View key={item.title} style={styles.principle}>
+            <Text style={styles.principleTitle}>{item.title}</Text>
+            <Text style={styles.quote}>{item.quote}</Text>
+            <SourceChips ids={item.sources} onOpen={setSource}/>
+          </View>)}
+        </View>
 
-export default function ParentsGuideScreen(){return <LinearGradient colors={[colors.background,colors.backgroundSecondary,colors.background]} style={styles.screen}><SafeAreaView style={styles.safe}><ScreenHeader title="Guide des parents" onBack={()=>router.back()}/><ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-  <View style={styles.hero}><Text style={styles.eyebrow}>BIEN CHOISIR</Text><Text style={styles.heroTitle}>Le prénom : du sens avant tout</Text><Text style={styles.heroText}>Quelques repères simples pour distinguer la langue, la culture, l’histoire et le jugement religieux sans transformer chaque prénom en étiquette « halal / haram ».</Text></View>
+        <Text style={styles.label}>PRÉNOMS INTERDITS, À ÉVITER OU DISCUTÉS</Text>
+        <View style={styles.legend}>{(Object.keys(TONES) as RestrictionTone[]).map((tone) => <View key={tone} style={styles.legendItem}><View style={[styles.dot, { backgroundColor: TONES[tone].accent }]}/><Text style={styles.legendText}>{TONES[tone].label}</Text></View>)}</View>
+        <View style={styles.list}>
+          {RESTRICTION_SECTIONS.map((section) => {
+            const tone = TONES[section.tone];
+            const opened = open.includes(section.id);
+            return <View key={section.id} style={[styles.section, { borderColor: tone.border }]}>
+              <Pressable onPress={() => toggle(section.id)} style={({ pressed }) => [styles.sectionHeader, pressed && styles.pressed]} accessibilityRole="button" accessibilityState={{ expanded: opened }}>
+                <Ionicons name={tone.icon} size={19} color={tone.accent}/>
+                <Text style={styles.sectionTitle}>{section.title}</Text>
+                <Text style={styles.count}>{section.examples.length}</Text>
+                <Ionicons name={opened ? 'chevron-up' : 'chevron-down'} size={17} color={colors.textMuted}/>
+              </Pressable>
+              {opened ? <View style={styles.sectionBody}>
+                {section.examples.map((example) => {
+                  const exampleTone = TONES[example.tone];
+                  return <View key={example.name} style={styles.example}>
+                    <View style={styles.exampleTop}>
+                      <View style={{ flex: 1 }}>
+                        <Text style={styles.exampleName}>{example.name}</Text>
+                        {example.meaning ? <Text style={styles.meaning}>{example.meaning}</Text> : null}
+                      </View>
+                      {example.arabic ? <Text style={styles.arabic}>{example.arabic}</Text> : null}
+                    </View>
+                    <View style={[styles.verdictPill, { borderColor: exampleTone.border, backgroundColor: exampleTone.wash }]}><Text style={[styles.verdictPillText, { color: exampleTone.accent }]}>{exampleTone.label}</Text></View>
+                    {example.verdicts.map((verdict) => <Pressable key={verdict.source} onPress={() => setSource(verdict.source)} style={({ pressed }) => [styles.verdict, pressed && styles.pressed]}>
+                      <Text style={styles.verdictSource}>{NAME_SOURCES[verdict.source].short}</Text>
+                      <Text style={styles.verdictText}>{verdict.says}</Text>
+                      <Ionicons name="chevron-forward" size={14} color={colors.textMuted}/>
+                    </Pressable>)}
+                  </View>;
+                })}
+              </View> : null}
+            </View>;
+          })}
+        </View>
 
-  <Section label="LES 5 REPÈRES ESSENTIELS" title="Comment choisir ?"/>
-  <View style={styles.stack}>{PRINCIPLES.map((item,i)=><View key={item.title} style={styles.principle}><View style={styles.principleIcon}><Ionicons name={item.icon} size={18} color={colors.goldLight}/></View><View style={{flex:1}}><View style={styles.principleHead}><Text style={styles.index}>{String(i+1).padStart(2,'0')}</Text><Text style={styles.cardTitle}>{item.title}</Text></View><Text style={styles.cardText}>{item.text}</Text></View></View>)}</View>
+        <Text style={styles.label}>SOURCES</Text>
+        <View style={styles.sources}>
+          {usedSources.map((id) => <Pressable key={id} onPress={() => setSource(id)} style={({ pressed }) => [styles.sourceRow, pressed && styles.pressed]}>
+            <View style={{ flex: 1 }}>
+              <Text style={styles.sourceAuthor}>{NAME_SOURCES[id].author}</Text>
+              <Text style={styles.sourceRef}>{NAME_SOURCES[id].reference}</Text>
+            </View>
+            <Ionicons name="chevron-forward" size={15} color={colors.textMuted}/>
+          </Pressable>)}
+        </View>
+      </ScrollView>
 
-  <View style={styles.feature}><Ionicons name="link-outline" size={22} color={colors.goldLight}/><View style={{flex:1}}><Text style={styles.featureEyebrow}>EXEMPLE CLAIR</Text><Text style={styles.featureTitle}>Abdullah et Abd ar-Rahman</Text><Text style={styles.featureText}>Le mot ʿabd signifie « serviteur ». Dans ces noms composés, il est relié à Allah ou à l’un de Ses noms : ʿAbd Allāh, « serviteur d’Allah », et ʿAbd ar-Raḥmān, « serviteur du Tout Miséricordieux ».</Text><View style={styles.sourceChip}><Text style={styles.sourceChipText}>Sahih Muslim 2132</Text></View></View></View>
+      <SourceSheet id={source} onClose={() => setSource(null)}/>
+    </SafeAreaView>
+  </LinearGradient>;
+}
 
-  <Section label="PRUDENCE" title="À éviter ou à vérifier"/>
-  <View style={styles.stack}>{CAUTIONS.map(item=><View key={item.title} style={styles.caution}><View style={styles.symbolBox}><Text style={styles.symbol}>{item.symbol}</Text></View><View style={{flex:1}}><Text style={styles.cardTitle}>{item.title}</Text><Text style={styles.cardText}>{item.text}</Text></View></View>)}</View>
-
-  <Section label="CAS CLAIRS" title="Interdit, déconseillé : pourquoi ?"/>
-  <Text style={styles.caseIntro}>Ces exemples ne sont pas placés dans le répertoire de découverte : ils sont regroupés ici pour expliquer la règle et la preuve.</Text>
-  <View style={styles.stack}>{CLEAR_CASES.map(item=><View key={item.name} style={styles.caseCard}><View style={styles.caseTop}><Text style={styles.caseStatus}>{item.status}</Text><Text style={styles.caseName}>{item.name}</Text></View><Text style={styles.cardText}>{item.reason}</Text><Text style={styles.caseSource}>{item.source}</Text></View>)}</View>
-
-  <Section label="IDÉE REÇUE" title="Arabe, culturel ou islamique ?"/>
-  <View style={styles.explainer}><Text style={styles.explainerText}>Ces mots ne veulent pas dire la même chose. Un prénom peut être <Text style={styles.bold}>arabe</Text> sans valeur religieuse particulière, être associé à l’<Text style={styles.bold}>histoire musulmane</Text> par la personne qui l’a porté, ou être simplement <Text style={styles.bold}>culturel</Text> tout en restant permis.</Text><View style={styles.examples}><Mini title="Arabe" text="Karim, Salma…"/><Mini title="Historique" text="Bilal, Khadija…"/><Mini title="Coranique" text="Yusuf, Maryam, Huda…"/></View></View>
-
-  <Section label="POURQUOI CERTAINS NOMS SONT CHANGÉS ?" title="Le sens compte réellement"/>
-  <View style={styles.storyCard}><Text style={styles.storyTitle}>Deux exemples authentiques</Text><Text style={styles.storyText}>Dans les hadiths, le Prophète ﷺ a changé un nom signifiant « désobéissante » en <Text style={styles.bold}>Jamila</Text>. Il a également changé <Text style={styles.bold}>Barrah</Text>, qui pouvait suggérer une auto-éloge de piété, en Zaynab ou Juwayriya.</Text><Text style={styles.storyNote}>Le principe n’est donc pas de « rendre arabe » un prénom, mais d’éviter un sens problématique et de préférer un beau nom.</Text></View>
-
-  <Section label="FIABILITÉ DES FICHES" title="Comprendre les badges"/>
-  <View style={styles.stack}>
-    <View style={styles.sourceRow}><Ionicons name="shield-checkmark-outline" size={18} color={colors.success}/><View style={{flex:1}}><Text style={styles.sourceRef}>Sourcé / Vérifié</Text><Text style={styles.sourceText}>La fiche a reçu une rédaction OUMMAH : sens, contexte et repères ont été distingués. Quand une preuve textuelle est pertinente, elle est indiquée.</Text></View></View>
-    <View style={styles.sourceRow}><Ionicons name="library-outline" size={18} color={colors.goldLight}/><View style={{flex:1}}><Text style={styles.sourceRef}>Catalogue culturel</Text><Text style={styles.sourceText}>Le prénom est proposé pour élargir la découverte, mais OUMMAH n’invente ni étymologie ni jugement religieux. Le sens exact reste affiché comme à confirmer jusqu’à sa revue éditoriale.</Text></View></View>
-  </View>
-
-  <Section label="RÉFÉRENCES DU GUIDE" title="Sources principales"/>
-  <View style={styles.stack}>{SOURCES.map(s=><View key={s.ref} style={styles.sourceRow}><Ionicons name="document-text-outline" size={18} color={colors.goldLight}/><View style={{flex:1}}><Text style={styles.sourceRef}>{s.ref}</Text><Text style={styles.sourceText}>{s.text}</Text></View></View>)}</View>
-
-  <View style={styles.editorial}><Ionicons name="shield-checkmark-outline" size={21} color={colors.goldLight}/><View style={{flex:1}}><Text style={styles.editorialTitle}>Méthode OUMMAH</Text><Text style={styles.editorialText}>Quand une étymologie ou un jugement fait l’objet d’une nuance, la fiche doit le dire. Le module ne remplace pas une consultation savante pour un cas complexe, mais il évite volontairement les verdicts sans explication.</Text></View></View>
-</ScrollView></SafeAreaView></LinearGradient>}
-
-function Section({label,title}:{label:string;title:string}){return <View style={styles.section}><Text style={styles.eyebrow}>{label}</Text><Text style={styles.sectionTitle}>{title}</Text></View>}
-function Mini({title,text}:{title:string;text:string}){return <View style={styles.mini}><Text style={styles.miniTitle}>{title}</Text><Text style={styles.miniText}>{text}</Text></View>}
-const styles=StyleSheet.create({screen:{flex:1},safe:{flex:1},content:{padding:16,paddingBottom:54},hero:{padding:21,borderRadius:28,borderWidth:1,borderColor:prenomTheme.borderGold,backgroundColor:prenomTheme.cardStrong},eyebrow:{color:colors.goldLight,fontFamily:typography.sans,fontSize:9,fontWeight:'800',letterSpacing:1.45},heroTitle:{marginTop:8,color:colors.text,fontFamily:typography.sans,fontSize:27,fontWeight:'800',lineHeight:33},heroText:{marginTop:8,color:colors.textSecondary,fontFamily:typography.sans,fontSize:12.5,lineHeight:19},section:{marginTop:28,marginBottom:10},sectionTitle:{marginTop:4,color:colors.text,fontFamily:typography.sans,fontSize:21,fontWeight:'800'},stack:{gap:9},principle:{padding:17,borderRadius:22,borderWidth:1,borderColor:colors.borderSoft,backgroundColor:prenomTheme.card,flexDirection:'row',gap:12},principleIcon:{width:36,height:36,borderRadius:12,alignItems:'center',justifyContent:'center',backgroundColor:prenomTheme.goldWash},principleHead:{flexDirection:'row',alignItems:'center',gap:8},index:{color:colors.goldLight,fontFamily:typography.sans,fontSize:9,fontWeight:'900'},cardTitle:{flex:1,color:colors.text,fontFamily:typography.sans,fontSize:14,fontWeight:'800',lineHeight:18},cardText:{marginTop:6,color:colors.textSecondary,fontFamily:typography.sans,fontSize:11,lineHeight:17.5},feature:{marginTop:12,padding:18,borderRadius:23,borderWidth:1,borderColor:prenomTheme.borderGold,backgroundColor:prenomTheme.goldWash,flexDirection:'row',gap:12},featureEyebrow:{color:colors.goldLight,fontFamily:typography.sans,fontSize:8.5,fontWeight:'800',letterSpacing:1.2},featureTitle:{marginTop:4,color:colors.text,fontFamily:typography.sans,fontSize:17,fontWeight:'800'},featureText:{marginTop:6,color:colors.textSecondary,fontFamily:typography.sans,fontSize:11.5,lineHeight:18},sourceChip:{marginTop:10,alignSelf:'flex-start',paddingHorizontal:9,paddingVertical:5,borderRadius:999,borderWidth:1,borderColor:prenomTheme.borderGold},sourceChipText:{color:colors.goldLight,fontFamily:typography.sans,fontSize:8.5,fontWeight:'800'},caution:{padding:17,borderRadius:22,borderWidth:1,borderColor:colors.borderSoft,backgroundColor:prenomTheme.card,flexDirection:'row',gap:12},symbolBox:{width:34,height:34,borderRadius:11,alignItems:'center',justifyContent:'center',backgroundColor:prenomTheme.goldWash},symbol:{color:colors.goldLight,fontFamily:typography.sans,fontSize:16,fontWeight:'900'},explainer:{padding:18,borderRadius:23,borderWidth:1,borderColor:colors.borderSoft,backgroundColor:prenomTheme.card},explainerText:{color:colors.textSecondary,fontFamily:typography.sans,fontSize:11.5,lineHeight:18},bold:{color:colors.text,fontWeight:'800'},examples:{marginTop:14,flexDirection:'row',gap:8},mini:{flex:1,minHeight:74,padding:10,borderRadius:14,backgroundColor:'rgba(255,255,255,.035)'},miniTitle:{color:colors.goldLight,fontFamily:typography.sans,fontSize:9.5,fontWeight:'800'},miniText:{marginTop:5,color:colors.textSecondary,fontFamily:typography.sans,fontSize:9,lineHeight:13},storyCard:{padding:18,borderRadius:23,borderWidth:1,borderColor:prenomTheme.borderGold,backgroundColor:prenomTheme.goldWash},storyTitle:{color:colors.text,fontFamily:typography.sans,fontSize:15,fontWeight:'800'},storyText:{marginTop:7,color:colors.textSecondary,fontFamily:typography.sans,fontSize:11.5,lineHeight:18},storyNote:{marginTop:10,paddingTop:10,borderTopWidth:1,borderTopColor:colors.borderSoft,color:colors.textMuted,fontFamily:typography.sans,fontSize:10,lineHeight:15},sourceRow:{padding:16,borderRadius:20,borderWidth:1,borderColor:colors.borderSoft,backgroundColor:prenomTheme.card,flexDirection:'row',gap:10},sourceRef:{color:colors.text,fontFamily:typography.sans,fontSize:11,fontWeight:'800'},sourceText:{marginTop:3,color:colors.textMuted,fontFamily:typography.sans,fontSize:9.5,lineHeight:14.5},editorial:{marginTop:24,padding:18,borderRadius:23,borderWidth:1,borderColor:prenomTheme.borderGold,backgroundColor:prenomTheme.goldWash,flexDirection:'row',gap:12},editorialTitle:{color:colors.text,fontFamily:typography.sans,fontSize:14,fontWeight:'800'},caseIntro:{marginBottom:10,color:colors.textMuted,fontFamily:typography.sans,fontSize:10.5,lineHeight:16},caseCard:{padding:17,borderRadius:22,borderWidth:1,borderColor:colors.borderSoft,backgroundColor:prenomTheme.card},caseTop:{gap:5},caseStatus:{color:colors.goldLight,fontFamily:typography.sans,fontSize:8.5,fontWeight:'900',letterSpacing:1.1},caseName:{color:colors.text,fontFamily:typography.sans,fontSize:14,fontWeight:'800'},caseSource:{marginTop:9,color:colors.goldLight,fontFamily:typography.sans,fontSize:9,fontWeight:'700'},editorialText:{marginTop:5,color:colors.textSecondary,fontFamily:typography.sans,fontSize:10.5,lineHeight:16.5}});
+const styles = StyleSheet.create({
+  screen: { flex: 1 }, safe: { flex: 1 }, pressed: { opacity: .72 }, content: { paddingHorizontal: 18, paddingBottom: 54 },
+  title: { marginTop: 4, color: colors.text, fontFamily: typography.serifSemibold, fontSize: 36, lineHeight: 40 },
+  lead: { marginTop: 8, color: colors.textSecondary, fontFamily: typography.sans, fontSize: 12.5, lineHeight: 19 },
+  label: { marginTop: 28, marginBottom: 10, color: colors.goldLight, fontFamily: typography.sans, fontSize: 9.5, fontWeight: '800', letterSpacing: 1.4 },
+  list: { gap: 10 },
+  principle: { paddingVertical: 14, borderBottomWidth: 1, borderBottomColor: colors.borderSoft },
+  principleTitle: { color: colors.text, fontFamily: typography.sans, fontSize: 14, fontWeight: '800' },
+  quote: { marginTop: 6, color: colors.textSecondary, fontFamily: typography.serifMedium, fontSize: 17, lineHeight: 23 },
+  legend: { marginBottom: 12, flexDirection: 'row', flexWrap: 'wrap', gap: 12 },
+  legendItem: { flexDirection: 'row', alignItems: 'center', gap: 5 }, dot: { width: 7, height: 7, borderRadius: 4 },
+  legendText: { color: colors.textMuted, fontFamily: typography.sans, fontSize: 10 },
+  section: { borderRadius: 20, borderWidth: 1, backgroundColor: prenomTheme.card, overflow: 'hidden' },
+  sectionHeader: { minHeight: 56, paddingHorizontal: 14, flexDirection: 'row', alignItems: 'center', gap: 10 },
+  sectionTitle: { flex: 1, color: colors.text, fontFamily: typography.sans, fontSize: 14.5, fontWeight: '800' },
+  count: { color: colors.textMuted, fontFamily: typography.sans, fontSize: 11, fontWeight: '700' },
+  sectionBody: { paddingHorizontal: 14, paddingBottom: 6, borderTopWidth: 1, borderTopColor: colors.borderSoft },
+  example: { paddingVertical: 14, borderBottomWidth: 1, borderBottomColor: 'rgba(126,78,151,.18)' },
+  exampleTop: { flexDirection: 'row', alignItems: 'flex-start', gap: 12 },
+  exampleName: { color: colors.text, fontFamily: typography.serifSemibold, fontSize: 20, lineHeight: 24 },
+  meaning: { marginTop: 2, color: colors.textMuted, fontFamily: typography.sans, fontSize: 11 },
+  arabic: { maxWidth: '48%', color: colors.goldLight, fontFamily: typography.arabic, fontSize: 19, textAlign: 'right' },
+  verdictPill: { alignSelf: 'flex-start', marginTop: 9, paddingHorizontal: 9, paddingVertical: 4, borderRadius: 999, borderWidth: 1 },
+  verdictPillText: { fontFamily: typography.sans, fontSize: 9.5, fontWeight: '900' },
+  verdict: { marginTop: 8, flexDirection: 'row', alignItems: 'flex-start', gap: 9 },
+  verdictSource: { width: 92, color: colors.goldLight, fontFamily: typography.sans, fontSize: 10.5, fontWeight: '800', lineHeight: 16 },
+  verdictText: { flex: 1, color: colors.textSecondary, fontFamily: typography.sans, fontSize: 11.5, lineHeight: 16 },
+  sources: { borderTopWidth: 1, borderTopColor: colors.borderSoft },
+  sourceRow: { paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: colors.borderSoft, flexDirection: 'row', alignItems: 'center', gap: 10 },
+  sourceAuthor: { color: colors.text, fontFamily: typography.sans, fontSize: 12, fontWeight: '800' },
+  sourceRef: { marginTop: 2, color: colors.textMuted, fontFamily: typography.sans, fontSize: 10.5, lineHeight: 15 },
+});
