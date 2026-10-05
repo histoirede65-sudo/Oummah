@@ -1,3 +1,5 @@
+import { getActiveLanguage, type LanguageCode } from "../../i18n";
+
 export type HijriMethod = "country" | "astronomical" | "manual";
 export type CalendarCountry =
   | "france"
@@ -11,14 +13,15 @@ export type CalendarCountry =
 export const CALENDAR_COUNTRIES: readonly {
   id: CalendarCountry;
   label: string;
+  labelEn: string;
 }[] = [
-  { id: "france", label: "France" },
-  { id: "algeria", label: "Algérie" },
-  { id: "morocco", label: "Maroc" },
-  { id: "tunisia", label: "Tunisie" },
-  { id: "saudi-arabia", label: "Arabie saoudite" },
-  { id: "turkey", label: "Turquie" },
-  { id: "other", label: "Autre pays" },
+  { id: "france", label: "France", labelEn: "France" },
+  { id: "algeria", label: "Algérie", labelEn: "Algeria" },
+  { id: "morocco", label: "Maroc", labelEn: "Morocco" },
+  { id: "tunisia", label: "Tunisie", labelEn: "Tunisia" },
+  { id: "saudi-arabia", label: "Arabie saoudite", labelEn: "Saudi Arabia" },
+  { id: "turkey", label: "Turquie", labelEn: "Turkey" },
+  { id: "other", label: "Autre pays", labelEn: "Other country" },
 ];
 
 export type HijriDate = {
@@ -44,6 +47,14 @@ export type IslamicEventDefinition = {
   importance: number;
   estimated?: boolean;
   matches: (date: HijriDate) => boolean;
+  /** Version anglaise ; les libellés de sources suivent le même ordre. */
+  en: {
+    title: string;
+    shortTitle: string;
+    summary: string;
+    actions: readonly string[];
+    sourceLabels: readonly string[];
+  };
 };
 
 export const HIJRI_MONTHS = [
@@ -60,6 +71,26 @@ export const HIJRI_MONTHS = [
   "Dhul-Qa‘da",
   "Dhul-Hijja",
 ] as const;
+
+export const HIJRI_MONTHS_EN = [
+  "Muharram",
+  "Safar",
+  "Rabi‘ al-Awwal",
+  "Rabi‘ al-Thani",
+  "Jumada al-Ula",
+  "Jumada al-Thaniya",
+  "Rajab",
+  "Sha‘ban",
+  "Ramadan",
+  "Shawwal",
+  "Dhu al-Qa‘dah",
+  "Dhu al-Hijjah",
+] as const;
+
+export function hijriMonthName(month: number, language: LanguageCode = getActiveLanguage()) {
+  const index = Math.max(1, Math.min(12, month)) - 1;
+  return language === "fr" ? HIJRI_MONTHS[index] : HIJRI_MONTHS_EN[index];
+}
 
 const DAY_MS = 86_400_000;
 
@@ -117,12 +148,16 @@ export function getHijriDate(
   };
 }
 
-export function formatHijri(date: HijriDate) {
-  return `${date.day} ${date.monthName} ${date.year}`;
+export function formatHijri(date: HijriDate, language: LanguageCode = getActiveLanguage()) {
+  return `${date.day} ${hijriMonthName(date.month, language)} ${date.year}`;
 }
 
-export function formatGregorian(date: Date, long = true) {
-  return new Intl.DateTimeFormat("fr-FR", {
+export function formatGregorian(
+  date: Date,
+  long = true,
+  language: LanguageCode = getActiveLanguage(),
+) {
+  return new Intl.DateTimeFormat(language === "fr" ? "fr-FR" : "en-GB", {
     weekday: long ? "long" : undefined,
     day: "numeric",
     month: long ? "long" : "short",
@@ -148,6 +183,14 @@ export const ISLAMIC_EVENTS: readonly IslamicEventDefinition[] = [
     ],
     importance: 4,
     estimated: true,
+    en: {
+      title: "Islamic New Year",
+      shortTitle: "Islamic New Year",
+      summary:
+        "The first day of Muharram opens a new year of the Hijri calendar.",
+      actions: ["Reflect on the past year", "Make a sincere intention", "Learn the story of the Hijrah"],
+      sourceLabels: ["Quran 9:36 — the twelve months"],
+    },
     matches: (date) => date.month === 1 && date.day === 1,
   },
   {
@@ -170,6 +213,14 @@ export const ISLAMIC_EVENTS: readonly IslamicEventDefinition[] = [
     ],
     importance: 5,
     estimated: true,
+    en: {
+      title: "Day of ‘Ashura",
+      shortTitle: "‘Ashura",
+      summary:
+        "The tenth day of Muharram. Fasting it is recommended and a great occasion for gratitude.",
+      actions: ["Fast on 10 Muharram", "Add the 9th or the 11th", "Increase dhikr and gratitude"],
+      sourceLabels: ["Sahih Muslim 1162 — fasting ‘Ashura"],
+    },
     matches: (date) => date.month === 1 && date.day === 10,
   },
   {
@@ -192,6 +243,14 @@ export const ISLAMIC_EVENTS: readonly IslamicEventDefinition[] = [
     ],
     importance: 5,
     estimated: true,
+    en: {
+      title: "Expected start of Ramadan",
+      shortTitle: "Ramadan",
+      summary:
+        "The month of fasting and of the revelation of the Quran. The final date depends on your country’s official announcement.",
+      actions: ["Prepare your intention", "Plan your Quran reading", "Set balanced goals"],
+      sourceLabels: ["Quran 2:185 — the month of Ramadan"],
+    },
     matches: (date) => date.month === 9 && date.day === 1,
   },
   {
@@ -215,6 +274,14 @@ export const ISLAMIC_EVENTS: readonly IslamicEventDefinition[] = [
     ],
     importance: 5,
     estimated: true,
+    en: {
+      title: "Nights to seek Laylat al-Qadr",
+      shortTitle: "Laylat al-Qadr",
+      summary:
+        "Laylat al-Qadr is sought in the odd nights of the last ten nights of Ramadan, without fixing it with certainty to a single date.",
+      actions: ["Pray and supplicate during the odd nights", "Read and reflect on the Quran", "Seek forgiveness sincerely"],
+      sourceLabels: ["Quran — Surah Al-Qadr", "Sahih al-Bukhari 2017 — the odd nights"],
+    },
     matches: (date) =>
       date.month === 9 &&
       date.day >= 21 &&
@@ -241,6 +308,14 @@ export const ISLAMIC_EVENTS: readonly IslamicEventDefinition[] = [
     ],
     importance: 5,
     estimated: true,
+    en: {
+      title: "Eid al-Fitr — expected date",
+      shortTitle: "Eid al-Fitr",
+      summary:
+        "The celebration marking the end of the Ramadan fast. Its date must be confirmed by the local official announcement.",
+      actions: ["Attend the Eid prayer", "Pay Zakat al-Fitr on time", "Share the joy with your loved ones"],
+      sourceLabels: ["Sahih al-Bukhari — the two Eids"],
+    },
     matches: (date) => date.month === 10 && date.day === 1,
   },
   {
@@ -263,6 +338,14 @@ export const ISLAMIC_EVENTS: readonly IslamicEventDefinition[] = [
     ],
     importance: 5,
     estimated: true,
+    en: {
+      title: "First ten days of Dhu al-Hijjah",
+      shortTitle: "Dhu al-Hijjah",
+      summary:
+        "The start of an especially precious time for good deeds and the remembrance of Allah.",
+      actions: ["Increase good deeds", "Increase dhikr", "Prepare for the day of ‘Arafah"],
+      sourceLabels: ["Sahih al-Bukhari 969 — good deeds"],
+    },
     matches: (date) => date.month === 12 && date.day === 1,
   },
   {
@@ -285,6 +368,14 @@ export const ISLAMIC_EVENTS: readonly IslamicEventDefinition[] = [
     ],
     importance: 5,
     estimated: true,
+    en: {
+      title: "Day of ‘Arafah",
+      shortTitle: "‘Arafah",
+      summary:
+        "The ninth day of Dhu al-Hijjah. For those not performing Hajj, fasting it is strongly recommended.",
+      actions: ["Fast if you are not a pilgrim", "Increase supplication", "Renew your repentance"],
+      sourceLabels: ["Sahih Muslim 1162 — fasting ‘Arafah"],
+    },
     matches: (date) => date.month === 12 && date.day === 9,
   },
   {
@@ -307,6 +398,14 @@ export const ISLAMIC_EVENTS: readonly IslamicEventDefinition[] = [
     ],
     importance: 5,
     estimated: true,
+    en: {
+      title: "Eid al-Adha — expected date",
+      shortTitle: "Eid al-Adha",
+      summary:
+        "The feast of sacrifice, celebrated on the tenth day of Dhu al-Hijjah. The final date follows the official announcement.",
+      actions: ["Attend the Eid prayer", "Strengthen family ties", "Share with and care for those in need"],
+      sourceLabels: ["Quran 108:2 — prayer and sacrifice"],
+    },
     matches: (date) => date.month === 12 && date.day === 10,
   },
   {
@@ -329,6 +428,14 @@ export const ISLAMIC_EVENTS: readonly IslamicEventDefinition[] = [
     ],
     importance: 4,
     estimated: true,
+    en: {
+      title: "Days of Tashriq",
+      shortTitle: "Tashriq",
+      summary:
+        "The 11th, 12th and 13th of Dhu al-Hijjah are days of eating, drinking and remembrance of Allah.",
+      actions: ["Increase the remembrance of Allah", "Enjoy these days with gratitude", "Do not plan a voluntary fast"],
+      sourceLabels: ["Sahih Muslim 1141 — the days of Tashriq"],
+    },
     matches: (date) => date.month === 12 && date.day >= 11 && date.day <= 13,
   },
 ];
@@ -353,8 +460,48 @@ export const WHITE_DAYS_EVENT: IslamicEventDefinition = {
   ],
   importance: 2,
   estimated: true,
+  en: {
+    title: "White days",
+    shortTitle: "White day",
+    summary:
+      "The 13th, 14th and 15th days of each Hijri month are days of recommended fasting.",
+    actions: ["Prepare your fast", "Adapt the reminder to your situation", "Keep a sincere and discreet intention"],
+    sourceLabels: ["Jami‘ at-Tirmidhi 761 — 13th, 14th and 15th"],
+  },
   matches: (date) => date.day >= 13 && date.day <= 15,
 };
+
+/** Textes de l'événement dans la langue de l'app. */
+export function localizeEvent(
+  event: IslamicEventDefinition,
+  language: LanguageCode = getActiveLanguage(),
+) {
+  if (language === "fr") {
+    return {
+      title: event.title,
+      shortTitle: event.shortTitle,
+      summary: event.summary,
+      actions: event.actions,
+      sources: event.sources,
+    };
+  }
+  return {
+    title: event.en.title,
+    shortTitle: event.en.shortTitle,
+    summary: event.en.summary,
+    actions: event.en.actions,
+    sources: event.sources.map((source, index) => ({
+      ...source,
+      label: event.en.sourceLabels[index] ?? source.label,
+    })),
+  };
+}
+
+export function countryLabel(id: CalendarCountry, language: LanguageCode = getActiveLanguage()) {
+  const country = CALENDAR_COUNTRIES.find((item) => item.id === id);
+  if (!country) return undefined;
+  return language === "fr" ? country.label : country.labelEn;
+}
 
 export function getEventsForDate(date: HijriDate) {
   const fixed = ISLAMIC_EVENTS.filter((event) => event.matches(date));
@@ -396,7 +543,11 @@ export function daysBetween(from: Date, to: Date) {
 
 export function isRecommendedFastDay(date: Date, hijri: HijriDate) {
   const weekday = date.getDay();
+  // Jeûne interdit le jour de l'Aïd al-Fitr, de l'Aïd al-Adha et pendant Tachrîq ;
+  // pendant Ramadan le jeûne est obligatoire, pas seulement recommandé.
+  if (hijri.month === 10 && hijri.day === 1) return false;
   if (hijri.month === 12 && hijri.day >= 10 && hijri.day <= 13) return false;
+  if (hijri.month === 9) return false;
   return (
     weekday === 1 ||
     weekday === 4 ||
