@@ -3,8 +3,8 @@ import { Ionicons } from '@expo/vector-icons';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { colors } from '../../theme/colors';
 import { typography } from '../../theme/typography';
-import { NAME_STATUS_META, type MuslimName, type NameStatus } from './types';
-import { getNameCardContext, getShownStatus } from './presentation';
+import type { MuslimName } from './types';
+import { getStatusBasis } from './presentation';
 
 export const prenomTheme = {
   card: 'rgba(23,16,38,0.88)',
@@ -12,6 +12,8 @@ export const prenomTheme = {
   goldWash: 'rgba(227,181,90,0.08)',
   borderGold: 'rgba(227,181,90,0.36)',
 };
+
+export const GENDER_ACCENT = { boy: '#78B9FF', girl: '#F2A6C7' } as const;
 
 export function ScreenHeader({ title, onBack, right }: { title: string; onBack: () => void; right?: ReactNode }) {
   return <View style={s.header}>
@@ -23,65 +25,60 @@ export function ScreenHeader({ title, onBack, right }: { title: string; onBack: 
   </View>;
 }
 
-export function StatusPill({ status, compact = false }: { status: NameStatus; compact?: boolean }) {
-  const meta = NAME_STATUS_META[status];
-  const tone = status === 'forbidden' ? colors.danger : status === 'discouraged' || status === 'note' ? colors.goldLight : colors.success;
-  return <View style={[s.statusPill,{borderColor:`${tone}55`,backgroundColor:`${tone}12`},compact&&s.statusCompact]}>
-    <Text style={[s.statusText,{color:tone},compact&&s.statusTextCompact]}>{meta.symbol} {meta.label}</Text>
+/** « ✓ Recommandé », shown only when a text establishes it (getStatusBasis). */
+export function RecommendedPill({ compact = false }: { compact?: boolean }) {
+  return <View style={[s.recommended, compact && s.recommendedCompact]}>
+    <Text style={[s.recommendedText, compact && s.recommendedTextCompact]}>✓ Recommandé</Text>
   </View>;
 }
 
-
-export function EditorialPill({ item, compact = false }: { item: MuslimName; compact?: boolean }) {
-  const level = item.editorialLevel ?? 'reviewed';
-  if (level === 'catalogue') {
-    return <View style={[s.editorialPill, compact && s.statusCompact]}><Ionicons name="library-outline" size={compact?10:12} color={colors.goldLight}/><Text style={[s.editorialText,compact&&s.statusTextCompact]}>Catalogue</Text></View>;
-  }
-  const sourced = level === 'sourced';
-  return <View style={[s.editorialPill,s.editorialVerified, compact && s.statusCompact]}><Ionicons name={sourced?'shield-checkmark-outline':'checkmark-circle-outline'} size={compact?10:12} color={colors.success}/><Text style={[s.editorialText,{color:colors.success},compact&&s.statusTextCompact]}>{sourced?'Sourcé':'Vérifié'}</Text></View>;
-}
-
-export function SectionTitle({ eyebrow, title, action, onAction }: { eyebrow?: string; title: string; action?: string; onAction?: () => void }) {
-  return <View style={s.sectionHead}>
-    <View style={{flex:1}}>{eyebrow ? <Text style={s.eyebrow}>{eyebrow}</Text> : null}<Text style={s.sectionTitle}>{title}</Text></View>
-    {action && onAction ? <Pressable onPress={onAction} hitSlop={8}><Text style={s.sectionAction}>{action}</Text></Pressable> : null}
-  </View>;
-}
-
+/** One dictionary entry: gender dot, name, Arabic, meaning on one line. */
 export function NameRow({ item, onPress, favorite, onFavorite }: { item: MuslimName; onPress: () => void; favorite?: boolean; onFavorite?: () => void }) {
-  const context=getNameCardContext(item);
-  const shownStatus=getShownStatus(item);
-  const genderAccent=item.gender==='boy'?'#78B9FF':'#F2A6C7';
-  const genderWash=item.gender==='boy'?'rgba(86,155,235,.065)':'rgba(231,126,174,.065)';
-  return <Pressable onPress={onPress} style={({pressed})=>[s.nameRow,{backgroundColor:genderWash},pressed&&s.pressed]}>
-    <View style={[s.genderRail,{backgroundColor:genderAccent}]}/>
-    <View style={s.nameMain}>
-      <View style={s.nameLine}><Text style={s.name}>{item.name}</Text><Text style={s.arabic}>{item.arabic}</Text></View>
-      <Text style={s.meaning} numberOfLines={2}>{item.meaning}</Text>
-      {context?<Text style={s.story} numberOfLines={2}>{context}</Text>:null}
-      <View style={s.metaLine}>{item.editorialLevel==='catalogue'?<EditorialPill item={item} compact/>:shownStatus?<StatusPill status={shownStatus} compact/>:null}<Text style={s.origin} numberOfLines={1}>{item.origin.join(' · ')}</Text></View>
+  const basis = getStatusBasis(item);
+  return <Pressable onPress={onPress} style={({pressed})=>[s.row,pressed&&s.pressed]} accessibilityRole="button" accessibilityLabel={`${item.name}, ${item.meaning}`}>
+    <View style={s.rowMain}>
+      <View style={s.rowTop}>
+        <View style={[s.dot,{backgroundColor:GENDER_ACCENT[item.gender]}]}/>
+        <Text style={s.rowName} numberOfLines={1}>{item.name}</Text>
+        {basis ? <Text style={s.rowCheck}>✓</Text> : null}
+        {item.arabic && item.arabic !== '—' ? <Text style={s.rowArabic} numberOfLines={1}>{item.arabic}</Text> : null}
+      </View>
+      <Text style={s.rowMeaning} numberOfLines={1}>{item.meaning}</Text>
     </View>
-    {onFavorite ? <Pressable onPress={(e)=>{e.stopPropagation();onFavorite();}} style={s.favoriteButton} hitSlop={8} accessibilityRole="button" accessibilityLabel={favorite?'Retirer des favoris':'Ajouter aux favoris'}>
-      <Ionicons name={favorite?'heart':'heart-outline'} size={19} color={favorite?colors.goldLight:colors.textMuted}/>
-    </Pressable> : <Ionicons name="chevron-forward" size={17} color={colors.textMuted}/>} 
+    {onFavorite ? <Pressable onPress={(e)=>{e.stopPropagation();onFavorite();}} style={s.heart} hitSlop={10} accessibilityRole="button" accessibilityLabel={favorite?'Retirer des favoris':'Ajouter aux favoris'}>
+      <Ionicons name={favorite?'heart':'heart-outline'} size={18} color={favorite?colors.goldLight:colors.textMuted}/>
+    </Pressable> : null}
   </Pressable>;
 }
 
-export function ChoiceChip({ label, active, onPress, icon }: { label: string; active?: boolean; onPress: () => void; icon?: keyof typeof Ionicons.glyphMap }) {
-  return <Pressable onPress={onPress} style={({pressed})=>[s.chip,active&&s.chipActive,pressed&&s.pressed]}>
+export function ChoiceChip({ label, active, onPress, icon, count }: { label: string; active?: boolean; onPress: () => void; icon?: keyof typeof Ionicons.glyphMap; count?: number }) {
+  return <Pressable onPress={onPress} style={({pressed})=>[s.chip,active&&s.chipActive,pressed&&s.pressed]} accessibilityRole="button" accessibilityState={{selected:Boolean(active)}}>
     {icon ? <Ionicons name={icon} size={14} color={active?colors.background:colors.textSecondary}/> : null}
     <Text style={[s.chipText,active&&s.chipTextActive]}>{label}</Text>
+    {count !== undefined ? <Text style={[s.chipCount,active&&s.chipTextActive]}>{count}</Text> : null}
   </Pressable>;
 }
 
 const s=StyleSheet.create({
-  header:{minHeight:68,paddingHorizontal:16,flexDirection:'row',alignItems:'center',justifyContent:'space-between'},
+  header:{minHeight:64,paddingHorizontal:16,flexDirection:'row',alignItems:'center',justifyContent:'space-between'},
   iconButton:{width:42,height:42,borderRadius:15,alignItems:'center',justifyContent:'center',borderWidth:1,borderColor:colors.borderSoft,backgroundColor:'rgba(255,255,255,0.035)'},
   headerTitle:{flex:1,textAlign:'center',paddingHorizontal:10,color:colors.text,fontFamily:typography.sans,fontSize:17,fontWeight:'700'},
-  headerRight:{width:42,alignItems:'flex-end'},spacer:{width:42,height:42},pressed:{opacity:.72},
-  statusPill:{alignSelf:'flex-start',paddingHorizontal:10,paddingVertical:6,borderRadius:999,borderWidth:1},statusCompact:{paddingHorizontal:7,paddingVertical:4},
-  statusText:{fontFamily:typography.sans,fontSize:11,fontWeight:'800'},statusTextCompact:{fontSize:9.5},editorialPill:{alignSelf:'flex-start',paddingHorizontal:9,paddingVertical:5,borderRadius:999,borderWidth:1,borderColor:prenomTheme.borderGold,backgroundColor:prenomTheme.goldWash,flexDirection:'row',alignItems:'center',gap:4},editorialVerified:{borderColor:'rgba(69,194,134,.32)',backgroundColor:'rgba(69,194,134,.08)'},editorialText:{color:colors.goldLight,fontFamily:typography.sans,fontSize:10,fontWeight:'800'},
-  sectionHead:{marginTop:28,marginBottom:11,flexDirection:'row',alignItems:'flex-end',gap:12},eyebrow:{color:colors.goldLight,fontFamily:typography.sans,fontSize:9,fontWeight:'800',letterSpacing:1.5},sectionTitle:{marginTop:4,color:colors.text,fontFamily:typography.sans,fontSize:21,fontWeight:'800',lineHeight:26},sectionAction:{color:colors.goldLight,fontFamily:typography.sans,fontSize:11.5,fontWeight:'700'},
-  nameRow:{minHeight:124,padding:15,borderRadius:22,borderWidth:1,borderColor:colors.borderSoft,backgroundColor:prenomTheme.card,flexDirection:'row',alignItems:'center',gap:10,overflow:'hidden'},genderRail:{position:'absolute',left:0,top:16,bottom:16,width:3,borderRadius:3},nameMain:{flex:1},nameLine:{flexDirection:'row',justifyContent:'space-between',alignItems:'baseline',gap:10},name:{color:colors.text,fontFamily:typography.sans,fontSize:19,fontWeight:'800'},arabic:{color:colors.goldLight,fontFamily:typography.arabic,fontSize:22},meaning:{marginTop:5,color:colors.textSecondary,fontFamily:typography.sans,fontSize:12.5,lineHeight:18},story:{marginTop:4,color:colors.textMuted,fontFamily:typography.sans,fontSize:10.5,lineHeight:15},metaLine:{marginTop:9,flexDirection:'row',alignItems:'center',gap:8},origin:{flex:1,color:colors.textMuted,fontFamily:typography.sans,fontSize:9.5},favoriteButton:{width:38,height:38,borderRadius:14,alignItems:'center',justifyContent:'center',backgroundColor:'rgba(255,255,255,0.035)'},
-  chip:{paddingHorizontal:13,paddingVertical:9,borderRadius:999,borderWidth:1,borderColor:colors.borderSoft,backgroundColor:'rgba(255,255,255,0.035)',flexDirection:'row',alignItems:'center',gap:6},chipActive:{borderColor:colors.goldLight,backgroundColor:colors.goldLight},chipText:{color:colors.textSecondary,fontFamily:typography.sans,fontSize:11,fontWeight:'600'},chipTextActive:{color:colors.background,fontWeight:'800'},
+  headerRight:{minWidth:42,alignItems:'flex-end'},spacer:{width:42,height:42},pressed:{opacity:.72},
+  recommended:{alignSelf:'flex-start',paddingHorizontal:10,paddingVertical:5,borderRadius:999,borderWidth:1,borderColor:'rgba(98,197,139,.45)',backgroundColor:'rgba(98,197,139,.08)'},
+  recommendedCompact:{paddingHorizontal:7,paddingVertical:3},
+  recommendedText:{color:colors.success,fontFamily:typography.sans,fontSize:11,fontWeight:'800'},recommendedTextCompact:{fontSize:9.5},
+  row:{minHeight:66,paddingVertical:11,borderBottomWidth:1,borderBottomColor:'rgba(126,78,151,.20)',flexDirection:'row',alignItems:'center',gap:10},
+  rowMain:{flex:1,minWidth:0},
+  rowTop:{flexDirection:'row',alignItems:'center',gap:7},
+  dot:{width:6,height:6,borderRadius:3},
+  rowName:{flexShrink:1,color:colors.text,fontFamily:typography.serifSemibold,fontSize:22,lineHeight:27},
+  rowCheck:{color:colors.success,fontFamily:typography.sans,fontSize:12,fontWeight:'900'},
+  rowArabic:{marginLeft:'auto',maxWidth:'45%',color:colors.goldLight,fontFamily:typography.arabic,fontSize:20},
+  rowMeaning:{marginTop:2,marginLeft:13,color:colors.textSecondary,fontFamily:typography.sans,fontSize:12.5,lineHeight:18},
+  heart:{width:34,height:34,alignItems:'center',justifyContent:'center'},
+  chip:{paddingHorizontal:12,paddingVertical:8,borderRadius:999,borderWidth:1,borderColor:colors.borderSoft,backgroundColor:'rgba(255,255,255,0.03)',flexDirection:'row',alignItems:'center',gap:6},
+  chipActive:{borderColor:colors.goldLight,backgroundColor:colors.goldLight},
+  chipText:{color:colors.textSecondary,fontFamily:typography.sans,fontSize:12,fontWeight:'600'},
+  chipCount:{color:colors.textMuted,fontFamily:typography.sans,fontSize:11,fontVariant:['tabular-nums']},
+  chipTextActive:{color:colors.background,fontWeight:'800'},
 });

@@ -1,4 +1,5 @@
-import type { MuslimName, NameStatus } from './types';
+import type { NameSourceId } from './scholar-sources';
+import type { MuslimName } from './types';
 
 // Stories produced from a template (they only repeat the meaning or an unsourced generality): not shown.
 const GENERIC_STORY_MARKERS = [
@@ -9,13 +10,30 @@ const GENERIC_STORY_MARKERS = [
   'son sens principal retenu ici est',
 ];
 
+export type StatusBasis = { reason: string; sources: NameSourceId[] };
+
+const PROPHET_IDS = new Set(['muhammad', 'ahmad']);
+
 /**
- * Religious status shown to the user. Only « Recommandé » is backed by a text (Muslim 2132 for Abdullah and
- * Abd ar-Rahman, prophets and people named in the Quran, Companions); the other statuses were generic verdicts
- * without a source, so no verdict is shown for them.
+ * Why a name is shown as « Recommandé », with the texts that say so. Only four cases have such a text:
+ * Abdullah and Abd ar-Rahman (Muslim 2132), names of servitude to one of Allah's Names (Ibn ‘Uthaymîn),
+ * prophets' names (Abû Dâwûd 4950, Ibn ‘Uthaymîn) and names of the women Companions (Ibn Bâz, Ibn ‘Uthaymîn).
+ * Every other name gets no verdict.
  */
-export function getShownStatus(item: MuslimName): NameStatus | null {
-  return item.status === 'recommended' ? item.status : null;
+export function getStatusBasis(item: MuslimName): StatusBasis | null {
+  if (item.id === 'abdullah' || item.id === 'abdurrahman') {
+    return { reason: '« Les noms les plus aimés d’Allah sont ‘Abdullah et ‘Abd al-Rahman. »', sources: ['muslim2132'] };
+  }
+  if (item.gender === 'boy' && item.arabic?.startsWith('عبد ')) {
+    return { reason: 'Nom rattaché à Allah. Ibn ‘Uthaymîn : « Tout [nom] rattaché à Allah est meilleur que les autres. »', sources: ['uthNaming', 'bazWhenWho'] };
+  }
+  if (item.tags.includes('prophete') || PROPHET_IDS.has(item.id)) {
+    return { reason: 'Nom de prophète. Le Prophète ﷺ : « Appelez-vous par les noms des Prophètes. »', sources: ['abuDawud4950', 'uthNaming'] };
+  }
+  if (item.tags.includes('sahabiyya') && item.status === 'recommended') {
+    return { reason: 'Nom d’une femme des Compagnons. Ibn Bâz : pour les femmes, « ce qui était en usage parmi les femmes des Compagnons ».', sources: ['bazWhenWho', 'uthMalak'] };
+  }
+  return null;
 }
 
 export function getNameStory(item: MuslimName): string | null {
@@ -23,13 +41,6 @@ export function getNameStory(item: MuslimName): string | null {
   const lower = raw.toLocaleLowerCase('fr');
   const isGeneric = !raw || GENERIC_STORY_MARKERS.some((marker) => lower.includes(marker));
   return isGeneric ? null : raw;
-}
-
-export function getNameCardContext(item: MuslimName) {
-  if (item.historicalRole) return item.historicalRole;
-  const story = getNameStory(item);
-  if (story) return story;
-  return item.quranReference ? `Repère coranique : ${item.quranReference}.` : null;
 }
 
 export function getReadableVariants(item: MuslimName) {

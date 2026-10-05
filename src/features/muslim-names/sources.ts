@@ -68,29 +68,6 @@ function isPreciseLink(url?: string) {
   return !/behindthename\.com\/names\/usage|huggingface\.co/.test(url);
 }
 
-export function getLanguageAndCulture(item: MuslimName) {
-  const language = item.language?.length ? item.language : inferLanguage(item.origin);
-  const culture = item.culture?.length ? item.culture : inferCulture(item.origin);
-  return { language, culture };
-}
-
-function inferLanguage(origin: string[]) {
-  const values = origin.map(value => value.toLocaleLowerCase('fr'));
-  const result: string[] = [];
-  if (values.some(value => value.includes('arabe'))) result.push('Arabe');
-  if (values.some(value => value.includes('perse'))) result.push('Persan');
-  if (values.some(value => value.includes('tur'))) result.push('Turc');
-  if (values.some(value => value.includes('amaz') || value.includes('berb'))) result.push('Amazigh');
-  if (values.some(value => value.includes('ourdou') || value.includes('urdu'))) result.push('Ourdou');
-  if (values.some(value => value.includes('hébra') || value.includes('sémit'))) result.push('Langue sémitique ancienne / forme arabisée');
-  return result.length ? result : ['Usage culturel à préciser'];
-}
-
-function inferCulture(origin: string[]) {
-  if (!origin.length) return ['Usage culturel à préciser'];
-  return origin.map(value => value === 'Usage arabe' ? 'Tradition arabophone' : value);
-}
-
 function dedupeSources(sources: NameSource[]) {
   const seen = new Set<string>();
   return sources.filter(source => {
