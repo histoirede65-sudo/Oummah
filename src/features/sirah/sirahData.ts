@@ -1111,8 +1111,8 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
       {
         "type": "hadith",
         "context": {
-          "fr": "‘Abd Allâh ibn Mas‘ûd, l’un des premiers musulmans, résume ainsi ce que la conversion de ‘Umar changea pour des croyants encore peu nombreux et persécutés.",
-          "en": "'Abd Allah ibn Mas'ud, one of the first Muslims, sums up this way what 'Umar's conversion changed for believers who were still few and persecuted."
+          "fr": "‘Abd Allâh ibn Mas‘ûd, l’un des premiers musulmans, résume ainsi ce que la conversion de ‘Umar changea pour les musulmans.",
+          "en": "'Abd Allah ibn Mas'ud, one of the first Muslims, sums up this way what 'Umar's conversion changed for the Muslims."
         },
         "text": {
           "fr": "Nous avons été forts depuis qu’`Umar a embrassé l’islam",
@@ -1314,8 +1314,8 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
       {
         "type": "hadith",
         "context": {
-          "fr": "Des années plus tard, ‘Â’isha demanda au Prophète ﷺ s’il avait vécu un jour plus dur que Uhud. Il raconta le retour de Tâ’if, rejeté et blessé, et la venue de l’ange des montagnes.",
-          "en": "Years later, 'A'isha asked the Prophet ﷺ whether he had known a harder day than Uhud. He told of the return from Ta'if, rejected and wounded, and the coming of the angel of the mountains."
+          "fr": "Des années plus tard, ‘Â’isha demanda au Prophète ﷺ s’il avait vécu un jour plus dur que Uhud. Il raconta le jour où les gens de Tâ’if le rejetèrent, puis la venue de l’ange des montagnes.",
+          "en": "Years later, 'A'isha asked the Prophet ﷺ whether he had known a harder day than Uhud. He told of the day the people of Ta'if rejected him, then the coming of the angel of the mountains."
         },
         "text": {
           "fr": "Ô Muhammad ! Ordonne ce que tu veux. Si tu veux, je ferai tomber sur eux les deux montagnes.” Le Prophète ﷺ a dit : « Non, mais j’espère qu’Allah fera naître d’eux des gens qui adoreront Allah seul, sans rien Lui associer.",
@@ -1692,8 +1692,8 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
       {
         "type": "hadith",
         "context": {
-          "fr": "Suraqa ibn Mâlik raconte lui-même sa poursuite. Il voulait la récompense promise par Quraysh pour la capture du Prophète ﷺ ; il se convertit des années plus tard.",
-          "en": "Suraqa ibn Malik tells of his own pursuit. He wanted the reward Quraysh had promised for capturing the Prophet ﷺ; he became Muslim years later."
+          "fr": "Suraqa ibn Mâlik raconte lui-même sa poursuite. Il voulait la récompense promise par Quraysh pour la capture du Prophète ﷺ et d’Abû Bakr.",
+          "en": "Suraqa ibn Malik tells of his own pursuit. He wanted the reward Quraysh had promised for capturing the Prophet ﷺ and Abu Bakr."
         },
         "text": {
           "fr": "Quand j’ai entendu la récitation du Coran par le Messager d’Allah (ﷺ), qui ne regardait pas autour de lui alors qu’Abu Bakr le faisait souvent, soudain les pattes avant de mon cheval se sont enfoncées dans le sol jusqu’aux genoux et je suis tombé. Je l’ai réprimandé, il s’est relevé mais avait du mal à sortir ses pattes, et quand il s’est redressé, la poussière est montée comme de la fumée. J’ai de nouveau tiré les flèches, et le tirage que je n’aimais pas est encore sorti. Alors je les ai appelés pour les rassurer. Ils se sont arrêtés, je suis remonté et je suis allé vers eux. Quand j’ai vu que je ne pouvais pas leur faire de mal, j’ai compris que la cause du Messager d’Allah (ﷺ) allait triompher.",
@@ -2963,15 +2963,15 @@ export const SIRAH_CHAPTERS: SirahChapter[] = [
       {
         "type": "text",
         "text": {
-          "fr": "Il déclara abolies les vengeances de sang et l’usure de l’époque préislamique, en commençant par celles de sa propre famille. Puis il parla des femmes, à des hommes habitués à en disposer sans leur reconnaître de droits :",
-          "en": "He declared the blood feuds and the usury of the pre-Islamic era abolished, starting with those of his own family. Then he spoke about women, to men used to disposing of them without granting them rights:"
+          "fr": "Il déclara abolies les vengeances de sang et l’usure de l’époque préislamique, en commençant par celles de sa propre famille. Puis il parla des femmes :",
+          "en": "He declared the blood feuds and the usury of the pre-Islamic era abolished, starting with those of his own family. Then he spoke about women:"
         }
       },
       {
         "type": "hadith",
         "context": {
-          "fr": "Même sermon de ‘Arafa. Dans une société où les femmes étaient souvent privées de droits, le Prophète ﷺ rappelle aux maris qu’ils devront rendre compte à Allah de leurs épouses.",
-          "en": "The same sermon at 'Arafa. In a society where women were often deprived of rights, the Prophet ﷺ reminds husbands that they will answer to Allah for their wives."
+          "fr": "Même sermon de ‘Arafa, juste après l’abolition des vengeances de sang et de l’usure. Le Prophète ﷺ s’adresse aux maris : leurs épouses leur ont été confiées sous la protection d’Allah.",
+          "en": "The same sermon at 'Arafa, right after the abolition of blood feuds and usury. The Prophet ﷺ addresses husbands: their wives were entrusted to them on the security of Allah."
         },
         "text": {
           "fr": "Craignez Allah à propos des femmes ! Vous les avez prises sous la protection d’Allah, et les rapports avec elles vous ont été rendus licites par la parole d’Allah.",
