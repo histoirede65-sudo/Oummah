@@ -2318,4 +2318,6 @@ export const en: Partial<Record<TranslationKey, string>> = {
   'wasil.noEnergyTitle': 'You have no Wasil Energy left',
   'wasil.noEnergyBody': 'Each question to Wasil uses Energy, and your balance is at zero. Top up your Energy to continue: your question is kept and you can send it again right after.',
   'wasil.noEnergyAction': 'Top up my Energy',
+  'wasil.lowEnergyTitle': 'Not enough Energy for this question',
+  'wasil.lowEnergyBody': 'An in-depth search needs more Energy than a simple question, and you do not have enough left. Top up your Energy to continue: your question is kept and you can send it again right after.',
 };

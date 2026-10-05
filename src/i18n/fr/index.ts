@@ -2327,6 +2327,8 @@ export const fr = {
   'wasil.noEnergyTitle': 'Vous n’avez plus d’Énergie Wasil',
   'wasil.noEnergyBody': 'Chaque question à Wasil utilise de l’Énergie, et votre solde est à zéro. Rechargez votre Énergie pour continuer : votre question est gardée, vous pourrez la renvoyer juste après.',
   'wasil.noEnergyAction': 'Recharger mon Énergie',
+  'wasil.lowEnergyTitle': 'Pas assez d’Énergie pour cette question',
+  'wasil.lowEnergyBody': 'Une recherche approfondie demande plus d’Énergie qu’une question simple, et il ne vous en reste pas assez. Rechargez votre Énergie pour continuer : votre question est gardée, vous pourrez la renvoyer juste après.',
 } as const;
 
 export type TranslationKey = keyof typeof fr;

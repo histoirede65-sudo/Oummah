@@ -1187,6 +1187,8 @@ export default function DalilScreen() {
   const [messages, setMessages] = useState<WasilConversationMessage[]>([]);
   const [lastMisunderstoodPrompt, setLastMisunderstoodPrompt] = useState("");
   const [failedPrompt, setFailedPrompt] = useState("");
+  // Balance when a question was refused for lack of Energy: « Réessayer » comes back once it has grown.
+  const [energyBlockedAt, setEnergyBlockedAt] = useState<number | null>(null);
   const [pendingReminder, setPendingReminder] =
     useState<PendingWasilReminder | null>(null);
   const [pendingReminderManagement, setPendingReminderManagement] =
@@ -2431,18 +2433,23 @@ export default function DalilScreen() {
       clearStream();
       const apiError = error instanceof WasilApiError ? error : null;
       const outOfEnergy = apiError?.code === "INSUFFICIENT_CREDITS";
-      if (typeof apiError?.balance === "number") setBalance(apiError.balance);
-      else if (outOfEnergy) setBalance(0);
+      const balanceLeft = typeof apiError?.balance === "number" ? apiError.balance : outOfEnergy ? 0 : null;
+      if (balanceLeft !== null) setBalance(balanceLeft);
+      setEnergyBlockedAt(outOfEnergy ? balanceLeft ?? 0 : null);
       const errorReply: WasilReply = {
         kind: "unsupported-religious",
         title:
           apiError?.code === "AUTH_REQUIRED"
             ? t("wasil.profileRequired")
             : outOfEnergy
-              ? t("wasil.noEnergyTitle")
+              ? balanceLeft
+                ? t("wasil.lowEnergyTitle")
+                : t("wasil.noEnergyTitle")
               : t("wasil.unavailable"),
         body: outOfEnergy
-          ? t("wasil.noEnergyBody")
+          ? balanceLeft
+            ? t("wasil.lowEnergyBody")
+            : t("wasil.noEnergyBody")
           : language === "fr" && apiError?.message
             ? apiError.message
             : t("wasil.retryNoCredit"),
@@ -2925,7 +2932,7 @@ export default function DalilScreen() {
                     {reply.title}
                   </Text>
                   <WasilAnswerPresentation answer={reply} />
-                  {failedPrompt && !(reply.action?.route === ENERGY_ROUTE && (balance ?? 0) <= 0) ? (
+                  {failedPrompt && (energyBlockedAt === null || (balance ?? 0) > energyBlockedAt) ? (
                     <Pressable
                       accessibilityRole="button"
                       disabled={loading}
