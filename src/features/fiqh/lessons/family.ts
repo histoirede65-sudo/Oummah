@@ -1,28 +1,24 @@
 import { c, p, type LessonEntry } from "./types";
 
-const F = "wajiz-salah";
-const N = "wajiz-nikah";
 
 export const FUNERAL_LESSONS: Record<string, LessonEntry> = {
   "funerals-dying-person": {
     title: "Accompagner le mourant",
-    short: "On aide doucement le mourant à prononcer « lâ ilâha illa-llâh », on l’encourage à espérer en la miséricorde d’Allah, et l’on reste patient.",
+    short: "On rappelle au mourant « lâ ilâha illa-llâh ». Les larmes sont une miséricorde, et l’on appelle à la patience.",
     rules: [
       p("« Faites dire à vos mourants : lâ ilâha illa-llâh. »", "muslim-916a"),
       p("Les larmes sont une miséricorde ; on appelle à la patience et à l’espoir de la récompense.", "bukhari-1284"),
     ],
-    avoid: ["Insister lourdement ou lui faire répéter la formule sans cesse : on la lui rappelle avec douceur."],
   },
 
   "funerals-after-death": {
     title: "Juste après le décès",
-    short: "On ferme les yeux du défunt, on invoque pour lui, on le couvre, puis on hâte la toilette, la prière et l’enterrement.",
+    short: "On ferme les yeux du défunt, on invoque pour lui, puis on hâte la toilette, la prière et l’enterrement.",
     rules: [
       p("Le Prophète ﷺ a fermé les yeux d’Abû Salama et a invoqué pour son pardon et l’élargissement de sa tombe.", "muslim-920a"),
       p("« Dépêchez-vous d’enterrer le défunt. »", "bukhari-1315"),
       p("Se frapper le visage et déchirer ses habits sont interdits.", "bukhari-1294"),
     ],
-    cases: [c("Peut-on retarder l’enterrement pour attendre la famille ?", "Seulement un court délai raisonnable ; la Sunnah est de ne pas tarder.", "bukhari-1315")],
   },
 
   "funerals-washing": {
@@ -33,30 +29,30 @@ export const FUNERAL_LESSONS: Record<string, LessonEntry> = {
       p("« Il a aussi été dit qu’il fallait commencer par le côté droit et par les parties lavées lors des ablutions. »", "bukhari-1254"),
     ],
     steps: [
-      p("Couvrez la ‘awra du défunt et lavez doucement les impuretés.", F),
-      p("Faites-lui le wudû’, en commençant par la droite.", "bukhari-1254"),
+      p("Commencez par le côté droit et les membres du wudû’.", "bukhari-1254"),
       p("Lavez tout le corps avec de l’eau et du sidr, trois fois ou plus, en nombre impair.", "bukhari-1253"),
-      p("Mettez du camphre dans la dernière eau, puis séchez.", "bukhari-1253"),
+      p("Mettez du camphre dans la dernière eau.", "bukhari-1253"),
     ],
-    cases: [c("Qui lave le défunt ?", "Les hommes lavent les hommes et les femmes les femmes ; l’époux et l’épouse peuvent se laver l’un l’autre.", F)],
+    cases: [
+      c("Qui lave le défunt ?", "Al-Wajîz : les hommes lavent les hommes et les femmes les femmes ; l’époux et l’épouse peuvent se laver l’un l’autre. ‘Â’isha a dit que si elle avait su, seules ses épouses auraient lavé le Prophète ﷺ.", "wajiz-salah"),
+    ],
   },
 
   "funerals-washing-cases": {
     title: "Cas particuliers de la toilette",
-    short: "Le pèlerin mort en ihrâm est lavé sans parfum et sa tête reste découverte. Le martyr tombé au combat est enterré sans être lavé.",
+    short: "Le pèlerin mort en ihrâm est lavé sans parfum et sa tête reste découverte. Les martyrs de Uhud ont été enterrés sans être lavés.",
     rules: [
       p("Le pèlerin mort en ihrâm : lavé à l’eau et au sidr, sans parfum, tête découverte ; il sera ressuscité en prononçant la talbiya.", "bukhari-1265"),
       p("Les martyrs de Uhud ont été enterrés dans leur sang, sans être lavés.", "bukhari-1343"),
     ],
-    cases: [c("Le corps est abîmé ou contagieux.", "On verse l’eau sans frotter ; si le lavage est impossible, on fait le tayammum au défunt.", F)],
   },
 
   "funerals-shroud": {
     title: "Le linceul",
-    short: "Le linceul de l’homme se compose de trois pièces de tissu blanc. Celui du Prophète ﷺ était de trois étoffes blanches en coton, sans chemise ni turban.",
-    rules: [p("Le Prophète ﷺ a été enveloppé dans trois étoffes blanches de coton, sans chemise ni turban.", "bukhari-1264", "muslim-941a")],
-    cases: [c("Et la femme ?", "Beaucoup de savants recommandent cinq pièces pour la femme ; le minimum pour tous est une pièce qui couvre tout le corps.", F)],
-    avoid: ["Les linceuls coûteux et l’ostentation."],
+    short: "Le Prophète ﷺ a été enveloppé dans trois étoffes blanches de coton, sans chemise ni turban.",
+    rules: [
+      p("Le Prophète ﷺ a été enveloppé dans trois étoffes blanches de coton, sans chemise ni turban.", "bukhari-1264", "muslim-941a"),
+    ],
   },
 
   "funerals-shroud-cases": {
@@ -76,48 +72,56 @@ export const FUNERAL_LESSONS: Record<string, LessonEntry> = {
     ],
     steps: [
       p("1er takbîr : al-Fâtiha.", "bukhari-1335"),
-      p("2e takbîr : la prière sur le Prophète ﷺ (celle du tashahhud).", "bukhari-3370", F),
+      p("2e takbîr : la prière sur le Prophète ﷺ (al-Wajîz, d’après le hadith d’Abû Umâma).", "wajiz-salah"),
       p("3e takbîr : invocation pour le défunt.", "muslim-963a"),
-      p("4e takbîr : un court silence ou une invocation, puis le salut à droite.", F),
+      p("Al-Wajîz : l’invocation entre le dernier takbîr et le salut est légiférée, d’après le hadith d’Ibn Abî Awfâ ; puis on salue.", "wajiz-salah"),
     ],
-    cases: [c("Où se place l’imam ?", "Au niveau de la tête pour un homme, au milieu du corps pour une femme.", F)],
+    cases: [
+      c("Où se place l’imam ?", "Al-Wajîz : au niveau de la tête pour un homme, au milieu du corps pour une femme, comme l’a fait Anas en disant que le Prophète ﷺ faisait ainsi.", "wajiz-salah"),
+    ],
   },
 
   "funerals-prayer-absent": {
     title: "La prière sur le défunt absent",
-    short: "On peut prier sur un défunt mort au loin : le Prophète ﷺ a prié sur le Najâshî, roi d’Abyssinie, le jour de sa mort.",
-    rules: [p("Le Prophète ﷺ a annoncé la mort du Najâshî, est sorti au lieu de prière et a fait quatre takbîr.", "bukhari-1334")],
-    note: ["Les savants divergent : certains la permettent pour tout défunt absent, d’autres la réservent à celui sur qui personne n’a prié."],
+    short: "Le Prophète ﷺ a prié sur le Najâshî, roi d’Abyssinie, le jour de sa mort.",
+    rules: [
+      p("Le Prophète ﷺ a annoncé la mort du Najâshî, est sorti au lieu de prière et a fait quatre takbîr.", "bukhari-1334"),
+    ],
   },
 
   "funerals-burial": {
     title: "L’enterrement",
-    short: "On hâte l’enterrement, on creuse une tombe profonde et large, de préférence avec une niche latérale (lahd), on y couche le défunt sur le côté droit face à la qibla, puis on invoque pour lui.",
+    short: "On hâte l’enterrement et l’on creuse une tombe large. Al-Wajîz : la niche latérale (lahd) et la fosse sont permises, et la niche est meilleure ; puis on invoque pour le défunt.",
     rules: [
       p("« Dépêchez-vous d’enterrer le défunt. »", "bukhari-1315"),
       p("Le jour de Uhud : « Creusez des tombes larges et enterrez deux ou trois personnes dans une même tombe. »", "abudawud-3215"),
-      p("La tombe du Prophète ﷺ avait une niche latérale (lahd) fermée de briques.", "muslim-966"),
+      p("La tombe du Prophète ﷺ avait une niche latérale (lahd) fermée de briques.", "muslim-966", "wajiz-salah"),
       p("Après l’enterrement : « Demandez pardon pour votre frère et demandez pour lui la fermeté, car il va maintenant être interrogé. »", "abudawud-3221"),
     ],
-    cases: [c("Les femmes suivent-elles le convoi ?", "Umm ‘Atiyya a dit : « On nous a interdit de suivre les cortèges funèbres, mais ce n’était pas strict. »", "bukhari-1278")],
+    cases: [
+      c("Les femmes suivent-elles le convoi ?", "Umm ‘Atiyya a dit : « On nous a interdit de suivre les cortèges funèbres, mais ce n’était pas strict. »", "bukhari-1278"),
+    ],
   },
 
   "funerals-grave": {
     title: "La tombe",
-    short: "La tombe reste simple, légèrement surélevée. On ne la plâtre pas, on ne construit pas dessus et on ne s’assoit pas dessus.",
-    rules: [p("Le Prophète ﷺ a interdit de plâtrer les tombes, de s’asseoir dessus et de construire dessus.", "muslim-970a")],
     sourceIds: ["muslim-966"],
+    short: "Al-Wajîz : la tombe est surélevée d’environ un empan, sans être nivelée au sol. On ne la plâtre pas, on ne construit pas dessus et on ne s’assoit pas dessus.",
+    rules: [
+      p("Le Prophète ﷺ a interdit de plâtrer les tombes, de s’asseoir dessus et de construire dessus.", "muslim-970a"),
+      p("Al-Wajîz : la tombe du Prophète ﷺ a été surélevée d’environ un empan, d’après le hadith de Jâbir.", "wajiz-salah"),
+    ],
   },
 
   "funerals-condolences": {
     title: "Les condoléances et le deuil",
-    short: "On console la famille en l’invitant à la patience : « À Allah appartient ce qu’Il a pris et ce qu’Il a donné. » Le deuil dure trois jours, sauf pour la veuve.",
+    short: "On console la famille en l’invitant à la patience. Le deuil dure trois jours, sauf pour la veuve.",
     rules: [
       p("« Ce qu’Allah prend Lui appartient et ce qu’Il donne Lui appartient, et toute chose auprès de Lui a un terme fixé (dans ce monde), alors elle doit être patiente et espérer la récompense d’Allah. »", "bukhari-1284"),
       p("Pas de deuil au-delà de trois jours, sauf la veuve : quatre mois et dix jours.", "bukhari-1280"),
       p("« Préparez à manger pour la famille de Ja‘far. »", "abudawud-3132"),
+      p("Se frapper le visage et déchirer ses habits sont interdits.", "bukhari-1294"),
     ],
-    avoid: ["Les lamentations, les cris, et faire porter à la famille du défunt la charge de nourrir les visiteurs."],
   },
 
   "funerals-graves": {
@@ -134,85 +138,88 @@ export const FUNERAL_LESSONS: Record<string, LessonEntry> = {
 export const FAMILY_LESSONS: Record<string, LessonEntry> = {
   "family-marriage-purpose": {
     title: "Le sens du mariage",
-    short: "Le mariage est une Sunnah des prophètes, une protection et un lieu de tranquillité, d’affection et de miséricorde.",
+    sourceIds: ["wajiz-nikah"],
+    short: "Le mariage est un lieu de tranquillité, d’affection et de bonté ; le Prophète ﷺ y a appelé les jeunes qui en ont la capacité.",
     rules: [
       p("« Il a créé de vous, pour vous, des épouses pour que vous viviez en tranquillité avec elles et Il a mis entre vous de l’affection et de la bonté. »", "quran-30-21"),
       p("« Ô jeunes gens ! Celui d’entre vous qui en a la capacité doit se marier. »", "bukhari-5065"),
       p("Le Prophète ﷺ a dit que le meilleur d’entre vous est le meilleur envers ses épouses.", "tirmidhi-3895"),
     ],
-    sourceIds: [N],
   },
 
   "family-proposal": {
     title: "La demande en mariage",
-    short: "On choisit d’abord la religion et le caractère. Il est permis de voir la personne avant de s’engager. On ne demande pas en mariage une femme déjà demandée par un autre.",
+    short: "On choisit d’abord la religion. Il est permis de voir la personne avant de s’engager. On ne demande pas en mariage une femme déjà demandée par un autre.",
     rules: [
       p("« On épouse une femme pour quatre raisons : sa richesse, sa famille, sa beauté et sa religion. Choisis la femme pieuse. »", "bukhari-5090"),
       p("« Va la regarder » : il est recommandé de voir la future épouse.", "muslim-1424"),
       p("On ne demande pas en mariage une femme déjà demandée tant que le premier n’a pas renoncé.", "bukhari-5142"),
     ],
-    avoid: ["Les rencontres seul à seul pendant les fiançailles : les fiancés restent étrangers l’un à l’autre jusqu’au contrat."],
   },
 
   "family-contract": {
     title: "Le contrat de mariage",
-    short: "Le mariage se conclut par le consentement des deux époux, l’accord du tuteur (wali) de la femme, deux témoins et un mahr.",
+    sensitive: true,
+    short: "Le mariage se conclut par le consentement de la femme, l’accord de son tuteur (wali), deux témoins et un mahr.",
     rules: [
       p("La femme ne se marie pas sans son consentement ; pour la vierge, son silence vaut accord.", "bukhari-5136"),
       p("« Il n’y a pas de mariage sans l’autorisation d’un tuteur. »", "abudawud-2085"),
+      p("Al-Wajîz : le contrat exige l’accord du tuteur et la présence de deux témoins intègres, d’après le hadith : pas de mariage sans tuteur et deux témoins intègres.", "wajiz-nikah"),
       p("Le contrat se fait en présence du tuteur, de l’époux et de deux témoins.", "binbaz-nikah-witnesses"),
       p("« Organise un banquet, même si c’est avec un seul mouton. »", "bukhari-5167"),
     ],
-    cases: [c("Le mariage civil suffit-il ?", "Le mariage civil seul ne remplit pas forcément les conditions (tuteur, témoins, mahr). Faites le contrat religieux dans les règles, en respectant aussi la loi de votre pays.", N)],
-    sensitive: true,
   },
 
   "family-wali": {
     title: "Le tuteur (wali)",
-    short: "Le tuteur est le père de la femme, à défaut son grand-père, son fils, son frère, puis les proches parents par le père. Il ne peut pas la marier contre son gré, ni l’empêcher sans raison d’épouser un homme convenable.",
+    sensitive: true,
+    short: "Le mariage de la femme se fait par son tuteur. Il ne peut pas la marier contre son gré, ni l’empêcher injustement d’épouser un homme convenable.",
     rules: [
       p("« Il n’y a pas de mariage sans l’autorisation d’un tuteur. »", "abudawud-2085"),
       p("Le mariage conclu sans l’accord du tuteur est nul.", "abudawud-2083"),
       p("Le tuteur n’empêche pas injustement un mariage convenable.", "quran-2-232"),
       p("Il ne peut marier la femme sans son consentement.", "bukhari-5136"),
     ],
-    note: ["Les hanafites permettent à la femme majeure de conclure elle-même son mariage avec un homme de rang équivalent ; les autres écoles exigent le tuteur."],
-    sensitive: true,
   },
 
   "family-witnesses": {
     title: "Les témoins",
-    short: "Le contrat de mariage se conclut devant deux témoins musulmans intègres, pour le rendre public et protéger les droits de chacun.",
-    rules: [p("Le contrat est établi avec le tuteur, l’époux et deux témoins.", "binbaz-nikah-witnesses")],
-    note: ["Les malikites mettent l’accent sur l’annonce publique du mariage, les autres écoles sur la présence des témoins lors du contrat."],
-    sourceIds: [N],
+    sourceIds: ["wajiz-nikah"],
+    short: "Le contrat de mariage se conclut devant deux témoins intègres.",
+    rules: [
+      p("Le contrat est établi avec le tuteur, l’époux et deux témoins.", "binbaz-nikah-witnesses"),
+      p("Al-Wajîz cite le hadith : pas de mariage sans tuteur et deux témoins intègres.", "wajiz-nikah"),
+    ],
   },
 
   "family-mahr": {
     title: "Le mahr (la dot)",
-    short: "Le mahr est un droit de l’épouse, offert par l’époux. Il lui appartient entièrement. Il n’a pas de minimum fixé : même une bague en fer convient, et la simplicité est préférable.",
+    short: "Le mahr est un droit de l’épouse et lui appartient. Al-Wajîz : la Charia ne lui fixe ni minimum ni maximum, mais elle encourage à l’alléger.",
     rules: [
       p("« Et donnez aux épouses leur mahr, de bonne grâce. »", "quran-4-4"),
       p("« Cherche même si ce n’est qu’une bague en fer. »", "muslim-1425"),
+      p("Al-Wajîz : le mahr est la propriété de la femme ; personne, pas même son père, ne peut en prendre sans son accord.", "wajiz-nikah"),
     ],
-    cases: [c("Peut-on le payer plus tard ?", "Oui : on peut en verser une partie au contrat et le reste à une date convenue.", N)],
+    cases: [
+      c("Peut-on le payer plus tard ?", "Al-Wajîz : on peut le verser entièrement tout de suite, entièrement plus tard, ou une partie maintenant et le reste plus tard.", "wajiz-nikah"),
+    ],
   },
 
   "family-spousal-rights": {
     title: "Les droits des époux",
-    short: "Les époux se doivent bon comportement, respect et fidélité. Le mari doit l’entretien et la bienveillance ; l’épouse la confiance et la préservation du foyer.",
+    sensitive: true,
+    short: "Les époux se doivent un bon comportement : chacun a des droits équivalents à ses obligations, conformément à la bienséance.",
     rules: [
       p("« Comportez-vous convenablement envers elles. »", "quran-4-19"),
       p("« Elles ont des droits équivalents à leurs obligations, conformément à la bienséance. »", "quran-2-228"),
       p("Le Prophète ﷺ a dit que le meilleur d’entre vous est le meilleur envers ses épouses.", "tirmidhi-3895"),
       p("Refuser sans raison l’intimité à son conjoint est une faute.", "bukhari-5193"),
     ],
-    sensitive: true,
   },
 
   "family-maintenance": {
     title: "L’entretien (nafaqa)",
-    short: "Le mari doit à son épouse et à ses enfants le logement, la nourriture et l’habillement, selon ses moyens. L’argent de l’épouse lui reste propre.",
+    short: "Le mari doit l’entretien de son épouse et de ses enfants, selon ses moyens.",
     rules: [
       p("« Que celui qui est aisé dépense de sa fortune. »", "quran-65-7"),
       p("À Hind, dont le mari était avare : « Prends ce qui est suffisant pour toi et tes enfants, mais de façon juste et raisonnable. »", "bukhari-5364"),
@@ -222,23 +229,23 @@ export const FAMILY_LESSONS: Record<string, LessonEntry> = {
 
   "family-disagreements": {
     title: "Les désaccords dans le couple",
-    short: "On cherche d’abord à se réconcilier par le dialogue. Si la discorde s’installe, chaque famille désigne un arbitre pour tenter la réconciliation.",
-    rules: [p("« Si vous craignez le désaccord entre les deux [époux], envoyez alors un arbitre de sa famille à lui, et un arbitre de sa famille à elle. Si les deux veulent la réconciliation, Allah rétablira l’entente entre eux. »", "quran-4-35")],
-    note: ["En cas de violence ou de danger, protégez-vous d’abord et faites appel aux autorités compétentes."],
     sensitive: true,
+    short: "Si la discorde est à craindre, chaque famille désigne un arbitre pour tenter la réconciliation.",
+    rules: [
+      p("« Si vous craignez le désaccord entre les deux [époux], envoyez alors un arbitre de sa famille à lui, et un arbitre de sa famille à elle. Si les deux veulent la réconciliation, Allah rétablira l’entente entre eux. »", "quran-4-35"),
+    ],
   },
 
   "family-divorce": {
     title: "Le divorce (talâq)",
-    short: "Le divorce est permis mais il est la dernière solution. Il se prononce en période de pureté sans rapport, une fois. Après un premier ou un deuxième divorce, le mari peut reprendre son épouse pendant le délai ; après le troisième, non.",
+    sensitive: true,
+    short: "Le divorce se prononce en tenant compte du délai d’attente, en période de pureté. Après un premier ou un deuxième divorce, le mari peut reprendre son épouse pendant le délai ; après le troisième, non.",
     rules: [
       p("« Répudiez-les conformément à leur période d’attente prescrite ; et comptez la période. »", "quran-65-1"),
       p("Ibn ‘Umar avait divorcé pendant les règles : le Prophète ﷺ lui a ordonné de reprendre son épouse.", "bukhari-5251"),
       p("« Le divorce est permis pour seulement deux fois. Alors, c’est soit la reprise conformément à la bienséance, ou la libération avec gentillesse. »", "quran-2-229"),
       p("Après le troisième, elle ne lui est plus permise avant d’avoir épousé un autre homme.", "quran-2-230"),
     ],
-    cases: [c("J’ai prononcé le divorce sous la colère.", "Les mots exacts, la colère et l’intention changent le jugement. Exposez votre cas à une personne de science avant toute conclusion.", N)],
-    sensitive: true,
   },
 
   "family-khul": {
@@ -265,35 +272,32 @@ export const FAMILY_LESSONS: Record<string, LessonEntry> = {
 
   "family-lineage": {
     title: "La filiation",
+    sensitive: true,
     short: "L’enfant est rattaché au mari de sa mère. On attribue chacun à son vrai père ; l’adoption ne change pas la filiation.",
     rules: [
       p("« L’enfant appartient au propriétaire du lit. »", "bukhari-6749"),
       p("« Appelez-les du nom de leurs pères. »", "quran-33-5"),
     ],
-    note: ["Le recueil d’un enfant (kafâla) est une grande œuvre, sans lui donner son nom de famille."],
-    sensitive: true,
   },
 
   "family-breastfeeding": {
     title: "L’allaitement",
-    short: "L’allaitement complet dure deux ans. Cinq tétées dans les deux premières années créent un lien de parenté : la nourrice et sa famille deviennent mahram pour l’enfant.",
+    short: "L’allaitement complet dure deux ans. Cinq tétées connues créent un lien de parenté : la nourrice et sa famille deviennent mahram pour l’enfant.",
     rules: [
       p("« Et les mères, qui veulent donner un allaitement complet, allaiteront leurs bébés deux ans complets. »", "quran-2-233"),
       p("L’allaitement rend interdit au mariage ce que rend interdit la parenté.", "bukhari-2645"),
       p("Cinq tétées connues établissent ce lien.", "muslim-1452"),
     ],
-    note: ["Pour les hanafites et les malikites, une seule tétée suffit à créer le lien."],
   },
 
   "family-custody": {
     title: "La garde des enfants",
-    short: "Après la séparation, la mère est la plus en droit de garder le jeune enfant tant qu’elle ne se remarie pas. Le père reste tenu de l’entretien.",
+    sensitive: true,
+    short: "Après la séparation, la mère est la plus en droit de garder l’enfant tant qu’elle ne se remarie pas. Le père reste tenu de l’entretien.",
     rules: [
       p("« Tu as plus de droits sur lui tant que tu ne te remaries pas. »", "abudawud-2276"),
       p("L’entretien de l’enfant revient au père.", "quran-2-233"),
     ],
-    note: ["L’intérêt de l’enfant prime. Les âges de transfert de garde varient selon les écoles et les lois."],
-    sensitive: true,
   },
 
   "family-mahram": {
