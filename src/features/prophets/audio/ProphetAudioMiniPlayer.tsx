@@ -18,7 +18,7 @@ export default function ProphetAudioMiniPlayer() {
   return (
     <View style={[styles.container, { bottom: 69 + insets.bottom }]}>
       <LinearGradient
-        colors={["#261323", "#401D2B", "#120B1D"]}
+        colors={["#1E1730", "#151022", "#100C19"]}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
         style={StyleSheet.absoluteFill}
@@ -28,7 +28,7 @@ export default function ProphetAudioMiniPlayer() {
         style={({ pressed }) => [styles.details, pressed && styles.pressed]}
       >
         <View style={styles.badge}>
-          <Ionicons name="headset" size={19} color="#FFF7EC" />
+          <Ionicons name="headset" size={19} color={colors.goldLight} />
         </View>
         <View style={styles.copy}>
           <Text numberOfLines={1} style={styles.kicker}>RÉCIT AUDIO · {episode.prophetName.toUpperCase()}</Text>
@@ -71,7 +71,7 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     borderRadius: 22,
     borderWidth: 1,
-    borderColor: "rgba(238,94,91,0.48)",
+    borderColor: "rgba(227,181,90,0.38)",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 7 },
     shadowOpacity: 0.35,
@@ -93,13 +93,13 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#B83C42",
+    backgroundColor: "rgba(227,181,90,0.12)",
     borderWidth: 1,
     borderColor: "rgba(255,255,255,0.24)",
   },
   copy: { flex: 1, minWidth: 0, marginLeft: 10 },
   kicker: {
-    color: "#F5B9B2",
+    color: colors.goldLight,
     fontFamily: typography.sans,
     fontSize: 8,
     fontWeight: "900",
@@ -138,6 +138,6 @@ const styles = StyleSheet.create({
     height: 3,
     backgroundColor: "rgba(255,255,255,0.10)",
   },
-  progressFill: { height: 3, backgroundColor: "#E85B5F" },
+  progressFill: { height: 3, backgroundColor: colors.goldLight },
   pressed: { opacity: 0.78 },
 });
