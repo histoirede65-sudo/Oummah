@@ -7,13 +7,16 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { FiqhDifferenceCard } from "../../../features/fiqh/components/FiqhDifferenceCard";
 import { FiqhTopBar, SourceChips, SourceSheet, TextSizeButton, fq, fqType, useSourceSheet } from "../../../features/fiqh/components/FiqhUI";
 import { FiqhWasilCTA } from "../../../features/fiqh/components/FiqhWasilCTA";
-import { bookOrder, categoryById, chapterById, topicById } from "../../../features/fiqh/fiqhData";
+import { bookOrder, chapterById } from "../../../features/fiqh/fiqhData";
 import { lessonOf, lessonSourceIds, sourceShortLabel } from "../../../features/fiqh/fiqhLessons";
+import { categoryIn, chapterIn, topicIn } from "../../../features/fiqh/fiqhLocalization";
 import { saveFiqhProgress, setFiqhLastLesson, setFiqhLessonRead, useFiqhReading } from "../../../features/fiqh/fiqhStorage";
+import { useI18n } from "../../../i18n";
 
 export default function FiqhLessonScreen() {
+  const { language, t } = useI18n();
   const { topicId, chapter: chapterParam } = useLocalSearchParams<{ topicId: string; chapter?: string }>();
-  const topic = topicById.get(topicId);
+  const topic = topicIn(topicId, language);
   const reading = useFiqhReading();
   const { sourceId, openSource, closeSource } = useSourceSheet();
   const [openCase, setOpenCase] = useState<number | null>(0);
@@ -30,12 +33,12 @@ export default function FiqhLessonScreen() {
   const lesson = useMemo(() => (topic ? lessonOf(topic) : null), [topic]);
 
   if (!topic || !lesson) {
-    return <SafeAreaView style={styles.screen}><FiqhTopBar /><Text style={styles.empty}>Leçon introuvable.</Text></SafeAreaView>;
+    return <SafeAreaView style={styles.screen}><FiqhTopBar /><Text style={styles.empty}>{t("fiqh.lessonNotFound")}</Text></SafeAreaView>;
   }
 
   const k = reading.textScale;
-  const category = categoryById.get(topic.categoryId);
-  const chapter = (chapterParam ? chapterById.get(chapterParam) : undefined) ?? Array.from(chapterById.values()).find((item) => item.topicIds.includes(topic.id));
+  const category = categoryIn(topic.categoryId, language);
+  const chapter = chapterIn(chapterParam && chapterById.has(chapterParam) ? chapterParam : Array.from(chapterById.values()).find((item) => item.topicIds.includes(topic.id))?.id, language);
   const chapterIndex = chapter && category?.chapters ? category.chapters.findIndex((item) => item.id === chapter.id) : -1;
   const lessonIndex = chapter ? chapter.topicIds.indexOf(topic.id) : -1;
   const book = bookOrder(topic.categoryId);
@@ -57,7 +60,7 @@ export default function FiqhLessonScreen() {
       <ScrollView contentContainerStyle={styles.content}>
         {chapter ? (
           <Text style={styles.kicker}>
-            {chapterIndex >= 0 ? `CHAPITRE ${chapterIndex + 1} · ` : ""}{chapter.title.toUpperCase()}
+            {chapterIndex >= 0 ? t("fiqh.chapterKicker", { count: chapterIndex + 1 }) : ""}{chapter.title.toUpperCase()}
             {lessonIndex >= 0 && chapter.topicIds.length > 1 ? `  ·  ${lessonIndex + 1}/${chapter.topicIds.length}` : ""}
           </Text>
         ) : null}
@@ -65,12 +68,12 @@ export default function FiqhLessonScreen() {
         {topic.arabicTerm ? <Text style={styles.arabic}>{topic.arabicTerm}</Text> : null}
 
         <View style={styles.short}>
-          <Text style={styles.shortLabel}>EN BREF</Text>
+          <Text style={styles.shortLabel}>{t("fiqh.inBrief")}</Text>
           <Text style={[styles.shortText, { fontSize: 18 * k, lineHeight: 28 * k }]}>{lesson.short}</Text>
         </View>
 
         {lesson.rules.length ? (
-          <Section title="Les règles">
+          <Section title={t("fiqh.rules")}>
             {lesson.rules.map((point, index) => (
               <View key={index} style={styles.rule}>
                 <View style={styles.ruleDot} />
@@ -84,7 +87,7 @@ export default function FiqhLessonScreen() {
         ) : null}
 
         {lesson.steps?.length ? (
-          <Section title="Comment faire">
+          <Section title={t("fiqh.steps")}>
             {lesson.steps.map((point, index) => (
               <View key={index} style={styles.step}>
                 <View style={styles.stepNumber}><Text style={styles.stepNumberText}>{index + 1}</Text></View>
@@ -98,7 +101,7 @@ export default function FiqhLessonScreen() {
         ) : null}
 
         {lesson.cases?.length ? (
-          <Section title="Cas fréquents">
+          <Section title={t("fiqh.cases")}>
             {lesson.cases.map((item, index) => {
               const open = openCase === index;
               return (
@@ -120,7 +123,7 @@ export default function FiqhLessonScreen() {
         ) : null}
 
         {lesson.avoid?.length ? (
-          <Section title="À éviter">
+          <Section title={t("fiqh.avoid")}>
             {lesson.avoid.map((text, index) => (
               <View key={index} style={styles.rule}>
                 <Ionicons name="close" size={16} color={fq.red} style={styles.avoidIcon} />
@@ -131,14 +134,14 @@ export default function FiqhLessonScreen() {
         ) : null}
 
         {topic.differences.length ? (
-          <Section title="Les avis des écoles">
+          <Section title={t("fiqh.schools")}>
             {topic.differences.map((difference) => <FiqhDifferenceCard key={difference.question} difference={difference} />)}
           </Section>
         ) : null}
 
         {lesson.note?.length ? (
           <View style={styles.note}>
-            <Text style={styles.noteLabel}>BON À SAVOIR</Text>
+            <Text style={styles.noteLabel}>{t("fiqh.goodToKnow")}</Text>
             {lesson.note.map((text, index) => <Text key={index} style={[styles.noteText, { fontSize: 15 * k, lineHeight: 23 * k }]}>{text}</Text>)}
           </View>
         ) : null}
@@ -146,14 +149,14 @@ export default function FiqhLessonScreen() {
         {topic.sensitive ? (
           <View style={styles.personal}>
             <Ionicons name="person-circle-outline" size={20} color={fq.gold} />
-            <Text style={styles.personalText}>Pour une situation réelle, exposez votre cas complet à une personne de science qualifiée.</Text>
+            <Text style={styles.personalText}>{t("fiqh.personal")}</Text>
           </View>
         ) : null}
 
         {topic.link || topic.categoryId === "hajj-umra" ? (
           <Pressable onPress={() => router.push((topic.link?.route ?? "/pilgrimage") as never)} style={styles.guide}>
             <Ionicons name="map-outline" size={19} color={fq.gold} />
-            <Text style={styles.guideText}>{topic.link?.label ?? "Ouvrir le guide pas à pas Hajj & ‘Umra"}</Text>
+            <Text style={styles.guideText}>{topic.link?.label ?? t("fiqh.hajjGuide")}</Text>
             <Ionicons name="chevron-forward" size={17} color={fq.gold} />
           </Pressable>
         ) : null}
@@ -161,20 +164,20 @@ export default function FiqhLessonScreen() {
         {sources.length ? (
           <View style={styles.sources}>
             <Pressable accessibilityRole="button" accessibilityState={{ expanded: showSources }} onPress={() => setShowSources((value) => !value)} style={styles.sourcesHead}>
-              <Text style={styles.sourcesTitle}>Sources de la leçon</Text>
+              <Text style={styles.sourcesTitle}>{t("fiqh.sources")}</Text>
               <Text style={styles.sourcesCount}>{sources.length}</Text>
               <Ionicons name={showSources ? "chevron-up" : "chevron-down"} size={18} color={fq.inkMuted} />
             </Pressable>
             {showSources ? sources.map((id) => (
               <Pressable key={id} onPress={() => openSource(id)} style={styles.sourceRow}>
-                <Text style={styles.sourceLabel}>{sourceShortLabel(id)}</Text>
+                <Text style={styles.sourceLabel}>{sourceShortLabel(id, language)}</Text>
                 <Ionicons name="information-circle-outline" size={17} color={fq.inkMuted} />
               </Pressable>
             )) : null}
           </View>
         ) : null}
 
-        <FiqhWasilCTA enabled prompt={`Contexte : Fiqh → ${category?.title ?? "Fiqh"} → ${chapter?.title ?? "Leçon"} → ${topic.title}.\n\nJe souhaite approfondir cette leçon et poser ma question :`} />
+        <FiqhWasilCTA enabled prompt={t("fiqh.wasilPrompt", { book: category?.title ?? t("fiqh.title"), chapter: chapter?.title ?? t("fiqh.lesson"), lesson: topic.title })} />
 
         <Pressable
           accessibilityRole="checkbox"
@@ -183,26 +186,26 @@ export default function FiqhLessonScreen() {
           style={[styles.readToggle, isRead && styles.readToggleOn]}
         >
           <Ionicons name={isRead ? "checkmark-circle" : "ellipse-outline"} size={22} color={isRead ? fq.page : fq.gold} />
-          <Text style={[styles.readText, isRead && styles.readTextOn]}>{isRead ? "Leçon lue" : "J’ai lu cette leçon"}</Text>
-          {isRead ? <Text style={styles.readUndo}>Annuler</Text> : null}
+          <Text style={[styles.readText, isRead && styles.readTextOn]}>{t(isRead ? "fiqh.lessonRead" : "fiqh.markRead")}</Text>
+          {isRead ? <Text style={styles.readUndo}>{t("fiqh.undo")}</Text> : null}
         </Pressable>
 
         <View style={styles.nav}>
           {previousId ? (
             <Pressable onPress={() => go(previousId)} style={styles.navButton}>
-              <Text style={styles.navKicker}>‹ Précédent</Text>
-              <Text style={styles.navTitle} numberOfLines={2}>{topicById.get(previousId)?.title}</Text>
+              <Text style={styles.navKicker}>{t("fiqh.previous")}</Text>
+              <Text style={styles.navTitle} numberOfLines={2}>{topicIn(previousId, language)?.title}</Text>
             </Pressable>
           ) : <View style={styles.navSpacer} />}
           {nextId ? (
             <Pressable onPress={() => goNext(nextId)} style={[styles.navButton, styles.navNext]}>
-              <Text style={[styles.navKicker, styles.navKickerNext]}>Suivant ›</Text>
-              <Text style={[styles.navTitle, styles.navTitleNext]} numberOfLines={2}>{topicById.get(nextId)?.title}</Text>
+              <Text style={[styles.navKicker, styles.navKickerNext]}>{t("fiqh.next")}</Text>
+              <Text style={[styles.navTitle, styles.navTitleNext]} numberOfLines={2}>{topicIn(nextId, language)?.title}</Text>
             </Pressable>
           ) : (
             <Pressable onPress={() => { void setFiqhLessonRead(topic.id, true); router.back(); }} style={[styles.navButton, styles.navNext]}>
-              <Text style={[styles.navKicker, styles.navKickerNext]}>Fin du livre</Text>
-              <Text style={[styles.navTitle, styles.navTitleNext]}>Retour au sommaire</Text>
+              <Text style={[styles.navKicker, styles.navKickerNext]}>{t("fiqh.bookEnd")}</Text>
+              <Text style={[styles.navTitle, styles.navTitleNext]}>{t("fiqh.backToToc")}</Text>
             </Pressable>
           )}
         </View>

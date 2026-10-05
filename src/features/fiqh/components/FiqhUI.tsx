@@ -5,9 +5,11 @@ import { useState, type ReactNode } from "react";
 import { Modal, Pressable, StyleSheet, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+import { useI18n } from "../../../i18n";
 import { colors } from "../../../theme/colors";
 import { typography } from "../../../theme/typography";
 import { sourceRoute, sourceShortLabel, sunnahUrl } from "../fiqhLessons";
+import { localizeSource } from "../fiqhLocalization";
 import { sourceById } from "../fiqhSources";
 import { FIQH_TEXT_SCALES, updateFiqhReading } from "../fiqhStorage";
 
@@ -33,9 +35,10 @@ export const fqType = {
 };
 
 export function FiqhTopBar({ label, right }: { label?: string; right?: ReactNode }) {
+  const { t } = useI18n();
   return (
     <View style={styles.topBar}>
-      <Pressable accessibilityRole="button" accessibilityLabel="Retour" hitSlop={10} onPress={() => router.back()} style={styles.back}>
+      <Pressable accessibilityRole="button" accessibilityLabel={t("common.back")} hitSlop={10} onPress={() => router.back()} style={styles.back}>
         <Ionicons name="chevron-back" size={22} color={fq.ink} />
       </Pressable>
       <Text style={styles.topLabel} numberOfLines={1}>{label ?? ""}</Text>
@@ -46,11 +49,12 @@ export function FiqhTopBar({ label, right }: { label?: string; right?: ReactNode
 
 /** « Aa » button cycling through the reading sizes. */
 export function TextSizeButton({ scale }: { scale: number }) {
+  const { t } = useI18n();
   const index = Math.max(0, FIQH_TEXT_SCALES.indexOf(scale));
   return (
     <Pressable
       accessibilityRole="button"
-      accessibilityLabel="Taille du texte"
+      accessibilityLabel={t("fiqh.textSize")}
       hitSlop={8}
       onPress={() => void updateFiqhReading((value) => ({ ...value, textScale: FIQH_TEXT_SCALES[(index + 1) % FIQH_TEXT_SCALES.length] }))}
       style={styles.sizeButton}
@@ -66,13 +70,14 @@ export function TextSizeButton({ scale }: { scale: number }) {
 
 /** Small source references under a point; a tap opens the reference card. */
 export function SourceChips({ ids, onOpen }: { ids?: string[]; onOpen: (id: string) => void }) {
+  const { language, t } = useI18n();
   const shown = Array.from(new Set((ids ?? []).filter((id) => sourceById.has(id))));
   if (!shown.length) return null;
   return (
     <View style={styles.chips}>
       {shown.map((id) => (
-        <Pressable key={id} accessibilityRole="button" accessibilityLabel={`Source : ${sourceShortLabel(id)}`} hitSlop={6} onPress={() => onOpen(id)} style={styles.chip}>
-          <Text style={styles.chipText}>{sourceShortLabel(id)}</Text>
+        <Pressable key={id} accessibilityRole="button" accessibilityLabel={t("fiqh.sourceA11y", { label: sourceShortLabel(id, language) })} hitSlop={6} onPress={() => onOpen(id)} style={styles.chip}>
+          <Text style={styles.chipText}>{sourceShortLabel(id, language)}</Text>
         </Pressable>
       ))}
     </View>
@@ -81,14 +86,16 @@ export function SourceChips({ ids, onOpen }: { ids?: string[]; onOpen: (id: stri
 
 /** Bottom sheet describing one source, with a link to read it in the app when possible. */
 export function SourceSheet({ id, onClose }: { id: string | null; onClose: () => void }) {
+  const { language, t } = useI18n();
   const insets = useSafeAreaInsets();
-  const source = id ? sourceById.get(id) : undefined;
+  const found = id ? sourceById.get(id) : undefined;
+  const source = found && localizeSource(found, language);
   const route = id ? sourceRoute(id) : null;
   const external = id ? sunnahUrl(id) : null;
-  const kind = source?.kind === "quran" ? "Verset du Coran" : source?.kind === "hadith" ? "Hadith" : source?.kind === "scholar" ? "Avis de savant" : "Ouvrage de fiqh";
+  const kind = t(source?.kind === "quran" ? "fiqh.kindQuran" : source?.kind === "hadith" ? "fiqh.kindHadith" : source?.kind === "scholar" ? "fiqh.kindScholar" : "fiqh.kindBook");
   return (
     <Modal visible={!!source} transparent animationType="slide" onRequestClose={onClose}>
-      <Pressable style={styles.sheetBackdrop} onPress={onClose} accessibilityLabel="Fermer" />
+      <Pressable style={styles.sheetBackdrop} onPress={onClose} accessibilityLabel={t("fiqh.close")} />
       {source ? (
         <View style={[styles.sheet, { paddingBottom: 22 + insets.bottom }]}>
           <View style={styles.sheetHandle} />
@@ -102,17 +109,17 @@ export function SourceSheet({ id, onClose }: { id: string | null; onClose: () =>
           {source.limits ? <Text style={styles.sheetLimits}>{source.limits}</Text> : null}
           {route ? (
             <Pressable accessibilityRole="link" onPress={() => { onClose(); router.push(route as never); }} style={styles.sheetLink}>
-              <Text style={styles.sheetLinkText}>{source.kind === "quran" ? "Lire le verset" : "Lire le hadith"}</Text>
+              <Text style={styles.sheetLinkText}>{t(source.kind === "quran" ? "fiqh.readVerse" : "fiqh.readHadith")}</Text>
               <Ionicons name="arrow-forward" size={16} color={fq.page} />
             </Pressable>
           ) : null}
           {external ? (
             <Pressable accessibilityRole="link" onPress={() => void Linking.openURL(external)} style={route ? styles.sheetLinkSecondary : styles.sheetLink}>
-              <Text style={route ? styles.sheetLinkSecondaryText : styles.sheetLinkText}>Lire le texte sur sunnah.com</Text>
+              <Text style={route ? styles.sheetLinkSecondaryText : styles.sheetLinkText}>{t("fiqh.readSunnah")}</Text>
               <Ionicons name="open-outline" size={16} color={route ? fq.gold : fq.page} />
             </Pressable>
           ) : null}
-          {external ? <Text style={styles.sheetHint}>Texte arabe et traduction anglaise, même numérotation.</Text> : null}
+          {external ? <Text style={styles.sheetHint}>{t("fiqh.sunnahHint")}</Text> : null}
         </View>
       ) : null}
     </Modal>

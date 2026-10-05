@@ -5,16 +5,19 @@ import { Image, Pressable, ScrollView, StyleSheet, Text, View } from "react-nati
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { FiqhTopBar, fq, fqType } from "../../features/fiqh/components/FiqhUI";
-import { FIQH_BOOK_IMAGES, FIQH_BOOK_INTROS } from "../../features/fiqh/fiqhBooks";
-import { bookOrder, categoryById, topicById } from "../../features/fiqh/fiqhData";
+import { FIQH_BOOK_IMAGES } from "../../features/fiqh/fiqhBooks";
+import { bookOrder } from "../../features/fiqh/fiqhData";
+import { bookIntro, categoryIn, topicIn } from "../../features/fiqh/fiqhLocalization";
 import { setFiqhLessonRead, useFiqhReading } from "../../features/fiqh/fiqhStorage";
+import { useI18n } from "../../i18n";
 
 /** A Fiqh book: cover, reading progress, then the table of contents with every lesson. */
 export default function FiqhBookScreen() {
   const { categoryId, chapter: focusChapter } = useLocalSearchParams<{ categoryId: string; chapter?: string }>();
-  const category = categoryById.get(categoryId);
+  const { language, t } = useI18n();
+  const category = categoryIn(categoryId, language);
   const reading = useFiqhReading();
-  if (!category) return <SafeAreaView style={styles.screen}><FiqhTopBar /><Text style={styles.empty}>Livre introuvable.</Text></SafeAreaView>;
+  if (!category) return <SafeAreaView style={styles.screen}><FiqhTopBar /><Text style={styles.empty}>{t("fiqh.bookNotFound")}</Text></SafeAreaView>;
 
   const chapters = category.chapters?.length ? category.chapters : [{ id: category.id, categoryId: category.id, title: category.title, topicIds: category.topicIds }];
   const lessons = bookOrder(category.id);
@@ -25,39 +28,39 @@ export default function FiqhBookScreen() {
 
   return (
     <SafeAreaView style={styles.screen} edges={["top"]}>
-      <FiqhTopBar label="Fiqh" />
+      <FiqhTopBar label={t("fiqh.title")} />
       <ScrollView contentContainerStyle={styles.content}>
         <View style={styles.cover}>
           {image ? <Image source={image} style={styles.coverImage} resizeMode="cover" /> : null}
           <LinearGradient colors={["rgba(10,8,20,0)", "rgba(10,8,20,0.55)", fq.page]} locations={[0, 0.55, 1]} style={StyleSheet.absoluteFill} />
           <View style={styles.coverText}>
-            <Text style={styles.kicker}>LIVRE DE FIQH</Text>
+            <Text style={styles.kicker}>{t("fiqh.bookKicker")}</Text>
             <Text style={styles.title}>{category.title}</Text>
             {category.arabicTitle ? <Text style={styles.arabic}>{category.arabicTitle}</Text> : null}
           </View>
         </View>
 
-        <Text style={styles.intro}>{FIQH_BOOK_INTROS[category.id] ?? category.summary}</Text>
+        <Text style={styles.intro}>{bookIntro(category, language)}</Text>
 
         <View style={styles.stats}>
-          <Text style={styles.stat}>{lessons.length} leçons</Text>
+          <Text style={styles.stat}>{t("fiqh.lessonsCount", { count: lessons.length })}</Text>
           <Text style={styles.statDot}>·</Text>
-          <Text style={styles.stat}>{chapters.length} chapitre{chapters.length > 1 ? "s" : ""}</Text>
-          {readCount ? <><Text style={styles.statDot}>·</Text><Text style={[styles.stat, styles.statGold]}>{readCount} lue{readCount > 1 ? "s" : ""}</Text></> : null}
+          <Text style={styles.stat}>{t(chapters.length > 1 ? "fiqh.chapterMany" : "fiqh.chapterOne", { count: chapters.length })}</Text>
+          {readCount ? <><Text style={styles.statDot}>·</Text><Text style={[styles.stat, styles.statGold]}>{t(readCount > 1 ? "fiqh.readMany" : "fiqh.readOne", { count: readCount })}</Text></> : null}
         </View>
         <View style={styles.bookTrack}><View style={[styles.bookFill, { width: `${lessons.length ? (readCount / lessons.length) * 100 : 0}%` }]} /></View>
 
         {nextId ? (
           <Pressable onPress={() => open(nextId)} style={({ pressed }) => [styles.cta, pressed && styles.pressed]}>
             <View style={styles.flex}>
-              <Text style={styles.ctaLabel}>{readCount === 0 ? "Commencer la lecture" : readCount === lessons.length ? "Relire depuis le début" : "Continuer"}</Text>
-              <Text style={styles.ctaTitle} numberOfLines={1}>{topicById.get(nextId)?.title}</Text>
+              <Text style={styles.ctaLabel}>{t(readCount === 0 ? "fiqh.start" : readCount === lessons.length ? "fiqh.reread" : "fiqh.continue")}</Text>
+              <Text style={styles.ctaTitle} numberOfLines={1}>{topicIn(nextId, language)?.title}</Text>
             </View>
             <View style={styles.ctaIcon}><Ionicons name="arrow-forward" size={18} color={fq.page} /></View>
           </Pressable>
         ) : null}
 
-        <Text style={styles.tocTitle}>Sommaire</Text>
+        <Text style={styles.tocTitle}>{t("fiqh.toc")}</Text>
         {chapters.map((chapter, chapterIndex) => (
           <View key={chapter.id} style={[styles.chapter, focusChapter === chapter.id && styles.chapterFocus]}>
             <View style={styles.chapterHead}>
@@ -65,7 +68,7 @@ export default function FiqhBookScreen() {
               <Text style={styles.chapterTitle}>{chapter.title}</Text>
             </View>
             {chapter.topicIds.map((id) => {
-              const topic = topicById.get(id);
+              const topic = topicIn(id, language);
               if (!topic) return null;
               const done = reading.read.includes(id);
               return (
@@ -73,7 +76,7 @@ export default function FiqhBookScreen() {
                   <Pressable
                     accessibilityRole="checkbox"
                     accessibilityState={{ checked: done }}
-                    accessibilityLabel={done ? `Décocher ${topic.title}` : `Cocher ${topic.title}`}
+                    accessibilityLabel={t(done ? "fiqh.uncheck" : "fiqh.check", { title: topic.title })}
                     hitSlop={12}
                     onPress={() => void setFiqhLessonRead(id, !done)}
                   >

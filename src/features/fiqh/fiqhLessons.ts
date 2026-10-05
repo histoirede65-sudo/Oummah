@@ -1,3 +1,5 @@
+import type { LanguageCode } from "../../i18n";
+import { localizeSource } from "./fiqhLocalization";
 import { sourceById } from "./fiqhSources";
 import type { FiqhLesson, FiqhTopic } from "./fiqhTypes";
 
@@ -44,15 +46,16 @@ const COLLECTIONS: [RegExp, string][] = [
 ];
 
 /** Short label of a source for inline chips: « Coran 5:6 », « Bukhârî 159 », « Al-Wajîz ». */
-export function sourceShortLabel(id: string) {
+export function sourceShortLabel(id: string, language: LanguageCode = "fr") {
   const quran = /^quran-(\d+)-(\d+)$/.exec(id);
-  if (quran) return `Coran ${quran[1]}:${quran[2]}`;
+  if (quran) return `${language === "fr" ? "Coran" : "Quran"} ${quran[1]}:${quran[2]}`;
   for (const [pattern, name] of COLLECTIONS) {
     const match = pattern.exec(id);
     if (match) return `${name} ${match[1].replace(/-/g, "–")}`;
   }
   for (const [pattern, name] of BOOK_LABELS) if (pattern.test(id)) return name;
-  const source = sourceById.get(id);
+  const found = sourceById.get(id);
+  const source = found && localizeSource(found, language);
   return source?.author ?? source?.reference.split(/[,—]/)[0] ?? id;
 }
 
