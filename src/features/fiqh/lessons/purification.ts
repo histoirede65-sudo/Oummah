@@ -7,8 +7,8 @@ export const PURIFICATION_LESSONS: Record<string, LessonEntry> = {
     short: "L’eau de pluie, de mer, de source, de puits ou du robinet purifie. Elle ne devient impure que si une impureté en change la couleur, le goût ou l’odeur.",
     rules: [
       p("L’eau qui descend du ciel est pure et sert à se purifier.", "quran-25-48", "quran-8-11"),
-      p("L’eau de mer purifie. Le Prophète ﷺ a dit : « Son eau est purifiante et ses bêtes mortes sont licites. »", "abudawud-83"),
-      p("Interrogé sur le puits de Budâ‘a, il a dit : « L’eau est pure, rien ne la rend impure. »", "abudawud-66"),
+      p("L’eau de mer purifie. Le Prophète ﷺ a dit : « Son eau est pure et ce qui y meurt est une nourriture licite. »", "abudawud-83"),
+      p("Interrogé sur le puits de Budâ‘a, il a dit : « L’eau est pure et rien ne la rend impure. »", "abudawud-66"),
       p("Si une impureté change la couleur, le goût ou l’odeur de l’eau, elle devient impure : les savants sont unanimes sur ce point.", W),
       p("L’eau déjà utilisée pour les ablutions reste pure : le Prophète ﷺ a versé l’eau de ses ablutions sur Jâbir malade.", "bukhari-194"),
     ],
@@ -56,7 +56,7 @@ export const PURIFICATION_LESSONS: Record<string, LessonEntry> = {
       p("Aucune prière n’est acceptée sans purification.", "muslim-224"),
       p("Allah n’accepte pas la prière de celui qui a perdu ses ablutions tant qu’il ne les a pas refaites.", "bukhari-135"),
       p("Le Coran nomme les membres à purifier : le visage, les bras jusqu’aux coudes, la tête à essuyer, les pieds jusqu’aux chevilles.", "quran-5-6"),
-      p("« La purification est la moitié de la foi. »", "muslim-223"),
+      p("« La propreté est la moitié de la foi. »", "muslim-223"),
     ],
     steps: [
       p("Ayez l’intention de vous purifier, dans le cœur, sans la prononcer.", "bukhari-1"),
@@ -86,7 +86,7 @@ export const PURIFICATION_LESSONS: Record<string, LessonEntry> = {
     short: "Quatre gestes sont obligatoires par le Coran : laver le visage, laver les bras jusqu’aux coudes, essuyer la tête et laver les pieds jusqu’aux chevilles. S’y ajoutent l’intention et, selon plusieurs écoles, l’ordre et la continuité.",
     rules: [
       p("Laver le visage, laver les bras jusqu’aux coudes, essuyer la tête, laver les pieds jusqu’aux chevilles : ces quatre membres sont cités par le verset.", "quran-5-6"),
-      p("L’intention est requise : « Les actes ne valent que par les intentions. »", "bukhari-1"),
+      p("L’intention est requise : « La récompense des actions dépend des intentions. »", "bukhari-1"),
       p("Chaque membre doit être entièrement atteint par l’eau. Une tache sèche oblige à reprendre.", "muslim-243", "muslim-241"),
       p("Le Prophète ﷺ a ordonné de refaire ablutions et prière à un homme qui avait laissé une partie sèche sur son pied : c’est la base de la continuité (ne pas laisser sécher un membre avant de passer au suivant).", "abudawud-175"),
       p("Le Prophète ﷺ a toujours suivi l’ordre du verset : visage, bras, tête, pieds.", "quran-5-6", "muslim-226"),
@@ -103,7 +103,7 @@ export const PURIFICATION_LESSONS: Record<string, LessonEntry> = {
   "wudu-sunnas": {
     short: "Des gestes de la Sunnah complètent le wudû’ : le siwâk, laver les mains au début, répéter trois fois, commencer par la droite, passer l’eau entre les doigts, l’invocation finale, puis prier deux rak‘ât.",
     rules: [
-      p("Le siwâk est fortement recommandé : « Si ce n’était pas pénible pour ma communauté, je leur aurais ordonné le siwâk à chaque prière. »", "bukhari-887"),
+      p("Le Prophète ﷺ a dit : « Si cela n’avait pas été difficile pour mes fidèles ou pour les gens, je leur aurais ordonné de se nettoyer les dents avec le siwak avant chaque prière. »", "bukhari-887"),
       p("Le Prophète ﷺ aimait commencer par la droite dans sa purification.", "bukhari-168"),
       p("Laver trois fois est la Sunnah ; une ou deux fois est valable.", "muslim-226", "bukhari-157", "bukhari-158"),
       p("Passer l’eau entre les doigts et bien aspirer l’eau par le nez, sauf quand on jeûne.", "abudawud-142"),
@@ -124,7 +124,7 @@ export const PURIFICATION_LESSONS: Record<string, LessonEntry> = {
       p("L’urine, les selles et les gaz annulent le wudû’.", "bukhari-135", W),
       p("Le madhy annule le wudû’ : on lave la partie intime et on refait les ablutions, sans ghusl.", "bukhari-269"),
       p("Le sommeil profond et la perte de conscience l’annulent ; la simple somnolence assise ne l’annule pas.", "muslim-376c", W),
-      p("Celui qui doute ne quitte pas sa prière « avant d’entendre un son ou de sentir une odeur ».", "bukhari-137", "muslim-361"),
+      p("Celui qui doute : « Qu’il ne quitte pas la prière à moins d’entendre un son ou de sentir une odeur. »", "bukhari-137", "muslim-361"),
       p("Pour le toucher direct des parties intimes, deux hadiths authentiques semblent différer ; Al-Wajîz les concilie en retenant l’annulation. Les écoles divergent.", "abudawud-181", "abudawud-182", W),
       p("Le Prophète ﷺ a ordonné le wudû’ après la viande de chameau. Al-Wajîz et les hanbalites le rendent obligatoire ; la majorité le juge recommandé.", "muslim-360", W),
     ],
@@ -143,7 +143,7 @@ export const PURIFICATION_LESSONS: Record<string, LessonEntry> = {
   ghusl: {
     short: "Le ghusl consiste à faire couler l’eau sur tout le corps avec l’intention de se purifier. Le Prophète ﷺ commençait par laver ses mains et sa partie intime, faisait le wudû’, puis versait l’eau sur sa tête et sur tout son corps.",
     rules: [
-      p("Le ghusl est obligatoire en état de janâba : « Si vous êtes en état d’impureté majeure, purifiez-vous. »", "quran-5-6", "quran-4-43"),
+      p("Le ghusl est obligatoire en état de janâba : « Et si vous êtes pollués junub, alors purifiez-vous (par un bain). »", "quran-5-6", "quran-4-43"),
       p("Ce qui est obligatoire : l’intention, et que l’eau atteigne tout le corps, cheveux et peau compris.", "bukhari-1", W),
       p("La femme n’a pas à défaire ses tresses : trois poignées d’eau sur la tête suffisent, si l’eau atteint les racines.", "muslim-330"),
       p("Le Prophète ﷺ faisait le ghusl avec un sâ‘ (environ quatre mudd) d’eau.", "bukhari-201"),
@@ -158,7 +158,7 @@ export const PURIFICATION_LESSONS: Record<string, LessonEntry> = {
     ],
     cases: [
       c("Dois-je refaire le wudû’ après le ghusl pour prier ?", "Non, si vous l’avez fait au début du ghusl et que rien ne l’a annulé pendant le bain.", "bukhari-248", W),
-      c("Le ghusl du vendredi est-il obligatoire ?", "Le Prophète ﷺ l’a ordonné et l’a qualifié de « devoir pour tout pubère ». La majorité des savants y voit une Sunnah très appuyée ; ne le délaissez pas.", "bukhari-877", "bukhari-879"),
+      c("Le ghusl du vendredi est-il obligatoire ?", "Le Prophète ﷺ a dit : « Celui d’entre vous qui assiste à la prière du vendredi doit prendre un bain. » Et : « Prendre un bain le vendredi est obligatoire pour tout homme (musulman) ayant atteint la puberté. »", "bukhari-877", "bukhari-879"),
     ],
     avoid: [
       "Laisser des parties sèches : nombril, dessous des bras, arrière des oreilles, racines des cheveux.",
@@ -189,7 +189,7 @@ export const PURIFICATION_LESSONS: Record<string, LessonEntry> = {
     short: "Quand l’eau manque ou qu’on ne peut pas l’utiliser (maladie, danger), on frappe une seule fois la terre propre des mains, puis on essuie le visage et le dos des mains. Le tayammum remplace le wudû’ et le ghusl.",
     rules: [
       p("Le Coran le permet à celui qui ne trouve pas d’eau, ou qui est malade : « Recourez à une terre pure. »", "quran-4-43", "quran-5-6"),
-      p("« La terre m’a été rendue lieu de prière et moyen de purification. »", "bukhari-335"),
+      p("« La terre m’a été rendue pure et lieu de prière. »", "bukhari-335"),
       p("Il remplace aussi le ghusl : ‘Ammâr, en état de janâba, s’était roulé dans la poussière ; le Prophète ﷺ lui a montré qu’il suffisait d’essuyer le visage et les mains.", "bukhari-338"),
       p("Il est annulé par ce qui annule le wudû’, et par la découverte de l’eau.", "abudawud-332", W),
     ],
@@ -200,7 +200,7 @@ export const PURIFICATION_LESSONS: Record<string, LessonEntry> = {
       p("Essuyez le visage, puis le dos des mains.", "bukhari-341", "bukhari-343"),
     ],
     cases: [
-      c("J’ai prié avec le tayammum, puis j’ai trouvé l’eau avant la fin de l’heure.", "Votre prière est valable. Deux Compagnons ont vécu ce cas : celui qui n’a pas refait sa prière « a suivi la Sunnah ».", "abudawud-338"),
+      c("J’ai prié avec le tayammum, puis j’ai trouvé l’eau avant la fin de l’heure.", "Votre prière est valable. Deux Compagnons ont vécu ce cas ; le Prophète ﷺ a dit à celui qui n’avait pas refait sa prière : « Tu as suivi la sunna, et ta première prière te suffit. »", "abudawud-338"),
       c("Un seul tayammum suffit-il pour plusieurs prières ?", "Pour les hanafites, oui : il vaut comme le wudû’ tant qu’il n’est pas annulé. Pour les malikites, les shafi‘ites et les hanbalites, on le refait pour chaque prière obligatoire.", W),
       c("J’ai un pansement ou un plâtre.", "Lavez ce qui peut l’être et passez la main mouillée sur le pansement. Si l’eau est dangereuse pour vous, recourez au tayammum. Demandez conseil pour les cas complexes.", W),
     ],
@@ -213,7 +213,7 @@ export const PURIFICATION_LESSONS: Record<string, LessonEntry> = {
   khuff: {
     short: "Celui qui a mis ses khuff (chaussures montantes en cuir) en état d’ablution peut, quand il refait son wudû’, passer la main mouillée sur le dessus au lieu de laver ses pieds : un jour et une nuit pour le résident, trois jours et trois nuits pour le voyageur.",
     rules: [
-      p("Condition : les avoir enfilés après un wudû’ complet. Le Prophète ﷺ a dit : « Laisse-les, je les ai mis alors que mes pieds étaient purs. »", "bukhari-206"),
+      p("Condition : les avoir enfilés après un wudû’ complet. Al-Mughîra voulut retirer les khuff du Prophète ﷺ : « Il m’a ordonné de les laisser, car il les avait mis après avoir fait ses ablutions. »", "bukhari-206"),
       p("Durée : un jour et une nuit pour le résident, trois jours et trois nuits pour le voyageur.", "muslim-276a"),
       p("On essuie le dessus, pas le dessous.", "abudawud-162"),
       p("La janâba oblige à les retirer pour faire le ghusl.", "tirmidhi-96"),
@@ -282,7 +282,7 @@ export const PURIFICATION_LESSONS: Record<string, LessonEntry> = {
   "purification-doubt": {
     short: "La certitude n’est pas effacée par le doute. Si vous étiez sûr d’avoir fait le wudû’, un doute ne l’annule pas ; si vous étiez sûr de l’avoir perdu, un doute ne le rétablit pas.",
     rules: [
-      p("Celui qui doute pendant la prière ne la quitte pas « avant d’entendre un son ou de sentir une odeur ».", "bukhari-137", "muslim-361"),
+      p("Celui qui doute pendant la prière : « Qu’il ne quitte pas la prière à moins d’entendre un son ou de sentir une odeur. »", "bukhari-137", "muslim-361"),
       p("Celui qui ressent quelque chose dans son ventre et ne sait pas s’il a perdu ses ablutions ne quitte pas la mosquée sans certitude.", "muslim-362"),
     ],
     cases: [

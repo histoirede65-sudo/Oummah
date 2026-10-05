@@ -2707,7 +2707,7 @@ export const CATALOG_TOPICS: FiqhTopic[] = [
     ],
     "badge": "REPÈRES ESSENTIELS",
     "sourceIds": [
-      "muslim-1164c",
+      "muslim-1164a",
       "wajiz-siyam"
     ],
     "differences": []

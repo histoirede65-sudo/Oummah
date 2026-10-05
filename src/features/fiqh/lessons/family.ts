@@ -19,7 +19,7 @@ export const FUNERAL_LESSONS: Record<string, LessonEntry> = {
     short: "On ferme les yeux du défunt, on invoque pour lui, on le couvre, puis on hâte la toilette, la prière et l’enterrement.",
     rules: [
       p("Le Prophète ﷺ a fermé les yeux d’Abû Salama et a invoqué pour son pardon et l’élargissement de sa tombe.", "muslim-920a"),
-      p("« Hâtez les funérailles. »", "bukhari-1315"),
+      p("« Dépêchez-vous d’enterrer le défunt. »", "bukhari-1315"),
       p("Se frapper le visage et déchirer ses habits sont interdits.", "bukhari-1294"),
     ],
     cases: [c("Peut-on retarder l’enterrement pour attendre la famille ?", "Seulement un court délai raisonnable ; la Sunnah est de ne pas tarder.", "bukhari-1315")],
@@ -29,8 +29,8 @@ export const FUNERAL_LESSONS: Record<string, LessonEntry> = {
     title: "La toilette mortuaire",
     short: "On lave le défunt un nombre impair de fois (trois, cinq ou plus) avec de l’eau et du sidr, en commençant par la droite et les membres du wudû’, avec du camphre au dernier lavage.",
     rules: [
-      p("« Lavez-la trois fois, cinq fois ou plus si vous le jugez nécessaire, avec de l’eau et du sidr, et mettez du camphre au dernier lavage. »", "bukhari-1253"),
-      p("« Commencez par son côté droit et par les membres du wudû’. »", "bukhari-1254"),
+      p("« Lavez-la trois fois, cinq fois ou plus si vous le jugez nécessaire, avec de l’eau et du jujubier, puis mettez du camphre ou un peu de camphre à la fin. »", "bukhari-1253"),
+      p("« Il a aussi été dit qu’il fallait commencer par le côté droit et par les parties lavées lors des ablutions. »", "bukhari-1254"),
     ],
     steps: [
       p("Couvrez la ‘awra du défunt et lavez doucement les impuretés.", F),
@@ -62,7 +62,7 @@ export const FUNERAL_LESSONS: Record<string, LessonEntry> = {
   "funerals-shroud-cases": {
     title: "Le linceul du pèlerin",
     short: "Le pèlerin mort en ihrâm est enveloppé dans ses deux pièces d’ihrâm, sans parfum et la tête découverte.",
-    rules: [p("« Enveloppez-le dans ses deux vêtements ; ne le parfumez pas et ne couvrez pas sa tête. »", "bukhari-1265")],
+    rules: [p("Pour le pèlerin mort en ihrâm : « Lavez-le avec de l’eau et du Sidr et enveloppez-le dans deux pièces de tissu, ne le parfumez pas et ne couvrez pas sa tête. »", "bukhari-1265")],
   },
 
   "funerals-prayer-basics": {
@@ -70,7 +70,7 @@ export const FUNERAL_LESSONS: Record<string, LessonEntry> = {
     short: "Debout, sans inclinaison ni prosternation, avec quatre takbîr : al-Fâtiha, la prière sur le Prophète ﷺ, l’invocation pour le défunt, puis le salut.",
     rules: [
       p("Quatre takbîr.", "bukhari-1334"),
-      p("Al-Fâtiha après le premier : « C’est la Sunnah. »", "bukhari-1335"),
+      p("Al-Fâtiha après le premier ; Ibn ‘Abbâs a dit : « Sachez que cela (c’est-à-dire la récitation d’Al-Fatiha) fait partie de la tradition du Prophète ﷺ. »", "bukhari-1335"),
       p("Invocation pour le défunt : « Allâhumma-ghfir lahu wa-rḥamhu, wa ‘âfihi wa-‘fu ‘anhu… »", "muslim-963a"),
       p("Assister à la prière vaut un qîrât, suivre jusqu’à l’enterrement deux.", "bukhari-1325"),
     ],
@@ -94,12 +94,12 @@ export const FUNERAL_LESSONS: Record<string, LessonEntry> = {
     title: "L’enterrement",
     short: "On hâte l’enterrement, on creuse une tombe profonde et large, de préférence avec une niche latérale (lahd), on y couche le défunt sur le côté droit face à la qibla, puis on invoque pour lui.",
     rules: [
-      p("« Hâtez les funérailles. »", "bukhari-1315"),
-      p("« Creusez, élargissez et faites bien. »", "abudawud-3215"),
+      p("« Dépêchez-vous d’enterrer le défunt. »", "bukhari-1315"),
+      p("Le jour de Uhud : « Creusez des tombes larges et enterrez deux ou trois personnes dans une même tombe. »", "abudawud-3215"),
       p("La tombe du Prophète ﷺ avait une niche latérale (lahd) fermée de briques.", "muslim-966"),
-      p("Après l’enterrement : « Demandez pardon pour votre frère et demandez pour lui la fermeté, car il est maintenant interrogé. »", "abudawud-3221"),
+      p("Après l’enterrement : « Demandez pardon pour votre frère et demandez pour lui la fermeté, car il va maintenant être interrogé. »", "abudawud-3221"),
     ],
-    cases: [c("Les femmes suivent-elles le convoi ?", "Umm ‘Atiyya a dit : « Il nous a été déconseillé de suivre les convois, sans insistance. »", "bukhari-1278")],
+    cases: [c("Les femmes suivent-elles le convoi ?", "Umm ‘Atiyya a dit : « On nous a interdit de suivre les cortèges funèbres, mais ce n’était pas strict. »", "bukhari-1278")],
   },
 
   "funerals-grave": {
@@ -113,7 +113,7 @@ export const FUNERAL_LESSONS: Record<string, LessonEntry> = {
     title: "Les condoléances et le deuil",
     short: "On console la famille en l’invitant à la patience : « À Allah appartient ce qu’Il a pris et ce qu’Il a donné. » Le deuil dure trois jours, sauf pour la veuve.",
     rules: [
-      p("« À Allah appartient ce qu’Il prend et ce qu’Il donne ; toute chose a auprès de Lui un terme fixé : sois patiente et espère la récompense. »", "bukhari-1284"),
+      p("« Ce qu’Allah prend Lui appartient et ce qu’Il donne Lui appartient, et toute chose auprès de Lui a un terme fixé (dans ce monde), alors elle doit être patiente et espérer la récompense d’Allah. »", "bukhari-1284"),
       p("Pas de deuil au-delà de trois jours, sauf la veuve : quatre mois et dix jours.", "bukhari-1280"),
       p("« Préparez à manger pour la famille de Ja‘far. »", "abudawud-3132"),
     ],
@@ -124,7 +124,7 @@ export const FUNERAL_LESSONS: Record<string, LessonEntry> = {
     title: "La visite des tombes",
     short: "Visiter les tombes rappelle l’au-delà. On salue les défunts et l’on invoque Allah pour eux ; on ne leur adresse aucune demande.",
     rules: [
-      p("« Visitez les tombes, car elles rappellent la mort. »", "muslim-976b"),
+      p("« Visitez les tombes, car cela vous rappelle la mort. »", "muslim-976b"),
       p("« As-salâmu ‘alaykum ahla-d-diyâri mina-l-mu’minîna wa-l-muslimîn, wa innâ in shâ’a-llâhu bikum la-lâḥiqûn, as’alu-llâha lanâ wa lakumu-l-‘âfiya. »", "muslim-975"),
       p("L’invocation s’adresse à Allah seul.", "muslim-975", "binbaz-grave-visit"),
     ],
@@ -136,9 +136,9 @@ export const FAMILY_LESSONS: Record<string, LessonEntry> = {
     title: "Le sens du mariage",
     short: "Le mariage est une Sunnah des prophètes, une protection et un lieu de tranquillité, d’affection et de miséricorde.",
     rules: [
-      p("« Il a créé de vous, pour vous, des épouses pour que vous viviez en tranquillité avec elles, et Il a mis entre vous affection et miséricorde. »", "quran-30-21"),
-      p("« Ô jeunes gens, que celui d’entre vous qui en a les moyens se marie. »", "bukhari-5065"),
-      p("« Le meilleur d’entre vous est le meilleur envers sa famille. »", "tirmidhi-3895"),
+      p("« Il a créé de vous, pour vous, des épouses pour que vous viviez en tranquillité avec elles et Il a mis entre vous de l’affection et de la bonté. »", "quran-30-21"),
+      p("« Ô jeunes gens ! Celui d’entre vous qui en a la capacité doit se marier. »", "bukhari-5065"),
+      p("Le Prophète ﷺ a dit que le meilleur d’entre vous est le meilleur envers ses épouses.", "tirmidhi-3895"),
     ],
     sourceIds: [N],
   },
@@ -147,7 +147,7 @@ export const FAMILY_LESSONS: Record<string, LessonEntry> = {
     title: "La demande en mariage",
     short: "On choisit d’abord la religion et le caractère. Il est permis de voir la personne avant de s’engager. On ne demande pas en mariage une femme déjà demandée par un autre.",
     rules: [
-      p("« On épouse une femme pour sa richesse, sa lignée, sa beauté et sa religion : choisis celle qui a la religion. »", "bukhari-5090"),
+      p("« On épouse une femme pour quatre raisons : sa richesse, sa famille, sa beauté et sa religion. Choisis la femme pieuse. »", "bukhari-5090"),
       p("« Va la regarder » : il est recommandé de voir la future épouse.", "muslim-1424"),
       p("On ne demande pas en mariage une femme déjà demandée tant que le premier n’a pas renoncé.", "bukhari-5142"),
     ],
@@ -159,9 +159,9 @@ export const FAMILY_LESSONS: Record<string, LessonEntry> = {
     short: "Le mariage se conclut par le consentement des deux époux, l’accord du tuteur (wali) de la femme, deux témoins et un mahr.",
     rules: [
       p("La femme ne se marie pas sans son consentement ; pour la vierge, son silence vaut accord.", "bukhari-5136"),
-      p("« Pas de mariage sans tuteur. »", "abudawud-2085"),
+      p("« Il n’y a pas de mariage sans l’autorisation d’un tuteur. »", "abudawud-2085"),
       p("Le contrat se fait en présence du tuteur, de l’époux et de deux témoins.", "binbaz-nikah-witnesses"),
-      p("« Donne un repas de noces, ne serait-ce qu’avec un mouton. »", "bukhari-5167"),
+      p("« Organise un banquet, même si c’est avec un seul mouton. »", "bukhari-5167"),
     ],
     cases: [c("Le mariage civil suffit-il ?", "Le mariage civil seul ne remplit pas forcément les conditions (tuteur, témoins, mahr). Faites le contrat religieux dans les règles, en respectant aussi la loi de votre pays.", N)],
     sensitive: true,
@@ -171,7 +171,7 @@ export const FAMILY_LESSONS: Record<string, LessonEntry> = {
     title: "Le tuteur (wali)",
     short: "Le tuteur est le père de la femme, à défaut son grand-père, son fils, son frère, puis les proches parents par le père. Il ne peut pas la marier contre son gré, ni l’empêcher sans raison d’épouser un homme convenable.",
     rules: [
-      p("« Pas de mariage sans tuteur. »", "abudawud-2085"),
+      p("« Il n’y a pas de mariage sans l’autorisation d’un tuteur. »", "abudawud-2085"),
       p("Le mariage conclu sans l’accord du tuteur est nul.", "abudawud-2083"),
       p("Le tuteur n’empêche pas injustement un mariage convenable.", "quran-2-232"),
       p("Il ne peut marier la femme sans son consentement.", "bukhari-5136"),
@@ -192,8 +192,8 @@ export const FAMILY_LESSONS: Record<string, LessonEntry> = {
     title: "Le mahr (la dot)",
     short: "Le mahr est un droit de l’épouse, offert par l’époux. Il lui appartient entièrement. Il n’a pas de minimum fixé : même une bague en fer convient, et la simplicité est préférable.",
     rules: [
-      p("« Donnez aux femmes leur mahr de bon cœur. »", "quran-4-4"),
-      p("« Cherche, ne serait-ce qu’une bague en fer. »", "muslim-1425"),
+      p("« Et donnez aux épouses leur mahr, de bonne grâce. »", "quran-4-4"),
+      p("« Cherche même si ce n’est qu’une bague en fer. »", "muslim-1425"),
     ],
     cases: [c("Peut-on le payer plus tard ?", "Oui : on peut en verser une partie au contrat et le reste à une date convenue.", N)],
   },
@@ -203,8 +203,8 @@ export const FAMILY_LESSONS: Record<string, LessonEntry> = {
     short: "Les époux se doivent bon comportement, respect et fidélité. Le mari doit l’entretien et la bienveillance ; l’épouse la confiance et la préservation du foyer.",
     rules: [
       p("« Comportez-vous convenablement envers elles. »", "quran-4-19"),
-      p("« Elles ont des droits équivalents à leurs obligations, conformément au bien. »", "quran-2-228"),
-      p("« Le meilleur d’entre vous est le meilleur envers sa famille. »", "tirmidhi-3895"),
+      p("« Elles ont des droits équivalents à leurs obligations, conformément à la bienséance. »", "quran-2-228"),
+      p("Le Prophète ﷺ a dit que le meilleur d’entre vous est le meilleur envers ses épouses.", "tirmidhi-3895"),
       p("Refuser sans raison l’intimité à son conjoint est une faute.", "bukhari-5193"),
     ],
     sensitive: true,
@@ -214,8 +214,8 @@ export const FAMILY_LESSONS: Record<string, LessonEntry> = {
     title: "L’entretien (nafaqa)",
     short: "Le mari doit à son épouse et à ses enfants le logement, la nourriture et l’habillement, selon ses moyens. L’argent de l’épouse lui reste propre.",
     rules: [
-      p("« Que l’aisé dépense selon ses moyens. »", "quran-65-7"),
-      p("Hind, dont le mari était avare : « Prends de quoi te suffire, toi et ton enfant, convenablement. »", "bukhari-5364"),
+      p("« Que celui qui est aisé dépense de sa fortune. »", "quran-65-7"),
+      p("À Hind, dont le mari était avare : « Prends ce qui est suffisant pour toi et tes enfants, mais de façon juste et raisonnable. »", "bukhari-5364"),
       p("L’entretien de la mère qui allaite revient au père.", "quran-2-233"),
     ],
   },
@@ -223,7 +223,7 @@ export const FAMILY_LESSONS: Record<string, LessonEntry> = {
   "family-disagreements": {
     title: "Les désaccords dans le couple",
     short: "On cherche d’abord à se réconcilier par le dialogue. Si la discorde s’installe, chaque famille désigne un arbitre pour tenter la réconciliation.",
-    rules: [p("« Si vous craignez la rupture entre eux, désignez un arbitre de sa famille et un de la sienne ; s’ils veulent la réconciliation, Allah rétablira l’entente. »", "quran-4-35")],
+    rules: [p("« Si vous craignez le désaccord entre les deux [époux], envoyez alors un arbitre de sa famille à lui, et un arbitre de sa famille à elle. Si les deux veulent la réconciliation, Allah rétablira l’entente entre eux. »", "quran-4-35")],
     note: ["En cas de violence ou de danger, protégez-vous d’abord et faites appel aux autorités compétentes."],
     sensitive: true,
   },
@@ -232,9 +232,9 @@ export const FAMILY_LESSONS: Record<string, LessonEntry> = {
     title: "Le divorce (talâq)",
     short: "Le divorce est permis mais il est la dernière solution. Il se prononce en période de pureté sans rapport, une fois. Après un premier ou un deuxième divorce, le mari peut reprendre son épouse pendant le délai ; après le troisième, non.",
     rules: [
-      p("« Divorcez-les en tenant compte de leur délai, et comptez le délai. »", "quran-65-1"),
+      p("« Répudiez-les conformément à leur période d’attente prescrite ; et comptez la période. »", "quran-65-1"),
       p("Ibn ‘Umar avait divorcé pendant les règles : le Prophète ﷺ lui a ordonné de reprendre son épouse.", "bukhari-5251"),
-      p("« Le divorce, c’est deux fois ; ensuite, la garder convenablement ou la libérer avec bonté. »", "quran-2-229"),
+      p("« Le divorce est permis pour seulement deux fois. Alors, c’est soit la reprise conformément à la bienséance, ou la libération avec gentillesse. »", "quran-2-229"),
       p("Après le troisième, elle ne lui est plus permise avant d’avoir épousé un autre homme.", "quran-2-230"),
     ],
     cases: [c("J’ai prononcé le divorce sous la colère.", "Les mots exacts, la colère et l’intention changent le jugement. Exposez votre cas à une personne de science avant toute conclusion.", N)],
@@ -267,7 +267,7 @@ export const FAMILY_LESSONS: Record<string, LessonEntry> = {
     title: "La filiation",
     short: "L’enfant est rattaché au mari de sa mère. On attribue chacun à son vrai père ; l’adoption ne change pas la filiation.",
     rules: [
-      p("« L’enfant appartient au lit conjugal. »", "bukhari-6749"),
+      p("« L’enfant appartient au propriétaire du lit. »", "bukhari-6749"),
       p("« Appelez-les du nom de leurs pères. »", "quran-33-5"),
     ],
     note: ["Le recueil d’un enfant (kafâla) est une grande œuvre, sans lui donner son nom de famille."],
@@ -278,7 +278,7 @@ export const FAMILY_LESSONS: Record<string, LessonEntry> = {
     title: "L’allaitement",
     short: "L’allaitement complet dure deux ans. Cinq tétées dans les deux premières années créent un lien de parenté : la nourrice et sa famille deviennent mahram pour l’enfant.",
     rules: [
-      p("« Les mères allaitent leurs enfants deux ans complets. »", "quran-2-233"),
+      p("« Et les mères, qui veulent donner un allaitement complet, allaiteront leurs bébés deux ans complets. »", "quran-2-233"),
       p("L’allaitement rend interdit au mariage ce que rend interdit la parenté.", "bukhari-2645"),
       p("Cinq tétées connues établissent ce lien.", "muslim-1452"),
     ],
@@ -289,7 +289,7 @@ export const FAMILY_LESSONS: Record<string, LessonEntry> = {
     title: "La garde des enfants",
     short: "Après la séparation, la mère est la plus en droit de garder le jeune enfant tant qu’elle ne se remarie pas. Le père reste tenu de l’entretien.",
     rules: [
-      p("« Tu y as plus droit tant que tu ne te remaries pas. »", "abudawud-2276"),
+      p("« Tu as plus de droits sur lui tant que tu ne te remaries pas. »", "abudawud-2276"),
       p("L’entretien de l’enfant revient au père.", "quran-2-233"),
     ],
     note: ["L’intérêt de l’enfant prime. Les âges de transfert de garde varient selon les écoles et les lois."],

@@ -14,7 +14,7 @@ export const PRAYER_LESSONS: Record<string, LessonEntry> = {
       p("La prière est prescrite aux croyants à des heures déterminées.", "quran-4-103"),
       p("Elle est le deuxième des cinq piliers de l’islam, après l’attestation de foi.", "bukhari-8"),
       p("Elles sont cinq par jour : Fajr, Dhuhr, ‘Asr, Maghrib et ‘Ishâ’.", "muslim-610a"),
-      p("La délaisser est très grave : « Entre l’homme et le polythéisme et la mécréance, il y a l’abandon de la prière. »", "muslim-82"),
+      p("« Ce qui sépare l’homme du polythéisme et de la mécréance, c’est le fait de négliger la prière. »", "muslim-82"),
       p("On l’ordonne aux enfants dès sept ans pour les y habituer.", "abudawud-495"),
     ],
     cases: [
@@ -28,7 +28,7 @@ export const PRAYER_LESSONS: Record<string, LessonEntry> = {
     title: "L’intention (niyya)",
     short: "L’intention est dans le cœur : savoir quelle prière on accomplit et la vouloir suffit. Elle ne se prononce pas.",
     rules: [
-      p("« Les actes ne valent que par les intentions. »", "bukhari-1"),
+      p("« La récompense des actions dépend des intentions. »", "bukhari-1"),
       p("Prononcer une formule comme « j’ai l’intention de prier… » n’a pas été enseigné par le Prophète ﷺ.", "scholar-ibn-baz-niyyah-prayer"),
     ],
     cases: [
@@ -44,9 +44,9 @@ export const PRAYER_LESSONS: Record<string, LessonEntry> = {
     rules: [
       p("Aucune prière n’est acceptée sans purification : le wudû’, le ghusl si nécessaire, ou le tayammum.", "muslim-224", "quran-5-6", "quran-4-43"),
       p("Le corps, le vêtement et le lieu doivent être purs de toute impureté.", "quran-74-4", W),
-      p("Il faut couvrir sa ‘awra : « Prenez votre parure en tout lieu de prière. »", "quran-7-31"),
+      p("Il faut couvrir sa ‘awra : « Dans chaque lieu de Salât portez votre parure (vos habits). »", "quran-7-31"),
       p("L’homme couvre au moins du nombril aux genoux, et ne prie pas les épaules entièrement découvertes.", "bukhari-359", W),
-      p("La femme couvre tout son corps sauf le visage et les mains : « Allah n’accepte pas la prière d’une femme pubère sans voile. »", "abudawud-641", W),
+      p("« Allah n’accepte pas la prière d’une femme qui a atteint la puberté si elle ne porte pas de voile. »", "abudawud-641", W),
       p("L’heure de la prière doit être entrée.", "quran-4-103"),
       p("On se tourne vers la qibla.", "quran-2-144"),
     ],
@@ -95,8 +95,8 @@ export const PRAYER_LESSONS: Record<string, LessonEntry> = {
     title: "La qibla",
     short: "On prie tourné vers la Ka‘ba. Loin de La Mecque, il suffit de viser sa direction après avoir fait l’effort de la trouver.",
     rules: [
-      p("« Tourne ton visage vers la Mosquée sacrée. »", "quran-2-144"),
-      p("Pour celui qui ne voit pas la Ka‘ba, c’est la direction qui compte : « Ce qui est entre l’est et l’ouest est qibla », dit pour les gens de Médine.", "tirmidhi-342"),
+      p("« Tourne donc ton visage vers la Mosquée sacrée. »", "quran-2-144"),
+      p("Pour les gens de Médine, le Prophète ﷺ a dit que ce qui est entre l’est et l’ouest est une qibla.", "tirmidhi-342"),
       p("Pour une prière surérogatoire en voyage, le Prophète ﷺ priait sur sa monture dans la direction où elle allait ; pour l’obligatoire, il descendait et faisait face à la qibla.", "bukhari-400"),
     ],
     cases: [
@@ -109,7 +109,7 @@ export const PRAYER_LESSONS: Record<string, LessonEntry> = {
     title: "Comment prier, pas à pas",
     short: "La prière commence par « Allâhu akbar » et se termine par le salut. Chaque rak‘a comprend la station debout avec al-Fâtiha, l’inclinaison, le redressement et deux prosternations, chaque position étant tenue avec calme.",
     rules: [
-      p("« On y entre par le takbîr et on en sort par le taslîm. »", "abudawud-61"),
+      p("« La clé de la prière, c’est la purification ; elle commence par le takbir et se termine par le salut. »", "abudawud-61"),
       p("Le Prophète ﷺ a enseigné la prière à un homme qui priait trop vite, position après position, en insistant sur le calme dans chacune.", "bukhari-757"),
       p("« Priez comme vous m’avez vu prier. »", "bukhari-631"),
     ],
@@ -136,7 +136,7 @@ export const PRAYER_LESSONS: Record<string, LessonEntry> = {
     title: "Le takbîr d’ouverture",
     short: "La prière commence par « Allâhu akbar » : à partir de ce mot, tout ce qui est étranger à la prière est interdit jusqu’au salut.",
     rules: [
-      p("« On entre dans la prière par le takbîr et on en sort par le taslîm. »", "abudawud-61"),
+      p("« La clé de la prière, c’est la purification ; elle commence par le takbir et se termine par le salut. »", "abudawud-61"),
       p("Le Prophète ﷺ a commencé par lui l’enseignement de la prière.", "bukhari-757"),
       p("On lève les mains à hauteur des épaules ou des oreilles en le prononçant.", "bukhari-735"),
     ],
@@ -153,7 +153,7 @@ export const PRAYER_LESSONS: Record<string, LessonEntry> = {
       p("Rester incliné jusqu’à être stable.", "bukhari-757"),
       p("Le Prophète ﷺ avait le dos droit et les mains posées sur les genoux.", "bukhari-828"),
       p("Il disait : « Subḥâna rabbiya-l-‘aẓîm » (Gloire à mon Seigneur l’Immense).", "muslim-772"),
-      p("« Au rukû‘, glorifiez le Seigneur ; il m’a été interdit d’y réciter le Coran. »", "muslim-479a"),
+      p("« Sachez que j’ai été interdit de réciter le Coran en état d’inclinaison et de prosternation. Pendant l’inclinaison, glorifiez le Seigneur Suprême et Glorieux. »", "muslim-479a"),
     ],
     cases: [c("Combien de fois le dire ?", "Au moins une fois ; trois fois est l’usage courant.", W)],
   },
@@ -172,7 +172,7 @@ export const PRAYER_LESSONS: Record<string, LessonEntry> = {
     title: "La prosternation (sujûd)",
     short: "On se prosterne sur sept os — le front avec le nez, les deux mains, les deux genoux et les orteils — en disant « Subḥâna rabbiya-l-a‘lâ ». C’est le moment où l’on est le plus proche d’Allah.",
     rules: [
-      p("« Il m’a été ordonné de me prosterner sur sept os. »", "bukhari-812"),
+      p("« J’ai reçu l’ordre de me prosterner sur sept os. »", "bukhari-812"),
       p("Posez les paumes et levez les coudes du sol.", "muslim-494"),
       p("Dites « Subḥâna rabbiya-l-a‘lâ » (Gloire à mon Seigneur le Très-Haut).", "muslim-772"),
       p("C’est le moment de multiplier les invocations : on y est au plus près de son Seigneur.", "muslim-482", "muslim-479a"),
@@ -203,7 +203,7 @@ export const PRAYER_LESSONS: Record<string, LessonEntry> = {
     title: "La récitation d’al-Fâtiha",
     short: "Al-Fâtiha est récitée à chaque rak‘a : « Pas de prière pour qui ne récite pas la Mère du Livre. » Derrière l’imam, les écoles divergent.",
     rules: [
-      p("« Pas de prière pour celui qui ne récite pas al-Fâtiha. »", "bukhari-756"),
+      p("« Celui qui ne récite pas Al-Fatiha dans sa prière, sa prière n’est pas valable. »", "bukhari-756"),
       p("Dans les deux premières rak‘ât, on ajoute une sourate ; dans les suivantes, al-Fâtiha seule.", "bukhari-776"),
       p("Quand l’imam dit « Âmîn », dites « Âmîn ».", "bukhari-780"),
     ],
@@ -230,7 +230,7 @@ export const PRAYER_LESSONS: Record<string, LessonEntry> = {
     title: "Le salut final",
     short: "On termine la prière en tournant la tête à droite puis à gauche : « As-salâmu ‘alaykum wa raḥmatu-llâh ».",
     rules: [
-      p("« On en sort par le taslîm. »", "abudawud-61"),
+      p("La prière « commence par le takbir et se termine par le salut ».", "abudawud-61"),
       p("Le Prophète ﷺ saluait à droite puis à gauche.", "muslim-582"),
     ],
     note: ["Pour les malikites, un seul salut suffit ; pour les shafi‘ites, le premier est obligatoire et le second recommandé ; pour les hanbalites, les deux sont obligatoires."],
@@ -254,9 +254,9 @@ export const PRAYER_LESSONS: Record<string, LessonEntry> = {
     title: "La prière du malade",
     short: "Le malade prie selon sa capacité : debout ; s’il ne peut pas, assis ; s’il ne peut pas, sur le côté. Il ne la délaisse pas tant qu’il est conscient.",
     rules: [
-      p("« Prie debout ; si tu ne peux pas, assis ; si tu ne peux pas, sur le côté. »", "bukhari-1117"),
+      p("« Prie debout, et si tu ne peux pas, prie assis, et si tu ne peux même pas faire cela, alors prie couché sur le côté. »", "bukhari-1117"),
       p("« Allah n’impose à aucune âme une charge supérieure à sa capacité. »", "quran-2-286"),
-      p("« Craignez Allah autant que vous le pouvez. »", "quran-64-16"),
+      p("« Craignez Allah, donc autant que vous pouvez. »", "quran-64-16"),
     ],
     cases: [
       c("Je ne peux pas me prosterner.", "Inclinez la tête pour le rukû‘, et un peu plus bas pour le sujûd.", W),
@@ -269,7 +269,7 @@ export const PRAYER_LESSONS: Record<string, LessonEntry> = {
     title: "La prière en voyage",
     short: "En voyage, les prières de quatre rak‘ât (Dhuhr, ‘Asr, ‘Ishâ’) se font en deux. Fajr et Maghrib ne changent pas. On commence à raccourcir une fois sorti de sa ville.",
     rules: [
-      p("« La prière a été prescrite à quatre rak‘ât en résidence et à deux en voyage. »", "muslim-687a"),
+      p("« Allah a prescrit la prière par la parole de votre Prophète ﷺ : quatre rak‘ats en résidence, deux en voyage. »", "muslim-687a"),
       p("Le Coran mentionne le raccourcissement de la prière en voyage.", "quran-4-101"),
       p("Selon les quatre écoles, on commence à raccourcir après avoir quitté les habitations de sa ville, pas dès l’intention.", ...SCHOOLS_QASR),
     ],
@@ -300,7 +300,7 @@ export const PRAYER_LESSONS: Record<string, LessonEntry> = {
     title: "Le retardataire",
     short: "Celui qui arrive en retard rejoint l’imam dans la position où il se trouve, sans courir, puis complète ce qu’il a manqué après le salut de l’imam. On compte la rak‘a si l’on a rejoint le rukû‘.",
     rules: [
-      p("« Ce que vous rattrapez, priez-le, et ce que vous avez manqué, complétez-le. »", "bukhari-908"),
+      p("« Si la prière commence, ne courez pas pour y aller mais marchez calmement, priez ce que vous pouvez et complétez ce que vous avez manqué. »", "bukhari-908"),
       p("Venez avec calme : ne courez pas pour rattraper une rak‘a.", "bukhari-908"),
     ],
     steps: [
@@ -334,7 +334,7 @@ export const PRAYER_LESSONS: Record<string, LessonEntry> = {
     title: "La prière du vendredi",
     short: "La prière du vendredi (jumu‘a) remplace Dhuhr. Elle est obligatoire pour l’homme résident ; elle comprend un sermon puis deux rak‘ât en groupe.",
     rules: [
-      p("« Quand on appelle à la prière du vendredi, accourez à l’évocation d’Allah et laissez le commerce. »", "quran-62-9"),
+      p("« Quand on appelle à la Salât du jour du Vendredi, accourez à l’invocation d’Allah et laissez tout négoce. »", "quran-62-9"),
       p("Elle est un devoir pour tout musulman, sauf l’esclave, la femme, l’enfant et le malade.", "abudawud-1067"),
       p("Délaisser trois vendredis par négligence est une grave faute.", "abudawud-1052"),
       p("Pendant le sermon, on écoute en silence ; même dire « tais-toi » est une parole vaine.", "bukhari-934", "muslim-857b"),
@@ -377,7 +377,7 @@ export const PRAYER_LESSONS: Record<string, LessonEntry> = {
     short: "Elle se prie debout, sans inclinaison ni prosternation, avec quatre takbîr : al-Fâtiha, la prière sur le Prophète ﷺ, l’invocation pour le défunt, puis le salut.",
     rules: [
       p("Le Prophète ﷺ a prié sur le Najâshî avec quatre takbîr.", "bukhari-1334"),
-      p("Ibn ‘Abbâs y a récité al-Fâtiha et a dit : « C’est la Sunnah. »", "bukhari-1335"),
+      p("Ibn ‘Abbâs y a récité al-Fâtiha et a dit : « Sachez que cela (c’est-à-dire la récitation d’Al-Fatiha) fait partie de la tradition du Prophète ﷺ. »", "bukhari-1335"),
       p("Y assister vaut un qîrât de récompense, et deux en suivant jusqu’à l’enterrement.", "bukhari-1325"),
     ],
     steps: [
@@ -393,9 +393,9 @@ export const PRAYER_LESSONS: Record<string, LessonEntry> = {
     title: "Prier derrière l’imam",
     short: "L’imam est là pour être suivi : on fait chaque mouvement juste après lui, jamais avant. On aligne les rangs épaule contre épaule.",
     rules: [
-      p("« L’imam a été désigné pour être suivi : quand il s’incline, inclinez-vous… »", "bukhari-722"),
+      p("« L’imam est là pour être suivi. Ne divergez donc pas de lui, inclinez-vous quand il s’incline… »", "bukhari-722"),
       p("Celui qui lève la tête avant l’imam s’expose à une grave menace.", "bukhari-691"),
-      p("« Alignez vos rangs : cela fait partie de l’accomplissement de la prière. »", "bukhari-723"),
+      p("« Alignez vos rangs, car l’alignement des rangs est essentiel pour une prière correcte et complète. »", "bukhari-723"),
       p("Dirige celui qui récite le mieux le Coran.", "muslim-673"),
       p("L’imam allège la prière, car derrière lui il y a des faibles et des malades.", "bukhari-703"),
     ],
@@ -412,9 +412,9 @@ export const PRAYER_LESSONS: Record<string, LessonEntry> = {
     aliases: ["jamaa", "groupe", "mosquée", "en commun"],
     short: "Prier en groupe vaut vingt-sept fois plus que prier seul. Pour les hommes, c’est un devoir très appuyé ; les femmes peuvent venir à la mosquée.",
     rules: [
-      p("« La prière en groupe dépasse de vingt-sept degrés la prière seul. »", "bukhari-645"),
+      p("« La prière en groupe est vingt-sept fois supérieure à la prière faite seul. »", "bukhari-645"),
       p("Même à l’aveugle qui entendait l’appel, le Prophète ﷺ a dit : « Réponds. »", "muslim-653"),
-      p("« N’empêchez pas les servantes d’Allah d’aller aux mosquées d’Allah. »", "bukhari-900"),
+      p("« Ne privez pas les servantes d’Allah d’aller dans les mosquées d’Allah. »", "bukhari-900"),
       p("En entrant à la mosquée, priez deux rak‘ât avant de vous asseoir.", "bukhari-444"),
     ],
     note: ["Les hanbalites jugent la prière en groupe obligatoire pour les hommes ; les autres écoles, une Sunnah très appuyée ou une obligation collective."],
@@ -427,7 +427,7 @@ export const PRAYER_LESSONS: Record<string, LessonEntry> = {
     aliases: ["qada", "prière manquée", "rattrapage", "oubli", "endormi"],
     short: "Celui qui a oublié une prière ou s’est endormi la prie dès qu’il s’en souvient. Plusieurs prières manquées se rattrapent dans l’ordre.",
     rules: [
-      p("« Celui qui oublie une prière ou s’endort, qu’il la prie dès qu’il s’en souvient : il n’y a pas d’autre expiation. »", "bukhari-597", "muslim-684"),
+      p("« Celui qui oublie la prière doit la faire dès qu’il s’en souvient, il n’y a pas d’autre expiation que cela. »", "bukhari-597", "muslim-684"),
       p("Le Prophète ﷺ a rattrapé ‘Asr après le coucher du soleil, puis a prié Maghrib : on respecte l’ordre.", "bukhari-596"),
       p("Délaisser volontairement la prière est un péché très grave dont il faut se repentir.", "muslim-82"),
     ],
@@ -453,7 +453,7 @@ export const PRAYER_LESSONS: Record<string, LessonEntry> = {
   "prayer-invalidators": {
     short: "La prière est annulée par la parole volontaire, le fait de manger ou boire, le rire aux éclats, la perte des ablutions, l’abandon volontaire d’un pilier et les mouvements nombreux sans nécessité.",
     rules: [
-      p("« Rien de la parole des gens ne convient à cette prière. »", "muslim-537a"),
+      p("« Il n’est pas convenable de parler aux gens pendant la prière, car elle consiste à glorifier Allah, à proclamer Sa grandeur et à réciter le Coran. »", "muslim-537a"),
       p("Manger ou boire volontairement annule la prière obligatoire.", "fiqh-badai-prayer-invalidators", "fiqh-majmu-prayer-invalidators", "fiqh-mughni-prayer-invalidators"),
       p("Le rire audible l’annule ; le sourire ne l’annule pas.", "fiqh-badai-prayer-invalidators", "fiqh-dusuqi-prayer-invalidators", "fiqh-majmu-prayer-invalidators", "fiqh-mughni-prayer-invalidators"),
       p("Les mouvements légers ou faits pour un besoin ne l’annulent pas ; ce sont les gestes nombreux et étrangers à la prière qui l’annulent.", "fiqh-badai-prayer-movements", "fiqh-dusuqi-prayer-movements", "fiqh-mughni-prayer-movements", "fiqh-majmu-prayer-movements"),
@@ -472,7 +472,7 @@ export const PRAYER_LESSONS: Record<string, LessonEntry> = {
     short: "Le witr est une prière en nombre impair qui clôt la nuit, au minimum une rak‘a, après ‘Ishâ’ et avant l’aube.",
     rules: [
       p("« Faites du witr votre dernière prière de la nuit. »", "bukhari-998"),
-      p("« Le witr est une rak‘a à la fin de la nuit. »", "muslim-752"),
+      p("« Le Witr est une rak‘a à la fin de la prière de la nuit. »", "muslim-752"),
       p("Celui qui craint de ne pas se lever le fait avant de dormir.", "muslim-755"),
     ],
     note: ["Les hanafites jugent le witr obligatoire ; pour les autres écoles, c’est la plus appuyée des Sunnah."],
@@ -484,8 +484,8 @@ export const PRAYER_LESSONS: Record<string, LessonEntry> = {
     aliases: ["rawatib", "sunna", "nafila", "duha", "tahiyyat al-masjid"],
     short: "Douze rak‘ât surérogatoires par jour bâtissent une maison au Paradis : deux avant Fajr, quatre avant Dhuhr et deux après, deux après Maghrib, deux après ‘Ishâ’.",
     rules: [
-      p("« Celui qui prie douze rak‘ât par jour en dehors de l’obligatoire, Allah lui bâtit une maison au Paradis. »", "muslim-728"),
-      p("Les deux rak‘ât avant Fajr « valent mieux que le monde et ce qu’il contient ».", "muslim-725"),
+      p("« Si un serviteur musulman prie pour Allah douze unités de prière (Sounan) chaque jour, en plus des prières obligatoires, Allah lui construira une maison au Paradis. »", "muslim-728"),
+      p("« Les deux unités de prière à l’aube valent mieux que ce monde et tout ce qu’il contient. »", "muslim-725"),
       p("Ibn ‘Umar en a retenu dix : deux avant et deux après Dhuhr, deux après Maghrib, deux après ‘Ishâ’, deux avant Fajr.", "bukhari-1180"),
       p("Deux rak‘ât de duḥâ, en matinée, valent une aumône pour chaque articulation du corps.", "muslim-720"),
       p("En entrant à la mosquée, priez deux rak‘ât avant de vous asseoir.", "bukhari-444"),
@@ -498,10 +498,10 @@ export const PRAYER_LESSONS: Record<string, LessonEntry> = {
     aliases: ["qiyam", "tahajjud", "tarawih", "prière de nuit"],
     short: "La prière de la nuit est la meilleure après l’obligatoire. Elle se prie deux rak‘ât par deux. En Ramadan, c’est le tarâwîh.",
     rules: [
-      p("« La meilleure prière après l’obligatoire est la prière de la nuit. »", "muslim-1163"),
-      p("« La prière de la nuit se fait deux par deux. »", "bukhari-990"),
+      p("« La meilleure prière après les prières obligatoires est la prière de nuit. »", "muslim-1163"),
+      p("« La prière de nuit se fait par deux rak`at à la fois, puis encore deux, et ainsi de suite. »", "bukhari-990"),
       p("Le Prophète ﷺ ne dépassait généralement pas onze rak‘ât, en Ramadan comme en dehors.", "bukhari-1147"),
-      p("« Celui qui prie les nuits de Ramadan avec foi et espérance, ses péchés passés lui sont pardonnés. »", "bukhari-2009"),
+      p("« Celui qui prie la nuit pendant tout le mois de Ramadan avec une foi sincère et en espérant une récompense d’Allah, tous ses péchés passés lui seront pardonnés. »", "bukhari-2009"),
     ],
     note: ["Le nombre de rak‘ât du tarâwîh n’est pas limité : les Compagnons en ont prié davantage. Le plus important est la qualité."],
   },

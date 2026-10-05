@@ -7,7 +7,7 @@ export const HAJJ_LESSONS: Record<string, LessonEntry> = {
     title: "L’obligation du Hajj",
     short: "Le Hajj est obligatoire une fois dans la vie pour le musulman pubère, sain d’esprit et qui en a la capacité : la santé, les moyens du voyage et ce qui suffit à sa famille pendant son absence.",
     rules: [
-      p("« C’est un devoir envers Allah pour les gens de faire le pèlerinage de la Maison, pour qui en a la capacité. »", "quran-3-97"),
+      p("« Et c’est un devoir envers Allah pour les gens qui ont les moyens, d’aller faire le pèlerinage de la Maison. »", "quran-3-97"),
       p("C’est le cinquième pilier de l’islam.", "bukhari-8"),
       p("Celui qui le fait sans obscénité ni perversité en revient comme au jour où sa mère l’a mis au monde.", "bukhari-1521"),
       p("Le Hajj accepté n’a d’autre récompense que le Paradis.", "bukhari-1773"),
@@ -30,7 +30,7 @@ export const HAJJ_LESSONS: Record<string, LessonEntry> = {
     aliases: ["arkan hajj", "piliers hajj", "wajibat hajj", "obligations hajj", "dam"],
     short: "Les piliers du Hajj sont l’ihrâm, la station à ‘Arafa, le tawâf al-ifâda et le sa‘y. Sans eux, le Hajj n’est pas valable. Les obligations (mîqât, Muzdalifa, nuits à Minâ, lapidation, rasage, tawâf d’adieu) se compensent par un sacrifice si on les manque.",
     rules: [
-      p("Station à ‘Arafa : « Le Hajj, c’est ‘Arafa. »", "abudawud-1949"),
+      p("Station à ‘Arafa : « Le hajj, le hajj, c’est le jour de ‘Arafah. »", "abudawud-1949"),
       p("Tawâf al-ifâda et sa‘y entre Safâ et Marwa.", "muslim-1218a", "quran-2-158"),
       p("L’ihrâm : l’intention d’entrer dans le rite.", "muslim-1218"),
     ],
@@ -83,7 +83,7 @@ export const HAJJ_LESSONS: Record<string, LessonEntry> = {
     short: "Le tawâf, ce sont sept tours autour de la Ka‘ba, en la gardant à gauche, en commençant à la Pierre noire. Le sa‘y, ce sont sept trajets entre Safâ et Marwa, en commençant par Safâ.",
     rules: [
       p("Le Prophète ﷺ a fait sept tours, puis a prié deux rak‘ât derrière le Maqâm Ibrâhîm, puis est allé à Safâ.", "muslim-1218a"),
-      p("« Safâ et Marwa font partie des rites d’Allah. »", "quran-2-158"),
+      p("« As-Safâ et Al-Marwah sont vraiment parmi les lieux sacrés d’Allah. »", "quran-2-158"),
     ],
     cases: [c("Faut-il les ablutions pour le tawâf ?", "Oui selon la majorité des savants ; les hanafites les jugent obligatoires mais non conditions de validité. Le sa‘y peut se faire sans ablutions.", W)],
   },
@@ -92,7 +92,7 @@ export const HAJJ_LESSONS: Record<string, LessonEntry> = {
     title: "‘Arafa, Muzdalifa et Minâ",
     short: "Le 9 Dhul-Hijja, on se tient à ‘Arafa jusqu’au coucher du soleil ; on passe la nuit à Muzdalifa ; puis on séjourne à Minâ les jours suivants pour lapider les stèles.",
     rules: [
-      p("« Le Hajj, c’est ‘Arafa. »", "abudawud-1949"),
+      p("« Le hajj, le hajj, c’est le jour de ‘Arafah. »", "abudawud-1949"),
       p("Le Prophète ﷺ est resté à ‘Arafa jusqu’au coucher du soleil, puis a passé la nuit à Muzdalifa et y a prié Fajr.", "muslim-1218c"),
       p("Les faibles, les femmes et ceux qui les accompagnent peuvent quitter Muzdalifa après le milieu de la nuit.", "bukhari-1681"),
     ],
@@ -106,7 +106,7 @@ export const HAJJ_LESSONS: Record<string, LessonEntry> = {
       p("Sept cailloux à la grande stèle, avec « Allâhu akbar » à chaque lancer.", "bukhari-1748"),
       p("Le rasage est meilleur que le raccourcissement pour les hommes ; le Prophète ﷺ a invoqué trois fois pour ceux qui se rasent.", "bukhari-1727", "bukhari-1728"),
       p("La femme raccourcit ses cheveux de la longueur d’une phalange.", W),
-      p("Si l’ordre est inversé le jour du sacrifice : « Fais, il n’y a pas de mal. »", "bukhari-1736"),
+      p("Ce jour-là, interrogé sur un acte fait avant ou après son moment, le Prophète ﷺ répondait : « Fais-le maintenant, il n’y a pas de mal. »", "bukhari-1736"),
     ],
     sourceIds: ["bukhari-1730", "bukhari-1731", "muslim-1218"],
   },
@@ -116,7 +116,7 @@ export const HAJJ_LESSONS: Record<string, LessonEntry> = {
     short: "Le tawâf al-ifâda est un pilier du Hajj, fait à partir du jour du sacrifice. Le tawâf d’adieu est le dernier acte avant de quitter La Mecque ; la femme en règles en est dispensée.",
     rules: [
       p("Le Prophète ﷺ a fait le tawâf al-ifâda le jour du sacrifice.", "muslim-1218"),
-      p("« Que votre dernier acte soit à la Maison », sauf pour la femme en règles.", "bukhari-1755"),
+      p("Les gens ont reçu l’ordre d’accomplir le Tawâf d’adieu comme dernière chose avant de quitter La Mecque, sauf les femmes ayant leurs règles, qui en étaient dispensées.", "bukhari-1755"),
       p("Safiyya, qui avait déjà fait l’ifâda, a pu partir malgré ses règles.", "muslim-1211ab", "muslim-1211ae"),
     ],
   },
@@ -134,7 +134,7 @@ export const HAJJ_LESSONS: Record<string, LessonEntry> = {
     aliases: ["umra", "omra", "oumra"],
     short: "La ‘Umra comprend l’ihrâm, le tawâf, le sa‘y, puis le rasage ou le raccourcissement. Elle se fait à tout moment de l’année.",
     rules: [
-      p("« Accomplissez pour Allah le Hajj et la ‘Umra. »", "quran-2-196"),
+      p("« Et accomplissez pour Allah le pèlerinage et l’Umra. »", "quran-2-196"),
       p("D’une ‘Umra à l’autre, les péchés commis entre les deux sont expiés.", "bukhari-1773"),
       p("Une ‘Umra en Ramadan équivaut à un Hajj.", "bukhari-1782"),
     ],
@@ -145,7 +145,7 @@ export const HAJJ_LESSONS: Record<string, LessonEntry> = {
     title: "Les règles pendant le Hajj",
     short: "La femme en règles accomplit tous les rites, sauf le tawâf, qu’elle fait après sa purification. Si elle a déjà fait le tawâf al-ifâda, elle est dispensée du tawâf d’adieu.",
     rules: [
-      p("« Fais tout ce que fait le pèlerin, sauf le tawâf autour de la Maison, jusqu’à ce que tu sois pure. »", "bukhari-305", "bukhari-1652"),
+      p("« Fais tout ce que font les pèlerins, sauf le tawaf autour de la Ka`ba jusqu’à ce que tu sois purifiée. »", "bukhari-305", "bukhari-1652"),
       p("Ayant déjà fait l’ifâda, elle peut partir sans tawâf d’adieu.", "muslim-1211ab", "bukhari-1755"),
     ],
     cases: [c("Mon vol part et je n’ai pas fait le tawâf al-ifâda.", "C’est une situation difficile qui demande l’avis d’un savant sur place : certains permettent, en dernier recours, de le faire avec une protection.", W)],
@@ -156,7 +156,7 @@ export const HAJJ_LESSONS: Record<string, LessonEntry> = {
     title: "L’enfant et la personne incapable",
     short: "Le Hajj de l’enfant est valable et récompensé, mais il devra refaire le Hajj obligatoire après la puberté. Celui qui ne peut plus voyager à cause de l’âge ou d’une maladie durable peut faire faire le Hajj à sa place.",
     rules: [
-      p("Une femme a soulevé un enfant : « Celui-ci a-t-il un Hajj ? » — « Oui, et tu en auras la récompense. »", "muslim-1336c"),
+      p("Une femme souleva un enfant et dit : « Ô Messager d’Allah, aura-t-il la récompense du Hajj ? » Il répondit : « Oui, et tu auras une récompense. »", "muslim-1336c"),
       p("Une femme a fait le Hajj pour son père âgé, incapable de tenir sur une monture.", "muslim-1334"),
     ],
     cases: [c("Qui peut faire le Hajj pour autrui ?", "Celui qui a déjà fait son propre Hajj, selon la majorité des savants.", W)],

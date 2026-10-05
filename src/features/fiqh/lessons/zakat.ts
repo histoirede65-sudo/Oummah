@@ -1,21 +1,20 @@
 import { c, p, type LessonEntry } from "./types";
 
-const W = "wajiz-zakat";
-const E = "contemporary-estimates";
 
 export const ZAKAT_LESSONS: Record<string, LessonEntry> = {
   "zakat-obligation": {
     title: "L’obligation de la zakât",
     short: "La zakât est le troisième pilier de l’islam : une part déterminée de certains biens, due chaque année par le musulman qui possède le seuil (nisâb), et versée à des bénéficiaires précis.",
     rules: [
-      p("« Accomplissez la prière et acquittez la zakât. »", "quran-2-43"),
+      p("« Et accomplissez la Salât, et acquittez la Zakât. »", "quran-2-43"),
       p("Elle est l’un des cinq piliers de l’islam.", "bukhari-8"),
       p("Elle est prise des riches et rendue aux pauvres.", "bukhari-1395"),
       p("Celui qui ne la paie pas s’expose à un châtiment sévère.", "bukhari-1403", "quran-9-34"),
     ],
     cases: [
-      c("Quels biens sont concernés ?", "L’or, l’argent et l’argent liquide (épargne, comptes), les marchandises destinées à la vente, les récoltes, le bétail en pâturage, et les trésors trouvés (rikâz).", W),
-      c("Ma maison, ma voiture, mes meubles ?", "Non : les biens d’usage personnel ne sont pas soumis à la zakât.", "bukhari-1463"),
+      c("Quels biens sont concernés ?", "Al-Wajîz cite l’or et l’argent, les récoltes et les fruits, le bétail et le trésor enfoui (rikâz). Ibn ‘Uthaymîn y ajoute tout bien destiné au commerce.", "wajiz-zakat", "uthaymin-liqa-zakat"),
+      c("Et l’argent en billets ou sur un compte ?", "Ibn Bâz : l’argent épargné, qu’il soit en or, en argent ou en monnaie papier, est soumis à la zakât s’il atteint le seuil et qu’une année est passée.", "binbaz-zakat-savings"),
+      c("Ma maison, ma voiture, mes meubles ?", "Ibn ‘Uthaymîn distingue les biens destinés au commerce de ce que l’on garde pour soi, comme sa maison. Le Prophète ﷺ a dit que le musulman ne doit pas de zakât sur son esclave ni sur son cheval.", "uthaymin-liqa-zakat", "bukhari-1463"),
     ],
   },
 
@@ -23,8 +22,8 @@ export const ZAKAT_LESSONS: Record<string, LessonEntry> = {
     title: "Le sens de la zakât",
     short: "La zakât purifie le croyant de l’avarice, purifie ses biens et y met la bénédiction. Elle ne diminue pas la richesse.",
     rules: [
-      p("« Prélève de leurs biens une aumône par laquelle tu les purifies et les bénis. »", "quran-9-103"),
-      p("« L’aumône ne diminue en rien les biens. »", "muslim-2588"),
+      p("« Prélève de leurs biens une Sadaqa par laquelle tu les purifies et les bénis. »", "quran-9-103"),
+      p("« L’aumône ne diminue pas la richesse. »", "muslim-2588"),
     ],
   },
 
@@ -38,9 +37,7 @@ export const ZAKAT_LESSONS: Record<string, LessonEntry> = {
       p("Donner à des proches dans le besoin vaut deux récompenses : celle de l’aumône et celle du lien de parenté.", "bukhari-1466"),
     ],
     cases: [
-      c("Puis-je la donner à mes parents ou à mes enfants ?", "Non, si vous avez l’obligation de les entretenir : ce serait vous acquitter d’un devoir avec votre zakât. Vos frères, sœurs, oncles et tantes dans le besoin peuvent la recevoir.", W, "bukhari-1466"),
-      c("Puis-je la donner à mon épouse ?", "Non, son entretien est à votre charge. L’épouse peut en revanche donner sa zakât à son mari pauvre.", "bukhari-1466"),
-      c("Dois-je répartir sur les huit catégories ?", "Non : donner à une seule catégorie suffit selon la majorité des savants.", W),
+      c("Dois-je répartir sur les huit catégories ?", "Al-Wajîz rapporte d’Ibn Kathîr deux avis : pour ash-Shâfi‘î, il faut couvrir les huit ; pour Mâlik et de nombreux savants, on peut tout donner à une seule. Ibn Jarîr dit que c’est l’avis de la généralité des savants.", "wajiz-zakat"),
     ],
   },
 
@@ -54,8 +51,8 @@ export const ZAKAT_LESSONS: Record<string, LessonEntry> = {
       p("Bovins : à partir de trente.", "tirmidhi-623"),
     ],
     cases: [
-      c("Combien cela fait-il en grammes ?", "Les savants contemporains estiment généralement 20 dinars à environ 85 g d’or, et 200 dirhams à environ 595 g d’argent. Vérifiez le cours du jour pour connaître le montant.", E),
-      c("Je dois me baser sur l’or ou sur l’argent ?", "Les savants divergent. Le seuil de l’argent est plus bas et profite davantage aux pauvres ; beaucoup le préfèrent pour l’argent liquide.", W),
+      c("Combien cela fait-il en grammes ?", "Ibn ‘Uthaymîn : « Le seuil de l’or, avec les mesures actuelles, est de quatre-vingt-cinq grammes, et celui de l’argent de cinq cent quatre-vingt-quinze grammes. »", "uthaymin-liqa-zakat"),
+      c("J’ai un demi-seuil d’or et un demi-seuil d’argent.", "Ibn ‘Uthaymîn : on ne complète pas l’or par l’argent ; il n’y a donc pas de zakât, puisque vous n’avez le seuil ni de l’un ni de l’autre.", "uthaymin-liqa-zakat"),
     ],
   },
 
@@ -65,16 +62,16 @@ export const ZAKAT_LESSONS: Record<string, LessonEntry> = {
     rules: [
       p("Pour 200 dirhams : 5 dirhams ; pour 20 dinars : un demi-dinar, soit un quarantième.", "abudawud-1573"),
       p("Sur l’argent, le quart du dixième (2,5 %).", "bukhari-1454"),
-      p("La monnaie actuelle (espèces, comptes, épargne) suit la règle de l’or et de l’argent.", W),
+      p("Ibn Bâz : l’argent épargné, qu’il soit en or, en argent ou en monnaie papier, est soumis à la zakât s’il atteint le seuil et qu’une année est passée.", "binbaz-zakat-savings"),
     ],
     steps: [
-      p("Le jour anniversaire de votre zakât, additionnez votre épargne, vos espèces et votre or ou argent.", W),
-      p("Si le total atteint le nisâb, multipliez-le par 2,5 % (divisez par 40).", "abudawud-1573"),
-      p("Versez ce montant aux bénéficiaires.", "quran-9-60"),
+      p("Quand une année lunaire est passée sur votre argent, vérifiez qu’il atteint le seuil.", "abudawud-1573"),
+      p("Versez-en le quarantième (2,5 %).", "abudawud-1573"),
+      p("Donnez ce montant aux bénéficiaires nommés par le Coran.", "quran-9-60"),
     ],
     cases: [
-      c("Les bijoux en or portés sont-ils soumis à la zakât ?", "Les écoles divergent : les hanafites la rendent obligatoire ; les malikites, shafi‘ites et hanbalites l’en dispensent pour un usage personnel habituel. Payer est la voie la plus prudente.", W),
-      c("Les marchandises de mon commerce ?", "Selon la majorité des savants, on estime leur valeur à la date de la zakât et on paie 2,5 %.", W),
+      c("Les bijoux en or portés sont-ils soumis à la zakât ?", "Al-Wajîz : la zakât des bijoux est obligatoire. Umm Salama portait des bijoux en or ; le Prophète ﷺ lui a dit que ce dont la zakât est payée n’est pas un trésor. Il a dit à ‘Â’isha, qui portait des bagues en argent sans en payer la zakât : « Cela suffit pour te mener au Feu de l’Enfer. » Ibn ‘Uthaymîn dit aussi que l’or et l’argent sont soumis à la zakât en toutes circonstances, bijoux compris.", "wajiz-zakat", "abudawud-1564", "abudawud-1565", "uthaymin-liqa-zakat"),
+      c("Les marchandises de mon commerce ?", "Ibn ‘Uthaymîn : tout bien destiné au commerce (terrains, voitures, tissus, ustensiles…) est soumis à la zakât, au quart du dixième, s’il atteint le seuil.", "uthaymin-liqa-zakat"),
     ],
   },
 
@@ -82,10 +79,9 @@ export const ZAKAT_LESSONS: Record<string, LessonEntry> = {
     title: "L’année de possession (hawl)",
     short: "La zakât de la monnaie, de l’or et du bétail n’est due qu’après une année lunaire pendant laquelle le bien est resté au-dessus du seuil. Les récoltes, elles, se paient à la récolte.",
     rules: [
-      p("« Pas de zakât sur un bien tant qu’une année n’est pas passée. »", "abudawud-1573"),
-      p("Pour les récoltes : « Acquittez-en le droit le jour de la récolte. »", "quran-6-141"),
+      p("« Aucune zakat n’est due sur un bien avant qu’une année ne s’écoule. »", "abudawud-1573"),
+      p("Pour les récoltes : « acquittez-en les droits le jour de la récolte. »", "quran-6-141"),
     ],
-    cases: [c("Mon épargne augmente pendant l’année.", "Le plus simple : fixez une date annuelle et payez sur la totalité du montant ce jour-là, s’il atteint le nisâb.", W)],
   },
 
   "zakat-camels": {
@@ -95,15 +91,17 @@ export const ZAKAT_LESSONS: Record<string, LessonEntry> = {
       p("De 5 à 24 : un mouton pour chaque tranche de cinq.", "bukhari-1454"),
       p("25 à 35 : une chamelle d’un an ; 36 à 45 : de deux ans ; 46 à 60 : de trois ans ; 61 à 75 : de quatre ans ; 76 à 90 : deux de deux ans ; 91 à 120 : deux de trois ans.", "bukhari-1454"),
       p("Au-delà de 120 : une chamelle de deux ans par quarante, une de trois ans par cinquante.", "bukhari-1454"),
+      p("Al-Wajîz : il faut que le bétail pâture librement la plus grande partie de l’année.", "wajiz-zakat"),
     ],
-    note: ["Cela concerne le bétail qui pâture librement la plus grande partie de l’année."],
   },
 
   "zakat-sheep": {
     title: "La zakât des moutons et chèvres",
     short: "De 40 à 120 têtes : un mouton ; de 121 à 200 : deux ; de 201 à 300 : trois ; puis un par centaine.",
-    rules: [p("Ces paliers sont fixés dans la lettre d’Abû Bakr transmise par Anas.", "bukhari-1454")],
-    note: ["Cela concerne le bétail qui pâture librement la plus grande partie de l’année."],
+    rules: [
+      p("Ces paliers sont fixés dans la lettre d’Abû Bakr transmise par Anas.", "bukhari-1454"),
+      p("Al-Wajîz : il faut que le bétail pâture librement la plus grande partie de l’année.", "wajiz-zakat"),
+    ],
   },
 
   "zakat-cattle": {
@@ -116,68 +114,69 @@ export const ZAKAT_LESSONS: Record<string, LessonEntry> = {
 
   "zakat-crops": {
     title: "La zakât des récoltes",
-    short: "Les céréales et les fruits qui se conservent (blé, orge, dattes, raisins secs…) atteignant 5 awsuq : 10 % s’ils sont arrosés par la pluie, 5 % s’ils sont irrigués avec effort.",
+    short: "Al-Wajîz : la zakât des récoltes se prend sur le blé, l’orge, les dattes et les raisins secs qui atteignent 5 awsuq : 10 % s’ils sont arrosés par la pluie, 5 % s’ils sont irrigués avec effort.",
     rules: [
+      p("Al-Wajîz : le Prophète ﷺ a envoyé Abû Mûsâ et Mu‘âdh au Yémen en leur ordonnant de ne prendre l’aumône que sur ces quatre denrées : le blé, l’orge, les dattes et les raisins secs.", "wajiz-zakat"),
       p("Pas de zakât en dessous de cinq awsuq.", "bukhari-1405"),
       p("Un dixième pour ce qu’arrosent la pluie et les sources, un vingtième pour ce qui est irrigué par un moyen coûteux.", "bukhari-1483", "muslim-981"),
       p("Elle se paie le jour de la récolte, sans attendre un an.", "quran-6-141"),
     ],
-    cases: [c("Combien font cinq awsuq ?", "Cinq awsuq font trois cents sâ‘, estimés par les savants contemporains à environ 600 kg selon la denrée.", E)],
+    cases: [
+      c("Combien font cinq awsuq ?", "Al-Wajîz rapporte d’Ibn Hajar qu’un wasq vaut soixante sâ‘, par accord des savants : cinq awsuq font donc trois cents sâ‘.", "wajiz-zakat"),
+    ],
   },
 
   "zakat-rikaz": {
     title: "Le trésor trouvé (rikâz)",
     short: "Celui qui trouve un trésor enfoui des temps anciens en donne un cinquième (20 %).",
-    rules: [p("« Sur le rikâz, le cinquième. »", "bukhari-1499")],
-    note: ["Un objet perdu récemment n’est pas un rikâz : il suit les règles du bien trouvé (luqata)."],
+    rules: [
+      p("« Le Khumus est obligatoire sur le Rikaz. »", "bukhari-1499"),
+      p("Al-Wajîz : le rikâz est le trésor enfoui d’avant l’islam, trouvé sans dépense ni grand effort ; on en donne le cinquième aussitôt, sans condition d’année ni de seuil.", "wajiz-zakat"),
+    ],
   },
 
   "zakat-fitr": {
     title: "La zakât al-fitr",
-    short: "À la fin de Ramadan, chaque musulman donne un sâ‘ de nourriture pour lui et pour ceux qu’il prend en charge, avant la prière de l’Aïd. Elle purifie le jeûne et nourrit les pauvres le jour de la fête.",
+    short: "À la fin de Ramadan, chaque musulman donne un sâ‘ de nourriture pour lui et pour ceux qu’il prend en charge, avant la prière de l’Aïd. Elle purifie le jeûneur et nourrit les pauvres.",
     rules: [
       p("Le Prophète ﷺ l’a prescrite : un sâ‘ de dattes ou d’orge.", "bukhari-1503", "bukhari-1504", "muslim-984e"),
       p("Elle purifie le jeûneur des paroles vaines et nourrit les pauvres.", "abudawud-1609"),
+      p("Al-Wajîz : elle ne se donne qu’aux pauvres (masâkîn), d’après les mots « nourriture pour les pauvres ».", "wajiz-zakat", "abudawud-1609"),
     ],
-    cases: [c("Est-ce la même chose que la zakât des biens ?", "Non : elle concerne chaque personne, riche ou non, dès qu’elle a de quoi manger le jour de l’Aïd.", W)],
+    cases: [
+      c("Est-ce la même chose que la zakât des biens ?", "Non. Al-Wajîz : elle est due par le musulman qui possède plus que sa nourriture et celle de sa famille pour un jour et une nuit.", "wajiz-zakat"),
+    ],
   },
 
   "zakat-fitr-amount": {
     title: "La quantité",
-    short: "Un sâ‘ par personne. Le sâ‘ est une mesure de volume (quatre fois deux mains jointes, environ 2,7 litres) : son poids change selon la denrée. Dans le doute, 2,5 à 3 kg couvrent toutes les denrées courantes.",
+    short: "Un sâ‘ par personne. Le sâ‘ est une mesure de volume : Ibn Bâz le décrit comme quatre poignées des deux mains moyennes remplies, soit environ 3 kg ; Ibn ‘Uthaymîn l’a pesé à 2,040 kg de bon blé.",
     rules: [
       p("Un sâ‘ de nourriture par personne.", "bukhari-1503", "bukhari-1504"),
-      p("Blé : environ 2 kg (2,04 kg selon l’estimation d’Ibn ‘Uthaymîn).", E),
-      p("Riz : environ 2,5 kg ; le Comité permanent des savants d’Arabie saoudite a retenu 3 kg par précaution.", E),
-      p("Dattes : environ 2 à 2,5 kg, selon la variété.", E),
-      p("Couscous ou semoule : environ 2 kg.", E),
-      p("Lentilles, pois chiches, haricots secs : environ 2,2 kg.", E),
-      p("Raisins secs : environ 1,8 kg.", E),
-      p("Orge : environ 1,7 kg.", E),
+      p("Ibn Bâz : un sâ‘ de toutes les denrées, soit quatre poignées des deux mains moyennes remplies ; au poids, environ 3 kg.", "binbaz-zakat-fitr-sa"),
+      p("Ibn ‘Uthaymîn : le sâ‘ prophétique, pesé en bon blé, fait 2,040 kg ; pour une denrée plus lourde, il faut augmenter le poids.", "uthaymin-sa"),
     ],
-    cases: [
-      c("Pour une famille de cinq personnes ?", "Cinq sâ‘ : par exemple environ 12,5 à 15 kg de riz, ou 10 kg de blé.", E),
-      c("Je n’ai pas de balance précise.", "Arrondissez vers le haut : donner un peu plus est une aumône en plus.", E),
-    ],
-    note: ["Ces poids sont des estimations : le sâ‘ se mesure en volume, et le poids exact dépend de la variété et de l’humidité de la denrée."],
   },
 
   "zakat-fitr-food": {
     title: "Nourriture ou argent ?",
-    short: "On donne l’aliment de base du pays : dattes, orge, blé, riz… Les hanafites permettent de donner sa valeur en argent ; les autres écoles demandent de la nourriture.",
+    short: "On donne de la nourriture : dattes, orge, fromage séché, raisins secs, ou l’aliment de base du pays. Abû Hanîfa a permis d’en donner la valeur ; la majorité des juristes ne l’ont pas permis.",
     rules: [
-      p("Le Prophète ﷺ l’a fixée en dattes ou en orge ; les Compagnons donnaient aussi du blé, du fromage séché ou des raisins secs.", "bukhari-1503", "bukhari-1506"),
-      p("Les hanafites permettent l’équivalent en argent ; les malikites, shafi‘ites et hanbalites exigent de la nourriture.", W),
+      p("Le Prophète ﷺ l’a fixée en dattes ou en orge ; les Compagnons donnaient un sâ‘ de nourriture, d’orge, de dattes, de fromage séché ou de raisins secs.", "bukhari-1503", "bukhari-1506"),
+      p("Al-Wajîz : ou tout ce qui sert d’aliment de base, comme le riz ou le maïs.", "wajiz-zakat"),
+      p("Al-Wajîz rapporte d’an-Nawawî que la généralité des juristes n’ont pas permis d’en donner la valeur, et qu’Abû Hanîfa l’a permis. Badawî rejette cet avis : si la valeur suffisait, Allah et Son Messager l’auraient précisé.", "wajiz-zakat"),
     ],
   },
 
   "zakat-fitr-persons": {
     title: "Pour qui la donner",
     short: "Elle est due pour chaque musulman, petit ou grand, homme ou femme. Le chef de famille la donne pour lui-même et pour ceux qu’il entretient.",
-    rules: [p("« Sur l’esclave et le libre, l’homme et la femme, le petit et le grand parmi les musulmans. »", "bukhari-1503", "muslim-984e")],
+    rules: [
+      p("Un sâ‘ « pour chaque personne parmi les musulmans, qu’elle soit homme libre ou esclave, homme ou femme, jeune ou âgé ».", "bukhari-1503", "muslim-984e"),
+      p("Al-Wajîz : il la donne pour lui-même et pour ceux dont il a la charge, comme son épouse et ses enfants, s’ils sont musulmans.", "wajiz-zakat"),
+    ],
     cases: [
-      c("Et le bébé à naître ?", "Elle n’est pas obligatoire pour l’enfant à naître ; certains Compagnons la donnaient par recommandation.", W),
-      c("Et celui qui n’a pas de quoi ?", "Elle n’est due que par celui qui possède plus que sa nourriture et celle de sa famille pour le jour et la nuit de l’Aïd.", W),
+      c("Et celui qui n’a pas de quoi ?", "Al-Wajîz : elle n’est due que par celui qui possède plus que sa nourriture et celle de sa famille pour un jour et une nuit.", "wajiz-zakat"),
     ],
   },
 
@@ -187,7 +186,7 @@ export const ZAKAT_LESSONS: Record<string, LessonEntry> = {
     rules: [
       p("Le Prophète ﷺ a ordonné de la donner avant que les gens sortent pour la prière.", "bukhari-1503"),
       p("Les Compagnons la donnaient un ou deux jours avant l’Aïd.", "bukhari-1511"),
-      p("« Celui qui la donne avant la prière, c’est une zakât acceptée ; après la prière, c’est une aumône parmi d’autres. »", "abudawud-1609"),
+      p("« Celui qui la donne avant la prière (‘Id), elle sera acceptée comme zakat. Celui qui la donne après la prière, ce sera une simple aumône comme les autres. »", "abudawud-1609"),
     ],
   },
 };
