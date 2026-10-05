@@ -37,7 +37,8 @@ export const ALLAH_NAMES_SOURCE = {
 };
 
 // Arabic, transliteration and base meanings follow the Islamic Relief UK list. Quran fragments are taken word for word
-// from the Uthmani text. Explanations are teaching summaries; keep FR and EN in step when editing.
+// with the official translations used by the Coran module (Hamidullah in French, Saheeh International in English).
+// Never replace them with a home-made translation. Explanations are teaching summaries; keep FR and EN in step when editing.
 const ENTRIES: AllahNameEntry[] = [
   {
     "id": 1,
@@ -63,10 +64,10 @@ const ENTRIES: AllahNameEntry[] = [
       "kind": "quran",
       "ref": "59:22",
       "surah": "Al-Ḥashr",
-      "arabic": "هُوَ الرَّحْمَٰنُ الرَّحِيمُ",
+      "arabic": "هُوَ ٱللَّهُ ٱلَّذِى لَآ إِلَـٰهَ إِلَّا هُوَ ۖ عَـٰلِمُ ٱلْغَيْبِ وَٱلشَّهَـٰدَةِ ۖ هُوَ ٱلرَّحْمَـٰنُ ٱلرَّحِيمُ",
       "text": {
-        "fr": "C’est Lui le Tout Miséricordieux, le Très Miséricordieux.",
-        "en": "He is the Most Merciful, the Especially Merciful."
+        "fr": "C’est Lui Allah. Nulle divinité autre que Lui, le Connaisseur de l’Invisible tout comme du visible. C’est Lui, le Tout Miséricordieux, le Très Miséricordieux.",
+        "en": "He is Allāh, other than whom there is no deity, Knower of the unseen and the witnessed. He is the Entirely Merciful, the Especially Merciful."
       }
     }
   },
@@ -94,10 +95,10 @@ const ENTRIES: AllahNameEntry[] = [
       "kind": "quran",
       "ref": "33:43",
       "surah": "Al-Aḥzāb",
-      "arabic": "وَكَانَ بِالْمُؤْمِنِينَ رَحِيمًا",
+      "arabic": "هُوَ ٱلَّذِى يُصَلِّى عَلَيْكُمْ وَمَلَـٰٓئِكَتُهُۥ لِيُخْرِجَكُم مِّنَ ٱلظُّلُمَـٰتِ إِلَى ٱلنُّورِ ۚ وَكَانَ بِٱلْمُؤْمِنِينَ رَحِيمًا",
       "text": {
-        "fr": "Il est Très Miséricordieux envers les croyants.",
-        "en": "And He is ever Merciful to the believers."
+        "fr": "C’est Lui qui prie sur vous, - ainsi que Ses anges, - afin qu’Il vous fasse sortir des ténèbres à la lumière; et Il est Miséricordieux envers les croyants.",
+        "en": "It is He who confers blessing upon you, and His angels [ask Him to do so] that He may bring you out from darknesses into the light. And ever is He, to the believers, Merciful."
       }
     }
   },
@@ -123,12 +124,12 @@ const ENTRIES: AllahNameEntry[] = [
     },
     "evidence": {
       "kind": "quran",
-      "ref": "20:114",
-      "surah": "Ṭā-Hā",
-      "arabic": "فَتَعَالَى اللَّهُ الْمَلِكُ الْحَقُّ",
+      "ref": "23:116",
+      "surah": "Al-Mu’minūn",
+      "arabic": "فَتَعَـٰلَى ٱللَّهُ ٱلْمَلِكُ ٱلْحَقُّ ۖ لَآ إِلَـٰهَ إِلَّا هُوَ رَبُّ ٱلْعَرْشِ ٱلْكَرِيمِ",
       "text": {
-        "fr": "Que soit exalté Allah, le Roi, la Vérité !",
-        "en": "So high above all is Allah, the King, the Truth."
+        "fr": "Que soit exalté Allah, le vrai Souverain! Pas de divinité [véritable] en dehors de Lui, le Seigneur du Trône sublime !",
+        "en": "So exalted is Allāh, the Sovereign, the Truth; there is no deity except Him, Lord of the Noble Throne."
       }
     }
   },
@@ -156,10 +157,10 @@ const ENTRIES: AllahNameEntry[] = [
       "kind": "quran",
       "ref": "62:1",
       "surah": "Al-Jumu‘a",
-      "arabic": "الْمَلِكِ الْقُدُّوسِ الْعَزِيزِ الْحَكِيمِ",
+      "arabic": " يُسَبِّحُ لِلَّهِ مَا فِى ٱلسَّمَـٰوَٰتِ وَمَا فِى ٱلْأَرْضِ ٱلْمَلِكِ ٱلْقُدُّوسِ ٱلْعَزِيزِ ٱلْحَكِيمِ",
       "text": {
-        "fr": "… le Roi, le Très Saint, le Tout-Puissant, le Sage.",
-        "en": "… the King, the Most Holy, the Almighty, the Wise."
+        "fr": "Ce qui est dans les cieux et ce qui sur la Terre glorifient Allah, le Souverain, le Pur, le Puissant, le Sage.",
+        "en": "Whatever is in the heavens and whatever is on the earth is exalting Allāh, the Sovereign, the Pure, the Exalted in Might, the Wise."
       }
     }
   },
@@ -187,10 +188,10 @@ const ENTRIES: AllahNameEntry[] = [
       "kind": "quran",
       "ref": "59:23",
       "surah": "Al-Ḥashr",
-      "arabic": "الْمَلِكُ الْقُدُّوسُ السَّلَامُ",
+      "arabic": "هُوَ ٱللَّهُ ٱلَّذِى لَآ إِلَـٰهَ إِلَّا هُوَ ٱلْمَلِكُ ٱلْقُدُّوسُ ٱلسَّلَـٰمُ ٱلْمُؤْمِنُ ٱلْمُهَيْمِنُ ٱلْعَزِيزُ ٱلْجَبَّارُ ٱلْمُتَكَبِّرُ ۚ سُبْحَـٰنَ ٱللَّهِ عَمَّا يُشْرِكُونَ",
       "text": {
-        "fr": "… le Roi, le Très Saint, la Paix…",
-        "en": "… the King, the Most Holy, the Source of Peace…"
+        "fr": "C’est Lui, Allah. Nulle divinité que Lui ; Le Souverain, le Pur, L’Apaisant, Le Rassurant, le Prédominant, Le Tout Puissant, Le Contraignant, L’Orgueilleux. Gloire à Allah! Il transcende ce qu’ils Lui associent.",
+        "en": "He is Allāh, other than whom there is no deity, the Sovereign, the Pure, the Perfection, the Grantor of Security, the Overseer, the Exalted in Might, the Compeller, the Superior. Exalted is Allāh above whatever they associate with Him."
       }
     }
   },
@@ -207,8 +208,8 @@ const ENTRIES: AllahNameEntry[] = [
       "en": "Al-Mu’min is the One who grants security to His servants, confirms the truthfulness of His messengers with proofs, and never breaks His promise."
     },
     "reflection": {
-      "fr": "La vraie sécurité ne vient ni de l’argent ni des gens, mais d’Allah : « Ceux qui ont cru et n’ont pas mêlé leur foi d’injustice, à eux la sécurité. » (6:82)",
-      "en": "True security comes neither from money nor from people, but from Allah: “Those who believe and do not mix their faith with wrongdoing, theirs is security.” (6:82)"
+      "fr": "La vraie sécurité ne vient ni de l’argent ni des gens, mais d’Allah : « Ceux qui ont cru et n’ont point entaché leur foi par quel qu’inéquité (association), ceux-là ont la sécurité; et ce sont eux les bien-guidés.\" » (6:82)",
+      "en": "True security comes neither from money nor from people, but from Allah: “They who believe and do not mix their belief with injustice - those will have security, and they are [rightly] guided.” (6:82)"
     },
     "practice": {
       "fr": "Être quelqu’un auprès de qui les autres se sentent en sécurité, dans ses paroles comme dans ses actes.",
@@ -218,10 +219,10 @@ const ENTRIES: AllahNameEntry[] = [
       "kind": "quran",
       "ref": "59:23",
       "surah": "Al-Ḥashr",
-      "arabic": "السَّلَامُ الْمُؤْمِنُ الْمُهَيْمِنُ",
+      "arabic": "هُوَ ٱللَّهُ ٱلَّذِى لَآ إِلَـٰهَ إِلَّا هُوَ ٱلْمَلِكُ ٱلْقُدُّوسُ ٱلسَّلَـٰمُ ٱلْمُؤْمِنُ ٱلْمُهَيْمِنُ ٱلْعَزِيزُ ٱلْجَبَّارُ ٱلْمُتَكَبِّرُ ۚ سُبْحَـٰنَ ٱللَّهِ عَمَّا يُشْرِكُونَ",
       "text": {
-        "fr": "… la Paix, Celui qui accorde la sécurité, le Gardien…",
-        "en": "… the Source of Peace, the Giver of Security, the Overseer…"
+        "fr": "C’est Lui, Allah. Nulle divinité que Lui ; Le Souverain, le Pur, L’Apaisant, Le Rassurant, le Prédominant, Le Tout Puissant, Le Contraignant, L’Orgueilleux. Gloire à Allah! Il transcende ce qu’ils Lui associent.",
+        "en": "He is Allāh, other than whom there is no deity, the Sovereign, the Pure, the Perfection, the Grantor of Security, the Overseer, the Exalted in Might, the Compeller, the Superior. Exalted is Allāh above whatever they associate with Him."
       }
     }
   },
@@ -249,10 +250,10 @@ const ENTRIES: AllahNameEntry[] = [
       "kind": "quran",
       "ref": "59:23",
       "surah": "Al-Ḥashr",
-      "arabic": "الْمُؤْمِنُ الْمُهَيْمِنُ الْعَزِيزُ",
+      "arabic": "هُوَ ٱللَّهُ ٱلَّذِى لَآ إِلَـٰهَ إِلَّا هُوَ ٱلْمَلِكُ ٱلْقُدُّوسُ ٱلسَّلَـٰمُ ٱلْمُؤْمِنُ ٱلْمُهَيْمِنُ ٱلْعَزِيزُ ٱلْجَبَّارُ ٱلْمُتَكَبِّرُ ۚ سُبْحَـٰنَ ٱللَّهِ عَمَّا يُشْرِكُونَ",
       "text": {
-        "fr": "… Celui qui accorde la sécurité, le Gardien, le Tout-Puissant…",
-        "en": "… the Giver of Security, the Overseer, the Almighty…"
+        "fr": "C’est Lui, Allah. Nulle divinité que Lui ; Le Souverain, le Pur, L’Apaisant, Le Rassurant, le Prédominant, Le Tout Puissant, Le Contraignant, L’Orgueilleux. Gloire à Allah! Il transcende ce qu’ils Lui associent.",
+        "en": "He is Allāh, other than whom there is no deity, the Sovereign, the Pure, the Perfection, the Grantor of Security, the Overseer, the Exalted in Might, the Compeller, the Superior. Exalted is Allāh above whatever they associate with Him."
       }
     }
   },
@@ -269,8 +270,8 @@ const ENTRIES: AllahNameEntry[] = [
       "en": "Al-‘Azīz is the One who cannot be overcome or harmed, whose might is complete and to whom all honour belongs."
     },
     "reflection": {
-      "fr": "« La puissance appartient à Allah, à Son Messager et aux croyants. » (63:8) La vraie dignité se trouve dans l’obéissance à Allah, pas dans l’orgueil.",
-      "en": "“Honour belongs to Allah, to His Messenger and to the believers.” (63:8) True dignity is found in obeying Allah, not in pride."
+      "fr": "Le Coran rappelle que la puissance appartient à Allah, à Son Messager et aux croyants (63:8) : la vraie dignité se trouve dans l’obéissance à Allah, pas dans l’orgueil.",
+      "en": "The Quran reminds us that honour belongs to Allah, to His Messenger and to the believers (63:8): true dignity is found in obeying Allah, not in pride."
     },
     "practice": {
       "fr": "Rechercher sa dignité dans l’obéissance à Allah, et ne pas s’humilier devant les créatures pour obtenir ce qui n’appartient qu’à Lui.",
@@ -280,10 +281,10 @@ const ENTRIES: AllahNameEntry[] = [
       "kind": "quran",
       "ref": "3:6",
       "surah": "Āl ‘Imrān",
-      "arabic": "لَا إِلَٰهَ إِلَّا هُوَ الْعَزِيزُ الْحَكِيمُ",
+      "arabic": "هُوَ ٱلَّذِى يُصَوِّرُكُمْ فِى ٱلْأَرْحَامِ كَيْفَ يَشَآءُ ۚ لَآ إِلَـٰهَ إِلَّا هُوَ ٱلْعَزِيزُ ٱلْحَكِيمُ",
       "text": {
-        "fr": "Nulle divinité en dehors de Lui, le Tout-Puissant, le Sage.",
-        "en": "There is no god but Him, the Almighty, the Wise."
+        "fr": "C’est Lui qui vous donne forme dans les matrices, comme Il veut. Point de divinité à part Lui, le Puissant, le Sage.",
+        "en": "It is He who forms you in the wombs however He wills. There is no deity except Him, the Exalted in Might, the Wise."
       }
     }
   },
@@ -311,10 +312,10 @@ const ENTRIES: AllahNameEntry[] = [
       "kind": "quran",
       "ref": "59:23",
       "surah": "Al-Ḥashr",
-      "arabic": "الْعَزِيزُ الْجَبَّارُ الْمُتَكَبِّرُ",
+      "arabic": "هُوَ ٱللَّهُ ٱلَّذِى لَآ إِلَـٰهَ إِلَّا هُوَ ٱلْمَلِكُ ٱلْقُدُّوسُ ٱلسَّلَـٰمُ ٱلْمُؤْمِنُ ٱلْمُهَيْمِنُ ٱلْعَزِيزُ ٱلْجَبَّارُ ٱلْمُتَكَبِّرُ ۚ سُبْحَـٰنَ ٱللَّهِ عَمَّا يُشْرِكُونَ",
       "text": {
-        "fr": "… le Tout-Puissant, le Contraignant, le Suprême…",
-        "en": "… the Almighty, the Compeller, the Supreme…"
+        "fr": "C’est Lui, Allah. Nulle divinité que Lui ; Le Souverain, le Pur, L’Apaisant, Le Rassurant, le Prédominant, Le Tout Puissant, Le Contraignant, L’Orgueilleux. Gloire à Allah! Il transcende ce qu’ils Lui associent.",
+        "en": "He is Allāh, other than whom there is no deity, the Sovereign, the Pure, the Perfection, the Grantor of Security, the Overseer, the Exalted in Might, the Compeller, the Superior. Exalted is Allāh above whatever they associate with Him."
       }
     }
   },
@@ -342,10 +343,10 @@ const ENTRIES: AllahNameEntry[] = [
       "kind": "quran",
       "ref": "59:23",
       "surah": "Al-Ḥashr",
-      "arabic": "الْجَبَّارُ الْمُتَكَبِّرُ ۚ سُبْحَانَ اللَّهِ عَمَّا يُشْرِكُونَ",
+      "arabic": "هُوَ ٱللَّهُ ٱلَّذِى لَآ إِلَـٰهَ إِلَّا هُوَ ٱلْمَلِكُ ٱلْقُدُّوسُ ٱلسَّلَـٰمُ ٱلْمُؤْمِنُ ٱلْمُهَيْمِنُ ٱلْعَزِيزُ ٱلْجَبَّارُ ٱلْمُتَكَبِّرُ ۚ سُبْحَـٰنَ ٱللَّهِ عَمَّا يُشْرِكُونَ",
       "text": {
-        "fr": "… le Contraignant, le Suprême. Gloire à Allah, bien au-dessus de ce qu’ils Lui associent !",
-        "en": "… the Compeller, the Supreme. Exalted is Allah above what they associate with Him."
+        "fr": "C’est Lui, Allah. Nulle divinité que Lui ; Le Souverain, le Pur, L’Apaisant, Le Rassurant, le Prédominant, Le Tout Puissant, Le Contraignant, L’Orgueilleux. Gloire à Allah! Il transcende ce qu’ils Lui associent.",
+        "en": "He is Allāh, other than whom there is no deity, the Sovereign, the Pure, the Perfection, the Grantor of Security, the Overseer, the Exalted in Might, the Compeller, the Superior. Exalted is Allāh above whatever they associate with Him."
       }
     }
   },
@@ -373,10 +374,10 @@ const ENTRIES: AllahNameEntry[] = [
       "kind": "quran",
       "ref": "59:24",
       "surah": "Al-Ḥashr",
-      "arabic": "هُوَ اللَّهُ الْخَالِقُ الْبَارِئُ الْمُصَوِّرُ",
+      "arabic": "هُوَ ٱللَّهُ ٱلْخَـٰلِقُ ٱلْبَارِئُ ٱلْمُصَوِّرُ ۖ لَهُ ٱلْأَسْمَآءُ ٱلْحُسْنَىٰ ۚ يُسَبِّحُ لَهُۥ مَا فِى ٱلسَّمَـٰوَٰتِ وَٱلْأَرْضِ ۖ وَهُوَ ٱلْعَزِيزُ ٱلْحَكِيمُ",
       "text": {
-        "fr": "C’est Lui, Allah, le Créateur, Celui qui donne l’existence, Celui qui façonne.",
-        "en": "He is Allah, the Creator, the Originator, the Fashioner."
+        "fr": "C’est Lui Allah, le Créateur, Celui qui donne un commencement à toute chose, le Formateur. A Lui les plus beaux noms. Tout ce qui est dans les cieux et la Terre Le glorifie. Et c’est Lui le Puissant, le Sage.",
+        "en": "He is Allāh, the Creator, the Producer, the Fashioner; to Him belong the best names. Whatever is in the heavens and earth is exalting Him. And He is the Exalted in Might, the Wise."
       }
     }
   },
@@ -404,10 +405,10 @@ const ENTRIES: AllahNameEntry[] = [
       "kind": "quran",
       "ref": "59:24",
       "surah": "Al-Ḥashr",
-      "arabic": "الْخَالِقُ الْبَارِئُ الْمُصَوِّرُ ۖ لَهُ الْأَسْمَاءُ الْحُسْنَىٰ",
+      "arabic": "هُوَ ٱللَّهُ ٱلْخَـٰلِقُ ٱلْبَارِئُ ٱلْمُصَوِّرُ ۖ لَهُ ٱلْأَسْمَآءُ ٱلْحُسْنَىٰ ۚ يُسَبِّحُ لَهُۥ مَا فِى ٱلسَّمَـٰوَٰتِ وَٱلْأَرْضِ ۖ وَهُوَ ٱلْعَزِيزُ ٱلْحَكِيمُ",
       "text": {
-        "fr": "… le Créateur, Celui qui donne l’existence, Celui qui façonne. À Lui les plus beaux noms.",
-        "en": "… the Creator, the Originator, the Fashioner. His are the most beautiful names."
+        "fr": "C’est Lui Allah, le Créateur, Celui qui donne un commencement à toute chose, le Formateur. A Lui les plus beaux noms. Tout ce qui est dans les cieux et la Terre Le glorifie. Et c’est Lui le Puissant, le Sage.",
+        "en": "He is Allāh, the Creator, the Producer, the Fashioner; to Him belong the best names. Whatever is in the heavens and earth is exalting Him. And He is the Exalted in Might, the Wise."
       }
     }
   },
@@ -435,10 +436,10 @@ const ENTRIES: AllahNameEntry[] = [
       "kind": "quran",
       "ref": "3:6",
       "surah": "Āl ‘Imrān",
-      "arabic": "هُوَ الَّذِي يُصَوِّرُكُمْ فِي الْأَرْحَامِ كَيْفَ يَشَاءُ",
+      "arabic": "هُوَ ٱلَّذِى يُصَوِّرُكُمْ فِى ٱلْأَرْحَامِ كَيْفَ يَشَآءُ ۚ لَآ إِلَـٰهَ إِلَّا هُوَ ٱلْعَزِيزُ ٱلْحَكِيمُ",
       "text": {
-        "fr": "C’est Lui qui vous façonne dans les matrices comme Il veut.",
-        "en": "It is He who shapes you in the wombs however He wills."
+        "fr": "C’est Lui qui vous donne forme dans les matrices, comme Il veut. Point de divinité à part Lui, le Puissant, le Sage.",
+        "en": "It is He who forms you in the wombs however He wills. There is no deity except Him, the Exalted in Might, the Wise."
       }
     }
   },
@@ -466,10 +467,10 @@ const ENTRIES: AllahNameEntry[] = [
       "kind": "quran",
       "ref": "71:10",
       "surah": "Nūḥ",
-      "arabic": "اسْتَغْفِرُوا رَبَّكُمْ إِنَّهُ كَانَ غَفَّارًا",
+      "arabic": "فَقُلْتُ ٱسْتَغْفِرُوا۟ رَبَّكُمْ إِنَّهُۥ كَانَ غَفَّارًا",
       "text": {
-        "fr": "Implorez le pardon de votre Seigneur, car Il pardonne sans cesse.",
-        "en": "Ask forgiveness of your Lord; indeed, He is ever Forgiving."
+        "fr": "J’ai donc dit : \"Implorez le pardon de votre Seigneur, car Il est grand Pardonneur,",
+        "en": "And said, 'Ask forgiveness of your Lord. Indeed, He is ever a Perpetual Forgiver."
       }
     }
   },
@@ -497,10 +498,10 @@ const ENTRIES: AllahNameEntry[] = [
       "kind": "quran",
       "ref": "14:48",
       "surah": "Ibrāhīm",
-      "arabic": "وَبَرَزُوا لِلَّهِ الْوَاحِدِ الْقَهَّارِ",
+      "arabic": "يَوْمَ تُبَدَّلُ ٱلْأَرْضُ غَيْرَ ٱلْأَرْضِ وَٱلسَّمَـٰوَٰتُ ۖ وَبَرَزُوا۟ لِلَّهِ ٱلْوَٰحِدِ ٱلْقَهَّارِ",
       "text": {
-        "fr": "… et ils comparaîtront devant Allah, l’Unique, le Dominateur suprême.",
-        "en": "… and they will come out before Allah, the One, the Prevailing."
+        "fr": "au jour où la Terre sera remplacée par une autre, de même que les cieux et où (les hommes) comparaîtront devant Allah, l’Unique, Le Dominateur Suprême.",
+        "en": "[It will be] on the Day the earth will be replaced by another earth, and the heavens [as well], and they [i.e., all creatures] will come out before Allāh, the One, the Prevailing,"
       }
     }
   },
@@ -528,10 +529,10 @@ const ENTRIES: AllahNameEntry[] = [
       "kind": "quran",
       "ref": "3:8",
       "surah": "Āl ‘Imrān",
-      "arabic": "وَهَبْ لَنَا مِنْ لَدُنْكَ رَحْمَةً ۚ إِنَّكَ أَنْتَ الْوَهَّابُ",
+      "arabic": "رَبَّنَا لَا تُزِغْ قُلُوبَنَا بَعْدَ إِذْ هَدَيْتَنَا وَهَبْ لَنَا مِن لَّدُنكَ رَحْمَةً ۚ إِنَّكَ أَنتَ ٱلْوَهَّابُ",
       "text": {
-        "fr": "… et accorde-nous de Ta part une miséricorde. C’est Toi le Grand Donateur.",
-        "en": "… and grant us mercy from Yourself. Indeed, You are the Bestower."
+        "fr": "\"Seigneur ! Ne laisse pas dévier nos cœurs après que Tu nous aies guidés; et accorde-nous Ta miséricorde. C’est Toi, certes, le Grand Donateur !",
+        "en": "[Who say], \"Our Lord, let not our hearts deviate after You have guided us and grant us from Yourself mercy. Indeed, You are the Bestower."
       }
     }
   },
@@ -548,8 +549,8 @@ const ENTRIES: AllahNameEntry[] = [
       "en": "Ar-Razzāq is the One who provides for all His creatures: food, health, knowledge, faith and everything that keeps the body and the heart alive."
     },
     "reflection": {
-      "fr": "« Il n’est pas de bête sur terre dont la subsistance n’incombe à Allah. » (11:6) Le rizq de chacun est écrit ; aucune âme ne meurt avant de l’avoir reçu en entier.",
-      "en": "“There is no creature on earth but that its provision is upon Allah.” (11:6) Each person’s provision is written; no soul dies before receiving it in full."
+      "fr": "« Il n’y a point de bête sur Terre dont la subsistance n’incombe à Allah qui connaît son gîte et son dépôt; tout est dans un Livre explicite. » (11:6) Le rizq de chacun est écrit ; aucune âme ne meurt avant de l’avoir reçu en entier.",
+      "en": "“And there is no creature on earth but that upon Allāh is its provision, and He knows its place of dwelling and place of storage. All is in a clear register.” (11:6) Each person’s provision is written; no soul dies before receiving it in full."
     },
     "practice": {
       "fr": "Travailler de manière licite, sans angoisse ni avidité, et remercier pour ce qui est accordé.",
@@ -559,10 +560,10 @@ const ENTRIES: AllahNameEntry[] = [
       "kind": "quran",
       "ref": "51:58",
       "surah": "Adh-Dhāriyāt",
-      "arabic": "إِنَّ اللَّهَ هُوَ الرَّزَّاقُ ذُو الْقُوَّةِ الْمَتِينُ",
+      "arabic": "إِنَّ ٱللَّهَ هُوَ ٱلرَّزَّاقُ ذُو ٱلْقُوَّةِ ٱلْمَتِينُ",
       "text": {
-        "fr": "C’est Allah le Pourvoyeur, le Détenteur de la force, l’Inébranlable.",
-        "en": "Indeed, it is Allah who is the Provider, the Possessor of strength, the Firm."
+        "fr": "En vérité, c’est Allah qui est le Grand Pourvoyeur, Le Détenteur de la force, l’Inébranlable.",
+        "en": "Indeed, it is Allāh who is the [continual] Provider, the firm possessor of strength."
       }
     }
   },
@@ -579,8 +580,8 @@ const ENTRIES: AllahNameEntry[] = [
       "en": "Al-Fattāḥ is the One who opens the doors of His mercy, of provision and of knowledge, and who judges with truth between His servants."
     },
     "reflection": {
-      "fr": "Aucune porte fermée ne l’est pour Allah. Ce qu’Il ouvre, personne ne peut le fermer (35:2).",
-      "en": "No closed door is closed for Allah. What He opens, no one can close (35:2)."
+      "fr": "Aucune porte fermée ne l’est pour Allah : « Ce qu’Allah accorde en miséricorde aux gens, il n’est personne à pouvoir le retenir. Et ce qu’Il retient, il n’est personne à le relâcher après Lui. Et c’est Lui le Puissant, le Sage. » (35:2)",
+      "en": "No closed door is closed for Allah: “Whatever Allāh grants to people of mercy - none can withhold it; and whatever He withholds - none can release it thereafter. And He is the Exalted in Might, the Wise.” (35:2)"
     },
     "practice": {
       "fr": "Demander à Allah d’ouvrir son cœur à la compréhension, et ne pas désespérer face à une situation bloquée.",
@@ -590,10 +591,10 @@ const ENTRIES: AllahNameEntry[] = [
       "kind": "quran",
       "ref": "34:26",
       "surah": "Saba’",
-      "arabic": "وَهُوَ الْفَتَّاحُ الْعَلِيمُ",
+      "arabic": "قُلْ يَجْمَعُ بَيْنَنَا رَبُّنَا ثُمَّ يَفْتَحُ بَيْنَنَا بِٱلْحَقِّ وَهُوَ ٱلْفَتَّاحُ ٱلْعَلِيمُ",
       "text": {
-        "fr": "… et c’est Lui le Juge suprême, l’Omniscient.",
-        "en": "… and He is the Knowing Judge."
+        "fr": "Dis : \"Notre Seigneur nous réunira, puis Il tranchera entre nous, avec la vérité, car c’est Lui le Grand Juge, l’Omniscient.\"",
+        "en": "Say, \"Our Lord will bring us together; then He will judge between us in truth. And He is the Knowing Judge.\""
       }
     }
   },
@@ -621,10 +622,10 @@ const ENTRIES: AllahNameEntry[] = [
       "kind": "quran",
       "ref": "2:32",
       "surah": "Al-Baqara",
-      "arabic": "سُبْحَانَكَ لَا عِلْمَ لَنَا إِلَّا مَا عَلَّمْتَنَا ۖ إِنَّكَ أَنْتَ الْعَلِيمُ الْحَكِيمُ",
+      "arabic": "قَالُوا۟ سُبْحَـٰنَكَ لَا عِلْمَ لَنَآ إِلَّا مَا عَلَّمْتَنَآ ۖ إِنَّكَ أَنتَ ٱلْعَلِيمُ ٱلْحَكِيمُ",
       "text": {
-        "fr": "Gloire à Toi ! Nous n’avons de savoir que ce que Tu nous as appris. C’est Toi l’Omniscient, le Sage.",
-        "en": "Exalted are You; we have no knowledge except what You have taught us. Indeed, You are the All-Knowing, the Wise."
+        "fr": "Ils dirent: \"Gloire à Toi! Nous n’avons de savoir que ce que Tu nous a appris. Certes c’est Toi l’Omniscient, le Sage.\"",
+        "en": "They said, \"Exalted are You; we have no knowledge except what You have taught us. Indeed, it is You who is the Knowing, the Wise.\""
       }
     }
   },
@@ -652,10 +653,10 @@ const ENTRIES: AllahNameEntry[] = [
       "kind": "quran",
       "ref": "2:245",
       "surah": "Al-Baqara",
-      "arabic": "وَاللَّهُ يَقْبِضُ وَيَبْسُطُ وَإِلَيْهِ تُرْجَعُونَ",
+      "arabic": "مَّن ذَا ٱلَّذِى يُقْرِضُ ٱللَّهَ قَرْضًا حَسَنًا فَيُضَـٰعِفَهُۥ لَهُۥٓ أَضْعَافًا كَثِيرَةً ۚ وَٱللَّهُ يَقْبِضُ وَيَبْصُۜطُ وَإِلَيْهِ تُرْجَعُونَ",
       "text": {
-        "fr": "Allah restreint et étend, et c’est vers Lui que vous serez ramenés.",
-        "en": "Allah withholds and extends, and to Him you will be returned."
+        "fr": "Quiconque prête à Allah de bonne grâce, Il le lui rendra multiplié plusieurs fois. Allah restreint ou étend (Ses faveurs). Et c’est à Lui que vous retournerez.",
+        "en": "Who is it that would loan Allāh a goodly loan so He may multiply it for him many times over? And it is Allāh who withholds and grants abundance, and to Him you will be returned."
       }
     }
   },
@@ -683,10 +684,10 @@ const ENTRIES: AllahNameEntry[] = [
       "kind": "quran",
       "ref": "2:245",
       "surah": "Al-Baqara",
-      "arabic": "وَاللَّهُ يَقْبِضُ وَيَبْسُطُ",
+      "arabic": "مَّن ذَا ٱلَّذِى يُقْرِضُ ٱللَّهَ قَرْضًا حَسَنًا فَيُضَـٰعِفَهُۥ لَهُۥٓ أَضْعَافًا كَثِيرَةً ۚ وَٱللَّهُ يَقْبِضُ وَيَبْصُۜطُ وَإِلَيْهِ تُرْجَعُونَ",
       "text": {
-        "fr": "Allah restreint et étend.",
-        "en": "Allah withholds and extends."
+        "fr": "Quiconque prête à Allah de bonne grâce, Il le lui rendra multiplié plusieurs fois. Allah restreint ou étend (Ses faveurs). Et c’est à Lui que vous retournerez.",
+        "en": "Who is it that would loan Allāh a goodly loan so He may multiply it for him many times over? And it is Allāh who withholds and grants abundance, and to Him you will be returned."
       }
     }
   },
@@ -744,12 +745,12 @@ const ENTRIES: AllahNameEntry[] = [
     },
     "evidence": {
       "kind": "quran",
-      "ref": "3:55",
-      "surah": "Āl ‘Imrān",
-      "arabic": "إِنِّي مُتَوَفِّيكَ وَرَافِعُكَ إِلَيَّ",
+      "ref": "6:83",
+      "surah": "Al-An‘ām",
+      "arabic": "وَتِلْكَ حُجَّتُنَآ ءَاتَيْنَـٰهَآ إِبْرَٰهِيمَ عَلَىٰ قَوْمِهِۦ ۚ نَرْفَعُ دَرَجَـٰتٍ مَّن نَّشَآءُ ۗ إِنَّ رَبَّكَ حَكِيمٌ عَلِيمٌ",
       "text": {
-        "fr": "Je vais mettre fin à ta vie terrestre et t’élever vers Moi.",
-        "en": "I will take you and raise you to Myself."
+        "fr": "Tel est l’argument que Nous donnâmes à Abraham contre son peuple. Nous élevons en haut rang qui Nous voulons. Ton Seigneur est Sage et Omniscient.",
+        "en": "And that was Our [conclusive] argument which We gave Abraham against his people. We raise by degrees whom We will. Indeed, your Lord is Wise and Knowing."
       }
     }
   },
@@ -777,10 +778,10 @@ const ENTRIES: AllahNameEntry[] = [
       "kind": "quran",
       "ref": "3:26",
       "surah": "Āl ‘Imrān",
-      "arabic": "وَتُعِزُّ مَنْ تَشَاءُ وَتُذِلُّ مَنْ تَشَاءُ ۖ بِيَدِكَ الْخَيْرُ",
+      "arabic": "قُلِ ٱللَّهُمَّ مَـٰلِكَ ٱلْمُلْكِ تُؤْتِى ٱلْمُلْكَ مَن تَشَآءُ وَتَنزِعُ ٱلْمُلْكَ مِمَّن تَشَآءُ وَتُعِزُّ مَن تَشَآءُ وَتُذِلُّ مَن تَشَآءُ ۖ بِيَدِكَ ٱلْخَيْرُ ۖ إِنَّكَ عَلَىٰ كُلِّ شَىْءٍ قَدِيرٌ",
       "text": {
-        "fr": "Tu honores qui Tu veux et Tu humilies qui Tu veux. Le bien est dans Ta main.",
-        "en": "You honour whom You will and You humble whom You will. In Your hand is all good."
+        "fr": "Dis: “Ô Allah! Maître de l’autorité absolue. Tu donnes l’autorité à qui Tu veux, et Tu arraches l’autorité à qui Tu veux; et Tu donnes la puissance à qui Tu veux, et Tu humilies qui Tu veux. Le bien est en Ta main et Tu es Omnipotent.",
+        "en": "Say, \"O Allāh, Owner of Sovereignty, You give sovereignty to whom You will and You take sovereignty away from whom You will. You honor whom You will and You humble whom You will. In Your hand is [all] good. Indeed, You are over all things competent."
       }
     }
   },
@@ -808,10 +809,10 @@ const ENTRIES: AllahNameEntry[] = [
       "kind": "quran",
       "ref": "3:26",
       "surah": "Āl ‘Imrān",
-      "arabic": "وَتُعِزُّ مَنْ تَشَاءُ وَتُذِلُّ مَنْ تَشَاءُ",
+      "arabic": "قُلِ ٱللَّهُمَّ مَـٰلِكَ ٱلْمُلْكِ تُؤْتِى ٱلْمُلْكَ مَن تَشَآءُ وَتَنزِعُ ٱلْمُلْكَ مِمَّن تَشَآءُ وَتُعِزُّ مَن تَشَآءُ وَتُذِلُّ مَن تَشَآءُ ۖ بِيَدِكَ ٱلْخَيْرُ ۖ إِنَّكَ عَلَىٰ كُلِّ شَىْءٍ قَدِيرٌ",
       "text": {
-        "fr": "Tu honores qui Tu veux et Tu humilies qui Tu veux.",
-        "en": "You honour whom You will and You humble whom You will."
+        "fr": "Dis: “Ô Allah! Maître de l’autorité absolue. Tu donnes l’autorité à qui Tu veux, et Tu arraches l’autorité à qui Tu veux; et Tu donnes la puissance à qui Tu veux, et Tu humilies qui Tu veux. Le bien est en Ta main et Tu es Omnipotent.",
+        "en": "Say, \"O Allāh, Owner of Sovereignty, You give sovereignty to whom You will and You take sovereignty away from whom You will. You honor whom You will and You humble whom You will. In Your hand is [all] good. Indeed, You are over all things competent."
       }
     }
   },
@@ -839,10 +840,10 @@ const ENTRIES: AllahNameEntry[] = [
       "kind": "quran",
       "ref": "42:11",
       "surah": "Ash-Shūrā",
-      "arabic": "لَيْسَ كَمِثْلِهِ شَيْءٌ ۖ وَهُوَ السَّمِيعُ الْبَصِيرُ",
+      "arabic": "فَاطِرُ ٱلسَّمَـٰوَٰتِ وَٱلْأَرْضِ ۚ جَعَلَ لَكُم مِّنْ أَنفُسِكُمْ أَزْوَٰجًا وَمِنَ ٱلْأَنْعَـٰمِ أَزْوَٰجًا ۖ يَذْرَؤُكُمْ فِيهِ ۚ لَيْسَ كَمِثْلِهِۦ شَىْءٌ ۖ وَهُوَ ٱلسَّمِيعُ ٱلْبَصِيرُ",
       "text": {
-        "fr": "Rien ne Lui ressemble, et c’est Lui qui entend tout et voit tout.",
-        "en": "There is nothing like Him, and He is the All-Hearing, the All-Seeing."
+        "fr": "...Créateur des cieux et de la terre. Il vous a donné des épouses [issues] de vous-même et des bestiaux par couples; par ce moyen Il vous multiplie. Il n’y a rien qui Lui ressemble; et c’est Lui l’Audient, le Clairvoyant.",
+        "en": "[He is] Creator of the heavens and the earth. He has made for you from yourselves, mates, and among the cattle, mates; He multiplies you thereby. There is nothing like unto Him, and He is the Hearing, the Seeing."
       }
     }
   },
@@ -868,12 +869,12 @@ const ENTRIES: AllahNameEntry[] = [
     },
     "evidence": {
       "kind": "quran",
-      "ref": "57:4",
-      "surah": "Al-Ḥadīd",
-      "arabic": "وَاللَّهُ بِمَا تَعْمَلُونَ بَصِيرٌ",
+      "ref": "40:44",
+      "surah": "Ghāfir",
+      "arabic": "فَسَتَذْكُرُونَ مَآ أَقُولُ لَكُمْ ۚ وَأُفَوِّضُ أَمْرِىٓ إِلَى ٱللَّهِ ۚ إِنَّ ٱللَّهَ بَصِيرٌۢ بِٱلْعِبَادِ",
       "text": {
-        "fr": "Et Allah voit parfaitement ce que vous faites.",
-        "en": "And Allah is Seeing of what you do."
+        "fr": "Bientôt vous vous rappellerez ce que je vous dis ; et je confie mon sort à Allah. Allah est, certes Clairvoyant sur les serviteurs.",
+        "en": "And you will remember what I [now] say to you, and I entrust my affair to Allāh. Indeed, Allāh is Seeing of [His] servants.\""
       }
     }
   },
@@ -901,10 +902,10 @@ const ENTRIES: AllahNameEntry[] = [
       "kind": "quran",
       "ref": "6:114",
       "surah": "Al-An‘ām",
-      "arabic": "أَفَغَيْرَ اللَّهِ أَبْتَغِي حَكَمًا",
+      "arabic": "أَفَغَيْرَ ٱللَّهِ أَبْتَغِى حَكَمًا وَهُوَ ٱلَّذِىٓ أَنزَلَ إِلَيْكُمُ ٱلْكِتَـٰبَ مُفَصَّلًا ۚ وَٱلَّذِينَ ءَاتَيْنَـٰهُمُ ٱلْكِتَـٰبَ يَعْلَمُونَ أَنَّهُۥ مُنَزَّلٌ مِّن رَّبِّكَ بِٱلْحَقِّ ۖ فَلَا تَكُونَنَّ مِنَ ٱلْمُمْتَرِينَ",
       "text": {
-        "fr": "Chercherais-je un autre juge qu’Allah ?",
-        "en": "Shall I seek a judge other than Allah?"
+        "fr": "Chercherai-je un autre juge qu’Allah, alors que c’est Lui qui a fait descendre vers vous ce Livre bien exposé ? Ceux auxquels Nous avons donné le Livre savent qu’il est descendu avec la vérité venant de ton Seigneur. Ne sois donc point du nombre de ceux qui doutent.",
+        "en": "[Say], \"Then is it other than Allāh I should seek as judge while it is He who has revealed to you the Book [i.e., the Qur’ān] explained in detail?\" And those to whom We [previously] gave the Scripture know that it is sent down from your Lord in truth, so never be among the doubters."
       }
     }
   },
@@ -932,10 +933,10 @@ const ENTRIES: AllahNameEntry[] = [
       "kind": "quran",
       "ref": "4:40",
       "surah": "An-Nisā’",
-      "arabic": "إِنَّ اللَّهَ لَا يَظْلِمُ مِثْقَالَ ذَرَّةٍ",
+      "arabic": "إِنَّ ٱللَّهَ لَا يَظْلِمُ مِثْقَالَ ذَرَّةٍ ۖ وَإِن تَكُ حَسَنَةً يُضَـٰعِفْهَا وَيُؤْتِ مِن لَّدُنْهُ أَجْرًا عَظِيمًا",
       "text": {
-        "fr": "Allah ne lèse personne, fût-ce du poids d’un atome.",
-        "en": "Indeed, Allah does not do injustice, even as much as an atom’s weight."
+        "fr": "Certes, Allah ne lèse (personne), fût-ce du poids d’un atome. S’il est une bonne action, Il la double, et accorde une immense récompense de Sa part.",
+        "en": "Indeed, Allāh does not do injustice, [even] as much as an atom's weight; while if there is a good deed, He multiplies it and gives from Himself a great reward."
       }
     }
   },
@@ -952,8 +953,8 @@ const ENTRIES: AllahNameEntry[] = [
       "en": "Al-Laṭīf joins two meanings: the One whose knowledge reaches the most hidden and subtle things, and the One who brings His kindness to His servants through ways they do not perceive."
     },
     "reflection": {
-      "fr": "Une épreuve peut porter un bien que l’on ne voit pas encore. Yūsuf l’a dit après des années d’épreuves : « Mon Seigneur est doux pour ce qu’Il veut. » (12:100)",
-      "en": "A trial may carry a good we cannot yet see. Yūsuf said it after years of trials: “My Lord is subtle in what He wills.” (12:100)"
+      "fr": "Une épreuve peut porter un bien que l’on ne voit pas encore. Après des années d’épreuves, Yūsuf a reconnu la douceur de son Seigneur dans ce qui lui était arrivé (12:100).",
+      "en": "A trial may carry a good we cannot yet see. After years of trials, Yūsuf recognised his Lord’s subtle kindness in all that had happened to him (12:100)."
     },
     "practice": {
       "fr": "Être doux dans sa manière de conseiller et de corriger, et faire du bien discrètement.",
@@ -963,10 +964,10 @@ const ENTRIES: AllahNameEntry[] = [
       "kind": "quran",
       "ref": "67:14",
       "surah": "Al-Mulk",
-      "arabic": "أَلَا يَعْلَمُ مَنْ خَلَقَ وَهُوَ اللَّطِيفُ الْخَبِيرُ",
+      "arabic": "أَلَا يَعْلَمُ مَنْ خَلَقَ وَهُوَ ٱللَّطِيفُ ٱلْخَبِيرُ",
       "text": {
-        "fr": "Ne connaît-Il pas ce qu’Il a créé, alors que c’est Lui le Subtil, le Parfaitement Informé ?",
-        "en": "Does He who created not know, while He is the Subtle, the Acquainted?"
+        "fr": "Ne connaît-Il pas ce qu’Il a créé alors que c’est Lui le Compatissant, le Parfaitement Connaisseur.",
+        "en": "Does He who created not know, while He is the Subtle, the Aware?"
       }
     }
   },
@@ -994,10 +995,10 @@ const ENTRIES: AllahNameEntry[] = [
       "kind": "quran",
       "ref": "49:13",
       "surah": "Al-Ḥujurāt",
-      "arabic": "إِنَّ أَكْرَمَكُمْ عِنْدَ اللَّهِ أَتْقَاكُمْ ۚ إِنَّ اللَّهَ عَلِيمٌ خَبِيرٌ",
+      "arabic": "يَـٰٓأَيُّهَا ٱلنَّاسُ إِنَّا خَلَقْنَـٰكُم مِّن ذَكَرٍ وَأُنثَىٰ وَجَعَلْنَـٰكُمْ شُعُوبًا وَقَبَآئِلَ لِتَعَارَفُوٓا۟ ۚ إِنَّ أَكْرَمَكُمْ عِندَ ٱللَّهِ أَتْقَىٰكُمْ ۚ إِنَّ ٱللَّهَ عَلِيمٌ خَبِيرٌ",
       "text": {
-        "fr": "Le plus noble d’entre vous auprès d’Allah est le plus pieux. Allah est Omniscient et Parfaitement Informé.",
-        "en": "The most noble of you in the sight of Allah is the most righteous. Indeed, Allah is Knowing and Acquainted."
+        "fr": "Ô hommes ! Nous vous avons créés d’un mâle et d’une femelle, et Nous avons fait de vous des nations et des tribus, pour que vous vous entreconnaissiez. Le plus noble d’entre vous, auprès d’Allah, est le plus pieux. Allah est certes Omniscient et Grand- Connaisseur.",
+        "en": "O mankind, indeed We have created you from male and female and made you peoples and tribes that you may know one another. Indeed, the most noble of you in the sight of Allāh is the most righteous of you. Indeed, Allāh is Knowing and Aware."
       }
     }
   },
@@ -1025,10 +1026,10 @@ const ENTRIES: AllahNameEntry[] = [
       "kind": "quran",
       "ref": "2:263",
       "surah": "Al-Baqara",
-      "arabic": "وَاللَّهُ غَنِيٌّ حَلِيمٌ",
+      "arabic": "۞ قَوْلٌ مَّعْرُوفٌ وَمَغْفِرَةٌ خَيْرٌ مِّن صَدَقَةٍ يَتْبَعُهَآ أَذًى ۗ وَٱللَّهُ غَنِىٌّ حَلِيمٌ",
       "text": {
-        "fr": "Et Allah se suffit à Lui-même, Il est Très Clément.",
-        "en": "And Allah is Free of need and Forbearing."
+        "fr": "Une parole agréable et un pardon valent mieux qu’une aumône suivie d’un tort. Allah n’a besoin de rien, et Il est indulgent.",
+        "en": "Kind speech and forgiveness are better than charity followed by injury. And Allāh is Free of need and Forbearing."
       }
     }
   },
@@ -1054,12 +1055,12 @@ const ENTRIES: AllahNameEntry[] = [
     },
     "evidence": {
       "kind": "quran",
-      "ref": "2:255",
-      "surah": "Al-Baqara",
-      "arabic": "وَهُوَ الْعَلِيُّ الْعَظِيمُ",
+      "ref": "56:96",
+      "surah": "Al-Wāqi‘a",
+      "arabic": "فَسَبِّحْ بِٱسْمِ رَبِّكَ ٱلْعَظِيمِ",
       "text": {
-        "fr": "Et Il est le Très-Haut, l’Immense.",
-        "en": "And He is the Most High, the Most Great."
+        "fr": "Glorifie donc le nom de ton Seigneur, le Très Grand !",
+        "en": "So exalt the name of your Lord, the Most Great."
       }
     }
   },
@@ -1087,10 +1088,10 @@ const ENTRIES: AllahNameEntry[] = [
       "kind": "quran",
       "ref": "39:53",
       "surah": "Az-Zumar",
-      "arabic": "إِنَّ اللَّهَ يَغْفِرُ الذُّنُوبَ جَمِيعًا ۚ إِنَّهُ هُوَ الْغَفُورُ الرَّحِيمُ",
+      "arabic": "۞ قُلْ يَـٰعِبَادِىَ ٱلَّذِينَ أَسْرَفُوا۟ عَلَىٰٓ أَنفُسِهِمْ لَا تَقْنَطُوا۟ مِن رَّحْمَةِ ٱللَّهِ ۚ إِنَّ ٱللَّهَ يَغْفِرُ ٱلذُّنُوبَ جَمِيعًا ۚ إِنَّهُۥ هُوَ ٱلْغَفُورُ ٱلرَّحِيمُ",
       "text": {
-        "fr": "Allah pardonne tous les péchés. C’est Lui le Grand Pardonneur, le Très Miséricordieux.",
-        "en": "Indeed, Allah forgives all sins. It is He who is the Forgiving, the Merciful."
+        "fr": "Dis : \"Ô Mes serviteurs qui avez commis des excès à votre propre détriment, ne désespérez pas de la miséricorde d’Allah. Car Allah pardonne tous les péchés. Oui, c’est Lui le Pardonneur, le Très Miséricordieux.\"",
+        "en": "Say, \"O My servants who have transgressed against themselves [by sinning], do not despair of the mercy of Allāh. Indeed, Allāh forgives all sins. Indeed, it is He who is the Forgiving, the Merciful.\""
       }
     }
   },
@@ -1118,10 +1119,10 @@ const ENTRIES: AllahNameEntry[] = [
       "kind": "quran",
       "ref": "35:30",
       "surah": "Fāṭir",
-      "arabic": "إِنَّهُ غَفُورٌ شَكُورٌ",
+      "arabic": "لِيُوَفِّيَهُمْ أُجُورَهُمْ وَيَزِيدَهُم مِّن فَضْلِهِۦٓ ۚ إِنَّهُۥ غَفُورٌ شَكُورٌ",
       "text": {
-        "fr": "Il est Pardonneur et Reconnaissant.",
-        "en": "Indeed, He is Forgiving and Appreciative."
+        "fr": "afin [qu’Allah] les récompensent pleinement et leur ajoute Sa grâce. Il est Pardonneur et Reconnaissant.",
+        "en": "That He may give them in full their rewards and increase for them of His bounty. Indeed, He is Forgiving and Appreciative."
       }
     }
   },
@@ -1149,10 +1150,10 @@ const ENTRIES: AllahNameEntry[] = [
       "kind": "quran",
       "ref": "22:62",
       "surah": "Al-Ḥajj",
-      "arabic": "وَأَنَّ اللَّهَ هُوَ الْعَلِيُّ الْكَبِيرُ",
+      "arabic": "ذَٰلِكَ بِأَنَّ ٱللَّهَ هُوَ ٱلْحَقُّ وَأَنَّ مَا يَدْعُونَ مِن دُونِهِۦ هُوَ ٱلْبَـٰطِلُ وَأَنَّ ٱللَّهَ هُوَ ٱلْعَلِىُّ ٱلْكَبِيرُ",
       "text": {
-        "fr": "… et c’est Allah le Très-Haut, le Très Grand.",
-        "en": "… and Allah is the Most High, the Grand."
+        "fr": "C’est ainsi qu’Allah est Lui le Vrai, alors que ce qu’ils invoquent en dehors de Lui est le Faux ; et c’est Allah qui est le Sublime, le Grand.",
+        "en": "That is because Allāh is the True Reality, and that which they call upon other than Him is falsehood, and because Allāh is the Most High, the Grand."
       }
     }
   },
@@ -1180,10 +1181,10 @@ const ENTRIES: AllahNameEntry[] = [
       "kind": "quran",
       "ref": "13:9",
       "surah": "Ar-Ra‘d",
-      "arabic": "عَالِمُ الْغَيْبِ وَالشَّهَادَةِ الْكَبِيرُ الْمُتَعَالِ",
+      "arabic": "عَـٰلِمُ ٱلْغَيْبِ وَٱلشَّهَـٰدَةِ ٱلْكَبِيرُ ٱلْمُتَعَالِ",
       "text": {
-        "fr": "Il connaît l’invisible et le visible, le Très Grand, le Très Élevé.",
-        "en": "Knower of the unseen and the witnessed, the Grand, the Exalted."
+        "fr": "Le Connaisseur de ce qui est caché et de ce qui est apparent, Le Grand, Le Sublime.",
+        "en": "[He is] Knower of the unseen and the witnessed, the Grand, the Exalted."
       }
     }
   },
@@ -1211,10 +1212,10 @@ const ENTRIES: AllahNameEntry[] = [
       "kind": "quran",
       "ref": "11:57",
       "surah": "Hūd",
-      "arabic": "إِنَّ رَبِّي عَلَىٰ كُلِّ شَيْءٍ حَفِيظٌ",
+      "arabic": "فَإِن تَوَلَّوْا۟ فَقَدْ أَبْلَغْتُكُم مَّآ أُرْسِلْتُ بِهِۦٓ إِلَيْكُمْ ۚ وَيَسْتَخْلِفُ رَبِّى قَوْمًا غَيْرَكُمْ وَلَا تَضُرُّونَهُۥ شَيْـًٔا ۚ إِنَّ رَبِّى عَلَىٰ كُلِّ شَىْءٍ حَفِيظٌ",
       "text": {
-        "fr": "Mon Seigneur préserve toute chose.",
-        "en": "Indeed, my Lord is Guardian over all things."
+        "fr": "Si vous vous détournez... voilà que je vous ai transmis [le message] que j’étais chargé de vous faire parvenir. Et mon Seigneur vous remplacera par un autre peuple, sans que vous ne Lui nuisiez en rien, car mon Seigneur, est gardien par excellence sur toute chose.\"",
+        "en": "But if you turn away, then I have already conveyed that with which I was sent to you. My Lord will give succession to a people other than you, and you will not harm Him at all. Indeed my Lord is, over all things, Guardian.\""
       }
     }
   },
@@ -1242,10 +1243,10 @@ const ENTRIES: AllahNameEntry[] = [
       "kind": "quran",
       "ref": "4:85",
       "surah": "An-Nisā’",
-      "arabic": "وَكَانَ اللَّهُ عَلَىٰ كُلِّ شَيْءٍ مُقِيتًا",
+      "arabic": "مَّن يَشْفَعْ شَفَـٰعَةً حَسَنَةً يَكُن لَّهُۥ نَصِيبٌ مِّنْهَا ۖ وَمَن يَشْفَعْ شَفَـٰعَةً سَيِّئَةً يَكُن لَّهُۥ كِفْلٌ مِّنْهَا ۗ وَكَانَ ٱللَّهُ عَلَىٰ كُلِّ شَىْءٍ مُّقِيتًا",
       "text": {
-        "fr": "Et Allah veille et pourvoit à toute chose.",
-        "en": "And Allah is ever, over all things, a Keeper."
+        "fr": "Quiconque intercède d’une bonne intercession, en aura une part; et quiconque intercède d’une mauvaise intercession portera une part de responsabilité. Et Allah veille sur toute chose.",
+        "en": "Whoever intercedes for a good cause will have a share [i.e., reward] therefrom; and whoever intercedes for an evil cause will have a portion [i.e., burden] therefrom. And ever is Allāh, over all things, a Keeper."
       }
     }
   },
@@ -1271,12 +1272,12 @@ const ENTRIES: AllahNameEntry[] = [
     },
     "evidence": {
       "kind": "quran",
-      "ref": "4:6",
-      "surah": "An-Nisā’",
-      "arabic": "وَكَفَىٰ بِاللَّهِ حَسِيبًا",
+      "ref": "33:39",
+      "surah": "Al-Aḥzāb",
+      "arabic": "ٱلَّذِينَ يُبَلِّغُونَ رِسَـٰلَـٰتِ ٱللَّهِ وَيَخْشَوْنَهُۥ وَلَا يَخْشَوْنَ أَحَدًا إِلَّا ٱللَّهَ ۗ وَكَفَىٰ بِٱللَّهِ حَسِيبًا",
       "text": {
-        "fr": "Et Allah suffit pour tenir les comptes.",
-        "en": "And sufficient is Allah as Accountant."
+        "fr": "Ceux qui communiquent les messages d’Allah, Le craignaient et ne redoutaient nul autre qu’Allah. Et Allah suffit pour tenir le compte de tout.",
+        "en": "[Allāh praises] those who convey the messages of Allāh and fear Him and do not fear anyone but Allāh. And sufficient is Allāh as Accountant."
       }
     }
   },
@@ -1304,10 +1305,10 @@ const ENTRIES: AllahNameEntry[] = [
       "kind": "quran",
       "ref": "55:27",
       "surah": "Ar-Raḥmān",
-      "arabic": "وَيَبْقَىٰ وَجْهُ رَبِّكَ ذُو الْجَلَالِ وَالْإِكْرَامِ",
+      "arabic": "وَيَبْقَىٰ وَجْهُ رَبِّكَ ذُو ٱلْجَلَـٰلِ وَٱلْإِكْرَامِ",
       "text": {
-        "fr": "Seul demeure le Visage de ton Seigneur, plein de majesté et de générosité.",
-        "en": "And there will remain the Face of your Lord, Owner of Majesty and Honour."
+        "fr": "[Seule] subsistera La Face [Wajh] de ton Seigneur, plein de majesté et de noblesse.",
+        "en": "And there will remain the Face of your Lord, Owner of Majesty and Honor."
       }
     }
   },
@@ -1324,8 +1325,8 @@ const ENTRIES: AllahNameEntry[] = [
       "en": "Al-Karīm is the One whose generosity has no limit: He gives before being asked, forgives when He could punish and honours when it is not deserved."
     },
     "reflection": {
-      "fr": "« Ô homme ! Qu’est-ce qui t’a trompé au sujet de ton Seigneur, le Généreux ? » Sa générosité ne doit pas rendre négligent.",
-      "en": "“O mankind, what has deceived you about your Lord, the Generous?” His generosity should not make one careless."
+      "fr": "C’est le reproche du verset ci-dessus : la générosité d’Allah ne doit pas rendre négligent.",
+      "en": "This is the reproach of the verse above: Allah’s generosity should not make one careless."
     },
     "practice": {
       "fr": "Être généreux de son temps, de son argent et de son pardon.",
@@ -1335,10 +1336,10 @@ const ENTRIES: AllahNameEntry[] = [
       "kind": "quran",
       "ref": "82:6",
       "surah": "Al-Infiṭār",
-      "arabic": "يَا أَيُّهَا الْإِنْسَانُ مَا غَرَّكَ بِرَبِّكَ الْكَرِيمِ",
+      "arabic": "يَـٰٓأَيُّهَا ٱلْإِنسَـٰنُ مَا غَرَّكَ بِرَبِّكَ ٱلْكَرِيمِ",
       "text": {
-        "fr": "Ô homme ! Qu’est-ce qui t’a trompé au sujet de ton Seigneur, le Généreux ?",
-        "en": "O mankind, what has deceived you concerning your Lord, the Generous?"
+        "fr": "Ô homme ! Qu’est-ce qui t’a trompé au sujet de ton Seigneur, le Noble,",
+        "en": "O mankind, what has deceived you concerning your Lord, the Generous,"
       }
     }
   },
@@ -1366,10 +1367,10 @@ const ENTRIES: AllahNameEntry[] = [
       "kind": "quran",
       "ref": "4:1",
       "surah": "An-Nisā’",
-      "arabic": "إِنَّ اللَّهَ كَانَ عَلَيْكُمْ رَقِيبًا",
+      "arabic": " يَـٰٓأَيُّهَا ٱلنَّاسُ ٱتَّقُوا۟ رَبَّكُمُ ٱلَّذِى خَلَقَكُم مِّن نَّفْسٍ وَٰحِدَةٍ وَخَلَقَ مِنْهَا زَوْجَهَا وَبَثَّ مِنْهُمَا رِجَالًا كَثِيرًا وَنِسَآءً ۚ وَٱتَّقُوا۟ ٱللَّهَ ٱلَّذِى تَسَآءَلُونَ بِهِۦ وَٱلْأَرْحَامَ ۚ إِنَّ ٱللَّهَ كَانَ عَلَيْكُمْ رَقِيبًا",
       "text": {
-        "fr": "Allah vous observe parfaitement.",
-        "en": "Indeed, Allah is ever, over you, an Observer."
+        "fr": "Ô hommes! Craignez votre Seigneur qui vous a créés d’un seul être, et a créé de celui-ci son épouse, et qui de ces deux-là a fait répandre (sur la terre) beaucoup d’hommes et de femmes. Craignez Allah au nom duquel vous vous implorez les uns les autres, et craignez de rompre les liens du sang. Certes Allah vous observe parfaitement.",
+        "en": "O mankind, fear your Lord, who created you from one soul and created from it its mate and dispersed from both of them many men and women. And fear Allāh, through whom you ask one another, and the wombs. Indeed Allāh is ever, over you, an Observer."
       }
     }
   },
@@ -1386,8 +1387,8 @@ const ENTRIES: AllahNameEntry[] = [
       "en": "Al-Mujīb is the One who answers the supplications of those who call upon Him and comes to the aid of those in distress."
     },
     "reflection": {
-      "fr": "« Je suis proche : Je réponds à l’appel de celui qui M’invoque. » (2:186) La réponse peut être ce qu’on a demandé, un mal écarté ou une récompense gardée pour l’au-delà (Aḥmad).",
-      "en": "“I am near: I answer the call of the one who calls upon Me.” (2:186) The answer may be what was asked for, a harm averted or a reward kept for the Hereafter (Aḥmad)."
+      "fr": "« Et quand Mes serviteurs t’interrogent sur Moi, alors Je suis tout proche: Je réponds à l’appel de celui qui M’invoque quand il M’invoque. Qu’ils répondent donc à Mon appel, et qu’ils croient en Moi, afin qu’ils soient bien guidés. » (2:186) La réponse peut être ce qu’on a demandé, un mal écarté ou une récompense gardée pour l’au-delà (Aḥmad).",
+      "en": "“And when My servants ask you, [O Muḥammad], concerning Me - indeed I am near. I respond to the invocation of the supplicant when he calls upon Me. So let them respond to Me [by obedience] and believe in Me that they may be [rightly] guided.” (2:186) The answer may be what was asked for, a harm averted or a reward kept for the Hereafter (Aḥmad)."
     },
     "practice": {
       "fr": "Invoquer souvent, avec certitude, sans se décourager si la réponse tarde.",
@@ -1395,12 +1396,12 @@ const ENTRIES: AllahNameEntry[] = [
     },
     "evidence": {
       "kind": "quran",
-      "ref": "11:61",
-      "surah": "Hūd",
-      "arabic": "إِنَّ رَبِّي قَرِيبٌ مُجِيبٌ",
+      "ref": "37:75",
+      "surah": "Aṣ-Ṣāffāt",
+      "arabic": "وَلَقَدْ نَادَىٰنَا نُوحٌ فَلَنِعْمَ ٱلْمُجِيبُونَ",
       "text": {
-        "fr": "Mon Seigneur est proche et Il répond.",
-        "en": "Indeed, my Lord is near and responsive."
+        "fr": "Noé, en effet, fit appel à Nous qui sommes le Meilleur Répondeur (qui exauce les prières).",
+        "en": "And Noah had certainly called Us, and [We are] the best of responders."
       }
     }
   },
@@ -1417,8 +1418,8 @@ const ENTRIES: AllahNameEntry[] = [
       "en": "Al-Wāsi‘ is the One whose knowledge, mercy, generosity and power extend to everything."
     },
     "reflection": {
-      "fr": "« Ma miséricorde embrasse toute chose. » (7:156) Aucun péché, aucune situation n’est plus vaste que ce qu’Allah embrasse.",
-      "en": "“My mercy encompasses all things.” (7:156) No sin and no situation is wider than what Allah encompasses."
+      "fr": "Allah dit que Sa miséricorde embrasse toute chose (7:156). Aucun péché, aucune situation n’est plus vaste que ce qu’Allah embrasse.",
+      "en": "Allah says that His mercy encompasses all things (7:156). No sin and no situation is wider than what Allah encompasses."
     },
     "practice": {
       "fr": "Avoir l’esprit large envers les gens et ne pas restreindre la miséricorde d’Allah dans ses jugements.",
@@ -1428,10 +1429,10 @@ const ENTRIES: AllahNameEntry[] = [
       "kind": "quran",
       "ref": "2:115",
       "surah": "Al-Baqara",
-      "arabic": "إِنَّ اللَّهَ وَاسِعٌ عَلِيمٌ",
+      "arabic": "وَلِلَّهِ ٱلْمَشْرِقُ وَٱلْمَغْرِبُ ۚ فَأَيْنَمَا تُوَلُّوا۟ فَثَمَّ وَجْهُ ٱللَّهِ ۚ إِنَّ ٱللَّهَ وَٰسِعٌ عَلِيمٌ",
       "text": {
-        "fr": "Allah a une grâce immense, Il est Omniscient.",
-        "en": "Indeed, Allah is all-Encompassing and Knowing."
+        "fr": "A Allah seul appartiennent l’Est et l’Ouest. Où que vous vous tourniez, la Face d’Allah est donc là, car Allah a la grâce immense; Il est Omniscient.",
+        "en": "And to Allāh belongs the east and the west. So wherever you [might] turn, there is the Face of Allāh. Indeed, Allāh is all-Encompassing and Knowing."
       }
     }
   },
@@ -1459,10 +1460,10 @@ const ENTRIES: AllahNameEntry[] = [
       "kind": "quran",
       "ref": "6:18",
       "surah": "Al-An‘ām",
-      "arabic": "وَهُوَ الْحَكِيمُ الْخَبِيرُ",
+      "arabic": "وَهُوَ ٱلْقَاهِرُ فَوْقَ عِبَادِهِۦ ۚ وَهُوَ ٱلْحَكِيمُ ٱلْخَبِيرُ",
       "text": {
-        "fr": "Et c’est Lui le Sage, le Parfaitement Informé.",
-        "en": "And He is the Wise, the Acquainted."
+        "fr": "C’est Lui Dominateur Suprême au-dessus de Ses serviteurs; c’est Lui le Sage, le Parfaitement Informé.",
+        "en": "And He is the subjugator over His servants. And He is the Wise, the Aware."
       }
     }
   },
@@ -1490,10 +1491,10 @@ const ENTRIES: AllahNameEntry[] = [
       "kind": "quran",
       "ref": "85:14",
       "surah": "Al-Burūj",
-      "arabic": "وَهُوَ الْغَفُورُ الْوَدُودُ",
+      "arabic": "وَهُوَ ٱلْغَفُورُ ٱلْوَدُودُ",
       "text": {
-        "fr": "Et c’est Lui le Pardonneur, le Très Aimant.",
-        "en": "And He is the Forgiving, the Affectionate."
+        "fr": "Et c’est Lui le Pardonneur, le Tout Affectueux,",
+        "en": "And He is the Forgiving, the Affectionate,"
       }
     }
   },
@@ -1521,10 +1522,10 @@ const ENTRIES: AllahNameEntry[] = [
       "kind": "quran",
       "ref": "11:73",
       "surah": "Hūd",
-      "arabic": "إِنَّهُ حَمِيدٌ مَجِيدٌ",
+      "arabic": "قَالُوٓا۟ أَتَعْجَبِينَ مِنْ أَمْرِ ٱللَّهِ ۖ رَحْمَتُ ٱللَّهِ وَبَرَكَـٰتُهُۥ عَلَيْكُمْ أَهْلَ ٱلْبَيْتِ ۚ إِنَّهُۥ حَمِيدٌ مَّجِيدٌ",
       "text": {
-        "fr": "Il est Digne de louange et Glorieux.",
-        "en": "Indeed, He is Praiseworthy and Honourable."
+        "fr": "Ils dirent : \"T’étonnes-tu de l’ordre d’Allah ? Que la miséricorde d’Allah et Ses bénédictions soient sur vous, gens de cette maison! Il est vraiment digne de louange et de glorification !\"",
+        "en": "They said, \"Are you amazed at the decree of Allāh? May the mercy of Allāh and His blessings be upon you, people of the house. Indeed, He is Praiseworthy and Honorable.\""
       }
     }
   },
@@ -1552,10 +1553,10 @@ const ENTRIES: AllahNameEntry[] = [
       "kind": "quran",
       "ref": "22:7",
       "surah": "Al-Ḥajj",
-      "arabic": "وَأَنَّ اللَّهَ يَبْعَثُ مَنْ فِي الْقُبُورِ",
+      "arabic": "وَأَنَّ ٱلسَّاعَةَ ءَاتِيَةٌ لَّا رَيْبَ فِيهَا وَأَنَّ ٱللَّهَ يَبْعَثُ مَن فِى ٱلْقُبُورِ",
       "text": {
-        "fr": "Et Allah ressuscitera ceux qui sont dans les tombes.",
-        "en": "And Allah will resurrect those in the graves."
+        "fr": "Et que l’Heure arrivera, pas de doute à son sujet, et qu’Allah ressuscitera ceux qui sont dans les tombes.",
+        "en": "And [that they may know] that the Hour is coming - no doubt about it - and that Allāh will resurrect those in the graves."
       }
     }
   },
@@ -1581,12 +1582,12 @@ const ENTRIES: AllahNameEntry[] = [
     },
     "evidence": {
       "kind": "quran",
-      "ref": "4:33",
-      "surah": "An-Nisā’",
-      "arabic": "إِنَّ اللَّهَ كَانَ عَلَىٰ كُلِّ شَيْءٍ شَهِيدًا",
+      "ref": "85:9",
+      "surah": "Al-Burūj",
+      "arabic": "ٱلَّذِى لَهُۥ مُلْكُ ٱلسَّمَـٰوَٰتِ وَٱلْأَرْضِ ۚ وَٱللَّهُ عَلَىٰ كُلِّ شَىْءٍ شَهِيدٌ",
       "text": {
-        "fr": "Allah est témoin de toute chose.",
-        "en": "Indeed, Allah is ever, over all things, a Witness."
+        "fr": "Auquel appartient la royauté des cieux et de la Terre. Allah est témoin de toute chose.",
+        "en": "To whom belongs the dominion of the heavens and the earth. And Allāh, over all things, is Witness."
       }
     }
   },
@@ -1614,10 +1615,10 @@ const ENTRIES: AllahNameEntry[] = [
       "kind": "quran",
       "ref": "22:6",
       "surah": "Al-Ḥajj",
-      "arabic": "ذَٰلِكَ بِأَنَّ اللَّهَ هُوَ الْحَقُّ",
+      "arabic": "ذَٰلِكَ بِأَنَّ ٱللَّهَ هُوَ ٱلْحَقُّ وَأَنَّهُۥ يُحْىِ ٱلْمَوْتَىٰ وَأَنَّهُۥ عَلَىٰ كُلِّ شَىْءٍ قَدِيرٌ",
       "text": {
-        "fr": "Il en est ainsi parce qu’Allah est la Vérité.",
-        "en": "That is because Allah is the Truth."
+        "fr": "Il en est ainsi parce qu’Allah est la vérité; et c’est Lui qui rend la vie aux morts; et c’est Lui qui est Omnipotent.",
+        "en": "That is because Allāh is the True Reality and because He gives life to the dead and because He is over all things competent"
       }
     }
   },
@@ -1645,10 +1646,10 @@ const ENTRIES: AllahNameEntry[] = [
       "kind": "quran",
       "ref": "3:173",
       "surah": "Āl ‘Imrān",
-      "arabic": "وَقَالُوا حَسْبُنَا اللَّهُ وَنِعْمَ الْوَكِيلُ",
+      "arabic": "ٱلَّذِينَ قَالَ لَهُمُ ٱلنَّاسُ إِنَّ ٱلنَّاسَ قَدْ جَمَعُوا۟ لَكُمْ فَٱخْشَوْهُمْ فَزَادَهُمْ إِيمَـٰنًا وَقَالُوا۟ حَسْبُنَا ٱللَّهُ وَنِعْمَ ٱلْوَكِيلُ",
       "text": {
-        "fr": "Et ils dirent : « Allah nous suffit, et quel excellent Garant ! »",
-        "en": "And they said: “Sufficient for us is Allah, and He is the best Disposer of affairs.”"
+        "fr": "Certes, ceux auxquels l’on disait : \"Les gens se sont rassemblés contre vous; craignez-les !\" - Cela accrut leur foi - et ils dirent : \"Allah nous suffit; et Il est notre meilleur garant !\"",
+        "en": "Those to whom people [i.e., hypocrites] said, \"Indeed, the people have gathered against you, so fear them.\" But it [merely] increased them in faith, and they said, \"Sufficient for us is Allāh, and [He is] the best Disposer of affairs.\""
       }
     }
   },
@@ -1676,10 +1677,10 @@ const ENTRIES: AllahNameEntry[] = [
       "kind": "quran",
       "ref": "22:74",
       "surah": "Al-Ḥajj",
-      "arabic": "إِنَّ اللَّهَ لَقَوِيٌّ عَزِيزٌ",
+      "arabic": "مَا قَدَرُوا۟ ٱللَّهَ حَقَّ قَدْرِهِۦٓ ۗ إِنَّ ٱللَّهَ لَقَوِىٌّ عَزِيزٌ",
       "text": {
-        "fr": "Allah est Fort et Tout-Puissant.",
-        "en": "Indeed, Allah is Powerful and Exalted in Might."
+        "fr": "Ils n’ont pas estimé Allah à sa juste valeur ; Allah est certes Fort et Puissant.",
+        "en": "They have not appraised Allāh with true appraisal. Indeed, Allāh is Powerful and Exalted in Might."
       }
     }
   },
@@ -1707,10 +1708,10 @@ const ENTRIES: AllahNameEntry[] = [
       "kind": "quran",
       "ref": "51:58",
       "surah": "Adh-Dhāriyāt",
-      "arabic": "ذُو الْقُوَّةِ الْمَتِينُ",
+      "arabic": "إِنَّ ٱللَّهَ هُوَ ٱلرَّزَّاقُ ذُو ٱلْقُوَّةِ ٱلْمَتِينُ",
       "text": {
-        "fr": "… le Détenteur de la force, l’Inébranlable.",
-        "en": "… the Possessor of strength, the Firm."
+        "fr": "En vérité, c’est Allah qui est le Grand Pourvoyeur, Le Détenteur de la force, l’Inébranlable.",
+        "en": "Indeed, it is Allāh who is the [continual] Provider, the firm possessor of strength."
       }
     }
   },
@@ -1727,8 +1728,8 @@ const ENTRIES: AllahNameEntry[] = [
       "en": "Al-Waliyy is the One who takes care of the believers, loves them, supports them and guides them. His special friendship is for those who believe and fear Him."
     },
     "reflection": {
-      "fr": "Ce verset décrit ce que fait cette protection : faire sortir des ténèbres vers la lumière.",
-      "en": "This verse describes what this protection does: bringing out of darkness into light."
+      "fr": "Sa protection fait sortir les croyants des ténèbres vers la lumière (2:257).",
+      "en": "His protection brings the believers out of darkness into the light (2:257)."
     },
     "practice": {
       "fr": "Prendre Allah pour allié en faisant ce qu’Il aime, et choisir ses amis parmi les gens de bien.",
@@ -1736,12 +1737,12 @@ const ENTRIES: AllahNameEntry[] = [
     },
     "evidence": {
       "kind": "quran",
-      "ref": "2:257",
-      "surah": "Al-Baqara",
-      "arabic": "اللَّهُ وَلِيُّ الَّذِينَ آمَنُوا يُخْرِجُهُمْ مِنَ الظُّلُمَاتِ إِلَى النُّورِ",
+      "ref": "42:28",
+      "surah": "Ash-Shūrā",
+      "arabic": "وَهُوَ ٱلَّذِى يُنَزِّلُ ٱلْغَيْثَ مِنۢ بَعْدِ مَا قَنَطُوا۟ وَيَنشُرُ رَحْمَتَهُۥ ۚ وَهُوَ ٱلْوَلِىُّ ٱلْحَمِيدُ",
       "text": {
-        "fr": "Allah est le Protecteur de ceux qui ont cru : Il les fait sortir des ténèbres vers la lumière.",
-        "en": "Allah is the ally of those who believe. He brings them out of darkness into the light."
+        "fr": "Et c’est Lui qui fait descendre la pluie après qu’on en a désespéré, et répand Sa miséricorde. Et c’est Lui le Maître, le Digne de louange.",
+        "en": "And it is He who sends down the rain after they had despaired and spreads His mercy. And He is the Protector, the Praiseworthy."
       }
     }
   },
@@ -1769,10 +1770,10 @@ const ENTRIES: AllahNameEntry[] = [
       "kind": "quran",
       "ref": "14:1",
       "surah": "Ibrāhīm",
-      "arabic": "إِلَىٰ صِرَاطِ الْعَزِيزِ الْحَمِيدِ",
+      "arabic": " الٓر ۚ كِتَـٰبٌ أَنزَلْنَـٰهُ إِلَيْكَ لِتُخْرِجَ ٱلنَّاسَ مِنَ ٱلظُّلُمَـٰتِ إِلَى ٱلنُّورِ بِإِذْنِ رَبِّهِمْ إِلَىٰ صِرَٰطِ ٱلْعَزِيزِ ٱلْحَمِيدِ",
       "text": {
-        "fr": "… vers le chemin du Tout-Puissant, du Digne de louange.",
-        "en": "… to the path of the Exalted in Might, the Praiseworthy."
+        "fr": "Alif, Lâm, Râ . (Voici) un livre que nous avons fait descendre sur toi, afin que - par la permission de leur Seigneur - tu fasses sortir les gens des ténèbres vers la lumière, sur la voie du Tout Puissant, du Digne de louange,",
+        "en": "Alif, Lām, Rā. [This is] a Book which We have revealed to you, [O Muḥammad], that you might bring mankind out of darknesses into the light by permission of their Lord - to the path of the Exalted in Might, the Praiseworthy -"
       }
     }
   },
@@ -1800,10 +1801,10 @@ const ENTRIES: AllahNameEntry[] = [
       "kind": "quran",
       "ref": "72:28",
       "surah": "Al-Jinn",
-      "arabic": "وَأَحْصَىٰ كُلَّ شَيْءٍ عَدَدًا",
+      "arabic": "لِّيَعْلَمَ أَن قَدْ أَبْلَغُوا۟ رِسَـٰلَـٰتِ رَبِّهِمْ وَأَحَاطَ بِمَا لَدَيْهِمْ وَأَحْصَىٰ كُلَّ شَىْءٍ عَدَدًۢا",
       "text": {
-        "fr": "… et Il a dénombré toute chose avec exactitude.",
-        "en": "… and He has enumerated all things in number."
+        "fr": "afin qu’Il sache s’ils ont bien transmis les messages de leur Seigneur. Il cerne (de Son savoir) ce qui est avec eux, et dénombre exactement toute chose.\"",
+        "en": "That he [i.e., Muḥammad (ﷺ)] may know that they have conveyed the messages of their Lord; and He has encompassed whatever is with them and has enumerated all things in number."
       }
     }
   },
@@ -1831,10 +1832,10 @@ const ENTRIES: AllahNameEntry[] = [
       "kind": "quran",
       "ref": "85:13",
       "surah": "Al-Burūj",
-      "arabic": "إِنَّهُ هُوَ يُبْدِئُ وَيُعِيدُ",
+      "arabic": "إِنَّهُۥ هُوَ يُبْدِئُ وَيُعِيدُ",
       "text": {
-        "fr": "C’est Lui qui commence la création et qui la recommence.",
-        "en": "Indeed, it is He who originates and repeats."
+        "fr": "C’est Lui, certes, qui commence (la création) et la refait.",
+        "en": "Indeed, it is He who originates [creation] and repeats."
       }
     }
   },
@@ -1862,10 +1863,10 @@ const ENTRIES: AllahNameEntry[] = [
       "kind": "quran",
       "ref": "85:13",
       "surah": "Al-Burūj",
-      "arabic": "إِنَّهُ هُوَ يُبْدِئُ وَيُعِيدُ",
+      "arabic": "إِنَّهُۥ هُوَ يُبْدِئُ وَيُعِيدُ",
       "text": {
-        "fr": "C’est Lui qui commence la création et qui la recommence.",
-        "en": "Indeed, it is He who originates and repeats."
+        "fr": "C’est Lui, certes, qui commence (la création) et la refait.",
+        "en": "Indeed, it is He who originates [creation] and repeats."
       }
     }
   },
@@ -1893,10 +1894,10 @@ const ENTRIES: AllahNameEntry[] = [
       "kind": "quran",
       "ref": "57:2",
       "surah": "Al-Ḥadīd",
-      "arabic": "يُحْيِي وَيُمِيتُ ۖ وَهُوَ عَلَىٰ كُلِّ شَيْءٍ قَدِيرٌ",
+      "arabic": "لَهُۥ مُلْكُ ٱلسَّمَـٰوَٰتِ وَٱلْأَرْضِ ۖ يُحْىِۦ وَيُمِيتُ ۖ وَهُوَ عَلَىٰ كُلِّ شَىْءٍ قَدِيرٌ",
       "text": {
-        "fr": "Il donne la vie et la mort, et Il est capable de toute chose.",
-        "en": "He gives life and causes death, and He is over all things competent."
+        "fr": "A Lui appartient la souveraineté des cieux et de la terre. Il fait vivre et il fait mourir, et Il est Omnipotent.",
+        "en": "His is the dominion of the heavens and earth. He gives life and causes death, and He is over all things competent."
       }
     }
   },
@@ -1913,8 +1914,8 @@ const ENTRIES: AllahNameEntry[] = [
       "en": "Al-Mumīt is the One who causes every being to die at the time He has set, neither before nor after. Death is Allah’s decree, not an accident."
     },
     "reflection": {
-      "fr": "La vie et la mort sont créées pour éprouver : « afin de voir qui d’entre vous agit le mieux ».",
-      "en": "Life and death are created as a test: “to see which of you is best in deed”."
+      "fr": "Le verset ci-dessus le dit : la vie et la mort sont créées pour éprouver les gens sur la qualité de leurs actes.",
+      "en": "The verse above says it: life and death are created to test people on the quality of their deeds."
     },
     "practice": {
       "fr": "Se souvenir souvent de la mort, comme le recommandait le Prophète ﷺ, pour bien vivre et non pour avoir peur.",
@@ -1924,10 +1925,10 @@ const ENTRIES: AllahNameEntry[] = [
       "kind": "quran",
       "ref": "67:2",
       "surah": "Al-Mulk",
-      "arabic": "الَّذِي خَلَقَ الْمَوْتَ وَالْحَيَاةَ لِيَبْلُوَكُمْ أَيُّكُمْ أَحْسَنُ عَمَلًا",
+      "arabic": "ٱلَّذِى خَلَقَ ٱلْمَوْتَ وَٱلْحَيَوٰةَ لِيَبْلُوَكُمْ أَيُّكُمْ أَحْسَنُ عَمَلًا ۚ وَهُوَ ٱلْعَزِيزُ ٱلْغَفُورُ",
       "text": {
-        "fr": "Celui qui a créé la mort et la vie afin de vous éprouver : qui de vous agit le mieux.",
-        "en": "He who created death and life to test you as to which of you is best in deed."
+        "fr": "Celui qui a créé la mort et la vie afin de vous éprouver (et de savoir) qui de vous est le meilleur en œuvre, et c’est Lui le Puissant, le Pardonneur.",
+        "en": "[He] who created death and life to test you [as to] which of you is best in deed - and He is the Exalted in Might, the Forgiving -"
       }
     }
   },
@@ -1955,10 +1956,10 @@ const ENTRIES: AllahNameEntry[] = [
       "kind": "quran",
       "ref": "25:58",
       "surah": "Al-Furqān",
-      "arabic": "وَتَوَكَّلْ عَلَى الْحَيِّ الَّذِي لَا يَمُوتُ",
+      "arabic": "وَتَوَكَّلْ عَلَى ٱلْحَىِّ ٱلَّذِى لَا يَمُوتُ وَسَبِّحْ بِحَمْدِهِۦ ۚ وَكَفَىٰ بِهِۦ بِذُنُوبِ عِبَادِهِۦ خَبِيرًا",
       "text": {
-        "fr": "Et place ta confiance dans le Vivant qui ne meurt jamais.",
-        "en": "And rely upon the Ever-Living who does not die."
+        "fr": "Et place ta confiance en le Vivant qui ne meurt jamais. Et par Sa louange, glorifie-Le. Et il suffit comme Parfait Informé des péchés de Ses serviteurs.",
+        "en": "And rely upon the Ever-Living who does not die, and exalt [Allāh] with His praise. And sufficient is He to be, with the sins of His servants, [fully] Aware -"
       }
     }
   },
@@ -1984,12 +1985,12 @@ const ENTRIES: AllahNameEntry[] = [
     },
     "evidence": {
       "kind": "quran",
-      "ref": "2:255",
-      "surah": "Al-Baqara",
-      "arabic": "اللَّهُ لَا إِلَٰهَ إِلَّا هُوَ الْحَيُّ الْقَيُّومُ",
+      "ref": "3:2",
+      "surah": "Āl ‘Imrān",
+      "arabic": "ٱللَّهُ لَآ إِلَـٰهَ إِلَّا هُوَ ٱلْحَىُّ ٱلْقَيُّومُ",
       "text": {
-        "fr": "Allah ! Nulle divinité en dehors de Lui, le Vivant, Celui qui subsiste par Lui-même.",
-        "en": "Allah, there is no god except Him, the Ever-Living, the Sustainer of existence."
+        "fr": "Allah! Pas de divinité à part Lui, le Vivant, Celui qui subsiste par Lui-même (Al Qayyum) .",
+        "en": "Allāh - there is no deity except Him, the Ever-Living, the Self-Sustaining."
       }
     }
   },
@@ -2016,8 +2017,8 @@ const ENTRIES: AllahNameEntry[] = [
     "evidence": {
       "kind": "sunnah",
       "text": {
-        "fr": "Ce nom figure dans la liste rapportée par at-Tirmidhî (3507). Son sens est confirmé par le Coran : « Vous êtes les pauvres ayant besoin d’Allah, et Allah est Celui qui se suffit à Lui-même. » (35:15)",
-        "en": "This name appears in the list reported by at-Tirmidhî (3507). Its meaning is confirmed by the Quran: “You are the ones in need of Allah, and Allah is the Free of need.” (35:15)"
+        "fr": "Ce nom figure dans la liste rapportée par at-Tirmidhî (3507). Son sens est confirmé par le Coran : « Ô hommes, vous êtes les indigents ayant besoin d’Allah, et c’est Allah, Lui qui se dispense de tout et Il est Le Digne de louange. » (35:15)",
+        "en": "This name appears in the list reported by at-Tirmidhî (3507). Its meaning is confirmed by the Quran: “O mankind, you are those in need of Allāh, while Allāh is the Free of need, the Praiseworthy.” (35:15)"
       },
       "source": {
         "fr": "at-Tirmidhî",
@@ -2049,10 +2050,10 @@ const ENTRIES: AllahNameEntry[] = [
       "kind": "quran",
       "ref": "85:15",
       "surah": "Al-Burūj",
-      "arabic": "ذُو الْعَرْشِ الْمَجِيدُ",
+      "arabic": "ذُو ٱلْعَرْشِ ٱلْمَجِيدُ",
       "text": {
-        "fr": "Le Maître du Trône, le Glorieux.",
-        "en": "Owner of the Throne, the Glorious."
+        "fr": "Le Maître du Trône, le Tout Glorieux,",
+        "en": "Honorable Owner of the Throne,"
       }
     }
   },
@@ -2078,12 +2079,12 @@ const ENTRIES: AllahNameEntry[] = [
     },
     "evidence": {
       "kind": "quran",
-      "ref": "13:16",
-      "surah": "Ar-Ra‘d",
-      "arabic": "قُلِ اللَّهُ خَالِقُ كُلِّ شَيْءٍ وَهُوَ الْوَاحِدُ الْقَهَّارُ",
+      "ref": "12:39",
+      "surah": "Yūsuf",
+      "arabic": "يَـٰصَـٰحِبَىِ ٱلسِّجْنِ ءَأَرْبَابٌ مُّتَفَرِّقُونَ خَيْرٌ أَمِ ٱللَّهُ ٱلْوَٰحِدُ ٱلْقَهَّارُ",
       "text": {
-        "fr": "Dis : « Allah est le Créateur de toute chose, et c’est Lui l’Unique, le Dominateur suprême. »",
-        "en": "Say: “Allah is the Creator of all things, and He is the One, the Prevailing.”"
+        "fr": "Ô mes deux compagnons de prison ! Qui est le meilleur : des Seigneurs éparpillés ou Allah, l’Unique, le Dominateur suprême ?",
+        "en": "O [my] two companions of prison, are separate lords better or Allāh, the One, the Prevailing?"
       }
     }
   },
@@ -2111,10 +2112,10 @@ const ENTRIES: AllahNameEntry[] = [
       "kind": "quran",
       "ref": "112:1",
       "surah": "Al-Ikhlāṣ",
-      "arabic": "قُلْ هُوَ اللَّهُ أَحَدٌ",
+      "arabic": " قُلْ هُوَ ٱللَّهُ أَحَدٌ",
       "text": {
-        "fr": "Dis : « Il est Allah, Unique. »",
-        "en": "Say: “He is Allah, the One.”"
+        "fr": "Dis : \"Il est Allah, Unique.",
+        "en": "Say, \"He is Allāh, [who is] One,"
       }
     }
   },
@@ -2142,10 +2143,10 @@ const ENTRIES: AllahNameEntry[] = [
       "kind": "quran",
       "ref": "112:2",
       "surah": "Al-Ikhlāṣ",
-      "arabic": "اللَّهُ الصَّمَدُ",
+      "arabic": "ٱللَّهُ ٱلصَّمَدُ",
       "text": {
-        "fr": "Allah, Celui vers qui tous se tournent.",
-        "en": "Allah, the Eternal Refuge."
+        "fr": "Allah, Le Seul à être imploré pour ce que nous désirons.",
+        "en": "Allāh, the Eternal Refuge."
       }
     }
   },
@@ -2173,10 +2174,10 @@ const ENTRIES: AllahNameEntry[] = [
       "kind": "quran",
       "ref": "75:40",
       "surah": "Al-Qiyāma",
-      "arabic": "أَلَيْسَ ذَٰلِكَ بِقَادِرٍ عَلَىٰ أَنْ يُحْيِيَ الْمَوْتَىٰ",
+      "arabic": "أَلَيْسَ ذَٰلِكَ بِقَـٰدِرٍ عَلَىٰٓ أَن يُحْـِۧىَ ٱلْمَوْتَىٰ",
       "text": {
-        "fr": "Celui-là n’est-Il pas capable de redonner vie aux morts ?",
-        "en": "Is not that Creator able to give life to the dead?"
+        "fr": "Celui-là (Allah) n’est-Il pas capable de faire revivre les morts ?",
+        "en": "Is not that [Creator] Able to give life to the dead?"
       }
     }
   },
@@ -2204,10 +2205,10 @@ const ENTRIES: AllahNameEntry[] = [
       "kind": "quran",
       "ref": "54:55",
       "surah": "Al-Qamar",
-      "arabic": "فِي مَقْعَدِ صِدْقٍ عِنْدَ مَلِيكٍ مُقْتَدِرٍ",
+      "arabic": "فِى مَقْعَدِ صِدْقٍ عِندَ مَلِيكٍ مُّقْتَدِرٍۭ",
       "text": {
-        "fr": "… dans une demeure de vérité, auprès d’un Souverain tout-puissant.",
-        "en": "… in a seat of honour near a Sovereign, Perfect in Ability."
+        "fr": "dans un séjour de vérité, auprès d’un Souverain Omnipotent.",
+        "en": "In a seat of honor near a Sovereign, Perfect in Ability."
       }
     }
   },
@@ -2299,10 +2300,10 @@ const ENTRIES: AllahNameEntry[] = [
       "kind": "quran",
       "ref": "57:3",
       "surah": "Al-Ḥadīd",
-      "arabic": "هُوَ الْأَوَّلُ وَالْآخِرُ وَالظَّاهِرُ وَالْبَاطِنُ",
+      "arabic": "هُوَ ٱلْأَوَّلُ وَٱلْـَٔاخِرُ وَٱلظَّـٰهِرُ وَٱلْبَاطِنُ ۖ وَهُوَ بِكُلِّ شَىْءٍ عَلِيمٌ",
       "text": {
-        "fr": "C’est Lui le Premier et le Dernier, l’Apparent et le Caché.",
-        "en": "He is the First and the Last, the Ascendant and the Intimate."
+        "fr": "C’est Lui le Premier et le Dernier, l’Apparent et le Caché et Il est Omniscient.",
+        "en": "He is the First and the Last, the Ascendant and the Intimate, and He is, of all things, Knowing."
       }
     }
   },
@@ -2330,10 +2331,10 @@ const ENTRIES: AllahNameEntry[] = [
       "kind": "quran",
       "ref": "57:3",
       "surah": "Al-Ḥadīd",
-      "arabic": "هُوَ الْأَوَّلُ وَالْآخِرُ وَالظَّاهِرُ وَالْبَاطِنُ",
+      "arabic": "هُوَ ٱلْأَوَّلُ وَٱلْـَٔاخِرُ وَٱلظَّـٰهِرُ وَٱلْبَاطِنُ ۖ وَهُوَ بِكُلِّ شَىْءٍ عَلِيمٌ",
       "text": {
-        "fr": "C’est Lui le Premier et le Dernier, l’Apparent et le Caché.",
-        "en": "He is the First and the Last, the Ascendant and the Intimate."
+        "fr": "C’est Lui le Premier et le Dernier, l’Apparent et le Caché et Il est Omniscient.",
+        "en": "He is the First and the Last, the Ascendant and the Intimate, and He is, of all things, Knowing."
       }
     }
   },
@@ -2361,10 +2362,10 @@ const ENTRIES: AllahNameEntry[] = [
       "kind": "quran",
       "ref": "57:3",
       "surah": "Al-Ḥadīd",
-      "arabic": "هُوَ الْأَوَّلُ وَالْآخِرُ وَالظَّاهِرُ وَالْبَاطِنُ",
+      "arabic": "هُوَ ٱلْأَوَّلُ وَٱلْـَٔاخِرُ وَٱلظَّـٰهِرُ وَٱلْبَاطِنُ ۖ وَهُوَ بِكُلِّ شَىْءٍ عَلِيمٌ",
       "text": {
-        "fr": "C’est Lui le Premier et le Dernier, l’Apparent et le Caché.",
-        "en": "He is the First and the Last, the Ascendant and the Intimate."
+        "fr": "C’est Lui le Premier et le Dernier, l’Apparent et le Caché et Il est Omniscient.",
+        "en": "He is the First and the Last, the Ascendant and the Intimate, and He is, of all things, Knowing."
       }
     }
   },
@@ -2392,10 +2393,10 @@ const ENTRIES: AllahNameEntry[] = [
       "kind": "quran",
       "ref": "57:3",
       "surah": "Al-Ḥadīd",
-      "arabic": "هُوَ الْأَوَّلُ وَالْآخِرُ وَالظَّاهِرُ وَالْبَاطِنُ ۖ وَهُوَ بِكُلِّ شَيْءٍ عَلِيمٌ",
+      "arabic": "هُوَ ٱلْأَوَّلُ وَٱلْـَٔاخِرُ وَٱلظَّـٰهِرُ وَٱلْبَاطِنُ ۖ وَهُوَ بِكُلِّ شَىْءٍ عَلِيمٌ",
       "text": {
-        "fr": "C’est Lui le Premier et le Dernier, l’Apparent et le Caché, et Il connaît toute chose.",
-        "en": "He is the First and the Last, the Ascendant and the Intimate, and He is Knowing of all things."
+        "fr": "C’est Lui le Premier et le Dernier, l’Apparent et le Caché et Il est Omniscient.",
+        "en": "He is the First and the Last, the Ascendant and the Intimate, and He is, of all things, Knowing."
       }
     }
   },
@@ -2423,10 +2424,10 @@ const ENTRIES: AllahNameEntry[] = [
       "kind": "quran",
       "ref": "13:11",
       "surah": "Ar-Ra‘d",
-      "arabic": "وَمَا لَهُمْ مِنْ دُونِهِ مِنْ وَالٍ",
+      "arabic": "لَهُۥ مُعَقِّبَـٰتٌ مِّنۢ بَيْنِ يَدَيْهِ وَمِنْ خَلْفِهِۦ يَحْفَظُونَهُۥ مِنْ أَمْرِ ٱللَّهِ ۗ إِنَّ ٱللَّهَ لَا يُغَيِّرُ مَا بِقَوْمٍ حَتَّىٰ يُغَيِّرُوا۟ مَا بِأَنفُسِهِمْ ۗ وَإِذَآ أَرَادَ ٱللَّهُ بِقَوْمٍ سُوٓءًا فَلَا مَرَدَّ لَهُۥ ۚ وَمَا لَهُم مِّن دُونِهِۦ مِن وَالٍ",
       "text": {
-        "fr": "… et ils n’ont, en dehors de Lui, aucun protecteur.",
-        "en": "… and there is not for them besides Him any patron."
+        "fr": "Il [l’homme] a par devant lui et derrière lui des Anges qui se relaient et qui veillent sur lui par ordre d’Allah. En vérité, Allah ne modifie point l’état d’un peuple, tant que les [individus qui le composent] ne modifient pas ce qui est en eux-mêmes. Et lorsqu’Allah veut [infliger] un mal à un peuple, nul ne peut le repousser et ils n’ont en dehors de Lui aucun protecteur.",
+        "en": "For him [i.e., each one] are successive [angels] before and behind him who protect him by the decree of Allāh. Indeed, Allāh will not change the condition of a people until they change what is in themselves. And when Allāh intends for a people ill, there is no repelling it. And there is not for them besides Him any patron."
       }
     }
   },
@@ -2454,10 +2455,10 @@ const ENTRIES: AllahNameEntry[] = [
       "kind": "quran",
       "ref": "13:9",
       "surah": "Ar-Ra‘d",
-      "arabic": "الْكَبِيرُ الْمُتَعَالِ",
+      "arabic": "عَـٰلِمُ ٱلْغَيْبِ وَٱلشَّهَـٰدَةِ ٱلْكَبِيرُ ٱلْمُتَعَالِ",
       "text": {
-        "fr": "… le Très Grand, le Très Élevé.",
-        "en": "… the Grand, the Exalted."
+        "fr": "Le Connaisseur de ce qui est caché et de ce qui est apparent, Le Grand, Le Sublime.",
+        "en": "[He is] Knower of the unseen and the witnessed, the Grand, the Exalted."
       }
     }
   },
@@ -2474,8 +2475,8 @@ const ENTRIES: AllahNameEntry[] = [
       "en": "Al-Barr is the One whose goodness is vast: He does good to His creatures, keeps His promises and rewards generously."
     },
     "reflection": {
-      "fr": "Ce sont les paroles des gens du Paradis : « Nous L’invoquions auparavant : c’est Lui le Bienfaisant, le Très Miséricordieux. »",
-      "en": "These are the words of the people of Paradise: “We used to call upon Him before: He is the Beneficent, the Merciful.”"
+      "fr": "Ce verset rapporte les paroles des gens du Paradis : ils invoquaient Allah dans ce monde, et ils Le reconnaissent comme le Bienfaisant.",
+      "en": "This verse reports the words of the people of Paradise: they used to call upon Allah in this world, and they recognise Him as the Beneficent."
     },
     "practice": {
       "fr": "Faire le bien autour de soi, en commençant par ses parents (birr al-wālidayn).",
@@ -2485,10 +2486,10 @@ const ENTRIES: AllahNameEntry[] = [
       "kind": "quran",
       "ref": "52:28",
       "surah": "Aṭ-Ṭūr",
-      "arabic": "إِنَّهُ هُوَ الْبَرُّ الرَّحِيمُ",
+      "arabic": "إِنَّا كُنَّا مِن قَبْلُ نَدْعُوهُ ۖ إِنَّهُۥ هُوَ ٱلْبَرُّ ٱلرَّحِيمُ",
       "text": {
-        "fr": "C’est Lui le Bienfaisant, le Très Miséricordieux.",
-        "en": "Indeed, it is He who is the Beneficent, the Merciful."
+        "fr": "Antérieurement, nous L’invoquions. C’est Lui certes, le Charitable, le Très Miséricordieux.\"",
+        "en": "Indeed, we used to supplicate Him before. Indeed, it is He who is the Beneficent, the Merciful.\""
       }
     }
   },
@@ -2516,10 +2517,10 @@ const ENTRIES: AllahNameEntry[] = [
       "kind": "quran",
       "ref": "2:37",
       "surah": "Al-Baqara",
-      "arabic": "إِنَّهُ هُوَ التَّوَّابُ الرَّحِيمُ",
+      "arabic": "فَتَلَقَّىٰٓ ءَادَمُ مِن رَّبِّهِۦ كَلِمَـٰتٍ فَتَابَ عَلَيْهِ ۚ إِنَّهُۥ هُوَ ٱلتَّوَّابُ ٱلرَّحِيمُ",
       "text": {
-        "fr": "C’est Lui qui accueille le repentir, le Très Miséricordieux.",
-        "en": "Indeed, it is He who is the Accepting of repentance, the Merciful."
+        "fr": "Puis, Adam reçut de son Seigneur des paroles, et Allah agréa son repentir car c’est Lui, certes, l’Accueillant au repentir, le Miséricordieux.",
+        "en": "Then Adam received from his Lord [some] words, and He accepted his repentance. Indeed, it is He who is the Accepting of Repentance, the Merciful."
       }
     }
   },
@@ -2547,10 +2548,10 @@ const ENTRIES: AllahNameEntry[] = [
       "kind": "quran",
       "ref": "3:4",
       "surah": "Āl ‘Imrān",
-      "arabic": "وَاللَّهُ عَزِيزٌ ذُو انْتِقَامٍ",
+      "arabic": "مِن قَبْلُ هُدًى لِّلنَّاسِ وَأَنزَلَ ٱلْفُرْقَانَ ۗ إِنَّ ٱلَّذِينَ كَفَرُوا۟ بِـَٔايَـٰتِ ٱللَّهِ لَهُمْ عَذَابٌ شَدِيدٌ ۗ وَٱللَّهُ عَزِيزٌ ذُو ٱنتِقَامٍ",
       "text": {
-        "fr": "Allah est Tout-Puissant, Détenteur du châtiment.",
-        "en": "And Allah is Exalted in Might, the Owner of Retribution."
+        "fr": "auparavant, en tant que guide pour les gens. Et Il a fait descendre le Discernement. Ceux qui ne croient pas aux signes d’Allah auront, certes, un dur châtiment! Et, Allah est Puissant, Détenteur du pouvoir de punir.",
+        "en": "Before, as guidance for the people. And He revealed the Criterion [i.e., the Qur’ān]. Indeed, those who disbelieve in the verses of Allāh will have a severe punishment, and Allāh is Exalted in Might, the Owner of Retribution."
       }
     }
   },
@@ -2578,10 +2579,10 @@ const ENTRIES: AllahNameEntry[] = [
       "kind": "quran",
       "ref": "4:99",
       "surah": "An-Nisā’",
-      "arabic": "وَكَانَ اللَّهُ عَفُوًّا غَفُورًا",
+      "arabic": "فَأُو۟لَـٰٓئِكَ عَسَى ٱللَّهُ أَن يَعْفُوَ عَنْهُمْ ۚ وَكَانَ ٱللَّهُ عَفُوًّا غَفُورًا",
       "text": {
-        "fr": "Allah efface les fautes et pardonne.",
-        "en": "And Allah is ever Pardoning and Forgiving."
+        "fr": "À ceux-là, Allah accordera le pardon. Et Allah est Clément et Pardonneur.",
+        "en": "For those it is expected that Allāh will pardon them, and Allāh is ever Pardoning and Forgiving."
       }
     }
   },
@@ -2607,12 +2608,12 @@ const ENTRIES: AllahNameEntry[] = [
     },
     "evidence": {
       "kind": "quran",
-      "ref": "2:143",
-      "surah": "Al-Baqara",
-      "arabic": "إِنَّ اللَّهَ بِالنَّاسِ لَرَءُوفٌ رَحِيمٌ",
+      "ref": "57:9",
+      "surah": "Al-Ḥadīd",
+      "arabic": "هُوَ ٱلَّذِى يُنَزِّلُ عَلَىٰ عَبْدِهِۦٓ ءَايَـٰتٍۭ بَيِّنَـٰتٍ لِّيُخْرِجَكُم مِّنَ ٱلظُّلُمَـٰتِ إِلَى ٱلنُّورِ ۚ وَإِنَّ ٱللَّهَ بِكُمْ لَرَءُوفٌ رَّحِيمٌ",
       "text": {
-        "fr": "Allah est Compatissant et Très Miséricordieux envers les gens.",
-        "en": "Indeed, Allah is, to the people, Kind and Merciful."
+        "fr": "C’est Lui qui fait descendre sur Son serviteur des versets claires, afin qu’il vous fasse sortir des ténèbres à la lumière; et assurément Allah est Compatissant envers vous, et Très Miséricordieux.",
+        "en": "It is He who sends down upon His Servant [Muḥammad (ﷺ)] verses of clear evidence that He may bring you out from darknesses into the light. And indeed, Allāh is to you Kind and Merciful."
       }
     }
   },
@@ -2640,10 +2641,10 @@ const ENTRIES: AllahNameEntry[] = [
       "kind": "quran",
       "ref": "3:26",
       "surah": "Āl ‘Imrān",
-      "arabic": "قُلِ اللَّهُمَّ مَالِكَ الْمُلْكِ تُؤْتِي الْمُلْكَ مَنْ تَشَاءُ",
+      "arabic": "قُلِ ٱللَّهُمَّ مَـٰلِكَ ٱلْمُلْكِ تُؤْتِى ٱلْمُلْكَ مَن تَشَآءُ وَتَنزِعُ ٱلْمُلْكَ مِمَّن تَشَآءُ وَتُعِزُّ مَن تَشَآءُ وَتُذِلُّ مَن تَشَآءُ ۖ بِيَدِكَ ٱلْخَيْرُ ۖ إِنَّكَ عَلَىٰ كُلِّ شَىْءٍ قَدِيرٌ",
       "text": {
-        "fr": "Dis : « Ô Allah, Maître de la royauté, Tu donnes la royauté à qui Tu veux. »",
-        "en": "Say: “O Allah, Owner of Sovereignty, You give sovereignty to whom You will.”"
+        "fr": "Dis: “Ô Allah! Maître de l’autorité absolue. Tu donnes l’autorité à qui Tu veux, et Tu arraches l’autorité à qui Tu veux; et Tu donnes la puissance à qui Tu veux, et Tu humilies qui Tu veux. Le bien est en Ta main et Tu es Omnipotent.",
+        "en": "Say, \"O Allāh, Owner of Sovereignty, You give sovereignty to whom You will and You take sovereignty away from whom You will. You honor whom You will and You humble whom You will. In Your hand is [all] good. Indeed, You are over all things competent."
       }
     }
   },
@@ -2671,10 +2672,10 @@ const ENTRIES: AllahNameEntry[] = [
       "kind": "quran",
       "ref": "55:78",
       "surah": "Ar-Raḥmān",
-      "arabic": "تَبَارَكَ اسْمُ رَبِّكَ ذِي الْجَلَالِ وَالْإِكْرَامِ",
+      "arabic": "تَبَـٰرَكَ ٱسْمُ رَبِّكَ ذِى ٱلْجَلَـٰلِ وَٱلْإِكْرَامِ",
       "text": {
-        "fr": "Béni soit le nom de ton Seigneur, plein de majesté et de générosité.",
-        "en": "Blessed is the name of your Lord, Owner of Majesty and Honour."
+        "fr": "Béni soit le Nom de ton Seigneur, Plein de Majesté et de Munificence !",
+        "en": "Blessed is the name of your Lord, Owner of Majesty and Honor."
       }
     }
   },
@@ -2702,10 +2703,10 @@ const ENTRIES: AllahNameEntry[] = [
       "kind": "quran",
       "ref": "3:18",
       "surah": "Āl ‘Imrān",
-      "arabic": "قَائِمًا بِالْقِسْطِ",
+      "arabic": "شَهِدَ ٱللَّهُ أَنَّهُۥ لَآ إِلَـٰهَ إِلَّا هُوَ وَٱلْمَلَـٰٓئِكَةُ وَأُو۟لُوا۟ ٱلْعِلْمِ قَآئِمًۢا بِٱلْقِسْطِ ۚ لَآ إِلَـٰهَ إِلَّا هُوَ ٱلْعَزِيزُ ٱلْحَكِيمُ",
       "text": {
-        "fr": "… Lui qui maintient l’équité.",
-        "en": "… maintaining creation in justice."
+        "fr": "Allah atteste, et aussi les Anges et les doués de science, qu’il n’y a point de divinité à part Lui, le Mainteneur de la justice. Point de divinité à part Lui, le Puissant, le Sage !",
+        "en": "Allāh witnesses that there is no deity except Him, and [so do] the angels and those of knowledge - [that He is] maintaining [creation] in justice. There is no deity except Him, the Exalted in Might, the Wise."
       }
     }
   },
@@ -2733,10 +2734,10 @@ const ENTRIES: AllahNameEntry[] = [
       "kind": "quran",
       "ref": "3:9",
       "surah": "Āl ‘Imrān",
-      "arabic": "رَبَّنَا إِنَّكَ جَامِعُ النَّاسِ لِيَوْمٍ لَا رَيْبَ فِيهِ",
+      "arabic": "رَبَّنَآ إِنَّكَ جَامِعُ ٱلنَّاسِ لِيَوْمٍ لَّا رَيْبَ فِيهِ ۚ إِنَّ ٱللَّهَ لَا يُخْلِفُ ٱلْمِيعَادَ",
       "text": {
-        "fr": "Seigneur, c’est Toi qui rassembleras les gens, un Jour au sujet duquel il n’y a aucun doute.",
-        "en": "Our Lord, surely You will gather the people for a Day about which there is no doubt."
+        "fr": "Seigneur! C’est Toi qui rassembleras les gens en un Jour au sujet duquel il n’y a aucun doute. Allah, vraiment, ne manque jamais à Sa promesse. ”",
+        "en": "Our Lord, surely You will gather the people for a Day about which there is no doubt. Indeed, Allāh does not fail in His promise.\""
       }
     }
   },
@@ -2764,10 +2765,10 @@ const ENTRIES: AllahNameEntry[] = [
       "kind": "quran",
       "ref": "35:15",
       "surah": "Fāṭir",
-      "arabic": "يَا أَيُّهَا النَّاسُ أَنْتُمُ الْفُقَرَاءُ إِلَى اللَّهِ ۖ وَاللَّهُ هُوَ الْغَنِيُّ الْحَمِيدُ",
+      "arabic": "۞ يَـٰٓأَيُّهَا ٱلنَّاسُ أَنتُمُ ٱلْفُقَرَآءُ إِلَى ٱللَّهِ ۖ وَٱللَّهُ هُوَ ٱلْغَنِىُّ ٱلْحَمِيدُ",
       "text": {
-        "fr": "Ô gens ! Vous êtes les pauvres ayant besoin d’Allah, et Allah est Celui qui se suffit à Lui-même, le Digne de louange.",
-        "en": "O mankind, you are those in need of Allah, while Allah is the Free of need, the Praiseworthy."
+        "fr": "Ô hommes, vous êtes les indigents ayant besoin d’Allah, et c’est Allah, Lui qui se dispense de tout et Il est Le Digne de louange.",
+        "en": "O mankind, you are those in need of Allāh, while Allāh is the Free of need, the Praiseworthy."
       }
     }
   },
@@ -2795,10 +2796,10 @@ const ENTRIES: AllahNameEntry[] = [
       "kind": "quran",
       "ref": "53:48",
       "surah": "An-Najm",
-      "arabic": "وَأَنَّهُ هُوَ أَغْنَىٰ وَأَقْنَىٰ",
+      "arabic": "وَأَنَّهُۥ هُوَ أَغْنَىٰ وَأَقْنَىٰ",
       "text": {
-        "fr": "Et c’est Lui qui enrichit et qui fait posséder.",
-        "en": "And it is He who enriches and suffices."
+        "fr": "et c’est Lui qui a enrichi et qui a fait acquérir.",
+        "en": "And that it is He who enriches and suffices"
       }
     }
   },
@@ -2858,10 +2859,10 @@ const ENTRIES: AllahNameEntry[] = [
       "kind": "quran",
       "ref": "10:107",
       "surah": "Yūnus",
-      "arabic": "وَإِنْ يَمْسَسْكَ اللَّهُ بِضُرٍّ فَلَا كَاشِفَ لَهُ إِلَّا هُوَ",
+      "arabic": "وَإِن يَمْسَسْكَ ٱللَّهُ بِضُرٍّ فَلَا كَاشِفَ لَهُۥٓ إِلَّا هُوَ ۖ وَإِن يُرِدْكَ بِخَيْرٍ فَلَا رَآدَّ لِفَضْلِهِۦ ۚ يُصِيبُ بِهِۦ مَن يَشَآءُ مِنْ عِبَادِهِۦ ۚ وَهُوَ ٱلْغَفُورُ ٱلرَّحِيمُ",
       "text": {
-        "fr": "Si Allah fait qu’un mal te touche, nul ne peut l’écarter en dehors de Lui.",
-        "en": "And if Allah should touch you with adversity, there is no remover of it except Him."
+        "fr": "Et si Allah fait qu’un mal te touche, nul ne peut l’écarter en dehors de Lui. Et s’Il te veut un bien, nul ne peut repousser Sa grâce. Il en gratifie qui Il veut parmi Ses serviteurs. Et c’est Lui le Pardonneur, le Miséricordieux.",
+        "en": "And if Allāh should touch you with adversity, there is no remover of it except Him; and if He intends for you good, then there is no repeller of His bounty. He causes it to reach whom He wills of His servants. And He is the Forgiving, the Merciful."
       }
     }
   },
@@ -2889,10 +2890,10 @@ const ENTRIES: AllahNameEntry[] = [
       "kind": "quran",
       "ref": "10:107",
       "surah": "Yūnus",
-      "arabic": "وَإِنْ يُرِدْكَ بِخَيْرٍ فَلَا رَادَّ لِفَضْلِهِ",
+      "arabic": "وَإِن يَمْسَسْكَ ٱللَّهُ بِضُرٍّ فَلَا كَاشِفَ لَهُۥٓ إِلَّا هُوَ ۖ وَإِن يُرِدْكَ بِخَيْرٍ فَلَا رَآدَّ لِفَضْلِهِۦ ۚ يُصِيبُ بِهِۦ مَن يَشَآءُ مِنْ عِبَادِهِۦ ۚ وَهُوَ ٱلْغَفُورُ ٱلرَّحِيمُ",
       "text": {
-        "fr": "Et s’Il te veut un bien, nul ne peut repousser Sa grâce.",
-        "en": "And if He intends good for you, there is no repeller of His bounty."
+        "fr": "Et si Allah fait qu’un mal te touche, nul ne peut l’écarter en dehors de Lui. Et s’Il te veut un bien, nul ne peut repousser Sa grâce. Il en gratifie qui Il veut parmi Ses serviteurs. Et c’est Lui le Pardonneur, le Miséricordieux.",
+        "en": "And if Allāh should touch you with adversity, there is no remover of it except Him; and if He intends for you good, then there is no repeller of His bounty. He causes it to reach whom He wills of His servants. And He is the Forgiving, the Merciful."
       }
     }
   },
@@ -2920,10 +2921,10 @@ const ENTRIES: AllahNameEntry[] = [
       "kind": "quran",
       "ref": "24:35",
       "surah": "An-Nūr",
-      "arabic": "اللَّهُ نُورُ السَّمَاوَاتِ وَالْأَرْضِ",
+      "arabic": "۞ ٱللَّهُ نُورُ ٱلسَّمَـٰوَٰتِ وَٱلْأَرْضِ ۚ مَثَلُ نُورِهِۦ كَمِشْكَوٰةٍ فِيهَا مِصْبَاحٌ ۖ ٱلْمِصْبَاحُ فِى زُجَاجَةٍ ۖ ٱلزُّجَاجَةُ كَأَنَّهَا كَوْكَبٌ دُرِّىٌّ يُوقَدُ مِن شَجَرَةٍ مُّبَـٰرَكَةٍ زَيْتُونَةٍ لَّا شَرْقِيَّةٍ وَلَا غَرْبِيَّةٍ يَكَادُ زَيْتُهَا يُضِىٓءُ وَلَوْ لَمْ تَمْسَسْهُ نَارٌ ۚ نُّورٌ عَلَىٰ نُورٍ ۗ يَهْدِى ٱللَّهُ لِنُورِهِۦ مَن يَشَآءُ ۚ وَيَضْرِبُ ٱللَّهُ ٱلْأَمْثَـٰلَ لِلنَّاسِ ۗ وَٱللَّهُ بِكُلِّ شَىْءٍ عَلِيمٌ",
       "text": {
-        "fr": "Allah est la Lumière des cieux et de la terre.",
-        "en": "Allah is the Light of the heavens and the earth."
+        "fr": "Allah est la Lumière des cieux et de la terre. Sa lumière est semblable à une niche où se trouve une lampe. La lampe est dans un (récipient de) cristal et celui-ci ressemble à un astre de grand éclat ; son combustible vient d’un arbre béni: un olivier ni oriental ni occidental dont l’huile semble éclairer sans même que le feu la touche. Lumière sur lumière. Allah guide vers Sa lumière qui Il veut. Et Allah propose aux hommes des paraboles et Allah est Omniscient.",
+        "en": "Allāh is the Light of the heavens and the earth. The example of His light is like a niche within which is a lamp; the lamp is within glass, the glass as if it were a pearly [white] star lit from [the oil of] a blessed olive tree, neither of the east nor of the west, whose oil would almost glow even if untouched by fire. Light upon light. Allāh guides to His light whom He wills. And Allāh presents examples for the people, and Allāh is Knowing of all things."
       }
     }
   },
@@ -2940,8 +2941,8 @@ const ENTRIES: AllahNameEntry[] = [
       "en": "Al-Hādī is the One who guides His creatures to what benefits them, and who guides whom He wills to the truth and to faith."
     },
     "reflection": {
-      "fr": "Dans chaque rak‘a, on demande : « Guide-nous vers le droit chemin. » Même le croyant a besoin de cette guidance chaque jour.",
-      "en": "In every rak‘a, we ask: “Guide us to the straight path.” Even the believer needs this guidance every day."
+      "fr": "Dans chaque rak‘a, on demande : « Guide-nous dans le droit chemin, » (1:6) Même le croyant a besoin de cette guidance chaque jour.",
+      "en": "In every rak‘a, we ask: “Guide us to the straight path -” (1:6) Even the believer needs this guidance every day."
     },
     "practice": {
       "fr": "Demander la guidance avec sincérité, rechercher la vérité et agir selon ce qu’on apprend.",
@@ -2951,10 +2952,10 @@ const ENTRIES: AllahNameEntry[] = [
       "kind": "quran",
       "ref": "25:31",
       "surah": "Al-Furqān",
-      "arabic": "وَكَفَىٰ بِرَبِّكَ هَادِيًا وَنَصِيرًا",
+      "arabic": "وَكَذَٰلِكَ جَعَلْنَا لِكُلِّ نَبِىٍّ عَدُوًّا مِّنَ ٱلْمُجْرِمِينَ ۗ وَكَفَىٰ بِرَبِّكَ هَادِيًا وَنَصِيرًا",
       "text": {
-        "fr": "Ton Seigneur suffit comme Guide et comme Soutien.",
-        "en": "But sufficient is your Lord as a Guide and a Helper."
+        "fr": "Et c’est ainsi que Nous fîmes à chaque Prophète un ennemi parmi les criminels. Mais ton Seigneur suffit comme guide et comme secoureur.",
+        "en": "And thus have We made for every prophet an enemy from among the criminals. But sufficient is your Lord as a guide and a helper."
       }
     }
   },
@@ -2982,10 +2983,10 @@ const ENTRIES: AllahNameEntry[] = [
       "kind": "quran",
       "ref": "2:117",
       "surah": "Al-Baqara",
-      "arabic": "بَدِيعُ السَّمَاوَاتِ وَالْأَرْضِ",
+      "arabic": "بَدِيعُ ٱلسَّمَـٰوَٰتِ وَٱلْأَرْضِ ۖ وَإِذَا قَضَىٰٓ أَمْرًا فَإِنَّمَا يَقُولُ لَهُۥ كُن فَيَكُونُ",
       "text": {
-        "fr": "Créateur sans modèle des cieux et de la terre.",
-        "en": "Originator of the heavens and the earth."
+        "fr": "Il est le Créateur des cieux et de la terre à partir du néant! Lorsqu’Il décide une chose, Il dit seulement: \"Sois!\", et elle est aussitôt.",
+        "en": "Originator of the heavens and the earth. When He decrees a matter, He only says to it, \"Be,\" and it is."
       }
     }
   },
@@ -3002,8 +3003,8 @@ const ENTRIES: AllahNameEntry[] = [
       "en": "Al-Bāqī is the One who remains forever, while everything else passes away."
     },
     "reflection": {
-      "fr": "« Tout ce qui est sur terre disparaîtra », sauf Lui. Ce qui est fait pour Lui reste.",
-      "en": "“Everyone upon the earth will perish”, except Him. What is done for Him remains."
+      "fr": "« Tout ce qui est sur elle [la terre] doit disparaître, » (55:26) Lui seul demeure, et ce qui est fait pour Lui reste.",
+      "en": "“Everyone upon it [i.e., the earth] will perish,” (55:26) He alone remains, and what is done for Him remains."
     },
     "practice": {
       "fr": "Investir dans ce qui reste : la sadaqa continue, la science utile, l’enfant pieux (Muslim).",
@@ -3013,10 +3014,10 @@ const ENTRIES: AllahNameEntry[] = [
       "kind": "quran",
       "ref": "55:27",
       "surah": "Ar-Raḥmān",
-      "arabic": "وَيَبْقَىٰ وَجْهُ رَبِّكَ ذُو الْجَلَالِ وَالْإِكْرَامِ",
+      "arabic": "وَيَبْقَىٰ وَجْهُ رَبِّكَ ذُو ٱلْجَلَـٰلِ وَٱلْإِكْرَامِ",
       "text": {
-        "fr": "Seul demeure le Visage de ton Seigneur, plein de majesté et de générosité.",
-        "en": "And there will remain the Face of your Lord, Owner of Majesty and Honour."
+        "fr": "[Seule] subsistera La Face [Wajh] de ton Seigneur, plein de majesté et de noblesse.",
+        "en": "And there will remain the Face of your Lord, Owner of Majesty and Honor."
       }
     }
   },
@@ -3033,8 +3034,8 @@ const ENTRIES: AllahNameEntry[] = [
       "en": "Al-Wārith is the One who remains after all creatures have passed away, and to whom everything they owned returns."
     },
     "reflection": {
-      "fr": "Zakariyyā invoquait : « Seigneur, ne me laisse pas seul, Tu es le meilleur des héritiers. » (21:89)",
-      "en": "Zakariyyā prayed: “My Lord, do not leave me alone, and You are the best of inheritors.” (21:89)"
+      "fr": "Zakariyyā invoquait ainsi : « Et Zacharie, quand il implora son Seigneur : \"Seigneur ! Ne me laisse pas seul alors que Tu es le meilleur des héritiers !\" » (21:89)",
+      "en": "Zakariyyā prayed: “And [mention] Zechariah, when he called to his Lord, \"My Lord, do not leave me alone [with no heir], while You are the best of inheritors.\"” (21:89)"
     },
     "practice": {
       "fr": "Ne pas s’attacher à ce qu’on laissera derrière soi, et donner de son vivant.",
@@ -3044,9 +3045,9 @@ const ENTRIES: AllahNameEntry[] = [
       "kind": "quran",
       "ref": "15:23",
       "surah": "Al-Ḥijr",
-      "arabic": "وَإِنَّا لَنَحْنُ نُحْيِي وَنُمِيتُ وَنَحْنُ الْوَارِثُونَ",
+      "arabic": "وَإِنَّا لَنَحْنُ نُحْىِۦ وَنُمِيتُ وَنَحْنُ ٱلْوَٰرِثُونَ",
       "text": {
-        "fr": "C’est Nous qui donnons la vie et la mort, et c’est Nous qui sommes l’Héritier.",
+        "fr": "Et c’est bien Nous qui donnons la vie et donnons la mort, et c’est Nous qui sommes l’héritier [de tout].",
         "en": "And indeed, it is We who give life and cause death, and We are the Inheritor."
       }
     }
@@ -3075,10 +3076,10 @@ const ENTRIES: AllahNameEntry[] = [
       "kind": "quran",
       "ref": "18:10",
       "surah": "Al-Kahf",
-      "arabic": "رَبَّنَا آتِنَا مِنْ لَدُنْكَ رَحْمَةً وَهَيِّئْ لَنَا مِنْ أَمْرِنَا رَشَدًا",
+      "arabic": "إِذْ أَوَى ٱلْفِتْيَةُ إِلَى ٱلْكَهْفِ فَقَالُوا۟ رَبَّنَآ ءَاتِنَا مِن لَّدُنكَ رَحْمَةً وَهَيِّئْ لَنَا مِنْ أَمْرِنَا رَشَدًا",
       "text": {
-        "fr": "Seigneur, accorde-nous de Ta part une miséricorde, et prépare-nous la droiture dans notre affaire.",
-        "en": "Our Lord, grant us from Yourself mercy and prepare for us from our affair right guidance."
+        "fr": "Quand ces jeunes gens se réfugièrent dans la caverne, ils dirent : \"Ô notre Seigneur ! Donne-nous de Ta part une miséricorde ! Et assure nous la droiture dans tout ce qui nous concerne.\"",
+        "en": "[Mention] when the youths retreated to the cave and said, \"Our Lord, grant us from Yourself mercy and prepare for us from our affair right guidance.\""
       }
     }
   },

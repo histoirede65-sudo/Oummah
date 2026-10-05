@@ -2196,7 +2196,7 @@ export const fr = {
   'names99.resultsMany': '{count} noms',
   'names99.emptyTitle': 'Aucun nom trouvé',
   'names99.emptyText': 'Essayez une autre recherche.',
-  'names99.verse': '« À Allah appartiennent les plus beaux noms : invoquez-Le par ces noms. »',
+  'names99.verse': '« C’est à Allah qu’appartiennent les plus beaux Noms. Invoquez-Le par ces Noms et laissez ceux qui profanent Ses noms: ils seront rétribués pour ce qu’ils ont fait. »',
   'names99.verseRef': 'Al-A‘rāf · 7:180',
   'names99.methodTitle': 'D’où vient ce contenu ?',
   'names99.method1': 'La liste, l’écriture arabe et les sens de base suivent la liste d’Islamic Relief UK, relue par Sheikh Dr. Saalim Al-Azhari. Chaque fiche cite un verset, ou un hadith quand le nom ne figure pas tel quel dans le Coran. Les explications sont des résumés pédagogiques et ne remplacent pas l’étude auprès de personnes qualifiées.',

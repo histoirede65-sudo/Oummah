@@ -22,6 +22,8 @@ import { typography } from "../theme/typography";
 const CARD = "#151022";
 const CARD_RAISED = "#1E1730";
 const LINE = "#2B2238";
+// A verse is never cut: longer ones are shown only on the name's page.
+const TODAY_VERSE_MAX = 200;
 
 function normalize(value: string) {
   return value
@@ -78,12 +80,12 @@ export default function AllahNamesScreen() {
             <Text style={styles.todayArabic}>{today.arabic}</Text>
             <Text style={styles.todayTransliteration}>{today.transliteration}</Text>
             <Text style={styles.todayTranslation}>{today.translation}</Text>
-            <Text style={styles.todayVerse} numberOfLines={4}>
-              {todayEvidence.kind === "quran" ? t("names99.quote", { text: todayEvidence.text.replace(/^…\s*/, "") }) : todayEvidence.text}
-            </Text>
-            <Text style={styles.todayReference}>
-              {todayEvidence.kind === "quran" ? `${todayEvidence.surah} · ${todayEvidence.ref}` : todayEvidence.source}
-            </Text>
+            {todayEvidence.kind === "quran" && todayEvidence.text.length <= TODAY_VERSE_MAX ? (
+              <>
+                <Text style={styles.todayVerse}>{t("names99.quote", { text: todayEvidence.text })}</Text>
+                <Text style={styles.todayReference}>{todayEvidence.surah} · {todayEvidence.ref}</Text>
+              </>
+            ) : null}
             <View style={styles.todayAction}>
               <Text style={styles.todayActionText}>{t("names99.discover")}</Text>
               <Ionicons name="arrow-forward" size={15} color={colors.goldLight} />

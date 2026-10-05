@@ -2187,7 +2187,7 @@ export const en: Partial<Record<TranslationKey, string>> = {
   'names99.resultsMany': '{count} names',
   'names99.emptyTitle': 'No name found',
   'names99.emptyText': 'Try another search.',
-  'names99.verse': '“To Allah belong the most beautiful names, so call upon Him by them.”',
+  'names99.verse': '“And to Allāh belong the best names, so invoke Him by them. And leave [the company of] those who practice deviation concerning His names. They will be recompensed for what they have been doing.”',
   'names99.verseRef': 'Al-A‘rāf · 7:180',
   'names99.methodTitle': 'Where does this content come from?',
   'names99.method1': 'The list, the Arabic spelling and the base meanings follow the Islamic Relief UK list, reviewed by Sheikh Dr. Saalim Al-Azhari. Each page cites a verse, or a hadith when the name does not appear as such in the Quran. The explanations are teaching summaries and do not replace study with qualified people.',
