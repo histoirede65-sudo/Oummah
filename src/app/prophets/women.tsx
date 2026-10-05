@@ -29,8 +29,6 @@ const WOMEN_EN: Record<string, string> = {
   "Mère des croyants, connue pour sa sagesse, sa patience dans l’épreuve et sa place dans la transmission de la Sunna.": "Mother of the believers, known for her wisdom, her patience in trial and her place in the transmission of the Sunna.",
   "COURAGE ET SERVICE": "COURAGE AND SERVICE",
   "Compagne connue pour son rôle lors de l’Hijra et pour sa fermeté. Son parcours appartient à l’histoire des premières générations musulmanes.": "A companion known for her role during the Hijra and for her steadfastness. Her life belongs to the history of the first Muslim generations.",
-  "Sahih Muslim · récits authentiques des Mères des croyants": "Sahih Muslim · authentic accounts of the Mothers of the believers",
-  "Sahih al-Bukhârî · récits de l’Hijra": "Sahih al-Bukhârî · accounts of the Hijra",
   "Femmes d’exception": "Exceptional women",
   "FOI · PATIENCE · SCIENCE · COURAGE": "FAITH · PATIENCE · KNOWLEDGE · COURAGE",
   "Des femmes qui ont marqué l’histoire": "Women who left their mark on history",
@@ -53,8 +51,8 @@ const WOMEN = [
   { name:"‘Â’ishah bint Abî Bakr", arabic:"عائشة بنت أبي بكر", tag:"SCIENCE ET TRANSMISSION", text:"Mère des croyants et grande transmettrice de la Sunna. Le Prophète ﷺ a explicitement souligné son mérite dans un hadith authentique.", hadith:"Jâmi‘ at-Tirmidhî 3887" },
   { name:"Hâjar", arabic:"هاجر", tag:"CONFIANCE EN ALLAH", text:"Mère d’Ismâ‘îl عليه السلام. Son histoire à La Mecque, sa recherche d’eau et Zamzam sont rapportées dans la Sunna authentique.", hadith:"Sahih al-Bukhârî 3364" },
   { name:"La mère de Mûsâ", arabic:"أم موسى", tag:"UNE CONFIANCE INÉBRANLABLE", text:"Allah lui inspira de déposer son enfant dans le fleuve et lui promit de le lui rendre. Son récit est une histoire exceptionnelle de peur, de confiance et de promesse divine.", quran:[28,7], source:"Al-Qasas 28:7–13" },
-  { name:"Umm Salamah", arabic:"أم سلمة", tag:"SAGESSE ET PATIENCE", text:"Mère des croyants, connue pour sa sagesse, sa patience dans l’épreuve et sa place dans la transmission de la Sunna.", hadith:"Sahih Muslim · récits authentiques des Mères des croyants" },
-  { name:"Asmâ’ bint Abî Bakr", arabic:"أسماء بنت أبي بكر", tag:"COURAGE ET SERVICE", text:"Compagne connue pour son rôle lors de l’Hijra et pour sa fermeté. Son parcours appartient à l’histoire des premières générations musulmanes.", hadith:"Sahih al-Bukhârî · récits de l’Hijra" },
+  { name:"Umm Salamah", arabic:"أم سلمة", tag:"SAGESSE ET PATIENCE", text:"Mère des croyants, connue pour sa sagesse, sa patience dans l’épreuve et sa place dans la transmission de la Sunna.", hadith:"Sahih Muslim 918" },
+  { name:"Asmâ’ bint Abî Bakr", arabic:"أسماء بنت أبي بكر", tag:"COURAGE ET SERVICE", text:"Compagne connue pour son rôle lors de l’Hijra et pour sa fermeté. Son parcours appartient à l’histoire des premières générations musulmanes.", hadith:"Sahih al-Bukhârî 2979" },
 ];
 
 export default function WomenOfHistoryScreen() {
