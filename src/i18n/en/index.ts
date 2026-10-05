@@ -2315,4 +2315,7 @@ export const en: Partial<Record<TranslationKey, string>> = {
   'companions.next': 'NEXT COMPANION',
   'companions.chapters': 'Chapters',
   'companions.method': 'Verses are quoted in the Saheeh International translation and hadiths in their collection\'s translation. Accounts that come from the sira or the historians are presented as such.',
+  'wasil.noEnergyTitle': 'You have no Wasil Energy left',
+  'wasil.noEnergyBody': 'Each question to Wasil uses Energy, and your balance is at zero. Top up your Energy to continue: your question is kept and you can send it again right after.',
+  'wasil.noEnergyAction': 'Top up my Energy',
 };

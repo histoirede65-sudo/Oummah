@@ -2324,6 +2324,9 @@ export const fr = {
   'companions.next': 'COMPAGNON SUIVANT',
   'companions.chapters': 'Chapitres',
   'companions.method': 'Les versets sont cités dans la traduction de Hamidullah et les hadiths dans la traduction de leur recueil. Les récits qui viennent de la sîra ou des historiens sont présentés comme tels.',
+  'wasil.noEnergyTitle': 'Vous n’avez plus d’Énergie Wasil',
+  'wasil.noEnergyBody': 'Chaque question à Wasil utilise de l’Énergie, et votre solde est à zéro. Rechargez votre Énergie pour continuer : votre question est gardée, vous pourrez la renvoyer juste après.',
+  'wasil.noEnergyAction': 'Recharger mon Énergie',
 } as const;
 
 export type TranslationKey = keyof typeof fr;

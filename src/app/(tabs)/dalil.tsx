@@ -277,6 +277,16 @@ type WasilVisualPose =
   | "success"
   | "error";
 
+/** Reply action that opens the Energy sheet instead of navigating. */
+const ENERGY_ROUTE = "wasil:energy";
+
+/** Balance colour: green from 10, yellow from 5 to 9, red from 4 down. */
+function energyTone(balance: number) {
+  if (balance >= 10) return "#5BC489";
+  if (balance >= 5) return "#E8C547";
+  return "#E5675C";
+}
+
 const ENERGY_FACT_KEYS = [
   "wasil.energyFact1",
   "wasil.energyFact2",
@@ -2118,6 +2128,10 @@ export default function DalilScreen() {
 
   const openRoute = (route: string) => {
     Keyboard.dismiss();
+    if (route === ENERGY_ROUTE) {
+      void openEnergy();
+      return;
+    }
     router.push(route as Href);
   };
 
@@ -2416,21 +2430,28 @@ export default function DalilScreen() {
     } catch (error) {
       clearStream();
       const apiError = error instanceof WasilApiError ? error : null;
+      const outOfEnergy = apiError?.code === "INSUFFICIENT_CREDITS";
       if (typeof apiError?.balance === "number") setBalance(apiError.balance);
+      else if (outOfEnergy) setBalance(0);
       const errorReply: WasilReply = {
         kind: "unsupported-religious",
         title:
           apiError?.code === "AUTH_REQUIRED"
             ? t("wasil.profileRequired")
-            : t("wasil.unavailable"),
-        body:
-          language === "fr" && apiError?.message
+            : outOfEnergy
+              ? t("wasil.noEnergyTitle")
+              : t("wasil.unavailable"),
+        body: outOfEnergy
+          ? t("wasil.noEnergyBody")
+          : language === "fr" && apiError?.message
             ? apiError.message
             : t("wasil.retryNoCredit"),
         action:
           apiError?.code === "AUTH_REQUIRED"
             ? { label: t("wasil.openProfile"), route: "/profile" }
-            : undefined,
+            : outOfEnergy
+              ? { label: t("wasil.noEnergyAction"), route: ENERGY_ROUTE }
+              : undefined,
       };
       setReply(errorReply);
       setFailedPrompt(trimmedPrompt);
@@ -2618,9 +2639,9 @@ export default function DalilScreen() {
               />
             </Pressable>
             {!isAuthenticated || balance === null ? null : (
-              <View style={styles.creditPill}>
-                <Ionicons name="sparkles" size={11} color={colors.goldLight} />
-                <Text style={styles.creditText}>{balance}</Text>
+              <View style={[styles.creditPill, { borderColor: `${energyTone(balance)}66` }]}>
+                <Ionicons name="sparkles" size={11} color={energyTone(balance)} />
+                <Text style={[styles.creditText, { color: energyTone(balance) }]}>{balance}</Text>
                 <Pressable
                   accessibilityLabel={t("wasil.buyEnergy")}
                   accessibilityRole="button"
@@ -2628,6 +2649,7 @@ export default function DalilScreen() {
                   onPress={() => void openEnergy()}
                   style={({ pressed }) => [
                     styles.energyAddButton,
+                    { backgroundColor: energyTone(balance) },
                     pressed && styles.energyAddButtonPressed,
                   ]}
                 >
@@ -2903,7 +2925,7 @@ export default function DalilScreen() {
                     {reply.title}
                   </Text>
                   <WasilAnswerPresentation answer={reply} />
-                  {failedPrompt ? (
+                  {failedPrompt && !(reply.action?.route === ENERGY_ROUTE && (balance ?? 0) <= 0) ? (
                     <Pressable
                       accessibilityRole="button"
                       disabled={loading}
