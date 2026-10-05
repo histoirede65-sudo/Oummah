@@ -1,3 +1,5 @@
+import type { I18nContextValue, LanguageCode, TranslationKey } from '../../../i18n';
+
 export type HalalPlaceCategory =
   | 'restaurant'
   | 'fast_food'
@@ -75,6 +77,43 @@ export const DEFAULT_HALAL_FILTERS: HalalSearchFilters = {
   openNow: false,
   favoritesOnly: false,
 };
+
+type Translate = I18nContextValue['t'];
+
+export function halalCategoryLabel(category: HalalPlaceCategory, t: Translate) {
+  return t(`halal.category.${category}` as TranslationKey);
+}
+
+/** Libellé et explication du niveau de preuve, dans la langue de l'app (les données gardent le texte français). */
+export function halalVerificationText(place: HalalPlace, t: Translate) {
+  const status = place.verificationStatus;
+  const defaultDetail = getHalalVerificationCopy(status).detail;
+  // Une contribution peut porter la note de son auteur : elle s'affiche telle quelle.
+  const ownNote = (place.source === 'community' || place.source === 'oummah')
+    && place.verificationDetail
+    && place.verificationDetail !== defaultDetail;
+  return {
+    label: t(`halal.status.${status}` as TranslationKey),
+    detail: ownNote
+      ? place.verificationDetail
+      : place.source === 'google' && status === 'unknown'
+        ? t('halal.detail.google')
+        : t(`halal.detail.${status}` as TranslationKey),
+  };
+}
+
+export function halalDistanceLabel(place: HalalPlace, language: LanguageCode, t: Translate) {
+  if (place.source === 'community' && place.distanceMeters === 0) return t('halal.personalAdd');
+  const meters = place.distanceMeters;
+  if (meters < 1_000) return `${Math.max(1, Math.round(meters))} m`;
+  const km = meters / 1_000;
+  return `${km.toLocaleString(language === 'fr' ? 'fr-FR' : 'en-GB', { maximumFractionDigits: km < 10 ? 1 : 0 })} km`;
+}
+
+/** Google ajoute « , France » à la fin des adresses : inutile dans la liste. */
+export function halalDisplayAddress(address: string) {
+  return address.replace(/,\s*(France|FR)\s*$/i, '');
+}
 
 export function getHalalVerificationCopy(status: HalalVerificationStatus) {
   switch (status) {
