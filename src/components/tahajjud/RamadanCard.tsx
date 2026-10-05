@@ -39,8 +39,8 @@ export function RamadanCard({ tonight, nights }: { tonight: TahajjudNight; night
             </Text>
             <Text style={styles.text}>
               {ramadan.odd
-                ? 'Une nuit meilleure que mille mois. Multipliez les invocations, le Coran et le pardon.'
-                : 'Les nuits les plus précieuses de l’année. Demain soir est une nuit impaire.'}
+                ? '« La nuit d’Al-Qadr est meilleure que mille mois. » (97:3)'
+                : '« Cherchez la nuit du Qadr dans les nuits impaires des dix derniers jours de Ramadan. » Demain soir est une nuit impaire.'}
             </Text>
 
             <View style={styles.tracker}>
