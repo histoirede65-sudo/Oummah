@@ -23,7 +23,7 @@ export const NIGHT_VERSES: Source[] = [
   {
     arabic: 'وَمِنَ ٱلَّيْلِ فَتَهَجَّدْ بِهِۦ نَافِلَةً لَّكَ عَسَىٰٓ أَن يَبْعَثَكَ رَبُّكَ مَقَامًا مَّحْمُودًا',
     phonetic: 'Wa mina-l-layli fa-tahajjad bihî nâfilatan lak, ‘asâ an yab‘athaka rabbuka maqâman mahmûdâ',
-    text: 'Et de la nuit consacre une partie [avant l’aube] pour des Salât surérogatoires : afin que ton Seigneur te ressuscite en une position de gloire.',
+    text: 'Et de la nuit consacre une partie [avant l’aube] pour des prières surérogatoires afin que ton Seigneur te ressuscite en une position de gloire.',
     source: 'Sourate Al-Isra, 17:79',
   },
   {
@@ -41,7 +41,7 @@ export const NIGHT_VERSES: Source[] = [
   {
     arabic: 'وَٱلَّذِينَ يَبِيتُونَ لِرَبِّهِمْ سُجَّدًا وَقِيَٰمًا',
     phonetic: 'Wa-lladhîna yabîtûna li-rabbihim sujjadan wa qiyâmâ',
-    text: '[Ceux] qui passent les nuits prosternés et debout devant leur Seigneur.',
+    text: 'Ceux qui passent les nuits prosternés et debout devant leur Seigneur.',
     source: 'Sourate Al-Furqan, 25:64',
   },
 ];
