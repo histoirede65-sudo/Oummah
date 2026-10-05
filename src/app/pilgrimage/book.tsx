@@ -19,26 +19,27 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { InvocationCard, PointRow, SectionTitle, TEXT_SCALES, TextScaleContext, useScaled } from "../../components/pilgrimage/PilgrimBits";
 import { PilgrimVisual } from "../../components/pilgrimage/PilgrimVisual";
 import { pil, pilType } from "../../components/pilgrimage/theme";
-import { BOOKS, bookPages, HAJJ_TYPE_LABELS, hajjTypeGuidance, type BookPage } from "../../features/pilgrimage/pilgrimageBook";
-import { INVOCATIONS_BY_ID } from "../../features/pilgrimage/pilgrimageInvocations";
+import { bookPages, type BookPage } from "../../features/pilgrimage/pilgrimageBook";
+import { usePilgrimageContent } from "../../features/pilgrimage/pilgrimageI18n";
 import { updatePilgrimageState, usePilgrimageState } from "../../features/pilgrimage/pilgrimageStorage";
 import type { HajjType, Point, Rite, Step, Tool } from "../../features/pilgrimage/pilgrimageTypes";
+import { useI18n, type TranslationKey } from "../../i18n";
 
-const TOOL_LABELS: Record<Tool, string> = {
-  tawaf: "Ouvrir le compteur de Tawâf",
-  sai: "Ouvrir le compteur de Sa‘y",
-  jamarat: "Ouvrir le compteur des Jamarât",
-  miqat: "Alerte mîqât en avion",
+const TOOL_LABELS: Record<Tool, TranslationKey> = {
+  tawaf: "pilgrimage.book.toolTawaf",
+  sai: "pilgrimage.book.toolSai",
+  jamarat: "pilgrimage.book.toolJamarat",
+  miqat: "pilgrimage.book.toolMiqat",
 };
 
-function onlyLabel(only: HajjType[]) {
-  return only.map((type) => HAJJ_TYPE_LABELS[type].title).join(" · ");
-}
+const HAJJ_TYPES: HajjType[] = ["tamattu", "qiran", "ifrad"];
 
 export default function PilgrimageBookScreen() {
   const params = useLocalSearchParams<{ rite?: string; step?: string }>();
   const rite: Rite = params.rite === "hajj" ? "hajj" : "umrah";
-  const book = BOOKS[rite];
+  const { t } = useI18n();
+  const { books, typeLabel } = usePilgrimageContent();
+  const book = books[rite];
   const state = usePilgrimageState();
   const hajjType = rite === "hajj" ? state?.hajjType ?? null : null;
   const pages = useMemo(() => bookPages(book, hajjType), [book, hajjType]);
@@ -133,29 +134,35 @@ export default function PilgrimageBookScreen() {
     return { chapter, total: inChapter.length, done: inChapter.filter((item) => done.has(item.step.id)).length, first: inChapter[0]?.index ?? 0 };
   }).filter((item) => item.total > 0);
   const isDone = done.has(page.step.id);
+  const doneCount = pages.filter((item) => done.has(item.step.id)).length;
+  const progressLabel = !doneCount
+    ? t("pilgrimage.book.progressSwipe", { step: index + 1, total: pages.length })
+    : doneCount > 1
+      ? t("pilgrimage.book.progressDoneMany", { step: index + 1, total: pages.length, done: doneCount })
+      : t("pilgrimage.book.progressDoneOne", { step: index + 1, total: pages.length });
 
   return (
     <View style={styles.screen}>
       {/* Fixed header: where am I in the book. */}
       <View style={[styles.header, { paddingTop: insets.top + 6 }]}>
         <View style={styles.headerRow}>
-          <Pressable accessibilityRole="button" accessibilityLabel="Retour" onPress={() => router.back()} hitSlop={8} style={styles.iconButton}>
+          <Pressable accessibilityRole="button" accessibilityLabel={t("common.back")} onPress={() => router.back()} hitSlop={8} style={styles.iconButton}>
             <Ionicons name="chevron-back" size={22} color="#FFFFFF" />
           </Pressable>
           <View style={styles.headerCopy}>
-            <Text style={styles.headerTitle}>{book.title}{hajjType ? ` · ${HAJJ_TYPE_LABELS[hajjType].title}` : ""}</Text>
+            <Text style={styles.headerTitle}>{book.title}{hajjType ? ` · ${typeLabel(hajjType).title}` : ""}</Text>
             <Text numberOfLines={1} style={styles.headerChapter}>{page.chapter.title}</Text>
           </View>
           <Pressable
             accessibilityRole="button"
-            accessibilityLabel="Taille du texte"
+            accessibilityLabel={t("pilgrimage.book.textSize")}
             onPress={() => setSizeOpen((value) => !value)}
             hitSlop={8}
             style={[styles.iconButton, sizeOpen && styles.iconButtonActive]}
           >
             <Text style={[styles.aaText, sizeOpen && styles.aaTextActive]}>Aa</Text>
           </Pressable>
-          <Pressable accessibilityRole="button" accessibilityLabel="Sommaire" onPress={() => setTocVisible(true)} hitSlop={8} style={styles.iconButton}>
+          <Pressable accessibilityRole="button" accessibilityLabel={t("pilgrimage.book.contents")} onPress={() => setTocVisible(true)} hitSlop={8} style={styles.iconButton}>
             <Ionicons name="list" size={21} color="#FFFFFF" />
           </Pressable>
         </View>
@@ -178,7 +185,7 @@ export default function PilgrimageBookScreen() {
         </View>
         {sizeOpen ? (
           <View style={styles.sizeBar}>
-            <Pressable accessibilityRole="button" accessibilityLabel="Texte plus petit" disabled={scaleIndex === 0} onPress={() => setScale(scaleIndex - 1)} style={[styles.sizeButton, scaleIndex === 0 && styles.disabled]}>
+            <Pressable accessibilityRole="button" accessibilityLabel={t("pilgrimage.book.textSmaller")} disabled={scaleIndex === 0} onPress={() => setScale(scaleIndex - 1)} style={[styles.sizeButton, scaleIndex === 0 && styles.disabled]}>
               <Text style={styles.sizeSmall}>A−</Text>
             </Pressable>
             <View style={styles.sizeDots}>
@@ -186,12 +193,12 @@ export default function PilgrimageBookScreen() {
                 <Pressable key={value} onPress={() => setScale(dot)} hitSlop={6} style={[styles.sizeDot, dot <= scaleIndex && styles.sizeDotOn]} />
               ))}
             </View>
-            <Pressable accessibilityRole="button" accessibilityLabel="Texte plus grand" disabled={scaleIndex === TEXT_SCALES.length - 1} onPress={() => setScale(scaleIndex + 1)} style={[styles.sizeButton, scaleIndex === TEXT_SCALES.length - 1 && styles.disabled]}>
+            <Pressable accessibilityRole="button" accessibilityLabel={t("pilgrimage.book.textLarger")} disabled={scaleIndex === TEXT_SCALES.length - 1} onPress={() => setScale(scaleIndex + 1)} style={[styles.sizeButton, scaleIndex === TEXT_SCALES.length - 1 && styles.disabled]}>
               <Text style={styles.sizeLarge}>A+</Text>
             </Pressable>
           </View>
         ) : null}
-        <Text style={styles.progressText}>Étape {index + 1} sur {pages.length} · {done.size ? `${pages.filter((item) => done.has(item.step.id)).length} faite${done.size > 1 ? "s" : ""}` : "glissez pour tourner les pages"}</Text>
+        <Text style={styles.progressText}>{progressLabel}</Text>
       </View>
 
       <TextScaleContext.Provider value={textScale}>
@@ -226,14 +233,14 @@ export default function PilgrimageBookScreen() {
 
       {/* Fixed footer: previous · done · next. */}
       <View style={[styles.footer, { paddingBottom: insets.bottom + 10 }]}>
-        <Pressable accessibilityRole="button" accessibilityLabel="Étape précédente" disabled={index === 0} onPress={() => goTo(index - 1)} style={[styles.navButton, index === 0 && styles.disabled]}>
+        <Pressable accessibilityRole="button" accessibilityLabel={t("pilgrimage.book.previousStep")} disabled={index === 0} onPress={() => goTo(index - 1)} style={[styles.navButton, index === 0 && styles.disabled]}>
           <Ionicons name="chevron-back" size={22} color="#FFFFFF" />
         </Pressable>
         <Pressable accessibilityRole="button" onPress={toggleDone} style={({ pressed }) => [styles.doneButton, isDone && styles.doneButtonDone, pressed && styles.pressed]}>
           <Ionicons name={isDone ? "checkmark-circle" : "checkmark-circle-outline"} size={21} color={isDone ? pil.green : pil.ink} />
-          <Text style={[styles.doneText, isDone && styles.doneTextDone]}>{isDone ? "Étape faite" : "J’ai fait cette étape"}</Text>
+          <Text style={[styles.doneText, isDone && styles.doneTextDone]}>{isDone ? t("pilgrimage.book.stepDone") : t("pilgrimage.book.markDone")}</Text>
         </Pressable>
-        <Pressable accessibilityRole="button" accessibilityLabel="Étape suivante" disabled={index === pages.length - 1} onPress={() => goTo(index + 1)} style={[styles.navButton, index === pages.length - 1 && styles.disabled]}>
+        <Pressable accessibilityRole="button" accessibilityLabel={t("pilgrimage.book.nextStep")} disabled={index === pages.length - 1} onPress={() => goTo(index + 1)} style={[styles.navButton, index === pages.length - 1 && styles.disabled]}>
           <Ionicons name="chevron-forward" size={22} color="#FFFFFF" />
         </Pressable>
       </View>
@@ -258,10 +265,10 @@ export default function PilgrimageBookScreen() {
           <View style={styles.finishCard}>
             <PilgrimVisual visual="done" />
             <Text style={styles.finishArabic}>تقبل الله منا ومنكم</Text>
-            <Text style={styles.finishTitle}>{rite === "hajj" ? "Votre Hajj est parcouru" : "Votre ‘Umra est parcourue"}</Text>
-            <Text style={styles.finishText}>Qu’Allah l’accepte et vous en accorde la récompense. Ce suivi reste une aide-mémoire : pour toute situation particulière, demandez à une personne qualifiée.</Text>
+            <Text style={styles.finishTitle}>{rite === "hajj" ? t("pilgrimage.book.finishHajj") : t("pilgrimage.book.finishUmrah")}</Text>
+            <Text style={styles.finishText}>{t("pilgrimage.book.finishText")}</Text>
             <Pressable onPress={() => setFinished(false)} style={styles.finishButton}>
-              <Text style={styles.finishButtonText}>Âmîn</Text>
+              <Text style={styles.finishButtonText}>{t("pilgrimage.book.amin")}</Text>
             </Pressable>
           </View>
         </View>
@@ -282,17 +289,19 @@ const BookPageView = memo(function BookPageView({ page, width, total, done, hajj
 }) {
   const { step, chapter, chapterIndex, index } = page;
   const scaled = useScaled();
+  const { t } = useI18n();
+  const { invocationsById, typeLabel } = usePilgrimageContent();
   const warnings = [...(step.avoid ?? []), ...(step.mistakes ?? [])];
   return (
     <ScrollView style={{ width }} contentContainerStyle={[styles.page, { paddingBottom: 110 + bottomInset }]} showsVerticalScrollIndicator={false}>
-      <Text style={styles.chapterEyebrow}>CHAPITRE {chapterIndex + 1} · {chapter.marker.toUpperCase()}</Text>
+      <Text style={styles.chapterEyebrow}>{t("pilgrimage.book.chapterEyebrow", { number: chapterIndex + 1, marker: chapter.marker.toUpperCase() })}</Text>
       <View style={styles.titleRow}>
         <Text style={scaled(styles.stepTitle)}>{step.title}</Text>
         {done ? <Ionicons name="checkmark-circle" size={26} color={pil.green} /> : null}
       </View>
       <View style={styles.metaRow}>
-        <Text style={styles.stepCount}>Étape {index + 1} / {total}</Text>
-        {step.only ? <Text style={styles.onlyBadge}>{onlyLabel(step.only)}</Text> : null}
+        <Text style={styles.stepCount}>{t("pilgrimage.book.stepCount", { step: index + 1, total })}</Text>
+        {step.only ? <Text style={styles.onlyBadge}>{step.only.map((type) => typeLabel(type).title).join(" · ")}</Text> : null}
       </View>
 
       <View style={styles.visual}>
@@ -306,7 +315,7 @@ const BookPageView = memo(function BookPageView({ page, width, total, done, hajj
 
       {rite === "hajj" && step.id === "types" ? <TypeChooser value={hajjType} onChoose={onChooseType} /> : null}
 
-      <SectionTitle icon="footsteps-outline">Ce que je fais</SectionTitle>
+      <SectionTitle icon="footsteps-outline">{t("pilgrimage.book.whatIDo")}</SectionTitle>
       {step.todo.map((point, pointIndex) => <PointRow key={pointIndex} point={point} index={pointIndex} />)}
 
       {step.tool ? (
@@ -316,7 +325,7 @@ const BookPageView = memo(function BookPageView({ page, width, total, done, hajj
           style={({ pressed }) => [styles.toolButton, pressed && styles.pressed]}
         >
           <Ionicons name="finger-print-outline" size={22} color={pil.ink} />
-          <Text style={styles.toolButtonText}>{TOOL_LABELS[step.tool]}</Text>
+          <Text style={styles.toolButtonText}>{t(TOOL_LABELS[step.tool])}</Text>
           <Ionicons name="arrow-forward" size={18} color={pil.ink} />
         </Pressable>
       ) : null}
@@ -328,15 +337,15 @@ const BookPageView = memo(function BookPageView({ page, width, total, done, hajj
           style={({ pressed }) => [styles.duasButton, pressed && styles.pressed]}
         >
           <Ionicons name="heart-outline" size={21} color={pil.gold} />
-          <Text style={styles.duasButtonText}>Mes dou‘as à faire</Text>
+          <Text style={styles.duasButtonText}>{t("pilgrimage.duasTitle")}</Text>
           <Ionicons name="chevron-forward" size={18} color={pil.gold} />
         </Pressable>
       ) : null}
 
       {step.say?.length ? (
         <>
-          <SectionTitle icon="chatbubble-ellipses-outline">Ce que je dis</SectionTitle>
-          {step.say.map((id) => INVOCATIONS_BY_ID[id] ? <InvocationCard key={id} invocation={INVOCATIONS_BY_ID[id]} /> : null)}
+          <SectionTitle icon="chatbubble-ellipses-outline">{t("pilgrimage.book.whatISay")}</SectionTitle>
+          {step.say.map((id) => invocationsById[id] ? <InvocationCard key={id} invocation={invocationsById[id]} /> : null)}
         </>
       ) : null}
 
@@ -344,7 +353,7 @@ const BookPageView = memo(function BookPageView({ page, width, total, done, hajj
 
       {step.notes?.length ? (
         <>
-          <SectionTitle icon="bulb-outline">Bon à savoir</SectionTitle>
+          <SectionTitle icon="bulb-outline">{t("pilgrimage.book.goodToKnow")}</SectionTitle>
           <View style={styles.card}>
             {step.notes.map((point, pointIndex) => <PointRow key={pointIndex} point={point} bullet="sparkles-outline" />)}
           </View>
@@ -353,7 +362,7 @@ const BookPageView = memo(function BookPageView({ page, width, total, done, hajj
 
       {warnings.length ? (
         <>
-          <SectionTitle icon="alert-circle-outline" color={pil.red}>À éviter</SectionTitle>
+          <SectionTitle icon="alert-circle-outline" color={pil.red}>{t("pilgrimage.book.avoid")}</SectionTitle>
           <View style={[styles.card, styles.warningCard]}>
             {warnings.map((point, pointIndex) => <PointRow key={pointIndex} point={point} bullet="close-circle-outline" />)}
           </View>
@@ -364,7 +373,7 @@ const BookPageView = memo(function BookPageView({ page, width, total, done, hajj
 
       {index === total - 1 ? null : (
         <View style={styles.turnHint}>
-          <Text style={styles.turnHintText}>Glissez vers la gauche pour l’étape suivante</Text>
+          <Text style={styles.turnHintText}>{t("pilgrimage.book.turnHint")}</Text>
           <Ionicons name="arrow-forward" size={16} color={pil.muted} />
         </View>
       )}
@@ -373,11 +382,13 @@ const BookPageView = memo(function BookPageView({ page, width, total, done, hajj
 });
 
 function TypeChooser({ value, onChoose }: { value: HajjType | null; onChoose: (type: HajjType) => void }) {
+  const { t } = useI18n();
+  const { typeLabel, typeText } = usePilgrimageContent();
   return (
     <View style={styles.typeChooser}>
-      <Text style={styles.typeChooserTitle}>Quel Hajj accomplissez-vous ?</Text>
-      <Text style={styles.typeChooserHint}>Le livre s’adapte à votre choix : seules les étapes qui vous concernent sont affichées.</Text>
-      {(Object.keys(HAJJ_TYPE_LABELS) as HajjType[]).map((type) => {
+      <Text style={styles.typeChooserTitle}>{t("pilgrimage.book.typeQuestion")}</Text>
+      <Text style={styles.typeChooserHint}>{t("pilgrimage.book.typeHint")}</Text>
+      {HAJJ_TYPES.map((type) => {
         const selected = value === type;
         return (
           <Pressable
@@ -388,12 +399,12 @@ function TypeChooser({ value, onChoose }: { value: HajjType | null; onChoose: (t
             style={({ pressed }) => [styles.typeCard, selected && styles.typeCardSelected, pressed && styles.pressed]}
           >
             <View style={styles.typeCardHead}>
-              <Text style={styles.typeCardTitle}>{HAJJ_TYPE_LABELS[type].title}</Text>
-              <Text style={styles.typeCardArabic}>{HAJJ_TYPE_LABELS[type].arabic}</Text>
+              <Text style={styles.typeCardTitle}>{typeLabel(type).title}</Text>
+              <Text style={styles.typeCardArabic}>{typeLabel(type).arabic}</Text>
               <Ionicons name={selected ? "radio-button-on" : "radio-button-off"} size={22} color={selected ? pil.gold : "#FFFFFF"} />
             </View>
-            <Text style={styles.typeCardShort}>{HAJJ_TYPE_LABELS[type].short}</Text>
-            {selected ? <Text style={styles.typeCardGuidance}>{hajjTypeGuidance(type)}</Text> : null}
+            <Text style={styles.typeCardShort}>{typeLabel(type).short}</Text>
+            {selected ? <Text style={styles.typeCardGuidance}>{typeText(type)}</Text> : null}
           </Pressable>
         );
       })}
@@ -404,12 +415,13 @@ function TypeChooser({ value, onChoose }: { value: HajjType | null; onChoose: (t
 function MenWomen({ men, women }: { men?: Point[]; women?: Point[] }) {
   const [tab, setTab] = useState<"men" | "women">(men?.length ? "men" : "women");
   const items = tab === "men" ? men : women;
+  const { t } = useI18n();
   return (
     <>
-      <SectionTitle icon="people-outline">Hommes et femmes</SectionTitle>
+      <SectionTitle icon="people-outline">{t("pilgrimage.book.menWomen")}</SectionTitle>
       <View style={styles.card}>
         <View style={styles.tabs}>
-          {([["men", "Pour les hommes", men], ["women", "Pour les femmes", women]] as const).map(([id, label, list]) => (
+          {([["men", t("pilgrimage.book.forMen"), men], ["women", t("pilgrimage.book.forWomen"), women]] as const).map(([id, label, list]) => (
             <Pressable
               key={id}
               disabled={!list?.length}
@@ -428,9 +440,10 @@ function MenWomen({ men, women }: { men?: Point[]; women?: Point[] }) {
 
 function Difference({ difference }: { difference: NonNullable<Step["differences"]>[number] }) {
   const [open, setOpen] = useState(false);
+  const { t } = useI18n();
   return (
     <>
-      <SectionTitle icon="git-compare-outline">Avis des savants</SectionTitle>
+      <SectionTitle icon="git-compare-outline">{t("pilgrimage.book.scholars")}</SectionTitle>
       <Pressable onPress={() => setOpen((value) => !value)} style={styles.card}>
         <View style={styles.differenceHead}>
           <Text style={styles.differenceQuestion}>{difference.question}</Text>
@@ -449,7 +462,7 @@ function Difference({ difference }: { difference: NonNullable<Step["differences"
             {difference.practicalNote ? <Text style={styles.practicalNote}>{difference.practicalNote}</Text> : null}
           </>
         ) : (
-          <Text style={styles.differenceMore}>Voir les avis</Text>
+          <Text style={styles.differenceMore}>{t("pilgrimage.book.seeViews")}</Text>
         )}
       </Pressable>
     </>
@@ -468,6 +481,8 @@ function TableOfContents({ visible, onClose, pages, current, done, rite, hajjTyp
   onSelect: (index: number) => void;
 }) {
   const insets = useSafeAreaInsets();
+  const { t } = useI18n();
+  const { typeLabel } = usePilgrimageContent();
   const chapters = pages.reduce<Array<{ title: string; marker: string; pages: BookPage[] }>>((list, page) => {
     const last = list[list.length - 1];
     if (last && last.title === page.chapter.title) last.pages.push(page);
@@ -477,20 +492,20 @@ function TableOfContents({ visible, onClose, pages, current, done, rite, hajjTyp
   return (
     <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose} statusBarTranslucent>
       <View style={styles.tocBackdrop}>
-        <Pressable style={StyleSheet.absoluteFill} onPress={onClose} accessibilityLabel="Fermer le sommaire" />
+        <Pressable style={StyleSheet.absoluteFill} onPress={onClose} accessibilityLabel={t("pilgrimage.book.closeContents")} />
         <View style={[styles.toc, { paddingBottom: insets.bottom + 12 }]}>
           <View style={styles.tocHandle} />
           <View style={styles.tocHead}>
-            <Text style={styles.tocTitle}>Sommaire</Text>
-            <Pressable onPress={onClose} hitSlop={8} style={styles.iconButton}>
+            <Text style={styles.tocTitle}>{t("pilgrimage.book.contents")}</Text>
+            <Pressable onPress={onClose} accessibilityLabel={t("pilgrimage.close")} hitSlop={8} style={styles.iconButton}>
               <Ionicons name="close" size={21} color="#FFFFFF" />
             </Pressable>
           </View>
           {rite === "hajj" ? (
             <View style={styles.tocTypes}>
-              {(Object.keys(HAJJ_TYPE_LABELS) as HajjType[]).map((type) => (
+              {HAJJ_TYPES.map((type) => (
                 <Pressable key={type} onPress={() => onChooseType(type)} style={[styles.tocType, hajjType === type && styles.tocTypeActive]}>
-                  <Text style={[styles.tocTypeText, hajjType === type && styles.tocTypeTextActive]}>{HAJJ_TYPE_LABELS[type].title}</Text>
+                  <Text style={[styles.tocTypeText, hajjType === type && styles.tocTypeTextActive]}>{typeLabel(type).title}</Text>
                 </Pressable>
               ))}
             </View>
@@ -498,7 +513,7 @@ function TableOfContents({ visible, onClose, pages, current, done, rite, hajjTyp
           <ScrollView showsVerticalScrollIndicator={false}>
             {chapters.map((chapter, chapterIndex) => (
               <View key={chapter.title} style={styles.tocChapter}>
-                <Text style={styles.tocChapterEyebrow}>CHAPITRE {chapterIndex + 1} · {chapter.marker.toUpperCase()}</Text>
+                <Text style={styles.tocChapterEyebrow}>{t("pilgrimage.book.chapterEyebrow", { number: chapterIndex + 1, marker: chapter.marker.toUpperCase() })}</Text>
                 <Text style={styles.tocChapterTitle}>{chapter.title}</Text>
                 {chapter.pages.map((page) => {
                   const isCurrent = page.index === current;

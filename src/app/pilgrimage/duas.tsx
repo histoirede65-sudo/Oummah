@@ -18,16 +18,26 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { pil, pilType } from "../../components/pilgrimage/theme";
+import { sourceReference } from "../../features/pilgrimage/pilgrimageI18n";
 import { updatePilgrimageState, usePilgrimageState, type DuaRequest } from "../../features/pilgrimage/pilgrimageStorage";
+import { useI18n, type LanguageCode } from "../../i18n";
 
-/** Where the dua was made: offered when it is ticked. */
+/** Where the dua was made: offered when it is ticked. The French name is what is stored. */
 const PLACES = ["‘Arafa", "Multazam", "Tawâf", "Sa‘y", "Zamzam", "Rawda", "Sujûd", "Ailleurs"] as const;
+const ELSEWHERE = "Ailleurs";
+const PLACES_EN: Record<string, string> = {
+  "‘Arafa": "‘Arafah", Multazam: "Multazam", "Tawâf": "Tawaf", "Sa‘y": "Sa‘y", Zamzam: "Zamzam", Rawda: "Rawdah", "Sujûd": "Sujud", Ailleurs: "Elsewhere",
+};
 
-const formatDate = (timestamp: number) => new Date(timestamp).toLocaleDateString("fr-FR", { day: "numeric", month: "long" });
+const placeLabel = (place: string, language: LanguageCode) => (language === "en" ? PLACES_EN[place] ?? place : place);
+
+const formatDate = (timestamp: number, language: LanguageCode) =>
+  new Date(timestamp).toLocaleDateString(language === "en" ? "en-GB" : "fr-FR", { day: "numeric", month: "long" });
 
 export default function PilgrimageDuas() {
   const insets = useSafeAreaInsets();
   const state = usePilgrimageState();
+  const { language, t } = useI18n();
   const [person, setPerson] = useState("");
   const [request, setRequest] = useState("");
   const [tab, setTab] = useState<"todo" | "done">("todo");
@@ -89,36 +99,38 @@ export default function PilgrimageDuas() {
   };
 
   const tell = (item: DuaRequest) => {
-    const where = item.place && item.place !== "Ailleurs" ? ` (${item.place})` : "";
+    const where = item.place && item.place !== ELSEWHERE ? ` (${placeLabel(item.place, language)})` : "";
     void Share.share({
-      message: `${item.person ? `${item.person}, j’ai` : "J’ai"} fait ta dou‘a${where} : « ${item.request} ». Qu’Allah l’exauce. 🤲`,
+      message: item.person
+        ? t("pilgrimage.duas.shareNamed", { person: item.person, where, request: item.request })
+        : t("pilgrimage.duas.share", { where, request: item.request }),
     }).catch(() => undefined);
   };
 
   return (
     <KeyboardAvoidingView style={styles.screen} behavior={Platform.OS === "ios" ? "padding" : undefined}>
       <View style={[styles.header, { paddingTop: insets.top + 6 }]}>
-        <Pressable accessibilityRole="button" accessibilityLabel="Retour" onPress={() => router.back()} hitSlop={8} style={styles.iconButton}>
+        <Pressable accessibilityRole="button" accessibilityLabel={t("common.back")} onPress={() => router.back()} hitSlop={8} style={styles.iconButton}>
           <Ionicons name="chevron-back" size={22} color="#FFFFFF" />
         </Pressable>
         <View style={styles.headerCopy}>
-          <Text style={styles.eyebrow}>CONFIÉES PAR VOS PROCHES</Text>
-          <Text style={styles.title}>Mes dou‘as à faire</Text>
+          <Text style={styles.eyebrow}>{t("pilgrimage.duas.eyebrow")}</Text>
+          <Text style={styles.title}>{t("pilgrimage.duasTitle")}</Text>
         </View>
       </View>
 
       <ScrollView contentContainerStyle={[styles.content, { paddingBottom: insets.bottom + 40 }]} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
         <View style={styles.hadith}>
           <Ionicons name="sparkles" size={18} color={pil.gold} />
-          <Text style={styles.hadithText}>« La prière d’un musulman pour son frère en son absence est exaucée tant qu’il invoque pour lui une bénédiction, et l’Ange chargé dit : “Amine, et que ce soit aussi pour toi.” »</Text>
-          <Text style={styles.hadithSource}>Sahîh Muslim 2733</Text>
+          <Text style={styles.hadithText}>{language === "fr" ? `« ${t("pilgrimage.duas.hadith")} »` : `“${t("pilgrimage.duas.hadith")}”`}</Text>
+          <Text style={styles.hadithSource}>{sourceReference("Sahîh Muslim 2733", language)}</Text>
         </View>
 
         <View style={styles.form}>
           <TextInput
             value={person}
             onChangeText={setPerson}
-            placeholder="Pour qui ? (Maman, Karim… ou laissez vide)"
+            placeholder={t("pilgrimage.duas.personPlaceholder")}
             placeholderTextColor="rgba(255,255,255,0.55)"
             style={styles.input}
             maxLength={40}
@@ -126,7 +138,7 @@ export default function PilgrimageDuas() {
           <TextInput
             value={request}
             onChangeText={setRequest}
-            placeholder="Que demander pour cette personne ?"
+            placeholder={t("pilgrimage.duas.requestPlaceholder")}
             placeholderTextColor="rgba(255,255,255,0.55)"
             style={[styles.input, styles.inputMultiline]}
             multiline
@@ -134,12 +146,12 @@ export default function PilgrimageDuas() {
           />
           <Pressable accessibilityRole="button" disabled={!request.trim()} onPress={add} style={({ pressed }) => [styles.addButton, !request.trim() && styles.disabled, pressed && styles.pressed]}>
             <Ionicons name="add" size={20} color={pil.ink} />
-            <Text style={styles.addText}>Ajouter à ma liste</Text>
+            <Text style={styles.addText}>{t("pilgrimage.duas.add")}</Text>
           </Pressable>
         </View>
 
         <View style={styles.tabs}>
-          {([["todo", `À faire · ${todo.length}`], ["done", `Faites · ${done.length}`]] as const).map(([id, label]) => (
+          {([["todo", t("pilgrimage.duas.tabTodo", { count: todo.length })], ["done", t("pilgrimage.duas.tabDone", { count: done.length })]] as const).map(([id, label]) => (
             <Pressable key={id} onPress={() => setTab(id)} style={[styles.tab, tab === id && styles.tabActive]}>
               <Text style={[styles.tabText, tab === id && styles.tabTextActive]}>{label}</Text>
             </Pressable>
@@ -149,7 +161,7 @@ export default function PilgrimageDuas() {
         {tab === "todo" && todo.length > 0 ? (
           <Pressable accessibilityRole="button" onPress={() => setReading(true)} style={({ pressed }) => [styles.readButton, pressed && styles.pressed]}>
             <Ionicons name="book-outline" size={19} color={pil.gold} />
-            <Text style={styles.readText}>Lire ma liste en grand, sur place</Text>
+            <Text style={styles.readText}>{t("pilgrimage.duas.readLarge")}</Text>
             <Ionicons name="chevron-forward" size={17} color={pil.gold} />
           </Pressable>
         ) : null}
@@ -158,21 +170,21 @@ export default function PilgrimageDuas() {
           <View key={item.id} style={[styles.card, item.doneAt ? styles.cardDone : null]}>
             <View style={styles.cardHead}>
               <View style={styles.avatar}>
-                <Text style={styles.avatarText}>{(item.person || "Moi").slice(0, 1).toUpperCase()}</Text>
+                <Text style={styles.avatarText}>{(item.person || t("pilgrimage.duas.me")).slice(0, 1).toUpperCase()}</Text>
               </View>
-              <Text style={styles.person}>{item.person || "Pour moi"}</Text>
-              <Pressable accessibilityRole="button" accessibilityLabel="Supprimer" onPress={() => remove(item.id)} hitSlop={8} style={[styles.deleteButton, confirmDelete === item.id && styles.deleteConfirm]}>
-                {confirmDelete === item.id ? <Text style={styles.deleteConfirmText}>Supprimer ?</Text> : <Ionicons name="trash-outline" size={17} color="#FFFFFF" />}
+              <Text style={styles.person}>{item.person || t("pilgrimage.duas.forMe")}</Text>
+              <Pressable accessibilityRole="button" accessibilityLabel={t("pilgrimage.duas.delete")} onPress={() => remove(item.id)} hitSlop={8} style={[styles.deleteButton, confirmDelete === item.id && styles.deleteConfirm]}>
+                {confirmDelete === item.id ? <Text style={styles.deleteConfirmText}>{t("pilgrimage.duas.deleteConfirm")}</Text> : <Ionicons name="trash-outline" size={17} color="#FFFFFF" />}
               </Pressable>
             </View>
             <Text style={styles.request}>{item.request}</Text>
             {item.doneAt ? (
               <View style={styles.doneRow}>
                 <Ionicons name="checkmark-circle" size={18} color={pil.green} />
-                <Text style={styles.doneText}>Faite{item.place ? ` · ${item.place}` : ""} · {formatDate(item.doneAt)}</Text>
+                <Text style={styles.doneText}>{t("pilgrimage.duas.done")}{item.place ? ` · ${placeLabel(item.place, language)}` : ""} · {formatDate(item.doneAt, language)}</Text>
                 <Pressable onPress={() => tell(item)} hitSlop={6} style={styles.smallButton}>
                   <Ionicons name="paper-plane-outline" size={15} color={pil.ink} />
-                  <Text style={styles.smallButtonText}>Prévenir</Text>
+                  <Text style={styles.smallButtonText}>{t("pilgrimage.duas.tell")}</Text>
                 </Pressable>
                 <Pressable onPress={() => undo(item.id)} hitSlop={6}>
                   <Ionicons name="arrow-undo-outline" size={18} color="#FFFFFF" />
@@ -181,7 +193,7 @@ export default function PilgrimageDuas() {
             ) : (
               <Pressable accessibilityRole="button" onPress={() => setPlacing(item)} style={({ pressed }) => [styles.doneButton, pressed && styles.pressed]}>
                 <Ionicons name="hand-left-outline" size={18} color={pil.ink} />
-                <Text style={styles.doneButtonText}>Je l’ai faite</Text>
+                <Text style={styles.doneButtonText}>{t("pilgrimage.duas.markDone")}</Text>
               </Pressable>
             )}
           </View>
@@ -191,9 +203,7 @@ export default function PilgrimageDuas() {
           <View style={styles.empty}>
             <Ionicons name={tab === "todo" ? "heart-outline" : "hourglass-outline"} size={32} color={pil.gold} />
             <Text style={styles.emptyText}>
-              {tab === "todo"
-                ? "Notez ici les dou‘as que vos proches vous confient avant le départ. Vous les retrouverez à ‘Arafa, devant la Kaaba ou pendant le Sa‘y."
-                : "Les dou‘as faites apparaîtront ici, avec le lieu et la date."}
+              {tab === "todo" ? t("pilgrimage.duas.emptyTodo") : t("pilgrimage.duas.emptyDone")}
             </Text>
           </View>
         ) : null}
@@ -204,7 +214,7 @@ export default function PilgrimageDuas() {
         <View style={styles.sheetBackdrop}>
           <Pressable style={StyleSheet.absoluteFill} onPress={() => setPlacing(null)} />
           <View style={[styles.sheet, { paddingBottom: insets.bottom + 18 }]}>
-            <Text style={styles.sheetTitle}>Où l’avez-vous faite ?</Text>
+            <Text style={styles.sheetTitle}>{t("pilgrimage.duas.whereTitle")}</Text>
             <Text numberOfLines={2} style={styles.sheetText}>{placing?.person ? `${placing.person} · ` : ""}{placing?.request}</Text>
             <View style={styles.places}>
               {PLACES.map((place) => (
@@ -216,7 +226,7 @@ export default function PilgrimageDuas() {
                   }}
                   style={({ pressed }) => [styles.place, pressed && styles.pressed]}
                 >
-                  <Text style={styles.placeText}>{place}</Text>
+                  <Text style={styles.placeText}>{placeLabel(place, language)}</Text>
                 </Pressable>
               ))}
             </View>
@@ -228,15 +238,15 @@ export default function PilgrimageDuas() {
       <Modal visible={reading} animationType="slide" onRequestClose={() => setReading(false)} statusBarTranslucent>
         <View style={[styles.reading, { paddingTop: insets.top + 10, paddingBottom: insets.bottom + 10 }]}>
           <View style={styles.readingHead}>
-            <Text style={styles.readingTitle}>{todo.length} dou‘a{todo.length > 1 ? "s" : ""} à faire</Text>
-            <Pressable onPress={() => setReading(false)} hitSlop={10} style={styles.iconButton}>
+            <Text style={styles.readingTitle}>{todo.length > 1 ? t("pilgrimage.duas.readingMany", { count: todo.length }) : t("pilgrimage.duas.readingOne")}</Text>
+            <Pressable onPress={() => setReading(false)} accessibilityLabel={t("pilgrimage.close")} hitSlop={10} style={styles.iconButton}>
               <Ionicons name="close" size={24} color="#FFFFFF" />
             </Pressable>
           </View>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.readingPlacesBar} contentContainerStyle={styles.readingPlaces}>
             {PLACES.map((place) => (
               <Pressable key={place} onPress={() => setReadingPlace(place)} style={[styles.readingPlace, readingPlace === place && styles.readingPlaceActive]}>
-                <Text style={[styles.readingPlaceText, readingPlace === place && styles.readingPlaceTextActive]}>{place}</Text>
+                <Text style={[styles.readingPlaceText, readingPlace === place && styles.readingPlaceTextActive]}>{placeLabel(place, language)}</Text>
               </Pressable>
             ))}
           </ScrollView>
@@ -247,11 +257,11 @@ export default function PilgrimageDuas() {
                 <Text style={styles.readingRequest}>{item.request}</Text>
                 <Pressable onPress={() => markDone(item.id, readingPlace)} style={({ pressed }) => [styles.readingDone, pressed && styles.pressed]}>
                   <Ionicons name="checkmark" size={22} color={pil.ink} />
-                  <Text style={styles.readingDoneText}>Faite</Text>
+                  <Text style={styles.readingDoneText}>{t("pilgrimage.duas.done")}</Text>
                 </Pressable>
               </View>
             ))}
-            {todo.length === 0 ? <Text style={styles.readingEnd}>Toutes vos dou‘as sont faites. Qu’Allah les exauce.</Text> : null}
+            {todo.length === 0 ? <Text style={styles.readingEnd}>{t("pilgrimage.duas.allDone")}</Text> : null}
           </ScrollView>
         </View>
       </Modal>

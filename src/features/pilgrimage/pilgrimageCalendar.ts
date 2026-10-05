@@ -4,17 +4,7 @@ import { getHijriDate } from "../calendar/IslamicCalendar";
 /** Where we are relative to the next Hajj, with the user's Hijri calendar settings. */
 export type HajjSeason =
   | { kind: "countdown"; days: number; arafa: Date; hijriYear: number; ramadan: boolean }
-  | { kind: "days"; dhulHijja: number; label: string; hijriYear: number };
-
-const DAY_LABELS: Record<number, string> = {
-  1: "Les dix premiers jours de Dhul-Hijja ont commencé",
-  8: "Jour de Tarwiya : les pèlerins rejoignent Mina",
-  9: "Jour de ‘Arafa",
-  10: "Jour du sacrifice — ‘Îd al-Adhâ",
-  11: "Premier jour de Tashrîq",
-  12: "Deuxième jour de Tashrîq",
-  13: "Dernier jour de Tashrîq",
-};
+  | { kind: "days"; dhulHijja: number; hijriYear: number };
 
 export async function getHajjSeason(now = new Date()): Promise<HajjSeason | null> {
   const settings = await loadCalendarSettings().catch(() => null);
@@ -22,8 +12,7 @@ export async function getHajjSeason(now = new Date()): Promise<HajjSeason | null
   const today = hijri(now);
 
   if (today.month === 12 && today.day <= 13) {
-    const label = DAY_LABELS[today.day] ?? (today.day < 8 ? DAY_LABELS[1] : "Les jours du Hajj");
-    return { kind: "days", dhulHijja: today.day, label, hijriYear: today.year };
+    return { kind: "days", dhulHijja: today.day, hijriYear: today.year };
   }
 
   const date = new Date(now);

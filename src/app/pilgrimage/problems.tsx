@@ -5,23 +5,25 @@ import { LayoutAnimation, Pressable, ScrollView, StyleSheet, Text, TextInput, Vi
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { pil, pilType } from "../../components/pilgrimage/theme";
-import { PROBLEM_CATEGORIES, PROBLEMS, PROBLEMS_DISCLAIMER, WHEN_TO_SEEK_HELP } from "../../features/pilgrimage/pilgrimageProblems";
+import { getProblems, PROBLEM_CATEGORIES, PROBLEMS_DISCLAIMER, WHEN_TO_SEEK_HELP } from "../../features/pilgrimage/pilgrimageProblems";
 import type { ProblemCategory } from "../../features/pilgrimage/pilgrimageTypes";
+import { useI18n } from "../../i18n";
 
 const normalize = (value: string) => value.normalize("NFD").replace(/[̀-ͯ‘’']/g, "").toLowerCase();
 
 export default function PilgrimageProblems() {
   const insets = useSafeAreaInsets();
+  const { language, t } = useI18n();
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState<ProblemCategory | null>(null);
   const [open, setOpen] = useState<string | null>(null);
 
   const shown = useMemo(() => {
     const words = normalize(query).split(/\s+/).filter(Boolean);
-    return PROBLEMS.filter((problem) =>
+    return getProblems(language).filter((problem) =>
       (!category || problem.category === category)
       && words.every((word) => normalize(`${problem.question} ${problem.whatToKnow} ${problem.whatToDoNow}`).includes(word)));
-  }, [category, query]);
+  }, [category, language, query]);
 
   const toggle = (id: string) => {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
@@ -31,12 +33,12 @@ export default function PilgrimageProblems() {
   return (
     <View style={[styles.screen, { paddingTop: insets.top + 6 }]}>
       <View style={styles.header}>
-        <Pressable accessibilityRole="button" accessibilityLabel="Retour" onPress={() => router.back()} hitSlop={8} style={styles.iconButton}>
+        <Pressable accessibilityRole="button" accessibilityLabel={t("common.back")} onPress={() => router.back()} hitSlop={8} style={styles.iconButton}>
           <Ionicons name="chevron-back" size={22} color="#FFFFFF" />
         </Pressable>
         <View style={styles.headerCopy}>
-          <Text style={styles.eyebrow}>PAS DE PANIQUE</Text>
-          <Text style={styles.title}>J’ai un doute</Text>
+          <Text style={styles.eyebrow}>{t("pilgrimage.problems.eyebrow")}</Text>
+          <Text style={styles.title}>{t("pilgrimage.tool.doubt")}</Text>
         </View>
       </View>
 
@@ -45,7 +47,7 @@ export default function PilgrimageProblems() {
         <TextInput
           value={query}
           onChangeText={setQuery}
-          placeholder="Parfum, tours, mîqât, règles…"
+          placeholder={t("pilgrimage.problems.search")}
           placeholderTextColor="rgba(255,255,255,0.55)"
           style={styles.searchInput}
           returnKeyType="search"
@@ -64,7 +66,7 @@ export default function PilgrimageProblems() {
           return (
             <Pressable key={id ?? "all"} onPress={() => setCategory(id)} style={[styles.filter, active && styles.filterActive]}>
               {item ? <Ionicons name={item.icon as keyof typeof Ionicons.glyphMap} size={15} color={active ? pil.ink : "#FFFFFF"} /> : null}
-              <Text style={[styles.filterText, active && styles.filterTextActive]}>{item?.label ?? "Tout"}</Text>
+              <Text style={[styles.filterText, active && styles.filterTextActive]}>{item ? item.label[language] : t("pilgrimage.all")}</Text>
             </Pressable>
           );
         })}
@@ -73,7 +75,7 @@ export default function PilgrimageProblems() {
       <ScrollView contentContainerStyle={[styles.content, { paddingBottom: insets.bottom + 30 }]} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
         <View style={styles.notice}>
           <Ionicons name="shield-checkmark-outline" size={20} color={pil.gold} />
-          <Text style={styles.noticeText}>{PROBLEMS_DISCLAIMER}</Text>
+          <Text style={styles.noticeText}>{PROBLEMS_DISCLAIMER[language]}</Text>
         </View>
 
         {shown.map((problem) => {
@@ -87,16 +89,16 @@ export default function PilgrimageProblems() {
               {expanded ? (
                 <>
                   <View style={styles.block}>
-                    <Text style={styles.blockLabel}>Ce qu’il faut savoir</Text>
+                    <Text style={styles.blockLabel}>{t("pilgrimage.problems.toKnow")}</Text>
                     <Text style={styles.blockText}>{problem.whatToKnow}</Text>
                   </View>
                   <View style={[styles.block, styles.blockAction]}>
-                    <Text style={[styles.blockLabel, styles.blockLabelAction]}>Que faire maintenant</Text>
+                    <Text style={[styles.blockLabel, styles.blockLabelAction]}>{t("pilgrimage.problems.toDo")}</Text>
                     <Text style={styles.blockText}>{problem.whatToDoNow}</Text>
                   </View>
                   <View style={styles.help}>
                     <Ionicons name="people-outline" size={17} color={pil.red} />
-                    <Text style={styles.helpText}>{WHEN_TO_SEEK_HELP}</Text>
+                    <Text style={styles.helpText}>{WHEN_TO_SEEK_HELP[language]}</Text>
                   </View>
                 </>
               ) : null}
@@ -106,7 +108,7 @@ export default function PilgrimageProblems() {
         {shown.length === 0 ? (
           <View style={styles.empty}>
             <Ionicons name="chatbubbles-outline" size={30} color={pil.gold} />
-            <Text style={styles.emptyText}>Aucune situation ne correspond. Pour un cas particulier, demandez à votre guide ou à une personne qualifiée.</Text>
+            <Text style={styles.emptyText}>{t("pilgrimage.problems.empty")}</Text>
           </View>
         ) : null}
       </ScrollView>

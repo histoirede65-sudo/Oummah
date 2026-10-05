@@ -8,10 +8,12 @@ import Svg, { Circle } from "react-native-svg";
 import { pil, pilType } from "../../components/pilgrimage/theme";
 import { CHECKLIST, CHECKLIST_TOTAL } from "../../features/pilgrimage/pilgrimageChecklist";
 import { updatePilgrimageState, usePilgrimageState } from "../../features/pilgrimage/pilgrimageStorage";
+import { useI18n } from "../../i18n";
 
 export default function PilgrimageChecklist() {
   const insets = useSafeAreaInsets();
   const state = usePilgrimageState();
+  const { language, t } = useI18n();
   const checked = new Set(state?.checklist ?? []);
   const ratio = checked.size / CHECKLIST_TOTAL;
   const ring = 2 * Math.PI * 34;
@@ -27,12 +29,12 @@ export default function PilgrimageChecklist() {
   return (
     <View style={[styles.screen, { paddingTop: insets.top + 6 }]}>
       <View style={styles.header}>
-        <Pressable accessibilityRole="button" accessibilityLabel="Retour" onPress={() => router.back()} hitSlop={8} style={styles.iconButton}>
+        <Pressable accessibilityRole="button" accessibilityLabel={t("common.back")} onPress={() => router.back()} hitSlop={8} style={styles.iconButton}>
           <Ionicons name="chevron-back" size={22} color="#FFFFFF" />
         </Pressable>
         <View style={styles.headerCopy}>
-          <Text style={styles.eyebrow}>AVANT LE DÉPART</Text>
-          <Text style={styles.title}>Ma valise</Text>
+          <Text style={styles.eyebrow}>{t("pilgrimage.checklist.eyebrow")}</Text>
+          <Text style={styles.title}>{t("pilgrimage.tool.bag")}</Text>
         </View>
         <View style={styles.ring}>
           <Svg width={80} height={80}>
@@ -60,7 +62,7 @@ export default function PilgrimageChecklist() {
             <View key={section.id}>
               <View style={styles.sectionHead}>
                 <Ionicons name={section.icon as keyof typeof Ionicons.glyphMap} size={18} color={pil.gold} />
-                <Text style={styles.sectionTitle}>{section.title}</Text>
+                <Text style={styles.sectionTitle}>{section.title[language]}</Text>
                 <Text style={[styles.sectionCount, sectionDone === section.items.length && styles.sectionCountDone]}>{sectionDone}/{section.items.length}</Text>
               </View>
               <View style={styles.group}>
@@ -78,8 +80,8 @@ export default function PilgrimageChecklist() {
                         {isChecked ? <Ionicons name="checkmark" size={17} color={pil.ink} /> : null}
                       </View>
                       <View style={styles.rowCopy}>
-                        <Text style={[styles.rowLabel, isChecked && styles.rowLabelChecked]}>{item.label}</Text>
-                        {item.hint ? <Text style={styles.rowHint}>{item.hint}</Text> : null}
+                        <Text style={[styles.rowLabel, isChecked && styles.rowLabelChecked]}>{item.label[language]}</Text>
+                        {item.hint ? <Text style={styles.rowHint}>{item.hint[language]}</Text> : null}
                       </View>
                     </Pressable>
                   );

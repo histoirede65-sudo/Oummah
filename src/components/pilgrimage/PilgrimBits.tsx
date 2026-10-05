@@ -3,8 +3,9 @@ import { createContext, useContext, useEffect, useRef, useState } from "react";
 import { Animated, Modal, Pressable, ScrollView, StyleSheet, Text, View, type TextStyle } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+import { importanceLabel, invocationStatusLabel, sourceChipReference, sourceKindLabel } from "../../features/pilgrimage/pilgrimageI18n";
 import type { Invocation, Point, Source } from "../../features/pilgrimage/pilgrimageTypes";
-import { sourceLabel } from "../../features/pilgrimage/pilgrimageTypes";
+import { useI18n } from "../../i18n";
 import { pil, pilType } from "./theme";
 
 /** Reading size chosen by the user (A− / A+), provided by each screen. */
@@ -53,13 +54,14 @@ export function PilgrimToggle({ value, onValueChange, accessibilityLabel }: { va
 
 /** « Coran 2:196 · Hadith — Sahîh Muslim 1218 » on one discreet line. */
 export function SourceLine({ sources }: { sources?: Source[] }) {
+  const { language } = useI18n();
   if (!sources?.length) return null;
   return (
     <View style={styles.sources}>
       {sources.map((source) => (
         <View key={`${source.kind}-${source.reference}`} style={styles.sourceChip}>
-          <Text style={styles.sourceKind}>{sourceLabel(source.kind)}</Text>
-          <Text style={styles.sourceRef}>{source.reference.replace(/^Coran /, "")}</Text>
+          <Text style={styles.sourceKind}>{sourceKindLabel(source.kind, language)}</Text>
+          <Text style={styles.sourceRef}>{sourceChipReference(source.reference, language)}</Text>
         </View>
       ))}
     </View>
@@ -78,6 +80,7 @@ export function SectionTitle({ icon, children, color = pil.gold }: { icon: keyof
 /** A statement with its sources and, when relevant, its weight (pillar, obligation…). */
 export function PointRow({ point, index, bullet }: { point: Point; index?: number; bullet?: keyof typeof Ionicons.glyphMap }) {
   const scaled = useScaled();
+  const { language } = useI18n();
   return (
     <View style={styles.point}>
       {index !== undefined ? (
@@ -87,7 +90,7 @@ export function PointRow({ point, index, bullet }: { point: Point; index?: numbe
       )}
       <View style={styles.pointBody}>
         {point.importance ? (
-          <Text style={[styles.importance, point.importance === "PILIER" && styles.importancePillar]}>{point.importance}</Text>
+          <Text style={[styles.importance, point.importance === "PILIER" && styles.importancePillar]}>{importanceLabel(point.importance, language)}</Text>
         ) : null}
         <Text style={scaled(styles.pointText)}>{point.text}</Text>
         <SourceLine sources={point.sources} />
@@ -101,15 +104,16 @@ export function InvocationCard({ invocation }: { invocation: Invocation }) {
   const [large, setLarge] = useState(false);
   const insets = useSafeAreaInsets();
   const scaled = useScaled();
+  const { language, t } = useI18n();
   const free = !invocation.arabic;
   return (
     <View style={styles.invocation}>
       <View style={styles.invocationHead}>
-        <Text style={styles.invocationStatus}>{invocation.status}</Text>
+        <Text style={styles.invocationStatus}>{invocationStatusLabel(invocation.status, language)}</Text>
         {!free ? (
           <Pressable accessibilityRole="button" onPress={() => setLarge(true)} hitSlop={8} style={styles.largeButton}>
             <Ionicons name="expand-outline" size={15} color={pil.gold} />
-            <Text style={styles.largeButtonText}>En grand</Text>
+            <Text style={styles.largeButtonText}>{t("pilgrimage.invocation.large")}</Text>
           </Pressable>
         ) : null}
       </View>
@@ -133,7 +137,7 @@ export function InvocationCard({ invocation }: { invocation: Invocation }) {
         <View style={[styles.largeScreen, { paddingTop: insets.top + 12, paddingBottom: insets.bottom + 16 }]}>
           <View style={styles.largeHead}>
             <Text style={styles.largeTitle}>{invocation.title}</Text>
-            <Pressable accessibilityRole="button" accessibilityLabel="Fermer" onPress={() => setLarge(false)} hitSlop={10} style={styles.largeClose}>
+            <Pressable accessibilityRole="button" accessibilityLabel={t("pilgrimage.close")} onPress={() => setLarge(false)} hitSlop={10} style={styles.largeClose}>
               <Ionicons name="close" size={24} color="#FFFFFF" />
             </Pressable>
           </View>
