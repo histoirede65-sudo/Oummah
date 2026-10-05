@@ -20,6 +20,7 @@ import {
     syncMosqueFavorites,
     type StoredMosque,
 } from '../../features/mosques/data/mosquePreferences';
+import { useI18n } from '../../i18n';
 import { colors } from '../../theme/colors';
 import { typography } from '../../theme/typography';
 
@@ -43,6 +44,7 @@ function openMosqueDetails(mosque: StoredMosque) {
 }
 
 export default function FavoriteMosquesScreen() {
+  const { t } = useI18n();
   const [favorites, setFavorites] = useState<StoredMosque[]>([]);
   const [mainMosqueId, setMainMosqueId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -86,10 +88,7 @@ export default function FavoriteMosquesScreen() {
       await setMosqueFavorite(mosque, false);
     } catch {
       setFavorites(previousFavorites);
-      Alert.alert(
-        'Suppression impossible',
-        'La mosquée n’a pas pu être retirée des favoris.',
-      );
+      Alert.alert(t('mosques.removeMainErrorTitle'), t('mosque.favoriteRemoveError'));
     } finally {
       setRemovingFavoriteId(null);
     }
@@ -99,7 +98,7 @@ export default function FavoriteMosquesScreen() {
     <SafeAreaView edges={['top']} style={styles.safeArea}>
       <View style={styles.header}>
         <Pressable
-          accessibilityLabel="Retour"
+          accessibilityLabel={t('common.back')}
           onPress={() => router.back()}
           style={styles.headerButton}
         >
@@ -111,8 +110,8 @@ export default function FavoriteMosquesScreen() {
         </Pressable>
 
         <View style={styles.headerCopy}>
-          <Text style={styles.eyebrow}>VOS REPÈRES</Text>
-          <Text style={styles.title}>Mes mosquées</Text>
+          <Text style={styles.eyebrow}>{t('mosque.favoritesEyebrow')}</Text>
+          <Text style={styles.title}>{t('mosque.favoritesTitle')}</Text>
         </View>
 
         <View style={styles.headerButtonPlaceholder} />
@@ -128,7 +127,7 @@ export default function FavoriteMosquesScreen() {
               size="large"
               color={colors.goldLight}
             />
-            <Text style={styles.emptyTitle}>Chargement</Text>
+            <Text style={styles.emptyTitle}>{t('mosque.loading')}</Text>
           </View>
         ) : favorites.length === 0 ? (
           <View style={styles.emptyCard}>
@@ -140,14 +139,9 @@ export default function FavoriteMosquesScreen() {
               />
             </View>
 
-            <Text style={styles.emptyTitle}>
-              Aucun favori pour le moment
-            </Text>
+            <Text style={styles.emptyTitle}>{t('mosque.noFavoritesTitle')}</Text>
 
-            <Text style={styles.emptyText}>
-              Ouvrez la fiche d’une mosquée puis appuyez sur le cœur
-              pour la retrouver ici.
-            </Text>
+            <Text style={styles.emptyText}>{t('mosque.noFavoritesText')}</Text>
 
             <Pressable
               onPress={() => router.replace('/mosques' as Href)}
@@ -161,9 +155,7 @@ export default function FavoriteMosquesScreen() {
                 size={18}
                 color={colors.background}
               />
-              <Text style={styles.exploreButtonText}>
-                Explorer les mosquées
-              </Text>
+              <Text style={styles.exploreButtonText}>{t('mosque.exploreMosques')}</Text>
             </Pressable>
           </View>
         ) : (
@@ -181,7 +173,7 @@ export default function FavoriteMosquesScreen() {
                 >
                   <Pressable
                     accessibilityRole="button"
-                    accessibilityLabel={`Ouvrir la fiche de ${mosque.name}`}
+                    accessibilityLabel={t('mosque.openSheetOf', { name: mosque.name })}
                     onPress={() => openMosqueDetails(mosque)}
                     style={({ pressed }) => [
                       styles.cardContent,
@@ -212,9 +204,7 @@ export default function FavoriteMosquesScreen() {
                               size={11}
                               color={colors.background}
                             />
-                            <Text style={styles.mainBadgeText}>
-                              Ma mosquée
-                            </Text>
+                            <Text style={styles.mainBadgeText}>{t('mosques.myMosque')}</Text>
                           </View>
                         ) : null}
                       </View>
@@ -242,7 +232,7 @@ export default function FavoriteMosquesScreen() {
 
                   <Pressable
                     accessibilityRole="button"
-                    accessibilityLabel={`Retirer ${mosque.name} des favoris`}
+                    accessibilityLabel={t('mosque.removeFavoriteOf', { name: mosque.name })}
                     disabled={removingFavoriteId !== null}
                     hitSlop={8}
                     onPress={() => void removeFavorite(mosque)}

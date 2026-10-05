@@ -21,6 +21,7 @@ import {
   createUserMosque,
   type UserMosqueFeatureState,
 } from '../../features/mosques/data/userMosques';
+import { useI18n } from '../../i18n';
 import { colors } from '../../theme/colors';
 import { typography } from '../../theme/typography';
 import { getNearbyMosques, type NearbyMosque } from '../../features/mosques/data/nearbyMosques';
@@ -81,23 +82,23 @@ const FEATURE_FIELDS: Array<{
     FormValues,
     'wheelchair' | 'womenSpace' | 'ablutions' | 'parking' | 'toilets'
   >;
-  label: string;
+  labelKey: 'mosque.wheelchair' | 'mosque.womenSpace' | 'mosque.ablutions' | 'mosque.parking' | 'mosque.toilets';
 }> = [
-  { key: 'wheelchair', label: 'Accessibilité fauteuil roulant' },
-  { key: 'womenSpace', label: 'Espace femmes' },
-  { key: 'ablutions', label: 'Ablutions' },
-  { key: 'parking', label: 'Parking' },
-  { key: 'toilets', label: 'Toilettes' },
+  { key: 'wheelchair', labelKey: 'mosque.wheelchair' },
+  { key: 'womenSpace', labelKey: 'mosque.womenSpace' },
+  { key: 'ablutions', labelKey: 'mosque.ablutions' },
+  { key: 'parking', labelKey: 'mosque.parking' },
+  { key: 'toilets', labelKey: 'mosque.toilets' },
 ];
 
 const FEATURE_OPTIONS: Array<{
   value: UserMosqueFeatureState;
-  label: string;
+  labelKey: 'mosque.optionYes' | 'mosque.optionNo' | 'mosque.optionLimited' | 'mosque.optionUnknown';
 }> = [
-  { value: 'yes', label: 'Oui' },
-  { value: 'no', label: 'Non' },
-  { value: 'limited', label: 'Limité' },
-  { value: 'unknown', label: 'Inconnu' },
+  { value: 'yes', labelKey: 'mosque.optionYes' },
+  { value: 'no', labelKey: 'mosque.optionNo' },
+  { value: 'limited', labelKey: 'mosque.optionLimited' },
+  { value: 'unknown', labelKey: 'mosque.optionUnknown' },
 ];
 
 function clean(value: string) {
@@ -138,6 +139,7 @@ function formatAddress(address: Location.LocationGeocodedAddress) {
 }
 
 export default function AddMosqueScreen() {
+  const { t } = useI18n();
   const [values, setValues] = useState<FormValues>(INITIAL_VALUES);
   const [errors, setErrors] = useState<FormErrors>({});
   const [saving, setSaving] = useState(false);
@@ -165,7 +167,7 @@ export default function AddMosqueScreen() {
   const selectMapLocation = async (event: MapPressEvent) => {
     const coordinates = event.nativeEvent.coordinate;
     setSelectedCoordinates(coordinates);
-    setLocationMessage('Emplacement sélectionné sur la carte.');
+    setLocationMessage(t('mosque.addMapSelected'));
     try {
       const addresses = await Location.reverseGeocodeAsync(coordinates);
       const address = addresses[0];
@@ -192,7 +194,7 @@ export default function AddMosqueScreen() {
       const results = await Location.geocodeAsync(query);
       const first = results[0];
       if (!first) {
-        setLocationMessage('Aucun emplacement trouvé. Essayez une adresse plus précise.');
+        setLocationMessage(t('mosque.addMapNotFound'));
         return;
       }
       await selectMapLocation({
@@ -207,7 +209,7 @@ export default function AddMosqueScreen() {
         longitudeDelta: 0.03,
       }, 500);
     } catch {
-      setLocationMessage('Recherche impossible. Vérifiez l’adresse ou le code postal.');
+      setLocationMessage(t('mosque.addMapSearchError'));
     } finally {
       setSearchingMap(false);
     }
@@ -235,14 +237,13 @@ export default function AddMosqueScreen() {
     const email = clean(values.email);
     const website = clean(values.website);
 
-    if (!clean(values.name)) nextErrors.name = 'Le nom est obligatoire.';
+    if (!clean(values.name)) nextErrors.name = t('mosque.addErrorName');
     if (!clean(values.address) || !clean(values.postalCode) || !clean(values.city)) {
-      nextErrors.address = "L'adresse est obligatoire.";
+      nextErrors.address = t('mosque.addErrorAddress');
     }
-    if (email && !isValidEmail(email)) nextErrors.email = 'E-mail invalide.';
+    if (email && !isValidEmail(email)) nextErrors.email = t('mosque.addErrorEmail');
     if (website && !isValidUrl(website)) {
-      nextErrors.website =
-        'URL invalide. Utilisez http:// ou https://.';
+      nextErrors.website = t('mosque.addErrorWebsite');
     }
 
     return nextErrors;
@@ -259,9 +260,7 @@ export default function AddMosqueScreen() {
         await Location.requestForegroundPermissionsAsync();
 
       if (permission.status !== Location.PermissionStatus.GRANTED) {
-        setLocationMessage(
-          "Permission refusée. Saisissez simplement l'adresse complète.",
-        );
+        setLocationMessage(t('mosque.addLocationDenied'));
         return;
       }
 
@@ -297,13 +296,9 @@ export default function AddMosqueScreen() {
         // Les coordonnées restent utilisables même si l'adresse ne remonte pas.
       }
 
-      setLocationMessage(
-        'Position récupérée. Vérifiez simplement l’adresse affichée.',
-      );
+      setLocationMessage(t('mosque.addLocationFound'));
     } catch {
-      setLocationMessage(
-        "Position indisponible. Saisissez simplement l'adresse complète.",
-      );
+      setLocationMessage(t('mosque.addLocationUnavailable'));
     } finally {
       setLocating(false);
     }
@@ -370,10 +365,8 @@ export default function AddMosqueScreen() {
         createdMosque.validationStatus === 'approved';
 
       Alert.alert(
-        publishedImmediately ? 'Mosquée publiée' : 'Mosquée envoyée',
-        publishedImmediately
-          ? 'La mosquée est disponible immédiatement dans l’application.'
-          : 'Merci. La mosquée est maintenant en attente de validation. Elle apparaîtra pour tout le monde après son approbation.',
+        publishedImmediately ? t('mosque.addPublishedTitle') : t('mosque.addSentTitle'),
+        publishedImmediately ? t('mosque.addPublishedText') : t('mosque.addSentText'),
         [{ text: 'OK', onPress: () => router.back() }],
       );
     } catch (error) {
@@ -382,21 +375,18 @@ export default function AddMosqueScreen() {
         error.message === 'MOSQUE_ADDRESS_NOT_FOUND'
       ) {
         setErrors({
-          address:
-            "Adresse introuvable. Vérifiez-la ou utilisez votre position actuelle.",
+          address: t('mosque.addErrorAddressNotFound'),
         });
       } else if (
         error instanceof Error &&
         error.message === 'USER_MOSQUE_AUTH_REQUIRED'
       ) {
         setErrors({
-          form:
-            'Vous devez être connecté pour proposer une mosquée.',
+          form: t('mosque.addErrorAuth'),
         });
       } else {
         setErrors({
-          form:
-            "La mosquée n'a pas pu être envoyée. Vérifiez votre connexion puis réessayez.",
+          form: t('mosque.addErrorSend'),
         });
       }
     } finally {
@@ -474,7 +464,7 @@ export default function AddMosqueScreen() {
     <SafeAreaView style={styles.safeArea} edges={['top']}>
       <View style={styles.header}>
         <Pressable
-          accessibilityLabel="Retour"
+          accessibilityLabel={t('common.back')}
           onPress={() => router.back()}
           style={styles.headerButton}
         >
@@ -485,7 +475,7 @@ export default function AddMosqueScreen() {
           />
         </Pressable>
 
-        <Text style={styles.title}>Ajouter une mosquée</Text>
+        <Text style={styles.title}>{t('mosque.addTitle')}</Text>
         <View style={styles.headerButtonPlaceholder} />
       </View>
 
@@ -500,32 +490,31 @@ export default function AddMosqueScreen() {
         keyboardDismissMode="on-drag"
       >
         <Text style={styles.intro}>
-          Proposez une mosquée. Elle sera vérifiée avant d’être
-          rendue visible à tous les utilisateurs.
+          {t('mosque.addIntro')}
         </Text>
 
         <Text style={styles.sectionTitle}>
-          Informations principales
+          {t('mosque.addMainInfo')}
         </Text>
 
-        {renderInput('name', 'Nom de la mosquée', {
+        {renderInput('name', t('mosque.addName'), {
           required: true,
         })}
 
-        {renderInput('address', 'Adresse complète', {
+        {renderInput('address', t('mosque.addAddress'), {
           required: true,
-          placeholder: 'Numéro et nom de rue',
+          placeholder: t('mosque.addAddressPlaceholder'),
         })}
 
         <View style={styles.addressRow}>
           <View style={styles.addressPostalField}>
-            {renderInput('postalCode', 'Code postal', {
+            {renderInput('postalCode', t('mosque.addPostalCode'), {
               required: true,
               keyboardType: 'phone-pad',
             })}
           </View>
           <View style={styles.addressCityField}>
-            {renderInput('city', 'Ville', { required: true })}
+            {renderInput('city', t('mosque.addCity'), { required: true })}
           </View>
         </View>
 
@@ -551,8 +540,8 @@ export default function AddMosqueScreen() {
 
             <Text style={styles.locationButtonText}>
               {locating
-                ? 'Recherche en cours…'
-                : 'Utiliser ma position actuelle'}
+                ? t('mosques.searching')
+                : t('mosque.addUseCurrentLocation')}
             </Text>
           </Pressable>
 
@@ -564,7 +553,7 @@ export default function AddMosqueScreen() {
             ]}
           >
             <Ionicons name="map-outline" size={19} color={colors.goldLight} />
-            <Text style={styles.mapButtonText}>Choisir sur la carte</Text>
+            <Text style={styles.mapButtonText}>{t('mosque.addChooseOnMap')}</Text>
           </Pressable>
 
           {mapVisible ? (
@@ -574,7 +563,7 @@ export default function AddMosqueScreen() {
                   value={mapQuery}
                   onChangeText={setMapQuery}
                   onSubmitEditing={() => void searchMapLocation()}
-                  placeholder="Adresse approximative, ville ou code postal"
+                  placeholder={t('mosque.addMapSearchPlaceholder')}
                   placeholderTextColor={colors.textMuted}
                   returnKeyType="search"
                   style={styles.mapSearchInput}
@@ -613,7 +602,7 @@ export default function AddMosqueScreen() {
                 ))}
                 {selectedCoordinates ? <Marker coordinate={selectedCoordinates} /> : null}
               </MapView>
-              <Text style={styles.mapHint}>Touchez la carte pour placer la mosquée.</Text>
+              <Text style={styles.mapHint}>{t('mosque.addMapHint')}</Text>
             </View>
           ) : null}
 
@@ -621,40 +610,39 @@ export default function AddMosqueScreen() {
             <Text style={styles.helper}>{locationMessage}</Text>
           ) : (
             <Text style={styles.helper}>
-              Les coordonnées sont calculées automatiquement et ne
-              sont jamais demandées à l’utilisateur.
+              {t('mosque.addCoordinatesHelp')}
             </Text>
           )}
         </View>
 
         <Text style={styles.sectionTitle}>
-          Informations complémentaires
+          {t('mosque.addMoreInfo')}
         </Text>
 
-        {renderInput('alternativeName', 'Nom alternatif')}
-        {renderInput('arabicName', 'Nom arabe')}
-        {renderInput('phone', 'Téléphone', {
+        {renderInput('alternativeName', t('mosque.addAlternativeName'))}
+        {renderInput('arabicName', t('mosque.arabicName'))}
+        {renderInput('phone', t('mosque.phone'), {
           keyboardType: 'phone-pad',
         })}
-        {renderInput('email', 'E-mail', {
+        {renderInput('email', t('mosque.email'), {
           keyboardType: 'email-address',
         })}
-        {renderInput('website', 'Site internet', {
+        {renderInput('website', t('mosque.website'), {
           placeholder: 'https://…',
         })}
-        {renderInput('openingHours', "Horaires d'ouverture", {
+        {renderInput('openingHours', t('mosque.openingHours'), {
           multiline: true,
         })}
-        {renderInput('operator', 'Responsable ou opérateur')}
-        {renderInput('denomination', 'Courant ou dénomination')}
+        {renderInput('operator', t('mosque.operator'))}
+        {renderInput('denomination', t('mosque.addDenomination'))}
 
         <Text style={styles.sectionTitle}>
-          Équipements et accessibilité
+          {t('mosque.addFacilities')}
         </Text>
 
-        {FEATURE_FIELDS.map(({ key, label }) => (
+        {FEATURE_FIELDS.map(({ key, labelKey }) => (
           <View key={key} style={styles.choiceField}>
-            <Text style={styles.label}>{label}</Text>
+            <Text style={styles.label}>{t(labelKey)}</Text>
 
             <View style={styles.choiceRow}>
               {FEATURE_OPTIONS.map((option) => (
@@ -674,7 +662,7 @@ export default function AddMosqueScreen() {
                         styles.choiceTextSelected,
                     ]}
                   >
-                    {option.label}
+                    {t(option.labelKey)}
                   </Text>
                 </Pressable>
               ))}
@@ -683,19 +671,19 @@ export default function AddMosqueScreen() {
         ))}
 
         <Text style={styles.sectionTitle}>
-          Langues et services
+          {t('mosque.addLanguagesServices')}
         </Text>
 
-        {renderInput('languages', 'Langues', {
-          placeholder: 'Français, arabe, anglais',
+        {renderInput('languages', t('mosque.addLanguages'), {
+          placeholder: t('mosque.addLanguagesPlaceholder'),
         })}
 
         {renderInput(
           'serviceTimes',
-          'Horaires ou informations de services',
+          t('mosque.addServiceTimes'),
           {
             multiline: true,
-            placeholder: 'Joumou’a, cours, conférences…',
+            placeholder: t('mosque.addServiceTimesPlaceholder'),
           },
         )}
 
@@ -718,8 +706,8 @@ export default function AddMosqueScreen() {
 
           <Text style={styles.saveButtonText}>
             {saving
-              ? 'Envoi en cours…'
-              : 'Envoyer pour validation'}
+              ? t('mosque.sending')
+              : t('mosque.addSubmit')}
           </Text>
         </Pressable>
       </ScrollView>
