@@ -141,7 +141,7 @@ export default function ProphetsScreen() {
             <Ionicons name="shield-checkmark-outline" size={21} color={colors.goldLight} />
             <View style={styles.methodCopy}>
               <Text style={styles.methodTitle}>Raconter sans romancer</Text>
-              <Text style={styles.methodText}>Chaque récit distinguera ce qui vient du Coran, de la Sunna authentique et des explications savantes. Aucun visage de prophète ne sera représenté.</Text>
+              <Text style={styles.methodText}>Chaque récit distingue ce qui vient du Coran, de la Sunna authentique et des explications savantes.</Text>
             </View>
           </View>
         </ScrollView>
