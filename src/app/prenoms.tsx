@@ -24,6 +24,7 @@ export default function PrenomsScreen(){
   const [collectionId,setCollectionId]=useState<string|null>(null);
   const [letter,setLetter]=useState<string|null>(null);
   const [favorites,setFavorites]=useState<string[]>([]);
+  const [openLetters,setOpenLetters]=useState<string[]>([]);
 
   useFocusEffect(useCallback(()=>{void loadNameFavorites().then(setFavorites);},[]));
 
@@ -51,12 +52,17 @@ export default function PrenomsScreen(){
       .sort((a,b)=>collator.compare(a.name,b.name));
   },[query,searching,gender,collection,letter]);
 
+  // Letters are folded by default; a short list (one letter, a small collection) opens by itself.
+  const autoOpen=Boolean(letter)||visible.length<=40;
   const sections=useMemo(()=>{
-    if(searching) return visible.length?[{title:'',data:visible}]:[];
+    if(searching) return visible.length?[{title:'',count:visible.length,data:visible}]:[];
     const groups=new Map<string,MuslimName[]>();
     for(const item of visible){const key=initialOf(item)||'#';groups.set(key,[...(groups.get(key)??[]),item]);}
-    return [...groups.entries()].map(([title,data])=>({title,data}));
-  },[visible,searching]);
+    return [...groups.entries()].map(([title,data])=>({title,count:data.length,data:autoOpen||openLetters.includes(title)?data:[]}));
+  },[visible,searching,autoOpen,openLetters]);
+  const allOpen=sections.length>0&&sections.every(section=>section.data.length===section.count);
+  const toggleLetter=(title:string)=>setOpenLetters(current=>current.includes(title)?current.filter(value=>value!==title):[...current,title]);
+  const toggleAll=()=>setOpenLetters(allOpen?[]:sections.map(section=>section.title));
 
   const abdCount=useMemo(()=>MUSLIM_NAMES.filter(isAbdName).length,[]);
   const counts=useMemo(()=>Object.fromEntries(NAME_COLLECTIONS.map(item=>[item.id,namesForCollection(item).filter(name=>gender==='all'||name.gender===gender).length])),[gender]);
@@ -106,6 +112,11 @@ export default function PrenomsScreen(){
       <Text style={styles.resultText}>{visible.length} résultat{visible.length>1?'s':''}{collection?` · ${collection.title}`:''}</Text>
       {collection?<Pressable onPress={()=>setCollectionId(null)} hitSlop={8}><Text style={styles.reset}>Tout afficher</Text></Pressable>:null}
     </View>:null}
+
+    {!searching&&!autoOpen&&sections.length>1?<View style={styles.foldBar}>
+      <Text style={styles.foldHint}>Touchez une lettre pour voir ses prénoms</Text>
+      <Pressable onPress={toggleAll} hitSlop={8}><Text style={styles.reset}>{allOpen?'Tout replier':'Tout déplier'}</Text></Pressable>
+    </View>:null}
   </View>;
 
   const Empty=<View style={styles.empty}>
@@ -124,7 +135,15 @@ export default function PrenomsScreen(){
       sections={sections}
       keyExtractor={(item,index)=>`${item.id}:${index}`}
       renderItem={({item})=><NameRow item={item} onPress={()=>open(item.id)} favorite={favorites.includes(item.id)} onFavorite={()=>void toggleFavorite(item.id)}/>}
-      renderSectionHeader={({section})=>section.title?<View style={styles.sectionHead}><Text style={styles.sectionLetter}>{section.title}</Text><Text style={styles.sectionCount}>{section.data.length} prénom{section.data.length>1?'s':''}</Text></View>:null}
+      renderSectionHeader={({section})=>{
+        if(!section.title) return null;
+        const opened=section.data.length>0;
+        return <Pressable disabled={autoOpen} onPress={()=>toggleLetter(section.title)} style={({pressed})=>[styles.sectionHead,pressed&&styles.pressed]} accessibilityRole="button" accessibilityState={{expanded:opened}} accessibilityLabel={`Lettre ${section.title}, ${section.count} prénoms`}>
+          <Text style={styles.sectionLetter}>{section.title}</Text>
+          <Text style={styles.sectionCount}>{section.count} prénom{section.count>1?'s':''}</Text>
+          {!autoOpen?<Ionicons name={opened?'chevron-up':'chevron-down'} size={18} color={colors.goldLight} style={styles.sectionChevron}/>:null}
+        </Pressable>;
+      }}
       stickySectionHeadersEnabled={false}
       ListHeaderComponent={Header}
       ListEmptyComponent={Empty}
@@ -180,10 +199,13 @@ const styles=StyleSheet.create({
   abdEntry:{marginTop:14,paddingVertical:12,paddingHorizontal:14,borderRadius:15,borderWidth:1,borderColor:'rgba(227,181,90,.30)',backgroundColor:'rgba(227,181,90,.05)',flexDirection:'row',alignItems:'center',gap:10},
   abdTitle:{color:colors.text,fontFamily:typography.serifSemibold,fontSize:19},
   abdSub:{marginTop:1,color:colors.textMuted,fontFamily:typography.sans,fontSize:10.5},
+  foldBar:{marginTop:18,flexDirection:'row',alignItems:'center',justifyContent:'space-between',gap:10},
+  foldHint:{flex:1,color:colors.textMuted,fontFamily:typography.sans,fontSize:11.5},
+  sectionChevron:{marginLeft:'auto',alignSelf:'center'},
   resultHead:{marginTop:18,flexDirection:'row',alignItems:'center',justifyContent:'space-between'},
   resultText:{color:colors.textSecondary,fontFamily:typography.sans,fontSize:12,fontWeight:'700'},
   reset:{color:colors.goldLight,fontFamily:typography.sans,fontSize:11.5,fontWeight:'800'},
-  sectionHead:{marginTop:22,paddingBottom:6,borderBottomWidth:1,borderBottomColor:colors.borderSoft,flexDirection:'row',alignItems:'baseline',gap:10},
+  sectionHead:{marginTop:6,paddingTop:10,paddingBottom:8,borderBottomWidth:1,borderBottomColor:colors.borderSoft,flexDirection:'row',alignItems:'baseline',gap:10},
   sectionLetter:{color:colors.goldLight,fontFamily:typography.serifSemibold,fontSize:32,lineHeight:36},
   sectionCount:{color:colors.textMuted,fontFamily:typography.sans,fontSize:11,fontVariant:['tabular-nums']},
   empty:{marginTop:26,alignItems:'center'},
