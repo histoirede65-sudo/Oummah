@@ -26,6 +26,10 @@ export const LESSON_SOURCES: FiqhSource[] = [
   { id: "binbaz-zakat-fitr-sa", kind: "scholar", author: "Shaykh ‘Abd al-‘Azîz ibn Bâz", reference: "Ibn Bâz — « Zakât al-fitr : un sâ‘ de l’aliment de base du pays » (binbaz.org.sa, article 169)", scope: "un sâ‘ par personne, de toutes les denrées : quatre poignées des deux mains moyennes remplies, soit environ 3 kg" },
   { id: "abudawud-1564", kind: "hadith", reference: "Sunan Abî Dâwûd, 1564", authenticity: "Hasan selon al-Albânî", scope: "Umm Salama portait des bijoux en or : Ce dont la zakât est payée n’est pas un trésor (kanz)" },
   { id: "abudawud-1565", kind: "hadith", reference: "Sunan Abî Dâwûd, 1565", authenticity: "Sahîh selon al-Albânî", scope: "‘Â’isha portait des bagues en argent sans en payer la zakât : « Cela suffit pour te mener au Feu »" },
+  { id: "abudawud-1811", kind: "hadith", reference: "Sunan Abî Dâwûd, 1811", authenticity: "Sahîh selon al-Albânî", scope: "l’homme qui faisait la talbiya pour Shubruma : « Accomplis d’abord le hajj pour toi-même, puis fais-le pour Shubrumah »" },
+  { id: "abudawud-1985", kind: "hadith", reference: "Sunan Abî Dâwûd, 1985", authenticity: "Sahîh selon al-Albânî", scope: "« Le rasage n’est pas une obligation pour les femmes ; seule la coupe des cheveux leur est demandée »" },
+  { id: "bukhari-1536", kind: "hadith", reference: "Sahîh al-Bukhârî, 1536", authenticity: "Sahîh", scope: "l’homme entré en ihrâm parfumé et vêtu d’un manteau : « Lave le parfum de ton corps trois fois, enlève le manteau »" },
+  { id: "bukhari-1685", kind: "hadith", reference: "Sahîh al-Bukhârî, 1685", authenticity: "Sahîh", scope: "al-Fadl rapporte que le Prophète ﷺ a continué la talbiya jusqu’à la lapidation de Jamrat al-‘Aqaba" },
   // Purification
   M("223", "La purification est la moitié de la foi"),
   M("224", "aucune prière n’est acceptée sans purification"),
