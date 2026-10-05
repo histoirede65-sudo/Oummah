@@ -1285,7 +1285,7 @@ export default function SurahReadingScreen() {
                 offset: averageItemLength * index,
                 animated: false,
               });
-              if (attempts > 60) {
+              if (attempts > 400) {
                 setDeepLinkPositioned(true);
                 return;
               }
