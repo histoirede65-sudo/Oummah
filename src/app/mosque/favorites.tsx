@@ -294,7 +294,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 22,
-    backgroundColor: colors.purpleDeep,
+    backgroundColor: '#151022',
   },
   headerButtonPlaceholder: {
     width: 44,
@@ -340,7 +340,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 36,
-    backgroundColor: 'rgba(126,72,148,0.20)',
+    backgroundColor: 'rgba(227,181,90,0.12)',
   },
   emptyTitle: {
     marginTop: 17,
@@ -403,7 +403,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 26,
-    backgroundColor: 'rgba(126,72,148,0.20)',
+    backgroundColor: 'rgba(227,181,90,0.12)',
   },
   copy: {
     flex: 1,
@@ -458,7 +458,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 22,
-    backgroundColor: colors.purpleDeep,
+    backgroundColor: '#151022',
   },
   pressed: {
     opacity: 0.72,

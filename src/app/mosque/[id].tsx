@@ -6,7 +6,6 @@ import {
     ActivityIndicator,
     Alert,
     Image,
-    type ImageSourcePropType,
     Linking,
     Pressable,
     ScrollView,
@@ -30,6 +29,7 @@ import {
 import { getMosqueImageSource } from '../../features/mosques/data/mosqueImage';
 
 import {
+    clearMainMosque,
     isFavoriteMosque,
     isMainMosque,
     setMosqueFavorite,
@@ -49,129 +49,9 @@ import {
   loadPrayerCalculationSettings,
   type MosquePrayerSchedule,
 } from '../../features/mosques/data/mosquePrayerTimes';
+import { useI18n, type LanguageCode, type TranslationKey } from '../../i18n';
 import { colors } from '../../theme/colors';
 import { typography } from '../../theme/typography';
-
-const USER_MOSQUE_IMAGES: Record<string, ImageSourcePropType> = {
-  'mosque-a-00': require('../../assets/images/mosques/mosque-a-00.jpg'),
-  'mosque-a-01': require('../../assets/images/mosques/mosque-a-01.jpg'),
-  'mosque-a-02': require('../../assets/images/mosques/mosque-a-02.jpg'),
-  'mosque-a-03': require('../../assets/images/mosques/mosque-a-03.jpg'),
-  'mosque-a-04': require('../../assets/images/mosques/mosque-a-04.jpg'),
-  'mosque-a-05': require('../../assets/images/mosques/mosque-a-05.jpg'),
-  'mosque-a-06': require('../../assets/images/mosques/mosque-a-06.jpg'),
-  'mosque-a-07': require('../../assets/images/mosques/mosque-a-07.jpg'),
-  'mosque-a-08': require('../../assets/images/mosques/mosque-a-08.jpg'),
-  'mosque-a-09': require('../../assets/images/mosques/mosque-a-09.jpg'),
-  'mosque-a-10': require('../../assets/images/mosques/mosque-a-10.jpg'),
-  'mosque-a-11': require('../../assets/images/mosques/mosque-a-11.jpg'),
-  'mosque-b-00': require('../../assets/images/mosques/mosque-b-00.jpg'),
-  'mosque-b-01': require('../../assets/images/mosques/mosque-b-01.jpg'),
-  'mosque-b-02': require('../../assets/images/mosques/mosque-b-02.jpg'),
-  'mosque-b-03': require('../../assets/images/mosques/mosque-b-03.jpg'),
-  'mosque-b-04': require('../../assets/images/mosques/mosque-b-04.jpg'),
-  'mosque-b-05': require('../../assets/images/mosques/mosque-b-05.jpg'),
-  'mosque-b-06': require('../../assets/images/mosques/mosque-b-06.jpg'),
-  'mosque-b-07': require('../../assets/images/mosques/mosque-b-07.jpg'),
-  'mosque-b-08': require('../../assets/images/mosques/mosque-b-08.jpg'),
-  'mosque-b-09': require('../../assets/images/mosques/mosque-b-09.jpg'),
-  'mosque-b-10': require('../../assets/images/mosques/mosque-b-10.jpg'),
-  'mosque-b-11': require('../../assets/images/mosques/mosque-b-11.jpg'),
-  'mosque-coastal': require('../../assets/images/mosques/mosque-coastal.jpg'),
-  'mosque-neighborhood': require('../../assets/images/mosques/mosque-neighborhood.jpg'),
-  'mosque-c-00': require('../../assets/images/mosques/mosque-c-00.jpg'),
-  'mosque-c-01': require('../../assets/images/mosques/mosque-c-01.jpg'),
-  'mosque-c-02': require('../../assets/images/mosques/mosque-c-02.jpg'),
-  'mosque-c-03': require('../../assets/images/mosques/mosque-c-03.jpg'),
-  'mosque-c-04': require('../../assets/images/mosques/mosque-c-04.jpg'),
-  'mosque-c-05': require('../../assets/images/mosques/mosque-c-05.jpg'),
-  'mosque-c-06': require('../../assets/images/mosques/mosque-c-06.jpg'),
-  'mosque-c-07': require('../../assets/images/mosques/mosque-c-07.jpg'),
-  'mosque-c-08': require('../../assets/images/mosques/mosque-c-08.jpg'),
-  'mosque-c-09': require('../../assets/images/mosques/mosque-c-09.jpg'),
-  'mosque-c-10': require('../../assets/images/mosques/mosque-c-10.jpg'),
-  'mosque-c-11': require('../../assets/images/mosques/mosque-c-11.jpg'),
-  'mosque-d-00': require('../../assets/images/mosques/mosque-d-00.jpg'),
-  'mosque-d-01': require('../../assets/images/mosques/mosque-d-01.jpg'),
-  'mosque-d-02': require('../../assets/images/mosques/mosque-d-02.jpg'),
-  'mosque-d-03': require('../../assets/images/mosques/mosque-d-03.jpg'),
-  'mosque-d-04': require('../../assets/images/mosques/mosque-d-04.jpg'),
-  'mosque-d-05': require('../../assets/images/mosques/mosque-d-05.jpg'),
-  'mosque-d-06': require('../../assets/images/mosques/mosque-d-06.jpg'),
-  'mosque-d-07': require('../../assets/images/mosques/mosque-d-07.jpg'),
-  'mosque-d-08': require('../../assets/images/mosques/mosque-d-08.jpg'),
-  'mosque-d-09': require('../../assets/images/mosques/mosque-d-09.jpg'),
-  'mosque-d-10': require('../../assets/images/mosques/mosque-d-10.jpg'),
-  'mosque-d-11': require('../../assets/images/mosques/mosque-d-11.jpg'),
-};
-
-const MOSQUE_HERO_FALLBACK = require('../../assets/images/mosques/mosque-hero-premium.jpg');
-
-const MOSQUE_CARD_IMAGES: readonly ImageSourcePropType[] = [
-  require('../../assets/images/mosques/mosque-neighborhood.jpg'),
-  require('../../assets/images/mosques/mosque-coastal.jpg'),
-  require('../../assets/images/mosques/mosque-a-00.jpg'),
-  require('../../assets/images/mosques/mosque-a-01.jpg'),
-  require('../../assets/images/mosques/mosque-a-02.jpg'),
-  require('../../assets/images/mosques/mosque-a-03.jpg'),
-  require('../../assets/images/mosques/mosque-a-04.jpg'),
-  require('../../assets/images/mosques/mosque-a-05.jpg'),
-  require('../../assets/images/mosques/mosque-a-06.jpg'),
-  require('../../assets/images/mosques/mosque-a-07.jpg'),
-  require('../../assets/images/mosques/mosque-a-08.jpg'),
-  require('../../assets/images/mosques/mosque-a-09.jpg'),
-  require('../../assets/images/mosques/mosque-a-10.jpg'),
-  require('../../assets/images/mosques/mosque-a-11.jpg'),
-  require('../../assets/images/mosques/mosque-b-00.jpg'),
-  require('../../assets/images/mosques/mosque-b-01.jpg'),
-  require('../../assets/images/mosques/mosque-b-02.jpg'),
-  require('../../assets/images/mosques/mosque-b-03.jpg'),
-  require('../../assets/images/mosques/mosque-b-04.jpg'),
-  require('../../assets/images/mosques/mosque-b-05.jpg'),
-  require('../../assets/images/mosques/mosque-b-06.jpg'),
-  require('../../assets/images/mosques/mosque-b-07.jpg'),
-  require('../../assets/images/mosques/mosque-b-08.jpg'),
-  require('../../assets/images/mosques/mosque-b-09.jpg'),
-  require('../../assets/images/mosques/mosque-b-10.jpg'),
-  require('../../assets/images/mosques/mosque-b-11.jpg'),
-  require('../../assets/images/mosques/mosque-c-00.jpg'),
-  require('../../assets/images/mosques/mosque-c-01.jpg'),
-  require('../../assets/images/mosques/mosque-c-02.jpg'),
-  require('../../assets/images/mosques/mosque-c-03.jpg'),
-  require('../../assets/images/mosques/mosque-c-04.jpg'),
-  require('../../assets/images/mosques/mosque-c-05.jpg'),
-  require('../../assets/images/mosques/mosque-c-06.jpg'),
-  require('../../assets/images/mosques/mosque-c-07.jpg'),
-  require('../../assets/images/mosques/mosque-c-08.jpg'),
-  require('../../assets/images/mosques/mosque-c-09.jpg'),
-  require('../../assets/images/mosques/mosque-c-10.jpg'),
-  require('../../assets/images/mosques/mosque-c-11.jpg'),
-  require('../../assets/images/mosques/mosque-d-00.jpg'),
-  require('../../assets/images/mosques/mosque-d-01.jpg'),
-  require('../../assets/images/mosques/mosque-d-02.jpg'),
-  require('../../assets/images/mosques/mosque-d-03.jpg'),
-  require('../../assets/images/mosques/mosque-d-04.jpg'),
-  require('../../assets/images/mosques/mosque-d-05.jpg'),
-  require('../../assets/images/mosques/mosque-d-06.jpg'),
-  require('../../assets/images/mosques/mosque-d-07.jpg'),
-  require('../../assets/images/mosques/mosque-d-08.jpg'),
-  require('../../assets/images/mosques/mosque-d-09.jpg'),
-  require('../../assets/images/mosques/mosque-d-10.jpg'),
-  require('../../assets/images/mosques/mosque-d-11.jpg'),
-];
-
-
-
-function getMosqueImage(mosqueId: string) {
-  let hash = 2_166_136_261;
-
-  for (const character of mosqueId) {
-    hash ^= character.charCodeAt(0);
-    hash = Math.imul(hash, 16_777_619);
-  }
-
-  return MOSQUE_CARD_IMAGES[(hash >>> 0) % MOSQUE_CARD_IMAGES.length] ?? MOSQUE_HERO_FALLBACK;
-}
 
 function getSingleParam(
   value: string | string[] | undefined,
@@ -254,73 +134,77 @@ function parseLanguages(
   }
 }
 
+type Translate = (key: TranslationKey, values?: Record<string, string | number>) => string;
+
 function getFeaturePresentation(
   state: StoredMosque['wheelchair'],
+  t: Translate,
 ) {
   switch (state) {
     case 'yes':
       return {
-        label: 'Disponible',
+        label: t('mosque.featureYes'),
         icon: 'checkmark-circle' as const,
         color: '#87D5A2',
       };
 
     case 'limited':
       return {
-        label: 'Partiel',
+        label: t('mosque.featurePartial'),
         icon: 'alert-circle' as const,
         color: colors.goldLight,
       };
 
     case 'no':
       return {
-        label: 'Non disponible',
+        label: t('mosque.featureNo'),
         icon: 'close-circle' as const,
         color: '#D78484',
       };
 
     default:
       return {
-        label: 'Non renseigné',
+        label: t('mosque.featureUnknown'),
         icon: 'help-circle-outline' as const,
         color: colors.textMuted,
       };
   }
 }
 
-function formatCheckedDate(value?: string) {
-  if (!value) return 'date inconnue';
+function formatCheckedDate(value: string | undefined, language: LanguageCode) {
+  if (!value) return undefined;
 
   const date = new Date(value);
 
   if (Number.isNaN(date.getTime())) {
-    return 'date inconnue';
+    return undefined;
   }
 
-  return new Intl.DateTimeFormat('fr-FR', {
+  return new Intl.DateTimeFormat(language === 'fr' ? 'fr-FR' : 'en-GB', {
     day: 'numeric',
     month: 'long',
     year: 'numeric',
   }).format(date);
 }
 
-async function openExternalUrl(url: string, errorMessage: string) {
+async function openExternalUrl(url: string, title: string, errorMessage: string) {
   try {
     const supported = await Linking.canOpenURL(url);
 
     if (!supported) {
-      Alert.alert('Action indisponible', errorMessage);
+      Alert.alert(title, errorMessage);
       return;
     }
 
     await Linking.openURL(url);
   } catch {
-    Alert.alert('Action indisponible', errorMessage);
+    Alert.alert(title, errorMessage);
   }
 }
 
 
 export default function MosqueDetailScreen() {
+  const { language, t } = useI18n();
   const params = useLocalSearchParams<{
     id?: string;
     name?: string;
@@ -575,7 +459,7 @@ export default function MosqueDetailScreen() {
       <SafeAreaView edges={['top']} style={styles.safeArea}>
         <View style={styles.header}>
           <Pressable
-            accessibilityLabel="Retour"
+            accessibilityLabel={t('common.back')}
             onPress={() => router.back()}
             style={styles.headerButton}
           >
@@ -586,7 +470,7 @@ export default function MosqueDetailScreen() {
             />
           </Pressable>
 
-          <Text style={styles.headerTitle}>Mosquée</Text>
+          <Text style={styles.headerTitle}>{t('mosque.headerShort')}</Text>
 
           <View style={styles.headerButtonPlaceholder} />
         </View>
@@ -597,12 +481,8 @@ export default function MosqueDetailScreen() {
             size={40}
             color={colors.goldLight}
           />
-          <Text style={styles.invalidTitle}>
-            Fiche indisponible
-          </Text>
-          <Text style={styles.invalidText}>
-            Les informations de cette mosquée sont incomplètes.
-          </Text>
+          <Text style={styles.invalidTitle}>{t('mosque.unavailableTitle')}</Text>
+          <Text style={styles.invalidText}>{t('mosque.unavailableText')}</Text>
         </View>
       </SafeAreaView>
     );
@@ -630,16 +510,21 @@ export default function MosqueDetailScreen() {
     ),
   };
 
+  const sourceName =
+    mosque.source === 'user'
+      ? t('mosque.sourceCommunity')
+      : mosque.source === 'openstreetmap'
+        ? 'OpenStreetMap'
+        : t('mosque.sourcePublic');
+  const checkedDate = formatCheckedDate(mosque.lastCheckedAt, language);
+
   const openDirections = () => {
     const destination = `${displayedMosque.latitude},${displayedMosque.longitude}`;
     const url =
       `https://www.google.com/maps/dir/?api=1&destination=` +
       encodeURIComponent(destination);
 
-    void openExternalUrl(
-      url,
-      'Aucune application compatible ne peut ouvrir cet itinéraire.',
-    );
+    void openExternalUrl(url, t('mosque.actionUnavailable'), t('mosque.directionsError'));
   };
 
   const callMosque = () => {
@@ -647,10 +532,7 @@ export default function MosqueDetailScreen() {
 
     const sanitizedPhone = displayedMosque.phone.replace(/[^\d+]/g, '');
 
-    void openExternalUrl(
-      `tel:${sanitizedPhone}`,
-      'Impossible de lancer cet appel.',
-    );
+    void openExternalUrl(`tel:${sanitizedPhone}`, t('mosque.actionUnavailable'), t('mosque.callError'));
   };
 
   const openWebsite = () => {
@@ -660,10 +542,7 @@ export default function MosqueDetailScreen() {
       ? displayedMosque.website
       : `https://${displayedMosque.website}`;
 
-    void openExternalUrl(
-      normalizedWebsite,
-      'Impossible d’ouvrir ce site internet.',
-    );
+    void openExternalUrl(normalizedWebsite, t('mosque.actionUnavailable'), t('mosque.websiteError'));
   };
 
   const openSource = async () => {
@@ -672,10 +551,7 @@ export default function MosqueDetailScreen() {
     try {
       await Linking.openURL(mosque.sourceUrl);
     } catch {
-      Alert.alert(
-        'Source indisponible',
-        'Impossible d’ouvrir la source des informations.',
-      );
+      Alert.alert(t('mosque.sourceUnavailableTitle'), t('mosque.sourceUnavailableMessage'));
     }
   };
 
@@ -693,10 +569,8 @@ export default function MosqueDetailScreen() {
     } catch {
       setFavorite(previousValue);
       Alert.alert(
-        'Enregistrement impossible',
-        previousValue
-          ? 'La mosquée n’a pas pu être retirée des favoris.'
-          : 'La mosquée n’a pas pu être ajoutée aux favoris.',
+        t('mosque.saveFailedTitle'),
+        previousValue ? t('mosque.favoriteRemoveError') : t('mosque.favoriteAddError'),
       );
     } finally {
       setSavingFavorite(false);
@@ -713,17 +587,39 @@ export default function MosqueDetailScreen() {
       setIsMainMosque(true);
 
       Alert.alert(
-        'Ma mosquée',
-        `${displayedMosque.name} est maintenant votre mosquée principale.`,
+        t('mosques.myMosque'),
+        t('mosque.mainSaved', { name: displayedMosque.name }),
       );
     } catch {
-      Alert.alert(
-        'Enregistrement impossible',
-        'Votre mosquée principale n’a pas pu être enregistrée.',
-      );
+      Alert.alert(t('mosque.saveFailedTitle'), t('mosque.mainSaveError'));
     } finally {
       setSavingMainMosque(false);
     }
+  };
+
+  const removeMainMosque = () => {
+    if (savingMainMosque || !mainMosque) return;
+
+    Alert.alert(
+      t('mosques.removeMainTitle'),
+      t('mosques.removeMainMessage', { name: displayedMosque.name }),
+      [
+        { text: t('mosques.cancel'), style: 'cancel' },
+        {
+          text: t('mosques.remove'),
+          style: 'destructive',
+          onPress: () => {
+            setSavingMainMosque(true);
+            void clearMainMosque()
+              .then(() => setIsMainMosque(false))
+              .catch(() =>
+                Alert.alert(t('mosques.removeMainErrorTitle'), t('mosques.removeMainErrorMessage')),
+              )
+              .finally(() => setSavingMainMosque(false));
+          },
+        },
+      ],
+    );
   };
 
   return (
@@ -742,15 +638,15 @@ export default function MosqueDetailScreen() {
         </Pressable>
 
         <Text numberOfLines={1} style={styles.headerTitle}>
-          Fiche mosquée
+          {t('mosque.headerTitle')}
         </Text>
 
         <Pressable
           accessibilityRole="button"
           accessibilityLabel={
             favorite
-              ? 'Retirer des favoris'
-              : 'Ajouter aux favoris'
+              ? t('mosques.removeFavorite')
+              : t('mosques.addFavorite')
           }
           accessibilityState={{
             disabled: loadingPreferences || savingFavorite,
@@ -797,6 +693,7 @@ export default function MosqueDetailScreen() {
             colors={['rgba(12,8,20,0.32)', 'rgba(12,8,20,0.88)']}
             style={StyleSheet.absoluteFill}
           />
+          <Text style={styles.illustrationLabel}>{t('mosques.illustration')}</Text>
           <Text style={styles.mosqueName}>{displayedMosque.name}</Text>
 
           <View style={styles.locationRow}>
@@ -863,9 +760,7 @@ export default function MosqueDetailScreen() {
                 color={colors.background}
               />
             </View>
-            <Text style={styles.primaryActionLabel}>
-              Itinéraire
-            </Text>
+            <Text style={styles.primaryActionLabel}>{t('mosque.directions')}</Text>
           </Pressable>
 
           <Pressable
@@ -882,9 +777,7 @@ export default function MosqueDetailScreen() {
               size={22}
               color={colors.goldLight}
             />
-            <Text style={styles.secondaryActionLabel}>
-              Téléphone
-            </Text>
+            <Text style={styles.secondaryActionLabel}>{t('mosque.phone')}</Text>
           </Pressable>
 
           <Pressable
@@ -901,13 +794,13 @@ export default function MosqueDetailScreen() {
               size={22}
               color={colors.goldLight}
             />
-            <Text style={styles.secondaryActionLabel}>Site</Text>
+            <Text style={styles.secondaryActionLabel}>{t('mosque.site')}</Text>
           </Pressable>
         </View>
 
         <Pressable
-          disabled={mainMosque || savingMainMosque}
-          onPress={() => void chooseMainMosque()}
+          disabled={savingMainMosque}
+          onPress={() => (mainMosque ? removeMainMosque() : void chooseMainMosque())}
           style={({ pressed }) => [
             styles.mainMosqueCard,
             !mainMosque && styles.mainMosqueCardCta,
@@ -940,16 +833,12 @@ export default function MosqueDetailScreen() {
           </View>
 
           <View style={styles.mainMosqueCopy}>
-            <Text style={styles.sectionEyebrow}>MA MOSQUÉE</Text>
+            <Text style={styles.sectionEyebrow}>{t('mosques.myMosqueEyebrow')}</Text>
             <Text style={styles.mainMosqueTitle}>
-              {mainMosque
-                ? 'Votre mosquée principale'
-                : 'Ajouter cette mosquée comme ma mosquée'}
+              {mainMosque ? t('mosque.mainActiveTitle') : t('mosque.mainChooseTitle')}
             </Text>
             <Text style={styles.mainMosqueText}>
-              {mainMosque
-                ? 'OUMMAH utilisera cette mosquée pour vos informations personnalisées.'
-                : 'Choisissez-la comme votre mosquée principale pour la retrouver facilement dans OUMMAH.'}
+              {mainMosque ? t('mosque.mainActiveText') : t('mosque.mainChooseText')}
             </Text>
           </View>
 
@@ -959,11 +848,13 @@ export default function MosqueDetailScreen() {
               size={21}
               color={colors.goldLight}
             />
-          ) : null}
+          ) : (
+            <Ionicons name="close-circle-outline" size={21} color={colors.textMuted} />
+          )}
         </Pressable>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Informations</Text>
+          <Text style={styles.sectionTitle}>{t('mosque.information')}</Text>
 
           <View style={styles.infoCard}>
             <View style={styles.infoRow}>
@@ -976,7 +867,7 @@ export default function MosqueDetailScreen() {
               </View>
 
               <View style={styles.infoCopy}>
-                <Text style={styles.infoLabel}>Adresse</Text>
+                <Text style={styles.infoLabel}>{t('mosque.address')}</Text>
                 <Text style={styles.infoValue}>
                   {displayedMosque.address}
                 </Text>
@@ -995,12 +886,9 @@ export default function MosqueDetailScreen() {
               </View>
 
               <View style={styles.infoCopy}>
-                <Text style={styles.infoLabel}>
-                  Horaires d’ouverture
-                </Text>
+                <Text style={styles.infoLabel}>{t('mosque.openingHours')}</Text>
                 <Text style={styles.infoValue}>
-                  {displayedMosque.openingHours ||
-                    'Non renseignés pour le moment'}
+                  {displayedMosque.openingHours || t('mosque.notProvidedPlural')}
                 </Text>
               </View>
             </View>
@@ -1017,9 +905,9 @@ export default function MosqueDetailScreen() {
               </View>
 
               <View style={styles.infoCopy}>
-                <Text style={styles.infoLabel}>Téléphone</Text>
+                <Text style={styles.infoLabel}>{t('mosque.phone')}</Text>
                 <Text style={styles.infoValue}>
-                  {displayedMosque.phone || 'Non renseigné'}
+                  {displayedMosque.phone || t('mosque.notProvided')}
                 </Text>
               </View>
             </View>
@@ -1036,9 +924,9 @@ export default function MosqueDetailScreen() {
               </View>
 
               <View style={styles.infoCopy}>
-                <Text style={styles.infoLabel}>Site internet</Text>
+                <Text style={styles.infoLabel}>{t('mosque.website')}</Text>
                 <Text numberOfLines={2} style={styles.infoValue}>
-                  {displayedMosque.website || 'Non renseigné'}
+                  {displayedMosque.website || t('mosque.notProvided')}
                 </Text>
               </View>
             </View>
@@ -1046,41 +934,20 @@ export default function MosqueDetailScreen() {
         </View>
 
 
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Services</Text>
-
-          <View style={styles.servicesCard}>
-            <Text style={styles.servicesTitle}>
-              Informations communautaires à venir
-            </Text>
-            <Text style={styles.servicesText}>
-              Salle pour les femmes, accès PMR, ablutions,
-              parking, cours et accueil des enfants seront ajoutés
-              lorsque ces informations pourront être vérifiées.
-            </Text>
-          </View>
-        </View>
-
         <View style={styles.infoSection}>
           <View style={styles.infoSectionHeader}>
             <View>
-              <Text style={styles.sectionEyebrow}>
-                INFORMATIONS
-              </Text>
-              <Text style={styles.infoSectionTitle}>
-                Services et accueil
-              </Text>
+              <Text style={styles.sectionEyebrow}>{t('mosque.informationEyebrow')}</Text>
+              <Text style={styles.infoSectionTitle}>{t('mosque.servicesTitle')}</Text>
             </View>
 
             <View style={styles.sourceBadge}>
               <Ionicons
-                name="map-outline"
+                name={mosque.source === 'user' ? 'people-outline' : 'map-outline'}
                 size={13}
                 color={colors.goldLight}
               />
-              <Text style={styles.sourceBadgeText}>
-                OpenStreetMap
-              </Text>
+              <Text style={styles.sourceBadgeText}>{sourceName}</Text>
             </View>
           </View>
 
@@ -1096,7 +963,7 @@ export default function MosqueDetailScreen() {
 
               <View style={styles.detailCopy}>
                 <Text style={styles.detailLabel}>
-                  Autre nom
+                  {t('mosque.otherName')}
                 </Text>
                 <Text style={styles.detailValue}>
                   {mosque.alternativeName}
@@ -1117,7 +984,7 @@ export default function MosqueDetailScreen() {
 
               <View style={styles.detailCopy}>
                 <Text style={styles.detailLabel}>
-                  Nom en arabe
+                  {t('mosque.arabicName')}
                 </Text>
                 <Text style={styles.detailValueArabic}>
                   {mosque.arabicName}
@@ -1138,7 +1005,7 @@ export default function MosqueDetailScreen() {
 
               <View style={styles.detailCopy}>
                 <Text style={styles.detailLabel}>
-                  Association ou gestionnaire
+                  {t('mosque.operator')}
                 </Text>
                 <Text style={styles.detailValue}>
                   {mosque.operator}
@@ -1159,7 +1026,7 @@ export default function MosqueDetailScreen() {
 
               <View style={styles.detailCopy}>
                 <Text style={styles.detailLabel}>
-                  Courant renseigné
+                  {t('mosque.denomination')}
                 </Text>
                 <Text style={styles.detailValue}>
                   {mosque.denomination}
@@ -1188,7 +1055,7 @@ export default function MosqueDetailScreen() {
 
               <View style={styles.detailCopy}>
                 <Text style={styles.detailLabel}>
-                  Email
+                  {t('mosque.email')}
                 </Text>
                 <Text style={styles.detailLink}>
                   {mosque.email}
@@ -1216,7 +1083,7 @@ export default function MosqueDetailScreen() {
 
               <View style={styles.detailCopy}>
                 <Text style={styles.detailLabel}>
-                  Langues renseignées
+                  {t('mosque.languages')}
                 </Text>
                 <View style={styles.languageList}>
                   {mosque.languages.map((language) => (
@@ -1246,7 +1113,7 @@ export default function MosqueDetailScreen() {
 
               <View style={styles.detailCopy}>
                 <Text style={styles.detailLabel}>
-                  Horaires de services renseignés
+                  {t('mosque.serviceTimes')}
                 </Text>
                 <Text style={styles.detailValue}>
                   {mosque.serviceTimes}
@@ -1258,37 +1125,42 @@ export default function MosqueDetailScreen() {
           <View style={styles.featureGrid}>
             {[
               {
-                label: 'Accès PMR',
+                id: 'wheelchair',
+                label: t('mosque.wheelchair'),
                 icon: 'accessibility-outline' as const,
                 state: displayedMosque.wheelchair,
               },
               {
-                label: 'Espace femmes',
+                id: 'women',
+                label: t('mosque.womenSpace'),
                 icon: 'female-outline' as const,
                 state: mosque.womenSpace,
               },
               {
-                label: 'Ablutions',
+                id: 'ablutions',
+                label: t('mosque.ablutions'),
                 icon: 'water-outline' as const,
                 state: mosque.ablutions,
               },
               {
-                label: 'Parking',
+                id: 'parking',
+                label: t('mosque.parking'),
                 icon: 'car-outline' as const,
                 state: displayedMosque.parking,
               },
               {
-                label: 'Toilettes',
+                id: 'toilets',
+                label: t('mosque.toilets'),
                 icon: 'male-female-outline' as const,
                 state: displayedMosque.toilets,
               },
             ].map((feature) => {
               const presentation =
-                getFeaturePresentation(feature.state);
+                getFeaturePresentation(feature.state, t);
 
               return (
                 <View
-                  key={feature.label}
+                  key={feature.id}
                   style={styles.featureCard}
                 >
                   <Ionicons
@@ -1321,7 +1193,7 @@ export default function MosqueDetailScreen() {
 
           <Pressable
             accessibilityRole="button"
-            accessibilityLabel="Signaler un problème sur cette mosquée"
+            accessibilityLabel={t('mosque.reportAccessibility')}
             onPress={() =>
               router.push({
                 pathname: "/mosque/report",
@@ -1343,10 +1215,8 @@ export default function MosqueDetailScreen() {
               <Ionicons name="flag-outline" size={21} color="#F28B82" />
             </View>
             <View style={styles.reportCopy}>
-              <Text style={styles.reportTitle}>Signaler un problème</Text>
-              <Text style={styles.reportText}>
-                Adresse, horaires, fermeture, doublon ou autre erreur
-              </Text>
+              <Text style={styles.reportTitle}>{t('mosque.reportTitle')}</Text>
+              <Text style={styles.reportText}>{t('mosque.reportText')}</Text>
             </View>
             <Ionicons name="chevron-forward" size={18} color={colors.textMuted} />
           </Pressable>
@@ -1370,14 +1240,11 @@ export default function MosqueDetailScreen() {
             </View>
 
             <View style={styles.sourceCopy}>
-              <Text style={styles.sourceTitle}>
-                Source des informations
-              </Text>
+              <Text style={styles.sourceTitle}>{t('mosque.sourceTitle')}</Text>
               <Text style={styles.sourceText}>
-                OpenStreetMap · vérifié le{' '}
-                {formatCheckedDate(
-                  mosque.lastCheckedAt,
-                )}
+                {checkedDate
+                  ? t('mosque.sourceChecked', { source: sourceName, date: checkedDate })
+                  : sourceName}
               </Text>
             </View>
 
@@ -1397,10 +1264,7 @@ export default function MosqueDetailScreen() {
             size={19}
             color={colors.goldLight}
           />
-          <Text style={styles.dataNoticeText}>
-            Les informations disponibles proviennent des données
-            publiques de la mosquée et peuvent être incomplètes.
-          </Text>
+          <Text style={styles.dataNoticeText}>{t('mosque.dataNotice')}</Text>
         </View>
         </View>
       </ScrollView>
@@ -1436,7 +1300,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 22,
-    backgroundColor: colors.purpleDeep,
+    backgroundColor: '#151022',
   },
   headerButtonPlaceholder: {
     width: 44,
@@ -1589,7 +1453,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 26,
-    backgroundColor: 'rgba(126,72,148,0.20)',
+    backgroundColor: 'rgba(227,181,90,0.12)',
   },
   mainMosqueIconActive: {
     backgroundColor: colors.goldLight,
@@ -1649,7 +1513,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 21,
-    backgroundColor: 'rgba(126,72,148,0.19)',
+    backgroundColor: 'rgba(227,181,90,0.12)',
   },
   infoCopy: {
     flex: 1,
@@ -1672,25 +1536,6 @@ const styles = StyleSheet.create({
     height: StyleSheet.hairlineWidth,
     marginLeft: 69,
     backgroundColor: colors.borderSoft,
-  },
-  servicesCard: {
-    padding: 18,
-    borderRadius: 21,
-    borderWidth: 1,
-    borderColor: colors.borderSoft,
-    backgroundColor: colors.surfaceAlt,
-  },
-  servicesTitle: {
-    color: colors.text,
-    fontFamily: typography.serifMedium,
-    fontSize: 18,
-  },
-  servicesText: {
-    marginTop: 7,
-    color: colors.textMuted,
-    fontFamily: typography.sans,
-    fontSize: 13,
-    lineHeight: 20,
   },
   infoSection: {
     marginTop: 16,
@@ -1740,7 +1585,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 21,
-    backgroundColor: 'rgba(126,72,148,0.18)',
+    backgroundColor: 'rgba(227,181,90,0.12)',
   },
   detailCopy: {
     flex: 1,
@@ -1871,7 +1716,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 21,
-    backgroundColor: 'rgba(126,72,148,0.18)',
+    backgroundColor: 'rgba(227,181,90,0.12)',
   },
   sourceCopy: {
     flex: 1,
@@ -1928,5 +1773,18 @@ const styles = StyleSheet.create({
   },
   pressed: {
     opacity: 0.72,
+  },
+  illustrationLabel: {
+    position: 'absolute',
+    top: 10,
+    right: 12,
+    paddingHorizontal: 7,
+    paddingVertical: 2,
+    overflow: 'hidden',
+    borderRadius: 7,
+    backgroundColor: 'rgba(8,7,19,0.72)',
+    color: 'rgba(248,244,238,0.78)',
+    fontFamily: typography.sans,
+    fontSize: 10,
   },
 });

@@ -444,7 +444,7 @@ const styles = StyleSheet.create({
     width: 170,
     height: 170,
     borderRadius: 85,
-    backgroundColor: 'rgba(126,72,148,0.28)',
+    backgroundColor: 'rgba(227,181,90,0.12)',
   },
   nextPrayerIcon: {
     width: 51,
