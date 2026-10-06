@@ -17,6 +17,7 @@ import { QuranArabicText } from "../../features/quran/QuranArabicText";
 import { sanitizeTranslationText } from "../../features/quran/TranslationText";
 import { readingQuranRepository } from "../../features/quran/ReadingQuranRepository";
 import type { QuranFoundationVerse } from "../../features/quranfoundation/QuranFoundationTypes";
+import { translate, useI18n } from "../../i18n";
 import { colors } from "../../theme/colors";
 import { typography } from "../../theme/typography";
 
@@ -36,6 +37,7 @@ function verseNumber(verse: QuranFoundationVerse) {
 }
 
 export default function WasilQuranPassageScreen() {
+  const { language } = useI18n();
   const { width: screenWidth } = useWindowDimensions();
   const params = useLocalSearchParams<{
     id?: string | string[];
@@ -63,7 +65,7 @@ export default function WasilQuranPassageScreen() {
       verseEnd > surah.verses ||
       verseEnd < verseStart
     ) {
-      setError("Ce passage coranique est invalide.");
+      setError(translate("quranPassage.invalid"));
       setLoading(false);
       return;
     }
@@ -73,6 +75,7 @@ export default function WasilQuranPassageScreen() {
     try {
       const response = (await readingQuranRepository.getVerses(
         surah.id,
+        language,
       )) as unknown as
         | QuranFoundationVerse[]
         | { verses?: QuranFoundationVerse[] };
@@ -84,19 +87,19 @@ export default function WasilQuranPassageScreen() {
         return number >= verseStart && number <= verseEnd;
       });
       if (passage.length !== verseEnd - verseStart + 1) {
-        throw new Error("Le passage demandé est incomplet.");
+        throw new Error(translate("quranPassage.incomplete"));
       }
       setVerses(passage);
     } catch (reason) {
       setError(
         reason instanceof Error
           ? reason.message
-          : "Impossible de charger ce passage.",
+          : translate("quranPassage.loadError"),
       );
     } finally {
       setLoading(false);
     }
-  }, [surah, verseEnd, verseStart]);
+  }, [surah, verseEnd, verseStart, language]);
 
   useEffect(() => {
     void load();
@@ -104,8 +107,8 @@ export default function WasilQuranPassageScreen() {
 
   const passageLabel =
     verseEnd === verseStart
-      ? `Verset ${verseStart}`
-      : `Versets ${verseStart} à ${verseEnd}`;
+      ? translate("quranPassage.verse", { verse: verseStart })
+      : translate("quranPassage.verses", { start: verseStart, end: verseEnd });
 
   const openFullSurah = useCallback(() => {
     if (!surah) return;
@@ -119,7 +122,7 @@ export default function WasilQuranPassageScreen() {
     <SafeAreaView edges={["top", "bottom"]} style={styles.safeArea}>
       <View style={styles.header}>
         <Pressable
-          accessibilityLabel="Retour vers Wasil"
+          accessibilityLabel={translate("quranPassage.back")}
           onPress={() => router.back()}
           style={styles.iconButton}
         >
@@ -128,7 +131,7 @@ export default function WasilQuranPassageScreen() {
         <View style={styles.headerCopy}>
           <Text style={styles.eyebrow}>OUMMAH</Text>
           <Text style={styles.title} numberOfLines={1}>
-            {surah ? `Sourate ${surah.transliteration}` : "Passage coranique"}
+            {surah ? translate("quranPassage.surah", { name: surah.transliteration }) : translate("quranPassage.passage")}
           </Text>
           <Text style={styles.subtitle}>{passageLabel}</Text>
         </View>
@@ -140,7 +143,7 @@ export default function WasilQuranPassageScreen() {
       {loading ? (
         <View style={styles.center}>
           <ActivityIndicator size="large" color={colors.gold} />
-          <Text style={styles.loadingText}>Ouverture du passage…</Text>
+          <Text style={styles.loadingText}>{translate("quranPassage.opening")}</Text>
         </View>
       ) : error ? (
         <View style={styles.center}>
@@ -151,7 +154,7 @@ export default function WasilQuranPassageScreen() {
           />
           <Text style={styles.errorText}>{error}</Text>
           <Pressable onPress={() => void load()} style={styles.primaryButton}>
-            <Text style={styles.primaryButtonText}>Réessayer</Text>
+            <Text style={styles.primaryButtonText}>{translate("common.retry")}</Text>
           </Pressable>
         </View>
       ) : (
@@ -161,7 +164,7 @@ export default function WasilQuranPassageScreen() {
         >
           <View style={styles.surahIdentity}>
             <Text style={styles.arabicSurahName}>{surah?.arabicName}</Text>
-            <Text style={styles.frenchSurahName}>{surah?.frenchName}</Text>
+            {language === "fr" ? <Text style={styles.frenchSurahName}>{surah?.frenchName}</Text> : null}
           </View>
 
           {verses.map((verse) => {
@@ -196,7 +199,7 @@ export default function WasilQuranPassageScreen() {
           <Pressable onPress={openFullSurah} style={styles.fullSurahButton}>
             <Ionicons name="library-outline" size={18} color={colors.goldLight} />
             <Text style={styles.fullSurahButtonText}>
-              Voir la sourate complète
+              {translate("quranPassage.fullSurah")}
             </Text>
           </Pressable>
         </ScrollView>

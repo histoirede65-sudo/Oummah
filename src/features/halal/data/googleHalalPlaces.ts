@@ -73,11 +73,12 @@ export async function getGoogleHalalPlaceDetails(placeId: string) {
   return payload?.place as GoogleHalalPlaceDetails | null;
 }
 
-export function getGoogleHalalPhotoSource(photoName?: string) {
+/** width : taille voulue en pixels (vignette de liste) ; sans width, grande photo pour la fiche. */
+export function getGoogleHalalPhotoSource(photoName?: string, width?: number) {
   const configuration = getSupabaseConfiguration();
   if (!configuration || !photoName) return null;
   return {
-    uri: `${configuration.url}/functions/v1/halal-place-photo?name=${encodeURIComponent(photoName)}`,
+    uri: `${configuration.url}/functions/v1/halal-place-photo?name=${encodeURIComponent(photoName)}${width ? `&w=${width}` : ''}`,
     headers: {
       apikey: configuration.key,
       Authorization: `Bearer ${configuration.key}`,

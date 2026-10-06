@@ -41,23 +41,23 @@ function ReferenceCard({ reference }: { reference: ProphetReference }) {
 }
 
 
-const SCENE_CONFIG: Record<string, { icon: keyof typeof Ionicons.glyphMap; colors: [string, string, string]; glow: string; label: string }> = {
-  nile: { icon: "boat-outline", colors: ["#120A24", "#4C2235", "#0B405A"], glow: "rgba(244,190,87,0.38)", label: "Le Nil au lever du jour" },
-  mistake: { icon: "heart-half-outline", colors: ["#180B19", "#442024", "#161020"], glow: "rgba(214,99,89,0.26)", label: "La ville, la faute et le repentir" },
-  madyan: { icon: "water-outline", colors: ["#170D23", "#6A3B20", "#24404A"], glow: "rgba(235,184,92,0.42)", label: "Le point d’eau de Madyan" },
-  family: { icon: "home-outline", colors: ["#171025", "#4A2832", "#75502C"], glow: "rgba(235,184,92,0.30)", label: "Les années de stabilité à Madyan" },
-  tuwa: { icon: "flame-outline", colors: ["#050713", "#15102A", "#56301F"], glow: "rgba(255,189,75,0.64)", label: "La vallée sacrée de Ṭuwâ" },
-  pharaoh: { icon: "business-outline", colors: ["#100818", "#30142C", "#70411F"], glow: "rgba(227,181,90,0.30)", label: "La cour de Pharaon" },
-  magicians: { icon: "sparkles-outline", colors: ["#11091F", "#381446", "#784516"], glow: "rgba(245,186,62,0.56)", label: "Le jour du rassemblement" },
-  signs: { icon: "thunderstorm-outline", colors: ["#07101D", "#152947", "#213D2D"], glow: "rgba(101,201,155,0.30)", label: "Les signes en Égypte" },
-  departure: { icon: "moon-outline", colors: ["#050710", "#10172B", "#29203E"], glow: "rgba(231,192,112,0.22)", label: "Le départ dans la nuit" },
-  sea: { icon: "water-outline", colors: ["#04101E", "#075075", "#0C6C88"], glow: "rgba(142,225,255,0.34)", label: "La mer ouverte comme un passage" },
-  "after-sea": { icon: "trail-sign-outline", colors: ["#160F24", "#503624", "#8B6336"], glow: "rgba(236,187,98,0.28)", label: "Le désert après la délivrance" },
-  mount: { icon: "triangle-outline", colors: ["#050611", "#151025", "#44313B"], glow: "rgba(255,205,116,0.52)", label: "Le rendez-vous du Mont" },
-  calf: { icon: "warning-outline", colors: ["#180B16", "#4A2117", "#86531E"], glow: "rgba(246,190,76,0.50)", label: "L’épreuve du veau" },
-  "holy-land": { icon: "map-outline", colors: ["#0F0E20", "#2F263B", "#745A2F"], glow: "rgba(225,184,101,0.30)", label: "Aux portes de la Terre sainte" },
-  khidr: { icon: "boat-outline", colors: ["#04111B", "#0B3A45", "#2C5143"], glow: "rgba(100,210,171,0.30)", label: "Le voyage vers une science inconnue" },
-  qarun: { icon: "diamond-outline", colors: ["#140919", "#4B231D", "#8B5C20"], glow: "rgba(246,190,76,0.52)", label: "La richesse, l’orgueil et la chute" },
+const SCENE_CONFIG: Record<string, { icon: keyof typeof Ionicons.glyphMap; colors: [string, string, string]; glow: string; label: TranslationKey }> = {
+  nile: { icon: "boat-outline", colors: ["#120A24", "#4C2235", "#0B405A"], glow: "rgba(244,190,87,0.38)", label: "musaScene.nile" },
+  mistake: { icon: "heart-half-outline", colors: ["#180B19", "#442024", "#161020"], glow: "rgba(214,99,89,0.26)", label: "musaScene.mistake" },
+  madyan: { icon: "water-outline", colors: ["#170D23", "#6A3B20", "#24404A"], glow: "rgba(235,184,92,0.42)", label: "musaScene.madyan" },
+  family: { icon: "home-outline", colors: ["#171025", "#4A2832", "#75502C"], glow: "rgba(235,184,92,0.30)", label: "musaScene.family" },
+  tuwa: { icon: "flame-outline", colors: ["#050713", "#15102A", "#56301F"], glow: "rgba(255,189,75,0.64)", label: "musaScene.tuwa" },
+  pharaoh: { icon: "business-outline", colors: ["#100818", "#30142C", "#70411F"], glow: "rgba(227,181,90,0.30)", label: "musaScene.pharaoh" },
+  magicians: { icon: "sparkles-outline", colors: ["#11091F", "#381446", "#784516"], glow: "rgba(245,186,62,0.56)", label: "musaScene.magicians" },
+  signs: { icon: "thunderstorm-outline", colors: ["#07101D", "#152947", "#213D2D"], glow: "rgba(101,201,155,0.30)", label: "musaScene.signs" },
+  departure: { icon: "moon-outline", colors: ["#050710", "#10172B", "#29203E"], glow: "rgba(231,192,112,0.22)", label: "musaScene.departure" },
+  sea: { icon: "water-outline", colors: ["#04101E", "#075075", "#0C6C88"], glow: "rgba(142,225,255,0.34)", label: "musaScene.sea" },
+  "after-sea": { icon: "trail-sign-outline", colors: ["#160F24", "#503624", "#8B6336"], glow: "rgba(236,187,98,0.28)", label: "musaScene.afterSea" },
+  mount: { icon: "triangle-outline", colors: ["#050611", "#151025", "#44313B"], glow: "rgba(255,205,116,0.52)", label: "musaScene.mount" },
+  calf: { icon: "warning-outline", colors: ["#180B16", "#4A2117", "#86531E"], glow: "rgba(246,190,76,0.50)", label: "musaScene.calf" },
+  "holy-land": { icon: "map-outline", colors: ["#0F0E20", "#2F263B", "#745A2F"], glow: "rgba(225,184,101,0.30)", label: "musaScene.holyLand" },
+  khidr: { icon: "boat-outline", colors: ["#04111B", "#0B3A45", "#2C5143"], glow: "rgba(100,210,171,0.30)", label: "musaScene.khidr" },
+  qarun: { icon: "diamond-outline", colors: ["#140919", "#4B231D", "#8B5C20"], glow: "rgba(246,190,76,0.52)", label: "musaScene.qarun" },
 };
 
 function Stars({ count = 12 }: { count?: number }) {
@@ -69,6 +69,7 @@ function MountainLayer({ bottom = 92, opacity = 0.72 }: { bottom?: number; opaci
 }
 
 function SceneArtwork({ chapterId }: { chapterId: string }) {
+  const { t } = useI18n();
   const scene = SCENE_CONFIG[chapterId] ?? SCENE_CONFIG.nile;
   const isNight = ["tuwa", "departure", "mount", "khidr"].includes(chapterId);
 
@@ -118,7 +119,7 @@ function SceneArtwork({ chapterId }: { chapterId: string }) {
       <View style={[styles.sceneGlow, { backgroundColor: scene.glow }]} />
       {foreground}
       <LinearGradient colors={["rgba(8,7,19,0.00)", "rgba(8,7,19,0.08)", "rgba(8,7,19,0.92)"]} style={StyleSheet.absoluteFill} />
-      <View style={styles.sceneLabelWrap}><Text style={styles.sceneLabel}>{scene.label}</Text></View>
+      <View style={styles.sceneLabelWrap}><Text style={styles.sceneLabel}>{t(scene.label)}</Text></View>
     </View>
   );
 }

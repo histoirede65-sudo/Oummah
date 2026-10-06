@@ -20,6 +20,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+import { useI18n, type TranslationKey } from "../i18n";
 import { colors } from "../theme/colors";
 import { typography } from "../theme/typography";
 
@@ -77,7 +78,11 @@ function WallpaperVideo({ source, contain = false }: { source: number; contain?:
   );
 }
 
+const CATEGORY_KEYS: Record<string, TranslationKey> = { "Animé": "wallpapers.catAnimated", Coran: "wallpapers.catQuran", Hadith: "wallpapers.catHadith" };
+
 export default function WallpapersScreen() {
+  const { t } = useI18n();
+  const titleOf = (wallpaper: Wallpaper) => t(`wallpapers.title.${wallpaper.id}` as TranslationKey);
   const { width } = useWindowDimensions();
   const cardWidth = useMemo(() => Math.floor((width - 46) / 2), [width]);
   const [selected, setSelected] = useState<Wallpaper | null>(null);
@@ -113,14 +118,14 @@ export default function WallpapersScreen() {
       await FileSystem.copyAsync({ from: uri, to: shareUri });
 
       await Sharing.shareAsync(shareUri, {
-        dialogTitle: "Enregistrer le fond d’écran OUMMAH",
+        dialogTitle: t("wallpapers.dialog"),
         mimeType: isVideo ? "video/mp4" : "image/jpeg",
         UTI: isVideo ? "public.mpeg-4" : "public.jpeg",
       });
     } catch {
       Alert.alert(
-        "Enregistrement indisponible",
-        "Impossible d’ouvrir les options d’enregistrement pour le moment.",
+        t("wallpapers.errorTitle"),
+        t("wallpapers.errorText"),
       );
     } finally {
       setSharingId(null);
@@ -131,15 +136,15 @@ export default function WallpapersScreen() {
     <SafeAreaView edges={["top"]} style={styles.safeArea}>
       <View style={styles.header}>
         <Pressable
-          accessibilityLabel="Retour"
+          accessibilityLabel={t("common.back")}
           onPress={() => router.back()}
           style={styles.headerButton}
         >
           <Ionicons name="arrow-back" size={22} color={colors.goldLight} />
         </Pressable>
         <View style={styles.headerCopy}>
-          <Text style={styles.eyebrow}>COLLECTION OUMMAH</Text>
-          <Text style={styles.headerTitle}>Fonds d’écran</Text>
+          <Text style={styles.eyebrow}>{t("wallpapers.eyebrow")}</Text>
+          <Text style={styles.headerTitle}>{t("wallpapers.header")}</Text>
         </View>
         <View style={styles.countPill}>
           <Text style={styles.countText}>{WALLPAPERS.length}</Text>
@@ -158,22 +163,20 @@ export default function WallpapersScreen() {
             <Ionicons name="phone-portrait-outline" size={25} color={colors.goldLight} />
           </View>
           <View style={styles.heroCopy}>
-            <Text style={styles.heroTitle}>Un rappel qui vous accompagne</Text>
-            <Text style={styles.heroText}>
-              Choisissez un fond, ouvrez-le puis enregistrez-le sur votre téléphone.
-            </Text>
+            <Text style={styles.heroTitle}>{t("wallpapers.heroTitle")}</Text>
+            <Text style={styles.heroText}>{t("wallpapers.heroText")}</Text>
           </View>
         </LinearGradient>
 
         <View style={styles.sectionRow}>
-          <Text style={styles.sectionTitle}>Toute la collection</Text>
-          <Text style={styles.sectionMeta}>{WALLPAPERS.length} fonds · faites défiler</Text>
+          <Text style={styles.sectionTitle}>{t("wallpapers.all")}</Text>
+          <Text style={styles.sectionMeta}>{t("wallpapers.count", { count: WALLPAPERS.length })}</Text>
         </View>
 
         <View style={styles.grid}>
           {WALLPAPERS.map((wallpaper) => (
             <Pressable
-              accessibilityLabel={`Voir le fond ${wallpaper.title}`}
+              accessibilityLabel={t("wallpapers.open", { title: titleOf(wallpaper) })}
               key={wallpaper.id}
               onPress={() => setSelected(wallpaper)}
               style={({ pressed }) => [
@@ -194,12 +197,12 @@ export default function WallpapersScreen() {
               />
               {wallpaper.isNew ? (
                 <View style={styles.newBadge}>
-                  <Text style={styles.newBadgeText}>NOUVEAU</Text>
+                  <Text style={styles.newBadgeText}>{t("menu.new")}</Text>
                 </View>
               ) : null}
               <View style={styles.cardFooter}>
-                <Text numberOfLines={1} style={styles.cardTitle}>{wallpaper.title}</Text>
-                <Text style={styles.cardCategory}>{wallpaper.category}</Text>
+                <Text numberOfLines={1} style={styles.cardTitle}>{titleOf(wallpaper)}</Text>
+                <Text style={styles.cardCategory}>{CATEGORY_KEYS[wallpaper.category] ? t(CATEGORY_KEYS[wallpaper.category]) : wallpaper.category}</Text>
               </View>
             </Pressable>
           ))}
@@ -227,11 +230,11 @@ export default function WallpapersScreen() {
           <SafeAreaView edges={["top", "bottom"]} style={styles.previewSafe}>
             <View style={styles.previewTop}>
               <View>
-                <Text style={styles.previewEyebrow}>APERÇU</Text>
-                <Text style={styles.previewTitle}>{selected?.title}</Text>
+                <Text style={styles.previewEyebrow}>{t("wallpapers.preview")}</Text>
+                <Text style={styles.previewTitle}>{selected ? titleOf(selected) : null}</Text>
               </View>
               <Pressable
-                accessibilityLabel="Fermer l’aperçu"
+                accessibilityLabel={t("wallpapers.closePreview")}
                 onPress={() => setSelected(null)}
                 style={styles.closeButton}
               >
@@ -250,11 +253,9 @@ export default function WallpapersScreen() {
                 ) : (
                   <Ionicons name="download-outline" size={20} color={colors.background} />
                 )}
-                <Text style={styles.saveButtonText}>Enregistrer ou partager</Text>
+                <Text style={styles.saveButtonText}>{t("wallpapers.save")}</Text>
               </Pressable>
-              <Text style={styles.saveHint}>
-                Dans le menu du téléphone, choisissez « Enregistrer l’image ».
-              </Text>
+              <Text style={styles.saveHint}>{t("wallpapers.saveHint")}</Text>
             </View>
           </SafeAreaView>
         </View>

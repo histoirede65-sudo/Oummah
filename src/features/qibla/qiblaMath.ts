@@ -1,3 +1,5 @@
+import { translate } from "../../i18n/translate";
+
 export const KAABA_COORDINATES = {
   latitude: 21.422487,
   longitude: 39.826206,
@@ -51,17 +53,8 @@ export function calculateDistanceToKaabaKm(
 }
 
 export function bearingToCardinal(bearing: number): string {
-  const labels = [
-    'Nord',
-    'Nord-est',
-    'Est',
-    'Sud-est',
-    'Sud',
-    'Sud-ouest',
-    'Ouest',
-    'Nord-ouest',
-  ];
-  return labels[Math.round(normalizeDegrees(bearing) / 45) % labels.length];
+  const labels = ['qiblaMap.n', 'qiblaMap.ne', 'qiblaMap.e', 'qiblaMap.se', 'qiblaMap.s', 'qiblaMap.sw', 'qiblaMap.w', 'qiblaMap.nw'] as const;
+  return translate(labels[Math.round(normalizeDegrees(bearing) / 45) % labels.length]);
 }
 
 export function getTurnInstruction(relativeAngle: number): string {

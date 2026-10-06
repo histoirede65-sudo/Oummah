@@ -79,7 +79,7 @@ import type { HalalPlace } from "../../features/halal/domain/HalalPlace";
 import { colors } from "../../theme/colors";
 import { typography } from "../../theme/typography";
 import { getValidSession } from "../../features/auth/SupabaseAuthService";
-import { useI18n } from "../../i18n";
+import { translate, useI18n } from "../../i18n";
 
 function getSingleParam(value: string | string[] | undefined) {
   return Array.isArray(value) ? (value[0] ?? "") : (value ?? "");
@@ -696,11 +696,11 @@ function formatQuranPassage(target: QuranNativeTarget) {
   const name = surah?.transliteration ?? String(surahId);
   const verseStart = target.params.verseStart;
   const verseEnd = target.params.verseEnd;
-  if (!verseStart) return `Sourate ${name}`;
+  if (!verseStart) return translate("quranPassage.surah", { name });
   if (verseEnd && verseEnd !== verseStart) {
-    return `Sourate ${name} — versets ${verseStart} à ${verseEnd}`;
+    return translate("wasil.passageVerses", { name, start: verseStart, end: verseEnd });
   }
-  return `Sourate ${name} — verset ${verseStart}`;
+  return translate("wasil.passageVerse", { name, verse: verseStart });
 }
 
 function markdownSourceLabel(label: string, urlValue: string, t: Translate) {
@@ -2253,7 +2253,7 @@ export default function DalilScreen() {
           title: t("wasil.reminderNotCreated"),
           body: t("wasil.reminderFailed"),
           action: {
-            label: "Ouvrir mes notifications",
+            label: translate("wasil.openNotifications"),
             route: "/notifications",
           },
         };
@@ -2289,7 +2289,7 @@ export default function DalilScreen() {
           title: "Objectifs indisponibles",
           body: t("wasil.goalsFailed"),
           action: {
-            label: "Ouvrir mes objectifs",
+            label: translate("wasil.openGoals"),
             route: "/daily-goals",
           },
         };

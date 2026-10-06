@@ -24,9 +24,42 @@ const LANGUAGE_STORAGE_KEY = '@oummah/language/v1';
 I18nManager.allowRTL(true);
 I18nManager.swapLeftAndRightInRTL?.(true);
 
+const isLanguage = (value: string | null): value is LanguageCode => value !== null && value in languages;
+
+/**
+ * Langue enregistrée, lue dès le chargement du module : notifications et widgets l'attendent
+ * avant de se synchroniser, pour ne pas être programmés en français chez un utilisateur anglais.
+ */
+/** Langue du téléphone au premier lancement : anglais seulement si le téléphone est en anglais. */
+function deviceLanguage(): LanguageCode {
+  try {
+    return /^en\b/i.test(Intl.DateTimeFormat().resolvedOptions().locale) ? 'en' : 'fr';
+  } catch {
+    return 'fr';
+  }
+}
+
+// Un choix déjà enregistré (dont « fr » chez tous les utilisateurs actuels) l'emporte toujours ;
+// la langue du téléphone ne sert qu'à une première installation.
+export const languageReady: Promise<LanguageCode> = AsyncStorage.getItem(LANGUAGE_STORAGE_KEY)
+  .then((stored) => (isLanguage(stored) ? stored : deviceLanguage()))
+  .catch(() => 'fr' as LanguageCode)
+  .then((stored) => {
+    setActiveLanguage(stored);
+    return stored;
+  });
+
+const languageChangeListeners = new Set<(language: LanguageCode) => void>();
+
+/** Appelé quand l'utilisateur change de langue (pas au démarrage). */
+export function subscribeLanguageChange(listener: (language: LanguageCode) => void) {
+  languageChangeListeners.add(listener);
+  return () => {
+    languageChangeListeners.delete(listener);
+  };
+}
+
 export function I18nProvider({ children }: { children: ReactNode; initialLanguage?: LanguageCode }) {
-  // Version française uniquement : l'anglais reste dans le code pour une réactivation future,
-  // mais ne peut plus être sélectionné ni restauré depuis un ancien réglage.
   const [language, setStoredLanguage] = useState<LanguageCode>('fr');
   const definition = languages[language];
 
@@ -35,15 +68,22 @@ export function I18nProvider({ children }: { children: ReactNode; initialLanguag
   }, [language]);
 
   useEffect(() => {
-    // Réinitialise aussi les utilisateurs qui avaient déjà enregistré "en".
-    setStoredLanguage('fr');
-    void AsyncStorage.setItem(LANGUAGE_STORAGE_KEY, 'fr').catch(() => undefined);
+    let cancelled = false;
+    void languageReady.then((stored) => {
+      if (!cancelled) setStoredLanguage(stored);
+    });
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
-  const setLanguage = useCallback((_nextLanguage: LanguageCode) => {
-    // Garde volontairement l'API existante pour ne rien casser ailleurs.
-    setStoredLanguage('fr');
-    void AsyncStorage.setItem(LANGUAGE_STORAGE_KEY, 'fr').catch(() => undefined);
+  const setLanguage = useCallback((nextLanguage: LanguageCode) => {
+    // Active la langue tout de suite pour les services, avant le prochain rendu.
+    setActiveLanguage(nextLanguage);
+    setStoredLanguage(nextLanguage);
+    void AsyncStorage.setItem(LANGUAGE_STORAGE_KEY, nextLanguage)
+      .catch(() => undefined)
+      .then(() => languageChangeListeners.forEach((listener) => listener(nextLanguage)));
   }, []);
 
   const value = useMemo<I18nContextValue>(() => {

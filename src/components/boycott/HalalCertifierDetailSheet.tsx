@@ -76,6 +76,7 @@ function GuideView({ guide }: { guide: HalalReligiousGuide }) {
     {guide.divergence ? <Section title={translate('certSheet.divergence')}><Text style={styles.conclusion}>{guide.divergence}</Text></Section> : null}
     {guide.reading ? <Section title={translate("certSheet.linkCert")}><Text style={styles.conclusion}>{guide.reading}</Text><Text style={styles.meta}>{translate("certSheet.guideNote")}</Text></Section> : null}
     <Text style={styles.meta}>{translate('certSheet.verifiedOn', { date: formatDate(guide.lastVerifiedAt) ?? '' })}</Text>
+    {getActiveLanguage() === 'en' ? <Text style={styles.meta}>{translate('certSheet.guideAiNote')}</Text> : null}
   </>;
 }
 
@@ -154,7 +155,7 @@ export function HalalCertifierDetailSheet({ certifier, onClose, scannedProducts,
 
       {guides.length ? <Section title={translate("certSheet.guides")}><Text style={styles.body}>{translate("certSheet.guidesText")}</Text>{guides.map((item) => <Pressable key={item.id} accessibilityRole="button" onPress={() => setGuideId(item.id)} style={styles.guideRow}><Ionicons name="book-outline" size={18} color={colors.goldLight} /><Text style={styles.guideTitle}>{item.title}</Text><Ionicons name="chevron-forward" size={16} color={colors.textMuted} /></Pressable>)}</Section> : null}
 
-      <Section title={translate("certSheet.conclusion")}><Text style={styles.conclusion}>{certifier.summary}</Text><Text style={styles.meta}>{translate("certSheet.conclusionNote")}</Text></Section>
+      <Section title={translate("certSheet.conclusion")}><Text style={styles.conclusion}>{certifier.summary}</Text>{getActiveLanguage() === 'en' ? <Text style={styles.meta}>{translate('certSheet.sheetAiNote')}</Text> : null}<Text style={styles.meta}>{translate("certSheet.conclusionNote")}</Text></Section>
 
       <Section title={translate('dossier.sources')}>{certifier.sources.length ? <SourceLinks sources={certifier.sources} /> : <Text style={styles.body}>{translate("certSheet.noPrimary")}</Text>}</Section>
     </ScrollView>}

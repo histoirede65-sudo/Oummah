@@ -401,7 +401,7 @@ export async function getAdhanNotificationDiagnostics() {
 export async function scheduleAdhanTestNotification() {
   const preferences = await loadAdhanPreferences();
   const permission = await Notifications.getPermissionsAsync();
-  if (!isGranted(permission)) throw new Error("Notifications non autorisées");
+  if (!isGranted(permission)) throw new Error(translate("adhan.notificationsDenied"));
 
   await configureAndroidChannels();
   await configureAdhanNotificationCategory();
