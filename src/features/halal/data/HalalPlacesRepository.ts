@@ -507,6 +507,11 @@ export async function searchNearbyHalalPlaces(
 
   const googlePlaces = await googlePromise;
   const communityPlaces = await communityPromise;
+  // OpenStreetMap n'a pas répondu : on garde les lieux OpenStreetMap déjà connus pour cette zone
+  // (dernière recherche, cache) au lieu de les faire disparaître de la liste.
+  if (!osmSucceeded) {
+    osmPlaces = previousPlaces.filter((place) => place.source === 'openstreetmap');
+  }
   const remote = deduplicate([...communityPlaces, ...osmPlaces, ...googlePlaces])
     .sort((a, b) => a.distanceMeters - b.distanceMeters)
     .slice(0, MAX_RESULTS);
@@ -516,7 +521,8 @@ export async function searchNearbyHalalPlaces(
     );
     rememberSessionPlaces(places);
     const persistentPlaces = deduplicate([...local, ...osmPlaces]).sort((a, b) => a.distanceMeters - b.distanceMeters);
-    const writes = [
+    // Une recherche où OpenStreetMap n'a pas répondu n'écrase pas la mémoire de la dernière recherche complète.
+    const writes = osmSucceeded ? [
       AsyncStorage.setItem(LAST_RESULTS_KEY, JSON.stringify(persistentPlaces)).catch(() => undefined),
       AsyncStorage.setItem(LAST_SEARCH_KEY, JSON.stringify({
         origin,
@@ -524,7 +530,7 @@ export async function searchNearbyHalalPlaces(
         savedAt: Date.now(),
         places: persistentPlaces,
       })).catch(() => undefined),
-    ];
+    ] : [];
     if (!freshOsmCache && osmSucceeded) {
       writes.push(AsyncStorage.setItem(key, JSON.stringify({ savedAt: Date.now(), places: osmPlaces })).catch(() => undefined));
     }
