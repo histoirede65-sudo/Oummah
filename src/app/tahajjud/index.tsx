@@ -53,11 +53,11 @@ export default function TahajjudScreen() {
   const verse = tonight ? verseOfTheNight(tonight.key) : null;
 
   const tiles: Tile[] = [
-    { icon: 'book-outline', label: tx('Conseils'), hint: tx('Apprendre le Qiyam'), route: '/tahajjud/guide' },
-    { icon: 'heart-outline', label: tx('Ma nuit'), hint: tx('Dhikr, Coran, duas…'), route: '/tahajjud/duas' },
+    { icon: 'book-outline', label: tx('Guide'), hint: tx('Apprendre le Qiyam'), route: '/tahajjud/guide' },
+    { icon: 'heart-outline', label: tx('Ma nuit'), hint: tx('Dhikr, Coran'), route: '/tahajjud/duas' },
     { icon: 'checkmark-circle-outline', label: tx('J’ai prié'), hint: view.validated ? tx('Nuit enregistrée') : tx('Valider ma nuit'), onPress: () => view.canValidate && setSheet(true) },
     { icon: 'stats-chart-outline', label: tx('Statistiques'), hint: tx('Calendrier · défis'), route: '/tahajjud/stats' },
-    { icon: 'people-outline', label: tx('Mur des duas'), hint: tx('Dire Amine'), route: '/tahajjud/wall' },
+    { icon: 'people-outline', label: tx('Duas'), hint: tx('Mur · dire Amine'), route: '/tahajjud/wall' },
     { icon: 'chatbubbles-outline', label: tx('Amis'), hint: unreadMessages ? txCount(unreadMessages, '{0} message non lu', '{0} messages non lus') : tx('Messages · encourager'), route: '/tahajjud/friends' },
   ];
 
@@ -174,7 +174,7 @@ export default function TahajjudScreen() {
                 <View style={[styles.tileIcon, tile.soon && styles.tileIconSoon]}>
                   <Ionicons name={tile.icon} size={20} color={tile.soon ? night.muted : night.goldSoft} />
                 </View>
-                <Text numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.8} style={[styles.tileLabel, tile.soon && styles.tileLabelSoon]}>{tile.label}</Text>
+                <Text numberOfLines={1} style={[styles.tileLabel, tile.soon && styles.tileLabelSoon]}>{tile.label}</Text>
                 <Text style={styles.tileHint}>{tile.hint}</Text>
               </Pressable>
             ))}

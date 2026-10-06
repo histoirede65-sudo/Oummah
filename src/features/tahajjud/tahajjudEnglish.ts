@@ -733,4 +733,7 @@ export const TAHAJJUD_EN: Record<string, string> = {
   'Encore {0} nuit avant les dix dernières. Prier la nuit avec le suhoor, c’est une seule montée.': '{0} more night before the last ten. Praying at night with suhoor is a single climb.',
   'Encore {0} nuits avant les dix dernières. Prier la nuit avec le suhoor, c’est une seule montée.': '{0} more nights before the last ten. Praying at night with suhoor is a single climb.',
   'jusqu’à Fajr ({0}), après ‘Isha': 'until Fajr ({0}), after ‘Isha',
+  'Dhikr, Coran': 'Dhikr, Quran',
+  'Duas': 'Duas',
+  'Mur · dire Amine': 'Wall · say Ameen',
 };
