@@ -1213,14 +1213,24 @@ export default function SurahReadingScreen() {
 
   // Printed pages of the Madinah Mushaf: the whole book (604 pages), opened on the requested verse.
   const isMushafPages = settings.mode === "mushaf-pages" || settings.mode === "mushaf-tajweed";
-  const [pageVerse, setPageVerse] = useState<QuranFoundationVerse | null>(null);
+  // Verse touched on a page. If it belongs to another surah (page shared by two surahs), the screen
+  // moves to that surah and the verse sheet opens as soon as its verses are loaded.
+  const [pageVerseKey, setPageVerseKey] = useState<string | null>(null);
+  const pageVerse = pageVerseKey ? verses.find((verse) => verse.verseKey === pageVerseKey) ?? null : null;
+  const setPageVerse = (verse: QuranFoundationVerse | null) => setPageVerseKey(verse?.verseKey ?? null);
   const mushafPages = MUSHAF_ALL_PAGES;
   const bookmarkTarget = parsePositiveRouteNumber(mushafPage);
   const mushafInitialPage =
     (bookmarkTarget && mushafPages.includes(bookmarkTarget) ? bookmarkTarget : null) ??
     verses.find((verse) => getRenderedVerseNumber(verse) === (mushafStartVerse ?? requestedVerseNumber ?? 1))?.pageNumber ??
     mushafPages[0] ?? 1;
-  const handleMushafVerse = (verseKey: string) => setPageVerse(verses.find((verse) => verse.verseKey === verseKey) ?? null);
+  const handleMushafVerse = (verseKey: string) => {
+    setPageVerseKey(verseKey);
+    const chapter = Number(verseKey.split(":")[0]);
+    if (chapter !== surahId && chapter >= 1 && chapter <= 114) {
+      router.setParams({ id: String(chapter), mushafPage: visibleMushafPage ? String(visibleMushafPage) : undefined, verse: undefined, direct: undefined });
+    }
+  };
   // Turning the pages like a book: when the page in view no longer holds this surah, the screen follows
   // the reader into the next (or previous) surah, without leaving the pages.
   const handleMushafPage = (page: number, chapters: number[]) => {
