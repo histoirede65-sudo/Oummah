@@ -6,19 +6,12 @@ import { getActiveLanguage, translate } from '../../i18n';
 import { getValidSession } from '../auth/SupabaseAuthService';
 import { resolveMosqueId } from './data/mosqueIdentity';
 import { getMosquePosts } from './data/mosquePosts';
-import { getMosquePrayerSchedule, loadPrayerCalculationSettings } from './data/mosquePrayerTimes';
-import {
-  applyApprovedMosquePrayerTimes,
-  getApprovedMosquePrayerTimes,
-  getIqamaTime,
-} from './data/mosquePrayerUpdates';
 
 /**
  * Notifications liées à une mosquée, activées mosquée par mosquée :
  *  - Événements : rappel 2 h avant chaque événement validé.
- *  - « Pars maintenant » : pour les prières choisies, au moment de partir pour arriver 5 min avant
- *    l'iqama (ou l'adhan si l'iqama n'est pas connue), selon le temps de trajet depuis la position du
- *    téléphone.
+ *  (« Partez maintenant » a été retiré : le trajet était calculé depuis la position du téléphone au moment
+ *  de la programmation, jusqu'à 3 jours avant, et non depuis l'endroit où se trouve l'utilisateur.)
  * Notifications locales, reprogrammées à chaque ouverture (3 jours d'avance). Seules les notifications
  * marquées OWNER sont annulées : celles des autres fonctions de l'app ne sont jamais touchées.
  */
@@ -35,16 +28,9 @@ const SETTINGS_KEY = 'oummah.mosques.reminders.v1';
 const ORIGIN_KEY = 'oummah.mosques.reminders.origin.v1';
 const OWNER = 'oummah-mosque';
 const CHANNEL = 'oummah-mosque-v1';
-const DAYS_AHEAD = 3;
 const EVENT_LEAD_MS = 2 * 60 * 60_000;
-const ARRIVAL_MARGIN_MIN = 5;
 const MAX_NOTIFICATIONS = 40;
 const IOS_MAX_NOTIFICATIONS = 6;
-
-function prayerLabel(prayer: ReminderPrayer) {
-  if (prayer === 'jumuah') return translate('mosque.jumuah');
-  return { fajr: 'Fajr', dhuhr: 'Dhuhr', asr: 'Asr', maghrib: 'Maghrib', isha: 'Isha' }[prayer];
-}
 
 function timeLocale() {
   return getActiveLanguage() === 'fr' ? 'fr-FR' : 'en-GB';
@@ -177,12 +163,11 @@ function mosqueRoute(mosque: MosqueReminderSettings['mosque']) {
 
 type Planned = { at: number; title: string; body: string; route: string; key: string };
 
-async function plannedForMosque(settings: MosqueReminderSettings, origin: Origin | null): Promise<Planned[]> {
+async function plannedForMosque(settings: MosqueReminderSettings): Promise<Planned[]> {
   const { mosque } = settings;
   const route = mosqueRoute(mosque);
   const planned: Planned[] = [];
   const now = Date.now();
-  const horizon = now + DAYS_AHEAD * 86_400_000;
 
   if (settings.events) {
     const posts = await getMosquePosts(mosque.id);
@@ -200,60 +185,6 @@ async function plannedForMosque(settings: MosqueReminderSettings, origin: Origin
     }
   }
 
-  if (settings.leaveNow.length > 0 && origin) {
-    const calculation = await loadPrayerCalculationSettings();
-    const [calculated, approved] = await Promise.all([
-      getMosquePrayerSchedule(mosque.latitude, mosque.longitude, undefined, calculation, DAYS_AHEAD + 1),
-      getApprovedMosquePrayerTimes(mosque.id).catch(() => null),
-    ]);
-    const schedule = applyApprovedMosquePrayerTimes(calculated, approved);
-    const travel = estimateTravel(origin, mosque);
-    const prayers = [...schedule.prayers, ...schedule.tomorrowPrayers, ...(schedule.futurePrayers ?? [])];
-    const seen = new Set<number>();
-    const jumuah = approved?.jumuahTimes?.[0]?.time;
-
-    for (const prayer of prayers) {
-      if (seen.has(prayer.timestamp)) continue;
-      seen.add(prayer.timestamp);
-      const key = prayer.key.toLowerCase() as Exclude<ReminderPrayer, 'jumuah'>;
-      const day = new Date(prayer.timestamp);
-      const isFridayDhuhr = key === 'dhuhr' && day.getDay() === 5;
-
-      let label: ReminderPrayer = key;
-      let target = prayer.timestamp;
-      let targetLabel = translate('mosque.notifTargetAdhan', { time: prayer.time });
-      if (isFridayDhuhr && settings.leaveNow.includes('jumuah') && jumuah) {
-        const [hours, minutes] = jumuah.split(':').map(Number);
-        const friday = new Date(day);
-        friday.setHours(hours, minutes, 0, 0);
-        label = 'jumuah';
-        target = friday.getTime();
-        targetLabel = translate('mosque.notifTargetJumuah', { time: jumuah });
-      } else {
-        if (!settings.leaveNow.includes(key)) continue;
-        const iqama = getIqamaTime(approved?.iqama?.[key], prayer, schedule.timezone);
-        if (iqama) {
-          const [hours, minutes] = iqama.split(':').map(Number);
-          const iqamaDate = new Date(day);
-          iqamaDate.setHours(hours, minutes, 0, 0);
-          target = iqamaDate.getTime();
-          targetLabel = translate('mosque.notifTargetIqama', { time: iqama });
-        }
-      }
-
-      const at = target - (travel.minutes + ARRIVAL_MARGIN_MIN) * 60_000;
-      if (at <= now || at > horizon) continue;
-      planned.push({
-        at, route, key: `leave-${label}-${target}`,
-        title: translate('mosque.notifLeaveTitle', { prayer: prayerLabel(label) }),
-        body: translate(travel.mode === 'walk' ? 'mosque.notifLeaveBodyWalk' : 'mosque.notifLeaveBodyCar', {
-          mosque: mosque.name,
-          minutes: travel.minutes,
-          target: targetLabel,
-        }),
-      });
-    }
-  }
   return planned;
 }
 
@@ -290,8 +221,7 @@ export function refreshMosqueReminders(force = false): Promise<void> {
         });
       }
 
-      const origin = all.some((settings) => settings.leaveNow.length > 0) ? await refreshOrigin(false) : null;
-      const planned = (await Promise.all(all.map((settings) => plannedForMosque(settings, origin).catch(() => []))))
+      const planned = (await Promise.all(all.map((settings) => plannedForMosque(settings).catch(() => []))))
         .flat()
         .sort((a, b) => a.at - b.at)
         // iOS keeps only 64 pending notifications for the whole app: the adhan comes first.
