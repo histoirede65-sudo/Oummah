@@ -13,10 +13,10 @@ const FRAME = '#C9A35A';
 const HEADER_FILL = '#F1E6C8';
 // Recitation: the verse is written in a warm gold ink, the recited word in a deeper tone with a soft glow.
 // The tajweed font keeps its own colours, so there only the recited word gets a light wash.
-const VERSE_INK = '#9C6A12';
-const WORD_INK = '#6E3F00';
-const WORD_GLOW = 'rgba(227,181,90,0.85)';
-const WORD_WASH = 'rgba(227,181,90,0.28)';
+const VERSE_INK = '#A86A00';
+const VERSE_WASH = 'rgba(227,181,90,0.16)';
+const WORD_PILL = 'rgba(214,160,55,0.62)';
+const WORD_INK = '#3A2200';
 const BASMALA = 'بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ';
 
 type Props = {
@@ -79,21 +79,21 @@ export function MushafPager({ pages, style, initialPage, activeVerseKey, activeW
           windowSize={3}
           initialNumToRender={1}
           maxToRenderPerBatch={2}
+          extraData={`${activeVerseKey}-${activeWordPosition}-${zoomed}-${resetKey}`}
           renderItem={({ item }) => (
-            <View style={{ width: size.width, height: size.height, overflow: 'hidden' }}>
-              <MushafZoom width={size.width} height={size.height} resetKey={resetKey} zoomed={zoomed} onZoomChange={setZoomed}>
-                <MushafPageView
-                  page={item}
-                  style={style}
-                  width={size.width}
-                  height={size.height}
-                  activeVerseKey={activeVerseKey ?? null}
-                  activeWordPosition={activeWordPosition ?? null}
-                  onVersePress={onVersePress}
-                  onLoaded={register}
-                />
-              </MushafZoom>
-            </View>
+            <MushafPageView
+              page={item}
+              style={style}
+              width={size.width}
+              height={size.height}
+              activeVerseKey={activeVerseKey ?? null}
+              activeWordPosition={activeWordPosition ?? null}
+              onVersePress={onVersePress}
+              onLoaded={register}
+              resetKey={resetKey}
+              zoomed={zoomed}
+              onZoomChange={setZoomed}
+            />
           )}
         />
       ) : null}
@@ -106,7 +106,7 @@ export function MushafPager({ pages, style, initialPage, activeVerseKey, activeW
   );
 }
 
-const MushafPageView = memo(function MushafPageView({ page, style, width, height, activeVerseKey, activeWordPosition, onVersePress, onLoaded }: {
+const MushafPageView = memo(function MushafPageView({ page, style, width, height, activeVerseKey, activeWordPosition, onVersePress, onLoaded, resetKey, zoomed, onZoomChange }: {
   page: number;
   style: MushafStyle;
   width: number;
@@ -115,6 +115,9 @@ const MushafPageView = memo(function MushafPageView({ page, style, width, height
   activeWordPosition: number | null;
   onVersePress: (verseKey: string) => void;
   onLoaded: (layout: MushafPage) => void;
+  resetKey: number;
+  zoomed: boolean;
+  onZoomChange: (zoomed: boolean) => void;
 }) {
   const { t } = useI18n();
   const [state, setState] = useState<{ key: string; layout: MushafPage; family: string } | { key: string; error: true } | null>(null);
@@ -157,7 +160,20 @@ const MushafPageView = memo(function MushafPageView({ page, style, width, height
     return Array.from({ length: last }, (_, index) => index + 1).map((number) => ({ number, line: words.get(number), header: headers.get(number) }));
   }, [current, opening]);
 
+  // Centre of the line being recited, so a zoomed page follows the recitation.
+  const focusY = useMemo(() => {
+    if (!activeVerseKey) return null;
+    const index = rows.findIndex(({ line }) => line?.words.some((word) => word.verseKey === activeVerseKey && (activeWordPosition === null || word.position === activeWordPosition)));
+    const fallback = index >= 0 ? index : rows.findIndex(({ line }) => line?.words.some((word) => word.verseKey === activeVerseKey));
+    if (fallback < 0) return null;
+    const contentHeight = height - 4 - 18;
+    const top = opening ? (contentHeight - rows.length * lineHeight) / 2 : 0;
+    return 4 + top + (fallback + 0.5) * lineHeight;
+  }, [activeVerseKey, activeWordPosition, height, lineHeight, opening, rows]);
+
   return (
+    <View style={{ width, height, overflow: 'hidden' }}>
+    <MushafZoom width={width} height={height} resetKey={resetKey} zoomed={zoomed} focusY={focusY} onZoomChange={onZoomChange}>
     <View style={[styles.slot, { width, height }]}>
       <View style={[styles.page, { width: pageWidth }]}>
         {!current ? (
@@ -182,8 +198,9 @@ const MushafPageView = memo(function MushafPageView({ page, style, width, height
                           onPress={() => onVersePress(word.verseKey)}
                           style={[
                             { fontFamily: current.family, fontSize, lineHeight, color: INK },
-                            inVerse && style === 'plain' && styles.verseInk,
-                            isWord && (style === 'plain' ? styles.wordInk : styles.wordWash),
+                            inVerse && (style === 'plain' ? styles.verseInk : styles.verseWash),
+                            isWord && styles.wordPill,
+                            isWord && style === 'plain' && styles.wordInk,
                           ]}
                         >
                           {word.code}
@@ -216,6 +233,8 @@ const MushafPageView = memo(function MushafPageView({ page, style, width, height
         <Text numberOfLines={1} style={styles.pageNumber}>{page}  ·  {t('surahReader.mushafCredit')}</Text>
       </View>
     </View>
+    </MushafZoom>
+    </View>
   );
 });
 
@@ -235,8 +254,9 @@ const styles = StyleSheet.create({
   line: { flexDirection: 'row-reverse', alignItems: 'center', justifyContent: 'space-between' },
   lineOpening: { justifyContent: 'center', gap: 6 },
   verseInk: { color: VERSE_INK },
-  wordInk: { color: WORD_INK, textShadowColor: WORD_GLOW, textShadowRadius: 10, textShadowOffset: { width: 0, height: 0 } },
-  wordWash: { backgroundColor: WORD_WASH },
+  verseWash: { backgroundColor: VERSE_WASH, borderRadius: 6, overflow: 'hidden' },
+  wordPill: { backgroundColor: WORD_PILL, borderRadius: 9, overflow: 'hidden', paddingHorizontal: 2 },
+  wordInk: { color: WORD_INK },
   surahName: { alignItems: 'center', justifyContent: 'center', borderWidth: 1.5, borderColor: FRAME, borderRadius: 10, backgroundColor: HEADER_FILL },
   surahNameText: { color: INK, fontFamily: ARABIC_READING_FONT_FAMILY },
   basmala: { alignItems: 'center', justifyContent: 'center' },
