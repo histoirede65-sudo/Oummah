@@ -24,5 +24,29 @@
         android:name="android.appwidget.provider"
         android:resource="@xml/halal_widget_info" />
     </receiver>
+    <!-- Home screen / lock screen shortcut that opens the Qibla compass. -->
+    <receiver
+      android:name="com.oummah.scanwidget.QiblaWidgetProvider"
+      android:exported="true"
+      android:label="@string/qibla_widget_label">
+      <intent-filter>
+        <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+      </intent-filter>
+      <meta-data
+        android:name="android.appwidget.provider"
+        android:resource="@xml/qibla_widget_info" />
+    </receiver>
+    <!-- « Reprendre le Coran »: the Mushaf bookmark, one tap to continue reading. -->
+    <receiver
+      android:name="com.oummah.scanwidget.QuranWidgetProvider"
+      android:exported="true"
+      android:label="@string/quran_widget_label">
+      <intent-filter>
+        <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+      </intent-filter>
+      <meta-data
+        android:name="android.appwidget.provider"
+        android:resource="@xml/quran_widget_info" />
+    </receiver>
   </application>
 </manifest>

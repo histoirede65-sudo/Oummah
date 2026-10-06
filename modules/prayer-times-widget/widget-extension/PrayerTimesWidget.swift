@@ -1647,6 +1647,235 @@ struct HalalWidget: Widget {
   }
 }
 
+// MARK: - Qibla : ouvre directement la boussole
+
+private let qiblaWidgetKind = "QiblaWidget"
+private let qiblaURL = URL(string: "oummah:///qibla")
+
+@available(iOS 16.0, *)
+private struct QiblaWidgetView: View {
+  @Environment(\.widgetFamily) private var family
+  let entry: ScanEntry
+
+  var body: some View {
+    switch family {
+    case .accessoryCircular:
+      ZStack {
+        AccessoryWidgetBackground()
+        Image(systemName: "location.north.circle")
+          .font(.system(size: 26, weight: .semibold))
+      }
+      .widgetAccentable()
+    case .accessoryRectangular:
+      HStack(spacing: 8) {
+        Image(systemName: "location.north.circle")
+          .font(.system(size: 26, weight: .semibold))
+          .widgetAccentable()
+        VStack(alignment: .leading, spacing: 1) {
+          Text("Qibla").font(.headline)
+          Text("Direction").font(.caption).foregroundStyle(.secondary)
+        }
+        Spacer(minLength: 0)
+      }
+    default:
+      VStack(spacing: 8) {
+        ZStack {
+          Circle().fill(scanGold.opacity(0.16)).frame(width: 74, height: 74)
+          Image(systemName: "location.north.circle")
+            .font(.system(size: 40, weight: .semibold))
+            .foregroundStyle(scanGold)
+        }
+        Text("Qibla")
+          .font(.system(size: 17, weight: .bold))
+          .foregroundStyle(scanCream)
+        Text("Trouver la direction")
+          .font(.system(size: 12, weight: .medium))
+          .foregroundStyle(scanGold.opacity(0.75))
+      }
+      .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+  }
+}
+
+@available(iOS 16.0, *)
+struct QiblaWidget: Widget {
+  var body: some WidgetConfiguration {
+    StaticConfiguration(kind: qiblaWidgetKind, provider: ScanProvider()) { entry in
+      QiblaWidgetView(entry: entry)
+        .widgetURL(qiblaURL)
+        .modifier(NightBackground())
+    }
+    .configurationDisplayName("Qibla")
+    .description("Ouvre directement la boussole de la Qibla.")
+    .supportedFamilies([.systemSmall, .accessoryCircular, .accessoryRectangular])
+  }
+}
+
+// MARK: - Reprendre le Coran : le marque-page du Mushaf
+
+private let quranWidgetKind = "QuranWidget"
+private let quranBookmarkKey = "oummah.quran-widget.bookmark.v1"
+
+private struct QuranBookmark: Decodable {
+  let surahId: Int
+  let page: Int
+  let name: String
+  let arabicName: String
+}
+
+private struct QuranEntry: TimelineEntry {
+  let date: Date
+  let bookmark: QuranBookmark?
+}
+
+private struct QuranProvider: TimelineProvider {
+  private func read() -> QuranBookmark? {
+    guard let raw = UserDefaults(suiteName: widgetGroupIdentifier)?.string(forKey: quranBookmarkKey),
+          let data = raw.data(using: .utf8) else { return nil }
+    return try? JSONDecoder().decode(QuranBookmark.self, from: data)
+  }
+
+  func placeholder(in context: Context) -> QuranEntry {
+    QuranEntry(date: Date(), bookmark: QuranBookmark(surahId: 2, page: 23, name: "Al-Baqara", arabicName: "البقرة"))
+  }
+  func getSnapshot(in context: Context, completion: @escaping (QuranEntry) -> Void) {
+    completion(QuranEntry(date: Date(), bookmark: read() ?? placeholder(in: context).bookmark))
+  }
+  func getTimeline(in context: Context, completion: @escaping (Timeline<QuranEntry>) -> Void) {
+    // Reloaded by the app each time the bookmark changes.
+    completion(Timeline(entries: [QuranEntry(date: Date(), bookmark: read())], policy: .never))
+  }
+}
+
+@available(iOS 16.0, *)
+private struct QuranWidgetView: View {
+  @Environment(\.widgetFamily) private var family
+  let entry: QuranEntry
+
+  private var title: String { entry.bookmark?.name ?? "Coran" }
+  private var subtitle: String {
+    if let bookmark = entry.bookmark { return "Page \(bookmark.page) · Continuer" }
+    return "Commencer la lecture"
+  }
+
+  var body: some View {
+    switch family {
+    case .accessoryCircular:
+      ZStack {
+        AccessoryWidgetBackground()
+        VStack(spacing: 0) {
+          Image(systemName: "bookmark.fill").font(.system(size: 13, weight: .semibold))
+          if let bookmark = entry.bookmark {
+            Text("p. \(bookmark.page)").font(.system(size: 12, weight: .bold)).minimumScaleFactor(0.7)
+          }
+        }
+      }
+      .widgetAccentable()
+    case .accessoryRectangular:
+      HStack(spacing: 8) {
+        Image(systemName: "bookmark.fill")
+          .font(.system(size: 22, weight: .semibold))
+          .widgetAccentable()
+        VStack(alignment: .leading, spacing: 1) {
+          Text(title).font(.headline).lineLimit(1)
+          Text(subtitle).font(.caption).foregroundStyle(.secondary).lineLimit(1)
+        }
+        Spacer(minLength: 0)
+      }
+    case .systemMedium:
+      HStack(spacing: 16) {
+        ZStack {
+          Circle().fill(scanGold.opacity(0.16)).frame(width: 66, height: 66)
+          Image(systemName: "bookmark.fill")
+            .font(.system(size: 30, weight: .semibold))
+            .foregroundStyle(scanGold)
+        }
+        VStack(alignment: .leading, spacing: 3) {
+          Text("REPRENDRE LE CORAN")
+            .font(.system(size: 10, weight: .bold))
+            .tracking(1.4)
+            .foregroundStyle(scanGold.opacity(0.85))
+          Text(title)
+            .font(.system(size: 19, weight: .bold))
+            .foregroundStyle(scanCream)
+            .lineLimit(1)
+          Text(subtitle)
+            .font(.system(size: 12.5, weight: .medium))
+            .foregroundStyle(scanCream.opacity(0.7))
+        }
+        Spacer(minLength: 0)
+        if let bookmark = entry.bookmark {
+          Text(bookmark.arabicName)
+            .font(.system(size: 28, weight: .bold))
+            .foregroundStyle(scanGold)
+            .minimumScaleFactor(0.6)
+            .lineLimit(1)
+        }
+      }
+      .padding(.horizontal, 4)
+    default:
+      VStack(spacing: 6) {
+        if let bookmark = entry.bookmark {
+          Text(bookmark.arabicName)
+            .font(.system(size: 28, weight: .bold))
+            .foregroundStyle(scanGold)
+            .minimumScaleFactor(0.6)
+            .lineLimit(1)
+        } else {
+          Image(systemName: "book.fill")
+            .font(.system(size: 32, weight: .semibold))
+            .foregroundStyle(scanGold)
+        }
+        Text(title)
+          .font(.system(size: 16, weight: .bold))
+          .foregroundStyle(scanCream)
+          .lineLimit(1)
+          .minimumScaleFactor(0.8)
+        Text(subtitle)
+          .font(.system(size: 11.5, weight: .medium))
+          .foregroundStyle(scanGold.opacity(0.8))
+          .lineLimit(1)
+          .minimumScaleFactor(0.8)
+      }
+      .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+  }
+}
+
+@available(iOS 16.0, *)
+struct QuranWidget: Widget {
+  var body: some WidgetConfiguration {
+    StaticConfiguration(kind: quranWidgetKind, provider: QuranProvider()) { entry in
+      QuranWidgetView(entry: entry)
+        .widgetURL(URL(string: entry.bookmark.map { "oummah:///surah/\($0.surahId)?mushafPage=\($0.page)" } ?? "oummah:///quran"))
+        .modifier(NightBackground())
+    }
+    .configurationDisplayName("Reprendre le Coran")
+    .description("Rouvre le Mushaf à la page de votre marque-page.")
+    .supportedFamilies([.systemSmall, .systemMedium, .accessoryCircular, .accessoryRectangular])
+  }
+}
+
+/// Night background (violet-black) used by the Qibla and Quran widgets.
+private struct NightBackground: ViewModifier {
+  private var gradient: LinearGradient {
+    LinearGradient(
+      colors: [Color(red: 0.14, green: 0.10, blue: 0.18), Color(red: 0.04, green: 0.05, blue: 0.04)],
+      startPoint: .topLeading,
+      endPoint: .bottomTrailing
+    )
+  }
+
+  @ViewBuilder
+  func body(content: Content) -> some View {
+    if #available(iOS 17.0, *) {
+      content.containerBackground(for: .widget) { gradient }
+    } else {
+      content.background(gradient)
+    }
+  }
+}
+
 @available(iOS 16.0, *)
 @main
 struct OummahWidgetBundle: WidgetBundle {
@@ -1656,5 +1885,7 @@ struct OummahWidgetBundle: WidgetBundle {
     TahajjudWidget()
     ScanWidget()
     HalalWidget()
+    QiblaWidget()
+    QuranWidget()
   }
 }

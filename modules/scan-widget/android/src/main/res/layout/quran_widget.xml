@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  android:id="@+id/quran_widget_root"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  android:background="@drawable/oummah_widget_night_bg"
+  android:gravity="center"
+  android:orientation="vertical"
+  android:padding="10dp">
+
+  <ImageView
+    android:layout_width="26dp"
+    android:layout_height="26dp"
+    android:contentDescription="@string/quran_widget_label"
+    android:src="@drawable/quran_widget_icon" />
+
+  <TextView
+    android:id="@+id/quran_widget_arabic"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="2dp"
+    android:textColor="#FFF2B53D"
+    android:textSize="20sp"
+    android:visibility="gone" />
+
+  <TextView
+    android:id="@+id/quran_widget_title"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="2dp"
+    android:ellipsize="end"
+    android:maxLines="1"
+    android:text="@string/quran_widget_empty_title"
+    android:textColor="#FFF8F1DE"
+    android:textSize="14sp"
+    android:textStyle="bold" />
+
+  <TextView
+    android:id="@+id/quran_widget_subtitle"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:maxLines="1"
+    android:text="@string/quran_widget_empty_subtitle"
+    android:textColor="#B3F2B53D"
+    android:textSize="11sp" />
+</LinearLayout>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Compass ring, needle and a small Kaaba, gold. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+  android:width="48dp" android:height="48dp" android:viewportWidth="40" android:viewportHeight="40">
+  <path android:strokeColor="#FFF2B53D" android:strokeWidth="2.5" android:fillColor="#00000000"
+    android:pathData="M20,4 A16,16 0 1 1 19.99,4 Z" />
+  <path android:fillColor="#FFF2B53D" android:pathData="M20,6 L24,20 L20,18 L16,20 Z" />
+  <path android:fillColor="#FF0A0D09" android:strokeColor="#FFF2B53D" android:strokeWidth="1.4"
+    android:pathData="M15.5,21.5 L24.5,21.5 L24.5,29.5 L15.5,29.5 Z" />
+  <path android:fillColor="#FFF2B53D" android:pathData="M15.5,24 L24.5,24 L24.5,25.6 L15.5,25.6 Z" />
+</vector>

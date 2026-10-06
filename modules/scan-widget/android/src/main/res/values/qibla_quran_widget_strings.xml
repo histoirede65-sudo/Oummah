@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="qibla_widget_label">Qibla</string>
+  <string name="qibla_widget_title">Qibla</string>
+  <string name="qibla_widget_subtitle">Trouver la direction</string>
+  <string name="qibla_widget_description">Ouvre directement la boussole de la Qibla.</string>
+  <string name="quran_widget_label">Reprendre le Coran</string>
+  <string name="quran_widget_page">Page %1$d · Continuer</string>
+  <string name="quran_widget_empty_title">Coran</string>
+  <string name="quran_widget_empty_subtitle">Commencer la lecture</string>
+  <string name="quran_widget_description">Rouvre le Mushaf à la page de votre marque-page.</string>
+</resources>
