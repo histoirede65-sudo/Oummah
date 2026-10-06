@@ -82,7 +82,7 @@ import {
   syncAdhanNotifications,
 } from "../features/adhan/AdhanNotifications";
 import AppHeader from "./AppHeader";
-import { useI18n, type TranslationKey } from "../i18n";
+import { translate, useI18n, type TranslationKey } from "../i18n";
 
 const PRAYER_LABEL_KEYS: Record<MosquePrayerKey, TranslationKey> = {
   Fajr: "prayer.fajr",
@@ -950,8 +950,8 @@ export default function PrayerCard({ onScheduleChange }: { onScheduleChange?: (s
         if (!controller.signal.aborted && !lastShown) {
           setErrorMessage(
             error instanceof Error && error.message === "LOCATION_DENIED"
-              ? "Autorisez la localisation ou choisissez votre mosquée."
-              : "Les horaires sont momentanément indisponibles.",
+              ? translate("prayer.locationDeniedError")
+              : translate("prayer.timesUnavailable"),
           );
         }
       } finally {

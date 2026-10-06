@@ -19,6 +19,7 @@ import {
   createProfileDraft,
   ProfileRepositoryError,
 } from "../../features/profile/UserProfileRepository";
+import { translate } from "../../i18n";
 import { colors } from "../../theme/colors";
 import { typography } from "../../theme/typography";
 
@@ -29,27 +30,27 @@ type CallbackState =
 
 function callbackErrorMessage(error: unknown) {
   if (error instanceof ProfileRepositoryError) {
-    return "Votre adresse a été confirmée, mais le profil n’a pas pu être préparé. Réessayez depuis la page Profil.";
+    return translate("authCallback.profileError");
   }
   if (!(error instanceof MagicLinkError)) {
-    return "La confirmation a échoué. Vérifiez votre connexion puis demandez un nouveau lien.";
+    return translate("authCallback.failed");
   }
 
   switch (error.code) {
     case "invalid-link":
-      return "Ce lien de confirmation est invalide.";
+      return translate("authCallback.invalid");
     case "expired-link":
-      return "Ce lien de confirmation a expiré. Demandez un nouveau lien.";
+      return translate("authCallback.expired");
     case "missing-parameters":
-      return "Ce lien ne contient pas les informations nécessaires à la confirmation.";
+      return translate("authCallback.missing");
     case "pkce-unsupported":
-      return "Ce format de lien n’est pas encore pris en charge. Demandez un nouveau magic link.";
+      return translate("authCallback.unsupported");
     case "network-error":
-      return "Impossible de contacter le service d’authentification. Vérifiez votre connexion.";
+      return translate("authCallback.network");
     case "session-save-failed":
-      return "Votre adresse a été confirmée, mais la session n’a pas pu être enregistrée sur cet appareil.";
+      return translate("authCallback.sessionSave");
     case "supabase-error":
-      return "Supabase n’a pas pu confirmer cette adresse. Demandez un nouveau lien.";
+      return translate("authCallback.supabase");
   }
 }
 
@@ -58,7 +59,7 @@ export default function AuthCallbackScreen() {
   const handledUrl = useRef<string | null>(null);
   const [state, setState] = useState<CallbackState>({
     status: "processing",
-    message: "Confirmation en cours…",
+    message: translate("authCallback.processing"),
   });
 
   useEffect(() => {
@@ -73,7 +74,7 @@ export default function AuthCallbackScreen() {
         if (!session) {
           setState({
             status: "error",
-            message: "La session n’a pas pu être créée à partir de ce lien.",
+            message: translate("authCallback.noSession"),
           });
           return;
         }
@@ -81,7 +82,7 @@ export default function AuthCallbackScreen() {
         if (!active) return;
         setState({
           status: "success",
-          message: "Adresse email confirmée",
+          message: translate("authCallback.confirmed"),
         });
         redirectTimer = setTimeout(
           () =>
@@ -128,7 +129,7 @@ export default function AuthCallbackScreen() {
               pressed && styles.returnButtonPressed,
             ]}
           >
-            <Text style={styles.returnButtonText}>Retour au profil</Text>
+            <Text style={styles.returnButtonText}>{translate("authCallback.back")}</Text>
           </Pressable>
         ) : null}
       </View>

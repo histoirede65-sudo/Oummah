@@ -13,6 +13,7 @@ import {
   calculateQiblaBearing,
   KAABA_COORDINATES,
 } from '../features/qibla/qiblaMath';
+import { getActiveLanguage, translate } from '../i18n';
 import { colors } from '../theme/colors';
 import { typography } from '../theme/typography';
 
@@ -119,7 +120,7 @@ export default function QiblaMapScreen() {
         </Pressable>
         <View style={styles.headerCopy}>
           <Text style={styles.eyebrow}>QIBLA</Text>
-          <Text style={styles.title}>Vue carte</Text>
+          <Text style={styles.title}>{translate("qiblaMap.title")}</Text>
         </View>
         <Pressable onPress={recenter} style={styles.iconButton}>
           <Ionicons name="locate-outline" size={22} color={colors.goldLight} />
@@ -129,10 +130,8 @@ export default function QiblaMapScreen() {
       {permissionDenied ? (
         <View style={styles.emptyState}>
           <Ionicons name="location-outline" size={42} color={colors.goldLight} />
-          <Text style={styles.emptyTitle}>Localisation indisponible</Text>
-          <Text style={styles.emptyText}>
-            Autorisez la localisation pour afficher la ligne vers la Kaaba.
-          </Text>
+          <Text style={styles.emptyTitle}>{translate("qiblaMap.unavailable")}</Text>
+          <Text style={styles.emptyText}>{translate('qiblaMap.allow')}</Text>
         </View>
       ) : (
         <View style={styles.mapShell}>
@@ -147,8 +146,8 @@ export default function QiblaMapScreen() {
           >
             {position ? (
               <>
-                <Marker coordinate={position} title="Votre position" />
-                <Marker coordinate={KAABA_COORDINATES} title="La Kaaba" pinColor={colors.gold} />
+                <Marker coordinate={position} title={translate("qiblaMap.you")} />
+                <Marker coordinate={KAABA_COORDINATES} title={translate("qiblaMap.kaaba")} pinColor={colors.gold} />
                 <Polyline
                   coordinates={[position, KAABA_COORDINATES]}
                   strokeColor={colors.goldLight}
@@ -171,16 +170,16 @@ export default function QiblaMapScreen() {
               <Ionicons name="navigate" size={22} color="#130B1B" />
             </View>
             <View style={styles.infoCopy}>
-              <Text style={styles.infoLabel}>Direction depuis votre position</Text>
+              <Text style={styles.infoLabel}>{translate("qiblaMap.direction")}</Text>
               <Text style={styles.infoValue}>
                 {qiblaBearing === null
-                  ? 'Calcul en cours...'
+                  ? translate("qiblaMap.calculating")
                   : `${Math.round(qiblaBearing)}° • ${bearingToCardinal(qiblaBearing)}`}
               </Text>
               <Text style={styles.infoDistance}>
                 {distance === null
-                  ? 'Localisation en cours'
-                  : `La Mecque à environ ${Math.round(distance).toLocaleString('fr-FR')} km`}
+                  ? translate("qiblaMap.locating")
+                  : translate('qiblaMap.distance', { km: Math.round(distance).toLocaleString(getActiveLanguage() === 'en' ? 'en-GB' : 'fr-FR') })}
               </Text>
             </View>
           </View>
@@ -188,11 +187,11 @@ export default function QiblaMapScreen() {
           <View style={styles.modeRow}>
             <Pressable onPress={() => router.replace('/qibla')} style={styles.modeButton}>
               <Ionicons name="compass-outline" size={19} color={colors.textSecondary} />
-              <Text style={styles.modeText}>Boussole</Text>
+              <Text style={styles.modeText}>{translate("qiblaMap.compass")}</Text>
             </Pressable>
             <View style={[styles.modeButton, styles.modeActive]}>
               <Ionicons name="map" size={19} color="#130B1B" />
-              <Text style={styles.modeActiveText}>Carte</Text>
+              <Text style={styles.modeActiveText}>{translate("qiblaMap.map")}</Text>
             </View>
           </View>
         </View>
