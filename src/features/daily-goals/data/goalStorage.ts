@@ -71,3 +71,18 @@ export async function readRecentDailyPlans(days = 7) {
   const plans = await Promise.all(dates.map(readDailyPlan));
   return plans.filter((plan): plan is DailyPlan => Boolean(plan));
 }
+
+/** Plans of the given days, read in one go (missing days are skipped). */
+export async function readDailyPlansFor(dateKeys: readonly string[]) {
+  const entries = await AsyncStorage.multiGet(dateKeys.map((key) => `${PLAN_PREFIX}${key}`)).catch(() => []);
+  const plans: DailyPlan[] = [];
+  for (const [, raw] of entries) {
+    if (!raw) continue;
+    try {
+      plans.push(JSON.parse(raw) as DailyPlan);
+    } catch {
+      // A damaged day is left out of the review.
+    }
+  }
+  return plans;
+}

@@ -22,6 +22,7 @@ import { ensureAppNotificationChannels } from '../features/notifications/notific
 import { isNotificationPermissionGranted } from '../features/notifications/NotificationPermissions';
 import { loadNotificationCenterPreferences, notificationResponseReadId, requestNotificationCenterPermission, saveNotificationCenterPreferences, saveReadNotificationIds, syncNotificationCenterSchedule, verseOfDayRoute } from '../features/notifications/NotificationCenter';
 import { syncJumuahNotification } from '../features/jumuah/JumuahService';
+import { syncGoalReviewNotifications } from '../features/daily-goals/services/reviewNotifications';
 import AnalyticsRouteTracker from '../features/analytics/AnalyticsRouteTracker';
 import FirstVisitGuideHost from '../components/FirstVisitGuideHost';
 import GoalCelebrationHost from '../features/daily-goals/presentation/GoalCelebrationHost';
@@ -600,6 +601,16 @@ export default function RootLayout() {
             })
             .catch(() => false);
         }, 700),
+      );
+
+      // Bilans des objectifs : lundi, 1er du mois, 1er janvier. Seulement si les notifications sont autorisées.
+      timers.push(
+        setTimeout(() => {
+          if (cancelled) return;
+          void permissionReady
+            .then((granted) => (cancelled || !granted ? false : syncGoalReviewNotifications()))
+            .catch(() => false);
+        }, 900),
       );
 
       // Push : permissions/token/session/réseau, donc légèrement après l'accueil.
