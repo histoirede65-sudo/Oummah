@@ -1026,7 +1026,7 @@ export const fr = {
   'surahReader.translation': 'Traduction',
   'surahReader.transliteration': 'Phonétique',
   'surahReader.mushaf': 'Mushaf',
-  'surahReader.mushafGoToBookmark': 'Aller au marque-page · page {page} ({surah})',
+  'surahReader.mushafGoToBookmark': 'Marque-page · p. {page}, {surah}',
   'surahReader.mushafBookmarkAdd': 'Placer le marque-page sur cette page',
   'surahReader.mushafBookmarkRemove': 'Retirer le marque-page',
   'surahReader.mushafBookmarkHere': 'Marque-page',

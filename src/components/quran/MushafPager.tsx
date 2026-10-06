@@ -28,13 +28,13 @@ type Props = {
   onVersePress: (verseKey: string) => void;
   /** Page carrying the reader's bookmark ribbon. */
   bookmarkPage?: number | null;
-  /** Page currently in view (for the bookmark button). */
-  onPageChange?: (page: number) => void;
+  /** Page in view, with the surahs it contains (in order), once its layout is known. */
+  onPageChange?: (page: number, chapters: number[]) => void;
   /** Asks the pager to show this page (nonce: a new request each time). */
   jumpTo?: { page: number; nonce: number } | null;
 };
 
-/** The surah's pages, turned from right to left like a printed Mushaf. */
+/** The Mushaf's pages, turned from right to left like a printed book. */
 export function MushafPager({ pages, style, initialPage, activeVerseKey, activeWordPosition, onVersePress, bookmarkPage, onPageChange, jumpTo }: Props) {
   const [size, setSize] = useState<{ width: number; height: number } | null>(null);
   const listRef = useRef<FlatList<number>>(null);
@@ -46,9 +46,15 @@ export function MushafPager({ pages, style, initialPage, activeVerseKey, activeW
   const [resetKey, setResetKey] = useState(0);
   const pageChange = useRef(onPageChange);
   useEffect(() => { pageChange.current = onPageChange; }, [onPageChange]);
+  // Surahs of each loaded page; the page in view is reported once its layout is known.
+  const pageChapters = useRef(new Map<number, number[]>());
+  const visiblePage = useRef<number | null>(null);
   const viewability = useCallback(({ viewableItems }: { viewableItems: { item: number }[] }) => {
     const visible = viewableItems[0]?.item;
-    if (typeof visible === 'number') pageChange.current?.(visible);
+    if (typeof visible !== 'number') return;
+    visiblePage.current = visible;
+    const chapters = pageChapters.current.get(visible);
+    if (chapters) pageChange.current?.(visible, chapters);
   }, []);
   const resetZoom = () => {
     setZoomed(false);
@@ -61,7 +67,16 @@ export function MushafPager({ pages, style, initialPage, activeVerseKey, activeW
   };
 
   const register = useCallback((layout: MushafPage) => {
-    for (const line of layout.lines) for (const word of line.words) pageOfVerse.current.set(word.verseKey, layout.page);
+    const chapters: number[] = [];
+    for (const line of layout.lines) {
+      for (const word of line.words) {
+        pageOfVerse.current.set(word.verseKey, layout.page);
+        const chapter = Number(word.verseKey.split(':')[0]);
+        if (!chapters.includes(chapter)) chapters.push(chapter);
+      }
+    }
+    pageChapters.current.set(layout.page, chapters);
+    if (visiblePage.current === layout.page) pageChange.current?.(layout.page, chapters);
   }, []);
 
   useEffect(() => {
