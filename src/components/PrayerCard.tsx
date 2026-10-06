@@ -199,14 +199,16 @@ const ORBIT_POSITIONS: ReadonlyArray<{
   top: number;
 }> = [
   { left: "4%", top: 66 },
-  { left: "19%", top: 9 },
+  { left: "19%", top: 18 },
   { left: "41%", top: 13 },
-  { left: "63%", top: 9 },
+  { left: "63%", top: 18 },
   { left: "79%", top: 66 },
   { left: "41%", top: 88 },
 ];
 
-const ORBIT_ANGLES = [2.96, 4.1, 4.71, 5.33, 6.46, 7.85, 9.24] as const;
+// Angle (radians) du point de l'ellipse le plus proche de chaque pastille (Fajr → Isha, puis Fajr + 2π),
+// pour que le halo passe sur la pastille à l'heure exacte de la prière.
+const ORBIT_ANGLES = [2.98, 4.17, 4.71, 5.24, 6.51, 7.86, 2.98 + 2 * Math.PI] as const;
 
 function getOrbitMarker(timeline: TimelineItem[], now: number) {
   const timestamps = timeline.map((prayer) => prayer.timestamp);
@@ -296,7 +298,9 @@ function getLocalDayStart(timestamp: number) {
   return date.getTime();
 }
 
-function getPrayerWidgetSunrise(fajr: MosquePrayerTime) {
+function getPrayerWidgetSunrise(fajr: MosquePrayerTime, real?: { time: string; timestamp: number }) {
+  if (real) return { key: "Sunrise", label: "Chourouk", time: real.time, timestamp: real.timestamp };
+  // Horaires en cache d'avant l'enregistrement du lever du soleil : ancienne estimation.
   const sunrise = new Date(fajr.timestamp + 90 * 60 * 1_000);
   return {
     key: "Sunrise",
@@ -322,13 +326,19 @@ function makeTimeline(
   const asr = getPrayerByKey(schedule, "Asr");
   const maghrib = getPrayerByKey(schedule, "Maghrib");
   const isha = getPrayerByKey(schedule, "Isha");
-  const sunrise = fajr ? new Date(fajr.timestamp + 90 * 60 * 1_000) : null;
-  const sunriseLabel = sunrise
-    ? [
-        String(sunrise.getHours()).padStart(2, "0"),
-        String(sunrise.getMinutes()).padStart(2, "0"),
-      ].join(":")
-    : "--:--";
+  // Vrai lever du soleil (Aladhan) ; l'ancienne estimation Fajr + 1 h 30 ne sert qu'aux horaires
+  // mis en cache avant que le lever du soleil soit enregistré.
+  const sunrise = schedule.sunrise
+    ? new Date(schedule.sunrise.timestamp)
+    : fajr ? new Date(fajr.timestamp + 90 * 60 * 1_000) : null;
+  const sunriseLabel = schedule.sunrise
+    ? schedule.sunrise.time
+    : sunrise
+      ? [
+          String(sunrise.getHours()).padStart(2, "0"),
+          String(sunrise.getMinutes()).padStart(2, "0"),
+        ].join(":")
+      : "--:--";
 
   const isActive = (prayer?: MosquePrayerTime) =>
     Boolean(prayer && currentPrayer?.key === prayer.key);
@@ -1165,7 +1175,7 @@ export default function PrayerCard({ onScheduleChange }: { onScheduleChange?: (s
           calendarSettings.country,
         )),
         prayers: schedule.prayers,
-        sunrise: getPrayerWidgetSunrise(todayAnchor),
+        sunrise: getPrayerWidgetSunrise(todayAnchor, schedule.sunrise),
       },
       tomorrow: {
         dateKey: tomorrowDate.toISOString().slice(0, 10),
@@ -1173,7 +1183,7 @@ export default function PrayerCard({ onScheduleChange }: { onScheduleChange?: (s
         frenchDate: formatDateLabel(tomorrowDate),
         hijriDate: formatHijri(tomorrowHijriDate),
         prayers: schedule.tomorrowPrayers,
-        sunrise: getPrayerWidgetSunrise(tomorrowAnchor),
+        sunrise: getPrayerWidgetSunrise(tomorrowAnchor, schedule.tomorrowSunrise),
       },
     });
   }, [calendarSettings, schedule]);
