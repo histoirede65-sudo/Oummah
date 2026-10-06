@@ -3557,4 +3557,6 @@ export const en: Partial<Record<TranslationKey, string>> = {
   'halalBodies.warning': 'A sheet describes the certifier; on its own it never makes a product “not halal”. The religious guides explain the rules and do not rate any certifier.',
 
 
+  'certSheet.guideAiNote': 'Scholars\' positions, Companions\' statements and summaries translated with the help of AI. Quran: Saheeh International. Hadith: official English translation (fawazahmed0).',
+  'certSheet.sheetAiNote': 'Sheet translated with the help of AI.',
 };

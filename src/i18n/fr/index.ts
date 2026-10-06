@@ -3566,6 +3566,8 @@ export const fr = {
   'halalBodies.warning': 'Une fiche décrit l’organisme ; elle ne rend jamais, à elle seule, un produit « non halal ». Les repères religieux expliquent les règles et ne notent aucun organisme.',
 
 
+  'certSheet.guideAiNote': 'Positions des savants, paroles des Compagnons et synthèses traduites à l’aide d’une IA. Coran : traduction officielle. Hadiths : traduction officielle.',
+  'certSheet.sheetAiNote': 'Fiche traduite à l’aide d’une IA.',
 } as const;
 
 export type TranslationKey = keyof typeof fr;

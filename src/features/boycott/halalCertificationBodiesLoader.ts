@@ -7,8 +7,8 @@ const GUIDES_CACHE_KEY = 'oummah.halal.religious-guides.v1';
 let loading: Promise<void> | null = null;
 const listeners = new Set<() => void>();
 
-type Row = { id: string; name: string; full_name?: string | null; aliases?: string[] | null; off_label_tags?: string[] | null; logo_url?: string | null; country?: string | null; official_website?: string | null; body_type?: string | null; documentation_level: HalalCertificationBody['documentationLevel']; summary: string; facts?: HalalCertificationBody['facts'] | null; criteria?: HalalCertificationBody['criteria'] | null; warnings?: HalalCertificationBody['warnings'] | null; criticisms?: HalalCertificationBody['criticisms'] | null; scholarly_notes?: HalalCertificationBody['scholarlyNotes'] | null; sources?: HalalCertificationBody['sources'] | null; last_verified_at: string };
-type GuideRow = { id: HalalReligiousGuide['id']; title: string; question: string; quran?: HalalReligiousGuide['quran'] | null; sunnah?: HalalReligiousGuide['sunnah'] | null; companions?: HalalReligiousGuide['companions'] | null; scholars?: HalalReligiousGuide['scholars'] | null; agreement?: string | null; divergence?: string | null; reading?: string | null; last_verified_at: string };
+type Row = { id: string; name: string; full_name?: string | null; aliases?: string[] | null; off_label_tags?: string[] | null; logo_url?: string | null; country?: string | null; official_website?: string | null; body_type?: string | null; documentation_level: HalalCertificationBody['documentationLevel']; summary: string; facts?: HalalCertificationBody['facts'] | null; criteria?: HalalCertificationBody['criteria'] | null; warnings?: HalalCertificationBody['warnings'] | null; criticisms?: HalalCertificationBody['criticisms'] | null; scholarly_notes?: HalalCertificationBody['scholarlyNotes'] | null; sources?: HalalCertificationBody['sources'] | null; last_verified_at: string; en?: HalalCertificationBody['en'] | null };
+type GuideRow = { id: HalalReligiousGuide['id']; title: string; question: string; quran?: HalalReligiousGuide['quran'] | null; sunnah?: HalalReligiousGuide['sunnah'] | null; companions?: HalalReligiousGuide['companions'] | null; scholars?: HalalReligiousGuide['scholars'] | null; agreement?: string | null; divergence?: string | null; reading?: string | null; last_verified_at: string; en?: HalalReligiousGuide['en'] | null };
 
 function fromRow(row: Row): HalalCertificationBody {
   return {
@@ -30,6 +30,7 @@ function fromRow(row: Row): HalalCertificationBody {
     scholarlyNotes: row.scholarly_notes ?? [],
     sources: row.sources ?? [],
     lastVerifiedAt: row.last_verified_at,
+    en: row.en ?? undefined,
   };
 }
 
@@ -46,6 +47,7 @@ function guideFromRow(row: GuideRow): HalalReligiousGuide {
     divergence: row.divergence ?? undefined,
     reading: row.reading ?? undefined,
     lastVerifiedAt: row.last_verified_at,
+    en: row.en ?? undefined,
   };
 }
 

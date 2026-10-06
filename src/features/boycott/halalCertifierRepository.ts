@@ -3,7 +3,7 @@
 // identifies bodies so detection still works offline. Editorial rules: a body's sheet never changes a
 // product's halal status by itself; undocumented facts are shown as "Information non vérifiée".
 
-import { localizedRecord, translate, type TranslationKey } from '../../i18n/translate';
+import { getActiveLanguage, localizedRecord, translate, type TranslationKey } from '../../i18n/translate';
 
 export type HalalSource = { title: string; organisation: string; publishedAt?: string; url: string };
 /** verified = independent official source (institution, official document); declared_by_body = the body's own website;
@@ -62,6 +62,8 @@ export type HalalReligiousGuide = {
   divergence?: string;
   reading?: string;
   lastVerifiedAt: string;
+  /** English texts (halal_religious_guides.en), same shape; lists are matched item by item. */
+  en?: Partial<Omit<HalalReligiousGuide, 'id' | 'en' | 'lastVerifiedAt'>>;
 };
 
 export type HalalCertificationBody = {
@@ -83,6 +85,8 @@ export type HalalCertificationBody = {
   scholarlyNotes: HalalScholarlyNote[];
   sources: HalalSource[];
   lastVerifiedAt: string;
+  /** English texts (halal_certification_bodies.en), same shape; lists are matched item by item. */
+  en?: Partial<Pick<HalalCertificationBody, 'summary' | 'country' | 'bodyType' | 'warnings' | 'criticisms' | 'scholarlyNotes'>> & { facts?: Record<string, Partial<HalalFact>>; criteria?: Record<string, Partial<HalalCriterion>> };
 };
 /** @deprecated kept for existing imports. */
 export type HalalCertifier = HalalCertificationBody;
@@ -140,12 +144,26 @@ export function setHalalCertificationBodies(next: HalalCertificationBody[]) {
   bodies = [...next, ...OFFLINE_BODIES.filter((body) => !ids.has(body.id))];
 }
 
-export function getHalalCertificationBodies() { return bodies; }
+// English overlay: each French field is replaced by its English version when there is one.
+function overlayList<T extends object>(list: T[], en?: Array<Partial<T>>): T[] { return en ? list.map((item, index) => ({ ...item, ...(en[index] ?? {}) })) : list; }
+function overlayRecord<T extends object>(record: Partial<Record<string, T>>, en?: Record<string, Partial<T>>): Partial<Record<string, T>> { if (!en) return record; const out: Partial<Record<string, T>> = {}; for (const [key, value] of Object.entries(record)) if (value) out[key] = { ...value, ...(en[key] ?? {}) }; return out; }
+function localizedBody(body: HalalCertificationBody): HalalCertificationBody {
+  const en = getActiveLanguage() === 'en' ? body.en : undefined;
+  if (!en) return body;
+  return { ...body, summary: en.summary ?? body.summary, country: en.country ?? body.country, bodyType: en.bodyType ?? body.bodyType, facts: overlayRecord(body.facts, en.facts) as HalalCertificationBody['facts'], criteria: overlayRecord(body.criteria, en.criteria) as HalalCertificationBody['criteria'], warnings: overlayList(body.warnings, en.warnings), criticisms: overlayList(body.criticisms, en.criticisms), scholarlyNotes: overlayList(body.scholarlyNotes, en.scholarlyNotes) };
+}
+function localizedGuide(guide: HalalReligiousGuide): HalalReligiousGuide {
+  const en = getActiveLanguage() === 'en' ? guide.en : undefined;
+  if (!en) return guide;
+  return { ...guide, title: en.title ?? guide.title, question: en.question ?? guide.question, agreement: en.agreement ?? guide.agreement, divergence: en.divergence ?? guide.divergence, reading: en.reading ?? guide.reading, quran: overlayList(guide.quran, en.quran), sunnah: overlayList(guide.sunnah, en.sunnah), companions: overlayList(guide.companions, en.companions), scholars: overlayList(guide.scholars, en.scholars) };
+}
+
+export function getHalalCertificationBodies() { return bodies.map(localizedBody); }
 
 let guides: HalalReligiousGuide[] = [];
 export function setHalalReligiousGuides(next: HalalReligiousGuide[]) { if (next.length) guides = next; }
-export function getHalalReligiousGuides() { return guides; }
-export function getHalalReligiousGuide(id?: HalalReligiousGuideId) { return id ? guides.find((guide) => guide.id === id) ?? null : null; }
+export function getHalalReligiousGuides() { return guides.map(localizedGuide); }
+export function getHalalReligiousGuide(id?: HalalReligiousGuideId) { const guide = id ? guides.find((item) => item.id === id) : undefined; return guide ? localizedGuide(guide) : null; }
 
 function normalize(value: string) { return value.normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim(); }
 function containsWords(text: string, term: string) { return Boolean(term) && ` ${text} `.includes(` ${term} `); }
@@ -154,19 +172,20 @@ function containsWords(text: string, term: string) { return Boolean(term) && ` $
 export function findHalalCertificationBody(values: string[]): HalalCertificationBody | null {
   const cleaned = values.map((value) => value.trim().toLowerCase()).filter(Boolean);
   for (const body of bodies) {
-    if (cleaned.some((value) => body.offLabelTags.some((tag) => value === tag || value.startsWith(`${tag}-`)))) return body;
+    if (cleaned.some((value) => body.offLabelTags.some((tag) => value === tag || value.startsWith(`${tag}-`)))) return localizedBody(body);
   }
   const texts = cleaned.map((value) => normalize(value.replace(/^[a-z]{2}:/, '')));
   for (const body of bodies) {
     const terms = [body.name, body.fullName, ...body.aliases].filter((term): term is string => Boolean(term)).map(normalize);
-    if (texts.some((text) => terms.some((term) => containsWords(text, term)))) return body;
+    if (texts.some((text) => terms.some((term) => containsWords(text, term)))) return localizedBody(body);
   }
   return null;
 }
 
 export function getHalalCertifier(nameOrId?: string): HalalCertificationBody | null {
   if (!nameOrId) return null;
-  return bodies.find((body) => body.id === nameOrId) ?? findHalalCertificationBody([nameOrId]);
+  const byId = bodies.find((body) => body.id === nameOrId);
+  return byId ? localizedBody(byId) : findHalalCertificationBody([nameOrId]);
 }
 
 /** Notices that call for checking a product's certification today (historical notices excluded). */
