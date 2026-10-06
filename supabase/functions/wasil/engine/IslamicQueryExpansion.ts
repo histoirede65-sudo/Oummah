@@ -1,5 +1,5 @@
 import { buildHadithSearchTerms, buildQuranSearchTerms, extractSalientTerms, normalizeIntentText } from "./UniversalIntent.ts";
-import { postOpenAiResponses, reasoningEffortFromEnv } from "./OpenAiRequest.ts";
+import { postOpenAiResponses, reasoningEffortFromEnv, WASIL_RETRIEVAL_MODEL } from "./OpenAiRequest.ts";
 
 export type IslamicQueryExpansion = {
   isIslamicEntity: boolean;
@@ -575,8 +575,7 @@ async function requestModelExpansion(
   const apiKey = Deno.env.get("OPENAI_API_KEY");
   if (!apiKey) return null;
 
-  const model = Deno.env.get("WASIL_MODEL_RETRIEVAL") ??
-    Deno.env.get("WASIL_MODEL_STANDARD") ?? "gpt-5.6-luna";
+  const model = WASIL_RETRIEVAL_MODEL;
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 1_800);
 

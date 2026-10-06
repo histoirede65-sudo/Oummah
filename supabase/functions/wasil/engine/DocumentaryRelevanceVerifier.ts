@@ -1,4 +1,4 @@
-import { postOpenAiResponses, reasoningEffortFromEnv } from "./OpenAiRequest.ts";
+import { postOpenAiResponses, reasoningEffortFromEnv, WASIL_RETRIEVAL_MODEL } from "./OpenAiRequest.ts";
 
 export type DocumentaryCandidate = {
   id: string;
@@ -232,8 +232,7 @@ export async function verifyDocumentaryRelevance(
     });
     return persistentSelection;
   }
-  const model = Deno.env.get("WASIL_MODEL_RETRIEVAL") ??
-    Deno.env.get("WASIL_MODEL_STANDARD") ?? "gpt-5.6-luna";
+  const model = WASIL_RETRIEVAL_MODEL;
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 5_500);
 
