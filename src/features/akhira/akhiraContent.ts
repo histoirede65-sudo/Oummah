@@ -284,6 +284,19 @@ export const AKHIRA_PARTS: AkhiraPart[] = [
             "highlightEn": "the soul has its share and the body has its share",
             "aiTranslation": true,
             "id": "barzakh-e4"
+          },
+          {
+            "kind": "scholar",
+            "ref": "Ibn Bâz · binbaz.org.sa, fatwa 21089",
+            "refEn": "Ibn Bâz · binbaz.org.sa, fatwa 21089",
+            "url": "https://binbaz.org.sa/fatwas/21089",
+            "arabic": "جاء في الكتاب ما يدل على ذلك؛ لأنَّ الله يقول سبحانه في آل فرعون: النَّارُ يُعْرَضُونَ عَلَيْهَا غُدُوًّا وَعَشِيًّا [غافر:46]، هذا من عذاب القبر، تُعرض أرواحهم عليه وهم في البرزخ. وأما السنة فهي طافحة بهذا ومُتواترة بعذاب القبر.",
+            "fr": "Le Livre contient ce qui l’indique, car Allah, gloire à Lui, dit au sujet des gens de Fir‘awn : « le Feu, auquel ils sont exposés matin et soir » ; cela fait partie du châtiment de la tombe : leurs âmes y sont exposées alors qu’ils sont dans le barzakh. Quant à la Sunna, elle en déborde, et elle rapporte le châtiment de la tombe de façon mutawâtir.",
+            "en": "The Book contains what indicates it, for Allah, glory be to Him, says about the people of Pharaoh: “The Fire; they are exposed to it morning and evening.” This is part of the punishment of the grave: their souls are exposed to it while they are in the barzakh. As for the Sunnah, it overflows with it, and reports the punishment of the grave by mass transmission (mutawatir).",
+            "highlight": "leurs âmes y sont exposées alors qu’ils sont dans le barzakh",
+            "highlightEn": "their souls are exposed to it while they are in the barzakh",
+            "aiTranslation": true,
+            "id": "barzakh-e5"
           }
         ],
         "texts": [
@@ -455,17 +468,6 @@ export const AKHIRA_PARTS: AkhiraPart[] = [
             "highlight": "des tombes, ils se précipiteront vers leur Seigneur",
             "highlightEn": "from the graves to their Lord they will hasten",
             "id": "trompe-t3"
-          },
-          {
-            "kind": "hadith",
-            "ref": "Sahih al-Bukhari 2412",
-            "url": "https://sunnah.com/bukhari:2412",
-            "fr": "Rapporté par Abu Sa`id Al-Khudri : […] Le Prophète (ﷺ) a dit : « Ne donnez pas la supériorité à un prophète sur un autre, car au Jour de la Résurrection, tous les gens perdront connaissance et je serai le premier à sortir de la terre, et je verrai Moïse debout, tenant l’un des pieds du Trône. Je ne saurai pas si Moïse est tombé inconscient ou si la première perte de connaissance lui a suffi. »",
-            "en": "Narrated Abu Sa`id Al-Khudri: […] The Prophet (ﷺ) said, \"Do not give a prophet superiority over another, for on the Day of Resurrection all the people will fall unconscious and I will be the first to emerge from the earth, and will see Moses standing and holding one of the legs of the Throne. I will not know whether Moses has fallen unconscious or the first unconsciousness was sufficient for him",
-            "highlight": "je serai le premier à sortir de la terre",
-            "highlightEn": "I will be the first to emerge from the earth",
-            "route": "/hadith/09d76f49-fb2a-4c92-96a2-f3c9a0c93954",
-            "id": "trompe-t4"
           }
         ]
       }
@@ -496,6 +498,32 @@ export const AKHIRA_PARTS: AkhiraPart[] = [
             "highlightEn": "the first to be clothed is Ibrahim",
             "aiTranslation": true,
             "id": "rassemblement-e1"
+          },
+          {
+            "kind": "scholar",
+            "ref": "Ibn ‘Uthaymîn · binothaimeen.net, fatwa 8029",
+            "refEn": "Ibn ‘Uthaymîn · binothaimeen.net, fatwa 8029",
+            "url": "https://old.binothaimeen.net/content/8029",
+            "arabic": "وأما الآية التي في سورة المعارج فإن ذلك يوم القيامة […] وبهذا تكون آية المعارج في يوم القيامة […] وقد ثبت في صحيح مسلم من حديث أبي هريرة في قصة مانع الزكاة أنه يحمى عليها في نار جهنم، فيكوى بها جنبه وجبينه وظهره، كلما بردت أعيدت في يوم كان مقداره خمسين ألف سنة.",
+            "fr": "Quant au verset de la sourate al-Ma‘ârij, il s’agit du Jour de la Résurrection […] Ainsi, le verset d’al-Ma‘ârij porte sur le Jour de la Résurrection. […] Il est établi dans le Sahîh de Muslim, d’après le hadith d’Abû Hurayra, dans le récit de celui qui refuse de payer la zakât, qu’elle est chauffée dans le feu de l’Enfer, et qu’on lui en marque le flanc, le front et le dos ; chaque fois qu’elle refroidit, on recommence, en un jour dont la durée est de cinquante mille ans.",
+            "en": "As for the verse of Surat al-Ma‘arij, it is about the Day of Resurrection […] Thus the verse of al-Ma‘arij is about the Day of Resurrection. […] It is established in Sahih Muslim, from the hadith of Abu Hurayra, in the account of the one who withholds zakat, that it is heated in the fire of Hell, and his side, his forehead and his back are branded with it; whenever it cools, it is brought back, in a day the extent of which is fifty thousand years.",
+            "highlight": "il s’agit du Jour de la Résurrection",
+            "highlightEn": "it is about the Day of Resurrection",
+            "aiTranslation": true,
+            "id": "rassemblement-e2"
+          },
+          {
+            "kind": "scholar",
+            "ref": "Ibn Bâz · binbaz.org.sa, fatwa 22724",
+            "refEn": "Ibn Bâz · binbaz.org.sa, fatwa 22724",
+            "url": "https://binbaz.org.sa/fatwas/22724",
+            "arabic": "اليوم مقداره خمسون ألف سنة، ولكن مثل ما قال جل وعلا، لا يأتي وسط النهار إلا وقد قضى الله بين الناس: أَصْحَابُ الْجَنَّةِ يَوْمَئِذٍ خَيْرٌ مُسْتَقَرًّا وَأَحْسَنُ مَقِيلًا [الفرقان:24] استنبط العلماء من مقيلا أنه يأتي نصف النهار وقد انتهى الأمر، والله المستعان.",
+            "fr": "Le Jour a une durée de cinquante mille ans ; mais, comme l’a dit Allah, exalté et majestueux, le milieu de la journée n’arrive pas sans qu’Allah ait déjà jugé entre les gens : « Les gens du Paradis auront, ce jour-là, une meilleure demeure et un plus beau lieu de repos. » Les savants ont déduit de « lieu de repos » (maqîl, le repos de midi) que le milieu de la journée arrive alors que l’affaire est terminée. Et c’est Allah dont on implore l’aide.",
+            "en": "The Day lasts fifty thousand years; but, as Allah, exalted and majestic is He, said, the middle of the day does not come without Allah having already judged between the people: “The companions of Paradise, that Day, are [in] a better settlement and better resting place.” The scholars deduced from “resting place” (maqil, the midday rest) that the middle of the day comes when the matter is over. And it is Allah whose help is sought.",
+            "highlight": "le milieu de la journée n’arrive pas sans qu’Allah ait déjà jugé entre les gens",
+            "highlightEn": "the middle of the day does not come without Allah having already judged between the people",
+            "aiTranslation": true,
+            "id": "rassemblement-e3"
           }
         ],
         "texts": [
@@ -533,6 +561,17 @@ export const AKHIRA_PARTS: AkhiraPart[] = [
             "id": "rassemblement-t3"
           },
           {
+            "kind": "hadith",
+            "ref": "Sahih al-Bukhari 2412",
+            "url": "https://sunnah.com/bukhari:2412",
+            "fr": "Rapporté par Abu Sa`id Al-Khudri : […] Le Prophète (ﷺ) a dit : « Ne donnez pas la supériorité à un prophète sur un autre, car au Jour de la Résurrection, tous les gens perdront connaissance et je serai le premier à sortir de la terre, et je verrai Moïse debout, tenant l’un des pieds du Trône. Je ne saurai pas si Moïse est tombé inconscient ou si la première perte de connaissance lui a suffi. »",
+            "en": "Narrated Abu Sa`id Al-Khudri: […] The Prophet (ﷺ) said, \"Do not give a prophet superiority over another, for on the Day of Resurrection all the people will fall unconscious and I will be the first to emerge from the earth, and will see Moses standing and holding one of the legs of the Throne. I will not know whether Moses has fallen unconscious or the first unconsciousness was sufficient for him",
+            "highlight": "je serai le premier à sortir de la terre",
+            "highlightEn": "I will be the first to emerge from the earth",
+            "route": "/hadith/09d76f49-fb2a-4c92-96a2-f3c9a0c93954",
+            "id": "rassemblement-t4"
+          },
+          {
             "kind": "quran",
             "ref": "Coran 70:4",
             "refEn": "Quran 70:4",
@@ -543,7 +582,7 @@ export const AKHIRA_PARTS: AkhiraPart[] = [
             "en": "The angels and the Spirit [i.e., Gabriel] will ascend to Him during a Day the extent of which is fifty thousand years.",
             "highlight": "en un jour dont la durée est de cinquante mille ans",
             "highlightEn": "during a Day the extent of which is fifty thousand years",
-            "id": "rassemblement-t4"
+            "id": "rassemblement-t5"
           },
           {
             "kind": "hadith",
@@ -553,7 +592,7 @@ export const AKHIRA_PARTS: AkhiraPart[] = [
             "en": "Miqdad b. Aswad reported: I heard Allah's Messenger (may peace he upon him) as saying: On the Day of Resurrection, the sun would draw so close to the people that there woum be left only a distance of one mile. Sulaim b. Amir said: By Allah, I do not know whether he meant by\" mile\" the mile of the (material) earth or dn instrument used for applying collyrium to the eye. (The Prophet is, however, reported to have said): The people would be submerged in perspiration according to their deeds, some up to their. knees, Some up to the waist and some would have the bridle of perspiration and, while saying this, Allah's Apostle (ﷺ) pointed his hand towards his mouth",
             "highlight": "le soleil s’approchera des gens jusqu’à ce qu’il ne reste qu’une distance d’un mille",
             "highlightEn": "the sun would draw so close to the people that there woum be left only a distance of one mile",
-            "id": "rassemblement-t5"
+            "id": "rassemblement-t6"
           },
           {
             "kind": "hadith",
@@ -563,7 +602,20 @@ export const AKHIRA_PARTS: AkhiraPart[] = [
             "en": "Narrated Abu Huraira: Allah's Messenger (ﷺ) said, \"The people will sweat so profusely on the Day of Resurrection that their sweat will sink seventy cubits deep into the earth, and it will rise up till it reaches the people's mouths and ears",
             "highlight": "Les gens transpireront tellement le Jour de la Résurrection",
             "highlightEn": "The people will sweat so profusely on the Day of Resurrection",
-            "id": "rassemblement-t6"
+            "id": "rassemblement-t7"
+          },
+          {
+            "kind": "quran",
+            "ref": "Coran 57:12-13",
+            "refEn": "Quran 57:12-13",
+            "url": "https://quran.com/57/12-13",
+            "route": "/surah/57?verse=12",
+            "arabic": "يَوْمَ تَرَى ٱلْمُؤْمِنِينَ وَٱلْمُؤْمِنَـٰتِ يَسْعَىٰ نُورُهُم بَيْنَ أَيْدِيهِمْ وَبِأَيْمَـٰنِهِم بُشْرَىٰكُمُ ٱلْيَوْمَ جَنَّـٰتٌ تَجْرِى مِن تَحْتِهَا ٱلْأَنْهَـٰرُ خَـٰلِدِينَ فِيهَا ۚ ذَٰلِكَ هُوَ ٱلْفَوْزُ ٱلْعَظِيمُ يَوْمَ يَقُولُ ٱلْمُنَـٰفِقُونَ وَٱلْمُنَـٰفِقَـٰتُ لِلَّذِينَ ءَامَنُوا۟ ٱنظُرُونَا نَقْتَبِسْ مِن نُّورِكُمْ قِيلَ ٱرْجِعُوا۟ وَرَآءَكُمْ فَٱلْتَمِسُوا۟ نُورًا فَضُرِبَ بَيْنَهُم بِسُورٍ لَّهُۥ بَابٌۢ بَاطِنُهُۥ فِيهِ ٱلرَّحْمَةُ وَظَـٰهِرُهُۥ مِن قِبَلِهِ ٱلْعَذَابُ",
+            "fr": "Le jour où tu verras les croyants et les croyantes, leur lumière courant devant eux et à leur droite ; (on leur dira) : \"Voici une bonne nouvelle pour vous aujourd’hui : des Jardins sous lesquels coulent les ruisseaux pour y demeurer éternellement.\" Tel est l’énorme succès. Le jour où les hypocrites, hommes et femmes, diront à ceux qui croient : \"Attendez que nous empruntions [un peu] : de votre lumières.\" Il sera dit : \"Revenez en arrière, et cherchez de la lumière\". C’est alors qu’on éleva entre eux une muraille ayant une porte dont l’intérieur contient la miséricorde, et dont la face apparente a devant elle le châtiment [l’Enfer].",
+            "en": "On the Day you see the believing men and believing women, their light proceeding before them and on their right, [it will be said], \"Your good tidings today are [of] gardens beneath which rivers flow, wherein you will abide eternally.\" That is what is the great attainment. On the [same] Day the hypocrite men and hypocrite women will say to those who believed, \"Wait for us that we may acquire some of your light.\" It will be said, \"Go back behind you and seek light.\" And a wall will be placed between them with a door, its interior containing mercy, but on the outside of it is torment.",
+            "highlight": "leur lumière courant devant eux et à leur droite",
+            "highlightEn": "their light proceeding before them and on their right",
+            "id": "rassemblement-t8"
           },
           {
             "kind": "hadith",
@@ -573,7 +625,7 @@ export const AKHIRA_PARTS: AkhiraPart[] = [
             "en": "Narrated Abu Huraira: The Prophet (ﷺ) said, \"Allah will give shade, to seven, on the Day when there will be no shade but His. (These seven persons are) a just ruler, a youth who has been brought up in the worship of Allah (i.e. worships Allah sincerely from childhood), a man whose heart is attached to the mosques (i.e. to pray the compulsory prayers in the mosque in congregation), two persons who love each other only for Allah's sake and they meet and part in Allah's cause only, a man who refuses the call of a charming woman of noble birth for illicit intercourse with her and says: I am afraid of Allah, a man who gives charitable gifts so secretly that his left hand does not know what his right hand has given (i.e. nobody knows how much he has given in charity), and a person who remembers Allah in seclusion and his eyes are then flooded with tears",
             "highlight": "Allah offrira Son ombre à sept personnes le Jour où il n’y aura d’ombre que la Sienne",
             "highlightEn": "Allah will give shade, to seven, on the Day when there will be no shade but His",
-            "id": "rassemblement-t7"
+            "id": "rassemblement-t9"
           }
         ]
       },
@@ -910,19 +962,6 @@ export const AKHIRA_PARTS: AkhiraPart[] = [
             "highlightEn": "as quickly as the wink of an eye",
             "route": "/hadith/7046b638-b0ad-4c5b-8f82-f7d8a7448a74",
             "id": "pont-t2"
-          },
-          {
-            "kind": "quran",
-            "ref": "Coran 57:12-13",
-            "refEn": "Quran 57:12-13",
-            "url": "https://quran.com/57/12-13",
-            "route": "/surah/57?verse=12",
-            "arabic": "يَوْمَ تَرَى ٱلْمُؤْمِنِينَ وَٱلْمُؤْمِنَـٰتِ يَسْعَىٰ نُورُهُم بَيْنَ أَيْدِيهِمْ وَبِأَيْمَـٰنِهِم بُشْرَىٰكُمُ ٱلْيَوْمَ جَنَّـٰتٌ تَجْرِى مِن تَحْتِهَا ٱلْأَنْهَـٰرُ خَـٰلِدِينَ فِيهَا ۚ ذَٰلِكَ هُوَ ٱلْفَوْزُ ٱلْعَظِيمُ يَوْمَ يَقُولُ ٱلْمُنَـٰفِقُونَ وَٱلْمُنَـٰفِقَـٰتُ لِلَّذِينَ ءَامَنُوا۟ ٱنظُرُونَا نَقْتَبِسْ مِن نُّورِكُمْ قِيلَ ٱرْجِعُوا۟ وَرَآءَكُمْ فَٱلْتَمِسُوا۟ نُورًا فَضُرِبَ بَيْنَهُم بِسُورٍ لَّهُۥ بَابٌۢ بَاطِنُهُۥ فِيهِ ٱلرَّحْمَةُ وَظَـٰهِرُهُۥ مِن قِبَلِهِ ٱلْعَذَابُ",
-            "fr": "Le jour où tu verras les croyants et les croyantes, leur lumière courant devant eux et à leur droite ; (on leur dira) : \"Voici une bonne nouvelle pour vous aujourd’hui : des Jardins sous lesquels coulent les ruisseaux pour y demeurer éternellement.\" Tel est l’énorme succès. Le jour où les hypocrites, hommes et femmes, diront à ceux qui croient : \"Attendez que nous empruntions [un peu] : de votre lumières.\" Il sera dit : \"Revenez en arrière, et cherchez de la lumière\". C’est alors qu’on éleva entre eux une muraille ayant une porte dont l’intérieur contient la miséricorde, et dont la face apparente a devant elle le châtiment [l’Enfer].",
-            "en": "On the Day you see the believing men and believing women, their light proceeding before them and on their right, [it will be said], \"Your good tidings today are [of] gardens beneath which rivers flow, wherein you will abide eternally.\" That is what is the great attainment. On the [same] Day the hypocrite men and hypocrite women will say to those who believed, \"Wait for us that we may acquire some of your light.\" It will be said, \"Go back behind you and seek light.\" And a wall will be placed between them with a door, its interior containing mercy, but on the outside of it is torment.",
-            "highlight": "leur lumière courant devant eux et à leur droite",
-            "highlightEn": "their light proceeding before them and on their right",
-            "id": "pont-t3"
           }
         ]
       },
