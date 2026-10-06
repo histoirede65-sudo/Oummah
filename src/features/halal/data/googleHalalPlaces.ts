@@ -49,7 +49,7 @@ export async function getNearbyHalalPlacesFromGoogle(
       apikey: configuration.key,
       Authorization: `Bearer ${configuration.key}`,
     },
-    body: JSON.stringify({ latitude, longitude, radius }),
+    body: JSON.stringify({ latitude, longitude, radius, pages: 2 }),
   });
   const payload = await response.json();
   if (!response.ok) throw new Error(payload?.error || `GOOGLE_HALAL_${response.status}`);

@@ -512,20 +512,6 @@ export async function searchNearbyHalalPlaces(
   if (!osmSucceeded) {
     osmPlaces = previousPlaces.filter((place) => place.source === 'openstreetmap');
   }
-  if (__DEV__) {
-    // DIAGNOSTIC TEMPORAIRE (à retirer) : nombre de lieux par source.
-    console.info('[HalalDiag]', JSON.stringify({
-      rayon: radiusMeters,
-      precedents: previousPlaces.length,
-      precedentsOsm: previousPlaces.filter((p) => p.source === 'openstreetmap').length,
-      cacheOsmFrais: freshOsmCache,
-      osmOk: osmSucceeded,
-      osm: osmPlaces.length,
-      google: googlePlaces.length,
-      communaute: communityPlaces.length,
-      erreur: lastError instanceof Error ? lastError.message : null,
-    }));
-  }
   const remote = deduplicate([...communityPlaces, ...osmPlaces, ...googlePlaces])
     .sort((a, b) => a.distanceMeters - b.distanceMeters)
     .slice(0, MAX_RESULTS);
