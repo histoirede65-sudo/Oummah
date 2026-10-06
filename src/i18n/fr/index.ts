@@ -1026,6 +1026,7 @@ export const fr = {
   'surahReader.translation': 'Traduction',
   'surahReader.transliteration': 'Phonétique',
   'surahReader.mushaf': 'Mushaf',
+  'surahReader.closePlayer': 'Arrêter et fermer le lecteur',
   'surahReader.mushafResetZoom': 'Taille normale',
   'surahReader.mushafZoomHint': 'Pincez pour zoomer',
   'surahReader.displayReading': 'Lecture',

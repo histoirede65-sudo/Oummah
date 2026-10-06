@@ -11,8 +11,12 @@ const PAPER = '#FBF6E9';
 const INK = '#1B1712';
 const FRAME = '#C9A35A';
 const HEADER_FILL = '#F1E6C8';
-const VERSE_TINT = 'rgba(201,163,90,0.22)';
-const WORD_TINT = 'rgba(201,163,90,0.55)';
+// Recitation: the verse is written in a warm gold ink, the recited word in a deeper tone with a soft glow.
+// The tajweed font keeps its own colours, so there only the recited word gets a light wash.
+const VERSE_INK = '#9C6A12';
+const WORD_INK = '#6E3F00';
+const WORD_GLOW = 'rgba(227,181,90,0.85)';
+const WORD_WASH = 'rgba(227,181,90,0.28)';
 const BASMALA = 'بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ';
 
 type Props = {
@@ -178,8 +182,8 @@ const MushafPageView = memo(function MushafPageView({ page, style, width, height
                           onPress={() => onVersePress(word.verseKey)}
                           style={[
                             { fontFamily: current.family, fontSize, lineHeight, color: INK },
-                            inVerse && styles.verseTint,
-                            isWord && styles.wordTint,
+                            inVerse && style === 'plain' && styles.verseInk,
+                            isWord && (style === 'plain' ? styles.wordInk : styles.wordWash),
                           ]}
                         >
                           {word.code}
@@ -230,8 +234,9 @@ const styles = StyleSheet.create({
   linesOpening: { justifyContent: 'center' },
   line: { flexDirection: 'row-reverse', alignItems: 'center', justifyContent: 'space-between' },
   lineOpening: { justifyContent: 'center', gap: 6 },
-  verseTint: { backgroundColor: VERSE_TINT },
-  wordTint: { backgroundColor: WORD_TINT },
+  verseInk: { color: VERSE_INK },
+  wordInk: { color: WORD_INK, textShadowColor: WORD_GLOW, textShadowRadius: 10, textShadowOffset: { width: 0, height: 0 } },
+  wordWash: { backgroundColor: WORD_WASH },
   surahName: { alignItems: 'center', justifyContent: 'center', borderWidth: 1.5, borderColor: FRAME, borderRadius: 10, backgroundColor: HEADER_FILL },
   surahNameText: { color: INK, fontFamily: ARABIC_READING_FONT_FAMILY },
   basmala: { alignItems: 'center', justifyContent: 'center' },

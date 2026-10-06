@@ -1017,6 +1017,7 @@ export const en: Partial<Record<TranslationKey, string>> = {
   'surahReader.translation': 'Translation',
   'surahReader.transliteration': 'Transliteration',
   'surahReader.mushaf': 'Mushaf',
+  'surahReader.closePlayer': 'Stop and close the player',
   'surahReader.mushafResetZoom': 'Normal size',
   'surahReader.mushafZoomHint': 'Pinch to zoom',
   'surahReader.displayReading': 'Reading',

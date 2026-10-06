@@ -373,6 +373,9 @@ export default function SurahReadingScreen() {
   const [settings, setSettings] = useState(DEFAULT_READING_PREFERENCES);
   // Mode to come back to when the Mushaf pages are closed.
   const [textMode, setTextMode] = useState<ReadingMode>(DEFAULT_READING_PREFERENCES.mode);
+  // The full-screen pages step aside while the tafsir is open, and come back on return.
+  const [mushafAway, setMushafAway] = useState(false);
+  useFocusEffect(useCallback(() => setMushafAway(false), [setMushafAway]));
   const [showSettings, setShowSettings] = useState(false);
   const [showVerseJump, setShowVerseJump] = useState(false);
   const [verseJumpValue, setVerseJumpValue] = useState("");
@@ -476,6 +479,14 @@ export default function SurahReadingScreen() {
     },
     [versePlayer],
   );
+
+  // Close button of the player: stops the recitation and hides the player.
+  const closePlayer = useCallback(() => {
+    sessionIdRef.current += 1;
+    stopInlineVerse();
+    preloadPlayer.pause();
+    setActiveVerse(undefined);
+  }, [preloadPlayer, stopInlineVerse]);
 
   useFocusEffect(
     useCallback(
@@ -1438,11 +1449,14 @@ export default function SurahReadingScreen() {
             >
               <Text style={styles.rateText}>{playbackRate}×</Text>
             </Pressable>
+            <Pressable accessibilityRole="button" accessibilityLabel={t("surahReader.closePlayer")} onPress={closePlayer} hitSlop={8} style={styles.playerClose}>
+              <Ionicons name="close" size={18} color={colors.textMuted} />
+            </Pressable>
           </View>
         </View>
       ) : null}
       <Modal
-        visible={isMushafPages && !loading && verses.length > 0}
+        visible={isMushafPages && !mushafAway && !loading && verses.length > 0}
         animationType="fade"
         presentationStyle="fullScreen"
         statusBarTranslucent
@@ -1498,6 +1512,9 @@ export default function SurahReadingScreen() {
                   <Ionicons name="play-skip-forward" size={18} color={activeVerse.id >= verses.length ? colors.textMuted : colors.goldLight} />
                 </Pressable>
                 <Text numberOfLines={1} style={styles.mushafPlayerText}>{t("surahReader.mushafVerseTitle", { verseKey: activeVerse.verseKey })} · {currentReciter?.name ?? ""}</Text>
+                <Pressable accessibilityRole="button" accessibilityLabel={t("surahReader.closePlayer")} onPress={closePlayer} hitSlop={8} style={styles.playerClose}>
+                  <Ionicons name="close" size={18} color={colors.textMuted} />
+                </Pressable>
               </View>
             ) : (
               <View style={styles.mushafHint}>
@@ -1519,7 +1536,7 @@ export default function SurahReadingScreen() {
                     <Ionicons name="play" size={17} color={colors.background} />
                     <Text style={styles.pageSheetButtonGoldText}>{t("surahReader.listenFromHere")}</Text>
                   </Pressable>
-                  <Pressable onPress={() => { const verse = pageVerse; setPageVerse(null); updateSettings({ mode: textMode }); handleOpenTafsir(verse); }} style={styles.pageSheetButton}>
+                  <Pressable onPress={() => { const verse = pageVerse; setPageVerse(null); setMushafAway(true); handleOpenTafsir(verse); }} style={styles.pageSheetButton}>
                     <Ionicons name="book-outline" size={17} color={colors.goldLight} />
                     <Text style={styles.pageSheetButtonText}>{t("surahReader.openTafsir")}</Text>
                   </Pressable>
@@ -1546,6 +1563,7 @@ const styles = StyleSheet.create({
   displayOptionText: { flexShrink: 1, color: colors.goldLight, fontFamily: typography.sans, fontSize: 13.5, fontWeight: "800" },
   displayOptionTextOn: { color: colors.background },
   mushafRoot: { flex: 1 },
+  playerClose: { width: 32, height: 32, borderRadius: 16, alignItems: "center", justifyContent: "center", backgroundColor: "rgba(255,255,255,0.06)" },
   mushafScreen: { flex: 1, backgroundColor: "#0B0918" },
   mushafBar: { flexDirection: "row", alignItems: "center", gap: 8, paddingHorizontal: 8, paddingVertical: 0, height: 40 },
   mushafHint: { flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 6, paddingHorizontal: 14, height: 22 },
