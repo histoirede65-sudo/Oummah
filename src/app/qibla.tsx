@@ -2,7 +2,13 @@ import { Ionicons } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
-import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { memo, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import Reanimated, {
+  useAnimatedStyle,
+  useFrameCallback,
+  useSharedValue,
+  type SharedValue,
+} from "react-native-reanimated";
 import {
   Animated,
   Easing,
@@ -38,8 +44,9 @@ import { useI18n, type LanguageCode, type TranslationKey } from "../i18n";
 import { colors } from "../theme/colors";
 import { typography } from "../theme/typography";
 
-const ALIGNMENT_TOLERANCE = 3;
-const NEAR_ALIGNMENT_TOLERANCE = 12;
+const ALIGNMENT_TOLERANCE = 5;
+const ALIGNMENT_RELEASE_TOLERANCE = 8;
+const NEAR_ALIGNMENT_TOLERANCE = 15;
 const ALIGNMENT_HAPTIC_COOLDOWN_MS = 1_500;
 const BACKGROUND_IMAGE = require("../assets/images/home/shortcuts/qibla-real.jpg");
 
@@ -50,10 +57,6 @@ async function triggerAlignmentHaptic() {
   }
 
   await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-}
-
-function unwrapTarget(previous: number, nextNormalized: number) {
-  return previous + shortestAngle(nextNormalized - normalizeDegrees(previous));
 }
 
 function formatDistance(distanceKm: number | null, language: LanguageCode) {
@@ -81,56 +84,53 @@ function GlassCard({ children, style }: { children: ReactNode; style?: object })
   );
 }
 
-function PremiumCompass({
+// Memoised: the needle moves through headingValue, so the compass only
+// re-renders when its aligned/near state changes.
+const PremiumCompass = memo(function PremiumCompass({
   size,
-  heading,
+  headingValue,
   qiblaBearing,
   isAligned,
   isNear,
 }: {
   size: number;
-  heading: number | null;
+  headingValue: SharedValue<number>;
   qiblaBearing: number | null;
   isAligned: boolean;
   isNear: boolean;
 }) {
   const { t } = useI18n();
   const faceSize = size - 9;
-  const dialRotation = useRef(new Animated.Value(0)).current;
-  const needleRotation = useRef(new Animated.Value(0)).current;
   const pulse = useRef(new Animated.Value(0)).current;
   const kaabaScale = useRef(new Animated.Value(1)).current;
-  const previousDialRef = useRef(0);
-  const previousNeedleRef = useRef(0);
 
+  // Every displayed frame eases the drawn heading toward the latest sensor
+  // value (time constant ~60 ms): fluid at 60/120 Hz whatever the sensor rate,
+  // with no React render involved.
+  const shownHeading = useSharedValue(Number.NaN);
+  const bearing = useSharedValue(qiblaBearing ?? 0);
   useEffect(() => {
-    if (heading === null) return;
-    const target = unwrapTarget(previousDialRef.current, normalizeDegrees(-heading));
-    previousDialRef.current = target;
-    dialRotation.stopAnimation();
-    Animated.timing(dialRotation, {
-      toValue: target,
-      duration: 140,
-      easing: Easing.linear,
-      useNativeDriver: true,
-    }).start();
-  }, [dialRotation, heading]);
-
-  useEffect(() => {
-    if (heading === null || qiblaBearing === null) return;
-    const target = unwrapTarget(
-      previousNeedleRef.current,
-      normalizeDegrees(qiblaBearing - heading),
-    );
-    previousNeedleRef.current = target;
-    needleRotation.stopAnimation();
-    Animated.timing(needleRotation, {
-      toValue: target,
-      duration: isNear ? 170 : 140,
-      easing: Easing.linear,
-      useNativeDriver: true,
-    }).start();
-  }, [heading, isNear, needleRotation, qiblaBearing]);
+    bearing.set(qiblaBearing ?? 0);
+  }, [bearing, qiblaBearing]);
+  useFrameCallback((frame) => {
+    const target = headingValue.get();
+    if (Number.isNaN(target)) return;
+    const current = shownHeading.get();
+    if (Number.isNaN(current) || Math.abs(target - current) > 720) {
+      shownHeading.set(target);
+      return;
+    }
+    const dt = Math.min(frame.timeSincePreviousFrame ?? 16, 100);
+    shownHeading.set(current + (target - current) * (1 - Math.exp(-dt / 60)));
+  });
+  const dialStyle = useAnimatedStyle(() => {
+    const value = shownHeading.get();
+    return { transform: [{ rotate: `${Number.isNaN(value) ? 0 : -value}deg` }] };
+  });
+  const needleStyle = useAnimatedStyle(() => {
+    const value = shownHeading.get();
+    return { transform: [{ rotate: `${Number.isNaN(value) ? 0 : bearing.get() - value}deg` }] };
+  });
 
   useEffect(() => {
     const animation = Animated.loop(
@@ -161,15 +161,6 @@ function PremiumCompass({
       useNativeDriver: true,
     }).start();
   }, [isAligned, isNear, kaabaScale]);
-
-  const dialRotate = dialRotation.interpolate({
-    inputRange: [-1440, 1440],
-    outputRange: ["-1440deg", "1440deg"],
-  });
-  const needleRotate = needleRotation.interpolate({
-    inputRange: [-1440, 1440],
-    outputRange: ["-1440deg", "1440deg"],
-  });
 
   return (
     <View style={[styles.compassStage, { width: size, height: size }]}>
@@ -213,7 +204,7 @@ function PremiumCompass({
             style={StyleSheet.absoluteFill}
           />
 
-          <Animated.View style={[styles.rotatingDial, { width: faceSize, height: faceSize, transform: [{ rotate: dialRotate }] }]}> 
+          <Reanimated.View style={[styles.rotatingDial, { width: faceSize, height: faceSize }, dialStyle]}>
             {Array.from({ length: 36 }).map((_, index) => (
               <View
                 key={index}
@@ -226,9 +217,10 @@ function PremiumCompass({
             <Text style={[styles.cardinal, styles.east]}>{t("qibla.east")}</Text>
             <Text style={[styles.cardinal, styles.south]}>{t("qibla.south")}</Text>
             <Text style={[styles.cardinal, styles.west]}>{t("qibla.west")}</Text>
-          </Animated.View>
+          </Reanimated.View>
 
-          <Animated.View style={[styles.needleLayer, { width: faceSize, height: faceSize, transform: [{ rotate: needleRotate }] }]}> 
+          {qiblaBearing !== null ? (
+          <Reanimated.View style={[styles.needleLayer, { width: faceSize, height: faceSize }, needleStyle]}>
             <View style={[styles.qiblaTip, isAligned && styles.qiblaTipAligned]}>
               <View style={styles.miniKaaba}>
                 <View style={styles.miniKaabaBand} />
@@ -239,7 +231,8 @@ function PremiumCompass({
               style={styles.qiblaPointer}
             />
             <View style={styles.pointerTail} />
-          </Animated.View>
+          </Reanimated.View>
+          ) : null}
 
           <Animated.View style={[styles.centerPivot, { transform: [{ scale: kaabaScale }] }]}>
             <LinearGradient colors={["#F7DC91", "#A76D1D", "#E7B954"]} style={styles.centerPivotGold} />
@@ -250,7 +243,7 @@ function PremiumCompass({
       </LinearGradient>
     </View>
   );
-}
+});
 
 export default function QiblaScreen() {
   const { language, t } = useI18n();
@@ -258,6 +251,7 @@ export default function QiblaScreen() {
   const {
     location,
     heading,
+    headingValue,
     sensorQuality,
     loading,
     permissionDenied,
@@ -283,7 +277,12 @@ export default function QiblaScreen() {
   const relativeAngle = qiblaBearing !== null && heading !== null ? shortestAngle(qiblaBearing - heading) : 0;
   const absoluteDifference = Math.abs(relativeAngle);
   const hasDirection = qiblaBearing !== null && heading !== null;
-  const isAligned = hasDirection && absoluteDifference <= ALIGNMENT_TOLERANCE;
+  // Hysteresis: "aligned" starts within 5° and ends beyond 8°, so normal
+  // hand tremor does not make it flicker on and off.
+  const [isAligned, setIsAligned] = useState(false);
+  const alignedNow = hasDirection &&
+    absoluteDifference <= (isAligned ? ALIGNMENT_RELEASE_TOLERANCE : ALIGNMENT_TOLERANCE);
+  if (alignedNow !== isAligned) setIsAligned(alignedNow);
   const isNear = hasDirection && absoluteDifference <= NEAR_ALIGNMENT_TOLERANCE;
 
   useEffect(() => {
@@ -390,7 +389,7 @@ export default function QiblaScreen() {
 
               <PremiumCompass
                 size={compassSize}
-                heading={heading}
+                headingValue={headingValue}
                 qiblaBearing={qiblaBearing}
                 isAligned={isAligned}
                 isNear={isNear}
