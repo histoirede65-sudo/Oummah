@@ -1,7 +1,7 @@
 import { storageService } from '../../core/storage';
 
 export type ReadingTheme = 'dark' | 'light' | 'sepia';
-export type ReadingMode = 'arabic' | 'arabic-translation' | 'arabic-transliteration' | 'translation' | 'mushaf';
+export type ReadingMode = 'arabic' | 'arabic-translation' | 'arabic-transliteration' | 'translation' | 'mushaf' | 'mushaf-pages' | 'mushaf-tajweed';
 
 export interface ReadingPreferences {
   mode: ReadingMode;

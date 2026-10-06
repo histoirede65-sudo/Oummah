@@ -14,6 +14,7 @@ import {
   ActivityIndicator,
   Alert,
   FlatList,
+  Modal,
   Pressable,
   StyleSheet,
   Text,
@@ -58,6 +59,7 @@ import type {
 import { colors } from "../../theme/colors";
 import { typography } from "../../theme/typography";
 import QuranReciterSelector from "../../components/quran/QuranReciterSelector";
+import { MushafPager } from "../../components/quran/MushafPager";
 import { WasilContextButton } from "../../components/wasil/WasilContextButton";
 import { useI18n, type TranslationKey } from "../../i18n";
 const modes: { id: ReadingMode; labelKey: TranslationKey }[] = [
@@ -66,6 +68,8 @@ const modes: { id: ReadingMode; labelKey: TranslationKey }[] = [
   { id: "arabic-transliteration", labelKey: "surahReader.arabicTransliteration" },
   { id: "translation", labelKey: "surahReader.translation" },
   { id: "mushaf", labelKey: "surahReader.mushaf" },
+  { id: "mushaf-pages", labelKey: "surahReader.mushafPages" },
+  { id: "mushaf-tajweed", labelKey: "surahReader.mushafTajweed" },
 ];
 
 function resolveVerseAudioUrl(value?: string) {
@@ -640,7 +644,10 @@ export default function SurahReadingScreen() {
     [settings.mode, surahId, verses],
   );
 
+  // Verse the reader was on when switching to the Mushaf pages: the pages open there.
+  const [mushafStartVerse, setMushafStartVerse] = useState<number | null>(null);
   const updateSettings = (patch: Partial<ReadingPreferences>) => {
+    if (patch.mode === "mushaf-pages" || patch.mode === "mushaf-tajweed") setMushafStartVerse(currentVerseRef.current);
     const next = { ...settings, ...patch };
     setSettings(next);
     void readingPreferencesStore.save(next);
@@ -1156,6 +1163,23 @@ export default function SurahReadingScreen() {
     setVerseJumpValue("");
   }, [surah.verses, t, verseJumpValue, verses]);
 
+  // Printed pages of the Madinah Mushaf: the surah's pages, opened on the requested verse.
+  const isMushafPages = settings.mode === "mushaf-pages" || settings.mode === "mushaf-tajweed";
+  const [pageVerse, setPageVerse] = useState<QuranFoundationVerse | null>(null);
+  const mushafPages = useMemo(() => {
+    const numbers = verses.map((verse) => verse.pageNumber).filter((page) => page > 0);
+    if (!numbers.length) return [];
+    const first = Math.min(...numbers);
+    return Array.from({ length: Math.max(...numbers) - first + 1 }, (_, index) => first + index);
+  }, [verses]);
+  const mushafInitialPage =
+    verses.find((verse) => getRenderedVerseNumber(verse) === (mushafStartVerse ?? requestedVerseNumber ?? 1))?.pageNumber ??
+    mushafPages[0] ?? 1;
+  const handleMushafVerse = useCallback(
+    (verseKey: string) => setPageVerse(verses.find((verse) => verse.verseKey === verseKey) ?? null),
+    [verses],
+  );
+
   const palette = colors.background;
 
   return (
@@ -1259,6 +1283,19 @@ export default function SurahReadingScreen() {
       ) : verses.length === 0 ? (
         <View style={styles.error}>
           <Text style={styles.errorText}>{t("surahReader.noVerses")}</Text>
+        </View>
+      ) : isMushafPages ? (
+        <View style={styles.verseListContainer}>
+          <MushafPager
+            key={settings.mode}
+            pages={mushafPages}
+            style={settings.mode === "mushaf-tajweed" ? "tajweed" : "plain"}
+            initialPage={mushafInitialPage}
+            activeVerseKey={activeVerse?.verseKey ?? null}
+            activeWordPosition={activeWordState.activeWordPosition}
+            onVersePress={handleMushafVerse}
+          />
+          <Text style={styles.mushafCredit}>{t("surahReader.mushafCredit")}</Text>
         </View>
       ) : (
         <View style={styles.verseListContainer}>
@@ -1395,11 +1432,49 @@ export default function SurahReadingScreen() {
           </View>
         </View>
       ) : null}
+      <Modal visible={Boolean(pageVerse)} transparent animationType="slide" onRequestClose={() => setPageVerse(null)}>
+        <Pressable style={styles.pageSheetBackdrop} onPress={() => setPageVerse(null)}>
+          {pageVerse ? (
+            <Pressable style={styles.pageSheet} onPress={() => undefined}>
+              <Text style={styles.pageSheetTitle}>{t("surahReader.mushafVerseTitle", { verseKey: pageVerse.verseKey })}</Text>
+              <Text style={styles.pageSheetArabic}>{pageVerse.textUthmani}</Text>
+              <Text style={styles.pageSheetTranslation}>
+                {sanitizeTranslationText(pageVerse.translation || pageVerse.translations?.[0]?.text) || t("surahReader.translationUnavailable")}
+              </Text>
+              <View style={styles.pageSheetActions}>
+                <Pressable
+                  onPress={() => { handleVerseListen(pageVerse); setPageVerse(null); }}
+                  style={[styles.pageSheetButton, styles.pageSheetButtonGold]}
+                >
+                  <Ionicons name="play" size={17} color={colors.background} />
+                  <Text style={styles.pageSheetButtonGoldText}>{t("surahReader.listenFromHere")}</Text>
+                </Pressable>
+                <Pressable onPress={() => { const verse = pageVerse; setPageVerse(null); handleOpenTafsir(verse); }} style={styles.pageSheetButton}>
+                  <Ionicons name="book-outline" size={17} color={colors.goldLight} />
+                  <Text style={styles.pageSheetButtonText}>{t("surahReader.openTafsir")}</Text>
+                </Pressable>
+              </View>
+            </Pressable>
+          ) : null}
+        </Pressable>
+      </Modal>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  mushafCredit: { paddingHorizontal: 16, paddingBottom: 6, color: colors.textMuted, fontFamily: typography.sans, fontSize: 11, textAlign: "center" },
+  pageSheetBackdrop: { flex: 1, justifyContent: "flex-end", backgroundColor: "rgba(4,3,9,0.6)" },
+  pageSheet: { padding: 22, paddingBottom: 36, borderTopLeftRadius: 26, borderTopRightRadius: 26, backgroundColor: colors.backgroundSecondary, borderWidth: 1, borderBottomWidth: 0, borderColor: colors.borderSoft, gap: 12 },
+  pageSheetTitle: { color: colors.goldLight, fontFamily: typography.sans, fontSize: 14, fontWeight: "800" },
+  pageSheetArabic: { color: colors.text, fontFamily: ARABIC_READING_FONT_FAMILY, fontSize: 26, lineHeight: 50, textAlign: "right", writingDirection: "rtl" },
+  pageSheetTranslation: { color: colors.textSecondary, fontFamily: typography.sans, fontSize: 16, lineHeight: 24 },
+  pageSheetActions: { flexDirection: "row", gap: 10, marginTop: 4 },
+  pageSheetButton: { flex: 1, minHeight: 48, borderRadius: 24, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 7, borderWidth: 1, borderColor: colors.borderSoft },
+  pageSheetButtonGold: { backgroundColor: colors.goldLight, borderColor: colors.goldLight },
+  pageSheetButtonGoldText: { color: colors.background, fontFamily: typography.sans, fontSize: 15, fontWeight: "800" },
+  pageSheetButtonText: { color: colors.goldLight, fontFamily: typography.sans, fontSize: 15, fontWeight: "800" },
+
   safe: { flex: 1 },
   header: {
     minHeight: 74,
