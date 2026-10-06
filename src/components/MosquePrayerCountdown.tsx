@@ -1,4 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
+import { useFocusEffect } from 'expo-router';
 import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import {
     ActivityIndicator,
@@ -139,15 +140,19 @@ function MosquePrayerCountdown({
     };
   }, [loadSchedule, refreshKey]);
 
-  useEffect(() => {
-    const intervalId = setInterval(() => {
+  // Le compte à rebours ne tourne que quand l'écran est affiché (pas en arrière-plan sous un autre écran).
+  useFocusEffect(
+    useCallback(() => {
       setNow(Date.now());
-    }, 1_000);
+      const intervalId = setInterval(() => {
+        setNow(Date.now());
+      }, 1_000);
 
-    return () => {
-      clearInterval(intervalId);
-    };
-  }, []);
+      return () => {
+        clearInterval(intervalId);
+      };
+    }, []),
+  );
 
   const nextPrayer = useMemo(
     () =>
