@@ -277,14 +277,14 @@ const MODULE_GUIDES: Record<string, GuideDefinition> = {
       icon: "walk-outline",
     }],
   },
-  "/dreams": {
-    id: "dreams",
+  "/akhira": {
+    id: "akhira",
     slides: [{
-      eyebrow: "RÊVES",
-      title: "Des repères avant toute interprétation",
+      eyebrow: "L’AU-DELÀ",
+      title: "De la mort à la demeure éternelle",
       description:
-        "Consultez les explications et précautions du module pour distinguer les différents types de rêves avec mesure.",
-      icon: "cloudy-night-outline",
+        "Suivez les étapes une par une : chaque page cite le Coran et les hadiths authentiques, avec leur source.",
+      icon: "moon-outline",
     }],
   },
   "/dalil": {
