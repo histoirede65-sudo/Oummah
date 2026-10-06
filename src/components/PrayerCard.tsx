@@ -199,14 +199,16 @@ const ORBIT_POSITIONS: ReadonlyArray<{
   top: number;
 }> = [
   { left: "4%", top: 66 },
-  { left: "19%", top: 9 },
+  { left: "19%", top: 18 },
   { left: "41%", top: 13 },
-  { left: "63%", top: 9 },
+  { left: "63%", top: 18 },
   { left: "79%", top: 66 },
   { left: "41%", top: 88 },
 ];
 
-const ORBIT_ANGLES = [2.96, 4.1, 4.71, 5.33, 6.46, 7.85, 9.24] as const;
+// Angle (radians) du point de l'ellipse le plus proche de chaque pastille (Fajr → Isha, puis Fajr + 2π),
+// pour que le halo passe sur la pastille à l'heure exacte de la prière.
+const ORBIT_ANGLES = [2.98, 4.17, 4.71, 5.24, 6.51, 7.86, 2.98 + 2 * Math.PI] as const;
 
 function getOrbitMarker(timeline: TimelineItem[], now: number) {
   const timestamps = timeline.map((prayer) => prayer.timestamp);
