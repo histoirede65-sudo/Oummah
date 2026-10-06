@@ -429,6 +429,10 @@ async function resolvePrayerSource(
   };
 }
 
+// Last times shown, kept for the whole app session: when the home screen is opened again (back from
+// Mosquées, « Accueil » in the menu…) they appear at once and are refreshed quietly in the background.
+let lastShown: { schedule: MosquePrayerSchedule; source: PrayerSource } | null = null;
+
 export default function PrayerCard({ onScheduleChange }: { onScheduleChange?: (schedule: MosquePrayerSchedule) => void }) {
   const { language, t } = useI18n();
   const insets = useSafeAreaInsets();
@@ -440,11 +444,11 @@ export default function PrayerCard({ onScheduleChange }: { onScheduleChange?: (s
   const [mainMosque, setMainMosque] = useState<StoredMosque | null>(null);
   const [mainMosqueLoaded, setMainMosqueLoaded] = useState(false);
   const [mainMosqueJumuah, setMainMosqueJumuah] = useState<string | null>(null);
-  const [source, setSource] = useState<PrayerSource | null>(null);
+  const [source, setSource] = useState<PrayerSource | null>(() => lastShown?.source ?? null);
   const [manualSource, setManualSource] = useState<PrayerSource | null>(null);
-  const [schedule, setSchedule] = useState<MosquePrayerSchedule | null>(null);
+  const [schedule, setSchedule] = useState<MosquePrayerSchedule | null>(() => lastShown?.schedule ?? null);
   const [completedPrayers, setCompletedPrayers] = useState<MosquePrayerKey[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(() => !lastShown);
   const [errorMessage, setErrorMessage] = useState("");
   const [refreshKey, setRefreshKey] = useState(0);
   const [calculationSettings, setCalculationSettings] = useState<PrayerCalculationSettings>(DEFAULT_PRAYER_CALCULATION_SETTINGS);
@@ -900,6 +904,8 @@ export default function PrayerCard({ onScheduleChange }: { onScheduleChange?: (s
     const controller = new AbortController();
 
     const loadPrayerTimes = async () => {
+      // Times kept in memory are handed to the home screen at once (Qiyam card…), before the refresh.
+      if (schedule) onScheduleChange?.(schedule);
       if (!schedule) setLoading(true);
       setErrorMessage("");
 
@@ -932,6 +938,7 @@ export default function PrayerCard({ onScheduleChange }: { onScheduleChange?: (s
         if (!controller.signal.aborted) {
           setSource(resolvedSource);
           setSchedule(adjustedResult);
+          lastShown = { schedule: adjustedResult, source: resolvedSource };
           onScheduleChange?.(adjustedResult);
         }
       } catch (error) {
@@ -939,7 +946,8 @@ export default function PrayerCard({ onScheduleChange }: { onScheduleChange?: (s
           return;
         }
 
-        if (!controller.signal.aborted) {
+        // A failed quiet refresh keeps the times already on screen.
+        if (!controller.signal.aborted && !lastShown) {
           setErrorMessage(
             error instanceof Error && error.message === "LOCATION_DENIED"
               ? "Autorisez la localisation ou choisissez votre mosquée."
