@@ -74,16 +74,16 @@ export default function ProphetsScreen() {
             <LinearGradient colors={["rgba(7,7,18,0.10)", "rgba(8,7,19,0.34)", "rgba(8,7,19,0.96)"]} style={StyleSheet.absoluteFill} />
             <View style={styles.featuredRim} />
             <View style={styles.featuredCopy}>
-              <View style={styles.availablePill}><Ionicons name="sparkles" size={12} color={colors.background} /><Text style={styles.availablePillText}>DISPONIBLE</Text></View>
+              <View style={styles.availablePill}><Ionicons name="sparkles" size={12} color={colors.background} /><Text style={styles.availablePillText}>{t("prophets.available")}</Text></View>
               <Text style={styles.featuredArabic}>مُوسَىٰ</Text>
               <Text style={styles.featuredTitle}>Mûsâ عليه السلام</Text>
-              <Text style={styles.featuredText}>Du Nil au Sinaï — 15 chapitres racontés à partir des passages du Coran.</Text>
+              <Text style={styles.featuredText}>{t("prophets.musaFeatured")}</Text>
               <View style={styles.progressRow}>
                 <View style={styles.progressTrack}><View style={[styles.progressFill, { width: `${Math.max(3, progress * 100)}%` }]} /></View>
                 <Text style={styles.progressText}>{completedCount}/{MUSA_CHAPTERS.length}</Text>
               </View>
               <View style={styles.resumeRow}>
-                <Text style={styles.resumeText}>{completedCount ? "Reprendre le récit" : "Commencer le récit"}</Text>
+                <Text style={styles.resumeText}>{completedCount ? t("prophets.resumeStory") : t("prophets.startStory")}</Text>
                 <Ionicons name="arrow-forward" size={16} color={colors.background} />
               </View>
             </View>
