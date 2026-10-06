@@ -2,6 +2,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
+import * as WebBrowser from 'expo-web-browser';
 import { Linking, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -119,7 +120,13 @@ export default function ZawajScreen() {
   const [openStory, setOpenStory] = useState<number | null>(0);
   const openNourAlZawaj = async () => {
     const url = 'https://nouralzawaj.com';
-    if (await Linking.canOpenURL(url)) await Linking.openURL(url);
+    // No canOpenURL check: on Android 11+ it answers false for web links unless the app declares them,
+    // and the button then did nothing. Open the site in the in-app browser, or the default browser.
+    try {
+      await WebBrowser.openBrowserAsync(url);
+    } catch {
+      await Linking.openURL(url).catch(() => undefined);
+    }
   };
 
   return (
