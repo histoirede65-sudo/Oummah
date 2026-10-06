@@ -167,7 +167,7 @@ export default function TahajjudDuasScreen() {
           ))}
           <Pressable onPress={() => router.push('/dua' as Href)} style={styles.link}>
             <Ionicons name="library-outline" size={16} color={night.goldSoft} />
-            <Text style={styles.linkText}>{tx("Toutes les douas d’OUMMAH")}</Text>
+            <Text style={styles.linkText}>{tx("Toutes les duas d’OUMMAH")}</Text>
           </Pressable>
         </>
       ) : (

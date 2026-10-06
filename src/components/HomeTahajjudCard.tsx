@@ -106,6 +106,7 @@ export default function HomeTahajjudCard({ schedule }: Props) {
         visible={sheet}
         late={false}
         streak={view.streak + 1}
+        nightKey={state.validatableKey}
         onClose={() => setSheet(false)}
         onConfirm={view.validate}
       />

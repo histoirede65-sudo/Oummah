@@ -139,7 +139,7 @@ export function wallErrorMessage(error: unknown) {
     case 'PROFILE_REQUIRED': return tx('Créez votre profil OUMMAH (un pseudo suffit) pour participer.');
     case 'TEXT_REFUSED': return tx('Ce texte contient des mots qui ne sont pas acceptés sur le Mur des duas.');
     case 'RATE_LIMIT': return tx('Vous avez atteint la limite pour aujourd’hui. Réessayez demain.');
-    case 'NOT_FOUND': return tx('Cette doua n’est plus disponible.');
+    case 'NOT_FOUND': return tx('Cette dua n’est plus disponible.');
     default: return tx('Action impossible pour le moment.');
   }
 }

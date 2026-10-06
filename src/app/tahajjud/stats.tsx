@@ -140,6 +140,8 @@ export default function TahajjudStatsScreen() {
         <View style={styles.heroCopy}>
           <Text style={styles.heroBig}>{stats.done}</Text>
           <Text style={styles.heroLabel}>{txCount(stats.done, 'nuit', 'nuits')} {period === 'week' ? tx('cette semaine') : period === 'month' ? tx('ce mois-ci') : tx('cette année')}</Text>
+          {/* What the percentage is made of: nights prayed out of the nights already passed (pauses left out). */}
+          <Text style={styles.heroNote}>{txCount(stats.counted, 'Régularité : {1} sur {0} nuit passée, hors pauses.', 'Régularité : {1} sur {0} nuits passées, hors pauses.', [stats.done])}</Text>
         </View>
       </GlassCard>
 
@@ -172,6 +174,7 @@ export default function TahajjudStatsScreen() {
         <View style={styles.legend}>
           <View style={styles.legendItem}><View style={[styles.legendDot, styles.dayDone]} /><Text style={styles.legendText}>{tx("Nuit priée")}</Text></View>
           <View style={styles.legendItem}><View style={[styles.legendDot, styles.dayPaused]} /><Text style={styles.legendText}>{tx("En pause")}</Text></View>
+          <View style={styles.legendItem}><View style={[styles.legendDot, styles.dayToday]} /><Text style={styles.legendText}>{tx("À enregistrer")}</Text></View>
         </View>
       </GlassCard>
 
@@ -265,6 +268,7 @@ const styles = StyleSheet.create({
   heroCopy: { flex: 1 },
   heroBig: { color: night.goldSoft, fontSize: 54, lineHeight: 58, ...nightType.display },
   heroLabel: { color: night.textSoft, fontSize: 17, ...nightType.medium },
+  heroNote: { marginTop: 6, color: night.muted, fontSize: 13.5, lineHeight: 18, ...nightType.body },
   metrics: { marginTop: 10, flexDirection: 'row', gap: 10 },
   metric: { flex: 1, padding: 14, alignItems: 'flex-start' },
   metricValue: { marginTop: 8, color: night.text, fontSize: 30, ...nightType.display },

@@ -53,11 +53,11 @@ export default function TahajjudScreen() {
   const verse = tonight ? verseOfTheNight(tonight.key) : null;
 
   const tiles: Tile[] = [
-    { icon: 'book-outline', label: tx('Conseils'), hint: tx('Apprendre le Qiyam'), route: '/tahajjud/guide' },
-    { icon: 'heart-outline', label: tx('Ma nuit'), hint: tx('Dhikr, Coran, duas…'), route: '/tahajjud/duas' },
+    { icon: 'book-outline', label: tx('Guide'), hint: tx('Apprendre le Qiyam'), route: '/tahajjud/guide' },
+    { icon: 'heart-outline', label: tx('Ma nuit'), hint: tx('Dhikr, Coran'), route: '/tahajjud/duas' },
     { icon: 'checkmark-circle-outline', label: tx('J’ai prié'), hint: view.validated ? tx('Nuit enregistrée') : tx('Valider ma nuit'), onPress: () => view.canValidate && setSheet(true) },
     { icon: 'stats-chart-outline', label: tx('Statistiques'), hint: tx('Calendrier · défis'), route: '/tahajjud/stats' },
-    { icon: 'people-outline', label: tx('Mur des duas'), hint: tx('Dire Amine'), route: '/tahajjud/wall' },
+    { icon: 'people-outline', label: tx('Duas'), hint: tx('Mur · dire Amine'), route: '/tahajjud/wall' },
     { icon: 'chatbubbles-outline', label: tx('Amis'), hint: unreadMessages ? txCount(unreadMessages, '{0} message non lu', '{0} messages non lus') : tx('Messages · encourager'), route: '/tahajjud/friends' },
   ];
 
@@ -82,7 +82,7 @@ export default function TahajjudScreen() {
       <Text style={styles.centerLabel}>{phase === 'day' ? tx('PROCHAIN DERNIER TIERS') : tx('DERNIER TIERS DE LA NUIT')}</Text>
       <Text style={styles.centerBig}>{clock(tonight.lastThirdStart)}</Text>
       <Text style={styles.centerSub}>
-        {phase === 'day' ? tx("jusqu’à {0} · ce soir après ‘Isha", [clock(tonight.fajr)]) : tx("commence dans {0}", [formatDuration(tonight.lastThirdStart - now)])}
+        {phase === 'day' ? tx('jusqu’à Fajr ({0}), après ‘Isha', [clock(tonight.fajr)]) : tx("commence dans {0}", [formatDuration(tonight.lastThirdStart - now)])}
       </Text>
     </>
   );
@@ -92,7 +92,7 @@ export default function TahajjudScreen() {
       <Animated.View entering={FadeInDown.duration(500)}>
         <Text style={styles.eyebrow}>{tonight ? nightTitle(tonight.key) : tx('Cette nuit')}</Text>
         <Text style={styles.title}>{tx("Qiyam al-Layl")}</Text>
-        <Text style={styles.subtitle}>{tx("Un rendez-vous privilégié avec ton Seigneur")}</Text>
+        <Text style={styles.subtitle}>{tx("Un rendez-vous privilégié avec votre Seigneur")}</Text>
       </Animated.View>
 
       {view.loading && !tonight ? (
@@ -174,7 +174,7 @@ export default function TahajjudScreen() {
                 <View style={[styles.tileIcon, tile.soon && styles.tileIconSoon]}>
                   <Ionicons name={tile.icon} size={20} color={tile.soon ? night.muted : night.goldSoft} />
                 </View>
-                <Text numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.8} style={[styles.tileLabel, tile.soon && styles.tileLabelSoon]}>{tile.label}</Text>
+                <Text numberOfLines={1} style={[styles.tileLabel, tile.soon && styles.tileLabelSoon]}>{tile.label}</Text>
                 <Text style={styles.tileHint}>{tile.hint}</Text>
               </Pressable>
             ))}
@@ -189,7 +189,7 @@ export default function TahajjudScreen() {
                 <View style={styles.communityCopy}>
                   <Text style={styles.communityTitle}>{tx("La Oummah cette nuit")}</Text>
                   <Text style={styles.communityText}>
-                    {awakeCount === null ? tx('Vous ne priez pas seul') : txCount(awakeCount, '{0} membre réveillé · voir la carte', '{0} membres réveillés · voir la carte')}
+                    {!awakeCount ? tx('Voir la carte de la nuit') : txCount(awakeCount, '{0} membre réveillé · voir la carte', '{0} membres réveillés · voir la carte')}
                   </Text>
                 </View>
                 <Ionicons name="chevron-forward" size={20} color={night.goldSoft} />
@@ -210,6 +210,9 @@ export default function TahajjudScreen() {
                   ) : null}
                 </View>
                 <WeekMoons nights={view.nights} pauses={view.pauses} currentNight={state?.validatableKey ?? tonight.key} />
+                {state?.validatableKey && !view.nights[state.validatableKey] ? (
+                  <Text style={styles.weekHint}>{tx('Cercle doré : la nuit que vous pouvez encore enregistrer.')}</Text>
+                ) : null}
               </GlassCard>
             </Pressable>
           </Animated.View>
@@ -236,6 +239,7 @@ export default function TahajjudScreen() {
         visible={sheet}
         late={late}
         streak={view.streak + (view.validated ? 0 : 1)}
+        nightKey={state?.validatableKey ?? null}
         onClose={() => setSheet(false)}
         onConfirm={view.validate}
       />
@@ -245,14 +249,14 @@ export default function TahajjudScreen() {
 
 const styles = StyleSheet.create({
   eyebrow: { color: night.gold, fontSize: 14, letterSpacing: 1.8, textTransform: 'uppercase', ...nightType.bold },
-  title: { marginTop: 4, color: night.text, fontSize: 54, lineHeight: 58, ...nightType.display },
+  title: { marginTop: 2, color: night.text, fontSize: 46, lineHeight: 50, ...nightType.display },
   subtitle: { marginTop: 2, color: night.textSoft, fontSize: 18, ...nightType.body },
   loader: { height: 280, alignItems: 'center', justifyContent: 'center' },
   errorCard: { marginTop: 30, alignItems: 'center', gap: 12 },
   errorText: { color: night.textSoft, fontSize: 17, textAlign: 'center', lineHeight: 24, ...nightType.body },
   retry: { paddingHorizontal: 20, paddingVertical: 10, borderRadius: 20, borderWidth: 1, borderColor: night.goldLine },
   retryText: { color: night.goldSoft, ...nightType.semibold },
-  arcWrap: { marginTop: 18, alignItems: 'center' },
+  arcWrap: { marginTop: 6, alignItems: 'center' },
   centerLabel: { color: night.muted, fontSize: 12, letterSpacing: 2.2, marginBottom: 4, ...nightType.bold },
   centerLabelGold: { color: night.goldSoft, marginBottom: 0 },
   centerBig: { color: night.text, fontSize: 48, lineHeight: 52, ...nightType.display },
@@ -276,6 +280,7 @@ const styles = StyleSheet.create({
   tileLabelSoon: { color: night.textSoft },
   tileHint: { marginTop: 2, color: night.muted, fontSize: 14, ...nightType.body },
   weekCard: { marginTop: 16 },
+  weekHint: { marginTop: 10, color: night.muted, fontSize: 14, ...nightType.body },
   community: { marginTop: 16, flexDirection: 'row', alignItems: 'center', gap: 14, padding: 16, borderRadius: 24, borderWidth: 1, borderColor: night.goldLine },
   communityIcon: { width: 48, height: 48, borderRadius: 24, alignItems: 'center', justifyContent: 'center', backgroundColor: '#080518' },
   communityCopy: { flex: 1 },

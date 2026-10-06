@@ -12,7 +12,7 @@ import { night, nightType } from './theme';
 import { tx } from '../../features/tahajjud/tahajjudI18n';
 
 /**
- * « Programme de la nuit » : dhikr, Coran, hadith, prophètes, doua. Each action opens the existing
+ * « Programme de la nuit » : dhikr, Coran, hadith, prophètes, dua. Each action opens the existing
  * module, which already feeds the daily goals; a tile is ticked when that activity happened tonight.
  */
 
@@ -31,7 +31,7 @@ const ACTIONS: Action[] = [
   { id: 'listen', icon: 'headset-outline', title: 'Écouter le Coran', hint: 'Laisser la récitation apaiser la nuit', href: '/listen/reciters' as Href, metrics: ['quran_listen_seconds'] },
   { id: 'hadith', icon: 'library-outline', title: 'Lire un hadith', hint: 'Le hadith du jour, en une minute', href: { pathname: '/hadiths', params: { open: 'daily' } } as unknown as Href, metrics: ['hadith_read'] },
   { id: 'prophets', icon: 'star-outline', title: 'Histoire d’un prophète', hint: 'Lire ou écouter un chapitre', href: '/prophets' as Href, metrics: ['prophet_story'] },
-  { id: 'dua', icon: 'heart-outline', title: 'Une doua', hint: 'Les invocations du Coran et de la Sunna', href: '/dua' as Href, metrics: ['dua_read', 'dua_listen_seconds'] },
+  { id: 'dua', icon: 'heart-outline', title: 'Une dua', hint: 'Les invocations du Coran et de la Sunna', href: '/dua' as Href, metrics: ['dua_read', 'dua_listen_seconds'] },
 ];
 
 function goalLine(goals: DailyGoal[], metrics: GoalMetric[]) {

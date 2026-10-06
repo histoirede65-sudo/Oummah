@@ -227,7 +227,7 @@ export function periodStats(period: StatsPeriod, currentNight: string, nights: T
   const done = keys.filter((night) => nights[night]).length;
   // Paused nights do not count against regularity; tonight only once validated.
   const counted = keys.filter((night) => nights[night] || (!isPaused(pauses, night) && night !== currentNight)).length;
-  return { done, regularity: counted ? Math.round((done / counted) * 100) : 0, total: keys.length };
+  return { done, counted, regularity: counted ? Math.round((done / counted) * 100) : 0, total: keys.length };
 }
 
 // ----- Evening intention -----------------------------------------------------------------------

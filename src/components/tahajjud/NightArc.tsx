@@ -108,7 +108,8 @@ export function NightArc({ width, night, phase, now, validated, children }: Prop
       ) : null}
 
       {/* Labels */}
-      <Text style={[styles.thirdLabel, { left: third.x - 60, top: third.y - 34 }]}>{clock(night.lastThirdStart)}</Text>
+      {/* Before the night starts the time is already written large in the center: show it only once. */}
+      {validated || phase === 'lastThird' ? <Text style={[styles.thirdLabel, { left: third.x - 60, top: third.y - 34 }]}>{clock(night.lastThirdStart)}</Text> : null}
       <View style={[styles.end, { left: 4 }]}>
         <Text style={styles.endName}>{tx("Maghrib")}</Text>
         <Text style={styles.endTime}>{clock(night.maghrib)}</Text>
