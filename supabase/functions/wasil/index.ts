@@ -1231,6 +1231,22 @@ async function syncConversations(userId: string, local: ConversationThread[]) {
   return merged;
 }
 
+// Raise when the answer rules change, so answers written under the old rules are no longer reused.
+const ANSWER_CACHE_VERSION = "1";
+
+/**
+ * Key under which an answer is reused, or null when it must not be: personal
+ * context, or a question not written in Latin script (the normalisation below
+ * keeps only Latin letters, so two Arabic questions could share a key).
+ */
+function answerCacheKeyFor(input: { question: string; mode: string; personal: boolean }) {
+  if (input.personal) return null;
+  if (/[^\p{Script=Latin}\p{Script=Common}\p{Script=Inherited}]/u.test(input.question)) return null;
+  const normalized = normalizeQuestion(input.question);
+  if (normalized.length < 8) return null;
+  return `v${ANSWER_CACHE_VERSION}:${input.mode}:${normalized}`;
+}
+
 function normalizeQuestion(value: string) {
   return value
     .normalize("NFD")
@@ -1980,6 +1996,73 @@ async function handleWasilRequest(
     });
   }
 
+  // A clarification requested by Wasil grants exactly one free follow-up:
+  // the immediately following user message. The client sends clarificationOf
+  // only for that next turn and clears it afterwards, even if Wasil asks again.
+  const isFreeClarificationFollowUp = Boolean(clarificationOf);
+  const credits = isFreeClarificationFollowUp
+    ? 0
+    : mode === "deep"
+      ? Math.max(1, Number(Deno.env.get("WASIL_DEEP_CREDITS") ?? "3") || 3)
+      : Math.max(1, Number(Deno.env.get("WASIL_STANDARD_CREDITS") ?? "1") || 1);
+  const model =
+    mode === "deep"
+      ? (Deno.env.get("WASIL_MODEL_DEEP") ?? "gpt-5.6-sol")
+      : (Deno.env.get("WASIL_MODEL_STANDARD") ?? "gpt-5.6-luna");
+
+  // Frequent questions: an answer that depends on nothing personal is reused
+  // for 30 days. Same credit as a normal answer, without the research wait.
+  const answerCacheKey = answerCacheKeyFor({
+    question,
+    mode,
+    personal: conversationHistory.length > 0 || Boolean(clarificationOf) ||
+      validLatitude !== null || Boolean(submittedContext?.sourceId) ||
+      Boolean(submittedContext?.action),
+  });
+  if (answerCacheKey) {
+    const [cachedReply, personalMemories] = await Promise.all([
+      postgrestRpc("get_wasil_cached_answer", { p_cache_key: answerCacheKey })
+        .catch(() => null),
+      loadProfileMemories(user.id),
+    ]);
+    if (cachedReply && typeof cachedReply === "object" && personalMemories.length === 0) {
+      let cachedBalance = balance;
+      try {
+        cachedBalance = Number(
+          await postgrestRpc("reserve_wasil_credits", {
+            p_user_id: user.id,
+            p_request_id: requestId,
+            p_amount: credits,
+            p_mode: mode,
+            p_model: `${model} (mémoire)`,
+          }),
+        );
+      } catch (error) {
+        const message = error instanceof Error ? error.message : "";
+        if (message.includes("INSUFFICIENT_CREDITS")) {
+          return json({ code: "INSUFFICIENT_CREDITS", balance }, 402);
+        }
+        return json({ code: "CREDIT_ERROR" }, 500);
+      }
+      runInBackground(
+        postgrestRpc("complete_wasil_request", {
+          p_request_id: requestId,
+          p_input_tokens: 0,
+          p_output_tokens: 0,
+          p_provider_response_id: null,
+        }),
+        "WASIL_REQUEST_COMPLETION_FAILURE",
+      );
+      console.log("WASIL_ANSWER_CACHE_HIT", { requestId, totalMs: elapsedMs(requestStartedAt) });
+      return json({
+        reply: cachedReply,
+        balance: cachedBalance,
+        creditsCharged: credits,
+        classification: "answered",
+      });
+    }
+  }
+
   const featureFlags = getWasilFeatureFlags();
   const productionV4InjectionRequested =
     featureFlags.v4ProductionBrainGuidance ||
@@ -2042,20 +2125,6 @@ async function handleWasilRequest(
     contextLoadMs = markLatency("contextLoadMs", contextStartedAt);
     return value;
   });
-
-  // A clarification requested by Wasil grants exactly one free follow-up:
-  // the immediately following user message. The client sends clarificationOf
-  // only for that next turn and clears it afterwards, even if Wasil asks again.
-  const isFreeClarificationFollowUp = Boolean(clarificationOf);
-  const credits = isFreeClarificationFollowUp
-    ? 0
-    : mode === "deep"
-      ? Math.max(1, Number(Deno.env.get("WASIL_DEEP_CREDITS") ?? "3") || 3)
-      : Math.max(1, Number(Deno.env.get("WASIL_STANDARD_CREDITS") ?? "1") || 1);
-  const model =
-    mode === "deep"
-      ? (Deno.env.get("WASIL_MODEL_DEEP") ?? "gpt-5.6-sol")
-      : (Deno.env.get("WASIL_MODEL_STANDARD") ?? "gpt-5.6-luna");
 
   let nextBalance = balance;
   let hasCreditReservation = false;
@@ -3036,6 +3105,27 @@ async function handleWasilRequest(
         footer: "============================================",
       }, null, 2),
     );
+
+    if (answerCacheKey && profileMemories.length === 0 && rememberedSourceIds.length === 0) {
+      runInBackground(
+        postgrestRpc("put_wasil_cached_answer", {
+          p_cache_key: answerCacheKey,
+          p_question: question,
+          p_mode: mode,
+          p_reply: {
+            kind: "answer",
+            title: parsed.title,
+            body: finalAnswerBody,
+            reference,
+            sourceUrl,
+            quranReferences: parsed.quran_references,
+            hadithReferences,
+            webReferences: verifiedWebReferences,
+          },
+        }),
+        "WASIL_ANSWER_CACHE_SAVE_FAILURE",
+      );
+    }
 
     return json({
       reply: {
