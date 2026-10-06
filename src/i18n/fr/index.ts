@@ -3566,6 +3566,14 @@ export const fr = {
   'halalBodies.warning': 'Une fiche décrit l’organisme ; elle ne rend jamais, à elle seule, un produit « non halal ». Les repères religieux expliquent les règles et ne notent aucun organisme.',
 
 
+  'surahReader.mushafVerseRead': 'Verset {verse} lu ✓',
+  'surahReader.mushafVerseUnread': 'Verset {verse} retiré des lectures',
+  'surahReader.mushafPageDone': 'Page {page} lue ✓',
+  'surahReader.mushafPageUndone': 'Page {page} retirée des lectures',
+  'surahReader.mushafPageMark': 'Valider la lecture de cette page',
+  'surahReader.mushafPageUnmark': 'Retirer cette page des lectures',
+  'surahReader.mushafSaveError': 'Enregistrement impossible',
+  'surahReader.mushafSaveErrorText': 'Réessayez dans un instant.',
 } as const;
 
 export type TranslationKey = keyof typeof fr;
