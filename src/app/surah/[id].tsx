@@ -16,6 +16,7 @@ import {
   FlatList,
   Modal,
   Pressable,
+  StatusBar,
   StyleSheet,
   Text,
   TextInput,
@@ -24,6 +25,7 @@ import {
   type ListRenderItem,
   type ViewToken,
 } from "react-native";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
 import { useGlobalAudioPlayer } from "../../context/AudioPlayerProvider";
@@ -1219,9 +1221,9 @@ export default function SurahReadingScreen() {
       </View>
       <View style={styles.displaySwitch} accessibilityRole="tablist">
         {([
-          { key: "text", label: t("surahReader.displayReading"), icon: "reader-outline", on: !isMushafPages, mode: textMode },
-          { key: "pages", label: t("surahReader.mushafPages"), icon: "book-outline", on: settings.mode === "mushaf-pages", mode: "mushaf-pages" },
-          { key: "tajweed", label: t("surahReader.mushafTajweed"), icon: "color-palette-outline", on: settings.mode === "mushaf-tajweed", mode: "mushaf-tajweed" },
+          { key: "text", label: t("surahReader.displayReading"), hint: t("surahReader.displayReadingHint"), icon: "reader-outline", on: !isMushafPages, mode: textMode },
+          { key: "pages", label: t("surahReader.mushafPages"), hint: t("surahReader.mushafPagesHint"), icon: "book-outline", on: settings.mode === "mushaf-pages", mode: "mushaf-pages" },
+          { key: "tajweed", label: t("surahReader.mushafTajweed"), hint: t("surahReader.mushafTajweedHint"), icon: "color-palette-outline", on: settings.mode === "mushaf-tajweed", mode: "mushaf-tajweed" },
         ] as const).map((item) => (
           <Pressable
             key={item.key}
@@ -1230,8 +1232,11 @@ export default function SurahReadingScreen() {
             onPress={() => updateSettings({ mode: item.mode })}
             style={[styles.displayOption, item.on && styles.displayOptionOn]}
           >
-            <Ionicons name={item.icon} size={16} color={item.on ? colors.background : colors.goldLight} />
-            <Text numberOfLines={1} style={[styles.displayOptionText, item.on && styles.displayOptionTextOn]}>{item.label}</Text>
+            <View style={styles.displayOptionTop}>
+              <Ionicons name={item.icon} size={15} color={item.on ? colors.background : colors.goldLight} />
+              <Text numberOfLines={1} style={[styles.displayOptionText, item.on && styles.displayOptionTextOn]}>{item.label}</Text>
+            </View>
+            <Text numberOfLines={1} style={[styles.displayOptionHint, item.on && styles.displayOptionHintOn]}>{item.hint}</Text>
           </Pressable>
         ))}
       </View>
@@ -1443,7 +1448,9 @@ export default function SurahReadingScreen() {
         statusBarTranslucent
         onRequestClose={() => updateSettings({ mode: textMode })}
       >
+        <GestureHandlerRootView style={styles.mushafRoot}>
         <SafeAreaProvider>
+          <StatusBar hidden={isMushafPages} animated />
           <SafeAreaView edges={["top", "bottom"]} style={styles.mushafScreen}>
             <View style={styles.mushafBar}>
               <Pressable
@@ -1493,8 +1500,12 @@ export default function SurahReadingScreen() {
                 <Text numberOfLines={1} style={styles.mushafPlayerText}>{t("surahReader.mushafVerseTitle", { verseKey: activeVerse.verseKey })} · {currentReciter?.name ?? ""}</Text>
               </View>
             ) : (
-              <Text style={styles.mushafCredit}>{t("surahReader.mushafCredit")}</Text>
+              <View style={styles.mushafHint}>
+                <Ionicons name="hand-left-outline" size={15} color={colors.goldLight} />
+                <Text numberOfLines={2} style={styles.mushafHintText}>{t("surahReader.mushafListenHint")} · {t("surahReader.mushafZoomHint")}</Text>
+              </View>
             )}
+            <Text style={styles.mushafCredit}>{t("surahReader.mushafCredit")}</Text>
           </SafeAreaView>
           {pageVerse ? (
             <Pressable style={styles.pageSheetBackdrop} onPress={() => setPageVerse(null)}>
@@ -1518,21 +1529,28 @@ export default function SurahReadingScreen() {
             </Pressable>
           ) : null}
         </SafeAreaProvider>
+        </GestureHandlerRootView>
       </Modal>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  mushafCredit: { paddingHorizontal: 16, paddingBottom: 6, color: colors.textMuted, fontFamily: typography.sans, fontSize: 11, textAlign: "center" },
+  mushafCredit: { paddingHorizontal: 16, paddingTop: 2, paddingBottom: 2, color: colors.textMuted, fontFamily: typography.sans, fontSize: 10, textAlign: "center" },
   pageSheetBackdrop: { ...StyleSheet.absoluteFill, justifyContent: "flex-end", backgroundColor: "rgba(4,3,9,0.6)" },
   displaySwitch: { flexDirection: "row", gap: 8, paddingHorizontal: 16, paddingBottom: 10 },
-  displayOption: { flex: 1, minHeight: 42, borderRadius: 21, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 6, paddingHorizontal: 8, borderWidth: 1, borderColor: "rgba(227,181,90,0.35)" },
+  displayOption: { flex: 1, minHeight: 52, borderRadius: 16, alignItems: "center", justifyContent: "center", gap: 2, paddingHorizontal: 6, paddingVertical: 6, borderWidth: 1, borderColor: "rgba(227,181,90,0.35)" },
+  displayOptionTop: { flexDirection: "row", alignItems: "center", gap: 5 },
+  displayOptionHint: { color: colors.textMuted, fontFamily: typography.sans, fontSize: 11.5 },
+  displayOptionHintOn: { color: "rgba(8,7,19,0.7)" },
   displayOptionOn: { backgroundColor: colors.goldLight, borderColor: colors.goldLight },
   displayOptionText: { flexShrink: 1, color: colors.goldLight, fontFamily: typography.sans, fontSize: 13.5, fontWeight: "800" },
   displayOptionTextOn: { color: colors.background },
+  mushafRoot: { flex: 1 },
   mushafScreen: { flex: 1, backgroundColor: "#0B0918" },
-  mushafBar: { flexDirection: "row", alignItems: "center", gap: 10, paddingHorizontal: 12, paddingVertical: 6 },
+  mushafBar: { flexDirection: "row", alignItems: "center", gap: 10, paddingHorizontal: 10, paddingVertical: 2 },
+  mushafHint: { flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 7, paddingHorizontal: 16, paddingTop: 4 },
+  mushafHintText: { flexShrink: 1, color: colors.goldLight, fontFamily: typography.sans, fontSize: 13, fontWeight: "700", textAlign: "center" },
   mushafBarButton: { width: 40, height: 40, borderRadius: 20, alignItems: "center", justifyContent: "center", backgroundColor: "rgba(255,255,255,0.06)" },
   mushafBarTitle: { flex: 1, color: colors.text, fontFamily: typography.sans, fontSize: 16, fontWeight: "800" },
   mushafStyleSwitch: { flexDirection: "row", padding: 3, borderRadius: 18, backgroundColor: "rgba(255,255,255,0.06)" },

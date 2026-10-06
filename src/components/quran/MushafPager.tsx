@@ -5,6 +5,7 @@ import { SURAHS } from '../../data/surahs';
 import { ARABIC_READING_FONT_FAMILY } from '../../features/quran/ArabicReadingPresentation';
 import { MUSHAF_LINES_PER_PAGE, prepareMushafPage, type MushafPage, type MushafStyle } from '../../features/quran/mushaf/MushafRepository';
 import { useI18n } from '../../i18n';
+import { MushafZoom } from './MushafZoom';
 
 const PAPER = '#FBF6E9';
 const INK = '#1B1712';
@@ -31,6 +32,14 @@ export function MushafPager({ pages, style, initialPage, activeVerseKey, activeW
   const listRef = useRef<FlatList<number>>(null);
   const pageOfVerse = useRef(new Map<string, number>());
   const initialIndex = Math.max(0, pages.indexOf(initialPage));
+  const { t } = useI18n();
+  // Zoomed page: the page turn waits until the page is back to normal size.
+  const [zoomed, setZoomed] = useState(false);
+  const [resetKey, setResetKey] = useState(0);
+  const resetZoom = () => {
+    setZoomed(false);
+    setResetKey((value) => value + 1);
+  };
 
   const onLayout = (event: LayoutChangeEvent) => {
     const { width, height } = event.nativeEvent.layout;
@@ -58,6 +67,7 @@ export function MushafPager({ pages, style, initialPage, activeVerseKey, activeW
           horizontal
           inverted
           pagingEnabled
+          scrollEnabled={!zoomed}
           showsHorizontalScrollIndicator={false}
           keyExtractor={(page) => String(page)}
           initialScrollIndex={initialIndex}
@@ -66,18 +76,27 @@ export function MushafPager({ pages, style, initialPage, activeVerseKey, activeW
           initialNumToRender={1}
           maxToRenderPerBatch={2}
           renderItem={({ item }) => (
-            <MushafPageView
-              page={item}
-              style={style}
-              width={size.width}
-              height={size.height}
-              activeVerseKey={activeVerseKey ?? null}
-              activeWordPosition={activeWordPosition ?? null}
-              onVersePress={onVersePress}
-              onLoaded={register}
-            />
+            <View style={{ width: size.width, height: size.height, overflow: 'hidden' }}>
+              <MushafZoom width={size.width} height={size.height} resetKey={resetKey} zoomed={zoomed} onZoomChange={setZoomed}>
+                <MushafPageView
+                  page={item}
+                  style={style}
+                  width={size.width}
+                  height={size.height}
+                  activeVerseKey={activeVerseKey ?? null}
+                  activeWordPosition={activeWordPosition ?? null}
+                  onVersePress={onVersePress}
+                  onLoaded={register}
+                />
+              </MushafZoom>
+            </View>
           )}
         />
+      ) : null}
+      {zoomed ? (
+        <Pressable accessibilityRole="button" onPress={resetZoom} style={styles.resetZoom}>
+          <Text style={styles.resetZoomText}>{t('surahReader.mushafResetZoom')}</Text>
+        </Pressable>
       ) : null}
     </View>
   );
@@ -113,12 +132,12 @@ const MushafPageView = memo(function MushafPageView({ page, style, width, height
   }, [key, onLoaded, page, style]);
 
   const current = state?.key === key ? state : null;
-  const pageWidth = width - 20;
-  const innerWidth = pageWidth - 28;
-  const lineHeight = (height - 20 - 46) / MUSHAF_LINES_PER_PAGE;
+  const pageWidth = width - 8;
+  const innerWidth = pageWidth - 16;
+  const lineHeight = (height - 8 - 30) / MUSHAF_LINES_PER_PAGE;
   // Pages 1 and 2 (Al-Fâtiha, start of Al-Baqara) are shorter and centred, as in the printed Mushaf.
   const opening = page <= 2;
-  const fontSize = Math.min(innerWidth * (opening ? 0.066 : 0.056), lineHeight * 0.62);
+  const fontSize = Math.min(innerWidth * (opening ? 0.07 : 0.0605), lineHeight * 0.66);
 
   const rows = useMemo(() => {
     if (!current || 'error' in current) return [];
@@ -198,10 +217,12 @@ const MushafPageView = memo(function MushafPageView({ page, style, width, height
 
 const styles = StyleSheet.create({
   root: { flex: 1 },
+  resetZoom: { position: 'absolute', top: 10, alignSelf: 'center', paddingHorizontal: 14, paddingVertical: 8, borderRadius: 18, backgroundColor: 'rgba(11,9,24,0.85)', borderWidth: 1, borderColor: FRAME },
+  resetZoomText: { color: '#F4E3B5', fontSize: 13, fontWeight: '800' },
   slot: { alignItems: 'center', justifyContent: 'center' },
   page: {
-    flex: 1, marginVertical: 10, paddingHorizontal: 14, paddingTop: 12, borderRadius: 18, backgroundColor: PAPER,
-    borderWidth: 2, borderColor: FRAME,
+    flex: 1, marginVertical: 4, paddingHorizontal: 8, paddingTop: 4, borderRadius: 10, backgroundColor: PAPER,
+    borderWidth: 1.5, borderColor: FRAME,
   },
   center: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 20 },
   errorText: { color: INK, fontSize: 15, textAlign: 'center', lineHeight: 21 },
@@ -215,5 +236,5 @@ const styles = StyleSheet.create({
   surahNameText: { color: INK, fontFamily: ARABIC_READING_FONT_FAMILY },
   basmala: { alignItems: 'center', justifyContent: 'center' },
   basmalaText: { color: INK, fontFamily: ARABIC_READING_FONT_FAMILY },
-  pageNumber: { height: 34, textAlign: 'center', textAlignVertical: 'center', lineHeight: 34, color: '#7B6F5C', fontSize: 13 },
+  pageNumber: { height: 26, textAlign: 'center', textAlignVertical: 'center', lineHeight: 26, color: '#7B6F5C', fontSize: 12 },
 });
