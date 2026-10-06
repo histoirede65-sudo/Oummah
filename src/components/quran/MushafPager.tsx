@@ -3,7 +3,7 @@ import { ActivityIndicator, FlatList, Pressable, StyleSheet, Text, View, type La
 
 import { SURAHS } from '../../data/surahs';
 import { ARABIC_READING_FONT_FAMILY } from '../../features/quran/ArabicReadingPresentation';
-import { MUSHAF_LINES_PER_PAGE, prepareMushafPage, type MushafPage, type MushafStyle } from '../../features/quran/mushaf/MushafRepository';
+import { loadMushafFont, MUSHAF_LINES_PER_PAGE, prepareMushafPage, type MushafPage, type MushafStyle } from '../../features/quran/mushaf/MushafRepository';
 import { useI18n } from '../../i18n';
 import { MushafZoom } from './MushafZoom';
 
@@ -11,12 +11,10 @@ const PAPER = '#FBF6E9';
 const INK = '#1B1712';
 const FRAME = '#C9A35A';
 const HEADER_FILL = '#F1E6C8';
-// Recitation: the verse is written in a warm gold ink, the recited word in a deeper tone with a soft glow.
-// The tajweed font keeps its own colours, so there only the recited word gets a light wash.
-const VERSE_INK = '#A86A00';
-const VERSE_WASH = 'rgba(227,181,90,0.16)';
-const WORD_PILL = 'rgba(214,160,55,0.62)';
-const WORD_INK = '#3A2200';
+// Recitation, letters only: the verse in gold ink, the recited word in a deep red-brown.
+// The tajweed font carries its own colours, so the recited verse is drawn with the classic font of the same page.
+const VERSE_INK = '#B07A0A';
+const WORD_INK = '#9A2A0E';
 const BASMALA = 'بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ';
 
 type Props = {
@@ -120,17 +118,17 @@ const MushafPageView = memo(function MushafPageView({ page, style, width, height
   onZoomChange: (zoomed: boolean) => void;
 }) {
   const { t } = useI18n();
-  const [state, setState] = useState<{ key: string; layout: MushafPage; family: string } | { key: string; error: true } | null>(null);
+  const [state, setState] = useState<{ key: string; layout: MushafPage; family: string; inkFamily: string } | { key: string; error: true } | null>(null);
   const [attempt, setAttempt] = useState(0);
   const key = `${page}-${style}-${attempt}`;
 
   useEffect(() => {
     let active = true;
-    prepareMushafPage(page, style)
-      .then(({ layout, family }) => {
+    Promise.all([prepareMushafPage(page, style), style === 'tajweed' ? loadMushafFont(page, 'plain') : null])
+      .then(([{ layout, family }, plainFamily]) => {
         if (!active) return;
         onLoaded(layout);
-        setState({ key, layout, family });
+        setState({ key, layout, family, inkFamily: plainFamily ?? family });
       })
       .catch(() => {
         if (active) setState({ key, error: true });
@@ -197,10 +195,9 @@ const MushafPageView = memo(function MushafPageView({ page, style, width, height
                           allowFontScaling={false}
                           onPress={() => onVersePress(word.verseKey)}
                           style={[
-                            { fontFamily: current.family, fontSize, lineHeight, color: INK },
-                            inVerse && (style === 'plain' ? styles.verseInk : styles.verseWash),
-                            isWord && styles.wordPill,
-                            isWord && style === 'plain' && styles.wordInk,
+                            { fontFamily: inVerse ? current.inkFamily : current.family, fontSize, lineHeight, color: INK },
+                            inVerse && styles.verseInk,
+                            isWord && styles.wordInk,
                           ]}
                         >
                           {word.code}
@@ -254,8 +251,6 @@ const styles = StyleSheet.create({
   line: { flexDirection: 'row-reverse', alignItems: 'center', justifyContent: 'space-between' },
   lineOpening: { justifyContent: 'center', gap: 6 },
   verseInk: { color: VERSE_INK },
-  verseWash: { backgroundColor: VERSE_WASH, borderRadius: 6, overflow: 'hidden' },
-  wordPill: { backgroundColor: WORD_PILL, borderRadius: 9, overflow: 'hidden', paddingHorizontal: 2 },
   wordInk: { color: WORD_INK },
   surahName: { alignItems: 'center', justifyContent: 'center', borderWidth: 1.5, borderColor: FRAME, borderRadius: 10, backgroundColor: HEADER_FILL },
   surahNameText: { color: INK, fontFamily: ARABIC_READING_FONT_FAMILY },
