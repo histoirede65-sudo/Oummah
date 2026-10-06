@@ -10,17 +10,22 @@ import {
   COMMUNITY_AVATARS,
   getCommunityProfile,
   isSignedIn,
+  nextPseudoChange,
+  renameCommunityPseudo,
   saveCommunityProfile,
   type CommunityAvatar,
 } from '../../features/tahajjud/tahajjudCommunity';
-import { tx } from '../../features/tahajjud/tahajjudI18n';
+import { tahajjudLocale, tx } from '../../features/tahajjud/tahajjudI18n';
 
-/** Profil OUMMAH : pseudo + avatar + confidentialité. Needed for the community features. */
+/** Profil OUMMAH : name + avatar + privacy. Created automatically with the account; the name changes once a week. */
 export default function TahajjudProfileScreen() {
   const [loading, setLoading] = useState(true);
   const [signedIn, setSignedIn] = useState(false);
-  const [exists, setExists] = useState(false);
   const [pseudo, setPseudo] = useState('');
+  const [changedAt, setChangedAt] = useState<string | null>(null);
+  const [editing, setEditing] = useState(false);
+  const [draft, setDraft] = useState('');
+  const [renaming, setRenaming] = useState(false);
   const [avatar, setAvatar] = useState<CommunityAvatar>('moon');
   const [shareTahajjud, setShareTahajjud] = useState(true);
   const [shareZone, setShareZone] = useState(true);
@@ -36,9 +41,9 @@ export default function TahajjudProfileScreen() {
       const profile = connected ? await getCommunityProfile() : null;
       if (!active) return;
       setSignedIn(connected);
-      setExists(Boolean(profile));
       if (profile) {
         setPseudo(profile.pseudo);
+        setChangedAt(profile.pseudoChangedAt ?? null);
         setAvatar(profile.avatar);
         setShareTahajjud(profile.shareTahajjud);
         setShareZone(profile.shareZone);
@@ -57,17 +62,39 @@ export default function TahajjudProfileScreen() {
     try {
       await saveCommunityProfile({ pseudo, avatar, shareTahajjud, shareZone, shareWithFriends, acceptFriendRequests, acceptMessages });
       router.back();
-    } catch (error) {
-      const code = error instanceof Error ? error.message : '';
-      Alert.alert(tx('Profil'), code === 'PSEUDO_TAKEN'
-        ? tx('Ce pseudo est déjà pris. Choisissez-en un autre.')
-        : code === 'PSEUDO_LOCKED'
-          ? tx('Le pseudo est définitif et ne peut pas être modifié.')
-          : code === 'PSEUDO_INVALID'
-          ? tx('Le pseudo doit faire de 3 à 24 caractères (lettres, chiffres, espace, point, tiret).')
-          : tx('Impossible d’enregistrer le profil pour le moment.'));
+    } catch {
+      Alert.alert(tx('Profil'), tx('Impossible d’enregistrer le profil pour le moment.'));
     } finally {
       setSaving(false);
+    }
+  };
+
+  const next = nextPseudoChange({ pseudoChangedAt: changedAt });
+  const formatDay = (date: Date) => date.toLocaleDateString(tahajjudLocale(), { weekday: 'long', day: 'numeric', month: 'long' });
+
+  const rename = async () => {
+    const wanted = draft.trim().replace(/\s+/g, ' ');
+    if (renaming || !wanted) return;
+    setRenaming(true);
+    try {
+      const result = await renameCommunityPseudo(wanted);
+      setPseudo(result.pseudo);
+      setChangedAt(result.changedAt);
+      setEditing(false);
+      if (result.pseudo.toLowerCase() !== wanted.toLowerCase()) {
+        Alert.alert(tx('Nom enregistré'), tx('« {0} » était déjà utilisé : vous apparaissez sous le nom « {1} ».', [wanted, result.pseudo]));
+      }
+    } catch (error) {
+      const code = error instanceof Error ? error.message : '';
+      Alert.alert(tx('Nom'), code.startsWith('PSEUDO_WAIT:')
+        ? tx('Vous pourrez changer de nom à nouveau le {0}.', [formatDay(new Date(code.slice('PSEUDO_WAIT:'.length)))])
+        : code === 'PSEUDO_INVALID'
+          ? tx('Le nom doit faire de 2 à 20 caractères (lettres, chiffres, espace, point, tiret).')
+          : code === 'PSEUDO_REFUSED'
+            ? tx('Ce nom contient des mots qui ne sont pas acceptés.')
+            : tx('Impossible de changer le nom pour le moment.'));
+    } finally {
+      setRenaming(false);
     }
   };
 
@@ -90,36 +117,52 @@ export default function TahajjudProfileScreen() {
   }
 
   return (
-    <TahajjudShell title={exists ? tx('Mon profil OUMMAH') : tx('Créer mon profil')} eyebrow={tx("Communauté")}>
+    <TahajjudShell title={tx('Mon profil OUMMAH')} eyebrow={tx("Communauté")}>
       <View style={styles.preview}>
         <View style={styles.avatarBig}>
           <Ionicons name={AVATAR_ICONS[avatar]} size={38} color={night.sky0} />
         </View>
-        <Text style={styles.previewName}>{pseudo.trim() || tx('Votre pseudo')}</Text>
+        <Text style={styles.previewName}>{pseudo}</Text>
       </View>
 
-      <Text style={shellStyles.sectionLabel}>{tx("Pseudo")}</Text>
-      {exists ? (
-        <View style={[styles.input, styles.locked]}>
-          <Text style={styles.lockedText}>{pseudo}</Text>
-          <Ionicons name="lock-closed" size={17} color={night.muted} />
-        </View>
+      <Text style={shellStyles.sectionLabel}>{tx("Nom affiché")}</Text>
+      {editing ? (
+        <>
+          <TextInput
+            value={draft}
+            onChangeText={setDraft}
+            placeholder={tx("Ex. : Abdallah, Oum Yasmine…")}
+            placeholderTextColor={night.placeholder}
+            maxLength={20}
+            autoCapitalize="words"
+            autoFocus
+            style={styles.input}
+          />
+          <View style={styles.renameActions}>
+            <Pressable onPress={() => setEditing(false)} style={styles.ghost}><Text style={styles.ghostText}>{tx("Annuler")}</Text></Pressable>
+            <Pressable disabled={renaming || draft.trim().length < 2} onPress={() => void rename()} style={[styles.small, (renaming || draft.trim().length < 2) && styles.disabled]}>
+              <Text style={styles.smallText}>{renaming ? tx('Enregistrement…') : tx('Valider ce nom')}</Text>
+            </Pressable>
+          </View>
+          <Text style={styles.hint}>{tx("Vous ne pourrez plus le changer pendant 7 jours. Si le nom est déjà pris, un chiffre est ajouté automatiquement.")}</Text>
+        </>
       ) : (
-        <TextInput
-          value={pseudo}
-          onChangeText={setPseudo}
-          placeholder={tx("Ex. : Abdallah, Oum Yasmine…")}
-          placeholderTextColor={night.placeholder}
-          maxLength={24}
-          autoCapitalize="words"
-          style={styles.input}
-        />
+        <>
+          <View style={[styles.input, styles.locked]}>
+            <Text style={styles.lockedText}>{pseudo}</Text>
+            {next ? <Ionicons name="lock-closed" size={17} color={night.muted} /> : (
+              <Pressable onPress={() => { setDraft(pseudo.replace(/ \d+$/, '')); setEditing(true); }} hitSlop={8}>
+                <Text style={styles.change}>{tx("Modifier")}</Text>
+              </Pressable>
+            )}
+          </View>
+          <Text style={styles.hint}>
+            {next
+              ? tx('Vous pourrez le changer à nouveau le {0}.', [formatDay(next)])
+              : tx('C’est le nom que voient vos amis. Vous pouvez le changer une fois par semaine.')}
+          </Text>
+        </>
       )}
-      <Text style={styles.hint}>
-        {exists
-          ? tx('Votre pseudo est unique et lié à votre compte : il ne peut plus être modifié.')
-          : tx('Unique et définitif : il ne pourra plus être modifié. Visible des autres membres, évitez votre nom complet.')}
-      </Text>
 
       <Text style={[shellStyles.sectionLabel, styles.section]}>{tx("Avatar")}</Text>
       <View style={styles.avatars}>
@@ -170,7 +213,7 @@ export default function TahajjudProfileScreen() {
       </GlassCard>
 
       <Pressable disabled={saving} onPress={() => void save()} style={[styles.button, styles.saveButton, saving && styles.disabled]}>
-        <Text style={styles.buttonText}>{saving ? tx('Enregistrement…') : exists ? tx('Enregistrer') : tx('Créer mon profil')}</Text>
+        <Text style={styles.buttonText}>{saving ? tx('Enregistrement…') : tx('Enregistrer')}</Text>
       </Pressable>
     </TahajjudShell>
   );
@@ -188,6 +231,12 @@ const styles = StyleSheet.create({
   input: { height: 54, borderRadius: 18, paddingHorizontal: 16, borderWidth: 1, borderColor: night.goldLine, backgroundColor: '#080518', color: night.text, fontSize: 18, ...nightType.medium },
   locked: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', opacity: 0.85 },
   lockedText: { color: night.text, fontSize: 18, ...nightType.medium },
+  change: { color: night.goldSoft, fontSize: 16, ...nightType.bold },
+  renameActions: { marginTop: 10, flexDirection: 'row', justifyContent: 'flex-end', gap: 10 },
+  ghost: { paddingHorizontal: 16, paddingVertical: 10, borderRadius: 20, borderWidth: 1, borderColor: night.line },
+  ghostText: { color: night.textSoft, fontSize: 15, ...nightType.semibold },
+  small: { paddingHorizontal: 18, paddingVertical: 10, borderRadius: 20, backgroundColor: night.gold },
+  smallText: { color: night.sky0, fontSize: 15, ...nightType.bold },
   hint: { marginTop: 6, color: night.muted, fontSize: 14, ...nightType.body },
   section: { marginTop: 24 },
   avatars: { flexDirection: 'row', flexWrap: 'wrap', gap: 10 },

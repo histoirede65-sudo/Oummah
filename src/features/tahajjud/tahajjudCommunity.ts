@@ -22,6 +22,8 @@ export type CommunityProfile = {
   acceptFriendRequests: boolean;
   /** Private messages from friends. */
   acceptMessages: boolean;
+  /** Last name change (one per 7 days). null = never changed. */
+  pseudoChangedAt?: string | null;
 };
 
 export type LiveZone = { lat: number; lng: number; count: number };
@@ -54,6 +56,10 @@ async function request<T>(path: string, init: RequestInit & { auth?: boolean } =
     if (text.includes('23505') || text.includes('community_profiles_pseudo_idx')) throw new Error('PSEUDO_TAKEN');
     if (text.includes('PROFILE_REQUIRED')) throw new Error('PROFILE_REQUIRED');
     if (text.includes('PSEUDO_LOCKED')) throw new Error('PSEUDO_LOCKED');
+    const wait = text.match(/PSEUDO_WAIT:([0-9TZ:-]+)/);
+    if (wait) throw new Error(`PSEUDO_WAIT:${wait[1]}`);
+    if (text.includes('PSEUDO_INVALID')) throw new Error('PSEUDO_INVALID');
+    if (text.includes('PSEUDO_REFUSED')) throw new Error('PSEUDO_REFUSED');
     if (text.includes('AUTH_REQUIRED')) throw new Error('AUTH_REQUIRED');
     throw new Error('REQUEST_FAILED');
   }
@@ -66,8 +72,8 @@ export async function isSignedIn() {
 
 // ----- Profile -------------------------------------------------------------------------------
 
-type ProfileRow = { pseudo: string; avatar: string; share_tahajjud: boolean; share_zone: boolean; share_with_friends?: boolean; accept_friend_requests?: boolean; accept_messages?: boolean };
-const PROFILE_COLUMNS = 'pseudo,avatar,share_tahajjud,share_zone,share_with_friends,accept_friend_requests,accept_messages';
+type ProfileRow = { pseudo: string; avatar: string; share_tahajjud: boolean; share_zone: boolean; share_with_friends?: boolean; accept_friend_requests?: boolean; accept_messages?: boolean; pseudo_changed_at?: string | null };
+const PROFILE_COLUMNS = 'pseudo,avatar,share_tahajjud,share_zone,share_with_friends,accept_friend_requests,accept_messages,pseudo_changed_at';
 
 function toProfile(row: ProfileRow): CommunityProfile {
   return {
@@ -78,15 +84,24 @@ function toProfile(row: ProfileRow): CommunityProfile {
     shareWithFriends: row.share_with_friends ?? true,
     acceptFriendRequests: row.accept_friend_requests ?? true,
     acceptMessages: row.accept_messages ?? true,
+    pseudoChangedAt: row.pseudo_changed_at ?? null,
   };
 }
 
-/** The signed-in user's community profile, or null (none yet / signed out). */
+/**
+ * The signed-in user's community profile, or null when signed out. Every account has one: the server creates
+ * it at sign-up (name taken from the e-mail); the app only asks for it again if it is still missing.
+ */
 export async function getCommunityProfile(): Promise<CommunityProfile | null> {
   const session = await getValidSession().catch(() => null);
   if (!session?.accessToken) return null;
   try {
-    const rows = await request<ProfileRow[]>(`community_profiles?user_id=eq.${session.user.id}&select=${PROFILE_COLUMNS}`);
+    const path = `community_profiles?user_id=eq.${session.user.id}&select=${PROFILE_COLUMNS}`;
+    let rows = await request<ProfileRow[]>(path);
+    if (!rows.length) {
+      await request('rpc/ensure_community_profile', { method: 'POST', body: '{}' });
+      rows = await request<ProfileRow[]>(path);
+    }
     const profile = rows[0] ? toProfile(rows[0]) : null;
     await AsyncStorage.setItem(PROFILE_CACHE_KEY, JSON.stringify(profile)).catch(() => undefined);
     return profile;
@@ -112,24 +127,41 @@ export async function saveCommunityProfile(profile: CommunityProfile): Promise<C
     accept_messages: profile.acceptMessages,
     updated_at: new Date().toISOString(),
   };
-  // The pseudo is definitive: an existing profile only updates its settings.
-  let rows = await request<ProfileRow[]>(`community_profiles?user_id=eq.${session.user.id}&select=${PROFILE_COLUMNS}`, {
+  // Settings only: the name changes through renameCommunityPseudo (once a week).
+  const patch = () => request<ProfileRow[]>(`community_profiles?user_id=eq.${session.user.id}&select=${PROFILE_COLUMNS}`, {
     method: 'PATCH',
     headers: { Prefer: 'return=representation' },
     body: JSON.stringify(settings),
   });
+  let rows = await patch();
   if (!rows.length) {
-    const pseudo = profile.pseudo.trim().replace(/\s+/g, ' ');
-    if (!/^[\p{L}\p{N} _.'’-]{3,24}$/u.test(pseudo)) throw new Error('PSEUDO_INVALID');
-    rows = await request<ProfileRow[]>(`community_profiles?select=${PROFILE_COLUMNS}`, {
-      method: 'POST',
-      headers: { Prefer: 'return=representation' },
-      body: JSON.stringify({ user_id: session.user.id, pseudo, ...settings }),
-    });
+    await request('rpc/ensure_community_profile', { method: 'POST', body: '{}' });
+    rows = await patch();
   }
   const saved = rows[0] ? toProfile(rows[0]) : profile;
   await AsyncStorage.setItem(PROFILE_CACHE_KEY, JSON.stringify(saved)).catch(() => undefined);
   return saved;
+}
+
+/** Days between two name changes. */
+export const PSEUDO_CHANGE_DAYS = 7;
+
+/** Date from which the name can be changed again, or null when it can be changed now. */
+export function nextPseudoChange(profile: Pick<CommunityProfile, 'pseudoChangedAt'>): Date | null {
+  if (!profile.pseudoChangedAt) return null;
+  const next = new Date(new Date(profile.pseudoChangedAt).getTime() + PSEUDO_CHANGE_DAYS * 86_400_000);
+  return next.getTime() > Date.now() ? next : null;
+}
+
+/** Changes the name. If it is taken, the server adds a number (« Yacine 2 ») and returns the final name. */
+export async function renameCommunityPseudo(pseudo: string): Promise<{ pseudo: string; changedAt: string | null }> {
+  const result = await request<{ pseudo: string; changedAt: string | null }>('rpc/community_rename', {
+    method: 'POST',
+    body: JSON.stringify({ p_pseudo: pseudo.trim().replace(/\s+/g, ' ') }),
+  });
+  const cached = JSON.parse((await AsyncStorage.getItem(PROFILE_CACHE_KEY).catch(() => null)) ?? 'null') as CommunityProfile | null;
+  if (cached) await AsyncStorage.setItem(PROFILE_CACHE_KEY, JSON.stringify({ ...cached, pseudo: result.pseudo, pseudoChangedAt: result.changedAt })).catch(() => undefined);
+  return result;
 }
 
 // ----- Presence ------------------------------------------------------------------------------
