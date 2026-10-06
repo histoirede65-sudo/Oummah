@@ -18,22 +18,23 @@ import {
   type SupportTicket,
 } from "../../features/support/SupportService";
 import { getValidSession } from "../../features/auth/SupabaseAuthService";
+import { getActiveLanguage, translate } from "../../i18n";
 import { colors } from "../../theme/colors";
 import { typography } from "../../theme/typography";
 
 const STATUS_LABELS = {
-  open: "Ouvert",
-  in_progress: "En cours",
-  resolved: "Résolu",
-  closed: "Fermé",
+  open: "support.statusOpen",
+  in_progress: "support.statusInProgress",
+  resolved: "support.statusResolved",
+  closed: "support.statusClosed",
 } as const;
 
 const CATEGORY_LABELS = {
-  bug: "Bug",
-  help: "Aide",
-  suggestion: "Suggestion",
-  account: "Compte",
-  other: "Autre",
+  bug: "support.catBug",
+  help: "support.catHelp",
+  suggestion: "support.catSuggestion",
+  account: "support.catAccount",
+  other: "support.catOther",
 } as const;
 
 export default function SupportHomeScreen() {
@@ -58,7 +59,7 @@ export default function SupportHomeScreen() {
     } catch (error) {
       Alert.alert(
         "Support OUMMAH",
-        error instanceof Error ? error.message : "Chargement impossible.",
+        error instanceof Error ? error.message : translate("support.loadError"),
       );
     } finally {
       setLoading(false);
@@ -80,7 +81,7 @@ export default function SupportHomeScreen() {
         </Pressable>
 
         <View style={styles.headerCopy}>
-          <Text style={styles.eyebrow}>AIDE ET CONTACT</Text>
+          <Text style={styles.eyebrow}>{translate("support.eyebrow")}</Text>
           <Text style={styles.title}>Support OUMMAH</Text>
         </View>
 
@@ -112,10 +113,8 @@ export default function SupportHomeScreen() {
               />
             </View>
             <View style={styles.heroCopy}>
-              <Text style={styles.heroTitle}>Comment pouvons-nous aider ?</Text>
-              <Text style={styles.heroText}>
-                Signalez un bug, demandez de l’aide ou proposez une amélioration.
-              </Text>
+              <Text style={styles.heroTitle}>{translate("support.heroTitle")}</Text>
+              <Text style={styles.heroText}>{translate("support.heroText")}</Text>
             </View>
           </View>
 
@@ -126,16 +125,13 @@ export default function SupportHomeScreen() {
                 size={25}
                 color={colors.goldLight}
               />
-              <Text style={styles.authTitle}>Connexion nécessaire</Text>
-              <Text style={styles.authText}>
-                Connectez-vous depuis votre profil pour créer et suivre vos
-                demandes.
-              </Text>
+              <Text style={styles.authTitle}>{translate("support.signInNeeded")}</Text>
+              <Text style={styles.authText}>{translate("support.signInText")}</Text>
               <Pressable
                 onPress={() => router.push("/profile")}
                 style={styles.authButton}
               >
-                <Text style={styles.authButtonText}>Ouvrir mon profil</Text>
+                <Text style={styles.authButtonText}>{translate("support.openProfile")}</Text>
               </Pressable>
             </View>
           ) : (
@@ -152,10 +148,10 @@ export default function SupportHomeScreen() {
                   size={20}
                   color={colors.background}
                 />
-                <Text style={styles.newButtonText}>Créer une demande</Text>
+                <Text style={styles.newButtonText}>{translate("support.create")}</Text>
               </Pressable>
 
-              <Text style={styles.sectionTitle}>Mes demandes</Text>
+              <Text style={styles.sectionTitle}>{translate("support.myRequests")}</Text>
 
               {tickets.length === 0 ? (
                 <View style={styles.emptyCard}>
@@ -164,10 +160,8 @@ export default function SupportHomeScreen() {
                     size={28}
                     color={colors.goldLight}
                   />
-                  <Text style={styles.emptyTitle}>Aucune demande</Text>
-                  <Text style={styles.emptyText}>
-                    Vos échanges avec l’équipe OUMMAH apparaîtront ici.
-                  </Text>
+                  <Text style={styles.emptyTitle}>{translate("support.none")}</Text>
+                  <Text style={styles.emptyText}>{translate("support.noneText")}</Text>
                 </View>
               ) : (
                 tickets.map((ticket) => (
@@ -187,7 +181,7 @@ export default function SupportHomeScreen() {
                     <View style={styles.ticketTop}>
                       <View style={styles.categoryBadge}>
                         <Text style={styles.categoryText}>
-                          {CATEGORY_LABELS[ticket.category]}
+                          {translate(CATEGORY_LABELS[ticket.category])}
                         </Text>
                       </View>
 
@@ -199,7 +193,7 @@ export default function SupportHomeScreen() {
                         ]}
                       >
                         <Text style={styles.statusText}>
-                          {STATUS_LABELS[ticket.status]}
+                          {translate(STATUS_LABELS[ticket.status])}
                         </Text>
                       </View>
                     </View>
@@ -211,7 +205,7 @@ export default function SupportHomeScreen() {
                     <View style={styles.ticketBottom}>
                       <Text style={styles.ticketDate}>
                         {new Date(ticket.lastMessageAt).toLocaleString(
-                          "fr-FR",
+                          getActiveLanguage() === "en" ? "en-GB" : "fr-FR",
                           {
                             day: "2-digit",
                             month: "short",
@@ -223,7 +217,7 @@ export default function SupportHomeScreen() {
 
                       {ticket.unreadByUser ? (
                         <View style={styles.unreadBadge}>
-                          <Text style={styles.unreadText}>Nouvelle réponse</Text>
+                          <Text style={styles.unreadText}>{translate("support.newReply")}</Text>
                         </View>
                       ) : null}
                     </View>

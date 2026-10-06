@@ -18,19 +18,20 @@ import {
   type SupportTicketCategory,
   type SupportTicketPriority,
 } from "../../features/support/SupportService";
+import { translate, type TranslationKey } from "../../i18n";
 import { colors } from "../../theme/colors";
 import { typography } from "../../theme/typography";
 
 const CATEGORIES: Array<{
   value: SupportTicketCategory;
-  label: string;
+  label: TranslationKey;
   icon: keyof typeof Ionicons.glyphMap;
 }> = [
-  { value: "bug", label: "Signaler un bug", icon: "bug-outline" },
-  { value: "help", label: "Demander de l’aide", icon: "help-circle-outline" },
-  { value: "suggestion", label: "Faire une suggestion", icon: "bulb-outline" },
-  { value: "account", label: "Compte ou crédits", icon: "person-circle-outline" },
-  { value: "other", label: "Autre demande", icon: "chatbox-outline" },
+  { value: "bug", label: "support.typeBug", icon: "bug-outline" },
+  { value: "help", label: "support.typeHelp", icon: "help-circle-outline" },
+  { value: "suggestion", label: "support.typeSuggestion", icon: "bulb-outline" },
+  { value: "account", label: "support.typeAccount", icon: "person-circle-outline" },
+  { value: "other", label: "support.typeOther", icon: "chatbox-outline" },
 ];
 
 export default function NewSupportTicketScreen() {
@@ -47,14 +48,14 @@ export default function NewSupportTicketScreen() {
     const cleanMessage = message.trim();
 
     if (cleanSubject.length < 4) {
-      Alert.alert("Sujet trop court", "Décrivez brièvement votre demande.");
+      Alert.alert(translate("support.subjectShort"), translate("support.subjectShortText"));
       return;
     }
 
     if (cleanMessage.length < 10) {
       Alert.alert(
-        "Message trop court",
-        "Ajoutez suffisamment de détails pour que nous puissions vous aider.",
+        translate("support.messageShort"),
+        translate("support.messageShortText"),
       );
       return;
     }
@@ -70,11 +71,11 @@ export default function NewSupportTicketScreen() {
       });
 
       Alert.alert(
-        "Demande envoyée",
-        "L’équipe OUMMAH pourra maintenant consulter votre message.",
+        translate("support.sent"),
+        translate("support.sentText"),
         [
           {
-            text: "Voir la demande",
+            text: translate("support.view"),
             onPress: () =>
               router.replace({
                 pathname: "/support/[id]",
@@ -85,8 +86,8 @@ export default function NewSupportTicketScreen() {
       );
     } catch (error) {
       Alert.alert(
-        "Envoi impossible",
-        error instanceof Error ? error.message : "Réessayez.",
+        translate("support.sendError"),
+        error instanceof Error ? error.message : translate("support.retry"),
       );
     } finally {
       setSending(false);
@@ -99,7 +100,7 @@ export default function NewSupportTicketScreen() {
         <Pressable onPress={() => router.back()} style={styles.headerButton}>
           <Ionicons name="arrow-back" size={22} color={colors.goldLight} />
         </Pressable>
-        <Text style={styles.title}>Nouvelle demande</Text>
+        <Text style={styles.title}>{translate("support.newTitle")}</Text>
         <View style={styles.headerButton} />
       </View>
 
@@ -107,7 +108,7 @@ export default function NewSupportTicketScreen() {
         contentContainerStyle={styles.content}
         keyboardShouldPersistTaps="handled"
       >
-        <Text style={styles.sectionTitle}>Type de demande</Text>
+        <Text style={styles.sectionTitle}>{translate("support.typeTitle")}</Text>
 
         {CATEGORIES.map((item) => {
           const selected = category === item.value;
@@ -132,7 +133,7 @@ export default function NewSupportTicketScreen() {
                   selected && styles.choiceTextSelected,
                 ]}
               >
-                {item.label}
+                {translate(item.label)}
               </Text>
               <Ionicons
                 name={selected ? "checkmark-circle" : "ellipse-outline"}
@@ -143,7 +144,7 @@ export default function NewSupportTicketScreen() {
           );
         })}
 
-        <Text style={styles.sectionTitle}>Priorité</Text>
+        <Text style={styles.sectionTitle}>{translate("support.priority")}</Text>
         <View style={styles.priorityRow}>
           {(["low", "normal", "high", "urgent"] as const).map((item) => (
             <Pressable
@@ -164,35 +165,35 @@ export default function NewSupportTicketScreen() {
                 ]}
               >
                 {item === "low"
-                  ? "Faible"
+                  ? translate("support.low")
                   : item === "normal"
-                    ? "Normale"
+                    ? translate("support.normal")
                     : item === "high"
-                      ? "Haute"
-                      : "Urgente"}
+                      ? translate("support.high")
+                      : translate("support.urgent")}
               </Text>
             </Pressable>
           ))}
         </View>
 
-        <Text style={styles.label}>Sujet</Text>
+        <Text style={styles.label}>{translate("support.subject")}</Text>
         <TextInput
           value={subject}
           onChangeText={setSubject}
           maxLength={120}
-          placeholder="Ex. L’application se ferme sur la page Coran"
+          placeholder={translate("support.subjectPlaceholder")}
           placeholderTextColor={colors.textMuted}
           style={styles.input}
         />
 
-        <Text style={styles.label}>Votre message</Text>
+        <Text style={styles.label}>{translate("support.message")}</Text>
         <TextInput
           value={message}
           onChangeText={setMessage}
           maxLength={3000}
           multiline
           textAlignVertical="top"
-          placeholder="Décrivez précisément ce qui se passe…"
+          placeholder={translate("support.messagePlaceholder")}
           placeholderTextColor={colors.textMuted}
           style={[styles.input, styles.messageInput]}
         />
@@ -210,7 +211,7 @@ export default function NewSupportTicketScreen() {
             <Ionicons name="send-outline" size={18} color={colors.background} />
           )}
           <Text style={styles.submitText}>
-            {sending ? "Envoi en cours…" : "Envoyer la demande"}
+            {sending ? translate("support.sending") : translate("support.send")}
           </Text>
         </Pressable>
       </ScrollView>

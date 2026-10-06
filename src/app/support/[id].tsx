@@ -20,6 +20,7 @@ import {
   replyToSupportTicket,
   type SupportMessage,
 } from "../../features/support/SupportService";
+import { getActiveLanguage, translate } from "../../i18n";
 import { colors } from "../../theme/colors";
 import { typography } from "../../theme/typography";
 
@@ -49,7 +50,7 @@ export default function SupportThreadScreen() {
     } catch (error) {
       Alert.alert(
         "Support OUMMAH",
-        error instanceof Error ? error.message : "Chargement impossible.",
+        error instanceof Error ? error.message : translate("support.loadError"),
       );
     } finally {
       setLoading(false);
@@ -77,8 +78,8 @@ export default function SupportThreadScreen() {
       await load();
     } catch (error) {
       Alert.alert(
-        "Envoi impossible",
-        error instanceof Error ? error.message : "Réessayez.",
+        translate("support.sendError"),
+        error instanceof Error ? error.message : translate("support.retry"),
       );
     } finally {
       setSending(false);
@@ -95,7 +96,7 @@ export default function SupportThreadScreen() {
           <Pressable onPress={() => router.back()} style={styles.headerButton}>
             <Ionicons name="arrow-back" size={22} color={colors.goldLight} />
           </Pressable>
-          <Text style={styles.title}>Conversation support</Text>
+          <Text style={styles.title}>{translate("support.conversation")}</Text>
           <Pressable onPress={() => void load()} style={styles.headerButton}>
             <Ionicons name="refresh" size={20} color={colors.goldLight} />
           </Pressable>
@@ -126,11 +127,11 @@ export default function SupportThreadScreen() {
                       ]}
                     >
                       <Text style={styles.sender}>
-                        {admin ? "Équipe OUMMAH" : "Vous"}
+                        {admin ? translate("support.team") : translate("support.you")}
                       </Text>
                       <Text style={styles.body}>{message.body}</Text>
                       <Text style={styles.date}>
-                        {new Date(message.createdAt).toLocaleString("fr-FR", {
+                        {new Date(message.createdAt).toLocaleString(getActiveLanguage() === "en" ? "en-GB" : "fr-FR", {
                           day: "2-digit",
                           month: "short",
                           hour: "2-digit",
@@ -149,7 +150,7 @@ export default function SupportThreadScreen() {
                 onChangeText={setReply}
                 multiline
                 maxLength={3000}
-                placeholder="Écrire une réponse…"
+                placeholder={translate("support.replyPlaceholder")}
                 placeholderTextColor={colors.textMuted}
                 style={styles.input}
               />

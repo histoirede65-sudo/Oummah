@@ -20,30 +20,31 @@ import {
   restorePremiumPurchases,
 } from "../features/premium/PremiumAccessService";
 import { revenueCatPaymentProvider } from "../features/premium/RevenueCatPaymentProvider";
+import { translate, type TranslationKey } from "../i18n";
 import { colors } from "../theme/colors";
 import { typography } from "../theme/typography";
 
-const BENEFITS = [
-  "Parcours progressifs personnalisés avec Wasil",
-  "Programmes sur plusieurs semaines",
-  "Séances et révisions intelligentes",
-  "Adaptation à votre rythme",
-  "Accès aux fonctionnalités Premium futures",
-] as const;
+const BENEFITS: readonly TranslationKey[] = [
+  "premium.benefit1",
+  "premium.benefit2",
+  "premium.benefit3",
+  "premium.benefit4",
+  "premium.benefit5",
+];
 
 type Feedback = { kind: "error" | "success"; message: string } | null;
 
 function providerMessage(code: string) {
   if (code === "expo-go-unavailable") {
-    return "Les achats nécessitent un development build. Ils ne sont pas disponibles dans Expo Go.";
+    return translate("premium.expoGo");
   }
   if (code === "not-configured") {
-    return "RevenueCat n’est pas encore configuré sur cet appareil.";
+    return translate("premium.notConfigured");
   }
   if (code === "unsupported-platform") {
-    return "Les abonnements sont disponibles uniquement sur iOS et Android.";
+    return translate("premium.platform");
   }
-  return "Impossible de contacter RevenueCat pour le moment. Réessayez dans quelques instants.";
+  return translate("premium.unreachable");
 }
 
 export default function PremiumScreen() {
@@ -63,7 +64,7 @@ export default function PremiumScreen() {
     if (!session) {
       setFeedback({
         kind: "error",
-        message: "Connectez-vous à votre profil avant de vous abonner.",
+        message: translate("premium.signInFirst"),
       });
       setLoading(false);
       return;
@@ -95,7 +96,7 @@ export default function PremiumScreen() {
     if (!selectedPackage) {
       setFeedback({
         kind: "error",
-        message: "L’offre mensuelle Premium est momentanément indisponible.",
+        message: translate("premium.offerTemporarilyOff"),
       });
     }
     setMonthlyPackage(selectedPackage);
@@ -114,7 +115,7 @@ export default function PremiumScreen() {
     if (!monthlyPackage) {
       setFeedback({
         kind: "error",
-        message: "L’offre mensuelle Premium est indisponible.",
+        message: translate("premium.offerOff"),
       });
       return;
     }
@@ -136,7 +137,7 @@ export default function PremiumScreen() {
       setFeedback({
         kind: "error",
         message:
-          "L’achat a été reçu, mais l’entitlement Premium n’est pas encore actif.",
+          translate("premium.notActiveYet"),
       });
       setProcessing(false);
       return;
@@ -146,10 +147,10 @@ export default function PremiumScreen() {
     const access = await getPremiumAccess();
     setFeedback(
       access.isPremium
-        ? { kind: "success", message: "Votre abonnement Premium est actif." }
+        ? { kind: "success", message: translate("premium.active") }
         : {
             kind: "error",
-            message: "Le statut Premium n’a pas encore pu être synchronisé.",
+            message: translate("premium.notSynced"),
           },
     );
     setProcessing(false);
@@ -166,7 +167,7 @@ export default function PremiumScreen() {
     if (result.status === "not-configured") {
       setFeedback({
         kind: "error",
-        message: "La restauration n’est pas disponible dans cet environnement.",
+        message: translate("premium.restoreUnavailable"),
       });
       setProcessing(false);
       return;
@@ -179,7 +180,7 @@ export default function PremiumScreen() {
     if (result.status === "no-purchases") {
       setFeedback({
         kind: "error",
-        message: "Aucun abonnement Premium actif n’a été trouvé.",
+        message: translate("premium.noneFound"),
       });
       setProcessing(false);
       return;
@@ -188,10 +189,10 @@ export default function PremiumScreen() {
     const access = await getPremiumAccess();
     setFeedback(
       access.isPremium
-        ? { kind: "success", message: "Votre abonnement Premium a été restauré." }
+        ? { kind: "success", message: translate("premium.restored") }
         : {
             kind: "error",
-            message: "Aucun entitlement Premium actif n’a été trouvé.",
+            message: translate("premium.noEntitlement"),
           },
     );
     setProcessing(false);
@@ -220,10 +221,7 @@ export default function PremiumScreen() {
           <Ionicons name="diamond-outline" size={31} color={colors.goldLight} />
         </View>
         <Text style={styles.title}>OUMMAH Premium</Text>
-        <Text style={styles.intro}>
-          Avancez avec un accompagnement structuré, progressif et adapté à votre
-          rythme.
-        </Text>
+        <Text style={styles.intro}>{translate("premium.intro")}</Text>
 
         <View style={styles.benefitsCard}>
           {BENEFITS.map((benefit) => (
@@ -233,13 +231,13 @@ export default function PremiumScreen() {
                 size={20}
                 color={colors.goldLight}
               />
-              <Text style={styles.benefitText}>{benefit}</Text>
+              <Text style={styles.benefitText}>{translate(benefit)}</Text>
             </View>
           ))}
         </View>
 
         <View style={styles.offerCard}>
-          <Text style={styles.offerLabel}>ABONNEMENT MENSUEL</Text>
+          <Text style={styles.offerLabel}>{translate("premium.monthly")}</Text>
           {loading ? (
             <ActivityIndicator color={colors.goldLight} style={styles.loader} />
           ) : monthlyPackage ? (
@@ -247,10 +245,10 @@ export default function PremiumScreen() {
               <Text style={styles.price}>
                 {monthlyPackage.product.priceString}
               </Text>
-              <Text style={styles.period}>par mois</Text>
+              <Text style={styles.period}>{translate("premium.perMonth")}</Text>
             </>
           ) : (
-            <Text style={styles.unavailable}>Offre indisponible</Text>
+            <Text style={styles.unavailable}>{translate("premium.unavailable")}</Text>
           )}
         </View>
 
@@ -281,7 +279,7 @@ export default function PremiumScreen() {
             <ActivityIndicator color={colors.background} />
           ) : (
             <Text style={styles.primaryButtonText}>
-              {signedIn ? "S’abonner" : "Se connecter"}
+              {signedIn ? translate("premium.subscribe") : translate("premium.signIn")}
             </Text>
           )}
         </Pressable>
@@ -291,11 +289,11 @@ export default function PremiumScreen() {
           onPress={() => void restore()}
           style={styles.restoreButton}
         >
-          <Text style={styles.restoreText}>Restaurer mes achats</Text>
+          <Text style={styles.restoreText}>{translate("premium.restore")}</Text>
         </Pressable>
 
         <Pressable onPress={() => router.back()} style={styles.returnLink}>
-          <Text style={styles.returnText}>Retour</Text>
+          <Text style={styles.returnText}>{translate("common.back")}</Text>
         </Pressable>
       </ScrollView>
     </SafeAreaView>
