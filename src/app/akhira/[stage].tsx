@@ -1,6 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { router, useLocalSearchParams, type Href } from "expo-router";
+import { useState } from "react";
 import { Alert, Linking, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, View } from "react-native";
 
 import { AKHIRA_PARTS, AKHIRA_STAGES, getAkhiraStage, type AkhiraText } from "../../features/akhira/akhiraContent";
@@ -9,8 +10,8 @@ import { colors } from "../../theme/colors";
 import { typography } from "../../theme/typography";
 
 const TEXT = {
-  fr: { ai: "Traduit à l’aide d’une IA.", scholars: "Ce qu’en disent les savants", sources: "Le Coran et la Sunna", back: "Retour", previous: "Étape précédente", next: "Étape suivante", overview: "Toutes les étapes", unavailableTitle: "Source indisponible", unavailableText: "Impossible d’ouvrir cette source pour le moment.", notFound: "Étape introuvable" },
-  en: { ai: "Translated with the help of AI.", scholars: "What the scholars say", sources: "The Quran and the Sunnah", back: "Back", previous: "Previous step", next: "Next step", overview: "All steps", unavailableTitle: "Source unavailable", unavailableText: "This source cannot be opened right now.", notFound: "Step not found" },
+  fr: { ai: "Traduit à l’aide d’une IA.", more: "Lire la suite", less: "Réduire", showArabic: "Voir l’arabe", hideArabic: "Masquer l’arabe", scholars: "Ce qu’en disent les savants", sources: "Le Coran et la Sunna", back: "Retour", previous: "Étape précédente", next: "Étape suivante", overview: "Toutes les étapes", unavailableTitle: "Source indisponible", unavailableText: "Impossible d’ouvrir cette source pour le moment.", notFound: "Étape introuvable" },
+  en: { ai: "Translated with the help of AI.", more: "Read more", less: "Show less", showArabic: "Show the Arabic", hideArabic: "Hide the Arabic", scholars: "What the scholars say", sources: "The Quran and the Sunnah", back: "Back", previous: "Previous step", next: "Next step", overview: "All steps", unavailableTitle: "Source unavailable", unavailableText: "This source cannot be opened right now.", notFound: "Step not found" },
 };
 
 export default function AkhiraStageScreen() {
@@ -32,13 +33,27 @@ export default function AkhiraStageScreen() {
     }
     Linking.openURL(item.url).catch(() => Alert.alert(tx.unavailableTitle, tx.unavailableText));
   };
-  const renderText = (item: AkhiraText) => (
+  // Long texts start folded on a few lines; the Arabic of the scholars' answers is shown on request.
+  const [opened, setOpened] = useState<string[]>([]);
+  const [arabicShown, setArabicShown] = useState<string[]>([]);
+  const toggle = (list: string[], set: (value: string[]) => void, id: string) => set(list.includes(id) ? list.filter((value) => value !== id) : [...list, id]);
+  const renderText = (item: AkhiraText) => {
+    const body = en ? item.en : item.fr;
+    const long = body.length > 320;
+    const open = opened.includes(item.id);
+    const scholar = item.kind === "scholar";
+    const arabicOpen = !scholar || arabicShown.includes(item.id);
+    return (
     <View key={item.id} style={styles.entry}>
       <View style={styles.highlight}>
         <Text style={styles.highlightText}>“{en ? item.highlightEn : item.highlight}”</Text>
       </View>
-      {item.arabic ? <Text style={styles.arabic}>{item.arabic}</Text> : null}
-      <Text style={styles.body}>{en ? item.en : item.fr}</Text>
+      {item.arabic && arabicOpen ? <Text style={styles.arabic}>{item.arabic}</Text> : null}
+      <Text style={styles.body} numberOfLines={long && !open ? 4 : undefined}>{body}</Text>
+      <View style={styles.toggles}>
+        {long ? <Pressable onPress={() => toggle(opened, setOpened, item.id)} hitSlop={8}><Text style={styles.toggle}>{open ? tx.less : tx.more}</Text></Pressable> : null}
+        {scholar && item.arabic ? <Pressable onPress={() => toggle(arabicShown, setArabicShown, item.id)} hitSlop={8}><Text style={styles.toggle}>{arabicOpen ? tx.hideArabic : tx.showArabic}</Text></Pressable> : null}
+      </View>
       {item.aiTranslation ? <Text style={styles.literal}>{tx.ai}</Text> : null}
       <Pressable onPress={() => openSource(item)} style={({ pressed }) => [styles.ref, pressed && styles.pressed]} accessibilityRole="link" hitSlop={6}>
         <Ionicons name={item.kind === "quran" ? "book-outline" : item.kind === "scholar" ? "person-outline" : "document-text-outline"} size={13} color={colors.goldLight} />
@@ -46,7 +61,8 @@ export default function AkhiraStageScreen() {
         <Ionicons name={item.route ? "chevron-forward" : "open-outline"} size={12} color={colors.goldLight} />
       </Pressable>
     </View>
-  );
+    );
+  };
   const go = (id: string) => router.replace(`/akhira/${id}` as Href);
 
   return (
@@ -114,6 +130,8 @@ const styles = StyleSheet.create({
   arabic: { marginTop: 16, color: colors.text, fontFamily: typography.arabic, fontSize: 26, lineHeight: 46, textAlign: "right", writingDirection: "rtl" },
   body: { marginTop: 14, color: colors.textSecondary, fontFamily: typography.sans, fontSize: 17.5, lineHeight: 27 },
   section: { marginTop: 34, color: colors.goldLight, fontFamily: typography.sans, fontSize: 13, fontWeight: "800", letterSpacing: 1.4, textTransform: "uppercase" },
+  toggles: { marginTop: 8, flexDirection: "row", gap: 18 },
+  toggle: { color: colors.goldLight, fontFamily: typography.sans, fontSize: 14.5, fontWeight: "800" },
   literal: { marginTop: 6, color: colors.textMuted, fontFamily: typography.sans, fontSize: 13.5, lineHeight: 19 },
   ref: { marginTop: 12, alignSelf: "flex-start", flexDirection: "row", alignItems: "center", gap: 6, paddingHorizontal: 10, paddingVertical: 6, borderRadius: 999, borderWidth: 1, borderColor: "rgba(227,181,90,0.36)", backgroundColor: "rgba(227,181,90,0.07)" },
   refText: { color: colors.goldLight, fontFamily: typography.sans, fontSize: 14, fontWeight: "800" },
