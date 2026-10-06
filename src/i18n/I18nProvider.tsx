@@ -30,8 +30,19 @@ const isLanguage = (value: string | null): value is LanguageCode => value !== nu
  * Langue enregistrée, lue dès le chargement du module : notifications et widgets l'attendent
  * avant de se synchroniser, pour ne pas être programmés en français chez un utilisateur anglais.
  */
+/** Langue du téléphone au premier lancement : anglais seulement si le téléphone est en anglais. */
+function deviceLanguage(): LanguageCode {
+  try {
+    return /^en\b/i.test(Intl.DateTimeFormat().resolvedOptions().locale) ? 'en' : 'fr';
+  } catch {
+    return 'fr';
+  }
+}
+
+// Un choix déjà enregistré (dont « fr » chez tous les utilisateurs actuels) l'emporte toujours ;
+// la langue du téléphone ne sert qu'à une première installation.
 export const languageReady: Promise<LanguageCode> = AsyncStorage.getItem(LANGUAGE_STORAGE_KEY)
-  .then((stored) => (isLanguage(stored) ? stored : 'fr'))
+  .then((stored) => (isLanguage(stored) ? stored : deviceLanguage()))
   .catch(() => 'fr' as LanguageCode)
   .then((stored) => {
     setActiveLanguage(stored);
