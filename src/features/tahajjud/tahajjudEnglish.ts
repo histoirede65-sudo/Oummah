@@ -183,7 +183,7 @@ export const TAHAJJUD_EN: Record<string, string> = {
   'jusqu’à {0} · ce soir après ‘Isha': 'until {0} · tonight after ‘Isha',
   'commence dans {0}': 'starts in {0}',
   'Cette nuit': 'Tonight',
-  'Un rendez-vous privilégié avec ton Seigneur': 'A special meeting with your Lord',
+  'Un rendez-vous privilégié avec votre Seigneur': 'A special meeting with your Lord',
   'Autorisez la localisation (ou choisissez votre mosquée) pour calculer le dernier tiers.':
     'Allow location (or choose your mosque) to calculate the last third.',
   'Les horaires sont momentanément indisponibles.': 'Prayer times are temporarily unavailable.',

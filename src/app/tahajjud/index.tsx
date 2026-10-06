@@ -92,7 +92,7 @@ export default function TahajjudScreen() {
       <Animated.View entering={FadeInDown.duration(500)}>
         <Text style={styles.eyebrow}>{tonight ? nightTitle(tonight.key) : tx('Cette nuit')}</Text>
         <Text style={styles.title}>{tx("Qiyam al-Layl")}</Text>
-        <Text style={styles.subtitle}>{tx("Un rendez-vous privilégié avec ton Seigneur")}</Text>
+        <Text style={styles.subtitle}>{tx("Un rendez-vous privilégié avec votre Seigneur")}</Text>
       </Animated.View>
 
       {view.loading && !tonight ? (
