@@ -378,14 +378,14 @@ export const hadithRepository = {
     return result;
   },
 
-  async daily(language: "fr" | "en" = "fr"): Promise<Hadith | null> {
+  async daily(language: "fr" | "en" = "fr", date = new Date()): Promise<Hadith | null> {
     try {
       // Keep one canonical daily selection for every language. Only the
       // official translation fetched for the selected identifier changes.
       const page = await fetchHadithPage(1, 40, "5", "fr");
       if (!page.length) return null;
-      const start = new Date(new Date().getFullYear(), 0, 0);
-      const day = Math.floor((Date.now() - start.getTime()) / 86400000);
+      const start = new Date(date.getFullYear(), 0, 0);
+      const day = Math.floor((date.getTime() - start.getTime()) / 86400000);
       return this.get(page[day % page.length].id, language);
     } catch {
       if (language === "en") return null;

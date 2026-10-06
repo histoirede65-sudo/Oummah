@@ -21,5 +21,15 @@ class ScanWidgetModule : Module() {
         .apply()
       QuranWidgetProvider.refresh(context)
     }
+
+    // « Verset du jour » / « Hadith du jour »: the coming week prepared by the app.
+    AsyncFunction("publishDaily") { payload: String ->
+      val context = appContext.reactContext ?: throw Exceptions.ReactContextLost()
+      context.getSharedPreferences(DailyWidgets.PREFS, Context.MODE_PRIVATE)
+        .edit()
+        .putString(DailyWidgets.KEY, payload)
+        .apply()
+      DailyWidgets.refreshAll(context)
+    }
   }
 }

@@ -1856,6 +1856,210 @@ struct QuranWidget: Widget {
   }
 }
 
+// MARK: - Verset du jour / Hadith du jour (écran d'accueil)
+// Same verse and hadith as the app's home cards, prepared by the app for the
+// coming week. The lock-screen verse widget above is separate and unchanged.
+
+private let dailyPayloadKey = "oummah.daily-widgets.payload.v1"
+
+private struct DailyVerse: Decodable {
+  let surahId: Int
+  let verse: Int
+  let arabic: String
+  let text: String
+  let reference: String
+}
+
+private struct DailyHadith: Decodable {
+  let id: String
+  let text: String
+  let reference: String
+}
+
+private struct DailyDay: Decodable {
+  let date: String
+  let verse: DailyVerse?
+  let hadith: DailyHadith?
+}
+
+private struct DailyLabels: Decodable {
+  let verse: String
+  let hadith: String
+}
+
+private struct DailyPayload: Decodable {
+  let labels: DailyLabels?
+  let days: [DailyDay]
+}
+
+private struct DailyEntry: TimelineEntry {
+  let date: Date
+  let day: DailyDay?
+  let labels: DailyLabels?
+}
+
+private struct DailyProvider: TimelineProvider {
+  private static let keyFormatter: DateFormatter = {
+    let formatter = DateFormatter()
+    formatter.calendar = Calendar(identifier: .gregorian)
+    formatter.locale = Locale(identifier: "en_US_POSIX")
+    formatter.dateFormat = "yyyy-MM-dd"
+    return formatter
+  }()
+
+  private func payload() -> DailyPayload? {
+    guard let raw = UserDefaults(suiteName: widgetGroupIdentifier)?.string(forKey: dailyPayloadKey),
+          let data = raw.data(using: .utf8) else { return nil }
+    return try? JSONDecoder().decode(DailyPayload.self, from: data)
+  }
+
+  /// The day dated `date`, or the latest earlier one when the app has not been opened for a while.
+  private func entry(for date: Date, in payload: DailyPayload?) -> DailyEntry {
+    let key = Self.keyFormatter.string(from: date)
+    let day = payload?.days.last { $0.date <= key } ?? payload?.days.first
+    return DailyEntry(date: date, day: day, labels: payload?.labels)
+  }
+
+  func placeholder(in context: Context) -> DailyEntry {
+    DailyEntry(
+      date: Date(),
+      day: DailyDay(
+        date: "",
+        verse: DailyVerse(surahId: 94, verse: 5, arabic: "فَإِنَّ مَعَ ٱلْعُسْرِ يُسْرًا", text: "A côté de la difficulté est, certes, une facilité !", reference: "Ash-Sharh · 94:5"),
+        hadith: nil
+      ),
+      labels: nil
+    )
+  }
+
+  func getSnapshot(in context: Context, completion: @escaping (DailyEntry) -> Void) {
+    let current = entry(for: Date(), in: payload())
+    completion(current.day == nil ? placeholder(in: context) : current)
+  }
+
+  func getTimeline(in context: Context, completion: @escaping (Timeline<DailyEntry>) -> Void) {
+    // One entry now, then one at each midnight of the prepared week.
+    let calendar = Calendar.current
+    let data = payload()
+    var entries = [entry(for: Date(), in: data)]
+    let startOfToday = calendar.startOfDay(for: Date())
+    for offset in 1..<8 {
+      if let midnight = calendar.date(byAdding: .day, value: offset, to: startOfToday) {
+        entries.append(entry(for: midnight, in: data))
+      }
+    }
+    completion(Timeline(entries: entries, policy: .atEnd))
+  }
+}
+
+private let dailyEmptyText = "Ouvrez OUMMAH une fois pour afficher le contenu du jour."
+
+@available(iOS 16.0, *)
+private struct DailyVerseWidgetView: View {
+  @Environment(\.widgetFamily) private var family
+  let entry: DailyEntry
+
+  var body: some View {
+    let verse = entry.day?.verse
+    VStack(alignment: .leading, spacing: 6) {
+      Text((entry.labels?.verse ?? "Verset du jour").uppercased())
+        .font(.system(size: 10, weight: .bold))
+        .tracking(1.3)
+        .foregroundStyle(scanGold.opacity(0.85))
+      if let verse {
+        if family != .systemSmall && !verse.arabic.isEmpty {
+          Text(verse.arabic)
+            .font(.system(size: family == .systemLarge ? 24 : 19, weight: .semibold))
+            .foregroundStyle(scanGold)
+            .multilineTextAlignment(.trailing)
+            .frame(maxWidth: .infinity, alignment: .trailing)
+            .lineLimit(family == .systemLarge ? 5 : 2)
+            .minimumScaleFactor(0.75)
+            .environment(\.layoutDirection, .rightToLeft)
+        }
+        Text(verse.text)
+          .font(.system(size: family == .systemSmall ? 13 : 14.5, weight: .medium, design: .serif))
+          .foregroundStyle(scanCream)
+          .lineLimit(family == .systemLarge ? 10 : (family == .systemSmall ? 6 : 4))
+          .minimumScaleFactor(0.8)
+        Spacer(minLength: 0)
+        Text(verse.reference)
+          .font(.system(size: 11, weight: .medium))
+          .foregroundStyle(scanGold.opacity(0.75))
+          .lineLimit(1)
+      } else {
+        Text(dailyEmptyText)
+          .font(.system(size: 13, weight: .medium))
+          .foregroundStyle(scanCream.opacity(0.8))
+        Spacer(minLength: 0)
+      }
+    }
+    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+  }
+}
+
+@available(iOS 16.0, *)
+struct DailyVerseWidget: Widget {
+  var body: some WidgetConfiguration {
+    StaticConfiguration(kind: "DailyVerseWidget", provider: DailyProvider()) { entry in
+      DailyVerseWidgetView(entry: entry)
+        .widgetURL(URL(string: entry.day?.verse.map { "oummah:///surah/\($0.surahId)?verse=\($0.verse)&direct=1" } ?? "oummah:///"))
+        .modifier(NightBackground())
+    }
+    .configurationDisplayName("Verset du jour")
+    .description("Le verset du jour, en arabe et en français.")
+    .supportedFamilies([.systemSmall, .systemMedium, .systemLarge])
+  }
+}
+
+@available(iOS 16.0, *)
+private struct DailyHadithWidgetView: View {
+  @Environment(\.widgetFamily) private var family
+  let entry: DailyEntry
+
+  var body: some View {
+    let hadith = entry.day?.hadith
+    VStack(alignment: .leading, spacing: 8) {
+      Text((entry.labels?.hadith ?? "Hadith du jour").uppercased())
+        .font(.system(size: 10, weight: .bold))
+        .tracking(1.3)
+        .foregroundStyle(scanGold.opacity(0.85))
+      if let hadith {
+        Text("« \(hadith.text) »")
+          .font(.system(size: family == .systemSmall ? 13 : 14.5, weight: .medium, design: .serif))
+          .foregroundStyle(scanCream)
+          .lineLimit(family == .systemLarge ? 14 : (family == .systemSmall ? 7 : 5))
+          .minimumScaleFactor(0.8)
+        Spacer(minLength: 0)
+        Text(hadith.reference)
+          .font(.system(size: 11, weight: .medium))
+          .foregroundStyle(scanGold.opacity(0.75))
+          .lineLimit(1)
+      } else {
+        Text(dailyEmptyText)
+          .font(.system(size: 13, weight: .medium))
+          .foregroundStyle(scanCream.opacity(0.8))
+        Spacer(minLength: 0)
+      }
+    }
+    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+  }
+}
+
+@available(iOS 16.0, *)
+struct DailyHadithWidget: Widget {
+  var body: some WidgetConfiguration {
+    StaticConfiguration(kind: "DailyHadithWidget", provider: DailyProvider()) { entry in
+      DailyHadithWidgetView(entry: entry)
+        .widgetURL(URL(string: entry.day?.hadith.map { "oummah:///hadith/\($0.id)" } ?? "oummah:///"))
+        .modifier(NightBackground())
+    }
+    .configurationDisplayName("Hadith du jour")
+    .description("Le hadith du jour.")
+    .supportedFamilies([.systemSmall, .systemMedium, .systemLarge])
+  }
+}
+
 /// Night background (violet-black) used by the Qibla and Quran widgets.
 private struct NightBackground: ViewModifier {
   private var gradient: LinearGradient {
@@ -1887,5 +2091,7 @@ struct OummahWidgetBundle: WidgetBundle {
     HalalWidget()
     QiblaWidget()
     QuranWidget()
+    DailyVerseWidget()
+    DailyHadithWidget()
   }
 }

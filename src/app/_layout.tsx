@@ -22,6 +22,7 @@ import { ensureAppNotificationChannels } from '../features/notifications/notific
 import { isNotificationPermissionGranted } from '../features/notifications/NotificationPermissions';
 import { loadNotificationCenterPreferences, notificationResponseReadId, requestNotificationCenterPermission, saveNotificationCenterPreferences, saveReadNotificationIds, syncNotificationCenterSchedule, verseOfDayRoute } from '../features/notifications/NotificationCenter';
 import { syncJumuahNotification } from '../features/jumuah/JumuahService';
+import { syncDailyWidgets } from '../features/daily-widgets/DailyWidgetSync';
 import { syncGoalReviewNotifications } from '../features/daily-goals/services/reviewNotifications';
 import AnalyticsRouteTracker from '../features/analytics/AnalyticsRouteTracker';
 import FirstVisitGuideHost from '../components/FirstVisitGuideHost';
@@ -418,6 +419,15 @@ export default function RootLayout() {
 
     return () => clearTimeout(timer);
   }, [launchVisible, notificationSettingsRequired]);
+
+  // Verse and hadith of the day widgets: the coming week, refreshed when the app comes back.
+  useEffect(() => {
+    void syncDailyWidgets().catch(() => undefined);
+    const subscription = AppState.addEventListener('change', (state) => {
+      if (state === 'active') void syncDailyWidgets().catch(() => undefined);
+    });
+    return () => subscription.remove();
+  }, []);
 
   useEffect(() => {
     const subscription = AppState.addEventListener('change', (state) => {

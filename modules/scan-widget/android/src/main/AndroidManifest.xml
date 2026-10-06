@@ -48,5 +48,29 @@
         android:name="android.appwidget.provider"
         android:resource="@xml/quran_widget_info" />
     </receiver>
+    <!-- Home screen: verse of the day (Arabic + translation). -->
+    <receiver
+      android:name="com.oummah.scanwidget.DailyVerseWidgetProvider"
+      android:exported="true"
+      android:label="@string/daily_verse_label">
+      <intent-filter>
+        <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+      </intent-filter>
+      <meta-data
+        android:name="android.appwidget.provider"
+        android:resource="@xml/daily_verse_widget_info" />
+    </receiver>
+    <!-- Home screen: hadith of the day. -->
+    <receiver
+      android:name="com.oummah.scanwidget.DailyHadithWidgetProvider"
+      android:exported="true"
+      android:label="@string/daily_hadith_label">
+      <intent-filter>
+        <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+      </intent-filter>
+      <meta-data
+        android:name="android.appwidget.provider"
+        android:resource="@xml/daily_hadith_widget_info" />
+    </receiver>
   </application>
 </manifest>

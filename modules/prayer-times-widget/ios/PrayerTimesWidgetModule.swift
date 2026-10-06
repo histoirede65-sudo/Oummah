@@ -8,6 +8,7 @@ private let tahajjudWidgetPayloadKey = "oummah.tahajjud-widget.payload.v1"
 private let tahajjudWidgetKind = "TahajjudWidget"
 private let quranWidgetBookmarkKey = "oummah.quran-widget.bookmark.v1"
 private let quranWidgetKind = "QuranWidget"
+private let dailyWidgetPayloadKey = "oummah.daily-widgets.payload.v1"
 
 public final class PrayerTimesWidgetModule: Module {
   public func definition() -> ModuleDefinition {
@@ -33,6 +34,19 @@ public final class PrayerTimesWidgetModule: Module {
       defaults.set(payload, forKey: tahajjudWidgetPayloadKey)
       DispatchQueue.main.async {
         WidgetCenter.shared.reloadTimelines(ofKind: tahajjudWidgetKind)
+      }
+    }
+
+    // « Verset du jour » and « Hadith du jour » widgets: the coming week prepared by the app.
+    AsyncFunction("publishDaily") { (payload: String) in
+      guard let defaults = UserDefaults(suiteName: prayerWidgetGroupIdentifier) else {
+        throw Exception(name: "PrayerTimesWidgetStorageError", description: "The OUMMAH widget App Group is unavailable.")
+      }
+
+      defaults.set(payload, forKey: dailyWidgetPayloadKey)
+      DispatchQueue.main.async {
+        WidgetCenter.shared.reloadTimelines(ofKind: "DailyVerseWidget")
+        WidgetCenter.shared.reloadTimelines(ofKind: "DailyHadithWidget")
       }
     }
 

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="daily_verse_label">Verset du jour</string>
+  <string name="daily_verse_description">Le verset du jour, en arabe et en français.</string>
+  <string name="daily_hadith_label">Hadith du jour</string>
+  <string name="daily_hadith_description">Le hadith du jour.</string>
+  <string name="daily_widget_empty">Ouvrez OUMMAH une fois pour afficher le contenu du jour.</string>
+</resources>
