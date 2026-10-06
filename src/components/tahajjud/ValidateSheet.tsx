@@ -5,20 +5,31 @@ import { useEffect, useState } from 'react';
 import { Modal, Pressable, StyleSheet, Text, View } from 'react-native';
 import Animated, { FadeIn, ZoomIn } from 'react-native-reanimated';
 import { night, nightType } from './theme';
-import { tx } from '../../features/tahajjud/tahajjudI18n';
+import { tx, tahajjudLocale } from '../../features/tahajjud/tahajjudI18n';
+
+/** « Nuit du lundi 5 au mardi 6 octobre »: the night is keyed by the evening it starts. */
+function nightDates(key: string) {
+  const evening = new Date(`${key}T12:00:00`);
+  const morning = new Date(evening);
+  morning.setDate(evening.getDate() + 1);
+  const day = (date: Date) => date.toLocaleDateString(tahajjudLocale(), { weekday: 'long', day: 'numeric' });
+  return tx('Nuit du {0} au {1}', [day(evening), `${day(morning)} ${morning.toLocaleDateString(tahajjudLocale(), { month: 'long' })}`]);
+}
 
 type Props = {
   visible: boolean;
   /** Morning after the night: « J'ai prié cette nuit ». */
   late: boolean;
   streak: number;
+  /** Evening date (YYYY-MM-DD) of the night being recorded. */
+  nightKey: string | null;
   onClose: () => void;
   onConfirm: (witr: boolean) => Promise<void>;
 };
 
 /** « J'ai prié cette nuit » : optional Witr, then a quiet celebration. */
-export function ValidateSheet({ visible, late, streak, onClose, onConfirm }: Props) {
-  const [witr, setWitr] = useState(true);
+export function ValidateSheet({ visible, late, streak, nightKey, onClose, onConfirm }: Props) {
+  const [witr, setWitr] = useState(false);
   const [saving, setSaving] = useState(false);
   const [done, setDone] = useState(false);
 
@@ -26,7 +37,7 @@ export function ValidateSheet({ visible, late, streak, onClose, onConfirm }: Pro
     if (visible) {
       setDone(false);
       setSaving(false);
-      setWitr(true);
+      setWitr(false);
     }
   }, [visible]);
 
@@ -68,8 +79,9 @@ export function ValidateSheet({ visible, late, streak, onClose, onConfirm }: Pro
             <>
               <View style={styles.handle} />
               <Text style={styles.title}>{tx("J’ai prié cette nuit")}</Text>
+              {nightKey ? <Text style={styles.date}>{nightDates(nightKey)}</Text> : null}
               <Text style={styles.text}>
-                {tx("Une seule validation par nuit. Elle reste sur ce téléphone et nourrit votre suivi.")}
+                {tx("Une seule validation par nuit. Elle est enregistrée sur ce téléphone pour votre suivi ; vos amis ou la communauté ne la voient que si vous l’avez autorisé.")}
               </Text>
 
               <Pressable onPress={() => setWitr((value) => !value)} style={styles.option}>
@@ -78,7 +90,7 @@ export function ValidateSheet({ visible, late, streak, onClose, onConfirm }: Pro
                 </View>
                 <View style={styles.optionCopy}>
                   <Text style={styles.optionTitle}>{tx("J’ai aussi prié le Witr")}</Text>
-                  <Text style={styles.optionText}>{tx("Facultatif")}</Text>
+                  <Text style={styles.optionText}>{tx("Facultatif · pour votre suivi")}</Text>
                 </View>
               </Pressable>
 
@@ -104,6 +116,7 @@ const styles = StyleSheet.create({
   sheet: { overflow: 'hidden', borderTopLeftRadius: 30, borderTopRightRadius: 30, borderWidth: 1, borderColor: night.goldLine, padding: 24, paddingBottom: 36 },
   handle: { alignSelf: 'center', width: 42, height: 4, borderRadius: 2, backgroundColor: '#363448', marginBottom: 18 },
   title: { color: night.text, fontSize: 32, ...nightType.display },
+  date: { marginTop: 4, color: night.goldSoft, fontSize: 16, ...nightType.semibold },
   text: { marginTop: 6, color: night.textSoft, fontSize: 17, lineHeight: 24, ...nightType.body },
   option: { marginTop: 22, flexDirection: 'row', alignItems: 'center', gap: 14, padding: 14, borderRadius: 18, backgroundColor: night.glass, borderWidth: 1, borderColor: night.line },
   check: { width: 26, height: 26, borderRadius: 13, borderWidth: 1.5, borderColor: night.gold, alignItems: 'center', justifyContent: 'center' },

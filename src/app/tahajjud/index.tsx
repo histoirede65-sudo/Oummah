@@ -236,6 +236,7 @@ export default function TahajjudScreen() {
         visible={sheet}
         late={late}
         streak={view.streak + (view.validated ? 0 : 1)}
+        nightKey={state?.validatableKey ?? null}
         onClose={() => setSheet(false)}
         onConfirm={view.validate}
       />

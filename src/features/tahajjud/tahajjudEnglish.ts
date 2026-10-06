@@ -737,4 +737,7 @@ export const TAHAJJUD_EN: Record<string, string> = {
   'Duas': 'Duas',
   'Mur · dire Amine': 'Wall · say Ameen',
   'Voir la carte de la nuit': 'See the map of the night',
+  'Nuit du {0} au {1}': 'Night of {0} to {1}',
+  'Une seule validation par nuit. Elle est enregistrée sur ce téléphone pour votre suivi ; vos amis ou la communauté ne la voient que si vous l’avez autorisé.': 'One record per night. It is saved on this phone for your tracking; your friends or the community only see it if you have allowed it.',
+  'Facultatif · pour votre suivi': 'Optional · for your tracking',
 };
