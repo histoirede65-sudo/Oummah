@@ -100,6 +100,9 @@ const sessionPlaces = new Map<string, HalalPlace>();
 // Lieux Google vus depuis l'ouverture de l'app (mémoire seulement : les conditions de Google
 // n'autorisent pas à les enregistrer durablement sur le téléphone).
 const sessionGooglePlaces = new Map<string, HalalPlace>();
+const GOOGLE_REUSE_MS = 10 * 60_000;
+const GOOGLE_REUSE_DISTANCE_METERS = 300;
+let lastGoogleSearch: { at: number; origin: HalalCoordinates; radiusMeters: number } | null = null;
 
 function getSupabaseConfiguration() {
   const url = process.env.EXPO_PUBLIC_SUPABASE_URL?.trim().replace(/\/+$/, '');
@@ -463,12 +466,19 @@ export async function searchNearbyHalalPlaces(
     rememberSessionPlaces(places);
     onProgressResults?.({ places, fromCache: false });
   };
-  const googlePromise = getNearbyHalalPlacesFromGoogle(
-    origin.latitude,
-    origin.longitude,
-    radiusMeters,
-    signal,
-  )
+  // Même zone, même rayon, moins de 10 minutes après la dernière recherche Google : on réutilise les lieux
+  // déjà en mémoire au lieu de rappeler Google (chaque appel est facturé).
+  const recentGoogle = lastGoogleSearch
+    && Date.now() - lastGoogleSearch.at < GOOGLE_REUSE_MS
+    && lastGoogleSearch.radiusMeters >= radiusMeters
+    && getDistanceMeters(origin, lastGoogleSearch.origin) <= GOOGLE_REUSE_DISTANCE_METERS;
+  const googleRequest = recentGoogle
+    ? Promise.resolve([] as Awaited<ReturnType<typeof getNearbyHalalPlacesFromGoogle>>)
+    : getNearbyHalalPlacesFromGoogle(origin.latitude, origin.longitude, radiusMeters, signal).then((results) => {
+      lastGoogleSearch = { at: Date.now(), origin, radiusMeters };
+      return results;
+    });
+  const googlePromise = googleRequest
     .then((googleResults) => {
       const fresh = googleResults
         .map((place) => mapGooglePlace(place, origin))
