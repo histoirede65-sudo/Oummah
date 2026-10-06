@@ -82,7 +82,7 @@ export default function TahajjudScreen() {
       <Text style={styles.centerLabel}>{phase === 'day' ? tx('PROCHAIN DERNIER TIERS') : tx('DERNIER TIERS DE LA NUIT')}</Text>
       <Text style={styles.centerBig}>{clock(tonight.lastThirdStart)}</Text>
       <Text style={styles.centerSub}>
-        {phase === 'day' ? tx("jusqu’à {0} · ce soir après ‘Isha", [clock(tonight.fajr)]) : tx("commence dans {0}", [formatDuration(tonight.lastThirdStart - now)])}
+        {phase === 'day' ? tx('jusqu’à Fajr ({0}), après ‘Isha', [clock(tonight.fajr)]) : tx("commence dans {0}", [formatDuration(tonight.lastThirdStart - now)])}
       </Text>
     </>
   );
@@ -245,14 +245,14 @@ export default function TahajjudScreen() {
 
 const styles = StyleSheet.create({
   eyebrow: { color: night.gold, fontSize: 14, letterSpacing: 1.8, textTransform: 'uppercase', ...nightType.bold },
-  title: { marginTop: 4, color: night.text, fontSize: 54, lineHeight: 58, ...nightType.display },
+  title: { marginTop: 2, color: night.text, fontSize: 46, lineHeight: 50, ...nightType.display },
   subtitle: { marginTop: 2, color: night.textSoft, fontSize: 18, ...nightType.body },
   loader: { height: 280, alignItems: 'center', justifyContent: 'center' },
   errorCard: { marginTop: 30, alignItems: 'center', gap: 12 },
   errorText: { color: night.textSoft, fontSize: 17, textAlign: 'center', lineHeight: 24, ...nightType.body },
   retry: { paddingHorizontal: 20, paddingVertical: 10, borderRadius: 20, borderWidth: 1, borderColor: night.goldLine },
   retryText: { color: night.goldSoft, ...nightType.semibold },
-  arcWrap: { marginTop: 18, alignItems: 'center' },
+  arcWrap: { marginTop: 6, alignItems: 'center' },
   centerLabel: { color: night.muted, fontSize: 12, letterSpacing: 2.2, marginBottom: 4, ...nightType.bold },
   centerLabelGold: { color: night.goldSoft, marginBottom: 0 },
   centerBig: { color: night.text, fontSize: 48, lineHeight: 52, ...nightType.display },
