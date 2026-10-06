@@ -189,7 +189,7 @@ export default function TahajjudScreen() {
                 <View style={styles.communityCopy}>
                   <Text style={styles.communityTitle}>{tx("La Oummah cette nuit")}</Text>
                   <Text style={styles.communityText}>
-                    {awakeCount === null ? tx('Vous ne priez pas seul') : txCount(awakeCount, '{0} membre réveillé · voir la carte', '{0} membres réveillés · voir la carte')}
+                    {!awakeCount ? tx('Voir la carte de la nuit') : txCount(awakeCount, '{0} membre réveillé · voir la carte', '{0} membres réveillés · voir la carte')}
                   </Text>
                 </View>
                 <Ionicons name="chevron-forward" size={20} color={night.goldSoft} />

@@ -736,4 +736,5 @@ export const TAHAJJUD_EN: Record<string, string> = {
   'Dhikr, Coran': 'Dhikr, Quran',
   'Duas': 'Duas',
   'Mur · dire Amine': 'Wall · say Ameen',
+  'Voir la carte de la nuit': 'See the map of the night',
 };
