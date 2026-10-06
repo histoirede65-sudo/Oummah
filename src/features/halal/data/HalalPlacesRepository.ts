@@ -512,6 +512,20 @@ export async function searchNearbyHalalPlaces(
   if (!osmSucceeded) {
     osmPlaces = previousPlaces.filter((place) => place.source === 'openstreetmap');
   }
+  if (__DEV__) {
+    // DIAGNOSTIC TEMPORAIRE (à retirer) : nombre de lieux par source.
+    console.info('[HalalDiag]', JSON.stringify({
+      rayon: radiusMeters,
+      precedents: previousPlaces.length,
+      precedentsOsm: previousPlaces.filter((p) => p.source === 'openstreetmap').length,
+      cacheOsmFrais: freshOsmCache,
+      osmOk: osmSucceeded,
+      osm: osmPlaces.length,
+      google: googlePlaces.length,
+      communaute: communityPlaces.length,
+      erreur: lastError instanceof Error ? lastError.message : null,
+    }));
+  }
   const remote = deduplicate([...communityPlaces, ...osmPlaces, ...googlePlaces])
     .sort((a, b) => a.distanceMeters - b.distanceMeters)
     .slice(0, MAX_RESULTS);
@@ -742,9 +756,21 @@ export async function enrichHalalPlaceFromGoogle(place: HalalPlace) {
   return withCommunityPhoto;
 }
 
+const RESOLVED_ADDRESSES_KEY = 'oummah.halal.resolved-addresses.v1';
+const MAX_RESOLVED_ADDRESSES = 1_000;
+
+/** Adresses retrouvées par le téléphone (lieux sans adresse dans OpenStreetMap), par identifiant de lieu. */
+export async function getResolvedHalalAddresses() {
+  return readJson<Record<string, string>>(RESOLVED_ADDRESSES_KEY, {});
+}
+
 export function rememberResolvedHalalAddress(place: HalalPlace, address: string) {
   const updated = { ...place, address };
   sessionPlaces.set(updated.id, updated);
+  void getResolvedHalalAddresses().then((stored) => {
+    const entries = Object.entries({ ...stored, [place.id]: address }).slice(-MAX_RESOLVED_ADDRESSES);
+    return AsyncStorage.setItem(RESOLVED_ADDRESSES_KEY, JSON.stringify(Object.fromEntries(entries)));
+  }).catch(() => undefined);
   return updated;
 }
 

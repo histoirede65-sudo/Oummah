@@ -1,4 +1,5 @@
 import type { I18nContextValue, LanguageCode, TranslationKey } from '../../../i18n';
+import { translate } from '../../../i18n/translate';
 
 export type HalalPlaceCategory =
   | 'restaurant'
@@ -112,6 +113,7 @@ export function halalDistanceLabel(place: HalalPlace, language: LanguageCode, t:
 
 /** Google ajoute « , France » à la fin des adresses : inutile dans la liste. */
 export function halalDisplayAddress(address: string) {
+  if (address === 'Adresse non renseignée') return translate('halal.addressUnknown');
   return address.replace(/,\s*(France|FR)\s*$/i, '');
 }
 

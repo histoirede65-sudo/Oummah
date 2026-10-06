@@ -3843,6 +3843,7 @@ export const fr = {
   'auth.notConfigured': 'La connexion sécurisée n’est pas encore configurée.',
   'auth.noAccount': 'Aucun compte connecté.',
   'adhan.notificationsDenied': 'Notifications non autorisées',
+  'halal.addressUnknown': 'Adresse non renseignée',
 } as const;
 
 export type TranslationKey = keyof typeof fr;

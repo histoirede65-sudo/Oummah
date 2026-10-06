@@ -25,6 +25,7 @@ import HalalPlaceCard from '../components/halal/HalalPlaceCard';
 import {
   getHalalFavoriteIds,
   isHalalPlaceOpenNow,
+  getResolvedHalalAddresses,
   searchNearbyHalalPlaces,
   rememberResolvedHalalAddress,
   toggleHalalFavorite,
@@ -68,7 +69,10 @@ function formatResolvedAddress(place?: Location.LocationGeocodedAddress) {
 }
 
 async function completeMissingAddresses(places: HalalPlace[]) {
-  const completed = [...places];
+  // Adresses déjà retrouvées lors d'une recherche précédente : pas besoin de les redemander.
+  const stored = await getResolvedHalalAddresses().catch(() => ({} as Record<string, string>));
+  const completed = places.map((place) =>
+    place.address === 'Adresse non renseignée' && stored[place.id] ? { ...place, address: stored[place.id] } : place);
   const missingIndexes = completed
     .map((place, index) => place.address === 'Adresse non renseignée' ? index : -1)
     .filter((index) => index >= 0);
@@ -81,7 +85,9 @@ async function completeMissingAddresses(places: HalalPlace[]) {
       if (address) completed[index] = rememberResolvedHalalAddress(place, address);
     }));
   }
-  return completed.filter((place) => place.address !== 'Adresse non renseignée');
+  // Un lieu dont l'adresse n'a pas pu être retrouvée reste dans la liste : l'iPhone limite ces recherches
+  // quand il y en a beaucoup d'un coup, et les retirer faisait varier le nombre de lieux d'une fois à l'autre.
+  return completed;
 }
 
 export default function HalalAroundMeScreen() {
