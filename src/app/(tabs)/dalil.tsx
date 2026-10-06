@@ -246,6 +246,32 @@ function getWasilReferenceRoute(reference: string): Href | null {
   return null;
 }
 
+/** A HadeethEnc page opens the same hadith in the app (its catalogue comes from HadeethEnc). */
+function resolveHadithNativeTarget(sourceUrl: string | undefined): HadithNativeTarget | null {
+  if (!sourceUrl) return null;
+  try {
+    const url = new URL(sourceUrl);
+    if (url.hostname.replace(/^www\./, "").toLowerCase() !== "hadeethenc.com") return null;
+    const id = url.pathname.match(/\/hadith\/(\d+)\/?$/)?.[1];
+    return id ? { pathname: "/hadith/[id]", params: { id } } : null;
+  } catch {
+    return null;
+  }
+}
+
+/** Web pages that the app can open itself: Quran pages always, HadeethEnc hadiths. */
+function toNativeSource(source: WasilDisplaySource): WasilDisplaySource {
+  const quranTarget = resolveQuranNativeTarget(source.url, "");
+  if (quranTarget) {
+    return { label: "OUMMAH", detail: formatQuranPassage(quranTarget), verified: source.verified, quranTarget };
+  }
+  const hadithTarget = resolveHadithNativeTarget(source.url);
+  if (hadithTarget) {
+    return { label: "OUMMAH · Hadith", detail: source.label, verified: source.verified, hadithTarget };
+  }
+  return source;
+}
+
 type HadithNativeTarget =
   | { pathname: "/hadith/[id]"; params: { id: string } }
   | { pathname: "/hadith/search"; params: { q: string } };
@@ -718,11 +744,11 @@ function parseWasilAnswer(answer: WasilReply, t: Translate) {
   })();
   const structuredSources: WasilDisplaySource[] =
     answer.reference && !hasExplicitNativeReferences
-      ? [{
+      ? [toNativeSource({
           label: structuredReferenceLabel ?? answer.reference,
           url: answer.sourceUrl,
           verified: true,
-        }]
+        })]
       : [];
   const explicitQuranSources = (answer.quranReferences ?? []).flatMap(
     (reference): WasilDisplaySource[] => {
@@ -765,7 +791,7 @@ function parseWasilAnswer(answer: WasilReply, t: Translate) {
     },
   );
   const explicitWebSources = (answer.webReferences ?? []).map(
-    (source): WasilDisplaySource => ({
+    (source): WasilDisplaySource => toNativeSource({
       label: markdownSourceLabel(source.title, source.url, t),
       url: source.url,
       verified: true,
@@ -781,7 +807,7 @@ function parseWasilAnswer(answer: WasilReply, t: Translate) {
     }),
   );
   const extractedSources = [...extracted.sources, ...rawSources].map(
-    (source): WasilDisplaySource => ({
+    (source): WasilDisplaySource => toNativeSource({
       label: markdownSourceLabel(source.label, source.url, t),
       url: source.url,
       verified: structuredSources.some(
