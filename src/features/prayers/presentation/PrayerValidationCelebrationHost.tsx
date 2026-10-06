@@ -2,6 +2,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useEffect, useRef, useState } from "react";
 import { Modal, Pressable, StyleSheet, Text, View } from "react-native";
 
+import { useI18n, type TranslationKey } from "../../../i18n";
 import { colors } from "../../../theme/colors";
 import { typography } from "../../../theme/typography";
 import { setIndividualPrayerCelebrationActive } from "../../celebrations/CelebrationCoordinator";
@@ -11,32 +12,33 @@ import {
   type PrayerValidationEvent,
 } from "../PrayerCompletionStore";
 
-type Hadith = { text: string; reference: string };
+type Hadith = { text: TranslationKey; reference: string };
 
 const HADITHS: Record<MosquePrayerKey, Hadith> = {
   Fajr: {
-    text: "Celui qui accomplit la prière du Fajr est sous la protection d’Allah.",
+    text: "prayerDone.hadithFajr",
     reference: "Sahih Muslim, 657",
   },
   Asr: {
-    text: "Celui qui accomplit les prières de l’aube et de l’après-midi entrera au Paradis.",
+    text: "prayerDone.hadithAsr",
     reference: "Sahih al-Bukhari, 574",
   },
   Dhuhr: {
-    text: "Les cinq prières effacent les fautes comme l’eau enlève les impuretés.",
+    text: "prayerDone.hadithFive",
     reference: "Sahih al-Bukhari, 528",
   },
   Maghrib: {
-    text: "Les cinq prières effacent les fautes comme l’eau enlève les impuretés.",
+    text: "prayerDone.hadithFive",
     reference: "Sahih al-Bukhari, 528",
   },
   Isha: {
-    text: "Les cinq prières effacent les fautes comme l’eau enlève les impuretés.",
+    text: "prayerDone.hadithFive",
     reference: "Sahih al-Bukhari, 528",
   },
 };
 
 export default function PrayerValidationCelebrationHost() {
+  const { t } = useI18n();
   const queue = useRef<PrayerValidationEvent[]>([]);
   const [event, setEvent] = useState<PrayerValidationEvent | null>(null);
 
@@ -69,11 +71,11 @@ export default function PrayerValidationCelebrationHost() {
           <View style={styles.icon}>
             <Ionicons name="sparkles" size={30} color={colors.goldLight} />
           </View>
-          <Text style={styles.heading}>Prière validée</Text>
-          <Text style={styles.blessing}>Qu’Allah accepte ta prière et te récompense.</Text>
+          <Text style={styles.heading}>{t("prayerDone.title")}</Text>
+          <Text style={styles.blessing}>{t("prayerDone.blessing")}</Text>
           <View style={styles.separator} />
-          <Text style={styles.intro}>Le Prophète ﷺ a dit :</Text>
-          <Text style={styles.hadith}>{hadith?.text}</Text>
+          <Text style={styles.intro}>{t("prayerDone.intro")}</Text>
+          <Text style={styles.hadith}>{hadith ? t(hadith.text) : null}</Text>
           <Text style={styles.reference}>{hadith?.reference}</Text>
           <Pressable accessibilityRole="button" onPress={dismiss} style={styles.button}>
             <Text style={styles.buttonText}>Alhamdulillah</Text>

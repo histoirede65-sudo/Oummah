@@ -14,7 +14,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import Svg, { Circle, Path, Rect } from "react-native-svg";
 
-import { useI18n } from "../i18n";
+import { useI18n, type TranslationKey } from "../i18n";
 import { getValidSession } from "../features/auth/SupabaseAuthService";
 import { isOummahAdminSession } from "../features/auth/AdminAccess";
 import { getCurrentUserProfile } from "../features/profile/UserProfileRepository";
@@ -66,35 +66,35 @@ const MENU_GROUPS: ReadonlyArray<{
   items: ReadonlyArray<MenuItem>;
 }> = [
   {
-    title: "ESSENTIEL",
+    title: "menu.groupEssential",
     items: [
-      { label: "Accueil", description: "Votre journée", href: "/", icon: "home-outline" },
-      { label: "Fonds d’écran", description: "12 créations OUMMAH", href: "/wallpapers", icon: "images-outline" },
-      { label: "Djoumou’a", description: "Votre parcours du vendredi", href: "/jumuah", icon: "moon-outline" },
-      { label: "Qiyam al-Layl", description: "La prière de la nuit", href: "/tahajjud", icon: "moon-outline" },
-      { label: "Lire le Coran", description: "Sourates et lecture", href: "/quran", icon: "book-outline" },
-      { label: "Hadiths", description: "Lire et méditer", href: "/hadith", icon: "library-outline" },
-      { label: "Écouter", description: "Récitateurs et audio", href: "/listen/reciters", icon: "headset-outline" },
-      { label: "Mosquées", description: "Horaires et proximité", href: "/mosques", icon: "business-outline" },
+      { label: "menu.home", description: "menu.homeDesc", href: "/", icon: "home-outline" },
+      { label: "menu.wallpapers", description: "menu.wallpapersDesc", href: "/wallpapers", icon: "images-outline" },
+      { label: "menu.jumuah", description: "menu.jumuahDesc", href: "/jumuah", icon: "moon-outline" },
+      { label: "menu.qiyam", description: "menu.qiyamDesc", href: "/tahajjud", icon: "moon-outline" },
+      { label: "menu.quran", description: "menu.quranDesc", href: "/quran", icon: "book-outline" },
+      { label: "menu.hadith", description: "menu.hadithDesc", href: "/hadith", icon: "library-outline" },
+      { label: "menu.listen", description: "menu.listenDesc", href: "/listen/reciters", icon: "headset-outline" },
+      { label: "menu.mosques", description: "menu.mosquesDesc", href: "/mosques", icon: "business-outline" },
     ],
   },
   {
-    title: "AU QUOTIDIEN",
+    title: "menu.groupDaily",
     items: [
-      { label: "Halal autour de moi", description: "Restaurants et commerces", href: "/halal", icon: "restaurant-outline" },
-      { label: "Calendrier", description: "Dates et événements", href: "/calendar", icon: "calendar-outline" },
-      { label: "Qibla", description: "Direction de La Mecque", href: "/qibla", icon: "compass-outline" },
-      { label: "Invocations", description: "Dou‘as authentiques", href: "/dua", icon: "hand-left-outline" },
-      { label: "Dhikr", description: "Rappels et compteur", href: "/dhikr", icon: "sparkles-outline" },
-      { label: "Mémorisation", description: "Suivi du Hifz", href: "/hifz", icon: "school-outline" },
-      { label: "Zakat", description: "Calcul et suivi", href: "/zakat", icon: "shield-checkmark-outline" },
+      { label: "menu.halal", description: "menu.halalDesc", href: "/halal", icon: "restaurant-outline" },
+      { label: "menu.calendar", description: "menu.calendarDesc", href: "/calendar", icon: "calendar-outline" },
+      { label: "menu.qibla", description: "menu.qiblaDesc", href: "/qibla", icon: "compass-outline" },
+      { label: "menu.dua", description: "menu.duaDesc", href: "/dua", icon: "hand-left-outline" },
+      { label: "menu.dhikr", description: "menu.dhikrDesc", href: "/dhikr", icon: "sparkles-outline" },
+      { label: "menu.hifz", description: "menu.hifzDesc", href: "/hifz", icon: "school-outline" },
+      { label: "menu.zakat", description: "menu.zakatDesc", href: "/zakat", icon: "shield-checkmark-outline" },
     ],
   },
   {
-    title: "OUMMAH",
+    title: "menu.groupOummah",
     items: [
-      { label: "Mes bilans", description: "Semaine, mois et année", href: "/bilans", icon: "stats-chart-outline" },
-      { label: "Mon profil", description: "Compte et préférences", href: "/profile", icon: "person-outline" },
+      { label: "menu.reviews", description: "menu.reviewsDesc", href: "/bilans", icon: "stats-chart-outline" },
+      { label: "menu.profile", description: "menu.profileDesc", href: "/profile", icon: "person-outline" },
     ],
   },
 ];
@@ -276,7 +276,7 @@ export default function AppHeader({
         {signedIn ? (
           <Pressable
             accessibilityRole="button"
-            accessibilityLabel={unreadMessages ? `Messages, ${unreadMessages} non lu${unreadMessages > 1 ? "s" : ""}` : "Messages"}
+            accessibilityLabel={unreadMessages ? t(unreadMessages > 1 ? "menu.messagesUnreadMany" : "menu.messagesUnreadOne", { count: unreadMessages }) : t("menu.messages")}
             onPress={() => router.push("/tahajjud/friends" as Href)}
             style={({ pressed }) => [styles.circle, pressed && styles.pressed]}
           >
@@ -312,7 +312,7 @@ export default function AppHeader({
         <View style={styles.menuBackdrop}>
           <Pressable
             accessibilityRole="button"
-            accessibilityLabel="Fermer le menu"
+            accessibilityLabel={t("menu.closeMenu")}
             onPress={() => setMenuVisible(false)}
             style={StyleSheet.absoluteFill}
           />
@@ -330,13 +330,13 @@ export default function AppHeader({
                   <MosqueLogo size={31} />
                 </View>
                 <View>
-                  <Text style={styles.menuEyebrow}>VOTRE ESPACE</Text>
+                  <Text style={styles.menuEyebrow}>{t("menu.eyebrow")}</Text>
                   <Text style={styles.menuTitle}>OUMMAH</Text>
                 </View>
               </View>
               <Pressable
                 accessibilityRole="button"
-                accessibilityLabel="Fermer"
+                accessibilityLabel={t("menu.close")}
                 onPress={() => setMenuVisible(false)}
                 style={styles.menuClose}
               >
@@ -346,8 +346,8 @@ export default function AppHeader({
 
             <Text style={styles.menuWelcome}>
               {displayName
-                ? `Salam ${displayName}, où souhaitez-vous aller ?`
-                : "Salam, où souhaitez-vous aller ?"}
+                ? t("menu.welcomeNamed", { name: displayName })
+                : t("menu.welcome")}
             </Text>
 
             <ScrollView
@@ -357,11 +357,11 @@ export default function AppHeader({
             >
               {MENU_GROUPS.map((group) => {
                 const items =
-                  group.title === "OUMMAH" && isAdmin
+                  group.title === "menu.groupOummah" && isAdmin
                     ? [
                         {
-                          label: "Espace administrateur",
-                          description: "Pilotage, crédits et modération",
+                          label: "menu.admin",
+                          description: "menu.adminDesc",
                           href: "/admin",
                           icon: "shield-checkmark-outline" as const,
                         },
@@ -371,7 +371,7 @@ export default function AppHeader({
 
                 return (
                 <View key={group.title} style={styles.menuGroup}>
-                  <Text style={styles.menuGroupTitle}>{group.title}</Text>
+                  <Text style={styles.menuGroupTitle}>{t(group.title as TranslationKey)}</Text>
                   {items.map((item) => (
                     <Pressable
                       key={item.href}
@@ -398,12 +398,12 @@ export default function AppHeader({
                         />
                       </View>
                       <View style={styles.menuItemCopy}>
-                        <Text style={styles.menuItemLabel}>{item.label}</Text>
-                        <Text style={styles.menuItemDescription}>{item.description}</Text>
+                        <Text style={styles.menuItemLabel}>{t(item.label as TranslationKey)}</Text>
+                        <Text style={styles.menuItemDescription}>{t(item.description as TranslationKey)}</Text>
                       </View>
                       {item.href === "/wallpapers" ? (
                         <View style={styles.menuNewBadge}>
-                          <Text style={styles.menuNewBadgeText}>NOUVEAU</Text>
+                          <Text style={styles.menuNewBadgeText}>{t("menu.new")}</Text>
                         </View>
                       ) : null}
                       {item.href === "/admin" && adminAttentionCount > 0 ? <View style={styles.adminAttentionDotMenu} /> : null}
@@ -419,7 +419,7 @@ export default function AppHeader({
               })}
             </ScrollView>
 
-            <Text style={styles.menuFooter}>Un seul espace pour votre quotidien</Text>
+            <Text style={styles.menuFooter}>{t("menu.footer")}</Text>
           </SafeAreaView>
         </View>
       </Modal>

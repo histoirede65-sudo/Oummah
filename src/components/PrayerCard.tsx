@@ -667,12 +667,12 @@ export default function PrayerCard({ onScheduleChange }: { onScheduleChange?: (s
     }
 
     Alert.alert(
-      "Localisation nécessaire",
-      "Autorisez la localisation dans les réglages du téléphone pour afficher les horaires de prière.",
+      t("prayer.locationNeededTitle"),
+      t("prayer.locationNeededBody"),
       [
-        { text: "Annuler", style: "cancel" },
+        { text: t("common.cancel"), style: "cancel" },
         {
-          text: "Ouvrir les réglages",
+          text: t("common.openSettings"),
           onPress: () => {
             waitingForLocationSettingsRef.current = true;
             void Linking.openSettings().catch(() => undefined);
@@ -1602,7 +1602,7 @@ export default function PrayerCard({ onScheduleChange }: { onScheduleChange?: (s
                 <Pressable
                   key={prayer.key}
                   accessibilityRole={REQUIRED_PRAYERS.includes(prayer.key as MosquePrayerKey) ? "button" : undefined}
-                  accessibilityLabel={`${translatedPrayerLabel(prayer.key, prayer.label)}${REQUIRED_PRAYERS.includes(prayer.key as MosquePrayerKey) ? completedPrayers.includes(prayer.key as MosquePrayerKey) ? " — validée" : " — non validée" : ""}`}
+                  accessibilityLabel={`${translatedPrayerLabel(prayer.key, prayer.label)}${REQUIRED_PRAYERS.includes(prayer.key as MosquePrayerKey) ? completedPrayers.includes(prayer.key as MosquePrayerKey) ? ` — ${t("prayer.a11yDone")}` : ` — ${t("prayer.a11yNotDone")}` : ""}`}
                   disabled={!REQUIRED_PRAYERS.includes(prayer.key as MosquePrayerKey)}
                   onPress={() => void togglePrayer(prayer.key as MosquePrayerKey)}
                   style={[

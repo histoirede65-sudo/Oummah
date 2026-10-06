@@ -10,7 +10,7 @@ import {
 } from "react-native";
 
 import { storageService } from "../core/storage/StorageService";
-import { useI18n } from "../i18n";
+import { useI18n, type TranslationKey } from "../i18n";
 import { colors } from "../theme/colors";
 import { typography } from "../theme/typography";
 
@@ -33,24 +33,24 @@ const APP_GUIDE: GuideDefinition = {
   id: "app",
   slides: [
     {
-      eyebrow: "BIENVENUE DANS OUMMAH",
-      title: "Tout votre quotidien, au même endroit",
+      eyebrow: "guide.app1.eyebrow",
+      title: "guide.app1.title",
       description:
-        "Horaires de prière, Coran, apprentissage et outils du quotidien : OUMMAH rassemble l’essentiel sans vous laisser chercher seul.",
+        "guide.app1.description",
       icon: "sparkles-outline",
     },
     {
-      eyebrow: "EXPLOREZ À VOTRE RYTHME",
-      title: "De nombreux modules vous attendent",
+      eyebrow: "guide.app2.eyebrow",
+      title: "guide.app2.title",
       description:
-        "Coran, Hadith, Hifz, Fiqh, histoires des prophètes, Sîra, invocations, Qibla, lieux halal et bien plus encore.",
+        "guide.app2.description",
       icon: "grid-outline",
     },
     {
-      eyebrow: "UN PETIT GUIDE À CHAQUE NOUVEAUTÉ",
-      title: "OUMMAH vous accompagne",
+      eyebrow: "guide.app3.eyebrow",
+      title: "guide.app3.title",
       description:
-        "La première fois que vous ouvrirez un module, une courte présentation vous montrera ce que vous pouvez y faire. Elle ne s’affichera qu’une seule fois.",
+        "guide.app3.description",
       icon: "navigate-circle-outline",
     },
   ],
@@ -60,240 +60,240 @@ const MODULE_GUIDES: Record<string, GuideDefinition> = {
   "/notifications": {
     id: "notifications",
     slides: [{
-      eyebrow: "CENTRE DE NOTIFICATIONS",
-      title: "Choisissez les rappels qui vous accompagnent",
+      eyebrow: "guide.notifications.eyebrow",
+      title: "guide.notifications.title",
       description:
-        "Retrouvez vos rappels OUMMAH et personnalisez ceux que vous souhaitez recevoir sur votre téléphone : prières, apprentissage et autres notifications utiles.",
+        "guide.notifications.description",
       icon: "notifications-outline",
     }],
   },
   "/quran": {
     id: "quran",
     slides: [{
-      eyebrow: "MODULE CORAN",
-      title: "Lire, écouter et reprendre facilement",
+      eyebrow: "guide.quran.eyebrow",
+      title: "guide.quran.title",
       description:
-        "Parcourez les sourates, écoutez vos récitateurs, utilisez les marque-pages et accédez directement au verset que vous cherchez.",
+        "guide.quran.description",
       icon: "book-outline",
     }],
   },
   "/listen": {
     id: "listen",
     slides: [{
-      eyebrow: "ÉCOUTER LE CORAN",
-      title: "Votre écoute, simplement",
+      eyebrow: "guide.listen.eyebrow",
+      title: "guide.listen.title",
       description:
-        "Choisissez un récitateur, une sourate et laissez le lecteur vous accompagner, y compris lorsque votre téléphone est verrouillé.",
+        "guide.listen.description",
       icon: "headset-outline",
     }],
   },
   "/hadith": {
     id: "hadith",
     slides: [{
-      eyebrow: "MODULE HADITH",
-      title: "Explorer des hadiths avec leurs références",
+      eyebrow: "guide.hadith.eyebrow",
+      title: "guide.hadith.title",
       description:
-        "Recherchez par thème ou recueil, ouvrez les références disponibles et retrouvez facilement vos lectures.",
+        "guide.hadith.description",
       icon: "library-outline",
     }],
   },
   "/hadiths": {
     id: "hadith",
     slides: [{
-      eyebrow: "MODULE HADITH",
-      title: "Explorer des hadiths avec leurs références",
+      eyebrow: "guide.hadith.eyebrow",
+      title: "guide.hadith.title",
       description:
-        "Recherchez par thème ou recueil, ouvrez les références disponibles et retrouvez facilement vos lectures.",
+        "guide.hadith.description",
       icon: "library-outline",
     }],
   },
   "/dhikr": {
     id: "dhikr",
     slides: [{
-      eyebrow: "MODULE DHIKR",
-      title: "Gardez le rythme de vos rappels",
+      eyebrow: "guide.dhikr.eyebrow",
+      title: "guide.dhikr.title",
       description:
-        "Utilisez le compteur, choisissez vos formules de dhikr et avancez à votre rythme au quotidien.",
+        "guide.dhikr.description",
       icon: "radio-button-on-outline",
     }],
   },
   "/hifz": {
     id: "hifz",
     slides: [{
-      eyebrow: "MODULE HIFZ",
-      title: "Mémoriser, répéter, réviser",
+      eyebrow: "guide.hifz.eyebrow",
+      title: "guide.hifz.title",
       description:
-        "Choisissez une sourate, travaillez une plage de versets et retrouvez vos révisions du jour dans un parcours pensé pour la mémorisation.",
+        "guide.hifz.description",
       icon: "school-outline",
     }],
   },
   "/dua": {
     id: "dua",
     slides: [{
-      eyebrow: "MODULE DOU‘Ā",
-      title: "Les invocations du quotidien",
+      eyebrow: "guide.dua.eyebrow",
+      title: "guide.dua.title",
       description:
-        "Parcourez les invocations par situation et gardez sous la main celles dont vous avez besoin au bon moment.",
+        "guide.dua.description",
       icon: "heart-outline",
     }],
   },
   "/mosques": {
     id: "mosques",
     slides: [{
-      eyebrow: "MODULE MOSQUÉES",
-      title: "Trouvez une mosquée autour de vous",
+      eyebrow: "guide.mosques.eyebrow",
+      title: "guide.mosques.title",
       description:
-        "Consultez les mosquées proches, leurs informations et, lorsqu’ils sont disponibles, leurs horaires de prière.",
+        "guide.mosques.description",
       icon: "business-outline",
     }],
   },
   "/zawaj": {
     id: "zawaj",
     slides: [{
-      eyebrow: "MODULE ZAWAJ",
-      title: "Comprendre le mariage en Islam",
+      eyebrow: "guide.zawaj.eyebrow",
+      title: "guide.zawaj.title",
       description:
-        "Retrouvez des repères structurés autour du mariage, de la préparation aux responsabilités de la vie conjugale.",
+        "guide.zawaj.description",
       icon: "people-outline",
     }],
   },
   "/zakat": {
     id: "zakat",
     slides: [{
-      eyebrow: "MODULE ZAKAT",
-      title: "Comprendre et calculer plus facilement",
+      eyebrow: "guide.zakat.eyebrow",
+      title: "guide.zakat.title",
       description:
-        "Utilisez les outils disponibles pour vous repérer dans le calcul et consultez les explications associées.",
+        "guide.zakat.description",
       icon: "calculator-outline",
     }],
   },
   "/calendar": {
     id: "calendar",
     slides: [{
-      eyebrow: "CALENDRIER ISLAMIQUE",
-      title: "Dates hégiriennes et événements",
+      eyebrow: "guide.calendar.eyebrow",
+      title: "guide.calendar.title",
       description:
-        "Consultez le calendrier hégirien et retrouvez les principaux événements et rappels liés aux dates islamiques.",
+        "guide.calendar.description",
       icon: "calendar-outline",
     }],
   },
   "/fiqh": {
     id: "fiqh",
     slides: [{
-      eyebrow: "MODULE FIQH",
-      title: "Des livres interactifs pour apprendre",
+      eyebrow: "guide.fiqh.eyebrow",
+      title: "guide.fiqh.title",
       description:
-        "Entrez dans les grandes catégories du fiqh, ouvrez les chapitres puis avancez sujet par sujet avec les sources affichées.",
+        "guide.fiqh.description",
       icon: "book-outline",
     }],
   },
   "/prophets": {
     id: "prophets",
     slides: [{
-      eyebrow: "HISTOIRES DES PROPHÈTES",
-      title: "Lire, écouter et relier les histoires",
+      eyebrow: "guide.prophets.eyebrow",
+      title: "guide.prophets.title",
       description:
-        "Découvrez les récits, écoutez les histoires complètes et explorez l’arbre des prophètes sans quitter le module.",
+        "guide.prophets.description",
       icon: "git-network-outline",
     }],
   },
   "/sirah": {
     id: "sirah",
     slides: [{
-      eyebrow: "SÎRA DU PROPHÈTE ﷺ",
-      title: "Parcourir sa vie étape par étape",
+      eyebrow: "guide.sirah.eyebrow",
+      title: "guide.sirah.title",
       description:
-        "Suivez les grandes périodes de la Sîra dans l’ordre et ouvrez chaque étape pour approfondir le récit et ses sources.",
+        "guide.sirah.description",
       icon: "map-outline",
     }],
   },
   "/boycott": {
     id: "boycott",
     slides: [{
-      eyebrow: "CONSOMMATION RESPONSABLE",
-      title: "Scannez ou recherchez avant d’acheter",
+      eyebrow: "guide.boycott.eyebrow",
+      title: "guide.boycott.title",
       description:
-        "Utilisez le scanner ou la recherche et consultez la méthodologie OUMMAH derrière les classifications affichées.",
+        "guide.boycott.description",
       icon: "scan-outline",
     }],
   },
   "/99-names": {
     id: "99-names",
     slides: [{
-      eyebrow: "LES NOMS D’ALLAH",
-      title: "Découvrir et mémoriser",
+      eyebrow: "guide.names99.eyebrow",
+      title: "guide.names99.title",
       description:
-        "Parcourez les Noms, ouvrez leur fiche et progressez à votre rythme dans leur apprentissage.",
+        "guide.names99.description",
       icon: "sparkles-outline",
     }],
   },
   "/prenoms": {
     id: "prenoms",
     slides: [{
-      eyebrow: "MODULE PRÉNOMS",
-      title: "Chercher un prénom et comprendre son sens",
+      eyebrow: "guide.prenoms.eyebrow",
+      title: "guide.prenoms.title",
       description:
-        "Explorez les prénoms garçons et filles, recherchez rapidement un nom et consultez son sens, son origine et les informations disponibles.",
+        "guide.prenoms.description",
       icon: "person-outline",
     }],
   },
   "/names": {
     id: "prenoms",
     slides: [{
-      eyebrow: "MODULE PRÉNOMS",
-      title: "Chercher un prénom et comprendre son sens",
+      eyebrow: "guide.prenoms.eyebrow",
+      title: "guide.prenoms.title",
       description:
-        "Explorez les prénoms garçons et filles, recherchez rapidement un nom et consultez son sens, son origine et les informations disponibles.",
+        "guide.prenoms.description",
       icon: "person-outline",
     }],
   },
   "/companions": {
     id: "companions",
     slides: [{
-      eyebrow: "COMPAGNONS",
-      title: "Découvrir celles et ceux qui ont accompagné le Prophète ﷺ",
+      eyebrow: "guide.companions.eyebrow",
+      title: "guide.companions.title",
       description:
-        "Parcourez les biographies disponibles et ouvrez chaque fiche pour découvrir leur parcours.",
+        "guide.companions.description",
       icon: "people-circle-outline",
     }],
   },
   "/jumuah": {
     id: "jumuah",
     slides: [{
-      eyebrow: "JUMU‘AH",
-      title: "Préparer votre vendredi",
+      eyebrow: "guide.eyebrow.jumuah",
+      title: "guide.jumuah.title",
       description:
-        "Retrouvez en un seul endroit les rappels et actions utiles pour accompagner votre journée du vendredi.",
+        "guide.jumuah.description",
       icon: "moon-outline",
     }],
   },
   "/pilgrimage": {
     id: "pilgrimage",
     slides: [{
-      eyebrow: "HAJJ & ‘UMRA",
-      title: "Votre pèlerinage, comme un livre",
+      eyebrow: "guide.eyebrow.pilgrimage",
+      title: "guide.pilgrimage.title",
       description:
-        "Deux livres à suivre étape par étape, des compteurs pour le Tawâf, le Sa‘y et les Jamarât, et des réponses quand vous avez un doute.",
+        "guide.pilgrimage.description",
       icon: "walk-outline",
     }],
   },
   "/akhira": {
     id: "akhira",
     slides: [{
-      eyebrow: "L’AU-DELÀ",
-      title: "De la mort à la demeure éternelle",
+      eyebrow: "guide.akhira.eyebrow",
+      title: "guide.akhira.title",
       description:
-        "Suivez les étapes une par une : chaque page cite le Coran et les hadiths authentiques, avec leur source.",
+        "guide.akhira.description",
       icon: "moon-outline",
     }],
   },
   "/dalil": {
     id: "wasil",
     slides: [{
-      eyebrow: "WASIL",
-      title: "Posez votre question",
+      eyebrow: "guide.eyebrow.wasil",
+      title: "guide.wasil.title",
       description:
-        "Écrivez votre question à Wasil. Lorsqu’une réponse religieuse est donnée, les références utilisées sont affichées lorsque disponibles.",
+        "guide.wasil.description",
       icon: "chatbubble-ellipses-outline",
     }],
   },
@@ -324,9 +324,9 @@ export default function FirstVisitGuideHost({
       ...moduleGuide,
       slides: moduleGuide.slides.map((slide) => ({
         ...slide,
-        eyebrow: t("dhikr.guideEyebrow"),
-        title: t("dhikr.guideTitle"),
-        description: t("dhikr.guideDescription"),
+        eyebrow: "dhikr.guideEyebrow",
+        title: "dhikr.guideTitle",
+        description: "dhikr.guideDescription",
       })),
     };
   }, [enabled, pathname, t]);
@@ -394,11 +394,11 @@ export default function FirstVisitGuideHost({
           </View>
 
           {slide.eyebrow ? (
-            <Text style={styles.eyebrow}>{slide.eyebrow}</Text>
+            <Text style={styles.eyebrow}>{t(slide.eyebrow as TranslationKey)}</Text>
           ) : null}
 
-          <Text style={styles.title}>{slide.title}</Text>
-          <Text style={styles.description}>{slide.description}</Text>
+          <Text style={styles.title}>{t(slide.title as TranslationKey)}</Text>
+          <Text style={styles.description}>{t(slide.description as TranslationKey)}</Text>
 
           {guide.slides.length > 1 ? (
             <View style={styles.dots}>
@@ -423,8 +423,8 @@ export default function FirstVisitGuideHost({
               {guide.id === "dhikr"
                 ? t("dhikr.guideDiscover")
                 : isLast
-                  ? "Découvrir"
-                  : "Suivant"}
+                  ? t("guide.discover")
+                  : t("guide.next")}
             </Text>
             <Ionicons
               name={isLast ? "checkmark" : "arrow-forward"}
@@ -442,7 +442,7 @@ export default function FirstVisitGuideHost({
                 pressed && styles.pressed,
               ]}
             >
-              <Text style={styles.skipText}>Passer le guide</Text>
+              <Text style={styles.skipText}>{t("guide.skip")}</Text>
             </Pressable>
           ) : null}
         </View>

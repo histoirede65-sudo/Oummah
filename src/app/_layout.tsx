@@ -16,7 +16,7 @@ import { ReciterProvider } from '../context/ReciterProvider';
 import MiniPlayer from '../features/audio/presentation/MiniPlayer';
 import { ProphetAudioProvider } from '../features/prophets/audio/ProphetAudioProvider';
 import ProphetAudioMiniPlayer from '../features/prophets/audio/ProphetAudioMiniPlayer';
-import { I18nProvider } from '../i18n/I18nProvider';
+import { I18nProvider, translate } from '../i18n/I18nProvider';
 import { syncPushRegistration } from '../features/notifications/PushRegistrationService';
 import { ensureAppNotificationChannels } from '../features/notifications/notificationChannels';
 import { isNotificationPermissionGranted } from '../features/notifications/NotificationPermissions';
@@ -304,10 +304,10 @@ function AppLaunchAnimation({
             },
           ]}
         >
-          <Text allowFontScaling={false} style={launchStyles.eyebrow}>BIENVENUE DANS</Text>
+          <Text allowFontScaling={false} style={launchStyles.eyebrow}>{translate('launch.welcome')}</Text>
           <Text allowFontScaling={false} style={launchStyles.title}>OUMMAH</Text>
           <View style={launchStyles.brandLine} />
-          <Text allowFontScaling={false} style={launchStyles.subtitle}>Votre compagnon musulman au quotidien</Text>
+          <Text allowFontScaling={false} style={launchStyles.subtitle}>{translate('launch.subtitle')}</Text>
         </Animated.View>
 
         <Animated.View
@@ -401,12 +401,12 @@ export default function RootLayout() {
 
     const timer = setTimeout(() => {
       Alert.alert(
-        'Notifications désactivées',
-        'Autorisez les notifications dans les réglages du téléphone pour recevoir les rappels OUMMAH.',
+        translate('launch.notificationsOffTitle'),
+        translate('launch.notificationsOffBody'),
         [
-          { text: 'Plus tard', style: 'cancel' },
+          { text: translate('common.later'), style: 'cancel' },
           {
-            text: 'Ouvrir les réglages',
+            text: translate('common.openSettings'),
             onPress: () => {
               waitingForNotificationSettingsRef.current = true;
               void Linking.openSettings().catch(() => undefined);
@@ -532,16 +532,16 @@ export default function RootLayout() {
             };
 
             Alert.alert(
-              'Vous aimez OUMMAH ? ⭐️',
-              'Votre avis nous aide énormément à améliorer OUMMAH et à la faire connaître.',
+              translate('launch.reviewTitle'),
+              translate('launch.reviewBody'),
               [
                 {
-                  text: 'Plus tard',
+                  text: translate('common.later'),
                   style: 'cancel',
                   onPress: postpone,
                 },
                 {
-                  text: 'Noter OUMMAH',
+                  text: translate('launch.reviewRate'),
                   onPress: () => {
                     promptVisible = false;
                     void AsyncStorage.setItem(REVIEW_COMPLETED_KEY, '1');

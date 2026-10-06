@@ -2,20 +2,20 @@ import { Ionicons } from '@expo/vector-icons';
 import { StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { useI18n } from '../../i18n';
 import { colors } from '../../theme/colors';
 import { typography } from '../../theme/typography';
 
 export default function CommunityScreen() {
+  const { t } = useI18n();
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.content}>
         <View style={styles.icon}>
           <Ionicons name="people-outline" size={38} color={colors.goldLight} />
         </View>
-        <Text style={styles.title}>Communauté</Text>
-        <Text style={styles.subtitle}>
-          Votre espace communautaire arrive bientôt.
-        </Text>
+        <Text style={styles.title}>{t('community.title')}</Text>
+        <Text style={styles.subtitle}>{t('community.soon')}</Text>
       </View>
     </SafeAreaView>
   );
