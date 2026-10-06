@@ -97,6 +97,12 @@ const REQUEST_TIMEOUT_MS = 14_000;
 const MAX_RESULTS = 120;
 const SAME_ZONE_MAX_DISTANCE_METERS = 3_000;
 const sessionPlaces = new Map<string, HalalPlace>();
+// Lieux Google vus depuis l'ouverture de l'app (mémoire seulement : les conditions de Google
+// n'autorisent pas à les enregistrer durablement sur le téléphone).
+const sessionGooglePlaces = new Map<string, HalalPlace>();
+const GOOGLE_REUSE_MS = 10 * 60_000;
+const GOOGLE_REUSE_DISTANCE_METERS = 300;
+let lastGoogleSearch: { at: number; origin: HalalCoordinates; radiusMeters: number } | null = null;
 
 function getSupabaseConfiguration() {
   const url = process.env.EXPO_PUBLIC_SUPABASE_URL?.trim().replace(/\/+$/, '');
@@ -460,16 +466,28 @@ export async function searchNearbyHalalPlaces(
     rememberSessionPlaces(places);
     onProgressResults?.({ places, fromCache: false });
   };
-  const googlePromise = getNearbyHalalPlacesFromGoogle(
-    origin.latitude,
-    origin.longitude,
-    radiusMeters,
-    signal,
-  )
+  // Même zone, même rayon, moins de 10 minutes après la dernière recherche Google : on réutilise les lieux
+  // déjà en mémoire au lieu de rappeler Google (chaque appel est facturé).
+  const recentGoogle = lastGoogleSearch
+    && Date.now() - lastGoogleSearch.at < GOOGLE_REUSE_MS
+    && lastGoogleSearch.radiusMeters >= radiusMeters
+    && getDistanceMeters(origin, lastGoogleSearch.origin) <= GOOGLE_REUSE_DISTANCE_METERS;
+  const googleRequest = recentGoogle
+    ? Promise.resolve([] as Awaited<ReturnType<typeof getNearbyHalalPlacesFromGoogle>>)
+    : getNearbyHalalPlacesFromGoogle(origin.latitude, origin.longitude, radiusMeters, signal).then((results) => {
+      lastGoogleSearch = { at: Date.now(), origin, radiusMeters };
+      return results;
+    });
+  const googlePromise = googleRequest
     .then((googleResults) => {
-      latestGooglePlaces = googleResults
+      const fresh = googleResults
         .map((place) => mapGooglePlace(place, origin))
-        .filter((place): place is HalalPlace => Boolean(place))
+        .filter((place): place is HalalPlace => Boolean(place));
+      fresh.forEach((place) => sessionGooglePlaces.set(place.id, place));
+      // Google ne renvoie pas toujours la même sélection : on garde aussi, pour la durée de la session
+      // (en mémoire seulement), les lieux Google déjà trouvés autour de ce point.
+      const seenNearby = refreshDistances([...sessionGooglePlaces.values()], origin);
+      latestGooglePlaces = deduplicate([...fresh, ...seenNearby])
         .filter((place) => place.distanceMeters <= radiusMeters);
       publishNetworkProgress();
       return latestGooglePlaces;
@@ -507,6 +525,11 @@ export async function searchNearbyHalalPlaces(
 
   const googlePlaces = await googlePromise;
   const communityPlaces = await communityPromise;
+  // OpenStreetMap n'a pas répondu : on garde les lieux OpenStreetMap déjà connus pour cette zone
+  // (dernière recherche, cache) au lieu de les faire disparaître de la liste.
+  if (!osmSucceeded) {
+    osmPlaces = previousPlaces.filter((place) => place.source === 'openstreetmap');
+  }
   const remote = deduplicate([...communityPlaces, ...osmPlaces, ...googlePlaces])
     .sort((a, b) => a.distanceMeters - b.distanceMeters)
     .slice(0, MAX_RESULTS);
@@ -516,7 +539,8 @@ export async function searchNearbyHalalPlaces(
     );
     rememberSessionPlaces(places);
     const persistentPlaces = deduplicate([...local, ...osmPlaces]).sort((a, b) => a.distanceMeters - b.distanceMeters);
-    const writes = [
+    // Une recherche où OpenStreetMap n'a pas répondu n'écrase pas la mémoire de la dernière recherche complète.
+    const writes = osmSucceeded ? [
       AsyncStorage.setItem(LAST_RESULTS_KEY, JSON.stringify(persistentPlaces)).catch(() => undefined),
       AsyncStorage.setItem(LAST_SEARCH_KEY, JSON.stringify({
         origin,
@@ -524,7 +548,7 @@ export async function searchNearbyHalalPlaces(
         savedAt: Date.now(),
         places: persistentPlaces,
       })).catch(() => undefined),
-    ];
+    ] : [];
     if (!freshOsmCache && osmSucceeded) {
       writes.push(AsyncStorage.setItem(key, JSON.stringify({ savedAt: Date.now(), places: osmPlaces })).catch(() => undefined));
     }
@@ -736,9 +760,21 @@ export async function enrichHalalPlaceFromGoogle(place: HalalPlace) {
   return withCommunityPhoto;
 }
 
+const RESOLVED_ADDRESSES_KEY = 'oummah.halal.resolved-addresses.v1';
+const MAX_RESOLVED_ADDRESSES = 1_000;
+
+/** Adresses retrouvées par le téléphone (lieux sans adresse dans OpenStreetMap), par identifiant de lieu. */
+export async function getResolvedHalalAddresses() {
+  return readJson<Record<string, string>>(RESOLVED_ADDRESSES_KEY, {});
+}
+
 export function rememberResolvedHalalAddress(place: HalalPlace, address: string) {
   const updated = { ...place, address };
   sessionPlaces.set(updated.id, updated);
+  void getResolvedHalalAddresses().then((stored) => {
+    const entries = Object.entries({ ...stored, [place.id]: address }).slice(-MAX_RESOLVED_ADDRESSES);
+    return AsyncStorage.setItem(RESOLVED_ADDRESSES_KEY, JSON.stringify(Object.fromEntries(entries)));
+  }).catch(() => undefined);
   return updated;
 }
 

@@ -3834,4 +3834,5 @@ export const en: Partial<Record<TranslationKey, string>> = {
   'auth.notConfigured': 'Secure sign-in is not set up yet.',
   'auth.noAccount': 'No account is signed in.',
   'adhan.notificationsDenied': 'Notifications not allowed',
+  'halal.addressUnknown': 'Address not provided',
 };

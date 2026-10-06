@@ -29,40 +29,58 @@ Deno.serve(async (request) => {
   if (request.method !== 'POST') return json({ error: 'METHOD_NOT_ALLOWED' }, 405);
 
   try {
-    const { latitude, longitude, radius = 10000 } = await request.json();
+    const { latitude, longitude, radius = 10000, pages = 1 } = await request.json();
     if (!Number.isFinite(latitude) || !Number.isFinite(longitude)) {
       return json({ error: 'INVALID_COORDINATES' }, 400);
     }
     const safeRadius = Math.min(Math.max(Number(radius) || 10000, 100), 50000);
+    // Google ne renvoie pas toujours les mêmes 20 lieux pour une même recherche : une 2e page
+    // (demandée par les versions récentes de l'app) couvre les deux listes. Les anciennes versions restent à 1.
+    const pageCount = Number(pages) === 2 ? 2 : 1;
     const apiKey = Deno.env.get('GOOGLE_PLACES_API_KEY');
     if (!apiKey) return json({ error: 'GOOGLE_PLACES_API_KEY_MISSING' }, 500);
 
-    const response = await fetch('https://places.googleapis.com/v1/places:searchText', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-Goog-Api-Key': apiKey,
-        'X-Goog-FieldMask': 'places.id,places.displayName,places.formattedAddress,places.location,places.primaryType,places.types,places.googleMapsUri,places.businessStatus,places.photos',
-      },
-      body: JSON.stringify({
-        textQuery: 'halal',
-        pageSize: 20,
-        languageCode: 'fr',
-        rankPreference: 'DISTANCE',
-        includePureServiceAreaBusinesses: false,
-        locationBias: {
-          circle: {
-            center: { latitude, longitude },
-            radius: safeRadius,
-          },
+    const collected: Array<GooglePlacePayload & { id?: string }> = [];
+    let pageToken: string | undefined;
+    for (let page = 0; page < pageCount; page += 1) {
+      const response = await fetch('https://places.googleapis.com/v1/places:searchText', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Goog-Api-Key': apiKey,
+          'X-Goog-FieldMask': 'places.id,places.displayName,places.formattedAddress,places.location,places.primaryType,places.types,places.googleMapsUri,places.businessStatus,places.photos,nextPageToken',
         },
-      }),
-    });
-    const payload = await response.json();
-    if (!response.ok) {
-      return json({ error: payload?.error?.message || 'GOOGLE_PLACES_ERROR' }, response.status);
+        body: JSON.stringify({
+          textQuery: 'halal',
+          pageSize: 20,
+          languageCode: 'fr',
+          rankPreference: 'DISTANCE',
+          includePureServiceAreaBusinesses: false,
+          locationBias: {
+            circle: {
+              center: { latitude, longitude },
+              radius: safeRadius,
+            },
+          },
+          ...(pageToken ? { pageToken } : {}),
+        }),
+      });
+      const payload = await response.json();
+      if (!response.ok) {
+        // La 1re page est indispensable ; si seule la 2e échoue, on renvoie la 1re.
+        if (page === 0) return json({ error: payload?.error?.message || 'GOOGLE_PLACES_ERROR' }, response.status);
+        break;
+      }
+      if (Array.isArray(payload?.places)) collected.push(...payload.places);
+      pageToken = typeof payload?.nextPageToken === 'string' ? payload.nextPageToken : undefined;
+      if (!pageToken) break;
     }
-    const places = (Array.isArray(payload?.places) ? payload.places : []).filter((place: GooglePlacePayload) => {
+    const seen = new Set<string>();
+    const places = collected.filter((place) => {
+      if (place.id) {
+        if (seen.has(place.id)) return false;
+        seen.add(place.id);
+      }
       if (place.businessStatus && place.businessStatus !== 'OPERATIONAL') return false;
       return (place.types ?? []).some((type) => FOOD_TYPES.has(type));
     });
