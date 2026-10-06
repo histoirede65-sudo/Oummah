@@ -6,37 +6,38 @@ import * as WebBrowser from 'expo-web-browser';
 import { Linking, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useI18n, type TranslationKey } from '../i18n';
 
 const BENEFITS = [
-  { icon: 'shield-checkmark-outline' as const, title: 'Se préserver', text: 'Avancer dans un cadre licite et protéger sa pudeur.' },
-  { icon: 'heart-outline' as const, title: 'Trouver la sérénité', text: 'Construire un foyer fondé sur l’affection et la miséricorde.' },
-  { icon: 'people-outline' as const, title: 'Fonder une famille', text: 'Transmettre la foi, les valeurs et le bon comportement.' },
-  { icon: 'leaf-outline' as const, title: 'Grandir ensemble', text: 'S’encourager dans le bien et progresser dans la foi.' },
+  { icon: 'shield-checkmark-outline' as const, title: "zawaj.b1Title", text: "zawaj.b1Text" },
+  { icon: 'heart-outline' as const, title: "zawaj.b2Title", text: "zawaj.b2Text" },
+  { icon: 'people-outline' as const, title: "zawaj.b3Title", text: "zawaj.b3Text" },
+  { icon: 'leaf-outline' as const, title: "zawaj.b4Title", text: "zawaj.b4Text" },
 ];
 
 const VERSES = [
   {
     reference: 'Ar-Rûm · 30:21',
-    text: 'Et parmi Ses signes, Il a créé de vous, pour vous, des épouses afin que vous trouviez auprès d’elles la tranquillité, et Il a mis entre vous affection et miséricorde.',
+    text: "zawaj.v1",
   },
   {
     reference: 'An-Nûr · 24:32',
-    text: 'Mariez les célibataires d’entre vous et les gens de bien parmi vos serviteurs et vos servantes.',
+    text: "zawaj.v2",
   },
   {
     reference: 'Al-Baqara · 2:187',
-    text: 'Elles sont un vêtement pour vous et vous êtes un vêtement pour elles.',
+    text: "zawaj.v3",
   },
 ];
 
 const HADITHS = [
   {
-    text: 'Ô jeunes gens ! Que celui d’entre vous qui en a la capacité se marie, car cela aide davantage à baisser le regard et à préserver la chasteté.',
-    source: 'Rapporté par Al-Bukhari et Muslim',
+    text: "zawaj.h1",
+    source: "zawaj.h1Source",
   },
   {
-    text: 'Le meilleur d’entre vous est celui qui est le meilleur envers sa famille.',
-    source: 'Rapporté par At-Tirmidhi',
+    text: "zawaj.h2",
+    source: "zawaj.h2Source",
   },
 ];
 
@@ -44,79 +45,80 @@ const HADITHS = [
 const STORIES = [
   {
     icon: 'rose-outline' as const,
-    title: 'Khadija et le Prophète ﷺ',
-    subtitle: 'Le soutien, la confiance et la loyauté',
-    story: 'Khadija رضي الله عنها fut un soutien immense pour le Prophète ﷺ dès les premiers instants de la Révélation. Elle l’a rassuré, cru en lui et accompagné avec fidélité dans les épreuves.',
-    lesson: 'Un foyer solide se construit lorsque chacun devient pour l’autre une source de paix, de confiance et de soutien dans le bien.',
-    reference: 'Sîra · Début de la Révélation',
+    title: "zawaj.s1Title",
+    subtitle: "zawaj.s1Subtitle",
+    story: "zawaj.s1Story",
+    lesson: "zawaj.s1Lesson",
+    reference: "zawaj.s1Ref",
   },
   {
     icon: 'home-outline' as const,
-    title: 'Ali et Fatima',
-    subtitle: 'La simplicité, la pudeur et l’entraide',
-    story: 'Le foyer de Ali et Fatima رضي الله عنهما était simple matériellement, mais riche de foi, d’efforts partagés et d’attachement à Allah.',
-    lesson: 'La valeur d’un mariage ne dépend pas du luxe. Elle repose sur la foi, la patience, l’entraide et la gratitude.',
-    reference: 'Récits authentiques de leur vie familiale',
+    title: "zawaj.s2Title",
+    subtitle: "zawaj.s2Subtitle",
+    story: "zawaj.s2Story",
+    lesson: "zawaj.s2Lesson",
+    reference: "zawaj.s2Ref",
   },
   {
     icon: 'water-outline' as const,
-    title: 'Moussa à Madyan',
-    subtitle: 'Le bon caractère avant les apparences',
-    story: 'Après avoir aidé deux femmes avec pudeur et générosité, Moussa عليه السلام fut reconnu pour sa force et sa fiabilité. Ces qualités ouvrirent la voie à une proposition de mariage honorable.',
-    lesson: 'Le comportement, la pudeur, la responsabilité et la confiance sont des fondations essentielles dans le choix d’un conjoint.',
+    title: "zawaj.s3Title",
+    subtitle: "zawaj.s3Subtitle",
+    story: "zawaj.s3Story",
+    lesson: "zawaj.s3Lesson",
     reference: 'Al-Qasas · 28:23–28',
   },
   {
     icon: 'compass-outline' as const,
-    title: 'Choisir avec discernement',
-    subtitle: 'La religion et le caractère comme repères',
-    story: 'Les enseignements prophétiques invitent à regarder au-delà de l’apparence et du statut, en donnant une place centrale à la religion, au caractère et à la capacité d’assumer ses responsabilités.',
-    lesson: 'Un bon choix se fait avec lucidité, consultation, vérification et confiance en Allah, sans idéaliser ni précipiter la décision.',
-    reference: 'Enseignements prophétiques sur le choix du conjoint',
+    title: "zawaj.s4Title",
+    subtitle: "zawaj.s4Subtitle",
+    story: "zawaj.s4Story",
+    lesson: "zawaj.s4Lesson",
+    reference: "zawaj.s4Ref",
   },
 ];
 
 const BLESSED_HOME = [
   {
     icon: 'heart-outline' as const,
-    title: 'Affection et miséricorde',
-    text: 'Entretenir la douceur, les gestes d’attention et la compassion, surtout lorsque la fatigue ou les difficultés apparaissent.',
+    title: "zawaj.f1Title",
+    text: "zawaj.f1Text",
     reference: 'Ar-Rûm · 30:21',
   },
   {
     icon: 'refresh-outline' as const,
-    title: 'Patience et pardon',
-    text: 'Ne pas laisser chaque erreur devenir une blessure durable. Savoir dialoguer, pardonner et rechercher la réconciliation.',
+    title: "zawaj.f2Title",
+    text: "zawaj.f2Text",
     reference: 'Ash-Shûrâ · 42:40',
   },
   {
     icon: 'sparkles-outline' as const,
-    title: 'Gratitude',
-    text: 'Reconnaître les efforts de son conjoint et exprimer sa gratitude protège le foyer de l’habitude et du mépris.',
+    title: "zawaj.f3Title",
+    text: "zawaj.f3Text",
     reference: 'Ibrâhîm · 14:7',
   },
   {
     icon: 'chatbubbles-outline' as const,
-    title: 'Consultation',
-    text: 'Les décisions importantes gagnent à être discutées avec respect, écoute et recherche sincère de l’intérêt du foyer.',
+    title: "zawaj.f4Title",
+    text: "zawaj.f4Text",
     reference: 'Ash-Shûrâ · 42:38',
   },
   {
     icon: 'school-outline' as const,
-    title: 'Transmettre la foi',
-    text: 'Faire du foyer un lieu où la prière, le bon comportement et l’amour d’Allah se transmettent naturellement aux enfants.',
+    title: "zawaj.f5Title",
+    text: "zawaj.f5Text",
     reference: 'At-Tahrîm · 66:6',
   },
 ];
 
 const ADVICE = [
-  'Renouveler son intention et rechercher la satisfaction d’Allah.',
-  'Donner de l’importance à la religion et au bon comportement.',
-  'Consulter les personnes sages et faire salat al-istikhara.',
-  'Être honnête sur ses attentes et ne pas précipiter la décision.',
+  "zawaj.a1",
+  "zawaj.a2",
+  "zawaj.a3",
+  "zawaj.a4",
 ];
 
 export default function ZawajScreen() {
+  const { t } = useI18n();
   const [openStory, setOpenStory] = useState<number | null>(0);
   const openNourAlZawaj = async () => {
     const url = 'https://nouralzawaj.com';
@@ -152,10 +154,10 @@ export default function ZawajScreen() {
           <View style={styles.heroCopy}>
             <View style={styles.eyebrow}>
               <Ionicons name="heart" size={13} color="#F3D797" />
-              <Text style={styles.eyebrowText}>UN CHEMIN VERS LE MARIAGE</Text>
+              <Text style={styles.eyebrowText}>{t("zawaj.eyebrow")}</Text>
             </View>
             <Text style={styles.heroTitle}>Zawaj</Text>
-            <Text style={styles.heroSubtitle}>Prépare ton cœur, ton intention et ton futur foyer.</Text>
+            <Text style={styles.heroSubtitle}>{t("zawaj.subtitle")}</Text>
 
 
           </View>
@@ -166,15 +168,13 @@ export default function ZawajScreen() {
             <View style={styles.quoteMark}>
               <Ionicons name="sparkles" size={18} color="#D8B767" />
             </View>
-            <Text style={styles.introTitle}>Le mariage en Islam</Text>
-            <Text style={styles.introText}>
-              Le mariage est un engagement, une protection et une source de sérénité. Il se construit avec une intention sincère, du respect et la volonté d’avancer ensemble vers le bien.
-            </Text>
+            <Text style={styles.introTitle}>{t("zawaj.introTitle")}</Text>
+            <Text style={styles.introText}>{t('zawaj.introText')}</Text>
           </View>
 
           <Pressable
             accessibilityRole="link"
-            accessibilityLabel="Accéder à Nour Al Zawaj"
+            accessibilityLabel={t("zawaj.nourA11y")}
             onPress={openNourAlZawaj}
             style={({ pressed }) => [styles.heroNourCard, styles.bodyNourCard, pressed && styles.heroNourCardPressed]}
           >
@@ -183,53 +183,51 @@ export default function ZawajScreen() {
             </View>
             <View style={styles.heroNourContent}>
               <Text style={styles.heroNourKicker}>NOUR AL ZAWAJ</Text>
-              <Text style={styles.heroNourTitle}>Rencontres sérieuses entre musulmans</Text>
-              <Text style={styles.heroNourText}>Une plateforme dédiée au mariage, dans un cadre respectueux des valeurs islamiques.</Text>
+              <Text style={styles.heroNourTitle}>{t("zawaj.nourTitle")}</Text>
+              <Text style={styles.heroNourText}>{t("zawaj.nourText")}</Text>
             </View>
             <View style={styles.heroNourArrow}>
               <Ionicons name="arrow-forward" size={18} color="#FFFFFF" />
             </View>
           </Pressable>
 
-          <SectionHeader eyebrow="POURQUOI SE MARIER ?" title="Les bienfaits du mariage" />
+          <SectionHeader eyebrow={t('zawaj.whyEyebrow')} title={t('zawaj.whyTitle')} />
           <View style={styles.benefitsGrid}>
             {BENEFITS.map((benefit) => (
               <View key={benefit.title} style={styles.benefitCard}>
                 <View style={styles.iconCircle}>
                   <Ionicons name={benefit.icon} size={22} color="#D8B767" />
                 </View>
-                <Text style={styles.benefitTitle}>{benefit.title}</Text>
-                <Text style={styles.benefitText}>{benefit.text}</Text>
+                <Text style={styles.benefitTitle}>{t(benefit.title as TranslationKey)}</Text>
+                <Text style={styles.benefitText}>{t(benefit.text as TranslationKey)}</Text>
               </View>
             ))}
           </View>
 
-          <SectionHeader eyebrow="PAROLES D’ALLAH" title="Versets sur le mariage" />
+          <SectionHeader eyebrow={t('zawaj.versesEyebrow')} title={t('zawaj.versesTitle')} />
           {VERSES.map((verse, index) => (
             <View key={verse.reference} style={styles.scriptureCard}>
               <View style={styles.scriptureTopline}>
                 <Text style={styles.scriptureIndex}>{String(index + 1).padStart(2, '0')}</Text>
                 <Text style={styles.scriptureReference}>{verse.reference}</Text>
               </View>
-              <Text style={styles.scriptureText}>« {verse.text} »</Text>
+              <Text style={styles.scriptureText}>« {t(verse.text as TranslationKey)} »</Text>
             </View>
           ))}
 
-          <SectionHeader eyebrow="PAROLES PROPHÉTIQUES" title="Hadiths essentiels" />
+          <SectionHeader eyebrow={t('zawaj.hadithEyebrow')} title={t('zawaj.hadithTitle')} />
           {HADITHS.map((hadith) => (
             <View key={hadith.text} style={styles.hadithCard}>
               <View style={styles.hadithAccent} />
               <View style={styles.hadithContent}>
-                <Text style={styles.hadithText}>« {hadith.text} »</Text>
-                <Text style={styles.hadithSource}>{hadith.source}</Text>
+                <Text style={styles.hadithText}>« {t(hadith.text as TranslationKey)} »</Text>
+                <Text style={styles.hadithSource}>{t(hadith.source as TranslationKey)}</Text>
               </View>
             </View>
           ))}
 
-          <SectionHeader eyebrow="RÉCITS ET LEÇONS" title="Histoires inspirantes" />
-          <Text style={styles.sectionIntro}>
-            Des récits courts pour méditer sur les qualités qui font grandir un couple.
-          </Text>
+          <SectionHeader eyebrow={t('zawaj.storiesEyebrow')} title={t('zawaj.storiesTitle')} />
+          <Text style={styles.sectionIntro}>{t('zawaj.storiesIntro')}</Text>
           <View style={styles.storiesList}>
             {STORIES.map((story, index) => {
               const isOpen = openStory === index;
@@ -246,19 +244,19 @@ export default function ZawajScreen() {
                       <Ionicons name={story.icon} size={22} color="#D8B767" />
                     </View>
                     <View style={styles.storyHeading}>
-                      <Text style={styles.storyTitle}>{story.title}</Text>
-                      <Text style={styles.storySubtitle}>{story.subtitle}</Text>
+                      <Text style={styles.storyTitle}>{t(story.title as TranslationKey)}</Text>
+                      <Text style={styles.storySubtitle}>{t(story.subtitle as TranslationKey)}</Text>
                     </View>
                     <Ionicons name={isOpen ? 'chevron-up' : 'chevron-down'} size={19} color="#C8A45B" />
                   </View>
                   {isOpen && (
                     <View style={styles.storyExpanded}>
-                      <Text style={styles.storyText}>{story.story}</Text>
+                      <Text style={styles.storyText}>{t(story.story as TranslationKey)}</Text>
                       <View style={styles.lessonBox}>
-                        <Text style={styles.lessonLabel}>À RETENIR</Text>
-                        <Text style={styles.lessonText}>{story.lesson}</Text>
+                        <Text style={styles.lessonLabel}>{t("zawaj.remember")}</Text>
+                        <Text style={styles.lessonText}>{t(story.lesson as TranslationKey)}</Text>
                       </View>
-                      <Text style={styles.storyReference}>{story.reference}</Text>
+                      <Text style={styles.storyReference}>{t(story.reference as TranslationKey)}</Text>
                     </View>
                   )}
                 </Pressable>
@@ -266,7 +264,7 @@ export default function ZawajScreen() {
             })}
           </View>
 
-          <SectionHeader eyebrow="INVOCATION" title="Demander un foyer béni" />
+          <SectionHeader eyebrow={t('zawaj.duaEyebrow')} title={t('zawaj.duaTitle')} />
           <LinearGradient colors={['#173A35', '#0F2D29']} style={styles.duaCard}>
             <Text style={styles.arabic}>
               رَبَّنَا هَبْ لَنَا مِنْ أَزْوَاجِنَا وَذُرِّيَّاتِنَا قُرَّةَ أَعْيُنٍ وَاجْعَلْنَا لِلْمُتَّقِينَ إِمَامًا
@@ -275,26 +273,22 @@ export default function ZawajScreen() {
             <Text style={styles.phonetic}>
               Rabbanâ hab lanâ min azwâjinâ wa dhurriyyâtinâ qurrata a‘yunin waj‘alnâ lil-muttaqîna imâmâ.
             </Text>
-            <Text style={styles.translation}>
-              Seigneur, accorde-nous en nos épouses et nos descendants la joie des yeux, et fais de nous un guide pour les pieux.
-            </Text>
+            <Text style={styles.translation}>{t('zawaj.duaTranslation')}</Text>
             <Text style={styles.duaReference}>Al-Furqân · 25:74</Text>
           </LinearGradient>
 
-          <SectionHeader eyebrow="AVANT DE S’ENGAGER" title="Quelques repères" />
+          <SectionHeader eyebrow={t('zawaj.adviceEyebrow')} title={t('zawaj.adviceTitle')} />
           <View style={styles.adviceCard}>
             {ADVICE.map((item, index) => (
               <View key={item} style={[styles.adviceRow, index === ADVICE.length - 1 && styles.adviceRowLast]}>
                 <View style={styles.adviceNumber}><Text style={styles.adviceNumberText}>{index + 1}</Text></View>
-                <Text style={styles.adviceText}>{item}</Text>
+                <Text style={styles.adviceText}>{t(item as TranslationKey)}</Text>
               </View>
             ))}
           </View>
 
-          <SectionHeader eyebrow="AU QUOTIDIEN" title="Construire un foyer béni" />
-          <Text style={styles.sectionIntro}>
-            Cinq fondations simples à cultiver avec constance dans la vie de famille.
-          </Text>
+          <SectionHeader eyebrow={t('zawaj.dailyEyebrow')} title={t('zawaj.dailyTitle')} />
+          <Text style={styles.sectionIntro}>{t('zawaj.dailyIntro')}</Text>
           <View style={styles.homeFoundations}>
             {BLESSED_HOME.map((item) => (
               <View key={item.title} style={styles.foundationCard}>
@@ -302,8 +296,8 @@ export default function ZawajScreen() {
                   <Ionicons name={item.icon} size={20} color="#17312E" />
                 </View>
                 <View style={styles.foundationContent}>
-                  <Text style={styles.foundationTitle}>{item.title}</Text>
-                  <Text style={styles.foundationText}>{item.text}</Text>
+                  <Text style={styles.foundationTitle}>{t(item.title as TranslationKey)}</Text>
+                  <Text style={styles.foundationText}>{t(item.text as TranslationKey)}</Text>
                   <Text style={styles.foundationReference}>{item.reference}</Text>
                 </View>
               </View>
@@ -315,12 +309,10 @@ export default function ZawajScreen() {
               <Ionicons name="heart-circle-outline" size={28} color="#17312E" />
             </View>
             <Text style={styles.ctaKicker}>NOUR AL ZAWAJ</Text>
-            <Text style={styles.ctaTitle}>Prêt à franchir une nouvelle étape ?</Text>
-            <Text style={styles.ctaDescription}>
-              Découvre une plateforme pensée pour les musulmans et musulmanes à la recherche d’un mariage sérieux.
-            </Text>
+            <Text style={styles.ctaTitle}>{t("zawaj.ctaTitle")}</Text>
+            <Text style={styles.ctaDescription}>{t('zawaj.ctaText')}</Text>
             <Pressable accessibilityRole="link" onPress={openNourAlZawaj} style={styles.ctaButton}>
-              <Text style={styles.ctaButtonText}>Découvrir Nour Al Zawaj</Text>
+              <Text style={styles.ctaButtonText}>{t("zawaj.ctaButton")}</Text>
               <Ionicons name="arrow-forward" size={18} color="#FFFFFF" />
             </Pressable>
           </LinearGradient>
