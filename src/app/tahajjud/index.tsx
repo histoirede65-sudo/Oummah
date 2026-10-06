@@ -210,6 +210,9 @@ export default function TahajjudScreen() {
                   ) : null}
                 </View>
                 <WeekMoons nights={view.nights} pauses={view.pauses} currentNight={state?.validatableKey ?? tonight.key} />
+                {state?.validatableKey && !view.nights[state.validatableKey] ? (
+                  <Text style={styles.weekHint}>{tx('Cercle doré : la nuit que vous pouvez encore enregistrer.')}</Text>
+                ) : null}
               </GlassCard>
             </Pressable>
           </Animated.View>
@@ -277,6 +280,7 @@ const styles = StyleSheet.create({
   tileLabelSoon: { color: night.textSoft },
   tileHint: { marginTop: 2, color: night.muted, fontSize: 14, ...nightType.body },
   weekCard: { marginTop: 16 },
+  weekHint: { marginTop: 10, color: night.muted, fontSize: 14, ...nightType.body },
   community: { marginTop: 16, flexDirection: 'row', alignItems: 'center', gap: 14, padding: 16, borderRadius: 24, borderWidth: 1, borderColor: night.goldLine },
   communityIcon: { width: 48, height: 48, borderRadius: 24, alignItems: 'center', justifyContent: 'center', backgroundColor: '#080518' },
   communityCopy: { flex: 1 },
