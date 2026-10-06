@@ -54,6 +54,7 @@ export default function AdminHomeScreen() {
         [inbox.posts.length, "annonce"],
         [inbox.reports.length, "signalement"],
         [inbox.wall.length, "dua"],
+        [inbox.certifiers.length, "certificateur"],
       ].filter(([count]) => Number(count) > 0).map(([count, label]) => `${count} ${label}${Number(count) > 1 && label !== "support" ? "s" : ""}`)
     : [];
 

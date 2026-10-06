@@ -4,7 +4,11 @@ import { useCallback, useRef, useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 
 import { ActionButton, AdminScreen, adminStyles, Card, EmptyState, ErrorState, Loading, SectionTitle } from "../../components/admin/AdminUI";
+import { Image } from "expo-image";
 import { adminRpc } from "../../features/admin/adminClient";
+import { reviewCertifierReport, type CertifierReport } from "../../features/admin/halalCertifierAdmin";
+import { getHalalCertificationBodies, getHalalCertifier } from "../../features/boycott/halalCertifierRepository";
+import { useHalalCertificationBodies } from "../../features/boycott/halalCertificationBodiesLoader";
 import { inboxTotal, loadInbox, type Inbox } from "../../features/admin/adminInbox";
 import { adminReviewMosquePost } from "../../features/mosques/data/mosquePosts";
 import { adminReviewMosquePrayerTimeUpdate, type MosquePrayerTimeProposal } from "../../features/mosques/data/mosquePrayerUpdates";
@@ -141,9 +145,42 @@ export default function AdminInbox() {
               </View>
             </Card>
           ))}
+
+          {inbox.certifiers.length ? <SectionTitle count={inbox.certifiers.length}>Certificateurs halal indiqués</SectionTitle> : null}
+          {inbox.certifiers.map((report) => (
+            <CertifierCard key={report.id} report={report} onDone={() => remove("certifiers", report.id)} />
+          ))}
         </>
       ) : null}
     </AdminScreen>
+  );
+}
+
+/** The team reads the logo on the photo and validates the body actually printed, whatever the user chose. */
+function CertifierCard({ report, onDone }: { report: CertifierReport; onDone: () => void }) {
+  useHalalCertificationBodies();
+  const [chosen, setChosen] = useState<string | null>(report.certifierId);
+  const bodies = getHalalCertificationBodies();
+  const name = (id: string | null) => (id ? getHalalCertifier(id)?.name ?? id : null);
+  return (
+    <Card>
+      <Text style={adminStyles.tag}>Indiqué : {report.certifierId ? name(report.certifierId) : `Autre · ${report.other ?? "?"}`}</Text>
+      <Text style={adminStyles.rowTitle}>{report.productName || "Produit sans nom"}</Text>
+      <Text style={adminStyles.meta}>Code-barres {report.barcode} · {day(report.createdAt)}{report.current ? ` · déjà confirmé : ${name(report.current)}` : ""}</Text>
+      {report.photoUrl ? <Image source={{ uri: report.photoUrl }} style={styles.photo} contentFit="contain" /> : <Text style={adminStyles.rowText}>Photo indisponible.</Text>}
+      <Text style={[adminStyles.meta, styles.pickLabel]}>Logo visible sur la photo :</Text>
+      <View style={styles.chips}>
+        {bodies.map((body) => (
+          <Pressable key={body.id} onPress={() => setChosen(body.id)} style={[styles.chip, chosen === body.id && styles.chipOn]} accessibilityRole="button" accessibilityState={{ selected: chosen === body.id }}>
+            <Text style={[styles.chipText, chosen === body.id && styles.chipTextOn]}>{body.name}</Text>
+          </Pressable>
+        ))}
+      </View>
+      <View style={adminStyles.actions}>
+        <ActionButton label="Refuser" tone="outline" done="Signalement refusé" onPress={async () => { await reviewCertifierReport(report.id, false); onDone(); }} />
+        <ActionButton label={chosen ? `Valider ${name(chosen)}` : "Choisir un logo"} icon="checkmark" disabled={!chosen} done="Certificateur validé pour ce produit" onPress={async () => { if (!chosen) return; await reviewCertifierReport(report.id, true, chosen); onDone(); }} />
+      </View>
+    </Card>
   );
 }
 
@@ -177,5 +214,12 @@ function OpenRow({ tag, title, text, meta, href, action = "Ouvrir" }: { tag: str
 const styles = StyleSheet.create({
   quote: { marginTop: 8, padding: 10, borderRadius: 12, backgroundColor: "rgba(255,255,255,0.04)" },
   openRow: { marginTop: 10, flexDirection: "row", alignItems: "center", gap: 4 },
+  photo: { marginTop: 10, width: "100%", aspectRatio: 4 / 3, borderRadius: 14, backgroundColor: "rgba(255,255,255,0.04)" },
+  pickLabel: { marginTop: 10, marginBottom: 6 },
+  chips: { flexDirection: "row", flexWrap: "wrap", gap: 6 },
+  chip: { paddingHorizontal: 11, paddingVertical: 7, borderRadius: 16, borderWidth: 1, borderColor: colors.borderSoft },
+  chipOn: { backgroundColor: colors.goldLight, borderColor: colors.goldLight },
+  chipText: { color: colors.textSecondary, fontFamily: typography.sans, fontSize: 13, fontWeight: "700" },
+  chipTextOn: { color: colors.background },
   openText: { color: colors.goldLight, fontFamily: typography.sans, fontSize: 14, fontWeight: "800" },
 });

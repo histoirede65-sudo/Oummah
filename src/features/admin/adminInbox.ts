@@ -1,4 +1,5 @@
 import { adminRpc } from "./adminClient";
+import { listCertifierReports, type CertifierReport } from "./halalCertifierAdmin";
 import { adminListMosquePosts, type MosquePostProposal } from "../mosques/data/mosquePosts";
 import { adminListMosquePrayerTimeUpdates, type MosquePrayerTimeProposal } from "../mosques/data/mosquePrayerUpdates";
 import { getAdminSupportTickets, type AdminSupportTicket } from "../support/AdminSupportService";
@@ -15,6 +16,7 @@ export type Inbox = {
   reports: Report[];
   wall: WallAdminItem[];
   support: AdminSupportTicket[];
+  certifiers: CertifierReport[];
   failed: string[];
 };
 
@@ -29,19 +31,20 @@ export async function loadInbox(): Promise<Inbox> {
       return fallback;
     }
   };
-  const [mosques, times, posts, reports, wall, support] = await Promise.all([
+  const [mosques, times, posts, reports, wall, support, certifiers] = await Promise.all([
     safe("mosquées", () => adminRpc<PendingMosque[]>("admin_list_mosque_submissions", { p_status: "pending" }), []),
     safe("horaires", adminListMosquePrayerTimeUpdates, []),
     safe("annonces", adminListMosquePosts, []),
     safe("signalements", () => adminRpc<Report[]>("admin_list_mosque_reports", { p_status: "pending" }), []),
     safe("mur des duas", adminListWall, []),
     safe("support", () => getAdminSupportTickets("open"), []),
+    safe("certificateurs", listCertifierReports, []),
   ]);
-  return { mosques: mosques ?? [], times, posts, reports: reports ?? [], wall, support, failed };
+  return { mosques: mosques ?? [], times, posts, reports: reports ?? [], wall, support, certifiers, failed };
 }
 
 export function inboxTotal(inbox: Inbox | null) {
   if (!inbox) return 0;
-  return inbox.mosques.length + inbox.times.length + inbox.posts.length + inbox.reports.length + inbox.wall.length + inbox.support.length;
+  return inbox.mosques.length + inbox.times.length + inbox.posts.length + inbox.reports.length + inbox.wall.length + inbox.support.length + inbox.certifiers.length;
 }
 
