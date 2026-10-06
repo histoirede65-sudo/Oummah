@@ -65,8 +65,10 @@ export function ChatBubble({ mine, body, meta, author, tail, onLongPress }: {
 export function ChatFrame<T extends Base>({
   title, subtitle, avatar, icon, onPressHeader, right,
   messages, renderItem, onEndReached, loadingMore, emptyTitle, emptyText, error,
-  draft, onDraft, onSend, composerAction, placeholder = tx('Votre message…'),
+  draft, onDraft, onSend, composerAction, placeholder = tx('Votre message…'), readOnly,
 }: {
+  /** Replaces the composer with this note (conversation one cannot answer). */
+  readOnly?: string;
   title: string;
   subtitle: string;
   avatar?: CommunityAvatar;
@@ -132,7 +134,7 @@ export function ChatFrame<T extends Base>({
 
           {error ? <Text style={styles.error}>{error}</Text> : null}
 
-          <View style={styles.composer}>
+          {readOnly ? <Text style={styles.readOnly}>{readOnly}</Text> : <View style={styles.composer}>
             {composerAction}
             <TextInput
               value={draft}
@@ -146,7 +148,7 @@ export function ChatFrame<T extends Base>({
             <Pressable onPress={onSend} disabled={!draft.trim()} style={[styles.send, !draft.trim() && styles.disabled]}>
               <Ionicons name="send" size={18} color={night.sky0} />
             </Pressable>
-          </View>
+          </View>}
         </KeyboardAvoidingView>
       </SafeAreaView>
     </View>
@@ -189,6 +191,7 @@ const styles = StyleSheet.create({
   empty: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: 10, paddingHorizontal: 30, transform: [{ scaleY: -1 }] },
   emptyTitle: { color: night.text, fontSize: 22, ...nightType.display },
   emptyText: { color: night.textSoft, fontSize: 15, lineHeight: 21, textAlign: 'center', ...nightType.body },
+  readOnly: { paddingHorizontal: 24, paddingTop: 10, paddingBottom: 14, color: night.muted, fontSize: 13.5, lineHeight: 19, textAlign: 'center', ...nightType.medium },
   error: { color: '#F28B82', fontSize: 14, textAlign: 'center', paddingHorizontal: 18, paddingBottom: 6, ...nightType.medium },
   composer: { flexDirection: 'row', alignItems: 'flex-end', gap: 10, paddingHorizontal: 14, paddingVertical: 10, borderTopWidth: 1, borderTopColor: night.line },
   input: {

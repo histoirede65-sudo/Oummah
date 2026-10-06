@@ -133,4 +133,22 @@ export async function getConversations(): Promise<Conversation[]> {
 export const sendChatMessage = (userId: string, body: string) => rpc<string>('chat_send', { p_user: userId, p_body: body });
 export const deleteChatMessage = (id: string) => rpc<void>('chat_delete', { p_id: id });
 export const reportChatMessage = (id: string) => rpc<void>('chat_report', { p_id: id });
+// ----- Messages from the OUMMAH team (read only) ---------------------------------------------
+
+export type OummahMessage = { id: string; body: string; createdAt: string };
+export type OummahSummary = { lastBody: string; lastAt: string; unread: number };
+
+/** Opening the thread marks every OUMMAH message as read. */
+export async function getOummahThread(before?: string): Promise<OummahMessage[]> {
+  const rows = await rpc<Array<{ id: string; body: string; created_at: string }>>('oummah_thread', { p_before: before ?? null, p_limit: 40 });
+  return rows.map((row) => ({ id: row.id, body: row.body, createdAt: row.created_at }));
+}
+
+/** null when the team has not written to this member yet. */
+export async function getOummahSummary(): Promise<OummahSummary | null> {
+  const raw = await rpc<{ lastBody: string; lastAt: string; unread: number } | null>('oummah_summary');
+  return raw ? { lastBody: raw.lastBody, lastAt: raw.lastAt, unread: Number(raw.unread) || 0 } : null;
+}
+
+/** Private messages and OUMMAH messages not yet read. */
 export const getChatUnreadCount = () => rpc<number>('chat_unread_count').then(Number).catch(() => 0);

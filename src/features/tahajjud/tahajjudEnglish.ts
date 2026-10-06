@@ -691,6 +691,26 @@ export const TAHAJJUD_EN: Record<string, string> = {
   'Votre pseudo est unique et lié à votre compte : il ne peut plus être modifié.': 'Your username is unique and linked to your account: it can no longer be changed.',
   'Unique et définitif : il ne pourra plus être modifié. Visible des autres membres, évitez votre nom complet.':
     'Unique and permanent: it can never be changed. Visible to other members, avoid your full name.',
+  'Nom affiché': 'Display name',
+  'Modifier': 'Change',
+  'Valider ce nom': 'Use this name',
+  'Nom enregistré': 'Name saved',
+  'Nom': 'Name',
+  '« {0} » était déjà utilisé : vous apparaissez sous le nom « {1} ».': '“{0}” was already taken: you appear as “{1}”.',
+  'Vous pourrez changer de nom à nouveau le {0}.': 'You can change your name again on {0}.',
+  'Vous pourrez le changer à nouveau le {0}.': 'You can change it again on {0}.',
+  'Le nom doit faire de 2 à 20 caractères (lettres, chiffres, espace, point, tiret).':
+    'The name must be 2 to 20 characters (letters, numbers, space, dot, hyphen).',
+  'Ce nom contient des mots qui ne sont pas acceptés.': 'This name contains words that are not allowed.',
+  'Impossible de changer le nom pour le moment.': 'Unable to change the name right now.',
+  'Vous ne pourrez plus le changer pendant 7 jours. Si le nom est déjà pris, un chiffre est ajouté automatiquement.':
+    'You will not be able to change it again for 7 days. If the name is taken, a number is added automatically.',
+  'C’est le nom que voient vos amis. Vous pouvez le changer une fois par semaine.':
+    'This is the name your friends see. You can change it once a week.',
+  'Messages de l’équipe': 'Messages from the team',
+  'Les nouveautés et messages de l’équipe OUMMAH apparaîtront ici.': 'News and messages from the OUMMAH team will appear here.',
+  'Messages de l’équipe OUMMAH. Pour nous écrire : Profil › Aide et support.':
+    'Messages from the OUMMAH team. To write to us: Profile › Help and support.',
   'Avatar': 'Avatar',
   'Confidentialité': 'Privacy',
   'Apparaître dans « La Oummah cette nuit »': 'Appear in “The Ummah tonight”',

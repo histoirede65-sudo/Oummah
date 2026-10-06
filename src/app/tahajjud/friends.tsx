@@ -19,6 +19,7 @@ import {
   friendsErrorMessage,
   getConversations,
   getFriendsOverview,
+  getOummahSummary,
   markEncouragementsRead,
   removeFriend,
   reportMember,
@@ -32,6 +33,7 @@ import {
   type FriendRelation,
   type FriendsOverview,
   type Member,
+  type OummahSummary,
 } from '../../features/tahajjud/tahajjudFriends';
 import { tx, txCount } from '../../features/tahajjud/tahajjudI18n';
 
@@ -92,9 +94,11 @@ export default function TahajjudFriendsScreen() {
   const [showBlocked, setShowBlocked] = useState(false);
   const [conversations, setConversations] = useState<Record<string, Conversation>>({});
   const [groups, setGroups] = useState<GroupSummary[]>([]);
+  const [oummah, setOummah] = useState<OummahSummary | null>(null);
   const searchSeq = useRef(0);
 
   const load = useCallback(async () => {
+    void getOummahSummary().then(setOummah).catch(() => undefined);
     try {
       const [overview, threads, myGroups] = await Promise.all([
         getFriendsOverview(),
@@ -236,6 +240,26 @@ export default function TahajjudFriendsScreen() {
             </View>
           ))}
         </GlassCard>
+      ) : null}
+
+      {oummah ? (
+        <Pressable onPress={() => router.push('/tahajjud/oummah' as Href)} style={({ pressed }) => [pressed && styles.pressed]}>
+          <GlassCard gold style={styles.oummahCard}>
+            <View style={styles.row}>
+              <View style={styles.oummahIcon}><Ionicons name="moon" size={20} color={night.sky0} /></View>
+              <View style={styles.flex}>
+                <Text style={styles.name}>OUMMAH</Text>
+                <Text style={[styles.groupLast, oummah.unread > 0 && styles.lastMessageUnread]} numberOfLines={1}>{oummah.lastBody}</Text>
+              </View>
+              <View style={styles.groupSide}>
+                <Text style={styles.time}>{timeAgo(oummah.lastAt)}</Text>
+                {oummah.unread ? (
+                  <View style={styles.badgeInline}><Text style={styles.badgeText}>{oummah.unread > 9 ? '9+' : oummah.unread}</Text></View>
+                ) : null}
+              </View>
+            </View>
+          </GlassCard>
+        </Pressable>
       ) : null}
 
       {friends.length ? (
@@ -480,6 +504,8 @@ const styles = StyleSheet.create({
   newGroupText: { color: night.sky0, fontSize: 14, ...nightType.bold },
   groupEmpty: { flexDirection: 'row', alignItems: 'center', gap: 12 },
   groupEmptyText: { flex: 1, color: night.textSoft, fontSize: 15, lineHeight: 21, ...nightType.body },
+  oummahCard: { marginTop: 16, paddingVertical: 8 },
+  oummahIcon: { width: 42, height: 42, borderRadius: 21, alignItems: 'center', justifyContent: 'center', backgroundColor: night.gold },
   groupIcon: { width: 42, height: 42, borderRadius: 21, alignItems: 'center', justifyContent: 'center', backgroundColor: night.lavender },
   groupTitleRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
   groupLast: { marginTop: 2, color: night.muted, fontSize: 14, ...nightType.medium },
