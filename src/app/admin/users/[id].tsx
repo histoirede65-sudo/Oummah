@@ -16,6 +16,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+import { grantManualPremium, revokeManualPremium } from "../../../features/admin/AdminPremiumService";
 import {
   adjustAdminUserCredits,
   deleteAdminUser,
@@ -206,6 +207,34 @@ export default function AdminUserDetailScreen() {
     );
   };
 
+  // Premium offered by hand (months > 0) or withdrawn (0). Store subscriptions are not touched.
+  const setPremium = (months: number) => {
+    if (!userId || saving || !user) return;
+    Alert.alert(
+      months ? `Offrir ${months} mois de Premium ?` : "Retirer le Premium offert ?",
+      months ? `${user.email} aura accès à Premium pendant ${months} mois.` : `${user.email} perd le Premium offert à la main. Un abonnement payé sur le store n’est pas touché.`,
+      [
+        { text: "Annuler", style: "cancel" },
+        {
+          text: months ? "Offrir" : "Retirer",
+          style: months ? "default" : "destructive",
+          onPress: async () => {
+            setSaving(true);
+            try {
+              if (months) await grantManualPremium(userId, months, "Premium offert par OUMMAH");
+              else await revokeManualPremium(userId, "Premium retiré par OUMMAH");
+              Alert.alert(months ? "Premium offert" : "Premium retiré", months ? `${months} mois de Premium pour ${user.email}.` : `Le Premium offert à ${user.email} est retiré.`);
+            } catch (error) {
+              Alert.alert("Action impossible", error instanceof Error ? error.message : "Réessayez.");
+            } finally {
+              setSaving(false);
+            }
+          },
+        },
+      ],
+    );
+  };
+
   const removeUser = () => {
     if (!userId || saving || !user) return;
 
@@ -353,6 +382,25 @@ export default function AdminUserDetailScreen() {
                 </Text>
               </View>
             </View>
+
+            <Text style={styles.sectionTitle}>Premium</Text>
+
+            <View style={styles.quickCreditsRow}>
+              {([1, 3, 12] as const).map((months) => (
+                <Pressable
+                  key={months}
+                  disabled={saving}
+                  onPress={() => setPremium(months)}
+                  style={[styles.quickCreditButton, saving && styles.disabled]}
+                >
+                  <Ionicons name="diamond-outline" size={17} color={colors.background} />
+                  <Text style={styles.quickCreditText}>{months} mois</Text>
+                </Pressable>
+              ))}
+            </View>
+            <Pressable disabled={saving} onPress={() => setPremium(0)} style={[styles.revokePremium, saving && styles.disabled]}>
+              <Text style={styles.revokePremiumText}>Retirer le Premium offert</Text>
+            </Pressable>
 
             <Text style={styles.sectionTitle}>Ajouter rapidement des crédits Wasil</Text>
 
@@ -686,6 +734,8 @@ const styles = StyleSheet.create({
     height: 1,
     backgroundColor: colors.border,
   },
+  revokePremium: { marginTop: 10, minHeight: 44, alignItems: "center", justifyContent: "center", borderRadius: 14, borderWidth: 1, borderColor: "rgba(233,107,114,0.6)" },
+  revokePremiumText: { color: colors.danger, fontWeight: "800", fontSize: 14 },
   sectionTitle: {
     marginTop: 22,
     marginBottom: 11,
