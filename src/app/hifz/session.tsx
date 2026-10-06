@@ -869,6 +869,24 @@ export default function HifzSessionScreen() {
               </View>
             ) : textVisibility === "full" ? (
               <View style={styles.wordSelection}>
+                {/* Signature feature: listen to one word or one passage. Shown before the verse, never hidden. */}
+                <View style={[styles.wordFeature, selectedWordRange && styles.wordFeatureActive]}>
+                  <View style={styles.wordFeatureIcon}>
+                    <Ionicons name={selectedWordRange ? "headset" : "hand-left-outline"} size={20} color={selectedWordRange ? colors.background : colors.goldLight} />
+                  </View>
+                  <View style={styles.wordFeatureCopy}>
+                    <Text style={[styles.wordFeatureTitle, selectedWordRange && styles.wordFeatureTitleActive]}>
+                      {selectedWordRange
+                        ? selectedWordRange[0] === selectedWordRange[1]
+                          ? t("hifz.session.wordFeatureOne")
+                          : t("hifz.session.wordFeatureRange", { from: selectedWordRange[0], to: selectedWordRange[1] })
+                        : t("hifz.session.wordFeatureTitle")}
+                    </Text>
+                    <Text style={[styles.wordFeatureText, selectedWordRange && styles.wordFeatureTextActive]}>
+                      {selectedWordRange ? t("hifz.session.wordFeatureExtend") : t("hifz.session.wordFeatureText")}
+                    </Text>
+                  </View>
+                </View>
                 <QuranArabicText
                   screenWidth={screenWidth}
                   preferredSize={33}
@@ -974,12 +992,8 @@ export default function HifzSessionScreen() {
               </View>
             )}
             <Text style={styles.cardHint}>
-              {textVisibility === "full"
-                ? t("hifz.session.tapWordHint")
-                : textVisibility === "masked"
-                  ? t("hifz.session.memoryHint")
-                  : null}
-              {textVisibility !== "hidden" && endVerse > startVerse ? " · " : null}
+              {textVisibility === "masked" ? t("hifz.session.memoryHint") : null}
+              {textVisibility === "masked" && endVerse > startVerse ? " · " : null}
               {endVerse > startVerse ? t("hifz.session.swipeHint") : null}
             </Text>
             {textVisibility === "full" ? (
@@ -1364,6 +1378,31 @@ const styles = StyleSheet.create({
     textDecorationLine: "underline",
     textDecorationColor: "rgba(227,181,90,0.72)",
   },
+  wordFeature: {
+    marginBottom: 14,
+    padding: 12,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+    borderRadius: 18,
+    borderWidth: 1,
+    borderColor: "rgba(227,181,90,0.55)",
+    backgroundColor: "rgba(227,181,90,0.10)",
+  },
+  wordFeatureActive: { backgroundColor: colors.goldLight, borderColor: colors.goldLight },
+  wordFeatureIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "rgba(227,181,90,0.16)",
+  },
+  wordFeatureCopy: { flex: 1 },
+  wordFeatureTitle: { color: colors.goldLight, fontFamily: typography.sans, fontSize: 16, fontWeight: "800" },
+  wordFeatureTitleActive: { color: colors.background },
+  wordFeatureText: { marginTop: 2, color: colors.textSecondary, fontFamily: typography.sans, fontSize: 13.5, lineHeight: 18 },
+  wordFeatureTextActive: { color: "rgba(8,7,19,0.72)" },
   fullVerseButton: {
     width: "100%",
     marginTop: 8,
