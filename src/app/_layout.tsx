@@ -23,6 +23,7 @@ import { isNotificationPermissionGranted } from '../features/notifications/Notif
 import { loadNotificationCenterPreferences, notificationResponseReadId, requestNotificationCenterPermission, saveNotificationCenterPreferences, saveReadNotificationIds, syncNotificationCenterSchedule, verseOfDayRoute } from '../features/notifications/NotificationCenter';
 import { syncJumuahNotification } from '../features/jumuah/JumuahService';
 import { syncDailyWidgets } from '../features/daily-widgets/DailyWidgetSync';
+import { refreshMosqueReminders } from '../features/mosques/mosqueReminders';
 import { syncGoalReviewNotifications } from '../features/daily-goals/services/reviewNotifications';
 import AnalyticsRouteTracker from '../features/analytics/AnalyticsRouteTracker';
 import FirstVisitGuideHost from '../components/FirstVisitGuideHost';
@@ -461,6 +462,7 @@ export default function RootLayout() {
             : null;
         }
         await syncNotificationCenterSchedule(preferences, schedule, mosque?.name, hifzState);
+        await refreshMosqueReminders(true);
         const { resyncWasilReminders } = await import('../features/wasil/WasilReminderService');
         await resyncWasilReminders();
       })
@@ -723,6 +725,17 @@ export default function RootLayout() {
             })
             .catch(() => undefined);
         }, 1600),
+      );
+
+      // Rappels des mosquées (événements) : reprogrammés au plus toutes les 3 h. Annule aussi les anciens
+      // rappels « Partez maintenant » encore programmés depuis leur retrait.
+      timers.push(
+        setTimeout(() => {
+          if (cancelled) return;
+          void permissionReady
+            .then(() => (cancelled ? undefined : refreshMosqueReminders()))
+            .catch(() => undefined);
+        }, 2000),
       );
 
       // Rappels Wasil créés avec un autre mode d'alerte ou sur un ancien canal.
