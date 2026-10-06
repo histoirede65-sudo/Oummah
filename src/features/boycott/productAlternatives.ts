@@ -202,12 +202,23 @@ function isSameBrand(originalBrands: string[], originalName: string, candidateBr
     || originalBrands.some((brand) => contains(candidateText, brand));
 }
 
+// Open Food Facts categories of meat and charcuterie (fish and seafood excluded: no slaughter).
+const MEAT_CATEGORY = /(^|[:-])(meats?|prepared-meats|hams?|white-hams|cooked-hams|dry-hams|sausages|salamis?|saucissons?|chorizos?|charcuteries?|poultr(y|ies)|chickens?|chicken-breasts?|turkeys?|turkey-breasts?|beef|veal|lambs?|mutton|kebabs?|merguez|meatballs?|burgers?|hamburgers?|nuggets|pates|terrines|rillettes|bacons?|lardons?|cured-meats|meat-based|meat-preparations?|cordons-bleus)(-|$)/;
+
+function isMeatProduct(product: BarcodeLookupResult) {
+  return [...(product.comparisonData?.categoriesTags ?? []), product.comparisonData?.comparedToCategory]
+    .some((tag) => Boolean(tag) && MEAT_CATEGORY.test(String(tag).toLowerCase()) && !/alternative|analogue|substitute|vegetarian|vegan|plant-based/.test(String(tag)));
+}
+
 function selectInCategory(original: BarcodeLookupResult, rows: AlternativeCandidateRow[], catalog: BoycottEntity[]): ProductAlternative[] {
   const originalGrade = toNutriGrade(original.healthData?.nutritionGrade);
   const originalBoycotted = original.assessment === 'boycott';
   const grades = acceptedGrades(originalGrade, originalBoycotted);
   if (!grades.length) return [];
-  const originalCertifier = analyzeHalalCertification(original.halalData).certifierId;
+  const originalHalal = analyzeHalalCertification(original.halalData);
+  const originalCertifier = originalHalal.certifierId;
+  // Meat, charcuterie or a product sold as halal: only halal alternatives.
+  const halalOnly = Boolean(originalCertifier) || originalHalal.halalMention || isMeatProduct(original);
   const originalHealth = analyzeHealthScore(original.healthData);
   const originalScore = originalHealth.available ? originalHealth.score : undefined;
   const originalName = normalize(original.productName ?? '');
@@ -236,8 +247,10 @@ function selectInCategory(original: BarcodeLookupResult, rows: AlternativeCandid
     if (brands[0] && (perBrand.get(brands[0]) ?? 0) >= MAX_PER_BRAND) continue;
     if (isBoycottCandidate(catalog, row)) continue;
     const halalData: ProductHalalData = { labels: row.halal_labels ?? [] };
-    const certifier = analyzeHalalCertification(halalData).certifierId;
+    const candidateHalal = analyzeHalalCertification(halalData);
+    const certifier = candidateHalal.certifierId;
     if (originalCertifier && !certifier) continue;
+    if (halalOnly && !certifier && !candidateHalal.halalMention) continue;
     seen.add(key);
     if (brands[0]) perBrand.set(brands[0], (perBrand.get(brands[0]) ?? 0) + 1);
 
@@ -248,6 +261,7 @@ function selectInCategory(original: BarcodeLookupResult, rows: AlternativeCandid
     reasons.push(row.category_name ? `Même catégorie : ${row.category_name.toLowerCase()}` : 'Même catégorie de produit');
     reasons.push('Aucun lien avec le catalogue boycott OUMMAH');
     if (certifier) reasons.push('Certification halal détectée');
+    else if (candidateHalal.halalMention) reasons.push('Déclaré halal (certificateur non renseigné)');
 
     selected.push({
       barcode: row.barcode,
