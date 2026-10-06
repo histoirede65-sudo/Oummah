@@ -1,7 +1,8 @@
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { useMemo, useState } from "react";
-import { Image, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
+import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
+import { Image } from "expo-image";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { FiqhTopBar, fq, fqType } from "../features/fiqh/components/FiqhUI";
@@ -35,7 +36,7 @@ export default function FiqhHome() {
         return (
           <Pressable key={book.id} onPress={() => router.push(`/fiqh/${book.id}`)} style={({ pressed }) => [styles.book, pressed && styles.pressed]}>
             <View style={styles.thumb}>
-              {FIQH_BOOK_IMAGES[book.id] ? <Image source={FIQH_BOOK_IMAGES[book.id]} style={styles.thumbImage} resizeMode="cover" /> : null}
+              {FIQH_BOOK_IMAGES[book.id] ? <Image source={FIQH_BOOK_IMAGES[book.id]} style={styles.thumbImage} contentFit="cover" /> : null}
             </View>
             <View style={styles.flex}>
               <View style={styles.bookTop}>

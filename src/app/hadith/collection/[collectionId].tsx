@@ -4,7 +4,8 @@ import { LinearGradient } from "expo-linear-gradient";
 import type { Href } from "expo-router";
 import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useMemo, useState } from "react";
-import { ActivityIndicator, Image, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { Image } from "expo-image";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { getHadithPreviews, hadithRepository } from "../../../features/hadith-explorer/data/hadithRepository";
 import type { HadithSummary } from "../../../features/hadith-explorer/domain/Hadith";
@@ -156,7 +157,7 @@ export default function HadithCollectionDetailScreen() {
 
         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.content}>
           <LinearGradient colors={[`${collection.tone}E6`, "#201329"]} style={styles.hero}>
-            {collectionCover(collection.id) ? <Image source={collectionCover(collection.id)} resizeMode="contain" style={styles.cover} /> : null}
+            {collectionCover(collection.id) ? <Image source={collectionCover(collection.id)} contentFit="contain" style={styles.cover} /> : null}
             <View style={styles.heroCopy}>
               <Text style={styles.heroTitle}>{collectionName}</Text>
               <Text style={styles.heroDescription}>{collectionDescription}</Text>

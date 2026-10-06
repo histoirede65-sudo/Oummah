@@ -2,7 +2,8 @@ import { Ionicons } from '@expo/vector-icons';
 import type { Href } from 'expo-router';
 import { router } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Alert, Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Image } from 'expo-image';
 import { getMosqueImageSource } from '../../features/mosques/data/mosqueImage';
 import type { MosquePost } from '../../features/mosques/data/mosquePosts';
 import type { StoredMosque } from '../../features/mosques/data/mosquePreferences';
@@ -47,7 +48,7 @@ export default function MyMosqueSection({ mainMosque, nextPrayer, iqama, nextEve
           <View style={styles.myMosqueImageWrap}>
             <Image
               source={getMosqueImageSource(mainMosque?.id ?? 'main', mainMosque?.imageKey)}
-              resizeMode="cover"
+              contentFit="cover"
               style={StyleSheet.absoluteFill}
             />
             <LinearGradient
@@ -126,7 +127,7 @@ export default function MyMosqueSection({ mainMosque, nextPrayer, iqama, nextEve
                     onPress={() => openStoredMosque(mosque)}
                     style={({ pressed }) => [styles.favoriteChip, pressed && styles.pressed]}
                   >
-                    <Image source={getMosqueImageSource(mosque.id)} resizeMode="cover" style={styles.favoriteChipImage} />
+                    <Image source={getMosqueImageSource(mosque.id)} contentFit="cover" style={styles.favoriteChipImage} />
                     <Text numberOfLines={2} style={styles.favoriteChipName}>{mosque.name}</Text>
                   </Pressable>
                 ))}

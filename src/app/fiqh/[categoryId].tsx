@@ -1,7 +1,8 @@
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { router, useLocalSearchParams } from "expo-router";
-import { Image, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { Image } from "expo-image";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { FiqhTopBar, fq, fqType } from "../../features/fiqh/components/FiqhUI";
@@ -31,7 +32,7 @@ export default function FiqhBookScreen() {
       <FiqhTopBar label={t("fiqh.title")} />
       <ScrollView contentContainerStyle={styles.content}>
         <View style={styles.cover}>
-          {image ? <Image source={image} style={styles.coverImage} resizeMode="cover" /> : null}
+          {image ? <Image source={image} style={styles.coverImage} contentFit="cover" /> : null}
           <LinearGradient colors={["rgba(10,8,20,0)", "rgba(10,8,20,0.55)", fq.page]} locations={[0, 0.55, 1]} style={StyleSheet.absoluteFill} />
           <View style={styles.coverText}>
             <Text style={styles.kicker}>{t("fiqh.bookKicker")}</Text>

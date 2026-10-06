@@ -2,7 +2,8 @@ import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
 import type { ImageSourcePropType } from "react-native";
-import { Image, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { Image } from "expo-image";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useEffect, useState } from "react";
 import { HADITH_COLLECTIONS } from "../../features/hadith-explorer/domain/HadithCollection";
@@ -93,7 +94,7 @@ export default function HadithCollectionsScreen() {
                   <View pointerEvents="none" style={styles.bookWrap}>
                     <Image
                       source={COLLECTION_COVERS[index]}
-                      resizeMode="contain"
+                      contentFit="contain"
                       style={styles.cover}
                     />
                   </View>

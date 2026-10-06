@@ -2,7 +2,8 @@ import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
 import { useEffect, useMemo, useState } from "react";
-import { Image, InteractionManager, Pressable, ScrollView, StyleSheet, Text, useWindowDimensions, View } from "react-native";
+import { InteractionManager, Pressable, ScrollView, StyleSheet, Text, useWindowDimensions, View } from "react-native";
+import { Image } from "expo-image";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Svg, { Circle } from "react-native-svg";
 
@@ -235,7 +236,7 @@ export default function PilgrimageHome() {
                   onPress={() => router.push(`/pilgrimage/book?rite=${rite}`)}
                   style={({ pressed }) => [styles.cover, { width: coverWidth }, pressed && styles.pressed]}
                 >
-                  <Image source={COVERS[rite].image} resizeMode="cover" style={[styles.coverImage, { width: coverWidth, height: coverHeight }]} />
+                  <Image source={COVERS[rite].image} contentFit="cover" style={[styles.coverImage, { width: coverWidth, height: coverHeight }]} />
                   <View style={styles.coverPanel}>
                     <View style={styles.coverTitleRow}>
                       <Text style={styles.coverTitle}>{book.title}</Text>

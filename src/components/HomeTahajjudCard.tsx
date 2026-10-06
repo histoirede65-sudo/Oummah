@@ -3,7 +3,8 @@ import { LinearGradient } from 'expo-linear-gradient';
 import type { Href } from 'expo-router';
 import { router, useFocusEffect } from 'expo-router';
 import { useCallback, useState } from 'react';
-import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Image } from 'expo-image';
 import Animated, { FadeIn } from 'react-native-reanimated';
 
 import type { MosquePrayerSchedule } from '../features/mosques/data/mosquePrayerTimes';
@@ -48,7 +49,7 @@ export default function HomeTahajjudCard({ schedule }: Props) {
       <View style={styles.card}>
         <Pressable accessibilityRole="button" accessibilityLabel={tx("Ouvrir Qiyam al-Layl")} onPress={() => router.push('/tahajjud' as Href)} style={styles.photo}>
           {/* The band has the photo's proportions (2172 × 724): the whole photo is shown. */}
-          <Image source={require('../assets/images/home/tahajjud-night-card-wide.png')} resizeMode="cover" style={styles.backgroundImage} />
+          <Image source={require('../assets/images/home/tahajjud-night-card-wide.png')} contentFit="cover" style={styles.backgroundImage} />
           <LinearGradient
             colors={['rgba(10,7,22,0)', 'rgba(10,7,22,0.35)', 'rgba(10,7,22,0.85)']}
             locations={[0, 0.38, 0.72]}
