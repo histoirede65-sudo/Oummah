@@ -1,5 +1,5 @@
 import type { ProductHalalData } from './data/BoycottRepository';
-import { findHalalCertificationBody } from './halalCertifierRepository';
+import { findHalalCertificationBody, getHalalCertifier } from './halalCertifierRepository';
 
 export type HalalVerificationLevel = 'verified' | 'likely' | 'uncertain' | 'insufficient_data';
 export type HalalVerificationAlert = { organisme: string; typeAlerte: string; description: string; source?: string; dateSource?: string; urlSource?: string };
@@ -20,11 +20,13 @@ function ingredientChecks(ingredientsText?: string) {
   return checks;
 }
 
-export function analyzeHalalCertification(data?: ProductHalalData, ingredientsText?: string): HalalVerificationAnalysis {
+/** confirmedCertifierId: certifier read by the OUMMAH team on a photo of the packaging, for this barcode. Open Food Facts wins when it names one. */
+export function analyzeHalalCertification(data?: ProductHalalData, ingredientsText?: string, confirmedCertifierId?: string | null): HalalVerificationAnalysis {
   const labels = data?.labels ?? []; const certifications = data?.certifications ?? []; // Open Food Facts stores the certifier in labels ("fr:a-votre-service"), not in a certifications field.
-  const body = findHalalCertificationBody([...labels, ...certifications]); const certification = body?.name; const halalMention = hasHalalMention([...labels, ...certifications]); const checks = ingredientChecks(ingredientsText); const alerts: HalalVerificationAlert[] = [];
+  const declared = findHalalCertificationBody([...labels, ...certifications]); const confirmed = !declared && confirmedCertifierId ? getHalalCertifier(confirmedCertifierId) : null;
+  const body = declared ?? confirmed; const certification = body?.name; const halalMention = hasHalalMention([...labels, ...certifications]); const checks = ingredientChecks(ingredientsText); const alerts: HalalVerificationAlert[] = [];
   const hasProductData = labels.length > 0 || certifications.length > 0 || Boolean(data?.manufacturer) || (data?.countries?.length ?? 0) > 0 || checks.length > 0;
   let level: HalalVerificationLevel = 'insufficient_data'; let explanation = 'Aucune information de certification disponible.';
-  if (certification) { level = 'verified'; explanation = 'Certification détectée dans les données du produit (déclarée sur Open Food Facts). La fiche de l’organisme précise ce qui est documenté.'; } else if (halalMention) { level = 'likely'; explanation = "Le produit comporte une mention halal, mais l'organisme certificateur n'a pas pu être identifié."; } else if (hasProductData) { level = 'uncertain'; explanation = 'Les données disponibles ne permettent pas d’identifier une certification halal.'; }
-  return { level, certification, certifierId: body?.id, certificationSource: certification ? 'OpenFoodFacts' : undefined, halalMention, ingredientChecks: checks, alerts, explanation };
+  if (confirmed) { level = 'verified'; explanation = 'Certificateur vérifié par l’équipe OUMMAH sur une photo de l’emballage envoyée par un utilisateur. La fiche de l’organisme précise ce qui est documenté.'; } else if (certification) { level = 'verified'; explanation = 'Certification détectée dans les données du produit (déclarée sur Open Food Facts). La fiche de l’organisme précise ce qui est documenté.'; } else if (halalMention) { level = 'likely'; explanation = 'Produit déclaré halal. Le certificateur n’est pas encore renseigné pour ce code-barres : regardez le logo sur l’emballage (AVS, ARGML, Achahada…).'; } else if (hasProductData) { level = 'uncertain'; explanation = 'Les données disponibles ne permettent pas d’identifier une certification halal.'; }
+  return { level, certification, certifierId: body?.id, certificationSource: confirmed ? 'OUMMAH' : certification ? 'OpenFoodFacts' : undefined, halalMention, ingredientChecks: checks, alerts, explanation };
 }
