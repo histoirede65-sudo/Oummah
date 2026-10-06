@@ -121,7 +121,7 @@ export default function BoycottScannerScreen() {
   }
 
   return (
-    <View style={styles.screen}>
+    <View style={[styles.screen, openedFromProductLink && styles.screenLink]}>
       {!openedFromProductLink ? <CameraView
         style={StyleSheet.absoluteFill}
         facing="back"
@@ -165,13 +165,14 @@ export default function BoycottScannerScreen() {
 
       {openedFromProductLink && !result ? <View style={styles.historyLoading}><Text style={styles.permissionText}>Chargement de la fiche…</Text></View> : null}
 
-      {result ? <BoycottScanResultCard result={result} primaryLabel={openedFromProductLink ? (openedFromHistory ? "Retour à l'historique" : 'Retour au produit précédent') : undefined} onClose={openedFromProductLink ? () => router.back() : resetScanner} onOpenEntity={() => router.push(`/boycott/${result.boycottEntity!.id}`)} onOpenAlternative={(barcode) => router.push({ pathname: '/boycott/scanner', params: { barcode, from: 'alternative' } } as never)} onPropose={() => router.replace({ pathname: '/boycott/add', params: { barcode: result.barcode, name: result.productName || '', brand: result.brandLabel || '' } } as never)} /> : null}
+      {result ? <BoycottScanResultCard result={result} startExpanded={openedFromProductLink} primaryLabel={openedFromProductLink ? (openedFromHistory ? "Retour à l'historique" : 'Retour au produit précédent') : undefined} onClose={openedFromProductLink ? () => router.back() : resetScanner} onOpenEntity={() => router.push(`/boycott/${result.boycottEntity!.id}`)} onOpenAlternative={(barcode) => router.push({ pathname: '/boycott/scanner', params: { barcode, from: 'alternative' } } as never)} onPropose={() => router.replace({ pathname: '/boycott/add', params: { barcode: result.barcode, name: result.productName || '', brand: result.brandLabel || '' } } as never)} /> : null}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: '#000' },
+  screenLink: { backgroundColor: '#090713' },
   historyLoading: { position: 'absolute', top: 0, right: 0, bottom: 0, left: 0, alignItems: 'center', justifyContent: 'center', backgroundColor: '#090713' },
   overlay: { position: 'absolute', top: 0, right: 0, bottom: 0, left: 0, backgroundColor: 'rgba(0,0,0,0.18)' },
   safe: { flex: 1, justifyContent: 'space-between' },

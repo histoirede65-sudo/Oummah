@@ -27,7 +27,7 @@ import { invalidateProductImage, resolveProductImage } from '../../features/boyc
 import { colors } from '../../theme/colors';
 import { typography } from '../../theme/typography';
 
-type Props = { result: BarcodeLookupResult; onClose: () => void; onOpenEntity: () => void; onOpenAlternative: (barcode: string) => void; onPropose: () => void; primaryLabel?: string };
+type Props = { result: BarcodeLookupResult; onClose: () => void; onOpenEntity: () => void; onOpenAlternative: (barcode: string) => void; onPropose: () => void; primaryLabel?: string; /** Opened from a link (alternative, history): full sheet at once. */ startExpanded?: boolean };
 type IconName = React.ComponentProps<typeof Ionicons>['name'];
 
 function LegacyHealthMethodologySheet({ visible, onClose }: { visible: boolean; onClose: () => void }) {
@@ -243,7 +243,7 @@ function AlternativeCard({ alternative, originalScore, onOpen }: { alternative: 
   return <Pressable accessibilityRole="button" accessibilityLabel={`Consulter la fiche de ${alternative.productName}, Score Santé ${alternative.healthScore} sur 100${halalLabel ? `, ${halalLabel}` : ''}`} onPress={() => onOpen(alternative.barcode)} style={({ pressed }) => [styles.altRow, pressed && styles.alternativePressed]}>
     <BoycottProductImage contentFit="cover" style={styles.altRowImage} uri={alternative.imageUrl} />
     <View style={styles.rowCopy}>
-      <Text numberOfLines={2} style={styles.altRowName}>{alternative.productName}</Text>
+      <Text numberOfLines={2} style={styles.altRowName}>{readableName(alternative.productName)}</Text>
       {subtitle ? <Text numberOfLines={1} style={styles.altRowBrand}>{subtitle}</Text> : null}
       <View style={styles.altRowBadges}>
         <View style={[styles.altGradeBubble, { backgroundColor: healthPresentation.backgroundColor }]}><Text style={[styles.altGrade, { color: healthPresentation.color }]}>{alternative.healthGrade}</Text></View>
@@ -269,7 +269,7 @@ function AlternativeSection({ alternatives, loading, originalScore, onOpen }: { 
   </View>;
 }
 
-export function BoycottScanResultCard({ result, onClose, onOpenEntity, onOpenAlternative, onPropose, primaryLabel = 'Scanner un autre produit' }: Props) {
+export function BoycottScanResultCard({ result, onClose, onOpenEntity, onOpenAlternative, onPropose, primaryLabel = 'Scanner un autre produit', startExpanded = false }: Props) {
   useHalalCertificationBodies();
   const [displayImageUrl, setDisplayImageUrl] = useState<string | undefined>();
   const [imageViewerOpen, setImageViewerOpen] = useState(false);
@@ -282,10 +282,10 @@ export function BoycottScanResultCard({ result, onClose, onOpenEntity, onOpenAlt
   const expandedHeight = screenHeight * 0.88;
   const compactHeight = screenHeight * 0.34;
   const compactOffset = expandedHeight - compactHeight;
-  const translateY = useRef(new Animated.Value(compactOffset)).current;
-  const dragStart = useRef(compactOffset);
+  const translateY = useRef(new Animated.Value(startExpanded ? 0 : compactOffset)).current;
+  const dragStart = useRef(startExpanded ? 0 : compactOffset);
   const expandedScrollRef = useRef<ScrollView>(null);
-  const [expanded, setExpanded] = useState(false);
+  const [expanded, setExpanded] = useState(startExpanded);
   const snapTo = (nextExpanded: boolean, velocity = 0) => {
     const destination = nextExpanded ? 0 : compactOffset;
     setExpanded(nextExpanded);
@@ -329,14 +329,14 @@ export function BoycottScanResultCard({ result, onClose, onOpenEntity, onOpenAlt
   useEffect(() => { prefetchBoycottImages([displayImageUrl]); }, [displayImageUrl]);
   useEffect(() => { if (!PRODUCT_ALTERNATIVES_ENABLED) { setAlternatives([]); setAlternativeLoading(false); return; } let active = true; setAlternatives([]); setAlternativeLoading(true); void getBoycottCatalog().then((catalog) => findProductAlternatives(result, catalog)).then((value) => { if (active) setAlternatives(value); }).finally(() => { if (active) setAlternativeLoading(false); }); return () => { active = false; }; }, [result]);
   useEffect(() => { if (PRODUCT_ALTERNATIVES_ENABLED) prefetchBoycottImages(alternatives.map(({ imageUrl }) => imageUrl)); }, [alternatives]);
-  const name = result.productName || result.brandLabel || `Code ${result.barcode}`; const certifier = getHalalCertifier(certifierName ?? undefined);
+  const name = readableName(result.productName || result.brandLabel || `Code ${result.barcode}`); const certifier = getHalalCertifier(certifierName ?? undefined);
   const [confirmedCertifier, setConfirmedCertifier] = useState<string | null>(null); const [reportOpen, setReportOpen] = useState(false);
   useEffect(() => { let active = true; setConfirmedCertifier(null); void getConfirmedCertifier(result.barcode).then((id) => { if (active) setConfirmedCertifier(id); }); return () => { active = false; }; }, [result.barcode]);
   const halal = analyzeHalalCertification(result.halalData, result.healthData?.ingredientsText, confirmedCertifier);
   const health = analyzeHealthScoreBase(result.healthData);
   const halalBody = getHalalCertifier(halal.certifierId);
   const halalVigilance = getActiveHalalCertifierNotices(halalBody).length > 0;
-  const halalLabel = halalBody ? `${halalBody.name}${halalVigilance ? ' · à vérifier' : ''}` : halal.level === 'likely' ? 'Certificateur non renseigné' : halal.level === 'uncertain' ? 'Informations à vérifier' : 'Non vérifié';
+  const halalLabel = halalBody ? `${halalBody.name}${halalVigilance ? ' · à vérifier' : ''}` : halal.level === 'likely' ? 'Halal · certificateur ?' : halal.level === 'uncertain' ? 'Informations à vérifier' : 'Non vérifié';
   const israelSignals = getIsraelSignals(result);
   // Medicines (ANSM registry): health score and halal analysis do not apply.
   const isMedicine = result.productKind === 'medicine';
@@ -355,6 +355,14 @@ export function BoycottScanResultCard({ result, onClose, onOpenEntity, onOpenAlt
   const failedImageUrl = displayImageUrl;
   const imageErrorHandler = useCallback(() => { void invalidateProductImage(result.barcode, failedImageUrl); }, [result.barcode, failedImageUrl]);
   return <View pointerEvents="box-none" style={styles.sheetBackdrop}><Animated.View style={[styles.sheet, { height: expandedHeight, transform: [{ translateY }] }, result.assessment === 'boycott' ? styles.sheetBoycott : null]}><View {...sheetPanResponder.panHandlers}><View style={styles.sheetHandleArea}><View style={styles.grabber} /></View><View style={styles.productHeader}><Pressable accessibilityRole="imagebutton" accessibilityLabel="Agrandir la photo du produit" disabled={!displayImageUrl} onPress={() => setImageViewerOpen(true)}><BoycottProductImage barcode={result.barcode} brand={diagnosticBrand} contentFit="contain" qualityCheck={isUsableProductPhoto} onImageError={imageErrorHandler} style={styles.productImage} uri={displayImageUrl} /></Pressable><View style={styles.rowCopy}><Text numberOfLines={2} style={styles.compactName}>{name}</Text>{result.brandLabel ? <Text numberOfLines={1} style={styles.compactBrand}>{result.brandLabel}</Text> : null}{recalls.length ? <Pressable accessibilityRole="button" accessibilityLabel="Rappel officiel en cours, voir le détail" onPress={() => setRecallOpen(true)} style={({ pressed }) => [styles.recallPill, pressed && styles.pressed]}><Ionicons name="warning" size={14} color="#FFF" /><Text style={styles.recallPillText}>Rappel officiel en cours</Text><Ionicons name="chevron-forward" size={14} color="#FFF" /></Pressable> : null}</View><Pressable accessibilityLabel="Fermer le résultat" onPress={onClose} style={styles.close}><Ionicons name="close" size={22} color={colors.text} /></Pressable></View>{!expanded ? <View style={styles.compactContent}><View style={styles.compactBadges}><View style={[styles.compactBadge, result.assessment === 'boycott' ? styles.compactBadgeDanger : null]}><Text style={styles.compactBadgeTitle}>Boycott</Text><Text numberOfLines={2} style={[styles.compactBadgeValue, { color: result.assessment === 'boycott' || israelWarning ? boycottTone : colors.text }]}>{statusLabel}</Text></View>{isMedicine ? <View style={[styles.compactBadge, styles.compactBadgeWide]}><Text style={styles.compactBadgeTitle}>Médicament</Text><Text numberOfLines={2} style={styles.compactBadgeValue}>{result.brandLabel ?? 'Laboratoire non renseigné'}</Text></View> : <><View style={styles.compactBadge}><Text style={styles.compactBadgeTitle}>Score Santé</Text><Text style={[styles.compactBadgeValue, { color: healthTone }]}>{health.available ? `${health.score}/100` : 'Indisponible'}</Text>{health.available && health.finalGrade ? <Text style={styles.compactBadgeNote}>{health.finalGrade}</Text> : null}</View><View style={styles.compactBadge}><Text style={styles.compactBadgeTitle}>Halal</Text><Text numberOfLines={2} style={styles.compactBadgeValue}>{halalLabel}</Text></View></>}</View><Pressable accessibilityRole="button" onPress={() => snapTo(true)} style={styles.expandHint}><Text style={styles.expandHintText}>Tirer vers le haut pour voir le détail</Text><Ionicons name="chevron-up" size={18} color={colors.goldLight} /></Pressable></View> : null}</View>{expanded ? <ScrollView ref={expandedScrollRef} style={styles.expandedScroll} contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}><Section icon={result.assessment === 'boycott' ? 'alert-circle' : 'business-outline'} title="Boycott" value={statusLabel} tone={boycottTone} open={openSection === 'boycott'} onToggle={() => toggleSection('boycott')}><BoycottBody result={result} dossier={dossier} israelSignals={israelSignals} onOpenEntity={onOpenEntity} onOpenDossier={() => setControversyOpen(true)} /></Section>{isMedicine ? null : <><Section icon="heart-outline" title="Score Santé" value={health.available ? `${health.score}/100 · ${getHealthGradePresentation(health.finalGrade).label}` : 'Indisponible'} tone={health.available ? getHealthGradePresentation(health.finalGrade).color : colors.textMuted} open={openSection === 'health'} onToggle={() => toggleSection('health')}><HealthBody result={result} onAdditive={setAdditiveCode} /></Section><Section icon="ribbon-outline" title="Halal" value={halalLabel} tone={halalTone} open={openSection === 'halal'} onToggle={() => toggleSection('halal')}><HalalBody result={result} confirmed={confirmedCertifier} onOpen={setCertifierName} onReport={() => setReportOpen(true)} /></Section></>}{PRODUCT_ALTERNATIVES_ENABLED ? <AlternativeSection alternatives={alternatives} loading={alternativeLoading} originalScore={health.available ? health.score : undefined} onOpen={onOpenAlternative} /> : null}<Pressable onPress={onClose} style={styles.primary}><Text style={styles.primaryText}>{primaryLabel}</Text></Pressable>{result.assessment === 'unknown' ? <Pressable onPress={onPropose} style={styles.secondary}><Text style={styles.actionText}>Proposer ce produit</Text></Pressable> : null}<Text style={styles.barcode}>Code-barres {result.barcode}{displayImageUrl ? '\nPhoto : Open Food Facts (CC BY-SA)' : ''}</Text></ScrollView> : null}</Animated.View><ProductImageViewer uri={imageViewerOpen ? displayImageUrl : undefined} name={name} onClose={() => setImageViewerOpen(false)} /><RecallSheet recalls={recallOpen ? recalls : []} onClose={() => setRecallOpen(false)} /><AdditiveDetailSheet additive={additiveCode ? getAdditiveInfo(additiveCode) : null} onClose={() => setAdditiveCode(null)} /><HalalCertifierDetailSheet certifier={certifier} onClose={() => setCertifierName(null)} /><BrandControversyDetailSheet dossier={controversyOpen ? dossier : null} onClose={() => setControversyOpen(false)} /><HalalCertifierReportSheet visible={reportOpen} barcode={result.barcode} productName={result.productName ?? undefined} onClose={() => setReportOpen(false)} /></View>;
+}
+
+// Open Food Facts names typed in capitals ("PREMIUM VOLAILLE BLANC DE DINDE") read as shouting: sentence case.
+function readableName(value: string) {
+  const letters = value.replace(/[^\p{L}]/gu, '');
+  if (letters.length < 4 || letters !== letters.toUpperCase()) return value;
+  const lower = value.toLocaleLowerCase('fr-FR');
+  return lower.charAt(0).toLocaleUpperCase('fr-FR') + lower.slice(1);
 }
 
 const styles = StyleSheet.create({
