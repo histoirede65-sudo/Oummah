@@ -2,7 +2,7 @@ import { storageService } from "../../core/storage";
 import { findOfficialFrenchDua } from "./OfficialFrenchDuaCatalog";
 import DUA_AUDIO_TIMINGS from "./duaAudioTimings.json";
 
-type DuaAudioTiming = { start: number; end: number; words?: number[] };
+type DuaAudioTiming = { start: number; end: number; words?: number[]; skip?: number[][] };
 
 export type DuaSectionId =
   | "morning"
@@ -41,6 +41,8 @@ export type DuaItem = {
   /** Mesuré sur l'enregistrement : début et fin de la dou'a, en secondes. */
   audioStartSeconds?: number;
   audioEndSeconds?: number;
+  /** Narrator's remarks inside the recording, jumped over during playback. */
+  audioSkipRanges?: [number, number][];
   /** Début de chaque mot affiché dans l'enregistrement, en secondes. */
   audioWordTimes?: readonly number[];
   frenchIsSummary?: boolean;
@@ -881,6 +883,7 @@ function normalizeCatalog(
             // devinée tombait presque toujours au milieu d'un mot.
             audioStartSeconds: timing?.start,
             audioEndSeconds: timing?.end,
+            audioSkipRanges: timing?.skip?.map(([from, to]) => [from, to] as [number, number]),
             audioWordTimes: wordTimes,
             source: official
               ? "La Citadelle du musulman — édition française"

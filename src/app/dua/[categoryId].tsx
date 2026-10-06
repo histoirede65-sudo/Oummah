@@ -429,6 +429,7 @@ export default function DuaReaderScreen() {
       endOffsetSeconds: audioEndOffsetSeconds,
       startSeconds: audioStartSeconds,
       endSeconds: audioEndSeconds,
+      skipRanges: current.audioSkipRanges,
     });
   }, [
     audioEndOffsetSeconds,
