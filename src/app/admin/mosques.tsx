@@ -1,3 +1,4 @@
+import { adminRpc } from "../../features/admin/adminClient";
 import { Ionicons } from "@expo/vector-icons";
 import { router, useFocusEffect } from "expo-router";
 import { useCallback, useMemo, useState } from "react";
@@ -16,8 +17,6 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { isOummahAdminSession } from "../../features/auth/AdminAccess";
-import { getValidSession } from "../../features/auth/SupabaseAuthService";
 import { colors } from "../../theme/colors";
 import { typography } from "../../theme/typography";
 
@@ -87,16 +86,6 @@ const STATUS_LABELS: Record<Status, string> = {
   rejected: "Refusées",
 };
 
-function config() {
-  const url = process.env.EXPO_PUBLIC_SUPABASE_URL?.trim().replace(/\/$/, "");
-  const key = (
-    process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY ??
-    process.env.EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY
-  )?.trim();
-
-  if (!url || !key) throw new Error("Supabase n’est pas configuré.");
-  return { url, key };
-}
 
 function normalize(value: string) {
   return value
@@ -195,33 +184,8 @@ export default function AdminMosquesScreen() {
   const [history, setHistory] = useState<ReviewHistoryRow[]>([]);
   const [historyLoading, setHistoryLoading] = useState(false);
 
-  const rpc = useCallback(
-    async <T,>(name: string, body: Record<string, unknown>): Promise<T> => {
-      const session = await getValidSession(true);
-      if (!isOummahAdminSession(session)) {
-        throw new Error("Accès administrateur refusé.");
-      }
-
-      const { url, key } = config();
-      const response = await fetch(`${url}/rest/v1/rpc/${name}`, {
-        method: "POST",
-        headers: {
-          apikey: key,
-          Authorization: `Bearer ${session!.accessToken}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(body),
-      });
-
-      if (!response.ok) {
-        const detail = await response.text().catch(() => "");
-        throw new Error(detail || "Action impossible.");
-      }
-
-      return (await response.json()) as T;
-    },
-    [],
-  );
+  // Shared admin client: session renewed only when needed, one retry, readable errors.
+  const rpc = useCallback(<T,>(name: string, body: Record<string, unknown>) => adminRpc<T>(name, body), []);
 
   const load = useCallback(
     async (silent = false) => {

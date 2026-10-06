@@ -99,7 +99,7 @@ export async function proposeMosquePost(input: {
 }
 
 export async function adminListMosquePosts(): Promise<MosquePostProposal[]> {
-  const session = await getValidSession(true);
+  const session = await getValidSession();
   if (!session?.accessToken) throw new Error('AUTH_REQUIRED');
   const rows = await request<PostRow[]>('rpc/admin_list_mosque_posts', {
     method: 'POST', body: JSON.stringify({ p_status: 'pending' }),
@@ -114,7 +114,7 @@ export async function adminListMosquePosts(): Promise<MosquePostProposal[]> {
 }
 
 export async function adminReviewMosquePost(id: string, approve: boolean) {
-  const session = await getValidSession(true);
+  const session = await getValidSession();
   if (!session?.accessToken) throw new Error('AUTH_REQUIRED');
   await request('rpc/admin_review_mosque_post', {
     method: 'POST', body: JSON.stringify({ p_id: id, p_approve: approve }),

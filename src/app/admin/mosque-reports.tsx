@@ -1,10 +1,9 @@
+import { adminRpc } from "../../features/admin/adminClient";
 import { Ionicons } from "@expo/vector-icons";
 import { router, useFocusEffect } from "expo-router";
 import { useCallback, useState } from "react";
 import { ActivityIndicator, Alert, Pressable, RefreshControl, ScrollView, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { getValidSession } from "../../features/auth/SupabaseAuthService";
-import { isOummahAdminSession } from "../../features/auth/AdminAccess";
 import { colors } from "../../theme/colors";
 import { typography } from "../../theme/typography";
 
@@ -12,15 +11,7 @@ type Status="pending"|"resolved"|"ignored";
 type Row={id:string;mosque_id:string;mosque_name:string;mosque_address:string;reason:string;details:string|null;reporter_email:string|null;created_at:string};
 const labels:Record<string,string>={wrong_address:"Mauvaise adresse",wrong_hours:"Horaires incorrects",closed:"Mosquée fermée",duplicate:"Doublon",wrong_information:"Informations erronées",other:"Autre problème"};
 
-async function rpc<T>(name:string,body:Record<string,unknown>={}):Promise<T>{
-  const session=await getValidSession(true);
-  if(!isOummahAdminSession(session))throw new Error("ADMIN_FORBIDDEN");
-  const url=process.env.EXPO_PUBLIC_SUPABASE_URL?.trim().replace(/\/$/,"");
-  const key=(process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY??process.env.EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY)?.trim();
-  if(!url||!key)throw new Error("ADMIN_SUPABASE_NOT_CONFIGURED");
-  const r=await fetch(`${url}/rest/v1/rpc/${name}`,{method:"POST",headers:{apikey:key,Authorization:`Bearer ${session!.accessToken}`,"Content-Type":"application/json"},body:JSON.stringify(body)});
-  if(!r.ok)throw new Error(await r.text());return await r.json() as T;
-}
+const rpc=<T,>(name:string,body:Record<string,unknown>={})=>adminRpc<T>(name,body);
 
 export default function AdminReports(){
   const [status,setStatus]=useState<Status>("pending"),[rows,setRows]=useState<Row[]>([]),[loading,setLoading]=useState(true),[refreshing,setRefreshing]=useState(false),[acting,setActing]=useState<string|null>(null);

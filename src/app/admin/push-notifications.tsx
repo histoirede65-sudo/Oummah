@@ -1,3 +1,4 @@
+import { adminFunction } from "../../features/admin/adminClient";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { useState } from "react";
@@ -13,23 +14,11 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { getValidSession } from "../../features/auth/SupabaseAuthService";
-import { isOummahAdminSession } from "../../features/auth/AdminAccess";
 import { colors } from "../../theme/colors";
 import { typography } from "../../theme/typography";
 
 type Audience = "all" | "free" | "premium";
 
-function configuration() {
-  const url = process.env.EXPO_PUBLIC_SUPABASE_URL?.trim().replace(/\/$/, "");
-  const key = (
-    process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY ??
-    process.env.EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY
-  )?.trim();
-
-  if (!url || !key) throw new Error("ADMIN_SUPABASE_NOT_CONFIGURED");
-  return { url, key };
-}
 
 export default function AdminPushNotificationsScreen() {
   const [title, setTitle] = useState("");
@@ -57,34 +46,12 @@ export default function AdminPushNotificationsScreen() {
           onPress: async () => {
             setSending(true);
             try {
-              const session = await getValidSession(true);
-              if (!isOummahAdminSession(session)) {
-                throw new Error("ADMIN_FORBIDDEN");
-              }
-
-              const { url, key } = configuration();
-              const response = await fetch(
-                `${url}/functions/v1/send-admin-push`,
-                {
-                  method: "POST",
-                  headers: {
-                    apikey: key,
-                    Authorization: `Bearer ${session!.accessToken}`,
-                    "Content-Type": "application/json",
-                  },
-                  body: JSON.stringify({
-                    title: cleanTitle,
-                    body: cleanBody,
-                    audience,
-                    route: route.trim() || "/",
-                  }),
-                },
-              );
-
-              const result = await response.json().catch(() => null);
-              if (!response.ok) {
-                throw new Error(result?.error ?? "PUSH_SEND_FAILED");
-              }
+              const result = await adminFunction<{ sent?: number } | null>("send-admin-push", {
+                title: cleanTitle,
+                body: cleanBody,
+                audience,
+                route: route.trim() || "/",
+              });
 
               Alert.alert(
                 "Notification envoyée",

@@ -1,5 +1,4 @@
-import { getValidSession } from "../auth/SupabaseAuthService";
-import { isOummahAdminSession } from "../auth/AdminAccess";
+import { adminRpc } from "./adminClient";
 
 export type AnalyticsOverview = {
   usersTotal: number;
@@ -32,51 +31,11 @@ export type AnalyticsPayload = {
   modules: AnalyticsModuleRow[];
 };
 
-function configuration() {
-  const url = process.env.EXPO_PUBLIC_SUPABASE_URL?.trim().replace(/\/$/, "");
-  const key = (
-    process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY ??
-    process.env.EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY
-  )?.trim();
-
-  if (!url || !key) {
-    throw new Error("ADMIN_SUPABASE_NOT_CONFIGURED");
-  }
-
-  return { url, key };
-}
 
 export async function getAdminAnalytics(
   days = 30,
 ): Promise<AnalyticsPayload> {
-  const session = await getValidSession(true);
-
-  if (!isOummahAdminSession(session)) {
-    throw new Error("ADMIN_FORBIDDEN");
-  }
-
-  const { url, key } = configuration();
-  const response = await fetch(
-    `${url}/rest/v1/rpc/admin_get_analytics`,
-    {
-      method: "POST",
-      headers: {
-        apikey: key,
-        Authorization: `Bearer ${session!.accessToken}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        p_days: Math.min(90, Math.max(7, days)),
-      }),
-    },
-  );
-
-  if (!response.ok) {
-    const detail = await response.text().catch(() => "");
-    throw new Error(detail || "ADMIN_ANALYTICS_FAILED");
-  }
-
-  const raw = (await response.json()) as {
+  const raw = (await adminRpc<unknown>("admin_get_analytics", { p_days: Math.min(90, Math.max(7, days)) })) as {
     overview?: Record<string, number>;
     daily?: Array<Record<string, string | number>>;
     modules?: Array<Record<string, string | number>>;

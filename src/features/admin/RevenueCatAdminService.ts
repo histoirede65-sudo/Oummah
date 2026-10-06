@@ -1,5 +1,4 @@
-import { getValidSession } from "../auth/SupabaseAuthService";
-import { isOummahAdminSession } from "../auth/AdminAccess";
+import { adminRpc } from "./adminClient";
 
 export type RevenueOverview = {
   activeSubscriptions: number;
@@ -58,44 +57,9 @@ export type RevenueDashboard = {
   wasilRisk: WasilRiskRow[];
 };
 
-function configuration() {
-  const url = process.env.EXPO_PUBLIC_SUPABASE_URL?.trim().replace(/\/$/, "");
-  const key = (
-    process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY ??
-    process.env.EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY
-  )?.trim();
-
-  if (!url || !key) throw new Error("ADMIN_SUPABASE_NOT_CONFIGURED");
-  return { url, key };
-}
-
-async function rpc<T>(
-  name: string,
-  body: Record<string, unknown> = {},
-): Promise<T> {
-  const session = await getValidSession(true);
-
-  if (!isOummahAdminSession(session)) {
-    throw new Error("ADMIN_FORBIDDEN");
-  }
-
-  const { url, key } = configuration();
-  const response = await fetch(`${url}/rest/v1/rpc/${name}`, {
-    method: "POST",
-    headers: {
-      apikey: key,
-      Authorization: `Bearer ${session!.accessToken}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(body),
-  });
-
-  if (!response.ok) {
-    const detail = await response.text().catch(() => "");
-    throw new Error(detail || "ADMIN_REVENUE_REQUEST_FAILED");
-  }
-
-  return (await response.json()) as T;
+// Every call goes through the shared admin client (session, retry, readable errors).
+function rpc<T>(name: string, body: Record<string, unknown> = {}): Promise<T> {
+  return adminRpc<T>(name, body);
 }
 
 export async function getRevenueDashboard(): Promise<RevenueDashboard> {

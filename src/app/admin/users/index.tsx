@@ -5,8 +5,6 @@ import { ActivityIndicator, FlatList, Pressable, RefreshControl, StyleSheet, Tex
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { getAdminUsers, type AdminUserRow } from "../../../features/admin/AdminService";
-import { isOummahAdminSession } from "../../../features/auth/AdminAccess";
-import { getValidSession } from "../../../features/auth/SupabaseAuthService";
 import { colors } from "../../../theme/colors";
 import { typography } from "../../../theme/typography";
 
@@ -27,9 +25,6 @@ export default function AdminUsersScreen() {
     if (refresh) setRefreshing(true); else setLoading(true);
     setError("");
     try {
-      const session = await getValidSession(true);
-      if (id !== requestId.current) return;
-      if (!isOummahAdminSession(session)) { router.replace("/profile"); return; }
       const nextUsers = await getAdminUsers(nextQuery);
       if (id !== requestId.current) return;
       setUsers(nextUsers);

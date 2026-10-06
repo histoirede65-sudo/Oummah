@@ -377,7 +377,7 @@ export async function proposeMosquePrayerTimes(input: MosqueTimesProposalInput) 
 }
 
 export async function adminListMosquePrayerTimeUpdates(): Promise<MosquePrayerTimeProposal[]> {
-  const session = await getValidSession(true); if (!session?.accessToken) throw new Error('AUTH_REQUIRED');
+  const session = await getValidSession(); if (!session?.accessToken) throw new Error('AUTH_REQUIRED');
   const rows = await rpc<any[]>('admin_list_mosque_prayer_time_updates', {p_status:'pending'}, session.accessToken);
   return rows.map((r) => ({ id:r.id, kind:r.kind ?? 'regular', mosqueId:r.mosque_id, mosqueName:r.mosque_name, mosqueAddress:r.mosque_address ?? undefined,
     fajr:r.fajr ?? undefined,dhuhr:r.dhuhr ?? undefined,asr:r.asr ?? undefined,maghrib:r.maghrib ?? undefined,isha:r.isha ?? undefined,jumuah:r.jumuah ?? undefined,
@@ -386,6 +386,6 @@ export async function adminListMosquePrayerTimeUpdates(): Promise<MosquePrayerTi
     note:r.note ?? undefined,status:r.status,createdAt:r.created_at }));
 }
 export async function adminReviewMosquePrayerTimeUpdate(id:string, approve:boolean) {
-  const session = await getValidSession(true); if (!session?.accessToken) throw new Error('AUTH_REQUIRED');
+  const session = await getValidSession(); if (!session?.accessToken) throw new Error('AUTH_REQUIRED');
   await rpc('admin_review_mosque_prayer_time_update', {p_id:id,p_approve:approve}, session.accessToken);
 }

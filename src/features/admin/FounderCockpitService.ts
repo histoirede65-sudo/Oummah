@@ -1,5 +1,4 @@
-import { getValidSession } from "../auth/SupabaseAuthService";
-import { isOummahAdminSession } from "../auth/AdminAccess";
+import { adminRpc } from "./adminClient";
 
 export type FounderCockpitStatus =
   | "growth"
@@ -72,46 +71,9 @@ export type FounderCockpit = {
   }>;
 };
 
-function configuration() {
-  const url = process.env.EXPO_PUBLIC_SUPABASE_URL?.trim().replace(/\/$/, "");
-  const key = (
-    process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY ??
-    process.env.EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY
-  )?.trim();
-
-  if (!url || !key) throw new Error("ADMIN_SUPABASE_NOT_CONFIGURED");
-  return { url, key };
-}
 
 export async function getFounderCockpit(): Promise<FounderCockpit> {
-  const session = await getValidSession(true);
-  if (!isOummahAdminSession(session)) {
-    throw new Error("ADMIN_FORBIDDEN");
-  }
-
-  const { url, key } = configuration();
-  const response = await fetch(
-    `${url}/rest/v1/rpc/admin_get_founder_cockpit`,
-    {
-      method: "POST",
-      headers: {
-        apikey: key,
-        Authorization: `Bearer ${session!.accessToken}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({}),
-    },
-  );
-
-  const text = await response.text().catch(() => "");
-  if (!response.ok) {
-    throw new Error(text || "ADMIN_FOUNDER_COCKPIT_FAILED");
-  }
-  if (!text.trim()) {
-    throw new Error("ADMIN_FOUNDER_COCKPIT_EMPTY_RESPONSE");
-  }
-
-  const raw = JSON.parse(text) as Record<string, unknown>;
+  const raw = ((await adminRpc<Record<string, unknown> | null>("admin_get_founder_cockpit")) ?? {}) as Record<string, unknown>;
   const users = (raw.users ?? {}) as Record<string, number>;
   const premium = (raw.premium ?? {}) as Record<string, number>;
   const finance = (raw.finance ?? {}) as Record<string, number>;

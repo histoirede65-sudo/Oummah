@@ -1,5 +1,4 @@
-import { getValidSession } from "../auth/SupabaseAuthService";
-import { isOummahAdminSession } from "../auth/AdminAccess";
+import { adminRpc } from "./adminClient";
 
 export type AdminAlertSeverity = "info" | "warning" | "critical";
 export type AdminAlertStatus = "open" | "resolved" | "ignored";
@@ -46,56 +45,9 @@ export type AdminAttentionState = {
   items: AdminAttentionItem[];
 };
 
-function configuration() {
-  const url = process.env.EXPO_PUBLIC_SUPABASE_URL?.trim().replace(/\/$/, "");
-  const key = (
-    process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY ??
-    process.env.EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY
-  )?.trim();
-
-  if (!url || !key) {
-    throw new Error("ADMIN_SUPABASE_NOT_CONFIGURED");
-  }
-
-  return { url, key };
-}
-
-async function rpc<T>(
-  name: string,
-  body: Record<string, unknown> = {},
-): Promise<T> {
-  const session = await getValidSession(true);
-
-  if (!isOummahAdminSession(session)) {
-    throw new Error("ADMIN_FORBIDDEN");
-  }
-
-  const { url, key } = configuration();
-  const response = await fetch(`${url}/rest/v1/rpc/${name}`, {
-    method: "POST",
-    headers: {
-      apikey: key,
-      Authorization: `Bearer ${session!.accessToken}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(body),
-  });
-
-  const responseText = await response.text().catch(() => "");
-
-  if (!response.ok) {
-    throw new Error(responseText || "ADMIN_ALERT_REQUEST_FAILED");
-  }
-
-  if (!responseText.trim()) {
-    return undefined as T;
-  }
-
-  try {
-    return JSON.parse(responseText) as T;
-  } catch {
-    throw new Error("ADMIN_ALERT_INVALID_RESPONSE");
-  }
+// Every call goes through the shared admin client (session, retry, readable errors).
+function rpc<T>(name: string, body: Record<string, unknown> = {}): Promise<T> {
+  return adminRpc<T>(name, body);
 }
 
 export async function refreshAdminAlerts(): Promise<void> {
@@ -204,7 +156,6 @@ export async function updateAdminAlert(
     p_note: note?.trim() || null,
   });
 }
-
 
 export type AdminAlertHealth = {
   status: "healthy" | "warning" | "critical" | "never_run";

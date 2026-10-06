@@ -1,5 +1,4 @@
-import { getValidSession } from "../auth/SupabaseAuthService";
-import { isOummahAdminSession } from "../auth/AdminAccess";
+import { adminRpc } from "./adminClient";
 
 export type AdminDashboard = {
   usersTotal: number;
@@ -22,59 +21,9 @@ export type AdminUserRow = {
   totalSpent: number;
 };
 
-function configuration() {
-  const url = process.env.EXPO_PUBLIC_SUPABASE_URL?.trim().replace(/\/$/, "");
-  const key = (
-    process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY ??
-    process.env.EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY
-  )?.trim();
-
-  if (!url || !key) {
-    throw new Error("ADMIN_SUPABASE_NOT_CONFIGURED");
-  }
-
-  return { url, key };
-}
-
-let adminSessionRequest: ReturnType<typeof getValidSession> | null = null;
-
-async function getAdminSession() {
-  if (!adminSessionRequest) {
-    // Plusieurs appels admin peuvent partir simultanément (fiche + historique).
-    // Un seul contrôle/renouvellement de session doit être partagé afin
-    // d'éviter une course sur le refresh token qui supprimerait la session.
-    adminSessionRequest = getValidSession().finally(() => {
-      adminSessionRequest = null;
-    });
-  }
-
-  return adminSessionRequest;
-}
-
-async function rpc<T>(name: string, body: Record<string, unknown> = {}): Promise<T> {
-  const session = await getAdminSession();
-  if (!isOummahAdminSession(session)) {
-    throw new Error("ADMIN_FORBIDDEN");
-  }
-
-  const { url, key } = configuration();
-  const response = await fetch(`${url}/rest/v1/rpc/${name}`, {
-    method: "POST",
-    headers: {
-      apikey: key,
-      Authorization: `Bearer ${session!.accessToken}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(body),
-  });
-
-  if (!response.ok) {
-    const detail = await response.text().catch(() => "");
-    throw new Error(detail || "ADMIN_REQUEST_FAILED");
-  }
-
-  const payload = await response.text();
-  return (payload ? JSON.parse(payload) : undefined) as T;
+// Every call goes through the shared admin client (session, retry, readable errors).
+function rpc<T>(name: string, body: Record<string, unknown> = {}): Promise<T> {
+  return adminRpc<T>(name, body);
 }
 
 export async function getAdminDashboard(): Promise<AdminDashboard> {
@@ -145,7 +94,6 @@ export async function adjustAdminUserCredits(
   });
 }
 
-
 export type AdminActivityKind =
   | "mosque_review"
   | "mosque_report"
@@ -189,7 +137,6 @@ export async function getAdminActivity(
     status: row.status,
   }));
 }
-
 
 export type AdminUserDetail = {
   userId: string;
@@ -266,7 +213,6 @@ export async function deleteAdminUser(userId: string): Promise<void> {
   await rpc("admin_delete_user", { p_user_id: userId });
 }
 
-
 export type OummahAdminRole =
   | "owner"
   | "admin"
@@ -326,7 +272,6 @@ export async function removeAdminMember(
     p_user_id: userId,
   });
 }
-
 
 export type AdminAnnouncementStatus = "draft" | "published" | "archived";
 export type AdminAnnouncementAudience = "all" | "free" | "premium";
