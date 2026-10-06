@@ -253,7 +253,7 @@ function resolveHadithNativeTarget(sourceUrl: string | undefined): HadithNativeT
     const url = new URL(sourceUrl);
     if (url.hostname.replace(/^www\./, "").toLowerCase() !== "hadeethenc.com") return null;
     const id = url.pathname.match(/\/hadith\/(\d+)\/?$/)?.[1];
-    return id ? { pathname: "/hadith/[id]", params: { id } } : null;
+    return id ? { pathname: "/hadith/[hadithId]", params: { hadithId: id } } : null;
   } catch {
     return null;
   }
@@ -273,7 +273,7 @@ function toNativeSource(source: WasilDisplaySource): WasilDisplaySource {
 }
 
 type HadithNativeTarget =
-  | { pathname: "/hadith/[id]"; params: { id: string } }
+  | { pathname: "/hadith/[hadithId]"; params: { hadithId: string } }
   | { pathname: "/hadith/search"; params: { q: string } };
 
 type WasilDisplaySource = {
@@ -785,7 +785,7 @@ function parseWasilAnswer(answer: WasilReply, t: Translate) {
         ].filter(Boolean).join(" · ") || t("wasil.verifiedHadith"),
         verified: true,
         hadithTarget: directId
-          ? { pathname: "/hadith/[id]", params: { id: directId } }
+          ? { pathname: "/hadith/[hadithId]", params: { hadithId: directId } }
           : { pathname: "/hadith/search", params: { q: searchQuery } },
       }];
     },
@@ -1070,7 +1070,7 @@ function WasilAnswerPresentation({
                   source.quranTarget
                     ? `quran:${quranPassageKey(source.quranTarget)}`
                     : source.hadithTarget
-                      ? `hadith:${"id" in source.hadithTarget.params ? source.hadithTarget.params.id : source.hadithTarget.params.q}:${source.detail ?? source.label}`
+                      ? `hadith:${"hadithId" in source.hadithTarget.params ? source.hadithTarget.params.hadithId : source.hadithTarget.params.q}:${source.detail ?? source.label}`
                       : (source.url ?? source.label)
                 }
                 style={
