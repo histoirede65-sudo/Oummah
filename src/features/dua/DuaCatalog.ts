@@ -760,45 +760,54 @@ function frenchMeaning(
 }
 
 export function classifyDuaCategory(title: string): DuaSectionId {
-  const plain = stripArabicMarks(title);
+  // NFKC turns Arabic presentation forms (ﻟﻤﺠلس) into plain letters; hamza
+  // carriers are unified so الآذان / الأولاد match الاذان / الاولاد. Patterns
+  // avoid the article where the source writes للـ (للمريض, للميت, للمسافر).
+  const plain = stripArabicMarks(title.normalize("NFKC")).replace(/[أإآ]/g, "ا");
   if (/الصباح|المساء/.test(plain)) return "morning-evening";
   if (/النوم|الاستيقاظ|الفراش|الرؤيا|الحلم|ليلا/.test(plain)) return "sleep";
+  // Merit of the prayer on the Prophet ﷺ: a dhikr, not part of the ritual prayer.
+  if (/^فضل الصلاة على النبي/.test(plain)) return "daily";
+  // Funeral prayer and burial sit with mourning, before the prayer rule.
   if (
-    /الصلاة|السجود|الركوع|التشهد|المسجد|الاذان|الوضوء|الاستخارة|الوتر/.test(
-      plain,
-    )
-  ) {
-    return "prayer";
-  }
-  if (/المتزوج|الزوجة|المولود|الاولاد|الطفل|الذرية|الاسرة/.test(plain)) {
-    return "family";
-  }
-  if (/الطعام|الشراب|الضيف|الصائم|افطار|الثمر/.test(plain)) return "food";
-  if (/المنزل|الخلاء|الثوب/.test(plain)) return "home";
-  if (/السفر|الركوب|القرية|البلدة|المسافر|الرجوع من السفر/.test(plain)) {
-    return "travel";
-  }
-  if (/المطر|الريح|الرعد|الهلال|الاستسقاء|الاستصحاء/.test(plain)) {
-    return "nature";
-  }
-  if (/عرفة|الحج|العمرة|الصفا|المروة|المشعر|الحجر الاسود|الجمار/.test(plain)) {
-    return "hajj";
-  }
-  if (
-    /المريض|المرض|الشفاء|الوجع|المحتضر|الميت|القبر|التعزية|المصيبة|الجنازة/.test(
+    /مريض|المرض|الشفاء|وجع|المحتضر|لميت|لفرط|القبر|القبور|التعزية|مصيبة|مبتلى|الجنازة|يرضاه/.test(
       plain,
     )
   ) {
     return "health";
   }
   if (
-    /الخوف|الكرب|الهم|الحزن|الشيطان|الوسوسة|الغضب|العين|الدجال|الشرك|العدو|السلطان|الفزع/.test(
+    /الصلاة|السجود|سجود|السجدتين|الركوع|التشهد|المسجد|الاذان|الوضوء|الاستخارة|الوتر|الاستفتاح/.test(
+      plain,
+    )
+  ) {
+    return "prayer";
+  }
+  if (/اقرض/.test(plain)) return "work";
+  // Words said to someone else (« الدعاء لمن… »): relations, even about clothes or money.
+  if (/الدعاء لمن|للكافر|العطاس|عطس/.test(plain)) return "etiquette";
+  if (/متزوج|الزوجة|المولود|الاولاد|الطفل|الذرية|الاسرة/.test(plain)) {
+    return "family";
+  }
+  if (/الطعام|الشراب|الضيف|الصائم|افطار|افطر|الثمر/.test(plain)) return "food";
+  if (/المنزل|الخلاء|ثوب/.test(plain)) return "home";
+  if (/سفر|الركوب|المركوب|القرية|البلدة|مسافر/.test(plain)) {
+    return "travel";
+  }
+  if (/المطر|الريح|الرعد|الهلال|الاستسقاء|الاستصحاء/.test(plain)) {
+    return "nature";
+  }
+  if (/عرفة|الحج|العمرة|الصفا|المروة|المشعر|الحجر الاسود|الركن|الجمار/.test(plain)) {
+    return "hajj";
+  }
+  if (
+    /الخوف|خاف|الكرب|الهم|الحزن|الشيطان|الشياطين|الوسوسة|وسوسة|الغضب|العين|بعين|الدجال|الشرك|العدو|السلطان|الفزع|الطيرة/.test(
       plain,
     )
   ) {
     return "protection";
   }
-  if (/الدين|الدَّين|العلم|العمل|السوق|استصعب|امر يسره|امر يكرهه/.test(plain)) {
+  if (/الدين|الدَّين|العلم|العمل|السوق|استصعب/.test(plain)) {
     return "work";
   }
   if (
