@@ -27,9 +27,9 @@ const FILTERS: Array<{ key: FilterKey; label: string }> = [
 ];
 const STATUS_DISPLAY: Record<HalalCriterionStatus | 'unknown', { icon: keyof typeof Ionicons.glyphMap; color: string; label: string }> = {
   yes: { icon: 'checkmark-circle', color: colors.success, label: 'Oui' },
-  partial: { icon: 'remove-circle', color: colors.warning, label: 'Partiel' },
+  partial: { icon: 'contrast', color: colors.goldLight, label: 'Partiel' },
   no: { icon: 'close-circle', color: colors.danger, label: 'Non' },
-  unknown: { icon: 'alert-circle-outline', color: colors.danger, label: 'Non garanti' },
+  unknown: { icon: 'help-circle-outline', color: colors.textSecondary, label: 'Non garanti' },
 };
 const STATUS_RANK: Record<HalalCriterionStatus | 'unknown', number> = { yes: 0, partial: 1, unknown: 2, no: 3 };
 const LEVEL_ORDER: HalalDocumentationLevel[] = ['documented', 'vigilance', 'to_verify', 'insufficient'];

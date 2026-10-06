@@ -40,9 +40,9 @@ function NoticeCard({ notice }: { notice: HalalNotice }) {
 type IconName = React.ComponentProps<typeof Ionicons>['name'];
 const CRITERION_STATUS: Record<HalalCriterion['status'] | 'unknown', { icon: IconName; color: string; label: string }> = {
   yes: { icon: 'checkmark-circle', color: colors.success, label: 'Déclaré' },
-  partial: { icon: 'remove-circle', color: colors.warning, label: 'Partiel' },
+  partial: { icon: 'contrast', color: colors.goldLight, label: 'Partiel' },
   no: { icon: 'close-circle', color: colors.danger, label: 'Non' },
-  unknown: { icon: 'alert-circle-outline', color: colors.danger, label: 'Non garanti' },
+  unknown: { icon: 'help-circle-outline', color: colors.textSecondary, label: 'Non garanti' },
 };
 const GUIDE_IDS: HalalReligiousGuideId[] = ['stunning', 'tasmiya', 'slaughterer', 'mechanical', 'contamination'];
 
