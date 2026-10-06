@@ -1,6 +1,8 @@
 import * as Notifications from "expo-notifications";
 import { Platform } from "react-native";
 
+import { translate } from "../../../i18n";
+
 const OWNER = "oummah-goal-reviews";
 const CHANNEL = "oummah-goal-reviews-v1";
 
@@ -18,7 +20,7 @@ export async function syncGoalReviewNotifications() {
   if (!permissionGranted(permission)) return false;
   const channelId = Platform.OS === "android" ? CHANNEL : undefined;
   if (Platform.OS === "android") {
-    await Notifications.setNotificationChannelAsync(CHANNEL, { name: "Bilans", importance: Notifications.AndroidImportance.DEFAULT, sound: "default" });
+    await Notifications.setNotificationChannelAsync(CHANNEL, { name: translate("reviews.channel"), importance: Notifications.AndroidImportance.DEFAULT, sound: "default" });
   }
   const scheduled = await Notifications.getAllScheduledNotificationsAsync();
   await Promise.all(
@@ -33,15 +35,15 @@ export async function syncGoalReviewNotifications() {
     data: { notificationOwner: OWNER, route: `/bilans?period=${period}` },
   });
   await Notifications.scheduleNotificationAsync({
-    content: content("Votre bilan de la semaine est prêt 🌙", "Vos jours actifs et vos objectifs de la semaine passée.", "week"),
+    content: content(translate("reviews.weekTitle"), translate("reviews.weekBody"), "week"),
     trigger: { type: Notifications.SchedulableTriggerInputTypes.WEEKLY, weekday: 2, hour: 9, minute: 0, channelId },
   });
   await Notifications.scheduleNotificationAsync({
-    content: content("Votre bilan du mois est prêt", "Votre régularité et ce que vous avez le mieux suivi le mois dernier.", "month"),
+    content: content(translate("reviews.monthTitle"), translate("reviews.monthBody"), "month"),
     trigger: { type: Notifications.SchedulableTriggerInputTypes.MONTHLY, day: 1, hour: 9, minute: 30, channelId },
   });
   await Notifications.scheduleNotificationAsync({
-    content: content("Votre année avec OUMMAH ✨", "Votre rétrospective de l’année est prête.", "year"),
+    content: content(translate("reviews.yearTitle"), translate("reviews.yearBody"), "year"),
     trigger: { type: Notifications.SchedulableTriggerInputTypes.YEARLY, month: 0, day: 1, hour: 10, minute: 0, channelId },
   });
   return true;

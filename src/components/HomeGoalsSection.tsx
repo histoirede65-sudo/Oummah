@@ -10,6 +10,7 @@ import { isGoalComplete } from '../features/daily-goals/domain/DailyGoal';
 import { useDailyGoalsViewModel } from '../features/daily-goals/presentation/useDailyGoalsViewModel';
 import { getValidSession } from '../features/auth/SupabaseAuthService';
 import { useI18n } from '../i18n';
+import { goalTitle } from '../features/daily-goals/presentation/goalText';
 
 export default function HomeGoalsSection() {
   const { t } = useI18n();
@@ -104,7 +105,7 @@ export default function HomeGoalsSection() {
               color="#F2B535"
             />
             <Text numberOfLines={1} style={styles.goalText}>
-              {goal.title}
+              {goalTitle(goal, t)}
             </Text>
           </View>
         )})}

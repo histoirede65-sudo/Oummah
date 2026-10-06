@@ -3,7 +3,9 @@ import { Pressable, StyleSheet, Text, View } from "react-native";
 
 import type { DailyGoal } from "../domain/DailyGoal";
 import { isGoalComplete } from "../domain/DailyGoal";
+import { useI18n } from "../../../i18n";
 import { colors } from "../../../theme/colors";
+import { goalSubtitle, goalTitle } from "./goalText";
 import { typography } from "../../../theme/typography";
 
 const ICONS: Record<DailyGoal["category"], keyof typeof Ionicons.glyphMap> = {
@@ -11,6 +13,7 @@ const ICONS: Record<DailyGoal["category"], keyof typeof Ionicons.glyphMap> = {
 };
 
 export default function DailyGoalCard({ goal, onPress, onDelete }: { goal: DailyGoal; onPress(): void; onDelete?: () => void }) {
+  const { language, t } = useI18n();
   const complete = isGoalComplete(goal);
   const ratio = Math.min(1, goal.progress.current / goal.progress.target);
   const displayCurrent = goal.progress.unit === "minute" ? Math.floor(goal.progress.current / 60) : Math.floor(goal.progress.current);
@@ -19,13 +22,13 @@ export default function DailyGoalCard({ goal, onPress, onDelete }: { goal: Daily
     <Pressable onPress={onPress} style={({ pressed }) => [styles.card, complete && styles.cardComplete, pressed && styles.pressed]}>
       <View style={[styles.icon, complete && styles.iconComplete]}><Ionicons name={complete ? "checkmark" : ICONS[goal.category]} size={18} color={complete ? colors.background : colors.goldLight} /></View>
       <View style={styles.copy}>
-        <View style={styles.titleRow}><Text numberOfLines={1} style={[styles.title, complete && styles.titleComplete]}>{goal.title}</Text><Text style={styles.time}>{goal.estimatedMinutes} min</Text></View>
-        <Text numberOfLines={1} style={styles.subtitle}>{complete && goal.progress.completedAt ? `Terminé à ${new Date(goal.progress.completedAt).toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })}` : goal.subtitle}</Text>
+        <View style={styles.titleRow}><Text numberOfLines={1} style={[styles.title, complete && styles.titleComplete]}>{goalTitle(goal, t)}</Text><Text style={styles.time}>{goal.estimatedMinutes} min</Text></View>
+        <Text numberOfLines={1} style={styles.subtitle}>{complete && goal.progress.completedAt ? t("goals.doneAt", { time: new Date(goal.progress.completedAt).toLocaleTimeString(language === "en" ? "en-GB" : "fr-FR", { hour: "2-digit", minute: "2-digit" }) }) : goalSubtitle(goal, t)}</Text>
         <View style={styles.progressRow}><View style={styles.track}><View style={[styles.fill, { width: `${ratio * 100}%` }]} /></View><Text style={styles.progressText}>{displayCurrent}/{displayTarget}</Text></View>
       </View>
       {goal.personal ? (
         <Pressable
-          accessibilityLabel="Supprimer cet objectif"
+          accessibilityLabel={t("goals.deleteA11y")}
           hitSlop={8}
           onPress={(event) => {
             event.stopPropagation();

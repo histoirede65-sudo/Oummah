@@ -4,6 +4,7 @@ import Svg, { Circle } from "react-native-svg";
 import { StyleSheet, Text, View } from "react-native";
 
 import type { DailyPlanSummary } from "../domain/DailyPlan";
+import { useI18n } from "../../../i18n";
 import { colors } from "../../../theme/colors";
 import { typography } from "../../../theme/typography";
 
@@ -14,6 +15,7 @@ export default function DailyProgressHero({
   summary: DailyPlanSummary;
   streak: number;
 }) {
+  const { t } = useI18n();
   const circumference = 2 * Math.PI * 43;
   const offset = circumference * (1 - summary.progress);
   return (
@@ -25,23 +27,23 @@ export default function DailyProgressHero({
         style={StyleSheet.absoluteFill}
       />
       <View style={styles.copy}>
-        <Text style={styles.eyebrow}>VOTRE JOURNÉE SPIRITUELLE</Text>
+        <Text style={styles.eyebrow}>{t("goals.heroEyebrow")}</Text>
         <Text style={styles.title}>
-          {summary.completed} objectif{summary.completed > 1 ? "s" : ""} sur {summary.total}
+          {t("goals.heroCount", { done: summary.completed, total: summary.total })}
         </Text>
         <Text style={styles.subtitle}>
           {summary.remainingMinutes > 0
-            ? `${summary.remainingMinutes} minutes restantes aujourd’hui`
-            : "Votre programme est accompli, alhamdulillah"}
+            ? t("goals.heroRemaining", { minutes: summary.remainingMinutes })
+            : t("goals.heroDone")}
         </Text>
         <View style={styles.streak}>
           <Ionicons name="flame-outline" size={14} color={colors.goldLight} />
-          <Text style={styles.streakText}>{streak} jours de régularité</Text>
+          <Text style={styles.streakText}>{t("goals.heroStreak", { count: streak })}</Text>
         </View>
         <Text style={styles.encouragement}>
           {summary.progress >= 1
-            ? "Une belle journée. Avancez toujours avec douceur."
-            : "Encore un petit effort pour prendre soin de votre journée."}
+            ? t("goals.heroGreat")
+            : t("goals.heroKeepGoing")}
         </Text>
       </View>
       <View style={styles.ring}>
@@ -63,7 +65,7 @@ export default function DailyProgressHero({
         </Svg>
         <View style={styles.ringCopy}>
           <Text style={styles.percent}>{Math.round(summary.progress * 100)}%</Text>
-          <Text style={styles.percentLabel}>ACCOMPLI</Text>
+          <Text style={styles.percentLabel}>{t("goals.heroPercentLabel")}</Text>
         </View>
       </View>
     </View>

@@ -21,17 +21,21 @@ import {
   type DailySnapshot,
 } from "../features/progression/ProgressionRepository";
 import { dailyGoalDateKey } from "../features/daily-goals/data/goalStorage";
+import { goalTitle } from "../features/daily-goals/presentation/goalText";
+import { getActiveLanguage, translate, useI18n } from "../i18n";
 import { colors } from "../theme/colors";
 import { typography } from "../theme/typography";
 
 type Period = "week" | "month" | "year";
 
 const PERIODS: readonly Period[] = ["week", "month", "year"];
-const WEEK_LABELS = ["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"];
-const MONTH_LABELS = [
-  "Janvier", "Février", "Mars", "Avril", "Mai", "Juin",
-  "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre",
-];
+// Day and month names come from the device calendar, in the app language.
+const locale = () => (getActiveLanguage() === "en" ? "en-GB" : "fr-FR");
+const weekLabel = (date: Date) => date.toLocaleDateString(locale(), { weekday: "short" }).replace(/\.$/, "");
+const monthLabel = (month: number) => {
+  const name = new Date(2024, month, 1).toLocaleDateString(locale(), { month: "long" });
+  return name.charAt(0).toUpperCase() + name.slice(1);
+};
 
 function dateFromKey(key: string) {
   return new Date(`${key}T12:00:00`);
@@ -66,9 +70,9 @@ function periodBounds(period: Period, offset: number) {
 function periodTitle(period: Period, offset: number) {
   const { start, end } = periodBounds(period, offset);
   if (period === "week") {
-    return `${start.toLocaleDateString("fr-FR", { day: "numeric", month: "short" })} – ${end.toLocaleDateString("fr-FR", { day: "numeric", month: "short" })}`;
+    return `${start.toLocaleDateString(locale(), { day: "numeric", month: "short" })} – ${end.toLocaleDateString(locale(), { day: "numeric", month: "short" })}`;
   }
-  if (period === "month") return start.toLocaleDateString("fr-FR", { month: "long", year: "numeric" });
+  if (period === "month") return start.toLocaleDateString(locale(), { month: "long", year: "numeric" });
   return String(start.getFullYear());
 }
 
@@ -92,7 +96,7 @@ function progressRatio(snapshot: DailySnapshot) {
 }
 
 function formatDay(key: string) {
-  return dateFromKey(key).toLocaleDateString("fr-FR", { day: "numeric", month: "long" });
+  return dateFromKey(key).toLocaleDateString(locale(), { day: "numeric", month: "long" });
 }
 
 function activityValue(snapshots: readonly DailySnapshot[], kind: "quran" | "dhikr" | "hifz" | "prayer" | "tahajjud") {
@@ -121,20 +125,21 @@ function SnapshotDetail({ snapshot }: { snapshot: DailySnapshot }) {
   const goals = snapshot.plan?.goals ?? [];
   const rows = goals.map((goal) => ({
     label: goal.metric === "quran_verses_read"
-      ? "Coran"
+      ? translate("progress.quran")
       : goal.metric === "dhikr_count"
-        ? "Dhikr"
+        ? translate("progress.dhikr")
         : goal.metric === "hifz_review_completed"
-          ? "Apprendre"
+          ? translate("progress.learn")
           : goal.metric === "prayer_completed"
-            ? "Prières"
-            : goal.title,
+            ? translate("progress.prayers")
+            : goalTitle(goal, translate),
     value: `${goal.progress.current}/${goal.progress.target}`,
   }));
-  return rows.length ? <View>{rows.map((row) => <DetailRow key={row.label} {...row} />)}</View> : <Text style={styles.emptyText}>Aucun détail disponible pour cette journée.</Text>;
+  return rows.length ? <View>{rows.map((row) => <DetailRow key={row.label} {...row} />)}</View> : <Text style={styles.emptyText}>{translate("progress.noDetail")}</Text>;
 }
 
 export default function ProgressionScreen() {
+  const { t } = useI18n();
   const [period, setPeriod] = useState<Period>("month");
   const [offset, setOffset] = useState(0);
   const [snapshots, setSnapshots] = useState<DailySnapshot[]>([]);
@@ -197,42 +202,42 @@ export default function ProgressionScreen() {
     return <Pressable key={key} disabled={!snapshot?.hasData || future} onPress={() => setSelected(snapshot ?? null)} style={[compact ? styles.weekDay : styles.calendarDay, tone]}>
       <Text style={styles.dayNumber}>{dateFromKey(key).getDate()}</Text>
       {!compact && <View style={[styles.dayDot, state === "success" && styles.dotSuccess, state === "partial" && styles.dotPartial, state === "neutral" && styles.dotNeutral]} />}
-      {compact && <Text style={styles.weekLabel}>{WEEK_LABELS[(dateFromKey(key).getDay() + 6) % 7]}</Text>}
+      {compact && <Text style={styles.weekLabel}>{weekLabel(dateFromKey(key))}</Text>}
     </Pressable>;
   };
 
   const yearRows = useMemo(() => Array.from({ length: 12 }, (_, month) => {
     const monthSnapshots = snapshots.filter((snapshot) => dateFromKey(snapshot.dateKey).getMonth() === month && snapshot.hasData && !isFuture(snapshot.dateKey));
     const monthSuccessful = monthSnapshots.filter(isSuccessfulDay).length;
-    return { name: MONTH_LABELS[month], followed: monthSnapshots.length, successful: monthSuccessful };
+    return { name: monthLabel(month), followed: monthSnapshots.length, successful: monthSuccessful };
   }), [snapshots]);
 
   return (
     <SafeAreaView edges={["top"]} style={styles.safe}>
       <View style={styles.header}>
         <Pressable onPress={() => router.back()} style={styles.headerButton}><Ionicons name="arrow-back" size={21} color={colors.goldLight} /></Pressable>
-        <Text style={styles.title}>Ma progression</Text>
+        <Text style={styles.title}>{t("goals.myProgress")}</Text>
         <View style={styles.headerButton} />
       </View>
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-        <View style={styles.periodTabs}>{PERIODS.map((item) => <Pressable key={item} onPress={() => { setPeriod(item); setOffset(0); }} style={[styles.periodTab, period === item && styles.periodTabActive]}><Text style={[styles.periodText, period === item && styles.periodTextActive]}>{item === "week" ? "Semaine" : item === "month" ? "Mois" : "Année"}</Text></Pressable>)}</View>
+        <View style={styles.periodTabs}>{PERIODS.map((item) => <Pressable key={item} onPress={() => { setPeriod(item); setOffset(0); }} style={[styles.periodTab, period === item && styles.periodTabActive]}><Text style={[styles.periodText, period === item && styles.periodTextActive]}>{item === "week" ? t("progress.week") : item === "month" ? t("progress.month") : t("progress.year")}</Text></Pressable>)}</View>
         <View style={styles.periodNav}><Pressable onPress={() => changeOffset(-1)} style={styles.navButton}><Ionicons name="chevron-back" size={18} color={colors.goldLight} /></Pressable><Text style={styles.periodTitle}>{periodTitle(period, offset)}</Text><Pressable disabled={offset >= 0} onPress={() => changeOffset(1)} style={[styles.navButton, offset >= 0 && styles.navDisabled]}><Ionicons name="chevron-forward" size={18} color={colors.goldLight} /></Pressable></View>
         {loading ? <View style={styles.loader}><ActivityIndicator color={colors.goldLight} /></View> : (
           <>
-            <View style={styles.streakCard}><View><Text style={styles.eyebrow}>🔥 SÉRIE ACTUELLE</Text><Text style={styles.streakValue}>{currentStreak} {currentStreak === 1 ? "jour" : "jours"}</Text><Text style={styles.streakBest}>Meilleure série : {bestStreak} {bestStreak === 1 ? "jour" : "jours"}</Text></View><Ionicons name="flame-outline" size={38} color={colors.goldLight} /></View>
-            <View style={styles.summaryCard}><Text style={styles.eyebrow}>RÉSUMÉ DE LA PÉRIODE</Text><Text style={styles.summaryText}>{successful} {successful === 1 ? "jour réussi" : "jours réussis"} sur {followed.length} {followed.length === 1 ? "jour suivi" : "jours suivis"}</Text></View>
-            {period === "week" ? <View style={styles.card}><Text style={styles.cardTitle}>Semaine</Text><View style={styles.weekRow}>{days.map((key) => renderDay(key, true))}</View></View> : null}
-            {period === "month" ? <View style={styles.card}><Text style={styles.cardTitle}>Calendrier</Text><View style={styles.legend}><View style={styles.legendItem}><View style={[styles.legendDot, styles.dotSuccess]} /><Text style={styles.legendText}>Réussi</Text></View><View style={styles.legendItem}><View style={[styles.legendDot, styles.dotPartial]} /><Text style={styles.legendText}>Partiel</Text></View><View style={styles.legendItem}><View style={[styles.legendDot, styles.dotNeutral]} /><Text style={styles.legendText}>Non accompli</Text></View><View style={styles.legendItem}><Text style={styles.legendDash}>—</Text><Text style={styles.legendText}>Pas de données</Text></View></View><View style={styles.calendarHeader}>{["L", "M", "M", "J", "V", "S", "D"].map((label, index) => <Text key={`${label}-${index}`} style={styles.calendarHeaderText}>{label}</Text>)}</View><View style={styles.calendarGrid}>{Array.from({ length: (dateFromKey(dateKey(start)).getDay() + 6) % 7 }, (_, index) => <View key={`empty-${index}`} style={styles.calendarDay} />)}{days.map((key) => renderDay(key))}</View></View> : null}
-            {period === "year" ? <View style={styles.card}><Text style={styles.cardTitle}>Année</Text>{yearRows.map((row) => { const ratio = row.followed ? row.successful / row.followed : 0; return <View key={row.name} style={styles.monthRow}><View style={styles.monthCopy}><Text style={styles.monthName}>{row.name}</Text><Text style={styles.monthMeta}>{row.followed ? `${row.successful} réussi${row.successful > 1 ? "s" : ""} / ${row.followed} suivi${row.followed > 1 ? "s" : ""}` : "Pas encore de données"}</Text></View><View style={styles.monthTrack}><View style={[styles.monthFill, { width: `${ratio * 100}%` }]} /></View></View>; })}</View> : null}
-            <Text style={styles.sectionTitle}>Activité</Text>
+            <View style={styles.streakCard}><View><Text style={styles.eyebrow}>{t("progress.currentStreak")}</Text><Text style={styles.streakValue}>{t(currentStreak === 1 ? "progress.dayOne" : "progress.days", { count: currentStreak })}</Text><Text style={styles.streakBest}>{t("progress.bestStreak", { days: t(bestStreak === 1 ? "progress.dayOne" : "progress.days", { count: bestStreak }) })}</Text></View><Ionicons name="flame-outline" size={38} color={colors.goldLight} /></View>
+            <View style={styles.summaryCard}><Text style={styles.eyebrow}>{t("progress.summary")}</Text><Text style={styles.summaryText}>{t("progress.summaryLine", { successful, followed: followed.length })}</Text></View>
+            {period === "week" ? <View style={styles.card}><Text style={styles.cardTitle}>{t("progress.week")}</Text><View style={styles.weekRow}>{days.map((key) => renderDay(key, true))}</View></View> : null}
+            {period === "month" ? <View style={styles.card}><Text style={styles.cardTitle}>{t("progress.calendar")}</Text><View style={styles.legend}><View style={styles.legendItem}><View style={[styles.legendDot, styles.dotSuccess]} /><Text style={styles.legendText}>{t("progress.legendSuccess")}</Text></View><View style={styles.legendItem}><View style={[styles.legendDot, styles.dotPartial]} /><Text style={styles.legendText}>{t("progress.legendPartial")}</Text></View><View style={styles.legendItem}><View style={[styles.legendDot, styles.dotNeutral]} /><Text style={styles.legendText}>{t("progress.legendMissed")}</Text></View><View style={styles.legendItem}><Text style={styles.legendDash}>—</Text><Text style={styles.legendText}>{t("progress.legendNoData")}</Text></View></View><View style={styles.calendarHeader}>{[0, 1, 2, 3, 4, 5, 6].map((day) => weekLabel(new Date(2024, 0, 1 + day)).charAt(0).toUpperCase()).map((label, index) => <Text key={`${label}-${index}`} style={styles.calendarHeaderText}>{label}</Text>)}</View><View style={styles.calendarGrid}>{Array.from({ length: (dateFromKey(dateKey(start)).getDay() + 6) % 7 }, (_, index) => <View key={`empty-${index}`} style={styles.calendarDay} />)}{days.map((key) => renderDay(key))}</View></View> : null}
+            {period === "year" ? <View style={styles.card}><Text style={styles.cardTitle}>{t("progress.year")}</Text>{yearRows.map((row) => { const ratio = row.followed ? row.successful / row.followed : 0; return <View key={row.name} style={styles.monthRow}><View style={styles.monthCopy}><Text style={styles.monthName}>{row.name}</Text><Text style={styles.monthMeta}>{row.followed ? t("progress.monthLine", { successful: row.successful, followed: row.followed }) : t("progress.noDataYet")}</Text></View><View style={styles.monthTrack}><View style={[styles.monthFill, { width: `${ratio * 100}%` }]} /></View></View>; })}</View> : null}
+            <Text style={styles.sectionTitle}>{t("progress.activity")}</Text>
             <View style={styles.activityGrid}>{[
-              ["Coran", "quran", "versets lus"], ["Dhikr", "dhikr", "dhikr"], ["Apprendre", "hifz", "révisions terminées"], ["Prières", "prayer", "prières validées"], ["Qiyam al-Layl", "tahajjud", "nuits"],
-            ].map(([label, kind, suffix]) => { const value = activityValue(activitySnapshots, kind as "quran" | "dhikr" | "hifz" | "prayer" | "tahajjud"); return <View key={label} style={styles.activityCard}><Text style={styles.activityLabel}>{label}</Text><Text style={styles.activityValue}>{value === null ? "—" : value}</Text><Text style={styles.activitySuffix}>{value === null ? "Pas encore de données" : suffix}</Text></View>; })}</View>
-            {!followed.length ? <Text style={styles.emptyText}>Aucune donnée disponible pour cette période.</Text> : null}
+              [t("progress.quran"), "quran", t("progress.versesRead")], [t("progress.dhikr"), "dhikr", "dhikr"], [t("progress.learn"), "hifz", t("progress.revisionsDone")], [t("progress.prayers"), "prayer", t("progress.prayersDone")], ["Qiyam al-Layl", "tahajjud", t("progress.nights")],
+            ].map(([label, kind, suffix]) => { const value = activityValue(activitySnapshots, kind as "quran" | "dhikr" | "hifz" | "prayer" | "tahajjud"); return <View key={label} style={styles.activityCard}><Text style={styles.activityLabel}>{label}</Text><Text style={styles.activityValue}>{value === null ? "—" : value}</Text><Text style={styles.activitySuffix}>{value === null ? t("progress.noDataYet") : suffix}</Text></View>; })}</View>
+            {!followed.length ? <Text style={styles.emptyText}>{t("progress.noPeriodData")}</Text> : null}
           </>
         )}
       </ScrollView>
-      <Modal visible={Boolean(selected)} transparent animationType="fade" onRequestClose={() => setSelected(null)}><Pressable style={styles.modalBackdrop} onPress={() => setSelected(null)}><Pressable style={styles.detailCard} onPress={(event) => event.stopPropagation()}><Text style={styles.detailTitle}>{selected ? formatDay(selected.dateKey) : ""}</Text>{selected ? <SnapshotDetail snapshot={selected} /> : null}<Pressable onPress={() => setSelected(null)} style={styles.closeButton}><Text style={styles.closeText}>Fermer</Text></Pressable></Pressable></Pressable></Modal>
+      <Modal visible={Boolean(selected)} transparent animationType="fade" onRequestClose={() => setSelected(null)}><Pressable style={styles.modalBackdrop} onPress={() => setSelected(null)}><Pressable style={styles.detailCard} onPress={(event) => event.stopPropagation()}><Text style={styles.detailTitle}>{selected ? formatDay(selected.dateKey) : ""}</Text>{selected ? <SnapshotDetail snapshot={selected} /> : null}<Pressable onPress={() => setSelected(null)} style={styles.closeButton}><Text style={styles.closeText}>{t("menu.close")}</Text></Pressable></Pressable></Pressable></Modal>
     </SafeAreaView>
   );
 }

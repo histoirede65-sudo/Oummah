@@ -1,9 +1,11 @@
 import { StyleSheet, Text, View } from "react-native";
+import { useI18n } from "../../../i18n";
 import { colors } from "../../../theme/colors";
 import { typography } from "../../../theme/typography";
 
 export default function WeeklySummaryCard({ activeDays, regularity }: { activeDays: number; regularity: number }) {
-  return <View style={styles.card}><View><Text style={styles.eyebrow}>BILAN DE LA SEMAINE</Text><Text style={styles.title}>{activeDays} jours actifs</Text></View><View style={styles.divider} /><View><Text style={styles.value}>{regularity}%</Text><Text style={styles.label}>de régularité</Text></View></View>;
+  const { t } = useI18n();
+  return <View style={styles.card}><View><Text style={styles.eyebrow}>{t("goals.weekReview")}</Text><Text style={styles.title}>{t("goals.activeDays", { count: activeDays })}</Text></View><View style={styles.divider} /><View><Text style={styles.value}>{regularity}%</Text><Text style={styles.label}>{t("goals.consistency")}</Text></View></View>;
 }
 const styles = StyleSheet.create({
   card: { minHeight: 82, paddingHorizontal: 17, flexDirection: "row", alignItems: "center", justifyContent: "space-between", borderRadius: 20, borderWidth: 1, borderColor: "rgba(255,255,255,0.07)", backgroundColor: "rgba(255,255,255,0.025)" },

@@ -4,21 +4,24 @@ import { Pressable, StyleSheet, Text, View } from "react-native";
 
 import type { DailyGoal } from "../domain/DailyGoal";
 import { isGoalComplete } from "../domain/DailyGoal";
+import { useI18n } from "../../../i18n";
 import { colors } from "../../../theme/colors";
+import { goalSubtitle, goalTitle } from "./goalText";
 import { typography } from "../../../theme/typography";
 
 export default function EssentialGoalCard({ goal, onPress }: { goal: DailyGoal; onPress(): void }) {
+  const { t } = useI18n();
   const complete = isGoalComplete(goal);
   return (
     <Pressable onPress={onPress} style={({ pressed }) => [styles.card, complete && styles.cardComplete, pressed && styles.pressed]}>
       <LinearGradient colors={["rgba(225,160,50,0.17)", "rgba(54,30,66,0.54)"]} style={StyleSheet.absoluteFill} />
       <View style={styles.icon}><Ionicons name={complete ? "checkmark" : "star-outline"} size={19} color={complete ? colors.background : colors.goldLight} /></View>
       <View style={styles.copy}>
-        <Text style={styles.eyebrow}>OBJECTIF ESSENTIEL</Text>
-        <Text style={styles.title}>{goal.title}</Text>
-        <Text style={styles.subtitle}>{complete ? "Petite victoire accomplie aujourd’hui" : goal.subtitle}</Text>
+        <Text style={styles.eyebrow}>{t("goals.essential")}</Text>
+        <Text style={styles.title}>{goalTitle(goal, t)}</Text>
+        <Text style={styles.subtitle}>{complete ? t("goals.smallWin") : goalSubtitle(goal, t)}</Text>
       </View>
-      <View style={styles.action}><Text style={styles.actionText}>{complete ? "Terminé" : "Continuer"}</Text><Ionicons name="arrow-forward" size={14} color={colors.background} /></View>
+      <View style={styles.action}><Text style={styles.actionText}>{complete ? t("goals.done") : t("goals.continue")}</Text><Ionicons name="arrow-forward" size={14} color={colors.background} /></View>
     </Pressable>
   );
 }

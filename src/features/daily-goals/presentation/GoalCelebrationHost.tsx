@@ -2,7 +2,9 @@ import { Ionicons } from "@expo/vector-icons";
 import { useEffect, useRef, useState } from "react";
 import { Modal, Pressable, StyleSheet, Text, View } from "react-native";
 
+import { translate } from "../../../i18n";
 import { colors } from "../../../theme/colors";
+import { goalTitle } from "./goalText";
 import { typography } from "../../../theme/typography";
 import {
   isIndividualPrayerCelebrationActive,
@@ -16,19 +18,19 @@ import { goalProgressBridge } from "../services/goalProgressBridge";
 function messageFor(goal: DailyGoal) {
   switch (goal.metric) {
     case "quran_verses_read":
-      return `Félicitations ! Tu as lu les ${goal.progress.target} versets de ton objectif quotidien.`;
+      return translate("goals.cheerQuran", { count: goal.progress.target });
     case "dhikr_count":
-      return `Félicitations ! Tu as accompli tes ${goal.progress.target} dhikr du jour.`;
+      return translate("goals.cheerDhikr", { count: goal.progress.target });
     case "hifz_review_completed":
-      return "Félicitations ! Tu as révisé un verset aujourd’hui.";
+      return translate("goals.cheerHifz");
     case "hadith_read":
-      return "Félicitations ! Tu as lu ton hadith du jour.";
+      return translate("goals.cheerHadith");
     case "prophet_story":
-      return "Félicitations ! Tu as suivi une histoire de prophète aujourd’hui.";
+      return translate("goals.cheerProphets");
     case "dua_read":
-      return "Félicitations ! Tu as lu ta dou’a du jour.";
+      return translate("goals.cheerDua");
     default:
-      return `Félicitations ! Tu as accompli ton objectif : ${goal.title.toLowerCase()}.`;
+      return translate("goals.cheerOther", { goal: goalTitle(goal, translate) });
   }
 }
 
@@ -77,11 +79,11 @@ export default function GoalCelebrationHost() {
       <View style={styles.backdrop}>
         <View style={styles.card}>
           <View style={styles.icon}><Ionicons name="sparkles" size={30} color={colors.goldLight} /></View>
-          <Text style={styles.heading}>Objectif accompli</Text>
+          <Text style={styles.heading}>{translate("goals.cheerTitle")}</Text>
           <Text style={styles.message}>{message}</Text>
-          <Text style={styles.blessing}>Qu’Allah te récompense et accepte tes efforts. Âmîn.</Text>
+          <Text style={styles.blessing}>{translate("goals.cheerBlessing")}</Text>
           <Pressable accessibilityRole="button" onPress={dismiss} style={styles.button}>
-            <Text style={styles.buttonText}>Continuer</Text>
+            <Text style={styles.buttonText}>{translate("goals.continue")}</Text>
           </Pressable>
         </View>
       </View>

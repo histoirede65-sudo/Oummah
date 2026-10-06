@@ -30,21 +30,23 @@ import { goalProgressBridge } from "../features/daily-goals/services/goalProgres
 import { progressivePathRepository } from "../features/progressive-paths/data/progressivePathRepository";
 import { nextProgressivePathSession, progressivePathProgress, type ProgressivePath } from "../features/progressive-paths/domain/ProgressivePath";
 import { getPremiumAccess, type PremiumAccess } from "../features/premium/PremiumAccessService";
+import { goalTitle } from "../features/daily-goals/presentation/goalText";
+import { useI18n, type TranslationKey } from "../i18n";
 import { colors } from "../theme/colors";
 import { typography } from "../theme/typography";
 
 const PACES: DailyGoalSettings["dailyMinutes"][] = [5, 10, 20, 30];
 const FOCUSES: Array<{
   id: DailyGoalSettings["focus"][number];
-  label: string;
+  label: TranslationKey;
   icon: keyof typeof Ionicons.glyphMap;
 }> = [
-  { id: "quran", label: "Coran", icon: "book-outline" },
-  { id: "dhikr", label: "Dhikr", icon: "ellipse-outline" },
-  { id: "hifz", label: "Mémorisation", icon: "school-outline" },
-  { id: "dua", label: "Dou’a", icon: "heart-outline" },
-  { id: "hadith", label: "Hadith", icon: "library-outline" },
-  { id: "prophets", label: "Prophètes", icon: "star-outline" },
+  { id: "quran", label: "goals.focusQuran", icon: "book-outline" },
+  { id: "dhikr", label: "goals.focusDhikr", icon: "ellipse-outline" },
+  { id: "hifz", label: "goals.focusHifz", icon: "school-outline" },
+  { id: "dua", label: "goals.focusDua", icon: "heart-outline" },
+  { id: "hadith", label: "goals.focusHadith", icon: "library-outline" },
+  { id: "prophets", label: "goals.focusProphets", icon: "star-outline" },
 ];
 
 function returnFromDailyGoals() {
@@ -56,6 +58,7 @@ function returnFromDailyGoals() {
 }
 
 export default function DailyGoalsScreen() {
+  const { t } = useI18n();
   const model = useDailyGoalsViewModel();
   const [addVisible, setAddVisible] = useState(false);
   const [settingsVisible, setSettingsVisible] = useState(false);
@@ -147,12 +150,12 @@ export default function DailyGoalsScreen() {
   const confirmDeleteGoal = (goal: DailyGoal) => {
     if (!goal.personal) return;
     Alert.alert(
-      "Supprimer cet objectif ?",
-      goal.title,
+      t("goals.deleteTitle"),
+      goalTitle(goal, t),
       [
-        { text: "Annuler", style: "cancel" },
+        { text: t("common.cancel"), style: "cancel" },
         {
-          text: "Supprimer",
+          text: t("goals.delete"),
           style: "destructive",
           onPress: () => {
             void model.removePersonal(goal.id);
@@ -202,7 +205,7 @@ export default function DailyGoalsScreen() {
     <SafeAreaView edges={["top"]} style={styles.safe}>
       <View style={styles.header}>
         <Pressable onPress={returnFromDailyGoals} style={styles.headerButton}><Ionicons name="arrow-back" size={21} color={colors.goldLight} /></Pressable>
-        <View style={styles.headerCopy}><Text style={styles.headerTitle}>Objectifs du jour</Text><Text style={styles.headerSubtitle}>Avancez à votre rythme, avec constance</Text></View>
+        <View style={styles.headerCopy}><Text style={styles.headerTitle}>{t("goals.screenTitle")}</Text><Text style={styles.headerSubtitle}>{t("goals.screenSubtitle")}</Text></View>
         <Pressable onPress={() => setSettingsVisible(true)} style={styles.headerButton}><Ionicons name="options-outline" size={20} color={colors.goldLight} /></Pressable>
       </View>
 
@@ -211,23 +214,23 @@ export default function DailyGoalsScreen() {
         <Pressable onPress={() => router.push("/progression")} style={({ pressed }) => [styles.progressionLink, styles.progressionLinkOffset, pressed && styles.pressed]}>
           <View style={styles.progressionIcon}><Ionicons name="trending-up-outline" size={22} color={colors.goldLight} /></View>
           <View style={styles.progressionCopy}>
-            <Text style={styles.progressionLinkText}>Ma progression</Text>
-            <Text style={styles.progressionSubtitle}>Semaine • Mois • Année</Text>
+            <Text style={styles.progressionLinkText}>{t("goals.myProgress")}</Text>
+            <Text style={styles.progressionSubtitle}>{t("goals.periods")}</Text>
           </View>
           <Ionicons name="chevron-forward" size={16} color={colors.goldLight} />
         </Pressable>
         <Pressable onPress={() => setSettingsVisible(true)} style={({ pressed }) => [styles.manageGoalsButton, pressed && styles.pressed]}>
           <Ionicons name="options-outline" size={19} color={colors.background} />
-          <Text style={styles.manageGoalsText}>Modifier mes objectifs</Text>
+          <Text style={styles.manageGoalsText}>{t("goals.editGoals")}</Text>
           <Ionicons name="chevron-forward" size={17} color={colors.background} />
         </Pressable>
         {progressivePath && pathProgress && nextPathSession ? (
           <>
-            <Text style={styles.sectionLabel}>PARCOURS PREMIUM</Text>
+            <Text style={styles.sectionLabel}>{t("goals.premiumPath")}</Text>
             <View style={styles.pathCard}>
               <View style={styles.pathTop}>
                 <View style={styles.pathBadge}><Ionicons name="diamond-outline" size={13} color={colors.goldLight} /><Text style={styles.pathBadgeText}>PREMIUM</Text></View>
-                <Text style={styles.pathMeta}>{pathProgress.completed}/{pathProgress.total} séances</Text>
+                <Text style={styles.pathMeta}>{t("goals.sessionsCount", { done: pathProgress.completed, total: pathProgress.total })}</Text>
               </View>
               <Text style={styles.pathTitle}>{progressivePath.title}</Text>
               <Text style={styles.pathSubtitle}>{nextPathSession.title}</Text>
@@ -237,39 +240,39 @@ export default function DailyGoalsScreen() {
                 <View style={styles.pathLockedBox}>
                   <Ionicons name="lock-closed-outline" size={17} color={colors.goldLight} />
                   <View style={styles.pathLockedCopy}>
-                    <Text style={styles.pathLockedTitle}>Parcours verrouillé</Text>
-                    <Text style={styles.pathLockedText}>Un abonnement Premium actif est nécessaire pour poursuivre les séances et les révisions.</Text>
+                    <Text style={styles.pathLockedTitle}>{t("goals.pathLocked")}</Text>
+                    <Text style={styles.pathLockedText}>{t("goals.pathLockedText")}</Text>
                   </View>
                   <Pressable onPress={() => router.push(premiumAccess?.reason === "signed-out" ? "/profile" : "/premium")} style={styles.pathLockedButton}>
-                    <Text style={styles.pathLockedButtonText}>{premiumAccess?.reason === "signed-out" ? "Connexion" : "Premium"}</Text>
+                    <Text style={styles.pathLockedButtonText}>{premiumAccess?.reason === "signed-out" ? t("goals.signIn") : "Premium"}</Text>
                   </Pressable>
                 </View>
               ) : (
                 <View style={styles.pathActions}>
-                  <Pressable onPress={() => void postponePathSession()} style={styles.pathSecondary}><Text style={styles.pathSecondaryText}>Reporter</Text></Pressable>
-                  <Pressable onPress={() => void completePathSession("difficult")} style={styles.pathSecondary}><Text style={styles.pathSecondaryText}>Difficile</Text></Pressable>
-                  <Pressable onPress={() => void completePathSession("normal")} style={styles.pathPrimary}><Text style={styles.pathPrimaryText}>Séance terminée</Text></Pressable>
+                  <Pressable onPress={() => void postponePathSession()} style={styles.pathSecondary}><Text style={styles.pathSecondaryText}>{t("goals.postpone")}</Text></Pressable>
+                  <Pressable onPress={() => void completePathSession("difficult")} style={styles.pathSecondary}><Text style={styles.pathSecondaryText}>{t("goals.difficult")}</Text></Pressable>
+                  <Pressable onPress={() => void completePathSession("normal")} style={styles.pathPrimary}><Text style={styles.pathPrimaryText}>{t("goals.sessionDone")}</Text></Pressable>
                 </View>
               )}
             </View>
           </>
         ) : null}
-        <Text style={styles.sectionLabel}>VOTRE PRIORITÉ</Text>
+        <Text style={styles.sectionLabel}>{t("goals.priority")}</Text>
         <EssentialGoalCard goal={model.essential} onPress={() => void openGoal(model.essential!)} />
-        <View style={styles.sectionHeading}><Text style={styles.sectionTitle}>Aujourd’hui</Text><Text style={styles.sectionMeta}>{model.summary.completed}/{model.summary.total} terminés</Text></View>
+        <View style={styles.sectionHeading}><Text style={styles.sectionTitle}>{t("goals.today")}</Text><Text style={styles.sectionMeta}>{t("goals.doneCount", { done: model.summary.completed, total: model.summary.total })}</Text></View>
         <View style={styles.goals}>{orderedGoals.map((goal) => <DailyGoalCard key={goal.id} goal={goal} onPress={() => void openGoal(goal)} onDelete={() => confirmDeleteGoal(goal)} />)}</View>
-        <Pressable onPress={() => setAddVisible(true)} style={styles.addButton}><Ionicons name="add" size={18} color={colors.goldLight} /><Text style={styles.addText}>Ajouter un objectif personnel</Text></Pressable>
-        <Text style={styles.sectionLabel}>VOTRE RÉGULARITÉ</Text>
+        <Pressable onPress={() => setAddVisible(true)} style={styles.addButton}><Ionicons name="add" size={18} color={colors.goldLight} /><Text style={styles.addText}>{t("goals.addPersonal")}</Text></Pressable>
+        <Text style={styles.sectionLabel}>{t("goals.regularity")}</Text>
         <WeeklySummaryCard activeDays={weekly.activeDays} regularity={weekly.regularity} />
         <View style={styles.eveningCard}>
           <View style={styles.eveningIcon}><Ionicons name="moon-outline" size={19} color={colors.goldLight} /></View>
           <View style={styles.eveningCopy}>
-            <Text style={styles.eveningEyebrow}>BILAN DE VOTRE JOURNÉE</Text>
-            <Text style={styles.eveningTitle}>{model.summary.completed} objectifs sur {model.summary.total} · {devotedMinutes} min consacrées</Text>
-            <Text style={styles.eveningText}>{model.summary.progress >= 1 ? "Votre journée est complète. Accueillez demain avec sérénité." : "Ce qui n’est pas terminé restera ici, sans dette pour demain."}</Text>
+            <Text style={styles.eveningEyebrow}>{t("goals.dayReview")}</Text>
+            <Text style={styles.eveningTitle}>{t("goals.dayReviewLine", { done: model.summary.completed, total: model.summary.total, minutes: devotedMinutes })}</Text>
+            <Text style={styles.eveningText}>{model.summary.progress >= 1 ? t("goals.dayComplete") : t("goals.dayIncomplete")}</Text>
           </View>
         </View>
-        <Text style={styles.footerNote}>Une nouvelle journée commence toujours sans dette. Les objectifs non terminés ne s’accumulent pas automatiquement.</Text>
+        <Text style={styles.footerNote}>{t("goals.footer")}</Text>
       </ScrollView>
 
       <Modal visible={addVisible} transparent animationType="fade" onRequestClose={() => setAddVisible(false)}>
@@ -280,14 +283,14 @@ export default function DailyGoalsScreen() {
         >
           <Pressable onPress={() => setAddVisible(false)} style={styles.backdrop}>
             <Pressable onPress={(event) => event.stopPropagation()} style={styles.modalCard}>
-              <Text style={styles.modalEyebrow}>MES OBJECTIFS</Text>
-              <Text style={styles.modalTitle}>Ajouter un objectif personnel</Text>
-              <Text style={styles.modalText}>Écrivez l’action que vous souhaitez accomplir aujourd’hui. Elle apparaîtra ensuite dans votre liste et vous pourrez la cocher une fois terminée.</Text>
-              <Text style={styles.inputLabel}>Votre objectif</Text>
+              <Text style={styles.modalEyebrow}>{t("goals.myGoals")}</Text>
+              <Text style={styles.modalTitle}>{t("goals.addPersonal")}</Text>
+              <Text style={styles.modalText}>{t("goals.addText")}</Text>
+              <Text style={styles.inputLabel}>{t("goals.yourGoal")}</Text>
               <TextInput
                 value={personalTitle}
                 onChangeText={setPersonalTitle}
-                placeholder="Ex. Appeler mes parents"
+                placeholder={t("goals.placeholder")}
                 placeholderTextColor={colors.textMuted}
                 autoFocus
                 maxLength={80}
@@ -297,17 +300,17 @@ export default function DailyGoalsScreen() {
                 style={styles.input}
               />
               <View style={styles.inputFooter}>
-                <Text style={styles.inputHint}>Un objectif simple et réalisable pour aujourd’hui.</Text>
+                <Text style={styles.inputHint}>{t("goals.inputHint")}</Text>
                 <Text style={styles.inputCount}>{personalTitle.length}/80</Text>
               </View>
               <View style={styles.modalActions}>
-                <Pressable onPress={() => setAddVisible(false)} style={styles.secondaryButton}><Text style={styles.secondaryText}>Annuler</Text></Pressable>
+                <Pressable onPress={() => setAddVisible(false)} style={styles.secondaryButton}><Text style={styles.secondaryText}>{t("common.cancel")}</Text></Pressable>
                 <Pressable
                   disabled={!personalTitle.trim()}
                   onPress={() => void addGoal()}
                   style={[styles.primaryButton, !personalTitle.trim() && styles.primaryButtonDisabled]}
                 >
-                  <Text style={[styles.primaryText, !personalTitle.trim() && styles.primaryTextDisabled]}>Ajouter l’objectif</Text>
+                  <Text style={[styles.primaryText, !personalTitle.trim() && styles.primaryTextDisabled]}>{t("goals.addConfirm")}</Text>
                 </Pressable>
               </View>
             </Pressable>
@@ -317,12 +320,12 @@ export default function DailyGoalsScreen() {
 
       <Modal visible={settingsVisible} transparent animationType="slide" onRequestClose={() => setSettingsVisible(false)}>
         <Pressable onPress={() => setSettingsVisible(false)} style={styles.backdrop}><Pressable onPress={(event) => event.stopPropagation()} style={styles.settingsSheet}>
-          <View style={styles.handle} /><Text style={styles.modalEyebrow}>PROGRAMME OUMMAH</Text><Text style={styles.modalTitle}>Votre rythme quotidien</Text><Text style={styles.modalText}>Combien de temps souhaitez-vous consacrer chaque jour ?</Text>
+          <View style={styles.handle} /><Text style={styles.modalEyebrow}>{t("goals.program")}</Text><Text style={styles.modalTitle}>{t("goals.pace")}</Text><Text style={styles.modalText}>{t("goals.paceQuestion")}</Text>
           <View style={styles.paces}>{PACES.map((minutes) => { const active = settings?.dailyMinutes === minutes; return <Pressable key={minutes} onPress={() => void choosePace(minutes)} style={[styles.pace, active && styles.paceActive]}><Text style={[styles.paceValue, active && styles.paceValueActive]}>{minutes}</Text><Text style={[styles.paceLabel, active && styles.paceLabelActive]}>MIN</Text></Pressable>; })}</View>
-          <Text style={styles.focusTitle}>Sur quoi souhaitez-vous progresser ?</Text>
-          <View style={styles.focuses}>{FOCUSES.map((focus) => { const active = settings?.focus.includes(focus.id); return <Pressable key={focus.id} onPress={() => void toggleFocus(focus.id)} style={[styles.focus, active && styles.focusActive]}><Ionicons name={focus.icon} size={15} color={active ? colors.goldLight : colors.textMuted} /><Text style={[styles.focusText, active && styles.focusTextActive]}>{focus.label}</Text></Pressable>; })}</View>
-          <Text style={styles.calmNote}>Le programme s’adapte sans supprimer vos objectifs personnels ni votre progression du jour.</Text>
-          <Pressable onPress={() => setSettingsVisible(false)} style={styles.primaryButtonWide}><Text style={styles.primaryText}>Terminer</Text></Pressable>
+          <Text style={styles.focusTitle}>{t("goals.focusQuestion")}</Text>
+          <View style={styles.focuses}>{FOCUSES.map((focus) => { const active = settings?.focus.includes(focus.id); return <Pressable key={focus.id} onPress={() => void toggleFocus(focus.id)} style={[styles.focus, active && styles.focusActive]}><Ionicons name={focus.icon} size={15} color={active ? colors.goldLight : colors.textMuted} /><Text style={[styles.focusText, active && styles.focusTextActive]}>{t(focus.label)}</Text></Pressable>; })}</View>
+          <Text style={styles.calmNote}>{t("goals.calmNote")}</Text>
+          <Pressable onPress={() => setSettingsVisible(false)} style={styles.primaryButtonWide}><Text style={styles.primaryText}>{t("goals.finish")}</Text></Pressable>
         </Pressable></Pressable>
       </Modal>
     </SafeAreaView>
