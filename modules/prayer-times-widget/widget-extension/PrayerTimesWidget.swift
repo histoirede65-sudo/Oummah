@@ -1582,6 +1582,71 @@ struct ScanWidget: Widget {
   }
 }
 
+// MARK: - Halal autour de moi : ouvre directement les adresses halal proches
+
+private let halalWidgetKind = "HalalWidget"
+private let halalURL = URL(string: "oummah:///halal")
+
+@available(iOS 16.0, *)
+private struct HalalWidgetView: View {
+  @Environment(\.widgetFamily) private var family
+  let entry: ScanEntry
+
+  var body: some View {
+    switch family {
+    case .accessoryCircular:
+      ZStack {
+        AccessoryWidgetBackground()
+        Image(systemName: "fork.knife")
+          .font(.system(size: 22, weight: .semibold))
+      }
+      .widgetAccentable()
+    case .accessoryRectangular:
+      HStack(spacing: 8) {
+        Image(systemName: "fork.knife.circle")
+          .font(.system(size: 26, weight: .semibold))
+          .widgetAccentable()
+        VStack(alignment: .leading, spacing: 1) {
+          Text("Halal").font(.headline)
+          Text("Autour de moi").font(.caption).foregroundStyle(.secondary)
+        }
+        Spacer(minLength: 0)
+      }
+    default:
+      VStack(spacing: 8) {
+        ZStack {
+          Circle().fill(scanGold.opacity(0.16)).frame(width: 74, height: 74)
+          Image(systemName: "fork.knife")
+            .font(.system(size: 36, weight: .semibold))
+            .foregroundStyle(scanGold)
+        }
+        Text("Halal")
+          .font(.system(size: 17, weight: .bold))
+          .foregroundStyle(scanCream)
+        Text("Autour de moi")
+          .font(.system(size: 12, weight: .medium))
+          .foregroundStyle(scanGold.opacity(0.75))
+      }
+      .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+  }
+}
+
+@available(iOS 16.0, *)
+struct HalalWidget: Widget {
+  var body: some WidgetConfiguration {
+    // Same static provider as the scanner: nothing to refresh.
+    StaticConfiguration(kind: halalWidgetKind, provider: ScanProvider()) { entry in
+      HalalWidgetView(entry: entry)
+        .widgetURL(halalURL)
+        .modifier(ScanBackground())
+    }
+    .configurationDisplayName("Halal autour de moi")
+    .description("Ouvre directement les restaurants et commerces halal autour de vous.")
+    .supportedFamilies([.systemSmall, .accessoryCircular, .accessoryRectangular])
+  }
+}
+
 @available(iOS 16.0, *)
 @main
 struct OummahWidgetBundle: WidgetBundle {
@@ -1590,5 +1655,6 @@ struct OummahWidgetBundle: WidgetBundle {
     OummahVerseLockScreenWidget()
     TahajjudWidget()
     ScanWidget()
+    HalalWidget()
   }
 }

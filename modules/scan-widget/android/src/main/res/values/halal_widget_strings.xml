@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="halal_widget_label">Halal autour de moi</string>
+  <string name="halal_widget_title">Halal</string>
+  <string name="halal_widget_subtitle">Autour de moi</string>
+  <string name="halal_widget_description">Ouvre directement les restaurants et commerces halal autour de vous.</string>
+</resources>

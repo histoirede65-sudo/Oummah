@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  android:id="@+id/halal_widget_root"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  android:background="@drawable/halal_widget_bg"
+  android:gravity="center"
+  android:orientation="vertical"
+  android:padding="10dp">
+
+  <ImageView
+    android:layout_width="44dp"
+    android:layout_height="44dp"
+    android:contentDescription="@string/halal_widget_label"
+    android:src="@drawable/halal_widget_icon" />
+
+  <TextView
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="6dp"
+    android:text="@string/halal_widget_title"
+    android:textColor="#FFF8F1DE"
+    android:textSize="14sp"
+    android:textStyle="bold" />
+
+  <TextView
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="@string/halal_widget_subtitle"
+    android:textColor="#B3F2B53D"
+    android:textSize="11sp" />
+</LinearLayout>
