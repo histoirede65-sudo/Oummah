@@ -18,6 +18,8 @@ type LearningAudioRequest = {
   /** Measured range in seconds; takes precedence over the ratios above. */
   startSeconds?: number;
   endSeconds?: number;
+  /** Passages inside the range to jump over (narrator's remark between two formulas), in seconds. */
+  skipRanges?: ReadonlyArray<readonly [number, number]>;
 };
 
 type UseLearningAudioPlayerOptions = {
@@ -91,6 +93,7 @@ export function useLearningAudioPlayer({
   const pollTimerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const mountedRef = useRef(true);
   const rangeFinishedRef = useRef(false);
+  const skipRangesRef = useRef<ReadonlyArray<readonly [number, number]>>([]);
 
   const clearPoll = useCallback(() => {
     if (pollTimerRef.current) {
@@ -159,6 +162,13 @@ export function useLearningAudioPlayer({
     setActiveRange(undefined);
   }, [clearPoll, status.didJustFinish]);
 
+  // Jumps over a narrator's remark inside the dou'a, then carries on.
+  useEffect(() => {
+    if (!status.playing) return;
+    const skip = skipRangesRef.current.find(([start, end]) => status.currentTime >= start && status.currentTime < end - 0.05);
+    if (skip) void player.seekTo(skip[1]).catch(() => undefined);
+  }, [player, status.currentTime, status.playing]);
+
   useEffect(() => {
     const range = rangeRef.current;
     if (
@@ -216,6 +226,7 @@ export function useLearningAudioPlayer({
           player.play();
           loadedKeyRef.current = request.key;
           loadedRequestRef.current = request;
+          skipRangesRef.current = request.skipRanges ?? [];
           pendingRef.current = undefined;
           setPendingKey(undefined);
           setActiveKey(request.key);
@@ -276,6 +287,7 @@ export function useLearningAudioPlayer({
             if (commandTokenRef.current !== token || !mountedRef.current) return;
             rangeFinishedRef.current = false;
             loadedRequestRef.current = request;
+            skipRangesRef.current = request.skipRanges ?? [];
             player.play();
             setActiveKey(request.key);
           } catch {
