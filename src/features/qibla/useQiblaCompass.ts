@@ -1,6 +1,9 @@
 import { translate } from '../../i18n';
 import * as Location from "expo-location";
+import { DeviceMotion } from "expo-sensors";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { Platform } from "react-native";
+import { useSharedValue } from "react-native-reanimated";
 
 import { normalizeDegrees, shortestAngle } from "./qiblaMath";
 import { readCachedQiblaLocation, saveCachedQiblaLocation } from "./qiblaPreferences";
@@ -24,7 +27,10 @@ type CompassState = {
   error: string | null;
 };
 
-const HEADING_DEAD_ZONE = 0.25;
+// The text under the compass (degrees left, turn left/right) is refreshed at
+// this pace; the needle itself follows every sample on the UI thread.
+const TEXT_REFRESH_MS = 120;
+const MOTION_INTERVAL_MS = 20;
 
 const initialState: CompassState = {
   location: null,
@@ -36,23 +42,26 @@ const initialState: CompassState = {
   error: null,
 };
 
-function circularLerp(from: number, to: number, factor: number) {
-  return normalizeDegrees(from + shortestAngle(to - from) * factor);
-}
-
-function smoothingFactor(delta: number, accuracy: number | null) {
-  const absolute = Math.abs(delta);
-  if (absolute >= 35) return 0.58;
-  if (absolute >= 6) return 0.72;
-  if (absolute >= 2) return 0.38;
-
-  // Expo reports compass calibration from 0 (none) to 3 (high).
-  // Trust well-calibrated readings more so the compass follows movement
-  // promptly, while filtering small movements from an uncertain sensor.
-  if (accuracy === 3) return 0.14;
-  if (accuracy === 2) return 0.12;
-  if (accuracy === 1) return 0.1;
-  return 0.08;
+/**
+ * Android: heading from the fused rotation vector (gyroscope + accelerometer +
+ * magnetometer) instead of Expo Location's raw magnetometer reading, which is
+ * sampled ~5 times per second, only reports 2° steps and goes wrong as soon as
+ * the phone is tilted. The direction used is the top edge of the phone plus
+ * its back, projected on the horizon: it stays right whether the phone is
+ * held flat, tilted or upright. Expo gives alpha = -azimuth, beta = -pitch,
+ * gamma = roll of Android's getOrientation, in radians.
+ */
+function headingFromRotation(alpha: number, beta: number, gamma: number) {
+  const s = Math.sin(alpha);
+  const c = Math.cos(alpha);
+  const sb = Math.sin(beta);
+  const cb = Math.cos(beta);
+  const sg = Math.sin(gamma);
+  const cg = Math.cos(gamma);
+  const east = -s * cb - c * sg - s * sb * cg;
+  const north = c * cb - s * sg + c * sb * cg;
+  if (Math.abs(east) + Math.abs(north) < 1e-6) return null;
+  return normalizeDegrees((Math.atan2(east, north) * 180) / Math.PI);
 }
 
 export function getQiblaSensorQuality(
@@ -67,12 +76,14 @@ export function getQiblaSensorQuality(
 export function useQiblaCompass() {
   const [state, setState] = useState<CompassState>(initialState);
   const [revision, setRevision] = useState(0);
-  const smoothHeadingRef = useRef<number | null>(null);
-  const lastRawHeadingRef = useRef<number | null>(null);
+  // Latest heading, unwrapped (no jump from 359° to 0°), read by the needle on
+  // the UI thread. NaN until the first sample.
+  const headingValue = useSharedValue(Number.NaN);
+  const lastTextUpdateRef = useRef(0);
 
   const restart = useCallback(() => {
-    smoothHeadingRef.current = null;
-    lastRawHeadingRef.current = null;
+    headingValue.set(Number.NaN);
+    lastTextUpdateRef.current = 0;
     setRevision((value) => value + 1);
     setState((current) => ({
       ...current,
@@ -83,13 +94,35 @@ export function useQiblaCompass() {
       permissionDenied: false,
       error: null,
     }));
-  }, []);
+  }, [headingValue]);
 
   useEffect(() => {
     let cancelled = false;
     let positionSubscription: Location.LocationSubscription | null = null;
     let headingSubscription: Location.LocationSubscription | null = null;
+    let motionSubscription: { remove(): void } | null = null;
     const stillCurrent = () => !cancelled;
+    // True north = magnetic north + declination; Expo Location knows the
+    // declination once it has a position (trueHeading - magHeading).
+    let declination = 0;
+    let accuracy: number | null = null;
+
+    const publishHeading = (heading: number) => {
+      const previous = headingValue.get();
+      headingValue.set(
+        Number.isNaN(previous) ? heading : previous + shortestAngle(heading - normalizeDegrees(previous)),
+      );
+      const now = Date.now();
+      if (now - lastTextUpdateRef.current < TEXT_REFRESH_MS) return;
+      lastTextUpdateRef.current = now;
+      setState((currentState) => ({
+        ...currentState,
+        heading,
+        rawHeading: heading,
+        headingAccuracy: accuracy,
+        loading: currentState.location === null,
+      }));
+    };
 
     async function updateCity(latitude: number, longitude: number) {
       const places = await Location.reverseGeocodeAsync({
@@ -143,48 +176,36 @@ export function useQiblaCompass() {
       // Start the compass immediately. Acquiring a fresh high-accuracy GPS
       // position can take several seconds on some devices and must not block
       // the first heading updates.
+      const useRotationVector =
+        Platform.OS === "android" &&
+        (await DeviceMotion.isAvailableAsync().catch(() => false));
+      if (!stillCurrent()) return;
+
+      // iOS headings are already fused and tilt-compensated by Core Location.
+      // On Android this subscription only provides calibration and declination.
       headingSubscription = await Location.watchHeadingAsync((sample) => {
         if (!stillCurrent()) return;
+        accuracy = sample.accuracy;
+        if (sample.trueHeading >= 0 && Number.isFinite(sample.magHeading)) {
+          declination = shortestAngle(sample.trueHeading - sample.magHeading);
+        }
+        if (useRotationVector) return;
         const candidate =
           sample.trueHeading >= 0 ? sample.trueHeading : sample.magHeading;
         if (!Number.isFinite(candidate)) return;
-
-        const normalized = normalizeDegrees(candidate);
-        const previousRaw = lastRawHeadingRef.current;
-        if (
-          previousRaw !== null &&
-          Math.abs(shortestAngle(normalized - previousRaw)) < HEADING_DEAD_ZONE
-        ) {
-          return;
-        }
-        lastRawHeadingRef.current = normalized;
-        const previous = smoothHeadingRef.current;
-        const next =
-          previous === null
-            ? normalized
-            : circularLerp(
-                previous,
-                normalized,
-                smoothingFactor(shortestAngle(normalized - previous), sample.accuracy),
-              );
-
-        // Ignore sub-degree magnetic noise once the display has stabilised.
-        if (
-          previous !== null &&
-          Math.abs(shortestAngle(next - previous)) < 0.03
-        ) {
-          return;
-        }
-
-        smoothHeadingRef.current = next;
-        setState((currentState) => ({
-          ...currentState,
-          heading: next,
-          rawHeading: normalized,
-          headingAccuracy: sample.accuracy,
-          loading: currentState.location === null,
-        }));
+        publishHeading(normalizeDegrees(candidate));
       });
+
+      if (useRotationVector) {
+        DeviceMotion.setUpdateInterval(MOTION_INTERVAL_MS);
+        motionSubscription = DeviceMotion.addListener((motion) => {
+          if (!stillCurrent() || !motion.rotation) return;
+          const { alpha, beta, gamma } = motion.rotation;
+          const magnetic = headingFromRotation(alpha, beta, gamma);
+          if (magnetic === null) return;
+          publishHeading(normalizeDegrees(magnetic + declination));
+        });
+      }
 
       const lastKnown = await Location.getLastKnownPositionAsync({ requiredAccuracy: 2000 }).catch(() => null);
 
@@ -278,11 +299,13 @@ export function useQiblaCompass() {
       cancelled = true;
       positionSubscription?.remove();
       headingSubscription?.remove();
+      motionSubscription?.remove();
     };
-  }, [revision]);
+  }, [headingValue, revision]);
 
   return {
     ...state,
+    headingValue,
     sensorQuality: getQiblaSensorQuality(state.headingAccuracy),
     restart,
   };
