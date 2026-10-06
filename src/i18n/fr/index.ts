@@ -3828,6 +3828,10 @@ export const fr = {
   'prophets.musaFeatured': 'Du Nil au Sinaï — 15 chapitres racontés à partir des passages du Coran.',
   'prophets.resumeStory': 'Reprendre le récit',
   'prophets.startStory': 'Commencer le récit',
+  'wasil.passageVerses': 'Sourate {name} — versets {start} à {end}',
+  'wasil.passageVerse': 'Sourate {name} — verset {verse}',
+  'wasil.openNotifications': 'Ouvrir mes notifications',
+  'wasil.openGoals': 'Ouvrir mes objectifs',
 } as const;
 
 export type TranslationKey = keyof typeof fr;

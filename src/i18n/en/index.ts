@@ -3819,4 +3819,8 @@ export const en: Partial<Record<TranslationKey, string>> = {
   'prophets.musaFeatured': 'From the Nile to Sinai — 15 chapters told from the passages of the Quran.',
   'prophets.resumeStory': 'Resume the story',
   'prophets.startStory': 'Start the story',
+  'wasil.passageVerses': 'Surah {name} — verses {start} to {end}',
+  'wasil.passageVerse': 'Surah {name} — verse {verse}',
+  'wasil.openNotifications': 'Open my notifications',
+  'wasil.openGoals': 'Open my goals',
 };
