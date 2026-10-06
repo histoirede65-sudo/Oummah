@@ -3565,6 +3565,7 @@ export const fr = {
   'halalBodies.loadingGuides': 'Chargement des repères… Une connexion est nécessaire la première fois.',
   'halalBodies.warning': 'Une fiche décrit l’organisme ; elle ne rend jamais, à elle seule, un produit « non halal ». Les repères religieux expliquent les règles et ne notent aucun organisme.',
 
+
 } as const;
 
 export type TranslationKey = keyof typeof fr;

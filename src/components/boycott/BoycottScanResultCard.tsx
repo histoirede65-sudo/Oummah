@@ -3,7 +3,7 @@ import { router } from 'expo-router';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Animated, Dimensions, LayoutAnimation, Linking, Modal, PanResponder, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import type { BarcodeLookupResult } from '../../features/boycott/data/BoycottRepository';
-import type { BoycottEntity } from '../../features/boycott/domain/BoycottEntity';
+import { boycottSummary, type BoycottEntity } from '../../features/boycott/domain/BoycottEntity';
 import { analyzeHealthIngredients, type HealthFinding } from '../../features/boycott/healthIngredientAnalyzer';
 import { analyzeHealthScore as analyzeHealthScoreBase, getHealthGradeForScore, getHealthGradePresentation, HEALTH_SCORE_METHODOLOGY_TEXT, HEALTH_SCORE_VERSION, type HealthScoreResult } from '../../features/boycott/healthScoreAnalyzer';
 import { analyzeHalalCertification } from '../../features/boycott/halalCertificationAnalyzer';
@@ -118,7 +118,7 @@ function BoycottBody({ result, dossier, israelSignals, onOpenEntity, onOpenDossi
       {entity.parentGroup ? <View style={styles.chain}><Text numberOfLines={1} style={styles.chainItem}>{entity.name}</Text><Ionicons name="arrow-forward" size={16} color={colors.textMuted} /><Text numberOfLines={1} style={[styles.chainItem, styles.chainGroup]}>{entity.parentGroup}</Text></View> : null}
       <Text style={styles.bodyLead}>{translate(EVIDENCE_REASONS[entity.evidenceKind] ?? EVIDENCE_REASONS.other_documented_link)}</Text>
       {result.barcodePrefixMatch ? <Text style={[styles.bodyText, styles.bodySpaced]}>{translate('scan.prefixMatch', { prefix: result.barcodePrefixMatch, owner: entity.parentGroup ?? entity.name })}</Text> : null}
-      {entity.summary ? <Text style={[styles.bodyText, styles.bodySpaced]}>{entity.summary}</Text> : null}
+      {entity.summary ? <Text style={[styles.bodyText, styles.bodySpaced]}>{boycottSummary(entity)}</Text> : null}
       <Pressable accessibilityRole="button" onPress={onOpenEntity} style={({ pressed }) => [styles.dangerButton, pressed && styles.pressed]}><Text style={styles.actionText}>{translate("scan.seeSources")}</Text></Pressable>
     </> : <Text style={styles.bodyLead}>{result.assessment === 'ok'
       ? translate("scan.noLink")

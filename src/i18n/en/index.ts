@@ -3556,4 +3556,5 @@ export const en: Partial<Record<TranslationKey, string>> = {
   'halalBodies.loadingGuides': 'Loading guides… A connection is needed the first time.',
   'halalBodies.warning': 'A sheet describes the certifier; on its own it never makes a product “not halal”. The religious guides explain the rules and do not rate any certifier.',
 
+
 };

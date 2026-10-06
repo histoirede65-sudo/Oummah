@@ -406,6 +406,7 @@ export async function getBoycottCatalog(): Promise<BoycottEntity[]> {
             category: row.category as BoycottCategory,
             parentGroup: row.parent_group ? String(row.parent_group) : undefined,
             summary: String(row.summary ?? ''),
+            summaryEn: row.summary_en ? String(row.summary_en) : undefined,
             evidenceKind: String(row.evidence_kind ?? 'other_documented_link') as BoycottEntity['evidenceKind'],
             sources: Array.isArray(row.sources) ? row.sources as BoycottEntity['sources'] : [],
             barcodePrefixes: Array.isArray(row.barcode_prefixes) ? row.barcode_prefixes.map(String) : undefined,

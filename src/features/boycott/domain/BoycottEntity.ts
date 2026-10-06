@@ -1,4 +1,4 @@
-import { localizedRecord } from '../../../i18n/translate';
+import { getActiveLanguage, localizedRecord } from '../../../i18n/translate';
 
 export type BoycottCategory =
   | 'restaurant'
@@ -35,6 +35,8 @@ export type BoycottEntity = {
   category: BoycottCategory;
   parentGroup?: string;
   summary: string;
+  /** English summary (boycott_entities.summary_en); French is used when missing. */
+  summaryEn?: string;
   evidenceKind: BoycottEvidenceKind;
   sources: BoycottSource[];
   barcodePrefixes?: string[];
@@ -43,6 +45,11 @@ export type BoycottEntity = {
   lastVerifiedAt: string;
   boycott: true;
 };
+
+/** Sheet summary in the active language. */
+export function boycottSummary(entity: Pick<BoycottEntity, 'summary' | 'summaryEn'>): string {
+  return getActiveLanguage() === 'en' && entity.summaryEn ? entity.summaryEn : entity.summary;
+}
 
 export const BOYCOTT_CATEGORY_LABELS: Record<BoycottCategory, string> = localizedRecord({
   restaurant: 'boycottCat.restaurant',
