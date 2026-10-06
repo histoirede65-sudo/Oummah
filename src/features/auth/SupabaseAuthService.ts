@@ -423,6 +423,11 @@ export async function getStoredSession() {
     : null;
 }
 
+// One refresh at a time for the whole app. Supabase refresh tokens are single-use: when several screens
+// (or several calls of one screen) refreshed at once with the same token, all but the first failed, the
+// action broke and the session could even be cleared. Every caller now shares the refresh in flight.
+let refreshInFlight: Promise<SupabaseAuthSession | null> | null = null;
+
 export async function getValidSession(forceRefresh = false) {
   const session = await getStoredSession();
   if (
@@ -431,7 +436,15 @@ export async function getValidSession(forceRefresh = false) {
   ) {
     return session;
   }
+  if (!refreshInFlight) {
+    refreshInFlight = refreshSession(session).finally(() => {
+      refreshInFlight = null;
+    });
+  }
+  return refreshInFlight;
+}
 
+async function refreshSession(session: SupabaseAuthSession) {
   const { url, key } = configuration();
   const response = await fetch(
     `${url}/auth/v1/token?grant_type=refresh_token`,
