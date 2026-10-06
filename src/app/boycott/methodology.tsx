@@ -3,43 +3,45 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useI18n, type TranslationKey } from '../../i18n';
 import { colors } from '../../theme/colors';
 import { typography } from '../../theme/typography';
 
-const SECTIONS = [
+const SECTIONS: Array<{ icon: React.ComponentProps<typeof Ionicons>['name']; title: TranslationKey; text: TranslationKey }> = [
   {
     icon: 'document-text-outline' as const,
-    title: 'Un classement éditorial',
-    text: 'Le statut affiché par OUMMAH exprime l’application de critères éditoriaux à des informations publiques et sourcées. Il ne constitue ni une décision de justice, ni une accusation pénale, ni l’affirmation qu’une entreprise commet une infraction.'
+    title: "boycottMethod.s1Title",
+    text: "boycottMethod.s1Text"
   },
   {
     icon: 'shield-outline' as const,
-    title: 'Critères retenus',
-    text: 'OUMMAH retient uniquement des motifs clairement documentés dans la fiche. Les motifs actuellement utilisés sont notamment : travail forcé, ou liens documentés avec des acteurs ou activités faisant l’objet de controverses liées à de graves atteintes aux droits humains. Le conflit ou le pays concerné n’est pas nommé dans l’intitulé du motif.'
+    title: "boycottMethod.s2Title",
+    text: "boycottMethod.s2Text"
   },
   {
     icon: 'git-branch-outline' as const,
-    title: 'Distinguer le type de lien',
-    text: 'Une fiche doit préciser si le lien concerne directement l’entreprise, une filiale, une franchise, une société mère, une marque du même groupe, une activité commerciale, un investissement ou une campagne de boycott tierce. Un lien indirect ne doit jamais être présenté comme une implication directe dans une atteinte aux droits humains.'
+    title: "boycottMethod.s3Title",
+    text: "boycottMethod.s3Text"
   },
   {
     icon: 'library-outline' as const,
-    title: 'Sources et dates',
-    text: 'Les affirmations factuelles doivent être rattachées à une ou plusieurs sources identifiables et datées lorsque cela est possible. Les situations peuvent évoluer : vente d’une filiale, fin d’un contrat, changement d’actionnariat ou correction d’une source.'
+    title: "boycottMethod.s4Title",
+    text: "boycottMethod.s4Text"
   },
   {
     icon: 'checkmark-circle-outline' as const,
-    title: 'Ce que signifie “OK · base OUMMAH”',
-    text: 'Cela signifie uniquement qu’aucun lien correspondant aux critères OUMMAH n’a été identifié dans la base au moment de la vérification. Ce statut ne garantit pas l’absence de tout lien et peut être révisé.'
+    title: "boycottMethod.s5Title",
+    text: "boycottMethod.s5Text"
   },
   {
     icon: 'refresh-outline' as const,
-    title: 'Rectification',
-    text: 'Toute entreprise, représentant ou utilisateur peut signaler une erreur, une source devenue obsolète ou apporter une source contradictoire. Une fiche contestée doit pouvoir être réexaminée et corrigée.'
+    title: "boycottMethod.s6Title",
+    text: "boycottMethod.s6Text"
   },
 ];
 
 export default function BoycottMethodologyScreen() {
+  const { t } = useI18n();
   return (
     <LinearGradient colors={['#090713', '#110A1B', '#090713']} style={styles.screen}>
       <SafeAreaView edges={['top']} style={styles.safe}>
@@ -47,36 +49,36 @@ export default function BoycottMethodologyScreen() {
           <Pressable onPress={() => router.back()} style={styles.headerButton}>
             <Ionicons name="arrow-back" size={21} color={colors.goldLight} />
           </Pressable>
-          <Text style={styles.headerTitle}>Méthodologie</Text>
+          <Text style={styles.headerTitle}>{t("additiveSheet.methodology")}</Text>
           <View style={styles.headerSpacer} />
         </View>
 
         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.content}>
           <View style={styles.hero}>
             <View style={styles.heroIcon}><Ionicons name="shield-checkmark-outline" size={26} color={colors.goldLight} /></View>
-            <Text style={styles.kicker}>TRANSPARENCE OUMMAH</Text>
-            <Text style={styles.title}>Comprendre le classement Boycott</Text>
-            <Text style={styles.subtitle}>L’objectif est d’aider à acheter en conscience sans transformer une opinion éditoriale en accusation juridique.</Text>
+            <Text style={styles.kicker}>{t("boycottMethod.kicker")}</Text>
+            <Text style={styles.title}>{t("boycottMethod.title")}</Text>
+            <Text style={styles.subtitle}>{t("boycottMethod.subtitle")}</Text>
           </View>
 
           {SECTIONS.map((section) => (
             <View key={section.title} style={styles.card}>
               <View style={styles.cardIcon}><Ionicons name={section.icon} size={20} color={colors.goldLight} /></View>
               <View style={styles.cardBody}>
-                <Text style={styles.cardTitle}>{section.title}</Text>
-                <Text style={styles.cardText}>{section.text}</Text>
+                <Text style={styles.cardTitle}>{t(section.title)}</Text>
+                <Text style={styles.cardText}>{t(section.text)}</Text>
               </View>
             </View>
           ))}
 
           <View style={styles.warning}>
             <Ionicons name="alert-circle-outline" size={21} color="#E2BF72" />
-            <Text style={styles.warningText}>Une source citée ne signifie pas qu’elle approuve le classement OUMMAH. OUMMAH reste responsable de la manière dont elle interprète et présente les éléments retenus.</Text>
+            <Text style={styles.warningText}>{t("boycottMethod.warning")}</Text>
           </View>
 
           <Pressable onPress={() => router.push('/boycott/add')} style={styles.action}>
             <Ionicons name="create-outline" size={20} color="#17111C" />
-            <Text style={styles.actionText}>Signaler une erreur ou proposer une source</Text>
+            <Text style={styles.actionText}>{t("boycottMethod.report")}</Text>
           </Pressable>
         </ScrollView>
       </SafeAreaView>

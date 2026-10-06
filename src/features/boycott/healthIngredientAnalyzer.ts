@@ -1,6 +1,7 @@
 import type { ProductHealthData } from './data/BoycottRepository';
 import { getAdditivePresentationLevelForScientificClassification, getAdditiveScientificAssessment, normalizeAdditiveCode, type AdditivePresentationLevel, type AdditiveScientificClassification } from './additiveInfoRepository';
 import { detectIngredientAdditives, getAdditivesDataStatus, type IngredientAdditiveDetectionSource } from './ingredientAdditiveDetector';
+import { localizedRecord, translate, type TranslationKey } from '../../i18n/translate';
 
 export type HealthFinding = {
   label: string;
@@ -25,27 +26,27 @@ export type HealthIngredientAnalysis = {
   additiveLevelCounts: Record<AdditivePresentationLevel, number>;
 };
 
-const ALLERGEN_LABELS: Record<string, string> = {
-  milk: 'Lait', dairy: 'Lait', gluten: 'Gluten', wheat: 'Blé', peanuts: 'Arachides', peanut: 'Arachides',
-  nuts: 'Fruits à coque', soybeans: 'Soja', soy: 'Soja', eggs: 'Œufs', egg: 'Œufs', fish: 'Poisson',
-  crustaceans: 'Crustacés', molluscs: 'Mollusques', celery: 'Céleri', mustard: 'Moutarde', sesame: 'Sésame',
-  lupin: 'Lupin', sulphur_dioxide_and_sulphites: 'Sulfites',
-};
+const ALLERGEN_LABELS: Record<string, string> = localizedRecord({
+  milk: 'allergen.milk', dairy: 'allergen.milk', gluten: 'allergen.gluten', wheat: 'allergen.wheat', peanuts: 'allergen.peanuts', peanut: 'allergen.peanuts',
+  nuts: 'allergen.nuts', soybeans: 'allergen.soy', soy: 'allergen.soy', eggs: 'allergen.eggs', egg: 'allergen.eggs', fish: 'allergen.fish',
+  crustaceans: 'allergen.crustaceans', molluscs: 'allergen.molluscs', celery: 'allergen.celery', mustard: 'allergen.mustard', sesame: 'allergen.sesame',
+  lupin: 'allergen.lupin', sulphur_dioxide_and_sulphites: 'allergen.sulphites',
+} satisfies Record<string, TranslationKey>);
 
-const ADDITIVE_LABELS: Record<string, string> = {
-  e950: 'Acésulfame-K', e951: 'Aspartame', e952: 'Cyclamates', e953: 'Isomalt', e954: 'Saccharine',
-  e960c: 'Glycosides de stéviol produits enzymatiquement',
-  e955: 'Sucralose', e960: 'Glycosides de stéviol', e202: 'Sorbate de potassium', e330: 'Acide citrique',
-  e322: 'Lécithines', e331: 'Citrates de sodium', e338: 'Acide phosphorique', e621: 'Glutamate monosodique', e150d: 'Caramel au sulfite d’ammonium',
-};
+const ADDITIVE_LABELS: Record<string, string> = localizedRecord({
+  e950: 'additive.e950', e951: 'additive.e951', e952: 'additive.e952', e953: 'additive.e953', e954: 'additive.e954',
+  e960c: 'additive.e960c',
+  e955: 'additive.e955', e960: 'additive.e960', e202: 'additive.e202', e330: 'additive.e330',
+  e322: 'additive.e322', e331: 'additive.e331', e338: 'additive.e338', e621: 'additive.e621', e150d: 'additive.e150d',
+} satisfies Record<string, TranslationKey>);
 
-const SCIENTIFIC_CLASSIFICATION_LABELS: Record<AdditiveScientificClassification, string> = {
-  no_particular_signal: 'Pas de signal particulier',
-  limited_concern: 'Risque limité',
-  moderate_concern: 'Risque modéré',
-  high_concern: 'À risque',
-  insufficient_data: 'Données insuffisantes',
-};
+const SCIENTIFIC_CLASSIFICATION_LABELS: Record<AdditiveScientificClassification, string> = localizedRecord({
+  no_particular_signal: 'additiveLevel.none',
+  limited_concern: 'additiveLevel.limited',
+  moderate_concern: 'additiveLevel.moderate',
+  high_concern: 'additiveLevel.high',
+  insufficient_data: 'additiveLevel.insufficient',
+});
 
 function cleanTag(tag: string) {
   return tag.toLowerCase().replace(/^(en|fr):/, '').replace(/[^a-z0-9_]/g, '');
@@ -70,22 +71,22 @@ export function analyzeHealthIngredients(data?: ProductHealthData): HealthIngred
   const additivesDataStatus = getAdditivesDataStatus(data, detectedAdditives);
   const levels = data.nutrientLevels;
   const levelLabels: Array<[keyof NonNullable<ProductHealthData['nutrientLevels']>, string]> = [
-    ['sugars', 'Sucre élevé'], ['salt', 'Sel élevé'], ['saturated-fat', 'Graisses saturées élevées'],
+    ['sugars', translate('health.highSugar')], ['salt', translate('health.highSalt')], ['saturated-fat', translate('health.highSatFat')],
   ];
 
   for (const [key, label] of levelLabels) {
-    if (levels?.[key] === 'high') watchItems.push({ label, detail: 'Information nutritionnelle à prendre en compte', kind: 'watch' });
+    if (levels?.[key] === 'high') watchItems.push({ label, detail: translate("health.nutritionInfo"), kind: 'watch' });
   }
 
-  if (data.novaGroup === 4) watchItems.push({ label: 'Transformation élevée', detail: 'NOVA 4 — peut nécessiter une attention particulière', kind: 'watch' });
+  if (data.novaGroup === 4) watchItems.push({ label: translate("health.highProcessing"), detail: translate("health.nova4"), kind: 'watch' });
   const ingredients = data.ingredientsText?.toLowerCase() ?? '';
-  if (/huile\s+de\s+palme|palm\s+oil/.test(ingredients)) watchItems.push({ label: 'Huile de palme', detail: 'Matière grasse à prendre en compte', kind: 'watch' });
-  if (/hydrog[eé]n|hydrogenated/.test(ingredients)) watchItems.push({ label: 'Matière grasse hydrogénée', detail: 'À surveiller', kind: 'watch' });
+  if (/huile\s+de\s+palme|palm\s+oil/.test(ingredients)) watchItems.push({ label: translate("health.palmOil"), detail: translate("health.palmOilDetail"), kind: 'watch' });
+  if (/hydrog[eé]n|hydrogenated/.test(ingredients)) watchItems.push({ label: translate("health.hydrogenated"), detail: translate("health.watch"), kind: 'watch' });
 
   for (const tag of data.allergensTags ?? []) {
     const key = cleanTag(tag);
     const label = ALLERGEN_LABELS[key] ?? key.replace(/_/g, ' ');
-    if (label) allergens.push({ label, detail: 'Allergène déclaré dans la fiche produit', kind: 'allergen' });
+    if (label) allergens.push({ label, detail: translate("health.allergenDeclared"), kind: 'allergen' });
   }
 
   for (const detection of detectedAdditives) {
@@ -98,12 +99,12 @@ export function analyzeHealthIngredients(data?: ProductHealthData): HealthIngred
   }
 
   const grade = data.nutritionGrade?.trim().toUpperCase();
-  if (grade === 'A' || grade === 'B') positives.push({ label: `Nutri-Score ${grade}`, detail: 'Repère nutritionnel disponible', kind: 'positive' });
+  if (grade === 'A' || grade === 'B') positives.push({ label: `Nutri-Score ${grade}`, detail: translate("health.nutriscoreAvailable"), kind: 'positive' });
   if (data.ingredientsText?.trim()) {
     const count = data.ingredientsText.split(',').map((item) => item.trim()).filter(Boolean).length;
-    if (count > 0 && count <= 5) positives.push({ label: 'Liste d’ingrédients courte', detail: 'D’après le texte disponible', kind: 'positive' });
+    if (count > 0 && count <= 5) positives.push({ label: translate("health.shortList"), detail: translate("health.fromText"), kind: 'positive' });
   }
-  if (additivesDataStatus === 'known_none') positives.push({ label: 'Aucun additif déclaré', detail: 'Selon les données disponibles', kind: 'positive' });
+  if (additivesDataStatus === 'known_none') positives.push({ label: translate("health.noAdditiveDeclared"), detail: translate("health.fromData"), kind: 'positive' });
 
   const additiveLevelCounts = emptyAdditiveLevelCounts();
   for (const item of additives) if (item.attentionLevel) additiveLevelCounts[item.attentionLevel] += 1;

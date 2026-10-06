@@ -1,3 +1,5 @@
+import { localizedRecord } from '../../../i18n/translate';
+
 export type BoycottCategory =
   | 'restaurant'
   | 'beverage'
@@ -42,15 +44,15 @@ export type BoycottEntity = {
   boycott: true;
 };
 
-export const BOYCOTT_CATEGORY_LABELS: Record<BoycottCategory, string> = {
-  restaurant: 'Restaurants',
-  beverage: 'Boissons',
-  food: 'Alimentation',
-  technology: 'Technologie',
-  retail: 'Commerce',
-  finance: 'Banque & finance',
-  travel: 'Voyage',
-  energy: 'Énergie',
-  automotive: 'Automobile',
-  other: 'Autres',
-};
+export const BOYCOTT_CATEGORY_LABELS: Record<BoycottCategory, string> = localizedRecord({
+  restaurant: 'boycottCat.restaurant',
+  beverage: 'boycottCat.beverage',
+  food: 'boycottCat.food',
+  technology: 'boycottCat.technology',
+  retail: 'boycottCat.retail',
+  finance: 'boycottCat.finance',
+  travel: 'boycottCat.travel',
+  energy: 'boycottCat.energy',
+  automotive: 'boycottCat.automotive',
+  other: 'boycottCat.other',
+});

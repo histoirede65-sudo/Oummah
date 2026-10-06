@@ -24,6 +24,7 @@ import { HalalCertifierDetailSheet } from './HalalCertifierDetailSheet';
 import { BoycottProductImage } from './BoycottProductImage';
 import { prefetchBoycottImages } from '../../features/boycott/boycottImageCache';
 import { invalidateProductImage, resolveProductImage } from '../../features/boycott/productImageResolver';
+import { getActiveLanguage, translate, type TranslationKey } from '../../i18n';
 import { colors } from '../../theme/colors';
 import { typography } from '../../theme/typography';
 
@@ -32,17 +33,17 @@ type IconName = React.ComponentProps<typeof Ionicons>['name'];
 
 function LegacyHealthMethodologySheet({ visible, onClose }: { visible: boolean; onClose: () => void }) {
   const sources = ['E150D', 'E331', 'E338', 'E950', 'E951'].flatMap((code) => getAdditiveInfo(code).sources).filter((source, index, all) => all.findIndex((item) => item.url === source.url) === index);
-  return <Modal transparent animationType="slide" visible={visible} onRequestClose={onClose}><View style={styles.backdrop}><View style={styles.cardShell}><View style={styles.heading}><Text style={styles.sectionTitle}>Indice Santé OUMMAH v{HEALTH_SCORE_VERSION}</Text><Pressable accessibilityLabel="Fermer la méthodologie" onPress={onClose} style={styles.close}><Ionicons name="close" size={22} color={colors.text} /></Pressable></View><ScrollView showsVerticalScrollIndicator={false}>
-    <Text style={styles.muted}>{HEALTH_SCORE_METHODOLOGY_TEXT}</Text><Text style={styles.groupTitle}>Formule publique</Text><Text style={styles.muted}>Score final = 0,50 × nutrition + 0,30 × additifs + 0,20 × transformation. Si un pilier secondaire manque, les poids disponibles sont renormalisés ; la nutrition reste obligatoire. Additifs : −15 par signal limité, −30 par signal modéré et plafond à 20/100 lorsqu’un signal élevé est présent. Les données insuffisantes et les signaux sans particularité n’ajoutent aucune pénalité. NOVA 4 est évalué à 20/100. Cette calibration est propre à OUMMAH et ne reproduit pas une note externe.</Text><Text style={styles.groupTitle}>Piliers</Text><Text style={styles.muted}>• Nutrition : 50 % — Nutri-Score officiel OpenFoodFacts, sans recalcul.</Text><Text style={styles.muted}>• Additifs : 30 % — classification scientifique OUMMAH par additif.</Text><Text style={styles.muted}>• Transformation : 20 % — groupe NOVA.</Text><Text style={styles.groupTitle}>Interprétation</Text><Text style={styles.muted}>A : 80–100{`\n`}B : 65–79,9{`\n`}C : 50–64,9{`\n`}D : 30–49,9{`\n`}E : 0–29,9</Text><Text style={styles.groupTitle}>Ce qui n’entre pas dans la note</Text><Text style={styles.muted}>Halal, boycott, controverses, certifications halal et allergènes comme pénalité générale.</Text><Text style={styles.disclaimer}>Cette méthodologie est propre à OUMMAH. Elle ne constitue pas une note officielle d’une autorité sanitaire.</Text><Text style={styles.groupTitle}>Sources scientifiques</Text>{sources.map((source) => <Pressable key={source.url} onPress={() => void Linking.openURL(source.url)}><Text style={styles.toggleText}>{source.organisation} — {source.title}</Text></Pressable>)}
+  return <Modal transparent animationType="slide" visible={visible} onRequestClose={onClose}><View style={styles.backdrop}><View style={styles.cardShell}><View style={styles.heading}><Text style={styles.sectionTitle}>Indice Santé OUMMAH v{HEALTH_SCORE_VERSION}</Text><Pressable accessibilityLabel={translate("scan.closeMethod")} onPress={onClose} style={styles.close}><Ionicons name="close" size={22} color={colors.text} /></Pressable></View><ScrollView showsVerticalScrollIndicator={false}>
+    <Text style={styles.muted}>{translate(HEALTH_SCORE_METHODOLOGY_TEXT)}</Text><Text style={styles.groupTitle}>{translate("scan.formula")}</Text><Text style={styles.muted}>Score final = 0,50 × nutrition + 0,30 × additifs + 0,20 × transformation. Si un pilier secondaire manque, les poids disponibles sont renormalisés ; la nutrition reste obligatoire. Additifs : −15 par signal limité, −30 par signal modéré et plafond à 20/100 lorsqu’un signal élevé est présent. Les données insuffisantes et les signaux sans particularité n’ajoutent aucune pénalité. NOVA 4 est évalué à 20/100. Cette calibration est propre à OUMMAH et ne reproduit pas une note externe.</Text><Text style={styles.groupTitle}>{translate("scan.pillars")}</Text><Text style={styles.muted}>• Nutrition : 50 % — Nutri-Score officiel OpenFoodFacts, sans recalcul.</Text><Text style={styles.muted}>• Additifs : 30 % — classification scientifique OUMMAH par additif.</Text><Text style={styles.muted}>• Transformation : 20 % — groupe NOVA.</Text><Text style={styles.groupTitle}>{translate("scan.interpretation")}</Text><Text style={styles.muted}>A : 80–100{`\n`}B : 65–79,9{`\n`}C : 50–64,9{`\n`}D : 30–49,9{`\n`}E : 0–29,9</Text><Text style={styles.groupTitle}>{translate("scan.notCounted")}</Text><Text style={styles.muted}>Halal, boycott, controverses, certifications halal et allergènes comme pénalité générale.</Text><Text style={styles.disclaimer}>Cette méthodologie est propre à OUMMAH. Elle ne constitue pas une note officielle d’une autorité sanitaire.</Text><Text style={styles.groupTitle}>{translate("scan.sciSources")}</Text>{sources.map((source) => <Pressable key={source.url} onPress={() => void Linking.openURL(source.url)}><Text style={styles.toggleText}>{source.organisation} — {source.title}</Text></Pressable>)}
   </ScrollView></View></View></Modal>;
 }
 
-const SCIENTIFIC_CONCERN_LABELS: Record<AdditiveScientificConcernLevel, string> = {
-  no_identified_concern: 'sans préoccupation identifiée',
-  limited: 'avec préoccupation limitée',
-  moderate: 'avec préoccupation modérée',
-  high: 'avec préoccupation élevée',
-  insufficient_data: 'avec données scientifiques insuffisantes',
+const SCIENTIFIC_CONCERN_LABELS: Record<AdditiveScientificConcernLevel, TranslationKey> = {
+  no_identified_concern: 'scan.concernNone',
+  limited: 'scan.concernLimited',
+  moderate: 'scan.concernModerate',
+  high: 'scan.concernHigh',
+  insufficient_data: 'scan.concernInsufficient',
 };
 
 // Product photos must be upright (portrait or near-square); landscape / lying photos fall back to the placeholder.
@@ -53,8 +54,8 @@ function getScientificAdditiveSummary(items: HealthFinding[]): string | null {
   if (!codes.length) return null;
   const counts: Record<AdditiveScientificConcernLevel, number> = { no_identified_concern: 0, limited: 0, moderate: 0, high: 0, insufficient_data: 0 };
   for (const code of codes) counts[getAdditiveScientificConcern(code)?.scientificConcern.level ?? 'insufficient_data'] += 1;
-  const details = (Object.keys(SCIENTIFIC_CONCERN_LABELS) as AdditiveScientificConcernLevel[]).filter((level) => counts[level] > 0).map((level) => `${counts[level]} ${SCIENTIFIC_CONCERN_LABELS[level]}`);
-  return `${codes.length} additif${codes.length > 1 ? 's' : ''} détecté${codes.length > 1 ? 's' : ''} · ${details.join(', ')}`;
+  const details = (Object.keys(SCIENTIFIC_CONCERN_LABELS) as AdditiveScientificConcernLevel[]).filter((level) => counts[level] > 0).map((level) => `${counts[level]} ${translate(SCIENTIFIC_CONCERN_LABELS[level])}`);
+  return `${translate(codes.length > 1 ? 'scan.additivesMany' : 'scan.additivesOne', { count: codes.length })} · ${details.join(', ')}`;
 }
 
 function analyzeHealthScore(data: BarcodeLookupResult['healthData']): HealthScoreResult {
@@ -62,12 +63,12 @@ function analyzeHealthScore(data: BarcodeLookupResult['healthData']): HealthScor
   if (!healthScore.available) return healthScore;
   const analysis = analyzeHealthIngredients(data);
   const scientificAdditiveSummary = getScientificAdditiveSummary(analysis.additives);
-  return { ...healthScore, pillars: healthScore.pillars.map((pillar) => pillar.pillar === 'additives' ? { ...pillar, label: 'Additifs - score actuel', detail: scientificAdditiveSummary ?? 'Additifs non renseignés' } : pillar) };
+  return { ...healthScore, pillars: healthScore.pillars.map((pillar) => pillar.pillar === 'additives' ? { ...pillar, label: translate("scan.additivesPillar"), detail: scientificAdditiveSummary ?? translate("scan.additivesMissing") } : pillar) };
 }
 
 function HealthMethodologySheet({ visible, onClose }: { visible: boolean; onClose: () => void }) {
   const sources = ['E150D', 'E331', 'E338', 'E950', 'E951'].flatMap((code) => getAdditiveInfo(code).sources).filter((source, index, all) => all.findIndex((item) => item.url === source.url) === index);
-  return <Modal transparent animationType="slide" visible={visible} onRequestClose={onClose}><View style={styles.backdrop}><View style={styles.cardShell}><View style={styles.heading}><Text style={styles.sectionTitle}>Indice Santé OUMMAH v2</Text><Pressable accessibilityLabel="Fermer la méthodologie" onPress={onClose} style={styles.close}><Ionicons name="close" size={22} color={colors.text} /></Pressable></View><ScrollView showsVerticalScrollIndicator={false}><Text style={styles.muted}>{HEALTH_SCORE_METHODOLOGY_TEXT}</Text><Text style={styles.groupTitle}>Formule publique</Text><Text style={styles.muted}>Score final = nutrition de base - pénalité additifs - pénalité NOVA, borné entre 0 et 100. Les données manquantes n’ajoutent jamais de bonus et ne sont pas assimilées à un danger.</Text><Text style={styles.groupTitle}>Piliers</Text><Text style={styles.muted}>• Nutrition : base Nutri-Score A=100, B=75, C=50, D=25, E=0.</Text><Text style={styles.muted}>• Additifs : pénalités uniquement selon ScientificConcern V1 ; aucune note Additifs /100.</Text><Text style={styles.muted}>• Transformation : NOVA peut uniquement réduire la note.</Text><Text style={styles.groupTitle}>Interprétation</Text><Text style={styles.muted}>A : 80–100{`\n`}B : 60–79,9{`\n`}C : 40–59,9{`\n`}D : 20–39,9{`\n`}E : 0–19,9</Text><Text style={styles.groupTitle}>Ce qui n’entre pas dans la note</Text><Text style={styles.muted}>Halal, boycott, controverses, certifications halal et allergènes ne modifient pas le Score Santé.</Text><Text style={styles.disclaimer}>Méthodologie OUMMAH v2. Les données scientifiques insuffisantes restent séparées de l’exposition et n’entraînent aucune pénalité.</Text><Text style={styles.groupTitle}>Sources scientifiques</Text>{sources.map((source) => <Pressable key={source.url} onPress={() => void Linking.openURL(source.url)}><Text style={styles.toggleText}>{source.organisation} — {source.title}</Text></Pressable>)}</ScrollView></View></View></Modal>;
+  return <Modal transparent animationType="slide" visible={visible} onRequestClose={onClose}><View style={styles.backdrop}><View style={styles.cardShell}><View style={styles.heading}><Text style={styles.sectionTitle}>{translate("scan.methodTitle")}</Text><Pressable accessibilityLabel={translate("scan.closeMethod")} onPress={onClose} style={styles.close}><Ionicons name="close" size={22} color={colors.text} /></Pressable></View><ScrollView showsVerticalScrollIndicator={false}><Text style={styles.muted}>{translate(HEALTH_SCORE_METHODOLOGY_TEXT)}</Text><Text style={styles.groupTitle}>{translate("scan.formula")}</Text><Text style={styles.muted}>{translate("scan.formulaText")}</Text><Text style={styles.groupTitle}>{translate("scan.pillars")}</Text><Text style={styles.muted}>{translate("scan.pillarNutrition")}</Text><Text style={styles.muted}>{translate("scan.pillarAdditives")}</Text><Text style={styles.muted}>{translate("scan.pillarNova")}</Text><Text style={styles.groupTitle}>{translate("scan.interpretation")}</Text><Text style={styles.muted}>{translate('scan.gradeRanges')}</Text><Text style={styles.groupTitle}>{translate("scan.notCounted")}</Text><Text style={styles.muted}>{translate("scan.notCountedText")}</Text><Text style={styles.disclaimer}>{translate("scan.methodDisclaimer")}</Text><Text style={styles.groupTitle}>{translate("scan.sciSources")}</Text>{sources.map((source) => <Pressable key={source.url} onPress={() => void Linking.openURL(source.url)}><Text style={styles.toggleText}>{source.organisation} — {source.title}</Text></Pressable>)}</ScrollView></View></View></Modal>;
 }
 
 type SectionKey = 'boycott' | 'health' | 'halal';
@@ -88,25 +89,25 @@ function LinkRow({ label, onPress, tone = colors.goldLight }: { label: string; o
 }
 
 // Israel-related signals are shown as information only: on their own they do not meet OUMMAH's
-// documented-link rule for the "À boycotter" status.
+// documented-link rule for the translate("scan.statusBoycott") status.
 function getIsraelSignals(result: BarcodeLookupResult) {
   const signals: string[] = [];
   const comparison = result.comparisonData;
-  if (comparison?.originsTags?.includes('en:israel') || /isra[eë]l/i.test(`${comparison?.origins ?? ''} ${comparison?.manufacturingPlaces ?? ''}`)) signals.push('Origine déclarée : Israël (Open Food Facts).');
-  if (/^729\d{10}$/.test(result.barcode)) signals.push('Code-barres enregistré auprès de GS1 Israël (préfixe 729) : l’entreprise qui l’a enregistré est rattachée à Israël, ce qui ne dit pas forcément où le produit est fabriqué.');
+  if (comparison?.originsTags?.includes('en:israel') || /isra[eë]l/i.test(`${comparison?.origins ?? ''} ${comparison?.manufacturingPlaces ?? ''}`)) signals.push(translate("scan.israelOrigin"));
+  if (/^729\d{10}$/.test(result.barcode)) signals.push(translate("scan.israelPrefix"));
   return signals;
 }
 
 // One plain-language sentence per kind of documented link, shown before the detailed summary.
-const EVIDENCE_REASONS: Record<BoycottEntity['evidenceKind'], string> = {
-  parent_group: 'Marque d’un groupe visé par le boycott.',
-  occupation_economy: 'Entreprise citée pour sa participation à l’économie de l’occupation (colonies, territoires occupés).',
-  military_supply: 'Entreprise citée pour la fourniture d’armes ou de technologies militaires à Israël.',
-  material_support: 'Entreprise citée pour un soutien matériel à l’armée israélienne.',
-  government_contract: 'Entreprise citée pour des contrats avec l’État israélien.',
-  subsidiary_or_franchise: 'Filiale ou franchise d’une entreprise visée par le boycott.',
-  financial_link: 'Entreprise citée pour ses investissements dans des sociétés impliquées dans l’occupation.',
-  other_documented_link: 'Lien documenté retenu par OUMMAH.',
+const EVIDENCE_REASONS: Record<BoycottEntity['evidenceKind'], TranslationKey> = {
+  parent_group: 'scan.reasonParentGroup',
+  occupation_economy: 'scan.reasonOccupation',
+  military_supply: 'scan.reasonMilitary',
+  material_support: 'scan.reasonMaterial',
+  government_contract: 'scan.reasonGovernment',
+  subsidiary_or_franchise: 'scan.reasonSubsidiary',
+  financial_link: 'scan.reasonFinancial',
+  other_documented_link: 'scan.reasonOther',
 };
 
 function BoycottBody({ result, dossier, israelSignals, onOpenEntity, onOpenDossier }: { result: BarcodeLookupResult; dossier: BrandControversy | null; israelSignals: string[]; onOpenEntity: () => void; onOpenDossier: () => void }) {
@@ -115,18 +116,18 @@ function BoycottBody({ result, dossier, israelSignals, onOpenEntity, onOpenDossi
   return <>
     {entity ? <>
       {entity.parentGroup ? <View style={styles.chain}><Text numberOfLines={1} style={styles.chainItem}>{entity.name}</Text><Ionicons name="arrow-forward" size={16} color={colors.textMuted} /><Text numberOfLines={1} style={[styles.chainItem, styles.chainGroup]}>{entity.parentGroup}</Text></View> : null}
-      <Text style={styles.bodyLead}>{EVIDENCE_REASONS[entity.evidenceKind] ?? EVIDENCE_REASONS.other_documented_link}</Text>
-      {result.barcodePrefixMatch ? <Text style={[styles.bodyText, styles.bodySpaced]}>Reconnu par son code-barres : le préfixe {result.barcodePrefixMatch} est enregistré auprès de GS1 par {entity.parentGroup ?? entity.name}, propriétaire du produit.</Text> : null}
+      <Text style={styles.bodyLead}>{translate(EVIDENCE_REASONS[entity.evidenceKind] ?? EVIDENCE_REASONS.other_documented_link)}</Text>
+      {result.barcodePrefixMatch ? <Text style={[styles.bodyText, styles.bodySpaced]}>{translate('scan.prefixMatch', { prefix: result.barcodePrefixMatch, owner: entity.parentGroup ?? entity.name })}</Text> : null}
       {entity.summary ? <Text style={[styles.bodyText, styles.bodySpaced]}>{entity.summary}</Text> : null}
-      <Pressable accessibilityRole="button" onPress={onOpenEntity} style={({ pressed }) => [styles.dangerButton, pressed && styles.pressed]}><Text style={styles.actionText}>Voir les sources</Text></Pressable>
+      <Pressable accessibilityRole="button" onPress={onOpenEntity} style={({ pressed }) => [styles.dangerButton, pressed && styles.pressed]}><Text style={styles.actionText}>{translate("scan.seeSources")}</Text></Pressable>
     </> : <Text style={styles.bodyLead}>{result.assessment === 'ok'
-      ? 'Aucun lien identifié avec une marque à boycotter dans la base OUMMAH.'
+      ? translate("scan.noLink")
       : result.source === 'none'
-        ? 'Ce code-barres n’est connu d’aucune base ouverte consultée (Open Food Facts, Open Beauty Facts, base publique des médicaments). Vous pouvez proposer ce produit.'
-        : `${result.brandLabel ?? 'Cette marque'} ne figure pas dans la liste OUMMAH des marques à boycotter. Cela ne garantit pas l’absence de tout lien : si vous avez une source, proposez-la.`}</Text>}
-    {isMedicine ? <View style={styles.notice}><Text style={styles.noticeTitle}>Médicament : votre santé d’abord</Text><Text style={styles.bodyText}>Ne changez jamais de traitement sans avis médical. Un générique équivalent d’un autre laboratoire existe souvent : demandez à votre pharmacien.</Text></View> : null}
-    {israelSignals.length ? <View style={styles.notice}><Text style={styles.noticeTitle}>Lien avec Israël signalé</Text>{israelSignals.map((signal) => <Text key={signal} style={styles.bodyText}>{signal}</Text>)}<Text style={[styles.bodyNote, styles.noticeNote]}>Information à vérifier : ce signal seul ne suffit pas au classement « À boycotter » dans OUMMAH.</Text></View> : null}
-    {dossier ? <LinkRow label={`Controverses · ${CONTROVERSY_CATEGORY_LABELS[dossier.category]} · ${dossier.sources.length} source${dossier.sources.length > 1 ? 's' : ''}`} onPress={onOpenDossier} /> : null}
+        ? translate("scan.unknownBarcode")
+        : translate('scan.notInList', { brand: result.brandLabel ?? translate('scan.thisBrand') })}</Text>}
+    {isMedicine ? <View style={styles.notice}><Text style={styles.noticeTitle}>{translate("scan.medicineTitle")}</Text><Text style={styles.bodyText}>{translate("scan.medicineText")}</Text></View> : null}
+    {israelSignals.length ? <View style={styles.notice}><Text style={styles.noticeTitle}>{translate("scan.israelTitle")}</Text>{israelSignals.map((signal) => <Text key={signal} style={styles.bodyText}>{signal}</Text>)}<Text style={[styles.bodyNote, styles.noticeNote]}>{translate("scan.israelNote")}</Text></View> : null}
+    {dossier ? <LinkRow label={translate(dossier.sources.length > 1 ? 'scan.controversiesMany' : 'scan.controversiesOne', { category: CONTROVERSY_CATEGORY_LABELS[dossier.category], count: dossier.sources.length })} onPress={onOpenDossier} /> : null}
   </>;
 }
 
@@ -136,14 +137,14 @@ function HealthBody({ result, onAdditive }: { result: BarcodeLookupResult; onAdd
   const findings = [...analysis.watchItems, ...analysis.additives];
   const ingredientCount = findings.length + analysis.allergens.length + analysis.positives.length;
   return <>
-    {!healthScore.available ? <Text style={styles.bodyLead}>Indice Santé indisponible — données nutritionnelles insuffisantes.</Text> : <>
+    {!healthScore.available ? <Text style={styles.bodyLead}>{translate("scan.healthUnavailableLead")}</Text> : <>
       <View style={styles.healthHero}>
         <View style={[styles.gradeBubble, { backgroundColor: getHealthGradePresentation(healthScore.finalGrade).backgroundColor }]}><Text style={[styles.healthGrade, { color: getHealthGradePresentation(healthScore.finalGrade).color }]}>{healthScore.finalGrade}</Text></View>
         <View style={styles.rowCopy}><Text style={styles.healthHeroScore}>{healthScore.score}<Text style={styles.healthHeroUnit}>/100</Text></Text><Text style={[styles.healthLabel, { color: getHealthGradePresentation(healthScore.finalGrade).color }]}>{getHealthGradePresentation(healthScore.finalGrade).label}</Text></View>
       </View>
       <HealthScale score={healthScore.score} />
-      {healthScore.scoreCompleteness !== 'complete' ? <Text style={styles.bodyNote}>{healthScore.scoreCompleteness === 'nutrition_only' ? 'Indice partiel — seules les données nutritionnelles sont disponibles.' : 'Indice calculé avec des données partielles.'}</Text> : null}
-      <Text style={styles.blockTitle}>Ce qui compose la note</Text>
+      {healthScore.scoreCompleteness !== 'complete' ? <Text style={styles.bodyNote}>{healthScore.scoreCompleteness === 'nutrition_only' ? translate("scan.partialNutrition") : translate("scan.partialData")}</Text> : null}
+      <Text style={styles.blockTitle}>{translate("scan.scoreParts")}</Text>
       {healthScore.pillars.filter((pillar) => pillar.available).map((pillar) => {
         const color = getHealthGradePresentation(getHealthGradeForScore(pillar.score)).color;
         return <View key={pillar.pillar} style={styles.pillar}>
@@ -155,38 +156,38 @@ function HealthBody({ result, onAdditive }: { result: BarcodeLookupResult; onAdd
       <NutritionDetails data={result.healthData} />
     </>}
     {analysis.hasReliableData && ingredientCount ? <>
-      <Pressable accessibilityRole="button" onPress={() => setIngredientsOpen((value) => !value)} style={({ pressed }) => [styles.linkRow, pressed && styles.pressed]}><Text style={styles.linkText}>{ingredientsOpen ? 'Masquer les ingrédients' : `Additifs et ingrédients (${ingredientCount})`}</Text><Ionicons name={ingredientsOpen ? 'chevron-up' : 'chevron-down'} size={18} color={colors.goldLight} /></Pressable>
+      <Pressable accessibilityRole="button" onPress={() => setIngredientsOpen((value) => !value)} style={({ pressed }) => [styles.linkRow, pressed && styles.pressed]}><Text style={styles.linkText}>{ingredientsOpen ? translate('scan.hideIngredients') : translate('scan.showIngredients', { count: ingredientCount })}</Text><Ionicons name={ingredientsOpen ? 'chevron-up' : 'chevron-down'} size={18} color={colors.goldLight} /></Pressable>
       {ingredientsOpen ? <>
         {findings.map((item, index) => <HealthRow key={`${item.label}-${index}`} item={item} onAdditive={onAdditive} />)}
-        {analysis.allergens.length ? <><Text style={styles.blockTitle}>Allergènes</Text>{analysis.allergens.map((item) => <HealthRow key={item.label} item={item} onAdditive={onAdditive} />)}</> : null}
-        {analysis.positives.length ? <><Text style={styles.blockTitle}>Points positifs</Text>{analysis.positives.map((item) => <HealthRow key={item.label} item={item} onAdditive={onAdditive} />)}</> : null}
+        {analysis.allergens.length ? <><Text style={styles.blockTitle}>{translate("scan.allergens")}</Text>{analysis.allergens.map((item) => <HealthRow key={item.label} item={item} onAdditive={onAdditive} />)}</> : null}
+        {analysis.positives.length ? <><Text style={styles.blockTitle}>{translate("scan.positives")}</Text>{analysis.positives.map((item) => <HealthRow key={item.label} item={item} onAdditive={onAdditive} />)}</> : null}
       </> : null}
     </> : null}
-    <LinkRow label="Comment la note est calculée ?" onPress={() => setMethodologyOpen(true)} />
-    <Text style={styles.bodyNote}>L’absence d’alerte ne garantit pas que le produit est sain.</Text>
+    <LinkRow label={translate("scan.howCalculated")} onPress={() => setMethodologyOpen(true)} />
+    <Text style={styles.bodyNote}>{translate("scan.noAlertNote")}</Text>
     <HealthMethodologySheet visible={methodologyOpen} onClose={() => setMethodologyOpen(false)} />
   </>;
 }
 
 // The product status and the certifier's sheet stay separate: a vigilance notice only asks to check
-// the certification ("Certification à vérifier"), it never turns the product into "non halal".
+// the certification (translate("scan.certToCheck")), it never turns the product into "non halal".
 function HalalBody({ result, confirmed, onOpen, onReport }: { result: BarcodeLookupResult; confirmed: string | null; onOpen: (id: string) => void; onReport: () => void }) {
   const analysis = analyzeHalalCertification(result.halalData, result.healthData?.ingredientsText, confirmed);
   const body = getHalalCertifier(analysis.certifierId);
   const vigilance = getActiveHalalCertifierNotices(body);
   return <>
     {body ? <>
-      <Text style={styles.blockTitleFirst}>Certification détectée</Text>
-      <Pressable accessibilityRole="button" accessibilityLabel={`Voir la fiche de l’organisme ${body.name}`} onPress={() => onOpen(body.id)} style={({ pressed }) => [styles.certifierRow, pressed && styles.pressed]}>
-        <View style={styles.rowCopy}><Text style={styles.certifierName}>{body.name}</Text><Text style={styles.certifierMeta}>{HALAL_DOCUMENTATION_LABELS[body.documentationLevel]} · Voir la fiche de l’organisme</Text></View>
+      <Text style={styles.blockTitleFirst}>{translate("scan.certDetected")}</Text>
+      <Pressable accessibilityRole="button" accessibilityLabel={translate('scan.openCertifierA11y', { name: body.name })} onPress={() => onOpen(body.id)} style={({ pressed }) => [styles.certifierRow, pressed && styles.pressed]}>
+        <View style={styles.rowCopy}><Text style={styles.certifierName}>{body.name}</Text><Text style={styles.certifierMeta}>{HALAL_DOCUMENTATION_LABELS[body.documentationLevel]} · {translate('scan.openCertifier')}</Text></View>
         <Ionicons name="chevron-forward" size={20} color={colors.goldLight} />
       </Pressable>
-      {vigilance.length ? <View style={styles.notice}><Text style={styles.noticeTitle}>Certification à vérifier</Text>{vigilance.map((notice) => <Text key={notice.id} style={styles.bodyText}>{notice.title}</Text>)}</View> : null}
+      {vigilance.length ? <View style={styles.notice}><Text style={styles.noticeTitle}>{translate("scan.certToCheck")}</Text>{vigilance.map((notice) => <Text key={notice.id} style={styles.bodyText}>{notice.title}</Text>)}</View> : null}
       <Text style={[styles.bodyNote, styles.noticeNote]}>{analysis.explanation}</Text>
     </> : <Text style={styles.bodyLead}>{analysis.explanation}</Text>}
-    {!body && analysis.halalMention ? <Pressable accessibilityRole="button" onPress={onReport} style={({ pressed }) => [styles.reportButton, pressed && styles.pressed]}><Ionicons name="camera-outline" size={18} color={colors.background} /><Text style={styles.reportButtonText}>Indiquer le certificateur</Text></Pressable> : null}
-    {analysis.ingredientChecks.length ? <><Text style={styles.blockTitle}>Points à vérifier</Text>{analysis.ingredientChecks.map((item) => <View key={item} style={styles.checkRow}><View style={[styles.dot, { backgroundColor: colors.warning }]} /><Text style={[styles.bodyText, styles.rowCopy]}>{item}</Text></View>)}</> : null}
-    <LinkRow label={body ? 'Comparer avec les autres organismes' : 'Voir les organismes halal'} onPress={() => router.push('/boycott/halal')} />
+    {!body && analysis.halalMention ? <Pressable accessibilityRole="button" onPress={onReport} style={({ pressed }) => [styles.reportButton, pressed && styles.pressed]}><Ionicons name="camera-outline" size={18} color={colors.background} /><Text style={styles.reportButtonText}>{translate("scan.reportCertifier")}</Text></Pressable> : null}
+    {analysis.ingredientChecks.length ? <><Text style={styles.blockTitle}>{translate("scan.toCheck")}</Text>{analysis.ingredientChecks.map((item) => <View key={item} style={styles.checkRow}><View style={[styles.dot, { backgroundColor: colors.warning }]} /><Text style={[styles.bodyText, styles.rowCopy]}>{item}</Text></View>)}</> : null}
+    <LinkRow label={body ? translate("scan.compareCertifiers") : translate("scan.seeCertifiers")} onPress={() => router.push('/boycott/halal')} />
   </>;
 }
 
@@ -194,30 +195,30 @@ function HealthRow({ item, onAdditive }: { item: HealthFinding; onAdditive: (cod
 
 function HealthScale({ score }: { score: number }) { const current = getHealthGradeForScore(score); return <View style={styles.healthScale}>{(['A', 'B', 'C', 'D', 'E'] as const).map((grade) => { const item = getHealthGradePresentation(grade); return <View key={grade} style={[styles.scaleSegment, { backgroundColor: item.color, opacity: current === grade ? 1 : 0.25 }]}><Text style={styles.scaleLabel}>{grade}</Text></View>; })}</View>; }
 
-function NutritionDetails({ data }: { data?: BarcodeLookupResult['healthData'] }) { const values = data?.nutritionValues; const basis = data?.nutritionBasis; if (!values || !basis || Object.values(values).every((value) => value === undefined)) return null; const rows: Array<[string, number | undefined, string]> = [['Énergie', values.energyKcal, 'kcal'], ['Sucres', values.sugarsG, 'g'], ['Sel', values.saltG, 'g'], ['Graisses saturées', values.saturatedFatG, 'g'], ['Protéines', values.proteinsG, 'g'], ['Fibres', values.fiberG, 'g']]; return <View style={styles.nutritionDetails}><Text style={styles.blockTitle}>Valeurs nutritionnelles · pour {basis}</Text>{rows.filter(([, value]) => value !== undefined).map(([label, value, unit]) => <View key={label} style={styles.nutritionRow}><Text style={styles.nutritionLabel}>{label}</Text><Text style={styles.nutritionValue}>{String(value).replace('.', ',')} {unit}</Text></View>)}</View>; }
+function NutritionDetails({ data }: { data?: BarcodeLookupResult['healthData'] }) { const values = data?.nutritionValues; const basis = data?.nutritionBasis; if (!values || !basis || Object.values(values).every((value) => value === undefined)) return null; const rows: Array<[string, number | undefined, string]> = [[translate("scan.energy"), values.energyKcal, 'kcal'], [translate("scan.sugars"), values.sugarsG, 'g'], [translate("scan.salt"), values.saltG, 'g'], [translate("scan.saturatedFat"), values.saturatedFatG, 'g'], [translate("scan.proteins"), values.proteinsG, 'g'], [translate("scan.fibre"), values.fiberG, 'g']]; return <View style={styles.nutritionDetails}><Text style={styles.blockTitle}>{translate('scan.nutritionFor', { basis })}</Text>{rows.filter(([, value]) => value !== undefined).map(([label, value, unit]) => <View key={label} style={styles.nutritionRow}><Text style={styles.nutritionLabel}>{label}</Text><Text style={styles.nutritionValue}>{getActiveLanguage() === 'en' ? String(value) : String(value).replace('.', ',')} {unit}</Text></View>)}</View>; }
 
 function formatRecallDate(value?: string) {
   if (!value) return undefined;
   const date = new Date(value);
-  return Number.isNaN(date.getTime()) ? value : date.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
+  return Number.isNaN(date.getTime()) ? value : date.toLocaleDateString(getActiveLanguage() === 'en' ? 'en-GB' : 'fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
 }
 
 /** Official recall (RappelConso): it targets specific lots, so the sheet asks to check the package. */
 function RecallSheet({ recalls, onClose }: { recalls: ProductRecall[]; onClose: () => void }) {
   return <Modal transparent animationType="slide" visible={recalls.length > 0} onRequestClose={onClose}><View style={styles.backdrop}><View style={styles.cardShell}>
-    <View style={styles.heading}><Ionicons name="warning" size={20} color={colors.danger} /><Text style={styles.sectionTitle}>Rappel officiel en cours</Text><Pressable accessibilityLabel="Fermer le rappel" onPress={onClose} style={styles.close}><Ionicons name="close" size={22} color={colors.text} /></Pressable></View>
+    <View style={styles.heading}><Ionicons name="warning" size={20} color={colors.danger} /><Text style={styles.sectionTitle}>{translate("scan.recallTitle")}</Text><Pressable accessibilityLabel={translate("scan.closeRecall")} onPress={onClose} style={styles.close}><Ionicons name="close" size={22} color={colors.text} /></Pressable></View>
     <ScrollView showsVerticalScrollIndicator={false}>
-      <Text style={styles.bodyLead}>Ce code-barres figure dans un rappel publié par les autorités. Seuls certains lots sont concernés : vérifiez le lot et la date sur votre emballage.</Text>
+      <Text style={styles.bodyLead}>{translate("scan.recallLead")}</Text>
       {recalls.map((recall) => <View key={recall.id} style={styles.recallCard}>
         <Text style={styles.recallTitle}>{recall.title}{recall.brand ? ` · ${recall.brand}` : ''}</Text>
-        <Text style={styles.bodyNote}>Publié le {formatRecallDate(recall.publishedAt)}{recall.endsAt ? ` · jusqu’au ${formatRecallDate(recall.endsAt)}` : ''}</Text>
-        {recall.reason ? <><Text style={styles.blockTitle}>Motif</Text><Text style={styles.bodyText}>{recall.reason}</Text></> : null}
-        {recall.risks ? <><Text style={styles.blockTitle}>Risques</Text><Text style={styles.bodyText}>{recall.risks}</Text></> : null}
-        {recall.lots.length ? <><Text style={styles.blockTitle}>Lots concernés</Text>{recall.lots.map((lot) => <Text key={lot} style={styles.bodyText}>• {lot}</Text>)}</> : null}
-        {recall.actions.length ? <><Text style={styles.blockTitle}>Que faire ?</Text>{recall.actions.map((action) => <Text key={action} style={styles.bodyText}>• {action}</Text>)}</> : null}
-        {recall.url ? <LinkRow label="Voir la fiche officielle" onPress={() => void Linking.openURL(recall.url!)} tone={colors.danger} /> : null}
+        <Text style={styles.bodyNote}>{translate('scan.recallPublished', { date: formatRecallDate(recall.publishedAt) ?? '' })}{recall.endsAt ? ` · ${translate('scan.recallUntil', { date: formatRecallDate(recall.endsAt) ?? '' })}` : ''}</Text>
+        {recall.reason ? <><Text style={styles.blockTitle}>{translate("scan.recallReason")}</Text><Text style={styles.bodyText}>{recall.reason}</Text></> : null}
+        {recall.risks ? <><Text style={styles.blockTitle}>{translate("scan.recallRisks")}</Text><Text style={styles.bodyText}>{recall.risks}</Text></> : null}
+        {recall.lots.length ? <><Text style={styles.blockTitle}>{translate("scan.recallLots")}</Text>{recall.lots.map((lot) => <Text key={lot} style={styles.bodyText}>• {lot}</Text>)}</> : null}
+        {recall.actions.length ? <><Text style={styles.blockTitle}>{translate("scan.recallWhatToDo")}</Text>{recall.actions.map((action) => <Text key={action} style={styles.bodyText}>• {action}</Text>)}</> : null}
+        {recall.url ? <LinkRow label={translate("scan.recallOfficial")} onPress={() => void Linking.openURL(recall.url!)} tone={colors.danger} /> : null}
       </View>)}
-      <Text style={styles.bodyNote}>Source : RappelConso (DGCCRF), Licence Ouverte Etalab.</Text>
+      <Text style={styles.bodyNote}>{translate("scan.recallSource")}</Text>
     </ScrollView>
   </View></View></Modal>;
 }
@@ -225,12 +226,12 @@ function RecallSheet({ recalls, onClose }: { recalls: ProductRecall[]; onClose: 
 /** Full-screen product photo: tap anywhere (or the close button) to dismiss. */
 function ProductImageViewer({ uri, name, onClose }: { uri?: string; name: string; onClose: () => void }) {
   return <Modal transparent animationType="fade" visible={Boolean(uri)} onRequestClose={onClose} statusBarTranslucent>
-    <Pressable accessibilityRole="button" accessibilityLabel="Fermer la photo" onPress={onClose} style={styles.viewerBackdrop}>
+    <Pressable accessibilityRole="button" accessibilityLabel={translate("scan.closePhoto")} onPress={onClose} style={styles.viewerBackdrop}>
       <View style={styles.viewerFrame}><BoycottProductImage contentFit="contain" style={styles.viewerImage} uri={uri} /></View>
       <Text numberOfLines={2} style={styles.viewerCaption}>{name}</Text>
-      <Text style={styles.viewerCredit}>Photo : Open Food Facts (CC BY-SA)</Text>
+      <Text style={styles.viewerCredit}>{translate("scan.photoCredit")}</Text>
     </Pressable>
-    <Pressable accessibilityRole="button" accessibilityLabel="Fermer la photo" onPress={onClose} style={styles.viewerClose}><Ionicons name="close" size={24} color="#FFF" /></Pressable>
+    <Pressable accessibilityRole="button" accessibilityLabel={translate("scan.closePhoto")} onPress={onClose} style={styles.viewerClose}><Ionicons name="close" size={24} color="#FFF" /></Pressable>
   </Modal>;
 }
 
@@ -240,7 +241,7 @@ function AlternativeCard({ alternative, originalScore, onOpen }: { alternative: 
   const halal = analyzeHalalCertification(alternative.halalData);
   const halalLabel = halal.certification ? `Halal · ${halal.certification}` : halal.halalMention ? 'Halal' : null;
   const subtitle = [alternative.brand, alternative.quantity].filter(Boolean).join(' · ');
-  return <Pressable accessibilityRole="button" accessibilityLabel={`Consulter la fiche de ${alternative.productName}, Score Santé ${alternative.healthScore} sur 100${halalLabel ? `, ${halalLabel}` : ''}`} onPress={() => onOpen(alternative.barcode)} style={({ pressed }) => [styles.altRow, pressed && styles.alternativePressed]}>
+  return <Pressable accessibilityRole="button" accessibilityLabel={`${translate('scan.altA11y', { name: alternative.productName, score: alternative.healthScore })}${halalLabel ? `, ${halalLabel}` : ''}`} onPress={() => onOpen(alternative.barcode)} style={({ pressed }) => [styles.altRow, pressed && styles.alternativePressed]}>
     <BoycottProductImage contentFit="cover" style={styles.altRowImage} uri={alternative.imageUrl} />
     <View style={styles.rowCopy}>
       <Text numberOfLines={2} style={styles.altRowName}>{readableName(alternative.productName)}</Text>
@@ -250,7 +251,7 @@ function AlternativeCard({ alternative, originalScore, onOpen }: { alternative: 
         <Text style={[styles.altRowScore, { color: healthPresentation.color }]}>{alternative.healthScore}/100</Text>
         {halalLabel ? <View style={styles.halalPill}><Text style={styles.halalPillText}>{halalLabel}</Text></View> : null}
       </View>
-      {originalScore !== undefined ? <Text style={styles.altRowCompare}>au lieu de {originalScore}/100</Text> : null}
+      {originalScore !== undefined ? <Text style={styles.altRowCompare}>{translate('scan.insteadOf', { score: originalScore })}</Text> : null}
     </View>
     <Ionicons name="chevron-forward" size={18} color={colors.goldLight} />
   </Pressable>;
@@ -258,18 +259,18 @@ function AlternativeCard({ alternative, originalScore, onOpen }: { alternative: 
 
 function AlternativeSection({ alternatives, loading, originalScore, onOpen }: { alternatives: AlternativeProduct[]; loading: boolean; originalScore?: number; onOpen: (barcode: string) => void }) {
   const allHalal = alternatives.length > 0 && alternatives.every((item) => analyzeHalalCertification(item.halalData).halalMention || Boolean(analyzeHalalCertification(item.halalData).certification));
-  const count = `${alternatives.length} produit${alternatives.length > 1 ? 's' : ''}${allHalal ? ' halal' : ''}`;
+  const count = translate(alternatives.length > 1 ? (allHalal ? 'scan.altCountManyHalal' : 'scan.altCountMany') : (allHalal ? 'scan.altCountOneHalal' : 'scan.altCountOne'), { count: alternatives.length });
   return <View style={styles.card}>
-    <View style={styles.heading}><Ionicons name="swap-horizontal-outline" size={20} color={colors.goldLight} /><Text style={styles.sectionTitle}>Mieux pour vous</Text></View>
-    {loading ? <Text style={styles.muted}>Recherche d’alternatives…</Text> : alternatives.length ? <>
+    <View style={styles.heading}><Ionicons name="swap-horizontal-outline" size={20} color={colors.goldLight} /><Text style={styles.sectionTitle}>{translate("scan.betterForYou")}</Text></View>
+    {loading ? <Text style={styles.muted}>{translate("scan.searchingAlt")}</Text> : alternatives.length ? <>
       <Text style={styles.altCount}>{count}</Text>
       <View style={styles.altList}>{alternatives.map((item) => <AlternativeCard key={item.barcode} alternative={item} originalScore={originalScore} onOpen={onOpen} />)}</View>
-      <Text style={styles.reason}>Même type de produit, mieux noté, sans lien avec le boycott. Données Open Food Facts (ODbL).</Text>
-    </> : originalScore !== undefined && originalScore >= 80 ? <Text style={styles.muted}>C’est déjà un des meilleurs choix de sa catégorie.</Text> : <Text style={styles.muted}>Aucune alternative de même type, hors boycott et mieux notée, n’a été trouvée.</Text>}
+      <Text style={styles.reason}>{translate("scan.altReason")}</Text>
+    </> : originalScore !== undefined && originalScore >= 80 ? <Text style={styles.muted}>{translate("scan.alreadyBest")}</Text> : <Text style={styles.muted}>{translate("scan.noAlternative")}</Text>}
   </View>;
 }
 
-export function BoycottScanResultCard({ result, onClose, onOpenEntity, onOpenAlternative, onPropose, primaryLabel = 'Scanner un autre produit', startExpanded = false }: Props) {
+export function BoycottScanResultCard({ result, onClose, onOpenEntity, onOpenAlternative, onPropose, primaryLabel = translate("scan.scanAnother"), startExpanded = false }: Props) {
   useHalalCertificationBodies();
   const [displayImageUrl, setDisplayImageUrl] = useState<string | undefined>();
   const [imageViewerOpen, setImageViewerOpen] = useState(false);
@@ -336,12 +337,12 @@ export function BoycottScanResultCard({ result, onClose, onOpenEntity, onOpenAlt
   const health = analyzeHealthScoreBase(result.healthData);
   const halalBody = getHalalCertifier(halal.certifierId);
   const halalVigilance = getActiveHalalCertifierNotices(halalBody).length > 0;
-  const halalLabel = halalBody ? `${halalBody.name}${halalVigilance ? ' · à vérifier' : ''}` : halal.level === 'likely' ? 'Halal · certificateur ?' : halal.level === 'uncertain' ? 'Informations à vérifier' : 'Non vérifié';
+  const halalLabel = halalBody ? `${halalBody.name}${halalVigilance ? ` · ${translate('scan.toCheckShort')}` : ''}` : halal.level === 'likely' ? translate("scan.halalCertifierUnknown") : halal.level === 'uncertain' ? translate("scan.infoToCheck") : translate("scan.notVerified");
   const israelSignals = getIsraelSignals(result);
   // Medicines (ANSM registry): health score and halal analysis do not apply.
   const isMedicine = result.productKind === 'medicine';
   const israelWarning = result.assessment !== 'boycott' && israelSignals.length > 0;
-  const statusLabel = result.assessment === 'boycott' ? 'À boycotter' : israelWarning ? 'Lien Israël à vérifier' : result.assessment === 'ok' ? 'Aucun lien identifié' : result.source === 'none' ? 'Produit inconnu' : 'Aucun lien connu';
+  const statusLabel = result.assessment === 'boycott' ? translate("scan.statusBoycott") : israelWarning ? translate("scan.statusIsrael") : result.assessment === 'ok' ? translate("scan.statusNoLinkFound") : result.source === 'none' ? translate("scan.statusUnknown") : translate("scan.statusNoLinkKnown");
   const healthTone = !health.available ? colors.textMuted : health.score >= 70 ? colors.success : health.score >= 50 ? colors.goldLight : colors.danger;
   const boycottTone = result.assessment === 'boycott' ? colors.danger : israelWarning ? colors.warning : result.assessment === 'ok' ? colors.success : colors.textMuted;
   const halalTone = halalBody ? (halalVigilance ? colors.warning : colors.success) : halal.level === 'likely' || halal.level === 'uncertain' ? colors.warning : colors.textMuted;
@@ -354,7 +355,7 @@ export function BoycottScanResultCard({ result, onClose, onOpenEntity, onOpenAlt
   // A failed URL is dropped from the cache for the next scan, but never replaced live: the placeholder stays.
   const failedImageUrl = displayImageUrl;
   const imageErrorHandler = useCallback(() => { void invalidateProductImage(result.barcode, failedImageUrl); }, [result.barcode, failedImageUrl]);
-  return <View pointerEvents="box-none" style={styles.sheetBackdrop}><Animated.View style={[styles.sheet, { height: expandedHeight, transform: [{ translateY }] }, result.assessment === 'boycott' ? styles.sheetBoycott : null]}><View {...sheetPanResponder.panHandlers}><View style={styles.sheetHandleArea}><View style={styles.grabber} /></View><View style={styles.productHeader}><Pressable accessibilityRole="imagebutton" accessibilityLabel="Agrandir la photo du produit" disabled={!displayImageUrl} onPress={() => setImageViewerOpen(true)}><BoycottProductImage barcode={result.barcode} brand={diagnosticBrand} contentFit="contain" qualityCheck={isUsableProductPhoto} onImageError={imageErrorHandler} style={styles.productImage} uri={displayImageUrl} /></Pressable><View style={styles.rowCopy}><Text numberOfLines={2} style={styles.compactName}>{name}</Text>{result.brandLabel ? <Text numberOfLines={1} style={styles.compactBrand}>{result.brandLabel}</Text> : null}{recalls.length ? <Pressable accessibilityRole="button" accessibilityLabel="Rappel officiel en cours, voir le détail" onPress={() => setRecallOpen(true)} style={({ pressed }) => [styles.recallPill, pressed && styles.pressed]}><Ionicons name="warning" size={14} color="#FFF" /><Text style={styles.recallPillText}>Rappel officiel en cours</Text><Ionicons name="chevron-forward" size={14} color="#FFF" /></Pressable> : null}</View><Pressable accessibilityLabel="Fermer le résultat" onPress={onClose} style={styles.close}><Ionicons name="close" size={22} color={colors.text} /></Pressable></View>{!expanded ? <View style={styles.compactContent}><View style={styles.compactBadges}><View style={[styles.compactBadge, result.assessment === 'boycott' ? styles.compactBadgeDanger : null]}><Text style={styles.compactBadgeTitle}>Boycott</Text><Text numberOfLines={2} style={[styles.compactBadgeValue, { color: result.assessment === 'boycott' || israelWarning ? boycottTone : colors.text }]}>{statusLabel}</Text></View>{isMedicine ? <View style={[styles.compactBadge, styles.compactBadgeWide]}><Text style={styles.compactBadgeTitle}>Médicament</Text><Text numberOfLines={2} style={styles.compactBadgeValue}>{result.brandLabel ?? 'Laboratoire non renseigné'}</Text></View> : <><View style={styles.compactBadge}><Text style={styles.compactBadgeTitle}>Score Santé</Text><Text style={[styles.compactBadgeValue, { color: healthTone }]}>{health.available ? `${health.score}/100` : 'Indisponible'}</Text>{health.available && health.finalGrade ? <Text style={styles.compactBadgeNote}>{health.finalGrade}</Text> : null}</View><View style={styles.compactBadge}><Text style={styles.compactBadgeTitle}>Halal</Text><Text numberOfLines={2} style={styles.compactBadgeValue}>{halalLabel}</Text></View></>}</View><Pressable accessibilityRole="button" onPress={() => snapTo(true)} style={styles.expandHint}><Text style={styles.expandHintText}>Tirer vers le haut pour voir le détail</Text><Ionicons name="chevron-up" size={18} color={colors.goldLight} /></Pressable></View> : null}</View>{expanded ? <ScrollView ref={expandedScrollRef} style={styles.expandedScroll} contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}><Section icon={result.assessment === 'boycott' ? 'alert-circle' : 'business-outline'} title="Boycott" value={statusLabel} tone={boycottTone} open={openSection === 'boycott'} onToggle={() => toggleSection('boycott')}><BoycottBody result={result} dossier={dossier} israelSignals={israelSignals} onOpenEntity={onOpenEntity} onOpenDossier={() => setControversyOpen(true)} /></Section>{isMedicine ? null : <><Section icon="heart-outline" title="Score Santé" value={health.available ? `${health.score}/100 · ${getHealthGradePresentation(health.finalGrade).label}` : 'Indisponible'} tone={health.available ? getHealthGradePresentation(health.finalGrade).color : colors.textMuted} open={openSection === 'health'} onToggle={() => toggleSection('health')}><HealthBody result={result} onAdditive={setAdditiveCode} /></Section><Section icon="ribbon-outline" title="Halal" value={halalLabel} tone={halalTone} open={openSection === 'halal'} onToggle={() => toggleSection('halal')}><HalalBody result={result} confirmed={confirmedCertifier} onOpen={setCertifierName} onReport={() => setReportOpen(true)} /></Section></>}{PRODUCT_ALTERNATIVES_ENABLED ? <AlternativeSection alternatives={alternatives} loading={alternativeLoading} originalScore={health.available ? health.score : undefined} onOpen={onOpenAlternative} /> : null}<Pressable onPress={onClose} style={styles.primary}><Text style={styles.primaryText}>{primaryLabel}</Text></Pressable>{result.assessment === 'unknown' ? <Pressable accessibilityRole="button" onPress={onPropose} style={styles.reportLink}><Text style={styles.reportLinkText}>Signaler un lien avec le boycott</Text></Pressable> : null}<Text style={styles.barcode}>Code-barres {result.barcode}{displayImageUrl ? '\nPhoto : Open Food Facts (CC BY-SA)' : ''}</Text></ScrollView> : null}</Animated.View><ProductImageViewer uri={imageViewerOpen ? displayImageUrl : undefined} name={name} onClose={() => setImageViewerOpen(false)} /><RecallSheet recalls={recallOpen ? recalls : []} onClose={() => setRecallOpen(false)} /><AdditiveDetailSheet additive={additiveCode ? getAdditiveInfo(additiveCode) : null} onClose={() => setAdditiveCode(null)} /><HalalCertifierDetailSheet certifier={certifier} onClose={() => setCertifierName(null)} /><BrandControversyDetailSheet dossier={controversyOpen ? dossier : null} onClose={() => setControversyOpen(false)} /><HalalCertifierReportSheet visible={reportOpen} barcode={result.barcode} productName={result.productName ?? undefined} onClose={() => setReportOpen(false)} /></View>;
+  return <View pointerEvents="box-none" style={styles.sheetBackdrop}><Animated.View style={[styles.sheet, { height: expandedHeight, transform: [{ translateY }] }, result.assessment === 'boycott' ? styles.sheetBoycott : null]}><View {...sheetPanResponder.panHandlers}><View style={styles.sheetHandleArea}><View style={styles.grabber} /></View><View style={styles.productHeader}><Pressable accessibilityRole="imagebutton" accessibilityLabel={translate("scan.zoomPhoto")} disabled={!displayImageUrl} onPress={() => setImageViewerOpen(true)}><BoycottProductImage barcode={result.barcode} brand={diagnosticBrand} contentFit="contain" qualityCheck={isUsableProductPhoto} onImageError={imageErrorHandler} style={styles.productImage} uri={displayImageUrl} /></Pressable><View style={styles.rowCopy}><Text numberOfLines={2} style={styles.compactName}>{name}</Text>{result.brandLabel ? <Text numberOfLines={1} style={styles.compactBrand}>{result.brandLabel}</Text> : null}{recalls.length ? <Pressable accessibilityRole="button" accessibilityLabel={translate("scan.recallA11y")} onPress={() => setRecallOpen(true)} style={({ pressed }) => [styles.recallPill, pressed && styles.pressed]}><Ionicons name="warning" size={14} color="#FFF" /><Text style={styles.recallPillText}>{translate("scan.recallTitle")}</Text><Ionicons name="chevron-forward" size={14} color="#FFF" /></Pressable> : null}</View><Pressable accessibilityLabel={translate("scan.closeResult")} onPress={onClose} style={styles.close}><Ionicons name="close" size={22} color={colors.text} /></Pressable></View>{!expanded ? <View style={styles.compactContent}><View style={styles.compactBadges}><View style={[styles.compactBadge, result.assessment === 'boycott' ? styles.compactBadgeDanger : null]}><Text style={styles.compactBadgeTitle}>Boycott</Text><Text numberOfLines={2} style={[styles.compactBadgeValue, { color: result.assessment === 'boycott' || israelWarning ? boycottTone : colors.text }]}>{statusLabel}</Text></View>{isMedicine ? <View style={[styles.compactBadge, styles.compactBadgeWide]}><Text style={styles.compactBadgeTitle}>{translate("scan.medicine")}</Text><Text numberOfLines={2} style={styles.compactBadgeValue}>{result.brandLabel ?? translate("scan.labUnknown")}</Text></View> : <><View style={styles.compactBadge}><Text style={styles.compactBadgeTitle}>{translate("scan.healthScore")}</Text><Text style={[styles.compactBadgeValue, { color: healthTone }]}>{health.available ? `${health.score}/100` : translate("scan.unavailable")}</Text>{health.available && health.finalGrade ? <Text style={styles.compactBadgeNote}>{health.finalGrade}</Text> : null}</View><View style={styles.compactBadge}><Text style={styles.compactBadgeTitle}>Halal</Text><Text numberOfLines={2} style={styles.compactBadgeValue}>{halalLabel}</Text></View></>}</View><Pressable accessibilityRole="button" onPress={() => snapTo(true)} style={styles.expandHint}><Text style={styles.expandHintText}>{translate("scan.pullUp")}</Text><Ionicons name="chevron-up" size={18} color={colors.goldLight} /></Pressable></View> : null}</View>{expanded ? <ScrollView ref={expandedScrollRef} style={styles.expandedScroll} contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}><Section icon={result.assessment === 'boycott' ? 'alert-circle' : 'business-outline'} title="Boycott" value={statusLabel} tone={boycottTone} open={openSection === 'boycott'} onToggle={() => toggleSection('boycott')}><BoycottBody result={result} dossier={dossier} israelSignals={israelSignals} onOpenEntity={onOpenEntity} onOpenDossier={() => setControversyOpen(true)} /></Section>{isMedicine ? null : <><Section icon="heart-outline" title={translate("scan.healthScore")} value={health.available ? `${health.score}/100 · ${getHealthGradePresentation(health.finalGrade).label}` : translate("scan.unavailable")} tone={health.available ? getHealthGradePresentation(health.finalGrade).color : colors.textMuted} open={openSection === 'health'} onToggle={() => toggleSection('health')}><HealthBody result={result} onAdditive={setAdditiveCode} /></Section><Section icon="ribbon-outline" title="Halal" value={halalLabel} tone={halalTone} open={openSection === 'halal'} onToggle={() => toggleSection('halal')}><HalalBody result={result} confirmed={confirmedCertifier} onOpen={setCertifierName} onReport={() => setReportOpen(true)} /></Section></>}{PRODUCT_ALTERNATIVES_ENABLED ? <AlternativeSection alternatives={alternatives} loading={alternativeLoading} originalScore={health.available ? health.score : undefined} onOpen={onOpenAlternative} /> : null}<Pressable onPress={onClose} style={styles.primary}><Text style={styles.primaryText}>{primaryLabel}</Text></Pressable>{result.assessment === 'unknown' ? <Pressable accessibilityRole="button" onPress={onPropose} style={styles.reportLink}><Text style={styles.reportLinkText}>{translate("scan.reportLink")}</Text></Pressable> : null}<Text style={styles.barcode}>{translate('scan.barcodeLine', { barcode: result.barcode })}{displayImageUrl ? `\n${translate('scan.photoCredit')}` : ''}</Text></ScrollView> : null}</Animated.View><ProductImageViewer uri={imageViewerOpen ? displayImageUrl : undefined} name={name} onClose={() => setImageViewerOpen(false)} /><RecallSheet recalls={recallOpen ? recalls : []} onClose={() => setRecallOpen(false)} /><AdditiveDetailSheet additive={additiveCode ? getAdditiveInfo(additiveCode) : null} onClose={() => setAdditiveCode(null)} /><HalalCertifierDetailSheet certifier={certifier} onClose={() => setCertifierName(null)} /><BrandControversyDetailSheet dossier={controversyOpen ? dossier : null} onClose={() => setControversyOpen(false)} /><HalalCertifierReportSheet visible={reportOpen} barcode={result.barcode} productName={result.productName ?? undefined} onClose={() => setReportOpen(false)} /></View>;
 }
 
 // Open Food Facts names typed in capitals ("PREMIUM VOLAILLE BLANC DE DINDE") read as shouting: sentence case.

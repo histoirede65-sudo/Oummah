@@ -2,10 +2,11 @@ import { Ionicons } from '@expo/vector-icons';
 import { useState } from 'react';
 import { Linking, Modal, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { getHalalReligiousGuide, HALAL_CRITERIA, HALAL_CRITERION_KIND_LABELS, HALAL_DOCUMENTATION_LABELS, HALAL_FACT_LABELS, type HalalCertificationBody, type HalalCriterion, type HalalCriterionDefinition, type HalalDocumentationLevel, type HalalFact, type HalalFactKey, type HalalNotice, type HalalReligiousGuide, type HalalReligiousGuideId, type HalalSource } from '../../features/boycott/halalCertifierRepository';
+import { getActiveLanguage, translate } from '../../i18n';
 import { colors } from '../../theme/colors';
 import { typography } from '../../theme/typography';
 
-// Facts every sheet answers; anything not documented is shown as "Information non vérifiée".
+// Facts every sheet answers; anything not documented is shown as translate("certSheet.notVerified").
 const CORE_FACTS: HalalFactKey[] = ['slaughterMethod', 'stunningPolicy', 'controlMethod', 'traceability', 'audits', 'accreditation'];
 
 const LEVEL_TONES: Record<HalalDocumentationLevel, string> = { documented: colors.success, to_verify: colors.warning, vigilance: colors.warning, insufficient: colors.textMuted };
@@ -14,7 +15,7 @@ const LEVEL_ICONS: Record<HalalDocumentationLevel, React.ComponentProps<typeof I
 function formatDate(value?: string) {
   if (!value) return undefined;
   const date = new Date(value);
-  return Number.isNaN(date.getTime()) ? value : date.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
+  return Number.isNaN(date.getTime()) ? value : date.toLocaleDateString(getActiveLanguage() === 'en' ? 'en-GB' : 'fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
 }
 
 function SourceLinks({ sources }: { sources: HalalSource[] }) {
@@ -28,21 +29,21 @@ function FactRow({ label, fact }: { label: string; fact: HalalFact }) {
 function NoticeCard({ notice }: { notice: HalalNotice }) {
   const tone = notice.level === 'vigilance' ? colors.warning : colors.textSecondary;
   return <View style={[styles.notice, notice.level === 'vigilance' && styles.noticeVigilance]}>
-    <Text style={[styles.noticeKind, { color: tone }]}>{notice.level === 'historical' ? 'Information historique' : notice.level === 'vigilance' ? 'Vigilance' : 'Information'}</Text>
+    <Text style={[styles.noticeKind, { color: tone }]}>{notice.level === 'historical' ? translate('infoStatus.historical') : notice.level === 'vigilance' ? translate('certSheet.vigilance') : translate('certSheet.information')}</Text>
     <Text style={styles.noticeTitle}>{notice.title}</Text>
     <Text style={styles.body}>{notice.summary}</Text>
-    {notice.scope ? <Text style={styles.meta}>Portée : {notice.scope}</Text> : null}
+    {notice.scope ? <Text style={styles.meta}>{translate('certSheet.scope', { scope: notice.scope })}</Text> : null}
     <Text style={styles.meta}>{notice.publishedAt ? `${formatDate(notice.publishedAt)} · ` : ''}{notice.issuedBy}</Text>
     <SourceLinks sources={notice.sources} />
   </View>;
 }
 
 type IconName = React.ComponentProps<typeof Ionicons>['name'];
-const CRITERION_STATUS: Record<HalalCriterion['status'] | 'unknown', { icon: IconName; color: string; label: string }> = {
-  yes: { icon: 'checkmark-circle', color: colors.success, label: 'Déclaré' },
-  partial: { icon: 'contrast', color: colors.goldLight, label: 'Partiel' },
-  no: { icon: 'close-circle', color: colors.danger, label: 'Non' },
-  unknown: { icon: 'help-circle-outline', color: colors.textSecondary, label: 'Non garanti' },
+const CRITERION_STATUS: Record<HalalCriterion['status'] | 'unknown', { icon: IconName; color: string; readonly label: string }> = {
+  yes: { icon: 'checkmark-circle', color: colors.success, get label() { return translate('certSheet.declared'); } },
+  partial: { icon: 'contrast', color: colors.goldLight, get label() { return translate('certSheet.partial'); } },
+  no: { icon: 'close-circle', color: colors.danger, get label() { return translate('certSheet.no'); } },
+  unknown: { icon: 'help-circle-outline', color: colors.textSecondary, get label() { return translate('certSheet.notGuaranteed'); } },
 };
 const GUIDE_IDS: HalalReligiousGuideId[] = ['stunning', 'tasmiya', 'slaughterer', 'mechanical', 'contamination'];
 
@@ -57,9 +58,9 @@ function CriterionRow({ definition, criterion, open, onToggle, onOpenGuide }: { 
       <Ionicons name={open ? 'chevron-up' : 'chevron-down'} size={16} color={colors.textMuted} />
     </Pressable>
     {open ? <View style={styles.criterionBody}>
-      {criterion ? <><Text style={styles.factValue}>{criterion.value}</Text><Text style={styles.meta}>{criterion.sourceStatus === 'verified' ? 'Document officiel indépendant' : criterion.sourceStatus === 'reported' ? 'Rapporté par une source tierce (voir la date)' : 'Déclaré par l’organisme'}</Text><SourceLinks sources={criterion.sources} /></> : <Text style={styles.body}>Non garanti : l’organisme ne s’y engage pas publiquement et aucune source identifiable ne le documente.</Text>}
+      {criterion ? <><Text style={styles.factValue}>{criterion.value}</Text><Text style={styles.meta}>{criterion.sourceStatus === 'verified' ? translate("certSheet.officialDoc") : criterion.sourceStatus === 'reported' ? translate("certSheet.reported") : translate("certSheet.declaredByBody")}</Text><SourceLinks sources={criterion.sources} /></> : <Text style={styles.body}>{translate("certSheet.notGuaranteedText")}</Text>}
       <Text style={styles.rule}>{definition.rule}</Text>
-      {guide ? <Pressable accessibilityRole="button" onPress={() => onOpenGuide(guide.id)}><Text style={styles.sourceLink}>Repère religieux : {guide.title} ›</Text></Pressable> : null}
+      {guide ? <Pressable accessibilityRole="button" onPress={() => onOpenGuide(guide.id)}><Text style={styles.sourceLink}>{translate('certSheet.guideLink', { title: guide.title })} ›</Text></Pressable> : null}
     </View> : null}
   </View>;
 }
@@ -67,14 +68,14 @@ function CriterionRow({ definition, criterion, open, onToggle, onOpenGuide }: { 
 function GuideView({ guide }: { guide: HalalReligiousGuide }) {
   return <>
     <Text style={styles.guideQuestion}>{guide.question}</Text>
-    {guide.quran.length ? <Section title="Coran">{guide.quran.map((item) => <View key={item.reference} style={styles.fact}><Text style={styles.factLabel}>{item.reference}</Text><Text style={styles.factValue}>{item.text}</Text></View>)}</Section> : null}
-    {guide.sunnah.length ? <Section title="Sunna du Prophète ﷺ">{guide.sunnah.map((item) => <View key={item.reference} style={styles.fact}><Text style={styles.factLabel}>{item.reference}</Text><Text style={styles.factValue}>{item.text}</Text><SourceLinks sources={item.sources} /></View>)}</Section> : null}
-    <Section title="Compagnons">{guide.companions.length ? guide.companions.map((item) => <View key={`${item.name}-${item.text}`} style={styles.fact}><Text style={styles.factLabel}>{item.name}</Text><Text style={styles.factValue}>{item.text}</Text><Text style={styles.meta}>{item.reference}</Text><SourceLinks sources={item.sources} /></View>) : <Text style={styles.body}>Aucune parole de Compagnon spécifique à ce sujet n’est retenue à ce jour.</Text>}</Section>
-    <Section title="Savants de la Sunna">{guide.scholars.map((item) => <View key={`${item.scholar}-${item.reference}`} style={styles.fact}><Text style={styles.factLabel}>{item.scholar}</Text><Text style={styles.factValue}>{item.position}</Text><Text style={styles.meta}>{item.reference}</Text><SourceLinks sources={item.sources} /></View>)}</Section>
-    {guide.agreement ? <Section title="Point d’accord"><Text style={styles.conclusion}>{guide.agreement}</Text></Section> : null}
-    {guide.divergence ? <Section title="Divergences"><Text style={styles.conclusion}>{guide.divergence}</Text></Section> : null}
-    {guide.reading ? <Section title="Lien avec la certification"><Text style={styles.conclusion}>{guide.reading}</Text><Text style={styles.meta}>Ces repères expliquent les règles ; ils ne notent aucun organisme.</Text></Section> : null}
-    <Text style={styles.meta}>Vérifié par OUMMAH le {formatDate(guide.lastVerifiedAt)}</Text>
+    {guide.quran.length ? <Section title={translate('certSheet.quran')}>{guide.quran.map((item) => <View key={item.reference} style={styles.fact}><Text style={styles.factLabel}>{item.reference}</Text><Text style={styles.factValue}>{item.text}</Text></View>)}</Section> : null}
+    {guide.sunnah.length ? <Section title={translate("certSheet.sunnah")}>{guide.sunnah.map((item) => <View key={item.reference} style={styles.fact}><Text style={styles.factLabel}>{item.reference}</Text><Text style={styles.factValue}>{item.text}</Text><SourceLinks sources={item.sources} /></View>)}</Section> : null}
+    <Section title={translate('certSheet.companions')}>{guide.companions.length ? guide.companions.map((item) => <View key={`${item.name}-${item.text}`} style={styles.fact}><Text style={styles.factLabel}>{item.name}</Text><Text style={styles.factValue}>{item.text}</Text><Text style={styles.meta}>{item.reference}</Text><SourceLinks sources={item.sources} /></View>) : <Text style={styles.body}>{translate("certSheet.noCompanion")}</Text>}</Section>
+    <Section title={translate("certSheet.scholars")}>{guide.scholars.map((item) => <View key={`${item.scholar}-${item.reference}`} style={styles.fact}><Text style={styles.factLabel}>{item.scholar}</Text><Text style={styles.factValue}>{item.position}</Text><Text style={styles.meta}>{item.reference}</Text><SourceLinks sources={item.sources} /></View>)}</Section>
+    {guide.agreement ? <Section title={translate("certSheet.agreement")}><Text style={styles.conclusion}>{guide.agreement}</Text></Section> : null}
+    {guide.divergence ? <Section title={translate('certSheet.divergence')}><Text style={styles.conclusion}>{guide.divergence}</Text></Section> : null}
+    {guide.reading ? <Section title={translate("certSheet.linkCert")}><Text style={styles.conclusion}>{guide.reading}</Text><Text style={styles.meta}>{translate("certSheet.guideNote")}</Text></Section> : null}
+    <Text style={styles.meta}>{translate('certSheet.verifiedOn', { date: formatDate(guide.lastVerifiedAt) ?? '' })}</Text>
   </>;
 }
 
@@ -87,8 +88,8 @@ export function HalalReligiousGuideSheet({ guide, onClose }: { guide: HalalRelig
   if (!guide) return null;
   return <Modal transparent animationType="slide" visible onRequestClose={onClose}><View style={styles.backdrop}><View style={styles.sheet}>
     <View style={styles.header}>
-      <View style={styles.headerCopy}><Text style={styles.kicker}>REPÈRE RELIGIEUX</Text><Text style={styles.name}>{guide.title}</Text></View>
-      <Pressable accessibilityLabel="Fermer le repère religieux" onPress={onClose} style={styles.close}><Ionicons name="close" size={22} color={colors.text} /></Pressable>
+      <View style={styles.headerCopy}><Text style={styles.kicker}>{translate("certSheet.guideKicker")}</Text><Text style={styles.name}>{guide.title}</Text></View>
+      <Pressable accessibilityLabel={translate("certSheet.closeGuide")} onPress={onClose} style={styles.close}><Ionicons name="close" size={22} color={colors.text} /></Pressable>
     </View>
     <ScrollView key={guide.id} showsVerticalScrollIndicator={false} contentContainerStyle={styles.content}><GuideView guide={guide} /></ScrollView>
   </View></View></Modal>;
@@ -115,47 +116,47 @@ export function HalalCertifierDetailSheet({ certifier, onClose, scannedProducts,
 
   return <Modal transparent animationType="slide" visible onRequestClose={guide ? () => setGuideId(null) : close}><View style={styles.backdrop}><View style={styles.sheet}>
     <View style={styles.header}>
-      {guide ? <Pressable accessibilityLabel="Retour à la fiche de l’organisme" onPress={() => setGuideId(null)} style={styles.close}><Ionicons name="chevron-back" size={22} color={colors.text} /></Pressable> : null}
-      <View style={styles.headerCopy}><Text style={styles.kicker}>{guide ? 'REPÈRE RELIGIEUX' : 'ORGANISME DE CERTIFICATION HALAL'}</Text><Text style={styles.name}>{guide ? guide.title : certifier.name}</Text>{!guide && certifier.fullName && certifier.fullName !== certifier.name ? <Text style={styles.fullName}>{certifier.fullName}</Text> : null}</View>
-      <Pressable accessibilityLabel="Fermer la fiche de l’organisme" onPress={close} style={styles.close}><Ionicons name="close" size={22} color={colors.text} /></Pressable>
+      {guide ? <Pressable accessibilityLabel={translate("certSheet.backToBody")} onPress={() => setGuideId(null)} style={styles.close}><Ionicons name="chevron-back" size={22} color={colors.text} /></Pressable> : null}
+      <View style={styles.headerCopy}><Text style={styles.kicker}>{guide ? translate('certSheet.guideKicker') : translate('certSheet.kicker')}</Text><Text style={styles.name}>{guide ? guide.title : certifier.name}</Text>{!guide && certifier.fullName && certifier.fullName !== certifier.name ? <Text style={styles.fullName}>{certifier.fullName}</Text> : null}</View>
+      <Pressable accessibilityLabel={translate("certSheet.closeBody")} onPress={close} style={styles.close}><Ionicons name="close" size={22} color={colors.text} /></Pressable>
     </View>
     {guide ? <ScrollView key={guide.id} showsVerticalScrollIndicator={false} contentContainerStyle={styles.content}><GuideView guide={guide} /></ScrollView> :
     <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.content}>
       <View style={[styles.summary, { borderColor: `${tone}55` }]}>
         <View style={styles.levelRow}><Ionicons name={LEVEL_ICONS[level]} size={22} color={tone} /><Text style={[styles.level, { color: tone }]}>{HALAL_DOCUMENTATION_LABELS[level]}</Text></View>
-        {vigilance.length ? <Text style={styles.vigilanceLine}>Des éléments concernant cet organisme nécessitent une vérification complémentaire.</Text> : null}
-        <Text style={styles.meta}>Vérifié par OUMMAH le {formatDate(certifier.lastVerifiedAt)}</Text>
+        {vigilance.length ? <Text style={styles.vigilanceLine}>{translate("certSheet.vigilanceLine")}</Text> : null}
+        <Text style={styles.meta}>{translate('certSheet.verifiedOn', { date: formatDate(certifier.lastVerifiedAt) ?? '' })}</Text>
         <View style={styles.identity}>
           {certifier.country ? <Text style={styles.identityItem}>{certifier.country}</Text> : null}
           {certifier.bodyType ? <Text style={styles.identityItem}>{certifier.bodyType}</Text> : null}
         </View>
-        {certifier.officialWebsite ? <Pressable accessibilityRole="link" onPress={() => void Linking.openURL(certifier.officialWebsite!)}><Text style={styles.sourceLink}>Site officiel ›</Text></Pressable> : <Text style={styles.meta}>Site officiel : information non vérifiée</Text>}
+        {certifier.officialWebsite ? <Pressable accessibilityRole="link" onPress={() => void Linking.openURL(certifier.officialWebsite!)}><Text style={styles.sourceLink}>{translate('certSheet.website')} ›</Text></Pressable> : <Text style={styles.meta}>{translate("certSheet.websiteUnknown")}</Text>}
       </View>
 
-      {vigilance.length ? <Section title="Vigilance">{vigilance.map((notice) => <NoticeCard key={notice.id} notice={notice} />)}</Section> : null}
+      {vigilance.length ? <Section title={translate('certSheet.vigilance')}>{vigilance.map((notice) => <NoticeCard key={notice.id} notice={notice} />)}</Section> : null}
 
-      <Section title="Grille OUMMAH">
-        <Text style={styles.body}>Ce que l’organisme publie, ou ce qu’une source identifiée rapporte, sur chaque critère. Ce que rien ne documente est « Non garanti ».</Text>
+      <Section title={translate("certSheet.grid")}>
+        <Text style={styles.body}>{translate("certSheet.gridText")}</Text>
         {HALAL_CRITERIA.map((definition) => <CriterionRow key={definition.key} definition={definition} criterion={criteria[definition.key]} open={openCriterion === definition.key} onToggle={() => setOpenCriterion((current) => current === definition.key ? null : definition.key)} onOpenGuide={setGuideId} />)}
       </Section>
 
-      {scannedProducts?.length ? <Section title="Vos produits scannés"><Text style={styles.body}>Produits de votre historique portant cette certification.</Text>{scannedProducts.map((product) => <Pressable key={product.barcode} accessibilityRole="button" disabled={!onOpenProduct} onPress={() => { close(); onOpenProduct?.(product.barcode); }} style={styles.guideRow}><Ionicons name="cube-outline" size={18} color={colors.goldLight} /><Text style={styles.guideTitle} numberOfLines={1}>{product.name}</Text>{onOpenProduct ? <Ionicons name="chevron-forward" size={16} color={colors.textMuted} /> : null}</Pressable>)}</Section> : null}
+      {scannedProducts?.length ? <Section title={translate("certSheet.yourProducts")}><Text style={styles.body}>{translate("certSheet.yourProductsText")}</Text>{scannedProducts.map((product) => <Pressable key={product.barcode} accessibilityRole="button" disabled={!onOpenProduct} onPress={() => { close(); onOpenProduct?.(product.barcode); }} style={styles.guideRow}><Ionicons name="cube-outline" size={18} color={colors.goldLight} /><Text style={styles.guideTitle} numberOfLines={1}>{product.name}</Text>{onOpenProduct ? <Ionicons name="chevron-forward" size={16} color={colors.textMuted} /> : null}</Pressable>)}</Section> : null}
 
-      <Section title="Faits vérifiés">{verified.length ? verified.map(([key, fact]) => <FactRow key={key} label={HALAL_FACT_LABELS[key]} fact={fact} />) : <Text style={styles.body}>Aucun fait confirmé par une source indépendante (institution, document officiel) n’est intégré pour le moment.</Text>}</Section>
+      <Section title={translate("certSheet.verifiedFacts")}>{verified.length ? verified.map(([key, fact]) => <FactRow key={key} label={HALAL_FACT_LABELS[key]} fact={fact} />) : <Text style={styles.body}>{translate("certSheet.noVerified")}</Text>}</Section>
 
-      <Section title="Ce que déclare l’organisme">{declared.length ? declared.map(([key, fact]) => <FactRow key={key} label={HALAL_FACT_LABELS[key]} fact={fact} />) : <Text style={styles.body}>Information non vérifiée.</Text>}</Section>
+      <Section title={translate("certSheet.bodyDeclares")}>{declared.length ? declared.map(([key, fact]) => <FactRow key={key} label={HALAL_FACT_LABELS[key]} fact={fact} />) : <Text style={styles.body}>{translate("certSheet.notVerifiedDot")}</Text>}</Section>
 
-      {missing.length ? <Section title="Non documenté à ce jour">{missing.map((key) => <View key={key} style={styles.missingRow}><Text style={styles.missingLabel}>{HALAL_FACT_LABELS[key]}</Text><Text style={styles.missingValue}>Information non vérifiée</Text></View>)}</Section> : null}
+      {missing.length ? <Section title={translate("certSheet.undocumented")}>{missing.map((key) => <View key={key} style={styles.missingRow}><Text style={styles.missingLabel}>{HALAL_FACT_LABELS[key]}</Text><Text style={styles.missingValue}>{translate("certSheet.notVerified")}</Text></View>)}</Section> : null}
 
-      {otherNotices.length ? <Section title="Informations à connaître">{otherNotices.map((notice) => <NoticeCard key={notice.id} notice={notice} />)}</Section> : null}
+      {otherNotices.length ? <Section title={translate("certSheet.toKnow")}>{otherNotices.map((notice) => <NoticeCard key={notice.id} notice={notice} />)}</Section> : null}
 
-      <Section title="Critiques documentées">{certifier.criticisms.length ? certifier.criticisms.map((notice) => <NoticeCard key={notice.id} notice={notice} />) : <Text style={styles.body}>Aucune critique appuyée sur une source primaire n’est intégrée.</Text>}</Section>
+      <Section title={translate("certSheet.criticisms")}>{certifier.criticisms.length ? certifier.criticisms.map((notice) => <NoticeCard key={notice.id} notice={notice} />) : <Text style={styles.body}>{translate("certSheet.noCriticism")}</Text>}</Section>
 
-      {guides.length ? <Section title="Repères religieux"><Text style={styles.body}>Coran, Sunna, Compagnons et savants de la Sunna, par sujet.</Text>{guides.map((item) => <Pressable key={item.id} accessibilityRole="button" onPress={() => setGuideId(item.id)} style={styles.guideRow}><Ionicons name="book-outline" size={18} color={colors.goldLight} /><Text style={styles.guideTitle}>{item.title}</Text><Ionicons name="chevron-forward" size={16} color={colors.textMuted} /></Pressable>)}</Section> : null}
+      {guides.length ? <Section title={translate("certSheet.guides")}><Text style={styles.body}>{translate("certSheet.guidesText")}</Text>{guides.map((item) => <Pressable key={item.id} accessibilityRole="button" onPress={() => setGuideId(item.id)} style={styles.guideRow}><Ionicons name="book-outline" size={18} color={colors.goldLight} /><Text style={styles.guideTitle}>{item.title}</Text><Ionicons name="chevron-forward" size={16} color={colors.textMuted} /></Pressable>)}</Section> : null}
 
-      <Section title="Conclusion OUMMAH"><Text style={styles.conclusion}>{certifier.summary}</Text><Text style={styles.meta}>Cette fiche décrit l’organisme ; elle ne rend jamais, à elle seule, un produit « non halal ».</Text></Section>
+      <Section title={translate("certSheet.conclusion")}><Text style={styles.conclusion}>{certifier.summary}</Text><Text style={styles.meta}>{translate("certSheet.conclusionNote")}</Text></Section>
 
-      <Section title="Sources">{certifier.sources.length ? <SourceLinks sources={certifier.sources} /> : <Text style={styles.body}>Aucune source primaire accessible n’est intégrée pour le moment.</Text>}</Section>
+      <Section title={translate('dossier.sources')}>{certifier.sources.length ? <SourceLinks sources={certifier.sources} /> : <Text style={styles.body}>{translate("certSheet.noPrimary")}</Text>}</Section>
     </ScrollView>}
   </View></View></Modal>;
 }

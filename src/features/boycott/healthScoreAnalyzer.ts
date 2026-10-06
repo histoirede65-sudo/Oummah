@@ -2,9 +2,11 @@ import type { AdditivesDataStatus, ProductHealthData } from './data/BoycottRepos
 import { analyzeHealthIngredients } from './healthIngredientAnalyzer';
 import { detectIngredientAdditives, getAdditivesDataStatus } from './ingredientAdditiveDetector';
 import { getAdditiveScientificConcern, type AdditiveScientificConcernLevel } from './additiveScientificConcernRepository';
+import { translate, type TranslationKey } from '../../i18n/translate';
 
 export const HEALTH_SCORE_VERSION = 'oummah-health-score-v2';
-export const HEALTH_SCORE_METHODOLOGY_TEXT = 'La nutrition constitue la base de la note. Les additifs présentant une préoccupation scientifique et le niveau de transformation peuvent uniquement réduire cette note. Une donnée manquante n’améliore jamais le score. Cette méthodologie est propre à OUMMAH et ne constitue pas une note officielle d’une autorité sanitaire.';
+/** Translation key: read it with translate(). */
+export const HEALTH_SCORE_METHODOLOGY_TEXT: TranslationKey = 'health.methodologyText';
 export const NUTRITION_SCORE_MAP = { A: 100, B: 75, C: 50, D: 25, E: 0 } as const;
 export const ADDITIVE_PENALTIES: Record<Exclude<AdditiveScientificConcernLevel, 'no_identified_concern' | 'insufficient_data'>, { perAdditive: number; cap: number }> = { limited: { perAdditive: 5, cap: 15 }, moderate: { perAdditive: 12, cap: 30 }, high: { perAdditive: 25, cap: 50 } };
 export const NOVA_PENALTIES = { 1: 0, 2: 0, 3: 5, 4: 10 } as const;
@@ -30,11 +32,11 @@ function roundScore(value: number) { return Math.round(value * 10) / 10; }
 export function getHealthGradeForScore(score: number): HealthGrade { return gradeFor(score); }
 export function getHealthGradePresentation(grade: HealthGrade): HealthGradePresentation {
   const presentation: Record<HealthGrade, Omit<HealthGradePresentation, 'grade'>> = {
-    A: { label: 'Très bon', color: '#E3B55A', backgroundColor: 'rgba(227,181,90,0.16)', accentColor: '#C8943A' },
-    B: { label: 'Bon', color: '#62C58B', backgroundColor: 'rgba(98,197,139,0.16)', accentColor: '#62C58B' },
-    C: { label: 'Moyen', color: '#F0C85A', backgroundColor: 'rgba(240,200,90,0.16)', accentColor: '#F0C85A' },
-    D: { label: 'Médiocre', color: '#E58A4F', backgroundColor: 'rgba(229,138,79,0.16)', accentColor: '#E58A4F' },
-    E: { label: 'Mauvais', color: '#E96B72', backgroundColor: 'rgba(233,107,114,0.16)', accentColor: '#E96B72' },
+    A: { label: translate('health.gradeA'), color: '#E3B55A', backgroundColor: 'rgba(227,181,90,0.16)', accentColor: '#C8943A' },
+    B: { label: translate('health.gradeB'), color: '#62C58B', backgroundColor: 'rgba(98,197,139,0.16)', accentColor: '#62C58B' },
+    C: { label: translate('health.gradeC'), color: '#F0C85A', backgroundColor: 'rgba(240,200,90,0.16)', accentColor: '#F0C85A' },
+    D: { label: translate('health.gradeD'), color: '#E58A4F', backgroundColor: 'rgba(229,138,79,0.16)', accentColor: '#E58A4F' },
+    E: { label: translate('health.gradeE'), color: '#E96B72', backgroundColor: 'rgba(233,107,114,0.16)', accentColor: '#E96B72' },
   };
   return { grade, ...presentation[grade] };
 }
@@ -47,16 +49,16 @@ export function aggregateAdditiveScores(levels: AdditiveScientificConcernLevel[]
 }
 
 function additiveSummary(counts: ScientificAdditiveCounts, total: number) {
-  const labels: Record<AdditiveScientificConcernLevel, string> = { no_identified_concern: 'sans préoccupation identifiée', limited: 'avec préoccupation limitée', moderate: 'avec préoccupation modérée', high: 'avec préoccupation élevée', insufficient_data: 'avec données scientifiques insuffisantes' };
-  const parts = (Object.keys(counts) as AdditiveScientificConcernLevel[]).filter((level) => counts[level] > 0).map((level) => `${counts[level]} ${labels[level]}`);
-  return `${total} additif${total > 1 ? 's' : ''} détecté${total > 1 ? 's' : ''} · ${parts.join(', ')}`;
+  const labels: Record<AdditiveScientificConcernLevel, TranslationKey> = { no_identified_concern: 'scan.concernNone', limited: 'scan.concernLimited', moderate: 'scan.concernModerate', high: 'scan.concernHigh', insufficient_data: 'scan.concernInsufficient' };
+  const parts = (Object.keys(counts) as AdditiveScientificConcernLevel[]).filter((level) => counts[level] > 0).map((level) => `${counts[level]} ${translate(labels[level])}`);
+  return `${translate(total > 1 ? 'scan.additivesMany' : 'scan.additivesOne', { count: total })} · ${parts.join(', ')}`;
 }
 
 export function analyzeHealthScore(data?: ProductHealthData): HealthScoreResult {
   const calculatedAt = new Date().toISOString();
   const nutrition = nutritionBase(data?.nutritionGrade);
   if (!nutrition) return { available: false, scoreVersion: HEALTH_SCORE_VERSION, methodologyVersion: HEALTH_SCORE_METHODOLOGY_VERSION, calculatedAt, reason: 'insufficient_data' };
-  const components: HealthScoreComponent[] = [{ type: 'nutrition', label: `Nutri-Score ${nutrition.grade}`, evidenceSource: 'OpenFoodFacts', evidenceLevel: 'provided_nutrition_data', oummahPenalty: 100 - nutrition.score, points: nutrition.score, explanation: 'Score nutritionnel officiel fourni par OpenFoodFacts ; il n’est pas recalculé par OUMMAH.' }];
+  const components: HealthScoreComponent[] = [{ type: 'nutrition', label: `Nutri-Score ${nutrition.grade}`, evidenceSource: 'OpenFoodFacts', evidenceLevel: 'provided_nutrition_data', oummahPenalty: 100 - nutrition.score, points: nutrition.score, explanation: translate("health.nutriscoreExplanation") }];
   const detectedAdditives = detectIngredientAdditives(data);
   const detectedCodes = [...new Set(detectedAdditives.map((detection) => detection.code))];
   const levels: AdditiveScientificConcernLevel[] = [];
@@ -68,16 +70,16 @@ export function analyzeHealthScore(data?: ProductHealthData): HealthScoreResult 
     if (record) additiveCoverage.scientificallyReviewed += 1; else additiveCoverage.unknown += 1;
     if (level === 'insufficient_data') additiveCoverage.insufficientData += 1;
     const penalty = level === 'limited' || level === 'moderate' || level === 'high' ? ADDITIVE_PENALTIES[level].perAdditive : 0;
-    if (penalty > 0) components.push({ type: 'additive', label: `${code} — ${level}`, evidenceSource: 'Référentiel scientifique OUMMAH V1', evidenceLevel: record?.scientificConcern.confidence, oummahPenalty: penalty, points: -penalty, scientificClassification: level, explanation: 'Pénalité appliquée uniquement lorsqu’une préoccupation scientifique V1 est identifiée.' });
+    if (penalty > 0) components.push({ type: 'additive', label: `${code} — ${level}`, evidenceSource: translate("health.additiveRef"), evidenceLevel: record?.scientificConcern.confidence, oummahPenalty: penalty, points: -penalty, scientificClassification: level, explanation: translate("health.additivePenaltyExplanation") });
   }
   const additiveAggregation = aggregateAdditiveScores(levels);
   const additiveCounts = additiveAggregation.counts;
   const additivesDataStatus = getAdditivesDataStatus(data, detectedAdditives);
   const transformationPenalty = data?.novaGroup && data.novaGroup in NOVA_PENALTIES ? NOVA_PENALTIES[data.novaGroup as keyof typeof NOVA_PENALTIES] : 0;
-  if (transformationPenalty > 0) components.push({ type: 'transformation', label: `NOVA ${data?.novaGroup}`, evidenceSource: 'OpenFoodFacts nova_group', evidenceLevel: 'provided_nutrition_data', oummahPenalty: transformationPenalty, points: -transformationPenalty, explanation: 'Le niveau de transformation peut uniquement réduire la base nutritionnelle.' });
+  if (transformationPenalty > 0) components.push({ type: 'transformation', label: `NOVA ${data?.novaGroup}`, evidenceSource: 'OpenFoodFacts nova_group', evidenceLevel: 'provided_nutrition_data', oummahPenalty: transformationPenalty, points: -transformationPenalty, explanation: translate("health.novaExplanation") });
   const score = roundScore(Math.max(0, Math.min(100, nutrition.score - additiveAggregation.penalty - transformationPenalty)));
-  const additivePillar: HealthPillarResult = { pillar: 'additives', score: 0, weight: 0, available: false, label: 'Additifs', detail: detectedCodes.length ? additiveSummary(additiveCounts, detectedCodes.length) : 'Aucun additif détecté' };
-  const transformationPillar: HealthPillarResult = { pillar: 'transformation', score: 0, weight: 0, available: data?.novaGroup !== undefined, label: 'Transformation', detail: data?.novaGroup ? `NOVA ${data.novaGroup}` : 'Niveau NOVA indisponible' };
+  const additivePillar: HealthPillarResult = { pillar: 'additives', score: 0, weight: 0, available: false, label: translate('health.additives'), detail: detectedCodes.length ? additiveSummary(additiveCounts, detectedCodes.length) : translate("health.noAdditive") };
+  const transformationPillar: HealthPillarResult = { pillar: 'transformation', score: 0, weight: 0, available: data?.novaGroup !== undefined, label: translate('health.processing'), detail: data?.novaGroup ? `NOVA ${data.novaGroup}` : translate('health.novaUnavailable') };
   const nutritionPillar: HealthPillarResult = { pillar: 'nutrition', score: nutrition.score, weight: 1, available: true, label: 'Nutrition', detail: `Nutri-Score ${nutrition.grade}` };
   const health = analyzeHealthIngredients(data);
   const scoreCompleteness: HealthScoreCompleteness = additiveCoverage.unknown > 0 || additiveCoverage.insufficientData > 0 || data?.novaGroup === undefined ? 'partial' : 'complete';

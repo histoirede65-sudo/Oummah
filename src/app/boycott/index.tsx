@@ -8,21 +8,23 @@ import BoycottEntityCard from '../../components/boycott/BoycottEntityCard';
 import { BoycottProductImage } from '../../components/boycott/BoycottProductImage';
 import { getBoycottCatalog, getBoycottScanHistory, searchBoycottCatalog, type BoycottScanHistoryItem } from '../../features/boycott/data/BoycottRepository';
 import { BOYCOTT_CATEGORY_LABELS, type BoycottCategory, type BoycottEntity } from '../../features/boycott/domain/BoycottEntity';
+import { useI18n, type TranslationKey } from '../../i18n';
 import { colors } from '../../theme/colors';
 import { typography } from '../../theme/typography';
 
-const CATEGORIES: Array<{ key: BoycottCategory | 'all'; icon: keyof typeof Ionicons.glyphMap; label: string }> = [
-  { key: 'all', icon: 'apps-outline', label: 'Tout' },
-  { key: 'restaurant', icon: 'restaurant-outline', label: 'Resto' },
-  { key: 'beverage', icon: 'cafe-outline', label: 'Boissons' },
-  { key: 'food', icon: 'basket-outline', label: 'Alimentaire' },
-  { key: 'technology', icon: 'laptop-outline', label: 'Tech' },
-  { key: 'retail', icon: 'storefront-outline', label: 'Commerce' },
-  { key: 'travel', icon: 'airplane-outline', label: 'Voyage' },
-  { key: 'finance', icon: 'card-outline', label: 'Finance' },
+const CATEGORIES: Array<{ key: BoycottCategory | 'all'; icon: keyof typeof Ionicons.glyphMap; label: TranslationKey }> = [
+  { key: 'all', icon: 'apps-outline', label: 'boycottHome.all' },
+  { key: 'restaurant', icon: 'restaurant-outline', label: 'boycottHome.resto' },
+  { key: 'beverage', icon: 'cafe-outline', label: 'boycottCat.beverage' },
+  { key: 'food', icon: 'basket-outline', label: 'boycottCat.food' },
+  { key: 'technology', icon: 'laptop-outline', label: 'boycottHome.tech' },
+  { key: 'retail', icon: 'storefront-outline', label: 'boycottCat.retail' },
+  { key: 'travel', icon: 'airplane-outline', label: 'boycottCat.travel' },
+  { key: 'finance', icon: 'card-outline', label: 'boycottHome.finance' },
 ];
 
 export default function BoycottScreen() {
+  const { t, language } = useI18n();
   const insets = useSafeAreaInsets();
   const [catalog, setCatalog] = useState<BoycottEntity[]>([]);
   const [query, setQuery] = useState('');
@@ -51,8 +53,8 @@ export default function BoycottScreen() {
         seen.add(item.id);
         return true;
       })
-      .sort((a, b) => a.name.localeCompare(b.name, 'fr', { sensitivity: 'base' }));
-  }, [results]);
+      .sort((a, b) => a.name.localeCompare(b.name, language, { sensitivity: 'base' }));
+  }, [results, language]);
 
   function openSearch() {
     scrollRef.current?.scrollTo({ y: Math.max(0, searchYRef.current - 18), animated: true });
@@ -70,28 +72,28 @@ export default function BoycottScreen() {
 
         <ScrollView ref={scrollRef} showsVerticalScrollIndicator={false} contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
           <View style={styles.hero}>
-            <Text style={styles.kicker}>ACHETER EN CONSCIENCE</Text>
-            <Text style={styles.title}>Scannez. Vérifiez. Remplacez.</Text>
-            <Text style={styles.subtitle}>Boycott, santé et halal en un seul scan.</Text>
+            <Text style={styles.kicker}>{t("boycottHome.kicker")}</Text>
+            <Text style={styles.title}>{t("boycottHome.title")}</Text>
+            <Text style={styles.subtitle}>{t("boycottHome.subtitle")}</Text>
             <View style={styles.analysisRow}>
               <View style={styles.analysisChip}><Ionicons name="alert-circle-outline" size={14} color={colors.goldLight} /><Text style={styles.analysisText}>Boycott</Text></View>
-              <View style={styles.analysisChip}><Ionicons name="nutrition-outline" size={14} color={colors.goldLight} /><Text style={styles.analysisText}>Santé</Text></View>
+              <View style={styles.analysisChip}><Ionicons name="nutrition-outline" size={14} color={colors.goldLight} /><Text style={styles.analysisText}>{t('boycottHome.health')}</Text></View>
               <View style={styles.analysisChip}><Ionicons name="shield-checkmark-outline" size={14} color={colors.goldLight} /><Text style={styles.analysisText}>Halal</Text></View>
             </View>
             <Pressable onPress={() => router.push('/boycott/scanner')} style={({ pressed }) => [styles.scanButton, pressed && styles.pressed]}>
               <LinearGradient colors={['#D9B15F', '#B98A38']} style={StyleSheet.absoluteFill} />
               <Ionicons name="scan" size={27} color="#17111C" />
-              <View style={{ flex: 1 }}><Text style={styles.scanTitle}>Scanner un produit</Text><Text style={styles.scanSubtitle}>Détection instantanée du code-barres</Text></View>
+              <View style={{ flex: 1 }}><Text style={styles.scanTitle}>{t("boycottHome.scanProduct")}</Text><Text style={styles.scanSubtitle}>{t("boycottHome.instant")}</Text></View>
               <Ionicons name="chevron-forward" size={21} color="#17111C" />
             </Pressable>
           </View>
 
           {recent.length ? <>
-            <View style={styles.recentHeader}><Text style={styles.sectionTitle}>Derniers scans</Text><Pressable onPress={() => router.push('/boycott/history')} accessibilityRole="button"><Text style={styles.recentAll}>Tout voir</Text></Pressable></View>
+            <View style={styles.recentHeader}><Text style={styles.sectionTitle}>{t("boycottHome.recent")}</Text><Pressable onPress={() => router.push('/boycott/history')} accessibilityRole="button"><Text style={styles.recentAll}>{t("boycottHome.seeAll")}</Text></Pressable></View>
             <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.recentRow}>
               {recent.map((item) => {
-                const label = item.productName || item.brandLabel || `Produit ${item.barcode}`;
-                return <Pressable key={item.barcode} onPress={() => router.push({ pathname: '/boycott/scanner', params: { barcode: item.barcode, from: 'history' } } as never)} style={({ pressed }) => [styles.recentCard, pressed && styles.pressed]} accessibilityRole="button" accessibilityLabel={`Consulter la fiche de ${label}`}>
+                const label = item.productName || item.brandLabel || t('boycottHome.productBarcode', { barcode: item.barcode });
+                return <Pressable key={item.barcode} onPress={() => router.push({ pathname: '/boycott/scanner', params: { barcode: item.barcode, from: 'history' } } as never)} style={({ pressed }) => [styles.recentCard, pressed && styles.pressed]} accessibilityRole="button" accessibilityLabel={t('boycottHome.openProduct', { name: label })}>
                   <View style={styles.recentImageWrap}><BoycottProductImage contentFit="contain" style={styles.recentImage} uri={item.imageUrl} /></View>
                   <Text style={styles.recentName} numberOfLines={2}>{label}</Text>
                 </Pressable>;
@@ -99,37 +101,37 @@ export default function BoycottScreen() {
             </ScrollView>
           </> : null}
 
-          <Pressable onPress={() => router.push('/boycott/halal')} style={({ pressed }) => [styles.halalEntry, pressed && styles.pressed]} accessibilityRole="button" accessibilityLabel="Organismes de certification halal">
+          <Pressable onPress={() => router.push('/boycott/halal')} style={({ pressed }) => [styles.halalEntry, pressed && styles.pressed]} accessibilityRole="button" accessibilityLabel={t("boycottHome.halalBodiesA11y")}>
             <View style={styles.halalIcon}><Ionicons name="shield-checkmark-outline" size={22} color={colors.goldLight} /></View>
-            <View style={{ flex: 1 }}><Text style={styles.contributeTitle}>Organismes halal</Text><Text style={styles.contributeText}>Fiches des certificateurs, grille OUMMAH et repères religieux sourcés.</Text></View>
+            <View style={{ flex: 1 }}><Text style={styles.contributeTitle}>{t("boycottHome.halalBodies")}</Text><Text style={styles.contributeText}>{t("boycottHome.halalBodiesText")}</Text></View>
             <Ionicons name="chevron-forward" size={18} color={colors.textMuted} />
           </Pressable>
 
           <View style={styles.searchWrap} onLayout={(event) => { searchYRef.current = event.nativeEvent.layout.y; }}>
             <Ionicons name="search" size={20} color={colors.goldLight} />
-            <TextInput ref={searchInputRef} value={query} onChangeText={setQuery} placeholder="Marque, restaurant, entreprise…" placeholderTextColor="#776D81" style={styles.searchInput} autoCorrect={false} />
+            <TextInput ref={searchInputRef} value={query} onChangeText={setQuery} placeholder={t("boycottHome.searchPlaceholder")} placeholderTextColor="#776D81" style={styles.searchInput} autoCorrect={false} />
             {query ? <Pressable onPress={() => setQuery('')}><Ionicons name="close-circle" size={19} color={colors.textMuted} /></Pressable> : null}
           </View>
 
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.categoryRow}>
             {CATEGORIES.map((item) => {
               const selected = category === item.key;
-              return <Pressable key={item.key} onPress={() => { setCategory(item.key); setBrowsing(true); }} style={[styles.categoryChip, selected && styles.categoryChipActive]}><Ionicons name={item.icon} size={16} color={selected ? '#17111C' : colors.goldLight} /><Text style={[styles.categoryText, selected && styles.categoryTextActive]}>{item.label}</Text></Pressable>;
+              return <Pressable key={item.key} onPress={() => { setCategory(item.key); setBrowsing(true); }} style={[styles.categoryChip, selected && styles.categoryChipActive]}><Ionicons name={item.icon} size={16} color={selected ? '#17111C' : colors.goldLight} /><Text style={[styles.categoryText, selected && styles.categoryTextActive]}>{t(item.label)}</Text></Pressable>;
             })}
           </ScrollView>
 
           {!showCatalog ? <Pressable onPress={() => setBrowsing(true)} style={({ pressed }) => [styles.browse, pressed && styles.pressed]} accessibilityRole="button">
             <Ionicons name="list-outline" size={20} color={colors.goldLight} />
-            <Text style={styles.browseText}>Parcourir les {loading ? '' : `${renderableResults.length} `}marques vérifiées</Text>
+            <Text style={styles.browseText}>{loading ? t('boycottHome.browse') : t('boycottHome.browseCount', { count: renderableResults.length })}</Text>
             <Ionicons name="chevron-down" size={18} color={colors.textMuted} />
           </Pressable> : <>
-          <View style={styles.sectionHeader}><Text style={styles.sectionTitle}>{query || category !== 'all' ? 'Résultats' : 'Marques vérifiées'}</Text><View style={styles.sectionActions}><Text style={styles.sectionCount}>{renderableResults.length}</Text><Pressable onPress={() => { setBrowsing(false); setCategory('all'); setQuery(''); searchInputRef.current?.blur(); }} style={({ pressed }) => [styles.collapse, pressed && styles.pressed]} accessibilityRole="button" accessibilityLabel="Refermer la liste"><Text style={styles.collapseText}>Refermer</Text><Ionicons name="chevron-up" size={15} color={colors.goldLight} /></Pressable></View></View>
-          {loading ? <ActivityIndicator color={colors.goldLight} style={{ marginTop: 28 }} /> : renderableResults.length ? <View style={styles.list}>{renderableResults.map((item, index) => <BoycottEntityCard key={`${item.id}-${index}`} item={item} onPress={() => router.push(`/boycott/${item.id}`)} />)}</View> : <View style={styles.empty}><Ionicons name="search-outline" size={30} color={colors.textMuted} /><Text style={styles.emptyTitle}>Introuvable pour le moment</Text><Text style={styles.emptyText}>La base grandit avec les vérifications et les propositions de la communauté.</Text><Pressable onPress={() => router.push('/boycott/add')} style={styles.emptyButton}><Text style={styles.emptyButtonText}>Proposer ce produit ou cette entreprise</Text></Pressable></View>}
+          <View style={styles.sectionHeader}><Text style={styles.sectionTitle}>{query || category !== 'all' ? t('boycottHome.results') : t('boycottHome.verified')}</Text><View style={styles.sectionActions}><Text style={styles.sectionCount}>{renderableResults.length}</Text><Pressable onPress={() => { setBrowsing(false); setCategory('all'); setQuery(''); searchInputRef.current?.blur(); }} style={({ pressed }) => [styles.collapse, pressed && styles.pressed]} accessibilityRole="button" accessibilityLabel={t("boycottHome.collapseA11y")}><Text style={styles.collapseText}>{t("boycottHome.collapse")}</Text><Ionicons name="chevron-up" size={15} color={colors.goldLight} /></Pressable></View></View>
+          {loading ? <ActivityIndicator color={colors.goldLight} style={{ marginTop: 28 }} /> : renderableResults.length ? <View style={styles.list}>{renderableResults.map((item, index) => <BoycottEntityCard key={`${item.id}-${index}`} item={item} onPress={() => router.push(`/boycott/${item.id}`)} />)}</View> : <View style={styles.empty}><Ionicons name="search-outline" size={30} color={colors.textMuted} /><Text style={styles.emptyTitle}>{t("boycottHome.notFound")}</Text><Text style={styles.emptyText}>{t("boycottHome.notFoundText")}</Text><Pressable onPress={() => router.push('/boycott/add')} style={styles.emptyButton}><Text style={styles.emptyButtonText}>{t("boycottHome.propose")}</Text></Pressable></View>}
           </>}
 
           <Pressable onPress={() => router.push('/boycott/add')} style={styles.contribute}>
             <Ionicons name="people-outline" size={22} color={colors.goldLight} />
-            <View style={{ flex: 1 }}><Text style={styles.contributeTitle}>Il manque quelque chose ?</Text><Text style={styles.contributeText}>Ajoutez un produit ou une entreprise. Rien n’est publié avant validation admin.</Text></View>
+            <View style={{ flex: 1 }}><Text style={styles.contributeTitle}>{t("boycottHome.missing")}</Text><Text style={styles.contributeText}>{t("boycottHome.missingText")}</Text></View>
             <Ionicons name="chevron-forward" size={18} color={colors.textMuted} />
           </Pressable>
         </ScrollView>
@@ -138,19 +140,19 @@ export default function BoycottScreen() {
           <View style={styles.dockShadow}>
             <LinearGradient colors={['rgba(59,45,76,0.88)', 'rgba(22,15,32,0.94)']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.dock}>
               <View pointerEvents="none" style={styles.dockHighlight} />
-              <Pressable onPress={() => router.push('/boycott/history')} style={({ pressed }) => [styles.dockSideButton, pressed && styles.dockPressed]} accessibilityLabel="Historique des produits scannés">
+              <Pressable onPress={() => router.push('/boycott/history')} style={({ pressed }) => [styles.dockSideButton, pressed && styles.dockPressed]} accessibilityLabel={t("boycottHome.historyA11y")}>
                 <Ionicons name="time-outline" size={22} color={colors.text} />
-                <Text style={styles.dockLabel}>Historique</Text>
+                <Text style={styles.dockLabel}>{t("boycottHome.history")}</Text>
               </Pressable>
 
-              <Pressable onPress={() => router.push('/boycott/scanner')} style={({ pressed }) => [styles.dockSideButton, styles.dockScanButton, pressed && styles.dockPressed]} accessibilityLabel="Scanner un produit">
+              <Pressable onPress={() => router.push('/boycott/scanner')} style={({ pressed }) => [styles.dockSideButton, styles.dockScanButton, pressed && styles.dockPressed]} accessibilityLabel={t("boycottHome.scanProduct")}>
                 <Ionicons name="qr-code-outline" size={22} color="#17111C" />
-                <Text style={styles.dockScanLabel}>Scanner</Text>
+                <Text style={styles.dockScanLabel}>{t('boycottHome.scan')}</Text>
               </Pressable>
 
-              <Pressable onPress={openSearch} style={({ pressed }) => [styles.dockSideButton, pressed && styles.dockPressed]} accessibilityLabel="Rechercher une marque">
+              <Pressable onPress={openSearch} style={({ pressed }) => [styles.dockSideButton, pressed && styles.dockPressed]} accessibilityLabel={t("boycottHome.searchA11y")}>
                 <Ionicons name="search-outline" size={22} color={colors.text} />
-                <Text style={styles.dockLabel}>Recherche</Text>
+                <Text style={styles.dockLabel}>{t("boycottHome.search")}</Text>
               </Pressable>
             </LinearGradient>
           </View>

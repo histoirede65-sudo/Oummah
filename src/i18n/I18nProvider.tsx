@@ -4,8 +4,9 @@ import { I18nManager, type FlexStyle, type TextStyle } from 'react-native';
 
 import { languages, type LanguageCode, type TextDirection } from './config';
 import { fr, type TranslationKey } from './fr';
+import { interpolate, setActiveLanguage, type TranslationValues } from './translate';
 
-type TranslationValues = Record<string, string | number>;
+export { getActiveLanguage, localizedRecord, translate } from './translate';
 
 export interface I18nContextValue {
   language: LanguageCode;
@@ -20,28 +21,6 @@ export interface I18nContextValue {
 const I18nContext = createContext<I18nContextValue | null>(null);
 const LANGUAGE_STORAGE_KEY = '@oummah/language/v1';
 
-
-function interpolate(message: string, values?: TranslationValues): string {
-  if (!values) return message;
-  return message.replace(/\{(\w+)\}/g, (match, name: string) => (
-    Object.prototype.hasOwnProperty.call(values, name) ? String(values[name]) : match
-  ));
-}
-
-// Language of the mounted provider, for code that runs outside components
-// (services building replies, notifications).
-let activeLanguage: LanguageCode = 'fr';
-
-export function getActiveLanguage(): LanguageCode {
-  return activeLanguage;
-}
-
-/** Same as useI18n().t, usable outside React components. */
-export function translate(key: TranslationKey, values?: TranslationValues): string {
-  const message = languages[activeLanguage].catalog[key] ?? fr[key];
-  return interpolate(typeof message === 'string' ? message : String(key), values);
-}
-
 I18nManager.allowRTL(true);
 I18nManager.swapLeftAndRightInRTL?.(true);
 
@@ -52,7 +31,7 @@ export function I18nProvider({ children }: { children: ReactNode; initialLanguag
   const definition = languages[language];
 
   useEffect(() => {
-    activeLanguage = language;
+    setActiveLanguage(language);
   }, [language]);
 
   useEffect(() => {

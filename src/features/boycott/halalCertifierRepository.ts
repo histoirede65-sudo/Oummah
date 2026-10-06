@@ -3,6 +3,8 @@
 // identifies bodies so detection still works offline. Editorial rules: a body's sheet never changes a
 // product's halal status by itself; undocumented facts are shown as "Information non vérifiée".
 
+import { localizedRecord, translate, type TranslationKey } from '../../i18n/translate';
+
 export type HalalSource = { title: string; organisation: string; publishedAt?: string; url: string };
 /** verified = independent official source (institution, official document); declared_by_body = the body's own website;
  * reported = identified, dated third party (consumer association survey, trade press quoting the body). */
@@ -25,19 +27,24 @@ export type HalalCriterionKind = 'validity' | 'prudence' | 'quality';
 export type HalalReligiousGuideId = 'stunning' | 'tasmiya' | 'slaughterer' | 'mechanical' | 'contamination';
 export type HalalCriterionDefinition = { key: HalalCriterionKey; label: string; kind: HalalCriterionKind; rule: string; guideId?: HalalReligiousGuideId };
 
+// Label and rule are read in the active language each time they are accessed.
+function criterion(key: HalalCriterionKey, kind: HalalCriterionKind, guideId?: HalalReligiousGuideId): HalalCriterionDefinition {
+  return { key, kind, guideId, get label() { return translate(`halalCrit.${key}` as TranslationKey); }, get rule() { return translate(`halalCrit.${key}Rule` as TranslationKey); } };
+}
+
 export const HALAL_CRITERIA: HalalCriterionDefinition[] = [
-  { key: 'slaughterer', label: 'Sacrificateur musulman', kind: 'prudence', guideId: 'slaughterer', rule: 'Condition de validité : un musulman ou un homme du Livre. Exiger un musulman est une précaution supplémentaire.' },
-  { key: 'tasmiya', label: 'Invocation sur chaque bête', kind: 'validity', guideId: 'tasmiya', rule: 'Condition exigée par les savants retenus ; divergence sur le cas de l’oubli.' },
-  { key: 'noStunning', label: 'Sans étourdissement', kind: 'prudence', guideId: 'stunning', rule: 'Condition de validité : la bête doit être vivante au moment de l’égorgement. Refuser tout étourdissement écarte le risque d’une bête morte avant.' },
-  { key: 'manualSlaughter', label: 'Abattage manuel', kind: 'prudence', guideId: 'mechanical', rule: 'La machine est permise si sa lame tranche la gorge et que l’invocation est prononcée ; l’abattage manuel est une précaution.' },
-  { key: 'permanentControl', label: 'Contrôleur présent en permanence', kind: 'prudence', guideId: 'contamination', rule: 'Permet d’attester les conditions de l’abattage sur chaque bête.' },
-  { key: 'traceability', label: 'Traçabilité jusqu’au conditionnement', kind: 'prudence', guideId: 'contamination', rule: 'Garantit que la viande vendue est celle qui a été contrôlée, sans mélange.' },
-  { key: 'ingredients', label: 'Contrôle des ingrédients et additifs', kind: 'prudence', guideId: 'contamination', rule: 'Écarte le porc, ses dérivés et les viandes non conformes dans les produits transformés.' },
-  { key: 'noPork', label: 'Aucun site manipulant du porc', kind: 'prudence', guideId: 'contamination', rule: 'Précaution contre la contamination ; la règle exige au minimum de laver ce qui a été souillé.' },
-  { key: 'noMSM', label: 'Refus de la VSM', kind: 'quality', rule: 'Critère de qualité (viande séparée mécaniquement), sans condition religieuse propre.' },
+  criterion('slaughterer', 'prudence', 'slaughterer'),
+  criterion('tasmiya', 'validity', 'tasmiya'),
+  criterion('noStunning', 'prudence', 'stunning'),
+  criterion('manualSlaughter', 'prudence', 'mechanical'),
+  criterion('permanentControl', 'prudence', 'contamination'),
+  criterion('traceability', 'prudence', 'contamination'),
+  criterion('ingredients', 'prudence', 'contamination'),
+  criterion('noPork', 'prudence', 'contamination'),
+  criterion('noMSM', 'quality'),
 ];
 
-export const HALAL_CRITERION_KIND_LABELS: Record<HalalCriterionKind, string> = { validity: 'Condition religieuse', prudence: 'Précaution', quality: 'Qualité' };
+export const HALAL_CRITERION_KIND_LABELS: Record<HalalCriterionKind, string> = localizedRecord({ validity: 'halalCrit.kindValidity', prudence: 'halalCrit.kindPrudence', quality: 'halalCrit.kindQuality' });
 
 export type HalalQuranRef = { reference: string; text: string };
 export type HalalTextRef = { reference: string; text: string; sources: HalalSource[] };
@@ -80,29 +87,29 @@ export type HalalCertificationBody = {
 /** @deprecated kept for existing imports. */
 export type HalalCertifier = HalalCertificationBody;
 
-export const HALAL_FACT_LABELS: Record<HalalFactKey, string> = {
-  legalForm: 'Statut et création',
-  officialApproval: 'Agrément officiel',
-  scope: 'Périmètre',
-  slaughterMethod: 'Méthode d’abattage',
-  stunningPolicy: 'Étourdissement / électronarcose',
-  controlMethod: 'Contrôle (permanent ou ponctuel)',
-  traceability: 'Traçabilité',
-  audits: 'Audits / contrôleurs',
-  accreditation: 'Accréditations',
-  partners: 'Partenaires et reconnaissances',
-};
+export const HALAL_FACT_LABELS: Record<HalalFactKey, string> = localizedRecord({
+  legalForm: 'halalFact.legalForm',
+  officialApproval: 'halalFact.officialApproval',
+  scope: 'halalFact.scope',
+  slaughterMethod: 'halalFact.slaughterMethod',
+  stunningPolicy: 'halalFact.stunningPolicy',
+  controlMethod: 'halalFact.controlMethod',
+  traceability: 'halalFact.traceability',
+  audits: 'halalFact.audits',
+  accreditation: 'halalFact.accreditation',
+  partners: 'halalFact.partners',
+});
 
-export const HALAL_DOCUMENTATION_LABELS: Record<HalalDocumentationLevel, string> = {
-  documented: 'Organisme documenté',
-  to_verify: 'Organisme à vérifier',
-  vigilance: 'Vigilance recommandée',
-  insufficient: 'Informations insuffisantes',
-};
+export const HALAL_DOCUMENTATION_LABELS: Record<HalalDocumentationLevel, string> = localizedRecord({
+  documented: 'halalDoc.documented',
+  to_verify: 'halalDoc.toVerify',
+  vigilance: 'halalDoc.vigilance',
+  insufficient: 'halalDoc.insufficient',
+});
 
-const OFFLINE_SUMMARY = 'Fiche détaillée indisponible hors connexion.';
+const OFFLINE_SUMMARY = 'halalDoc.offline';
 function offline(id: string, name: string, aliases: string[], offLabelTags: string[], country?: string): HalalCertificationBody {
-  return { id, name, aliases, offLabelTags, country, documentationLevel: 'insufficient', summary: OFFLINE_SUMMARY, facts: {}, criteria: {}, warnings: [], criticisms: [], scholarlyNotes: [], sources: [], lastVerifiedAt: '2026-10-02' };
+  return { id, name, aliases, offLabelTags, country, documentationLevel: 'insufficient', get summary() { return translate(OFFLINE_SUMMARY); }, facts: {}, criteria: {}, warnings: [], criticisms: [], scholarlyNotes: [], sources: [], lastVerifiedAt: '2026-10-02' };
 }
 
 const OFFLINE_BODIES: HalalCertificationBody[] = [

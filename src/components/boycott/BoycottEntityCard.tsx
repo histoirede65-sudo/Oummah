@@ -1,12 +1,13 @@
 import { Ionicons } from '@expo/vector-icons';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { translate } from '../../i18n';
 import { colors } from '../../theme/colors';
 import { typography } from '../../theme/typography';
 import { BOYCOTT_CATEGORY_LABELS, type BoycottEntity } from '../../features/boycott/domain/BoycottEntity';
 
 export default function BoycottEntityCard({ item, onPress }: { item: BoycottEntity; onPress: () => void }) {
   const name = typeof item?.name === 'string' && item.name.trim() ? item.name.trim() : 'Marque';
-  const categoryLabel = BOYCOTT_CATEGORY_LABELS[item?.category] ?? 'Autres';
+  const categoryLabel = BOYCOTT_CATEGORY_LABELS[item?.category] ?? BOYCOTT_CATEGORY_LABELS.other;
   const parentGroup = typeof item?.parentGroup === 'string' && item.parentGroup.trim() ? item.parentGroup.trim() : undefined;
 
   return (
@@ -15,7 +16,7 @@ export default function BoycottEntityCard({ item, onPress }: { item: BoycottEnti
       <View style={styles.copy}>
         <Text style={styles.name} numberOfLines={1}>{name}</Text>
         <Text style={styles.meta} numberOfLines={1}>{categoryLabel}{parentGroup ? ` · ${parentGroup}` : ''}</Text>
-        <View style={styles.badge}><View style={styles.dot} /><Text style={styles.badgeText}>À BOYCOTTER</Text></View>
+        <View style={styles.badge}><View style={styles.dot} /><Text style={styles.badgeText}>{translate("scan.badgeBoycott")}</Text></View>
       </View>
       <Ionicons name="chevron-forward" size={18} color={colors.textMuted} />
     </Pressable>

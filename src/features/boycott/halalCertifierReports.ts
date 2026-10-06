@@ -1,4 +1,5 @@
 import { getValidSession } from '../auth/SupabaseAuthService';
+import { translate } from '../../i18n/translate';
 
 /**
  * « Indiquer le certificateur » : when Open Food Facts names no body, a user sends the logo they see and a
@@ -77,8 +78,8 @@ export async function submitCertifierReport(input: CertifierReportInput) {
 
 export function certifierReportErrorMessage(error: unknown) {
   switch (error instanceof Error ? error.message : '') {
-    case 'PHOTO_SIZE': return 'La photo est trop lourde. Reprenez-la de plus près.';
-    case 'TOO_MANY_REPORTS': return 'Ce produit a déjà été signalé plusieurs fois. L’équipe le vérifie.';
-    default: return 'Envoi impossible pour le moment. Vérifiez votre connexion et réessayez.';
+    case 'PHOTO_SIZE': return translate("certReport.tooBig");
+    case 'TOO_MANY_REPORTS': return translate("certReport.tooMany");
+    default: return translate("certReport.sendError");
   }
 }

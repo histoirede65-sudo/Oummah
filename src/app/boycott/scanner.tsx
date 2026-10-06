@@ -7,10 +7,12 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { BoycottScanResultCard } from '../../components/boycott/BoycottScanResultCard';
 import { getBoycottCatalog, lookupBoycottBarcode, type BarcodeLookupResult } from '../../features/boycott/data/BoycottRepository';
 import type { BoycottEntity } from '../../features/boycott/domain/BoycottEntity';
+import { useI18n } from '../../i18n';
 import { colors } from '../../theme/colors';
 import { typography } from '../../theme/typography';
 
 export default function BoycottScannerScreen() {
+  const { t } = useI18n();
   const params = useLocalSearchParams<{ barcode?: string | string[]; from?: string | string[] }>();
   const historyBarcode = (Array.isArray(params.barcode) ? params.barcode[0] : params.barcode)?.replace(/\D/g, '') ?? '';
   const openedFromHistory = (Array.isArray(params.from) ? params.from[0] : params.from) === 'history';
@@ -103,19 +105,19 @@ export default function BoycottScannerScreen() {
 
 
   if (!historyBarcode && !permission) {
-    return <View style={styles.permission}><Text style={styles.permissionText}>Initialisation de la caméra…</Text></View>;
+    return <View style={styles.permission}><Text style={styles.permissionText}>{t("scanner.init")}</Text></View>;
   }
 
   if (!historyBarcode && !permission?.granted) {
     return (
       <View style={styles.permission}>
         <Ionicons name="camera-outline" size={40} color={colors.goldLight} />
-        <Text style={styles.permissionTitle}>Caméra nécessaire</Text>
-        <Text style={styles.permissionText}>La caméra sert uniquement à lire le code-barres du produit.</Text>
+        <Text style={styles.permissionTitle}>{t("scanner.cameraNeeded")}</Text>
+        <Text style={styles.permissionText}>{t("scanner.cameraWhy")}</Text>
         <Pressable onPress={() => void requestPermission()} style={styles.permissionButton}>
-          <Text style={styles.permissionButtonText}>Autoriser la caméra</Text>
+          <Text style={styles.permissionButtonText}>{t("scanner.allowCamera")}</Text>
         </Pressable>
-        <Pressable onPress={() => router.back()}><Text style={styles.cancel}>Annuler</Text></Pressable>
+        <Pressable onPress={() => router.back()}><Text style={styles.cancel}>{t("common.cancel")}</Text></Pressable>
       </View>
     );
   }
@@ -138,8 +140,8 @@ export default function BoycottScannerScreen() {
           <View style={styles.top}>
             <Pressable onPress={() => router.back()} style={styles.circle}><Ionicons name="close" size={24} color="#FFF" /></Pressable>
             <View style={styles.titleWrap}>
-              <Text style={styles.title}>Scanner</Text>
-              <Text style={styles.readyText}>{cameraReady ? 'Prêt' : 'Caméra…'}</Text>
+              <Text style={styles.title}>{t('boycottHome.scan')}</Text>
+              <Text style={styles.readyText}>{cameraReady ? t('scanner.ready') : t('scanner.camera')}</Text>
             </View>
             <Pressable onPress={() => setTorch((value) => !value)} style={styles.circle}>
               <Ionicons name={torch ? 'flash' : 'flash-outline'} size={22} color={torch ? '#F4CF77' : '#FFF'} />
@@ -154,18 +156,18 @@ export default function BoycottScannerScreen() {
               <View style={[styles.corner, styles.br]} />
               <View style={styles.scanLine} />
             </View>
-            <Text style={styles.hint}>{locked ? 'Vérification instantanée…' : 'Cadrez le code ou le QR, dans n’importe quel sens'}</Text>
+            <Text style={styles.hint}>{locked ? t("scanner.checking") : t("scanner.hint")}</Text>
           </View>
 
           <View style={styles.bottom}>
-            <Text style={styles.bottomText}>EAN · UPC · QR · détection instantanée</Text>
+            <Text style={styles.bottomText}>{t("scanner.formats")}</Text>
           </View>
         </SafeAreaView>
       </View> : null}
 
-      {openedFromProductLink && !result ? <View style={styles.historyLoading}><Text style={styles.permissionText}>Chargement de la fiche…</Text></View> : null}
+      {openedFromProductLink && !result ? <View style={styles.historyLoading}><Text style={styles.permissionText}>{t("scanner.loadingSheet")}</Text></View> : null}
 
-      {result ? <BoycottScanResultCard result={result} startExpanded={openedFromProductLink} primaryLabel={openedFromProductLink ? (openedFromHistory ? "Retour à l'historique" : 'Retour au produit précédent') : undefined} onClose={openedFromProductLink ? () => router.back() : resetScanner} onOpenEntity={() => router.push(`/boycott/${result.boycottEntity!.id}`)} onOpenAlternative={(barcode) => router.push({ pathname: '/boycott/scanner', params: { barcode, from: 'alternative' } } as never)} onPropose={() => router.replace({ pathname: '/boycott/add', params: { barcode: result.barcode, name: result.productName || '', brand: result.brandLabel || '' } } as never)} /> : null}
+      {result ? <BoycottScanResultCard result={result} startExpanded={openedFromProductLink} primaryLabel={openedFromProductLink ? (openedFromHistory ? t('scanner.backToHistory') : t('scanner.backToPrevious')) : undefined} onClose={openedFromProductLink ? () => router.back() : resetScanner} onOpenEntity={() => router.push(`/boycott/${result.boycottEntity!.id}`)} onOpenAlternative={(barcode) => router.push({ pathname: '/boycott/scanner', params: { barcode, from: 'alternative' } } as never)} onPropose={() => router.replace({ pathname: '/boycott/add', params: { barcode: result.barcode, name: result.productName || '', brand: result.brandLabel || '' } } as never)} /> : null}
     </View>
   );
 }

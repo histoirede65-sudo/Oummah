@@ -6,24 +6,26 @@ import { Linking, Pressable, ScrollView, StyleSheet, Text, View } from 'react-na
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { getBoycottCatalog } from '../../features/boycott/data/BoycottRepository';
 import { BOYCOTT_CATEGORY_LABELS, type BoycottEntity } from '../../features/boycott/domain/BoycottEntity';
+import { useI18n } from '../../i18n';
 import { colors } from '../../theme/colors';
 import { typography } from '../../theme/typography';
 
 export default function BoycottDetailScreen() {
+  const { t } = useI18n();
   const { id } = useLocalSearchParams<{ id: string }>();
   const [item, setItem] = useState<BoycottEntity | null>(null);
   useEffect(() => { void getBoycottCatalog().then((items) => setItem(items.find((x) => x.id === id) ?? null)); }, [id]);
 
   return <LinearGradient colors={['#090713', '#120A1D', '#090713']} style={styles.screen}><SafeAreaView edges={['top']} style={styles.safe}>
-    <View style={styles.header}><Pressable onPress={() => router.back()} style={styles.headerButton}><Ionicons name="arrow-back" size={21} color={colors.goldLight} /></Pressable><Text style={styles.headerTitle}>Vérification</Text><View style={styles.headerButton} /></View>
+    <View style={styles.header}><Pressable onPress={() => router.back()} style={styles.headerButton}><Ionicons name="arrow-back" size={21} color={colors.goldLight} /></Pressable><Text style={styles.headerTitle}>{t("boycottDetail.title")}</Text><View style={styles.headerButton} /></View>
     <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.content}>
       {item ? <>
-        <View style={styles.identity}><View style={styles.monogram}><Text style={styles.monogramText}>{item.name[0]}</Text></View><Text style={styles.name}>{item.name}</Text><Text style={styles.meta}>{BOYCOTT_CATEGORY_LABELS[item.category]}{item.parentGroup ? ` · Groupe ${item.parentGroup}` : ''}</Text><View style={styles.redBadge}><View style={styles.redDot}/><Text style={styles.redText}>À BOYCOTTER</Text></View></View>
-        <View style={styles.card}><Text style={styles.cardEyebrow}>POURQUOI ?</Text><Text style={styles.summary}>{item.summary}</Text></View>
-        <View style={styles.card}><Text style={styles.cardEyebrow}>SOURCES</Text>{item.sources.map((source, index) => <Pressable key={`${source.url}-${index}`} onPress={() => void Linking.openURL(source.url)} style={styles.source}><View style={styles.sourceIcon}><Ionicons name="document-text-outline" size={18} color={colors.goldLight} /></View><View style={{flex:1}}><Text style={styles.sourceTitle}>{source.label}</Text>{source.publishedAt ? <Text style={styles.sourceDate}>{source.publishedAt}</Text> : null}</View><Ionicons name="open-outline" size={17} color={colors.textMuted} /></Pressable>)}</View>
-        <View style={styles.notice}><Ionicons name="shield-checkmark-outline" size={20} color={colors.goldLight}/><Text style={styles.noticeText}>OUMMAH distingue toujours le fait documenté de l’interprétation. Un lien indirect reste rouge selon la règle éditoriale du module, mais il est décrit comme indirect.</Text></View>
-        <Text style={styles.verified}>Dernière vérification : {item.lastVerifiedAt}</Text>
-      </> : <Text style={styles.missing}>Fiche introuvable.</Text>}
+        <View style={styles.identity}><View style={styles.monogram}><Text style={styles.monogramText}>{item.name[0]}</Text></View><Text style={styles.name}>{item.name}</Text><Text style={styles.meta}>{BOYCOTT_CATEGORY_LABELS[item.category]}{item.parentGroup ? ` · ${t('boycottDetail.group', { group: item.parentGroup })}` : ''}</Text><View style={styles.redBadge}><View style={styles.redDot}/><Text style={styles.redText}>{t("scan.badgeBoycott")}</Text></View></View>
+        <View style={styles.card}><Text style={styles.cardEyebrow}>{t("boycottDetail.why")}</Text><Text style={styles.summary}>{item.summary}</Text></View>
+        <View style={styles.card}><Text style={styles.cardEyebrow}>{t("boycottDetail.sources")}</Text>{item.sources.map((source, index) => <Pressable key={`${source.url}-${index}`} onPress={() => void Linking.openURL(source.url)} style={styles.source}><View style={styles.sourceIcon}><Ionicons name="document-text-outline" size={18} color={colors.goldLight} /></View><View style={{flex:1}}><Text style={styles.sourceTitle}>{source.label}</Text>{source.publishedAt ? <Text style={styles.sourceDate}>{source.publishedAt}</Text> : null}</View><Ionicons name="open-outline" size={17} color={colors.textMuted} /></Pressable>)}</View>
+        <View style={styles.notice}><Ionicons name="shield-checkmark-outline" size={20} color={colors.goldLight}/><Text style={styles.noticeText}>{t("boycottDetail.notice")}</Text></View>
+        <Text style={styles.verified}>{t('boycottDetail.lastCheck', { date: item.lastVerifiedAt })}</Text>
+      </> : <Text style={styles.missing}>{t("boycottDetail.notFound")}</Text>}
     </ScrollView>
   </SafeAreaView></LinearGradient>;
 }

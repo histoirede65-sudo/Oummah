@@ -7,14 +7,16 @@ import { Pressable } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { getBoycottScanHistory, type BoycottScanHistoryItem } from '../../features/boycott/data/BoycottRepository';
 import { BoycottProductImage } from '../../components/boycott/BoycottProductImage';
+import { getActiveLanguage, useI18n } from '../../i18n';
 import { colors } from '../../theme/colors';
 import { typography } from '../../theme/typography';
 
 function formatScanDate(timestamp: number) {
-  return new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }).format(new Date(timestamp));
+  return new Intl.DateTimeFormat(getActiveLanguage() === 'en' ? 'en-GB' : 'fr-FR', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }).format(new Date(timestamp));
 }
 
 export default function BoycottHistoryScreen() {
+  const { t } = useI18n();
   const [history, setHistory] = useState<BoycottScanHistoryItem[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -34,7 +36,7 @@ export default function BoycottHistoryScreen() {
       <SafeAreaView edges={['top', 'bottom']} style={styles.safe}>
         <View style={styles.header}>
           <Pressable onPress={() => router.back()} style={styles.headerButton}><Ionicons name="arrow-back" size={21} color={colors.goldLight} /></Pressable>
-          <View style={styles.headerCopy}><Text style={styles.title}>Historique</Text><Text style={styles.subtitle}>Produits scannés sur cet appareil</Text></View>
+          <View style={styles.headerCopy}><Text style={styles.title}>{t("boycottHome.history")}</Text><Text style={styles.subtitle}>{t("history.subtitle")}</Text></View>
           <Pressable onPress={() => router.push('/boycott/scanner')} style={styles.headerButton}><Ionicons name="scan" size={21} color={colors.goldLight} /></Pressable>
         </View>
 
@@ -44,19 +46,19 @@ export default function BoycottHistoryScreen() {
             keyExtractor={(item) => item.barcode}
             contentContainerStyle={[styles.content, !history.length && styles.emptyContent]}
             showsVerticalScrollIndicator={false}
-            ListHeaderComponent={history.length ? <Text style={styles.count}>{history.length} produit{history.length > 1 ? 's' : ''}</Text> : null}
+            ListHeaderComponent={history.length ? <Text style={styles.count}>{t(history.length > 1 ? 'scan.altCountMany' : 'scan.altCountOne', { count: history.length })}</Text> : null}
             ListEmptyComponent={
               <View style={styles.empty}>
                 <View style={styles.emptyIcon}><Ionicons name="time-outline" size={30} color={colors.goldLight} /></View>
-                <Text style={styles.emptyTitle}>Aucun produit scanné</Text>
-                <Text style={styles.emptyText}>Les produits identifiés avec le scanner apparaîtront automatiquement ici.</Text>
-                <Pressable onPress={() => router.push('/boycott/scanner')} style={styles.scanButton}><Ionicons name="scan" size={19} color="#17111C" /><Text style={styles.scanButtonText}>Scanner un produit</Text></Pressable>
+                <Text style={styles.emptyTitle}>{t("history.empty")}</Text>
+                <Text style={styles.emptyText}>{t("history.emptyText")}</Text>
+                <Pressable onPress={() => router.push('/boycott/scanner')} style={styles.scanButton}><Ionicons name="scan" size={19} color="#17111C" /><Text style={styles.scanButtonText}>{t("boycottHome.scanProduct")}</Text></Pressable>
               </View>
             }
             renderItem={({ item }) => (
               <Pressable
                 accessibilityRole="button"
-                accessibilityLabel={`Consulter la fiche de ${item.productName || item.brandLabel || `Produit ${item.barcode}`}`}
+                accessibilityLabel={t('boycottHome.openProduct', { name: item.productName || item.brandLabel || t('boycottHome.productBarcode', { barcode: item.barcode }) })}
                 onPress={() => router.push({ pathname: '/boycott/scanner', params: { barcode: item.barcode, from: 'history' } } as never)}
                 style={({ pressed }) => [styles.card, pressed && styles.cardPressed]}
               >
@@ -64,7 +66,7 @@ export default function BoycottHistoryScreen() {
                   <BoycottProductImage contentFit="contain" style={styles.image} uri={item.imageUrl} />
                 </View>
                 <View style={styles.cardCopy}>
-                  <Text numberOfLines={2} style={styles.productName}>{item.productName || item.brandLabel || `Produit ${item.barcode}`}</Text>
+                  <Text numberOfLines={2} style={styles.productName}>{item.productName || item.brandLabel || t('boycottHome.productBarcode', { barcode: item.barcode })}</Text>
                   {item.brandLabel && item.brandLabel !== item.productName ? <Text numberOfLines={1} style={styles.brand}>{item.brandLabel}</Text> : null}
                   <View style={styles.metaRow}><Ionicons name="barcode-outline" size={13} color={colors.textMuted} /><Text style={styles.meta}>{item.barcode}</Text></View>
                 </View>

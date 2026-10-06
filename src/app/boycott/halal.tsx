@@ -9,27 +9,24 @@ import { getBoycottScanHistory } from '../../features/boycott/data/BoycottReposi
 import { analyzeHalalCertification } from '../../features/boycott/halalCertificationAnalyzer';
 import { useHalalCertificationBodies } from '../../features/boycott/halalCertificationBodiesLoader';
 import { getHalalCertificationBodies, getHalalReligiousGuides, HALAL_CRITERIA, HALAL_DOCUMENTATION_LABELS, type HalalCertificationBody, type HalalCriterionKey, type HalalCriterionStatus, type HalalDocumentationLevel, type HalalReligiousGuide } from '../../features/boycott/halalCertifierRepository';
+import { localizedRecord, translate, useI18n } from '../../i18n';
 import { colors } from '../../theme/colors';
 import { typography } from '../../theme/typography';
 
 type FilterKey = 'all' | 'france' | 'international' | HalalCriterionKey;
 
-const KEY_CRITERIA: Array<{ key: HalalCriterionKey; label: string }> = [
-  { key: 'noStunning', label: 'Sans étourdissement' },
-  { key: 'permanentControl', label: 'Contrôleur permanent' },
-  { key: 'slaughterer', label: 'Sacrificateur musulman' },
-];
-const FILTERS: Array<{ key: FilterKey; label: string }> = [
-  { key: 'all', label: 'Tous' },
-  { key: 'france', label: 'France' },
-  { key: 'international', label: 'International' },
+const CRITERION_LABELS = localizedRecord({ noStunning: 'halalCrit.noStunning', permanentControl: 'halalBodies.permanentControl', slaughterer: 'halalCrit.slaughterer' });
+const KEY_CRITERIA: Array<{ key: HalalCriterionKey; readonly label: string }> = (['noStunning', 'permanentControl', 'slaughterer'] as const).map((key) => ({ key, get label() { return CRITERION_LABELS[key]; } }));
+const FILTER_LABELS = localizedRecord({ all: 'halalBodies.all', france: 'halalBodies.france', international: 'halalBodies.international' });
+const FILTERS: Array<{ key: FilterKey; readonly label: string }> = [
+  ...(['all', 'france', 'international'] as const).map((key) => ({ key, get label() { return FILTER_LABELS[key]; } })),
   ...KEY_CRITERIA,
 ];
-const STATUS_DISPLAY: Record<HalalCriterionStatus | 'unknown', { icon: keyof typeof Ionicons.glyphMap; color: string; label: string }> = {
-  yes: { icon: 'checkmark-circle', color: colors.success, label: 'Oui' },
-  partial: { icon: 'contrast', color: colors.goldLight, label: 'Partiel' },
-  no: { icon: 'close-circle', color: colors.danger, label: 'Non' },
-  unknown: { icon: 'help-circle-outline', color: colors.textSecondary, label: 'Non garanti' },
+const STATUS_DISPLAY: Record<HalalCriterionStatus | 'unknown', { icon: keyof typeof Ionicons.glyphMap; color: string; readonly label: string }> = {
+  yes: { icon: 'checkmark-circle', color: colors.success, get label() { return translate('halalBodies.yes'); } },
+  partial: { icon: 'contrast', color: colors.goldLight, get label() { return translate('certSheet.partial'); } },
+  no: { icon: 'close-circle', color: colors.danger, get label() { return translate('certSheet.no'); } },
+  unknown: { icon: 'help-circle-outline', color: colors.textSecondary, get label() { return translate('certSheet.notGuaranteed'); } },
 };
 const STATUS_RANK: Record<HalalCriterionStatus | 'unknown', number> = { yes: 0, partial: 1, unknown: 2, no: 3 };
 const LEVEL_ORDER: HalalDocumentationLevel[] = ['documented', 'vigilance', 'to_verify', 'insufficient'];
@@ -71,12 +68,13 @@ function BodyCard({ body, scannedCount, onPress }: { body: HalalCertificationBod
     <View style={styles.cardMeta}>
       <View style={[styles.levelBadge, { borderColor: tone }]}><Text style={[styles.levelText, { color: tone }]}>{HALAL_DOCUMENTATION_LABELS[body.documentationLevel]}</Text></View>
       {body.country ? <Text style={styles.cardCountry}>{body.country}</Text> : null}
-      {scannedCount ? <Text style={styles.cardScanned}>· {scannedCount} produit{scannedCount > 1 ? 's' : ''} scanné{scannedCount > 1 ? 's' : ''}</Text> : null}
+      {scannedCount ? <Text style={styles.cardScanned}>· {translate(scannedCount > 1 ? 'halalBodies.scannedMany' : 'halalBodies.scannedOne', { count: scannedCount })}</Text> : null}
     </View>
   </Pressable>;
 }
 
 export default function HalalBodiesScreen() {
+  const { t } = useI18n();
   useHalalCertificationBodies();
   const [query, setQuery] = useState('');
   const [filter, setFilter] = useState<FilterKey>('all');
@@ -94,7 +92,7 @@ export default function HalalBodiesScreen() {
       const byBody: Record<string, HalalScannedProduct[]> = {};
       for (const item of items) {
         const certifierId = analyzeHalalCertification(item.halalData).certifierId;
-        if (certifierId) (byBody[certifierId] ??= []).push({ barcode: item.barcode, name: item.productName || item.brandLabel || `Produit ${item.barcode}` });
+        if (certifierId) (byBody[certifierId] ??= []).push({ barcode: item.barcode, name: item.productName || item.brandLabel || translate('boycottHome.productBarcode', { barcode: item.barcode }) });
       }
       if (active) setScanned(byBody);
     });
@@ -108,37 +106,37 @@ export default function HalalBodiesScreen() {
       .filter((body) => filter === 'all' || (filter === 'france' ? isFrench(body) : filter === 'international' ? !isFrench(body) : statusOf(body, filter) === 'yes'))
       .sort(compareBodies);
     return [
-      { key: 'france', title: 'France', items: filtered.filter(isFrench) },
-      { key: 'international', title: 'Autres pays', items: filtered.filter((body) => !isFrench(body)) },
+      { key: 'france', title: t('halalBodies.france'), items: filtered.filter(isFrench) },
+      { key: 'international', title: t('halalBodies.otherCountries'), items: filtered.filter((body) => !isFrench(body)) },
     ].filter((group) => group.items.length);
-  }, [bodies, query, filter]);
+  }, [bodies, query, filter, t]);
 
   return (
     <LinearGradient colors={['#090713', '#110A1B', '#090713']} style={styles.screen}>
       <SafeAreaView edges={['top']} style={styles.safe}>
         <View style={styles.header}>
-          <Pressable onPress={() => router.back()} style={styles.headerButton} accessibilityLabel="Retour"><Ionicons name="arrow-back" size={21} color={colors.goldLight} /></Pressable>
-          <Text style={styles.headerTitle}>Organismes halal</Text>
-          <Pressable onPress={() => setShowHelp((value) => !value)} style={[styles.headerButton, showHelp && styles.headerButtonActive]} accessibilityLabel="Comment lire les fiches"><Ionicons name="help" size={21} color={colors.goldLight} /></Pressable>
+          <Pressable onPress={() => router.back()} style={styles.headerButton} accessibilityLabel={t('common.back')}><Ionicons name="arrow-back" size={21} color={colors.goldLight} /></Pressable>
+          <Text style={styles.headerTitle}>{t("boycottHome.halalBodies")}</Text>
+          <Pressable onPress={() => setShowHelp((value) => !value)} style={[styles.headerButton, showHelp && styles.headerButtonActive]} accessibilityLabel={t("halalBodies.howToRead")}><Ionicons name="help" size={21} color={colors.goldLight} /></Pressable>
         </View>
 
         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
-          <Text style={styles.intro}>Ce que chaque organisme garantit publiquement. Touchez une fiche pour voir ses {HALAL_CRITERIA.length} critères et leurs sources.</Text>
+          <Text style={styles.intro}>{t('halalBodies.intro', { count: HALAL_CRITERIA.length })}</Text>
 
           {showHelp ? <View style={styles.help}>
-            <Text style={styles.helpTitle}>Comment lire les fiches</Text>
+            <Text style={styles.helpTitle}>{t("halalBodies.howToRead")}</Text>
             {(['yes', 'partial', 'no', 'unknown'] as const).map((status) => <View key={status} style={styles.keyRow}>
               <Ionicons name={STATUS_DISPLAY[status].icon} size={15} color={STATUS_DISPLAY[status].color} />
               <Text style={[styles.keyValue, styles.helpStatus, { color: STATUS_DISPLAY[status].color }]}>{STATUS_DISPLAY[status].label}</Text>
-              <Text style={styles.helpText}>{status === 'yes' ? 'L’organisme s’y engage, ou une source identifiée le documente.' : status === 'partial' ? 'Engagement limité à certains produits ou certaines espèces.' : status === 'no' ? 'L’organisme, ou une source datée, indique qu’il accepte la pratique.' : 'L’organisme ne s’y engage pas publiquement et aucune source ne le documente.'}</Text>
+              <Text style={styles.helpText}>{status === 'yes' ? t('halalBodies.helpYes') : status === 'partial' ? t('halalBodies.helpPartial') : status === 'no' ? t('halalBodies.helpNo') : t('halalBodies.helpUnknown')}</Text>
             </View>)}
-            <Text style={styles.helpNote}>Une grille, pas une note. Le badge (documenté, à vérifier…) indique la qualité des sources, pas une recommandation. La liste est rangée selon les trois garanties affichées.</Text>
+            <Text style={styles.helpNote}>{t("halalBodies.helpNote")}</Text>
           </View> : null}
 
           <View style={styles.searchWrap}>
             <Ionicons name="search" size={20} color={colors.goldLight} />
-            <TextInput value={query} onChangeText={setQuery} placeholder="AVS, Achahada, Mosquée de Paris…" placeholderTextColor="#776D81" style={styles.searchInput} autoCorrect={false} />
-            {query ? <Pressable onPress={() => setQuery('')} accessibilityLabel="Effacer"><Ionicons name="close-circle" size={19} color={colors.textMuted} /></Pressable> : null}
+            <TextInput value={query} onChangeText={setQuery} placeholder={t("halalBodies.searchPlaceholder")} placeholderTextColor="#776D81" style={styles.searchInput} autoCorrect={false} />
+            {query ? <Pressable onPress={() => setQuery('')} accessibilityLabel={t("halalBodies.clear")}><Ionicons name="close-circle" size={19} color={colors.textMuted} /></Pressable> : null}
           </View>
 
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.filterRow}>
@@ -152,19 +150,19 @@ export default function HalalBodiesScreen() {
             <View style={styles.sectionHeader}><Text style={styles.sectionTitle}>{group.title}</Text><Text style={styles.sectionCount}>{group.items.length}</Text></View>
             <View style={styles.list}>{group.items.map((body) => <BodyCard key={body.id} body={body} scannedCount={scanned[body.id]?.length ?? 0} onPress={() => setSelected(body)} />)}</View>
           </View>)}
-          {!groups.length ? <Text style={styles.emptyText}>{bodies.length ? 'Aucun organisme ne correspond à cette recherche.' : 'Chargement des organismes… Une connexion est nécessaire la première fois.'}</Text> : null}
+          {!groups.length ? <Text style={styles.emptyText}>{bodies.length ? t('halalBodies.noMatch') : t('halalBodies.loading')}</Text> : null}
 
-          <View style={styles.sectionHeader}><Text style={styles.sectionTitle}>Comprendre les règles</Text><Text style={styles.sectionCount}>{guides.length}</Text></View>
-          <Text style={styles.sectionIntro}>Coran, Sunna, Compagnons et savants de la Sunna, avec leurs sources.</Text>
+          <View style={styles.sectionHeader}><Text style={styles.sectionTitle}>{t("halalBodies.rules")}</Text><Text style={styles.sectionCount}>{guides.length}</Text></View>
+          <Text style={styles.sectionIntro}>{t("halalBodies.rulesText")}</Text>
           {guides.length ? <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.guideRow}>{guides.map((item) => <Pressable key={item.id} onPress={() => setGuide(item)} style={({ pressed }) => [styles.guideCard, pressed && styles.pressed]} accessibilityRole="button" accessibilityLabel={item.title}>
             <View style={styles.guideIcon}><Ionicons name={GUIDE_ICONS[item.id] ?? 'book-outline'} size={18} color={colors.goldLight} /></View>
             <Text style={styles.guideTitle} numberOfLines={2}>{item.title}</Text>
             <Text style={styles.guideQuestion} numberOfLines={3}>{item.question}</Text>
-          </Pressable>)}</ScrollView> : <Text style={styles.emptyText}>Chargement des repères… Une connexion est nécessaire la première fois.</Text>}
+          </Pressable>)}</ScrollView> : <Text style={styles.emptyText}>{t("halalBodies.loadingGuides")}</Text>}
 
           <View style={styles.warning}>
             <Ionicons name="information-circle-outline" size={21} color="#E2BF72" />
-            <Text style={styles.warningText}>Une fiche décrit l’organisme ; elle ne rend jamais, à elle seule, un produit « non halal ». Les repères religieux expliquent les règles et ne notent aucun organisme.</Text>
+            <Text style={styles.warningText}>{t("halalBodies.warning")}</Text>
           </View>
         </ScrollView>
       </SafeAreaView>

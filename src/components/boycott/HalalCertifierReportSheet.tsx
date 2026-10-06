@@ -6,6 +6,7 @@ import { ActivityIndicator, KeyboardAvoidingView, Modal, Platform, Pressable, Sc
 
 import { getHalalCertifier } from '../../features/boycott/halalCertifierRepository';
 import { certifierReportErrorMessage, submitCertifierReport } from '../../features/boycott/halalCertifierReports';
+import { translate } from '../../i18n';
 import { colors } from '../../theme/colors';
 import { typography } from '../../theme/typography';
 
@@ -32,7 +33,7 @@ export function HalalCertifierReportSheet({ visible, barcode, productName, onClo
     setError('');
     const permission = camera ? await ImagePicker.requestCameraPermissionsAsync() : await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (!permission.granted) {
-      setError(camera ? 'Autorisez l’appareil photo dans les réglages du téléphone.' : 'Autorisez l’accès aux photos dans les réglages du téléphone.');
+      setError(camera ? translate("certReport.cameraDenied") : translate("certReport.photosDenied"));
       return;
     }
     const options: ImagePicker.ImagePickerOptions = { mediaTypes: ['images'], quality: 0.6, allowsEditing: false };
@@ -60,19 +61,19 @@ export function HalalCertifierReportSheet({ visible, barcode, productName, onClo
   return (
     <Modal visible={visible} transparent animationType="slide" onRequestClose={close}>
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={styles.backdrop}>
-        <Pressable style={StyleSheet.absoluteFill} onPress={close} accessibilityLabel="Fermer" />
+        <Pressable style={StyleSheet.absoluteFill} onPress={close} accessibilityLabel={translate("common.close")} />
         <View style={styles.sheet}>
           {sent ? (
             <View style={styles.done}>
               <Ionicons name="checkmark-circle" size={52} color={colors.success} />
-              <Text style={styles.title}>Merci, c’est envoyé</Text>
-              <Text style={styles.text}>L’équipe OUMMAH vérifie la photo. Une fois validé, le certificateur s’affichera pour ce produit, pour tout le monde.</Text>
-              <Pressable onPress={close} style={styles.primary}><Text style={styles.primaryText}>Fermer</Text></Pressable>
+              <Text style={styles.title}>{translate("certReport.thanks")}</Text>
+              <Text style={styles.text}>{translate("certReport.thanksText")}</Text>
+              <Pressable onPress={close} style={styles.primary}><Text style={styles.primaryText}>{translate("common.close")}</Text></Pressable>
             </View>
           ) : (
             <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
-              <Text style={styles.title}>Indiquer le certificateur</Text>
-              <Text style={styles.text}>Quel logo voyez-vous sur l’emballage ?</Text>
+              <Text style={styles.title}>{translate("scan.reportCertifier")}</Text>
+              <Text style={styles.text}>{translate("certReport.whichLogo")}</Text>
 
               <View style={styles.chips}>
                 {COMMON.map((id) => {
@@ -86,38 +87,38 @@ export function HalalCertifierReportSheet({ visible, barcode, productName, onClo
                   );
                 })}
                 <Pressable onPress={() => setChoice(OTHER)} style={[styles.chip, choice === OTHER && styles.chipOn]} accessibilityRole="button" accessibilityState={{ selected: choice === OTHER }}>
-                  <Text style={[styles.chipText, choice === OTHER && styles.chipTextOn]}>Autre</Text>
+                  <Text style={[styles.chipText, choice === OTHER && styles.chipTextOn]}>{translate("common.other")}</Text>
                 </Pressable>
               </View>
               {choice === OTHER ? (
-                <TextInput value={other} onChangeText={setOther} maxLength={80} placeholder="Nom écrit sur le logo" placeholderTextColor={colors.textMuted} style={styles.input} />
+                <TextInput value={other} onChangeText={setOther} maxLength={80} placeholder={translate("certReport.otherPlaceholder")} placeholderTextColor={colors.textMuted} style={styles.input} />
               ) : null}
 
-              <Text style={[styles.text, styles.spaced]}>Photo du logo sur l’emballage</Text>
-              <Text style={styles.note}>Elle sert uniquement à la vérification par l’équipe et n’est pas publiée.</Text>
+              <Text style={[styles.text, styles.spaced]}>{translate("certReport.photoTitle")}</Text>
+              <Text style={styles.note}>{translate("certReport.photoNote")}</Text>
               {photo ? (
                 <View style={styles.preview}>
                   <Image source={{ uri: photo.uri }} style={styles.previewImage} contentFit="cover" />
-                  <Pressable onPress={() => setPhoto(null)} style={styles.retake}><Text style={styles.retakeText}>Changer la photo</Text></Pressable>
+                  <Pressable onPress={() => setPhoto(null)} style={styles.retake}><Text style={styles.retakeText}>{translate("certReport.changePhoto")}</Text></Pressable>
                 </View>
               ) : (
                 <View style={styles.photoRow}>
                   <Pressable onPress={() => void pick(true)} style={styles.photoButton}>
                     <Ionicons name="camera-outline" size={22} color={colors.goldLight} />
-                    <Text style={styles.photoText}>Prendre une photo</Text>
+                    <Text style={styles.photoText}>{translate("certReport.takePhoto")}</Text>
                   </Pressable>
                   <Pressable onPress={() => void pick(false)} style={styles.photoButton}>
                     <Ionicons name="images-outline" size={22} color={colors.goldLight} />
-                    <Text style={styles.photoText}>Choisir une photo</Text>
+                    <Text style={styles.photoText}>{translate("certReport.choosePhoto")}</Text>
                   </Pressable>
                 </View>
               )}
 
               {error ? <Text style={styles.error}>{error}</Text> : null}
               <Pressable disabled={!ready || sending} onPress={() => void send()} style={[styles.primary, (!ready || sending) && styles.disabled]}>
-                {sending ? <ActivityIndicator color={colors.background} /> : <Text style={styles.primaryText}>Envoyer</Text>}
+                {sending ? <ActivityIndicator color={colors.background} /> : <Text style={styles.primaryText}>{translate("common.send")}</Text>}
               </Pressable>
-              <Pressable onPress={close} style={styles.cancel}><Text style={styles.cancelText}>Annuler</Text></Pressable>
+              <Pressable onPress={close} style={styles.cancel}><Text style={styles.cancelText}>{translate("common.cancel")}</Text></Pressable>
             </ScrollView>
           )}
         </View>
