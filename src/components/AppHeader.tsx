@@ -19,6 +19,7 @@ import { getValidSession } from "../features/auth/SupabaseAuthService";
 import { isOummahAdminSession } from "../features/auth/AdminAccess";
 import { getCurrentUserProfile } from "../features/profile/UserProfileRepository";
 import { getAdminAttentionState } from "../features/admin/AdminAlertsService";
+import { getChatUnreadCount } from "../features/tahajjud/tahajjudFriends";
 import { loadHifzState } from "../features/hifz/HifzStore";
 import { getMosquePrayerSchedule } from "../features/mosques/data/mosquePrayerTimes";
 import { getMainMosque } from "../features/mosques/data/mosquePreferences";
@@ -166,6 +167,9 @@ export default function AppHeader({
   const [hasUnreadNotifications, setHasUnreadNotifications] = useState(false);
   const [adminAttentionCount, setAdminAttentionCount] = useState(0);
   const [displayName, setDisplayName] = useState("");
+  // Shortcut to the friends' messages (Qiyam al-Layl), shown once signed in.
+  const [signedIn, setSignedIn] = useState(false);
+  const [unreadMessages, setUnreadMessages] = useState(0);
 
   useFocusEffect(
     useCallback(() => {
@@ -195,7 +199,11 @@ export default function AppHeader({
           ? await getCurrentUserProfile().catch(() => null)
           : null;
 
+        const unread = session ? await getChatUnreadCount() : 0;
+
         if (active) {
+          setSignedIn(Boolean(session));
+          setUnreadMessages(unread);
           setDisplayName(profile?.displayName?.trim() ?? "");
           setHasUnreadNotifications(
             items.some((item) => !readIds.includes(item.id)),
@@ -262,6 +270,22 @@ export default function AppHeader({
           <MosqueLogo />
           <Text style={styles.brandText}>{t("common.brand")}</Text>
         </View>
+        <View style={styles.actions}>
+        {signedIn ? (
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel={unreadMessages ? `Messages, ${unreadMessages} non lu${unreadMessages > 1 ? "s" : ""}` : "Messages"}
+            onPress={() => router.push("/tahajjud/friends" as Href)}
+            style={({ pressed }) => [styles.circle, pressed && styles.pressed]}
+          >
+            <Ionicons name="chatbubbles-outline" size={21} color={colors.goldLight} />
+            {unreadMessages > 0 ? (
+              <View style={styles.messageBadge}>
+                <Text style={styles.messageBadgeText}>{unreadMessages > 9 ? "9+" : unreadMessages}</Text>
+              </View>
+            ) : null}
+          </Pressable>
+        ) : null}
         <Pressable
           accessibilityRole="button"
           accessibilityLabel={t("common.notifications")}
@@ -273,6 +297,7 @@ export default function AppHeader({
         >
           <NotificationIcon unread={hasUnreadNotifications} />
         </Pressable>
+        </View>
       </View>
 
       <Modal
@@ -427,6 +452,9 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(12,14,27,0.64)",
   },
   brand: { flexDirection: "row", alignItems: "center" },
+  actions: { flexDirection: "row", alignItems: "center", gap: 8 },
+  messageBadge: { position: "absolute", top: -3, right: -3, minWidth: 19, height: 19, paddingHorizontal: 4, alignItems: "center", justifyContent: "center", borderRadius: 10, borderWidth: 1.5, borderColor: colors.background, backgroundColor: colors.danger },
+  messageBadgeText: { color: "#FFFFFF", fontFamily: typography.sans, fontSize: 10.5, fontWeight: "800" },
   brandText: {
     marginLeft: 12,
     color: colors.goldLight,
