@@ -9,8 +9,8 @@ import { colors } from "../../theme/colors";
 import { typography } from "../../theme/typography";
 
 const TEXT = {
-  fr: { literal: "Traduction littérale de l’arabe ci-dessus.", back: "Retour", previous: "Étape précédente", next: "Étape suivante", overview: "Toutes les étapes", unavailableTitle: "Source indisponible", unavailableText: "Impossible d’ouvrir cette source pour le moment.", notFound: "Étape introuvable" },
-  en: { literal: "Literal translation of the Arabic above.", back: "Back", previous: "Previous step", next: "Next step", overview: "All steps", unavailableTitle: "Source unavailable", unavailableText: "This source cannot be opened right now.", notFound: "Step not found" },
+  fr: { ai: "Traduit à l’aide d’une IA.", scholars: "Ce qu’en disent les savants", sources: "Le Coran et la Sunna", back: "Retour", previous: "Étape précédente", next: "Étape suivante", overview: "Toutes les étapes", unavailableTitle: "Source indisponible", unavailableText: "Impossible d’ouvrir cette source pour le moment.", notFound: "Étape introuvable" },
+  en: { ai: "Translated with the help of AI.", scholars: "What the scholars say", sources: "The Quran and the Sunnah", back: "Back", previous: "Previous step", next: "Next step", overview: "All steps", unavailableTitle: "Source unavailable", unavailableText: "This source cannot be opened right now.", notFound: "Step not found" },
 };
 
 export default function AkhiraStageScreen() {
@@ -25,8 +25,28 @@ export default function AkhiraStageScreen() {
   const part = AKHIRA_PARTS.find((item) => item.stages.some((candidate) => candidate.id === stage?.id));
 
   const openSource = (item: AkhiraText) => {
+    // Verses open in the Coran reader and hadiths in the Hadith module when they are there; otherwise the website.
+    if (item.route) {
+      router.push(item.route as Href);
+      return;
+    }
     Linking.openURL(item.url).catch(() => Alert.alert(tx.unavailableTitle, tx.unavailableText));
   };
+  const renderText = (item: AkhiraText) => (
+    <View key={item.id} style={styles.entry}>
+      <View style={styles.highlight}>
+        <Text style={styles.highlightText}>“{en ? item.highlightEn : item.highlight}”</Text>
+      </View>
+      {item.arabic ? <Text style={styles.arabic}>{item.arabic}</Text> : null}
+      <Text style={styles.body}>{en ? item.en : item.fr}</Text>
+      {item.aiTranslation ? <Text style={styles.literal}>{tx.ai}</Text> : null}
+      <Pressable onPress={() => openSource(item)} style={({ pressed }) => [styles.ref, pressed && styles.pressed]} accessibilityRole="link" hitSlop={6}>
+        <Ionicons name={item.kind === "quran" ? "book-outline" : item.kind === "scholar" ? "person-outline" : "document-text-outline"} size={13} color={colors.goldLight} />
+        <Text style={styles.refText}>{en ? item.refEn ?? item.ref : item.ref}</Text>
+        <Ionicons name={item.route ? "chevron-forward" : "open-outline"} size={12} color={colors.goldLight} />
+      </Pressable>
+    </View>
+  );
   const go = (id: string) => router.replace(`/akhira/${id}` as Href);
 
   return (
@@ -45,21 +65,10 @@ export default function AkhiraStageScreen() {
             <Text style={styles.arabicTitle}>{stage.arabic}</Text>
             <Text style={styles.title}>{en ? stage.titleEn : stage.title}</Text>
 
-            {stage.texts.map((item) => (
-              <View key={item.id} style={styles.entry}>
-                <View style={styles.highlight}>
-                  <Text style={styles.highlightText}>“{en ? item.highlightEn : item.highlight}”</Text>
-                </View>
-                {item.arabic ? <Text style={styles.arabic}>{item.arabic}</Text> : null}
-                <Text style={styles.body}>{en ? item.en : item.fr}</Text>
-                {item.kind === "scholar" ? <Text style={styles.literal}>{tx.literal}</Text> : null}
-                <Pressable onPress={() => openSource(item)} style={({ pressed }) => [styles.ref, pressed && styles.pressed]} accessibilityRole="link" hitSlop={6}>
-                  <Ionicons name={item.kind === "quran" ? "book-outline" : item.kind === "scholar" ? "person-outline" : "document-text-outline"} size={13} color={colors.goldLight} />
-                  <Text style={styles.refText}>{en ? item.refEn ?? item.ref : item.ref}</Text>
-                  <Ionicons name="open-outline" size={12} color={colors.goldLight} />
-                </Pressable>
-              </View>
-            ))}
+            {stage.explain.length ? <Text style={styles.section}>{tx.scholars}</Text> : null}
+            {stage.explain.map(renderText)}
+            <Text style={styles.section}>{tx.sources}</Text>
+            {stage.texts.map(renderText)}
 
             <View style={styles.nav}>
               {previous ? (
@@ -104,6 +113,7 @@ const styles = StyleSheet.create({
   highlightText: { color: colors.text, fontFamily: typography.serifMedium, fontSize: 27, lineHeight: 35 },
   arabic: { marginTop: 16, color: colors.text, fontFamily: typography.arabic, fontSize: 26, lineHeight: 46, textAlign: "right", writingDirection: "rtl" },
   body: { marginTop: 14, color: colors.textSecondary, fontFamily: typography.sans, fontSize: 17.5, lineHeight: 27 },
+  section: { marginTop: 34, color: colors.goldLight, fontFamily: typography.sans, fontSize: 13, fontWeight: "800", letterSpacing: 1.4, textTransform: "uppercase" },
   literal: { marginTop: 6, color: colors.textMuted, fontFamily: typography.sans, fontSize: 13.5, lineHeight: 19 },
   ref: { marginTop: 12, alignSelf: "flex-start", flexDirection: "row", alignItems: "center", gap: 6, paddingHorizontal: 10, paddingVertical: 6, borderRadius: 999, borderWidth: 1, borderColor: "rgba(227,181,90,0.36)", backgroundColor: "rgba(227,181,90,0.07)" },
   refText: { color: colors.goldLight, fontFamily: typography.sans, fontSize: 14, fontWeight: "800" },
