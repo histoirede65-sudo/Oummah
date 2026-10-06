@@ -56,7 +56,8 @@ type MenuItem = {
     | "person-outline"
     | "shield-checkmark-outline"
     | "images-outline"
-    | "moon-outline";
+    | "moon-outline"
+    | "stats-chart-outline";
 };
 
 const MENU_GROUPS: ReadonlyArray<{
@@ -91,6 +92,7 @@ const MENU_GROUPS: ReadonlyArray<{
   {
     title: "OUMMAH",
     items: [
+      { label: "Mes bilans", description: "Semaine, mois et année", href: "/bilans", icon: "stats-chart-outline" },
       { label: "Mon profil", description: "Compte et préférences", href: "/profile", icon: "person-outline" },
     ],
   },
