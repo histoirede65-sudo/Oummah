@@ -62,6 +62,7 @@ import { colors } from "../../theme/colors";
 import { typography } from "../../theme/typography";
 import QuranReciterSelector from "../../components/quran/QuranReciterSelector";
 import { MushafPager } from "../../components/quran/MushafPager";
+import * as Haptics from "expo-haptics";
 import { MUSHAF_PAGE_COUNT } from "../../features/quran/mushaf/MushafRepository";
 import { mushafBookmarkStore, type MushafBookmark } from "../../features/quran/mushaf/MushafBookmark";
 import { WasilContextButton } from "../../components/wasil/WasilContextButton";
@@ -363,6 +364,11 @@ export default function SurahReadingScreen() {
   const verseLoadRequestRef = useRef(0);
   const [verses, setVerses] = useState<QuranFoundationVerse[]>([]);
   const [readVerseKeys, setReadVerseKeys] = useState<Set<string>>(new Set());
+  // Mushaf: verses of the page in view, and a short confirmation after a validation.
+  const [mushafPageVerses, setMushafPageVerses] = useState<string[]>([]);
+  const [mushafToast, setMushafToast] = useState<string | null>(null);
+  const mushafToastTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  useEffect(() => () => clearTimeout(mushafToastTimer.current), []);
   const [savingReadKeys, setSavingReadKeys] = useState<Set<string>>(new Set());
   useFocusEffect(useCallback(() => {
     let active = true;
@@ -1233,8 +1239,40 @@ export default function SurahReadingScreen() {
   };
   // Turning the pages like a book: when the page in view no longer holds this surah, the screen follows
   // the reader into the next (or previous) surah, without leaving the pages.
-  const handleMushafPage = (page: number, chapters: number[]) => {
+  const showMushafToast = (message: string) => {
+    setMushafToast(message);
+    clearTimeout(mushafToastTimer.current);
+    mushafToastTimer.current = setTimeout(() => setMushafToast(null), 1800);
+  };
+  // Confirms (or withdraws) verses as read for the daily goals, without moving the page.
+  const setVersesRead = async (keys: string[], selected: boolean) => {
+    let next = readVerseKeys;
+    for (const key of keys) {
+      if (next.has(key) === selected) continue;
+      next = await setReadConfirmation('quran', key, selected);
+      await goalProgressBridge.setEvidence('quran_verses_read', `read:${key}`, selected);
+    }
+    setReadVerseKeys(next);
+  };
+  const handleMushafVerseLongPress = (verseKey: string) => {
+    const selected = !readVerseKeys.has(verseKey);
+    void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => undefined);
+    void setVersesRead([verseKey], selected)
+      .then(() => showMushafToast(t(selected ? "surahReader.mushafVerseRead" : "surahReader.mushafVerseUnread", { verse: verseKey })))
+      .catch(() => Alert.alert(t("surahReader.mushafSaveError"), t("surahReader.mushafSaveErrorText")));
+  };
+  const mushafPageRead = mushafPageVerses.length > 0 && mushafPageVerses.every((key) => readVerseKeys.has(key));
+  const toggleMushafPageRead = () => {
+    const page = visibleMushafPage ?? mushafInitialPage;
+    const selected = !mushafPageRead;
+    void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => undefined);
+    void setVersesRead(mushafPageVerses, selected)
+      .then(() => showMushafToast(t(selected ? "surahReader.mushafPageDone" : "surahReader.mushafPageUndone", { page })))
+      .catch(() => Alert.alert(t("surahReader.mushafSaveError"), t("surahReader.mushafSaveErrorText")));
+  };
+  const handleMushafPage = (page: number, chapters: number[], verseKeys: string[]) => {
     setVisibleMushafPage(page);
+    setMushafPageVerses(verseKeys);
     if (!chapters.length || chapters.includes(surahId)) return;
     const next = chapters.every((chapter) => chapter > surahId) ? chapters[0] : chapters[chapters.length - 1];
     router.setParams({ id: String(next), mushafPage: String(page), verse: undefined, direct: undefined });
@@ -1540,6 +1578,17 @@ export default function SurahReadingScreen() {
                   </Pressable>
                 );
               })()}
+              <Pressable
+                accessibilityRole="button"
+                accessibilityLabel={mushafPageRead ? t("surahReader.mushafPageUnmark") : t("surahReader.mushafPageMark")}
+                accessibilityState={{ checked: mushafPageRead }}
+                disabled={!mushafPageVerses.length}
+                onPress={toggleMushafPageRead}
+                hitSlop={8}
+                style={[styles.mushafBarButton, mushafPageRead && styles.mushafPageReadOn]}
+              >
+                <Ionicons name={mushafPageRead ? "checkmark-done" : "checkmark-done-outline"} size={19} color={mushafPageRead ? colors.background : colors.goldLight} />
+              </Pressable>
               {bookmark && bookmark.page !== (visibleMushafPage ?? mushafInitialPage) ? (
                 <Pressable
                   accessibilityRole="button"
@@ -1577,10 +1626,17 @@ export default function SurahReadingScreen() {
               activeVerseKey={activeVerse?.verseKey ?? null}
               activeWordPosition={activeWordState.activeWordPosition}
               onVersePress={handleMushafVerse}
+              onVerseLongPress={handleMushafVerseLongPress}
               bookmarkPage={bookmark?.page ?? null}
               onPageChange={handleMushafPage}
               jumpTo={mushafJump}
             />
+            {mushafToast ? (
+              <View pointerEvents="none" style={styles.mushafToast}>
+                <Ionicons name="checkmark-circle" size={16} color={colors.success} />
+                <Text style={styles.mushafToastText}>{mushafToast}</Text>
+              </View>
+            ) : null}
             {activeVerse ? (
               <View style={styles.mushafPlayer}>
                 <Pressable accessibilityLabel={t("surahReader.previousVerse")} disabled={activeVerse.id <= 1} onPress={() => playNeighbor(-1)} style={styles.inlineSmallButton}>
@@ -1645,6 +1701,9 @@ const styles = StyleSheet.create({
   displayOptionTextOn: { color: colors.background },
   mushafRoot: { flex: 1 },
   mushafGoBookmark: { backgroundColor: "#A3271C" },
+  mushafPageReadOn: { backgroundColor: colors.success },
+  mushafToast: { position: "absolute", top: 52, alignSelf: "center", flexDirection: "row", alignItems: "center", gap: 7, paddingHorizontal: 14, paddingVertical: 8, borderRadius: 18, backgroundColor: "rgba(11,9,24,0.9)", borderWidth: 1, borderColor: "rgba(98,197,139,0.5)" },
+  mushafToastText: { color: "#F4E3B5", fontSize: 13, fontWeight: "700" },
   mushafBookmarkOn: { backgroundColor: "#A3271C" },
   playerClose: { width: 32, height: 32, borderRadius: 16, alignItems: "center", justifyContent: "center", backgroundColor: "rgba(255,255,255,0.06)" },
   mushafScreen: { flex: 1, backgroundColor: "#0B0918" },

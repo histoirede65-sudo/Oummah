@@ -3557,4 +3557,12 @@ export const en: Partial<Record<TranslationKey, string>> = {
   'halalBodies.warning': 'A sheet describes the certifier; on its own it never makes a product “not halal”. The religious guides explain the rules and do not rate any certifier.',
 
 
+  'surahReader.mushafVerseRead': 'Verse {verse} read ✓',
+  'surahReader.mushafVerseUnread': 'Verse {verse} removed from your reading',
+  'surahReader.mushafPageDone': 'Page {page} read ✓',
+  'surahReader.mushafPageUndone': 'Page {page} removed from your reading',
+  'surahReader.mushafPageMark': 'Mark this page as read',
+  'surahReader.mushafPageUnmark': 'Remove this page from your reading',
+  'surahReader.mushafSaveError': 'Could not save',
+  'surahReader.mushafSaveErrorText': 'Please try again in a moment.',
 };

@@ -26,16 +26,18 @@ type Props = {
   activeVerseKey?: string | null;
   activeWordPosition?: number | null;
   onVersePress: (verseKey: string) => void;
+  /** Long press on a verse: confirms it as read for the daily goals (the page stays put). */
+  onVerseLongPress?: (verseKey: string) => void;
   /** Page carrying the reader's bookmark ribbon. */
   bookmarkPage?: number | null;
-  /** Page in view, with the surahs it contains (in order), once its layout is known. */
-  onPageChange?: (page: number, chapters: number[]) => void;
+  /** Page in view, with the surahs and the verses it contains (in order), once its layout is known. */
+  onPageChange?: (page: number, chapters: number[], verseKeys: string[]) => void;
   /** Asks the pager to show this page (nonce: a new request each time). */
   jumpTo?: { page: number; nonce: number } | null;
 };
 
 /** The Mushaf's pages, turned from right to left like a printed book. */
-export function MushafPager({ pages, style, initialPage, activeVerseKey, activeWordPosition, onVersePress, bookmarkPage, onPageChange, jumpTo }: Props) {
+export function MushafPager({ pages, style, initialPage, activeVerseKey, activeWordPosition, onVersePress, onVerseLongPress, bookmarkPage, onPageChange, jumpTo }: Props) {
   const [size, setSize] = useState<{ width: number; height: number } | null>(null);
   const listRef = useRef<FlatList<number>>(null);
   const pageOfVerse = useRef(new Map<string, number>());
@@ -48,13 +50,17 @@ export function MushafPager({ pages, style, initialPage, activeVerseKey, activeW
   useEffect(() => { pageChange.current = onPageChange; }, [onPageChange]);
   // Surahs of each loaded page; the page in view is reported once its layout is known.
   const pageChapters = useRef(new Map<number, number[]>());
+  const pageVerses = useRef(new Map<number, string[]>());
+  const longPress = useRef(onVerseLongPress);
+  useEffect(() => { longPress.current = onVerseLongPress; }, [onVerseLongPress]);
+  const handleLongPress = useCallback((verseKey: string) => longPress.current?.(verseKey), []);
   const visiblePage = useRef<number | null>(null);
   const viewability = useCallback(({ viewableItems }: { viewableItems: { item: number }[] }) => {
     const visible = viewableItems[0]?.item;
     if (typeof visible !== 'number') return;
     visiblePage.current = visible;
     const chapters = pageChapters.current.get(visible);
-    if (chapters) pageChange.current?.(visible, chapters);
+    if (chapters) pageChange.current?.(visible, chapters, pageVerses.current.get(visible) ?? []);
   }, []);
   const resetZoom = () => {
     setZoomed(false);
@@ -68,15 +74,18 @@ export function MushafPager({ pages, style, initialPage, activeVerseKey, activeW
 
   const register = useCallback((layout: MushafPage) => {
     const chapters: number[] = [];
+    const verseKeys: string[] = [];
     for (const line of layout.lines) {
       for (const word of line.words) {
         pageOfVerse.current.set(word.verseKey, layout.page);
+        if (!verseKeys.includes(word.verseKey)) verseKeys.push(word.verseKey);
         const chapter = Number(word.verseKey.split(':')[0]);
         if (!chapters.includes(chapter)) chapters.push(chapter);
       }
     }
     pageChapters.current.set(layout.page, chapters);
-    if (visiblePage.current === layout.page) pageChange.current?.(layout.page, chapters);
+    pageVerses.current.set(layout.page, verseKeys);
+    if (visiblePage.current === layout.page) pageChange.current?.(layout.page, chapters, verseKeys);
   }, []);
 
   useEffect(() => {
@@ -122,6 +131,7 @@ export function MushafPager({ pages, style, initialPage, activeVerseKey, activeW
               activeVerseKey={activeVerseKey ?? null}
               activeWordPosition={activeWordPosition ?? null}
               onVersePress={onVersePress}
+              onVerseLongPress={handleLongPress}
               onLoaded={register}
               resetKey={resetKey}
               zoomed={zoomed}
@@ -140,7 +150,7 @@ export function MushafPager({ pages, style, initialPage, activeVerseKey, activeW
   );
 }
 
-const MushafPageView = memo(function MushafPageView({ page, style, width, height, activeVerseKey, activeWordPosition, onVersePress, onLoaded, resetKey, zoomed, onZoomChange, bookmarked }: {
+const MushafPageView = memo(function MushafPageView({ page, style, width, height, activeVerseKey, activeWordPosition, onVersePress, onVerseLongPress, onLoaded, resetKey, zoomed, onZoomChange, bookmarked }: {
   page: number;
   style: MushafStyle;
   width: number;
@@ -148,6 +158,7 @@ const MushafPageView = memo(function MushafPageView({ page, style, width, height
   activeVerseKey: string | null;
   activeWordPosition: number | null;
   onVersePress: (verseKey: string) => void;
+  onVerseLongPress: (verseKey: string) => void;
   onLoaded: (layout: MushafPage) => void;
   resetKey: number;
   zoomed: boolean;
@@ -231,6 +242,7 @@ const MushafPageView = memo(function MushafPageView({ page, style, width, height
                           key={`${word.verseKey}-${index}`}
                           allowFontScaling={false}
                           onPress={() => onVersePress(word.verseKey)}
+                          onLongPress={() => onVerseLongPress(word.verseKey)}
                           style={[
                             { fontFamily: inVerse ? current.inkFamily : current.family, fontSize, lineHeight, color: INK },
                             inVerse && styles.verseInk,
