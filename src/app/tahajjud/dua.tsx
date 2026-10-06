@@ -24,7 +24,7 @@ import {
 import { COMMUNITY_AVATARS, getCommunityProfile, isSignedIn, type CommunityAvatar } from '../../features/tahajjud/tahajjudCommunity';
 import { tx, txCount } from '../../features/tahajjud/tahajjudI18n';
 
-const KIND_REPLIES = ['Amine 🤲', 'Qu’Allah t’exauce', 'Je fais doua pour toi', 'Qu’Allah te facilite'];
+const KIND_REPLIES = ['Amine 🤲', 'Qu’Allah t’exauce', 'Je fais dua pour toi', 'Qu’Allah te facilite'];
 
 const avatarOf = (value: string | null): CommunityAvatar =>
   (COMMUNITY_AVATARS as readonly string[]).includes(String(value)) ? value as CommunityAvatar : 'moon';
@@ -102,8 +102,8 @@ export default function DuaDetailScreen() {
 
   const postOptions = () => {
     if (!post || post.mine) return;
-    Alert.alert(tx('Doua'), undefined, [
-      { text: tx('Signaler'), onPress: () => void reportWall('post', post.id).then(() => Alert.alert(tx('Merci'), tx('La doua a été signalée. Elle sera masquée si plusieurs membres la signalent.'))).catch((error) => Alert.alert(tx('Signalement'), wallErrorMessage(error))) },
+    Alert.alert(tx('Dua'), undefined, [
+      { text: tx('Signaler'), onPress: () => void reportWall('post', post.id).then(() => Alert.alert(tx('Merci'), tx('La dua a été signalée. Elle sera masquée si plusieurs membres la signalent.'))).catch((error) => Alert.alert(tx('Signalement'), wallErrorMessage(error))) },
       { text: tx('Annuler'), style: 'cancel' },
     ]);
   };
@@ -118,7 +118,7 @@ export default function DuaDetailScreen() {
           </Pressable>
           <View style={styles.flex}>
             <Text style={styles.eyebrow}>{tx("Mur des duas")}</Text>
-            <Text style={styles.title}>{tx("Doua")}</Text>
+            <Text style={styles.title}>{tx("Dua")}</Text>
           </View>
           {post && !post.mine ? (
             <Pressable onPress={postOptions} hitSlop={10}><Ionicons name="ellipsis-horizontal" size={22} color={night.muted} /></Pressable>
@@ -131,7 +131,7 @@ export default function DuaDetailScreen() {
           ) : post === null ? (
             <View style={styles.center}>
               <Ionicons name="moon-outline" size={36} color={night.lavender} />
-              <Text style={styles.gone}>{tx("Cette doua n’est plus disponible.")}</Text>
+              <Text style={styles.gone}>{tx("Cette dua n’est plus disponible.")}</Text>
               <Pressable onPress={() => router.replace('/tahajjud/wall' as Href)} style={styles.primary}>
                 <Text style={styles.primaryText}>{tx("Voir le Mur des duas")}</Text>
               </Pressable>
@@ -188,7 +188,7 @@ export default function DuaDetailScreen() {
                 <View style={[styles.kindBanner, focused && styles.kindBannerFocused]}>
                   <Ionicons name="heart" size={15} color={night.goldSoft} />
                   <Text style={styles.kindText}>
-                    {tx("Réponse bienveillante uniquement : une doua, un encouragement. Pas de jugement ni de conseil non demandé.")}
+                    {tx("Réponse bienveillante uniquement : une dua, un encouragement. Pas de jugement ni de conseil non demandé.")}
                   </Text>
                 </View>
                 {focused && !draft ? (

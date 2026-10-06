@@ -38,7 +38,7 @@ function DuaZoneSheet({ zone, onClose }: { zone: DuaMapZone | null; onClose: () 
           <View style={styles.sheetHead}>
             <View style={styles.sheetIcon}><Ionicons name="hand-left" size={18} color={night.sky0} /></View>
             <View style={styles.sheetCopy}>
-              <Text style={styles.sheetTitle}>{zone?.count === 1 ? tx('Une doua partagée ici') : tx("{0} duas partagées ici", [zone?.count ?? 0])}</Text>
+              <Text style={styles.sheetTitle}>{zone?.count === 1 ? tx('Une dua partagée ici') : tx("{0} duas partagées ici", [zone?.count ?? 0])}</Text>
               <Text style={styles.sheetSub}>{tx("Zone d’environ 30 km · 14 derniers jours")}</Text>
             </View>
           </View>

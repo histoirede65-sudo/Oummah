@@ -65,14 +65,14 @@ function PostCard({ post, canWrite, onChanged }: { post: WallPost; canWrite: boo
 
   const menu = () => {
     if (post.mine) {
-      Alert.alert(tx('Ma doua'), undefined, [
+      Alert.alert(tx('Ma dua'), undefined, [
         ...(!post.answered && !post.pending ? [{ text: tx('Allah m’a exaucé'), onPress: () => setAnswerSheet(true) }] : []),
         { text: tx('Supprimer'), style: 'destructive' as const, onPress: () => void deleteWall('post', post.id).then(onChanged) },
         { text: tx('Annuler'), style: 'cancel' as const },
       ]);
     } else {
-      Alert.alert(tx('Doua'), undefined, [
-        { text: tx('Signaler'), onPress: () => void reportWall('post', post.id).then(() => Alert.alert(tx('Merci'), tx('La doua a été signalée. Elle sera masquée si plusieurs membres la signalent.'))).catch((error) => Alert.alert(tx('Signalement'), wallErrorMessage(error))) },
+      Alert.alert(tx('Dua'), undefined, [
+        { text: tx('Signaler'), onPress: () => void reportWall('post', post.id).then(() => Alert.alert(tx('Merci'), tx('La dua a été signalée. Elle sera masquée si plusieurs membres la signalent.'))).catch((error) => Alert.alert(tx('Signalement'), wallErrorMessage(error))) },
         { text: tx('Annuler'), style: 'cancel' },
       ]);
     }
@@ -209,7 +209,7 @@ export default function DuaWallScreen() {
       await publishDua(draft, anonymous);
       setCompose(false);
       setDraft('');
-      Alert.alert(tx('Doua publiée'), tx('Votre doua est sur le Mur. Qu’Allah l’exauce.'));
+      Alert.alert(tx('Dua publiée'), tx('Votre dua est sur le Mur. Qu’Allah l’exauce.'));
       void load(filter);
     } catch (error) {
       Alert.alert(tx('Mur des duas'), wallErrorMessage(error));
@@ -220,12 +220,12 @@ export default function DuaWallScreen() {
 
   return (
     <TahajjudShell title={tx("Mur des duas")} eyebrow={tx("Communauté")}>
-      <Text style={styles.intro}>{tx("Faites doua les uns pour les autres et dites Amine. Votre doua est publiée tout de suite.")}</Text>
+      <Text style={styles.intro}>{tx("Faites dua les uns pour les autres et dites Amine. Votre dua est publiée tout de suite.")}</Text>
 
       <Pressable onPress={openCompose} style={({ pressed }) => [pressed && styles.pressed]}>
         <LinearGradient colors={[night.goldSoft, night.gold]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.composeButton}>
           <Ionicons name="create-outline" size={20} color={night.sky0} />
-          <Text style={styles.composeButtonText}>{tx("Partager une doua")}</Text>
+          <Text style={styles.composeButtonText}>{tx("Partager une dua")}</Text>
         </LinearGradient>
       </Pressable>
 
@@ -243,7 +243,7 @@ export default function DuaWallScreen() {
         <View style={styles.empty}>
           <Ionicons name="hand-left-outline" size={36} color={night.lavender} />
           <Text style={styles.emptyText}>
-            {filter === 'answered' ? tx('Les duas exaucées apparaîtront ici, avec la gratitude de leurs auteurs.') : tx('Aucune doua pour le moment. Soyez le premier à en partager une.')}
+            {filter === 'answered' ? tx('Les duas exaucées apparaîtront ici, avec la gratitude de leurs auteurs.') : tx('Aucune dua pour le moment. Soyez le premier à en partager une.')}
           </Text>
         </View>
       ) : (
@@ -261,12 +261,12 @@ export default function DuaWallScreen() {
         <KeyboardAvoidingView behavior="padding" style={styles.backdrop}>
           <View style={styles.sheet}>
             <LinearGradient colors={['#1C1546', '#0E0A26']} style={StyleSheet.absoluteFill} />
-            <Text style={styles.sheetTitle}>{tx("Partager une doua")}</Text>
-            <Text style={styles.sheetText}>{tx("Demandez à vos frères et sœurs de faire doua pour vous. Restez bienveillant.")}</Text>
+            <Text style={styles.sheetTitle}>{tx("Partager une dua")}</Text>
+            <Text style={styles.sheetText}>{tx("Demandez à vos frères et sœurs de faire dua pour vous. Restez bienveillant.")}</Text>
             <TextInput
               value={draft}
               onChangeText={setDraft}
-              placeholder={tx("Faites doua pour… ")}
+              placeholder={tx("Faites dua pour… ")}
               placeholderTextColor={night.placeholder}
               maxLength={600}
               multiline

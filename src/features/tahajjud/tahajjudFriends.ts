@@ -28,7 +28,7 @@ export type FriendsOverview = {
 export const ENCOURAGEMENTS = [
   { kind: 'wake', get text() { return tx('On se réveille pour prier cette nuit ?'); }, icon: 'alarm-outline' },
   { kind: 'ease', get text() { return tx('Qu’Allah te facilite ta nuit.'); }, icon: 'moon-outline' },
-  { kind: 'dua', get text() { return tx('J’ai fait doua pour toi cette nuit.'); }, icon: 'hand-left-outline' },
+  { kind: 'dua', get text() { return tx('J’ai fait dua pour toi cette nuit.'); }, icon: 'hand-left-outline' },
   { kind: 'keep', get text() { return tx('Barak Allahou fik, continue comme ça !'); }, icon: 'heart-outline' },
   { kind: 'mashallah', get text() { return tx('Ma sha Allah, qu’Allah t’accorde la constance.'); }, icon: 'sparkles-outline' },
 ] as const;

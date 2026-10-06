@@ -25,7 +25,7 @@ import { tx, txCount } from '../../features/tahajjud/tahajjudI18n';
 
 const POLL_MS = 4_000;
 const AUTHOR_COLORS = ['#F4D995', '#B7ABF2', '#7FD8A6', '#8EC5FF', '#F7A8C4', '#FFB37A'];
-const REMINDER_PRESETS = ['Debout pour la prière de la nuit', 'Lecture de sourate Al-Mulk', 'Witr avant de dormir', 'Doua du dernier tiers'];
+const REMINDER_PRESETS = ['Debout pour la prière de la nuit', 'Lecture de sourate Al-Mulk', 'Witr avant de dormir', 'Dua du dernier tiers'];
 
 function colorOf(id: string | null) {
   if (!id) return AUTHOR_COLORS[0];
