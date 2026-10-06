@@ -17,6 +17,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { grantManualPremium, revokeManualPremium } from "../../../features/admin/AdminPremiumService";
+import { sendOummahMessage } from "../../../features/admin/oummahMessages";
 import {
   adjustAdminUserCredits,
   deleteAdminUser,
@@ -53,6 +54,7 @@ export default function AdminUserDetailScreen() {
   const [amount, setAmount] = useState("");
   const [reason, setReason] = useState("");
   const [mode, setMode] = useState<"add" | "remove">("add");
+  const [note, setNote] = useState("");
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -235,6 +237,29 @@ export default function AdminUserDetailScreen() {
     );
   };
 
+  const sendNote = () => {
+    const body = note.trim();
+    if (!userId || saving || !user || body.length < 2) return;
+    Alert.alert("Envoyer ce message ?", `${user.email} le recevra dans sa messagerie, signé « OUMMAH », avec une notification.`, [
+      { text: "Annuler", style: "cancel" },
+      {
+        text: "Envoyer",
+        onPress: async () => {
+          setSaving(true);
+          try {
+            const sent = await sendOummahMessage(body, userId);
+            setNote("");
+            Alert.alert("Message envoyé", sent.devices ? "Une notification a été envoyée sur son téléphone." : "Il le verra en ouvrant sa messagerie (notifications désactivées sur son téléphone).");
+          } catch (error) {
+            Alert.alert("Envoi impossible", error instanceof Error ? error.message : "Réessayez.");
+          } finally {
+            setSaving(false);
+          }
+        },
+      },
+    ]);
+  };
+
   const removeUser = () => {
     if (!userId || saving || !user) return;
 
@@ -382,6 +407,22 @@ export default function AdminUserDetailScreen() {
                 </Text>
               </View>
             </View>
+
+            <Text style={styles.sectionTitle}>Message OUMMAH</Text>
+            <TextInput
+              value={note}
+              onChangeText={setNote}
+              placeholder="Arrive dans sa messagerie, signé « OUMMAH »"
+              placeholderTextColor={colors.textMuted}
+              multiline
+              maxLength={2000}
+              textAlignVertical="top"
+              style={[styles.input, styles.reasonInput]}
+            />
+            <Pressable disabled={saving || note.trim().length < 2} onPress={sendNote} style={[styles.submitButton, (saving || note.trim().length < 2) && styles.disabled]}>
+              <Ionicons name="chatbubble-ellipses" size={18} color={colors.background} />
+              <Text style={styles.submitText}>Envoyer le message</Text>
+            </Pressable>
 
             <Text style={styles.sectionTitle}>Premium</Text>
 

@@ -5,6 +5,7 @@ import { Alert, Pressable, StyleSheet, Switch, Text, TextInput, View } from "rea
 import { ActionButton, AdminScreen, adminStyles, Card, SectionTitle, useAdminToast } from "../../components/admin/AdminUI";
 import { adminFunction } from "../../features/admin/adminClient";
 import { archiveAdminAnnouncement, getAdminAnnouncements, saveAdminAnnouncement, type AdminAnnouncementAudience, type AdminAnnouncementRow } from "../../features/admin/AdminService";
+import { deleteOummahMessage, listOummahMessages, sendOummahMessage, type SentOummahMessage } from "../../features/admin/oummahMessages";
 import { colors } from "../../theme/colors";
 import { typography } from "../../theme/typography";
 
@@ -46,8 +47,10 @@ function SendForm() {
   const [route, setRoute] = useState("/");
   const [push, setPush] = useState(true);
   const [announce, setAnnounce] = useState(false);
+  const [message, setMessage] = useState(false);
   const [days, setDays] = useState(7);
   const [announcements, setAnnouncements] = useState<AdminAnnouncementRow[]>([]);
+  const [messages, setMessages] = useState<SentOummahMessage[]>([]);
 
   const loadAnnouncements = useCallback(async () => {
     try {
@@ -57,11 +60,20 @@ function SendForm() {
     }
   }, [toast]);
 
+  const loadMessages = useCallback(async () => {
+    try {
+      setMessages(await listOummahMessages());
+    } catch (error) {
+      toast(error instanceof Error ? error.message : "Messages non chargés.", "error");
+    }
+  }, [toast]);
+
   useFocusEffect(useCallback(() => {
     void loadAnnouncements();
-  }, [loadAnnouncements]));
+    void loadMessages();
+  }, [loadAnnouncements, loadMessages]));
 
-  const ready = title.trim().length >= 3 && body.trim().length >= 5 && (push || announce);
+  const ready = title.trim().length >= 3 && body.trim().length >= 5 && (push || announce || message);
 
   const send = async () => {
     const cleanTitle = title.trim();
@@ -69,7 +81,7 @@ function SendForm() {
     const confirmed = await new Promise<boolean>((resolve) => {
       Alert.alert(
         "Confirmer l’envoi",
-        `${[push ? "Notification" : null, announce ? `Annonce (${days} j)` : null].filter(Boolean).join(" + ")} · ${audienceLabel(audience)}\n\n${cleanTitle}`,
+        `${[push ? "Notification" : null, announce ? `Annonce (${days} j)` : null, message ? "Messagerie (tous les membres)" : null].filter(Boolean).join(" + ")} · ${audienceLabel(audience)}\n\n${cleanTitle}`,
         [
           { text: "Annuler", style: "cancel", onPress: () => resolve(false) },
           { text: "Envoyer", onPress: () => resolve(true) },
@@ -97,7 +109,11 @@ function SendForm() {
       });
       results.push("annonce publiée");
     }
-    if (push) {
+    if (message) {
+      // With the notification on, it is sent once and opens the OUMMAH conversation.
+      const sent = await sendOummahMessage(`${cleanTitle}\n\n${cleanBody}`, null, push);
+      results.push(push ? `message envoyé, notification sur ${sent.devices} appareil${sent.devices > 1 ? "s" : ""}` : "message envoyé dans la messagerie");
+    } else if (push) {
       const result = await adminFunction<{ sent?: number } | null>("send-admin-push", { title: cleanTitle, body: cleanBody, audience, route });
       results.push(`notification envoyée à ${result?.sent ?? 0} appareil${(result?.sent ?? 0) > 1 ? "s" : ""}`);
     }
@@ -105,6 +121,7 @@ function SendForm() {
     setBody("");
     toast(results.join(" · ").replace(/^./, (letter) => letter.toUpperCase()));
     if (announce) void loadAnnouncements();
+    if (message) void loadMessages();
   };
 
   return (
@@ -135,6 +152,13 @@ function SendForm() {
           </View>
           <Switch value={announce} onValueChange={setAnnounce} trackColor={{ true: colors.goldDark, false: "rgba(255,255,255,0.16)" }} thumbColor={announce ? colors.goldLight : "#CFC6D6"} />
         </View>
+        <View style={styles.switchRow}>
+          <View style={styles.switchCopy}>
+            <Text style={adminStyles.rowTitle}>Message dans la messagerie</Text>
+            <Text style={adminStyles.meta}>Signé « OUMMAH », reçu par tous les membres dans Qiyam al-Layl › Amis. Ils ne peuvent pas répondre.</Text>
+          </View>
+          <Switch value={message} onValueChange={setMessage} trackColor={{ true: colors.goldDark, false: "rgba(255,255,255,0.16)" }} thumbColor={message ? colors.goldLight : "#CFC6D6"} />
+        </View>
         {announce ? (
           <>
             <Text style={adminStyles.label}>Visible pendant</Text>
@@ -159,6 +183,21 @@ function SendForm() {
             <ActionButton label="Retirer l’annonce" tone="danger" icon="archive-outline" done="Annonce retirée" onPress={async () => {
               await archiveAdminAnnouncement(row.id);
               setAnnouncements((current) => current.filter((item) => item.id !== row.id));
+            }} />
+          </View>
+        </Card>
+      ))}
+
+      <SectionTitle>Messages OUMMAH envoyés</SectionTitle>
+      {messages.length === 0 ? <Text style={adminStyles.meta}>Aucun message envoyé.</Text> : null}
+      {messages.map((row) => (
+        <Card key={row.id}>
+          <Text style={adminStyles.tag}>{row.recipient ? `À ${row.recipientName ?? "un membre"}` : "À tous les membres"} · {new Date(row.createdAt).toLocaleDateString("fr-FR", { day: "numeric", month: "long" })}</Text>
+          <Text style={adminStyles.rowText} numberOfLines={4}>{row.body}</Text>
+          <View style={adminStyles.actions}>
+            <ActionButton label="Supprimer le message" tone="danger" icon="trash-outline" done="Message supprimé" onPress={async () => {
+              await deleteOummahMessage(row.id);
+              setMessages((current) => current.filter((item) => item.id !== row.id));
             }} />
           </View>
         </Card>
