@@ -16,7 +16,7 @@ import { ReciterProvider } from '../context/ReciterProvider';
 import MiniPlayer from '../features/audio/presentation/MiniPlayer';
 import { ProphetAudioProvider } from '../features/prophets/audio/ProphetAudioProvider';
 import ProphetAudioMiniPlayer from '../features/prophets/audio/ProphetAudioMiniPlayer';
-import { I18nProvider, translate } from '../i18n/I18nProvider';
+import { I18nProvider, languageReady, subscribeLanguageChange, translate } from '../i18n/I18nProvider';
 import { syncPushRegistration } from '../features/notifications/PushRegistrationService';
 import { ensureAppNotificationChannels } from '../features/notifications/notificationChannels';
 import { isNotificationPermissionGranted } from '../features/notifications/NotificationPermissions';
@@ -422,12 +422,50 @@ export default function RootLayout() {
 
   // Verse and hadith of the day widgets: the coming week, refreshed when the app comes back.
   useEffect(() => {
-    void syncDailyWidgets().catch(() => undefined);
+    void languageReady.then(() => syncDailyWidgets()).catch(() => undefined);
     const subscription = AppState.addEventListener('change', (state) => {
       if (state === 'active') void syncDailyWidgets().catch(() => undefined);
     });
     return () => subscription.remove();
   }, []);
+
+  // Changement de langue : widgets et rappels déjà programmés sont refaits dans la nouvelle langue.
+  useEffect(() => subscribeLanguageChange(() => {
+    void syncDailyWidgets().catch(() => undefined);
+    if (Platform.OS === 'web') return;
+    void Notifications.getPermissionsAsync()
+      .then(async (permission) => {
+        if (!isNotificationPermissionGranted(permission)) return;
+        await syncJumuahNotification().catch(() => false);
+        await syncGoalReviewNotifications().catch(() => false);
+        const [preferences, hifzState, mosque, calculation] = await Promise.all([
+          loadNotificationCenterPreferences(),
+          loadHifzState(),
+          getMainMosque(),
+          loadPrayerCalculationSettings(),
+        ]);
+        if (!preferences.systemEnabled) return;
+        let schedule: MosquePrayerSchedule | null = null;
+        if (mosque) {
+          const calculated = await getMosquePrayerSchedule(
+            mosque.latitude,
+            mosque.longitude,
+            undefined,
+            calculation,
+          ).catch(() => null);
+          const approved = await getApprovedMosquePrayerTimes(mosque.id).catch(() => null);
+          schedule = calculated
+            ? calculation.scheduleSource === 'mosque'
+              ? applyApprovedMosquePrayerTimes(calculated, approved)
+              : calculated
+            : null;
+        }
+        await syncNotificationCenterSchedule(preferences, schedule, mosque?.name, hifzState);
+        const { resyncWasilReminders } = await import('../features/wasil/WasilReminderService');
+        await resyncWasilReminders();
+      })
+      .catch(() => undefined);
+  }), []);
 
   useEffect(() => {
     const subscription = AppState.addEventListener('change', (state) => {
@@ -578,7 +616,11 @@ export default function RootLayout() {
     let cancelled = false;
     const timers: ReturnType<typeof setTimeout>[] = [];
 
-    const permissionReady = notificationPermissionRef.current ?? Promise.resolve(false);
+    // La langue enregistrée doit être chargée avant de programmer quoi que ce soit.
+    const permissionReady = Promise.all([
+      languageReady,
+      notificationPermissionRef.current ?? Promise.resolve(false),
+    ]).then(([, granted]) => granted);
 
     const interactionTask = InteractionManager.runAfterInteractions(() => {
       if (cancelled) return;

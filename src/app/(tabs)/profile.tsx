@@ -43,7 +43,7 @@ const LOCAL_DATA = [
 ] as const;
 
 export default function ProfileScreen() {
-  const { t } = useI18n();
+  const { language, setLanguage, t } = useI18n();
   const [supportUnreadCount, setSupportUnreadCount] = useState(0);
   const router = useRouter();
   const [session, setSession] = useState<SupabaseAuthSession | null>(null);
@@ -235,6 +235,31 @@ export default function ProfileScreen() {
           <Text style={styles.subtitle}>
             {t("profile.subtitle")}
           </Text>
+        </View>
+
+        <View style={styles.languageCard}>
+          <View style={styles.languageCopy}>
+            <Text style={styles.languageTitle}>{t("profile.language")}</Text>
+            <Text style={styles.languageSubtitle}>{t("profile.languageSubtitle")}</Text>
+          </View>
+          <View style={styles.languageChoices}>
+            {(["fr", "en"] as const).map((code) => {
+              const selected = language === code;
+              return (
+                <Pressable
+                  key={code}
+                  accessibilityRole="button"
+                  accessibilityState={{ selected }}
+                  onPress={() => setLanguage(code)}
+                  style={[styles.languageChoice, selected && styles.languageChoiceSelected]}
+                >
+                  <Text style={[styles.languageChoiceText, selected && styles.languageChoiceTextSelected]}>
+                    {code === "fr" ? "Français" : "English"}
+                  </Text>
+                </Pressable>
+              );
+            })}
+          </View>
         </View>
 
         <LinearGradient
