@@ -1,4 +1,4 @@
-import { Animated, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, useWindowDimensions, View } from "react-native";
+import { Animated, InteractionManager, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, useWindowDimensions, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { router, useLocalSearchParams } from "expo-router";
@@ -30,7 +30,13 @@ export default function HomeScreen() {
   const scrollRef = useRef<ScrollView>(null);
   const dashboardOffset = useRef(0);
   const wasilOffset = useRef(0);
-
+  // Noms d'Allah et objectifs sont sous la ligne de flottaison : ils sont montés juste après
+  // le premier affichage, pour que le haut de l'accueil apparaisse plus vite sur les petits téléphones.
+  const [lowerSectionsReady, setLowerSectionsReady] = useState(false);
+  useEffect(() => {
+    const task = InteractionManager.runAfterInteractions(() => setLowerSectionsReady(true));
+    return () => task.cancel();
+  }, []);
 
   useEffect(() => {
     if (welcome !== "1") return;
@@ -105,8 +111,12 @@ export default function HomeScreen() {
               <DalilCard onPromptFocus={revealWasilInput} />
             </View>
             <HomeShortcuts />
-            <AllahNamesHomeSection />
-            <HomeGoalsSection />
+            {lowerSectionsReady ? (
+              <>
+                <AllahNamesHomeSection />
+                <HomeGoalsSection />
+              </>
+            ) : null}
           </View>
         </ScrollView>
       </KeyboardAvoidingView>

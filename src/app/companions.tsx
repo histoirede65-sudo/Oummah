@@ -3,7 +3,8 @@ import { LinearGradient } from "expo-linear-gradient";
 import type { Href } from "expo-router";
 import { router } from "expo-router";
 import { useMemo, useState } from "react";
-import { Image, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
+import { Pressable, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
+import { Image } from "expo-image";
 
 import { COMPANIONS } from "../features/companions/companionsData";
 import { useOpenedCompanions } from "../features/companions/companionsStorage";
@@ -79,7 +80,7 @@ export default function CompanionsScreen() {
 
         <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
           <View style={styles.hero}>
-            <Image source={require("../assets/images/home/shortcuts/companions-premium.png")} style={StyleSheet.absoluteFill} resizeMode="cover" />
+            <Image source={require("../assets/images/home/shortcuts/companions-premium.png")} style={StyleSheet.absoluteFill} contentFit="cover" />
             <LinearGradient colors={["rgba(13,11,24,.15)", "rgba(13,11,24,.94)"]} style={StyleSheet.absoluteFill} />
             <View style={styles.heroCopy}>
               <Text style={styles.kicker}>{t("companions.kicker")}</Text>
