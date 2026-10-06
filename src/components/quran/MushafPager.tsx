@@ -132,9 +132,9 @@ const MushafPageView = memo(function MushafPageView({ page, style, width, height
   }, [key, onLoaded, page, style]);
 
   const current = state?.key === key ? state : null;
-  const pageWidth = width - 8;
-  const innerWidth = pageWidth - 16;
-  const lineHeight = (height - 8 - 30) / MUSHAF_LINES_PER_PAGE;
+  const pageWidth = width - 6;
+  const innerWidth = pageWidth - 12;
+  const lineHeight = (height - 4 - 18) / MUSHAF_LINES_PER_PAGE;
   // Pages 1 and 2 (Al-Fâtiha, start of Al-Baqara) are shorter and centred, as in the printed Mushaf.
   const opening = page <= 2;
   const fontSize = Math.min(innerWidth * (opening ? 0.07 : 0.0605), lineHeight * 0.66);
@@ -209,7 +209,7 @@ const MushafPageView = memo(function MushafPageView({ page, style, width, height
             })}
           </View>
         )}
-        <Text style={styles.pageNumber}>{page}</Text>
+        <Text numberOfLines={1} style={styles.pageNumber}>{page}  ·  {t('surahReader.mushafCredit')}</Text>
       </View>
     </View>
   );
@@ -221,7 +221,7 @@ const styles = StyleSheet.create({
   resetZoomText: { color: '#F4E3B5', fontSize: 13, fontWeight: '800' },
   slot: { alignItems: 'center', justifyContent: 'center' },
   page: {
-    flex: 1, marginVertical: 4, paddingHorizontal: 8, paddingTop: 4, borderRadius: 10, backgroundColor: PAPER,
+    flex: 1, marginVertical: 2, paddingHorizontal: 6, paddingTop: 2, borderRadius: 8, backgroundColor: PAPER,
     borderWidth: 1.5, borderColor: FRAME,
   },
   center: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 20 },
@@ -236,5 +236,5 @@ const styles = StyleSheet.create({
   surahNameText: { color: INK, fontFamily: ARABIC_READING_FONT_FAMILY },
   basmala: { alignItems: 'center', justifyContent: 'center' },
   basmalaText: { color: INK, fontFamily: ARABIC_READING_FONT_FAMILY },
-  pageNumber: { height: 26, textAlign: 'center', textAlignVertical: 'center', lineHeight: 26, color: '#7B6F5C', fontSize: 12 },
+  pageNumber: { height: 18, textAlign: 'center', textAlignVertical: 'center', lineHeight: 18, color: '#8A7E69', fontSize: 10 },
 });

@@ -1032,7 +1032,7 @@ export const fr = {
   'surahReader.displayReadingHint': 'verset par verset',
   'surahReader.mushafPagesHint': 'pages du papier',
   'surahReader.mushafTajweedHint': 'règles en couleur',
-  'surahReader.mushafListenHint': 'Touchez un verset pour l’écouter, voir sa traduction ou son tafsir',
+  'surahReader.mushafListenHint': 'Touchez un verset pour l’écouter · pincez pour zoomer',
   'surahReader.mushafClose': 'Fermer les pages',
   'surahReader.mushafPlainShort': 'Classique',
   'surahReader.mushafTajweedShort': 'Couleurs',

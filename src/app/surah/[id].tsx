@@ -1501,11 +1501,10 @@ export default function SurahReadingScreen() {
               </View>
             ) : (
               <View style={styles.mushafHint}>
-                <Ionicons name="hand-left-outline" size={15} color={colors.goldLight} />
-                <Text numberOfLines={2} style={styles.mushafHintText}>{t("surahReader.mushafListenHint")} · {t("surahReader.mushafZoomHint")}</Text>
+                <Ionicons name="hand-left-outline" size={13} color={colors.goldLight} />
+                <Text numberOfLines={1} adjustsFontSizeToFit style={styles.mushafHintText}>{t("surahReader.mushafListenHint")}</Text>
               </View>
             )}
-            <Text style={styles.mushafCredit}>{t("surahReader.mushafCredit")}</Text>
           </SafeAreaView>
           {pageVerse ? (
             <Pressable style={styles.pageSheetBackdrop} onPress={() => setPageVerse(null)}>
@@ -1548,17 +1547,17 @@ const styles = StyleSheet.create({
   displayOptionTextOn: { color: colors.background },
   mushafRoot: { flex: 1 },
   mushafScreen: { flex: 1, backgroundColor: "#0B0918" },
-  mushafBar: { flexDirection: "row", alignItems: "center", gap: 10, paddingHorizontal: 10, paddingVertical: 2 },
-  mushafHint: { flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 7, paddingHorizontal: 16, paddingTop: 4 },
-  mushafHintText: { flexShrink: 1, color: colors.goldLight, fontFamily: typography.sans, fontSize: 13, fontWeight: "700", textAlign: "center" },
-  mushafBarButton: { width: 40, height: 40, borderRadius: 20, alignItems: "center", justifyContent: "center", backgroundColor: "rgba(255,255,255,0.06)" },
-  mushafBarTitle: { flex: 1, color: colors.text, fontFamily: typography.sans, fontSize: 16, fontWeight: "800" },
+  mushafBar: { flexDirection: "row", alignItems: "center", gap: 8, paddingHorizontal: 8, paddingVertical: 0, height: 40 },
+  mushafHint: { flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 6, paddingHorizontal: 14, height: 22 },
+  mushafHintText: { flexShrink: 1, color: colors.goldLight, fontFamily: typography.sans, fontSize: 12, fontWeight: "700", textAlign: "center" },
+  mushafBarButton: { width: 34, height: 34, borderRadius: 17, alignItems: "center", justifyContent: "center", backgroundColor: "rgba(255,255,255,0.06)" },
+  mushafBarTitle: { flex: 1, color: colors.text, fontFamily: typography.sans, fontSize: 15, fontWeight: "800" },
   mushafStyleSwitch: { flexDirection: "row", padding: 3, borderRadius: 18, backgroundColor: "rgba(255,255,255,0.06)" },
-  mushafStyleOption: { paddingHorizontal: 12, paddingVertical: 7, borderRadius: 15 },
+  mushafStyleOption: { paddingHorizontal: 11, paddingVertical: 5, borderRadius: 14 },
   mushafStyleOptionOn: { backgroundColor: colors.goldLight },
   mushafStyleText: { color: colors.goldLight, fontFamily: typography.sans, fontSize: 13, fontWeight: "800" },
   mushafStyleTextOn: { color: colors.background },
-  mushafPlayer: { flexDirection: "row", alignItems: "center", gap: 10, paddingHorizontal: 14, paddingVertical: 6 },
+  mushafPlayer: { flexDirection: "row", alignItems: "center", gap: 10, paddingHorizontal: 14, paddingVertical: 2 },
   mushafPlayerText: { flex: 1, color: colors.textSecondary, fontFamily: typography.sans, fontSize: 13 },
   pageSheet: { padding: 22, paddingBottom: 36, borderTopLeftRadius: 26, borderTopRightRadius: 26, backgroundColor: colors.backgroundSecondary, borderWidth: 1, borderBottomWidth: 0, borderColor: colors.borderSoft, gap: 12 },
   pageSheetTitle: { color: colors.goldLight, fontFamily: typography.sans, fontSize: 14, fontWeight: "800" },

@@ -1023,7 +1023,7 @@ export const en: Partial<Record<TranslationKey, string>> = {
   'surahReader.displayReadingHint': 'verse by verse',
   'surahReader.mushafPagesHint': 'printed pages',
   'surahReader.mushafTajweedHint': 'colour-coded rules',
-  'surahReader.mushafListenHint': 'Tap a verse to listen, read its translation or its tafsir',
+  'surahReader.mushafListenHint': 'Tap a verse to listen · pinch to zoom',
   'surahReader.mushafClose': 'Close the pages',
   'surahReader.mushafPlainShort': 'Classic',
   'surahReader.mushafTajweedShort': 'Colours',
