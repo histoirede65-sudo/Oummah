@@ -3832,6 +3832,9 @@ export const fr = {
   'wasil.passageVerse': 'Sourate {name} — verset {verse}',
   'wasil.openNotifications': 'Ouvrir mes notifications',
   'wasil.openGoals': 'Ouvrir mes objectifs',
+  'auth.notConfigured': 'La connexion sécurisée n’est pas encore configurée.',
+  'auth.noAccount': 'Aucun compte connecté.',
+  'adhan.notificationsDenied': 'Notifications non autorisées',
 } as const;
 
 export type TranslationKey = keyof typeof fr;

@@ -1,3 +1,4 @@
+import { translate } from "../../i18n/translate";
 import { storageService } from "../../core/storage/StorageService";
 import { revenueCatPaymentProvider } from "../premium/RevenueCatPaymentProvider";
 import AuthFallbackStorage from "expo-sqlite/kv-store";
@@ -51,7 +52,7 @@ function configuration() {
   )?.trim();
 
   if (!url || !key) {
-    throw new Error("La connexion sécurisée n’est pas encore configurée.");
+    throw new Error(translate("auth.notConfigured"));
   }
 
   return { url, key };
@@ -493,7 +494,7 @@ export async function signOut() {
 /** Permanently deletes the currently authenticated account on the server. */
 export async function deleteCurrentAccount() {
   const session = await getStoredSession();
-  if (!session) throw new Error("Aucun compte connecté.");
+  if (!session) throw new Error(translate("auth.noAccount"));
 
   const { url, key } = configuration();
   const response = await fetch(`${url}/functions/v1/delete-account`, {

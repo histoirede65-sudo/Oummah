@@ -3823,4 +3823,7 @@ export const en: Partial<Record<TranslationKey, string>> = {
   'wasil.passageVerse': 'Surah {name} — verse {verse}',
   'wasil.openNotifications': 'Open my notifications',
   'wasil.openGoals': 'Open my goals',
+  'auth.notConfigured': 'Secure sign-in is not set up yet.',
+  'auth.noAccount': 'No account is signed in.',
+  'adhan.notificationsDenied': 'Notifications not allowed',
 };
