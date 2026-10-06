@@ -2,6 +2,7 @@ import * as Notifications from "expo-notifications";
 import { Platform } from "react-native";
 
 import { ensureCommunityChannels } from "../tahajjud/communityChannels";
+import { translate, type TranslationKey } from "../../i18n";
 
 /**
  * Sound / vibration rules shared by every local notification.
@@ -29,16 +30,16 @@ export const VIBRATION_PATTERN = [0, 300, 180, 300];
 
 export const reminderChannelId = (mode: AlertMode) => `oummah-reminders-${mode}-v4`;
 
-const REMINDER_CHANNEL_NAMES: Record<AlertMode, string> = {
-  sound: "Rappels OUMMAH",
-  vibration: "Rappels OUMMAH · vibreur",
-  silent: "Rappels OUMMAH · silencieux",
+const REMINDER_CHANNEL_NAMES: Record<AlertMode, TranslationKey> = {
+  sound: "channel.reminders",
+  vibration: "channel.remindersVibrate",
+  silent: "channel.remindersSilent",
 };
 
 export async function ensureReminderChannel(mode: AlertMode) {
   if (Platform.OS !== "android") return;
   await Notifications.setNotificationChannelAsync(reminderChannelId(mode), {
-    name: REMINDER_CHANNEL_NAMES[mode],
+    name: translate(REMINDER_CHANNEL_NAMES[mode]),
     importance: mode === "silent" ? Notifications.AndroidImportance.DEFAULT : Notifications.AndroidImportance.HIGH,
     sound: mode === "sound" ? "default" : null,
     ...(mode === "silent" ? {} : { vibrationPattern: VIBRATION_PATTERN }),
@@ -59,7 +60,7 @@ const LEGACY_CHANNELS = [
 /** Channels targeted by server pushes (`channelId` in the Expo push payload). */
 async function ensurePushChannels() {
   const admin = {
-    name: "Communications OUMMAH",
+    name: translate("notifScreen.announcements"),
     importance: Notifications.AndroidImportance.HIGH,
     sound: "default",
     vibrationPattern: [0, 250, 140, 250],
@@ -70,7 +71,7 @@ async function ensurePushChannels() {
     Notifications.setNotificationChannelAsync("oummah-admin", admin),
     Notifications.setNotificationChannelAsync("oummah-admin-v2", admin),
     Notifications.setNotificationChannelAsync("oummah-mosque-v1", {
-      name: "Ma mosquée",
+      name: translate("channel.myMosque"),
       importance: Notifications.AndroidImportance.HIGH,
       vibrationPattern: [0, 200, 100, 200],
       sound: "default",

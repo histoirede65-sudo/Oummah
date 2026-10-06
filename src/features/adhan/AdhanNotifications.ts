@@ -4,6 +4,8 @@ import Constants, { AppOwnership } from "expo-constants";
 import * as Location from "expo-location";
 import { Platform } from "react-native";
 
+import { translate, type TranslationKey } from "../../i18n";
+
 import type {
   MosquePrayerSchedule,
   MosquePrayerTime,
@@ -114,32 +116,32 @@ const NEARBY_MOSQUE_MAX_DISTANCE_METERS = 3_000;
 
 const PRAYER_HADITHS: Record<
   MosquePrayerTime["key"],
-  ReadonlyArray<{ text: string; reference: string }>
+  ReadonlyArray<{ text: TranslationKey; reference: string }>
 > = {
   Fajr: [
-    { text: "Celui qui accomplit la prière du Fajr est sous la protection d’Allah.", reference: "Sahih Muslim, 657" },
-    { text: "Celui qui accomplit les prières de l’aube et de l’après-midi entrera au Paradis.", reference: "Sahih al-Bukhari, 574" },
-    { text: "La prière est une lumière.", reference: "Sahih Muslim, 223" },
+    { text: "prayerDone.hadithFajr", reference: "Sahih Muslim, 657" },
+    { text: "prayerDone.hadithAsr", reference: "Sahih al-Bukhari, 574" },
+    { text: "adhan.hadithLight", reference: "Sahih Muslim, 223" },
   ],
   Dhuhr: [
-    { text: "Parmi les œuvres les plus aimées d’Allah : la prière accomplie à son heure.", reference: "Sahih al-Bukhari, 527" },
-    { text: "Les cinq prières effacent les fautes comme l’eau enlève les impuretés.", reference: "Sahih al-Bukhari, 528" },
-    { text: "La prière est une lumière.", reference: "Sahih Muslim, 223" },
+    { text: "adhan.hadithOnTime", reference: "Sahih al-Bukhari, 527" },
+    { text: "prayerDone.hadithFive", reference: "Sahih al-Bukhari, 528" },
+    { text: "adhan.hadithLight", reference: "Sahih Muslim, 223" },
   ],
   Asr: [
-    { text: "Celui qui délaisse la prière du ‘Asr voit ses œuvres annulées.", reference: "Sahih al-Bukhari, 553" },
-    { text: "Celui qui accomplit les prières de l’aube et de l’après-midi entrera au Paradis.", reference: "Sahih al-Bukhari, 574" },
-    { text: "Parmi les œuvres les plus aimées d’Allah : la prière accomplie à son heure.", reference: "Sahih al-Bukhari, 527" },
+    { text: "adhan.hadithAsrLeft", reference: "Sahih al-Bukhari, 553" },
+    { text: "prayerDone.hadithAsr", reference: "Sahih al-Bukhari, 574" },
+    { text: "adhan.hadithOnTime", reference: "Sahih al-Bukhari, 527" },
   ],
   Maghrib: [
-    { text: "Les cinq prières effacent les fautes comme l’eau enlève les impuretés.", reference: "Sahih al-Bukhari, 528" },
-    { text: "La prière est une lumière.", reference: "Sahih Muslim, 223" },
-    { text: "Parmi les œuvres les plus aimées d’Allah : la prière accomplie à son heure.", reference: "Sahih al-Bukhari, 527" },
+    { text: "prayerDone.hadithFive", reference: "Sahih al-Bukhari, 528" },
+    { text: "adhan.hadithLight", reference: "Sahih Muslim, 223" },
+    { text: "adhan.hadithOnTime", reference: "Sahih al-Bukhari, 527" },
   ],
   Isha: [
-    { text: "Celui qui accomplit ‘Isha en groupe est comme s’il avait prié la moitié de la nuit.", reference: "Sahih Muslim, 656" },
-    { text: "Si les gens savaient ce qu’il y a dans les prières de l’‘Isha et du Fajr, ils y viendraient même en rampant.", reference: "Sahih al-Bukhari, 721" },
-    { text: "La prière est une lumière.", reference: "Sahih Muslim, 223" },
+    { text: "adhan.hadithIsha", reference: "Sahih Muslim, 656" },
+    { text: "adhan.hadithCrawl", reference: "Sahih al-Bukhari, 721" },
+    { text: "adhan.hadithLight", reference: "Sahih Muslim, 223" },
   ],
 };
 
@@ -200,7 +202,7 @@ async function configureAndroidChannels() {
   await Promise.all([
     ...(["makkah", "madinah", "egypt", "birds"] as const).map((voice) =>
       Notifications.setNotificationChannelAsync(`adhan-sound-${voice}-v5`, {
-      name: `Adhan — ${voice === "makkah" ? "La Mecque" : voice === "madinah" ? "Médine" : voice === "egypt" ? "Égypte" : "Oiseaux apaisants"}`,
+      name: `Adhan — ${translate(voice === "makkah" ? "adhan.voiceMakkah" : voice === "madinah" ? "adhan.voiceMadinah" : voice === "egypt" ? "adhan.voiceEgypt" : "adhan.voiceBirds")}`,
       importance: Notifications.AndroidImportance.HIGH,
         sound: `adhan_${voice}_notification.wav`,
       vibrationPattern: [0, 280, 160, 280],
@@ -239,7 +241,7 @@ async function configureAdhanNotificationCategory() {
     [
       {
         identifier: STOP_ADHAN_ACTION,
-        buttonTitle: "Arrêter l’adhan",
+        buttonTitle: translate("adhan.stop"),
         options: {
           opensAppToForeground: true,
           isAuthenticationRequired: false,
@@ -441,9 +443,9 @@ function contentFor(
 
   return {
     title: isAdvanceReminder
-      ? `${prayer.label} dans ${preferences.leadMinutes} min`
-      : `C’est l’heure de ${prayer.label}`,
-    body: `« ${hadith.text} » — ${hadith.reference}`,
+      ? translate("adhan.inMinutes", { prayer: prayer.label, minutes: preferences.leadMinutes })
+      : translate("adhan.timeFor", { prayer: prayer.label }),
+    body: `« ${translate(hadith.text)} » — ${hadith.reference}`,
     categoryIdentifier: ADHAN_NOTIFICATION_CATEGORY,
     data: {
       route: "/",
@@ -457,7 +459,7 @@ function contentFor(
       notificationRuntimeSound: runtimeSound,
       notificationChannel: channelIdFor(preferences.mode, preferences.voice),
       ...(isTest ? { notificationTest: true } : {}),
-      hadithText: hadith.text,
+      hadithText: translate(hadith.text),
       hadithReference: hadith.reference,
       ...(mosque
         ? {
@@ -488,8 +490,8 @@ function renewalRequest(lastAlertAt: number, preferences: AdhanPreferences): Not
   const mode = preferences.mode === "adhan" ? "notification" : preferences.mode;
   return {
     content: {
-      title: "Gardez vos alertes de prière",
-      body: "Ouvrez OUMMAH pour programmer les alertes des prochains jours.",
+      title: translate("adhan.renewTitle"),
+      body: translate("adhan.renewBody"),
       data: {
         route: "/",
         notificationOwner: NOTIFICATION_OWNER,

@@ -53,6 +53,7 @@ import {
   type NotificationReliability,
 } from "../features/notifications/notificationReliability";
 import { resyncWasilReminders } from "../features/wasil/WasilReminderService";
+import { useI18n, type TranslationKey } from "../i18n";
 import { colors } from "../theme/colors";
 import { getActiveAnnouncements, type PublicAnnouncement } from "../features/announcements/AnnouncementService";
 import { typography } from "../theme/typography";
@@ -75,25 +76,25 @@ async function getNotificationPrayerLocation(mosque: StoredMosque | null) {
     : null;
 }
 
-const FILTERS: ReadonlyArray<{ id: Filter; label: string }> = [
-  { id: "all", label: "Tout" },
-  { id: "prayer", label: "Prières" },
-  { id: "dua", label: "Dou‘as" },
-  { id: "learning", label: "Apprentissage" },
-  { id: "inspiration", label: "Inspiration" },
+const FILTERS: ReadonlyArray<{ id: Filter; label: TranslationKey }> = [
+  { id: "all", label: "notifScreen.all" },
+  { id: "prayer", label: "notifScreen.prayers" },
+  { id: "dua", label: "notifScreen.duas" },
+  { id: "learning", label: "notifScreen.learning" },
+  { id: "inspiration", label: "notifScreen.inspiration" },
 ];
 
-const MODES: ReadonlyArray<{ id: CenterAlertMode; label: string; icon: "volume-high-outline" | "phone-portrait-outline" | "notifications-off-outline" }> = [
-  { id: "sound", label: "Son", icon: "volume-high-outline" },
-  { id: "vibration", label: "Vibreur", icon: "phone-portrait-outline" },
-  { id: "silent", label: "Silencieux", icon: "notifications-off-outline" },
+const MODES: ReadonlyArray<{ id: CenterAlertMode; label: TranslationKey; icon: "volume-high-outline" | "phone-portrait-outline" | "notifications-off-outline" }> = [
+  { id: "sound", label: "notifScreen.sound", icon: "volume-high-outline" },
+  { id: "vibration", label: "notifScreen.vibration", icon: "phone-portrait-outline" },
+  { id: "silent", label: "notifScreen.silent", icon: "notifications-off-outline" },
 ];
 
 const REMINDER_SECTIONS = [
-  { id: "Objectifs", label: "Objectifs" },
-  { id: "Dou‘as", label: "Dou‘as du quotidien" },
-  { id: "Apprentissage", label: "Apprentissage" },
-  { id: "Inspiration", label: "Inspiration" },
+  { id: "Objectifs", label: "notifScreen.goals" },
+  { id: "Dou‘as", label: "notifScreen.dailyDuas" },
+  { id: "Apprentissage", label: "notifScreen.learning" },
+  { id: "Inspiration", label: "notifScreen.inspiration" },
 ] as const;
 
 type IconName = keyof typeof Ionicons.glyphMap;
@@ -153,6 +154,7 @@ function notificationTimeValue(timeLabel: string) {
 }
 
 export default function NotificationsScreen() {
+  const { t } = useI18n();
   const [preferences, setPreferences] = useState<NotificationCenterPreferences>(
     DEFAULT_NOTIFICATION_CENTER_PREFERENCES,
   );
@@ -300,8 +302,8 @@ export default function NotificationsScreen() {
       setSavedPreferences(nextPreferences);
     } catch {
       Alert.alert(
-        "Horaire non enregistré",
-        "Impossible d’enregistrer ce nouvel horaire pour le moment. Réessayez dans quelques instants.",
+        t("notifScreen.saveErrorTitle"),
+        t("notifScreen.saveErrorBody"),
       );
     } finally {
       setSaving(false);
@@ -338,8 +340,8 @@ export default function NotificationsScreen() {
     );
     if (!granted) {
       Alert.alert(
-        "Autorisation nécessaire",
-        "Autorisez les notifications pour recevoir vos rappels même lorsque l’application est fermée.",
+        t("notifScreen.permTitle"),
+        t("notifScreen.permBody"),
       );
       return;
     }
@@ -384,11 +386,11 @@ export default function NotificationsScreen() {
           <Ionicons name="chevron-back" size={22} color="#FFF8EF" />
         </Pressable>
         <View style={styles.headerCopy}>
-          <Text allowFontScaling={false} style={styles.eyebrow}>VOTRE QUOTIDIEN</Text>
+          <Text allowFontScaling={false} style={styles.eyebrow}>{t("notifScreen.eyebrow")}</Text>
           <Text allowFontScaling={false} numberOfLines={1} style={styles.title}>Notifications</Text>
           <Pressable onPress={openSettings} style={styles.editNotificationsButton}>
             <Ionicons name="options-outline" size={18} color="#F2BE55" />
-            <Text allowFontScaling={false} style={styles.editNotificationsText}>Modifier mes notifications</Text>
+            <Text allowFontScaling={false} style={styles.editNotificationsText}>{t("notifScreen.edit")}</Text>
           </Pressable>
         </View>
       </View>
@@ -400,12 +402,12 @@ export default function NotificationsScreen() {
           </View>
           <View style={styles.summaryCopy}>
             <Text style={styles.summaryTitle}>
-              {unreadCount ? `${unreadCount} rappel${unreadCount > 1 ? "s" : ""} à voir` : "Vous êtes à jour"}
+              {unreadCount ? t(unreadCount > 1 ? "notifScreen.unreadMany" : "notifScreen.unreadOne", { count: unreadCount }) : t("notifScreen.upToDate")}
             </Text>
             <Text style={styles.summaryText}>
               {preferences.systemEnabled
-                ? "Les rappels choisis sont actifs sur cet appareil."
-                : "Activez les alertes système depuis les réglages."}
+                ? t("notifScreen.activeHere")
+                : t("notifScreen.enableSystem")}
             </Text>
           </View>
           {unreadCount ? (
@@ -419,13 +421,13 @@ export default function NotificationsScreen() {
           <View style={styles.reliabilityCard}>
             <View style={styles.reliabilityHead}>
               <Ionicons name="alarm-outline" size={19} color="#F4C75E" />
-              <Text style={styles.reliabilityTitle}>Recevoir chaque alerte à l’heure</Text>
+              <Text style={styles.reliabilityTitle}>{t("notifScreen.reliabilityTitle")}</Text>
             </View>
             {!reliability.exactAlarms ? (
               <Pressable onPress={() => void openExactAlarmSettings()} style={({ pressed }) => [styles.reliabilityRow, pressed && styles.pressed]}>
                 <View style={styles.reliabilityCopy}>
-                  <Text style={styles.reliabilityLabel}>Autoriser « Alarmes et rappels »</Text>
-                  <Text style={styles.reliabilityText}>Sans cette autorisation, Android peut retarder l’adhan de plusieurs minutes quand le téléphone est en veille.</Text>
+                  <Text style={styles.reliabilityLabel}>{t("notifScreen.exactAlarms")}</Text>
+                  <Text style={styles.reliabilityText}>{t("notifScreen.exactAlarmsText")}</Text>
                 </View>
                 <Ionicons name="chevron-forward" size={16} color="#F4C75E" />
               </Pressable>
@@ -433,8 +435,8 @@ export default function NotificationsScreen() {
             {!reliability.batteryUnrestricted ? (
               <Pressable onPress={() => void openBatteryOptimizationSettings()} style={({ pressed }) => [styles.reliabilityRow, pressed && styles.pressed]}>
                 <View style={styles.reliabilityCopy}>
-                  <Text style={styles.reliabilityLabel}>Retirer OUMMAH de l’optimisation de batterie</Text>
-                  <Text style={styles.reliabilityText}>Certains téléphones (Samsung, Xiaomi, Huawei…) bloquent les alertes des applications « optimisées ». Choisissez OUMMAH puis « Ne pas optimiser » ou « Aucune restriction ».</Text>
+                  <Text style={styles.reliabilityLabel}>{t("notifScreen.battery")}</Text>
+                  <Text style={styles.reliabilityText}>{t("notifScreen.batteryText")}</Text>
                 </View>
                 <Ionicons name="chevron-forward" size={16} color="#F4C75E" />
               </Pressable>
@@ -442,8 +444,8 @@ export default function NotificationsScreen() {
             {!reliability.soundAllowed ? (
               <Pressable onPress={() => void Linking.openSettings().catch(() => undefined)} style={({ pressed }) => [styles.reliabilityRow, pressed && styles.pressed]}>
                 <View style={styles.reliabilityCopy}>
-                  <Text style={styles.reliabilityLabel}>Activer les sons d’OUMMAH</Text>
-                  <Text style={styles.reliabilityText}>Les sons des notifications sont coupés pour OUMMAH dans les réglages de l’iPhone : l’adhan et la vibration ne peuvent pas se déclencher.</Text>
+                  <Text style={styles.reliabilityLabel}>{t("notifScreen.sounds")}</Text>
+                  <Text style={styles.reliabilityText}>{t("notifScreen.soundsText")}</Text>
                 </View>
                 <Ionicons name="chevron-forward" size={16} color="#F4C75E" />
               </Pressable>
@@ -458,14 +460,14 @@ export default function NotificationsScreen() {
               onPress={() => setFilter(item.id)}
               style={[styles.filter, filter === item.id && styles.filterActive]}
             >
-              <Text style={[styles.filterText, filter === item.id && styles.filterTextActive]}>{item.label}</Text>
+              <Text style={[styles.filterText, filter === item.id && styles.filterTextActive]}>{t(item.label)}</Text>
             </Pressable>
           ))}
         </ScrollView>
 
         {adminAnnouncements.length ? (
           <View style={styles.adminAnnouncements}>
-            <Text style={styles.adminAnnouncementsTitle}>Communications OUMMAH</Text>
+            <Text style={styles.adminAnnouncementsTitle}>{t("notifScreen.announcements")}</Text>
             {adminAnnouncements.map((announcement) => (
               <Pressable key={announcement.id} disabled={!announcement.actionRoute} onPress={() => announcement.actionRoute && router.push(announcement.actionRoute as Href)} style={styles.adminAnnouncementCard}>
                 <View style={styles.adminAnnouncementIcon}><Ionicons name="megaphone-outline" size={18} color="#26181C" /></View>
@@ -500,7 +502,7 @@ export default function NotificationsScreen() {
                   <View style={styles.itemCopy}>
                     <View style={styles.itemTitleRow}>
                       <Text style={[styles.itemTitle, unread && styles.itemTitleUnread]}>{item.title}</Text>
-                      {unread ? <Text style={styles.unreadBadge}>NOUVEAU</Text> : null}
+                      {unread ? <Text style={styles.unreadBadge}>{t("menu.new")}</Text> : null}
                     </View>
                     <Text style={[styles.itemBody, unread && styles.itemBodyUnread]}>{item.body}</Text>
                     <Text style={[styles.itemTime, unread && styles.itemTimeUnread]}>{item.timeLabel}</Text>
@@ -512,8 +514,8 @@ export default function NotificationsScreen() {
           ) : (
             <View style={styles.emptyCard}>
               <Ionicons name="checkmark-circle-outline" size={34} color="#72C7A7" />
-              <Text style={styles.emptyTitle}>Rien à signaler ici</Text>
-              <Text style={styles.emptyText}>Les prochains rappels apparaîtront au bon moment de la journée.</Text>
+              <Text style={styles.emptyTitle}>{t("notifScreen.emptyTitle")}</Text>
+              <Text style={styles.emptyText}>{t("notifScreen.emptyText")}</Text>
             </View>
           )}
         </View>
@@ -526,8 +528,8 @@ export default function NotificationsScreen() {
             <View style={styles.handle} />
             <View style={styles.sheetHeader}>
               <View style={styles.sheetHeaderCopy}>
-                <Text style={styles.sheetTitle}>Mes rappels</Text>
-                <Text style={styles.sheetSubtitle}>Touchez une heure pour la changer</Text>
+                <Text style={styles.sheetTitle}>{t("notifScreen.myReminders")}</Text>
+                <Text style={styles.sheetSubtitle}>{t("notifScreen.tapTime")}</Text>
               </View>
               <Pressable onPress={closeSettings} hitSlop={8} style={styles.closeButton}>
                 <Ionicons name="close" size={21} color="#FFFFFF" />
@@ -539,11 +541,11 @@ export default function NotificationsScreen() {
                 <View style={styles.masterIcon}>
                   <Ionicons name="notifications" size={18} color="#26181C" />
                 </View>
-                <Text style={styles.masterTitle}>Rappels sur le téléphone</Text>
+                <Text style={styles.masterTitle}>{t("notifScreen.phoneReminders")}</Text>
                 <GoldToggle
                   value={preferences.systemEnabled}
                   onValueChange={(value) => void toggleSystemNotifications(value)}
-                  accessibilityLabel="Rappels sur le téléphone"
+                  accessibilityLabel={t("notifScreen.phoneReminders")}
                 />
               </View>
 
@@ -559,17 +561,17 @@ export default function NotificationsScreen() {
                       style={[styles.segment, selected && styles.segmentActive]}
                     >
                       <Ionicons name={mode.icon} size={16} color={selected ? "#26181C" : "#FFFFFF"} />
-                      <Text style={[styles.segmentText, selected && styles.segmentTextActive]}>{mode.label}</Text>
+                      <Text style={[styles.segmentText, selected && styles.segmentTextActive]}>{t(mode.label)}</Text>
                     </Pressable>
                   );
                 })}
               </View>
-              <Text style={styles.adhanHintText}>L’adhan se règle depuis la carte des prières de l’accueil.</Text>
+              <Text style={styles.adhanHintText}>{t("notifScreen.adhanHint")}</Text>
 
               <View style={!preferences.systemEnabled && styles.disabledChoice}>
                 {REMINDER_SECTIONS.map((section) => (
                   <View key={section.id}>
-                    <Text style={styles.sectionLabel}>{section.label}</Text>
+                    <Text style={styles.sectionLabel}>{t(section.label)}</Text>
                     <View style={styles.settingsGroup}>
                       {CENTER_REMINDERS.filter((reminder) => reminder.section === section.id).map((reminder, index) => {
                         const enabled = preferences.reminders[reminder.id];
@@ -580,12 +582,12 @@ export default function NotificationsScreen() {
                               <Ionicons name={look.icon} size={17} color={look.accent} />
                             </View>
                             <Text numberOfLines={1} style={[styles.settingTitle, !enabled && styles.settingTitleOff]}>
-                              {reminder.title}
+                              {t(reminder.title)}
                             </Text>
                             {reminder.time && enabled ? (
                               <Pressable
                                 accessibilityRole="button"
-                                accessibilityLabel={`Changer l’heure : ${reminder.title}`}
+                                accessibilityLabel={t("notifScreen.changeTime", { reminder: t(reminder.title) })}
                                 hitSlop={6}
                                 onPress={() => openReminderTimePicker(reminder)}
                                 style={({ pressed }) => [styles.timePill, pressed && styles.reminderTimeButtonPressed]}
@@ -601,7 +603,7 @@ export default function NotificationsScreen() {
                                   reminders: { ...current.reminders, [reminder.id]: value },
                                 }))
                               }
-                              accessibilityLabel={reminder.title}
+                              accessibilityLabel={t(reminder.title)}
                             />
                           </View>
                         );
@@ -622,7 +624,7 @@ export default function NotificationsScreen() {
             >
               <Ionicons name={hasPendingChanges ? "checkmark" : "checkmark-circle"} size={19} color={hasPendingChanges ? "#172018" : "#72C7A7"} />
               <Text style={[styles.saveButtonText, !hasPendingChanges && styles.saveButtonTextSaved]}>
-                {saving ? "Enregistrement…" : hasPendingChanges ? "Enregistrer" : "Enregistré"}
+                {saving ? t("notifScreen.saving") : hasPendingChanges ? t("notifScreen.save") : t("notifScreen.saved")}
               </Text>
             </Pressable>
           </View>
@@ -631,9 +633,9 @@ export default function NotificationsScreen() {
             <View style={styles.timePickerOverlay}>
               <Pressable style={StyleSheet.absoluteFill} onPress={() => setTimePickerReminder(null)} />
               <View style={styles.timePickerCard}>
-                <Text style={styles.timePickerEyebrow}>HORAIRE DE LA NOTIFICATION</Text>
-                <Text style={styles.timePickerTitle}>{activeTimeReminder?.title ?? "Choisir l’heure"}</Text>
-                <Text style={styles.timePickerSubtitle}>Choisissez l’heure à laquelle vous souhaitez recevoir ce rappel.</Text>
+                <Text style={styles.timePickerEyebrow}>{t("notifScreen.timeEyebrow")}</Text>
+                <Text style={styles.timePickerTitle}>{activeTimeReminder ? t(activeTimeReminder.title) : t("notifScreen.pickTime")}</Text>
+                <Text style={styles.timePickerSubtitle}>{t("notifScreen.timeText")}</Text>
                 <View style={styles.timePickerValues}>
                   <View style={styles.timePickerColumn}>
                     <Pressable onPress={() => setTimePickerHour((value) => (value + 1) % 24)} style={styles.timePickerAdjust}><Ionicons name="chevron-up" size={22} color="#F4C75E" /></Pressable>
@@ -648,7 +650,7 @@ export default function NotificationsScreen() {
                   </View>
                 </View>
                 <Pressable disabled={saving} onPress={() => void saveReminderTime()} style={[styles.timePickerDone, saving && styles.disabledChoice]}>
-                  <Text style={styles.timePickerDoneText}>{saving ? "Enregistrement…" : "Valider cette heure"}</Text>
+                  <Text style={styles.timePickerDoneText}>{saving ? t("notifScreen.saving") : t("notifScreen.confirmTime")}</Text>
                 </Pressable>
               </View>
             </View>

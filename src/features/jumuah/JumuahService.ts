@@ -1,6 +1,7 @@
 import * as Notifications from "expo-notifications";
 import { Platform } from "react-native";
 import { storageService } from "../../core/storage/StorageService";
+import { translate } from "../../i18n";
 
 const OWNER = "oummah-jumuah";
 const CHANNEL = "oummah-jumuah-v2";
@@ -18,7 +19,7 @@ export async function syncJumuahNotification() {
   const scheduled = await Notifications.getAllScheduledNotificationsAsync();
   await Promise.all(scheduled.filter((item) => item.content.data?.notificationOwner === OWNER).map((item) => Notifications.cancelScheduledNotificationAsync(item.identifier)));
   await Notifications.scheduleNotificationAsync({
-    content: { title: "C’est vendredi 🤍 Prépare ta Djoumou’a", body: "Ouvre OUMMAH, une surprise t’attend.", sound: "default", data: { notificationOwner: OWNER, route: JUMUAH_ROUTE } },
+    content: { title: translate("jumuahNotif.title"), body: translate("jumuahNotif.body"), sound: "default", data: { notificationOwner: OWNER, route: JUMUAH_ROUTE } },
     trigger: { type: Notifications.SchedulableTriggerInputTypes.WEEKLY, weekday: 6, hour: 10, minute: 0, channelId: Platform.OS === "android" ? CHANNEL : undefined },
   });
   return true;

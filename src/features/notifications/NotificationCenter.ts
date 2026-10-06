@@ -6,11 +6,13 @@ import type {
   MosquePrayerKey,
   MosquePrayerSchedule,
 } from "../mosques/data/mosquePrayerTimes";
-import { isGoalComplete } from "../daily-goals/domain/DailyGoal";
+import { isGoalComplete, type DailyGoal } from "../daily-goals/domain/DailyGoal";
 import { goalRepository } from "../daily-goals/data/goalRepository";
 import { goalProgressBridge } from "../daily-goals/services/goalProgressBridge";
 import { alertSound, ensureReminderChannel, reminderChannelId, VIBRATION_PATTERN } from "./notificationChannels";
 import { isNotificationPermissionGranted } from "./NotificationPermissions";
+import { translate, type TranslationKey } from "../../i18n";
+import { goalTitle } from "../daily-goals/presentation/goalText";
 
 export type CenterReminderId =
   | "morning-dua"
@@ -49,23 +51,23 @@ export type NotificationCenterItem = {
 
 export const CENTER_REMINDERS: ReadonlyArray<{
   id: CenterReminderId;
-  title: string;
-  description: string;
+  title: TranslationKey;
+  description: TranslationKey;
   section: "Prières" | "Dou‘as" | "Apprentissage" | "Inspiration" | "Objectifs";
   time?: string;
 }> = [
-  { id: "jummah", title: "Préparer Joumou‘a", description: "Le vendredi avant l’heure de votre mosquée", section: "Prières" },
-  { id: "morning-dua", title: "Dou‘as du matin", description: "Commencer la journée par les adhkār", section: "Dou‘as", time: "07:00" },
-  { id: "leave-home-dua", title: "En sortant de chez soi", description: "Au début des horaires de bureau", section: "Dou‘as", time: "08:00" },
-  { id: "before-meal-dua", title: "Avant de manger", description: "Rappel autour de la pause du midi", section: "Dou‘as", time: "12:15" },
-  { id: "enter-home-dua", title: "En rentrant chez soi", description: "À la fin des horaires de bureau", section: "Dou‘as", time: "18:30" },
-  { id: "evening-dua", title: "Dou‘as du soir", description: "Terminer la journée par les adhkār", section: "Dou‘as", time: "20:30" },
-  { id: "wake-up-dua", title: "Au réveil", description: "L’invocation authentique du réveil", section: "Dou‘as", time: "06:45" },
-  { id: "sleep-dua", title: "Avant de dormir", description: "L’invocation authentique avant le coucher", section: "Dou‘as", time: "22:30" },
-  { id: "hifz", title: "Objectif mémorisation", description: "Versets restant à apprendre aujourd’hui", section: "Apprentissage", time: "18:00" },
-  { id: "verse-of-day", title: "Verset du jour", description: "S’il n’a pas encore été consulté", section: "Inspiration", time: "13:00" },
-  { id: "hadith-of-day", title: "Hadith du jour", description: "Un rappel authentique chaque soir", section: "Inspiration", time: "21:00" },
-  { id: "daily-goals", title: "Rappel des objectifs", description: "Un rappel s’il te reste des objectifs à accomplir", section: "Objectifs", time: "20:00" },
+  { id: "jummah", title: "notif.jummah", description: "notif.jummahDesc", section: "Prières" },
+  { id: "morning-dua", title: "notif.morning", description: "notif.morningDesc", section: "Dou‘as", time: "07:00" },
+  { id: "leave-home-dua", title: "notif.leaveHome", description: "notif.leaveHomeDesc", section: "Dou‘as", time: "08:00" },
+  { id: "before-meal-dua", title: "notif.meal", description: "notif.mealDesc", section: "Dou‘as", time: "12:15" },
+  { id: "enter-home-dua", title: "notif.enterHome", description: "notif.enterHomeDesc", section: "Dou‘as", time: "18:30" },
+  { id: "evening-dua", title: "notif.evening", description: "notif.eveningDesc", section: "Dou‘as", time: "20:30" },
+  { id: "wake-up-dua", title: "notif.wake", description: "notif.wakeDesc", section: "Dou‘as", time: "06:45" },
+  { id: "sleep-dua", title: "notif.sleep", description: "notif.sleepDesc", section: "Dou‘as", time: "22:30" },
+  { id: "hifz", title: "notif.hifz", description: "notif.hifzDesc", section: "Apprentissage", time: "18:00" },
+  { id: "verse-of-day", title: "notif.verse", description: "notif.verseDesc", section: "Inspiration", time: "13:00" },
+  { id: "hadith-of-day", title: "notif.hadith", description: "notif.hadithDesc", section: "Inspiration", time: "21:00" },
+  { id: "daily-goals", title: "notif.goals", description: "notif.goalsDesc", section: "Objectifs", time: "20:00" },
 ];
 
 export const DEFAULT_NOTIFICATION_CENTER_PREFERENCES: NotificationCenterPreferences = {
@@ -277,7 +279,7 @@ function isCenterScheduledNotification(notification: Notifications.NotificationR
   const title = normalizedNotificationText(notification.content.title);
   const route = typeof data?.route === "string" ? data.route : "";
   return (
-    CENTER_REMINDERS.some((item) => normalizedNotificationText(item.title) === title) ||
+    CENTER_REMINDERS.some((item) => normalizedNotificationText(translate(item.title)) === title) ||
     route.includes("open=daily") ||
     route.includes("section=morning") ||
     route.includes("section=evening") ||
@@ -460,16 +462,16 @@ export function buildNotificationCenterItems({
     icon: string;
     accent: string;
   }> = [
-    { id: "wake-up-dua", time: "06:45", title: "Au réveil", body: "Commencez votre journée avec l’invocation authentique du réveil.", route: "/dua?section=sleep&focus=wake-up", category: "dua", icon: "sunny-outline", accent: "#F4C95D" },
-    { id: "morning-dua", time: "07:00", title: "Dou‘as du matin", body: "Commencez la journée avec les adhkār authentiques du matin.", route: "/dua?section=morning", category: "dua", icon: "sunny-outline", accent: "#F4C95D" },
-    { id: "leave-home-dua", time: "08:00", title: "Avant de sortir", body: "Pensez à l’invocation en sortant de chez vous.", route: "/dua?section=home&focus=leave", category: "dua", icon: "exit-outline", accent: "#E3A85F" },
-    { id: "before-meal-dua", time: "12:15", title: "Avant de manger", body: "Un rappel simple : prononcez le nom d’Allah avant votre repas.", route: "/dua?section=food&focus=before-meal", category: "dua", icon: "restaurant-outline", accent: "#CF9561" },
-    { id: "verse-of-day", time: "13:00", title: "Votre verset du jour vous attend", body: dailyVerseReference ? `Découvrez aujourd’hui le verset ${dailyVerseReference[1]}:${dailyVerseReference[2]}.` : "Quelques minutes de lecture peuvent éclairer toute votre journée.", route: dailyVerseRoute, category: "inspiration", icon: "book-outline", accent: "#A878D0" },
-    { id: "hifz", time: "18:00", title: "Objectif Hifz", body: "Reprenez votre mémorisation là où vous l’avez laissée.", route: "/hifz", category: "learning", icon: "school-outline", accent: "#6BBCA8" },
-    { id: "enter-home-dua", time: "18:30", title: "En rentrant chez vous", body: "Pensez à l’invocation en entrant dans votre foyer.", route: "/dua?section=home&focus=enter", category: "dua", icon: "home-outline", accent: "#D8A767" },
-    { id: "evening-dua", time: "20:30", title: "Dou‘as du soir", body: "Prenez un moment pour les adhkār authentiques du soir.", route: "/dua?section=evening", category: "dua", icon: "moon-outline", accent: "#8D78CB" },
-    { id: "hadith-of-day", time: "21:00", title: "Hadith du jour", body: "Votre rappel du jour n’a pas encore été consulté.", route: "/hadiths?open=daily", category: "inspiration", icon: "chatbubble-ellipses-outline", accent: "#C98CBA" },
-    { id: "sleep-dua", time: "22:30", title: "Avant de dormir", body: "Terminez la journée avec l’invocation authentique du coucher.", route: "/dua?section=sleep&focus=bedtime", category: "dua", icon: "bed-outline", accent: "#7D70BC" },
+    { id: "wake-up-dua", time: "06:45", title: translate("notif.wake"), body: translate("notif.wakeBody"), route: "/dua?section=sleep&focus=wake-up", category: "dua", icon: "sunny-outline", accent: "#F4C95D" },
+    { id: "morning-dua", time: "07:00", title: translate("notif.morning"), body: translate("notif.morningBody"), route: "/dua?section=morning", category: "dua", icon: "sunny-outline", accent: "#F4C95D" },
+    { id: "leave-home-dua", time: "08:00", title: translate("notif.beforeLeaving"), body: translate("notif.leaveHomeBody"), route: "/dua?section=home&focus=leave", category: "dua", icon: "exit-outline", accent: "#E3A85F" },
+    { id: "before-meal-dua", time: "12:15", title: translate("notif.meal"), body: translate("notif.mealBody"), route: "/dua?section=food&focus=before-meal", category: "dua", icon: "restaurant-outline", accent: "#CF9561" },
+    { id: "verse-of-day", time: "13:00", title: translate("notif.verseTitle"), body: dailyVerseReference ? translate("notif.verseBody", { verse: `${dailyVerseReference[1]}:${dailyVerseReference[2]}` }) : translate("notif.verseFallback"), route: dailyVerseRoute, category: "inspiration", icon: "book-outline", accent: "#A878D0" },
+    { id: "hifz", time: "18:00", title: translate("notif.hifzTitle"), body: translate("notif.hifzBody"), route: "/hifz", category: "learning", icon: "school-outline", accent: "#6BBCA8" },
+    { id: "enter-home-dua", time: "18:30", title: translate("notif.enterHomeTitle"), body: translate("notif.enterHomeBody"), route: "/dua?section=home&focus=enter", category: "dua", icon: "home-outline", accent: "#D8A767" },
+    { id: "evening-dua", time: "20:30", title: translate("notif.evening"), body: translate("notif.eveningBody"), route: "/dua?section=evening", category: "dua", icon: "moon-outline", accent: "#8D78CB" },
+    { id: "hadith-of-day", time: "21:00", title: translate("notif.hadith"), body: translate("notif.hadithBody"), route: "/hadiths?open=daily", category: "inspiration", icon: "chatbubble-ellipses-outline", accent: "#C98CBA" },
+    { id: "sleep-dua", time: "22:30", title: translate("notif.sleep"), body: translate("notif.sleepBody"), route: "/dua?section=sleep&focus=bedtime", category: "dua", icon: "bed-outline", accent: "#7D70BC" },
   ];
 
   timedItems.forEach((item) => {
@@ -484,7 +486,7 @@ export function buildNotificationCenterItems({
       title: item.title,
       body:
         item.id === "hifz" && remaining
-          ? `Il vous reste ${remaining} verset${remaining > 1 ? "s" : ""} pour atteindre votre objectif du jour.`
+          ? translate(remaining > 1 ? "notif.hifzRemainingMany" : "notif.hifzRemainingOne", { count: remaining })
           : item.body,
       timeLabel: itemTime,
       route: item.route,
@@ -499,11 +501,11 @@ export function buildNotificationCenterItems({
       id: `${day}:jummah`,
       reminderId: "jummah",
       category: "prayer",
-      title: "Joumou‘a aujourd’hui",
+      title: translate("notif.jummahToday"),
       body: mosqueName
-        ? `Préparez-vous pour la prière du vendredi à ${mosqueName}.`
-        : "Préparez-vous pour la prière du vendredi et ses bienfaits.",
-      timeLabel: dhuhr?.time ?? "Vendredi",
+        ? translate("notif.jummahAt", { mosque: mosqueName })
+        : translate("notif.jummahBody"),
+      timeLabel: dhuhr?.time ?? translate("notif.friday"),
       route: "/mosques",
       icon: "business-outline",
       accent: "#E8B84E",
@@ -569,14 +571,14 @@ function notificationContent(
   };
 }
 
-function dailyGoalsNotificationCopy(remainingGoals: Array<{ title: string }>) {
-  const labels = remainingGoals.slice(0, 2).map((goal) => goal.title).join(", ");
+function dailyGoalsNotificationCopy(remainingGoals: DailyGoal[]) {
+  const labels = remainingGoals.slice(0, 2).map((goal) => goalTitle(goal, translate)).join(", ");
   const extra = remainingGoals.length > 2
-    ? ` et ${remainingGoals.length - 2} autre${remainingGoals.length - 2 > 1 ? "s" : ""}`
+    ? translate("notif.goalsMore", { count: remainingGoals.length - 2 })
     : "";
   return {
-    title: remainingGoals.length === 1 ? "Un dernier objectif aujourd’hui" : "Tes objectifs du jour",
-    body: `Il te reste : ${labels}${extra}.`,
+    title: remainingGoals.length === 1 ? translate("notif.goalsLast") : translate("notif.goalsTitle"),
+    body: translate("notif.goalsBody", { goals: `${labels}${extra}` }),
   };
 }
 
@@ -689,8 +691,8 @@ async function syncNotificationCenterScheduleInternal(
     ids.push(
       await Notifications.scheduleNotificationAsync({
         content: notificationContent(
-          reminder.title,
-          reminder.description,
+          translate(reminder.title),
+          translate(reminder.description),
           preferences.mode,
           reminder.id === "verse-of-day"
             ? "/verse-of-day"
