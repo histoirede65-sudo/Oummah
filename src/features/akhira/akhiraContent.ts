@@ -978,7 +978,21 @@ export const AKHIRA_PARTS: AkhiraPart[] = [
         "arabic": "الأعراف",
         "title": "Al-A‘râf",
         "titleEn": "Al-A‘raf",
-        "explain": [],
+        "explain": [
+          {
+            "kind": "scholar",
+            "ref": "Ibn Bâz · binbaz.org.sa, commentaire du Tafsîr d’Ibn Kathîr (7:46-49)",
+            "refEn": "Ibn Bâz · binbaz.org.sa, commentary on Tafsir Ibn Kathir (7:46-49)",
+            "url": "https://binbaz.org.sa/audios/3199",
+            "arabic": "والأقرب مثلما تقدَّم أنَّهم قومٌ استوت حسناتُهم وسيِّئاتهم، وُقِفُوا ثم أُذِنَ لهم بدخول الجنَّة، فهم على الأعراف بين الجنَّة والنار، ثم أُذِنَ لهم بدخول الجنَّة. […] أمر الأعراف غريبٌ جدًّا في اختلاف الناس، سبحان الله! ما أعظم شأنه! عبرة.",
+            "fr": "Le plus probable, comme cela a été dit, est qu’ils sont des gens dont les bonnes et les mauvaises actions se sont équilibrées : ils ont été arrêtés, puis il leur a été permis d’entrer au Paradis. Ils sont donc sur al-A‘râf, entre le Paradis et le Feu, puis il leur est permis d’entrer au Paradis. […] La question d’al-A‘râf est très singulière par les divergences des gens à son sujet, gloire à Allah ! Que son affaire est immense ! C’est une leçon.",
+            "en": "The most likely, as was said before, is that they are people whose good and bad deeds were equal: they were held back, then they were permitted to enter Paradise. So they are on al-A‘raf, between Paradise and the Fire, then they are permitted to enter Paradise. […] The matter of al-A‘raf is very strange in how people have differed over it, glory be to Allah! How great its matter is! It is a lesson.",
+            "highlight": "des gens dont les bonnes et les mauvaises actions se sont équilibrées",
+            "highlightEn": "people whose good and bad deeds were equal",
+            "aiTranslation": true,
+            "id": "araf-e1"
+          }
+        ],
         "texts": [
           {
             "kind": "quran",
