@@ -48,11 +48,28 @@ export default function HalalPlaceCard({ place, favorite, onPress, onFavorite, c
   const { language, t } = useI18n();
   const verification = verificationColors(place);
   const verificationText = halalVerificationText(place, t);
+  // Vignette légère (≈ 35 Ko au lieu de plusieurs centaines) : la carte n'affiche que 78 px de large.
+  const [photoAttempt, setPhotoAttempt] = useState(0);
+  const googleSource = getGoogleHalalPhotoSource(place.photoName, 240);
   const photoSource = place.communityPhotoUrl
     ? { uri: place.communityPhotoUrl }
-    : getGoogleHalalPhotoSource(place.photoName);
+    : googleSource && photoAttempt > 0
+      ? { ...googleSource, uri: `${googleSource.uri}&retry=${photoAttempt}` }
+      : googleSource;
   const [photoFailed, setPhotoFailed] = useState(false);
-  useEffect(() => setPhotoFailed(false), [place.photoName, place.communityPhotoUrl]);
+  useEffect(() => {
+    setPhotoFailed(false);
+    setPhotoAttempt(0);
+  }, [place.photoName, place.communityPhotoUrl]);
+  useEffect(() => {
+    if (!photoFailed || photoAttempt >= 2 || place.communityPhotoUrl) return;
+    // Trop de photos demandées en même temps (refus 429) : on réessaie un peu plus tard.
+    const timer = setTimeout(() => {
+      setPhotoAttempt((attempt) => attempt + 1);
+      setPhotoFailed(false);
+    }, 1200 * (photoAttempt + 1));
+    return () => clearTimeout(timer);
+  }, [photoFailed, photoAttempt, place.communityPhotoUrl]);
   const displayPhoto = photoSource && !photoFailed;
   return (
     <Pressable
@@ -69,7 +86,7 @@ export default function HalalPlaceCard({ place, favorite, onPress, onFavorite, c
       />
       <View style={[styles.iconWrap, displayPhoto && styles.photoWrap, compact && displayPhoto && styles.photoWrapCompact]}>
         {displayPhoto ? (
-          <Image source={photoSource} contentFit="cover" transition={180} onError={() => setPhotoFailed(true)} style={StyleSheet.absoluteFill} />
+          <Image source={photoSource} cachePolicy="memory-disk" recyclingKey={place.id} contentFit="cover" transition={120} onError={() => setPhotoFailed(true)} style={StyleSheet.absoluteFill} />
         ) : (
           <Ionicons name={CATEGORY_ICONS[place.category]} size={compact ? 19 : 22} color={colors.goldLight} />
         )}

@@ -227,7 +227,7 @@ export default function HalalPlaceDetailScreen() {
 
       <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
         <LinearGradient colors={['rgba(30,23,48,0.96)', 'rgba(30,23,48,0.98)', 'rgba(10,9,21,1)']} style={styles.hero}>
-          {displayPhoto ? <Image source={photoSource} contentFit="cover" transition={220} onError={() => setPhotoFailed(true)} style={StyleSheet.absoluteFill} /> : null}
+          {displayPhoto ? <Image source={photoSource} placeholder={place.communityPhotoUrl ? undefined : getGoogleHalalPhotoSource(place.photoName, 240)} placeholderContentFit="cover" cachePolicy="memory-disk" contentFit="cover" transition={160} onError={() => setPhotoFailed(true)} style={StyleSheet.absoluteFill} /> : null}
           {displayPhoto ? <LinearGradient colors={['rgba(8,7,19,0.20)', 'rgba(8,7,19,0.78)', 'rgba(8,7,19,0.96)']} style={StyleSheet.absoluteFill} /> : null}
           <View style={styles.heroGlow} />
           {!displayPhoto ? <View style={styles.heroIcon}><Ionicons name="restaurant" size={36} color={colors.goldLight} /></View> : null}
