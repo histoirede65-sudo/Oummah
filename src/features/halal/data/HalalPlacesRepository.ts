@@ -75,11 +75,15 @@ export type HalalPlaceReport = {
   createdAt: string;
 };
 
+// Ordre = fiabilité mesurée (octobre 2026) : overpass-api.de répond en quelques secondes s'il reçoit un
+// User-Agent (sinon 406), maps.mail.ru répond mais lentement, overpass.kumi.systems ne répond plus.
 const OVERPASS_ENDPOINTS = [
   'https://overpass-api.de/api/interpreter',
-  'https://overpass.kumi.systems/api/interpreter',
   'https://maps.mail.ru/osm/tools/overpass/api/interpreter',
+  'https://overpass.kumi.systems/api/interpreter',
 ] as const;
+// overpass-api.de refuse les requêtes sans application identifiée.
+const OVERPASS_USER_AGENT = 'OUMMAH/1.0 (com.oummah.app)';
 const CACHE_PREFIX = 'oummah.halal.search.v2';
 const LAST_RESULTS_KEY = 'oummah.halal.last-results.v2';
 const LAST_SEARCH_KEY = 'oummah.halal.last-search.v1';
@@ -258,7 +262,7 @@ async function fetchEndpoint(endpoint: string, query: string, externalSignal?: A
   try {
     const response = await fetch(endpoint, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded', Accept: 'application/json' },
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded', Accept: 'application/json', 'User-Agent': OVERPASS_USER_AGENT },
       body: `data=${encodeURIComponent(query)}`,
       signal: controller.signal,
     });
