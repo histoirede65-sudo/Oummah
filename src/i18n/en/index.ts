@@ -1017,6 +1017,7 @@ export const en: Partial<Record<TranslationKey, string>> = {
   'surahReader.translation': 'Translation',
   'surahReader.transliteration': 'Transliteration',
   'surahReader.mushaf': 'Mushaf',
+  'surahReader.mushafGoToBookmark': 'Go to the bookmark · page {page} ({surah})',
   'surahReader.mushafBookmarkAdd': 'Place the bookmark on this page',
   'surahReader.mushafBookmarkRemove': 'Remove the bookmark',
   'surahReader.mushafBookmarkHere': 'Bookmark',

@@ -386,6 +386,13 @@ export default function SurahReadingScreen() {
     void mushafBookmarkStore.load().then((value) => { if (active) setBookmark(value); });
     return () => { active = false; };
   }, []);
+  const [mushafJump, setMushafJump] = useState<{ page: number; nonce: number } | null>(null);
+  // « Aller au marque-page »: same surah, the pages turn to it; another surah, that surah opens on it.
+  const goToBookmark = () => {
+    if (!bookmark) return;
+    if (bookmark.surahId === surahId) setMushafJump({ page: bookmark.page, nonce: Date.now() });
+    else router.replace(`/surah/${bookmark.surahId}?mushafPage=${bookmark.page}` as never);
+  };
   const toggleBookmark = (page: number) => {
     if (bookmark?.page === page) {
       setBookmark(null);
@@ -1542,7 +1549,19 @@ export default function SurahReadingScreen() {
               onVersePress={handleMushafVerse}
               bookmarkPage={bookmark?.page ?? null}
               onPageChange={setVisibleMushafPage}
+              jumpTo={mushafJump}
             />
+            {bookmark && bookmark.page !== (visibleMushafPage ?? mushafInitialPage) ? (
+              <Pressable accessibilityRole="button" onPress={goToBookmark} style={({ pressed }) => [styles.goToBookmark, pressed && styles.tafsirButtonPressed]}>
+                <Ionicons name="bookmark" size={15} color="#F4E3B5" />
+                <Text numberOfLines={1} style={styles.goToBookmarkText}>
+                  {t("surahReader.mushafGoToBookmark", {
+                    page: bookmark.page,
+                    surah: SURAHS.find((item) => item.id === bookmark.surahId)?.transliteration ?? "",
+                  })}
+                </Text>
+              </Pressable>
+            ) : null}
             {activeVerse ? (
               <View style={styles.mushafPlayer}>
                 <Pressable accessibilityLabel={t("surahReader.previousVerse")} disabled={activeVerse.id <= 1} onPress={() => playNeighbor(-1)} style={styles.inlineSmallButton}>
@@ -1606,6 +1625,8 @@ const styles = StyleSheet.create({
   displayOptionText: { flexShrink: 1, color: colors.goldLight, fontFamily: typography.sans, fontSize: 13.5, fontWeight: "800" },
   displayOptionTextOn: { color: colors.background },
   mushafRoot: { flex: 1 },
+  goToBookmark: { position: "absolute", top: 52, alignSelf: "center", flexDirection: "row", alignItems: "center", gap: 7, paddingHorizontal: 14, paddingVertical: 8, borderRadius: 18, backgroundColor: "#A3271C", shadowColor: "#000", shadowOpacity: 0.3, shadowRadius: 8, shadowOffset: { width: 0, height: 3 }, elevation: 6 },
+  goToBookmarkText: { color: "#FBF1DC", fontFamily: typography.sans, fontSize: 13.5, fontWeight: "800" },
   mushafBookmarkOn: { backgroundColor: "#A3271C" },
   playerClose: { width: 32, height: 32, borderRadius: 16, alignItems: "center", justifyContent: "center", backgroundColor: "rgba(255,255,255,0.06)" },
   mushafScreen: { flex: 1, backgroundColor: "#0B0918" },

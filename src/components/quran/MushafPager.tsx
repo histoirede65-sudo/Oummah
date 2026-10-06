@@ -30,10 +30,12 @@ type Props = {
   bookmarkPage?: number | null;
   /** Page currently in view (for the bookmark button). */
   onPageChange?: (page: number) => void;
+  /** Asks the pager to show this page (nonce: a new request each time). */
+  jumpTo?: { page: number; nonce: number } | null;
 };
 
 /** The surah's pages, turned from right to left like a printed Mushaf. */
-export function MushafPager({ pages, style, initialPage, activeVerseKey, activeWordPosition, onVersePress, bookmarkPage, onPageChange }: Props) {
+export function MushafPager({ pages, style, initialPage, activeVerseKey, activeWordPosition, onVersePress, bookmarkPage, onPageChange, jumpTo }: Props) {
   const [size, setSize] = useState<{ width: number; height: number } | null>(null);
   const listRef = useRef<FlatList<number>>(null);
   const pageOfVerse = useRef(new Map<string, number>());
@@ -61,6 +63,12 @@ export function MushafPager({ pages, style, initialPage, activeVerseKey, activeW
   const register = useCallback((layout: MushafPage) => {
     for (const line of layout.lines) for (const word of line.words) pageOfVerse.current.set(word.verseKey, layout.page);
   }, []);
+
+  useEffect(() => {
+    if (!jumpTo || !size) return;
+    const index = pages.indexOf(jumpTo.page);
+    if (index >= 0) listRef.current?.scrollToIndex({ index, animated: true });
+  }, [jumpTo, pages, size]);
 
   // During recitation, the page of the recited verse comes into view.
   useEffect(() => {
