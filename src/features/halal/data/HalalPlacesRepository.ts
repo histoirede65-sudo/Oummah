@@ -97,6 +97,9 @@ const REQUEST_TIMEOUT_MS = 14_000;
 const MAX_RESULTS = 120;
 const SAME_ZONE_MAX_DISTANCE_METERS = 3_000;
 const sessionPlaces = new Map<string, HalalPlace>();
+// Lieux Google vus depuis l'ouverture de l'app (mémoire seulement : les conditions de Google
+// n'autorisent pas à les enregistrer durablement sur le téléphone).
+const sessionGooglePlaces = new Map<string, HalalPlace>();
 
 function getSupabaseConfiguration() {
   const url = process.env.EXPO_PUBLIC_SUPABASE_URL?.trim().replace(/\/+$/, '');
@@ -467,9 +470,14 @@ export async function searchNearbyHalalPlaces(
     signal,
   )
     .then((googleResults) => {
-      latestGooglePlaces = googleResults
+      const fresh = googleResults
         .map((place) => mapGooglePlace(place, origin))
-        .filter((place): place is HalalPlace => Boolean(place))
+        .filter((place): place is HalalPlace => Boolean(place));
+      fresh.forEach((place) => sessionGooglePlaces.set(place.id, place));
+      // Google ne renvoie pas toujours la même sélection : on garde aussi, pour la durée de la session
+      // (en mémoire seulement), les lieux Google déjà trouvés autour de ce point.
+      const seenNearby = refreshDistances([...sessionGooglePlaces.values()], origin);
+      latestGooglePlaces = deduplicate([...fresh, ...seenNearby])
         .filter((place) => place.distanceMeters <= radiusMeters);
       publishNetworkProgress();
       return latestGooglePlaces;
