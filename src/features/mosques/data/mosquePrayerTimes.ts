@@ -24,6 +24,9 @@ export type MosquePrayerSchedule = {
   tomorrowPrayers: MosquePrayerTime[];
   tomorrowFajr: MosquePrayerTime;
   futurePrayers?: MosquePrayerTime[];
+  /** Lever du soleil (Chourouk) du jour, donné par Aladhan. Absent des horaires mis en cache avant cet ajout. */
+  sunrise?: { time: string; timestamp: number };
+  tomorrowSunrise?: { time: string; timestamp: number };
   fromCache: boolean;
 };
 
@@ -392,8 +395,24 @@ function buildSchedule(
     tomorrowPrayers,
     tomorrowFajr,
     futurePrayers,
+    sunrise: buildSunrise(todayResponse),
+    tomorrowSunrise: buildSunrise(tomorrowResponse),
     fromCache: false,
   };
+}
+
+function buildSunrise(response: AladhanTimingsResponse) {
+  const data = response.data;
+  if (!data?.timings?.Sunrise || !data.date?.gregorian?.date) return undefined;
+  try {
+    const time = cleanPrayerTime(data.timings.Sunrise);
+    return {
+      time,
+      timestamp: createPrayerTimestamp(data.date.gregorian.date, time, data.meta?.timezone || 'Europe/Paris'),
+    };
+  } catch {
+    return undefined;
+  }
 }
 
 async function fetchPrayerDay(

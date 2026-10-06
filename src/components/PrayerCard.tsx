@@ -298,7 +298,9 @@ function getLocalDayStart(timestamp: number) {
   return date.getTime();
 }
 
-function getPrayerWidgetSunrise(fajr: MosquePrayerTime) {
+function getPrayerWidgetSunrise(fajr: MosquePrayerTime, real?: { time: string; timestamp: number }) {
+  if (real) return { key: "Sunrise", label: "Chourouk", time: real.time, timestamp: real.timestamp };
+  // Horaires en cache d'avant l'enregistrement du lever du soleil : ancienne estimation.
   const sunrise = new Date(fajr.timestamp + 90 * 60 * 1_000);
   return {
     key: "Sunrise",
@@ -324,13 +326,19 @@ function makeTimeline(
   const asr = getPrayerByKey(schedule, "Asr");
   const maghrib = getPrayerByKey(schedule, "Maghrib");
   const isha = getPrayerByKey(schedule, "Isha");
-  const sunrise = fajr ? new Date(fajr.timestamp + 90 * 60 * 1_000) : null;
-  const sunriseLabel = sunrise
-    ? [
-        String(sunrise.getHours()).padStart(2, "0"),
-        String(sunrise.getMinutes()).padStart(2, "0"),
-      ].join(":")
-    : "--:--";
+  // Vrai lever du soleil (Aladhan) ; l'ancienne estimation Fajr + 1 h 30 ne sert qu'aux horaires
+  // mis en cache avant que le lever du soleil soit enregistré.
+  const sunrise = schedule.sunrise
+    ? new Date(schedule.sunrise.timestamp)
+    : fajr ? new Date(fajr.timestamp + 90 * 60 * 1_000) : null;
+  const sunriseLabel = schedule.sunrise
+    ? schedule.sunrise.time
+    : sunrise
+      ? [
+          String(sunrise.getHours()).padStart(2, "0"),
+          String(sunrise.getMinutes()).padStart(2, "0"),
+        ].join(":")
+      : "--:--";
 
   const isActive = (prayer?: MosquePrayerTime) =>
     Boolean(prayer && currentPrayer?.key === prayer.key);
@@ -1167,7 +1175,7 @@ export default function PrayerCard({ onScheduleChange }: { onScheduleChange?: (s
           calendarSettings.country,
         )),
         prayers: schedule.prayers,
-        sunrise: getPrayerWidgetSunrise(todayAnchor),
+        sunrise: getPrayerWidgetSunrise(todayAnchor, schedule.sunrise),
       },
       tomorrow: {
         dateKey: tomorrowDate.toISOString().slice(0, 10),
@@ -1175,7 +1183,7 @@ export default function PrayerCard({ onScheduleChange }: { onScheduleChange?: (s
         frenchDate: formatDateLabel(tomorrowDate),
         hijriDate: formatHijri(tomorrowHijriDate),
         prayers: schedule.tomorrowPrayers,
-        sunrise: getPrayerWidgetSunrise(tomorrowAnchor),
+        sunrise: getPrayerWidgetSunrise(tomorrowAnchor, schedule.tomorrowSunrise),
       },
     });
   }, [calendarSettings, schedule]);
