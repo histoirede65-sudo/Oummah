@@ -24,7 +24,7 @@ import {
   type ListRenderItem,
   type ViewToken,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
 import { useGlobalAudioPlayer } from "../../context/AudioPlayerProvider";
 import { useReciter } from "../../context/ReciterProvider";
@@ -68,8 +68,6 @@ const modes: { id: ReadingMode; labelKey: TranslationKey }[] = [
   { id: "arabic-transliteration", labelKey: "surahReader.arabicTransliteration" },
   { id: "translation", labelKey: "surahReader.translation" },
   { id: "mushaf", labelKey: "surahReader.mushaf" },
-  { id: "mushaf-pages", labelKey: "surahReader.mushafPages" },
-  { id: "mushaf-tajweed", labelKey: "surahReader.mushafTajweed" },
 ];
 
 function resolveVerseAudioUrl(value?: string) {
@@ -371,6 +369,8 @@ export default function SurahReadingScreen() {
   );
   const [error, setError] = useState<string>();
   const [settings, setSettings] = useState(DEFAULT_READING_PREFERENCES);
+  // Mode to come back to when the Mushaf pages are closed.
+  const [textMode, setTextMode] = useState<ReadingMode>(DEFAULT_READING_PREFERENCES.mode);
   const [showSettings, setShowSettings] = useState(false);
   const [showVerseJump, setShowVerseJump] = useState(false);
   const [verseJumpValue, setVerseJumpValue] = useState("");
@@ -619,6 +619,7 @@ export default function SurahReadingScreen() {
     ]).then(([savedSettings, position]) => {
       if (!active) return;
       setSettings(savedSettings);
+      if (savedSettings.mode !== "mushaf-pages" && savedSettings.mode !== "mushaf-tajweed") setTextMode(savedSettings.mode);
       if (!requestedVerseNumber && position?.surahId === surahId) {
         offsetRef.current = position.scrollOffset ?? 0;
         currentVerseRef.current = position.verseNumber;
@@ -648,6 +649,7 @@ export default function SurahReadingScreen() {
   const [mushafStartVerse, setMushafStartVerse] = useState<number | null>(null);
   const updateSettings = (patch: Partial<ReadingPreferences>) => {
     if (patch.mode === "mushaf-pages" || patch.mode === "mushaf-tajweed") setMushafStartVerse(currentVerseRef.current);
+    else if (patch.mode) setTextMode(patch.mode);
     const next = { ...settings, ...patch };
     setSettings(next);
     void readingPreferencesStore.save(next);
@@ -1175,10 +1177,7 @@ export default function SurahReadingScreen() {
   const mushafInitialPage =
     verses.find((verse) => getRenderedVerseNumber(verse) === (mushafStartVerse ?? requestedVerseNumber ?? 1))?.pageNumber ??
     mushafPages[0] ?? 1;
-  const handleMushafVerse = useCallback(
-    (verseKey: string) => setPageVerse(verses.find((verse) => verse.verseKey === verseKey) ?? null),
-    [verses],
-  );
+  const handleMushafVerse = (verseKey: string) => setPageVerse(verses.find((verse) => verse.verseKey === verseKey) ?? null);
 
   const palette = colors.background;
 
@@ -1217,6 +1216,24 @@ export default function SurahReadingScreen() {
         >
           <Ionicons name="options-outline" size={21} color={colors.goldLight} />
         </Pressable>
+      </View>
+      <View style={styles.displaySwitch} accessibilityRole="tablist">
+        {([
+          { key: "text", label: t("surahReader.displayReading"), icon: "reader-outline", on: !isMushafPages, mode: textMode },
+          { key: "pages", label: t("surahReader.mushafPages"), icon: "book-outline", on: settings.mode === "mushaf-pages", mode: "mushaf-pages" },
+          { key: "tajweed", label: t("surahReader.mushafTajweed"), icon: "color-palette-outline", on: settings.mode === "mushaf-tajweed", mode: "mushaf-tajweed" },
+        ] as const).map((item) => (
+          <Pressable
+            key={item.key}
+            accessibilityRole="tab"
+            accessibilityState={{ selected: item.on }}
+            onPress={() => updateSettings({ mode: item.mode })}
+            style={[styles.displayOption, item.on && styles.displayOptionOn]}
+          >
+            <Ionicons name={item.icon} size={16} color={item.on ? colors.background : colors.goldLight} />
+            <Text numberOfLines={1} style={[styles.displayOptionText, item.on && styles.displayOptionTextOn]}>{item.label}</Text>
+          </Pressable>
+        ))}
       </View>
       <View style={styles.reciterSelectorSlot}>
         <View style={styles.reciterSelectorRow}>
@@ -1283,19 +1300,6 @@ export default function SurahReadingScreen() {
       ) : verses.length === 0 ? (
         <View style={styles.error}>
           <Text style={styles.errorText}>{t("surahReader.noVerses")}</Text>
-        </View>
-      ) : isMushafPages ? (
-        <View style={styles.verseListContainer}>
-          <MushafPager
-            key={settings.mode}
-            pages={mushafPages}
-            style={settings.mode === "mushaf-tajweed" ? "tajweed" : "plain"}
-            initialPage={mushafInitialPage}
-            activeVerseKey={activeVerse?.verseKey ?? null}
-            activeWordPosition={activeWordState.activeWordPosition}
-            onVersePress={handleMushafVerse}
-          />
-          <Text style={styles.mushafCredit}>{t("surahReader.mushafCredit")}</Text>
         </View>
       ) : (
         <View style={styles.verseListContainer}>
@@ -1432,31 +1436,88 @@ export default function SurahReadingScreen() {
           </View>
         </View>
       ) : null}
-      <Modal visible={Boolean(pageVerse)} transparent animationType="slide" onRequestClose={() => setPageVerse(null)}>
-        <Pressable style={styles.pageSheetBackdrop} onPress={() => setPageVerse(null)}>
-          {pageVerse ? (
-            <Pressable style={styles.pageSheet} onPress={() => undefined}>
-              <Text style={styles.pageSheetTitle}>{t("surahReader.mushafVerseTitle", { verseKey: pageVerse.verseKey })}</Text>
-              <Text style={styles.pageSheetArabic}>{pageVerse.textUthmani}</Text>
-              <Text style={styles.pageSheetTranslation}>
-                {sanitizeTranslationText(pageVerse.translation || pageVerse.translations?.[0]?.text) || t("surahReader.translationUnavailable")}
-              </Text>
-              <View style={styles.pageSheetActions}>
-                <Pressable
-                  onPress={() => { handleVerseListen(pageVerse); setPageVerse(null); }}
-                  style={[styles.pageSheetButton, styles.pageSheetButtonGold]}
-                >
-                  <Ionicons name="play" size={17} color={colors.background} />
-                  <Text style={styles.pageSheetButtonGoldText}>{t("surahReader.listenFromHere")}</Text>
-                </Pressable>
-                <Pressable onPress={() => { const verse = pageVerse; setPageVerse(null); handleOpenTafsir(verse); }} style={styles.pageSheetButton}>
-                  <Ionicons name="book-outline" size={17} color={colors.goldLight} />
-                  <Text style={styles.pageSheetButtonText}>{t("surahReader.openTafsir")}</Text>
-                </Pressable>
+      <Modal
+        visible={isMushafPages && !loading && verses.length > 0}
+        animationType="fade"
+        presentationStyle="fullScreen"
+        statusBarTranslucent
+        onRequestClose={() => updateSettings({ mode: textMode })}
+      >
+        <SafeAreaProvider>
+          <SafeAreaView edges={["top", "bottom"]} style={styles.mushafScreen}>
+            <View style={styles.mushafBar}>
+              <Pressable
+                accessibilityRole="button"
+                accessibilityLabel={t("surahReader.mushafClose")}
+                onPress={() => updateSettings({ mode: textMode })}
+                hitSlop={10}
+                style={styles.mushafBarButton}
+              >
+                <Ionicons name="close" size={22} color={colors.goldLight} />
+              </Pressable>
+              <Text numberOfLines={1} style={styles.mushafBarTitle}>{surah.transliteration}</Text>
+              <View style={styles.mushafStyleSwitch}>
+                {([["mushaf-pages", t("surahReader.mushafPlainShort")], ["mushaf-tajweed", t("surahReader.mushafTajweedShort")]] as const).map(([mode, label]) => (
+                  <Pressable
+                    key={mode}
+                    accessibilityRole="button"
+                    accessibilityState={{ selected: settings.mode === mode }}
+                    onPress={() => updateSettings({ mode })}
+                    style={[styles.mushafStyleOption, settings.mode === mode && styles.mushafStyleOptionOn]}
+                  >
+                    <Text style={[styles.mushafStyleText, settings.mode === mode && styles.mushafStyleTextOn]}>{label}</Text>
+                  </Pressable>
+                ))}
               </View>
+            </View>
+            <MushafPager
+              key={settings.mode}
+              pages={mushafPages}
+              style={settings.mode === "mushaf-tajweed" ? "tajweed" : "plain"}
+              initialPage={mushafInitialPage}
+              activeVerseKey={activeVerse?.verseKey ?? null}
+              activeWordPosition={activeWordState.activeWordPosition}
+              onVersePress={handleMushafVerse}
+            />
+            {activeVerse ? (
+              <View style={styles.mushafPlayer}>
+                <Pressable accessibilityLabel={t("surahReader.previousVerse")} disabled={activeVerse.id <= 1} onPress={() => playNeighbor(-1)} style={styles.inlineSmallButton}>
+                  <Ionicons name="play-skip-back" size={18} color={activeVerse.id <= 1 ? colors.textMuted : colors.goldLight} />
+                </Pressable>
+                <Pressable accessibilityLabel={playingVerseKey ? t("common.pause") : t("surahReader.play")} onPress={() => void listenToVerse(activeVerse)} style={styles.inlinePlayButton}>
+                  <Ionicons name={playingVerseKey ? "pause" : "play"} size={21} color={colors.background} />
+                </Pressable>
+                <Pressable accessibilityLabel={t("surahReader.nextVerse")} disabled={activeVerse.id >= verses.length} onPress={() => playNeighbor(1)} style={styles.inlineSmallButton}>
+                  <Ionicons name="play-skip-forward" size={18} color={activeVerse.id >= verses.length ? colors.textMuted : colors.goldLight} />
+                </Pressable>
+                <Text numberOfLines={1} style={styles.mushafPlayerText}>{t("surahReader.mushafVerseTitle", { verseKey: activeVerse.verseKey })} · {currentReciter?.name ?? ""}</Text>
+              </View>
+            ) : (
+              <Text style={styles.mushafCredit}>{t("surahReader.mushafCredit")}</Text>
+            )}
+          </SafeAreaView>
+          {pageVerse ? (
+            <Pressable style={styles.pageSheetBackdrop} onPress={() => setPageVerse(null)}>
+              <Pressable style={styles.pageSheet} onPress={() => undefined}>
+                <Text style={styles.pageSheetTitle}>{t("surahReader.mushafVerseTitle", { verseKey: pageVerse.verseKey })}</Text>
+                <Text style={styles.pageSheetArabic}>{pageVerse.textUthmani}</Text>
+                <Text style={styles.pageSheetTranslation}>
+                  {sanitizeTranslationText(pageVerse.translation || pageVerse.translations?.[0]?.text) || t("surahReader.translationUnavailable")}
+                </Text>
+                <View style={styles.pageSheetActions}>
+                  <Pressable onPress={() => { handleVerseListen(pageVerse); setPageVerse(null); }} style={[styles.pageSheetButton, styles.pageSheetButtonGold]}>
+                    <Ionicons name="play" size={17} color={colors.background} />
+                    <Text style={styles.pageSheetButtonGoldText}>{t("surahReader.listenFromHere")}</Text>
+                  </Pressable>
+                  <Pressable onPress={() => { const verse = pageVerse; setPageVerse(null); updateSettings({ mode: textMode }); handleOpenTafsir(verse); }} style={styles.pageSheetButton}>
+                    <Ionicons name="book-outline" size={17} color={colors.goldLight} />
+                    <Text style={styles.pageSheetButtonText}>{t("surahReader.openTafsir")}</Text>
+                  </Pressable>
+                </View>
+              </Pressable>
             </Pressable>
           ) : null}
-        </Pressable>
+        </SafeAreaProvider>
       </Modal>
     </SafeAreaView>
   );
@@ -1464,7 +1525,23 @@ export default function SurahReadingScreen() {
 
 const styles = StyleSheet.create({
   mushafCredit: { paddingHorizontal: 16, paddingBottom: 6, color: colors.textMuted, fontFamily: typography.sans, fontSize: 11, textAlign: "center" },
-  pageSheetBackdrop: { flex: 1, justifyContent: "flex-end", backgroundColor: "rgba(4,3,9,0.6)" },
+  pageSheetBackdrop: { ...StyleSheet.absoluteFill, justifyContent: "flex-end", backgroundColor: "rgba(4,3,9,0.6)" },
+  displaySwitch: { flexDirection: "row", gap: 8, paddingHorizontal: 16, paddingBottom: 10 },
+  displayOption: { flex: 1, minHeight: 42, borderRadius: 21, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 6, paddingHorizontal: 8, borderWidth: 1, borderColor: "rgba(227,181,90,0.35)" },
+  displayOptionOn: { backgroundColor: colors.goldLight, borderColor: colors.goldLight },
+  displayOptionText: { flexShrink: 1, color: colors.goldLight, fontFamily: typography.sans, fontSize: 13.5, fontWeight: "800" },
+  displayOptionTextOn: { color: colors.background },
+  mushafScreen: { flex: 1, backgroundColor: "#0B0918" },
+  mushafBar: { flexDirection: "row", alignItems: "center", gap: 10, paddingHorizontal: 12, paddingVertical: 6 },
+  mushafBarButton: { width: 40, height: 40, borderRadius: 20, alignItems: "center", justifyContent: "center", backgroundColor: "rgba(255,255,255,0.06)" },
+  mushafBarTitle: { flex: 1, color: colors.text, fontFamily: typography.sans, fontSize: 16, fontWeight: "800" },
+  mushafStyleSwitch: { flexDirection: "row", padding: 3, borderRadius: 18, backgroundColor: "rgba(255,255,255,0.06)" },
+  mushafStyleOption: { paddingHorizontal: 12, paddingVertical: 7, borderRadius: 15 },
+  mushafStyleOptionOn: { backgroundColor: colors.goldLight },
+  mushafStyleText: { color: colors.goldLight, fontFamily: typography.sans, fontSize: 13, fontWeight: "800" },
+  mushafStyleTextOn: { color: colors.background },
+  mushafPlayer: { flexDirection: "row", alignItems: "center", gap: 10, paddingHorizontal: 14, paddingVertical: 6 },
+  mushafPlayerText: { flex: 1, color: colors.textSecondary, fontFamily: typography.sans, fontSize: 13 },
   pageSheet: { padding: 22, paddingBottom: 36, borderTopLeftRadius: 26, borderTopRightRadius: 26, backgroundColor: colors.backgroundSecondary, borderWidth: 1, borderBottomWidth: 0, borderColor: colors.borderSoft, gap: 12 },
   pageSheetTitle: { color: colors.goldLight, fontFamily: typography.sans, fontSize: 14, fontWeight: "800" },
   pageSheetArabic: { color: colors.text, fontFamily: ARABIC_READING_FONT_FAMILY, fontSize: 26, lineHeight: 50, textAlign: "right", writingDirection: "rtl" },
