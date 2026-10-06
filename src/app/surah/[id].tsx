@@ -1540,16 +1540,31 @@ export default function SurahReadingScreen() {
                   </Pressable>
                 );
               })()}
+              {bookmark && bookmark.page !== (visibleMushafPage ?? mushafInitialPage) ? (
+                <Pressable
+                  accessibilityRole="button"
+                  accessibilityLabel={t("surahReader.mushafGoToBookmark", {
+                    page: bookmark.page,
+                    surah: SURAHS.find((item) => item.id === bookmark.surahId)?.transliteration ?? "",
+                  })}
+                  onPress={goToBookmark}
+                  hitSlop={8}
+                  style={[styles.mushafBarButton, styles.mushafGoBookmark]}
+                >
+                  <Ionicons name="arrow-redo" size={17} color="#F4E3B5" />
+                </Pressable>
+              ) : null}
               <View style={styles.mushafStyleSwitch}>
-                {([["mushaf-pages", t("surahReader.mushafPlainShort")], ["mushaf-tajweed", t("surahReader.mushafTajweedShort")]] as const).map(([mode, label]) => (
+                {([["mushaf-pages", t("surahReader.mushafPlainShort"), "book"], ["mushaf-tajweed", t("surahReader.mushafTajweedShort"), "color-palette"]] as const).map(([mode, label, icon]) => (
                   <Pressable
                     key={mode}
                     accessibilityRole="button"
+                    accessibilityLabel={label}
                     accessibilityState={{ selected: settings.mode === mode }}
                     onPress={() => updateSettings({ mode })}
                     style={[styles.mushafStyleOption, settings.mode === mode && styles.mushafStyleOptionOn]}
                   >
-                    <Text style={[styles.mushafStyleText, settings.mode === mode && styles.mushafStyleTextOn]}>{label}</Text>
+                    <Ionicons name={icon} size={17} color={settings.mode === mode ? colors.background : colors.goldLight} />
                   </Pressable>
                 ))}
               </View>
@@ -1582,17 +1597,6 @@ export default function SurahReadingScreen() {
                   <Ionicons name="close" size={18} color={colors.textMuted} />
                 </Pressable>
               </View>
-            ) : bookmark && bookmark.page !== (visibleMushafPage ?? mushafInitialPage) ? (
-              <Pressable accessibilityRole="button" onPress={goToBookmark} hitSlop={6} style={styles.mushafHint}>
-                <Ionicons name="bookmark" size={12} color="#C8473A" />
-                <Text numberOfLines={1} style={styles.goToBookmarkText}>
-                  {t("surahReader.mushafGoToBookmark", {
-                    page: bookmark.page,
-                    surah: SURAHS.find((item) => item.id === bookmark.surahId)?.transliteration ?? "",
-                  })}
-                </Text>
-                <Ionicons name="chevron-forward" size={12} color={colors.goldLight} />
-              </Pressable>
             ) : (
               <View style={styles.mushafHint}>
                 <Ionicons name="hand-left-outline" size={13} color={colors.goldLight} />
@@ -1640,7 +1644,7 @@ const styles = StyleSheet.create({
   displayOptionText: { flexShrink: 1, color: colors.goldLight, fontFamily: typography.sans, fontSize: 13.5, fontWeight: "800" },
   displayOptionTextOn: { color: colors.background },
   mushafRoot: { flex: 1 },
-  goToBookmarkText: { flexShrink: 1, color: colors.goldLight, fontFamily: typography.sans, fontSize: 12, fontWeight: "700" },
+  mushafGoBookmark: { backgroundColor: "#A3271C" },
   mushafBookmarkOn: { backgroundColor: "#A3271C" },
   playerClose: { width: 32, height: 32, borderRadius: 16, alignItems: "center", justifyContent: "center", backgroundColor: "rgba(255,255,255,0.06)" },
   mushafScreen: { flex: 1, backgroundColor: "#0B0918" },
@@ -1650,10 +1654,8 @@ const styles = StyleSheet.create({
   mushafBarButton: { width: 34, height: 34, borderRadius: 17, alignItems: "center", justifyContent: "center", backgroundColor: "rgba(255,255,255,0.06)" },
   mushafBarTitle: { flex: 1, color: colors.text, fontFamily: typography.sans, fontSize: 15, fontWeight: "800" },
   mushafStyleSwitch: { flexDirection: "row", padding: 3, borderRadius: 18, backgroundColor: "rgba(255,255,255,0.06)" },
-  mushafStyleOption: { paddingHorizontal: 11, paddingVertical: 5, borderRadius: 14 },
+  mushafStyleOption: { width: 38, height: 30, alignItems: "center", justifyContent: "center", borderRadius: 14 },
   mushafStyleOptionOn: { backgroundColor: colors.goldLight },
-  mushafStyleText: { color: colors.goldLight, fontFamily: typography.sans, fontSize: 13, fontWeight: "800" },
-  mushafStyleTextOn: { color: colors.background },
   mushafPlayer: { flexDirection: "row", alignItems: "center", gap: 10, paddingHorizontal: 14, paddingVertical: 2 },
   mushafPlayerText: { flex: 1, color: colors.textSecondary, fontFamily: typography.sans, fontSize: 13 },
   pageSheet: { padding: 22, paddingBottom: 36, borderTopLeftRadius: 26, borderTopRightRadius: 26, backgroundColor: colors.backgroundSecondary, borderWidth: 1, borderBottomWidth: 0, borderColor: colors.borderSoft, gap: 12 },
