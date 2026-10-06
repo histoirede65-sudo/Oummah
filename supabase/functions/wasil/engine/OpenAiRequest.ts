@@ -2,6 +2,13 @@ export type ReasoningEffort = "minimal" | "low" | "medium" | "high";
 
 const EFFORTS = new Set<ReasoningEffort>(["minimal", "low", "medium", "high"]);
 
+/**
+ * Model of the preparatory steps (understanding the question, finding and checking sources). They write
+ * nothing the user reads, so a fast model is enough; the answer itself keeps WASIL_MODEL_STANDARD/DEEP.
+ * Measured on the same question: about 2.6 s instead of 6 s. Overridable with WASIL_MODEL_RETRIEVAL.
+ */
+export const WASIL_RETRIEVAL_MODEL = Deno.env.get("WASIL_MODEL_RETRIEVAL") ?? "gpt-5.4-mini";
+
 // Set once the provider rejects the reasoning parameter for this worker, so
 // later calls do not pay a second round trip.
 let reasoningRejected = false;

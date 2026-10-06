@@ -2,7 +2,7 @@ import { rankDocuments } from "../RelevanceScorer.ts";
 import type { IslamicQueryExpansion } from "../IslamicQueryExpansion.ts";
 import { buildHadithSearchTerms, extractIntentConcepts } from "../UniversalIntent.ts";
 import { consumeWasilWebBudget, type WasilWebBudget } from "../DocumentaryRetriever.ts";
-import { postOpenAiResponses, reasoningEffortFromEnv } from "../OpenAiRequest.ts";
+import { postOpenAiResponses, reasoningEffortFromEnv, WASIL_RETRIEVAL_MODEL } from "../OpenAiRequest.ts";
 
 export type HadithRepositoryReference = {
   title: string;
@@ -625,8 +625,7 @@ export async function searchHadithRepository(
     return returnDirectRecord();
   }
 
-  const model = Deno.env.get("WASIL_MODEL_RETRIEVAL") ??
-    Deno.env.get("WASIL_MODEL_STANDARD") ?? "gpt-5.6-luna";
+  const model = WASIL_RETRIEVAL_MODEL;
   const controller = new AbortController();
   const supplementalTimeoutMs = directRecord ? 2_500 : 6_500;
   const timeout = setTimeout(() => controller.abort(), supplementalTimeoutMs);
