@@ -62,6 +62,7 @@ import { colors } from "../../theme/colors";
 import { typography } from "../../theme/typography";
 import QuranReciterSelector from "../../components/quran/QuranReciterSelector";
 import { MushafPager } from "../../components/quran/MushafPager";
+import { mushafBookmarkStore, type MushafBookmark } from "../../features/quran/mushaf/MushafBookmark";
 import { WasilContextButton } from "../../components/wasil/WasilContextButton";
 import { useI18n, type TranslationKey } from "../../i18n";
 const modes: { id: ReadingMode; labelKey: TranslationKey }[] = [
@@ -329,9 +330,11 @@ function getRenderedVerseNumber(verse: QuranFoundationVerse) {
 
 export default function SurahReadingScreen() {
   const { language, t } = useI18n();
-  const { id, verse: requestedVerse, direct, source } = useLocalSearchParams<{
+  const { id, verse: requestedVerse, direct, source, mushafPage } = useLocalSearchParams<{
     id: string;
     verse?: string;
+    /** Opens the Mushaf pages on this page (bookmark). */
+    mushafPage?: string;
     direct?: string;
     source?: string;
   }>();
@@ -375,6 +378,22 @@ export default function SurahReadingScreen() {
   const [textMode, setTextMode] = useState<ReadingMode>(DEFAULT_READING_PREFERENCES.mode);
   // The full-screen pages step aside while the tafsir is open, and come back on return.
   const [mushafAway, setMushafAway] = useState(false);
+  // Bookmark of the Mushaf pages, and the page in view to place it.
+  const [bookmark, setBookmark] = useState<MushafBookmark | null>(null);
+  const [visibleMushafPage, setVisibleMushafPage] = useState<number | null>(null);
+  useEffect(() => {
+    let active = true;
+    void mushafBookmarkStore.load().then((value) => { if (active) setBookmark(value); });
+    return () => { active = false; };
+  }, []);
+  const toggleBookmark = (page: number) => {
+    if (bookmark?.page === page) {
+      setBookmark(null);
+      void mushafBookmarkStore.clear();
+    } else {
+      void mushafBookmarkStore.save(surahId, page).then(setBookmark);
+    }
+  };
   useFocusEffect(useCallback(() => setMushafAway(false), [setMushafAway]));
   const [showSettings, setShowSettings] = useState(false);
   const [showVerseJump, setShowVerseJump] = useState(false);
@@ -631,7 +650,12 @@ export default function SurahReadingScreen() {
       offlineRepository.getLastReading(),
     ]).then(([savedSettings, position]) => {
       if (!active) return;
-      setSettings(savedSettings);
+      // Opened from the Mushaf bookmark: straight to the pages, in the reader's usual style.
+      const fromBookmark = parsePositiveRouteNumber(mushafPage) !== null;
+      const opened = fromBookmark && savedSettings.mode !== "mushaf-pages" && savedSettings.mode !== "mushaf-tajweed"
+        ? { ...savedSettings, mode: "mushaf-pages" as const }
+        : savedSettings;
+      setSettings(opened);
       if (savedSettings.mode !== "mushaf-pages" && savedSettings.mode !== "mushaf-tajweed") setTextMode(savedSettings.mode);
       if (!requestedVerseNumber && position?.surahId === surahId) {
         offsetRef.current = position.scrollOffset ?? 0;
@@ -1187,7 +1211,9 @@ export default function SurahReadingScreen() {
     const first = Math.min(...numbers);
     return Array.from({ length: Math.max(...numbers) - first + 1 }, (_, index) => first + index);
   }, [verses]);
+  const bookmarkTarget = parsePositiveRouteNumber(mushafPage);
   const mushafInitialPage =
+    (bookmarkTarget && mushafPages.includes(bookmarkTarget) ? bookmarkTarget : null) ??
     verses.find((verse) => getRenderedVerseNumber(verse) === (mushafStartVerse ?? requestedVerseNumber ?? 1))?.pageNumber ??
     mushafPages[0] ?? 1;
   const handleMushafVerse = (verseKey: string) => setPageVerse(verses.find((verse) => verse.verseKey === verseKey) ?? null);
@@ -1477,6 +1503,21 @@ export default function SurahReadingScreen() {
                 <Ionicons name="close" size={22} color={colors.goldLight} />
               </Pressable>
               <Text numberOfLines={1} style={styles.mushafBarTitle}>{surah.transliteration}</Text>
+              {(() => {
+                const page = visibleMushafPage ?? mushafInitialPage;
+                const marked = bookmark?.page === page;
+                return (
+                  <Pressable
+                    accessibilityRole="button"
+                    accessibilityLabel={marked ? t("surahReader.mushafBookmarkRemove") : t("surahReader.mushafBookmarkAdd")}
+                    onPress={() => toggleBookmark(page)}
+                    hitSlop={8}
+                    style={[styles.mushafBarButton, marked && styles.mushafBookmarkOn]}
+                  >
+                    <Ionicons name={marked ? "bookmark" : "bookmark-outline"} size={18} color={marked ? "#F4E3B5" : colors.goldLight} />
+                  </Pressable>
+                );
+              })()}
               <View style={styles.mushafStyleSwitch}>
                 {([["mushaf-pages", t("surahReader.mushafPlainShort")], ["mushaf-tajweed", t("surahReader.mushafTajweedShort")]] as const).map(([mode, label]) => (
                   <Pressable
@@ -1499,6 +1540,8 @@ export default function SurahReadingScreen() {
               activeVerseKey={activeVerse?.verseKey ?? null}
               activeWordPosition={activeWordState.activeWordPosition}
               onVersePress={handleMushafVerse}
+              bookmarkPage={bookmark?.page ?? null}
+              onPageChange={setVisibleMushafPage}
             />
             {activeVerse ? (
               <View style={styles.mushafPlayer}>
@@ -1563,6 +1606,7 @@ const styles = StyleSheet.create({
   displayOptionText: { flexShrink: 1, color: colors.goldLight, fontFamily: typography.sans, fontSize: 13.5, fontWeight: "800" },
   displayOptionTextOn: { color: colors.background },
   mushafRoot: { flex: 1 },
+  mushafBookmarkOn: { backgroundColor: "#A3271C" },
   playerClose: { width: 32, height: 32, borderRadius: 16, alignItems: "center", justifyContent: "center", backgroundColor: "rgba(255,255,255,0.06)" },
   mushafScreen: { flex: 1, backgroundColor: "#0B0918" },
   mushafBar: { flexDirection: "row", alignItems: "center", gap: 8, paddingHorizontal: 8, paddingVertical: 0, height: 40 },

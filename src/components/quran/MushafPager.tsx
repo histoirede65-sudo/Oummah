@@ -26,10 +26,14 @@ type Props = {
   activeVerseKey?: string | null;
   activeWordPosition?: number | null;
   onVersePress: (verseKey: string) => void;
+  /** Page carrying the reader's bookmark ribbon. */
+  bookmarkPage?: number | null;
+  /** Page currently in view (for the bookmark button). */
+  onPageChange?: (page: number) => void;
 };
 
 /** The surah's pages, turned from right to left like a printed Mushaf. */
-export function MushafPager({ pages, style, initialPage, activeVerseKey, activeWordPosition, onVersePress }: Props) {
+export function MushafPager({ pages, style, initialPage, activeVerseKey, activeWordPosition, onVersePress, bookmarkPage, onPageChange }: Props) {
   const [size, setSize] = useState<{ width: number; height: number } | null>(null);
   const listRef = useRef<FlatList<number>>(null);
   const pageOfVerse = useRef(new Map<string, number>());
@@ -38,6 +42,12 @@ export function MushafPager({ pages, style, initialPage, activeVerseKey, activeW
   // Zoomed page: the page turn waits until the page is back to normal size.
   const [zoomed, setZoomed] = useState(false);
   const [resetKey, setResetKey] = useState(0);
+  const pageChange = useRef(onPageChange);
+  useEffect(() => { pageChange.current = onPageChange; }, [onPageChange]);
+  const viewability = useCallback(({ viewableItems }: { viewableItems: { item: number }[] }) => {
+    const visible = viewableItems[0]?.item;
+    if (typeof visible === 'number') pageChange.current?.(visible);
+  }, []);
   const resetZoom = () => {
     setZoomed(false);
     setResetKey((value) => value + 1);
@@ -77,7 +87,9 @@ export function MushafPager({ pages, style, initialPage, activeVerseKey, activeW
           windowSize={3}
           initialNumToRender={1}
           maxToRenderPerBatch={2}
-          extraData={`${activeVerseKey}-${activeWordPosition}-${zoomed}-${resetKey}`}
+          extraData={`${activeVerseKey}-${activeWordPosition}-${zoomed}-${resetKey}-${bookmarkPage}`}
+          onViewableItemsChanged={viewability}
+          viewabilityConfig={{ itemVisiblePercentThreshold: 60 }}
           renderItem={({ item }) => (
             <MushafPageView
               page={item}
@@ -91,6 +103,7 @@ export function MushafPager({ pages, style, initialPage, activeVerseKey, activeW
               resetKey={resetKey}
               zoomed={zoomed}
               onZoomChange={setZoomed}
+              bookmarked={item === bookmarkPage}
             />
           )}
         />
@@ -104,7 +117,7 @@ export function MushafPager({ pages, style, initialPage, activeVerseKey, activeW
   );
 }
 
-const MushafPageView = memo(function MushafPageView({ page, style, width, height, activeVerseKey, activeWordPosition, onVersePress, onLoaded, resetKey, zoomed, onZoomChange }: {
+const MushafPageView = memo(function MushafPageView({ page, style, width, height, activeVerseKey, activeWordPosition, onVersePress, onLoaded, resetKey, zoomed, onZoomChange, bookmarked }: {
   page: number;
   style: MushafStyle;
   width: number;
@@ -116,6 +129,7 @@ const MushafPageView = memo(function MushafPageView({ page, style, width, height
   resetKey: number;
   zoomed: boolean;
   onZoomChange: (zoomed: boolean) => void;
+  bookmarked: boolean;
 }) {
   const { t } = useI18n();
   const [state, setState] = useState<{ key: string; layout: MushafPage; family: string; inkFamily: string } | { key: string; error: true } | null>(null);
@@ -228,6 +242,12 @@ const MushafPageView = memo(function MushafPageView({ page, style, width, height
           </View>
         )}
         <Text numberOfLines={1} style={styles.pageNumber}>{page}  ·  {t('surahReader.mushafCredit')}</Text>
+        {bookmarked ? (
+          <View pointerEvents="none" style={styles.ribbon} accessibilityLabel={t('surahReader.mushafBookmarkHere')}>
+            <View style={styles.ribbonBody} />
+            <View style={styles.ribbonTail} />
+          </View>
+        ) : null}
       </View>
     </View>
     </MushafZoom>
@@ -237,6 +257,9 @@ const MushafPageView = memo(function MushafPageView({ page, style, width, height
 
 const styles = StyleSheet.create({
   root: { flex: 1 },
+  ribbon: { position: 'absolute', top: -2, left: 18, width: 18, alignItems: 'center' },
+  ribbonBody: { width: 18, height: 34, backgroundColor: '#A3271C' },
+  ribbonTail: { width: 0, height: 0, borderLeftWidth: 9, borderRightWidth: 9, borderTopWidth: 8, borderLeftColor: '#A3271C', borderRightColor: '#A3271C', borderTopColor: 'transparent' },
   resetZoom: { position: 'absolute', top: 10, alignSelf: 'center', paddingHorizontal: 14, paddingVertical: 8, borderRadius: 18, backgroundColor: 'rgba(11,9,24,0.85)', borderWidth: 1, borderColor: FRAME },
   resetZoomText: { color: '#F4E3B5', fontSize: 13, fontWeight: '800' },
   slot: { alignItems: 'center', justifyContent: 'center' },

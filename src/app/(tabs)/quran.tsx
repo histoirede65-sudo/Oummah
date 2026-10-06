@@ -1,7 +1,9 @@
+import { Ionicons } from "@expo/vector-icons";
 import type { Href } from "expo-router";
 import { router, useFocusEffect } from "expo-router";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import {
+  Pressable,
   StyleSheet,
   Text,
   View,
@@ -9,6 +11,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import LastReadingCard from "../../components/quran/LastReadingCard";
+import { mushafBookmarkStore, type MushafBookmark } from "../../features/quran/mushaf/MushafBookmark";
 import CalendarSeasonalPrompt from "../../components/CalendarSeasonalPrompt";
 import QuranHeader from "../../components/quran/QuranHeader";
 import QuranQuickActions, {
@@ -37,6 +40,7 @@ export default function QuranScreen() {
   const [query, setQuery] = useState("");
   const [activeTab, setActiveTab] = useState<QuranTab>("surahs");
   const [lastReading, setLastReading] = useState<ReadingPosition | null>(null);
+  const [mushafBookmark, setMushafBookmark] = useState<MushafBookmark | null>(null);
   const [favoriteSurahIds, setFavoriteSurahIds] = useState<Set<number>>(
     new Set(),
   );
@@ -93,9 +97,11 @@ export default function QuranScreen() {
         offlineRepository.getLastReading(),
         offlineRepository.getFavorites(),
         offlineRepository.getBookmarks(),
-      ]).then(([position, favorites, bookmarks]) => {
+        mushafBookmarkStore.load(),
+      ]).then(([position, favorites, bookmarks, pageBookmark]) => {
         if (!active) return;
         setLastReading(position);
+        setMushafBookmark(pageBookmark);
         setFavoriteSurahIds(
           new Set(
             favorites
@@ -242,6 +248,30 @@ export default function QuranScreen() {
           )
         }
       />
+      {mushafBookmark ? (
+        <Pressable
+          accessibilityRole="button"
+          onPress={() => router.push(`/surah/${mushafBookmark.surahId}?mushafPage=${mushafBookmark.page}` as Href)}
+          style={({ pressed }) => [styles.pageBookmark, pressed && styles.pageBookmarkPressed]}
+        >
+          <View style={styles.pageBookmarkRibbon}>
+            <Ionicons name="bookmark" size={18} color="#F4E3B5" />
+          </View>
+          <View style={styles.pageBookmarkCopy}>
+            <Text style={styles.pageBookmarkTitle}>{t("quran.mushafBookmark")}</Text>
+            <Text style={styles.pageBookmarkMeta}>
+              {t("quran.mushafBookmarkMeta", {
+                page: mushafBookmark.page,
+                surah: (() => {
+                  const target = SURAHS.find((item) => item.id === mushafBookmark.surahId);
+                  return target ? getSurahDisplayName(target) : "";
+                })(),
+              })}
+            </Text>
+          </View>
+          <Ionicons name="chevron-forward" size={18} color={colors.goldLight} />
+        </Pressable>
+      ) : null}
       <CalendarSeasonalPrompt context="quran" />
       <View style={styles.searchGap}>
         <QuranSearchBar value={query} onChangeText={setQuery} />
@@ -309,6 +339,12 @@ export default function QuranScreen() {
 const styles = StyleSheet.create({
   safeArea: { flex: 1, backgroundColor: colors.background },
   searchGap: { marginTop: 11 },
+  pageBookmark: { marginTop: 10, flexDirection: "row", alignItems: "center", gap: 12, padding: 12, borderRadius: 18, borderWidth: 1, borderColor: "rgba(227,181,90,0.35)", backgroundColor: "rgba(227,181,90,0.06)" },
+  pageBookmarkPressed: { opacity: 0.75 },
+  pageBookmarkRibbon: { width: 36, height: 36, borderRadius: 12, alignItems: "center", justifyContent: "center", backgroundColor: "#A3271C" },
+  pageBookmarkCopy: { flex: 1 },
+  pageBookmarkTitle: { color: colors.text, fontFamily: typography.sans, fontSize: 15.5, fontWeight: "800" },
+  pageBookmarkMeta: { marginTop: 2, color: colors.textMuted, fontFamily: typography.sans, fontSize: 13 },
   listHeading: {
     marginBottom: 10,
     flexDirection: "row",
