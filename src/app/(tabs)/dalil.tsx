@@ -3783,7 +3783,7 @@ const styles = StyleSheet.create({
   },
   wasilMessageText: {
     marginTop: 6,
-    color: colors.textSecondary,
+    color: colors.text,
     fontFamily: typography.sans,
     fontSize: 16,
     lineHeight: 24,
