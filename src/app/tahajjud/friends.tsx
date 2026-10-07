@@ -366,9 +366,23 @@ export default function TahajjudFriendsScreen() {
         const thread = conversations[friend.id];
         return (
           <Animated.View key={friend.id} entering={FadeInDown.delay(60 * index).duration(400)}>
-            <GlassCard style={styles.friendCard}>
+            <Pressable
+              onPress={() => openChat(friend)}
+              accessibilityRole="button"
+              accessibilityLabel={friend.pseudo}
+              style={({ pressed }) => [styles.friendCard, pressed && styles.friendCardPressed]}
+            >
+              <LinearGradient
+                colors={['#2B2254', '#1A1438', '#120E28']}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={StyleSheet.absoluteFill}
+              />
+              <View style={styles.friendCardSheen} />
               <View style={styles.row}>
-                <MemberAvatar avatar={friend.avatar} size={48} dim={!friend.tonight} />
+                <View style={styles.friendAvatarRing}>
+                  <MemberAvatar avatar={friend.avatar} size={48} dim={!friend.tonight} />
+                </View>
                 <View style={styles.flex}>
                   <Text style={styles.friendName} numberOfLines={1}>{friend.pseudo}</Text>
                   {status ? (
@@ -383,27 +397,27 @@ export default function TahajjudFriendsScreen() {
                 </Pressable>
               </View>
               {thread ? (
-                <Pressable onPress={() => openChat(friend)} style={styles.lastMessage}>
+                <View style={styles.lastMessage}>
                   <Text style={[styles.lastMessageText, thread.unread > 0 && styles.lastMessageUnread]} numberOfLines={1}>
                     {thread.lastMine ? tx('Vous : ') : ''}{thread.lastBody}
                   </Text>
                   <Text style={styles.time}>{timeAgo(thread.lastAt)}</Text>
-                </Pressable>
+                </View>
               ) : null}
               <View style={styles.friendFooter}>
-                <Pressable onPress={() => openChat(friend)} style={styles.messageButton}>
+                <View style={styles.messageButton}>
                   <Ionicons name="chatbubble-ellipses" size={15} color={night.goldSoft} />
                   <Text style={styles.messageButtonText}>{tx("Message")}</Text>
                   {thread?.unread ? (
                     <View style={styles.badge}><Text style={styles.badgeText}>{thread.unread > 9 ? '9+' : thread.unread}</Text></View>
                   ) : null}
-                </Pressable>
+                </View>
                 <Pressable onPress={() => setEncourage(friend)} style={styles.encourageButton}>
                   <Ionicons name="heart" size={15} color={night.sky0} />
                   <Text style={styles.encourageButtonText}>{tx("Encourager")}</Text>
                 </Pressable>
               </View>
-            </GlassCard>
+            </Pressable>
           </Animated.View>
         );
       })}
@@ -484,8 +498,15 @@ const styles = StyleSheet.create({
   time: { color: night.muted, fontSize: 12, ...nightType.body },
   emptyTitle: { color: night.text, fontSize: 20, ...nightType.display },
   emptyText: { color: night.textSoft, fontSize: 15, lineHeight: 21, textAlign: 'center', ...nightType.body },
-  friendCard: { marginBottom: 12 },
-  friendName: { color: night.text, fontSize: 19, ...nightType.semibold },
+  friendCard: {
+    marginBottom: 14, padding: 18, borderRadius: 24, overflow: 'hidden',
+    borderWidth: 1, borderColor: 'rgba(227,181,90,0.28)',
+    shadowColor: '#000', shadowOpacity: 0.45, shadowRadius: 16, shadowOffset: { width: 0, height: 8 }, elevation: 8,
+  },
+  friendCardPressed: { opacity: 0.9, transform: [{ scale: 0.985 }] },
+  friendCardSheen: { position: 'absolute', top: 0, left: 24, right: 24, height: 1, backgroundColor: 'rgba(244,217,149,0.45)' },
+  friendAvatarRing: { padding: 2, borderRadius: 30, borderWidth: 1, borderColor: 'rgba(244,217,149,0.4)' },
+  friendName: { color: night.text, fontSize: 22, ...nightType.display },
   statusRow: { marginTop: 3, flexDirection: 'row', alignItems: 'center', gap: 6 },
   statusText: { fontSize: 14, ...nightType.semibold },
   friendFooter: { marginTop: 10, flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end', gap: 10 },
@@ -509,7 +530,7 @@ const styles = StyleSheet.create({
     alignItems: 'center', justifyContent: 'center', backgroundColor: night.success,
   },
   badgeText: { color: night.sky0, fontSize: 11, ...nightType.bold },
-  lastMessage: { marginTop: 10, flexDirection: 'row', alignItems: 'center', gap: 8, paddingHorizontal: 12, paddingVertical: 9, borderRadius: 14, backgroundColor: '#080519' },
+  lastMessage: { marginTop: 10, flexDirection: 'row', alignItems: 'center', gap: 8, paddingHorizontal: 12, paddingVertical: 9, borderRadius: 14, backgroundColor: 'rgba(8,5,25,0.55)', borderWidth: 1, borderColor: 'rgba(183,171,242,0.12)' },
   lastMessageText: { flex: 1, color: night.muted, fontSize: 14, ...nightType.medium },
   lastMessageUnread: { color: night.text, ...nightType.bold },
   encourageButton: { flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: 15, paddingVertical: 9, borderRadius: 18, backgroundColor: night.goldSoft },
