@@ -1298,7 +1298,7 @@ async function syncConversations(userId: string, local: ConversationThread[]) {
 }
 
 // Raise when the answer rules change, so answers written under the old rules are no longer reused.
-const ANSWER_CACHE_VERSION = "9";
+const ANSWER_CACHE_VERSION = "10";
 
 /**
  * Key under which an answer is reused, or null when it must not be: personal
@@ -2521,9 +2521,10 @@ async function handleWasilRequest(
         effectiveQuestion,
         documentaryHadithSourceIds.map((id) => requestSources[id]).filter(Boolean),
       );
-    if ((verifiedHadithMissing || quotedHadithMissing) && webBudget.remaining === 0) {
-      webBudget.initial += 1;
-      webBudget.remaining = 1;
+    // Two searches: the first one sometimes only lands on Sunnah.com's empty search page.
+    if ((verifiedHadithMissing || quotedHadithMissing) && webBudget.remaining < 2) {
+      webBudget.initial += 2 - webBudget.remaining;
+      webBudget.remaining = 2;
     }
     // The V4 plan may request additional documentary verification, but it may
     // never disable a web search required by the stable production engine.
@@ -2641,7 +2642,10 @@ async function handleWasilRequest(
                 verifiedHadithMissing || quotedHadithMissing
                 ? "required"
                 : "auto",
-            max_tool_calls: Math.min(webBudget.remaining, mode === "deep" ? 2 : 1),
+            max_tool_calls: Math.min(
+              webBudget.remaining,
+              mode === "deep" || verifiedHadithMissing || quotedHadithMissing ? 2 : 1,
+            ),
             include: ["web_search_call.action.sources"],
           }
         : {}),
