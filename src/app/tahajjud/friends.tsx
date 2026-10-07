@@ -384,16 +384,17 @@ export default function TahajjudFriendsScreen() {
       ) : friends.map((friend, index) => {
         const status = friendStatus(friend);
         const thread = conversations[friend.id];
+        const unread = Boolean(thread?.unread);
         return (
           <Animated.View key={friend.id} entering={FadeInDown.delay(60 * index).duration(400)}>
             <Pressable
               onPress={() => openChat(friend)}
               accessibilityRole="button"
               accessibilityLabel={friend.pseudo}
-              style={({ pressed }) => [styles.friendCard, pressed && styles.friendCardPressed]}
+              style={({ pressed }) => [styles.friendCard, unread && styles.friendCardUnread, pressed && styles.friendCardPressed]}
             >
               <LinearGradient
-                colors={['#2B2254', '#1A1438', '#120E28']}
+                colors={unread ? ['#4A3A2A', '#2A2050', '#16102E'] : ['#2B2254', '#1A1438', '#120E28']}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 1 }}
                 style={StyleSheet.absoluteFill}
@@ -402,9 +403,13 @@ export default function TahajjudFriendsScreen() {
               <View style={styles.row}>
                 <View style={styles.friendAvatarRing}>
                   <MemberAvatar avatar={friend.avatar} size={48} dim={!friend.tonight} />
+                  {unread ? <View style={styles.unreadDot} /> : null}
                 </View>
                 <View style={styles.flex}>
-                  <Text style={styles.friendName} numberOfLines={1}>{friend.pseudo}</Text>
+                  <View style={styles.nameRow}>
+                    <Text style={[styles.friendName, styles.flexShrink]} numberOfLines={1}>{friend.pseudo}</Text>
+                    {unread ? <Text style={styles.newLabel}>{tx('Nouveau message')}</Text> : null}
+                  </View>
                   {status ? (
                     <View style={styles.statusRow}>
                       <Ionicons name={status.icon} size={15} color={status.color} />
@@ -522,6 +527,17 @@ const styles = StyleSheet.create({
     marginBottom: 14, padding: 18, borderRadius: 24, overflow: 'hidden',
     borderWidth: 1, borderColor: 'rgba(227,181,90,0.28)',
     shadowColor: '#000', shadowOpacity: 0.45, shadowRadius: 16, shadowOffset: { width: 0, height: 8 }, elevation: 8,
+  },
+  friendCardUnread: { borderColor: night.gold, borderWidth: 1.5 },
+  unreadDot: {
+    position: 'absolute', top: 0, right: 0, width: 14, height: 14, borderRadius: 7,
+    backgroundColor: '#FF4D5E', borderWidth: 2, borderColor: '#1A1438',
+  },
+  nameRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  flexShrink: { flexShrink: 1 },
+  newLabel: {
+    overflow: 'hidden', paddingHorizontal: 8, paddingVertical: 2, borderRadius: 10,
+    backgroundColor: '#FF4D5E', color: '#FFFFFF', fontSize: 11, ...nightType.bold,
   },
   friendCardPressed: { opacity: 0.9, transform: [{ scale: 0.985 }] },
   friendCardSheen: { position: 'absolute', top: 0, left: 24, right: 24, height: 1, backgroundColor: 'rgba(244,217,149,0.45)' },

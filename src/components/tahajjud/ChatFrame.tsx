@@ -1,6 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import type { ReactElement, ReactNode } from 'react';
+import { useRef } from 'react';
 import { ActivityIndicator, FlatList, KeyboardAvoidingView, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import type { CommunityAvatar } from '../../features/tahajjud/tahajjudCommunity';
@@ -43,21 +44,44 @@ export function DayLabel({ iso }: { iso: string }) {
   return <Text style={styles.day}>{dayLabel(iso)}</Text>;
 }
 
-export function ChatBubble({ mine, body, meta, author, tail, onLongPress }: {
+export function ChatBubble({ mine, body, meta, author, tail, onLongPress, onDoublePress, reactions, onPressReactions }: {
   mine: boolean;
+  /** Emojis put on this message (one per member), shown under the bubble. */
+  reactions?: readonly { emoji: string; mine: boolean }[];
+  onPressReactions?: () => void;
+  onDoublePress?: () => void;
   body: string;
   meta: string;
   author?: ReactNode;
   tail: boolean;
   onLongPress?: () => void;
 }) {
+  const lastTap = useRef(0);
+  const onPress = onDoublePress
+    ? () => {
+      const now = Date.now();
+      if (now - lastTap.current < 300) {
+        lastTap.current = 0;
+        onDoublePress();
+      } else {
+        lastTap.current = now;
+      }
+    }
+    : undefined;
   return (
-    <Pressable onLongPress={onLongPress} delayLongPress={350} style={[styles.bubbleRow, mine && styles.bubbleRowMine]}>
+    <Pressable onPress={onPress} onLongPress={onLongPress} delayLongPress={350} style={[styles.bubbleRow, mine && styles.bubbleRowMine]}>
       {author}
       <View style={[styles.bubble, mine ? styles.bubbleMine : styles.bubbleOther, tail && (mine ? styles.tailMine : styles.tailOther)]}>
         <Text style={[styles.bubbleText, mine && styles.bubbleTextMine]}>{body}</Text>
         <Text style={[styles.time, mine && styles.timeMine]}>{meta}</Text>
       </View>
+      {reactions?.length ? (
+        <Pressable onPress={onPressReactions} hitSlop={6} style={[styles.reactions, mine ? styles.reactionsMine : styles.reactionsOther]}>
+          {reactions.map((reaction, index) => (
+            <Text key={index} style={styles.reactionEmoji}>{reaction.emoji}</Text>
+          ))}
+        </Pressable>
+      ) : null}
     </Pressable>
   );
 }
@@ -178,6 +202,13 @@ const styles = StyleSheet.create({
   more: { marginVertical: 12 },
   day: { alignSelf: 'center', marginVertical: 12, color: night.muted, fontSize: 13, ...nightType.semibold },
   bubbleRow: { marginVertical: 2, alignItems: 'flex-start' },
+  reactions: {
+    marginTop: -8, flexDirection: 'row', gap: 2, paddingHorizontal: 7, paddingVertical: 2, borderRadius: 14,
+    backgroundColor: night.glassStrong, borderWidth: 1, borderColor: night.goldLine,
+  },
+  reactionsMine: { marginRight: 10 },
+  reactionsOther: { marginLeft: 10 },
+  reactionEmoji: { fontSize: 15, lineHeight: 20 },
   bubbleRowMine: { alignItems: 'flex-end' },
   bubble: { maxWidth: '80%', paddingHorizontal: 14, paddingTop: 9, paddingBottom: 7, borderRadius: 20 },
   bubbleOther: { backgroundColor: night.glassStrong, borderWidth: 1, borderColor: night.line },

@@ -169,6 +169,20 @@ export async function getConversations(): Promise<Conversation[]> {
 export const sendChatMessage = (userId: string, body: string) => rpc<string>('chat_send', { p_user: userId, p_body: body });
 export const deleteChatMessage = (id: string) => rpc<void>('chat_delete', { p_id: id });
 export const reportChatMessage = (id: string) => rpc<void>('chat_report', { p_id: id });
+
+export const CHAT_REACTIONS = ['❤️', '👍', '🤲', '😂', '😮', '😢'] as const;
+export type ChatReaction = { emoji: string; mine: boolean };
+
+/** Reactions of the conversation, by message id (messages written at or after `since`). */
+export async function getChatReactions(userId: string, since?: string): Promise<Record<string, ChatReaction[]>> {
+  const rows = await rpc<Array<{ message_id: string; emoji: string; mine: boolean }>>('chat_reactions', { p_user: userId, p_since: since ?? null });
+  const byMessage: Record<string, ChatReaction[]> = {};
+  for (const row of rows) (byMessage[row.message_id] ??= []).push({ emoji: row.emoji, mine: row.mine });
+  return byMessage;
+}
+
+/** Sets my reaction; the same emoji again (or null) removes it. */
+export const reactToChatMessage = (id: string, emoji: string | null) => rpc<string | null>('chat_react', { p_id: id, p_emoji: emoji });
 // ----- Messages from the OUMMAH team (read only) ---------------------------------------------
 
 export type OummahMessage = { id: string; body: string; createdAt: string };

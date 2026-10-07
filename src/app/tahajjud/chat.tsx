@@ -1,15 +1,20 @@
 import { useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { useCallback, useRef, useState } from 'react';
-import { Alert, View } from 'react-native';
+import { Alert, Modal, Pressable, StyleSheet, Text, View } from 'react-native';
+import { night, nightType } from '../../components/tahajjud/theme';
 import { ChatBubble, ChatFrame, DayLabel, mergeThread, startsDay, timeOf } from '../../components/tahajjud/ChatFrame';
 import { COMMUNITY_AVATARS, type CommunityAvatar } from '../../features/tahajjud/tahajjudCommunity';
 import {
+  CHAT_REACTIONS,
   deleteChatMessage,
   friendsErrorMessage,
+  getChatReactions,
   getChatThread,
+  reactToChatMessage,
   reportChatMessage,
   sendChatMessage,
   type ChatMessage,
+  type ChatReaction,
 } from '../../features/tahajjud/tahajjudFriends';
 import { tx } from '../../features/tahajjud/tahajjudI18n';
 
@@ -28,6 +33,35 @@ export default function TahajjudChatScreen() {
   const [loadingMore, setLoadingMore] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const sendingRef = useRef(false);
+  const [reactions, setReactions] = useState<Record<string, ChatReaction[]>>({});
+  const [picker, setPicker] = useState<ChatMessage | null>(null);
+  const messagesRef = useRef<ChatMessage[] | null>(null);
+  messagesRef.current = messages;
+
+  // Reactions of the loaded messages; silent if they can't be read (server not up to date…).
+  const refreshReactions = useCallback(async () => {
+    const loaded = messagesRef.current?.filter((message) => !message.pending) ?? [];
+    const since = loaded[loaded.length - 1]?.createdAt;
+    try {
+      setReactions(await getChatReactions(friendId, since));
+    } catch {
+      // Kept as they are.
+    }
+  }, [friendId]);
+
+  const react = async (message: ChatMessage, emoji: string) => {
+    setPicker(null);
+    const previous = reactions;
+    const others = (reactions[message.id] ?? []).filter((reaction) => !reaction.mine);
+    const mineNow = (reactions[message.id] ?? []).find((reaction) => reaction.mine)?.emoji;
+    setReactions({ ...reactions, [message.id]: mineNow === emoji ? others : [...others, { emoji, mine: true }] });
+    try {
+      await reactToChatMessage(message.id, emoji);
+    } catch (reason) {
+      setReactions(previous);
+      Alert.alert(tx('Réaction'), friendsErrorMessage(reason));
+    }
+  };
 
   const refresh = useCallback(async () => {
     try {
@@ -35,11 +69,12 @@ export default function TahajjudChatScreen() {
       setMessages((current) => (current ? mergeThread(latest, current) : latest));
       setHasMore((value) => value && latest.length >= 40);
       setError(null);
+      void refreshReactions();
     } catch (reason) {
       setError(friendsErrorMessage(reason));
       setMessages((current) => current ?? []);
     }
-  }, [friendId]);
+  }, [friendId, refreshReactions]);
 
   useFocusEffect(useCallback(() => {
     void refresh();
@@ -84,6 +119,11 @@ export default function TahajjudChatScreen() {
 
   const onLongPress = (message: ChatMessage) => {
     if (message.pending) return;
+    setPicker(message);
+  };
+
+  const messageActions = (message: ChatMessage) => {
+    setPicker(null);
     if (message.mine) {
       Alert.alert(tx('Mon message'), tx('Le supprimer pour vous deux ?'), [
         { text: tx('Annuler'), style: 'cancel' },
@@ -104,7 +144,33 @@ export default function TahajjudChatScreen() {
 
   const lastMineId = messages?.find((message) => message.mine)?.id;
 
+  const myReaction = picker ? (reactions[picker.id] ?? []).find((reaction) => reaction.mine)?.emoji : undefined;
+
   return (
+    <>
+    <Modal visible={Boolean(picker)} transparent animationType="fade" onRequestClose={() => setPicker(null)}>
+      <Pressable style={styles.backdrop} onPress={() => setPicker(null)}>
+        <View style={styles.sheet}>
+          <Text style={styles.preview} numberOfLines={2}>{picker?.body}</Text>
+          <View style={styles.emojiRow}>
+            {CHAT_REACTIONS.map((emoji) => (
+              <Pressable
+                key={emoji}
+                onPress={() => picker && void react(picker, emoji)}
+                style={({ pressed }) => [styles.emojiButton, myReaction === emoji && styles.emojiButtonOn, pressed && styles.emojiPressed]}
+              >
+                <Text style={styles.emoji}>{emoji}</Text>
+              </Pressable>
+            ))}
+          </View>
+          <Pressable onPress={() => picker && messageActions(picker)} style={styles.action}>
+            <Text style={[styles.actionText, picker?.mine && styles.actionDanger]}>
+              {picker?.mine ? tx('Supprimer le message') : tx('Signaler ce message')}
+            </Text>
+          </Pressable>
+        </View>
+      </Pressable>
+    </Modal>
     <ChatFrame
       title={pseudo}
       subtitle={tx("Message privé · entre amis")}
@@ -131,10 +197,28 @@ export default function TahajjudChatScreen() {
               meta={item.pending ? tx('Envoi…') : `${timeOf(item.createdAt)}${status}`}
               tail={!newer || newer.mine !== item.mine}
               onLongPress={() => onLongPress(item)}
+              onDoublePress={item.pending ? undefined : () => void react(item, '❤️')}
+              reactions={reactions[item.id]}
+              onPressReactions={() => onLongPress(item)}
             />
           </View>
         );
       }}
     />
+    </>
   );
 }
+
+const styles = StyleSheet.create({
+  backdrop: { flex: 1, justifyContent: 'center', padding: 24, backgroundColor: 'rgba(4,3,14,0.7)' },
+  sheet: { borderRadius: 24, padding: 18, gap: 14, backgroundColor: night.glassStrong, borderWidth: 1, borderColor: night.goldLine },
+  preview: { color: night.textSoft, fontSize: 15, lineHeight: 21, ...nightType.body },
+  emojiRow: { flexDirection: 'row', justifyContent: 'space-between' },
+  emojiButton: { width: 46, height: 46, borderRadius: 23, alignItems: 'center', justifyContent: 'center' },
+  emojiButtonOn: { backgroundColor: 'rgba(244,217,149,0.22)', borderWidth: 1, borderColor: night.goldLine },
+  emojiPressed: { transform: [{ scale: 1.15 }] },
+  emoji: { fontSize: 28 },
+  action: { paddingVertical: 10, alignItems: 'center', borderTopWidth: 1, borderTopColor: night.line },
+  actionText: { color: night.text, fontSize: 16, ...nightType.semibold },
+  actionDanger: { color: '#FF8A8A' },
+});
