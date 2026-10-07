@@ -42,38 +42,57 @@ import { tx, txCount } from '../../features/tahajjud/tahajjudI18n';
 
 type SearchResult = Member & { relation: FriendRelation };
 
-/** Red « Supprimer » revealed by swiping a conversation to the left, growing as it is uncovered. */
-function DeleteAction({ progress, onPress }: { progress: SharedValue<number>; onPress: () => void }) {
-  const style = useAnimatedStyle(() => ({
-    opacity: interpolate(progress.value, [0, 0.4, 1], [0, 0.6, 1]),
-    transform: [{ scale: interpolate(progress.value, [0, 1], [0.6, 1], 'clamp') }],
+const ACTION_WIDTH = 104;
+// Dragged at least this far (px) and released: deleted without tapping the button.
+const FULL_SWIPE = 200;
+
+/** Red « Supprimer » revealed by swiping left; it stretches with the finger, WhatsApp-like. */
+function DeleteAction({ progress, translation, onPress }: {
+  progress: SharedValue<number>;
+  translation: SharedValue<number>;
+  onPress: () => void;
+}) {
+  const container = useAnimatedStyle(() => ({ width: Math.max(ACTION_WIDTH, -translation.value) }));
+  const content = useAnimatedStyle(() => ({
+    opacity: interpolate(progress.value, [0, 0.4, 1], [0, 0.6, 1], 'clamp'),
+    transform: [{ scale: -translation.value > FULL_SWIPE ? 1.15 : interpolate(progress.value, [0, 1], [0.6, 1], 'clamp') }],
   }));
   return (
-    <Pressable onPress={onPress} style={styles.swipeAction}>
-      <Animated.View style={[styles.swipeActionInner, style]}>
-        <Ionicons name="trash" size={22} color="#FFFFFF" />
-        <Text style={styles.swipeActionText}>{tx('Supprimer')}</Text>
-      </Animated.View>
-    </Pressable>
+    <Animated.View style={[styles.swipeAction, container]}>
+      <Pressable onPress={onPress} style={styles.swipeActionPress}>
+        <Animated.View style={[styles.swipeActionInner, content]}>
+          <Ionicons name="trash" size={22} color="#FFFFFF" />
+          <Text style={styles.swipeActionText}>{tx('Supprimer')}</Text>
+        </Animated.View>
+      </Pressable>
+    </Animated.View>
   );
 }
 
-/** Swipe left to delete, WhatsApp-like; asks first and springs back if cancelled. */
-function SwipeToDelete({ enabled, onDelete, children }: { enabled: boolean; onDelete: (close: () => void) => void; children: ReactNode }) {
+/** Swipe left: the button appears; dragged to the end or button tapped, it is deleted (no question). */
+function SwipeToDelete({ enabled, onDelete, children }: { enabled: boolean; onDelete: () => void; children: ReactNode }) {
   const ref = useRef<SwipeableMethods>(null);
+  const translationRef = useRef<SharedValue<number> | null>(null);
   if (!enabled) return <>{children}</>;
-  const ask = () => {
+  const remove = () => {
     void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => undefined);
-    onDelete(() => ref.current?.close());
+    ref.current?.reset();
+    onDelete();
   };
   return (
     <ReanimatedSwipeable
       ref={ref}
-      friction={1.6}
-      rightThreshold={60}
-      overshootRight={false}
-      onSwipeableOpen={ask}
-      renderRightActions={(progress) => <DeleteAction progress={progress} onPress={ask} />}
+      friction={1.4}
+      rightThreshold={50}
+      overshootRight
+      overshootFriction={1}
+      onSwipeableWillOpen={() => {
+        if ((translationRef.current?.value ?? 0) < -FULL_SWIPE) remove();
+      }}
+      renderRightActions={(progress, translation) => {
+        translationRef.current = translation;
+        return <DeleteAction progress={progress} translation={translation} onPress={remove} />;
+      }}
     >
       {children}
     </ReanimatedSwipeable>
@@ -207,6 +226,13 @@ export default function TahajjudFriendsScreen() {
     );
   };
 
+  // From a swipe: no question, the gesture is the confirmation. Hidden at once, then saved.
+  const swipeDelete = (id: string) => {
+    if (id === OUMMAH_CONVERSATION) setOummah(null);
+    else setConversations((current) => Object.fromEntries(Object.entries(current).filter(([key]) => key !== id)));
+    void act(() => deleteConversation(id));
+  };
+
   const friendMenu = (friend: Friend) => {
     Alert.alert(friend.pseudo, undefined, [
       ...(conversations[friend.id] ? [{ text: tx('Supprimer la conversation'), style: 'destructive' as const, onPress: () => confirmDeleteConversation(friend.id, friend.pseudo) }] : []),
@@ -251,13 +277,45 @@ export default function TahajjudFriendsScreen() {
     );
   }
 
-  // Unread conversations first, then the most recent ones.
+  // Most recent message first; friends without a conversation after.
   const friends = [...(data?.friends ?? [])].sort((a, b) => {
     const ca = conversations[a.id];
     const cb = conversations[b.id];
-    if ((cb?.unread ?? 0) > 0 !== (ca?.unread ?? 0) > 0) return (cb?.unread ?? 0) > 0 ? 1 : -1;
-    return (cb?.lastAt ?? '').localeCompare(ca?.lastAt ?? '');
+    return (cb ? Date.parse(cb.lastAt) : 0) - (ca ? Date.parse(ca.lastAt) : 0);
   });
+  // OUMMAH among the conversations: the most recent message first.
+  const oummahIndex = oummah
+    ? friends.findIndex((friend) => !conversations[friend.id] || Date.parse(conversations[friend.id].lastAt) < Date.parse(oummah.lastAt))
+    : -1;
+  const oummahCard = oummah ? (
+        <Animated.View exiting={FadeOutLeft.duration(260)} layout={LinearTransition} style={styles.oummahWrap}>
+        <SwipeToDelete enabled onDelete={() => swipeDelete(OUMMAH_CONVERSATION)}>
+        <Pressable
+          onPress={() => router.push('/tahajjud/oummah' as Href)}
+          onLongPress={() => confirmDeleteConversation(OUMMAH_CONVERSATION, 'OUMMAH')}
+          style={({ pressed }) => [pressed && styles.pressed]}>
+          <GlassCard gold style={styles.oummahCard}>
+            <View style={styles.row}>
+              <View style={styles.oummahIcon}><Ionicons name="moon" size={20} color={night.sky0} /></View>
+              <View style={styles.flex}>
+                <Text style={styles.name}>OUMMAH</Text>
+                <Text style={[styles.groupLast, oummah.unread > 0 && styles.lastMessageUnread]} numberOfLines={1}>{oummah.lastBody}</Text>
+              </View>
+              <View style={styles.groupSide}>
+                <Pressable onPress={() => confirmDeleteConversation(OUMMAH_CONVERSATION, 'OUMMAH')} hitSlop={10}>
+                  <Ionicons name="ellipsis-horizontal" size={18} color={night.muted} />
+                </Pressable>
+                <Text style={styles.time}>{timeAgo(oummah.lastAt)}</Text>
+                {oummah.unread ? (
+                  <View style={styles.badgeInline}><Text style={styles.badgeText}>{oummah.unread > 9 ? '9+' : oummah.unread}</Text></View>
+                ) : null}
+              </View>
+            </View>
+          </GlassCard>
+        </Pressable>
+        </SwipeToDelete>
+        </Animated.View>
+  ) : null;
   const openChat = (friend: Friend) => router.push({ pathname: '/tahajjud/chat', params: { id: friend.id, pseudo: friend.pseudo, avatar: friend.avatar } } as unknown as Href);
   const prayedTonight = friends.filter((friend) => friend.shared && friend.tonight === 'prayed').length;
   const awakeTonight = friends.filter((friend) => friend.shared && friend.tonight).length;
@@ -296,35 +354,7 @@ export default function TahajjudFriendsScreen() {
         </GlassCard>
       ) : null}
 
-      {oummah ? (
-        <Animated.View exiting={FadeOutLeft.duration(260)} layout={LinearTransition} style={styles.oummahWrap}>
-        <SwipeToDelete enabled onDelete={(close) => confirmDeleteConversation(OUMMAH_CONVERSATION, 'OUMMAH', close)}>
-        <Pressable
-          onPress={() => router.push('/tahajjud/oummah' as Href)}
-          onLongPress={() => confirmDeleteConversation(OUMMAH_CONVERSATION, 'OUMMAH')}
-          style={({ pressed }) => [pressed && styles.pressed]}>
-          <GlassCard gold style={styles.oummahCard}>
-            <View style={styles.row}>
-              <View style={styles.oummahIcon}><Ionicons name="moon" size={20} color={night.sky0} /></View>
-              <View style={styles.flex}>
-                <Text style={styles.name}>OUMMAH</Text>
-                <Text style={[styles.groupLast, oummah.unread > 0 && styles.lastMessageUnread]} numberOfLines={1}>{oummah.lastBody}</Text>
-              </View>
-              <View style={styles.groupSide}>
-                <Pressable onPress={() => confirmDeleteConversation(OUMMAH_CONVERSATION, 'OUMMAH')} hitSlop={10}>
-                  <Ionicons name="ellipsis-horizontal" size={18} color={night.muted} />
-                </Pressable>
-                <Text style={styles.time}>{timeAgo(oummah.lastAt)}</Text>
-                {oummah.unread ? (
-                  <View style={styles.badgeInline}><Text style={styles.badgeText}>{oummah.unread > 9 ? '9+' : oummah.unread}</Text></View>
-                ) : null}
-              </View>
-            </View>
-          </GlassCard>
-        </Pressable>
-        </SwipeToDelete>
-        </Animated.View>
-      ) : null}
+      {friends.length === 0 ? oummahCard : null}
 
       {friends.length ? (
         <Animated.View entering={FadeInDown.duration(450)}>
@@ -430,8 +460,10 @@ export default function TahajjudFriendsScreen() {
         const thread = conversations[friend.id];
         const unread = Boolean(thread?.unread);
         return (
-          <Animated.View key={friend.id} entering={FadeInDown.delay(60 * index).duration(400)} layout={LinearTransition} style={styles.friendWrap}>
-            <SwipeToDelete enabled={Boolean(thread)} onDelete={(close) => confirmDeleteConversation(friend.id, friend.pseudo, close)}>
+          <View key={friend.id}>
+          {index === oummahIndex ? oummahCard : null}
+          <Animated.View entering={FadeInDown.delay(60 * index).duration(400)} layout={LinearTransition} style={styles.friendWrap}>
+            <SwipeToDelete enabled={Boolean(thread)} onDelete={() => swipeDelete(friend.id)}>
             <Pressable
               onPress={() => openChat(friend)}
               accessibilityRole="button"
@@ -490,8 +522,10 @@ export default function TahajjudFriendsScreen() {
             </Pressable>
             </SwipeToDelete>
           </Animated.View>
+          </View>
         );
       })}
+      {friends.length && oummahIndex === -1 ? oummahCard : null}
 
       {data?.sent.length ? (
         <>
@@ -570,7 +604,7 @@ const styles = StyleSheet.create({
   emptyTitle: { color: night.text, fontSize: 20, ...nightType.display },
   emptyText: { color: night.textSoft, fontSize: 15, lineHeight: 21, textAlign: 'center', ...nightType.body },
   friendWrap: { marginBottom: 14 },
-  oummahWrap: { marginTop: 16 },
+  oummahWrap: { marginTop: 4, marginBottom: 14 },
   friendCard: {
     padding: 18, borderRadius: 24, overflow: 'hidden',
     borderWidth: 1, borderColor: 'rgba(227,181,90,0.28)',
@@ -601,7 +635,8 @@ const styles = StyleSheet.create({
   groupEmpty: { flexDirection: 'row', alignItems: 'center', gap: 12 },
   groupEmptyText: { flex: 1, color: night.textSoft, fontSize: 15, lineHeight: 21, ...nightType.body },
   oummahCard: { paddingVertical: 8 },
-  swipeAction: { width: 112, marginLeft: 10, borderRadius: 24, backgroundColor: '#E5484D', alignItems: 'center', justifyContent: 'center' },
+  swipeAction: { marginLeft: 10, borderRadius: 24, backgroundColor: '#E5484D', overflow: 'hidden' },
+  swipeActionPress: { flex: 1, alignItems: 'center', justifyContent: 'center' },
   swipeActionInner: { alignItems: 'center', gap: 4 },
   swipeActionText: { color: '#FFFFFF', fontSize: 13, ...nightType.bold },
   oummahIcon: { width: 42, height: 42, borderRadius: 21, alignItems: 'center', justifyContent: 'center', backgroundColor: night.gold },
