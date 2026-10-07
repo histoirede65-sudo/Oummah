@@ -515,6 +515,8 @@ async function readCachedSchedule(
       tomorrowPrayers: cached.tomorrowPrayers,
       tomorrowFajr: cached.tomorrowFajr,
       futurePrayers: Array.isArray(cached.futurePrayers) ? cached.futurePrayers : [],
+      sunrise: cached.sunrise,
+      tomorrowSunrise: cached.tomorrowSunrise,
       fromCache: true,
     };
   } catch {
@@ -536,6 +538,8 @@ async function writeCachedSchedule(
     tomorrowPrayers: schedule.tomorrowPrayers,
     tomorrowFajr: schedule.tomorrowFajr,
     futurePrayers: schedule.futurePrayers ?? [],
+    sunrise: schedule.sunrise,
+    tomorrowSunrise: schedule.tomorrowSunrise,
     savedAt: Date.now(),
   };
 
@@ -568,11 +572,22 @@ export async function getMosquePrayerSchedule(
       ADHAN_SCHEDULE_DAYS,
       Math.max(DEFAULT_PRAYER_SCHEDULE_DAYS, Math.floor(requestedDays)),
     );
-    const responses = await Promise.all(
+    // Today and tomorrow are required; a later day that fails (Aladhan limits rapid requests) only
+    // shortens the schedule instead of failing it, the following days being dropped to keep them in order.
+    const settled = await Promise.allSettled(
       Array.from({ length: scheduleDays }, (_, dayOffset) =>
         fetchPrayerDay(getDateOffset(today, dayOffset), latitude, longitude, signal, calculation),
       ),
     );
+    const responses: AladhanTimingsResponse[] = [];
+    for (const [index, item] of settled.entries()) {
+      if (item.status === 'fulfilled') {
+        responses.push(item.value);
+        continue;
+      }
+      if (index < 2) throw item.reason;
+      break;
+    }
     const [todayResponse, tomorrowResponse, ...futureResponses] = responses;
 
     const schedule = buildSchedule(
@@ -586,6 +601,7 @@ export async function getMosquePrayerSchedule(
       cacheKey,
       schedule,
     ).catch(() => undefined);
+    await writeLatestSchedule(latitude, longitude, calculation, schedule).catch(() => undefined);
 
     return schedule;
   } catch (error) {
@@ -603,7 +619,111 @@ export async function getMosquePrayerSchedule(
       return cachedSchedule;
     }
 
+    // Offline or Aladhan unreachable: the last times downloaded nearby, moved to today.
+    const latest = await getStoredPrayerSchedule(calculation, { latitude, longitude });
+    if (latest) return latest;
+
     throw error;
+  }
+}
+
+const LATEST_SCHEDULE_KEY = 'oummah.mosque.prayers.latest.v1';
+// The 7 downloaded days cover a week offline; the place may move a little (GPS) without changing the times.
+const LATEST_MAX_AGE_MS = 8 * 24 * 60 * 60 * 1000;
+const LATEST_MAX_DISTANCE_KM = 30;
+
+type LatestPrayerSchedule = {
+  latitude: number;
+  longitude: number;
+  calculation: string;
+  savedAt: number;
+  schedule: MosquePrayerSchedule;
+};
+
+function getCalculationSignature(calculation: PrayerCalculationSettings) {
+  return [calculation.mode, calculation.method, calculation.fajrAngle, calculation.ishaAngle].join(':');
+}
+
+function distanceKm(aLat: number, aLon: number, bLat: number, bLon: number) {
+  const rad = Math.PI / 180;
+  const dLat = (bLat - aLat) * rad;
+  const dLon = (bLon - aLon) * rad;
+  const h = Math.sin(dLat / 2) ** 2 + Math.cos(aLat * rad) * Math.cos(bLat * rad) * Math.sin(dLon / 2) ** 2;
+  return 12_742 * Math.asin(Math.sqrt(h));
+}
+
+async function writeLatestSchedule(
+  latitude: number,
+  longitude: number,
+  calculation: PrayerCalculationSettings,
+  schedule: MosquePrayerSchedule,
+) {
+  const value: LatestPrayerSchedule = {
+    latitude,
+    longitude,
+    calculation: getCalculationSignature(calculation),
+    savedAt: Date.now(),
+    schedule: { ...schedule, fromCache: false },
+  };
+  await AsyncStorage.setItem(LATEST_SCHEDULE_KEY, JSON.stringify(value));
+}
+
+/** Moves a stored schedule to today, using its following days; null when they don't reach tomorrow. */
+export function shiftScheduleToToday(schedule: MosquePrayerSchedule): MosquePrayerSchedule | null {
+  const todayKey = getLocalDateKey(new Date());
+  if (schedule.dateKey === todayKey) return schedule;
+
+  const future = schedule.futurePrayers ?? [];
+  const days = [schedule.prayers, schedule.tomorrowPrayers];
+  for (let index = 0; index + PRAYER_DEFINITIONS.length <= future.length; index += PRAYER_DEFINITIONS.length) {
+    days.push(future.slice(index, index + PRAYER_DEFINITIONS.length));
+  }
+
+  const [year, month, day] = schedule.dateKey.split('-').map(Number);
+  const start = new Date(year, month - 1, day, 12, 0, 0, 0);
+  const offset = days.findIndex((_, index) => getLocalDateKey(getDateOffset(start, index)) === todayKey);
+  if (offset < 0 || offset + 1 >= days.length) return null;
+
+  const prayers = days[offset];
+  return {
+    ...schedule,
+    dateKey: todayKey,
+    dateLabel: formatDateLabel(prayers[0].timestamp, schedule.timezone),
+    hijriDateLabel: undefined,
+    prayers,
+    tomorrowPrayers: days[offset + 1],
+    tomorrowFajr: days[offset + 1][0],
+    futurePrayers: days.slice(offset + 2).flat(),
+    sunrise: offset === 1 ? schedule.tomorrowSunrise : undefined,
+    tomorrowSunrise: undefined,
+    fromCache: true,
+  };
+}
+
+/**
+ * Last prayer times downloaded on this phone, moved to today — shown at once when the app opens and
+ * kept when offline. With `near`, only if they were downloaded within 30 km.
+ */
+export async function getStoredPrayerSchedule(
+  calculation: PrayerCalculationSettings,
+  near?: { latitude: number; longitude: number },
+): Promise<MosquePrayerSchedule | null> {
+  try {
+    const raw = await AsyncStorage.getItem(LATEST_SCHEDULE_KEY);
+    if (!raw) return null;
+    const latest = JSON.parse(raw) as LatestPrayerSchedule;
+    if (
+      !latest.schedule?.prayers?.length
+      || latest.calculation !== getCalculationSignature(calculation)
+      || !latest.savedAt
+      || Date.now() - latest.savedAt > LATEST_MAX_AGE_MS
+    ) return null;
+    if (near && distanceKm(near.latitude, near.longitude, latest.latitude, latest.longitude) > LATEST_MAX_DISTANCE_KM) {
+      return null;
+    }
+    return shiftScheduleToToday(latest.schedule);
+  } catch {
+    return null;
   }
 }
 
