@@ -904,6 +904,9 @@ function isPrimaryEvidenceSufficient(input: {
   candidates: DocumentaryCandidate[];
   requestedCorpora: { quran: boolean; hadith: boolean };
 }) {
+  // A hadith is never taken on shared words alone: the semantic check always runs (« pudeur » chose
+  // three hadiths on silence and worship).
+  if (input.requestedCorpora.hadith || input.profile.category === "hadith") return false;
   const normalized = normalizeQuestion(input.question);
   const scholarNames = religiousScholarCorpus
     .filter((source) => source.sourceKind === "scholar" && source.scholar)
@@ -1282,7 +1285,7 @@ async function syncConversations(userId: string, local: ConversationThread[]) {
 }
 
 // Raise when the answer rules change, so answers written under the old rules are no longer reused.
-const ANSWER_CACHE_VERSION = "5";
+const ANSWER_CACHE_VERSION = "7";
 
 /**
  * Key under which an answer is reused, or null when it must not be: personal

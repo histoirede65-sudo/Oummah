@@ -158,11 +158,32 @@ function deduplicateAndPrioritizeHadithItems(
   return retained.slice(0, limit);
 }
 
+// Words that only frame the question (« quel hadith parle de… ») or link words: a search made only
+// of them (« parle de la », « de ne pas se ») returns unrelated hadiths and pushes out « pudeur ».
+const HADITH_QUESTION_FILLER = new Set([
+  "quel", "quels", "quelle", "quelles", "hadith", "hadiths", "parle", "parlent", "dit", "disent",
+  "qui", "que", "qu", "sur", "concernant", "propos", "connais", "connait", "tu", "ce", "cet", "cette",
+  "ces", "est", "il", "y", "a", "un", "une", "des", "de", "du", "la", "le", "les", "l", "d", "en", "et",
+  "ou", "au", "aux", "pas", "ne", "se", "s", "son", "sa", "ses", "mon", "ma", "mes", "me", "moi",
+  "donne", "donner", "cite", "citer", "existe", "t", "il", "elle", "on", "nous", "vous", "je", "j",
+  "prophete", "messager", "dire", "selon", "avec", "pour", "par", "dans", "plus", "tout", "comme",
+  "sont", "etre", "tres", "aussi", "faut", "peux", "peut", "veux", "ouvre", "ouvrir", "montre",
+]);
+
+function hadithContentWords(question: string) {
+  return normalizeText(question).split(" ").filter((word) =>
+    word.length >= 4 && !HADITH_QUESTION_FILLER.has(word) && !/^\d+$/.test(word)
+  );
+}
+
 function hadithSearchPhrases(
   question: string,
   expansion?: IslamicQueryExpansion | null,
 ): string[] {
-  const universalTerms = buildHadithSearchTerms(question);
+  const contentWords = hadithContentWords(question);
+  const hasContentWord = (phrase: string) =>
+    normalizeText(phrase).split(" ").some((word) => contentWords.includes(word));
+  const universalTerms = buildHadithSearchTerms(question).filter(hasContentWord);
   const normalized = normalizeText(question);
   const fallbackKeywords = normalized
     .split(" ")
@@ -191,12 +212,14 @@ function hadithSearchPhrases(
     ...universalTerms,
     // Standalone fallback words are kept only as secondary recall signals;
     // complete expressions from buildHadithSearchTerms remain first.
-    ...fallbackKeywords.slice(0, 3).filter((word) => !/^\d+$/.test(word)),
+    ...fallbackKeywords.slice(0, 3).filter((word) => !/^\d+$/.test(word) && hasContentWord(word)),
   ]
     .map((phrase) => phrase.trim())
-    .filter((phrase) => phrase.length >= 3 && !/[\u0600-\u06ff]/u.test(phrase));
+    .filter((phrase) => phrase.length >= 3 && !/[\u0600-\u06ff]/u.test(phrase))
+    // Also for the expansion's terms: its lexical fallback returns \u00ab quel hadith parle \u00bb, \u00ab parle de la \u00bb.
+    .filter((phrase) => contentWords.length === 0 || priorityTerms.has(normalizeText(phrase)) || hasContentWord(phrase));
 
-  return [...new Set(candidates.map((phrase) => normalizeText(phrase)).filter(Boolean))]
+  const ordered = [...new Set(candidates.map((phrase) => normalizeText(phrase)).filter(Boolean))]
     .sort((a, b) => {
       const priorityDelta = Number(priorityTerms.has(b)) - Number(priorityTerms.has(a));
       if (priorityDelta !== 0) return priorityDelta;
@@ -209,8 +232,13 @@ function hadithSearchPhrases(
       if (aSpecificity !== bSpecificity) return aSpecificity - bSpecificity;
       if (aWords !== bWords) return aWords - bWords;
       return a.length - b.length;
-    })
-    .slice(0, isIstikhara ? 14 : 10);
+    });
+  // Each meaningful word is also searched alone (« pudeur », « colere »): HadeethEnc's search is lexical
+  // and the shortest hadiths (« La pudeur fait partie de la foi ») hold no other word of the question.
+  const singles = [...new Set(contentWords)].slice(0, 4);
+  const limit = isIstikhara ? 14 : 10;
+  const others = ordered.filter((phrase) => !singles.includes(phrase));
+  return [...others.slice(0, limit - singles.length), ...singles];
 }
 
 type HadithConceptProfile = {
@@ -330,7 +358,14 @@ async function searchHadeethEnc(
 
   // Avoid fetching hundreds of detail records. Candidates returned by several
   // independent expressions are fetched first, then the closest summary titles.
-  const primaryTerms = expansion?.evidenceTerms ?? buildHadithSearchTerms(question);
+  // Without an expansion, only the question's terms holding a meaningful word: « parle de la pudeur »
+  // must not count as evidence for every hadith that matched « parle de ».
+  const questionWords = hadithContentWords(question);
+  const questionTerms = buildHadithSearchTerms(question).filter((term) =>
+    normalizeText(term).split(" ").some((word) => questionWords.includes(word))
+  );
+  const primaryTerms = expansion?.evidenceTerms ??
+    (questionTerms.length ? [...questionWords, ...questionTerms] : buildHadithSearchTerms(question));
   const normalizedPrimaryTerms = primaryTerms
     .map((term) => normalizeText(term))
     .filter(Boolean);
@@ -427,7 +462,20 @@ async function searchHadeethEnc(
     false,
   );
 
-  const conceptRankedItems = applyHadithConceptReranking(rankedItems, question);
+  // Scores often reach the ceiling (1) together; long stories then won on link words (« de ne pas »).
+  // First the hadith whose own text holds the most meaningful words of the question (5-letter stems:
+  // « colère », « pudeur »), then the score, then the shortest one.
+  const contentStems = [...new Set(hadithContentWords(question).map((word) => word.slice(0, 5)))];
+  const contentHits = (item: HadithRepositoryItem) => {
+    const words = normalizeText(item.frenchMeaning).split(" ");
+    return contentStems.filter((stem) => words.some((word) => word.startsWith(stem))).length;
+  };
+  const tieBrokenItems = [...rankedItems].sort((a, b) =>
+    contentHits(b.item) - contentHits(a.item) ||
+    b.score - a.score ||
+    a.item.frenchMeaning.length - b.item.frenchMeaning.length
+  );
+  const conceptRankedItems = applyHadithConceptReranking(tieBrokenItems, question);
   // The ranking evidence travels with each item: without it the strict
   // fallback saw a score of 0 and rejected every hadith.
   const items = deduplicateAndPrioritizeHadithItems(
