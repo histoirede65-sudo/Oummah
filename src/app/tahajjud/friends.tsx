@@ -14,6 +14,7 @@ import { timeAgo } from '../../features/tahajjud/duaWall';
 import { getGroups, type GroupSummary } from '../../features/tahajjud/tahajjudGroups';
 import {
   blockMember,
+  deleteConversation,
   ENCOURAGEMENTS,
   encouragementText,
   friendsErrorMessage,
@@ -34,6 +35,7 @@ import {
   type FriendsOverview,
   type Member,
   type OummahSummary,
+  OUMMAH_CONVERSATION,
 } from '../../features/tahajjud/tahajjudFriends';
 import { tx, txCount } from '../../features/tahajjud/tahajjudI18n';
 
@@ -154,8 +156,20 @@ export default function TahajjudFriendsScreen() {
     void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => undefined);
   });
 
+  const confirmDeleteConversation = (id: string, name: string) => {
+    Alert.alert(
+      tx("Supprimer la conversation avec {0} ?", [name]),
+      tx('Les messages disparaissent de votre téléphone seulement. Un nouveau message fera réapparaître la conversation.'),
+      [
+        { text: tx('Annuler'), style: 'cancel' },
+        { text: tx('Supprimer'), style: 'destructive', onPress: () => void act(() => deleteConversation(id)) },
+      ],
+    );
+  };
+
   const friendMenu = (friend: Friend) => {
     Alert.alert(friend.pseudo, undefined, [
+      ...(conversations[friend.id] ? [{ text: tx('Supprimer la conversation'), style: 'destructive' as const, onPress: () => confirmDeleteConversation(friend.id, friend.pseudo) }] : []),
       { text: tx('Retirer de mes amis'), onPress: () => void act(() => removeFriend(friend.id)) },
       {
         text: tx('Bloquer'), style: 'destructive', onPress: () => Alert.alert(
@@ -243,7 +257,10 @@ export default function TahajjudFriendsScreen() {
       ) : null}
 
       {oummah ? (
-        <Pressable onPress={() => router.push('/tahajjud/oummah' as Href)} style={({ pressed }) => [pressed && styles.pressed]}>
+        <Pressable
+          onPress={() => router.push('/tahajjud/oummah' as Href)}
+          onLongPress={() => confirmDeleteConversation(OUMMAH_CONVERSATION, 'OUMMAH')}
+          style={({ pressed }) => [pressed && styles.pressed]}>
           <GlassCard gold style={styles.oummahCard}>
             <View style={styles.row}>
               <View style={styles.oummahIcon}><Ionicons name="moon" size={20} color={night.sky0} /></View>
@@ -252,6 +269,9 @@ export default function TahajjudFriendsScreen() {
                 <Text style={[styles.groupLast, oummah.unread > 0 && styles.lastMessageUnread]} numberOfLines={1}>{oummah.lastBody}</Text>
               </View>
               <View style={styles.groupSide}>
+                <Pressable onPress={() => confirmDeleteConversation(OUMMAH_CONVERSATION, 'OUMMAH')} hitSlop={10}>
+                  <Ionicons name="ellipsis-horizontal" size={18} color={night.muted} />
+                </Pressable>
                 <Text style={styles.time}>{timeAgo(oummah.lastAt)}</Text>
                 {oummah.unread ? (
                   <View style={styles.badgeInline}><Text style={styles.badgeText}>{oummah.unread > 9 ? '9+' : oummah.unread}</Text></View>

@@ -1,3 +1,4 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getValidSession } from '../auth/SupabaseAuthService';
 import { COMMUNITY_AVATARS, type CommunityAvatar } from './tahajjudCommunity';
 import { tx } from './tahajjudI18n';
@@ -118,16 +119,51 @@ export function friendsErrorMessage(error: unknown) {
 export type ChatMessage = { id: string; body: string; mine: boolean; createdAt: string; read: boolean; pending?: boolean };
 export type Conversation = { userId: string; lastBody: string; lastMine: boolean; lastAt: string; unread: number };
 
+// ----- Conversations deleted on this phone ----------------------------------------------------
+// Deleting a conversation hides it for me only: the other member keeps their messages. Everything
+// written before the deletion stays hidden; a new message brings the conversation back.
+const CLEARED_KEY = 'oummah.community.cleared-conversations.v1';
+export const OUMMAH_CONVERSATION = 'oummah';
+
+async function getClearedAt(): Promise<Record<string, string>> {
+  try {
+    return JSON.parse((await AsyncStorage.getItem(CLEARED_KEY)) ?? '{}') as Record<string, string>;
+  } catch {
+    return {};
+  }
+}
+
+const isAfter = (date: string, cleared?: string) => !cleared || new Date(date).getTime() > new Date(cleared).getTime();
+
+/** Hides a conversation (a member id, or OUMMAH_CONVERSATION) up to now; its messages are marked read. */
+export async function deleteConversation(id: string) {
+  const cleared = await getClearedAt();
+  cleared[id] = new Date().toISOString();
+  await AsyncStorage.setItem(CLEARED_KEY, JSON.stringify(cleared));
+  if (id === OUMMAH_CONVERSATION) await getOummahThread().catch(() => undefined);
+  else await getChatThread(id).catch(() => undefined);
+}
+
 export async function getChatThread(userId: string, before?: string): Promise<ChatMessage[]> {
-  const rows = await rpc<Array<{ id: string; body: string; mine: boolean; created_at: string; read: boolean }>>(
-    'chat_thread', { p_user: userId, p_before: before ?? null, p_limit: 40 },
-  );
-  return rows.map((row) => ({ id: row.id, body: row.body, mine: row.mine, createdAt: row.created_at, read: row.read }));
+  const [rows, cleared] = await Promise.all([
+    rpc<Array<{ id: string; body: string; mine: boolean; created_at: string; read: boolean }>>(
+      'chat_thread', { p_user: userId, p_before: before ?? null, p_limit: 40 },
+    ),
+    getClearedAt(),
+  ]);
+  return rows
+    .filter((row) => isAfter(row.created_at, cleared[userId]))
+    .map((row) => ({ id: row.id, body: row.body, mine: row.mine, createdAt: row.created_at, read: row.read }));
 }
 
 export async function getConversations(): Promise<Conversation[]> {
-  const rows = await rpc<Array<{ user_id: string; last_body: string; last_mine: boolean; last_at: string; unread: number }>>('chat_conversations');
-  return rows.map((row) => ({ userId: row.user_id, lastBody: row.last_body, lastMine: row.last_mine, lastAt: row.last_at, unread: Number(row.unread) || 0 }));
+  const [rows, cleared] = await Promise.all([
+    rpc<Array<{ user_id: string; last_body: string; last_mine: boolean; last_at: string; unread: number }>>('chat_conversations'),
+    getClearedAt(),
+  ]);
+  return rows
+    .filter((row) => isAfter(row.last_at, cleared[row.user_id]))
+    .map((row) => ({ userId: row.user_id, lastBody: row.last_body, lastMine: row.last_mine, lastAt: row.last_at, unread: Number(row.unread) || 0 }));
 }
 
 export const sendChatMessage = (userId: string, body: string) => rpc<string>('chat_send', { p_user: userId, p_body: body });
@@ -140,13 +176,22 @@ export type OummahSummary = { lastBody: string; lastAt: string; unread: number }
 
 /** Opening the thread marks every OUMMAH message as read. */
 export async function getOummahThread(before?: string): Promise<OummahMessage[]> {
-  const rows = await rpc<Array<{ id: string; body: string; created_at: string }>>('oummah_thread', { p_before: before ?? null, p_limit: 40 });
-  return rows.map((row) => ({ id: row.id, body: row.body, createdAt: row.created_at }));
+  const [rows, cleared] = await Promise.all([
+    rpc<Array<{ id: string; body: string; created_at: string }>>('oummah_thread', { p_before: before ?? null, p_limit: 40 }),
+    getClearedAt(),
+  ]);
+  return rows
+    .filter((row) => isAfter(row.created_at, cleared[OUMMAH_CONVERSATION]))
+    .map((row) => ({ id: row.id, body: row.body, createdAt: row.created_at }));
 }
 
 /** null when the team has not written to this member yet. */
 export async function getOummahSummary(): Promise<OummahSummary | null> {
-  const raw = await rpc<{ lastBody: string; lastAt: string; unread: number } | null>('oummah_summary');
+  const [raw, cleared] = await Promise.all([
+    rpc<{ lastBody: string; lastAt: string; unread: number } | null>('oummah_summary'),
+    getClearedAt(),
+  ]);
+  if (raw && !isAfter(raw.lastAt, cleared[OUMMAH_CONVERSATION])) return null;
   return raw ? { lastBody: raw.lastBody, lastAt: raw.lastAt, unread: Number(raw.unread) || 0 } : null;
 }
 
