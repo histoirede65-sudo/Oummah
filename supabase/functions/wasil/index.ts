@@ -693,7 +693,34 @@ function applyDocumentaryVerification(input: {
   };
 }
 
+function quoteWords(value: string) {
+  return value.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase()
+    .split(/[^a-z0-9]+/).filter(Boolean);
+}
+
+function wordTrigrams(words: string[]) {
+  const grams: string[] = [];
+  for (let index = 0; index + 3 <= words.length; index += 1) grams.push(words.slice(index, index + 3).join(" "));
+  return grams;
+}
+
+/**
+ * True when one of the answer's quotations (« … ») is taken from the source: at least 60 % of its
+ * three-word sequences appear in it, in the same order. Single words are not enough — a long story
+ * holds most of them (« les deux rak'a de l'aube » matched 47 % of an unrelated hadith).
+ */
+function answerQuotesSource(answer: string, sourceText: string) {
+  const source = ` ${quoteWords(sourceText).join(" ")} `;
+  return [...answer.matchAll(/«([^»]{12,})»/g)].some((match) => {
+    const grams = wordTrigrams(quoteWords(match[1]));
+    if (grams.length === 0) return false;
+    const found = grams.filter((gram) => source.includes(` ${gram} `)).length;
+    return found / grams.length >= 0.6;
+  });
+}
+
 function ensureRequestedCorpusCoverage(input: {
+  answerBody: string;
   question: string;
   parsedSourceIds: string[];
   parsedQuranReferences: QuranReference[];
@@ -732,10 +759,14 @@ function ensureRequestedCorpusCoverage(input: {
     }
   }
 
+  // A hadith is added only if the answer really quotes it: the best-ranked candidate can be another
+  // hadith (« les deux rak'a de l'aube » got a story of Ka'b ibn Mâlik with « Réponse vérifiée »).
+  // Without it, the answer falls back to « no verified hadith » below.
   if (requireHadith && !hasSelectedHadith) {
-    const sourceId = input.verifiedHadithSourceIds.find((id) =>
-      Boolean(input.requestSources[id])
-    );
+    const sourceId = input.verifiedHadithSourceIds.find((id) => {
+      const source = input.requestSources[id];
+      return Boolean(source) && answerQuotesSource(input.answerBody, source.body);
+    });
     if (sourceId && !selectedIds.has(sourceId)) {
       input.parsedSourceIds.push(sourceId);
       selectedIds.add(sourceId);
@@ -755,6 +786,25 @@ function ensureRequestedCorpusCoverage(input: {
       existingReferenceKeys.add(key);
     }
   }
+}
+
+/**
+ * When the answer quotes words (« … »), an internal hadith card is kept only if that hadith contains
+ * them: otherwise the card shows another hadith under a quotation it does not hold.
+ */
+function dropHadithSourcesNotQuoted(input: {
+  answerBody: string;
+  parsedSourceIds: string[];
+  requestSources: Record<string, TrustedSource>;
+  hadithMetadata: Map<string, HadithReference>;
+}) {
+  if (!/«[^»]{12,}»/.test(input.answerBody)) return;
+  const retained = input.parsedSourceIds.filter((id) => {
+    if (!isHadithDocumentarySource(id, input.hadithMetadata)) return true;
+    const source = input.requestSources[id];
+    return Boolean(source) && answerQuotesSource(input.answerBody, source.body);
+  });
+  input.parsedSourceIds.splice(0, input.parsedSourceIds.length, ...retained);
 }
 
 function enforceExplicitHadithSourceIds(input: {
@@ -1232,7 +1282,7 @@ async function syncConversations(userId: string, local: ConversationThread[]) {
 }
 
 // Raise when the answer rules change, so answers written under the old rules are no longer reused.
-const ANSWER_CACHE_VERSION = "1";
+const ANSWER_CACHE_VERSION = "5";
 
 /**
  * Key under which an answer is reused, or null when it must not be: personal
@@ -2797,6 +2847,7 @@ async function handleWasilRequest(
     }
 
     ensureRequestedCorpusCoverage({
+      answerBody: parsed.body,
       question: effectiveQuestion,
       parsedSourceIds: parsed.source_ids,
       parsedQuranReferences: parsed.quran_references,
@@ -2804,6 +2855,12 @@ async function handleWasilRequest(
       brainPlan: v4Analysis?.brainPlan ?? null,
       verifiedQuranSourceIds: documentaryQuranSourceIds,
       verifiedHadithSourceIds: documentaryHadithSourceIds,
+      hadithMetadata: productionHadith.metadata,
+    });
+    dropHadithSourcesNotQuoted({
+      answerBody: parsed.body,
+      parsedSourceIds: parsed.source_ids,
+      requestSources,
       hadithMetadata: productionHadith.metadata,
     });
     const hasVerifiedRequestedHadith = enforceExplicitHadithSourceIds({
