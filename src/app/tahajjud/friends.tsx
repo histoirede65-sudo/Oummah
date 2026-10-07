@@ -3,9 +3,10 @@ import * as Haptics from 'expo-haptics';
 import { LinearGradient } from 'expo-linear-gradient';
 import type { Href } from 'expo-router';
 import { router, useFocusEffect } from 'expo-router';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react';
 import { ActivityIndicator, Alert, Modal, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
-import Animated, { FadeInDown } from 'react-native-reanimated';
+import ReanimatedSwipeable, { type SwipeableMethods } from 'react-native-gesture-handler/ReanimatedSwipeable';
+import Animated, { FadeInDown, FadeOutLeft, interpolate, LinearTransition, useAnimatedStyle, type SharedValue } from 'react-native-reanimated';
 import { MemberAvatar } from '../../components/tahajjud/MemberAvatar';
 import { GlassCard, shellStyles, TahajjudShell } from '../../components/tahajjud/TahajjudShell';
 import { night, nightType } from '../../components/tahajjud/theme';
@@ -40,6 +41,44 @@ import {
 import { tx, txCount } from '../../features/tahajjud/tahajjudI18n';
 
 type SearchResult = Member & { relation: FriendRelation };
+
+/** Red « Supprimer » revealed by swiping a conversation to the left, growing as it is uncovered. */
+function DeleteAction({ progress, onPress }: { progress: SharedValue<number>; onPress: () => void }) {
+  const style = useAnimatedStyle(() => ({
+    opacity: interpolate(progress.value, [0, 0.4, 1], [0, 0.6, 1]),
+    transform: [{ scale: interpolate(progress.value, [0, 1], [0.6, 1], 'clamp') }],
+  }));
+  return (
+    <Pressable onPress={onPress} style={styles.swipeAction}>
+      <Animated.View style={[styles.swipeActionInner, style]}>
+        <Ionicons name="trash" size={22} color="#FFFFFF" />
+        <Text style={styles.swipeActionText}>{tx('Supprimer')}</Text>
+      </Animated.View>
+    </Pressable>
+  );
+}
+
+/** Swipe left to delete, WhatsApp-like; asks first and springs back if cancelled. */
+function SwipeToDelete({ enabled, onDelete, children }: { enabled: boolean; onDelete: (close: () => void) => void; children: ReactNode }) {
+  const ref = useRef<SwipeableMethods>(null);
+  if (!enabled) return <>{children}</>;
+  const ask = () => {
+    void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => undefined);
+    onDelete(() => ref.current?.close());
+  };
+  return (
+    <ReanimatedSwipeable
+      ref={ref}
+      friction={1.6}
+      rightThreshold={60}
+      overshootRight={false}
+      onSwipeableOpen={ask}
+      renderRightActions={(progress) => <DeleteAction progress={progress} onPress={ask} />}
+    >
+      {children}
+    </ReanimatedSwipeable>
+  );
+}
 
 function friendStatus(friend: Friend) {
   if (!friend.shared) return { icon: 'lock-closed-outline' as const, text: tx('Activité privée'), color: night.muted };
@@ -156,14 +195,15 @@ export default function TahajjudFriendsScreen() {
     void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => undefined);
   });
 
-  const confirmDeleteConversation = (id: string, name: string) => {
+  const confirmDeleteConversation = (id: string, name: string, onCancel?: () => void) => {
     Alert.alert(
       tx("Supprimer la conversation avec {0} ?", [name]),
       tx('Les messages disparaissent de votre téléphone seulement. Un nouveau message fera réapparaître la conversation.'),
       [
-        { text: tx('Annuler'), style: 'cancel' },
+        { text: tx('Annuler'), style: 'cancel', onPress: onCancel },
         { text: tx('Supprimer'), style: 'destructive', onPress: () => void act(() => deleteConversation(id)) },
       ],
+      { cancelable: true, onDismiss: onCancel },
     );
   };
 
@@ -257,6 +297,8 @@ export default function TahajjudFriendsScreen() {
       ) : null}
 
       {oummah ? (
+        <Animated.View exiting={FadeOutLeft.duration(260)} layout={LinearTransition} style={styles.oummahWrap}>
+        <SwipeToDelete enabled onDelete={(close) => confirmDeleteConversation(OUMMAH_CONVERSATION, 'OUMMAH', close)}>
         <Pressable
           onPress={() => router.push('/tahajjud/oummah' as Href)}
           onLongPress={() => confirmDeleteConversation(OUMMAH_CONVERSATION, 'OUMMAH')}
@@ -280,6 +322,8 @@ export default function TahajjudFriendsScreen() {
             </View>
           </GlassCard>
         </Pressable>
+        </SwipeToDelete>
+        </Animated.View>
       ) : null}
 
       {friends.length ? (
@@ -386,7 +430,8 @@ export default function TahajjudFriendsScreen() {
         const thread = conversations[friend.id];
         const unread = Boolean(thread?.unread);
         return (
-          <Animated.View key={friend.id} entering={FadeInDown.delay(60 * index).duration(400)}>
+          <Animated.View key={friend.id} entering={FadeInDown.delay(60 * index).duration(400)} layout={LinearTransition} style={styles.friendWrap}>
+            <SwipeToDelete enabled={Boolean(thread)} onDelete={(close) => confirmDeleteConversation(friend.id, friend.pseudo, close)}>
             <Pressable
               onPress={() => openChat(friend)}
               accessibilityRole="button"
@@ -443,6 +488,7 @@ export default function TahajjudFriendsScreen() {
                 </Pressable>
               </View>
             </Pressable>
+            </SwipeToDelete>
           </Animated.View>
         );
       })}
@@ -523,8 +569,10 @@ const styles = StyleSheet.create({
   time: { color: night.muted, fontSize: 12, ...nightType.body },
   emptyTitle: { color: night.text, fontSize: 20, ...nightType.display },
   emptyText: { color: night.textSoft, fontSize: 15, lineHeight: 21, textAlign: 'center', ...nightType.body },
+  friendWrap: { marginBottom: 14 },
+  oummahWrap: { marginTop: 16 },
   friendCard: {
-    marginBottom: 14, padding: 18, borderRadius: 24, overflow: 'hidden',
+    padding: 18, borderRadius: 24, overflow: 'hidden',
     borderWidth: 1, borderColor: 'rgba(227,181,90,0.28)',
     shadowColor: '#000', shadowOpacity: 0.45, shadowRadius: 16, shadowOffset: { width: 0, height: 8 }, elevation: 8,
   },
@@ -552,7 +600,10 @@ const styles = StyleSheet.create({
   newGroupText: { color: night.sky0, fontSize: 14, ...nightType.bold },
   groupEmpty: { flexDirection: 'row', alignItems: 'center', gap: 12 },
   groupEmptyText: { flex: 1, color: night.textSoft, fontSize: 15, lineHeight: 21, ...nightType.body },
-  oummahCard: { marginTop: 16, paddingVertical: 8 },
+  oummahCard: { paddingVertical: 8 },
+  swipeAction: { width: 112, marginLeft: 10, borderRadius: 24, backgroundColor: '#E5484D', alignItems: 'center', justifyContent: 'center' },
+  swipeActionInner: { alignItems: 'center', gap: 4 },
+  swipeActionText: { color: '#FFFFFF', fontSize: 13, ...nightType.bold },
   oummahIcon: { width: 42, height: 42, borderRadius: 21, alignItems: 'center', justifyContent: 'center', backgroundColor: night.gold },
   groupIcon: { width: 42, height: 42, borderRadius: 21, alignItems: 'center', justifyContent: 'center', backgroundColor: night.lavender },
   groupTitleRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
