@@ -38,6 +38,7 @@ import {
   DEFAULT_PRAYER_CALCULATION_SETTINGS,
   loadPrayerCalculationSettings,
   savePrayerCalculationSettings,
+  shiftScheduleToToday,
 } from "../features/mosques/data/mosquePrayerTimes";
 import {
   DEFAULT_CALENDAR_SETTINGS,
@@ -211,14 +212,17 @@ const ORBIT_POSITIONS: ReadonlyArray<{
 const ORBIT_ANGLES = [2.98, 4.17, 4.71, 5.24, 6.51, 7.86, 2.98 + 2 * Math.PI] as const;
 
 function getOrbitMarker(timeline: TimelineItem[], now: number) {
-  const timestamps = timeline.map((prayer) => prayer.timestamp);
-
-  if (timestamps.length !== 6 || timestamps.some((timestamp) => !timestamp)) {
+  if (timeline.length !== 6 || timeline.some((prayer) => !prayer.timestamp)) {
     return null;
   }
 
+  // Time of day only: times still from a previous day (refresh not done yet, offline…) used to leave
+  // the halo stuck under the Fajr dot all day long.
+  const timeOfDay = (timestamp: number) => timestamp - getLocalDayStart(timestamp);
+  const timestamps = timeline.map((prayer) => timeOfDay(prayer.timestamp));
+
   const day = 24 * 60 * 60 * 1_000;
-  let adjustedNow = now;
+  let adjustedNow = timeOfDay(now);
 
   if (adjustedNow < timestamps[0]) {
     adjustedNow += day;
@@ -442,6 +446,8 @@ async function resolvePrayerSource(
 // Last times shown, kept for the whole app session: when the home screen is opened again (back from
 // Mosquées, « Accueil » in the menu…) they appear at once and are refreshed quietly in the background.
 let lastShown: { schedule: MosquePrayerSchedule; source: PrayerSource } | null = null;
+// Also kept on the phone: when the app opens (even offline) the last times are shown at once.
+const LAST_SHOWN_STORAGE_KEY = "oummah.home.prayer-times.last-shown.v1";
 
 export default function PrayerCard({ onScheduleChange }: { onScheduleChange?: (schedule: MosquePrayerSchedule) => void }) {
   const { language, t } = useI18n();
@@ -916,7 +922,24 @@ export default function PrayerCard({ onScheduleChange }: { onScheduleChange?: (s
     const loadPrayerTimes = async () => {
       // Times kept in memory are handed to the home screen at once (Qiyam card…), before the refresh.
       if (schedule) onScheduleChange?.(schedule);
-      if (!schedule) setLoading(true);
+      if (!schedule && !lastShown) {
+        const stored = await storageService
+          .get<{ schedule: MosquePrayerSchedule; source: PrayerSource }>(LAST_SHOWN_STORAGE_KEY)
+          .catch(() => null);
+        const storedSchedule = stored?.schedule ? shiftScheduleToToday(stored.schedule) : null;
+        const sameSource = stored?.source && (mainMosque
+          ? stored.source.type === "mosque" && stored.source.label === mainMosque.name
+          : stored.source.type === "location");
+        if (controller.signal.aborted) return;
+        if (storedSchedule && sameSource && !manualSource) {
+          lastShown = { schedule: storedSchedule, source: stored.source };
+          setSource(stored.source);
+          setSchedule(storedSchedule);
+          setLoading(false);
+          onScheduleChange?.(storedSchedule);
+        }
+      }
+      if (!schedule && !lastShown) setLoading(true);
       setErrorMessage("");
 
       try {
@@ -945,10 +968,14 @@ export default function PrayerCard({ onScheduleChange }: { onScheduleChange?: (s
           ? applyApprovedMosquePrayerTimes(result, approved)
           : result;
 
-        if (!controller.signal.aborted) {
+        // Offline, the stored times already shown (with the mosque's own times) are kept rather than
+        // replaced by the calculated fallback.
+        const keepShown = result.fromCache && lastShown?.schedule.dateKey === result.dateKey;
+        if (!controller.signal.aborted && !keepShown) {
           setSource(resolvedSource);
           setSchedule(adjustedResult);
           lastShown = { schedule: adjustedResult, source: resolvedSource };
+          if (!manualSource) void storageService.set(LAST_SHOWN_STORAGE_KEY, lastShown).catch(() => undefined);
           onScheduleChange?.(adjustedResult);
         }
       } catch (error) {
