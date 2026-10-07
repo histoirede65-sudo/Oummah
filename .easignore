@@ -23,3 +23,13 @@ supabase/.temp
 # OS
 .DS_Store
 Thumbs.db
+
+# Dépendances : EAS les réinstalle lui-même
+node_modules
+
+# Fichiers de compilation locaux (recréés à chaque build ; un build local interrompu les laisse incomplets)
+android/.gradle
+android/build
+android/app/build
+android/app/.cxx
+android/local.properties
