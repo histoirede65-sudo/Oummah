@@ -1,4 +1,6 @@
+import * as Haptics from 'expo-haptics';
 import { useFocusEffect, useLocalSearchParams } from 'expo-router';
+import Animated, { FadeIn, ZoomIn } from 'react-native-reanimated';
 import { useCallback, useRef, useState } from 'react';
 import { Alert, Modal, Pressable, StyleSheet, Text, View } from 'react-native';
 import { night, nightType } from '../../components/tahajjud/theme';
@@ -50,6 +52,7 @@ export default function TahajjudChatScreen() {
   }, [friendId]);
 
   const react = async (message: ChatMessage, emoji: string) => {
+    void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => undefined);
     setPicker(null);
     const previous = reactions;
     const others = (reactions[message.id] ?? []).filter((reaction) => !reaction.mine);
@@ -119,6 +122,7 @@ export default function TahajjudChatScreen() {
 
   const onLongPress = (message: ChatMessage) => {
     if (message.pending) return;
+    void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => undefined);
     setPicker(message);
   };
 
@@ -148,27 +152,30 @@ export default function TahajjudChatScreen() {
 
   return (
     <>
-    <Modal visible={Boolean(picker)} transparent animationType="fade" onRequestClose={() => setPicker(null)}>
+    <Modal visible={Boolean(picker)} transparent animationType="fade" statusBarTranslucent onRequestClose={() => setPicker(null)}>
       <Pressable style={styles.backdrop} onPress={() => setPicker(null)}>
-        <View style={styles.sheet}>
+        <Animated.View entering={ZoomIn.springify().damping(16).stiffness(220)} style={styles.sheet}>
           <Text style={styles.preview} numberOfLines={2}>{picker?.body}</Text>
           <View style={styles.emojiRow}>
-            {CHAT_REACTIONS.map((emoji) => (
+            {CHAT_REACTIONS.map((emoji, index) => (
+              <Animated.View key={emoji} entering={ZoomIn.delay(40 + index * 35).springify().damping(11).stiffness(260)}>
               <Pressable
-                key={emoji}
                 onPress={() => picker && void react(picker, emoji)}
                 style={({ pressed }) => [styles.emojiButton, myReaction === emoji && styles.emojiButtonOn, pressed && styles.emojiPressed]}
               >
                 <Text style={styles.emoji}>{emoji}</Text>
               </Pressable>
+              </Animated.View>
             ))}
           </View>
+          <Animated.View entering={FadeIn.delay(160).duration(220)}>
           <Pressable onPress={() => picker && messageActions(picker)} style={styles.action}>
             <Text style={[styles.actionText, picker?.mine && styles.actionDanger]}>
               {picker?.mine ? tx('Supprimer le message') : tx('Signaler ce message')}
             </Text>
           </Pressable>
-        </View>
+          </Animated.View>
+        </Animated.View>
       </Pressable>
     </Modal>
     <ChatFrame
@@ -211,12 +218,15 @@ export default function TahajjudChatScreen() {
 
 const styles = StyleSheet.create({
   backdrop: { flex: 1, justifyContent: 'center', padding: 24, backgroundColor: 'rgba(4,3,14,0.7)' },
-  sheet: { borderRadius: 24, padding: 18, gap: 14, backgroundColor: night.glassStrong, borderWidth: 1, borderColor: night.goldLine },
+  sheet: {
+    borderRadius: 26, padding: 18, gap: 14, backgroundColor: night.glassStrong, borderWidth: 1, borderColor: night.goldLine,
+    shadowColor: '#000', shadowOpacity: 0.5, shadowRadius: 24, shadowOffset: { width: 0, height: 12 }, elevation: 16,
+  },
   preview: { color: night.textSoft, fontSize: 15, lineHeight: 21, ...nightType.body },
   emojiRow: { flexDirection: 'row', justifyContent: 'space-between' },
   emojiButton: { width: 46, height: 46, borderRadius: 23, alignItems: 'center', justifyContent: 'center' },
   emojiButtonOn: { backgroundColor: 'rgba(244,217,149,0.22)', borderWidth: 1, borderColor: night.goldLine },
-  emojiPressed: { transform: [{ scale: 1.15 }] },
+  emojiPressed: { transform: [{ scale: 1.25 }], backgroundColor: 'rgba(244,217,149,0.14)' },
   emoji: { fontSize: 28 },
   action: { paddingVertical: 10, alignItems: 'center', borderTopWidth: 1, borderTopColor: night.line },
   actionText: { color: night.text, fontSize: 16, ...nightType.semibold },

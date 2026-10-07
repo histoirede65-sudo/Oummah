@@ -2,6 +2,8 @@ import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import type { ReactElement, ReactNode } from 'react';
 import { useRef } from 'react';
+import * as Haptics from 'expo-haptics';
+import Animated, { useAnimatedStyle, useSharedValue, withSequence, withSpring, ZoomIn } from 'react-native-reanimated';
 import { ActivityIndicator, FlatList, KeyboardAvoidingView, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import type { CommunityAvatar } from '../../features/tahajjud/tahajjudCommunity';
@@ -57,11 +59,16 @@ export function ChatBubble({ mine, body, meta, author, tail, onLongPress, onDoub
   onLongPress?: () => void;
 }) {
   const lastTap = useRef(0);
+  // The bubble sinks slightly under the finger and springs back, and pops on a double tap.
+  const scale = useSharedValue(1);
+  const bubbleStyle = useAnimatedStyle(() => ({ transform: [{ scale: scale.value }] }));
   const onPress = onDoublePress
     ? () => {
       const now = Date.now();
       if (now - lastTap.current < 300) {
         lastTap.current = 0;
+        void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => undefined);
+        scale.value = withSequence(withSpring(1.06, { damping: 8, stiffness: 400 }), withSpring(1, { damping: 12, stiffness: 260 }));
         onDoublePress();
       } else {
         lastTap.current = now;
@@ -69,16 +76,29 @@ export function ChatBubble({ mine, body, meta, author, tail, onLongPress, onDoub
     }
     : undefined;
   return (
-    <Pressable onPress={onPress} onLongPress={onLongPress} delayLongPress={350} style={[styles.bubbleRow, mine && styles.bubbleRowMine]}>
+    <Pressable
+      onPress={onPress}
+      onLongPress={onLongPress}
+      onPressIn={() => { scale.value = withSpring(0.97, { damping: 15, stiffness: 300 }); }}
+      onPressOut={() => { scale.value = withSpring(1, { damping: 12, stiffness: 260 }); }}
+      delayLongPress={350}
+      style={[styles.bubbleRow, mine && styles.bubbleRowMine]}
+    >
       {author}
-      <View style={[styles.bubble, mine ? styles.bubbleMine : styles.bubbleOther, tail && (mine ? styles.tailMine : styles.tailOther)]}>
+      <Animated.View style={[styles.bubble, mine ? styles.bubbleMine : styles.bubbleOther, tail && (mine ? styles.tailMine : styles.tailOther), bubbleStyle]}>
         <Text style={[styles.bubbleText, mine && styles.bubbleTextMine]}>{body}</Text>
         <Text style={[styles.time, mine && styles.timeMine]}>{meta}</Text>
-      </View>
+      </Animated.View>
       {reactions?.length ? (
         <Pressable onPress={onPressReactions} hitSlop={6} style={[styles.reactions, mine ? styles.reactionsMine : styles.reactionsOther]}>
-          {reactions.map((reaction, index) => (
-            <Text key={index} style={styles.reactionEmoji}>{reaction.emoji}</Text>
+          {reactions.map((reaction) => (
+            <Animated.Text
+              key={`${reaction.mine ? 'me' : 'other'}-${reaction.emoji}`}
+              entering={ZoomIn.springify().damping(9).stiffness(320)}
+              style={styles.reactionEmoji}
+            >
+              {reaction.emoji}
+            </Animated.Text>
           ))}
         </Pressable>
       ) : null}

@@ -6,7 +6,8 @@ import { router, useFocusEffect } from 'expo-router';
 import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react';
 import { ActivityIndicator, Alert, Modal, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import ReanimatedSwipeable, { type SwipeableMethods } from 'react-native-gesture-handler/ReanimatedSwipeable';
-import Animated, { FadeInDown, FadeOutLeft, interpolate, LinearTransition, useAnimatedStyle, type SharedValue } from 'react-native-reanimated';
+import { scheduleOnRN } from 'react-native-worklets';
+import Animated, { FadeInDown, FadeOutLeft, interpolate, LinearTransition, useAnimatedReaction, useAnimatedStyle, useSharedValue, withSpring, type SharedValue } from 'react-native-reanimated';
 import { MemberAvatar } from '../../components/tahajjud/MemberAvatar';
 import { GlassCard, shellStyles, TahajjudShell } from '../../components/tahajjud/TahajjudShell';
 import { night, nightType } from '../../components/tahajjud/theme';
@@ -43,6 +44,26 @@ import { tx, txCount } from '../../features/tahajjud/tahajjudI18n';
 type SearchResult = Member & { relation: FriendRelation };
 
 const ACTION_WIDTH = 104;
+const tick = () => void Haptics.selectionAsync().catch(() => undefined);
+
+const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
+
+/** A card that sinks a little under the finger and springs back. */
+function SpringCard({ style, children, ...props }: { style: (object | false)[]; children: ReactNode; onPress: () => void; accessibilityLabel: string }) {
+  const scale = useSharedValue(1);
+  const animated = useAnimatedStyle(() => ({ transform: [{ scale: scale.value }] }));
+  return (
+    <AnimatedPressable
+      {...props}
+      accessibilityRole="button"
+      onPressIn={() => { scale.value = withSpring(0.975, { damping: 18, stiffness: 320 }); }}
+      onPressOut={() => { scale.value = withSpring(1, { damping: 14, stiffness: 220 }); }}
+      style={[...style, animated]}
+    >
+      {children}
+    </AnimatedPressable>
+  );
+}
 // Dragged at least this far (px) and released: deleted without tapping the button.
 const FULL_SWIPE = 200;
 
@@ -52,6 +73,13 @@ function DeleteAction({ progress, translation, onPress }: {
   translation: SharedValue<number>;
   onPress: () => void;
 }) {
+  // A tick when the drag reaches the point where releasing deletes (and back).
+  useAnimatedReaction(
+    () => -translation.value > FULL_SWIPE,
+    (full, previous) => {
+      if (previous !== null && full !== previous) scheduleOnRN(tick);
+    },
+  );
   const container = useAnimatedStyle(() => ({ width: Math.max(ACTION_WIDTH, -translation.value) }));
   const content = useAnimatedStyle(() => ({
     opacity: interpolate(progress.value, [0, 0.4, 1], [0, 0.6, 1], 'clamp'),
@@ -82,7 +110,9 @@ function SwipeToDelete({ enabled, onDelete, children }: { enabled: boolean; onDe
   return (
     <ReanimatedSwipeable
       ref={ref}
-      friction={1.4}
+      friction={1.2}
+      dragOffsetFromRightEdge={12}
+      animationOptions={{ damping: 22, stiffness: 240, mass: 0.9 }}
       rightThreshold={50}
       overshootRight
       overshootFriction={1}
@@ -464,11 +494,10 @@ export default function TahajjudFriendsScreen() {
           {index === oummahIndex ? oummahCard : null}
           <Animated.View entering={FadeInDown.delay(60 * index).duration(400)} layout={LinearTransition} style={styles.friendWrap}>
             <SwipeToDelete enabled={Boolean(thread)} onDelete={() => swipeDelete(friend.id)}>
-            <Pressable
+            <SpringCard
               onPress={() => openChat(friend)}
-              accessibilityRole="button"
               accessibilityLabel={friend.pseudo}
-              style={({ pressed }) => [styles.friendCard, unread && styles.friendCardUnread, pressed && styles.friendCardPressed]}
+              style={[styles.friendCard, unread && styles.friendCardUnread]}
             >
               <LinearGradient
                 colors={unread ? ['#4A3A2A', '#2A2050', '#16102E'] : ['#2B2254', '#1A1438', '#120E28']}
@@ -519,7 +548,7 @@ export default function TahajjudFriendsScreen() {
                   <Text style={styles.encourageButtonText}>{tx("Encourager")}</Text>
                 </Pressable>
               </View>
-            </Pressable>
+            </SpringCard>
             </SwipeToDelete>
           </Animated.View>
           </View>
@@ -621,7 +650,6 @@ const styles = StyleSheet.create({
     overflow: 'hidden', paddingHorizontal: 8, paddingVertical: 2, borderRadius: 10,
     backgroundColor: '#FF4D5E', color: '#FFFFFF', fontSize: 11, ...nightType.bold,
   },
-  friendCardPressed: { opacity: 0.9, transform: [{ scale: 0.985 }] },
   friendCardSheen: { position: 'absolute', top: 0, left: 24, right: 24, height: 1, backgroundColor: 'rgba(244,217,149,0.45)' },
   friendAvatarRing: { padding: 2, borderRadius: 30, borderWidth: 1, borderColor: 'rgba(244,217,149,0.4)' },
   friendName: { color: night.text, fontSize: 22, ...nightType.display },
