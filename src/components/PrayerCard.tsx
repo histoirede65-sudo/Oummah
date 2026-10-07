@@ -212,14 +212,17 @@ const ORBIT_POSITIONS: ReadonlyArray<{
 const ORBIT_ANGLES = [2.98, 4.17, 4.71, 5.24, 6.51, 7.86, 2.98 + 2 * Math.PI] as const;
 
 function getOrbitMarker(timeline: TimelineItem[], now: number) {
-  const timestamps = timeline.map((prayer) => prayer.timestamp);
-
-  if (timestamps.length !== 6 || timestamps.some((timestamp) => !timestamp)) {
+  if (timeline.length !== 6 || timeline.some((prayer) => !prayer.timestamp)) {
     return null;
   }
 
+  // Time of day only: times still from a previous day (refresh not done yet, offline…) used to leave
+  // the halo stuck under the Fajr dot all day long.
+  const timeOfDay = (timestamp: number) => timestamp - getLocalDayStart(timestamp);
+  const timestamps = timeline.map((prayer) => timeOfDay(prayer.timestamp));
+
   const day = 24 * 60 * 60 * 1_000;
-  let adjustedNow = now;
+  let adjustedNow = timeOfDay(now);
 
   if (adjustedNow < timestamps[0]) {
     adjustedNow += day;
