@@ -388,15 +388,15 @@ export default function TahajjudFriendsScreen() {
                   <Text style={styles.time}>{timeAgo(thread.lastAt)}</Text>
                 </Pressable>
               ) : null}
+              {friend.shared ? (
+                <View style={styles.weekRow}>
+                  {Array.from({ length: 7 }, (_, i) => (
+                    <View key={i} style={[styles.weekDot, i < friend.week && styles.weekDotOn]} />
+                  ))}
+                  <Text style={styles.weekText} numberOfLines={1}>{txCount(friend.week, '{0} nuit / 7 jours', '{0} nuits / 7 jours')}</Text>
+                </View>
+              ) : null}
               <View style={styles.friendFooter}>
-                {friend.shared ? (
-                  <View style={styles.weekRow}>
-                    {Array.from({ length: 7 }, (_, i) => (
-                      <View key={i} style={[styles.weekDot, i < friend.week && styles.weekDotOn]} />
-                    ))}
-                    <Text style={styles.weekText}>{txCount(friend.week, '{0} nuit / 7 jours', '{0} nuits / 7 jours')}</Text>
-                  </View>
-                ) : <View style={styles.flex} />}
                 <Pressable onPress={() => openChat(friend)} style={styles.messageButton}>
                   <Ionicons name="chatbubble-ellipses" size={16} color={night.goldSoft} />
                   {thread?.unread ? (
@@ -493,11 +493,11 @@ const styles = StyleSheet.create({
   friendName: { color: night.text, fontSize: 19, ...nightType.semibold },
   statusRow: { marginTop: 3, flexDirection: 'row', alignItems: 'center', gap: 6 },
   statusText: { fontSize: 14, ...nightType.semibold },
-  friendFooter: { marginTop: 10, flexDirection: 'row', alignItems: 'center', gap: 10 },
-  weekRow: { flex: 1, flexDirection: 'row', alignItems: 'center', gap: 5 },
+  friendFooter: { marginTop: 10, flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end', gap: 10 },
+  weekRow: { marginTop: 12, flexDirection: 'row', alignItems: 'center', gap: 5 },
   weekDot: { width: 9, height: 9, borderRadius: 5, backgroundColor: '#222036' },
   weekDotOn: { backgroundColor: night.goldSoft },
-  weekText: { marginLeft: 6, color: night.muted, fontSize: 13, ...nightType.medium },
+  weekText: { flexShrink: 1, marginLeft: 6, color: night.muted, fontSize: 13, ...nightType.medium },
   sectionHead: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 },
   noMargin: { marginBottom: 0 },
   newGroup: { flexDirection: 'row', alignItems: 'center', gap: 4, paddingHorizontal: 12, paddingVertical: 7, borderRadius: 16, backgroundColor: night.gold },
