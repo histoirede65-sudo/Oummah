@@ -1,4 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { getLocales } from 'expo-localization';
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
 import { I18nManager, type FlexStyle, type TextStyle } from 'react-native';
 
@@ -30,10 +31,14 @@ const isLanguage = (value: string | null): value is LanguageCode => value !== nu
  * Langue enregistrée, lue dès le chargement du module : notifications et widgets l'attendent
  * avant de se synchroniser, pour ne pas être programmés en français chez un utilisateur anglais.
  */
-/** Langue du téléphone au premier lancement : anglais seulement si le téléphone est en anglais. */
+/**
+ * Langue du téléphone au premier lancement : anglais seulement si la première langue choisie dans les
+ * réglages du téléphone est l'anglais. (Intl ne convient pas : sur iPhone, il donne la langue que iOS
+ * attribue à l'app, l'anglais par défaut, même sur un téléphone en français.)
+ */
 function deviceLanguage(): LanguageCode {
   try {
-    return /^en\b/i.test(Intl.DateTimeFormat().resolvedOptions().locale) ? 'en' : 'fr';
+    return getLocales()[0]?.languageCode === 'en' ? 'en' : 'fr';
   } catch {
     return 'fr';
   }

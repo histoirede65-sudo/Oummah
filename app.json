@@ -80,7 +80,8 @@
           "backgroundAsset": "home-mosque-sunset.jpg"
         }
       ],
-      "expo-video"
+      "expo-video",
+      "expo-localization"
     ],
     "experiments": {
       "typedRoutes": false,
