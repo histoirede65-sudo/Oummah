@@ -1285,7 +1285,7 @@ async function syncConversations(userId: string, local: ConversationThread[]) {
 }
 
 // Raise when the answer rules change, so answers written under the old rules are no longer reused.
-const ANSWER_CACHE_VERSION = "7";
+const ANSWER_CACHE_VERSION = "8";
 
 /**
  * Key under which an answer is reused, or null when it must not be: personal
@@ -2494,10 +2494,19 @@ async function handleWasilRequest(
             Boolean(quranContext),
             corpusCoverage,
           );
+    // A hadith is asked and the semantic check kept none of the local ones (« les 2 rakat de fajr sont
+    // meilleures que le bas monde »: HadeethEnc only has other Fajr hadiths, the hadith is on Sunnah.com):
+    // the final answer always gets its own web search, even if retrieval spent the first one.
+    const verifiedHadithMissing = (requestedCorpora.hadith || queryProfile.category === "hadith") &&
+      (semanticSelection?.length === 0 || documentaryHadithSourceIds.length === 0);
+    if (verifiedHadithMissing && webBudget.remaining === 0) {
+      webBudget.initial += 1;
+      webBudget.remaining = 1;
+    }
     // The V4 plan may request additional documentary verification, but it may
     // never disable a web search required by the stable production engine.
     const useWebSearch =
-      (stableUseWebSearch || Boolean(executionPlan?.shouldUseWeb)) &&
+      (stableUseWebSearch || Boolean(executionPlan?.shouldUseWeb) || verifiedHadithMissing) &&
       webBudget.remaining > 0;
     console.log("WASIL_DOCUMENTARY_CORPUS_COVERAGE", {
       requiresQuranAndSunnah: corpusCoverage.requiresQuranAndSunnah,
