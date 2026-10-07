@@ -232,6 +232,9 @@ function findSurah(question: string) {
   }
 
   const compactQuestion = compact(question);
+  // A French name (« l'aube », « la vache »…) is an ordinary word: it only means the surah when the
+  // question says « sourate ». « Le hadith des deux rak'a de l'aube » is not Al-Fajr.
+  const saysSurah = ["sourate", "surah", "surat", "sura"].some((term) => containsStandaloneTerm(question, term));
   return [...SURAHS]
     .sort(
       (left, right) =>
@@ -241,7 +244,7 @@ function findSurah(question: string) {
     .find((surah) => {
       const aliases = [
         compact(surah.transliteration),
-        compact(surah.frenchName),
+        ...(saysSurah ? [compact(surah.frenchName)] : []),
         compact(
           surah.transliteration.replace(/^(al|an|ar|as|at|ash|az)-?/i, ""),
         ),
@@ -261,6 +264,15 @@ export function resolveWasilFreeAction(
   // peut être transformée localement en navigation.
   if (isDocumentaryQuestion(question)) return null;
   if (!ACTION_TERMS.some((term) => containsStandaloneTerm(question, term))) {
+    return null;
+  }
+
+  // « Ouvre le hadith qui dit… » asks for one hadith: Wasil finds it. Only « ouvre les hadiths »
+  // opens the module.
+  if (
+    ["hadith", "hadiths"].some((term) => containsStandaloneTerm(question, term))
+    && question.split(" ").length > 4
+  ) {
     return null;
   }
 
