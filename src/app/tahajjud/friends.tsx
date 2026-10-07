@@ -43,7 +43,7 @@ function friendStatus(friend: Friend) {
   if (!friend.shared) return { icon: 'lock-closed-outline' as const, text: tx('Activité privée'), color: night.muted };
   if (friend.tonight === 'prayed') return { icon: 'checkmark-circle' as const, text: tx('A prié cette nuit'), color: night.success };
   if (friend.tonight === 'awake') return { icon: 'sunny' as const, text: tx('Réveillé pour prier'), color: night.goldSoft };
-  return { icon: 'moon-outline' as const, text: tx('Pas encore cette nuit'), color: night.muted };
+  return null;
 }
 
 function EncourageSheet({ friend, onClose }: { friend: Friend | null; onClose: () => void }) {
@@ -215,7 +215,7 @@ export default function TahajjudFriendsScreen() {
         <TextInput
           value={query}
           onChangeText={setQuery}
-          placeholder={tx("Ajouter un ami par son pseudo")}
+          placeholder={tx("Rechercher un pseudo")}
           placeholderTextColor={night.placeholder}
           autoCapitalize="none"
           autoCorrect={false}
@@ -285,8 +285,8 @@ export default function TahajjudFriendsScreen() {
       {groups.length === 0 ? (
         <Pressable onPress={() => router.push('/tahajjud/group-new' as Href)}>
           <GlassCard style={styles.groupEmpty}>
-            <Ionicons name="people-circle-outline" size={30} color={night.lavender} />
-            <Text style={styles.groupEmptyText}>{tx("Créez un groupe avec vos amis pour vous parler et vous programmer des rappels (prière de la nuit, lecture, Witr…).")}</Text>
+            <Ionicons name="people-circle-outline" size={24} color={night.lavender} />
+            <Text style={styles.groupEmptyText}>{tx("Échangez avec vos amis et programmez vos rappels.")}</Text>
           </GlassCard>
         </Pressable>
       ) : (
@@ -371,10 +371,12 @@ export default function TahajjudFriendsScreen() {
                 <MemberAvatar avatar={friend.avatar} size={48} dim={!friend.tonight} />
                 <View style={styles.flex}>
                   <Text style={styles.friendName} numberOfLines={1}>{friend.pseudo}</Text>
-                  <View style={styles.statusRow}>
-                    <Ionicons name={status.icon} size={15} color={status.color} />
-                    <Text style={[styles.statusText, { color: status.color }]}>{status.text}</Text>
-                  </View>
+                  {status ? (
+                    <View style={styles.statusRow}>
+                      <Ionicons name={status.icon} size={15} color={status.color} />
+                      <Text style={[styles.statusText, { color: status.color }]}>{status.text}</Text>
+                    </View>
+                  ) : null}
                 </View>
                 <Pressable onPress={() => friendMenu(friend)} hitSlop={10}>
                   <Ionicons name="ellipsis-horizontal" size={20} color={night.muted} />
@@ -388,17 +390,10 @@ export default function TahajjudFriendsScreen() {
                   <Text style={styles.time}>{timeAgo(thread.lastAt)}</Text>
                 </Pressable>
               ) : null}
-              {friend.shared ? (
-                <View style={styles.weekRow}>
-                  {Array.from({ length: 7 }, (_, i) => (
-                    <View key={i} style={[styles.weekDot, i < friend.week && styles.weekDotOn]} />
-                  ))}
-                  <Text style={styles.weekText} numberOfLines={1}>{txCount(friend.week, '{0} nuit / 7 jours', '{0} nuits / 7 jours')}</Text>
-                </View>
-              ) : null}
               <View style={styles.friendFooter}>
                 <Pressable onPress={() => openChat(friend)} style={styles.messageButton}>
-                  <Ionicons name="chatbubble-ellipses" size={16} color={night.goldSoft} />
+                  <Ionicons name="chatbubble-ellipses" size={15} color={night.goldSoft} />
+                  <Text style={styles.messageButtonText}>{tx("Message")}</Text>
                   {thread?.unread ? (
                     <View style={styles.badge}><Text style={styles.badgeText}>{thread.unread > 9 ? '9+' : thread.unread}</Text></View>
                   ) : null}
@@ -452,7 +447,7 @@ export default function TahajjudFriendsScreen() {
         <Ionicons name="shield-checkmark-outline" size={17} color={night.goldSoft} />
         <Text style={styles.privacyText}>{tx("Ce que mes amis voient · confidentialité")}</Text>
       </Pressable>
-      <Text style={styles.footer}>{tx("Pas de classement ni de comparaison : on s’encourage, Allah seul compte les nuits.")}</Text>
+      <Text style={styles.footer}>{tx("Encourageons-nous avec bienveillance, sans classement ni compétition.")}</Text>
 
       <EncourageSheet friend={encourage} onClose={() => setEncourage(null)} />
     </TahajjudShell>
@@ -494,10 +489,6 @@ const styles = StyleSheet.create({
   statusRow: { marginTop: 3, flexDirection: 'row', alignItems: 'center', gap: 6 },
   statusText: { fontSize: 14, ...nightType.semibold },
   friendFooter: { marginTop: 10, flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end', gap: 10 },
-  weekRow: { marginTop: 12, flexDirection: 'row', alignItems: 'center', gap: 5 },
-  weekDot: { width: 9, height: 9, borderRadius: 5, backgroundColor: '#222036' },
-  weekDotOn: { backgroundColor: night.goldSoft },
-  weekText: { flexShrink: 1, marginLeft: 6, color: night.muted, fontSize: 13, ...nightType.medium },
   sectionHead: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 },
   noMargin: { marginBottom: 0 },
   newGroup: { flexDirection: 'row', alignItems: 'center', gap: 4, paddingHorizontal: 12, paddingVertical: 7, borderRadius: 16, backgroundColor: night.gold },
@@ -511,7 +502,8 @@ const styles = StyleSheet.create({
   groupLast: { marginTop: 2, color: night.muted, fontSize: 14, ...nightType.medium },
   groupSide: { alignItems: 'flex-end', gap: 5 },
   badgeInline: { minWidth: 20, height: 20, borderRadius: 10, paddingHorizontal: 5, alignItems: 'center', justifyContent: 'center', backgroundColor: night.success },
-  messageButton: { width: 40, height: 36, borderRadius: 18, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: night.goldLine },
+  messageButton: { flexDirection: 'row', gap: 6, paddingHorizontal: 15, paddingVertical: 9, borderRadius: 18, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: night.goldLine },
+  messageButtonText: { color: night.goldSoft, fontSize: 14, ...nightType.semibold },
   badge: {
     position: 'absolute', top: -6, right: -6, minWidth: 20, height: 20, borderRadius: 10, paddingHorizontal: 5,
     alignItems: 'center', justifyContent: 'center', backgroundColor: night.success,
