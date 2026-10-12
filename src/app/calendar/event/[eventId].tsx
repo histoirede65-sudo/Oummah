@@ -35,16 +35,16 @@ import { colors } from "../../../theme/colors";
 import { typography } from "../../../theme/typography";
 
 const EVENT_IMAGES: Record<string, number> = {
-  "hijri-new-year": require("../../../assets/images/mosques/mosque-a-04.jpg"),
-  ashura: require("../../../assets/images/mosques/mosque-b-05.jpg"),
+  "hijri-new-year": require("../../../assets/images/mosques/mosque-a-04.webp"),
+  ashura: require("../../../assets/images/mosques/mosque-b-05.webp"),
   "ramadan-start": require("../../../assets/images/home/home-mosque-sunset.jpg"),
-  "laylat-al-qadr": require("../../../assets/images/home/shortcuts/quran-real.jpg"),
-  "eid-al-fitr": require("../../../assets/images/mosques/mosque-coastal.jpg"),
-  "dhul-hijjah-start": require("../../../assets/images/home/shortcuts/qibla-real.jpg"),
-  arafah: require("../../../assets/images/home/shortcuts/qibla-real.jpg"),
-  "eid-al-adha": require("../../../assets/images/mosques/mosque-hero-premium.jpg"),
-  tashriq: require("../../../assets/images/mosques/mosque-a-10.jpg"),
-  "white-days": require("../../../assets/images/mosques/mosque-b-02.jpg"),
+  "laylat-al-qadr": require("../../../assets/images/home/shortcuts/quran-real.webp"),
+  "eid-al-fitr": require("../../../assets/images/mosques/mosque-coastal.webp"),
+  "dhul-hijjah-start": require("../../../assets/images/home/shortcuts/qibla-real.webp"),
+  arafah: require("../../../assets/images/home/shortcuts/qibla-real.webp"),
+  "eid-al-adha": require("../../../assets/images/mosques/mosque-hero-premium.webp"),
+  tashriq: require("../../../assets/images/mosques/mosque-a-10.webp"),
+  "white-days": require("../../../assets/images/mosques/mosque-b-02.webp"),
 };
 
 const TIMINGS = [

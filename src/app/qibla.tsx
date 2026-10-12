@@ -48,7 +48,7 @@ const ALIGNMENT_TOLERANCE = 5;
 const ALIGNMENT_RELEASE_TOLERANCE = 8;
 const NEAR_ALIGNMENT_TOLERANCE = 15;
 const ALIGNMENT_HAPTIC_COOLDOWN_MS = 1_500;
-const BACKGROUND_IMAGE = require("../assets/images/home/shortcuts/qibla-real.jpg");
+const BACKGROUND_IMAGE = require("../assets/images/home/shortcuts/qibla-real.webp");
 
 async function triggerAlignmentHaptic() {
   if (Platform.OS === "android") {

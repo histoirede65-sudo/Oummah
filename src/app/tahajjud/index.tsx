@@ -100,7 +100,7 @@ export default function TahajjudScreen() {
   );
 
   return (
-    <TahajjudShell hero={require('../../../assets/images/tahajjud/hero.jpg')}>
+    <TahajjudShell hero={require('../../../assets/images/tahajjud/hero.webp')}>
       <Animated.View entering={FadeInDown.duration(500)} style={styles.heroCopy}>
         <Text style={styles.eyebrow}>{tonight ? nightTitle(tonight.key) : tx('Cette nuit')}</Text>
         <Text style={styles.title}>{tx("Qiyam al-Layl")}</Text>
@@ -179,7 +179,7 @@ export default function TahajjudScreen() {
             <Pressable onPress={() => router.push('/tahajjud/wall' as Href)} style={({ pressed }) => [pressed && styles.pressed]}>
               <View style={styles.wall}>
                 {/* The photo sits on the right at its natural scale and fades into the card. */}
-                <Image source={require('../../../assets/images/tahajjud/dua-hands.jpg')} contentFit="cover" contentPosition="center" style={styles.wallImage} />
+                <Image source={require('../../../assets/images/tahajjud/dua-hands.webp')} contentFit="cover" contentPosition="center" style={styles.wallImage} />
                 <LinearGradient colors={[night.glass, 'rgba(23,16,38,0.6)', 'rgba(23,16,38,0)']} locations={[0, 0.45, 1]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={styles.wallImage} />
                 <View style={styles.wallHeader}>
                   <View style={styles.wallIcon}>
@@ -221,7 +221,7 @@ export default function TahajjudScreen() {
                   </View>
                   <Ionicons name="chevron-forward" size={20} color={night.goldSoft} />
                 </View>
-                <Image source={require('../../../assets/images/tahajjud/world-night.jpg')} contentFit="cover" style={styles.worldMap} />
+                <Image source={require('../../../assets/images/tahajjud/world-night.webp')} contentFit="cover" style={styles.worldMap} />
                 <View style={styles.communityLink}>
                   <Text style={styles.communityLinkText}>{tx('Voir la carte de la nuit')}</Text>
                   <Ionicons name="arrow-forward" size={14} color={night.goldSoft} />

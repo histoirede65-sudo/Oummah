@@ -12,9 +12,9 @@ import { GUIDE, type GuideStep, type GuideTab } from '../../features/tahajjud/ta
 import { tx } from '../../features/tahajjud/tahajjudI18n';
 
 const TAB_IMAGES: Record<GuideTab['id'], number> = {
-  understand: require('../../../assets/images/tahajjud/guide-understand.jpg'),
-  pray: require('../../../assets/images/tahajjud/guide-pray.jpg'),
-  tips: require('../../../assets/images/tahajjud/guide-tips.jpg'),
+  understand: require('../../../assets/images/tahajjud/guide-understand.webp'),
+  pray: require('../../../assets/images/tahajjud/guide-pray.webp'),
+  tips: require('../../../assets/images/tahajjud/guide-tips.webp'),
 };
 
 function Step({ step, index, last }: { step: GuideStep; index: number; last: boolean }) {

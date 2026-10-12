@@ -418,7 +418,7 @@ export default function HifzScreen() {
 
         <View style={styles.hero}>
           <Image
-            source={require("../assets/images/home/shortcuts/hifz-real.jpg")}
+            source={require("../assets/images/home/shortcuts/hifz-real.webp")}
             contentFit="cover"
             style={StyleSheet.absoluteFill}
           />

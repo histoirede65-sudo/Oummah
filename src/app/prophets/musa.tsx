@@ -17,7 +17,7 @@ import { colors } from "../../theme/colors";
 import { typography } from "../../theme/typography";
 
 const SOURCE_LABELS: Record<ProphetSourceKind, TranslationKey> = { QURAN: "prophets.sourceQuran", SUNNA: "prophets.sourceSunna", TAFSIR: "prophets.sourceTafsir" };
-const MUSA_COVER = PROPHETS_PREVIEW.find((prophet) => prophet.id === "musa")?.coverImage ?? require("../../assets/images/prophets/musa-scenes/moussa.jpg");
+const MUSA_COVER = PROPHETS_PREVIEW.find((prophet) => prophet.id === "musa")?.coverImage ?? require("../../assets/images/prophets/musa-scenes/moussa.webp");
 
 function SourceChip({ kind }: { kind: ProphetSourceKind }) {
   const { t } = useI18n();

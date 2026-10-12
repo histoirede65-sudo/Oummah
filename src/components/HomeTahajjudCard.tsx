@@ -49,7 +49,7 @@ export default function HomeTahajjudCard({ schedule }: Props) {
       <View style={styles.card}>
         <Pressable accessibilityRole="button" accessibilityLabel={tx("Ouvrir Qiyam al-Layl")} onPress={() => router.push('/tahajjud' as Href)} style={styles.photo}>
           {/* The band has the photo's proportions (2172 × 724): the whole photo is shown. */}
-          <Image source={require('../assets/images/home/tahajjud-night-card-wide.png')} contentFit="cover" style={styles.backgroundImage} />
+          <Image source={require('../assets/images/home/tahajjud-night-card-wide.webp')} contentFit="cover" style={styles.backgroundImage} />
           <LinearGradient
             colors={['rgba(10,7,22,0)', 'rgba(10,7,22,0.35)', 'rgba(10,7,22,0.85)']}
             locations={[0, 0.38, 0.72]}

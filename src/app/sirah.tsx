@@ -13,7 +13,7 @@ import { typography } from "../theme/typography";
 
 const CARD = "#151022";
 const LINE = "#2B2238";
-const hero = require("../assets/images/home/shortcuts/sirah-premium.png");
+const hero = require("../assets/images/home/shortcuts/sirah-premium.webp");
 
 export default function SirahHome() {
   const { language, t } = useI18n();

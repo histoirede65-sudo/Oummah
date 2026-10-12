@@ -80,7 +80,7 @@ export default function CompanionsScreen() {
 
         <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
           <View style={styles.hero}>
-            <Image source={require("../assets/images/home/shortcuts/companions-premium.png")} style={StyleSheet.absoluteFill} contentFit="cover" />
+            <Image source={require("../assets/images/home/shortcuts/companions-premium.webp")} style={StyleSheet.absoluteFill} contentFit="cover" />
             <LinearGradient colors={["rgba(13,11,24,.15)", "rgba(13,11,24,.94)"]} style={StyleSheet.absoluteFill} />
             <View style={styles.heroCopy}>
               <Text style={styles.kicker}>{t("companions.kicker")}</Text>

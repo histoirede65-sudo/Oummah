@@ -13,8 +13,8 @@ import { useI18n } from "../i18n";
 import { colors } from "../theme/colors";
 import { typography } from "../theme/typography";
 
-const MUSA_COVER = require("../assets/images/prophets/musa-scenes/moussa.jpg");
-const PROPHETS_HOME_COVER = require("../assets/images/prophets/prophets-home-premium.jpg");
+const MUSA_COVER = require("../assets/images/prophets/musa-scenes/moussa.webp");
+const PROPHETS_HOME_COVER = require("../assets/images/prophets/prophets-home-premium.webp");
 const CARD = "#151022";
 const CARD_RAISED = "#1E1730";
 const LINE = "#2B2238";

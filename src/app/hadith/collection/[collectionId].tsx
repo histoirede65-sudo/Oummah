@@ -42,14 +42,14 @@ function categoryIcon(name: string): keyof typeof Ionicons.glyphMap {
 
 function collectionCover(id: string) {
   const covers: Record<string, number> = {
-    bukhari: require("../../../assets/images/hadith-collections/sahih-bukhari.png"),
-    muslim: require("../../../assets/images/hadith-collections/sahih-muslim.png"),
-    "abu-dawud": require("../../../assets/images/hadith-collections/sunan-abu-dawud.png"),
-    tirmidhi: require("../../../assets/images/hadith-collections/jami-tirmidhi.png"),
-    nasai: require("../../../assets/images/hadith-collections/sunan-nasai.png"),
-    "ibn-majah": require("../../../assets/images/hadith-collections/sunan-ibn-majah.png"),
-    riyad: require("../../../assets/images/hadith-collections/riyad-as-salihin.png"),
-    adab: require("../../../assets/images/hadith-collections/al-adab-al-mufrad.png"),
+    bukhari: require("../../../assets/images/hadith-collections/sahih-bukhari.webp"),
+    muslim: require("../../../assets/images/hadith-collections/sahih-muslim.webp"),
+    "abu-dawud": require("../../../assets/images/hadith-collections/sunan-abu-dawud.webp"),
+    tirmidhi: require("../../../assets/images/hadith-collections/jami-tirmidhi.webp"),
+    nasai: require("../../../assets/images/hadith-collections/sunan-nasai.webp"),
+    "ibn-majah": require("../../../assets/images/hadith-collections/sunan-ibn-majah.webp"),
+    riyad: require("../../../assets/images/hadith-collections/riyad-as-salihin.webp"),
+    adab: require("../../../assets/images/hadith-collections/al-adab-al-mufrad.webp"),
   };
   return covers[id];
 }

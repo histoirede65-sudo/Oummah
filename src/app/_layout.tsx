@@ -343,7 +343,7 @@ function AppLaunchAnimation({
             ]}
           />
           <Image
-            source={require('../assets/images/home/wasil-idle.png')}
+            source={require('../assets/images/home/wasil-idle.webp')}
             style={launchStyles.wasilImage}
             resizeMode="contain"
           />

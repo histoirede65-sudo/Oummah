@@ -26,7 +26,7 @@ export default function AkhiraScreen() {
     <LinearGradient colors={[colors.background, colors.backgroundSecondary, colors.background]} style={styles.screen}>
       <SafeAreaView style={styles.safe}>
         <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
-          <ImageBackground source={require("../assets/images/akhira/hero.jpg")} style={styles.hero} imageStyle={styles.heroImage}>
+          <ImageBackground source={require("../assets/images/akhira/hero.webp")} style={styles.hero} imageStyle={styles.heroImage}>
             <LinearGradient colors={["rgba(8,7,19,0.10)", "rgba(8,7,19,0.35)", colors.background]} style={styles.heroShade}>
               <Pressable onPress={() => router.back()} style={styles.iconButton} accessibilityRole="button" accessibilityLabel={tx.back}>
                 <Ionicons name="chevron-back" size={22} color={colors.text} />

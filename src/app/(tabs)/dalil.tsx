@@ -331,14 +331,14 @@ const WASIL_QUESTION_EXAMPLE_KEYS = [
 ] as const;
 
 const wasilPoseSources = {
-  idle: require("../../assets/images/home/wasil-idle.png"),
-  blink: require("../../assets/images/home/wasil-blink.png"),
-  "wave-1": require("../../assets/images/home/wasil-wave-1.png"),
-  "wave-2": require("../../assets/images/home/wasil-wave-2.png"),
-  "wave-3": require("../../assets/images/home/wasil-wave-3.png"),
-  thinking: require("../../assets/images/home/wasil-thinking.png"),
-  "reading-quran-1": require("../../assets/images/home/wasil-reading-quran-1.png"),
-  "reading-quran-2": require("../../assets/images/home/wasil-reading-quran-2.png"),
+  idle: require("../../assets/images/home/wasil-idle.webp"),
+  blink: require("../../assets/images/home/wasil-blink.webp"),
+  "wave-1": require("../../assets/images/home/wasil-wave-1.webp"),
+  "wave-2": require("../../assets/images/home/wasil-wave-2.webp"),
+  "wave-3": require("../../assets/images/home/wasil-wave-3.webp"),
+  thinking: require("../../assets/images/home/wasil-thinking.webp"),
+  "reading-quran-1": require("../../assets/images/home/wasil-reading-quran-1.webp"),
+  "reading-quran-2": require("../../assets/images/home/wasil-reading-quran-2.webp"),
 } as const;
 
 function getWasilPoseSource(pose: WasilVisualPose, frame: number) {
@@ -3260,7 +3260,7 @@ export default function DalilScreen() {
                 <View style={styles.energyHeroGlow} />
                 <View style={styles.energyHeroGlowSecondary} />
                 <Image
-                  source={require("../../assets/images/home/dalil-mascot.png")}
+                  source={require("../../assets/images/home/dalil-mascot.webp")}
                   resizeMode="contain"
                   style={styles.energyMascot}
                 />

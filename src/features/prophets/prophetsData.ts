@@ -23,7 +23,7 @@ export type ProphetChapter = {
 export const MUSA_CHAPTERS: ProphetChapter[] = [
   {
     id: "nile", index: 1, title: "L’enfant confié au fleuve", subtitle: "Une promesse au milieu de la peur",
-    image: require("../../assets/images/prophets/musa-scenes/musa-board-01.jpg"), atmosphere: "Le Nil · l’enfance · la confiance",
+    image: require("../../assets/images/prophets/musa-scenes/musa-board-01.webp"), atmosphere: "Le Nil · l’enfance · la confiance",
     paragraphs: [
       "Pharaon domine alors l’Égypte et opprime une partie de ses habitants : il affaiblit les Enfants d’Israël et fait tuer leurs fils tout en laissant vivre leurs femmes. C’est dans ce contexte de peur que commence l’histoire de Mûsâ telle que la raconte la sourate Al-Qasas.",
       "Allah inspire à la mère de Mûsâ de l’allaiter. Lorsqu’elle craint pour lui, elle reçoit un ordre qui paraît humainement vertigineux : le placer dans le fleuve. Mais cet ordre est accompagné d’une promesse précise : ne pas avoir peur ni s’attrister, car Allah le lui rendra et fera de lui l’un des messagers.",
@@ -36,7 +36,7 @@ export const MUSA_CHAPTERS: ProphetChapter[] = [
   },
   {
     id: "youth", index: 2, title: "Une erreur, puis le retour", subtitle: "Reconnaître sa faute et demander pardon",
-    image: require("../../assets/images/prophets/musa-scenes/musa-board-02.jpg"), atmosphere: "Égypte · erreur · repentir",
+    image: require("../../assets/images/prophets/musa-scenes/musa-board-02.webp"), atmosphere: "Égypte · erreur · repentir",
     paragraphs: [
       "Lorsque Mûsâ atteint sa pleine force et sa maturité, Allah lui accorde jugement et savoir. Un jour, il entre dans la ville à un moment où ses habitants sont inattentifs et y trouve deux hommes qui se battent : l’un appartient à son peuple, l’autre au camp de son ennemi.",
       "Celui de son peuple lui demande secours. Mûsâ frappe l’autre homme et le coup entraîne sa mort. Le récit ne transforme pas l’événement en victoire : Mûsâ reconnaît immédiatement la gravité de ce qui vient de se produire et demande pardon à son Seigneur.",
@@ -78,7 +78,7 @@ export const MUSA_CHAPTERS: ProphetChapter[] = [
   },
   {
     id: "pharaoh-call", index: 5, title: "Parler à Pharaon", subtitle: "La vérité, sans perdre la justesse",
-    image: require("../../assets/images/prophets/musa-scenes/musa-board-05.jpg"), atmosphere: "Palais · appel · signes",
+    image: require("../../assets/images/prophets/musa-scenes/musa-board-05.webp"), atmosphere: "Palais · appel · signes",
     paragraphs: [
       "Mûsâ et Hârûn reçoivent l’ordre d’aller ensemble vers Pharaon. Malgré la tyrannie de celui-ci, Allah leur commande de lui adresser une parole douce, dans l’espoir qu’il se rappelle ou qu’il craigne. La douceur du discours n’efface donc ni la vérité du message ni la gravité de l’injustice.",
       "Les deux frères expriment leur crainte que Pharaon ne se précipite contre eux ou ne dépasse encore les limites. Allah les rassure : Il est avec eux, entend et voit. Ils doivent se présenter comme les messagers de leur Seigneur et demander que les Enfants d’Israël soient laissés partir.",
@@ -94,7 +94,7 @@ export const MUSA_CHAPTERS: ProphetChapter[] = [
   },
   {
     id: "magicians", index: 6, title: "Le jour des magiciens", subtitle: "Quand ceux qui savent reconnaissent le signe",
-    image: require("../../assets/images/prophets/musa-scenes/musa-board-06.jpg"), atmosphere: "Rassemblement · bâtons · prosternation",
+    image: require("../../assets/images/prophets/musa-scenes/musa-board-06.webp"), atmosphere: "Rassemblement · bâtons · prosternation",
     paragraphs: [
       "Pharaon fait rassembler les magiciens et fixe un rendez-vous public. La confrontation doit avoir lieu devant les gens, afin que le pouvoir puisse transformer l’événement en démonstration contre Mûsâ.",
       "Les magiciens demandent à Pharaon s’ils recevront une récompense en cas de victoire. Il leur promet non seulement une récompense, mais aussi de les rapprocher de lui. Ils arrivent donc avec la volonté de l’emporter et avec la reconnaissance du pouvoir en perspective.",
@@ -123,7 +123,7 @@ export const MUSA_CHAPTERS: ProphetChapter[] = [
   },
   {
     id: "exodus", index: 8, title: "Le départ dans la nuit", subtitle: "Quitter l’oppression sur ordre d’Allah",
-    image: require("../../assets/images/prophets/musa-scenes/musa-board-08.jpg"), atmosphere: "Nuit · exode · poursuite",
+    image: require("../../assets/images/prophets/musa-scenes/musa-board-08.webp"), atmosphere: "Nuit · exode · poursuite",
     paragraphs: [
       "Après les avertissements répétés, Allah ordonne à Mûsâ de partir de nuit avec Ses serviteurs. Il ne s’agit plus seulement de demander leur libération à Pharaon : le moment est venu de quitter effectivement l’Égypte.",
       "Le départ se fait sous la menace d’une poursuite. Pharaon envoie dans les villes des rassembleurs afin de réunir ses forces. Le Coran rapporte son discours méprisant sur le groupe qui vient de partir, alors même qu’il mobilise une armée pour les rattraper.",
@@ -184,7 +184,7 @@ export const MUSA_CHAPTERS: ProphetChapter[] = [
   },
   {
     id: "calf", index: 12, title: "L’épreuve du veau", subtitle: "Une communauté éprouvée pendant l’absence de Mûsâ",
-    image: require("../../assets/images/prophets/musa-scenes/musa-board-12.jpg"), atmosphere: "Camp · veau · retour",
+    image: require("../../assets/images/prophets/musa-scenes/musa-board-12.webp"), atmosphere: "Camp · veau · retour",
     paragraphs: [
       "Pendant que Mûsâ se trouve au rendez-vous de son Seigneur, son peuple est éprouvé en son absence. Le Coran rapporte qu’al-Sâmirî les conduit vers un veau doté d’un mugissement, et certains disent alors qu’il s’agit de leur divinité et de celle de Mûsâ.",
       "Hârûn les avait pourtant avertis avant le retour de son frère : ils sont seulement mis à l’épreuve par ce veau, leur Seigneur est le Tout Miséricordieux et ils doivent le suivre et lui obéir. Une partie du peuple refuse et affirme qu’elle restera attachée au veau jusqu’au retour de Mûsâ.",
@@ -295,29 +295,29 @@ export const PROPHETS_PREVIEW = PROPHETS_PREVIEW_BASE.map((prophet) => ({
   frenchName: PROPHET_FRENCH_NAMES[prophet.id],
   coverImage:
     prophet.id === "adam" ? require("../../assets/images/prophets/adam-cover.jpg")
-    : prophet.id === "idris" ? require("../../assets/images/prophets/idris-cover.jpg")
-    : prophet.id === "nuh" ? require("../../assets/images/prophets/nuh-cover.jpg")
-    : prophet.id === "hud" ? require("../../assets/images/prophets/hud-cover.jpg")
+    : prophet.id === "idris" ? require("../../assets/images/prophets/idris-cover.webp")
+    : prophet.id === "nuh" ? require("../../assets/images/prophets/nuh-cover.webp")
+    : prophet.id === "hud" ? require("../../assets/images/prophets/hud-cover.webp")
     : prophet.id === "salih" ? require("../../assets/images/prophets/salih-cover.jpg")
     : prophet.id === "ibrahim" ? require("../../assets/images/prophets/ibrahim-cover.jpg")
-    : prophet.id === "lut" ? require("../../assets/images/prophets/lut-cover.jpg")
-    : prophet.id === "ismail" ? require("../../assets/images/prophets/ismail-cover.jpg")
-    : prophet.id === "ishaq" ? require("../../assets/images/prophets/ishaq-cover.jpg")
-    : prophet.id === "yaqub" ? require("../../assets/images/prophets/yaqub-cover.jpg")
-    : prophet.id === "yusuf" ? require("../../assets/images/prophets/yusuf-cover.jpg")
-    : prophet.id === "shuayb" ? require("../../assets/images/prophets/shuayb-cover.jpg")
+    : prophet.id === "lut" ? require("../../assets/images/prophets/lut-cover.webp")
+    : prophet.id === "ismail" ? require("../../assets/images/prophets/ismail-cover.webp")
+    : prophet.id === "ishaq" ? require("../../assets/images/prophets/ishaq-cover.webp")
+    : prophet.id === "yaqub" ? require("../../assets/images/prophets/yaqub-cover.webp")
+    : prophet.id === "yusuf" ? require("../../assets/images/prophets/yusuf-cover.webp")
+    : prophet.id === "shuayb" ? require("../../assets/images/prophets/shuayb-cover.webp")
     : prophet.id === "ayyub" ? require("../../assets/images/prophets/ayyub-cover.jpg")
-    : prophet.id === "dhul-kifl" ? require("../../assets/images/prophets/dhul-kifl-cover.jpg")
-    : prophet.id === "musa" ? require("../../assets/images/prophets/musa-scenes/moussa.jpg")
-    : prophet.id === "harun" ? require("../../assets/images/prophets/harun-cover.jpg")
-    : prophet.id === "dawud" ? require("../../assets/images/prophets/dawud-cover.jpg")
-    : prophet.id === "sulayman" ? require("../../assets/images/prophets/sulayman-cover.jpg")
-    : prophet.id === "ilyas" ? require("../../assets/images/prophets/ilyas-cover.jpg")
-    : prophet.id === "al-yasa" ? require("../../assets/images/prophets/al-yasa-cover.jpg")
-    : prophet.id === "yunus" ? require("../../assets/images/prophets/yunus-cover.jpg")
-    : prophet.id === "zakariya" ? require("../../assets/images/prophets/zakariya-cover.jpg")
+    : prophet.id === "dhul-kifl" ? require("../../assets/images/prophets/dhul-kifl-cover.webp")
+    : prophet.id === "musa" ? require("../../assets/images/prophets/musa-scenes/moussa.webp")
+    : prophet.id === "harun" ? require("../../assets/images/prophets/harun-cover.webp")
+    : prophet.id === "dawud" ? require("../../assets/images/prophets/dawud-cover.webp")
+    : prophet.id === "sulayman" ? require("../../assets/images/prophets/sulayman-cover.webp")
+    : prophet.id === "ilyas" ? require("../../assets/images/prophets/ilyas-cover.webp")
+    : prophet.id === "al-yasa" ? require("../../assets/images/prophets/al-yasa-cover.webp")
+    : prophet.id === "yunus" ? require("../../assets/images/prophets/yunus-cover.webp")
+    : prophet.id === "zakariya" ? require("../../assets/images/prophets/zakariya-cover.webp")
     : prophet.id === "yahya" ? require("../../assets/images/prophets/yahya-cover.jpg")
-    : prophet.id === "isa" ? require("../../assets/images/prophets/isa-cover.jpg")
-    : prophet.id === "muhammad" ? require("../../assets/images/prophets/muhammad-cover.jpg")
+    : prophet.id === "isa" ? require("../../assets/images/prophets/isa-cover.webp")
+    : prophet.id === "muhammad" ? require("../../assets/images/prophets/muhammad-cover.webp")
     : null,
 }));;

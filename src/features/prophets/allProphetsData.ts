@@ -11,121 +11,121 @@ export type ProphetStory = {
 
 const noImage = 0 as unknown as number;
 const ADAM_CHAPTER_IMAGES = [
-  require("../../assets/images/prophets/adam-chapter-01.jpg"),
+  require("../../assets/images/prophets/adam-chapter-01.webp"),
   require("../../assets/images/prophets/adam-chapter-02.jpg"),
   require("../../assets/images/prophets/adam-chapter-03.jpg"),
-  require("../../assets/images/prophets/adam-chapter-04.jpg"),
+  require("../../assets/images/prophets/adam-chapter-04.webp"),
 ];
 const NUH_CHAPTER_IMAGES = [
-  require("../../assets/images/prophets/nuh-chapter-01.jpg"),
-  require("../../assets/images/prophets/nuh-chapter-02.jpg"),
-  require("../../assets/images/prophets/nuh-chapter-03.jpg"),
-  require("../../assets/images/prophets/nuh-chapter-04.jpg"),
-  require("../../assets/images/prophets/nuh-chapter-05.jpg"),
+  require("../../assets/images/prophets/nuh-chapter-01.webp"),
+  require("../../assets/images/prophets/nuh-chapter-02.webp"),
+  require("../../assets/images/prophets/nuh-chapter-03.webp"),
+  require("../../assets/images/prophets/nuh-chapter-04.webp"),
+  require("../../assets/images/prophets/nuh-chapter-05.webp"),
   require("../../assets/images/prophets/nuh-chapter-06.jpg"),
 ];
 const HUD_CHAPTER_IMAGES = [
-  require("../../assets/images/prophets/hud-chapter-01.jpg"),
-  require("../../assets/images/prophets/hud-chapter-02.jpg"),
-  require("../../assets/images/prophets/hud-chapter-03.jpg"),
+  require("../../assets/images/prophets/hud-chapter-01.webp"),
+  require("../../assets/images/prophets/hud-chapter-02.webp"),
+  require("../../assets/images/prophets/hud-chapter-03.webp"),
 ];
 const SALIH_CHAPTER_IMAGES = [
-  require("../../assets/images/prophets/salih-chapter-01.jpg"),
-  require("../../assets/images/prophets/salih-chapter-02.jpg"),
-  require("../../assets/images/prophets/salih-chapter-03.jpg"),
-  require("../../assets/images/prophets/salih-chapter-04.jpg"),
+  require("../../assets/images/prophets/salih-chapter-01.webp"),
+  require("../../assets/images/prophets/salih-chapter-02.webp"),
+  require("../../assets/images/prophets/salih-chapter-03.webp"),
+  require("../../assets/images/prophets/salih-chapter-04.webp"),
 ];
 const IBRAHIM_CHAPTER_IMAGES = [
-  require("../../assets/images/prophets/ibrahim-chapter-07.jpg"),
-  require("../../assets/images/prophets/ibrahim-chapter-02.jpg"),
-  require("../../assets/images/prophets/ibrahim-chapter-06.jpg"),
-  require("../../assets/images/prophets/ibrahim-chapter-01.jpg"),
-  require("../../assets/images/prophets/ibrahim-chapter-03.jpg"),
-  require("../../assets/images/prophets/ibrahim-chapter-05.jpg"),
-  require("../../assets/images/prophets/ibrahim-chapter-04.jpg"),
+  require("../../assets/images/prophets/ibrahim-chapter-07.webp"),
+  require("../../assets/images/prophets/ibrahim-chapter-02.webp"),
+  require("../../assets/images/prophets/ibrahim-chapter-06.webp"),
+  require("../../assets/images/prophets/ibrahim-chapter-01.webp"),
+  require("../../assets/images/prophets/ibrahim-chapter-03.webp"),
+  require("../../assets/images/prophets/ibrahim-chapter-05.webp"),
+  require("../../assets/images/prophets/ibrahim-chapter-04.webp"),
   require("../../assets/images/prophets/ibrahim-chapter-08.jpg"),
 ];
 const LUT_CHAPTER_IMAGES = [
-  require("../../assets/images/prophets/lut-chapter-01.jpg"),
-  require("../../assets/images/prophets/lut-chapter-02.jpg"),
-  require("../../assets/images/prophets/lut-chapter-03.jpg"),
-  require("../../assets/images/prophets/lut-chapter-04.jpg"),
+  require("../../assets/images/prophets/lut-chapter-01.webp"),
+  require("../../assets/images/prophets/lut-chapter-02.webp"),
+  require("../../assets/images/prophets/lut-chapter-03.webp"),
+  require("../../assets/images/prophets/lut-chapter-04.webp"),
 ];
 const ISMAIL_CHAPTER_IMAGES = [
-  require("../../assets/images/prophets/ismail-chapter-03.jpg"),
+  require("../../assets/images/prophets/ismail-chapter-03.webp"),
   require("../../assets/images/prophets/ismail-chapter-01.jpg"),
-  require("../../assets/images/prophets/ismail-chapter-02.jpg"),
+  require("../../assets/images/prophets/ismail-chapter-02.webp"),
 ];
 const ISHAQ_CHAPTER_IMAGES = [
-  require("../../assets/images/prophets/ishaq-chapter-01.jpg"),
+  require("../../assets/images/prophets/ishaq-chapter-01.webp"),
   require("../../assets/images/prophets/ishaq-chapter-02.jpg"),
 ];
 
 const IDRIS_CHAPTER_IMAGES = [
-  require("../../assets/images/prophets/idris-chapter-01.jpg"),
+  require("../../assets/images/prophets/idris-chapter-01.webp"),
 ];
 
 const YAQUB_CHAPTER_IMAGES = [
   require("../../assets/images/prophets/yaqub-chapter-01.jpg"),
-  require("../../assets/images/prophets/yaqub-chapter-02.jpg"),
-  require("../../assets/images/prophets/yaqub-chapter-03.jpg"),
-  require("../../assets/images/prophets/yaqub-chapter-04.jpg"),
+  require("../../assets/images/prophets/yaqub-chapter-02.webp"),
+  require("../../assets/images/prophets/yaqub-chapter-03.webp"),
+  require("../../assets/images/prophets/yaqub-chapter-04.webp"),
 ];
 
 const YUSUF_CHAPTER_IMAGES = [
   require("../../assets/images/prophets/yusuf-chapter-01.jpg"),
-  require("../../assets/images/prophets/yusuf-chapter-02.jpg"),
+  require("../../assets/images/prophets/yusuf-chapter-02.webp"),
   require("../../assets/images/prophets/yusuf-chapter-03.jpg"),
   require("../../assets/images/prophets/yusuf-chapter-04.jpg"),
-  require("../../assets/images/prophets/yusuf-chapter-05.jpg"),
-  require("../../assets/images/prophets/yusuf-chapter-06.jpg"),
-  require("../../assets/images/prophets/yusuf-chapter-07.jpg"),
-  require("../../assets/images/prophets/yusuf-chapter-08.jpg"),
-  require("../../assets/images/prophets/yusuf-chapter-09.jpg"),
-  require("../../assets/images/prophets/yusuf-chapter-10.jpg"),
+  require("../../assets/images/prophets/yusuf-chapter-05.webp"),
+  require("../../assets/images/prophets/yusuf-chapter-06.webp"),
+  require("../../assets/images/prophets/yusuf-chapter-07.webp"),
+  require("../../assets/images/prophets/yusuf-chapter-08.webp"),
+  require("../../assets/images/prophets/yusuf-chapter-09.webp"),
+  require("../../assets/images/prophets/yusuf-chapter-10.webp"),
 ];
 
 const SHUAYB_CHAPTER_IMAGES = [
-  require("../../assets/images/prophets/shuayb-chapter-01.jpg"),
-  require("../../assets/images/prophets/shuayb-chapter-02.jpg"),
-  require("../../assets/images/prophets/shuayb-chapter-03.jpg"),
+  require("../../assets/images/prophets/shuayb-chapter-01.webp"),
+  require("../../assets/images/prophets/shuayb-chapter-02.webp"),
+  require("../../assets/images/prophets/shuayb-chapter-03.webp"),
   require("../../assets/images/prophets/shuayb-chapter-04.jpg"),
 ];
 
 const AYYUB_CHAPTER_IMAGES = [
-  require("../../assets/images/prophets/ayyub-chapter-01.jpg"),
+  require("../../assets/images/prophets/ayyub-chapter-01.webp"),
   require("../../assets/images/prophets/ayyub-chapter-02.jpg"),
   require("../../assets/images/prophets/ayyub-chapter-03.jpg"),
 ];
 
 const DHUL_KIFL_CHAPTER_IMAGES = [
-  require("../../assets/images/prophets/dhul-kifl-chapter-01.jpg"),
+  require("../../assets/images/prophets/dhul-kifl-chapter-01.webp"),
 ];
 
 const HARUN_CHAPTER_IMAGES = [
-  require("../../assets/images/prophets/harun-chapter-01.jpg"),
-  require("../../assets/images/prophets/harun-chapter-02.jpg"),
-  require("../../assets/images/prophets/harun-chapter-03.jpg"),
+  require("../../assets/images/prophets/harun-chapter-01.webp"),
+  require("../../assets/images/prophets/harun-chapter-02.webp"),
+  require("../../assets/images/prophets/harun-chapter-03.webp"),
 ];
 
 const DAWUD_CHAPTER_IMAGES = [
-  require("../../assets/images/prophets/dawud-chapter-01.jpg"),
-  require("../../assets/images/prophets/dawud-chapter-02.jpg"),
+  require("../../assets/images/prophets/dawud-chapter-01.webp"),
+  require("../../assets/images/prophets/dawud-chapter-02.webp"),
   require("../../assets/images/prophets/dawud-chapter-03.jpg"),
-  require("../../assets/images/prophets/dawud-chapter-04.jpg"),
+  require("../../assets/images/prophets/dawud-chapter-04.webp"),
 ];
 
 const SULAYMAN_CHAPTER_IMAGES = [
-  require("../../assets/images/prophets/sulayman-chapter-01.jpg"),
-  require("../../assets/images/prophets/sulayman-chapter-02.jpg"),
-  require("../../assets/images/prophets/sulayman-chapter-03.jpg"),
-  require("../../assets/images/prophets/sulayman-chapter-04.jpg"),
-  require("../../assets/images/prophets/sulayman-chapter-05.jpg"),
-  require("../../assets/images/prophets/sulayman-chapter-06.jpg"),
+  require("../../assets/images/prophets/sulayman-chapter-01.webp"),
+  require("../../assets/images/prophets/sulayman-chapter-02.webp"),
+  require("../../assets/images/prophets/sulayman-chapter-03.webp"),
+  require("../../assets/images/prophets/sulayman-chapter-04.webp"),
+  require("../../assets/images/prophets/sulayman-chapter-05.webp"),
+  require("../../assets/images/prophets/sulayman-chapter-06.webp"),
 ];
 
 const ILYAS_CHAPTER_IMAGES = [
-  require("../../assets/images/prophets/ilyas-chapter-01.jpg"),
+  require("../../assets/images/prophets/ilyas-chapter-01.webp"),
   require("../../assets/images/prophets/ilyas-chapter-02.jpg"),
 ];
 
@@ -134,46 +134,46 @@ const AL_YASA_CHAPTER_IMAGES = [
 ];
 
 const YUNUS_CHAPTER_IMAGES = [
-  require("../../assets/images/prophets/yunus-chapter-01.jpg"),
-  require("../../assets/images/prophets/yunus-chapter-02.jpg"),
+  require("../../assets/images/prophets/yunus-chapter-01.webp"),
+  require("../../assets/images/prophets/yunus-chapter-02.webp"),
   require("../../assets/images/prophets/yunus-chapter-03.jpg"),
 ];
 
 const ZAKARIYA_CHAPTER_IMAGES = [
-  require("../../assets/images/prophets/zakariya-chapter-01.jpg"),
-  require("../../assets/images/prophets/zakariya-chapter-02.jpg"),
+  require("../../assets/images/prophets/zakariya-chapter-01.webp"),
+  require("../../assets/images/prophets/zakariya-chapter-02.webp"),
   require("../../assets/images/prophets/zakariya-chapter-03.jpg"),
-  require("../../assets/images/prophets/zakariya-chapter-04.jpg"),
+  require("../../assets/images/prophets/zakariya-chapter-04.webp"),
 ];
 
 const YAHYA_CHAPTER_IMAGES = [
-  require("../../assets/images/prophets/yahya-chapter-01.jpg"),
-  require("../../assets/images/prophets/yahya-chapter-02.jpg"),
+  require("../../assets/images/prophets/yahya-chapter-01.webp"),
+  require("../../assets/images/prophets/yahya-chapter-02.webp"),
   require("../../assets/images/prophets/yahya-chapter-03.jpg"),
 ];
 
 const ISA_CHAPTER_IMAGES = [
   require("../../assets/images/prophets/isa-chapter-01.jpg"),
   require("../../assets/images/prophets/isa-chapter-02.jpg"),
-  require("../../assets/images/prophets/isa-chapter-03.jpg"),
-  require("../../assets/images/prophets/isa-chapter-04.jpg"),
+  require("../../assets/images/prophets/isa-chapter-03.webp"),
+  require("../../assets/images/prophets/isa-chapter-04.webp"),
   require("../../assets/images/prophets/isa-chapter-05.jpg"),
-  require("../../assets/images/prophets/isa-chapter-06.jpg"),
-  require("../../assets/images/prophets/isa-chapter-07.jpg"),
+  require("../../assets/images/prophets/isa-chapter-06.webp"),
+  require("../../assets/images/prophets/isa-chapter-07.webp"),
 ];
 
 const MUHAMMAD_CHAPTER_IMAGES = [
   require("../../assets/images/prophets/muhammad-chapter-01.jpg"),
-  require("../../assets/images/prophets/muhammad-chapter-02.jpg"),
+  require("../../assets/images/prophets/muhammad-chapter-02.webp"),
   require("../../assets/images/prophets/muhammad-chapter-03.jpg"),
   require("../../assets/images/prophets/muhammad-chapter-04.jpg"),
   require("../../assets/images/prophets/muhammad-chapter-05.jpg"),
   require("../../assets/images/prophets/muhammad-chapter-06.jpg"),
-  require("../../assets/images/prophets/muhammad-chapter-07.jpg"),
+  require("../../assets/images/prophets/muhammad-chapter-07.webp"),
   require("../../assets/images/prophets/muhammad-chapter-08.jpg"),
   require("../../assets/images/prophets/muhammad-chapter-09.jpg"),
   require("../../assets/images/prophets/muhammad-chapter-10.jpg"),
-  require("../../assets/images/prophets/muhammad-chapter-11.jpg"),
+  require("../../assets/images/prophets/muhammad-chapter-11.webp"),
   require("../../assets/images/prophets/muhammad-chapter-12.jpg"),
 ];
 

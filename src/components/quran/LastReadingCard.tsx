@@ -28,7 +28,7 @@ export default function LastReadingCard({
   return (
     <View style={styles.card}>
       <Image
-        source={require('../../assets/images/home/shortcuts/quran-real.jpg')}
+        source={require('../../assets/images/home/shortcuts/quran-real.webp')}
         contentFit="cover"
         transition={180}
         style={StyleSheet.absoluteFill}

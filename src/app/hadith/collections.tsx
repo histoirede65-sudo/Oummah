@@ -14,15 +14,15 @@ import { typography } from "../../theme/typography";
 import { useI18n } from "../../i18n";
 
 const COLLECTION_COVERS: ImageSourcePropType[] = [
-  require("../../assets/images/hadith-collections/sahih-bukhari.png"),
-  require("../../assets/images/hadith-collections/sahih-muslim.png"),
-  require("../../assets/images/hadith-collections/sunan-abu-dawud.png"),
-  require("../../assets/images/hadith-collections/jami-tirmidhi.png"),
-  require("../../assets/images/hadith-collections/sunan-nasai.png"),
-  require("../../assets/images/hadith-collections/sunan-ibn-majah.png"),
-  require("../../assets/images/hadith-collections/riyad-as-salihin.png"),
-  require("../../assets/images/hadith-collections/al-adab-al-mufrad.png"),
-  require("../../assets/images/hadith-collections/forty-nawawi.png"),
+  require("../../assets/images/hadith-collections/sahih-bukhari.webp"),
+  require("../../assets/images/hadith-collections/sahih-muslim.webp"),
+  require("../../assets/images/hadith-collections/sunan-abu-dawud.webp"),
+  require("../../assets/images/hadith-collections/jami-tirmidhi.webp"),
+  require("../../assets/images/hadith-collections/sunan-nasai.webp"),
+  require("../../assets/images/hadith-collections/sunan-ibn-majah.webp"),
+  require("../../assets/images/hadith-collections/riyad-as-salihin.webp"),
+  require("../../assets/images/hadith-collections/al-adab-al-mufrad.webp"),
+  require("../../assets/images/hadith-collections/forty-nawawi.webp"),
 ];
 
 const HIDDEN_COLLECTION_IDS = new Set(["riyad", "adab", "nasai"]);

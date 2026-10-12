@@ -23,8 +23,8 @@ const COVER_RATIO = 1122 / 1402;
 const BODY_PADDING = 18;
 const SHELF_GAP = 12;
 const COVERS: Record<Rite, { image: number }> = {
-  umrah: { image: require("../assets/images/pilgrimage/umrah-cover.jpg") },
-  hajj: { image: require("../assets/images/pilgrimage/hajj-cover.jpg") },
+  umrah: { image: require("../assets/images/pilgrimage/umrah-cover.webp") },
+  hajj: { image: require("../assets/images/pilgrimage/hajj-cover.webp") },
 };
 
 /** Virtues of the pilgrimage, one shown at a time, in the words of the collections. */

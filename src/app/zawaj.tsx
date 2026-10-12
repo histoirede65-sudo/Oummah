@@ -136,7 +136,7 @@ export default function ZawajScreen() {
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.content}>
         <View style={styles.hero}>
           <Image
-            source={require('../assets/images/dua/guides/marriage.jpg')}
+            source={require('../assets/images/dua/guides/marriage.webp')}
             style={StyleSheet.absoluteFill}
             contentFit="cover"
           />

@@ -26,14 +26,14 @@ type DalilCardProps = {
 };
 
 const cardPoseSources = {
-  idle: require('../assets/images/home/wasil-idle.png'),
-  blink: require('../assets/images/home/wasil-blink.png'),
-  thinking: require('../assets/images/home/wasil-thinking.png'),
-  'reading-quran-1': require('../assets/images/home/wasil-reading-quran-1.png'),
-  'reading-quran-2': require('../assets/images/home/wasil-reading-quran-2.png'),
-  'wave-1': require('../assets/images/home/wasil-wave-1.png'),
-  'wave-2': require('../assets/images/home/wasil-wave-2.png'),
-  'wave-3': require('../assets/images/home/wasil-wave-3.png'),
+  idle: require('../assets/images/home/wasil-idle.webp'),
+  blink: require('../assets/images/home/wasil-blink.webp'),
+  thinking: require('../assets/images/home/wasil-thinking.webp'),
+  'reading-quran-1': require('../assets/images/home/wasil-reading-quran-1.webp'),
+  'reading-quran-2': require('../assets/images/home/wasil-reading-quran-2.webp'),
+  'wave-1': require('../assets/images/home/wasil-wave-1.webp'),
+  'wave-2': require('../assets/images/home/wasil-wave-2.webp'),
+  'wave-3': require('../assets/images/home/wasil-wave-3.webp'),
 } as const;
 
 const suggestions = [

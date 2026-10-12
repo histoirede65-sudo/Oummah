@@ -144,7 +144,7 @@ const ADHAN_VOICES: ReadonlyArray<{ key: AdhanVoice; labelKey: TranslationKey; f
   { key: "makkah", labelKey: "prayer.voiceMakkah", file: require("../../assets/adhan/adhan_makkah.mp3") },
   { key: "madinah", labelKey: "prayer.voiceMadinah", file: require("../../assets/adhan/adhan_madinah.mp3") },
   { key: "egypt", labelKey: "prayer.voiceEgypt", file: require("../../assets/adhan/adhan_egypt.mp3") },
-  { key: "birds", labelKey: "prayer.voiceBirds", file: require("../../assets/adhan/adhan_birds.wav") },
+  { key: "birds", labelKey: "prayer.voiceBirds", file: require("../../assets/adhan/adhan_birds.mp3") },
 ];
 
 /** Gold toggle drawn in JS: the native iOS switch overflows its box and looks misaligned. */
@@ -1254,7 +1254,7 @@ export default function PrayerCard({ onScheduleChange }: { onScheduleChange?: (s
   );
   const isNightBackground = isBeforeTodayFajr || isAfterNightStartBeforeTomorrowFajr;
   const daySource = require("../assets/images/home/home-mosque-sunset.jpg");
-  const nightSource = require("../assets/images/home/home-mosque-night.jpg");
+  const nightSource = require("../assets/images/home/home-mosque-night.webp");
   const nightRevealProgress = useRef(new Animated.Value(0)).current;
   const nightTransitionDateKey = isBeforeTodayFajr && fajrTime
     ? previousLocalDateKey(fajrTime)

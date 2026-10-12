@@ -328,7 +328,7 @@ export default function DuaHomeScreen() {
         <>
           <View style={styles.hero}>
             <Image
-              source={require("../assets/images/home/shortcuts/dua-real.jpg")}
+              source={require("../assets/images/home/shortcuts/dua-real.webp")}
               contentFit="cover"
               style={StyleSheet.absoluteFill}
             />

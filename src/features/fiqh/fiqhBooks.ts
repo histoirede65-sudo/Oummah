@@ -2,22 +2,22 @@ import type { ImageSourcePropType } from "react-native";
 
 /** Cover of each Fiqh book. */
 export const FIQH_BOOK_IMAGES: Record<string, ImageSourcePropType> = {
-  purification: require("../../assets/images/fiqh/purification.png"),
-  prayer: require("../../assets/images/fiqh/prayer-book.png"),
-  fasting: require("../../assets/images/fiqh/fasting.png"),
-  zakat: require("../../assets/images/fiqh/zakat.png"),
-  "hajj-umra": require("../../assets/images/fiqh/hajj-umrah-final.jpg"),
-  funerals: require("../../assets/images/fiqh/funerals.png"),
-  family: require("../../assets/images/fiqh/family.png"),
-  transactions: require("../../assets/images/fiqh/transactions.png"),
-  "food-sacrifices": require("../../assets/images/fiqh/food-sacrifices.png"),
-  "oaths-vows": require("../../assets/images/fiqh/oaths-vows.png"),
-  "clothing-adornment": require("../../assets/images/fiqh/clothing-adornment.png"),
-  "daily-life": require("../../assets/images/fiqh/daily-life.png"),
-  "justice-rights": require("../../assets/images/fiqh/justice-rights.png"),
-  "inheritance-wills": require("../../assets/images/fiqh/inheritance-wills.png"),
-  "hunting-animals": require("../../assets/images/fiqh/hunting-animals.png"),
-  "siyar-relations": require("../../assets/images/fiqh/siyar-relations.png"),
+  purification: require("../../assets/images/fiqh/purification.webp"),
+  prayer: require("../../assets/images/fiqh/prayer-book.webp"),
+  fasting: require("../../assets/images/fiqh/fasting.webp"),
+  zakat: require("../../assets/images/fiqh/zakat.webp"),
+  "hajj-umra": require("../../assets/images/fiqh/hajj-umrah-final.webp"),
+  funerals: require("../../assets/images/fiqh/funerals.webp"),
+  family: require("../../assets/images/fiqh/family.webp"),
+  transactions: require("../../assets/images/fiqh/transactions.webp"),
+  "food-sacrifices": require("../../assets/images/fiqh/food-sacrifices.webp"),
+  "oaths-vows": require("../../assets/images/fiqh/oaths-vows.webp"),
+  "clothing-adornment": require("../../assets/images/fiqh/clothing-adornment.webp"),
+  "daily-life": require("../../assets/images/fiqh/daily-life.webp"),
+  "justice-rights": require("../../assets/images/fiqh/justice-rights.webp"),
+  "inheritance-wills": require("../../assets/images/fiqh/inheritance-wills.webp"),
+  "hunting-animals": require("../../assets/images/fiqh/hunting-animals.webp"),
+  "siyar-relations": require("../../assets/images/fiqh/siyar-relations.webp"),
 };
 
 /** One-sentence presentation of each book, shown on the library and on the book's first page. */

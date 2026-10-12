@@ -55,18 +55,18 @@ import { getMainMosque } from "../features/mosques/data/mosquePreferences";
 type CalendarTab = "today" | "month" | "events" | "reminders";
 
 const MONTH_IMAGES = [
-  require("../assets/images/mosques/mosque-a-00.jpg"),
-  require("../assets/images/mosques/mosque-b-02.jpg"),
-  require("../assets/images/mosques/mosque-a-04.jpg"),
-  require("../assets/images/mosques/mosque-b-05.jpg"),
-  require("../assets/images/mosques/mosque-a-06.jpg"),
-  require("../assets/images/mosques/mosque-b-07.jpg"),
-  require("../assets/images/mosques/mosque-a-08.jpg"),
-  require("../assets/images/home/shortcuts/quran-real.jpg"),
+  require("../assets/images/mosques/mosque-a-00.webp"),
+  require("../assets/images/mosques/mosque-b-02.webp"),
+  require("../assets/images/mosques/mosque-a-04.webp"),
+  require("../assets/images/mosques/mosque-b-05.webp"),
+  require("../assets/images/mosques/mosque-a-06.webp"),
+  require("../assets/images/mosques/mosque-b-07.webp"),
+  require("../assets/images/mosques/mosque-a-08.webp"),
+  require("../assets/images/home/shortcuts/quran-real.webp"),
   require("../assets/images/home/home-mosque-sunset.jpg"),
-  require("../assets/images/mosques/mosque-coastal.jpg"),
-  require("../assets/images/mosques/mosque-a-10.jpg"),
-  require("../assets/images/home/shortcuts/qibla-real.jpg"),
+  require("../assets/images/mosques/mosque-coastal.webp"),
+  require("../assets/images/mosques/mosque-a-10.webp"),
+  require("../assets/images/home/shortcuts/qibla-real.webp"),
 ] as const;
 
 const WEEKDAYS = {
