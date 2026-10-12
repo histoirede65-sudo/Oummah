@@ -1,4 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
+import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
 import type { Href } from 'expo-router';
 import { router, useFocusEffect } from 'expo-router';
@@ -13,7 +14,6 @@ import { RamadanCard } from '../../components/tahajjud/RamadanCard';
 import { ValidateSheet } from '../../components/tahajjud/ValidateSheet';
 import { WakeBuddyCard } from '../../components/tahajjud/WakeBuddy';
 import { WeekMoons } from '../../components/tahajjud/WeekMoons';
-import { OummahNightArt } from '../../components/tahajjud/OummahNightArt';
 import { getNewDuas, type WallPost } from '../../features/tahajjud/duaWall';
 import { getTahajjudLive } from '../../features/tahajjud/tahajjudCommunity';
 import { getChatUnreadCount } from '../../features/tahajjud/tahajjudFriends';
@@ -100,8 +100,8 @@ export default function TahajjudScreen() {
   );
 
   return (
-    <TahajjudShell>
-      <Animated.View entering={FadeInDown.duration(500)}>
+    <TahajjudShell hero={require('../../../assets/images/tahajjud/hero.jpg')}>
+      <Animated.View entering={FadeInDown.duration(500)} style={styles.heroCopy}>
         <Text style={styles.eyebrow}>{tonight ? nightTitle(tonight.key) : tx('Cette nuit')}</Text>
         <Text style={styles.title}>{tx("Qiyam al-Layl")}</Text>
         <Text style={styles.subtitle}>{tx("Un rendez-vous privilégié avec votre Seigneur")}</Text>
@@ -177,7 +177,9 @@ export default function TahajjudScreen() {
 
           <Animated.View entering={FadeInDown.delay(260).duration(500)}>
             <Pressable onPress={() => router.push('/tahajjud/wall' as Href)} style={({ pressed }) => [pressed && styles.pressed]}>
-              <LinearGradient colors={['#3A1F52', '#211331']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.wall}>
+              <View style={styles.wall}>
+                <Image source={require('../../../assets/images/tahajjud/dua-hands.jpg')} contentFit="cover" style={StyleSheet.absoluteFill} />
+                <LinearGradient colors={['rgba(8,7,19,0.88)', 'rgba(8,7,19,0.55)', 'rgba(8,7,19,0.9)']} locations={[0, 0.5, 1]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={StyleSheet.absoluteFill} />
                 <View style={styles.wallHeader}>
                   <View style={styles.wallIcon}>
                     <Ionicons name="hand-left-outline" size={22} color={night.sky0} />
@@ -199,25 +201,31 @@ export default function TahajjudScreen() {
                     <Text style={styles.wallPreviewMeta}>{txCount(latestDua.ameenCount, '{0} Amine', '{0} Amine')}</Text>
                   </View>
                 ) : null}
-              </LinearGradient>
+              </View>
             </Pressable>
           </Animated.View>
 
           <Animated.View entering={FadeInDown.delay(300).duration(500)}>
             <Pressable onPress={() => router.push('/tahajjud/community' as Href)} style={({ pressed }) => [pressed && styles.pressed]}>
-              <LinearGradient colors={['#24123A', '#0E0915']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.community}>
-                <View style={styles.communityCopy}>
-                  <Text style={styles.communityTitle}>{tx("La Oummah cette nuit")}</Text>
-                  <Text style={styles.communityText}>
-                    {!awakeCount ? tx('Qui se lève cette nuit à travers le monde') : txCount(awakeCount, '{0} membre réveillé', '{0} membres réveillés')}
-                  </Text>
-                  <View style={styles.communityLink}>
-                    <Text style={styles.communityLinkText}>{tx('Voir la carte de la nuit')}</Text>
-                    <Ionicons name="arrow-forward" size={14} color={night.goldSoft} />
+              <View style={styles.community}>
+                <View style={styles.communityHeader}>
+                  <View style={styles.communityCopy}>
+                    <Text style={styles.communityTitle}>{tx("La Oummah cette nuit")}</Text>
+                    <View style={styles.liveLine}>
+                      <View style={styles.greenDot} />
+                      <Text style={styles.communityText}>
+                        {!awakeCount ? tx('Qui se lève cette nuit à travers le monde') : txCount(awakeCount, '{0} membre réveillé', '{0} membres réveillés')}
+                      </Text>
+                    </View>
                   </View>
+                  <Ionicons name="chevron-forward" size={20} color={night.goldSoft} />
                 </View>
-                <OummahNightArt size={128} />
-              </LinearGradient>
+                <Image source={require('../../../assets/images/tahajjud/world-night.jpg')} contentFit="cover" style={styles.worldMap} />
+                <View style={styles.communityLink}>
+                  <Text style={styles.communityLinkText}>{tx('Voir la carte de la nuit')}</Text>
+                  <Ionicons name="arrow-forward" size={14} color={night.goldSoft} />
+                </View>
+              </View>
             </Pressable>
           </Animated.View>
 
@@ -289,6 +297,7 @@ export default function TahajjudScreen() {
 }
 
 const styles = StyleSheet.create({
+  heroCopy: { minHeight: 250, justifyContent: 'flex-end', paddingBottom: 8 },
   eyebrow: { color: night.gold, fontSize: 14, letterSpacing: 1.8, textTransform: 'uppercase', ...nightType.bold },
   title: { marginTop: 2, color: night.text, fontSize: 46, lineHeight: 50, ...nightType.display },
   subtitle: { marginTop: 2, color: night.textSoft, fontSize: 18, ...nightType.body },
@@ -322,16 +331,20 @@ const styles = StyleSheet.create({
   tileHint: { marginTop: 2, color: night.muted, fontSize: 14, ...nightType.body },
   weekCard: { marginTop: 16 },
   weekHint: { marginTop: 10, color: night.muted, fontSize: 14, ...nightType.body },
-  wall: { marginTop: 24, padding: 18, borderRadius: 26, borderWidth: 1, borderColor: night.goldLine },
+  wall: { marginTop: 24, padding: 18, minHeight: 170, overflow: 'hidden', borderRadius: 26, borderWidth: 1, borderColor: night.goldLine, backgroundColor: night.glass },
   wallHeader: { flexDirection: 'row', alignItems: 'center', gap: 12 },
   wallIcon: { width: 46, height: 46, borderRadius: 23, alignItems: 'center', justifyContent: 'center', backgroundColor: night.goldSoft },
   wallTitle: { color: night.text, fontSize: 22, ...nightType.semibold },
   badge: { minWidth: 26, height: 26, paddingHorizontal: 7, borderRadius: 13, alignItems: 'center', justifyContent: 'center', backgroundColor: '#E5484D' },
   badgeText: { color: '#FFFFFF', fontSize: 14, ...nightType.bold },
-  wallPreview: { marginTop: 14, padding: 14, borderRadius: 18, backgroundColor: 'rgba(8,7,19,0.45)' },
+  wallPreview: { marginTop: 14, padding: 14, borderRadius: 18, backgroundColor: 'rgba(8,7,19,0.6)', borderWidth: 1, borderColor: 'rgba(227,181,90,0.18)' },
   wallPreviewText: { color: night.text, fontSize: 16, lineHeight: 23, fontStyle: 'italic', ...nightType.body },
   wallPreviewMeta: { marginTop: 6, color: night.goldSoft, fontSize: 14, ...nightType.semibold },
-  community: { marginTop: 16, minHeight: 150, flexDirection: 'row', alignItems: 'center', gap: 8, paddingLeft: 18, paddingRight: 8, paddingVertical: 12, borderRadius: 26, borderWidth: 1, borderColor: night.goldLine },
+  community: { marginTop: 16, padding: 18, overflow: 'hidden', borderRadius: 26, borderWidth: 1, borderColor: night.goldLine, backgroundColor: '#0D0A1A' },
+  communityHeader: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  liveLine: { marginTop: 4, flexDirection: 'row', alignItems: 'center', gap: 7 },
+  greenDot: { width: 8, height: 8, borderRadius: 4, backgroundColor: night.success },
+  worldMap: { marginTop: 14, marginHorizontal: -18, height: 130 },
   communityCopy: { flex: 1 },
   communityTitle: { color: night.text, fontSize: 22, lineHeight: 27, ...nightType.semibold },
   communityLink: { marginTop: 12, flexDirection: 'row', alignItems: 'center', gap: 6 },

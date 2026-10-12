@@ -1,6 +1,8 @@
 import { Ionicons } from '@expo/vector-icons';
 import type { Href } from 'expo-router';
 import { router } from 'expo-router';
+import { Image } from 'expo-image';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
@@ -8,6 +10,12 @@ import { TahajjudShell } from '../../components/tahajjud/TahajjudShell';
 import { night, nightType } from '../../components/tahajjud/theme';
 import { GUIDE, type GuideStep, type GuideTab } from '../../features/tahajjud/tahajjudContent';
 import { tx } from '../../features/tahajjud/tahajjudI18n';
+
+const TAB_IMAGES: Record<GuideTab['id'], number> = {
+  understand: require('../../../assets/images/tahajjud/guide-understand.jpg'),
+  pray: require('../../../assets/images/tahajjud/guide-pray.jpg'),
+  tips: require('../../../assets/images/tahajjud/guide-tips.jpg'),
+};
 
 function Step({ step, index, last }: { step: GuideStep; index: number; last: boolean }) {
   const [open, setOpen] = useState(false);
@@ -64,7 +72,15 @@ export default function TahajjudGuideScreen() {
     <TahajjudShell title={tx("Apprendre le Qiyam")} eyebrow={tx("Guide")}>
       <View style={styles.tabs}>
         {GUIDE.map((item) => (
-          <Pressable key={item.id} onPress={() => setTabId(item.id)} style={[styles.tab, { flex: item.label.length + 4 }, tabId === item.id && styles.tabOn]}>
+          <Pressable
+            key={item.id}
+            accessibilityRole="tab"
+            accessibilityState={{ selected: tabId === item.id }}
+            onPress={() => setTabId(item.id)}
+            style={[styles.tab, tabId === item.id && styles.tabOn]}
+          >
+            <Image source={TAB_IMAGES[item.id]} contentFit="cover" style={StyleSheet.absoluteFill} />
+            <LinearGradient colors={['rgba(8,7,19,0)', 'rgba(8,7,19,0.85)']} locations={[0.4, 1]} style={StyleSheet.absoluteFill} />
             <Text numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.8} style={[styles.tabText, tabId === item.id && styles.tabTextOn]}>{item.label}</Text>
           </Pressable>
         ))}
@@ -80,11 +96,11 @@ export default function TahajjudGuideScreen() {
 }
 
 const styles = StyleSheet.create({
-  tabs: { flexDirection: 'row', padding: 5, borderRadius: 22, backgroundColor: night.glass, borderWidth: 1, borderColor: night.line },
-  tab: { height: 52, borderRadius: 17, paddingHorizontal: 6, alignItems: 'center', justifyContent: 'center' },
-  tabOn: { backgroundColor: night.gold },
-  tabText: { color: night.textSoft, fontSize: 18, ...nightType.semibold },
-  tabTextOn: { color: night.sky0, ...nightType.bold },
+  tabs: { flexDirection: 'row', gap: 10 },
+  tab: { flex: 1, height: 170, borderRadius: 20, overflow: 'hidden', justifyContent: 'flex-end', padding: 12, borderWidth: 1, borderColor: night.line, backgroundColor: night.glass, opacity: 0.72 },
+  tabOn: { borderWidth: 2, borderColor: night.gold, opacity: 1 },
+  tabText: { color: night.text, fontSize: 16, ...nightType.semibold },
+  tabTextOn: { color: night.goldSoft, ...nightType.bold },
   intro: { marginTop: 18, marginBottom: 18, color: night.textSoft, fontSize: 18, lineHeight: 26, ...nightType.body },
   stepRow: { flexDirection: 'row', gap: 12 },
   rail: { width: 38, alignItems: 'center' },

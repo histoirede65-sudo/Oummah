@@ -1,19 +1,25 @@
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import type { ReactNode } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Image, type ImageSource } from 'expo-image';
+import { LinearGradient } from 'expo-linear-gradient';
+import { Pressable, ScrollView, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { NightSky } from './NightSky';
 import { night, nightType } from './theme';
 import { tx } from '../../features/tahajjud/tahajjudI18n';
 
 /** Frame of every Tahajjud screen: night sky, back button, optional title. */
-export function TahajjudShell({ title, eyebrow, children, scroll = true }: {
+export function TahajjudShell({ title, eyebrow, children, scroll = true, hero }: {
   title?: string;
   eyebrow?: string;
   children: ReactNode;
   scroll?: boolean;
+  /** Night landscape behind the top of the screen, fading into the sky. */
+  hero?: ImageSource;
 }) {
+  const { width } = useWindowDimensions();
+  const heroHeight = Math.round(width * 0.98);
   const header = (
     <View style={styles.header}>
       <Pressable accessibilityRole="button" accessibilityLabel={tx("Retour")} onPress={() => router.back()} hitSlop={10} style={styles.back}>
@@ -30,6 +36,16 @@ export function TahajjudShell({ title, eyebrow, children, scroll = true }: {
   return (
     <View style={styles.root}>
       <NightSky />
+      {hero ? (
+        <View pointerEvents="none" style={[styles.hero, { height: heroHeight }]}>
+          <Image source={hero} contentFit="cover" contentPosition="right" style={StyleSheet.absoluteFill} />
+          <LinearGradient
+            colors={['rgba(8,7,19,0.35)', 'rgba(8,7,19,0)', 'rgba(8,7,19,0.55)', night.sky0]}
+            locations={[0, 0.3, 0.75, 1]}
+            style={StyleSheet.absoluteFill}
+          />
+        </View>
+      ) : null}
       <SafeAreaView edges={['top']} style={styles.safe}>
         {scroll ? (
           <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
@@ -59,6 +75,7 @@ export const shellStyles = StyleSheet.create({
 const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: night.sky0 },
   safe: { flex: 1 },
+  hero: { position: 'absolute', top: 0, left: 0, right: 0 },
   content: { paddingHorizontal: 18, paddingBottom: 48 },
   fill: { flex: 1 },
   header: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingTop: 6, paddingBottom: 14 },
