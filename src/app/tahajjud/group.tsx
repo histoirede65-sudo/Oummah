@@ -24,7 +24,7 @@ import {
 import { tx, txCount } from '../../features/tahajjud/tahajjudI18n';
 
 const POLL_MS = 4_000;
-const AUTHOR_COLORS = ['#F4D995', '#B7ABF2', '#7FD8A6', '#8EC5FF', '#F7A8C4', '#FFB37A'];
+const AUTHOR_COLORS = ['#F4D995', '#C9A3DB', '#7FD8A6', '#8EC5FF', '#F7A8C4', '#FFB37A'];
 const REMINDER_PRESETS = ['Debout pour la prière de la nuit', 'Lecture de sourate Al-Mulk', 'Witr avant de dormir', 'Dua du dernier tiers'];
 
 function colorOf(id: string | null) {
@@ -61,7 +61,7 @@ function ReminderSheet({ visible, onClose, onCreate }: {
       <KeyboardAvoidingView behavior="padding" style={styles.backdrop}>
         <Pressable style={StyleSheet.absoluteFill} onPress={onClose} />
         <View style={styles.sheet}>
-          <LinearGradient colors={['#1C1546', '#0E0A26']} style={StyleSheet.absoluteFill} />
+          <LinearGradient colors={['#291A3E', '#160E21']} style={StyleSheet.absoluteFill} />
           <View style={styles.sheetHead}>
             <Ionicons name="alarm" size={26} color={night.goldSoft} />
             <Text style={styles.sheetTitle}>{tx("Rappel pour le groupe")}</Text>
@@ -295,8 +295,8 @@ const styles = StyleSheet.create({
   reminderHead: { flexDirection: 'row', alignItems: 'center', gap: 7 },
   reminderWhen: { color: night.sky0, fontSize: 14, textTransform: 'uppercase', letterSpacing: 0.6, ...nightType.bold },
   reminderBody: { marginTop: 6, color: night.sky0, fontSize: 18, lineHeight: 24, ...nightType.semibold },
-  reminderBy: { marginTop: 6, color: 'rgba(4,3,12,0.6)', fontSize: 12, ...nightType.medium },
-  backdrop: { flex: 1, backgroundColor: 'rgba(5,3,18,0.7)', justifyContent: 'flex-end' },
+  reminderBy: { marginTop: 6, color: 'rgba(7,5,11,0.6)', fontSize: 12, ...nightType.medium },
+  backdrop: { flex: 1, backgroundColor: 'rgba(11,7,16,0.7)', justifyContent: 'flex-end' },
   sheet: { borderTopLeftRadius: 28, borderTopRightRadius: 28, overflow: 'hidden', padding: 22, paddingBottom: 34, gap: 12 },
   sheetHead: { flexDirection: 'row', alignItems: 'center', gap: 10 },
   sheetTitle: { color: night.text, fontSize: 24, ...nightType.display },
@@ -308,7 +308,7 @@ const styles = StyleSheet.create({
   presetTextOn: { color: night.sky0 },
   field: {
     minHeight: 50, borderRadius: 16, paddingHorizontal: 16, borderWidth: 1, borderColor: night.goldLine,
-    backgroundColor: '#080518', color: night.text, fontSize: 17, ...nightType.medium,
+    backgroundColor: '#0E0915', color: night.text, fontSize: 17, ...nightType.medium,
   },
   timeRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 12 },
   label: { color: night.text, fontSize: 17, ...nightType.semibold },

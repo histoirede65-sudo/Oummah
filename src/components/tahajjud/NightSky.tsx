@@ -36,7 +36,7 @@ function TwinkleStar({ x, y, size, delay }: { x: number; y: number; size: number
 }
 
 /**
- * Night sky behind the whole Tahajjud space: indigo gradient, a soft moon glow, static stars (one
+ * Night sky behind the whole Tahajjud space: plum gradient, a soft moon glow, static stars (one
  * SVG) and a few twinkling ones (native-thread animations). No image: weighs nothing.
  */
 function NightSkyComponent({ glow = true }: { glow?: boolean }) {
@@ -60,8 +60,8 @@ function NightSkyComponent({ glow = true }: { glow?: boolean }) {
       <Svg width={width} height={height} style={StyleSheet.absoluteFill}>
         <Defs>
           <RadialGradient id="glow" cx="78%" cy="9%" r="55%">
-            <Stop offset="0" stopColor="#8E7CFF" stopOpacity={glow ? 0.28 : 0} />
-            <Stop offset="0.5" stopColor="#4B3A9E" stopOpacity={glow ? 0.1 : 0} />
+            <Stop offset="0" stopColor="#B07AC9" stopOpacity={glow ? 0.28 : 0} />
+            <Stop offset="0.5" stopColor="#5A2B73" stopOpacity={glow ? 0.1 : 0} />
             <Stop offset="1" stopColor="#000000" stopOpacity={0} />
           </RadialGradient>
         </Defs>

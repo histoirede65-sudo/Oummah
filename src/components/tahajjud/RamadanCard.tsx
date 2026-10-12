@@ -27,7 +27,7 @@ export function RamadanCard({ tonight, nights }: { tonight: TahajjudNight; night
 
   return (
     <Animated.View entering={FadeInDown.duration(500)}>
-      <LinearGradient colors={['#2A1F45', '#15102C']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.card}>
+      <LinearGradient colors={['#2A1F45', '#1A1027']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.card}>
         <View style={styles.head}>
           <Ionicons name="moon" size={18} color={palette.goldSoft} />
           <Text style={styles.eyebrow}>{tx('RAMADAN · NUIT {0}', [ramadan.night])}</Text>
@@ -100,7 +100,7 @@ const styles = StyleSheet.create({
   trackLabel: { color: palette.muted, fontSize: 11, ...nightType.semibold },
   trackLabelOdd: { color: palette.goldSoft },
   trackSummary: { marginTop: 8, color: palette.muted, fontSize: 13, textAlign: 'center', ...nightType.medium },
-  dua: { marginTop: 16, padding: 14, borderRadius: 16, backgroundColor: '#0D0A1F' },
+  dua: { marginTop: 16, padding: 14, borderRadius: 16, backgroundColor: '#120B1B' },
   duaArabic: { color: palette.goldSoft, fontSize: 24, lineHeight: 42, textAlign: 'right', writingDirection: 'rtl', ...nightType.arabic },
   duaPhonetic: { marginTop: 6, color: palette.textSoft, fontSize: 15, lineHeight: 22, fontStyle: 'italic', ...nightType.medium },
   duaText: { marginTop: 6, color: palette.textSoft, fontSize: 14, lineHeight: 20, ...nightType.body },

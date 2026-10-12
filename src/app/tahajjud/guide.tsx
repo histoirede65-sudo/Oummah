@@ -10,7 +10,7 @@ import { GUIDE, type GuideStep, type GuideTab } from '../../features/tahajjud/ta
 import { tx } from '../../features/tahajjud/tahajjudI18n';
 
 function Step({ step, index, last }: { step: GuideStep; index: number; last: boolean }) {
-  const [open, setOpen] = useState(index === 0);
+  const [open, setOpen] = useState(false);
   return (
     <Animated.View entering={FadeInDown.delay(index * 70).duration(400)} style={styles.stepRow}>
       {/* Timeline */}
@@ -96,7 +96,7 @@ const styles = StyleSheet.create({
   cardHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 8 },
   stepTitle: { flex: 1, color: night.text, fontSize: 20, ...nightType.semibold },
   body: { marginTop: 10, color: night.textSoft, fontSize: 17, lineHeight: 25, ...nightType.body },
-  proof: { marginTop: 12, padding: 14, borderRadius: 16, backgroundColor: '#080519', borderLeftWidth: 2, borderLeftColor: night.gold },
+  proof: { marginTop: 12, padding: 14, borderRadius: 16, backgroundColor: '#0F0916', borderLeftWidth: 2, borderLeftColor: night.gold },
   phonetic: { marginBottom: 10, color: night.goldSoft, fontSize: 16, lineHeight: 23, fontStyle: 'italic', ...nightType.medium },
   arabic: { color: night.moon, fontSize: 22, lineHeight: 38, textAlign: 'right', writingDirection: 'rtl', marginBottom: 8, ...nightType.arabic },
   proofText: { color: night.textSoft, fontSize: 17, lineHeight: 24, fontStyle: 'italic', ...nightType.body },

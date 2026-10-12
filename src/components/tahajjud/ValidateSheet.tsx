@@ -57,7 +57,7 @@ export function ValidateSheet({ visible, late, streak, nightKey, onClose, onConf
     <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
       <Pressable style={styles.backdrop} onPress={onClose}>
         <Pressable style={styles.sheet} onPress={() => undefined}>
-          <LinearGradient colors={['#1C1546', '#0E0A26']} style={StyleSheet.absoluteFill} />
+          <LinearGradient colors={['#291A3E', '#160E21']} style={StyleSheet.absoluteFill} />
           {done ? (
             <Animated.View entering={FadeIn.duration(300)} style={styles.doneWrap}>
               <Animated.View entering={ZoomIn.springify().damping(12)} style={styles.doneMoon}>
@@ -112,7 +112,7 @@ export function ValidateSheet({ visible, late, streak, nightKey, onClose, onConf
 }
 
 const styles = StyleSheet.create({
-  backdrop: { flex: 1, backgroundColor: 'rgba(2,1,8,0.72)', justifyContent: 'flex-end' },
+  backdrop: { flex: 1, backgroundColor: 'rgba(5,3,7,0.72)', justifyContent: 'flex-end' },
   sheet: { overflow: 'hidden', borderTopLeftRadius: 30, borderTopRightRadius: 30, borderWidth: 1, borderColor: night.goldLine, padding: 24, paddingBottom: 36 },
   handle: { alignSelf: 'center', width: 42, height: 4, borderRadius: 2, backgroundColor: '#363448', marginBottom: 18 },
   title: { color: night.text, fontSize: 32, ...nightType.display },

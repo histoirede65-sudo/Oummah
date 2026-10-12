@@ -101,7 +101,7 @@ export function NightArc({ width, night, phase, now, validated, children }: Prop
         <>
           <Animated.View
             pointerEvents="none"
-            style={[styles.halo, { left: moon.x - 20, top: moon.y - 20, backgroundColor: inLastThird ? 'rgba(244,217,149,0.45)' : 'rgba(183,171,242,0.4)' }, haloStyle]}
+            style={[styles.halo, { left: moon.x - 20, top: moon.y - 20, backgroundColor: inLastThird ? 'rgba(244,217,149,0.45)' : 'rgba(201,163,219,0.4)' }, haloStyle]}
           />
           <View pointerEvents="none" style={[styles.moon, { left: moon.x - 9, top: moon.y - 9 }, validated && styles.moonDone]} />
         </>

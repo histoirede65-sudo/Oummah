@@ -13,6 +13,8 @@ import { RamadanCard } from '../../components/tahajjud/RamadanCard';
 import { ValidateSheet } from '../../components/tahajjud/ValidateSheet';
 import { WakeBuddyCard } from '../../components/tahajjud/WakeBuddy';
 import { WeekMoons } from '../../components/tahajjud/WeekMoons';
+import { OummahNightArt } from '../../components/tahajjud/OummahNightArt';
+import { getNewDuas, type WallPost } from '../../features/tahajjud/duaWall';
 import { getTahajjudLive } from '../../features/tahajjud/tahajjudCommunity';
 import { getChatUnreadCount } from '../../features/tahajjud/tahajjudFriends';
 import { verseOfTheNight } from '../../features/tahajjud/tahajjudContent';
@@ -38,11 +40,21 @@ export default function TahajjudScreen() {
   const [sheet, setSheet] = useState(false);
   const [awakeCount, setAwakeCount] = useState<number | null>(null);
   const [unreadMessages, setUnreadMessages] = useState(0);
+  const [newDuas, setNewDuas] = useState(0);
+  const [latestDua, setLatestDua] = useState<WallPost | null>(null);
 
   useFocusEffect(useCallback(() => {
     void loadTahajjudSettings().then(setSettings);
     void getTahajjudLive().then((live) => setAwakeCount(live.awake)).catch(() => undefined);
     void getChatUnreadCount().then(setUnreadMessages);
+    // New duas badge: refreshed on focus and every minute while the screen is open.
+    const refreshDuas = () => void getNewDuas().then(({ count, latest }) => {
+      setNewDuas(count);
+      setLatestDua(latest);
+    }).catch(() => undefined);
+    refreshDuas();
+    const timer = setInterval(refreshDuas, 60_000);
+    return () => clearInterval(timer);
   }, []));
 
   const { state, now } = view;
@@ -57,7 +69,7 @@ export default function TahajjudScreen() {
     { icon: 'heart-outline', label: tx('Ma nuit'), hint: tx('Dhikr, Coran'), route: '/tahajjud/duas' },
     { icon: 'checkmark-circle-outline', label: tx('J’ai prié'), hint: view.validated ? tx('Nuit enregistrée') : tx('Valider ma nuit'), onPress: () => view.canValidate && setSheet(true) },
     { icon: 'stats-chart-outline', label: tx('Statistiques'), hint: tx('Calendrier · défis'), route: '/tahajjud/stats' },
-    { icon: 'people-outline', label: tx('Duas'), hint: tx('Mur · dire Amine'), route: '/tahajjud/wall' },
+    { icon: 'musical-notes-outline', label: tx('Que réciter ?'), hint: tx('Dans ma prière'), route: '/tahajjud/recite' },
     { icon: 'chatbubbles-outline', label: tx('Amis'), hint: unreadMessages ? txCount(unreadMessages, '{0} message non lu', '{0} messages non lus') : tx('Messages · encourager'), route: '/tahajjud/friends' },
   ];
 
@@ -163,6 +175,52 @@ export default function TahajjudScreen() {
           <IntentionCard phase={phase} tonight={tonight} now={now} nights={view.nights} />
           <WakeBuddyCard phase={phase} nightKey={tonight.key} wakeAt={wakeUp} validated={view.validated} />
 
+          <Animated.View entering={FadeInDown.delay(260).duration(500)}>
+            <Pressable onPress={() => router.push('/tahajjud/wall' as Href)} style={({ pressed }) => [pressed && styles.pressed]}>
+              <LinearGradient colors={['#3A1F52', '#211331']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.wall}>
+                <View style={styles.wallHeader}>
+                  <View style={styles.wallIcon}>
+                    <Ionicons name="hand-left-outline" size={22} color={night.sky0} />
+                  </View>
+                  <View style={styles.communityCopy}>
+                    <Text style={styles.wallTitle}>{tx('Mur des duas')}</Text>
+                    <Text style={styles.communityText}>{tx('Mur · dire Amine')}</Text>
+                  </View>
+                  {newDuas > 0 ? (
+                    <View style={styles.badge} accessibilityLabel={txCount(newDuas, '{0} nouvelle dua', '{0} nouvelles duas')}>
+                      <Text style={styles.badgeText}>{newDuas >= 20 ? '20+' : newDuas}</Text>
+                    </View>
+                  ) : null}
+                  <Ionicons name="chevron-forward" size={20} color={night.goldSoft} />
+                </View>
+                {latestDua ? (
+                  <View style={styles.wallPreview}>
+                    <Text numberOfLines={2} style={styles.wallPreviewText}>« {latestDua.body} »</Text>
+                    <Text style={styles.wallPreviewMeta}>{txCount(latestDua.ameenCount, '{0} Amine', '{0} Amine')}</Text>
+                  </View>
+                ) : null}
+              </LinearGradient>
+            </Pressable>
+          </Animated.View>
+
+          <Animated.View entering={FadeInDown.delay(300).duration(500)}>
+            <Pressable onPress={() => router.push('/tahajjud/community' as Href)} style={({ pressed }) => [pressed && styles.pressed]}>
+              <LinearGradient colors={['#24123A', '#0E0915']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.community}>
+                <View style={styles.communityCopy}>
+                  <Text style={styles.communityTitle}>{tx("La Oummah cette nuit")}</Text>
+                  <Text style={styles.communityText}>
+                    {!awakeCount ? tx('Qui se lève cette nuit à travers le monde') : txCount(awakeCount, '{0} membre réveillé', '{0} membres réveillés')}
+                  </Text>
+                  <View style={styles.communityLink}>
+                    <Text style={styles.communityLinkText}>{tx('Voir la carte de la nuit')}</Text>
+                    <Ionicons name="arrow-forward" size={14} color={night.goldSoft} />
+                  </View>
+                </View>
+                <OummahNightArt size={128} />
+              </LinearGradient>
+            </Pressable>
+          </Animated.View>
+
           <Animated.View entering={FadeInDown.delay(320).duration(500)} style={styles.grid}>
             {tiles.map((tile) => (
               <Pressable
@@ -178,23 +236,6 @@ export default function TahajjudScreen() {
                 <Text style={styles.tileHint}>{tile.hint}</Text>
               </Pressable>
             ))}
-          </Animated.View>
-
-          <Animated.View entering={FadeInDown.delay(360).duration(500)}>
-            <Pressable onPress={() => router.push('/tahajjud/community' as Href)} style={({ pressed }) => [pressed && styles.pressed]}>
-              <LinearGradient colors={['rgba(183,171,242,0.16)', 'rgba(227,181,90,0.12)']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.community}>
-                <View style={styles.communityIcon}>
-                  <Ionicons name="earth" size={24} color={night.goldSoft} />
-                </View>
-                <View style={styles.communityCopy}>
-                  <Text style={styles.communityTitle}>{tx("La Oummah cette nuit")}</Text>
-                  <Text style={styles.communityText}>
-                    {!awakeCount ? tx('Voir la carte de la nuit') : txCount(awakeCount, '{0} membre réveillé · voir la carte', '{0} membres réveillés · voir la carte')}
-                  </Text>
-                </View>
-                <Ionicons name="chevron-forward" size={20} color={night.goldSoft} />
-              </LinearGradient>
-            </Pressable>
           </Animated.View>
 
           <Animated.View entering={FadeInDown.delay(400).duration(500)}>
@@ -265,7 +306,7 @@ const styles = StyleSheet.create({
   liveDot: { width: 7, height: 7, borderRadius: 4, backgroundColor: night.goldSoft },
   cta: { marginTop: 22, minHeight: 58, borderRadius: 29, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10, paddingHorizontal: 20 },
   ctaText: { color: night.sky0, fontSize: 20, ...nightType.bold },
-  ctaDone: { backgroundColor: '#161C2D', borderWidth: 1, borderColor: 'rgba(127,216,166,0.3)' },
+  ctaDone: { backgroundColor: '#1A1128', borderWidth: 1, borderColor: 'rgba(127,216,166,0.3)' },
   ctaDoneText: { color: night.success },
   undo: { position: 'absolute', right: 18 },
   undoText: { color: night.muted, fontSize: 15, ...nightType.medium },
@@ -281,10 +322,20 @@ const styles = StyleSheet.create({
   tileHint: { marginTop: 2, color: night.muted, fontSize: 14, ...nightType.body },
   weekCard: { marginTop: 16 },
   weekHint: { marginTop: 10, color: night.muted, fontSize: 14, ...nightType.body },
-  community: { marginTop: 16, flexDirection: 'row', alignItems: 'center', gap: 14, padding: 16, borderRadius: 24, borderWidth: 1, borderColor: night.goldLine },
-  communityIcon: { width: 48, height: 48, borderRadius: 24, alignItems: 'center', justifyContent: 'center', backgroundColor: '#080518' },
+  wall: { marginTop: 24, padding: 18, borderRadius: 26, borderWidth: 1, borderColor: night.goldLine },
+  wallHeader: { flexDirection: 'row', alignItems: 'center', gap: 12 },
+  wallIcon: { width: 46, height: 46, borderRadius: 23, alignItems: 'center', justifyContent: 'center', backgroundColor: night.goldSoft },
+  wallTitle: { color: night.text, fontSize: 22, ...nightType.semibold },
+  badge: { minWidth: 26, height: 26, paddingHorizontal: 7, borderRadius: 13, alignItems: 'center', justifyContent: 'center', backgroundColor: '#E5484D' },
+  badgeText: { color: '#FFFFFF', fontSize: 14, ...nightType.bold },
+  wallPreview: { marginTop: 14, padding: 14, borderRadius: 18, backgroundColor: 'rgba(8,7,19,0.45)' },
+  wallPreviewText: { color: night.text, fontSize: 16, lineHeight: 23, fontStyle: 'italic', ...nightType.body },
+  wallPreviewMeta: { marginTop: 6, color: night.goldSoft, fontSize: 14, ...nightType.semibold },
+  community: { marginTop: 16, minHeight: 150, flexDirection: 'row', alignItems: 'center', gap: 8, paddingLeft: 18, paddingRight: 8, paddingVertical: 12, borderRadius: 26, borderWidth: 1, borderColor: night.goldLine },
   communityCopy: { flex: 1 },
-  communityTitle: { color: night.text, fontSize: 19, ...nightType.semibold },
+  communityTitle: { color: night.text, fontSize: 22, lineHeight: 27, ...nightType.semibold },
+  communityLink: { marginTop: 12, flexDirection: 'row', alignItems: 'center', gap: 6 },
+  communityLinkText: { color: night.goldSoft, fontSize: 15, ...nightType.semibold },
   communityText: { marginTop: 2, color: night.textSoft, fontSize: 15, ...nightType.body },
   weekHeader: { flexDirection: 'row', justifyContent: 'space-between' },
   streakPill: { flexDirection: 'row', alignItems: 'center', gap: 4, height: 22, paddingHorizontal: 9, borderRadius: 11, backgroundColor: '#241C27' },

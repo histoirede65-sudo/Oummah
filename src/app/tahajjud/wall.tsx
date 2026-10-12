@@ -22,6 +22,7 @@ import { night, nightType } from '../../components/tahajjud/theme';
 import {
   deleteWall,
   getWallFeed,
+  markWallSeen,
   markAnswered,
   publishDua,
   reportWall,
@@ -139,7 +140,7 @@ function AnswerSheet({ visible, onClose, onConfirm }: { visible: boolean; onClos
     <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
       <KeyboardAvoidingView behavior="padding" style={styles.backdrop}>
         <View style={styles.sheet}>
-          <LinearGradient colors={['#1C1546', '#0E0A26']} style={StyleSheet.absoluteFill} />
+          <LinearGradient colors={['#291A3E', '#160E21']} style={StyleSheet.absoluteFill} />
           <Ionicons name="sparkles" size={34} color={night.goldSoft} />
           <Text style={styles.sheetTitle}>{tx("Allah m’a exaucé")}</Text>
           <Text style={styles.sheetText}>{tx("Al-hamdu lillah. Un mot de gratitude pour encourager les autres ? (facultatif)")}</Text>
@@ -182,6 +183,7 @@ export default function DuaWallScreen() {
 
   useFocusEffect(useCallback(() => {
     void load(filter);
+    void markWallSeen();
     void (async () => {
       const connected = await isSignedIn();
       setSignedIn(connected);
@@ -260,7 +262,7 @@ export default function DuaWallScreen() {
       <Modal visible={compose} transparent animationType="slide" onRequestClose={() => setCompose(false)}>
         <KeyboardAvoidingView behavior="padding" style={styles.backdrop}>
           <View style={styles.sheet}>
-            <LinearGradient colors={['#1C1546', '#0E0A26']} style={StyleSheet.absoluteFill} />
+            <LinearGradient colors={['#291A3E', '#160E21']} style={StyleSheet.absoluteFill} />
             <Text style={styles.sheetTitle}>{tx("Partager une dua")}</Text>
             <Text style={styles.sheetText}>{tx("Demandez à vos frères et sœurs de faire dua pour vous. Restez bienveillant.")}</Text>
             <TextInput
@@ -307,13 +309,13 @@ const styles = StyleSheet.create({
   emptyText: { color: night.textSoft, fontSize: 16, lineHeight: 23, textAlign: 'center', ...nightType.body },
   card: { marginBottom: 12, padding: 18, borderRadius: 24, backgroundColor: night.glass, borderWidth: 1, borderColor: night.line },
   cardAnswered: { borderColor: night.goldLine, backgroundColor: '#191324' },
-  cardPending: { borderStyle: 'dashed', borderColor: 'rgba(183,171,242,0.35)' },
+  cardPending: { borderStyle: 'dashed', borderColor: 'rgba(201,163,219,0.35)' },
   pendingPill: { alignSelf: 'flex-start', flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 10 },
   pendingText: { color: night.lavender, fontSize: 13, ...nightType.semibold },
   answeredPill: { alignSelf: 'flex-start', flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 10, paddingHorizontal: 11, paddingVertical: 5, borderRadius: 14, backgroundColor: night.goldSoft },
   answeredText: { color: night.sky0, fontSize: 13, ...nightType.bold },
   body: { color: night.text, fontSize: 18, lineHeight: 27, ...nightType.medium },
-  gratitude: { marginTop: 12, padding: 12, borderRadius: 16, borderLeftWidth: 2, borderLeftColor: night.gold, backgroundColor: '#08061A' },
+  gratitude: { marginTop: 12, padding: 12, borderRadius: 16, borderLeftWidth: 2, borderLeftColor: night.gold, backgroundColor: '#0F0A17' },
   gratitudeLabel: { color: night.gold, fontSize: 12, letterSpacing: 1.4, textTransform: 'uppercase', ...nightType.bold },
   gratitudeText: { marginTop: 4, color: night.textSoft, fontSize: 16, lineHeight: 23, fontStyle: 'italic', ...nightType.body },
   meta: { marginTop: 12, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
@@ -324,18 +326,18 @@ const styles = StyleSheet.create({
   ameenText: { color: night.goldSoft, fontSize: 15, ...nightType.bold },
   ameenTextOn: { color: night.sky0 },
   ameenCount: { minWidth: 26, height: 24, paddingHorizontal: 7, borderRadius: 12, backgroundColor: '#2F2933', alignItems: 'center', justifyContent: 'center' },
-  ameenCountOn: { backgroundColor: 'rgba(14,10,38,0.22)' },
+  ameenCountOn: { backgroundColor: 'rgba(22,14,33,0.22)' },
   ameenCountText: { color: night.goldSoft, fontSize: 14, ...nightType.bold },
   ameenCountTextOn: { color: night.sky0 },
   replyToggle: { flexDirection: 'row', alignItems: 'center', gap: 7, paddingHorizontal: 14, height: 42 },
   replyToggleText: { color: night.textSoft, fontSize: 15, ...nightType.semibold },
   more: { alignSelf: 'center', marginTop: 6, padding: 12 },
   moreText: { color: night.goldSoft, fontSize: 16, ...nightType.semibold },
-  backdrop: { flex: 1, justifyContent: 'flex-end', backgroundColor: 'rgba(2,1,8,0.72)' },
+  backdrop: { flex: 1, justifyContent: 'flex-end', backgroundColor: 'rgba(5,3,7,0.72)' },
   sheet: { overflow: 'hidden', padding: 24, paddingBottom: 34, borderTopLeftRadius: 30, borderTopRightRadius: 30, borderWidth: 1, borderColor: night.goldLine, gap: 8 },
   sheetTitle: { color: night.text, fontSize: 30, ...nightType.display },
   sheetText: { color: night.textSoft, fontSize: 16, lineHeight: 22, ...nightType.body },
-  composeInput: { marginTop: 8, minHeight: 90, maxHeight: 200, borderRadius: 18, padding: 14, textAlignVertical: 'top', borderWidth: 1, borderColor: night.goldLine, backgroundColor: '#080518', color: night.text, fontSize: 17, ...nightType.body },
+  composeInput: { marginTop: 8, minHeight: 90, maxHeight: 200, borderRadius: 18, padding: 14, textAlignVertical: 'top', borderWidth: 1, borderColor: night.goldLine, backgroundColor: '#0E0915', color: night.text, fontSize: 17, ...nightType.body },
   composeInputTall: { minHeight: 140 },
   counter: { alignSelf: 'flex-end', color: night.muted, fontSize: 12, ...nightType.body },
   anonRow: { flexDirection: 'row', alignItems: 'center', gap: 12, marginTop: 4 },

@@ -224,7 +224,7 @@ const styles = StyleSheet.create({
   prompt: { color: night.text, fontSize: 23, ...nightType.display },
   promptSpaced: { marginTop: 18 },
   addRow: { marginTop: 12, flexDirection: 'row', alignItems: 'flex-end', gap: 10 },
-  input: { flex: 1, minHeight: 48, maxHeight: 140, borderRadius: 16, paddingHorizontal: 14, paddingTop: 13, paddingBottom: 13, backgroundColor: '#080518', borderWidth: 1, borderColor: night.line, color: night.text, fontSize: 18, ...nightType.body },
+  input: { flex: 1, minHeight: 48, maxHeight: 140, borderRadius: 16, paddingHorizontal: 14, paddingTop: 13, paddingBottom: 13, backgroundColor: '#0E0915', borderWidth: 1, borderColor: night.line, color: night.text, fontSize: 18, ...nightType.body },
   journalInput: { marginTop: 10, minHeight: 90, textAlignVertical: 'top' },
   addButton: { width: 48, height: 48, borderRadius: 24, backgroundColor: night.gold, alignItems: 'center', justifyContent: 'center' },
   addDisabled: { opacity: 0.4 },

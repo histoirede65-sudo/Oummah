@@ -217,7 +217,7 @@ export default function TahajjudChatScreen() {
 }
 
 const styles = StyleSheet.create({
-  backdrop: { flex: 1, justifyContent: 'center', padding: 24, backgroundColor: 'rgba(4,3,14,0.7)' },
+  backdrop: { flex: 1, justifyContent: 'center', padding: 24, backgroundColor: 'rgba(8,5,12,0.7)' },
   sheet: {
     borderRadius: 26, padding: 18, gap: 14, backgroundColor: night.glassStrong, borderWidth: 1, borderColor: night.goldLine,
     shadowColor: '#000', shadowOpacity: 0.5, shadowRadius: 24, shadowOffset: { width: 0, height: 12 }, elevation: 16,

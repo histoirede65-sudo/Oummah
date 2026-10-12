@@ -269,7 +269,7 @@ const amber = '#E8C98A';
 
 const styles = StyleSheet.create({
   // Darker than the rest of the space: easy on eyes just woken up.
-  root: { flex: 1, backgroundColor: '#020107' },
+  root: { flex: 1, backgroundColor: '#040306' },
   flex: { flex: 1 },
   header: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingTop: 6 },
   close: { width: 40, height: 40, borderRadius: 20, alignItems: 'center', justifyContent: 'center' },
@@ -285,7 +285,7 @@ const styles = StyleSheet.create({
   big: { color: amber, fontSize: 30, lineHeight: 36, ...nightType.display },
   lead: { marginTop: 12, color: '#FFFFFF', fontSize: 18, lineHeight: 27, ...nightType.body },
   tip: { marginTop: 14, color: night.muted, fontSize: 15, lineHeight: 22, fontStyle: 'italic', ...nightType.body },
-  source: { marginTop: 18, padding: 16, borderRadius: 18, backgroundColor: '#0D0A1C', borderLeftWidth: 2, borderLeftColor: '#7A6740' },
+  source: { marginTop: 18, padding: 16, borderRadius: 18, backgroundColor: '#100A19', borderLeftWidth: 2, borderLeftColor: '#7A6740' },
   sourceArabic: { color: amber, fontSize: 24, lineHeight: 42, textAlign: 'right', writingDirection: 'rtl', ...nightType.arabic },
   sourcePhonetic: { marginTop: 8, color: '#CDB98C', fontSize: 16, lineHeight: 23, fontStyle: 'italic', ...nightType.medium },
   sourceText: { marginTop: 8, color: '#FFFFFF', fontSize: 16, lineHeight: 23, ...nightType.body },
@@ -297,12 +297,12 @@ const styles = StyleSheet.create({
   counterLabel: { color: night.muted, fontSize: 13, ...nightType.semibold },
   link: { marginTop: 22, flexDirection: 'row', alignItems: 'center', gap: 8, alignSelf: 'center', paddingHorizontal: 18, paddingVertical: 12, borderRadius: 22, borderWidth: 1, borderColor: '#3A3150' },
   linkText: { color: night.goldSoft, fontSize: 16, ...nightType.semibold },
-  duaList: { marginTop: 18, padding: 16, borderRadius: 18, backgroundColor: '#0D0A1C', gap: 10 },
+  duaList: { marginTop: 18, padding: 16, borderRadius: 18, backgroundColor: '#100A19', gap: 10 },
   duaTitle: { color: night.muted, fontSize: 13, letterSpacing: 1, textTransform: 'uppercase', ...nightType.bold },
   duaRow: { flexDirection: 'row', gap: 10, alignItems: 'flex-start' },
   duaText: { flex: 1, color: '#FFFFFF', fontSize: 17, lineHeight: 24, ...nightType.medium },
   witrRow: { marginTop: 20, flexDirection: 'row', justifyContent: 'center', gap: 14 },
-  witr: { width: 110, height: 96, borderRadius: 24, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: '#3A3150', backgroundColor: '#0D0A1C' },
+  witr: { width: 110, height: 96, borderRadius: 24, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: '#3A3150', backgroundColor: '#100A19' },
   witrOn: { backgroundColor: amber, borderColor: amber },
   witrValue: { color: amber, fontSize: 36, ...nightType.display },
   witrLabel: { color: night.muted, fontSize: 13, ...nightType.semibold },

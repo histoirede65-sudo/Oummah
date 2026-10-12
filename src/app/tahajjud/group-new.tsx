@@ -80,7 +80,7 @@ export default function NewGroupScreen() {
 const styles = StyleSheet.create({
   input: {
     height: 56, borderRadius: 18, paddingHorizontal: 16, borderWidth: 1, borderColor: night.goldLine,
-    backgroundColor: '#080518', color: night.text, fontSize: 19, ...nightType.medium,
+    backgroundColor: '#0E0915', color: night.text, fontSize: 19, ...nightType.medium,
   },
   ideas: { marginTop: 8, color: night.muted, fontSize: 14, lineHeight: 21, ...nightType.body },
   idea: { color: night.goldSoft, ...nightType.semibold },

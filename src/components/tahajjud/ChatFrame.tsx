@@ -238,7 +238,7 @@ const styles = StyleSheet.create({
   bubbleText: { color: night.text, fontSize: 17, lineHeight: 23, ...nightType.medium },
   bubbleTextMine: { color: night.sky0 },
   time: { marginTop: 3, alignSelf: 'flex-end', color: night.muted, fontSize: 11, ...nightType.medium },
-  timeMine: { color: 'rgba(4,3,12,0.6)' },
+  timeMine: { color: 'rgba(7,5,11,0.6)' },
   empty: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: 10, paddingHorizontal: 30, transform: [{ scaleY: -1 }] },
   emptyTitle: { color: night.text, fontSize: 22, ...nightType.display },
   emptyText: { color: night.textSoft, fontSize: 15, lineHeight: 21, textAlign: 'center', ...nightType.body },
@@ -247,7 +247,7 @@ const styles = StyleSheet.create({
   composer: { flexDirection: 'row', alignItems: 'flex-end', gap: 10, paddingHorizontal: 14, paddingVertical: 10, borderTopWidth: 1, borderTopColor: night.line },
   input: {
     flex: 1, minHeight: 46, maxHeight: 130, borderRadius: 23, paddingHorizontal: 18, paddingTop: 12, paddingBottom: 12,
-    backgroundColor: '#070516', borderWidth: 1, borderColor: night.goldLine, color: night.text, fontSize: 17, ...nightType.medium,
+    backgroundColor: '#0D0813', borderWidth: 1, borderColor: night.goldLine, color: night.text, fontSize: 17, ...nightType.medium,
   },
   send: { width: 46, height: 46, borderRadius: 23, alignItems: 'center', justifyContent: 'center', backgroundColor: night.gold },
   disabled: { opacity: 0.45 },

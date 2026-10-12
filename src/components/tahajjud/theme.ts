@@ -1,19 +1,19 @@
 import { typography } from '../../theme/typography';
 
-/** Night palette of the Tahajjud space: deep indigo sky, moonlight, gold of the last third. */
+/** Night palette of the Tahajjud space: OUMMAH plum night, moonlight, gold of the last third. */
 export const night = {
-  sky0: '#04030C',
-  sky1: '#0A0720',
-  sky2: '#151036',
+  sky0: '#080713',
+  sky1: '#110B1F',
+  sky2: '#24123A',
   /** Opaque night surfaces (cards, panels): never see-through, easier on the eyes. */
-  glass: '#16122E',
-  glassStrong: '#1F1A3A',
-  line: 'rgba(196,184,255,0.14)',
+  glass: '#171026',
+  glassStrong: '#211331',
+  line: 'rgba(126,78,151,0.35)',
   goldLine: 'rgba(227,181,90,0.35)',
   gold: '#E3B55A',
   goldSoft: '#F4D995',
   moon: '#F7EDD2',
-  lavender: '#B7ABF2',
+  lavender: '#C9A3DB',
   text: '#FFFFFF',
   textSoft: '#FFFFFF',
   /** Secondary text: white too (no grey in the Qiyam space). */

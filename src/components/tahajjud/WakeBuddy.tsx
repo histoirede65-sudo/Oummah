@@ -111,7 +111,7 @@ function AskSheet({ visible, onClose, onSend }: {
     <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
       <Pressable style={styles.backdrop} onPress={onClose}>
         <Pressable style={styles.sheet} onPress={() => undefined}>
-          <LinearGradient colors={['#1C1546', '#0E0A26']} style={StyleSheet.absoluteFill} />
+          <LinearGradient colors={['#291A3E', '#160E21']} style={StyleSheet.absoluteFill} />
           <Text style={styles.sheetTitle}>{tx("Qui peut vous réveiller ?")}</Text>
           <Text style={styles.sheetText}>{tx("Ils reçoivent une notification. Le premier debout vous réveille avec le son OUMMAH.")}</Text>
           <ScrollView style={styles.sheetList} showsVerticalScrollIndicator={false}>
@@ -248,7 +248,7 @@ const styles = StyleSheet.create({
   mine: { flexDirection: 'row', alignItems: 'center', gap: 12 },
   icon: { width: 38, height: 38, borderRadius: 19, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: night.goldLine },
   cancelLink: { color: night.muted, fontSize: 13, textDecorationLine: 'underline', ...nightType.medium },
-  backdrop: { flex: 1, backgroundColor: 'rgba(5,3,18,0.7)', justifyContent: 'flex-end' },
+  backdrop: { flex: 1, backgroundColor: 'rgba(11,7,16,0.7)', justifyContent: 'flex-end' },
   sheet: { maxHeight: '85%', borderTopLeftRadius: 28, borderTopRightRadius: 28, overflow: 'hidden', padding: 22, paddingBottom: 30 },
   sheetTitle: { color: night.text, fontSize: 24, ...nightType.display },
   sheetText: { marginTop: 6, marginBottom: 14, color: night.textSoft, fontSize: 15, lineHeight: 21, ...nightType.body },

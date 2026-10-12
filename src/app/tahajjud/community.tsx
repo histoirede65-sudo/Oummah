@@ -34,7 +34,7 @@ function DuaZoneSheet({ zone, onClose }: { zone: DuaMapZone | null; onClose: () 
     <Modal visible={Boolean(zone)} transparent animationType="fade" onRequestClose={onClose}>
       <Pressable style={styles.backdrop} onPress={onClose}>
         <Pressable style={styles.sheet} onPress={() => undefined}>
-          <LinearGradient colors={['#1C1546', '#0E0A26']} style={StyleSheet.absoluteFill} />
+          <LinearGradient colors={['#291A3E', '#160E21']} style={StyleSheet.absoluteFill} />
           <View style={styles.sheetHead}>
             <View style={styles.sheetIcon}><Ionicons name="hand-left" size={18} color={night.sky0} /></View>
             <View style={styles.sheetCopy}>
@@ -288,7 +288,7 @@ const styles = StyleSheet.create({
   legendHalo: { width: 14, height: 14, borderRadius: 7, backgroundColor: 'rgba(244,217,149,0.55)', borderWidth: 1, borderColor: night.goldSoft },
   legendPin: { width: 16, height: 16, borderRadius: 8, alignItems: 'center', justifyContent: 'center', backgroundColor: night.lavender, borderWidth: 1, borderColor: '#FFFFFF' },
   legendText: { color: night.muted, fontSize: 13, ...nightType.medium },
-  backdrop: { flex: 1, backgroundColor: 'rgba(5,3,18,0.7)', justifyContent: 'flex-end' },
+  backdrop: { flex: 1, backgroundColor: 'rgba(11,7,16,0.7)', justifyContent: 'flex-end' },
   sheet: { maxHeight: '78%', borderTopLeftRadius: 28, borderTopRightRadius: 28, overflow: 'hidden', padding: 20, paddingBottom: 30 },
   sheetHead: { flexDirection: 'row', alignItems: 'center', gap: 12, marginBottom: 14 },
   sheetIcon: { width: 40, height: 40, borderRadius: 20, alignItems: 'center', justifyContent: 'center', backgroundColor: night.lavender },

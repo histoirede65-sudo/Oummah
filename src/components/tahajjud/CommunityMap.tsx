@@ -8,15 +8,15 @@ import { night, nightType } from './theme';
 
 /** Google Maps night style (Android); iOS uses Apple Maps' dark mode. */
 const NIGHT_STYLE = [
-  { elementType: 'geometry', stylers: [{ color: '#0b0820' }] },
+  { elementType: 'geometry', stylers: [{ color: '#120C1C' }] },
   { elementType: 'labels', stylers: [{ visibility: 'off' }] },
   { featureType: 'administrative', elementType: 'geometry', stylers: [{ visibility: 'off' }] },
-  { featureType: 'administrative.country', elementType: 'geometry.stroke', stylers: [{ visibility: 'on' }, { color: '#2b2357' }, { weight: 0.6 }] },
-  { featureType: 'landscape', elementType: 'geometry', stylers: [{ color: '#171035' }] },
+  { featureType: 'administrative.country', elementType: 'geometry.stroke', stylers: [{ visibility: 'on' }, { color: '#33204D' }, { weight: 0.6 }] },
+  { featureType: 'landscape', elementType: 'geometry', stylers: [{ color: '#1F142F' }] },
   { featureType: 'poi', stylers: [{ visibility: 'off' }] },
   { featureType: 'road', stylers: [{ visibility: 'off' }] },
   { featureType: 'transit', stylers: [{ visibility: 'off' }] },
-  { featureType: 'water', elementType: 'geometry', stylers: [{ color: '#05040e' }] },
+  { featureType: 'water', elementType: 'geometry', stylers: [{ color: '#08050C' }] },
 ];
 
 /** Dua pin: praying hands in a lavender bubble, with the number of duas of the zone. */

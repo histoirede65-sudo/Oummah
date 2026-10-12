@@ -1,3 +1,4 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getValidSession } from '../auth/SupabaseAuthService';
 import { approximateZone } from './tahajjudCommunity';
 import { tx } from './tahajjudI18n';
@@ -100,6 +101,25 @@ export async function getDuaMap(days = 14): Promise<DuaMapZone[]> {
 export async function getWallFeed(filter: WallFilter = 'recent', before?: string): Promise<WallPost[]> {
   const rows = await rpc<PostRow[]>('dua_wall_feed', { p_filter: filter, p_before: before ?? null, p_limit: 20 }, false);
   return rows.map(toPost);
+}
+
+const WALL_SEEN_KEY = 'tahajjud.duaWall.lastSeenAt';
+
+/** Duas published by others since the wall was last opened (first page only, so 20 = "20+"), plus the latest one for the preview. */
+export async function getNewDuas(): Promise<{ count: number; latest: WallPost | null }> {
+  const lastSeen = await AsyncStorage.getItem(WALL_SEEN_KEY).catch(() => null);
+  const posts = await getWallFeed('recent');
+  if (!lastSeen) {
+    await markWallSeen();
+    return { count: 0, latest: posts[0] ?? null };
+  }
+  const since = Date.parse(lastSeen);
+  const count = posts.filter((post) => !post.mine && Date.parse(post.createdAt) > since).length;
+  return { count, latest: posts[0] ?? null };
+}
+
+export async function markWallSeen() {
+  await AsyncStorage.setItem(WALL_SEEN_KEY, new Date().toISOString()).catch(() => undefined);
 }
 
 export async function getWallReplies(postId: string): Promise<WallReply[]> {

@@ -41,12 +41,12 @@ export function WeekMoons({ nights, pauses, currentNight, size = 26 }: {
 const styles = StyleSheet.create({
   row: { flexDirection: 'row', justifyContent: 'space-between' },
   item: { alignItems: 'center', gap: 6 },
-  moon: { borderWidth: 1.5, borderColor: 'rgba(183,171,242,0.35)' },
+  moon: { borderWidth: 1.5, borderColor: 'rgba(201,163,219,0.35)' },
   done: {
     backgroundColor: night.goldSoft, borderColor: night.goldSoft,
     shadowColor: night.goldSoft, shadowOpacity: 0.8, shadowRadius: 8, shadowOffset: { width: 0, height: 0 }, elevation: 4,
   },
-  paused: { borderStyle: 'dashed', borderColor: 'rgba(183,171,242,0.2)' },
+  paused: { borderStyle: 'dashed', borderColor: 'rgba(201,163,219,0.2)' },
   today: { borderColor: night.gold },
   day: { color: night.muted, fontSize: 14, ...nightType.semibold },
   dayToday: { color: night.goldSoft },

@@ -156,7 +156,7 @@ function EncourageSheet({ friend, onClose }: { friend: Friend | null; onClose: (
     <Modal visible={Boolean(friend)} transparent animationType="fade" onRequestClose={onClose}>
       <Pressable style={styles.backdrop} onPress={onClose}>
         <Pressable style={styles.sheet} onPress={() => undefined}>
-          <LinearGradient colors={['#1C1546', '#0E0A26']} style={StyleSheet.absoluteFill} />
+          <LinearGradient colors={['#291A3E', '#160E21']} style={StyleSheet.absoluteFill} />
           <Text style={styles.sheetTitle}>{tx("Encourager ")}{friend?.pseudo}</Text>
           <Text style={styles.sheetText}>{tx("Choisissez un message. Votre ami le reçoit en notification.")}</Text>
           {ENCOURAGEMENTS.map((item) => (
@@ -500,7 +500,7 @@ export default function TahajjudFriendsScreen() {
               style={[styles.friendCard, unread && styles.friendCardUnread]}
             >
               <LinearGradient
-                colors={unread ? ['#4A3A2A', '#2A2050', '#16102E'] : ['#2B2254', '#1A1438', '#120E28']}
+                colors={unread ? ['#4A3A2A', '#2A2050', '#1A1128'] : ['#2B2254', '#201531', '#170F23']}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 1 }}
                 style={StyleSheet.absoluteFill}
@@ -610,7 +610,7 @@ const styles = StyleSheet.create({
   primaryText: { color: night.sky0, fontSize: 17, ...nightType.bold },
   search: {
     flexDirection: 'row', alignItems: 'center', gap: 10, height: 54, borderRadius: 27, paddingHorizontal: 18,
-    borderWidth: 1, borderColor: night.goldLine, backgroundColor: '#080518',
+    borderWidth: 1, borderColor: night.goldLine, backgroundColor: '#0E0915',
   },
   searchInput: { flex: 1, color: night.text, fontSize: 17, ...nightType.medium },
   block: { marginTop: 12, paddingVertical: 6 },
@@ -642,7 +642,7 @@ const styles = StyleSheet.create({
   friendCardUnread: { borderColor: night.gold, borderWidth: 1.5 },
   unreadDot: {
     position: 'absolute', top: 0, right: 0, width: 14, height: 14, borderRadius: 7,
-    backgroundColor: '#FF4D5E', borderWidth: 2, borderColor: '#1A1438',
+    backgroundColor: '#FF4D5E', borderWidth: 2, borderColor: '#201531',
   },
   nameRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   flexShrink: { flexShrink: 1 },
@@ -680,7 +680,7 @@ const styles = StyleSheet.create({
     alignItems: 'center', justifyContent: 'center', backgroundColor: night.success,
   },
   badgeText: { color: night.sky0, fontSize: 11, ...nightType.bold },
-  lastMessage: { marginTop: 10, flexDirection: 'row', alignItems: 'center', gap: 8, paddingHorizontal: 12, paddingVertical: 9, borderRadius: 14, backgroundColor: 'rgba(8,5,25,0.55)', borderWidth: 1, borderColor: 'rgba(183,171,242,0.12)' },
+  lastMessage: { marginTop: 10, flexDirection: 'row', alignItems: 'center', gap: 8, paddingHorizontal: 12, paddingVertical: 9, borderRadius: 14, backgroundColor: 'rgba(15,9,22,0.55)', borderWidth: 1, borderColor: 'rgba(201,163,219,0.12)' },
   lastMessageText: { flex: 1, color: night.muted, fontSize: 14, ...nightType.medium },
   lastMessageUnread: { color: night.text, ...nightType.bold },
   encourageButton: { flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: 15, paddingVertical: 9, borderRadius: 18, backgroundColor: night.goldSoft },
@@ -690,7 +690,7 @@ const styles = StyleSheet.create({
   privacyLink: { marginTop: 24, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6 },
   privacyText: { color: night.goldSoft, fontSize: 15, ...nightType.semibold },
   footer: { marginTop: 12, color: night.muted, fontSize: 13, lineHeight: 18, textAlign: 'center', ...nightType.body },
-  backdrop: { flex: 1, backgroundColor: 'rgba(5,3,18,0.7)', justifyContent: 'flex-end' },
+  backdrop: { flex: 1, backgroundColor: 'rgba(11,7,16,0.7)', justifyContent: 'flex-end' },
   sheet: { borderTopLeftRadius: 28, borderTopRightRadius: 28, overflow: 'hidden', padding: 22, paddingBottom: 34, gap: 10 },
   sheetTitle: { color: night.text, fontSize: 24, ...nightType.display },
   sheetText: { color: night.textSoft, fontSize: 15, lineHeight: 21, marginBottom: 4, ...nightType.body },

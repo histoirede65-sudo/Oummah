@@ -228,7 +228,7 @@ const styles = StyleSheet.create({
     shadowColor: night.goldSoft, shadowOpacity: 0.7, shadowRadius: 20, shadowOffset: { width: 0, height: 0 }, elevation: 8,
   },
   previewName: { marginTop: 12, color: night.text, fontSize: 26, ...nightType.display },
-  input: { height: 54, borderRadius: 18, paddingHorizontal: 16, borderWidth: 1, borderColor: night.goldLine, backgroundColor: '#080518', color: night.text, fontSize: 18, ...nightType.medium },
+  input: { height: 54, borderRadius: 18, paddingHorizontal: 16, borderWidth: 1, borderColor: night.goldLine, backgroundColor: '#0E0915', color: night.text, fontSize: 18, ...nightType.medium },
   locked: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', opacity: 0.85 },
   lockedText: { color: night.text, fontSize: 18, ...nightType.medium },
   change: { color: night.goldSoft, fontSize: 16, ...nightType.bold },
