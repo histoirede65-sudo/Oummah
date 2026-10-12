@@ -271,6 +271,8 @@ export default function HifzSessionScreen() {
   const [repeat, setRepeat] = useState<(typeof repetitions)[number]>(3);
   const [speed, setSpeed] = useState(0.75);
   const [masteredVerses, setMasteredVerses] = useState<number[]>([]);
+  // Button chosen for each verse during this session, so a tap is always visible.
+  const [verseChoices, setVerseChoices] = useState<Record<number, "easy" | "hard">>({});
   const [celebration, setCelebration] = useState<Celebration>(null);
   const [displayName, setDisplayName] = useState("");
   const { pause: pauseQuranAudio } = useGlobalAudioPlayer();
@@ -662,8 +664,35 @@ export default function HifzSessionScreen() {
   const complete = async (difficulty: "easy" | "hard") => {
     if (validationInProgress.current) return;
     validationInProgress.current = true;
-    const state = await loadHifzState();
     const verseNumber = Number(verse?.verseKey.split(":")[1] ?? index + 1);
+    if (verseChoices[verseNumber] === difficulty) {
+      // Second tap on the same button undoes the choice for this verse.
+      setVerseChoices(({ [verseNumber]: _removed, ...rest }) => rest);
+      try {
+        const current = await loadHifzState();
+        const reverted = upsertHifzProgress(current, surahId, (entry) => ({
+          ...entry,
+          learnedVerses:
+            difficulty === "easy"
+              ? entry.learnedVerses.filter((item) => item !== verseNumber)
+              : entry.learnedVerses,
+          difficultVerses:
+            difficulty === "hard"
+              ? entry.difficultVerses.filter((item) => item !== verseNumber)
+              : entry.difficultVerses,
+        }));
+        await saveHifzState(reverted);
+        setMasteredVerses(
+          reverted.progress.find((item) => item.surahId === surahId)
+            ?.learnedVerses ?? [],
+        );
+      } finally {
+        validationInProgress.current = false;
+      }
+      return;
+    }
+    setVerseChoices((choices) => ({ ...choices, [verseNumber]: difficulty }));
+    const state = await loadHifzState();
     const now = new Date();
     const next = upsertHifzProgress(state, surahId, (current) => ({
       ...current,
@@ -775,6 +804,9 @@ export default function HifzSessionScreen() {
     }
     await finishReview();
   };
+
+  const currentChoice =
+    verseChoices[Number(verse?.verseKey.split(":")[1] ?? index + 1)];
 
   const goToPreviousVerse = () => {
     if (canGoPrevious) setIndex((value) => Math.max(startVerse - 1, value - 1));
@@ -1120,15 +1152,17 @@ export default function HifzSessionScreen() {
           </Text>
           <View style={styles.evaluateButtons}>
             <Pressable
+              accessibilityState={{ selected: currentChoice === "hard" }}
               onPress={() => void complete("hard")}
-              style={styles.hard}
+              style={[styles.hard, currentChoice === "hard" && styles.hardChosen]}
             >
-              <Ionicons name="refresh" size={16} color={colors.goldLight} />
-              <Text style={styles.hardText}>{t("hifz.session.hard")}</Text>
+              <Ionicons name="refresh" size={16} color={currentChoice === "hard" ? colors.background : colors.goldLight} />
+              <Text style={[styles.hardText, currentChoice === "hard" && styles.chosenText]}>{t("hifz.session.hard")}</Text>
             </Pressable>
             <Pressable
+              accessibilityState={{ selected: currentChoice === "easy" }}
               onPress={() => void complete("easy")}
-              style={styles.easy}
+              style={[styles.easy, currentChoice === "easy" && styles.easyChosen]}
             >
               <Ionicons name="checkmark" size={17} color={colors.background} />
               <Text style={styles.easyText}>
@@ -1747,6 +1781,9 @@ const styles = StyleSheet.create({
     borderRadius: 18,
     backgroundColor: colors.goldLight,
   },
+  hardChosen: { backgroundColor: "#E8A66A", borderColor: "#E8A66A" },
+  easyChosen: { backgroundColor: "#7CC79A" },
+  chosenText: { color: colors.background },
   easyText: {
     marginLeft: 6,
     color: colors.background,
