@@ -1,4 +1,5 @@
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { Ionicons } from '@expo/vector-icons';
 import { ActivityIndicator, FlatList, Pressable, StyleSheet, Text, View, type LayoutChangeEvent } from 'react-native';
 
 import { SURAHS } from '../../data/surahs';
@@ -142,8 +143,15 @@ export function MushafPager({ pages, style, initialPage, activeVerseKey, activeW
         />
       ) : null}
       {zoomed ? (
-        <Pressable accessibilityRole="button" onPress={resetZoom} style={styles.resetZoom}>
-          <Text style={styles.resetZoomText}>{t('surahReader.mushafResetZoom')}</Text>
+        // Small corner icon: returns to the initial zoom without covering the text.
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel={t('surahReader.mushafResetZoom')}
+          hitSlop={10}
+          onPress={resetZoom}
+          style={styles.resetZoom}
+        >
+          <Ionicons name="contract-outline" size={16} color="#F4E3B5" />
         </Pressable>
       ) : null}
     </View>
@@ -295,8 +303,7 @@ const styles = StyleSheet.create({
   ribbon: { position: 'absolute', top: -2, left: 18, width: 18, alignItems: 'center' },
   ribbonBody: { width: 18, height: 34, backgroundColor: '#A3271C' },
   ribbonTail: { width: 0, height: 0, borderLeftWidth: 9, borderRightWidth: 9, borderTopWidth: 8, borderLeftColor: '#A3271C', borderRightColor: '#A3271C', borderTopColor: 'transparent' },
-  resetZoom: { position: 'absolute', top: 10, alignSelf: 'center', paddingHorizontal: 14, paddingVertical: 8, borderRadius: 18, backgroundColor: 'rgba(11,9,24,0.85)', borderWidth: 1, borderColor: FRAME },
-  resetZoomText: { color: '#F4E3B5', fontSize: 13, fontWeight: '800' },
+  resetZoom: { position: 'absolute', bottom: 12, right: 12, width: 32, height: 32, alignItems: 'center', justifyContent: 'center', borderRadius: 16, backgroundColor: 'rgba(11,9,24,0.45)' },
   slot: { alignItems: 'center', justifyContent: 'center' },
   page: {
     flex: 1, marginVertical: 2, paddingHorizontal: 6, paddingTop: 2, borderRadius: 8, backgroundColor: PAPER,
