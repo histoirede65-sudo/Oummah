@@ -178,8 +178,9 @@ export default function TahajjudScreen() {
           <Animated.View entering={FadeInDown.delay(260).duration(500)}>
             <Pressable onPress={() => router.push('/tahajjud/wall' as Href)} style={({ pressed }) => [pressed && styles.pressed]}>
               <View style={styles.wall}>
-                <Image source={require('../../../assets/images/tahajjud/dua-hands.jpg')} contentFit="cover" style={StyleSheet.absoluteFill} />
-                <LinearGradient colors={['rgba(8,7,19,0.88)', 'rgba(8,7,19,0.55)', 'rgba(8,7,19,0.9)']} locations={[0, 0.5, 1]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={StyleSheet.absoluteFill} />
+                {/* The photo sits on the right at its natural scale and fades into the card. */}
+                <Image source={require('../../../assets/images/tahajjud/dua-hands.jpg')} contentFit="cover" contentPosition="center" style={styles.wallImage} />
+                <LinearGradient colors={[night.glass, 'rgba(23,16,38,0.6)', 'rgba(23,16,38,0)']} locations={[0, 0.45, 1]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={styles.wallImage} />
                 <View style={styles.wallHeader}>
                   <View style={styles.wallIcon}>
                     <Ionicons name="hand-left-outline" size={22} color={night.sky0} />
@@ -240,7 +241,7 @@ export default function TahajjudScreen() {
                 <View style={[styles.tileIcon, tile.soon && styles.tileIconSoon]}>
                   <Ionicons name={tile.icon} size={20} color={tile.soon ? night.muted : night.goldSoft} />
                 </View>
-                <Text numberOfLines={1} style={[styles.tileLabel, tile.soon && styles.tileLabelSoon]}>{tile.label}</Text>
+                <Text numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.7} style={[styles.tileLabel, tile.soon && styles.tileLabelSoon]}>{tile.label}</Text>
                 <Text style={styles.tileHint}>{tile.hint}</Text>
               </Pressable>
             ))}
@@ -332,6 +333,7 @@ const styles = StyleSheet.create({
   weekCard: { marginTop: 16 },
   weekHint: { marginTop: 10, color: night.muted, fontSize: 14, ...nightType.body },
   wall: { marginTop: 24, padding: 18, minHeight: 170, overflow: 'hidden', borderRadius: 26, borderWidth: 1, borderColor: night.goldLine, backgroundColor: night.glass },
+  wallImage: { position: 'absolute', top: 0, right: 0, bottom: 0, width: '48%' },
   wallHeader: { flexDirection: 'row', alignItems: 'center', gap: 12 },
   wallIcon: { width: 46, height: 46, borderRadius: 23, alignItems: 'center', justifyContent: 'center', backgroundColor: night.goldSoft },
   wallTitle: { color: night.text, fontSize: 22, ...nightType.semibold },

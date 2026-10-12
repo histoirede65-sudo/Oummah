@@ -37,11 +37,12 @@ export function TahajjudShell({ title, eyebrow, children, scroll = true, hero }:
     <View style={styles.root}>
       <NightSky />
       {hero ? (
+        // The landscape fades gradually into the sky colour behind its bottom edge (sky1), no visible cut.
         <View pointerEvents="none" style={[styles.hero, { height: heroHeight }]}>
           <Image source={hero} contentFit="cover" contentPosition="right" style={StyleSheet.absoluteFill} />
           <LinearGradient
-            colors={['rgba(8,7,19,0.35)', 'rgba(8,7,19,0)', 'rgba(8,7,19,0.55)', night.sky0]}
-            locations={[0, 0.3, 0.75, 1]}
+            colors={['rgba(17,11,31,0.35)', 'rgba(17,11,31,0)', 'rgba(17,11,31,0.15)', 'rgba(17,11,31,0.45)', 'rgba(17,11,31,0.75)', 'rgba(17,11,31,0.93)', night.sky1]}
+            locations={[0, 0.22, 0.45, 0.62, 0.78, 0.9, 1]}
             style={StyleSheet.absoluteFill}
           />
         </View>
