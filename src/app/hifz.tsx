@@ -217,6 +217,16 @@ export default function HifzScreen() {
     0,
   );
   const due = state ? reviewDue(state) : [];
+  // Reviewing any learned verse fills the daily goal, even when nothing is due yet.
+  const reviewTarget =
+    due[0] ?? studied.find((item) => item.learnedVerses.length > 0);
+  const reviewVerse = reviewTarget
+    ? Math.min(...reviewTarget.learnedVerses)
+    : undefined;
+  const startReview = () =>
+    reviewTarget
+      ? begin(reviewTarget.surahId, true, reviewVerse)
+      : begin(priorities[0]?.id, true);
   const annualProgress = state ? Math.min(1, learned / state.annualTarget) : 0;
   const activeSurahs = studied.filter(
     (item) => item.learnedVerses.length > 0,
@@ -442,7 +452,7 @@ export default function HifzScreen() {
                 <Text style={styles.primaryText}>{t("hifz.continue")}</Text>
               </Pressable>
               <Pressable
-                onPress={() => begin(priorities[0]?.id, true)}
+                onPress={startReview}
                 style={styles.secondaryButton}
               >
                 <Ionicons name="refresh" size={15} color={colors.goldLight} />
@@ -475,11 +485,11 @@ export default function HifzScreen() {
             </View>
             <Ionicons name="chevron-forward" size={18} color={colors.goldLight} />
           </Pressable>
-          {due.length > 0 ? <Pressable onPress={() => begin(priorities[0]?.id, true)} style={styles.primaryReviewCard}>
+          {reviewTarget ? <Pressable onPress={startReview} style={styles.primaryReviewCard}>
             <Ionicons name="refresh-circle-outline" size={24} color={colors.goldLight} />
             <View style={styles.primaryReviewCopy}>
-              <Text style={styles.primaryReviewTitle}>{t("hifz.reviewToday")}</Text>
-              <Text style={styles.primaryReviewMeta}>{t(due.length > 1 ? "hifz.dueMany" : "hifz.dueOne", { count: due.length })}</Text>
+              <Text style={styles.primaryReviewTitle}>{due.length > 0 ? t("hifz.reviewToday") : t("hifz.reviewLearned")}</Text>
+              <Text style={styles.primaryReviewMeta}>{due.length > 0 ? t(due.length > 1 ? "hifz.dueMany" : "hifz.dueOne", { count: due.length }) : t("hifz.reviewLearnedMeta")}</Text>
             </View>
             <Ionicons name="chevron-forward" size={18} color={colors.goldLight} />
           </Pressable> : null}

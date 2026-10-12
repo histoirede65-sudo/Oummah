@@ -71,6 +71,23 @@ function resolveVerseAudioUrl(value?: string) {
   return `https://verses.quran.foundation/${trimmed.replace(/^\/+/, "")}`;
 }
 
+// Tapping outside the range extends it; tapping a selected word removes it
+// (an edge shrinks the range, a single word or an inner word clears it).
+function toggleWordInRange(
+  range: [number, number] | null,
+  position: number,
+): [number, number] | null {
+  if (!range) return [position, position];
+  const [from, to] = range;
+  if (position < from || position > to) {
+    return [Math.min(from, position), Math.max(to, position)];
+  }
+  if (from === to) return null;
+  if (position === from) return [from + 1, to];
+  if (position === to) return [from, to - 1];
+  return null;
+}
+
 function isMaskedWord(index: number, seed: number) {
   return (index + seed) % 3 === 1;
 }
@@ -688,6 +705,8 @@ export default function HifzSessionScreen() {
       amount: 3,
       evidenceId: `${surahId}:${verseNumber}:${dateKey(now)}`,
     });
+    // One tap fills the daily goal: don't wait for the celebration to close.
+    await finishReview();
     setSaved(true);
     if (difficulty === "easy") {
       const learned =
@@ -906,31 +925,30 @@ export default function HifzSessionScreen() {
                     return (
                       <Text
                         key={`${verse?.verseKey}-${wordIndex}-${isPauseMark ? "quranic-sign" : "word"}`}
-                        onPress={() =>
-                          setSelectedWordRange((range) =>
-                            range
-                              ? [
-                                  Math.min(range[0], position),
-                                  Math.max(range[1], position),
-                                ]
-                              : [position, position],
-                          )
-                        }
-                        style={[
-                          styles.selectableWord,
-                          selected && styles.selectableWordActive,
-                        ]}
                       >
-                        <QuranWordHighlight
-                          text={`${word}${wordIndex < textWords.length - 1 ? " " : ""}`}
-                          fontFamily={ARABIC_READING_FONT_FAMILY}
-                          isActive={!isPauseMark && activeWordPosition === position}
-                          isRead={
-                            !isPauseMark &&
-                            lastReadWordPosition !== null &&
-                            position <= lastReadWordPosition
+                        <Text
+                          onPress={
+                            isPauseMark
+                              ? undefined
+                              : () =>
+                                  setSelectedWordRange((range) =>
+                                    toggleWordInRange(range, position),
+                                  )
                           }
-                        />
+                          style={selected && styles.selectableWordActive}
+                        >
+                          <QuranWordHighlight
+                            text={word}
+                            fontFamily={ARABIC_READING_FONT_FAMILY}
+                            isActive={!isPauseMark && activeWordPosition === position}
+                            isRead={
+                              !isPauseMark &&
+                              lastReadWordPosition !== null &&
+                              position <= lastReadWordPosition
+                            }
+                          />
+                        </Text>
+                        {wordIndex < textWords.length - 1 ? " " : ""}
                       </Text>
                     );
                   })}
@@ -1371,10 +1389,8 @@ const styles = StyleSheet.create({
     textAlign: "right",
     writingDirection: "rtl",
   },
-  selectableWord: {
-    textDecorationLine: "none",
-  },
   selectableWordActive: {
+    backgroundColor: "rgba(227,181,90,0.22)",
     textDecorationLine: "underline",
     textDecorationColor: "rgba(227,181,90,0.72)",
   },

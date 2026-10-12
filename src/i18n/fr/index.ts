@@ -1310,6 +1310,8 @@ export const fr = {
   'hifz.reviewToday': 'Réviser aujourd’hui',
   'hifz.dueOne': '{count} passage à revoir',
   'hifz.dueMany': '{count} passages à revoir',
+  'hifz.reviewLearned': 'Réviser un verset appris',
+  'hifz.reviewLearnedMeta': 'Compte pour votre objectif du jour',
   'hifz.mySurahs': 'Mes sourates',
   'hifz.addSurah': 'Ajouter une sourate',
   'hifz.surahVerses': '{learned} / {total} versets',

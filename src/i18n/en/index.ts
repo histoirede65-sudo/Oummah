@@ -1301,6 +1301,8 @@ export const en: Partial<Record<TranslationKey, string>> = {
   'hifz.reviewToday': 'Review today',
   'hifz.dueOne': '{count} passage to review',
   'hifz.dueMany': '{count} passages to review',
+  'hifz.reviewLearned': 'Review a learned verse',
+  'hifz.reviewLearnedMeta': 'Counts toward your daily goal',
   'hifz.mySurahs': 'My surahs',
   'hifz.addSurah': 'Add a surah',
   'hifz.surahVerses': '{learned} / {total} verses',
