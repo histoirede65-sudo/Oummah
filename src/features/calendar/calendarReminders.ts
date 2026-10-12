@@ -17,7 +17,8 @@ import {
 /**
  * Notifications du calendrier, toutes locales :
  *  - événements suivis : 3 jours avant ou la veille à 20 h, ou le matin même à 8 h ;
- *  - jours blancs : la veille des 13, 14 et 15 à 20 h ;
+ *  - nouveau mois hégirien : le 1er du mois à 8 h ;
+ *  - jours blancs : une seule notification la veille du 13 à 12 h, avec « Ajouter au calendrier » ;
  *  - vendredi : sourate Al-Kahf à 9 h ;
  *  - lundi et jeudi : la veille à 20 h, seulement si le jeûne est permis ce jour-là ;
  *  - rappels personnels : le jour choisi à 9 h.
@@ -34,7 +35,10 @@ const IOS_MAX_NOTIFICATIONS = 6;
 const REFRESHED_AT_KEY = 'oummah.calendar.reminders.refreshed-at.v1';
 const REFRESH_INTERVAL_MS = 3 * 60 * 60_000;
 
-type Planned = { at: number; title: string; body: string; route: string; key: string };
+type Planned = { at: number; title: string; body: string; route: string; key: string; category?: string };
+
+export const WHITE_DAYS_CATEGORY = 'oummah-white-days';
+export const ADD_TO_CALENDAR_ACTION = 'add-to-calendar';
 
 function at(date: Date, hours: number) {
   const moment = new Date(date);
@@ -44,6 +48,7 @@ function at(date: Date, hours: number) {
 
 function hasAnyReminder(settings: CalendarSettings) {
   return settings.whiteDaysReminder
+    || settings.newMonthReminder
     || settings.fridayReminder
     || settings.mondayThursdayReminder
     || settings.personalReminders.length > 0
@@ -85,12 +90,33 @@ function plan(settings: CalendarSettings): Planned[] {
 
     const eve = addDays(day, -1);
     const fastAllowed = isRecommendedFastDay(day, hijri);
-    if (settings.whiteDaysReminder && hijri.day >= 13 && hijri.day <= 15 && fastAllowed) {
+    // Dates follow the user's method / country / adjustment, like the rest of the calendar.
+    if (settings.newMonthReminder && hijri.day === 1) {
       push({
-        at: at(eve, 20), route: '/calendar', key: `white-${dayKey}`,
-        title: translate('calendar.notifWhiteTitle', { day: hijri.day, month: hijriMonthName(hijri.month) }),
-        body: translate('calendar.notifWhiteBody'),
+        at: at(day, 8), route: '/calendar', key: `month-${dayKey}`,
+        title: translate('calendar.notifNewMonthTitle'),
+        body: translate('calendar.notifNewMonthBody', { month: hijriMonthName(hijri.month) }),
       });
+    }
+    if (settings.whiteDaysReminder && hijri.day === 13) {
+      // Fasting days among the 13th, 14th and 15th (e.g. 13 Dhul-Hijja is a day of Tashriq).
+      const fastDates = [0, 1, 2]
+        .map((extra) => addDays(day, extra))
+        .filter((date) => isRecommendedFastDay(date, hijriOf(date)));
+      const fastDays = fastDates.map((date) => hijriOf(date).day);
+      if (fastDays.length) {
+        const month = hijriMonthName(hijri.month);
+        const last = fastDays.at(-1);
+        const list = fastDays.length > 1
+          ? translate('calendar.whiteDaysList', { first: fastDays.slice(0, -1).join(', '), last: String(last), month })
+          : `${last} ${month}`;
+        push({
+          at: at(eve, 12), route: `/calendar?whiteDays=${toDateKey(fastDates[0])}&count=${fastDates.length}`, key: `white-${dayKey}`,
+          category: WHITE_DAYS_CATEGORY,
+          title: translate('calendar.notifWhiteTitle'),
+          body: translate('calendar.notifWhiteBody', { month, days: list }),
+        });
+      }
     }
     const weekday = day.getDay();
     if (settings.mondayThursdayReminder && (weekday === 1 || weekday === 4) && fastAllowed) {
@@ -153,6 +179,10 @@ export function refreshCalendarReminders(
         });
       }
 
+      await Notifications.setNotificationCategoryAsync(WHITE_DAYS_CATEGORY, [
+        { identifier: ADD_TO_CALENDAR_ACTION, buttonTitle: translate('calendar.addToPhoneCalendar'), options: { opensAppToForeground: true } },
+      ]).catch(() => undefined);
+
       const planned = plan(settings)
         .sort((a, b) => a.at - b.at)
         .slice(0, Platform.OS === 'ios' ? IOS_MAX_NOTIFICATIONS : MAX_NOTIFICATIONS);
@@ -162,6 +192,7 @@ export function refreshCalendarReminders(
             title: item.title,
             body: item.body,
             sound: 'default',
+            ...(item.category ? { categoryIdentifier: item.category } : {}),
             data: { notificationOwner: OWNER, route: item.route, reminderKey: item.key },
           },
           trigger: {

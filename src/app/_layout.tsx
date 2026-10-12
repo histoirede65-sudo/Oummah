@@ -794,8 +794,11 @@ export default function RootLayout() {
         latitude <= 90 &&
         longitude >= -180 &&
         longitude <= 180;
-      const fallbackRoute =
+      const baseRoute =
         typeof route === 'string' && route.trim().length > 0 ? route : '/';
+      // "Ajouter au calendrier" on the white days notification opens the phone calendar sheet directly.
+      const fallbackRoute =
+        response?.actionIdentifier === 'add-to-calendar' ? `${baseRoute}&add=1` : baseRoute;
 
       try {
         if (hasValidCoordinates) {

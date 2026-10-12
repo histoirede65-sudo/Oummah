@@ -51,6 +51,15 @@
     },
     "plugins": [
       "expo-router",
+      [
+        "expo-calendar",
+        {
+          "writeOnlyAccess": true,
+          "writeOnlyCalendarPermission": "OUMMAH ajoute à votre calendrier les dates que vous choisissez, comme les trois jours blancs.",
+          "calendarPermission": false,
+          "remindersPermission": false
+        }
+      ],
       "expo-font",
       "expo-sqlite",
       "expo-web-browser",

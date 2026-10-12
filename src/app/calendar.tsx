@@ -1,11 +1,12 @@
 import { Ionicons } from "@expo/vector-icons";
-import { useFocusEffect } from "expo-router";
+import { useFocusEffect, useLocalSearchParams } from "expo-router";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import type { Href } from "expo-router";
 import { router } from "expo-router";
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
+  Alert,
   Modal,
   PanResponder,
   Pressable,
@@ -24,6 +25,7 @@ import {
   type CalendarSettings,
 } from "../features/calendar/CalendarStore";
 import { refreshCalendarReminders } from "../features/calendar/calendarReminders";
+import { addAllDayEventToPhoneCalendar } from "../features/calendar/phoneCalendar";
 import {
   addDays,
   CALENDAR_COUNTRIES,
@@ -35,6 +37,7 @@ import {
   getEventsForDate,
   getEventDefinition,
   getHijriDate,
+  hijriMonthName,
   isRecommendedFastDay,
   localizeEvent,
   toDateKey,
@@ -96,6 +99,11 @@ export default function IslamicCalendarScreen() {
   const [prayerSchedule, setPrayerSchedule] = useState<MosquePrayerSchedule>();
   const [prayerPlace, setPrayerPlace] = useState<string>();
   const today = new Date();
+  // Opened from the white days notification: /calendar?whiteDays=<first day>&count=<days>[&add=1]
+  const params = useLocalSearchParams<{ whiteDays?: string; count?: string; add?: string }>();
+  const whiteDaysStart = params.whiteDays ? fromDateKey(params.whiteDays) : null;
+  const whiteDaysCount = Math.min(3, Math.max(1, Number(params.count) || 3));
+  const autoAddDone = useRef(false);
 
   useFocusEffect(
     useCallback(() => {
@@ -143,6 +151,35 @@ export default function IslamicCalendarScreen() {
     settings.adjustment,
     settings.country,
   );
+  const whiteDaysDates = whiteDaysStart
+    ? Array.from({ length: whiteDaysCount }, (_, index) => addDays(whiteDaysStart, index))
+    : [];
+  const whiteDaysHijri = whiteDaysDates.map((date) =>
+    getHijriDate(date, settings.method, settings.adjustment, settings.country),
+  );
+  const whiteDaysMonth = whiteDaysHijri[0] ? hijriMonthName(whiteDaysHijri[0].month) : "";
+  const whiteDaysLabel = whiteDaysHijri.length > 1
+    ? t("calendar.whiteDaysList", {
+        first: whiteDaysHijri.slice(0, -1).map((item) => item.day).join(", "),
+        last: String(whiteDaysHijri.at(-1)!.day),
+        month: whiteDaysMonth,
+      })
+    : whiteDaysHijri[0] ? `${whiteDaysHijri[0].day} ${whiteDaysMonth}` : "";
+  const addWhiteDays = useCallback(async () => {
+    if (!whiteDaysStart) return;
+    const opened = await addAllDayEventToPhoneCalendar({
+      title: t("calendar.whiteDaysEventTitle", { month: whiteDaysMonth }),
+      notes: whiteDaysLabel,
+      start: whiteDaysStart,
+      days: whiteDaysCount,
+    });
+    if (!opened) Alert.alert(t("calendar.addToPhoneCalendar"), t("calendar.addedToPhoneCalendarError"));
+  }, [t, whiteDaysCount, whiteDaysLabel, whiteDaysMonth, whiteDaysStart]);
+  useEffect(() => {
+    if (params.add !== "1" || autoAddDone.current || !whiteDaysStart) return;
+    autoAddDone.current = true;
+    void addWhiteDays();
+  }, [addWhiteDays, params.add, whiteDaysStart]);
   const todayEvents = getEventsForDate(hijriToday);
   const fastingToday = isRecommendedFastDay(today, hijriToday);
   const ramadanToday = hijriToday.month === 9;
@@ -313,6 +350,22 @@ export default function IslamicCalendarScreen() {
             />
           </Pressable>
         </View>
+
+        {whiteDaysStart ? (
+          <View style={styles.whiteDaysCard}>
+            <View style={styles.whiteDaysHeader}>
+              <Ionicons name="moon-outline" size={20} color={colors.goldLight} />
+              <Text style={styles.whiteDaysTitle}>{t("calendar.whiteDaysCardTitle", { days: whiteDaysLabel })}</Text>
+            </View>
+            <Text style={styles.whiteDaysText}>
+              {t("calendar.whiteDaysCardText", { country: localizedCountryLabel(settings.country) ?? "" })}
+            </Text>
+            <Pressable onPress={() => void addWhiteDays()} style={styles.whiteDaysButton}>
+              <Ionicons name="calendar-outline" size={17} color={colors.background} />
+              <Text style={styles.whiteDaysButtonText}>{t("calendar.addToPhoneCalendar")}</Text>
+            </Pressable>
+          </View>
+        ) : null}
 
         <View style={styles.hero}>
           <Image
@@ -632,6 +685,15 @@ export default function IslamicCalendarScreen() {
                 updateSettings({
                   whiteDaysReminder: !settings.whiteDaysReminder,
                 })
+              }
+            />
+            <ReminderToggle
+              icon="sparkles-outline"
+              title={t("calendar.newMonth")}
+              subtitle={t("calendar.newMonthText")}
+              active={settings.newMonthReminder}
+              onPress={() =>
+                updateSettings({ newMonthReminder: !settings.newMonthReminder })
               }
             />
             <ReminderToggle
@@ -1122,6 +1184,12 @@ function ReminderToggle({
 }
 
 const styles = StyleSheet.create({
+  whiteDaysCard: { marginBottom: 16, padding: 16, borderRadius: 22, borderWidth: 1, borderColor: "rgba(227,181,90,0.35)", backgroundColor: colors.surface },
+  whiteDaysHeader: { flexDirection: "row", alignItems: "center", gap: 10 },
+  whiteDaysTitle: { flex: 1, color: colors.text, fontFamily: typography.serifMedium, fontSize: 19 },
+  whiteDaysText: { marginTop: 8, color: colors.textSecondary, fontFamily: typography.sans, fontSize: 14, lineHeight: 20 },
+  whiteDaysButton: { marginTop: 14, alignSelf: "flex-start", flexDirection: "row", alignItems: "center", gap: 8, paddingHorizontal: 16, paddingVertical: 11, borderRadius: 18, backgroundColor: colors.goldLight },
+  whiteDaysButtonText: { color: colors.background, fontFamily: typography.sans, fontSize: 15, fontWeight: "800" },
   safeArea: { flex: 1, backgroundColor: "#08050D" },
   content: { paddingHorizontal: 15, paddingBottom: 140 },
   header: { height: 72, flexDirection: "row", alignItems: "center" },

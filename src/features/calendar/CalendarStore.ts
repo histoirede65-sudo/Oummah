@@ -20,6 +20,7 @@ export type CalendarSettings = {
   adjustment: -1 | 0 | 1;
   eventReminders: Record<string, ReminderTiming>;
   whiteDaysReminder: boolean;
+  newMonthReminder: boolean;
   fridayReminder: boolean;
   mondayThursdayReminder: boolean;
   personalReminders: PersonalCalendarReminder[];
@@ -36,7 +37,8 @@ export const DEFAULT_CALENDAR_SETTINGS: CalendarSettings = {
   country: "france",
   adjustment: 0,
   eventReminders: {},
-  whiteDaysReminder: false,
+  whiteDaysReminder: true,
+  newMonthReminder: true,
   fridayReminder: false,
   mondayThursdayReminder: false,
   personalReminders: [],
@@ -60,6 +62,7 @@ export async function loadCalendarSettings(): Promise<CalendarSettings> {
     adjustment: saved.adjustment ?? 0,
     eventReminders,
     whiteDaysReminder: saved.whiteDaysReminder ?? false,
+    newMonthReminder: saved.newMonthReminder ?? true,
     fridayReminder: saved.fridayReminder ?? false,
     mondayThursdayReminder: saved.mondayThursdayReminder ?? false,
     personalReminders: saved.personalReminders ?? [],
