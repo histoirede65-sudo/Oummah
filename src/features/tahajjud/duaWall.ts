@@ -135,7 +135,25 @@ export async function publishDua(body: string, anonymous: boolean) {
   return rpc<string>('dua_wall_publish', { p_body: body, p_anonymous: anonymous, p_lat: zone?.lat ?? null, p_lng: zone?.lng ?? null });
 }
 export const setAmeen = (postId: string, on: boolean) => rpc<number>('dua_wall_ameen', { p_post: postId, p_on: on });
-export const replyToDua = (postId: string, body: string) => rpc<string>('dua_wall_reply', { p_post: postId, p_body: body });
+export async function replyToDua(postId: string, body: string) {
+  const replyId = await rpc<string>('dua_wall_reply', { p_post: postId, p_body: body });
+  void notifyDuaAuthor(replyId);
+  return replyId;
+}
+
+/** Push to the dua's author (server side); never blocks or fails the reply. */
+async function notifyDuaAuthor(replyId: string) {
+  try {
+    const { url, key } = config();
+    const session = await getValidSession();
+    if (!session?.accessToken || !replyId) return;
+    await fetch(`${url}/functions/v1/notify-dua-reply`, {
+      method: 'POST',
+      headers: { apikey: key, Authorization: `Bearer ${session.accessToken}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ replyId }),
+    });
+  } catch {}
+}
 export const reportWall = (type: 'post' | 'reply', id: string, reason?: string) => rpc<void>('dua_wall_report', { p_type: type, p_id: id, p_reason: reason ?? null });
 export const deleteWall = (type: 'post' | 'reply', id: string) => rpc<void>('dua_wall_delete', { p_type: type, p_id: id });
 export const markAnswered = (postId: string, gratitude?: string) => rpc<void>('dua_wall_mark_answered', { p_post: postId, p_gratitude: gratitude?.trim() || null });
