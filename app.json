@@ -56,8 +56,8 @@
         {
           "writeOnlyAccess": true,
           "writeOnlyCalendarPermission": "OUMMAH ajoute à votre calendrier les dates que vous choisissez, comme les trois jours blancs.",
-          "calendarPermission": false,
-          "remindersPermission": false
+          "calendarPermission": "OUMMAH ajoute à votre calendrier les dates que vous choisissez, comme les trois jours blancs.",
+          "remindersPermission": "OUMMAH n’utilise pas vos rappels ; cet accès n’est jamais demandé."
         }
       ],
       "expo-font",
