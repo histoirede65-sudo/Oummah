@@ -270,7 +270,6 @@ export default function HifzSessionScreen() {
   const [revealedWordCount, setRevealedWordCount] = useState(0);
   const [repeat, setRepeat] = useState<(typeof repetitions)[number]>(3);
   const [speed, setSpeed] = useState(0.75);
-  const [saved, setSaved] = useState(false);
   const [masteredVerses, setMasteredVerses] = useState<number[]>([]);
   const [celebration, setCelebration] = useState<Celebration>(null);
   const [displayName, setDisplayName] = useState("");
@@ -396,7 +395,6 @@ export default function HifzSessionScreen() {
     loadedVerseKey.current = null;
     resumePosition.current = null;
     setSelectedWordRange(null);
-    setSaved(false);
     setRevealedWordCount(0);
     setMaskSeed(0);
     setWordTimings([]);
@@ -601,13 +599,25 @@ export default function HifzSessionScreen() {
       const selectedTimings = selectedWordRange
         ? normalizedWordTimings.filter((item) => item.wordPosition >= selectedWordRange[0] && item.wordPosition <= selectedWordRange[1])
         : [];
-      const absoluteStartMs = selectedTimings[0]?.startMs ?? timing.timestampFrom;
+      // Reciter timings often start inside the tail of the previous word and
+      // MP3 seeks land slightly early: start after the previous word ends,
+      // plus a short margin (never past a third of the first word).
+      const firstSelected = selectedTimings[0];
+      const previousWord = firstSelected
+        ? normalizedWordTimings.find((item) => item.wordPosition === firstSelected.wordPosition - 1)
+        : undefined;
+      const absoluteStartMs = firstSelected
+        ? Math.min(
+            Math.max(firstSelected.startMs, previousWord?.endMs ?? 0) + 90,
+            firstSelected.startMs + (firstSelected.endMs - firstSelected.startMs) / 3,
+          )
+        : timing.timestampFrom;
       const start = dedicatedSource
         ? Math.max(0, absoluteStartMs - timing.timestampFrom) / 1000
         : absoluteStartMs / 1000;
       const length = Math.max(
         0.2,
-        ((selectedTimings.at(-1)?.endMs ?? timing.timestampTo) - (selectedTimings[0]?.startMs ?? timing.timestampFrom)) / 1000 / speed,
+        ((selectedTimings.at(-1)?.endMs ?? timing.timestampTo) - absoluteStartMs) / 1000 / speed,
       );
       const playClip = () => {
         if (!screenFocused.current || requestId !== audioRequestId.current)
@@ -650,7 +660,7 @@ export default function HifzSessionScreen() {
   }, [stopVerseAudio]);
 
   const complete = async (difficulty: "easy" | "hard") => {
-    if (validationInProgress.current || saved) return;
+    if (validationInProgress.current) return;
     validationInProgress.current = true;
     const state = await loadHifzState();
     const verseNumber = Number(verse?.verseKey.split(":")[1] ?? index + 1);
@@ -707,7 +717,6 @@ export default function HifzSessionScreen() {
     });
     // One tap fills the daily goal: don't wait for the celebration to close.
     await finishReview();
-    setSaved(true);
     if (difficulty === "easy") {
       const learned =
         next.progress.find((item) => item.surahId === surahId)?.learnedVerses ??
@@ -717,10 +726,7 @@ export default function HifzSessionScreen() {
       validationInProgress.current = false;
       return;
     }
-    if (index < verses.length - 1 && index + 1 < endVerse) {
-      setIndex((value) => value + 1);
-      setSaved(false);
-    }
+    // "À revoir" stays on the verse so it can be reviewed again as often as needed.
     validationInProgress.current = false;
   };
 
@@ -745,7 +751,8 @@ export default function HifzSessionScreen() {
         evidenceId: `hifz-review:${today}:${surahId}:${Number(verse?.verseKey.split(":")[1] ?? index + 1)}`,
       });
       void goalProgressBridge.flush().catch(() => undefined);
-    } catch {
+    } finally {
+      // Only guards a call in flight: every validation may count.
       reviewFinished.current = false;
     }
   };
@@ -764,7 +771,6 @@ export default function HifzSessionScreen() {
     setCelebration(null);
     if (shouldAdvance) {
       setIndex((value) => value + 1);
-      setSaved(false);
       return;
     }
     await finishReview();
@@ -1126,7 +1132,7 @@ export default function HifzSessionScreen() {
             >
               <Ionicons name="checkmark" size={17} color={colors.background} />
               <Text style={styles.easyText}>
-                {saved ? t("hifz.session.saved") : t("hifz.session.easy")}
+                {t("hifz.session.easy")}
               </Text>
             </Pressable>
           </View>
