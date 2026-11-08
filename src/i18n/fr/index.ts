@@ -1062,6 +1062,7 @@ export const fr = {
   'surahReader.reciteShort': 'Réciter',
   'surahReader.reciteLogin': 'Connecte-toi depuis ton profil pour utiliser la récitation.',
   'surahReader.reciteServer': 'Le service de récitation n’est pas encore en ligne. Réessaie un peu plus tard.',
+  'surahReader.goToVerseShort': 'Verset',
   'surahReader.reciteStart': 'Réciter : illuminer les mots que je lis',
   'surahReader.reciteStop': 'Arrêter la récitation',
   'surahReader.reciteListening': 'Je t’écoute… récite, les mots s’illuminent',

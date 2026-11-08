@@ -1135,6 +1135,48 @@ export default function SurahReadingScreen() {
       params: { verseKey: verse.verseKey },
     });
   }, []);
+  // Plus haut mot atteint par la récitation de l'utilisateur, par verset.
+  const recitedReach = useRef(new Map<string, number>());
+  const markRecitedVerse = useCallback((verseKey: string) => {
+    if (readVerseKeys.has(verseKey)) return;
+    void (async () => {
+      try {
+        const next = await setReadConfirmation('quran', verseKey, true);
+        await goalProgressBridge.setEvidence('quran_verses_read', `read:${verseKey}`, true);
+        setReadVerseKeys(next);
+        void recordActivity({ kind: 'quran_verse', title: 'Lecture du Coran', detail: `Verset ${verseKey}`, reference: `quran:${verseKey}` }).catch(() => undefined);
+      } catch {
+        // Sans réseau ou stockage : le verset reste à valider à la main.
+      }
+    })();
+  }, [readVerseKeys]);
+  useEffect(() => {
+    const position = recite.current;
+    if (!position) return;
+    const reach = recitedReach.current;
+    // Verset quitté (passage au suivant) : on valide les versets récités à 80 % au moins.
+    for (const [verseKey, reached] of reach) {
+      if (verseKey === position.verseKey) continue;
+      const total = reciteWords.filter((word) => word.verseKey === verseKey).length;
+      if (total && reached >= Math.ceil(total * 0.8)) markRecitedVerse(verseKey);
+      reach.delete(verseKey);
+    }
+    reach.set(position.verseKey, Math.max(reach.get(position.verseKey) ?? 0, position.position));
+    const total = reciteWords.filter((word) => word.verseKey === position.verseKey).length;
+    // Dernier mot du verset atteint : validé tout de suite.
+    if (total && position.position >= total && (reach.get(position.verseKey) ?? 0) >= Math.ceil(total * 0.8)) markRecitedVerse(position.verseKey);
+  }, [markRecitedVerse, recite.current, reciteWords]);
+  useEffect(() => {
+    if (recite.listening) return;
+    // Fin de l'écoute : le verset en cours compte aussi s'il a été récité à 80 %.
+    const reach = recitedReach.current;
+    for (const [verseKey, reached] of reach) {
+      const total = reciteWords.filter((word) => word.verseKey === verseKey).length;
+      if (total && reached >= Math.ceil(total * 0.8)) markRecitedVerse(verseKey);
+    }
+    reach.clear();
+  }, [markRecitedVerse, recite.listening, reciteWords]);
+
   const handleConfirmRead = useCallback((verse: QuranFoundationVerse) => {
     const key = verse.verseKey;
     if (savingReadKeys.has(key)) return;
@@ -1431,7 +1473,8 @@ export default function SurahReadingScreen() {
             onPress={() => setShowVerseJump((value) => !value)}
             style={({ pressed }) => [styles.verseJumpTrigger, showVerseJump && styles.iconButtonActive, pressed && styles.tafsirButtonPressed]}
           >
-            <Text style={styles.verseJumpTriggerText}>{t("surahReader.goToVerse")}</Text>
+            <Ionicons name="search" size={14} color={colors.goldLight} />
+            <Text style={styles.verseJumpTriggerText}>{t("surahReader.goToVerseShort")}</Text>
           </Pressable>
         </View>
         {showVerseJump ? (
@@ -1872,7 +1915,9 @@ const styles = StyleSheet.create({
   reciterSelectorControl: { flex: 1, minWidth: 0 },
   verseJumpTrigger: {
     height: 38,
-    paddingHorizontal: 12,
+    paddingHorizontal: 11,
+    flexDirection: "row",
+    gap: 5,
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 19,
