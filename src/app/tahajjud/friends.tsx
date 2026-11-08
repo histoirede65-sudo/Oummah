@@ -111,7 +111,7 @@ function SwipeToDelete({ enabled, onDelete, children }: { enabled: boolean; onDe
     <ReanimatedSwipeable
       ref={ref}
       friction={1.2}
-      dragOffsetFromRightEdge={12}
+      dragOffsetFromRight={12}
       animationOptions={{ damping: 22, stiffness: 240, mass: 0.9 }}
       rightThreshold={50}
       overshootRight
