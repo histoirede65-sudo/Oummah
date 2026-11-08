@@ -3,13 +3,13 @@ import { router, useFocusEffect } from 'expo-router';
 import { useCallback, useMemo, useState } from 'react';
 import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 import { getValidSession } from '../features/auth/SupabaseAuthService';
-import { getEntry, isLocalEntryComplete, listCommitments, localDateKey, loadDraft } from '../features/muhasabah/MuhasabahService';
+import { getEntry, isLocalEntryComplete, listCommitments, listLocalEntries, localDateKey, loadDraft } from '../features/muhasabah/MuhasabahService';
 import { muhasabahText } from '../features/muhasabah/muhasabahStrings';
 import { useI18n } from '../i18n';
 import { colors } from '../theme/colors';
 import { typography } from '../theme/typography';
 
-type State = { kind: 'default' | 'saved' | 'draft' } | { kind: 'effort'; effort: string };
+type State = { kind: 'default' | 'saved' | 'draft' } | { kind: 'effort' | 'yesterday'; effort: string };
 
 export default function HomeMuhasabahCard() {
   const { language } = useI18n();
@@ -30,13 +30,21 @@ export default function HomeMuhasabahCard() {
       if (!active) return;
       if (done) { setState({ kind: 'saved' }); return; }
       if (draft && (draft.goodDeeds.trim() || draft.couldImprove.trim() || draft.effort.trim())) { setState({ kind: 'draft' }); return; }
+      // Le matin : l'intention écrite hier soir.
+      if (new Date().getHours() < 15) {
+        const yesterdayDate = new Date(); yesterdayDate.setDate(yesterdayDate.getDate() - 1);
+        const yesterday = localDateKey(yesterdayDate);
+        const entry = session ? await getEntry(yesterday).catch(() => null) : (await listLocalEntries()).find((item) => item.entryDate === yesterday) ?? null;
+        if (!active) return;
+        if (entry?.effort.trim()) { setState({ kind: 'yesterday', effort: entry.effort.trim() }); return; }
+      }
       const effort = commitments.find((item) => item.status === 'active' || item.status === 'progressing');
       setState(effort ? { kind: 'effort', effort: effort.text } : { kind: 'default' });
     })();
     return () => { active = false; };
   }, []));
 
-  const subtitle = state.kind === 'saved' ? t('homeSaved') : state.kind === 'draft' ? t('homeDraft') : state.kind === 'effort' ? t('homeEffort', { effort: state.effort }) : t('homeDefault');
+  const subtitle = state.kind === 'saved' ? t('homeSaved') : state.kind === 'draft' ? t('homeDraft') : state.kind === 'yesterday' ? t('homeYesterday', { effort: state.effort }) : state.kind === 'effort' ? t('homeEffort', { effort: state.effort }) : t('homeDefault');
   const saved = state.kind === 'saved';
 
   return (
