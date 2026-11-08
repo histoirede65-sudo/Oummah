@@ -306,7 +306,7 @@ export default function MuhasabahScreen() {
             <Reanimated.View entering={enter(0)}>
               <Pressable onPress={() => router.push('/surah/59?verse=18&direct=1' as never)} style={({ pressed }) => [pressed && styles.pressed]}>
                 <Glass tint={GOLD} style={styles.verseCard}>
-                  <Text style={styles.verseArabic}>وَلْتَنظُرْ نَفْسٌ مَّا قَدَّمَتْ لِغَدٍ</Text>
+                  <Text style={styles.verseArabic}>يَـٰٓأَيُّهَا ٱلَّذِينَ ءَامَنُوا۟ ٱتَّقُوا۟ ٱللَّهَ وَلْتَنظُرْ نَفْسٌ مَّا قَدَّمَتْ لِغَدٍ ۖ وَٱتَّقُوا۟ ٱللَّهَ ۚ إِنَّ ٱللَّهَ خَبِيرٌۢ بِمَا تَعْمَلُونَ</Text>
                   <Text style={styles.verseText}>« {t('verseText')} »</Text>
                   <View style={styles.verseRefRow}><Ionicons name="book-outline" size={13} color={GOLD} /><Text style={styles.verseRef}>{t('verseRef')}</Text><Ionicons name="chevron-forward" size={13} color={GOLD} /></View>
                 </Glass>
