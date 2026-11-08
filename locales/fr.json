@@ -1,0 +1,11 @@
+{
+  "ios": {
+    "NSMicrophoneUsageDescription": "OUMMAH utilise le micro pour suivre ta récitation du Coran et illuminer les mots que tu lis.",
+    "NSSpeechRecognitionUsageDescription": "OUMMAH reconnaît ta récitation pour illuminer les mots du Coran pendant que tu lis.",
+    "NSCalendarsUsageDescription": "OUMMAH ajoute à votre calendrier les dates que vous choisissez, comme les trois jours blancs.",
+    "NSCalendarsWriteOnlyAccessUsageDescription": "OUMMAH ajoute à votre calendrier les dates que vous choisissez, comme les trois jours blancs.",
+    "NSCalendarsFullAccessUsageDescription": "OUMMAH ajoute à votre calendrier les dates que vous choisissez, comme les trois jours blancs.",
+    "NSRemindersUsageDescription": "OUMMAH n’utilise pas vos rappels ; cet accès n’est jamais demandé.",
+    "NSRemindersFullAccessUsageDescription": "OUMMAH n’utilise pas vos rappels ; cet accès n’est jamais demandé."
+  }
+}

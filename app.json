@@ -6,6 +6,10 @@
     "orientation": "portrait",
     "scheme": "oummah",
     "userInterfaceStyle": "automatic",
+    "locales": {
+      "fr": "./locales/fr.json",
+      "en": "./locales/en.json"
+    },
     "icon": "./assets/images/icon.png",
     "ios": {
       "bundleIdentifier": "com.oummah.app",
