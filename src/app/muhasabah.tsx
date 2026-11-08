@@ -584,7 +584,7 @@ export default function MuhasabahScreen() {
               })() : <Text style={styles.reviewHint}>{t('reviewPick')}</Text>}
 
               <Text style={styles.feedTitle}>{t('monthFeed')}</Text>
-              {monthEntries.length ? monthEntries.map((item, index) => (
+              {monthEntries.length ? monthEntries.filter((item) => item.entryDate !== reviewDate).map((item, index) => (
                 <Reanimated.View key={item.id} entering={enter(2 + Math.min(index, 5))}>
                   <Pressable onPress={() => pickDay(item.entryDate)} style={({ pressed }) => [pressed && styles.pressed]}>
                     <Glass style={styles.cardPad}>
