@@ -115,7 +115,8 @@ export async function loadDraft(userId: string | null, date = localDateKey()) {
 }
 
 export async function saveDraft(userId: string | null, date: string, draft: MuhasabahDraft) {
-  if (!draft.goodDeeds.trim() && !draft.couldImprove.trim() && !draft.effort.trim()) return;
+  // Tout effacé : on supprime le brouillon, sinon l'ancien texte (même une lettre) revient à l'ouverture.
+  if (!draft.goodDeeds.trim() && !draft.couldImprove.trim() && !draft.effort.trim()) { await clearDraft(userId, date); return; }
   await storageService.set(`${DRAFT_KEY_PREFIX}.${userId ?? 'guest'}.${date}`, draft);
 }
 
