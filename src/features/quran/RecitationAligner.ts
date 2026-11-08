@@ -68,6 +68,8 @@ const MISSED_WINDOW = 10;
 // Pour sauter ailleurs dans la sourate : au moins 3 mots qui se suivent, et 60 % de ce qui a été entendu.
 const RELOCATE_MIN_WORDS = 3;
 const RELOCATE_MIN_RATIO = 0.6;
+// Mots derrière la position actuelle encore considérés comme « ici » (début du verset en cours).
+const NEAR_BEHIND = 15;
 
 /** `hits` : mots réellement entendus et reconnus (sert à décider) ; `matches` inclut les mots sautés (affichage). */
 type Run = { matches: ReciteWord[]; hits: number; end: number; last: number | null };
@@ -97,6 +99,15 @@ export class RecitationAligner {
     if (!heard.length) return [];
 
     const local = this.matchFrom(this.pointer, heard);
+    // Passages presque identiques (histoires parallèles, refrains) : si la suite attendue ne correspond pas
+    // à tout ce qui a été entendu, un autre passage de la sourate qui correspond mieux l'emporte.
+    if (local.hits < heard.length && heard.length >= RELOCATE_MIN_WORDS) {
+      const better = this.relocate(heard);
+      if (better && better.hits > local.hits) {
+        this.commit(better);
+        return better.matches;
+      }
+    }
     const enough = local.hits >= Math.max(1, Math.ceil(heard.length * 0.5)) && (heard.length < 3 || local.hits >= 2);
     if (local.hits && (!strict || enough)) {
       this.commit(local);
@@ -152,7 +163,8 @@ export class RecitationAligner {
       const count = run.hits;
       if (count < RELOCATE_MIN_WORDS || count < heard.length * RELOCATE_MIN_RATIO) continue;
       // À égalité (passage répété), on préfère l'occurrence la plus proche après la position actuelle.
-      const distance = start >= this.pointer ? start - this.pointer : this.words.length + (this.pointer - start);
+      // Un passage qui commence juste derrière la position (verset en cours) compte comme tout proche.
+      const distance = start >= this.pointer - NEAR_BEHIND ? Math.abs(start - this.pointer) : this.words.length + (this.pointer - start);
       if (!best || count > best.run.hits || (count === best.run.hits && distance < best.distance)) {
         best = { run, distance };
       }
