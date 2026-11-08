@@ -167,20 +167,13 @@ export default function MuhasabahScreen() {
   }, [applyDate, t]);
   const loadReminder = useCallback(() => { void getMuhasabahReminderState().then(setReminder).catch(() => setReminder(null)); }, []);
   useFocusEffect(useCallback(() => { void refresh(); loadReminder(); }, [loadReminder, refresh]));
-  const [toast, setToast] = useState<string | null>(null);
-  const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const toggleReminder = async (enabled: boolean) => {
     setReminder((previous) => (previous ? { ...previous, enabled } : previous));
     const ok = await setMuhasabahReminderEnabled(enabled).catch(() => false);
     if (!ok && enabled) Alert.alert(t('reminderDeniedTitle'), t('reminderDeniedBody'));
     const state = await getMuhasabahReminderState().catch(() => null);
     setReminder(state);
-    if (ok && state) {
-      void Haptics.selectionAsync().catch(() => undefined);
-      setToast(state.enabled ? t('reminderOnToast', { time: state.time }) : t('reminderOffToast'));
-      if (toastTimer.current) clearTimeout(toastTimer.current);
-      toastTimer.current = setTimeout(() => setToast(null), 2200);
-    }
+    if (ok && state) void Haptics.selectionAsync().catch(() => undefined);
   };
 
   // Ouvert depuis le rappel du soir : directement sur la première question, clavier sorti.
@@ -334,13 +327,6 @@ export default function MuhasabahScreen() {
             <Reanimated.Image entering={FadeIn.duration(900)} source={require('../assets/images/home/home-mosque-sunset.jpg')} resizeMode="cover" style={styles.heroImage} />
             <LinearGradient colors={['rgba(11,9,22,0.15)', 'rgba(11,9,22,0.25)', 'rgba(11,9,22,0.85)', colors.background]} locations={[0, 0.45, 0.82, 1]} style={StyleSheet.absoluteFill} />
             <Pressable onPress={() => router.back()} accessibilityRole="button" style={[styles.back, { top: insets.top + 8 }]}><Ionicons name="chevron-back" size={22} color="#fff" /></Pressable>
-            {reminder ? (
-              <Pressable accessibilityRole="switch" accessibilityState={{ checked: reminder.enabled }} accessibilityLabel={t('reminderTitle')} onPress={() => void toggleReminder(!reminder.enabled)} style={[styles.bell, { top: insets.top + 8 }, reminder.enabled && styles.bellOn]}>
-                <Ionicons name={reminder.enabled ? 'notifications' : 'notifications-off-outline'} size={17} color={reminder.enabled ? INK : '#fff'} />
-                {reminder.enabled ? <Text style={styles.bellText}>{reminder.time}</Text> : null}
-              </Pressable>
-            ) : null}
-            {toast ? <Reanimated.View entering={FadeIn.duration(200)} style={[styles.toast, { top: insets.top + 58 }]}><Text style={styles.toastText}>{toast}</Text></Reanimated.View> : null}
             <View style={[styles.heroCopy, { paddingTop: insets.top + 64 }]}>
               <Reanimated.Text entering={FadeInDown.duration(700).delay(100)} style={styles.titleEyebrow}>{t('titleArabic')}</Reanimated.Text>
               <Reanimated.Text entering={FadeInDown.duration(700).delay(150)} style={styles.title}>{t('title')}</Reanimated.Text>
@@ -355,6 +341,19 @@ export default function MuhasabahScreen() {
           </View>
 
           <View style={styles.body}>
+            {reminder ? (
+              <Reanimated.View entering={enter(0)}>
+                <Glass style={styles.reminderRow}>
+                  <Ionicons name={reminder.enabled ? 'notifications' : 'notifications-off-outline'} size={18} color={reminder.enabled ? GOLD : colors.textMuted} />
+                  <View style={styles.flex}>
+                    <Text style={styles.reminderTitle}>{t('reminderTitle')}{reminder.enabled ? ` · ${reminder.time}` : ''}</Text>
+                    <Text style={styles.reminderText}>{t('reminderAskBody')}</Text>
+                  </View>
+                  <Switch value={reminder.enabled} onValueChange={(value) => void toggleReminder(value)} trackColor={{ false: 'rgba(255,255,255,0.15)', true: GOLD }} thumbColor="#fff" ios_backgroundColor="rgba(255,255,255,0.15)" />
+                </Glass>
+              </Reanimated.View>
+            ) : null}
+
             {loadError ? (
               <Glass tint={GOLD} style={styles.errorBanner}>
                 <Ionicons name="cloud-offline-outline" size={20} color={GOLD} />
@@ -735,7 +734,7 @@ const styles: any = StyleSheet.create({
   glass: { borderRadius: 22, borderWidth: 1, borderColor: 'rgba(255,255,255,0.13)', backgroundColor: 'rgba(36,28,52,0.62)', overflow: 'hidden', marginBottom: 12 },
   glassShine: { position: 'absolute', top: 0, left: 0, right: 0, height: 46 },
   cardPad: { padding: 16 },
-  reminderRow: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingHorizontal: 14, paddingVertical: 11 },
+  reminderRow: { flexDirection: 'row', alignItems: 'center', gap: 11, paddingHorizontal: 14, paddingVertical: 9 },
   reminderTitle: { color: colors.text, fontWeight: '700', fontSize: 14 },
   reminderText: { color: colors.textMuted, fontSize: 12, marginTop: 1 },
   titleEyebrow: { color: GOLD, fontSize: 11, letterSpacing: 2.4, fontWeight: '700', textAlign: 'center', marginBottom: 2, textShadowColor: 'rgba(0,0,0,0.6)', textShadowRadius: 8 },

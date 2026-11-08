@@ -141,8 +141,6 @@ function planNight(night: TahajjudNight, settings: Awaited<ReturnType<typeof loa
   return planned;
 }
 
-/** These notifications open the guided « Je suis debout » mode. */
-const WAKE_KINDS = new Set(['alarm', 'start', 'soon']);
 
 let queue: Promise<void> = Promise.resolve();
 
@@ -195,7 +193,7 @@ export function refreshTahajjudNotifications(force = false): Promise<void> {
             title: item.title,
             body: item.body,
             sound: 'default',
-            data: { notificationOwner: OWNER, route: WAKE_KINDS.has(item.kind) ? '/tahajjud/awake' : '/tahajjud', kind: item.kind, night: item.night },
+            data: { notificationOwner: OWNER, route: '/tahajjud', kind: item.kind, night: item.night },
             ...(Platform.OS === 'ios' && item.kind === 'alarm' ? { interruptionLevel: 'timeSensitive' as const } : {}),
           },
           trigger: {

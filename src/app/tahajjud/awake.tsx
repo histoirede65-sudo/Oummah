@@ -54,8 +54,6 @@ export default function AwakeScreen() {
   const [rakat, setRakat] = useState(0);
   const [witr, setWitr] = useState<1 | 3 | null>(null);
   const [duas, setDuas] = useState<PrivateDua[]>([]);
-  const [saving, setSaving] = useState(false);
-  const [saved, setSaved] = useState(false);
   const [toWake, setToWake] = useState<WakeRequestForMe[]>([]);
   const loadToWake = useCallback(() => {
     void getWakeRequestsForMe().then(setToWake).catch(() => undefined);
@@ -78,26 +76,6 @@ export default function AwakeScreen() {
   const addRakat = (delta: number) => {
     void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => undefined);
     setRakat((value) => Math.max(0, value + delta));
-  };
-
-  const finish = async () => {
-    if (saving) return;
-    if (view.validated) {
-      setSaved(true);
-      return;
-    }
-    if (!view.canValidate) {
-      router.back();
-      return;
-    }
-    setSaving(true);
-    try {
-      await view.validate(witr !== null);
-      void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => undefined);
-      setSaved(true);
-    } finally {
-      setSaving(false);
-    }
   };
 
   const now = view.now;
@@ -198,26 +176,17 @@ export default function AwakeScreen() {
           </>
         );
       case 'done':
-        return saved ? (
+        return (
           <Animated.View entering={FadeIn.duration(600)} style={styles.doneWrap}>
             <Ionicons name="moon" size={58} color={night.goldSoft} />
-            <Text style={styles.big}>{tx("Qu’Allah l’accepte.")}</Text>
-            <Text style={styles.lead}>{tx("Votre nuit est enregistrée. Reposez-vous jusqu’à Fajr")}{night_ ? ` (${clock(night_.fajr)})` : ''}.</Text>
+            <Text style={styles.big}>{tx("Al-hamdu lillah.")}</Text>
+            <Text style={styles.lead}>
+              {rakat ? tx("{0} rak‘at", [rakat]) : tx('Votre prière')}{witr ? tx(" et {0} de Witr", [witr]) : ''}.
+            </Text>
             <Pressable onPress={() => router.back()} style={styles.primary}>
               <Text style={styles.primaryText}>{tx("Terminer")}</Text>
             </Pressable>
           </Animated.View>
-        ) : (
-          <>
-            <Text style={styles.big}>{tx("Al-hamdu lillah.")}</Text>
-            <Text style={styles.lead}>
-              {rakat ? tx("{0} rak‘at", [rakat]) : tx('Votre prière')}{witr ? tx(" et {0} de Witr", [witr]) : ''}{tx(". Enregistrez votre nuit pour votre régularité.")}
-            </Text>
-            <Pressable onPress={() => void finish()} disabled={saving} style={[styles.primary, saving && styles.disabled]}>
-              <Ionicons name="checkmark-circle" size={20} color={night.sky0} />
-              <Text style={styles.primaryText}>{view.validated ? tx('Nuit déjà enregistrée') : view.canValidate ? tx('J’ai prié cette nuit') : tx('Fermer')}</Text>
-            </Pressable>
-          </>
         );
     }
   };

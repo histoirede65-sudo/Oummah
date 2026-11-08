@@ -132,7 +132,36 @@ export async function getWallReplies(postId: string): Promise<WallReply[]> {
 /** Publishes with an approximate zone (~28 km) for the map, when the member shares their zone. */
 export async function publishDua(body: string, anonymous: boolean) {
   const zone = await approximateZone().catch(() => null);
-  return rpc<string>('dua_wall_publish', { p_body: body, p_anonymous: anonymous, p_lat: zone?.lat ?? null, p_lng: zone?.lng ?? null });
+  const postId = await rpc<string>('dua_wall_publish', { p_body: body, p_anonymous: anonymous, p_lat: zone?.lat ?? null, p_lng: zone?.lng ?? null });
+  void callFunction('notify-new-dua', { postId });
+  return postId;
+}
+
+/** Être prévenu quand une nouvelle dua est publiée sur le mur (choix enregistré sur le compte). */
+export const getDuaWallAlerts = () => rpc<boolean>('dua_wall_alerts_get', {});
+export async function setDuaWallAlerts(on: boolean) {
+  const { getActiveLanguage } = await import('../../i18n');
+  const result = await rpc<boolean>('dua_wall_alerts_set', { p_on: on, p_language: getActiveLanguage() === 'en' ? 'en' : 'fr' });
+  if (on) {
+    // Le jeton de notification de ce téléphone doit être enregistré pour recevoir les pushs.
+    const { syncPushRegistration } = await import('../notifications/PushRegistrationService');
+    void syncPushRegistration().catch(() => undefined);
+  }
+  return result;
+}
+
+/** Appelle une fonction serveur sans jamais bloquer ni faire échouer l'action de l'utilisateur. */
+async function callFunction(name: string, body: object) {
+  try {
+    const { url, key } = config();
+    const session = await getValidSession();
+    if (!session?.accessToken) return;
+    await fetch(`${url}/functions/v1/${name}`, {
+      method: 'POST',
+      headers: { apikey: key, Authorization: `Bearer ${session.accessToken}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    });
+  } catch {}
 }
 export const setAmeen = (postId: string, on: boolean) => rpc<number>('dua_wall_ameen', { p_post: postId, p_on: on });
 export async function replyToDua(postId: string, body: string) {

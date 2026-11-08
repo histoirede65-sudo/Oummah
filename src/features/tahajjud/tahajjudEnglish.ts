@@ -4,6 +4,15 @@
  * Keep the French keys exactly as written in the screens; a missing key simply shows the French text.
  */
 export const TAHAJJUD_EN: Record<string, string> = {
+  // ----- Notifications on the module home -----
+  'Une notification quand le meilleur moment de la nuit commence.': 'A notification when the best time of the night begins.',
+  'Nouvelles duas du mur': 'New duas on the wall',
+  'Être prévenu quand quelqu’un partage une dua, pour dire Amine.': 'Get notified when someone shares a dua, to say Ameen.',
+  'Connexion nécessaire': 'Sign-in required',
+  'Connectez-vous depuis votre profil pour être prévenu des nouvelles duas.': 'Sign in from your profile to be notified of new duas.',
+  'Autorisez les notifications d’OUMMAH dans les réglages du téléphone.': 'Allow OUMMAH notifications in your phone settings.',
+  'Prière guidée': 'Guided prayer',
+  'Étape par étape': 'Step by step',
   // ----- Verses (Saheeh International) -------------------------------------------------------------
   'Et de la nuit consacre une partie [avant l’aube] pour des prières surérogatoires afin que ton Seigneur te ressuscite en une position de gloire.':
     'And from [part of] the night, pray with it [i.e., recitation of the Qur’ān] as additional [worship] for you; it is expected that your Lord will resurrect you to a praised station.',
