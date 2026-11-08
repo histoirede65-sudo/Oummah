@@ -18,7 +18,8 @@ import { useI18n, type TranslationKey } from "../i18n";
 import { getValidSession } from "../features/auth/SupabaseAuthService";
 import { isOummahAdminSession } from "../features/auth/AdminAccess";
 import { getCurrentUserProfile } from "../features/profile/UserProfileRepository";
-import { getAdminAttentionState } from "../features/admin/AdminAlertsService";
+import { getAdminAlertCounts } from "../features/admin/AdminAlertsService";
+import { inboxTotal, loadInbox } from "../features/admin/adminInbox";
 import { getChatUnreadCount } from "../features/tahajjud/tahajjudFriends";
 import { loadHifzState } from "../features/hifz/HifzStore";
 import { getMosquePrayerSchedule } from "../features/mosques/data/mosquePrayerTimes";
@@ -213,8 +214,13 @@ export default function AppHeader({
           const admin = isOummahAdminSession(session);
           setIsAdmin(admin);
           if (admin) {
-            const attention = await getAdminAttentionState().catch(() => null);
-            if (active) setAdminAttentionCount(attention?.actionCount ?? 0);
+            // Même source que l'écran Administration : boîte « À traiter » + alertes critiques.
+            // (Les alertes d'information, comme un utilisateur Wasil à 0 crédit, n'allument plus le point.)
+            const [inbox, alerts] = await Promise.all([
+              loadInbox().catch(() => null),
+              getAdminAlertCounts().catch(() => null),
+            ]);
+            if (active) setAdminAttentionCount(inboxTotal(inbox) + (alerts?.critical ?? 0));
           } else {
             setAdminAttentionCount(0);
           }
