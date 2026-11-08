@@ -1230,7 +1230,8 @@ export default function SurahReadingScreen() {
       verses.find((verse) => Number(verse.verseKey.split(":")[1]) === currentVerseRef.current) ??
       verses[0];
     if (!startVerse) return;
-    setActiveVerse(startVerse);
+    // Rien n'est surligné avant le premier mot reconnu : l'utilisateur peut commencer à n'importe quel verset.
+    setActiveVerse(undefined);
     const startIndex = Math.max(0, reciteWords.findIndex((word) => word.verseKey === startVerse.verseKey));
     await recite.start(reciteWords, startIndex);
   }, [activeVerse, preloadPlayer, recite, reciteWords, stopInlineVerse, verses]);

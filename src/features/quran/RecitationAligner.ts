@@ -82,6 +82,8 @@ export class RecitationAligner {
   private pointer: number;
   private lastMatched: number | null = null;
   private missed: string[] = [];
+  // Mot(s) gardé(s) en attente quand la position n'est pas sûre : un seul mot ne suffit pas à la trouver.
+  private pending: string[] = [];
 
   constructor(private readonly words: readonly ReciteWord[], startIndex = 0) {
     this.pointer = Math.max(0, Math.min(startIndex, words.length));
@@ -99,13 +101,19 @@ export class RecitationAligner {
    * n'est accepté que si une bonne part de ce qui a été entendu suit le texte.
    */
   feedAll(heardWords: readonly string[], strict = false) {
-    const heard = heardWords.map(normalizeArabic).filter(Boolean);
+    const heard = [...this.pending, ...heardWords.map(normalizeArabic).filter(Boolean)];
+    this.pending = [];
     if (!heard.length) return [];
 
     const local = this.matchFrom(this.pointer, heard);
     // Début d'écoute, ou suite retrouvée seulement en sautant des mots : la position n'est pas sûre
     // (ex. Al-Fâtiha 1:3 = fin de 1:1). On compare avec le reste de la sourate, en préférant un début de verset.
     const unsure = this.lastMatched === null || (local.first !== null && local.first - this.pointer >= 2);
+    // Un seul mot entendu et la position n'est pas sûre (ex. « الرحمن » est dans 1:1 et 1:3) : on attend le suivant.
+    if (unsure && heard.length < 2) {
+      this.pending = heard;
+      return [];
+    }
     // Passages presque identiques (histoires parallèles, refrains) : un passage qui correspond mieux l'emporte.
     const partial = local.hits < heard.length && heard.length >= RELOCATE_MIN_WORDS;
     if (partial || (unsure && heard.length >= 2)) {
