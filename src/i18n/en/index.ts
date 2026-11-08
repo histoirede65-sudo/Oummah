@@ -2899,7 +2899,7 @@ export const en: Partial<Record<TranslationKey, string>> = {
   'notif.hadithDesc': 'An authentic reminder every evening',
   'notif.goals': 'Goals reminder',
   'notif.goalsDesc': 'A reminder if you still have goals to complete',
-  'notif.muhasabah': 'My Muhasabah',
+  'notif.muhasabah': 'My daily reflection',
   'notif.muhasabahDesc': 'An evening reminder to reflect on your day',
   'notif.wakeBody': 'Start your day with the authentic supplication on waking.',
   'notif.morningBody': 'Start the day with the authentic morning adhkar.',

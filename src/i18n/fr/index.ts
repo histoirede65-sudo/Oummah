@@ -2908,7 +2908,7 @@ export const fr = {
   'notif.hadithDesc': 'Un rappel authentique chaque soir',
   'notif.goals': 'Rappel des objectifs',
   'notif.goalsDesc': 'Un rappel s’il te reste des objectifs à accomplir',
-  'notif.muhasabah': 'Ma Muhâsabah',
+  'notif.muhasabah': 'Mon bilan du jour',
   'notif.muhasabahDesc': 'Un rappel le soir pour faire ton bilan',
   'notif.wakeBody': 'Commencez votre journée avec l’invocation authentique du réveil.',
   'notif.morningBody': 'Commencez la journée avec les adhkār authentiques du matin.',

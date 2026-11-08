@@ -3,7 +3,7 @@ import * as Haptics from 'expo-haptics';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
-import { ActivityIndicator, Alert, InputAccessoryView, Keyboard, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Switch, Text, TextInput, View, type StyleProp, type ViewStyle } from 'react-native';
+import { ActivityIndicator, Alert, Dimensions, InputAccessoryView, Keyboard, Platform, Pressable, ScrollView, StyleSheet, Switch, Text, TextInput, View, type StyleProp, type ViewStyle } from 'react-native';
 import type { ScrollViewInstance, TextInputInstance } from 'react-native';
 import Reanimated, { Easing, FadeIn, FadeInDown, ZoomIn } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -15,7 +15,6 @@ import {
 } from '../features/muhasabah/MuhasabahService';
 import { muhasabahLocale, muhasabahText, type MuhasabahStringKey } from '../features/muhasabah/muhasabahStrings';
 import { cancelTodayMuhasabahReminder, getMuhasabahReminderState, setMuhasabahReminderEnabled } from '../features/notifications/NotificationCenter';
-import { SURAHS } from '../data/surahs';
 import { ARABIC_READING_FONT_FAMILY } from '../features/quran/ArabicReadingPresentation';
 import { useI18n } from '../i18n';
 import { colors } from '../theme/colors';
@@ -48,27 +47,16 @@ const sameDraft = (a: MuhasabahDraft, b: MuhasabahDraft) => a.goodDeeds.trim() =
 const shiftDay = (date: string, delta: number) => { const d = new Date(`${date}T12:00:00`); d.setDate(d.getDate() + delta); return localDateKey(d); };
 
 type DisplayActivity = { id: string; kind: MuhasabahActivityKind; title: string; detail: string };
-const verseOrder = (key: string) => { const [surah, verse] = key.split(':').map(Number); return (surah || 0) * 1000 + (verse || 0); };
 
-/** Lectures du jour affichées dans la langue de l'app ; les versets du Coran sont regroupés en une ligne. */
+/** Lectures du jour : une ligne par type avec le nombre (pas une ligne par verset). */
 function displayActivities(list: MuhasabahActivity[], t: T): DisplayActivity[] {
-  // Un verset passé à l'écran n'est pas forcément lu : on montre la sourate et le passage, sans compter.
-  const verses = list.filter((item) => item.kind === 'quran_verse').map((item) => item.reference.replace(/^quran:/, '')).sort((a, b) => verseOrder(a) - verseOrder(b));
-  const bySurah = new Map<number, string[]>();
-  for (const key of verses) { const surah = Number(key.split(':')[0]); bySurah.set(surah, [...(bySurah.get(surah) ?? []), key]); }
-  const result: DisplayActivity[] = [];
-  for (const [surah, keys] of bySurah) {
-    const range = keys.length === 1 ? keys[0] : `${keys[0]} → ${keys[keys.length - 1]}`;
-    const name = SURAHS.find((item) => item.id === surah)?.transliteration ?? String(surah);
-    result.push({ id: `quran-${surah}`, kind: 'quran_verse', title: t('act_quran'), detail: t('act_quranSurah', { surah: name, range }) });
-  }
-  for (const item of list) {
-    if (item.kind === 'quran_verse') continue;
-    const title = item.kind === 'tafsir' ? t('act_tafsir') : item.kind === 'hadith' ? t('act_hadith') : item.kind === 'dua' ? t('act_dua') : item.kind === 'dhikr' ? t('act_dhikr') : t('act_content');
-    const detail = item.kind === 'tafsir' ? t('act_tafsirDetail', { ref: item.reference.replace(/^tafsir:/, '') }) : item.detail;
-    result.push({ id: item.id, kind: item.kind, title, detail });
-  }
-  return result;
+  const order: MuhasabahActivityKind[] = ['quran_verse', 'tafsir', 'hadith', 'dua', 'dhikr', 'content'];
+  const titles: Record<MuhasabahActivityKind, MuhasabahStringKey> = { quran_verse: 'act_quran', tafsir: 'act_tafsir', hadith: 'act_hadith', dua: 'act_dua', dhikr: 'act_dhikr', content: 'act_content' };
+  const counts: Record<MuhasabahActivityKind, MuhasabahStringKey> = { quran_verse: 'act_quranCount', tafsir: 'act_tafsirCount', hadith: 'act_hadithCount', dua: 'act_duaCount', dhikr: 'act_dhikrCount', content: 'act_contentCount' };
+  return order.flatMap((kind) => {
+    const count = list.filter((item) => item.kind === kind).length;
+    return count ? [{ id: kind, kind, title: t(titles[kind]), detail: t(counts[kind], { count }) }] : [];
+  });
 }
 
 function calendarDays(cursor: Date) {
@@ -119,6 +107,7 @@ export default function MuhasabahScreen() {
   const [activities, setActivities] = useState<MuhasabahActivity[]>([]);
   const [commitments, setCommitments] = useState<MuhasabahCommitment[]>([]);
   const [tab, setTab] = useState<Tab>('today');
+  const [reviewDate, setReviewDate] = useState<string | null>(null);
   const [month, setMonth] = useState(() => new Date());
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState(false);
@@ -171,11 +160,20 @@ export default function MuhasabahScreen() {
   }, [applyDate, t]);
   const loadReminder = useCallback(() => { void getMuhasabahReminderState().then(setReminder).catch(() => setReminder(null)); }, []);
   useFocusEffect(useCallback(() => { void refresh(); loadReminder(); }, [loadReminder, refresh]));
+  const [toast, setToast] = useState<string | null>(null);
+  const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const toggleReminder = async (enabled: boolean) => {
     setReminder((previous) => (previous ? { ...previous, enabled } : previous));
     const ok = await setMuhasabahReminderEnabled(enabled).catch(() => false);
     if (!ok && enabled) Alert.alert(t('reminderDeniedTitle'), t('reminderDeniedBody'));
-    loadReminder();
+    const state = await getMuhasabahReminderState().catch(() => null);
+    setReminder(state);
+    if (ok && state) {
+      void Haptics.selectionAsync().catch(() => undefined);
+      setToast(state.enabled ? t('reminderOnToast', { time: state.time }) : t('reminderOffToast'));
+      if (toastTimer.current) clearTimeout(toastTimer.current);
+      toastTimer.current = setTimeout(() => setToast(null), 2200);
+    }
   };
 
   // Ouvert depuis le rappel du soir : directement sur la première question, clavier sorti.
@@ -202,22 +200,38 @@ export default function MuhasabahScreen() {
     draftTimer.current = setTimeout(() => { void saveDraft(userId, date, next).catch(() => undefined); }, 500);
   };
   const focusedIndex = useRef<number | null>(null);
+  const scrollY = useRef(0);
+  const viewHeight = useRef(0);
+  const keyboardHeight = useRef(0);
+  const [keyboardSpace, setKeyboardSpace] = useState(0);
   const scrollToQuestion = useCallback((index: number) => {
-    const input = inputRefs.current[index] as unknown as { measureLayout?: (relative: unknown, success: (x: number, y: number) => void, fail?: () => void) => void } | null;
+    const input = inputRefs.current[index] as unknown as { measureLayout?: (relative: unknown, success: (x: number, y: number, w: number, h: number) => void, fail?: () => void) => void } | null;
     const content = contentRef.current;
     if (!input?.measureLayout || !content) return;
-    // Le titre de la question (≈ 50 px au-dessus du champ) reste visible.
-    input.measureLayout(content, (_x, y) => scrollRef.current?.scrollTo({ y: Math.max(0, y - 70), animated: true }), () => undefined);
-  }, []);
+    input.measureLayout(content, (_x, y, _w, h) => {
+      // Zone visible : hauteur de l'écran moins le clavier (Android peut déjà avoir réduit la vue).
+      const visible = Math.min(viewHeight.current, Dimensions.get('window').height - keyboardHeight.current) - 16;
+      const top = scrollY.current + insets.top + 8;
+      const bottom = scrollY.current + visible;
+      if (y + h > bottom) scrollRef.current?.scrollTo({ y: y + h - visible, animated: true });
+      else if (y - 40 < top) scrollRef.current?.scrollTo({ y: Math.max(0, y - 40 - insets.top), animated: true });
+    }, () => undefined);
+  }, [insets.top]);
   const focusQuestion = (index: number) => {
     focusedIndex.current = index;
-    setTimeout(() => scrollToQuestion(index), 120);
+    if (keyboardHeight.current) setTimeout(() => scrollToQuestion(index), 60);
   };
   useEffect(() => {
-    const show = Keyboard.addListener(Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow', () => {
-      if (focusedIndex.current !== null) setTimeout(() => scrollToQuestion(focusedIndex.current ?? 0), Platform.OS === 'ios' ? 280 : 60);
+    const show = Keyboard.addListener(Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow', (event) => {
+      keyboardHeight.current = event.endCoordinates.height;
+      setKeyboardSpace(event.endCoordinates.height);
+      if (focusedIndex.current !== null) setTimeout(() => scrollToQuestion(focusedIndex.current ?? 0), Platform.OS === 'ios' ? 120 : 60);
     });
-    const hide = Keyboard.addListener('keyboardDidHide', () => { focusedIndex.current = null; });
+    const hide = Keyboard.addListener(Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide', () => {
+      keyboardHeight.current = 0;
+      setKeyboardSpace(0);
+      focusedIndex.current = null;
+    });
     return () => { show.remove(); hide.remove(); };
   }, [scrollToQuestion]);
   const askLogin = (body: string) => Alert.alert(t('loginTitle'), body, [{ text: t('later'), style: 'cancel' }, { text: t('openProfile'), onPress: () => router.push('/profile') }]);
@@ -305,15 +319,23 @@ export default function MuhasabahScreen() {
 
   return (
     <View style={styles.safe}>
-      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={styles.flex}>
-        <ScrollView ref={scrollRef} contentContainerStyle={{ paddingBottom: insets.bottom + 34 }} automaticallyAdjustKeyboardInsets={false} keyboardShouldPersistTaps="handled" keyboardDismissMode={Platform.OS === 'ios' ? 'interactive' : 'none'} showsVerticalScrollIndicator={false}>
+      <View style={styles.flex}>
+        <ScrollView ref={scrollRef} onLayout={(event) => { viewHeight.current = event.nativeEvent.layout.height; }} onScroll={(event) => { scrollY.current = event.nativeEvent.contentOffset.y; }} scrollEventThrottle={32} contentContainerStyle={{ paddingBottom: insets.bottom + 34 + keyboardSpace }} automaticallyAdjustKeyboardInsets={false} keyboardShouldPersistTaps="handled" keyboardDismissMode={Platform.OS === 'ios' ? 'interactive' : 'none'} showsVerticalScrollIndicator={false}>
           <View ref={contentRef} collapsable={false}>
           {/* En-tête photo */}
           <View style={styles.hero}>
             <Reanimated.Image entering={FadeIn.duration(900)} source={require('../assets/images/home/home-mosque-sunset.jpg')} resizeMode="cover" style={styles.heroImage} />
             <LinearGradient colors={['rgba(11,9,22,0.15)', 'rgba(11,9,22,0.25)', 'rgba(11,9,22,0.85)', colors.background]} locations={[0, 0.45, 0.82, 1]} style={StyleSheet.absoluteFill} />
             <Pressable onPress={() => router.back()} accessibilityRole="button" style={[styles.back, { top: insets.top + 8 }]}><Ionicons name="chevron-back" size={22} color="#fff" /></Pressable>
+            {reminder ? (
+              <Pressable accessibilityRole="switch" accessibilityState={{ checked: reminder.enabled }} accessibilityLabel={t('reminderTitle')} onPress={() => void toggleReminder(!reminder.enabled)} style={[styles.bell, { top: insets.top + 8 }, reminder.enabled && styles.bellOn]}>
+                <Ionicons name={reminder.enabled ? 'notifications' : 'notifications-off-outline'} size={17} color={reminder.enabled ? INK : '#fff'} />
+                {reminder.enabled ? <Text style={styles.bellText}>{reminder.time}</Text> : null}
+              </Pressable>
+            ) : null}
+            {toast ? <Reanimated.View entering={FadeIn.duration(200)} style={[styles.toast, { top: insets.top + 58 }]}><Text style={styles.toastText}>{toast}</Text></Reanimated.View> : null}
             <View style={[styles.heroCopy, { paddingTop: insets.top + 64 }]}>
+              <Reanimated.Text entering={FadeInDown.duration(700).delay(100)} style={styles.titleEyebrow}>{t('titleArabic')}</Reanimated.Text>
               <Reanimated.Text entering={FadeInDown.duration(700).delay(150)} style={styles.title}>{t('title')}</Reanimated.Text>
               <Reanimated.View entering={FadeInDown.duration(700).delay(260)} style={styles.heroVerse}>
                 <Pressable onPress={() => router.push('/surah/59?verse=18&direct=1' as never)} style={({ pressed }) => [styles.heroVersePress, pressed && styles.pressed]}>
@@ -468,19 +490,6 @@ export default function MuhasabahScreen() {
                   </Glass>
                 </Reanimated.View>
               ) : null}
-              {reminder ? (
-                <Reanimated.View entering={enter(1)}>
-                  <Glass style={styles.reminderRow}>
-                    <View style={[styles.bubble, { backgroundColor: reminder.enabled ? VIOLET : 'rgba(255,255,255,0.1)' }]}><Ionicons name={reminder.enabled ? 'notifications' : 'notifications-off-outline'} size={16} color={reminder.enabled ? INK : colors.textMuted} /></View>
-                    <View style={styles.flex}>
-                      <Text style={styles.reminderTitle}>{t('reminderTitle')}</Text>
-                      <Text style={styles.reminderText}>{reminder.enabled ? t(reminder.auto ? 'reminderAuto' : 'reminderFixed', { time: reminder.time }) : t('reminderOff')}</Text>
-                    </View>
-                    <Switch value={reminder.enabled} onValueChange={(value) => void toggleReminder(value)} trackColor={{ false: 'rgba(255,255,255,0.15)', true: VIOLET }} thumbColor="#fff" ios_backgroundColor="rgba(255,255,255,0.15)" />
-                  </Glass>
-                </Reanimated.View>
-              ) : null}
-
               <View style={styles.privateFooter}>
                 <Ionicons name={session ? 'lock-closed' : 'phone-portrait-outline'} size={12} color={colors.textMuted} />
                 <Text style={styles.privateFooterText}>{session ? t('privateBody') : t('privateGuestBody')}</Text>
@@ -524,8 +533,8 @@ export default function MuhasabahScreen() {
                       const future = date > today;
                       const hasEntry = entryDates.has(date);
                       return (
-                        <Pressable key={date} disabled={future} onPress={() => void openDate(date, true)} style={styles.day}>
-                          <View style={[styles.dayInner, hasEntry && styles.dayHasEntry, date === today && styles.dayToday]}>
+                        <Pressable key={date} disabled={future} onPress={() => setReviewDate(date)} style={styles.day}>
+                          <View style={[styles.dayInner, hasEntry && styles.dayHasEntry, date === today && styles.dayToday, date === reviewDate && styles.dayPicked]}>
                             <Text style={[styles.dayText, future && styles.dayFuture, hasEntry && styles.dayTextEntry]}>{Number(date.slice(-2))}</Text>
                           </View>
                           {activityDates.has(date) ? <View style={styles.activityDot} /> : null}
@@ -540,10 +549,33 @@ export default function MuhasabahScreen() {
                 </Glass>
               </Reanimated.View>
 
+              {reviewDate ? (() => {
+                const picked = entries.find((item) => item.entryDate === reviewDate) ?? null;
+                const pickedActivities = displayActivities(activities.filter((item) => item.activityDate === reviewDate), t);
+                return (
+                  <Reanimated.View key={reviewDate} entering={FadeInDown.duration(300)}>
+                    <Glass tint={GOLD} style={styles.cardPad}>
+                      <Text style={styles.feedDate}>{longDate(reviewDate)}</Text>
+                      {picked ? <>
+                        <PreviewLine color={GREEN} text={picked.goodDeeds} full />
+                        <PreviewLine color={AMBER} text={picked.couldImprove} full />
+                        <PreviewLine color={VIOLET} text={picked.effort} full />
+                        {picked.effortResult ? <Text style={[styles.feedResult, { color: picked.effortResult === 'done' ? GREEN : picked.effortResult === 'partial' ? GOLD : colors.textMuted }]}>{t(`goalResult_${picked.effortResult}` as MuhasabahStringKey)}</Text> : null}
+                      </> : <Text style={[styles.emptyText, { textAlign: 'left' }]}>{t('noEntry')}</Text>}
+                      {pickedActivities.length ? <View style={styles.monthSection}>{pickedActivities.map((activity) => <ActivityLine key={activity.id} activity={activity} />)}</View> : null}
+                      <Pressable onPress={() => void openDate(reviewDate, true)} style={styles.outlineButton}>
+                        <Ionicons name={picked ? 'create-outline' : 'add'} size={16} color={GOLD} />
+                        <Text style={styles.outlineButtonText}>{picked ? t('editEntry') : t('writeEntry')}</Text>
+                      </Pressable>
+                    </Glass>
+                  </Reanimated.View>
+                );
+              })() : <Text style={styles.reviewHint}>{t('reviewPick')}</Text>}
+
               <Text style={styles.feedTitle}>{t('monthFeed')}</Text>
               {monthEntries.length ? monthEntries.map((item, index) => (
                 <Reanimated.View key={item.id} entering={enter(2 + Math.min(index, 5))}>
-                  <Pressable onPress={() => void openDate(item.entryDate, true)} style={({ pressed }) => [pressed && styles.pressed]}>
+                  <Pressable onPress={() => { setReviewDate(item.entryDate); scrollRef.current?.scrollTo({ y: 0, animated: true }); }} style={({ pressed }) => [pressed && styles.pressed]}>
                     <Glass style={styles.cardPad}>
                       <View style={styles.feedHeader}><Text style={styles.feedDate}>{longDate(item.entryDate)}</Text><Ionicons name="chevron-forward" size={16} color={colors.textMuted} /></View>
                       <PreviewLine color={GREEN} text={item.goodDeeds} />
@@ -562,7 +594,7 @@ export default function MuhasabahScreen() {
           </View>
           </View>
         </ScrollView>
-      </KeyboardAvoidingView>
+      </View>
       {Platform.OS === 'ios' ? <InputAccessoryView nativeID="muhasabah-input"><View style={styles.accessory}><Pressable onPress={Keyboard.dismiss}><Text style={styles.done}>{t('done')}</Text></Pressable></View></InputAccessoryView> : null}
     </View>
   );
@@ -581,8 +613,8 @@ function ActivityLine({ activity }: { activity: DisplayActivity }) {
   );
 }
 
-function PreviewLine({ color, text }: { color: string; text: string }) {
-  return text ? <View style={styles.previewLine}><View style={[styles.previewDot, { backgroundColor: color }]} /><Text numberOfLines={3} style={styles.previewText}>{text}</Text></View> : null;
+function PreviewLine({ color, text, full }: { color: string; text: string; full?: boolean }) {
+  return text ? <View style={styles.previewLine}><View style={[styles.previewDot, { backgroundColor: color }]} /><Text numberOfLines={full ? undefined : 3} style={styles.previewText}>{text}</Text></View> : null;
 }
 
 function CollapsibleSection({ title, children }: { title: string; children: ReactNode }) {
@@ -687,7 +719,7 @@ const styles: any = StyleSheet.create({
   heroImage: { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, width: '100%' },
   back: { position: 'absolute', left: 16, width: 42, height: 42, borderRadius: 21, alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(15,10,28,0.45)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.22)', zIndex: 2 },
   heroCopy: { alignItems: 'center', paddingHorizontal: 28 },
-  title: { color: '#fff', fontFamily: typography.serifMedium, fontSize: 40, textAlign: 'center', textShadowColor: 'rgba(0,0,0,0.45)', textShadowRadius: 14, textShadowOffset: { width: 0, height: 2 } },
+  title: { color: '#fff', fontFamily: typography.serifMedium, fontSize: 36, textAlign: 'center', textShadowColor: 'rgba(0,0,0,0.45)', textShadowRadius: 14, textShadowOffset: { width: 0, height: 2 } },
   intro: { color: 'rgba(255,255,255,0.88)', fontFamily: typography.sans, fontSize: 15, lineHeight: 21, marginTop: 8, textAlign: 'center', textShadowColor: 'rgba(0,0,0,0.5)', textShadowRadius: 10 },
   body: { paddingHorizontal: 16, marginTop: -64 },
   glass: { borderRadius: 22, borderWidth: 1, borderColor: 'rgba(255,255,255,0.13)', backgroundColor: 'rgba(36,28,52,0.62)', overflow: 'hidden', marginBottom: 12 },
@@ -696,6 +728,16 @@ const styles: any = StyleSheet.create({
   reminderRow: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingHorizontal: 14, paddingVertical: 11 },
   reminderTitle: { color: colors.text, fontWeight: '700', fontSize: 14 },
   reminderText: { color: colors.textMuted, fontSize: 12, marginTop: 1 },
+  titleEyebrow: { color: GOLD, fontSize: 11, letterSpacing: 2.4, fontWeight: '700', textAlign: 'center', marginBottom: 2, textShadowColor: 'rgba(0,0,0,0.6)', textShadowRadius: 8 },
+  bell: { position: 'absolute', right: 16, height: 42, minWidth: 42, paddingHorizontal: 11, borderRadius: 21, flexDirection: 'row', gap: 5, alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(15,10,28,0.45)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.22)', zIndex: 2 },
+  bellOn: { backgroundColor: GOLD, borderColor: GOLD },
+  bellText: { color: INK, fontSize: 12, fontWeight: '800' },
+  toast: { position: 'absolute', right: 16, paddingHorizontal: 12, paddingVertical: 7, borderRadius: 12, backgroundColor: 'rgba(15,10,28,0.85)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.15)', zIndex: 3 },
+  toastText: { color: '#fff', fontSize: 12, fontWeight: '600' },
+  dayPicked: { borderWidth: 2, borderColor: '#fff' },
+  reviewHint: { color: colors.textMuted, fontSize: 13, textAlign: 'center', marginVertical: 6 },
+  outlineButton: { marginTop: 14, minHeight: 42, borderRadius: 21, borderWidth: 1, borderColor: GOLD, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 6 },
+  outlineButtonText: { color: GOLD, fontWeight: '700', fontSize: 14 },
   heroVerse: { marginTop: 14, alignSelf: 'stretch' },
   heroVersePress: { alignItems: 'center', paddingHorizontal: 4 },
   privateFooter: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, marginTop: 14, paddingHorizontal: 10 },
@@ -745,10 +787,10 @@ const styles: any = StyleSheet.create({
   optionalTag: { color: colors.textMuted, fontSize: 11, fontStyle: 'italic' },
   input: { minHeight: 64, maxHeight: 190, marginTop: 11, paddingHorizontal: 13, paddingVertical: 11, borderRadius: 15, borderWidth: 1, borderColor: 'rgba(255,255,255,0.09)', backgroundColor: 'rgba(8,6,18,0.45)', color: colors.text, fontFamily: typography.sans, fontSize: 14, lineHeight: 20 },
   draftNote: { color: colors.textMuted, fontSize: 12, textAlign: 'center', marginBottom: 8 },
-  saveWrap: { marginTop: 6, marginHorizontal: 18, borderRadius: 28, shadowColor: '#F2B53D', shadowOpacity: 0.55, shadowRadius: 18, shadowOffset: { width: 0, height: 4 }, elevation: 8 },
-  save: { minHeight: 56, borderRadius: 28, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 9 },
+  saveWrap: { marginTop: 6, alignSelf: 'center', minWidth: 230, borderRadius: 24, shadowColor: '#F2B53D', shadowOpacity: 0.55, shadowRadius: 18, shadowOffset: { width: 0, height: 4 }, elevation: 8 },
+  save: { minHeight: 48, borderRadius: 24, paddingHorizontal: 26, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 8 },
   saveDisabled: { opacity: 0.55, shadowOpacity: 0 },
-  saveText: { color: INK, fontFamily: typography.sans, fontWeight: '800', fontSize: 16 },
+  saveText: { color: INK, fontFamily: typography.sans, fontWeight: '800', fontSize: 15, textAlign: 'center' },
   savedCard: { flexDirection: 'row', alignItems: 'center', gap: 13, padding: 15, marginTop: 4 },
   savedCheck: { width: 46, height: 46, borderRadius: 23, backgroundColor: GREEN, alignItems: 'center', justifyContent: 'center', shadowColor: GREEN, shadowOpacity: 0.6, shadowRadius: 12, shadowOffset: { width: 0, height: 0 } },
   savedTitle: { color: colors.text, fontWeight: '800', fontSize: 16 },
