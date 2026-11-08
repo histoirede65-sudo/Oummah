@@ -17,6 +17,7 @@ import { typography } from "../../theme/typography";
 import { useI18n } from "../../i18n";
 import { goalProgressBridge } from "../../features/daily-goals/services/goalProgressBridge";
 import { loadReadConfirmations, onLocalMidnight, setReadConfirmation } from "../../features/reading-progress/ReadingValidationStore";
+import { recordActivity } from "../../features/muhasabah/MuhasabahService";
 
 export default function HadithDetailScreen() {
   const { language, t } = useI18n();
@@ -45,6 +46,7 @@ export default function HadithDetailScreen() {
     void Promise.all([hadithRepository.get(hadithId, language), hadithLibraryService.isFavorite(hadithId)]).then(([value, saved]) => {
       if (!active) return;
       setHadith(value); setFavorite(saved); void hadithLibraryService.markRead(value);
+      void recordActivity({ kind: 'hadith', title: 'Lecture d’un hadith', detail: hadithDisplayTitle(value) || value.reference || `Hadith ${value.id}`, reference: `hadith:${value.id}` }).catch(() => undefined);
       void loadReadConfirmations('hadith').then(ids => {
         if (active) setReadingConfirmed(ids.has(String(value.id)));
       });
