@@ -101,7 +101,6 @@ export function useRecitationFollow() {
       revealQueue.current.push(...words);
       if (!revealTimer.current) revealNext();
     }
-    if (aligner.current.finished) wanted.current = false;
   }, [revealNext]);
 
   const stop = useCallback(() => {
@@ -230,7 +229,6 @@ export function useRecitationFollow() {
         const fresh = heard.slice(consumed.current);
         consumed.current = event.isFinal ? 0 : heard.length;
         applyWords(fresh);
-        if (aligner.current?.finished) stop();
       }) as (payload: never) => void),
       // Android (et iOS ancien) s'arrête après un silence : on relance tant que l'utilisateur n'a pas arrêté.
       speech.addListener('end', (() => {

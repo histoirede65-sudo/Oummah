@@ -51,6 +51,17 @@ export function wordsMatch(heard: string, expected: string) {
   return 1 - distance(heard, expected) / longest >= 0.6;
 }
 
+/**
+ * Plus souple, seulement pour le mot attendu juste après la position actuelle : un mot coupé entre deux
+ * morceaux (fragment de début ou de fin, 3 lettres au moins) ou allongé en fin de verset.
+ */
+function nextWordMatch(heard: string, expected: string) {
+  if (wordsMatch(heard, expected)) return true;
+  if (heard.length < 3 || expected.length < 4) return false;
+  if (expected.startsWith(heard) || expected.endsWith(heard)) return true;
+  return 1 - distance(heard, expected) / Math.max(heard.length, expected.length) >= 0.5;
+}
+
 const LOOKAHEAD = 3;
 // Mots entendus non placés gardés pour retrouver où l'on est dans la sourate.
 const MISSED_WINDOW = 10;
@@ -113,7 +124,9 @@ export class RecitationAligner {
     const matches: ReciteWord[] = [];
     for (const word of heard) {
       for (let offset = 0; offset <= LOOKAHEAD && pointer + offset < this.words.length; offset += 1) {
-        if (wordsMatch(word, this.words[pointer + offset].norm)) {
+        const expected = this.words[pointer + offset].norm;
+        const loose = start === this.pointer && offset === 0;
+        if (loose ? nextWordMatch(word, expected) : wordsMatch(word, expected)) {
           last = pointer + offset;
           // Mots sautés (perdus entre deux morceaux, mal entendus) : forcément lus, on les allume aussi,
           // sauf avant le tout premier mot retrouvé (on ne sait pas d'où l'utilisateur est parti).
