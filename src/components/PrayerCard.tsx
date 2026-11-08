@@ -14,7 +14,6 @@ import {
   AppState,
   Alert,
   Easing,
-  InteractionManager,
   Linking,
   Modal,
   Platform,
@@ -26,6 +25,7 @@ import {
   useWindowDimensions,
   View,
 } from "react-native";
+import { scheduleIdle } from "../utils/scheduleIdle";
 
 import {
   getMosquePrayerSchedule,
@@ -715,7 +715,7 @@ export default function PrayerCard({ onScheduleChange }: { onScheduleChange?: (s
   useFocusEffect(
     useCallback(() => {
       setOrbitLayoutReady(false);
-      const task = InteractionManager.runAfterInteractions(() => {
+      const task = scheduleIdle(() => {
         setOrbitLayoutReady(true);
       });
       return () => task.cancel();

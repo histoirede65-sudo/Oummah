@@ -18,6 +18,7 @@ import { useCallback, useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { useI18n } from "../../i18n";
+import { muhasabahText } from "../../features/muhasabah/muhasabahStrings";
 import { colors } from "../../theme/colors";
 import { getMyUnreadSupportCount } from "../../features/support/SupportService";
 import { typography } from "../../theme/typography";
@@ -348,6 +349,19 @@ export default function ProfileScreen() {
             <Ionicons name="chevron-forward" size={19} color={colors.goldLight} />
           </Pressable>
         ) : null}
+
+        <Pressable
+          accessibilityRole="button"
+          onPress={() => router.push("/muhasabah")}
+          style={({ pressed }) => [styles.supportButton, pressed && styles.premiumButtonPressed]}
+        >
+          <Ionicons name="create-outline" size={20} color={colors.goldLight} />
+          <View style={styles.supportButtonCopy}>
+            <Text style={styles.supportButtonTitle}>{muhasabahText(language)("title")}</Text>
+            <Text style={styles.supportButtonSubtitle}>{muhasabahText(language)("homeDefault")}</Text>
+          </View>
+          <Ionicons name="chevron-forward" size={19} color={colors.goldLight} />
+        </Pressable>
 
 
         <Pressable
