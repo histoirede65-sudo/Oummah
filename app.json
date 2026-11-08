@@ -7,7 +7,6 @@
     "scheme": "oummah",
     "userInterfaceStyle": "automatic",
     "icon": "./assets/images/icon.png",
-    "newArchEnabled": true,
     "ios": {
       "bundleIdentifier": "com.oummah.app",
       "supportsTablet": true,
@@ -41,7 +40,6 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
       },
-      "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
       "runtimeVersion": "1.0.0"
     },
@@ -90,7 +88,14 @@
         }
       ],
       "expo-video",
-      "expo-localization"
+      "expo-localization",
+      [
+        "expo-speech-recognition",
+        {
+          "microphonePermission": "OUMMAH utilise le micro pour suivre ta récitation du Coran et illuminer les mots que tu lis.",
+          "speechRecognitionPermission": "OUMMAH reconnaît ta récitation pour illuminer les mots du Coran pendant que tu lis."
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": false,

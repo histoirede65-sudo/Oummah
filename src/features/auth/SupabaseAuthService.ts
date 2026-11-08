@@ -1,7 +1,7 @@
 import { translate } from "../../i18n/translate";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { storageService } from "../../core/storage/StorageService";
 import { revenueCatPaymentProvider } from "../premium/RevenueCatPaymentProvider";
-import AuthFallbackStorage from "expo-sqlite/kv-store";
 
 const SESSION_KEY = "oummah.auth.session.v1";
 const HANDLED_MAGIC_LINKS_KEY = "oummah.auth.handled-magic-links.v1";
@@ -91,7 +91,7 @@ async function saveSession(value: SupabaseSessionResponse) {
     await storageService.set(SESSION_KEY, session);
   } catch {
     try {
-      await AuthFallbackStorage.setItem(SESSION_KEY, JSON.stringify(session));
+      await AsyncStorage.setItem(SESSION_KEY, JSON.stringify(session));
     } catch {
       throw new MagicLinkError(
         "session-save-failed",
@@ -106,7 +106,7 @@ async function saveSession(value: SupabaseSessionResponse) {
 async function clearStoredSession() {
   await Promise.allSettled([
     storageService.remove(SESSION_KEY),
-    AuthFallbackStorage.removeItem(SESSION_KEY),
+    AsyncStorage.removeItem(SESSION_KEY),
   ]);
 }
 
@@ -415,10 +415,10 @@ export async function getStoredSession() {
     const session = await storageService.get<SupabaseAuthSession>(SESSION_KEY);
     if (session) return session;
   } catch {
-    // Le stockage SQLite de secours est vérifié juste après.
+    // Le stockage AsyncStorage de secours est vérifié juste après.
   }
 
-  const fallbackSession = await AuthFallbackStorage.getItem(SESSION_KEY);
+  const fallbackSession = await AsyncStorage.getItem(SESSION_KEY);
   return fallbackSession
     ? JSON.parse(fallbackSession) as SupabaseAuthSession
     : null;
