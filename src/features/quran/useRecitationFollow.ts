@@ -21,6 +21,10 @@ const speech = requireOptionalNativeModule<SpeechModule>('ExpoSpeechRecognition'
 const SEGMENT_MS = 2500;
 // En dessous (dB), le morceau est considéré comme silencieux.
 const SILENCE_DB = -42;
+// Au-delà de ce retard (mots en attente), on rattrape directement.
+const MAX_BACKLOG = 6;
+// Surlignage gardé après l'arrêt (ms).
+const LINGER_MS = 4000;
 
 async function transcribeOnServer(uri: string, hint: string): Promise<string> {
   const url = process.env.EXPO_PUBLIC_SUPABASE_URL?.trim().replace(/\/$/, '');
@@ -49,6 +53,9 @@ async function transcribeOnServer(uri: string, hint: string): Promise<string> {
  */
 export function useRecitationFollow() {
   const [listening, setListening] = useState(false);
+  // Surlignage affiché : pendant l'écoute, puis le temps d'allumer les derniers mots et quelques secondes après.
+  const [following, setFollowing] = useState(false);
+  const lingerTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [current, setCurrent] = useState<RecitePosition | null>(null);
   const [error, setError] = useState<ReciteError | null>(null);
   const aligner = useRef<RecitationAligner | null>(null);
@@ -63,12 +70,24 @@ export function useRecitationFollow() {
   const revealQueue = useRef<RecitePosition[]>([]);
   const revealTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const revealNext = useCallback(() => {
+    // Trop de retard accumulé : on rattrape directement pour rester collé à la voix.
+    if (revealQueue.current.length > MAX_BACKLOG) revealQueue.current = revealQueue.current.slice(-MAX_BACKLOG);
     const word = revealQueue.current.shift();
     if (!word) { revealTimer.current = null; return; }
     setCurrent(word);
-    // Rythme proche d'une récitation : réparti sur la durée d'un morceau, entre 450 et 900 ms par mot.
-    const delay = Math.min(900, Math.max(450, SEGMENT_MS / Math.max(1, revealQueue.current.length + 1)));
+    // Rythme adapté : les mots en attente s'allument en un morceau de temps, plus vite si l'on récite vite.
+    const delay = Math.min(650, Math.max(120, (SEGMENT_MS * 0.9) / Math.max(1, revealQueue.current.length + 1)));
     revealTimer.current = setTimeout(revealNext, delay);
+  }, []);
+
+  /** Fin de session : les derniers mots s'allument, le surlignage reste visible un moment puis disparaît. */
+  const finishFollowing = useCallback(() => {
+    const waitQueue = () => {
+      if (revealTimer.current || revealQueue.current.length) { setTimeout(waitQueue, 150); return; }
+      if (lingerTimer.current) clearTimeout(lingerTimer.current);
+      lingerTimer.current = setTimeout(() => { if (!wanted.current) setFollowing(false); }, LINGER_MS);
+    };
+    waitQueue();
   }, []);
 
   const applyWords = useCallback((heard: readonly string[], paced = false) => {
@@ -86,11 +105,22 @@ export function useRecitationFollow() {
   }, [revealNext]);
 
   const stop = useCallback(() => {
+    if (!wanted.current) return;
+    wanted.current = false;
+    setListening(false);
+    // Mode téléphone : le dernier résultat arrive après l'arrêt. Mode serveur : la boucle envoie le morceau en cours.
+    try { speech?.stop(); } catch { /* déjà arrêté */ }
+    if (speech && options.current) finishFollowing();
+  }, [finishFollowing]);
+
+  /** Arrêt immédiat (erreur) : rien n'est envoyé, le surlignage disparaît. */
+  const abortAll = useCallback(() => {
     wanted.current = false;
     revealQueue.current = [];
     if (revealTimer.current) { clearTimeout(revealTimer.current); revealTimer.current = null; }
     setListening(false);
-    try { speech?.stop(); } catch { /* déjà arrêté */ }
+    setFollowing(false);
+    try { speech?.abort(); } catch { /* déjà arrêté */ }
     void recorder.stop().catch(() => undefined);
     void setAudioModeAsync({ allowsRecording: false, playsInSilentMode: true }).catch(() => undefined);
   }, [recorder]);
@@ -102,11 +132,10 @@ export function useRecitationFollow() {
     try {
       speech.start(options.current);
     } catch {
-      wanted.current = false;
-      setListening(false);
+      abortAll();
       setError('failed');
     }
-  }, []);
+  }, [abortAll]);
 
   // ----- Mode serveur : morceaux de 2,5 s, envoyés pendant que le suivant s'enregistre, traités dans l'ordre. -----
   const serverLoop = useCallback(async () => {
@@ -118,7 +147,8 @@ export function useRecitationFollow() {
         // Volume mesuré pendant le morceau : un morceau silencieux n'est pas envoyé.
         loudest = -160;
         const started = Date.now();
-        while (Date.now() - started < SEGMENT_MS) {
+        // Arrêt demandé : on coupe le morceau en cours et on l'envoie quand même (fin du verset).
+        while (Date.now() - started < SEGMENT_MS && wanted.current) {
           await new Promise((resolve) => setTimeout(resolve, 100));
           const level = recorder.getStatus().metering;
           if (typeof level === 'number' && level > loudest) loudest = level;
@@ -126,7 +156,7 @@ export function useRecitationFollow() {
         await recorder.stop();
       } catch (reason) {
         if (__DEV__) console.info('[RECITE] enregistrement impossible', reason);
-        stop();
+        abortAll();
         setError('failed');
         return;
       }
@@ -150,23 +180,29 @@ export function useRecitationFollow() {
           serverFailures.current += 1;
           // Service absent (non déployé) : inutile d'insister, on le dit tout de suite.
           const missing = reason instanceof Error && reason.message === 'TRANSCRIBE_404';
-          if ((missing || serverFailures.current >= 3) && wanted.current) { stop(); setError(missing ? 'server' : 'failed'); }
+          if ((missing || serverFailures.current >= 3) && wanted.current) { abortAll(); setError(missing ? 'server' : 'failed'); }
         }
       });
     }
-    if (!wanted.current) setListening(false);
-  }, [applyWords, recorder, stop]);
+    setListening(false);
+    void setAudioModeAsync({ allowsRecording: false, playsInSilentMode: true }).catch(() => undefined);
+    // Les derniers morceaux envoyés s'allument avant de terminer.
+    await serverChain.current.catch(() => undefined);
+    finishFollowing();
+  }, [abortAll, applyWords, finishFollowing, recorder]);
 
   const start = useCallback(async (words: readonly ReciteWord[], startIndex: number) => {
     setError(null);
     setCurrent(null);
     revealQueue.current = [];
+    if (lingerTimer.current) clearTimeout(lingerTimer.current);
+    setFollowing(true);
     aligner.current = new RecitationAligner(words, startIndex);
     const contextual = [...new Set(words.slice(startIndex, startIndex + 120).map((word) => word.text ?? word.norm).filter(Boolean))].slice(0, 100);
 
     if (speech && speech.isRecognitionAvailable()) {
       const permission = await speech.requestPermissionsAsync().catch(() => null);
-      if (!permission?.granted) { setError('permission'); return false; }
+      if (!permission?.granted) { setError('permission'); setFollowing(false); return false; }
       options.current = { lang: 'ar-SA', interimResults: true, continuous: true, addsPunctuation: false, maxAlternatives: 1, contextualStrings: contextual };
       wanted.current = true;
       setListening(true);
@@ -174,9 +210,10 @@ export function useRecitationFollow() {
       return true;
     }
 
-    if (!(await getValidSession().catch(() => null))) { setError('login'); return false; }
+    options.current = null;
+    if (!(await getValidSession().catch(() => null))) { setError('login'); setFollowing(false); return false; }
     const permission = await requestRecordingPermissionsAsync().catch(() => null);
-    if (!permission?.granted) { setError('permission'); return false; }
+    if (!permission?.granted) { setError('permission'); setFollowing(false); return false; }
     await setAudioModeAsync({ allowsRecording: true, playsInSilentMode: true }).catch(() => undefined);
     serverFailures.current = 0;
     wanted.current = true;
@@ -202,20 +239,19 @@ export function useRecitationFollow() {
       speech.addListener('error', ((event: ExpoSpeechRecognitionErrorEvent) => {
         if (event.error === 'no-speech' || event.error === 'speech-timeout' || event.error === 'aborted') return;
         setError(event.error === 'not-allowed' ? 'permission' : 'failed');
-        wanted.current = false;
-        setListening(false);
+        abortAll();
       }) as (payload: never) => void),
     ];
     return () => {
       subscriptions.forEach((subscription) => subscription.remove());
       try { speech.abort(); } catch { /* rien à arrêter */ }
     };
-  }, [applyWords, beginNative, stop]);
+  }, [abortAll, applyWords, beginNative, stop]);
 
   useEffect(() => () => {
     wanted.current = false;
     void setAudioModeAsync({ allowsRecording: false, playsInSilentMode: true }).catch(() => undefined);
   }, []);
 
-  return { listening, current, error, start, stop };
+  return { listening, following, current, error, start, stop };
 }

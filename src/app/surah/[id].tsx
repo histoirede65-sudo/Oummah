@@ -1051,7 +1051,7 @@ export default function SurahReadingScreen() {
       ),
     [verses],
   );
-  const reciteActive = recite.listening && recite.current !== null && activeVerse?.verseKey === recite.current.verseKey;
+  const reciteActive = recite.following && recite.current !== null && activeVerse?.verseKey === recite.current.verseKey;
   const activeWordState = useMemo(
     () =>
       reciteActive && recite.current
@@ -1063,13 +1063,13 @@ export default function SurahReadingScreen() {
     [audioWordState, recite.current, reciteActive],
   );
   useEffect(() => {
-    if (!recite.listening || !recite.current) return;
+    if (!recite.following || !recite.current) return;
     if (activeVerse?.verseKey === recite.current.verseKey) return;
     const index = verses.findIndex((verse) => verse.verseKey === recite.current?.verseKey);
     if (index < 0) return;
     setActiveVerse(verses[index]);
     listRef.current?.scrollToIndex({ index, animated: true, viewPosition: 0.15 });
-  }, [activeVerse?.verseKey, recite.current, recite.listening, verses]);
+  }, [activeVerse?.verseKey, recite.current, recite.following, verses]);
   useEffect(() => {
     if (!recite.error) return;
     Alert.alert(
