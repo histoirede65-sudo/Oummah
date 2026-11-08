@@ -805,7 +805,7 @@ const styles: any = StyleSheet.create({
   optionalTag: { color: colors.textMuted, fontSize: 11, fontStyle: 'italic' },
   input: { minHeight: 64, maxHeight: 190, marginTop: 11, paddingHorizontal: 13, paddingVertical: 11, borderRadius: 15, borderWidth: 1, borderColor: 'rgba(255,255,255,0.09)', backgroundColor: 'rgba(8,6,18,0.45)', color: colors.text, fontFamily: typography.sans, fontSize: 14, lineHeight: 20 },
   draftNote: { color: colors.textMuted, fontSize: 12, textAlign: 'center', marginTop: 8 },
-  saveWrap: { marginTop: -2, alignSelf: 'center', minWidth: 230, borderRadius: 24, shadowColor: '#F2B53D', shadowOpacity: 0.55, shadowRadius: 18, shadowOffset: { width: 0, height: 4 }, elevation: 8 },
+  saveWrap: { marginTop: -8, alignSelf: 'center', minWidth: 230, borderRadius: 24, shadowColor: '#F2B53D', shadowOpacity: 0.55, shadowRadius: 18, shadowOffset: { width: 0, height: 4 }, elevation: 8 },
   save: { minHeight: 48, borderRadius: 24, paddingHorizontal: 26, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 8 },
   saveDisabled: { opacity: 0.55, shadowOpacity: 0 },
   saveText: { color: INK, fontFamily: typography.sans, fontWeight: '800', fontSize: 15, textAlign: 'center' },
