@@ -108,6 +108,13 @@ export default function MuhasabahScreen() {
   const [commitments, setCommitments] = useState<MuhasabahCommitment[]>([]);
   const [tab, setTab] = useState<Tab>('today');
   const [reviewDate, setReviewDate] = useState<string | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- type d'instance de View propre à cette version de React Native
+  const pickedRef = useRef<any>(null);
+  const pickDay = (date: string) => {
+    setReviewDate(date);
+    // On amène le bilan du jour touché à l'écran, sous le calendrier.
+    setTimeout(() => pickedRef.current?.measureLayout?.(contentRef.current, (_x: number, y: number) => scrollRef.current?.scrollTo({ y: Math.max(0, y - insets.top - 12), animated: true }), () => undefined), 120);
+  };
   const [month, setMonth] = useState(() => new Date());
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState(false);
@@ -456,13 +463,13 @@ export default function MuhasabahScreen() {
                 </Reanimated.View>
               ) : (
                 <Reanimated.View entering={enter(7)}>
-                  {hasDraft ? <Text style={styles.draftNote}>{t('draftKept')}</Text> : null}
                   <Pressable disabled={saving || unchanged} onPress={() => void save()} style={({ pressed }) => [styles.saveWrap, (saving || unchanged) && styles.saveDisabled, pressed && styles.pressed]}>
                     <LinearGradient colors={['#FFD978', '#E9A93A']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.save}>
                       {saving ? <ActivityIndicator color={INK} /> : <Ionicons name={unchanged ? 'checkmark-done' : 'checkmark'} size={21} color={INK} />}
                       <Text style={styles.saveText}>{saving ? t('saving') : unchanged ? t('saved') : entry ? t('update') : t('save')}</Text>
                     </LinearGradient>
                   </Pressable>
+                  {hasDraft ? <Text style={styles.draftNote}>{t('draftKept')}</Text> : null}
                 </Reanimated.View>
               )}
               {entry ? <Pressable onPress={remove} style={styles.delete}><Text style={styles.deleteText}>{t('delete')}</Text></Pressable> : null}
@@ -533,7 +540,7 @@ export default function MuhasabahScreen() {
                       const future = date > today;
                       const hasEntry = entryDates.has(date);
                       return (
-                        <Pressable key={date} disabled={future} onPress={() => setReviewDate(date)} style={styles.day}>
+                        <Pressable key={date} disabled={future} onPress={() => pickDay(date)} style={styles.day}>
                           <View style={[styles.dayInner, hasEntry && styles.dayHasEntry, date === today && styles.dayToday, date === reviewDate && styles.dayPicked]}>
                             <Text style={[styles.dayText, future && styles.dayFuture, hasEntry && styles.dayTextEntry]}>{Number(date.slice(-2))}</Text>
                           </View>
@@ -553,15 +560,19 @@ export default function MuhasabahScreen() {
                 const picked = entries.find((item) => item.entryDate === reviewDate) ?? null;
                 const pickedActivities = displayActivities(activities.filter((item) => item.activityDate === reviewDate), t);
                 return (
-                  <Reanimated.View key={reviewDate} entering={FadeInDown.duration(300)}>
-                    <Glass tint={GOLD} style={styles.cardPad}>
-                      <Text style={styles.feedDate}>{longDate(reviewDate)}</Text>
-                      {picked ? <>
-                        <PreviewLine color={GREEN} text={picked.goodDeeds} full />
-                        <PreviewLine color={AMBER} text={picked.couldImprove} full />
-                        <PreviewLine color={VIOLET} text={picked.effort} full />
-                        {picked.effortResult ? <Text style={[styles.feedResult, { color: picked.effortResult === 'done' ? GREEN : picked.effortResult === 'partial' ? GOLD : colors.textMuted }]}>{t(`goalResult_${picked.effortResult}` as MuhasabahStringKey)}</Text> : null}
-                      </> : <Text style={[styles.emptyText, { textAlign: 'left' }]}>{t('noEntry')}</Text>}
+                  <Reanimated.View key={reviewDate} entering={FadeInDown.duration(300)} ref={pickedRef} collapsable={false}>
+                    <Glass tint={GOLD} style={styles.pickedCard}>
+                      <Text style={styles.pickedDate}>{longDate(reviewDate)}</Text>
+                      {picked ? questions.map((question, index) => picked[question.key].trim() ? (
+                        <View key={question.key} style={[styles.pickedBlock, { borderLeftColor: question.color }]}>
+                          <View style={styles.pickedHead}>
+                            <View style={[styles.bubble, { backgroundColor: question.color, width: 26, height: 26, borderRadius: 13 }]}><Ionicons name={question.icon} size={14} color={INK} /></View>
+                            <Text style={styles.pickedQuestion}>{t(index === 0 ? 'q1Day' : question.title)}</Text>
+                          </View>
+                          <Text style={styles.pickedText}>{picked[question.key].trim()}</Text>
+                          {question.key === 'effort' && picked.effortResult ? <Text style={[styles.pickedResult, { color: picked.effortResult === 'done' ? GREEN : picked.effortResult === 'partial' ? GOLD : colors.textMuted }]}>{t(`goalResult_${picked.effortResult}` as MuhasabahStringKey)}</Text> : null}
+                        </View>
+                      ) : null) : <Text style={[styles.emptyText, { textAlign: 'left', fontSize: 16 }]}>{t('noEntry')}</Text>}
                       {pickedActivities.length ? <View style={styles.monthSection}>{pickedActivities.map((activity) => <ActivityLine key={activity.id} activity={activity} />)}</View> : null}
                       <Pressable onPress={() => void openDate(reviewDate, true)} style={styles.outlineButton}>
                         <Ionicons name={picked ? 'create-outline' : 'add'} size={16} color={GOLD} />
@@ -575,7 +586,7 @@ export default function MuhasabahScreen() {
               <Text style={styles.feedTitle}>{t('monthFeed')}</Text>
               {monthEntries.length ? monthEntries.map((item, index) => (
                 <Reanimated.View key={item.id} entering={enter(2 + Math.min(index, 5))}>
-                  <Pressable onPress={() => { setReviewDate(item.entryDate); scrollRef.current?.scrollTo({ y: 0, animated: true }); }} style={({ pressed }) => [pressed && styles.pressed]}>
+                  <Pressable onPress={() => pickDay(item.entryDate)} style={({ pressed }) => [pressed && styles.pressed]}>
                     <Glass style={styles.cardPad}>
                       <View style={styles.feedHeader}><Text style={styles.feedDate}>{longDate(item.entryDate)}</Text><Ionicons name="chevron-forward" size={16} color={colors.textMuted} /></View>
                       <PreviewLine color={GREEN} text={item.goodDeeds} />
@@ -734,6 +745,13 @@ const styles: any = StyleSheet.create({
   bellText: { color: INK, fontSize: 12, fontWeight: '800' },
   toast: { position: 'absolute', right: 16, paddingHorizontal: 12, paddingVertical: 7, borderRadius: 12, backgroundColor: 'rgba(15,10,28,0.85)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.15)', zIndex: 3 },
   toastText: { color: '#fff', fontSize: 12, fontWeight: '600' },
+  pickedCard: { padding: 18 },
+  pickedDate: { color: GOLD, fontFamily: typography.serifMedium, fontSize: 26, textTransform: 'capitalize', marginBottom: 6 },
+  pickedBlock: { marginTop: 14, paddingLeft: 14, borderLeftWidth: 3 },
+  pickedHead: { flexDirection: 'row', alignItems: 'center', gap: 9 },
+  pickedQuestion: { flex: 1, color: colors.textSecondary, fontSize: 14, fontWeight: '700' },
+  pickedText: { color: colors.text, fontSize: 18, lineHeight: 27, marginTop: 8 },
+  pickedResult: { fontSize: 14, fontWeight: '800', marginTop: 8 },
   dayPicked: { borderWidth: 2, borderColor: '#fff' },
   reviewHint: { color: colors.textMuted, fontSize: 13, textAlign: 'center', marginVertical: 6 },
   outlineButton: { marginTop: 14, minHeight: 42, borderRadius: 21, borderWidth: 1, borderColor: GOLD, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 6 },
@@ -786,8 +804,8 @@ const styles: any = StyleSheet.create({
   questionTitle: { flex: 1, color: colors.text, fontFamily: typography.sans, fontWeight: '700', fontSize: 16, lineHeight: 21 },
   optionalTag: { color: colors.textMuted, fontSize: 11, fontStyle: 'italic' },
   input: { minHeight: 64, maxHeight: 190, marginTop: 11, paddingHorizontal: 13, paddingVertical: 11, borderRadius: 15, borderWidth: 1, borderColor: 'rgba(255,255,255,0.09)', backgroundColor: 'rgba(8,6,18,0.45)', color: colors.text, fontFamily: typography.sans, fontSize: 14, lineHeight: 20 },
-  draftNote: { color: colors.textMuted, fontSize: 12, textAlign: 'center', marginBottom: 8 },
-  saveWrap: { marginTop: 6, alignSelf: 'center', minWidth: 230, borderRadius: 24, shadowColor: '#F2B53D', shadowOpacity: 0.55, shadowRadius: 18, shadowOffset: { width: 0, height: 4 }, elevation: 8 },
+  draftNote: { color: colors.textMuted, fontSize: 12, textAlign: 'center', marginTop: 8 },
+  saveWrap: { marginTop: -2, alignSelf: 'center', minWidth: 230, borderRadius: 24, shadowColor: '#F2B53D', shadowOpacity: 0.55, shadowRadius: 18, shadowOffset: { width: 0, height: 4 }, elevation: 8 },
   save: { minHeight: 48, borderRadius: 24, paddingHorizontal: 26, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 8 },
   saveDisabled: { opacity: 0.55, shadowOpacity: 0 },
   saveText: { color: INK, fontFamily: typography.sans, fontWeight: '800', fontSize: 15, textAlign: 'center' },
