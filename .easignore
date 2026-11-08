@@ -27,9 +27,7 @@ Thumbs.db
 # Dépendances : EAS les réinstalle lui-même
 node_modules
 
-# Fichiers de compilation locaux (recréés à chaque build ; un build local interrompu les laisse incomplets)
-android/.gradle
-android/build
-android/app/build
-android/app/.cxx
-android/local.properties
+# Code natif généré localement (npx expo run:android / prebuild) : EAS le régénère depuis app.json.
+# Sans ça, un vieux dossier android/ (ancien SDK) était envoyé et les réglages d'app.json étaient ignorés.
+/android
+/ios
