@@ -71,7 +71,7 @@ export const CENTER_REMINDERS: ReadonlyArray<{
   { id: "verse-of-day", title: "notif.verse", description: "notif.verseDesc", section: "Inspiration", time: "13:00" },
   { id: "hadith-of-day", title: "notif.hadith", description: "notif.hadithDesc", section: "Inspiration", time: "21:00" },
   { id: "daily-goals", title: "notif.goals", description: "notif.goalsDesc", section: "Objectifs", time: "20:00" },
-  { id: "muhasabah", title: "notif.goals", description: "notif.goalsDesc", section: "Objectifs", time: "21:30" },
+  { id: "muhasabah", title: "notif.muhasabah", description: "notif.muhasabahDesc", section: "Objectifs", time: "20:30" },
 ];
 
 export const DEFAULT_NOTIFICATION_CENTER_PREFERENCES: NotificationCenterPreferences = {
@@ -100,7 +100,7 @@ export const DEFAULT_NOTIFICATION_CENTER_PREFERENCES: NotificationCenterPreferen
     "evening-dua": "20:30",
     "wake-up-dua": "06:45",
     "sleep-dua": "22:30",
-    muhasabah: "21:30",
+    muhasabah: "20:30",
   },
 };
 
@@ -477,7 +477,7 @@ export function buildNotificationCenterItems({
     { id: "enter-home-dua", time: "18:30", title: translate("notif.enterHomeTitle"), body: translate("notif.enterHomeBody"), route: "/dua?section=home&focus=enter", category: "dua", icon: "home-outline", accent: "#D8A767" },
     { id: "evening-dua", time: "20:30", title: translate("notif.evening"), body: translate("notif.eveningBody"), route: "/dua?section=evening", category: "dua", icon: "moon-outline", accent: "#8D78CB" },
     { id: "hadith-of-day", time: "21:00", title: translate("notif.hadith"), body: translate("notif.hadithBody"), route: "/hadiths?open=daily", category: "inspiration", icon: "chatbubble-ellipses-outline", accent: "#C98CBA" },
-    { id: "muhasabah", time: "21:30", title: muhasabahText(getActiveLanguage() === "en" ? "en" : "fr")("notifTitle"), body: muhasabahText(getActiveLanguage() === "en" ? "en" : "fr")("notifBody"), route: "/muhasabah?write=1", category: "inspiration", icon: "create-outline", accent: "#E3B55A" },
+    { id: "muhasabah", time: "20:30", title: muhasabahText(getActiveLanguage() === "en" ? "en" : "fr")("notifTitle"), body: muhasabahText(getActiveLanguage() === "en" ? "en" : "fr")("notifBody"), route: "/muhasabah?write=1", category: "inspiration", icon: "create-outline", accent: "#E3B55A" },
     { id: "sleep-dua", time: "22:30", title: translate("notif.sleep"), body: translate("notif.sleepBody"), route: "/dua?section=sleep&focus=bedtime", category: "dua", icon: "bed-outline", accent: "#7D70BC" },
   ];
 
@@ -748,45 +748,112 @@ async function syncNotificationCenterScheduleInternal(
 }
 
 
-const MUHASABAH_DEFAULT_TIME = "21:30";
+const MUHASABAH_AUTO_TIMES = new Set(["20:30", "21:30"]); // heure par défaut (actuelle et ancienne) = réglage automatique
 const MUHASABAH_AFTER_ISHA_MINUTES = 30;
+const MUHASABAH_WINDOW = { start: 20 * 60, end: 22 * 60 };
+const MUHASABAH_ISHA_KEY = "oummah.muhasabah.ishaTimes.v1";
+
+/** 30 min après Isha, mais jamais avant 20 h ni après 22 h (Isha très tôt l'hiver, très tard l'été). */
+function muhasabahFireTime(ishaTimestamp: number) {
+  const fireAt = new Date(ishaTimestamp + MUHASABAH_AFTER_ISHA_MINUTES * 60_000);
+  const minutes = Math.min(MUHASABAH_WINDOW.end, Math.max(MUHASABAH_WINDOW.start, fireAt.getHours() * 60 + fireAt.getMinutes()));
+  fireAt.setHours(Math.floor(minutes / 60), minutes % 60, 0, 0);
+  return fireAt;
+}
+
+async function muhasabahIshaTimes(schedule: MosquePrayerSchedule | null) {
+  if (schedule) {
+    const times = [schedule.prayers, schedule.tomorrowPrayers, schedule.futurePrayers ?? []].flat().filter((prayer) => prayer.key === "Isha").map((prayer) => prayer.timestamp);
+    await AsyncStorage.setItem(MUHASABAH_ISHA_KEY, JSON.stringify(times)).catch(() => undefined);
+    return times;
+  }
+  try { return (JSON.parse((await AsyncStorage.getItem(MUHASABAH_ISHA_KEY)) ?? "[]") as number[]).filter((value) => typeof value === "number"); }
+  catch { return []; }
+}
 
 /**
- * Rappel de la Muhâsabah : 30 min après Isha (horaires de la mosquée/ville) tant que l'utilisateur garde
- * l'heure par défaut ; à l'heure choisie sinon. Pas de rappel le jour où le bilan est déjà fait.
+ * Rappel de la Muhâsabah : 30 min après Isha (entre 20 h et 22 h) tant que l'utilisateur garde l'heure par
+ * défaut ; à l'heure choisie sinon. Pas de rappel le jour où le bilan est déjà fait.
  */
 async function scheduleMuhasabahReminders(preferences: NotificationCenterPreferences, schedule: MosquePrayerSchedule | null, channelId: string) {
   const t = muhasabahText(getActiveLanguage() === "en" ? "en" : "fr");
   const content = notificationContent(t("notifTitle"), t("notifBody"), preferences.mode, "/muhasabah?write=1", "muhasabah");
-  const chosen = preferences.reminderTimes?.muhasabah ?? MUHASABAH_DEFAULT_TIME;
+  const chosen = preferences.reminderTimes?.muhasabah ?? "20:30";
   const session = await import("../auth/SupabaseAuthService").then(({ getValidSession }) => getValidSession().catch(() => null));
-  const doneToday = await isLocalEntryComplete(session?.user.id ?? null, muhasabahLocalDateKey());
+  const today = muhasabahLocalDateKey();
+  const doneToday = await isLocalEntryComplete(session?.user.id ?? null, today);
   const now = Date.now();
   const ids: string[] = [];
+  const ishaTimes = await muhasabahIshaTimes(schedule);
 
-  const ishaTimes = chosen === MUHASABAH_DEFAULT_TIME && schedule
-    ? [schedule.prayers, schedule.tomorrowPrayers, schedule.futurePrayers ?? []].flat().filter((prayer) => prayer.key === "Isha")
-    : [];
-  const seen = new Set<string>();
-  for (const prayer of ishaTimes) {
-    const fireAt = new Date(prayer.timestamp + MUHASABAH_AFTER_ISHA_MINUTES * 60_000);
-    const day = muhasabahLocalDateKey(fireAt);
-    if (fireAt.getTime() <= now || seen.has(day) || (doneToday && day === muhasabahLocalDateKey())) continue;
-    seen.add(day);
-    ids.push(await Notifications.scheduleNotificationAsync({ content, trigger: { type: Notifications.SchedulableTriggerInputTypes.DATE, date: fireAt, channelId } }));
+  if (MUHASABAH_AUTO_TIMES.has(chosen) && ishaTimes.length) {
+    const seen = new Set<string>();
+    for (const isha of ishaTimes) {
+      const fireAt = muhasabahFireTime(isha);
+      const day = muhasabahLocalDateKey(fireAt);
+      if (fireAt.getTime() <= now || seen.has(day) || (doneToday && day === today)) continue;
+      seen.add(day);
+      ids.push(await Notifications.scheduleNotificationAsync({ content, trigger: { type: Notifications.SchedulableTriggerInputTypes.DATE, date: fireAt, channelId } }));
+    }
+    if (ids.length) return ids;
   }
-  if (ids.length) return ids;
 
-  // Sans horaires de prière : rappel quotidien à l'heure choisie (sauf aujourd'hui si le bilan est fait).
+  const [hour, minute] = chosen.split(":").map(Number);
   if (doneToday) {
-    const [hour, minute] = chosen.split(":").map(Number);
-    const tomorrow = new Date(); tomorrow.setDate(tomorrow.getDate() + 1); tomorrow.setHours(hour, minute, 0, 0);
-    ids.push(await Notifications.scheduleNotificationAsync({ content, trigger: { type: Notifications.SchedulableTriggerInputTypes.DATE, date: tomorrow, channelId } }));
+    // Bilan fait : prochains soirs seulement (programmés à la date, une semaine d'avance).
+    for (let offset = 1; offset <= 7; offset += 1) {
+      const date = new Date(); date.setDate(date.getDate() + offset); date.setHours(hour, minute, 0, 0);
+      ids.push(await Notifications.scheduleNotificationAsync({ content, trigger: { type: Notifications.SchedulableTriggerInputTypes.DATE, date, channelId } }));
+    }
     return ids;
   }
-  const [hour, minute] = chosen.split(":").map(Number);
   ids.push(await Notifications.scheduleNotificationAsync({ content, trigger: { type: Notifications.SchedulableTriggerInputTypes.DAILY, hour, minute, channelId } }));
   return ids;
+}
+
+async function cancelMuhasabahNotifications() {
+  const scheduled = await Notifications.getAllScheduledNotificationsAsync().catch(() => []);
+  for (const request of scheduled) {
+    if (request.content.data?.reminderId === "muhasabah") await Notifications.cancelScheduledNotificationAsync(request.identifier).catch(() => undefined);
+  }
+}
+
+/** État du rappel pour l'écran Muhâsabah : activé ou non, et heure du prochain rappel. */
+export async function getMuhasabahReminderState() {
+  const preferences = await loadNotificationCenterPreferences();
+  const permission = await Notifications.getPermissionsAsync().catch(() => null);
+  const enabled = Boolean(preferences.systemEnabled && preferences.reminders.muhasabah && permission && isNotificationPermissionGranted(permission));
+  const chosen = preferences.reminderTimes?.muhasabah ?? "20:30";
+  let time = chosen;
+  let auto = false;
+  if (MUHASABAH_AUTO_TIMES.has(chosen)) {
+    const next = (await muhasabahIshaTimes(null)).map(muhasabahFireTime).find((date) => date.getTime() > Date.now());
+    if (next) { auto = true; time = `${String(next.getHours()).padStart(2, "0")}:${String(next.getMinutes()).padStart(2, "0")}`; }
+  }
+  return { enabled, time, auto };
+}
+
+/** Active ou coupe le rappel Muhâsabah depuis son écran (même réglage que l'écran Notifications). */
+export async function setMuhasabahReminderEnabled(enabled: boolean) {
+  const preferences = await loadNotificationCenterPreferences();
+  if (enabled && !(await requestNotificationCenterPermission(preferences.mode))) return false;
+  let next: NotificationCenterPreferences = { ...preferences, reminders: { ...preferences.reminders, muhasabah: enabled } };
+  if (enabled && !preferences.systemEnabled) {
+    // Les notifications étaient coupées : on n'allume que ce rappel, pas tous les autres.
+    const onlyMuhasabah = Object.fromEntries(Object.keys(preferences.reminders).map((id) => [id, id === "muhasabah"])) as NotificationCenterPreferences["reminders"];
+    next = { ...preferences, systemEnabled: true, reminders: onlyMuhasabah };
+  }
+  await saveNotificationCenterPreferences(next);
+  await cancelMuhasabahNotifications();
+  if (enabled) {
+    await configureChannel(next.mode);
+    const ids = await scheduleMuhasabahReminders(next, null, reminderChannelId(next.mode));
+    const raw = await AsyncStorage.getItem(SCHEDULED_IDS_KEY).catch(() => null);
+    let stored: string[] = [];
+    try { stored = raw ? JSON.parse(raw) : []; } catch { stored = []; }
+    await AsyncStorage.setItem(SCHEDULED_IDS_KEY, JSON.stringify([...stored, ...ids]));
+  }
+  return true;
 }
 
 
@@ -807,14 +874,9 @@ goalProgressBridge.subscribe(() => {
   void syncDailyGoalsReminder().catch(() => undefined);
 });
 
-/** Annule le rappel Muhâsabah de ce soir quand le bilan du jour vient d'être enregistré. */
+/** Bilan du jour enregistré : le rappel de ce soir est retiré, les suivants restent programmés. */
 export async function cancelTodayMuhasabahReminder() {
-  const today = muhasabahLocalDateKey();
-  const scheduled = await Notifications.getAllScheduledNotificationsAsync().catch(() => []);
-  for (const request of scheduled) {
-    if (request.content.data?.reminderId !== "muhasabah") continue;
-    const trigger = request.trigger as { type?: string; value?: number; date?: number | Date } | null;
-    const at = trigger?.value ?? (trigger?.date ? new Date(trigger.date).getTime() : null);
-    if (at && muhasabahLocalDateKey(new Date(at)) === today) await Notifications.cancelScheduledNotificationAsync(request.identifier).catch(() => undefined);
-  }
+  const preferences = await loadNotificationCenterPreferences();
+  if (!preferences.systemEnabled || !preferences.reminders.muhasabah) return;
+  await setMuhasabahReminderEnabled(true);
 }

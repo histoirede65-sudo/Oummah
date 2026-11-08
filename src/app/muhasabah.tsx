@@ -1,8 +1,9 @@
 import { Ionicons } from '@expo/vector-icons';
+import * as Haptics from 'expo-haptics';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
-import { ActivityIndicator, Alert, InputAccessoryView, Keyboard, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View, type StyleProp, type ViewStyle } from 'react-native';
+import { ActivityIndicator, Alert, InputAccessoryView, Keyboard, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Switch, Text, TextInput, View, type StyleProp, type ViewStyle } from 'react-native';
 import type { ScrollViewInstance, TextInputInstance } from 'react-native';
 import Reanimated, { Easing, FadeIn, FadeInDown, ZoomIn } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -13,7 +14,7 @@ import {
   type CommitmentStatus, type FollowupResponse, type MuhasabahActivity, type MuhasabahActivityKind, type MuhasabahCommitment, type MuhasabahDraft, type MuhasabahEntry,
 } from '../features/muhasabah/MuhasabahService';
 import { muhasabahLocale, muhasabahText, type MuhasabahStringKey } from '../features/muhasabah/muhasabahStrings';
-import { cancelTodayMuhasabahReminder } from '../features/notifications/NotificationCenter';
+import { cancelTodayMuhasabahReminder, getMuhasabahReminderState, setMuhasabahReminderEnabled } from '../features/notifications/NotificationCenter';
 import { useI18n } from '../i18n';
 import { colors } from '../theme/colors';
 import { typography } from '../theme/typography';
@@ -43,6 +44,26 @@ const normalize = (text: string) => text.trim().toLocaleLowerCase().replace(/\s+
 const draftFrom = (entry: MuhasabahEntry): MuhasabahDraft => ({ goodDeeds: entry.goodDeeds, couldImprove: entry.couldImprove, effort: entry.effort });
 const sameDraft = (a: MuhasabahDraft, b: MuhasabahDraft) => a.goodDeeds.trim() === b.goodDeeds.trim() && a.couldImprove.trim() === b.couldImprove.trim() && a.effort.trim() === b.effort.trim();
 const shiftDay = (date: string, delta: number) => { const d = new Date(`${date}T12:00:00`); d.setDate(d.getDate() + delta); return localDateKey(d); };
+
+type DisplayActivity = { id: string; kind: MuhasabahActivityKind; title: string; detail: string };
+const verseOrder = (key: string) => { const [surah, verse] = key.split(':').map(Number); return (surah || 0) * 1000 + (verse || 0); };
+
+/** Lectures du jour affichées dans la langue de l'app ; les versets du Coran sont regroupés en une ligne. */
+function displayActivities(list: MuhasabahActivity[], t: T): DisplayActivity[] {
+  const verses = list.filter((item) => item.kind === 'quran_verse').map((item) => item.reference.replace(/^quran:/, '')).sort((a, b) => verseOrder(a) - verseOrder(b));
+  const result: DisplayActivity[] = [];
+  if (verses.length) {
+    const range = verses.length === 1 ? verses[0] : `${verses[0]} → ${verses[verses.length - 1]}`;
+    result.push({ id: 'quran', kind: 'quran_verse', title: t('act_quran'), detail: t('act_quranDetail', { count: verses.length, range }) });
+  }
+  for (const item of list) {
+    if (item.kind === 'quran_verse') continue;
+    const title = item.kind === 'tafsir' ? t('act_tafsir') : item.kind === 'hadith' ? t('act_hadith') : item.kind === 'dua' ? t('act_dua') : item.kind === 'dhikr' ? t('act_dhikr') : t('act_content');
+    const detail = item.kind === 'tafsir' ? t('act_tafsirDetail', { ref: item.reference.replace(/^tafsir:/, '') }) : item.detail;
+    result.push({ id: item.id, kind: item.kind, title, detail });
+  }
+  return result;
+}
 
 function calendarDays(cursor: Date) {
   const first = new Date(cursor.getFullYear(), cursor.getMonth(), 1);
@@ -94,6 +115,7 @@ export default function MuhasabahScreen() {
   const [saving, setSaving] = useState(false);
   const [justSaved, setJustSaved] = useState<'account' | 'local' | null>(null);
   const [busyCommitment, setBusyCommitment] = useState<string | null>(null);
+  const [reminder, setReminder] = useState<{ enabled: boolean; time: string; auto: boolean } | null>(null);
 
   const entry = entries.find((item) => item.entryDate === selectedDate) ?? null;
 
@@ -128,7 +150,14 @@ export default function MuhasabahScreen() {
       setLoading(false);
     }
   }, [applyDate]);
-  useFocusEffect(useCallback(() => { void refresh(); }, [refresh]));
+  const loadReminder = useCallback(() => { void getMuhasabahReminderState().then(setReminder).catch(() => setReminder(null)); }, []);
+  useFocusEffect(useCallback(() => { void refresh(); loadReminder(); }, [loadReminder, refresh]));
+  const toggleReminder = async (enabled: boolean) => {
+    setReminder((previous) => (previous ? { ...previous, enabled } : previous));
+    const ok = await setMuhasabahReminderEnabled(enabled).catch(() => false);
+    if (!ok && enabled) Alert.alert(t('reminderDeniedTitle'), t('reminderDeniedBody'));
+    loadReminder();
+  };
 
   // Ouvert depuis le rappel du soir : directement sur la première question, clavier sorti.
   const autoFocused = useRef(false);
@@ -168,6 +197,7 @@ export default function MuhasabahScreen() {
       else await saveLocalEntry(selectedDate, draft);
       if (selectedDate === today) void cancelTodayMuhasabahReminder().catch(() => undefined);
       await refresh();
+      void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => undefined);
       setJustSaved(session ? 'account' : 'local');
     } catch {
       Alert.alert(t('saveErrorTitle'), t('saveErrorBody'));
@@ -221,7 +251,7 @@ export default function MuhasabahScreen() {
   const goodNotes = monthEntries.filter((item) => item.goodDeeds.trim()).slice(0, 3);
   const isCurrentMonth = monthPrefix === today.slice(0, 7);
   const weekDays = useMemo(() => Array.from({ length: 7 }, (_, index) => new Date(2024, 0, 1 + index).toLocaleDateString(locale, { weekday: 'narrow' })), [locale]);
-  const selectedActivities = activities.filter((item) => item.activityDate === selectedDate);
+  const selectedActivities = useMemo(() => displayActivities(activities.filter((item) => item.activityDate === selectedDate), t), [activities, selectedDate, t]);
   const unchanged = entry ? sameDraft(draft, draftFrom(entry)) : false;
   const hasDraft = !entry && !sameDraft(draft, emptyDraft);
   const effortTracked = commitments.some((item) => normalize(item.text) === normalize(draft.effort));
@@ -256,6 +286,19 @@ export default function MuhasabahScreen() {
                 </View>
               </Glass>
             </Reanimated.View>
+
+            {reminder ? (
+              <Reanimated.View entering={enter(1)}>
+                <Glass style={styles.reminderRow}>
+                  <View style={[styles.bubble, { backgroundColor: reminder.enabled ? VIOLET : 'rgba(255,255,255,0.1)' }]}><Ionicons name={reminder.enabled ? 'notifications' : 'notifications-off-outline'} size={16} color={reminder.enabled ? INK : colors.textMuted} /></View>
+                  <View style={styles.flex}>
+                    <Text style={styles.reminderTitle}>{t('reminderTitle')}</Text>
+                    <Text style={styles.reminderText}>{reminder.enabled ? t(reminder.auto ? 'reminderAuto' : 'reminderFixed', { time: reminder.time }) : t('reminderOff')}</Text>
+                  </View>
+                  <Switch value={reminder.enabled} onValueChange={(value) => void toggleReminder(value)} trackColor={{ false: 'rgba(255,255,255,0.15)', true: VIOLET }} thumbColor="#fff" ios_backgroundColor="rgba(255,255,255,0.15)" />
+                </Glass>
+              </Reanimated.View>
+            ) : null}
 
             {loadError ? (
               <Glass tint={GOLD} style={styles.errorBanner}>
@@ -339,6 +382,13 @@ export default function MuhasabahScreen() {
                       <Text style={styles.savedText}>{justSaved === 'local' ? t('savedLocalBody', { date: shortDate(selectedDate) }) : t('savedInlineSub', { count: currentMonthCount })}</Text>
                     </View>
                   </Glass>
+                  {reminder && !reminder.enabled ? (
+                    <Glass tint={VIOLET} style={styles.prompt}>
+                      <Ionicons name="notifications-outline" size={20} color={VIOLET} />
+                      <View style={styles.flex}><Text style={styles.promptTitle}>{t('reminderAsk')}</Text><Text style={styles.promptText}>{t('reminderAskBody')}</Text></View>
+                      <Pressable onPress={() => void toggleReminder(true)} style={styles.smallButton}><Text style={styles.smallButtonText}>{t('reminderEnable')}</Text></Pressable>
+                    </Glass>
+                  ) : null}
                 </Reanimated.View>
               ) : (
                 <Reanimated.View entering={enter(7)}>
@@ -458,7 +508,7 @@ function Stat({ value, label, color }: { value: number; label: string; color: st
   return <View style={styles.stat}><Text style={[styles.statValue, { color }]}>{value}</Text><Text style={styles.statLabel}>{label}</Text></View>;
 }
 
-function ActivityLine({ activity }: { activity: MuhasabahActivity }) {
+function ActivityLine({ activity }: { activity: DisplayActivity }) {
   return (
     <View style={styles.activityLine}>
       <View style={styles.activityIcon}><Ionicons name={activityIcons[activity.kind] ?? 'book-outline'} size={14} color={VIOLET} /></View>
@@ -579,6 +629,9 @@ const styles: any = StyleSheet.create({
   glass: { borderRadius: 22, borderWidth: 1, borderColor: 'rgba(255,255,255,0.13)', backgroundColor: 'rgba(36,28,52,0.62)', overflow: 'hidden', marginBottom: 12 },
   glassShine: { position: 'absolute', top: 0, left: 0, right: 0, height: 46 },
   cardPad: { padding: 16 },
+  reminderRow: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingHorizontal: 14, paddingVertical: 11 },
+  reminderTitle: { color: colors.text, fontWeight: '700', fontSize: 14 },
+  reminderText: { color: colors.textMuted, fontSize: 12, marginTop: 1 },
   privateCard: { flexDirection: 'row', alignItems: 'center', gap: 13, padding: 14 },
   lockBubble: { width: 44, height: 44, borderRadius: 22, backgroundColor: GOLD, alignItems: 'center', justifyContent: 'center', shadowColor: GOLD, shadowOpacity: 0.5, shadowRadius: 10, shadowOffset: { width: 0, height: 0 } },
   privateTitle: { color: colors.text, fontWeight: '700', fontSize: 15 },

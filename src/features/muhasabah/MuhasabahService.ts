@@ -186,9 +186,15 @@ export async function listActivities(date?: string) {
   return (rows ?? []).map(activityFromRow);
 }
 
+// Déjà envoyées depuis le lancement : la lecture du Coran en signale une à chaque verset qui défile.
+const recordedActivities = new Set<string>();
+
 export async function recordActivity(input: { kind: MuhasabahActivityKind; title: string; detail: string; reference: string; date?: string }) {
   const date = input.date ?? localDateKey();
-  if (!(await getValidSession())) return null;
+  const key = `${date}|${input.kind}|${input.reference}`;
+  if (recordedActivities.has(key)) return null;
+  recordedActivities.add(key);
+  if (!(await getValidSession().catch(() => null))) { recordedActivities.delete(key); return null; }
   const rows = await request<ActivityRow[]>('muhasabah_activities?on_conflict=user_id,activity_date,kind,reference&select=*', {
     method: 'POST',
     headers: { Prefer: 'resolution=ignore-duplicates,return=representation' },
