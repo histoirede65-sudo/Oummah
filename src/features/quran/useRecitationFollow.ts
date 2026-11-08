@@ -6,7 +6,7 @@ import { getValidSession } from '../auth/SupabaseAuthService';
 import { RecitationAligner, type ReciteWord } from './RecitationAligner';
 
 export type RecitePosition = { verseKey: string; position: number };
-export type ReciteError = 'permission' | 'unavailable' | 'failed' | 'login';
+export type ReciteError = 'permission' | 'unavailable' | 'failed' | 'login' | 'server';
 
 type Subscription = { remove: () => void };
 type SpeechModule = ExpoSpeechRecognitionModuleType & {
@@ -103,9 +103,11 @@ export function useRecitationFollow() {
           const text = await pending;
           serverFailures.current = 0;
           if (wanted.current || text) applyWords(text.split(/\s+/).filter(Boolean));
-        } catch {
+        } catch (reason) {
           serverFailures.current += 1;
-          if (serverFailures.current >= 3 && wanted.current) { stop(); setError('failed'); }
+          // Service absent (non déployé) : inutile d'insister, on le dit tout de suite.
+          const missing = reason instanceof Error && reason.message === 'TRANSCRIBE_404';
+          if ((missing || serverFailures.current >= 3) && wanted.current) { stop(); setError(missing ? 'server' : 'failed'); }
         }
       });
     }

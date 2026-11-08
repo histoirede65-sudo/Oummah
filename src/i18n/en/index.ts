@@ -1052,6 +1052,7 @@ export const en: Partial<Record<TranslationKey, string>> = {
   'surahReader.wordSyncUnavailable': 'Word-by-word synchronization is unavailable for this reciter.',
   'surahReader.reciteShort': 'Recite',
   'surahReader.reciteLogin': 'Sign in from your profile to use recitation.',
+  'surahReader.reciteServer': 'The recitation service is not online yet. Please try again later.',
   'surahReader.reciteStart': 'Recite: light up the words I read',
   'surahReader.reciteStop': 'Stop reciting',
   'surahReader.reciteListening': 'Listening… recite and the words light up',
