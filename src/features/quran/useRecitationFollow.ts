@@ -19,6 +19,8 @@ type SpeechModule = ExpoSpeechRecognitionModuleType & {
 const speech = requireOptionalNativeModule<SpeechModule>('ExpoSpeechRecognition');
 
 const SEGMENT_MS = 2500;
+// En dessous (dB), le morceau est considéré comme silencieux.
+const SILENCE_DB = -42;
 
 async function transcribeOnServer(uri: string, hint: string): Promise<string> {
   const url = process.env.EXPO_PUBLIC_SUPABASE_URL?.trim().replace(/\/$/, '');
@@ -53,7 +55,7 @@ export function useRecitationFollow() {
   const wanted = useRef(false);
   const consumed = useRef(0);
   const options = useRef<ExpoSpeechRecognitionOptions | null>(null);
-  const recorder = useAudioRecorder(RecordingPresets.HIGH_QUALITY);
+  const recorder = useAudioRecorder({ ...RecordingPresets.HIGH_QUALITY, isMeteringEnabled: true });
   const serverChain = useRef<Promise<void>>(Promise.resolve());
   const serverFailures = useRef(0);
 
@@ -64,14 +66,14 @@ export function useRecitationFollow() {
     const word = revealQueue.current.shift();
     if (!word) { revealTimer.current = null; return; }
     setCurrent(word);
-    // Rythme : réparti sur la durée d'un morceau, entre 180 et 450 ms par mot.
-    const delay = Math.min(450, Math.max(180, SEGMENT_MS / Math.max(1, revealQueue.current.length + 1)));
+    // Rythme proche d'une récitation : réparti sur la durée d'un morceau, entre 450 et 900 ms par mot.
+    const delay = Math.min(900, Math.max(450, SEGMENT_MS / Math.max(1, revealQueue.current.length + 1)));
     revealTimer.current = setTimeout(revealNext, delay);
   }, []);
 
   const applyWords = useCallback((heard: readonly string[], paced = false) => {
     if (!heard.length || !aligner.current) return;
-    const words = aligner.current.feedAll(heard).map((word) => ({ verseKey: word.verseKey, position: word.position }));
+    const words = aligner.current.feedAll(heard, paced).map((word) => ({ verseKey: word.verseKey, position: word.position }));
     if (!words.length) return;
     if (!paced) {
       const last = words[words.length - 1];
@@ -108,11 +110,19 @@ export function useRecitationFollow() {
 
   // ----- Mode serveur : morceaux de 2,5 s, envoyés pendant que le suivant s'enregistre, traités dans l'ordre. -----
   const serverLoop = useCallback(async () => {
+    let loudest = -160;
     while (wanted.current) {
       try {
         await recorder.prepareToRecordAsync();
         recorder.record();
-        await new Promise((resolve) => setTimeout(resolve, SEGMENT_MS));
+        // Volume mesuré pendant le morceau : un morceau silencieux n'est pas envoyé.
+        loudest = -160;
+        const started = Date.now();
+        while (Date.now() - started < SEGMENT_MS) {
+          await new Promise((resolve) => setTimeout(resolve, 100));
+          const level = recorder.getStatus().metering;
+          if (typeof level === 'number' && level > loudest) loudest = level;
+        }
         await recorder.stop();
       } catch (reason) {
         if (__DEV__) console.info('[RECITE] enregistrement impossible', reason);
@@ -121,10 +131,14 @@ export function useRecitationFollow() {
         return;
       }
       const uri = recorder.uri;
-      if (__DEV__) console.info('[RECITE] morceau enregistré', uri);
+      if (__DEV__) console.info('[RECITE] morceau enregistré, volume max', Math.round(loudest), 'dB');
       if (!uri) continue;
-      const hint = aligner.current?.upcoming(40) ?? '';
-      const pending = transcribeOnServer(uri, hint);
+      if (loudest < SILENCE_DB) {
+        void FileSystem.deleteAsync(uri, { idempotent: true }).catch(() => undefined);
+        continue;
+      }
+      // Aucun indice envoyé : le modèle recopiait le texte attendu quand il n'entendait pas d'arabe.
+      const pending = transcribeOnServer(uri, '');
       serverChain.current = serverChain.current.then(async () => {
         try {
           const text = await pending;

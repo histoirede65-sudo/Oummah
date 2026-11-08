@@ -62,7 +62,15 @@ export class RecitationAligner {
   }
 
   /** Comme feed, mais renvoie tous les mots du texte reconnus, dans l'ordre (pour les allumer un par un). */
-  feedAll(heardWords: readonly string[]) {
+  feedAll(heardWords: readonly string[], strict = false) {
+    // Mode strict (paquets du serveur) : on essaie sur une copie, et on n'avance que si une bonne part
+    // de ce qui a été entendu suit le texte. Du français ou des paroles sans rapport sont rejetés.
+    if (strict) {
+      const trial = new RecitationAligner(this.words, this.pointer);
+      const result = trial.feedAll(heardWords);
+      const heardCount = heardWords.map(normalizeArabic).filter(Boolean).length;
+      if (!result.length || result.length < Math.max(1, Math.ceil(heardCount * 0.5)) || (heardCount >= 3 && result.length < 2)) return [];
+    }
     const matched: ReciteWord[] = [];
     for (const raw of heardWords) {
       const heard = normalizeArabic(raw);
