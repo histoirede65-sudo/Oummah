@@ -58,7 +58,8 @@ const MISSED_WINDOW = 10;
 const RELOCATE_MIN_WORDS = 3;
 const RELOCATE_MIN_RATIO = 0.6;
 
-type Run = { matches: ReciteWord[]; end: number; last: number | null };
+/** `hits` : mots réellement entendus et reconnus (sert à décider) ; `matches` inclut les mots sautés (affichage). */
+type Run = { matches: ReciteWord[]; hits: number; end: number; last: number | null };
 
 export class RecitationAligner {
   private pointer: number;
@@ -85,8 +86,8 @@ export class RecitationAligner {
     if (!heard.length) return [];
 
     const local = this.matchFrom(this.pointer, heard);
-    const enough = local.matches.length >= Math.max(1, Math.ceil(heard.length * 0.5)) && (heard.length < 3 || local.matches.length >= 2);
-    if (local.matches.length && (!strict || enough)) {
+    const enough = local.hits >= Math.max(1, Math.ceil(heard.length * 0.5)) && (heard.length < 3 || local.hits >= 2);
+    if (local.hits && (!strict || enough)) {
       this.commit(local);
       return local.matches;
     }
@@ -108,18 +109,23 @@ export class RecitationAligner {
   private matchFrom(start: number, heard: readonly string[]): Run {
     let pointer = start;
     let last: number | null = null;
+    let hits = 0;
     const matches: ReciteWord[] = [];
     for (const word of heard) {
       for (let offset = 0; offset <= LOOKAHEAD && pointer + offset < this.words.length; offset += 1) {
         if (wordsMatch(word, this.words[pointer + offset].norm)) {
           last = pointer + offset;
+          // Mots sautés (perdus entre deux morceaux, mal entendus) : forcément lus, on les allume aussi,
+          // sauf avant le tout premier mot retrouvé (on ne sait pas d'où l'utilisateur est parti).
+          if (matches.length || start === this.pointer) for (let skipped = pointer; skipped < last; skipped += 1) matches.push(this.words[skipped]);
           matches.push(this.words[last]);
+          hits += 1;
           pointer = last + 1;
           break;
         }
       }
     }
-    return { matches, end: pointer, last };
+    return { matches, hits, end: pointer, last };
   }
 
   /** Cherche dans toute la sourate le passage qui correspond le mieux aux derniers mots entendus. */
@@ -130,11 +136,11 @@ export class RecitationAligner {
       // On ne part que d'un mot qui ressemble à l'un des premiers mots entendus.
       if (!heard.slice(0, 3).some((word) => wordsMatch(word, this.words[start].norm))) continue;
       const run = this.matchFrom(start, heard);
-      const count = run.matches.length;
+      const count = run.hits;
       if (count < RELOCATE_MIN_WORDS || count < heard.length * RELOCATE_MIN_RATIO) continue;
       // À égalité (passage répété), on préfère l'occurrence la plus proche après la position actuelle.
       const distance = start >= this.pointer ? start - this.pointer : this.words.length + (this.pointer - start);
-      if (!best || count > best.run.matches.length || (count === best.run.matches.length && distance < best.distance)) {
+      if (!best || count > best.run.hits || (count === best.run.hits && distance < best.distance)) {
         best = { run, distance };
       }
     }
