@@ -5,6 +5,8 @@
  */
 export const TAHAJJUD_EN: Record<string, string> = {
   // ----- Notifications on the module home -----
+  'Notif. dernier tiers': 'Last third alert',
+  'Notif. nouvelles duas': 'New duas alert',
   'Nuit validée': 'Night logged',
   'Une notification quand le meilleur moment de la nuit commence.': 'A notification when the best time of the night begins.',
   'Nouvelles duas du mur': 'New duas on the wall',

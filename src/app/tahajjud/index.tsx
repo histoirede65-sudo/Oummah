@@ -4,7 +4,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import type { Href } from 'expo-router';
 import { router, useFocusEffect } from 'expo-router';
 import { useCallback, useState } from 'react';
-import { ActivityIndicator, Alert, Linking, Pressable, StyleSheet, Switch, Text, useWindowDimensions, View } from 'react-native';
+import { ActivityIndicator, Alert, Linking, Pressable, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import { NightArc } from '../../components/tahajjud/NightArc';
 import { GlassCard, shellStyles, TahajjudShell } from '../../components/tahajjud/TahajjudShell';
@@ -14,14 +14,13 @@ import { RamadanCard } from '../../components/tahajjud/RamadanCard';
 import { ValidateSheet } from '../../components/tahajjud/ValidateSheet';
 import { WakeBuddyCard } from '../../components/tahajjud/WakeBuddy';
 import { WeekMoons } from '../../components/tahajjud/WeekMoons';
-import { getDuaWallAlerts, getNewDuas, setDuaWallAlerts, type WallPost } from '../../features/tahajjud/duaWall';
-import { getValidSession } from '../../features/auth/SupabaseAuthService';
-import { ensureTahajjudNotificationPermission, refreshTahajjudNotifications } from '../../features/tahajjud/tahajjudService';
+import { getNewDuas, type WallPost } from '../../features/tahajjud/duaWall';
+import { loadQiyamNotificationState, setQiyamDuaNotification, setQiyamStartNotification, type QiyamNotificationState } from '../../features/tahajjud/tahajjudNotificationPrefs';
 import { getTahajjudLive } from '../../features/tahajjud/tahajjudCommunity';
 import { getChatUnreadCount } from '../../features/tahajjud/tahajjudFriends';
 import { verseOfTheNight } from '../../features/tahajjud/tahajjudContent';
 import { alarmTime, clock, formatDuration } from '../../features/tahajjud/tahajjudNight';
-import { loadTahajjudSettings, saveTahajjudSettings, type TahajjudSettings } from '../../features/tahajjud/TahajjudStore';
+import { loadTahajjudSettings, type TahajjudSettings } from '../../features/tahajjud/TahajjudStore';
 import { useTahajjudNight } from '../../features/tahajjud/useTahajjudNight';
 import { tx, txCount, tahajjudLocale } from '../../features/tahajjud/tahajjudI18n';
 
@@ -44,43 +43,36 @@ export default function TahajjudScreen() {
   const [unreadMessages, setUnreadMessages] = useState(0);
   const [newDuas, setNewDuas] = useState(0);
   const [latestDua, setLatestDua] = useState<WallPost | null>(null);
-  const [duaAlerts, setDuaAlerts] = useState<boolean | null>(null);
-  const [notifOpen, setNotifOpen] = useState(false);
 
-  const askPermission = async () => {
-    if (await ensureTahajjudNotificationPermission()) return true;
-    Alert.alert(tx('Notifications désactivées'), tx('Autorisez les notifications d’OUMMAH dans les réglages du téléphone.'), [
-      { text: tx('Plus tard'), style: 'cancel' },
-      { text: tx('Réglages'), onPress: () => void Linking.openSettings() },
-    ]);
-    return false;
+  const [qiyamNotifs, setQiyamNotifs] = useState<QiyamNotificationState | null>(null);
+  const refusePermission = () => Alert.alert(tx('Notifications désactivées'), tx('Autorisez les notifications d’OUMMAH dans les réglages du téléphone.'), [
+    { text: tx('Plus tard'), style: 'cancel' },
+    { text: tx('Réglages'), onPress: () => void Linking.openSettings() },
+  ]);
+  const toggleStart = async () => {
+    if (!qiyamNotifs) return;
+    const on = !qiyamNotifs.start;
+    setQiyamNotifs({ ...qiyamNotifs, start: on });
+    if (!(await setQiyamStartNotification(on))) { setQiyamNotifs({ ...qiyamNotifs, start: !on }); refusePermission(); return; }
+    void loadTahajjudSettings().then(setSettings);
   };
-  const toggleStart = async (on: boolean) => {
-    if (!settings) return;
-    if (on && !(await askPermission())) return;
-    const next = { ...settings, notifications: { ...settings.notifications, start: on } };
-    setSettings(next);
-    await saveTahajjudSettings(next);
-    void refreshTahajjudNotifications(true);
-  };
-  const toggleDuaAlerts = async (on: boolean) => {
-    if (!(await getValidSession().catch(() => null))) {
+  const toggleDuas = async () => {
+    if (!qiyamNotifs) return;
+    if (qiyamNotifs.duas === null) {
       Alert.alert(tx('Connexion nécessaire'), tx('Connectez-vous depuis votre profil pour être prévenu des nouvelles duas.'));
       return;
     }
-    if (on && !(await askPermission())) return;
-    setDuaAlerts(on);
-    await setDuaWallAlerts(on).catch(() => {
-      setDuaAlerts(!on);
-      Alert.alert(tx('Réessayer'));
-    });
+    const on = !qiyamNotifs.duas;
+    setQiyamNotifs({ ...qiyamNotifs, duas: on });
+    const ok = await setQiyamDuaNotification(on).catch(() => false);
+    if (!ok) { setQiyamNotifs({ ...qiyamNotifs, duas: !on }); if (on) refusePermission(); }
   };
 
   useFocusEffect(useCallback(() => {
     void loadTahajjudSettings().then(setSettings);
     void getTahajjudLive().then((live) => setAwakeCount(live.awake)).catch(() => undefined);
     void getChatUnreadCount().then(setUnreadMessages);
-    void getDuaWallAlerts().then(setDuaAlerts).catch(() => setDuaAlerts(false));
+    void loadQiyamNotificationState().then(setQiyamNotifs).catch(() => undefined);
     // New duas badge: refreshed on focus and every minute while the screen is open.
     const refreshDuas = () => void getNewDuas().then(({ count, latest }) => {
       setNewDuas(count);
@@ -150,14 +142,6 @@ export default function TahajjudScreen() {
               <Text style={[styles.topPillText, view.validated && styles.topPillTextDone]}>{view.validated ? tx('Nuit validée') : tx('Valider ma nuit')}</Text>
             </Pressable>
           ) : null}
-          <Pressable
-            accessibilityRole="button"
-            accessibilityLabel={tx('Notifications')}
-            onPress={() => setNotifOpen((open) => !open)}
-            style={({ pressed }) => [styles.topBell, notifOpen && styles.topBellOpen, pressed && styles.pressed]}
-          >
-            <Ionicons name={settings?.notifications.start || duaAlerts ? 'notifications' : 'notifications-outline'} size={17} color={notifOpen ? night.sky0 : night.goldSoft} />
-          </Pressable>
         </View>
       )}
     >
@@ -167,26 +151,10 @@ export default function TahajjudScreen() {
         <Text style={styles.subtitle}>{tx("Un rendez-vous privilégié avec votre Seigneur")}</Text>
       </Animated.View>
 
-      {notifOpen ? (
-        <Animated.View entering={FadeInDown.duration(220)}>
-          <GlassCard style={styles.notifCard}>
-            <View style={styles.notifRow}>
-              <View style={styles.notifCopy}>
-                <Text style={styles.notifTitle}>{tx('Début du dernier tiers')}</Text>
-                <Text style={styles.notifText}>{tx('Une notification quand le meilleur moment de la nuit commence.')}</Text>
-              </View>
-              <Switch value={Boolean(settings?.notifications.start)} disabled={!settings} onValueChange={(value) => void toggleStart(value)} trackColor={{ false: 'rgba(255,255,255,0.15)', true: night.gold }} thumbColor={night.text} />
-            </View>
-            <View style={[styles.notifRow, styles.notifBorder]}>
-              <View style={styles.notifCopy}>
-                <Text style={styles.notifTitle}>{tx('Nouvelles duas du mur')}</Text>
-                <Text style={styles.notifText}>{tx('Être prévenu quand quelqu’un partage une dua, pour dire Amine.')}</Text>
-              </View>
-              <Switch value={Boolean(duaAlerts)} disabled={duaAlerts === null} onValueChange={(value) => void toggleDuaAlerts(value)} trackColor={{ false: 'rgba(255,255,255,0.15)', true: night.gold }} thumbColor={night.text} />
-            </View>
-          </GlassCard>
-        </Animated.View>
-      ) : null}
+      <View style={styles.notifChips}>
+        <NotifChip icon="moon" label={tx('Notif. dernier tiers')} on={Boolean(qiyamNotifs?.start)} onPress={() => void toggleStart()} />
+        <NotifChip icon="hand-left" label={tx('Notif. nouvelles duas')} on={Boolean(qiyamNotifs?.duas)} onPress={() => void toggleDuas()} />
+      </View>
 
       {view.loading && !tonight ? (
         <View style={styles.loader}><ActivityIndicator color={night.gold} /></View>
@@ -231,10 +199,10 @@ export default function TahajjudScreen() {
                 </Pressable>
               </View>
             ) : (
-              <Pressable onPress={() => router.push('/tahajjud/alarm' as Href)} style={({ pressed }) => [pressed && styles.pressed]}>
-                <LinearGradient colors={[night.goldSoft, night.gold]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.cta}>
-                  <Ionicons name="alarm" size={20} color={night.sky0} />
-                  <Text style={styles.ctaText}>{wakeUp ? tx("Réveil réglé · {0}", [clock(wakeUp)]) : tx('Régler mon réveil')}</Text>
+              <Pressable onPress={() => router.push('/tahajjud/alarm' as Href)} style={({ pressed }) => [styles.ctaSmallWrap, pressed && styles.pressed]}>
+                <LinearGradient colors={[night.goldSoft, night.gold]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={[styles.cta, styles.ctaSmall]}>
+                  <Ionicons name="alarm" size={16} color={night.sky0} />
+                  <Text style={[styles.ctaText, styles.ctaSmallText]}>{wakeUp ? tx("Réveil réglé · {0}", [clock(wakeUp)]) : tx('Régler mon réveil')}</Text>
                 </LinearGradient>
               </Pressable>
             )}
@@ -378,6 +346,17 @@ export default function TahajjudScreen() {
   );
 }
 
+/** Petite pastille de notification : dorée quand c'est activé, un tap pour activer ou couper. */
+function NotifChip({ icon, label, on, onPress }: { icon: keyof typeof Ionicons.glyphMap; label: string; on: boolean; onPress: () => void }) {
+  return (
+    <Pressable accessibilityRole="switch" accessibilityState={{ checked: on }} accessibilityLabel={label} onPress={onPress} style={({ pressed }) => [styles.chip, on && styles.chipOn, pressed && styles.pressed]}>
+      <Ionicons name={on ? 'notifications' : 'notifications-off-outline'} size={13} color={on ? night.sky0 : night.muted} />
+      <Ionicons name={icon} size={12} color={on ? night.sky0 : night.muted} />
+      <Text style={[styles.chipText, on && styles.chipTextOn]}>{label}</Text>
+    </Pressable>
+  );
+}
+
 const styles = StyleSheet.create({
   heroCopy: { minHeight: 120, justifyContent: 'flex-end', paddingBottom: 8 },
   eyebrow: { color: night.gold, fontSize: 14, letterSpacing: 1.8, textTransform: 'uppercase', ...nightType.bold },
@@ -390,6 +369,14 @@ const styles = StyleSheet.create({
   topPillTextDone: { color: night.success },
   topBell: { width: 34, height: 34, borderRadius: 17, alignItems: 'center', justifyContent: 'center', backgroundColor: night.glassStrong, borderWidth: 1, borderColor: night.line },
   topBellOpen: { backgroundColor: night.goldSoft, borderColor: night.goldSoft },
+  notifChips: { flexDirection: 'row', flexWrap: 'wrap', gap: 7, marginTop: 8 },
+  chip: { flexDirection: 'row', alignItems: 'center', gap: 4, height: 28, paddingHorizontal: 10, borderRadius: 14, borderWidth: 1, borderColor: night.line, backgroundColor: night.glassStrong },
+  chipOn: { backgroundColor: night.goldSoft, borderColor: night.goldSoft },
+  chipText: { color: night.muted, fontSize: 12, ...nightType.semibold },
+  chipTextOn: { color: night.sky0 },
+  ctaSmallWrap: { alignSelf: 'center' },
+  ctaSmall: { marginTop: 18, minHeight: 42, borderRadius: 21, alignSelf: 'center', paddingHorizontal: 18, gap: 7 },
+  ctaSmallText: { fontSize: 15 },
   notifCard: { marginTop: 4, marginBottom: 6, paddingVertical: 4, paddingHorizontal: 14 },
   notifRow: { flexDirection: 'row', alignItems: 'center', gap: 10, paddingVertical: 8 },
   notifBorder: { borderTopWidth: 1, borderTopColor: night.line },

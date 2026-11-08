@@ -121,7 +121,6 @@ export default function MuhasabahScreen() {
   const [saving, setSaving] = useState(false);
   const [justSaved, setJustSaved] = useState<'account' | 'local' | null>(null);
   const [busyCommitment, setBusyCommitment] = useState<string | null>(null);
-  const [reminderOpen, setReminderOpen] = useState(false);
   const [reminder, setReminder] = useState<{ enabled: boolean; time: string; auto: boolean } | null>(null);
 
   const entry = entries.find((item) => item.entryDate === selectedDate) ?? null;
@@ -329,8 +328,9 @@ export default function MuhasabahScreen() {
             <LinearGradient colors={['rgba(11,9,22,0.15)', 'rgba(11,9,22,0.25)', 'rgba(11,9,22,0.85)', colors.background]} locations={[0, 0.45, 0.82, 1]} style={StyleSheet.absoluteFill} />
             <Pressable onPress={() => router.back()} accessibilityRole="button" style={[styles.back, { top: insets.top + 8 }]}><Ionicons name="chevron-back" size={22} color="#fff" /></Pressable>
             {reminder ? (
-              <Pressable accessibilityRole="button" accessibilityLabel={t('reminderTitle')} onPress={() => setReminderOpen((open) => !open)} style={[styles.bell, { top: insets.top + 12 }, reminderOpen && styles.bellOn]}>
-                <Ionicons name={reminder.enabled ? 'notifications' : 'notifications-off-outline'} size={16} color={reminderOpen ? INK : '#fff'} />
+              <Pressable accessibilityRole="switch" accessibilityState={{ checked: reminder.enabled }} accessibilityLabel={t('reminderTitle')} onPress={() => void toggleReminder(!reminder.enabled)} style={[styles.bell, { top: insets.top + 12 }, reminder.enabled && styles.bellOn]}>
+                <Ionicons name={reminder.enabled ? 'notifications' : 'notifications-off-outline'} size={14} color={reminder.enabled ? INK : '#fff'} />
+                <Text style={[styles.bellText, !reminder.enabled && { color: '#fff' }]}>{reminder.enabled ? `${t('reminderTitle')} · ${reminder.time}` : t('reminderTitle')}</Text>
               </Pressable>
             ) : null}
             <View style={[styles.heroCopy, { paddingTop: insets.top + 64 }]}>
@@ -347,18 +347,6 @@ export default function MuhasabahScreen() {
           </View>
 
           <View style={styles.body}>
-            {reminder && reminderOpen ? (
-              <Reanimated.View entering={FadeInDown.duration(220)}>
-                <Glass style={styles.reminderRow}>
-                  <View style={styles.flex}>
-                    <Text style={styles.reminderTitle}>{t('reminderTitle')}{reminder.enabled ? ` · ${reminder.time}` : ''}</Text>
-                    <Text style={styles.reminderText}>{t('reminderAskBody')}</Text>
-                  </View>
-                  <Switch value={reminder.enabled} onValueChange={(value) => void toggleReminder(value)} trackColor={{ false: 'rgba(255,255,255,0.15)', true: GOLD }} thumbColor="#fff" ios_backgroundColor="rgba(255,255,255,0.15)" />
-                </Glass>
-              </Reanimated.View>
-            ) : null}
-
             {loadError ? (
               <Glass tint={GOLD} style={styles.errorBanner}>
                 <Ionicons name="cloud-offline-outline" size={20} color={GOLD} />
@@ -743,9 +731,9 @@ const styles: any = StyleSheet.create({
   reminderTitle: { color: colors.text, fontWeight: '700', fontSize: 13 },
   reminderText: { color: colors.textMuted, fontSize: 12, marginTop: 1 },
   titleEyebrow: { color: GOLD, fontSize: 11, letterSpacing: 2.4, fontWeight: '700', textAlign: 'center', marginBottom: 2, textShadowColor: 'rgba(0,0,0,0.6)', textShadowRadius: 8 },
-  bell: { position: 'absolute', right: 16, height: 34, minWidth: 34, paddingHorizontal: 0, borderRadius: 17, flexDirection: 'row', gap: 5, alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(15,10,28,0.45)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.22)', zIndex: 2 },
+  bell: { position: 'absolute', right: 16, height: 30, minWidth: 30, paddingHorizontal: 11, borderRadius: 15, flexDirection: 'row', gap: 5, alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(15,10,28,0.45)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.22)', zIndex: 2 },
   bellOn: { backgroundColor: GOLD, borderColor: GOLD },
-  bellText: { color: INK, fontSize: 12, fontWeight: '800' },
+  bellText: { color: INK, fontSize: 12, fontWeight: '700' },
   toast: { position: 'absolute', right: 16, paddingHorizontal: 12, paddingVertical: 7, borderRadius: 12, backgroundColor: 'rgba(15,10,28,0.85)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.15)', zIndex: 3 },
   toastText: { color: '#fff', fontSize: 12, fontWeight: '600' },
   pickedCard: { padding: 18 },

@@ -1,4 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
+import { loadQiyamNotificationState, setQiyamDuaNotification, setQiyamStartNotification, type QiyamNotificationState } from "../features/tahajjud/tahajjudNotificationPrefs";
+import { tx as tahajjudTx } from "../features/tahajjud/tahajjudI18n";
 import { LinearGradient } from "expo-linear-gradient";
 import * as Location from "expo-location";
 import type { Href } from "expo-router";
@@ -112,7 +114,49 @@ const REMINDER_LOOKS: Record<CenterReminderId, { icon: IconName; accent: string 
   hifz: { icon: "school-outline", accent: "#6BBCA8" },
   "verse-of-day": { icon: "book-outline", accent: "#B98BE0" },
   "hadith-of-day": { icon: "chatbubble-ellipses-outline", accent: "#D89BC8" },
+  muhasabah: { icon: "create-outline", accent: "#E3B55A" },
 };
+
+/**
+ * Qiyam al-Layl : début du dernier tiers et nouvelles duas du mur. Même réglage que l'accueil du module,
+ * appliqué tout de suite (il ne dépend pas du bouton Enregistrer de cet écran).
+ */
+function QiyamNotificationSection({ title }: { title: string }) {
+  const [state, setState] = useState<QiyamNotificationState | null>(null);
+  useFocusEffect(useCallback(() => {
+    void loadQiyamNotificationState().then(setState).catch(() => undefined);
+  }, []));
+  if (!state) return null;
+  const rows = [
+    { key: "start" as const, icon: "moon-outline" as IconName, label: tahajjudTx("Début du dernier tiers"), value: state.start },
+    { key: "duas" as const, icon: "hand-left-outline" as IconName, label: tahajjudTx("Nouvelles duas du mur"), value: Boolean(state.duas) },
+  ];
+  const toggle = async (key: "start" | "duas", value: boolean) => {
+    if (key === "duas" && state.duas === null) {
+      Alert.alert(tahajjudTx("Connexion nécessaire"), tahajjudTx("Connectez-vous depuis votre profil pour être prévenu des nouvelles duas."));
+      return;
+    }
+    setState({ ...state, [key]: value });
+    const ok = key === "start" ? await setQiyamStartNotification(value) : await setQiyamDuaNotification(value).catch(() => false);
+    if (!ok) setState({ ...state, [key]: !value });
+  };
+  return (
+    <View>
+      <Text style={styles.sectionLabel}>{title}</Text>
+      <View style={styles.settingsGroup}>
+        {rows.map((row, index) => (
+          <View key={row.key} style={[styles.settingRow, index > 0 && styles.settingRowDivider]}>
+            <View style={[styles.rowIcon, { backgroundColor: "#8D78CB26" }]}>
+              <Ionicons name={row.icon} size={17} color="#8D78CB" />
+            </View>
+            <Text numberOfLines={1} style={[styles.settingTitle, !row.value && styles.settingTitleOff]}>{row.label}</Text>
+            <GoldToggle value={row.value} onValueChange={(value) => void toggle(row.key, value)} accessibilityLabel={row.label} />
+          </View>
+        ))}
+      </View>
+    </View>
+  );
+}
 
 /** Gold toggle drawn in JS: aligned on every iOS version (the native switch overflows its box). */
 function GoldToggle({ value, onValueChange, accessibilityLabel }: {
@@ -612,6 +656,7 @@ export default function NotificationsScreen() {
                   </View>
                 ))}
               </View>
+              <QiyamNotificationSection title={tahajjudTx("Qiyam al-Layl")} />
             </ScrollView>
             <Pressable
               disabled={saving || !hasPendingChanges}

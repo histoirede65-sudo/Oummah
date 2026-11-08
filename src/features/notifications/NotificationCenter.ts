@@ -89,7 +89,7 @@ export const DEFAULT_NOTIFICATION_CENTER_PREFERENCES: NotificationCenterPreferen
     "verse-of-day": true,
     "hadith-of-day": true,
     "daily-goals": false,
-    muhasabah: false,
+    muhasabah: true,
     jummah: true,
   },
   reminderTimes: {
