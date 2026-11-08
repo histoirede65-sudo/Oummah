@@ -54,6 +54,10 @@ import { sanitizeTranslationText } from "../../features/quran/TranslationText";
 import { quranFoundationRepository } from "../../features/quranfoundation/QuranFoundationRepository";
 import { goalProgressBridge } from "../../features/daily-goals/services/goalProgressBridge";
 import { loadReadConfirmations, onLocalMidnight, setReadConfirmation } from "../../features/reading-progress/ReadingValidationStore";
+import { recordActivity } from "../../features/muhasabah/MuhasabahService";
+import { normalizeArabic, type ReciteWord } from "../../features/quran/RecitationAligner";
+import { useRecitationFollow } from "../../features/quran/useRecitationFollow";
+import { isQuranicPauseMark as isPauseMarkWord } from "../../features/quran/QuranWordSync";
 import type {
   QuranFoundationRecitation,
   QuranFoundationVerse,
@@ -1020,7 +1024,7 @@ export default function SurahReadingScreen() {
       versePlayerStatus.duration,
     ],
   );
-  const activeWordState = useMemo(
+  const audioWordState = useMemo(
     () =>
       activeVerse
         ? getWordSyncState({
@@ -1032,6 +1036,51 @@ export default function SurahReadingScreen() {
         : { activeWordPosition: null, completedWordPositions: [] as number[] },
     [activeVerse, syncPositionMs, wordTimestamps],
   );
+
+  // ----- Récitation de l'utilisateur : le micro suit sa voix et illumine les mots qu'il lit. -----
+  const recite = useRecitationFollow();
+  const reciteWords = useMemo<ReciteWord[]>(
+    () =>
+      verses.flatMap((verse) =>
+        verse.textUthmani
+          .replace(/\s+/g, " ")
+          .trim()
+          .split(" ")
+          .filter((word) => word && !isPauseMarkWord(word))
+          .map((word, index) => ({ verseKey: verse.verseKey, position: index + 1, norm: normalizeArabic(word) })),
+      ),
+    [verses],
+  );
+  const reciteActive = recite.listening && recite.current !== null && activeVerse?.verseKey === recite.current.verseKey;
+  const activeWordState = useMemo(
+    () =>
+      reciteActive && recite.current
+        ? {
+            activeWordPosition: recite.current.position,
+            completedWordPositions: Array.from({ length: recite.current.position - 1 }, (_, index) => index + 1),
+          }
+        : audioWordState,
+    [audioWordState, recite.current, reciteActive],
+  );
+  useEffect(() => {
+    if (!recite.listening || !recite.current) return;
+    if (activeVerse?.verseKey === recite.current.verseKey) return;
+    const index = verses.findIndex((verse) => verse.verseKey === recite.current?.verseKey);
+    if (index < 0) return;
+    setActiveVerse(verses[index]);
+    listRef.current?.scrollToIndex({ index, animated: true, viewPosition: 0.15 });
+  }, [activeVerse?.verseKey, recite.current, recite.listening, verses]);
+  useEffect(() => {
+    if (!recite.error) return;
+    Alert.alert(
+      t("surahReader.reciteTitle"),
+      recite.error === "permission"
+        ? t("surahReader.recitePermission")
+        : recite.error === "unavailable"
+          ? t("surahReader.reciteUnavailable")
+          : t("surahReader.reciteFailed"),
+    );
+  }, [recite.error, t]);
   const lastReadWordPosition =
     activeWordState.completedWordPositions.at(-1) ?? null;
   const isWordSyncUnavailable = Boolean(
@@ -1072,6 +1121,7 @@ export default function SurahReadingScreen() {
     void listenToVerseRef.current(verse);
   }, []);
   const handleOpenTafsir = useCallback((verse: QuranFoundationVerse) => {
+    void recordActivity({ kind: 'tafsir', title: 'Lecture d’une explication', detail: `Explication du verset ${verse.verseKey}`, reference: `tafsir:${verse.verseKey}` }).catch(() => undefined);
     goalProgressBridge.record({
       metric: "quran_tafsir_read",
       evidenceId: verse.verseKey,
@@ -1119,6 +1169,24 @@ export default function SurahReadingScreen() {
     );
     if (dedicatedUrl) preloadPlayer.replace({ uri: dedicatedUrl });
   }, [activeVerse, currentReciter, preloadPlayer, surahId, verses]);
+
+  const toggleRecite = useCallback(async () => {
+    if (recite.listening) {
+      recite.stop();
+      return;
+    }
+    sessionIdRef.current += 1;
+    stopInlineVerse();
+    preloadPlayer.pause();
+    const startVerse =
+      activeVerse ??
+      verses.find((verse) => Number(verse.verseKey.split(":")[1]) === currentVerseRef.current) ??
+      verses[0];
+    if (!startVerse) return;
+    setActiveVerse(startVerse);
+    const startIndex = Math.max(0, reciteWords.findIndex((word) => word.verseKey === startVerse.verseKey));
+    await recite.start(reciteWords, startIndex);
+  }, [activeVerse, preloadPlayer, recite, reciteWords, stopInlineVerse, verses]);
 
   const renderVerse = useCallback<ListRenderItem<QuranFoundationVerse>>(
     ({ item, index }) => (
@@ -1175,6 +1243,7 @@ export default function SurahReadingScreen() {
     }) => {
       const first = viewableItems.find((item) => item.item);
       if (first?.item) {
+        void recordActivity({ kind: 'quran_verse', title: 'Lecture du Coran', detail: `Verset ${first.item.verseKey}`, reference: `quran:${first.item.verseKey}` }).catch(() => undefined);
         currentVerseRef.current = getRenderedVerseNumber(first.item);
         if (
           shouldRevealRequestedVerseDirectly &&
@@ -1307,6 +1376,15 @@ export default function SurahReadingScreen() {
           </Text>
         </View>
         <Text style={styles.headerArabic}>{surah.arabicName}</Text>
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel={recite.listening ? t("surahReader.reciteStop") : t("surahReader.reciteStart")}
+          disabled={verses.length === 0}
+          onPress={() => void toggleRecite()}
+          style={[styles.iconButton, styles.headerAction, recite.listening && styles.iconButtonActive]}
+        >
+          <Ionicons name={recite.listening ? "mic" : "mic-outline"} size={21} color={colors.goldLight} />
+        </Pressable>
         <Pressable
           accessibilityRole="button"
           accessibilityLabel={t("surahReader.settingsLabel")}
@@ -1462,7 +1540,16 @@ export default function SurahReadingScreen() {
           ) : null}
         </View>
       )}
-      {activeVerse ? (
+      {recite.listening ? (
+        <View style={styles.reciteBar}>
+          <View style={styles.reciteDot} />
+          <Text style={styles.reciteText}>{t("surahReader.reciteListening")}</Text>
+          <Pressable accessibilityRole="button" onPress={recite.stop} hitSlop={8} style={styles.reciteStop}>
+            <Text style={styles.reciteStopText}>{t("surahReader.reciteStopShort")}</Text>
+          </Pressable>
+        </View>
+      ) : null}
+      {activeVerse && !recite.listening ? (
         <View style={styles.inlinePlayer}>
           <View style={styles.inlineProgressTrack}>
             <View
@@ -1737,6 +1824,11 @@ const styles = StyleSheet.create({
     borderColor: colors.borderSoft,
     backgroundColor: colors.backgroundSecondary,
   },
+  reciteBar: { flexDirection: "row", alignItems: "center", gap: 10, marginHorizontal: 16, marginBottom: 10, paddingHorizontal: 14, paddingVertical: 10, borderRadius: 16, borderWidth: 1, borderColor: "rgba(227,181,90,0.45)", backgroundColor: "rgba(227,181,90,0.1)" },
+  reciteDot: { width: 9, height: 9, borderRadius: 5, backgroundColor: "#E5484D" },
+  reciteText: { flex: 1, color: colors.text, fontFamily: typography.sans, fontSize: 14, fontWeight: "600" },
+  reciteStop: { paddingHorizontal: 12, paddingVertical: 6, borderRadius: 12, backgroundColor: colors.goldLight },
+  reciteStopText: { color: colors.background, fontFamily: typography.sans, fontSize: 13, fontWeight: "800" },
   iconButton: {
     width: 40,
     height: 40,
