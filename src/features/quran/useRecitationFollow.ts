@@ -18,6 +18,9 @@ type SpeechModule = ExpoSpeechRecognitionModuleType & {
 // serveur (enregistrement par morceaux), sans plantage.
 const speech = requireOptionalNativeModule<SpeechModule>('ExpoSpeechRecognition');
 
+// Transcription serveur (payante) seulement dans les versions de développement.
+const SERVER_FALLBACK_ENABLED = __DEV__;
+
 const SEGMENT_MS = 2500;
 // En dessous (dB), le morceau est considéré comme silencieux.
 const SILENCE_DB = -42;
@@ -210,6 +213,9 @@ export function useRecitationFollow() {
     }
 
     options.current = null;
+    // Mode serveur payant (transcription OpenAI) : réservé au développement. Dans l'app publiée, seule la
+    // reconnaissance gratuite du téléphone est utilisée.
+    if (!SERVER_FALLBACK_ENABLED) { setError('unavailable'); setFollowing(false); return false; }
     if (!(await getValidSession().catch(() => null))) { setError('login'); setFollowing(false); return false; }
     const permission = await requestRecordingPermissionsAsync().catch(() => null);
     if (!permission?.granted) { setError('permission'); setFollowing(false); return false; }
