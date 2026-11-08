@@ -28,11 +28,25 @@ Deno.serve(async (request) => {
     const apiKey = Deno.env.get("OPENAI_API_KEY");
     if (!apiKey) return json({ error: "not_configured" }, 500);
 
-    const form = await request.formData();
-    const audio = form.get("audio");
-    if (!(audio instanceof File) || audio.size === 0) return json({ error: "audio_required" }, 400);
+    // JSON { audio: base64, hint, name } (app mobile) ou formulaire multipart { audio: fichier, hint }.
+    let audio: File;
+    let hint = "";
+    if ((request.headers.get("Content-Type") ?? "").includes("application/json")) {
+      const body = (await request.json().catch(() => null)) as { audio?: string; hint?: string; name?: string } | null;
+      if (!body?.audio) return json({ error: "audio_required" }, 400);
+      const bytes = Uint8Array.from(atob(body.audio), (char) => char.charCodeAt(0));
+      audio = new File([bytes], body.name || "recitation.m4a", { type: "audio/mp4" });
+      hint = String(body.hint ?? "");
+    } else {
+      const form = await request.formData();
+      const value = form.get("audio");
+      if (!(value instanceof File)) return json({ error: "audio_required" }, 400);
+      audio = value;
+      hint = String(form.get("hint") ?? "");
+    }
+    if (audio.size === 0) return json({ error: "audio_required" }, 400);
     if (audio.size > MAX_AUDIO_BYTES) return json({ error: "audio_too_large" }, 413);
-    const hint = String(form.get("hint") ?? "").slice(0, 600);
+    hint = hint.slice(0, 600);
 
     const upstream = new FormData();
     upstream.append("file", audio, audio.name || "recitation.m4a");

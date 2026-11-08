@@ -2,6 +2,7 @@ import { requireOptionalNativeModule } from 'expo';
 import { RecordingPresets, requestRecordingPermissionsAsync, setAudioModeAsync, useAudioRecorder } from 'expo-audio';
 import type { ExpoSpeechRecognitionErrorEvent, ExpoSpeechRecognitionModuleType, ExpoSpeechRecognitionOptions, ExpoSpeechRecognitionResultEvent } from 'expo-speech-recognition/build/ExpoSpeechRecognitionModule.types';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import * as FileSystem from 'expo-file-system/legacy';
 import { getValidSession } from '../auth/SupabaseAuthService';
 import { RecitationAligner, type ReciteWord } from './RecitationAligner';
 
@@ -24,13 +25,13 @@ async function transcribeOnServer(uri: string, hint: string): Promise<string> {
   const key = (process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY ?? process.env.EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY)?.trim();
   const session = await getValidSession().catch(() => null);
   if (!url || !key || !session) return '';
-  const form = new FormData();
-  form.append('audio', { uri, name: 'recitation.m4a', type: 'audio/m4a' } as unknown as Blob);
-  form.append('hint', hint);
+  // Envoi en JSON (audio en base64) : l'envoi de fichier « multipart » échoue sur iPhone dans cette app.
+  const audio = await FileSystem.readAsStringAsync(uri, { encoding: FileSystem.EncodingType.Base64 });
+  void FileSystem.deleteAsync(uri, { idempotent: true }).catch(() => undefined);
   const response = await fetch(`${url}/functions/v1/quran-recite-transcribe`, {
     method: 'POST',
-    headers: { apikey: key, Authorization: `Bearer ${session.accessToken}` },
-    body: form,
+    headers: { apikey: key, Authorization: `Bearer ${session.accessToken}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ audio, hint, name: 'recitation.m4a' }),
   });
   if (!response.ok) {
     if (__DEV__) console.info('[RECITE] serveur', response.status, await response.text().catch(() => ''));
@@ -110,6 +111,7 @@ export function useRecitationFollow() {
           serverFailures.current = 0;
           if (wanted.current || text) applyWords(text.split(/\s+/).filter(Boolean));
         } catch (reason) {
+          if (__DEV__) console.info('[RECITE] envoi impossible', reason instanceof Error ? reason.message : reason);
           serverFailures.current += 1;
           // Service absent (non déployé) : inutile d'insister, on le dit tout de suite.
           const missing = reason instanceof Error && reason.message === 'TRANSCRIBE_404';
