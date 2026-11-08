@@ -72,7 +72,11 @@ const RELOCATE_MIN_RATIO = 0.6;
 const NEAR_BEHIND = 15;
 
 /** `hits` : mots réellement entendus et reconnus (sert à décider) ; `matches` inclut les mots sautés (affichage). */
-type Run = { matches: ReciteWord[]; hits: number; end: number; last: number | null };
+/**
+ * `hits` : mots réellement entendus et reconnus (sert à décider) ; `matches` inclut les mots sautés (affichage) ;
+ * `first` : index du premier mot reconnu.
+ */
+type Run = { matches: ReciteWord[]; hits: number; end: number; last: number | null; first: number | null };
 
 export class RecitationAligner {
   private pointer: number;
@@ -99,11 +103,18 @@ export class RecitationAligner {
     if (!heard.length) return [];
 
     const local = this.matchFrom(this.pointer, heard);
-    // Passages presque identiques (histoires parallèles, refrains) : si la suite attendue ne correspond pas
-    // à tout ce qui a été entendu, un autre passage de la sourate qui correspond mieux l'emporte.
-    if (local.hits < heard.length && heard.length >= RELOCATE_MIN_WORDS) {
-      const better = this.relocate(heard);
-      if (better && better.hits > local.hits) {
+    // Début d'écoute, ou suite retrouvée seulement en sautant des mots : la position n'est pas sûre
+    // (ex. Al-Fâtiha 1:3 = fin de 1:1). On compare avec le reste de la sourate, en préférant un début de verset.
+    const unsure = this.lastMatched === null || (local.first !== null && local.first - this.pointer >= 2);
+    // Passages presque identiques (histoires parallèles, refrains) : un passage qui correspond mieux l'emporte.
+    const partial = local.hits < heard.length && heard.length >= RELOCATE_MIN_WORDS;
+    if (partial || (unsure && heard.length >= 2)) {
+      const better = this.relocate(heard, heard.length >= RELOCATE_MIN_WORDS ? RELOCATE_MIN_WORDS : heard.length, unsure);
+      const startsVerse = (run: Run) => run.first !== null && this.words[run.first].position === 1;
+      // On récite en avançant : revenir en arrière vers un passage semblable demande une correspondance nettement meilleure.
+      const backward = better !== null && better.first !== null && better.first < this.pointer - NEAR_BEHIND;
+      const margin = backward ? 2 : 1;
+      if (better && better.first !== local.first && (better.hits >= local.hits + margin || (!backward && unsure && better.hits === local.hits && startsVerse(better) && !startsVerse(local)))) {
         this.commit(better);
         return better.matches;
       }
@@ -131,6 +142,7 @@ export class RecitationAligner {
   private matchFrom(start: number, heard: readonly string[]): Run {
     let pointer = start;
     let last: number | null = null;
+    let first: number | null = null;
     let hits = 0;
     const matches: ReciteWord[] = [];
     for (const word of heard) {
@@ -139,6 +151,7 @@ export class RecitationAligner {
         const loose = start === this.pointer && offset === 0;
         if (loose ? nextWordMatch(word, expected) : wordsMatch(word, expected)) {
           last = pointer + offset;
+          if (first === null) first = last;
           // Mots sautés (perdus entre deux morceaux, mal entendus) : forcément lus, on les allume aussi,
           // sauf avant le tout premier mot retrouvé (on ne sait pas d'où l'utilisateur est parti).
           if (matches.length || start === this.pointer) for (let skipped = pointer; skipped < last; skipped += 1) matches.push(this.words[skipped]);
@@ -149,25 +162,30 @@ export class RecitationAligner {
         }
       }
     }
-    return { matches, hits, end: pointer, last };
+    return { matches, hits, end: pointer, last, first };
   }
 
-  /** Cherche dans toute la sourate le passage qui correspond le mieux aux derniers mots entendus. */
-  private relocate(heard: readonly string[]): Run | null {
-    if (heard.length < RELOCATE_MIN_WORDS) return null;
-    let best: { run: Run; distance: number } | null = null;
+  /**
+   * Cherche dans toute la sourate le passage qui correspond le mieux aux mots entendus.
+   * Classement : plus de mots reconnus ; puis (si `preferVerseStart`) un passage qui commence au début d'un
+   * verset ; puis le plus proche de la position actuelle (le verset en cours compte comme tout proche).
+   */
+  private relocate(heard: readonly string[], minHits = RELOCATE_MIN_WORDS, preferVerseStart = false): Run | null {
+    if (heard.length < minHits) return null;
+    let best: { run: Run; verseStart: boolean; distance: number } | null = null;
     for (let start = 0; start < this.words.length; start += 1) {
       // On ne part que d'un mot qui ressemble à l'un des premiers mots entendus.
       if (!heard.slice(0, 3).some((word) => wordsMatch(word, this.words[start].norm))) continue;
       const run = this.matchFrom(start, heard);
       const count = run.hits;
-      if (count < RELOCATE_MIN_WORDS || count < heard.length * RELOCATE_MIN_RATIO) continue;
-      // À égalité (passage répété), on préfère l'occurrence la plus proche après la position actuelle.
-      // Un passage qui commence juste derrière la position (verset en cours) compte comme tout proche.
+      if (count < minHits || count < heard.length * RELOCATE_MIN_RATIO) continue;
+      const verseStart = preferVerseStart && run.first !== null && this.words[run.first].position === 1;
       const distance = start >= this.pointer - NEAR_BEHIND ? Math.abs(start - this.pointer) : this.words.length + (this.pointer - start);
-      if (!best || count > best.run.hits || (count === best.run.hits && distance < best.distance)) {
-        best = { run, distance };
-      }
+      const better = !best
+        || count > best.run.hits
+        || (count === best.run.hits && verseStart && !best.verseStart)
+        || (count === best.run.hits && verseStart === best.verseStart && distance < best.distance);
+      if (better) best = { run, verseStart, distance };
     }
     return best?.run ?? null;
   }
