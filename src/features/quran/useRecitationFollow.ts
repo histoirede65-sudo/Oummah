@@ -32,7 +32,10 @@ async function transcribeOnServer(uri: string, hint: string): Promise<string> {
     headers: { apikey: key, Authorization: `Bearer ${session.accessToken}` },
     body: form,
   });
-  if (!response.ok) throw new Error(`TRANSCRIBE_${response.status}`);
+  if (!response.ok) {
+    if (__DEV__) console.info('[RECITE] serveur', response.status, await response.text().catch(() => ''));
+    throw new Error(`TRANSCRIBE_${response.status}`);
+  }
   const body = (await response.json().catch(() => null)) as { text?: string } | null;
   return body?.text ?? '';
 }
@@ -89,18 +92,21 @@ export function useRecitationFollow() {
         recorder.record();
         await new Promise((resolve) => setTimeout(resolve, SEGMENT_MS));
         await recorder.stop();
-      } catch {
+      } catch (reason) {
+        if (__DEV__) console.info('[RECITE] enregistrement impossible', reason);
         stop();
         setError('failed');
         return;
       }
       const uri = recorder.uri;
+      if (__DEV__) console.info('[RECITE] morceau enregistré', uri);
       if (!uri) continue;
       const hint = aligner.current?.upcoming(40) ?? '';
       const pending = transcribeOnServer(uri, hint);
       serverChain.current = serverChain.current.then(async () => {
         try {
           const text = await pending;
+          if (__DEV__) console.info('[RECITE] entendu :', text || '(rien)');
           serverFailures.current = 0;
           if (wanted.current || text) applyWords(text.split(/\s+/).filter(Boolean));
         } catch (reason) {
