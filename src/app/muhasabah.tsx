@@ -9,12 +9,13 @@ import Reanimated, { Easing, FadeIn, FadeInDown, ZoomIn } from 'react-native-rea
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { getValidSession } from '../features/auth/SupabaseAuthService';
 import {
-  addFollowup, createCommitment, deleteCommitment, deleteEntry, deleteLocalEntry, listActivities, listCommitments, listEntries, listLocalEntries,
+  addFollowup, createCommitment, deleteCommitment, discardLocalEntries, setEffortResult, deleteEntry, deleteLocalEntry, listActivities, listCommitments, listEntries, listLocalEntries,
   localDateKey, loadDraft, saveDraft, saveEntry, saveLocalEntry, syncLocalEntries, updateCommitment,
-  type CommitmentStatus, type FollowupResponse, type MuhasabahActivity, type MuhasabahActivityKind, type MuhasabahCommitment, type MuhasabahDraft, type MuhasabahEntry,
+  type CommitmentStatus, type EffortResult, type FollowupResponse, type MuhasabahActivity, type MuhasabahActivityKind, type MuhasabahCommitment, type MuhasabahDraft, type MuhasabahEntry,
 } from '../features/muhasabah/MuhasabahService';
 import { muhasabahLocale, muhasabahText, type MuhasabahStringKey } from '../features/muhasabah/muhasabahStrings';
 import { cancelTodayMuhasabahReminder, getMuhasabahReminderState, setMuhasabahReminderEnabled } from '../features/notifications/NotificationCenter';
+import { SURAHS } from '../data/surahs';
 import { useI18n } from '../i18n';
 import { colors } from '../theme/colors';
 import { typography } from '../theme/typography';
@@ -50,11 +51,15 @@ const verseOrder = (key: string) => { const [surah, verse] = key.split(':').map(
 
 /** Lectures du jour affichées dans la langue de l'app ; les versets du Coran sont regroupés en une ligne. */
 function displayActivities(list: MuhasabahActivity[], t: T): DisplayActivity[] {
+  // Un verset passé à l'écran n'est pas forcément lu : on montre la sourate et le passage, sans compter.
   const verses = list.filter((item) => item.kind === 'quran_verse').map((item) => item.reference.replace(/^quran:/, '')).sort((a, b) => verseOrder(a) - verseOrder(b));
+  const bySurah = new Map<number, string[]>();
+  for (const key of verses) { const surah = Number(key.split(':')[0]); bySurah.set(surah, [...(bySurah.get(surah) ?? []), key]); }
   const result: DisplayActivity[] = [];
-  if (verses.length) {
-    const range = verses.length === 1 ? verses[0] : `${verses[0]} → ${verses[verses.length - 1]}`;
-    result.push({ id: 'quran', kind: 'quran_verse', title: t('act_quran'), detail: t('act_quranDetail', { count: verses.length, range }) });
+  for (const [surah, keys] of bySurah) {
+    const range = keys.length === 1 ? keys[0] : `${keys[0]} → ${keys[keys.length - 1]}`;
+    const name = SURAHS.find((item) => item.id === surah)?.transliteration ?? String(surah);
+    result.push({ id: `quran-${surah}`, kind: 'quran_verse', title: t('act_quran'), detail: t('act_quranSurah', { surah: name, range }) });
   }
   for (const item of list) {
     if (item.kind === 'quran_verse') continue;
@@ -98,6 +103,8 @@ export default function MuhasabahScreen() {
   const inputRefs = useRef<(TextInputInstance | null)[]>([]);
   const questionY = useRef<number[]>([]);
   const scrollRef = useRef<ScrollViewInstance | null>(null);
+  const draftTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const askedSync = useRef(false);
   const today = localDateKey();
   const [session, setSession] = useState<boolean | null>(null);
   const [userId, setUserId] = useState<string | null>(null);
@@ -137,8 +144,17 @@ export default function MuhasabahScreen() {
         await applyDate(date, local, null);
         return;
       }
-      let allEntries = await listEntries();
-      if (await syncLocalEntries(new Set(allEntries.map((item) => item.entryDate))).catch(() => false)) allEntries = await listEntries();
+      const allEntries = await listEntries();
+      const pending = await listLocalEntries().catch(() => []);
+      if (pending.length && !askedSync.current) {
+        // Téléphone peut-être partagé : on demande avant d'ajouter ces bilans au compte connecté.
+        askedSync.current = true;
+        Alert.alert(t('syncTitle'), t('syncBody', { count: pending.length }), [
+          { text: t('later'), style: 'cancel' },
+          { text: t('syncDiscard'), style: 'destructive', onPress: () => void discardLocalEntries().then(() => refresh()) },
+          { text: t('syncAdd'), onPress: () => void syncLocalEntries(new Set(allEntries.map((item) => item.entryDate))).then(() => refresh()).catch(() => Alert.alert(t('errorTitle'), t('retryLater'))) },
+        ]);
+      }
       const [allCommitments, allActivities] = await Promise.all([listCommitments(), listActivities()]);
       setEntries(allEntries); setCommitments(allCommitments); setActivities(allActivities); setLoadError(false);
       await applyDate(date, allEntries, uid);
@@ -149,7 +165,7 @@ export default function MuhasabahScreen() {
     } finally {
       setLoading(false);
     }
-  }, [applyDate]);
+  }, [applyDate, t]);
   const loadReminder = useCallback(() => { void getMuhasabahReminderState().then(setReminder).catch(() => setReminder(null)); }, []);
   useFocusEffect(useCallback(() => { void refresh(); loadReminder(); }, [loadReminder, refresh]));
   const toggleReminder = async (enabled: boolean) => {
@@ -178,7 +194,9 @@ export default function MuhasabahScreen() {
     const next = { ...draft, [key]: value };
     setDraft(next);
     setJustSaved(null);
-    void saveDraft(userId, selectedDate, next).catch(() => undefined);
+    if (draftTimer.current) clearTimeout(draftTimer.current);
+    const date = selectedDate;
+    draftTimer.current = setTimeout(() => { void saveDraft(userId, date, next).catch(() => undefined); }, 500);
   };
   const focusQuestion = (index: number) => {
     setTimeout(() => {
@@ -189,6 +207,7 @@ export default function MuhasabahScreen() {
   const askLogin = (body: string) => Alert.alert(t('loginTitle'), body, [{ text: t('later'), style: 'cancel' }, { text: t('openProfile'), onPress: () => router.push('/profile') }]);
 
   const save = async () => {
+    if (draftTimer.current) clearTimeout(draftTimer.current);
     if (sameDraft(draft, emptyDraft)) { Alert.alert(t('incompleteTitle'), t('incompleteBody')); return; }
     Keyboard.dismiss();
     setSaving(true);
@@ -258,7 +277,14 @@ export default function MuhasabahScreen() {
   const ongoing = commitments.filter((item) => item.status === 'active' || item.status === 'progressing');
   const others = commitments.filter((item) => item.status === 'completed' || item.status === 'paused');
   const isToday = selectedDate === today;
-  const yesterdayEffort = isToday ? entries.find((item) => item.entryDate === shiftDay(today, -1))?.effort.trim() : undefined;
+  const goalEntry = entries.find((item) => item.entryDate === shiftDay(selectedDate, -1) && item.effort.trim()) ?? null;
+  const goalsDone = monthEntries.filter((item) => item.effortResult === 'done').length;
+  const validateGoal = async (result: EffortResult | null) => {
+    if (!goalEntry) return;
+    setEntries((previous) => previous.map((item) => (item.id === goalEntry.id ? { ...item, effortResult: result } : item)));
+    if (result === 'done') void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => undefined);
+    await setEffortResult(goalEntry, result).catch(() => Alert.alert(t('errorTitle'), t('retryLater')));
+  };
   const dayTitle = isToday ? `${t('tabTonight')} – ${longDate(selectedDate)}` : selectedDate === shiftDay(today, -1) ? `${t('yesterdayShort')} – ${longDate(selectedDate)}` : longDate(selectedDate);
 
   return (
@@ -278,6 +304,16 @@ export default function MuhasabahScreen() {
 
           <View style={styles.body}>
             <Reanimated.View entering={enter(0)}>
+              <Pressable onPress={() => router.push('/surah/59?verse=18&direct=1' as never)} style={({ pressed }) => [pressed && styles.pressed]}>
+                <Glass tint={GOLD} style={styles.verseCard}>
+                  <Text style={styles.verseArabic}>وَلْتَنظُرْ نَفْسٌ مَّا قَدَّمَتْ لِغَدٍ</Text>
+                  <Text style={styles.verseText}>« {t('verseText')} »</Text>
+                  <View style={styles.verseRefRow}><Ionicons name="book-outline" size={13} color={GOLD} /><Text style={styles.verseRef}>{t('verseRef')}</Text><Ionicons name="chevron-forward" size={13} color={GOLD} /></View>
+                </Glass>
+              </Pressable>
+            </Reanimated.View>
+
+            <Reanimated.View entering={enter(1)}>
               <Glass style={styles.privateCard}>
                 <View style={styles.lockBubble}><Ionicons name={session ? 'lock-closed' : 'phone-portrait'} size={19} color={INK} /></View>
                 <View style={styles.flex}>
@@ -329,14 +365,33 @@ export default function MuhasabahScreen() {
                 <Pressable accessibilityRole="button" disabled={isToday} onPress={() => void openDate(shiftDay(selectedDate, 1))} style={[styles.dateArrow, isToday && styles.disabled]}><Ionicons name="chevron-forward" size={18} color={colors.text} /></Pressable>
               </Reanimated.View>
 
-              {yesterdayEffort ? (
+              {goalEntry ? (
                 <Reanimated.View entering={enter(3)}>
-                  <Glass tint={GOLD} style={styles.yesterday}>
-                    <View style={[styles.bubble, { backgroundColor: GOLD }]}><Ionicons name="sunny" size={17} color={INK} /></View>
-                    <View style={styles.flex}>
-                      <Text style={styles.yesterdayKicker}>{t('yesterdayKicker')}</Text>
-                      <Text style={styles.yesterdayText}>{yesterdayEffort}</Text>
+                  <Glass tint={goalEntry.effortResult === 'done' ? GREEN : GOLD} style={styles.cardPad}>
+                    <View style={styles.goalTop}>
+                      <View style={[styles.bubble, { backgroundColor: goalEntry.effortResult === 'done' ? GREEN : GOLD }]}><Ionicons name={goalEntry.effortResult === 'done' ? 'checkmark' : 'flag'} size={17} color={INK} /></View>
+                      <View style={styles.flex}>
+                        <Text style={styles.yesterdayKicker}>{isToday ? t('goalKicker') : t('goalKickerPast')}</Text>
+                        <Text style={styles.goalFrom}>{t('goalFrom')}</Text>
+                      </View>
                     </View>
+                    <Text style={[styles.goalText, goalEntry.effortResult === 'done' && styles.goalTextDone]}>{goalEntry.effort.trim()}</Text>
+                    {goalEntry.effortResult ? (
+                      <View style={styles.goalResultRow}>
+                        <Ionicons name={goalEntry.effortResult === 'done' ? 'checkmark-circle' : goalEntry.effortResult === 'partial' ? 'contrast' : 'ellipse-outline'} size={17} color={goalEntry.effortResult === 'done' ? GREEN : goalEntry.effortResult === 'partial' ? GOLD : colors.textMuted} />
+                        <Text style={styles.goalResultText}>{t(`goalResult_${goalEntry.effortResult}` as MuhasabahStringKey)}</Text>
+                        <Pressable hitSlop={8} onPress={() => void validateGoal(null)}><Text style={styles.linkText}>{t('goalChange')}</Text></Pressable>
+                      </View>
+                    ) : (
+                      <View style={styles.responseRow}>
+                        {(['done', 'partial', 'not_yet'] as const).map((result) => (
+                          <Pressable key={result} onPress={() => void validateGoal(result)} style={({ pressed }) => [styles.goalButton, result === 'done' && styles.goalButtonMain, pressed && styles.pressed]}>
+                            <Ionicons name={result === 'done' ? 'checkmark' : result === 'partial' ? 'contrast-outline' : 'time-outline'} size={16} color={result === 'done' ? INK : colors.textSecondary} />
+                            <Text style={[styles.goalButtonText, result === 'done' && { color: INK }]}>{t(`goal_${result}` as MuhasabahStringKey)}</Text>
+                          </Pressable>
+                        ))}
+                      </View>
+                    )}
                   </Glass>
                 </Reanimated.View>
               ) : null}
@@ -382,6 +437,14 @@ export default function MuhasabahScreen() {
                       <Text style={styles.savedText}>{justSaved === 'local' ? t('savedLocalBody', { date: shortDate(selectedDate) }) : t('savedInlineSub', { count: currentMonthCount })}</Text>
                     </View>
                   </Glass>
+                  {session && draft.effort.trim() && !effortTracked ? (
+                    <Glass tint={VIOLET} style={styles.prompt}>
+                      <Ionicons name="leaf-outline" size={20} color={VIOLET} />
+                      <View style={styles.flex}><Text style={styles.promptTitle}>{t('followPromptTitle')}</Text><Text numberOfLines={2} style={styles.promptText}>{draft.effort.trim()}</Text></View>
+                      <Pressable onPress={() => void proposeEffort()} style={styles.smallButton}><Text style={styles.smallButtonText}>{t('follow')}</Text></Pressable>
+                    </Glass>
+                  ) : null}
+
                   {reminder && !reminder.enabled ? (
                     <Glass tint={VIOLET} style={styles.prompt}>
                       <Ionicons name="notifications-outline" size={20} color={VIOLET} />
@@ -402,14 +465,6 @@ export default function MuhasabahScreen() {
                 </Reanimated.View>
               )}
               {entry ? <Pressable onPress={remove} style={styles.delete}><Text style={styles.deleteText}>{t('delete')}</Text></Pressable> : null}
-
-              {draft.effort.trim() && !effortTracked ? (
-                <Glass tint={VIOLET} style={styles.prompt}>
-                  <Ionicons name="leaf-outline" size={20} color={VIOLET} />
-                  <View style={styles.flex}><Text style={styles.promptTitle}>{t('followPromptTitle')}</Text><Text numberOfLines={2} style={styles.promptText}>{draft.effort.trim()}</Text></View>
-                  <Pressable onPress={() => void proposeEffort()} style={styles.smallButton}><Text style={styles.smallButtonText}>{t('follow')}</Text></Pressable>
-                </Glass>
-              ) : null}
 
               {ongoing.length ? (
                 <Reanimated.View entering={enter(8)}>
@@ -440,7 +495,7 @@ export default function MuhasabahScreen() {
                     <View style={styles.statDivider} />
                     <Stat value={monthReadingDays} label={t('monthReadings')} color={VIOLET} />
                     <View style={styles.statDivider} />
-                    <Stat value={ongoing.length} label={t('monthEfforts')} color={GREEN} />
+                    <Stat value={goalsDone} label={t('monthGoals')} color={GREEN} />
                   </View>
                   {repeatedEfforts.length ? <View style={styles.monthSection}>
                     <Text style={styles.monthSectionTitle}>{t('repeatedEfforts')}</Text>
@@ -487,6 +542,7 @@ export default function MuhasabahScreen() {
                       <PreviewLine color={GREEN} text={item.goodDeeds} />
                       <PreviewLine color={AMBER} text={item.couldImprove} />
                       <PreviewLine color={VIOLET} text={item.effort} />
+                      {item.effortResult ? <Text style={[styles.feedResult, { color: item.effortResult === 'done' ? GREEN : item.effortResult === 'partial' ? GOLD : colors.textMuted }]}>{t(`goalResult_${item.effortResult}` as MuhasabahStringKey)}</Text> : null}
                     </Glass>
                   </Pressable>
                 </Reanimated.View>
@@ -632,6 +688,21 @@ const styles: any = StyleSheet.create({
   reminderRow: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingHorizontal: 14, paddingVertical: 11 },
   reminderTitle: { color: colors.text, fontWeight: '700', fontSize: 14 },
   reminderText: { color: colors.textMuted, fontSize: 12, marginTop: 1 },
+  verseCard: { padding: 16, alignItems: 'center' },
+  verseArabic: { color: colors.text, fontFamily: typography.arabic, fontSize: 24, lineHeight: 44, textAlign: 'center', writingDirection: 'rtl' },
+  verseText: { color: colors.textSecondary, fontFamily: typography.serifMedium, fontSize: 15, lineHeight: 22, textAlign: 'center', marginTop: 6 },
+  verseRefRow: { flexDirection: 'row', alignItems: 'center', gap: 5, marginTop: 10 },
+  verseRef: { color: GOLD, fontSize: 12, fontWeight: '600' },
+  goalTop: { flexDirection: 'row', alignItems: 'center', gap: 12 },
+  goalFrom: { color: colors.textMuted, fontSize: 12, marginTop: 1 },
+  goalText: { color: colors.text, fontFamily: typography.serifMedium, fontSize: 21, lineHeight: 27, marginTop: 12, marginBottom: 12 },
+  goalTextDone: { color: colors.textSecondary },
+  goalResultRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  goalResultText: { flex: 1, color: colors.text, fontWeight: '700', fontSize: 14 },
+  goalButton: { flex: 1, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: 5, paddingVertical: 11, borderRadius: 14, backgroundColor: 'rgba(255,255,255,0.07)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.1)' },
+  goalButtonMain: { backgroundColor: GREEN, borderColor: GREEN },
+  goalButtonText: { color: colors.textSecondary, fontSize: 13, fontWeight: '700' },
+  feedResult: { fontSize: 12, fontWeight: '700', marginTop: 8, marginLeft: 17 },
   privateCard: { flexDirection: 'row', alignItems: 'center', gap: 13, padding: 14 },
   lockBubble: { width: 44, height: 44, borderRadius: 22, backgroundColor: GOLD, alignItems: 'center', justifyContent: 'center', shadowColor: GOLD, shadowOpacity: 0.5, shadowRadius: 10, shadowOffset: { width: 0, height: 0 } },
   privateTitle: { color: colors.text, fontWeight: '700', fontSize: 15 },

@@ -8,10 +8,13 @@ export type MuhasabahEntry = {
   goodDeeds: string;
   couldImprove: string;
   effort: string;
+  /** Résultat de l'effort, devenu l'objectif du lendemain. */
+  effortResult: EffortResult | null;
   createdAt: string;
   updatedAt: string;
 };
 
+export type EffortResult = 'done' | 'partial' | 'not_yet';
 export type MuhasabahDraft = Pick<MuhasabahEntry, 'goodDeeds' | 'couldImprove' | 'effort'>;
 export type CommitmentStatus = 'active' | 'progressing' | 'completed' | 'paused';
 export type FollowupResponse = 'success' | 'progress' | 'not_yet';
@@ -47,7 +50,7 @@ export type MuhasabahActivity = {
 
 type EntryRow = {
   id: string; user_id: string; entry_date: string; good_deeds: string;
-  could_improve: string; effort: string; created_at: string; updated_at: string;
+  could_improve: string; effort: string; effort_result?: EffortResult | null; created_at: string; updated_at: string;
 };
 type CommitmentRow = {
   id: string; user_id: string; text: string; status: CommitmentStatus;
@@ -94,7 +97,7 @@ async function request<T>(path: string, init: RequestInit = {}) {
 }
 
 function entryFromRow(row: EntryRow): MuhasabahEntry {
-  return { id: row.id, userId: row.user_id, entryDate: row.entry_date, goodDeeds: row.good_deeds ?? '', couldImprove: row.could_improve ?? '', effort: row.effort ?? '', createdAt: row.created_at, updatedAt: row.updated_at };
+  return { id: row.id, userId: row.user_id, entryDate: row.entry_date, goodDeeds: row.good_deeds ?? '', couldImprove: row.could_improve ?? '', effort: row.effort ?? '', effortResult: row.effort_result ?? null, createdAt: row.created_at, updatedAt: row.updated_at };
 }
 
 function commitmentFromRow(row: CommitmentRow, followups: FollowupRow[]): MuhasabahCommitment {
@@ -138,7 +141,7 @@ export async function saveLocalEntry(date: string, draft: MuhasabahDraft) {
   if (!draft.goodDeeds.trim() && !draft.couldImprove.trim() && !draft.effort.trim()) throw new Error('EMPTY_ENTRY');
   const all = await readLocalEntries();
   const now = new Date().toISOString();
-  const entry: MuhasabahEntry = { id: `local-${date}`, userId: 'guest', entryDate: date, goodDeeds: draft.goodDeeds.trim(), couldImprove: draft.couldImprove.trim(), effort: draft.effort.trim(), createdAt: all[date]?.createdAt ?? now, updatedAt: now };
+  const entry: MuhasabahEntry = { id: `local-${date}`, userId: 'guest', entryDate: date, goodDeeds: draft.goodDeeds.trim(), couldImprove: draft.couldImprove.trim(), effort: draft.effort.trim(), effortResult: all[date]?.effortResult ?? null, createdAt: all[date]?.createdAt ?? now, updatedAt: now };
   all[date] = entry;
   await storageService.set(LOCAL_ENTRIES_KEY, all);
   await storageService.set(`${COMPLETED_KEY_PREFIX}.guest.${date}`, true);
@@ -153,6 +156,12 @@ export async function deleteLocalEntry(date: string) {
   await storageService.remove(`${COMPLETED_KEY_PREFIX}.guest.${date}`);
 }
 
+export async function discardLocalEntries() {
+  const all = await readLocalEntries();
+  for (const date of Object.keys(all)) await storageService.remove(`${COMPLETED_KEY_PREFIX}.guest.${date}`).catch(() => undefined);
+  await storageService.remove(LOCAL_ENTRIES_KEY);
+}
+
 /** Envoie au compte les bilans écrits hors connexion (sans écraser un bilan déjà présent ce jour-là). */
 export async function syncLocalEntries(serverDates: Set<string>) {
   const all = await readLocalEntries();
@@ -160,7 +169,10 @@ export async function syncLocalEntries(serverDates: Set<string>) {
   if (!dates.length) return false;
   for (const date of dates) {
     const item = all[date];
-    if (!serverDates.has(date)) await saveEntry(date, item);
+    if (!serverDates.has(date)) {
+      const saved = await saveEntry(date, item);
+      if (item.effortResult) await setEffortResult(saved, item.effortResult);
+    }
     delete all[date];
     await storageService.set(LOCAL_ENTRIES_KEY, all);
   }
@@ -171,9 +183,36 @@ export async function isLocalEntryComplete(userId: string | null, date = localDa
   return (await storageService.get<boolean>(`${COMPLETED_KEY_PREFIX}.${userId ?? 'guest'}.${date}`).catch(() => false)) === true;
 }
 
+const RESULTS_KEY_PREFIX = 'oummah.muhasabah.effortResults.v1';
+
+async function readLocalResults(userId: string) {
+  return (await storageService.get<Record<string, EffortResult>>(`${RESULTS_KEY_PREFIX}.${userId}`).catch(() => null)) ?? {};
+}
+
 export async function listEntries() {
   const rows = await request<EntryRow[]>('muhasabah_entries?select=*&order=entry_date.desc');
-  return (rows ?? []).map(entryFromRow);
+  const session = await getValidSession().catch(() => null);
+  const local = session ? await readLocalResults(session.user.id) : {};
+  // Résultat gardé sur le téléphone tant que la colonne n'existe pas encore en ligne.
+  return (rows ?? []).map((row) => { const entry = entryFromRow(row); return entry.effortResult ? entry : { ...entry, effortResult: local[entry.entryDate] ?? null }; });
+}
+
+/** Valide l'objectif né de l'effort écrit dans `entry` (fait / en partie / pas encore). */
+export async function setEffortResult(entry: MuhasabahEntry, result: EffortResult | null) {
+  if (entry.id.startsWith('local-')) {
+    const all = await readLocalEntries();
+    if (all[entry.entryDate]) { all[entry.entryDate] = { ...all[entry.entryDate], effortResult: result }; await storageService.set(LOCAL_ENTRIES_KEY, all); }
+    return;
+  }
+  const session = await getValidSession().catch(() => null);
+  if (session) {
+    const local = await readLocalResults(session.user.id);
+    if (result) local[entry.entryDate] = result; else delete local[entry.entryDate];
+    await storageService.set(`${RESULTS_KEY_PREFIX}.${session.user.id}`, local);
+  }
+  await request(`muhasabah_entries?id=eq.${encodeURIComponent(entry.id)}`, {
+    method: 'PATCH', body: JSON.stringify({ effort_result: result, effort_result_at: result ? new Date().toISOString() : null }),
+  }).catch(() => undefined);
 }
 
 export async function getEntry(date: string) {
