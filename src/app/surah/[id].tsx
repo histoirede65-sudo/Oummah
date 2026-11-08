@@ -1383,15 +1383,6 @@ export default function SurahReadingScreen() {
         <Text style={styles.headerArabic}>{surah.arabicName}</Text>
         <Pressable
           accessibilityRole="button"
-          accessibilityLabel={recite.listening ? t("surahReader.reciteStop") : t("surahReader.reciteStart")}
-          disabled={verses.length === 0}
-          onPress={() => void toggleRecite()}
-          style={({ pressed }) => [styles.recitePill, recite.listening && styles.recitePillOn, pressed && { opacity: 0.8 }]}
-        >
-          <Ionicons name={recite.listening ? "stop" : "mic"} size={20} color={recite.listening ? "#FFFFFF" : colors.background} />
-        </Pressable>
-        <Pressable
-          accessibilityRole="button"
           accessibilityLabel={t("surahReader.settingsLabel")}
           onPress={() => setShowSettings((value) => !value)}
           style={[styles.iconButton, styles.headerAction, showSettings && styles.iconButtonActive]}
@@ -1425,6 +1416,15 @@ export default function SurahReadingScreen() {
           <View style={styles.reciterSelectorControl}>
             <QuranReciterSelector compact />
           </View>
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel={recite.listening ? t("surahReader.reciteStop") : t("surahReader.reciteStart")}
+            disabled={verses.length === 0}
+            onPress={() => void toggleRecite()}
+            style={({ pressed }) => [styles.recitePill, recite.listening && styles.recitePillOn, pressed && { opacity: 0.8 }]}
+          >
+            <Ionicons name={recite.listening ? "stop" : "mic"} size={20} color={recite.listening ? "#FFFFFF" : colors.background} />
+          </Pressable>
           <Pressable
             accessibilityRole="button"
             accessibilityLabel={t("surahReader.goToVerse")}

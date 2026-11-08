@@ -14,8 +14,8 @@ const FRAME = '#C9A35A';
 const HEADER_FILL = '#F1E6C8';
 // Recitation, letters only: the verse in gold ink, the recited word in a deep red-brown.
 // The tajweed font carries its own colours, so the recited verse is drawn with the classic font of the same page.
-const VERSE_INK = '#B07A0A';
-const WORD_INK = '#9A2A0E';
+const VERSE_INK = '#C98A00';
+const WORD_INK = '#E0301E';
 const BASMALA = 'بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ';
 
 type Props = {
@@ -316,7 +316,8 @@ const styles = StyleSheet.create({
   line: { flexDirection: 'row-reverse', alignItems: 'center', justifyContent: 'space-between' },
   lineOpening: { justifyContent: 'center', gap: 6 },
   verseInk: { color: VERSE_INK },
-  wordInk: { color: WORD_INK },
+  // Halo qui suit les lettres du mot lu (pas de fond) : bien visible sur le papier.
+  wordInk: { color: WORD_INK, textShadowColor: 'rgba(224,48,30,0.55)', textShadowRadius: 8, textShadowOffset: { width: 0, height: 0 } },
   surahName: { alignItems: 'center', justifyContent: 'center', borderWidth: 1.5, borderColor: FRAME, borderRadius: 10, backgroundColor: HEADER_FILL },
   surahNameText: { color: INK, fontFamily: ARABIC_READING_FONT_FAMILY },
   basmala: { alignItems: 'center', justifyContent: 'center' },
