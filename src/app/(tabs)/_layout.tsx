@@ -119,7 +119,7 @@ export default function TabLayout() {
         freezeOnBlur: true,
         lazy: true,
       }}
-      tabBar={({ state, navigation }) => {
+      tabBar={({ state, navigation }: { state: { index: number; routes: { name: string }[] }; navigation?: { navigate?: (route: never) => void } }) => {
         if (tadabburMode.isActive) {
           return null;
         }
@@ -155,7 +155,9 @@ export default function TabLayout() {
                       return;
                     }
 
-                    navigation.navigate(tab.route as never);
+                    // SDK 58 : la barre d'onglets personnalisée ne reçoit plus toujours `navigation`.
+                    if (navigation?.navigate) navigation.navigate(tab.route as never);
+                    else router.navigate((tab.route === 'index' ? '/' : `/${tab.route}`) as never);
                   }}
                   style={({ pressed }) => [
                     styles.tab,
