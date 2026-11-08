@@ -5,6 +5,7 @@
  */
 export const TAHAJJUD_EN: Record<string, string> = {
   // ----- Notifications on the module home -----
+  'Nuit validée': 'Night logged',
   'Une notification quand le meilleur moment de la nuit commence.': 'A notification when the best time of the night begins.',
   'Nouvelles duas du mur': 'New duas on the wall',
   'Être prévenu quand quelqu’un partage une dua, pour dire Amine.': 'Get notified when someone shares a dua, to say Ameen.',

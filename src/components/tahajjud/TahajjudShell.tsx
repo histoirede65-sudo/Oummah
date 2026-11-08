@@ -10,8 +10,10 @@ import { night, nightType } from './theme';
 import { tx } from '../../features/tahajjud/tahajjudI18n';
 
 /** Frame of every Tahajjud screen: night sky, back button, optional title. */
-export function TahajjudShell({ title, eyebrow, children, scroll = true, hero }: {
+export function TahajjudShell({ title, eyebrow, children, scroll = true, hero, headerRight }: {
   title?: string;
+  /** Petits boutons discrets en haut à droite. */
+  headerRight?: ReactNode;
   eyebrow?: string;
   children: ReactNode;
   scroll?: boolean;
@@ -30,7 +32,8 @@ export function TahajjudShell({ title, eyebrow, children, scroll = true, hero }:
           {eyebrow ? <Text style={styles.eyebrow}>{eyebrow}</Text> : null}
           <Text style={styles.title}>{title}</Text>
         </View>
-      ) : null}
+      ) : <View style={styles.headerCopy} />}
+      {headerRight}
     </View>
   );
   return (

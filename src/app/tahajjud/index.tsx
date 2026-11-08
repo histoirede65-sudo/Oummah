@@ -45,6 +45,7 @@ export default function TahajjudScreen() {
   const [newDuas, setNewDuas] = useState(0);
   const [latestDua, setLatestDua] = useState<WallPost | null>(null);
   const [duaAlerts, setDuaAlerts] = useState<boolean | null>(null);
+  const [notifOpen, setNotifOpen] = useState(false);
 
   const askPermission = async () => {
     if (await ensureTahajjudNotificationPermission()) return true;
@@ -134,33 +135,58 @@ export default function TahajjudScreen() {
   );
 
   return (
-    <TahajjudShell hero={require('../../../assets/images/tahajjud/hero.webp')}>
+    <TahajjudShell
+      hero={require('../../../assets/images/tahajjud/hero.webp')}
+      headerRight={(
+        <View style={styles.topActions}>
+          {tonight && (view.validated || view.canValidate) ? (
+            <Pressable
+              accessibilityRole="button"
+              disabled={view.validated}
+              onPress={() => setSheet(true)}
+              style={({ pressed }) => [styles.topPill, view.validated && styles.topPillDone, pressed && styles.pressed]}
+            >
+              <Ionicons name={view.validated ? 'checkmark-circle' : 'checkmark-circle-outline'} size={15} color={view.validated ? night.success : night.goldSoft} />
+              <Text style={[styles.topPillText, view.validated && styles.topPillTextDone]}>{view.validated ? tx('Nuit validée') : tx('Valider ma nuit')}</Text>
+            </Pressable>
+          ) : null}
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel={tx('Notifications')}
+            onPress={() => setNotifOpen((open) => !open)}
+            style={({ pressed }) => [styles.topBell, notifOpen && styles.topBellOpen, pressed && styles.pressed]}
+          >
+            <Ionicons name={settings?.notifications.start || duaAlerts ? 'notifications' : 'notifications-outline'} size={17} color={notifOpen ? night.sky0 : night.goldSoft} />
+          </Pressable>
+        </View>
+      )}
+    >
       <Animated.View entering={FadeInDown.duration(500)} style={styles.heroCopy}>
         <Text style={styles.eyebrow}>{tonight ? nightTitle(tonight.key) : tx('Cette nuit')}</Text>
         <Text style={styles.title}>{tx("Qiyam al-Layl")}</Text>
         <Text style={styles.subtitle}>{tx("Un rendez-vous privilégié avec votre Seigneur")}</Text>
       </Animated.View>
 
-      <Animated.View entering={FadeInDown.delay(60).duration(500)}>
-        <GlassCard style={styles.notifCard}>
-          <View style={styles.notifRow}>
-            <Ionicons name="moon-outline" size={18} color={night.goldSoft} />
-            <View style={styles.notifCopy}>
-              <Text style={styles.notifTitle}>{tx('Début du dernier tiers')}</Text>
-              <Text style={styles.notifText}>{tx('Une notification quand le meilleur moment de la nuit commence.')}</Text>
+      {notifOpen ? (
+        <Animated.View entering={FadeInDown.duration(220)}>
+          <GlassCard style={styles.notifCard}>
+            <View style={styles.notifRow}>
+              <View style={styles.notifCopy}>
+                <Text style={styles.notifTitle}>{tx('Début du dernier tiers')}</Text>
+                <Text style={styles.notifText}>{tx('Une notification quand le meilleur moment de la nuit commence.')}</Text>
+              </View>
+              <Switch value={Boolean(settings?.notifications.start)} disabled={!settings} onValueChange={(value) => void toggleStart(value)} trackColor={{ false: 'rgba(255,255,255,0.15)', true: night.gold }} thumbColor={night.text} />
             </View>
-            <Switch value={Boolean(settings?.notifications.start)} disabled={!settings} onValueChange={(value) => void toggleStart(value)} trackColor={{ false: 'rgba(255,255,255,0.15)', true: night.gold }} thumbColor={night.text} />
-          </View>
-          <View style={[styles.notifRow, styles.notifBorder]}>
-            <Ionicons name="hand-left-outline" size={18} color={night.goldSoft} />
-            <View style={styles.notifCopy}>
-              <Text style={styles.notifTitle}>{tx('Nouvelles duas du mur')}</Text>
-              <Text style={styles.notifText}>{tx('Être prévenu quand quelqu’un partage une dua, pour dire Amine.')}</Text>
+            <View style={[styles.notifRow, styles.notifBorder]}>
+              <View style={styles.notifCopy}>
+                <Text style={styles.notifTitle}>{tx('Nouvelles duas du mur')}</Text>
+                <Text style={styles.notifText}>{tx('Être prévenu quand quelqu’un partage une dua, pour dire Amine.')}</Text>
+              </View>
+              <Switch value={Boolean(duaAlerts)} disabled={duaAlerts === null} onValueChange={(value) => void toggleDuaAlerts(value)} trackColor={{ false: 'rgba(255,255,255,0.15)', true: night.gold }} thumbColor={night.text} />
             </View>
-            <Switch value={Boolean(duaAlerts)} disabled={duaAlerts === null} onValueChange={(value) => void toggleDuaAlerts(value)} trackColor={{ false: 'rgba(255,255,255,0.15)', true: night.gold }} thumbColor={night.text} />
-          </View>
-        </GlassCard>
-      </Animated.View>
+          </GlassCard>
+        </Animated.View>
+      ) : null}
 
       {view.loading && !tonight ? (
         <View style={styles.loader}><ActivityIndicator color={night.gold} /></View>
@@ -357,12 +383,19 @@ const styles = StyleSheet.create({
   eyebrow: { color: night.gold, fontSize: 14, letterSpacing: 1.8, textTransform: 'uppercase', ...nightType.bold },
   title: { marginTop: 2, color: night.text, fontSize: 46, lineHeight: 50, ...nightType.display },
   subtitle: { marginTop: 2, color: night.textSoft, fontSize: 18, ...nightType.body },
-  notifCard: { marginTop: 10, paddingVertical: 6, paddingHorizontal: 14 },
-  notifRow: { flexDirection: 'row', alignItems: 'center', gap: 11, paddingVertical: 9 },
+  topActions: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  topPill: { height: 34, paddingHorizontal: 11, borderRadius: 17, flexDirection: 'row', alignItems: 'center', gap: 5, backgroundColor: night.glassStrong, borderWidth: 1, borderColor: night.line },
+  topPillDone: { borderColor: 'rgba(127,216,166,0.35)' },
+  topPillText: { color: night.goldSoft, fontSize: 13, ...nightType.semibold },
+  topPillTextDone: { color: night.success },
+  topBell: { width: 34, height: 34, borderRadius: 17, alignItems: 'center', justifyContent: 'center', backgroundColor: night.glassStrong, borderWidth: 1, borderColor: night.line },
+  topBellOpen: { backgroundColor: night.goldSoft, borderColor: night.goldSoft },
+  notifCard: { marginTop: 4, marginBottom: 6, paddingVertical: 4, paddingHorizontal: 14 },
+  notifRow: { flexDirection: 'row', alignItems: 'center', gap: 10, paddingVertical: 8 },
   notifBorder: { borderTopWidth: 1, borderTopColor: night.line },
   notifCopy: { flex: 1 },
-  notifTitle: { color: night.text, fontSize: 15, ...nightType.semibold },
-  notifText: { marginTop: 1, color: night.muted, fontSize: 13, lineHeight: 17, ...nightType.body },
+  notifTitle: { color: night.text, fontSize: 14, ...nightType.semibold },
+  notifText: { marginTop: 1, color: night.muted, fontSize: 12, lineHeight: 16, ...nightType.body },
   loader: { height: 280, alignItems: 'center', justifyContent: 'center' },
   errorCard: { marginTop: 30, alignItems: 'center', gap: 12 },
   errorText: { color: night.textSoft, fontSize: 17, textAlign: 'center', lineHeight: 24, ...nightType.body },
