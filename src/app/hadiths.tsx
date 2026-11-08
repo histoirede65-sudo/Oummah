@@ -3,12 +3,13 @@ import { LinearGradient } from "expo-linear-gradient";
 import type { Href } from "expo-router";
 import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
-import { AppState, InteractionManager } from "react-native";
+import { AppState } from "react-native";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { hadithRepository } from "../features/hadith-explorer/data/hadithRepository";
 import type { Hadith } from "../features/hadith-explorer/domain/Hadith";
 import { HADITH_THEMES } from "../features/hadith-explorer/domain/HadithTheme";
+import { scheduleIdle } from "../utils/scheduleIdle";
 import { cleanHadithLabel, hadithDisplayTitle, isReferenceTitle, knownReference } from "../features/hadith-explorer/domain/hadithDisplay";
 import DailyHadithCard from "../features/hadith-explorer/presentation/DailyHadithCard";
 import { preloadHadithCollections } from "../features/hadith-explorer/services/hadithPreloader";
@@ -74,7 +75,7 @@ export default function HadithHomeScreen() {
   }, [language]);
 
   useEffect(() => {
-    const task = InteractionManager.runAfterInteractions(() => {
+    const task = scheduleIdle(() => {
       void preloadHadithCollections();
     });
     return () => task.cancel();

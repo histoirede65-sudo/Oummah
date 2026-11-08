@@ -1,8 +1,9 @@
-import { Animated, InteractionManager, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, useWindowDimensions, View } from "react-native";
+import { Animated, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, useWindowDimensions, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useRef, useState } from "react";
+import { scheduleIdle } from "../../utils/scheduleIdle";
 
 import DalilCard from "../../components/DalilCard";
 import HomeGoalsSection from "../../components/HomeGoalsSection";
@@ -12,6 +13,7 @@ import HomeShortcuts from "../../components/HomeShortcuts";
 import HomeDailyRow from "../../components/home/HomeDailyRow";
 import PrayerCard from "../../components/PrayerCard";
 import HomeTahajjudCard from "../../components/HomeTahajjudCard";
+import HomeMuhasabahCard from "../../components/HomeMuhasabahCard";
 import type { MosquePrayerSchedule } from "../../features/mosques/data/mosquePrayerTimes";
 import { saveTasbihPrayerSchedule } from "../../features/dhikr/TasbihStore";
 import { useI18n } from "../../i18n";
@@ -34,7 +36,7 @@ export default function HomeScreen() {
   // le premier affichage, pour que le haut de l'accueil apparaisse plus vite sur les petits téléphones.
   const [lowerSectionsReady, setLowerSectionsReady] = useState(false);
   useEffect(() => {
-    const task = InteractionManager.runAfterInteractions(() => setLowerSectionsReady(true));
+    const task = scheduleIdle(() => setLowerSectionsReady(true));
     return () => task.cancel();
   }, []);
 
@@ -95,6 +97,7 @@ export default function HomeScreen() {
             void saveTasbihPrayerSchedule(schedule).catch(() => undefined);
           }} />
           <HomeTahajjudCard schedule={prayerSchedule} />
+          <HomeMuhasabahCard />
           <HomeAnnouncementBanner />
           <View
             onLayout={(event) => {

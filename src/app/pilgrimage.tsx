@@ -2,12 +2,13 @@ import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
 import { useEffect, useMemo, useState } from "react";
-import { InteractionManager, Pressable, ScrollView, StyleSheet, Text, useWindowDimensions, View } from "react-native";
+  import { Pressable, ScrollView, StyleSheet, Text, useWindowDimensions, View } from "react-native";
 import { Image } from "expo-image";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Svg, { Circle } from "react-native-svg";
 
 import { PilgrimToggle } from "../components/pilgrimage/PilgrimBits";
+import { scheduleIdle } from "../utils/scheduleIdle";
 import { pil, pilType } from "../components/pilgrimage/theme";
 import { bookPages } from "../features/pilgrimage/pilgrimageBook";
 import { getHajjSeason, type HajjSeason } from "../features/pilgrimage/pilgrimageCalendar";
@@ -133,7 +134,7 @@ export default function PilgrimageHome() {
   // Refresh at each visit: dates come closer, times get precise once online.
   useEffect(() => {
     if (!state) return;
-    const task = InteractionManager.runAfterInteractions(() => {
+      const task = scheduleIdle(() => {
       void syncHajjReminders(state.hajjReminders).then(setReminderStatus).catch(() => undefined);
     });
     return () => task.cancel();
@@ -148,7 +149,7 @@ export default function PilgrimageHome() {
   };
 
   useEffect(() => {
-    const task = InteractionManager.runAfterInteractions(() => {
+      const task = scheduleIdle(() => {
       void getHajjSeason().then(setSeason).catch(() => undefined);
     });
     return () => task.cancel();

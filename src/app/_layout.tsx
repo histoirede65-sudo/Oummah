@@ -8,12 +8,13 @@ import { router, Stack } from 'expo-router';
 import { useFonts } from 'expo-font';
 import { useEffect, useRef, useState } from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { Alert, Animated, AppState, Easing, Image, InteractionManager, Linking, Platform, StyleSheet, Text, View } from 'react-native';
+import { Alert, Animated, AppState, Easing, Image, Linking, Platform, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { AudioPlayerProvider } from '../context/AudioPlayerProvider';
 import { ReciterProvider } from '../context/ReciterProvider';
 import MiniPlayer from '../features/audio/presentation/MiniPlayer';
+import { scheduleIdle } from '../utils/scheduleIdle';
 import { ProphetAudioProvider } from '../features/prophets/audio/ProphetAudioProvider';
 import ProphetAudioMiniPlayer from '../features/prophets/audio/ProphetAudioMiniPlayer';
 import { I18nProvider, languageReady, subscribeLanguageChange, translate } from '../i18n/I18nProvider';
@@ -531,7 +532,7 @@ export default function RootLayout() {
     let promptVisible = false;
     const timers: ReturnType<typeof setTimeout>[] = [];
 
-    const interactionTask = InteractionManager.runAfterInteractions(() => {
+    const interactionTask = scheduleIdle(() => {
       timers.push(
         setTimeout(() => {
           if (cancelled) return;
@@ -624,7 +625,7 @@ export default function RootLayout() {
       notificationPermissionRef.current ?? Promise.resolve(false),
     ]).then(([, granted]) => granted);
 
-    const interactionTask = InteractionManager.runAfterInteractions(() => {
+    const interactionTask = scheduleIdle(() => {
       if (cancelled) return;
 
       // Canaux Android visés par les push (support, mosquée, messages…) + suppression des anciens
