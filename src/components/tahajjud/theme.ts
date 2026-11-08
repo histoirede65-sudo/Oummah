@@ -2,6 +2,9 @@ import { typography } from '../../theme/typography';
 
 /** Night palette of the Tahajjud space: OUMMAH plum night, moonlight, gold of the last third. */
 export const night = {
+  /** Fond vert discret de tout ce qui permet de valider sa nuit. */
+  validateBg: 'rgba(127,216,166,0.13)',
+  validateLine: 'rgba(127,216,166,0.38)',
   sky0: '#080713',
   sky1: '#110B1F',
   sky2: '#24123A',

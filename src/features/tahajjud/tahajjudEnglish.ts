@@ -5,6 +5,11 @@
  */
 export const TAHAJJUD_EN: Record<string, string> = {
   // ----- Notifications on the module home -----
+  'Touchez une nuit pour la valider.': 'Tap a night to log it.',
+  'Annuler cette nuit ?': 'Remove this night?',
+  'Valider cette nuit ?': 'Log this night?',
+  'Nuit du {0}': 'Night of {0}',
+  'Annuler la nuit': 'Remove the night',
   'Notif. dernier tiers': 'Last third alert',
   'Notif. nouvelles duas': 'New duas alert',
   'Nuit validée': 'Night logged',

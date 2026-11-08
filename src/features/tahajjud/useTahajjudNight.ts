@@ -30,6 +30,7 @@ export type TahajjudView = {
   streak: number;
   validate: (witr: boolean) => Promise<void>;
   undo: () => Promise<void>;
+  setNightDone: (night: string, done: boolean) => Promise<void>;
   reload: () => void;
 };
 
@@ -93,10 +94,20 @@ export function useTahajjudNight(schedule?: MosquePrayerSchedule | null): Tahajj
     setNights(await cancelTahajjudNight(key));
   }, [key]);
 
+  /** Valide ou annule une nuit précise (ronds des 7 dernières nuits). */
+  const setNightDone = useCallback(async (night: string, done: boolean) => {
+    if (done) {
+      setNights(await validateTahajjudNight(night, false));
+      setDetails(await loadNightDetails());
+    } else {
+      setNights(await cancelTahajjudNight(night));
+    }
+  }, []);
+
   return {
     loading, error, now, state, nights, details, pauses,
     canValidate: Boolean(key && !nights[key]),
-    validated, streak, validate, undo,
+    validated, streak, validate, undo, setNightDone,
     reload: () => setVersion((value) => value + 1),
   };
 }

@@ -83,7 +83,7 @@ export default function HomeTahajjudCard({ schedule }: Props) {
                   <Text style={styles.primaryText}>{tx("Je suis debout")}</Text>
                 </LinearGradient>
               </Pressable>
-              <Pressable onPress={() => setSheet(true)} style={({ pressed }) => [styles.chip, pressed && styles.pressed]}>
+              <Pressable onPress={() => setSheet(true)} style={({ pressed }) => [styles.chip, styles.chipValidate, pressed && styles.pressed]}>
                 <Ionicons name="checkmark-circle-outline" size={16} color={night.goldSoft} />
                 <Text style={styles.chipText}>{tx("J’ai prié")}</Text>
               </Pressable>
@@ -116,6 +116,7 @@ export default function HomeTahajjudCard({ schedule }: Props) {
 }
 
 const styles = StyleSheet.create({
+  chipValidate: { backgroundColor: night.validateBg, borderColor: night.validateLine },
   outer: { marginHorizontal: 12, marginTop: 12 },
   card: { overflow: 'hidden', borderRadius: 22, borderWidth: 1, borderColor: 'rgba(227,181,90,0.45)', backgroundColor: '#0B0820' },
   photo: { aspectRatio: 2172 / 724, paddingVertical: 10, paddingHorizontal: 14, flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end' },

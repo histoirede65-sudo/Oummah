@@ -32,7 +32,7 @@ function nightTitle(key: string) {
   return tx('Nuit du {0} au {1} {2}', [day(evening), day(morning), morning.toLocaleDateString(tahajjudLocale(), { day: 'numeric', month: 'long' })]);
 }
 
-type Tile = { icon: keyof typeof Ionicons.glyphMap; label: string; hint: string; route?: string; onPress?: () => void; soon?: boolean };
+type Tile = { icon: keyof typeof Ionicons.glyphMap; label: string; hint: string; route?: string; onPress?: () => void; soon?: boolean; validate?: boolean };
 
 export default function TahajjudScreen() {
   const { width } = useWindowDimensions();
@@ -90,11 +90,23 @@ export default function TahajjudScreen() {
   const wakeUp = tonight && settings?.alarm.enabled ? alarmTime(tonight, settings.alarm.mode, settings.alarm.customTime) : null;
   const verse = tonight ? verseOfTheNight(tonight.key) : null;
 
+  const askNight = (key: string, done: boolean) => {
+    const label = new Date(`${key}T12:00:00`).toLocaleDateString(tahajjudLocale(), { weekday: 'long', day: 'numeric', month: 'long' });
+    Alert.alert(
+      done ? tx('Annuler cette nuit ?') : tx('Valider cette nuit ?'),
+      tx('Nuit du {0}', [label]),
+      [
+        { text: tx('Retour'), style: 'cancel' },
+        { text: done ? tx('Annuler la nuit') : tx('J’ai prié cette nuit'), style: done ? 'destructive' : 'default', onPress: () => void view.setNightDone(key, !done) },
+      ],
+    );
+  };
+
   const tiles: Tile[] = [
     { icon: 'book-outline', label: tx('Guide'), hint: tx('Apprendre le Qiyam'), route: '/tahajjud/guide' },
     { icon: 'heart-outline', label: tx('Ma nuit'), hint: tx('Dhikr, Coran'), route: '/tahajjud/duas' },
     { icon: 'footsteps-outline', label: tx('Prière guidée'), hint: tx('Étape par étape'), route: '/tahajjud/awake' },
-    { icon: 'checkmark-circle-outline', label: tx('J’ai prié'), hint: view.validated ? tx('Nuit enregistrée') : tx('Valider ma nuit'), onPress: () => view.canValidate && setSheet(true) },
+    { icon: 'checkmark-circle-outline', label: tx('J’ai prié'), hint: view.validated ? tx('Nuit enregistrée') : tx('Valider ma nuit'), onPress: () => view.canValidate && setSheet(true), validate: true },
     { icon: 'stats-chart-outline', label: tx('Statistiques'), hint: tx('Calendrier · défis'), route: '/tahajjud/stats' },
     { icon: 'musical-notes-outline', label: tx('Que réciter ?'), hint: tx('Dans ma prière'), route: '/tahajjud/recite' },
     { icon: 'chatbubbles-outline', label: tx('Amis'), hint: unreadMessages ? txCount(unreadMessages, '{0} message non lu', '{0} messages non lus') : tx('Messages · encourager'), route: '/tahajjud/friends' },
@@ -185,7 +197,7 @@ export default function TahajjudScreen() {
                     <Text style={styles.ctaText}>{tx("Je suis debout")}</Text>
                   </LinearGradient>
                 </Pressable>
-                <Pressable onPress={() => setSheet(true)} style={styles.lateLink}>
+                <Pressable onPress={() => setSheet(true)} style={[styles.lateLink, styles.validateLink]}>
                   <Ionicons name="checkmark-circle-outline" size={15} color={night.goldSoft} />
                   <Text style={styles.lateText}>{tx("J’ai déjà prié cette nuit")}</Text>
                 </Pressable>
@@ -213,7 +225,7 @@ export default function TahajjudScreen() {
               </Pressable>
             ) : null}
             {late ? (
-              <Pressable onPress={() => setSheet(true)} style={styles.lateLink}>
+              <Pressable onPress={() => setSheet(true)} style={[styles.lateLink, styles.validateLink]}>
                 <Ionicons name="moon-outline" size={15} color={night.goldSoft} />
                 <Text style={styles.lateText}>{tx("J’ai prié cette nuit ? Enregistrez-la jusqu’à Dhuhr.")}</Text>
               </Pressable>
@@ -285,7 +297,7 @@ export default function TahajjudScreen() {
                 key={tile.label}
                 disabled={tile.soon}
                 onPress={() => (tile.route ? router.push(tile.route as Href) : tile.onPress?.())}
-                style={({ pressed }) => [styles.tile, tile.soon && styles.tileSoon, pressed && styles.pressed]}
+                style={({ pressed }) => [styles.tile, tile.validate && styles.validateBg, tile.soon && styles.tileSoon, pressed && styles.pressed]}
               >
                 <View style={[styles.tileIcon, tile.soon && styles.tileIconSoon]}>
                   <Ionicons name={tile.icon} size={20} color={tile.soon ? night.muted : night.goldSoft} />
@@ -308,10 +320,8 @@ export default function TahajjudScreen() {
                     </View>
                   ) : null}
                 </View>
-                <WeekMoons nights={view.nights} pauses={view.pauses} currentNight={state?.validatableKey ?? tonight.key} />
-                {state?.validatableKey && !view.nights[state.validatableKey] ? (
-                  <Text style={styles.weekHint}>{tx('Cercle doré : la nuit que vous pouvez encore enregistrer.')}</Text>
-                ) : null}
+                <WeekMoons nights={view.nights} pauses={view.pauses} currentNight={state?.validatableKey ?? tonight.key} onPressNight={askNight} />
+                <Text style={styles.weekHint}>{tx('Touchez une nuit pour la valider.')}</Text>
               </GlassCard>
             </Pressable>
           </Animated.View>
@@ -362,8 +372,10 @@ const styles = StyleSheet.create({
   eyebrow: { color: night.gold, fontSize: 14, letterSpacing: 1.8, textTransform: 'uppercase', ...nightType.bold },
   title: { marginTop: 2, color: night.text, fontSize: 46, lineHeight: 50, ...nightType.display },
   subtitle: { marginTop: 2, color: night.textSoft, fontSize: 18, ...nightType.body },
+  validateBg: { backgroundColor: night.validateBg, borderColor: night.validateLine },
+  validateLink: { alignSelf: 'center', paddingHorizontal: 14, paddingVertical: 8, borderRadius: 18, borderWidth: 1, backgroundColor: night.validateBg, borderColor: night.validateLine },
   topActions: { flexDirection: 'row', alignItems: 'center', gap: 8 },
-  topPill: { height: 34, paddingHorizontal: 11, borderRadius: 17, flexDirection: 'row', alignItems: 'center', gap: 5, backgroundColor: night.glassStrong, borderWidth: 1, borderColor: night.line },
+  topPill: { height: 34, paddingHorizontal: 11, borderRadius: 17, flexDirection: 'row', alignItems: 'center', gap: 5, backgroundColor: night.validateBg, borderWidth: 1, borderColor: night.validateLine },
   topPillDone: { borderColor: 'rgba(127,216,166,0.35)' },
   topPillText: { color: night.goldSoft, fontSize: 13, ...nightType.semibold },
   topPillTextDone: { color: night.success },
@@ -423,14 +435,14 @@ const styles = StyleSheet.create({
   wallPreview: { marginTop: 14, padding: 14, borderRadius: 18, backgroundColor: 'rgba(8,7,19,0.6)', borderWidth: 1, borderColor: 'rgba(227,181,90,0.18)' },
   wallPreviewText: { color: night.text, fontSize: 16, lineHeight: 23, fontStyle: 'italic', ...nightType.body },
   wallPreviewMeta: { marginTop: 6, color: night.goldSoft, fontSize: 14, ...nightType.semibold },
-  community: { marginTop: 16, padding: 18, overflow: 'hidden', borderRadius: 26, borderWidth: 1, borderColor: night.goldLine, backgroundColor: '#0D0A1A' },
+  community: { marginTop: 14, padding: 14, overflow: 'hidden', borderRadius: 26, borderWidth: 1, borderColor: night.goldLine, backgroundColor: '#0D0A1A' },
   communityHeader: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   liveLine: { marginTop: 4, flexDirection: 'row', alignItems: 'center', gap: 7 },
   greenDot: { width: 8, height: 8, borderRadius: 4, backgroundColor: night.success },
-  worldMap: { marginTop: 14, marginHorizontal: -18, height: 130 },
+  worldMap: { marginTop: 10, marginHorizontal: -14, height: 100 },
   communityCopy: { flex: 1 },
-  communityTitle: { color: night.text, fontSize: 22, lineHeight: 27, ...nightType.semibold },
-  communityLink: { marginTop: 12, flexDirection: 'row', alignItems: 'center', gap: 6 },
+  communityTitle: { color: night.text, fontSize: 19, lineHeight: 24, ...nightType.semibold },
+  communityLink: { marginTop: 9, flexDirection: 'row', alignItems: 'center', gap: 6 },
   communityLinkText: { color: night.goldSoft, fontSize: 15, ...nightType.semibold },
   communityText: { marginTop: 2, color: night.textSoft, fontSize: 15, ...nightType.body },
   weekHeader: { flexDirection: 'row', justifyContent: 'space-between' },
