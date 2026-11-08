@@ -16,6 +16,7 @@ import {
 import { muhasabahLocale, muhasabahText, type MuhasabahStringKey } from '../features/muhasabah/muhasabahStrings';
 import { cancelTodayMuhasabahReminder, getMuhasabahReminderState, setMuhasabahReminderEnabled } from '../features/notifications/NotificationCenter';
 import { SURAHS } from '../data/surahs';
+import { ARABIC_READING_FONT_FAMILY } from '../features/quran/ArabicReadingPresentation';
 import { useI18n } from '../i18n';
 import { colors } from '../theme/colors';
 import { typography } from '../theme/typography';
@@ -102,6 +103,8 @@ export default function MuhasabahScreen() {
   const shortDate = useCallback((date: string) => new Date(`${date}T12:00:00`).toLocaleDateString(locale, { day: 'numeric', month: 'long' }), [locale]);
   const inputRefs = useRef<(TextInputInstance | null)[]>([]);
   const questionY = useRef<number[]>([]);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- type d'instance de View propre à cette version de React Native
+  const contentRef = useRef<any>(null);
   const scrollRef = useRef<ScrollViewInstance | null>(null);
   const draftTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const askedSync = useRef(false);
@@ -198,12 +201,25 @@ export default function MuhasabahScreen() {
     const date = selectedDate;
     draftTimer.current = setTimeout(() => { void saveDraft(userId, date, next).catch(() => undefined); }, 500);
   };
+  const focusedIndex = useRef<number | null>(null);
+  const scrollToQuestion = useCallback((index: number) => {
+    const input = inputRefs.current[index] as unknown as { measureLayout?: (relative: unknown, success: (x: number, y: number) => void, fail?: () => void) => void } | null;
+    const content = contentRef.current;
+    if (!input?.measureLayout || !content) return;
+    // Le titre de la question (≈ 50 px au-dessus du champ) reste visible.
+    input.measureLayout(content, (_x, y) => scrollRef.current?.scrollTo({ y: Math.max(0, y - 70), animated: true }), () => undefined);
+  }, []);
   const focusQuestion = (index: number) => {
-    setTimeout(() => {
-      const y = questionY.current[index];
-      if (y !== undefined) scrollRef.current?.scrollTo({ y: Math.max(0, y - 20), animated: true });
-    }, 120);
+    focusedIndex.current = index;
+    setTimeout(() => scrollToQuestion(index), 120);
   };
+  useEffect(() => {
+    const show = Keyboard.addListener(Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow', () => {
+      if (focusedIndex.current !== null) setTimeout(() => scrollToQuestion(focusedIndex.current ?? 0), Platform.OS === 'ios' ? 280 : 60);
+    });
+    const hide = Keyboard.addListener('keyboardDidHide', () => { focusedIndex.current = null; });
+    return () => { show.remove(); hide.remove(); };
+  }, [scrollToQuestion]);
   const askLogin = (body: string) => Alert.alert(t('loginTitle'), body, [{ text: t('later'), style: 'cancel' }, { text: t('openProfile'), onPress: () => router.push('/profile') }]);
 
   const save = async () => {
@@ -289,8 +305,9 @@ export default function MuhasabahScreen() {
 
   return (
     <View style={styles.safe}>
-      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.flex}>
-        <ScrollView ref={scrollRef} contentContainerStyle={{ paddingBottom: insets.bottom + 34 }} keyboardShouldPersistTaps="handled" keyboardDismissMode={Platform.OS === 'ios' ? 'interactive' : 'none'} showsVerticalScrollIndicator={false}>
+      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={styles.flex}>
+        <ScrollView ref={scrollRef} contentContainerStyle={{ paddingBottom: insets.bottom + 34 }} automaticallyAdjustKeyboardInsets={false} keyboardShouldPersistTaps="handled" keyboardDismissMode={Platform.OS === 'ios' ? 'interactive' : 'none'} showsVerticalScrollIndicator={false}>
+          <View ref={contentRef} collapsable={false}>
           {/* En-tête photo */}
           <View style={styles.hero}>
             <Reanimated.Image entering={FadeIn.duration(900)} source={require('../assets/images/home/home-mosque-sunset.jpg')} resizeMode="cover" style={styles.heroImage} />
@@ -298,44 +315,17 @@ export default function MuhasabahScreen() {
             <Pressable onPress={() => router.back()} accessibilityRole="button" style={[styles.back, { top: insets.top + 8 }]}><Ionicons name="chevron-back" size={22} color="#fff" /></Pressable>
             <View style={[styles.heroCopy, { paddingTop: insets.top + 64 }]}>
               <Reanimated.Text entering={FadeInDown.duration(700).delay(150)} style={styles.title}>{t('title')}</Reanimated.Text>
-              <Reanimated.Text entering={FadeInDown.duration(700).delay(260)} style={styles.intro}>{t('intro')}</Reanimated.Text>
+              <Reanimated.View entering={FadeInDown.duration(700).delay(260)} style={styles.heroVerse}>
+                <Pressable onPress={() => router.push('/surah/59?verse=18&direct=1' as never)} style={({ pressed }) => [styles.heroVersePress, pressed && styles.pressed]}>
+                  <Text style={styles.verseArabic}>يَـٰٓأَيُّهَا ٱلَّذِينَ ءَامَنُوا۟ ٱتَّقُوا۟ ٱللَّهَ وَلْتَنظُرْ نَفْسٌ مَّا قَدَّمَتْ لِغَدٍ ۖ وَٱتَّقُوا۟ ٱللَّهَ ۚ إِنَّ ٱللَّهَ خَبِيرٌۢ بِمَا تَعْمَلُونَ</Text>
+                  <Text style={styles.verseText}>« {t('verseText')} »</Text>
+                  <View style={styles.verseRefRow}><Text style={styles.verseRef}>{t('verseRef')}</Text><Ionicons name="chevron-forward" size={12} color={GOLD} /></View>
+                </Pressable>
+              </Reanimated.View>
             </View>
           </View>
 
           <View style={styles.body}>
-            <Reanimated.View entering={enter(0)}>
-              <Pressable onPress={() => router.push('/surah/59?verse=18&direct=1' as never)} style={({ pressed }) => [pressed && styles.pressed]}>
-                <Glass tint={GOLD} style={styles.verseCard}>
-                  <Text style={styles.verseArabic}>يَـٰٓأَيُّهَا ٱلَّذِينَ ءَامَنُوا۟ ٱتَّقُوا۟ ٱللَّهَ وَلْتَنظُرْ نَفْسٌ مَّا قَدَّمَتْ لِغَدٍ ۖ وَٱتَّقُوا۟ ٱللَّهَ ۚ إِنَّ ٱللَّهَ خَبِيرٌۢ بِمَا تَعْمَلُونَ</Text>
-                  <Text style={styles.verseText}>« {t('verseText')} »</Text>
-                  <View style={styles.verseRefRow}><Ionicons name="book-outline" size={13} color={GOLD} /><Text style={styles.verseRef}>{t('verseRef')}</Text><Ionicons name="chevron-forward" size={13} color={GOLD} /></View>
-                </Glass>
-              </Pressable>
-            </Reanimated.View>
-
-            <Reanimated.View entering={enter(1)}>
-              <Glass style={styles.privateCard}>
-                <View style={styles.lockBubble}><Ionicons name={session ? 'lock-closed' : 'phone-portrait'} size={19} color={INK} /></View>
-                <View style={styles.flex}>
-                  <Text style={styles.privateTitle}>{t('privateTitle')}</Text>
-                  <Text style={styles.privateText}>{session ? t('privateBody') : t('privateGuestBody')}</Text>
-                </View>
-              </Glass>
-            </Reanimated.View>
-
-            {reminder ? (
-              <Reanimated.View entering={enter(1)}>
-                <Glass style={styles.reminderRow}>
-                  <View style={[styles.bubble, { backgroundColor: reminder.enabled ? VIOLET : 'rgba(255,255,255,0.1)' }]}><Ionicons name={reminder.enabled ? 'notifications' : 'notifications-off-outline'} size={16} color={reminder.enabled ? INK : colors.textMuted} /></View>
-                  <View style={styles.flex}>
-                    <Text style={styles.reminderTitle}>{t('reminderTitle')}</Text>
-                    <Text style={styles.reminderText}>{reminder.enabled ? t(reminder.auto ? 'reminderAuto' : 'reminderFixed', { time: reminder.time }) : t('reminderOff')}</Text>
-                  </View>
-                  <Switch value={reminder.enabled} onValueChange={(value) => void toggleReminder(value)} trackColor={{ false: 'rgba(255,255,255,0.15)', true: VIOLET }} thumbColor="#fff" ios_backgroundColor="rgba(255,255,255,0.15)" />
-                </Glass>
-              </Reanimated.View>
-            ) : null}
-
             {loadError ? (
               <Glass tint={GOLD} style={styles.errorBanner}>
                 <Ionicons name="cloud-offline-outline" size={20} color={GOLD} />
@@ -392,17 +382,6 @@ export default function MuhasabahScreen() {
                         ))}
                       </View>
                     )}
-                  </Glass>
-                </Reanimated.View>
-              ) : null}
-
-              {selectedActivities.length ? (
-                <Reanimated.View entering={enter(3)}>
-                  <Glass tint={VIOLET} style={styles.cardPad}>
-                    <Text style={styles.cardTitle}>{isToday ? t('alreadyToday') : t('alreadyDay')}</Text>
-                    <Text style={styles.cardLead}>{t('alreadyLead')}</Text>
-                    {selectedActivities.slice(0, 4).map((activity) => <ActivityLine key={activity.id} activity={activity} />)}
-                    {selectedActivities.length > 4 ? <Text style={styles.moreText}>+{selectedActivities.length - 4}</Text> : null}
                   </Glass>
                 </Reanimated.View>
               ) : null}
@@ -466,6 +445,17 @@ export default function MuhasabahScreen() {
               )}
               {entry ? <Pressable onPress={remove} style={styles.delete}><Text style={styles.deleteText}>{t('delete')}</Text></Pressable> : null}
 
+              {selectedActivities.length ? (
+                <Reanimated.View entering={enter(3)}>
+                  <Glass tint={VIOLET} style={styles.cardPad}>
+                    <Text style={styles.cardTitle}>{isToday ? t('alreadyToday') : t('alreadyDay')}</Text>
+                    <Text style={styles.cardLead}>{t('alreadyLead')}</Text>
+                    {selectedActivities.slice(0, 4).map((activity) => <ActivityLine key={activity.id} activity={activity} />)}
+                    {selectedActivities.length > 4 ? <Text style={styles.moreText}>+{selectedActivities.length - 4}</Text> : null}
+                  </Glass>
+                </Reanimated.View>
+              ) : null}
+
               {ongoing.length ? (
                 <Reanimated.View entering={enter(8)}>
                   <Glass style={styles.cardPad}>
@@ -478,6 +468,23 @@ export default function MuhasabahScreen() {
                   </Glass>
                 </Reanimated.View>
               ) : null}
+              {reminder ? (
+                <Reanimated.View entering={enter(1)}>
+                  <Glass style={styles.reminderRow}>
+                    <View style={[styles.bubble, { backgroundColor: reminder.enabled ? VIOLET : 'rgba(255,255,255,0.1)' }]}><Ionicons name={reminder.enabled ? 'notifications' : 'notifications-off-outline'} size={16} color={reminder.enabled ? INK : colors.textMuted} /></View>
+                    <View style={styles.flex}>
+                      <Text style={styles.reminderTitle}>{t('reminderTitle')}</Text>
+                      <Text style={styles.reminderText}>{reminder.enabled ? t(reminder.auto ? 'reminderAuto' : 'reminderFixed', { time: reminder.time }) : t('reminderOff')}</Text>
+                    </View>
+                    <Switch value={reminder.enabled} onValueChange={(value) => void toggleReminder(value)} trackColor={{ false: 'rgba(255,255,255,0.15)', true: VIOLET }} thumbColor="#fff" ios_backgroundColor="rgba(255,255,255,0.15)" />
+                  </Glass>
+                </Reanimated.View>
+              ) : null}
+
+              <View style={styles.privateFooter}>
+                <Ionicons name={session ? 'lock-closed' : 'phone-portrait-outline'} size={12} color={colors.textMuted} />
+                <Text style={styles.privateFooterText}>{session ? t('privateBody') : t('privateGuestBody')}</Text>
+              </View>
             </View> : null}
 
             {!loading && tab === 'review' ? <View>
@@ -552,6 +559,7 @@ export default function MuhasabahScreen() {
                 {others.map((item) => <CommitmentRow key={item.id} item={item} t={t} today={today} shortDate={shortDate} busy={busyCommitment === item.id} run={runOnCommitment} />)}
               </CollapsibleSection> : null}
             </View> : null}
+          </View>
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
@@ -675,23 +683,26 @@ function ActionChip({ icon, label, onPress, danger }: { icon: keyof typeof Ionic
 const styles: any = StyleSheet.create({
   safe: { flex: 1, backgroundColor: colors.background },
   flex: { flex: 1 },
-  hero: { height: HERO_HEIGHT, overflow: 'hidden' },
-  heroImage: { position: 'absolute', top: 0, left: 0, right: 0, width: '100%', height: HERO_HEIGHT + 40 },
+  hero: { minHeight: HERO_HEIGHT, paddingBottom: 92, overflow: 'hidden' },
+  heroImage: { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, width: '100%' },
   back: { position: 'absolute', left: 16, width: 42, height: 42, borderRadius: 21, alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(15,10,28,0.45)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.22)', zIndex: 2 },
   heroCopy: { alignItems: 'center', paddingHorizontal: 28 },
   title: { color: '#fff', fontFamily: typography.serifMedium, fontSize: 40, textAlign: 'center', textShadowColor: 'rgba(0,0,0,0.45)', textShadowRadius: 14, textShadowOffset: { width: 0, height: 2 } },
   intro: { color: 'rgba(255,255,255,0.88)', fontFamily: typography.sans, fontSize: 15, lineHeight: 21, marginTop: 8, textAlign: 'center', textShadowColor: 'rgba(0,0,0,0.5)', textShadowRadius: 10 },
-  body: { paddingHorizontal: 16, marginTop: -92 },
+  body: { paddingHorizontal: 16, marginTop: -64 },
   glass: { borderRadius: 22, borderWidth: 1, borderColor: 'rgba(255,255,255,0.13)', backgroundColor: 'rgba(36,28,52,0.62)', overflow: 'hidden', marginBottom: 12 },
   glassShine: { position: 'absolute', top: 0, left: 0, right: 0, height: 46 },
   cardPad: { padding: 16 },
   reminderRow: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingHorizontal: 14, paddingVertical: 11 },
   reminderTitle: { color: colors.text, fontWeight: '700', fontSize: 14 },
   reminderText: { color: colors.textMuted, fontSize: 12, marginTop: 1 },
-  verseCard: { padding: 16, alignItems: 'center' },
-  verseArabic: { color: colors.text, fontFamily: typography.arabic, fontSize: 24, lineHeight: 44, textAlign: 'center', writingDirection: 'rtl' },
-  verseText: { color: colors.textSecondary, fontFamily: typography.serifMedium, fontSize: 15, lineHeight: 22, textAlign: 'center', marginTop: 6 },
-  verseRefRow: { flexDirection: 'row', alignItems: 'center', gap: 5, marginTop: 10 },
+  heroVerse: { marginTop: 14, alignSelf: 'stretch' },
+  heroVersePress: { alignItems: 'center', paddingHorizontal: 4 },
+  privateFooter: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, marginTop: 14, paddingHorizontal: 10 },
+  privateFooterText: { color: colors.textMuted, fontSize: 12, textAlign: 'center', flexShrink: 1 },
+  verseArabic: { color: '#fff', fontFamily: ARABIC_READING_FONT_FAMILY, fontSize: 21, lineHeight: 40, textAlign: 'center', writingDirection: 'rtl', textShadowColor: 'rgba(0,0,0,0.6)', textShadowRadius: 10 },
+  verseText: { color: 'rgba(255,255,255,0.9)', fontFamily: typography.sans, fontSize: 13.5, lineHeight: 20, textAlign: 'center', marginTop: 6, textShadowColor: 'rgba(0,0,0,0.6)', textShadowRadius: 8 },
+  verseRefRow: { flexDirection: 'row', alignItems: 'center', gap: 4, marginTop: 8 },
   verseRef: { color: GOLD, fontSize: 12, fontWeight: '600' },
   goalTop: { flexDirection: 'row', alignItems: 'center', gap: 12 },
   goalFrom: { color: colors.textMuted, fontSize: 12, marginTop: 1 },
