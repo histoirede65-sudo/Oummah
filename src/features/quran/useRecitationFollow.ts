@@ -57,15 +57,36 @@ export function useRecitationFollow() {
   const serverChain = useRef<Promise<void>>(Promise.resolve());
   const serverFailures = useRef(0);
 
-  const applyWords = useCallback((heard: readonly string[]) => {
-    if (!heard.length || !aligner.current) return;
-    const word = aligner.current.feed(heard);
-    if (word) setCurrent((previous) => (previous?.verseKey === word.verseKey && previous.position === word.position ? previous : { verseKey: word.verseKey, position: word.position }));
-    if (aligner.current.finished) wanted.current = false;
+  // Mots reconnus en attente d'être allumés : un paquet du serveur s'allume mot par mot, pas d'un bloc.
+  const revealQueue = useRef<RecitePosition[]>([]);
+  const revealTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const revealNext = useCallback(() => {
+    const word = revealQueue.current.shift();
+    if (!word) { revealTimer.current = null; return; }
+    setCurrent(word);
+    // Rythme : réparti sur la durée d'un morceau, entre 180 et 450 ms par mot.
+    const delay = Math.min(450, Math.max(180, SEGMENT_MS / Math.max(1, revealQueue.current.length + 1)));
+    revealTimer.current = setTimeout(revealNext, delay);
   }, []);
+
+  const applyWords = useCallback((heard: readonly string[], paced = false) => {
+    if (!heard.length || !aligner.current) return;
+    const words = aligner.current.feedAll(heard).map((word) => ({ verseKey: word.verseKey, position: word.position }));
+    if (!words.length) return;
+    if (!paced) {
+      const last = words[words.length - 1];
+      setCurrent((previous) => (previous?.verseKey === last.verseKey && previous.position === last.position ? previous : last));
+    } else {
+      revealQueue.current.push(...words);
+      if (!revealTimer.current) revealNext();
+    }
+    if (aligner.current.finished) wanted.current = false;
+  }, [revealNext]);
 
   const stop = useCallback(() => {
     wanted.current = false;
+    revealQueue.current = [];
+    if (revealTimer.current) { clearTimeout(revealTimer.current); revealTimer.current = null; }
     setListening(false);
     try { speech?.stop(); } catch { /* déjà arrêté */ }
     void recorder.stop().catch(() => undefined);
@@ -109,7 +130,7 @@ export function useRecitationFollow() {
           const text = await pending;
           if (__DEV__) console.info('[RECITE] entendu :', text || '(rien)');
           serverFailures.current = 0;
-          if (wanted.current || text) applyWords(text.split(/\s+/).filter(Boolean));
+          if (wanted.current || text) applyWords(text.split(/\s+/).filter(Boolean), true);
         } catch (reason) {
           if (__DEV__) console.info('[RECITE] envoi impossible', reason instanceof Error ? reason.message : reason);
           serverFailures.current += 1;
@@ -125,6 +146,7 @@ export function useRecitationFollow() {
   const start = useCallback(async (words: readonly ReciteWord[], startIndex: number) => {
     setError(null);
     setCurrent(null);
+    revealQueue.current = [];
     aligner.current = new RecitationAligner(words, startIndex);
     const contextual = [...new Set(words.slice(startIndex, startIndex + 120).map((word) => word.text ?? word.norm).filter(Boolean))].slice(0, 100);
 

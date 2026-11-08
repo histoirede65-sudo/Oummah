@@ -58,18 +58,25 @@ export class RecitationAligner {
 
   /** Traite des mots entendus ; renvoie le dernier mot reconnu dans le texte (ou null). */
   feed(heardWords: readonly string[]) {
+    return this.feedAll(heardWords).at(-1) ?? (this.lastMatched === null ? null : this.words[this.lastMatched]);
+  }
+
+  /** Comme feed, mais renvoie tous les mots du texte reconnus, dans l'ordre (pour les allumer un par un). */
+  feedAll(heardWords: readonly string[]) {
+    const matched: ReciteWord[] = [];
     for (const raw of heardWords) {
       const heard = normalizeArabic(raw);
       if (!heard) continue;
       for (let offset = 0; offset <= LOOKAHEAD && this.pointer + offset < this.words.length; offset += 1) {
         if (wordsMatch(heard, this.words[this.pointer + offset].norm)) {
           this.lastMatched = this.pointer + offset;
+          matched.push(this.words[this.pointer + offset]);
           this.pointer += offset + 1;
           break;
         }
       }
     }
-    return this.lastMatched === null ? null : this.words[this.lastMatched];
+    return matched;
   }
 
   /** Texte des prochains mots attendus (indice donné à la transcription côté serveur). */
