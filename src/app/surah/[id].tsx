@@ -1047,7 +1047,7 @@ export default function SurahReadingScreen() {
           .trim()
           .split(" ")
           .filter((word) => word && !isPauseMarkWord(word))
-          .map((word, index) => ({ verseKey: verse.verseKey, position: index + 1, norm: normalizeArabic(word) })),
+          .map((word, index) => ({ verseKey: verse.verseKey, position: index + 1, norm: normalizeArabic(word), text: word })),
       ),
     [verses],
   );
@@ -1074,7 +1074,9 @@ export default function SurahReadingScreen() {
     if (!recite.error) return;
     Alert.alert(
       t("surahReader.reciteTitle"),
-      recite.error === "permission"
+      recite.error === "login"
+        ? t("surahReader.reciteLogin")
+        : recite.error === "permission"
         ? t("surahReader.recitePermission")
         : recite.error === "unavailable"
           ? t("surahReader.reciteUnavailable")
@@ -1170,7 +1172,7 @@ export default function SurahReadingScreen() {
     if (dedicatedUrl) preloadPlayer.replace({ uri: dedicatedUrl });
   }, [activeVerse, currentReciter, preloadPlayer, surahId, verses]);
 
-  const toggleRecite = useCallback(async () => {
+  const toggleRecite = useCallback(async (from?: QuranFoundationVerse) => {
     if (recite.listening) {
       recite.stop();
       return;
@@ -1179,6 +1181,7 @@ export default function SurahReadingScreen() {
     stopInlineVerse();
     preloadPlayer.pause();
     const startVerse =
+      from ??
       activeVerse ??
       verses.find((verse) => Number(verse.verseKey.split(":")[1]) === currentVerseRef.current) ??
       verses[0];
@@ -1381,9 +1384,10 @@ export default function SurahReadingScreen() {
           accessibilityLabel={recite.listening ? t("surahReader.reciteStop") : t("surahReader.reciteStart")}
           disabled={verses.length === 0}
           onPress={() => void toggleRecite()}
-          style={[styles.iconButton, styles.headerAction, recite.listening && styles.iconButtonActive]}
+          style={({ pressed }) => [styles.recitePill, recite.listening && styles.recitePillOn, pressed && { opacity: 0.8 }]}
         >
-          <Ionicons name={recite.listening ? "mic" : "mic-outline"} size={21} color={colors.goldLight} />
+          <Ionicons name={recite.listening ? "stop" : "mic"} size={17} color={recite.listening ? "#FFFFFF" : colors.background} />
+          <Text style={[styles.recitePillText, recite.listening && styles.recitePillTextOn]}>{recite.listening ? t("surahReader.reciteStopShort") : t("surahReader.reciteShort")}</Text>
         </Pressable>
         <Pressable
           accessibilityRole="button"
@@ -1650,6 +1654,16 @@ export default function SurahReadingScreen() {
                 <Ionicons name="close" size={22} color={colors.goldLight} />
               </Pressable>
               <Text numberOfLines={1} style={styles.mushafBarTitle}>{surah.transliteration}</Text>
+              <Pressable
+                accessibilityRole="button"
+                accessibilityLabel={recite.listening ? t("surahReader.reciteStop") : t("surahReader.reciteStart")}
+                disabled={verses.length === 0}
+                onPress={() => void toggleRecite(verses.find((verse) => mushafPageVerses.includes(verse.verseKey)))}
+                style={({ pressed }) => [styles.recitePill, recite.listening && styles.recitePillOn, pressed && { opacity: 0.8 }]}
+              >
+                <Ionicons name={recite.listening ? "stop" : "mic"} size={17} color={recite.listening ? "#FFFFFF" : colors.background} />
+                <Text style={[styles.recitePillText, recite.listening && styles.recitePillTextOn]}>{recite.listening ? t("surahReader.reciteStopShort") : t("surahReader.reciteShort")}</Text>
+              </Pressable>
               {(() => {
                 const page = visibleMushafPage ?? mushafInitialPage;
                 const marked = bookmark?.page === page;
@@ -1724,7 +1738,13 @@ export default function SurahReadingScreen() {
                 <Text style={styles.mushafToastText}>{mushafToast}</Text>
               </View>
             ) : null}
-            {activeVerse ? (
+            {recite.listening ? (
+              <View style={[styles.reciteBar, styles.reciteBarMushaf]}>
+                <View style={styles.reciteDot} />
+                <Text style={styles.reciteText}>{t("surahReader.reciteListening")}</Text>
+              </View>
+            ) : null}
+            {activeVerse && !recite.listening ? (
               <View style={styles.mushafPlayer}>
                 <Pressable accessibilityLabel={t("surahReader.previousVerse")} disabled={activeVerse.id <= 1} onPress={() => playNeighbor(-1)} style={styles.inlineSmallButton}>
                   <Ionicons name="play-skip-back" size={18} color={activeVerse.id <= 1 ? colors.textMuted : colors.goldLight} />
@@ -1824,6 +1844,11 @@ const styles = StyleSheet.create({
     borderColor: colors.borderSoft,
     backgroundColor: colors.backgroundSecondary,
   },
+  recitePill: { flexDirection: "row", alignItems: "center", gap: 6, height: 38, paddingHorizontal: 14, borderRadius: 19, backgroundColor: colors.goldLight, shadowColor: colors.goldLight, shadowOpacity: 0.55, shadowRadius: 10, shadowOffset: { width: 0, height: 0 }, elevation: 6 },
+  recitePillOn: { backgroundColor: "#E5484D", shadowColor: "#E5484D" },
+  recitePillText: { color: colors.background, fontFamily: typography.sans, fontSize: 14, fontWeight: "800" },
+  recitePillTextOn: { color: "#FFFFFF" },
+  reciteBarMushaf: { marginTop: 8 },
   reciteBar: { flexDirection: "row", alignItems: "center", gap: 10, marginHorizontal: 16, marginBottom: 10, paddingHorizontal: 14, paddingVertical: 10, borderRadius: 16, borderWidth: 1, borderColor: "rgba(227,181,90,0.45)", backgroundColor: "rgba(227,181,90,0.1)" },
   reciteDot: { width: 9, height: 9, borderRadius: 5, backgroundColor: "#E5484D" },
   reciteText: { flex: 1, color: colors.text, fontFamily: typography.sans, fontSize: 14, fontWeight: "600" },

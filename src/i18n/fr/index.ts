@@ -1059,6 +1059,8 @@ export const fr = {
   'surahReader.markVerseReadLabel': 'Marquer le verset {verse} comme lu',
   'surahReader.unmarkVerseReadLabel': 'Retirer la validation du verset {verse}',
   'surahReader.wordSyncUnavailable': 'Synchronisation mot à mot indisponible pour ce récitateur.',
+  'surahReader.reciteShort': 'Réciter',
+  'surahReader.reciteLogin': 'Connecte-toi depuis ton profil pour utiliser la récitation.',
   'surahReader.reciteStart': 'Réciter : illuminer les mots que je lis',
   'surahReader.reciteStop': 'Arrêter la récitation',
   'surahReader.reciteListening': 'Je t’écoute… récite, les mots s’illuminent',

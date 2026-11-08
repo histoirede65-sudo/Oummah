@@ -6,21 +6,21 @@
  * un mot mal entendu ou sauté. Elle ne recule jamais et n'invente rien : un mot non reconnu est ignoré.
  */
 
-export type ReciteWord = { verseKey: string; position: number; norm: string };
+export type ReciteWord = { verseKey: string; position: number; norm: string; text?: string };
 
 // Voyelles, signes coraniques, tatweel, hamza isolée.
-const MARKS = /[ؐ-ًؚ-ٰٟۖ-ۭـء]/g;
+const MARKS = /[\u0610-\u061A\u064B-\u065F\u0670\u06D6-\u06ED\u0640\u0621]/g;
 
 /** Squelette d'un mot arabe : lettres de base, variantes unifiées, alif retiré (écrit ou non selon l'orthographe). */
 export function normalizeArabic(value: string) {
   return value
     .replace(MARKS, '')
-    .replace(/[آأإٱا]/g, '') // alif sous toutes ses formes
-    .replace(/ى/g, 'ي') // alif maqsura → ya
-    .replace(/ة/g, 'ه') // ta marbuta → ha
-    .replace(/ؤ/g, 'و') // waw hamza → waw
-    .replace(/ئ/g, 'ي') // ya hamza → ya
-    .replace(/[^ب-ي]/g, '');
+    .replace(/[\u0622\u0623\u0625\u0671\u0627]/g, '') // alif sous toutes ses formes
+    .replace(/\u0649/g, '\u064A') // alif maqsura → ya
+    .replace(/\u0629/g, '\u0647') // ta marbuta → ha
+    .replace(/\u0624/g, '\u0648') // waw hamza → waw
+    .replace(/\u0626/g, '\u064A') // ya hamza → ya
+    .replace(/[^\u0628-\u064A]/g, '');
 }
 
 function distance(a: string, b: string) {
@@ -70,6 +70,11 @@ export class RecitationAligner {
       }
     }
     return this.lastMatched === null ? null : this.words[this.lastMatched];
+  }
+
+  /** Texte des prochains mots attendus (indice donné à la transcription côté serveur). */
+  upcoming(count: number) {
+    return this.words.slice(this.pointer, this.pointer + count).map((word) => word.text ?? '').join(' ').trim();
   }
 
   get finished() {

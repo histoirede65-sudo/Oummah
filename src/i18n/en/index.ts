@@ -1050,6 +1050,8 @@ export const en: Partial<Record<TranslationKey, string>> = {
   'surahReader.markVerseReadLabel': 'Mark verse {verse} as read',
   'surahReader.unmarkVerseReadLabel': 'Remove read confirmation for verse {verse}',
   'surahReader.wordSyncUnavailable': 'Word-by-word synchronization is unavailable for this reciter.',
+  'surahReader.reciteShort': 'Recite',
+  'surahReader.reciteLogin': 'Sign in from your profile to use recitation.',
   'surahReader.reciteStart': 'Recite: light up the words I read',
   'surahReader.reciteStop': 'Stop reciting',
   'surahReader.reciteListening': 'Listening… recite and the words light up',
