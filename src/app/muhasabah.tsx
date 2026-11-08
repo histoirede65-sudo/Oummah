@@ -386,15 +386,14 @@ export default function MuhasabahScreen() {
 
               {goalEntry ? (
                 <Reanimated.View entering={enter(3)}>
-                  <Glass tint={goalEntry.effortResult === 'done' ? GREEN : GOLD} style={styles.cardPad}>
+                  <Glass tint={goalEntry.effortResult === 'done' ? GREEN : GOLD} style={styles.goalCard}>
                     <View style={styles.goalTop}>
-                      <View style={[styles.bubble, { backgroundColor: goalEntry.effortResult === 'done' ? GREEN : GOLD }]}><Ionicons name={goalEntry.effortResult === 'done' ? 'checkmark' : 'flag'} size={17} color={INK} /></View>
+                      <View style={[styles.goalBubble, { backgroundColor: goalEntry.effortResult === 'done' ? GREEN : GOLD }]}><Ionicons name={goalEntry.effortResult === 'done' ? 'checkmark' : 'flag'} size={13} color={INK} /></View>
                       <View style={styles.flex}>
-                        <Text style={styles.yesterdayKicker}>{isToday ? t('goalKicker') : t('goalKickerPast')}</Text>
-                        <Text style={styles.goalFrom}>{t('goalFrom')}</Text>
+                        <Text style={styles.goalKicker}>{isToday ? t('goalKicker') : t('goalKickerPast')}</Text>
+                        <Text numberOfLines={2} style={[styles.goalText, goalEntry.effortResult === 'done' && styles.goalTextDone]}>{goalEntry.effort.trim()}</Text>
                       </View>
                     </View>
-                    <Text style={[styles.goalText, goalEntry.effortResult === 'done' && styles.goalTextDone]}>{goalEntry.effort.trim()}</Text>
                     {goalEntry.effortResult ? (
                       <View style={styles.goalResultRow}>
                         <Ionicons name={goalEntry.effortResult === 'done' ? 'checkmark-circle' : goalEntry.effortResult === 'partial' ? 'contrast' : 'ellipse-outline'} size={17} color={goalEntry.effortResult === 'done' ? GREEN : goalEntry.effortResult === 'partial' ? GOLD : colors.textMuted} />
@@ -405,7 +404,7 @@ export default function MuhasabahScreen() {
                       <View style={styles.responseRow}>
                         {(['done', 'partial', 'not_yet'] as const).map((result) => (
                           <Pressable key={result} onPress={() => void validateGoal(result)} style={({ pressed }) => [styles.goalButton, result === 'done' && styles.goalButtonMain, pressed && styles.pressed]}>
-                            <Ionicons name={result === 'done' ? 'checkmark' : result === 'partial' ? 'contrast-outline' : 'time-outline'} size={16} color={result === 'done' ? INK : colors.textSecondary} />
+                            <Ionicons name={result === 'done' ? 'checkmark' : result === 'partial' ? 'contrast-outline' : 'time-outline'} size={14} color={result === 'done' ? INK : colors.textSecondary} />
                             <Text style={[styles.goalButtonText, result === 'done' && { color: INK }]}>{t(`goal_${result}` as MuhasabahStringKey)}</Text>
                           </Pressable>
                         ))}
@@ -764,15 +763,18 @@ const styles: any = StyleSheet.create({
   verseText: { color: 'rgba(255,255,255,0.9)', fontFamily: typography.sans, fontSize: 13.5, lineHeight: 20, textAlign: 'center', marginTop: 6, textShadowColor: 'rgba(0,0,0,0.6)', textShadowRadius: 8 },
   verseRefRow: { flexDirection: 'row', alignItems: 'center', gap: 4, marginTop: 8 },
   verseRef: { color: GOLD, fontSize: 12, fontWeight: '600' },
-  goalTop: { flexDirection: 'row', alignItems: 'center', gap: 12 },
+  goalCard: { paddingHorizontal: 13, paddingVertical: 11 },
+  goalBubble: { width: 24, height: 24, borderRadius: 12, alignItems: 'center', justifyContent: 'center' },
+  goalKicker: { color: GOLD, fontSize: 9.5, letterSpacing: 1.4, fontWeight: '700' },
+  goalTop: { flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 9 },
   goalFrom: { color: colors.textMuted, fontSize: 12, marginTop: 1 },
-  goalText: { color: colors.text, fontFamily: typography.serifMedium, fontSize: 21, lineHeight: 27, marginTop: 12, marginBottom: 12 },
+  goalText: { color: colors.text, fontSize: 15, fontWeight: '600', lineHeight: 20, marginTop: 2 },
   goalTextDone: { color: colors.textSecondary },
   goalResultRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
-  goalResultText: { flex: 1, color: colors.text, fontWeight: '700', fontSize: 14 },
-  goalButton: { flex: 1, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: 5, paddingVertical: 11, borderRadius: 14, backgroundColor: 'rgba(255,255,255,0.07)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.1)' },
+  goalResultText: { flex: 1, color: colors.text, fontWeight: '700', fontSize: 13 },
+  goalButton: { flex: 1, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: 4, paddingVertical: 7, borderRadius: 12, backgroundColor: 'rgba(255,255,255,0.07)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.1)' },
   goalButtonMain: { backgroundColor: GREEN, borderColor: GREEN },
-  goalButtonText: { color: colors.textSecondary, fontSize: 13, fontWeight: '700' },
+  goalButtonText: { color: colors.textSecondary, fontSize: 12, fontWeight: '700' },
   feedResult: { fontSize: 12, fontWeight: '700', marginTop: 8, marginLeft: 17 },
   privateCard: { flexDirection: 'row', alignItems: 'center', gap: 13, padding: 14 },
   lockBubble: { width: 44, height: 44, borderRadius: 22, backgroundColor: GOLD, alignItems: 'center', justifyContent: 'center', shadowColor: GOLD, shadowOpacity: 0.5, shadowRadius: 10, shadowOffset: { width: 0, height: 0 } },
