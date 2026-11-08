@@ -9,18 +9,22 @@
 export type ReciteWord = { verseKey: string; position: number; norm: string; text?: string };
 
 // Voyelles, signes coraniques, tatweel, hamza isolée.
-const MARKS = /[\u0610-\u061A\u064B-\u065F\u0670\u06D6-\u06ED\u0640\u0621]/g;
+const MARKS = /[\u0610-\u061A\u064B-\u065F\u06D6-\u06ED\u0640\u0621]/g;
 
-/** Squelette d'un mot arabe : lettres de base, variantes unifiées, alif retiré (écrit ou non selon l'orthographe). */
+/**
+ * Squelette d'un mot arabe : lettres de base et variantes unifiées. L'alif est gardé ; le petit alif
+ * suscrit du texte uthmani compte comme un alif (ٱلْعَٰلَمِينَ = العالمين).
+ */
 export function normalizeArabic(value: string) {
   return value
+    .replace(/\u0670/g, '\u0627') // alif suscrit → alif
     .replace(MARKS, '')
-    .replace(/[\u0622\u0623\u0625\u0671\u0627]/g, '') // alif sous toutes ses formes
+    .replace(/[\u0622\u0623\u0625\u0671]/g, '\u0627') // alif sous toutes ses formes
     .replace(/\u0649/g, '\u064A') // alif maqsura → ya
     .replace(/\u0629/g, '\u0647') // ta marbuta → ha
     .replace(/\u0624/g, '\u0648') // waw hamza → waw
     .replace(/\u0626/g, '\u064A') // ya hamza → ya
-    .replace(/[^\u0628-\u064A]/g, '');
+    .replace(/[^\u0627-\u064A]/g, '');
 }
 
 function distance(a: string, b: string) {
@@ -42,15 +46,24 @@ export function wordsMatch(heard: string, expected: string) {
   if (!heard || !expected) return false;
   if (heard === expected) return true;
   const longest = Math.max(heard.length, expected.length);
-  if (longest <= 2) return false;
+  // Mots courts (لا, ما, الا…) : exacts seulement, sinon ils se confondent entre eux.
+  if (longest <= 3) return false;
   return 1 - distance(heard, expected) / longest >= 0.6;
 }
 
 const LOOKAHEAD = 3;
+// Mots entendus non placés gardés pour retrouver où l'on est dans la sourate.
+const MISSED_WINDOW = 10;
+// Pour sauter ailleurs dans la sourate : au moins 3 mots qui se suivent, et 60 % de ce qui a été entendu.
+const RELOCATE_MIN_WORDS = 3;
+const RELOCATE_MIN_RATIO = 0.6;
+
+type Run = { matches: ReciteWord[]; end: number; last: number | null };
 
 export class RecitationAligner {
   private pointer: number;
   private lastMatched: number | null = null;
+  private missed: string[] = [];
 
   constructor(private readonly words: readonly ReciteWord[], startIndex = 0) {
     this.pointer = Math.max(0, Math.min(startIndex, words.length));
@@ -61,35 +74,71 @@ export class RecitationAligner {
     return this.feedAll(heardWords).at(-1) ?? (this.lastMatched === null ? null : this.words[this.lastMatched]);
   }
 
-  /** Comme feed, mais renvoie tous les mots du texte reconnus, dans l'ordre (pour les allumer un par un). */
+  /**
+   * Renvoie les mots du texte reconnus, dans l'ordre (pour les allumer un par un).
+   * Suit d'abord la suite du texte ; si ce qui est entendu n'y correspond pas, cherche le passage dans
+   * toute la sourate (l'utilisateur peut commencer n'importe où). `strict` (paquets du serveur) : un paquet
+   * n'est accepté que si une bonne part de ce qui a été entendu suit le texte.
+   */
   feedAll(heardWords: readonly string[], strict = false) {
-    // Mode strict (paquets du serveur) : on essaie sur une copie, et on n'avance que si une bonne part
-    // de ce qui a été entendu suit le texte. Du français ou des paroles sans rapport sont rejetés.
-    if (strict) {
-      const trial = new RecitationAligner(this.words, this.pointer);
-      const result = trial.feedAll(heardWords);
-      const heardCount = heardWords.map(normalizeArabic).filter(Boolean).length;
-      if (!result.length || result.length < Math.max(1, Math.ceil(heardCount * 0.5)) || (heardCount >= 3 && result.length < 2)) return [];
+    const heard = heardWords.map(normalizeArabic).filter(Boolean);
+    if (!heard.length) return [];
+
+    const local = this.matchFrom(this.pointer, heard);
+    const enough = local.matches.length >= Math.max(1, Math.ceil(heard.length * 0.5)) && (heard.length < 3 || local.matches.length >= 2);
+    if (local.matches.length && (!strict || enough)) {
+      this.commit(local);
+      return local.matches;
     }
-    const matched: ReciteWord[] = [];
-    for (const raw of heardWords) {
-      const heard = normalizeArabic(raw);
-      if (!heard) continue;
-      for (let offset = 0; offset <= LOOKAHEAD && this.pointer + offset < this.words.length; offset += 1) {
-        if (wordsMatch(heard, this.words[this.pointer + offset].norm)) {
-          this.lastMatched = this.pointer + offset;
-          matched.push(this.words[this.pointer + offset]);
-          this.pointer += offset + 1;
+
+    this.missed = [...this.missed, ...heard].slice(-MISSED_WINDOW);
+    const found = this.relocate(this.missed);
+    if (!found) return [];
+    this.commit(found);
+    return found.matches;
+  }
+
+  private commit(run: Run) {
+    this.pointer = run.end;
+    this.lastMatched = run.last;
+    this.missed = [];
+  }
+
+  /** Suit les mots entendus à partir de `start`, en tolérant un mot sauté ou mal entendu. */
+  private matchFrom(start: number, heard: readonly string[]): Run {
+    let pointer = start;
+    let last: number | null = null;
+    const matches: ReciteWord[] = [];
+    for (const word of heard) {
+      for (let offset = 0; offset <= LOOKAHEAD && pointer + offset < this.words.length; offset += 1) {
+        if (wordsMatch(word, this.words[pointer + offset].norm)) {
+          last = pointer + offset;
+          matches.push(this.words[last]);
+          pointer = last + 1;
           break;
         }
       }
     }
-    return matched;
+    return { matches, end: pointer, last };
   }
 
-  /** Texte des prochains mots attendus (indice donné à la transcription côté serveur). */
-  upcoming(count: number) {
-    return this.words.slice(this.pointer, this.pointer + count).map((word) => word.text ?? '').join(' ').trim();
+  /** Cherche dans toute la sourate le passage qui correspond le mieux aux derniers mots entendus. */
+  private relocate(heard: readonly string[]): Run | null {
+    if (heard.length < RELOCATE_MIN_WORDS) return null;
+    let best: { run: Run; distance: number } | null = null;
+    for (let start = 0; start < this.words.length; start += 1) {
+      // On ne part que d'un mot qui ressemble à l'un des premiers mots entendus.
+      if (!heard.slice(0, 3).some((word) => wordsMatch(word, this.words[start].norm))) continue;
+      const run = this.matchFrom(start, heard);
+      const count = run.matches.length;
+      if (count < RELOCATE_MIN_WORDS || count < heard.length * RELOCATE_MIN_RATIO) continue;
+      // À égalité (passage répété), on préfère l'occurrence la plus proche après la position actuelle.
+      const distance = start >= this.pointer ? start - this.pointer : this.words.length + (this.pointer - start);
+      if (!best || count > best.run.matches.length || (count === best.run.matches.length && distance < best.distance)) {
+        best = { run, distance };
+      }
+    }
+    return best?.run ?? null;
   }
 
   get finished() {
